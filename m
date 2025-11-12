@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-897234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165A6C52582
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:58:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7881C5253A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663803B56F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C91189FA75
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494243396E4;
-	Wed, 12 Nov 2025 12:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FDF3385B6;
+	Wed, 12 Nov 2025 12:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZiEUORbE"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hOKp3Js0"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBBC334C1B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6C3385B8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951656; cv=none; b=ap5NOpGx+l+UnKSv3/8YJc+Q9+AFFnwC9LDbRgxX6FE2X6WTj+xqJD1OaWNL6Z/X/Ww76xjeCnC3AQN7GYjV2EPal0Ebwb+hVHiu2eBiDsq324CA001EieLNxsrU5DLT2r0zUdk4LqZ9lG2zVYgbg7gUogK6mjTLIUJFfiTwX38=
+	t=1762951658; cv=none; b=oa5d7jpR5KYHVyyM+clb5Ud6wHFpSsOfQr6INHa22TXZ+kmDi6FJiU7ZesmedBkBBaDNqaeyfPgk8PvwPyv94uk0Ajl267ugelkINC98d//BRSiJLc2hhd+f3n05W2WjsyB0ECtTq1/8jjhDtTAjIqcIos18DZc53/Zu3CVqQ5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951656; c=relaxed/simple;
-	bh=Us/zLvFyE9k9qHI3mL8Iz47DL6Q8odLnYIznsT0OSFA=;
+	s=arc-20240116; t=1762951658; c=relaxed/simple;
+	bh=6MeYm25HociD581vSqYtJ2eptFsvAZ44ncTNn+Udga4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cVwRKI80IUCk1Clj6qvvB5oTrUoo3Ex643xFEt5ZYhHD/i505oZnncRvNfD7TZKAEmGlXshVG8JxhnmPdN40iXPwkhuTABv1ZH8U5YxOSe1ucLW6IYvYhkGW5OaEz4VUC0FK2bxrsgwAJBrg0IGICEk9b7dyAsuxay6/yylFmqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZiEUORbE; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=GcLdW4Pt4i6yRV0mB91E2rJk9/f+PRWRqK4e5Q2dcIgLiJamRNrE2pncnX+AI1hcZ34X4Jg2aUi8G5WRr8h/EGmqHUpysJXCs2WYBYh0ziBU9LkUpgDyj8BUaIV5ZhZ67cCPEBihrPeT6zbd9Of+P9Ve2f1oPzPzEINMNHksU44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hOKp3Js0; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-6417a4b67f9so728244a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:47:34 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429c5da68e5so474253f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:47:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762951653; x=1763556453; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762951654; x=1763556454; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3f3ldoO9R08QIpB/BHNyvJNE4LJaL87gT6nQsr/65nY=;
-        b=ZiEUORbEAuMUeogWj2YlqN4aVNJ7lY8zBGMCV3AsOe4VThZDLZYt7IcVtqgsQI0hy3
-         nolHH3kZDziSlCxzX3PdhBUkE9YzbQJy/q7VN9J35qk9NHKefOz2MtavoCjVNcdPhXgf
-         zoG39fCo/YDV3CFlvufcmenXvl89djj57nGjNOeMTO+VPSsRrhAcDyAAOsfNc2S7YiM9
-         /uCsiT5PS7cjRFAfhzbKVpfZttsP5ylkQ06yL/r8p+8AT3IhoR2WNEycdkEbzkHroBu2
-         NoSgxwUWpD48eZ3qJW11Y5Vb09+j5iVhaAQl3ZKE9yqUz05du4yaDOt2GHuNvTlf+ME6
-         I13w==
+        bh=3QATGzgIOoHBhOcPYuGxb2KGfX2Q3a4/bHnK1FxMmdk=;
+        b=hOKp3Js0djsTm6iPQ9M0p8KRFqp93+fgPHbyZKBYRnqtc4t6Jpn/cLOksgk/FYDCRf
+         bszPhDECozvuH3hfNwQ2JWKzEtqbjDyajMr10IC8fb8gh0I36jLqlbaIjxHkYkvlj06D
+         81csjewvJul5qwmLBtgAi+yL9oxOEZp0b9oAS30vK0Qx17x+6BUUZbyf71/04xrCxN9a
+         zC4Q4XfEoJEo5VrHY93cdpJx8E7Uw3w7lWrgs866iDiIizljs+BXaxme6ZW5xJgkORv9
+         UtVvxjwkos3dqQOzmSGTiPYwluWGXw4hFxMm6KMcrUwHsWUUjFBqGnEdc+9ZXzo+u0ou
+         qsZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762951653; x=1763556453;
+        d=1e100.net; s=20230601; t=1762951654; x=1763556454;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3f3ldoO9R08QIpB/BHNyvJNE4LJaL87gT6nQsr/65nY=;
-        b=F0NQ9UQHrXo/AxV5ALjmhJozx1jQMxnJOLntAffJFlFvWeZQ3xTRBbE4wBGR0SWodT
-         ctroMMJKhczVGBO2rDSYj/1D5nE4/bc9mTSLNOwFPG0yvUTMnaZa+8kNV6F7BU3arr1e
-         wWQ7vclqa+D5G4kmgyY6xtgbbQrFzY5eGSW2OPmDu2RlBt+lDrOooJ0lwWLRkT8vv+FJ
-         e0KSxXyzHm1Ofx+cp6pJmi5VF6E2/3EjWFWee1Vmoq8t0BU1FfLAZw2YMk2ozVHHYsUJ
-         0znmFa9XpIzBNV2sGhwOSxAthXSTXkT/Bdr1yvWm7GjzAByxgUe+8q7NTB37eaj8iMCx
-         3ppA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO386Nr2ooLbK8FSEVO4pofERMZLPj/F67HG65LDTU2f2f7FA8uLxeimWfMs4/PS3g9eu2ATSXaHQOowo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqILyvIZ1QtDiJbX6HZisETQw0/R+jFvhcVzHcrjpJomp2J06M
-	dMv3eDbPBWGF7wiWThL3X3yVsu6PrE8pWaot/+z+T/k+sNCnv0sOdr/XwwXSzCpiKqXr/F9wuQU
-	lnO9/+rfdXfwHrV3K4w==
-X-Google-Smtp-Source: AGHT+IH29rIcpbeIT3goMzCDhfweeIVyGKOaeO+HjU4VdSeG5f8TlrA77kWhpxkYNjptpYv78x0JsOJF84UEb6c=
-X-Received: from edaa9.prod.google.com ([2002:a05:6402:24c9:b0:643:add:e1c0])
+        bh=3QATGzgIOoHBhOcPYuGxb2KGfX2Q3a4/bHnK1FxMmdk=;
+        b=JaWLalj7Y/9BQzGX6RJgS5lHXLHQpejsKqepv/wMi5plmrdBdUmg19dauOZI2VnlBS
+         PLNU2YDzIGmYlOhctYB/NX29+GfMir9qgFfU2AmlOAW4vbNTMpBcdyVFDwAKxQ2UBkrS
+         LqJdXVO4Z/v16Y5SLUa0FDk22E8+udvs3UZHer5i1yt7Mgx46QaTwne2t1yghGdgprKx
+         zQmq+bGajnrorJv4RyFMW4FhfrBniE6NdrGFyNEKhwAnAmBcPDSYjwa7BKbBR5IdDZq/
+         DwvHSluveCKIjvgctuT3iFsKbbv7VwJvQG03rBL+NyxMMMbPJuh4gdiu7EuVbCfA+O4I
+         fOrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqoi380SPt+F+/DZ7OutPyChZYjYKQLO1tmtVB2A0s+Uj1T3x/zcPuHzmrrCiGR+QRrIjLoXXgei/yD54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsAiBHyL0IBcLvWcOKV744PgiXm5CeBqEJdBlody7AYkYfEfBK
+	DGmyapaipwS8gu1KHoVcUPd+9mNPugstOZM05gz59KGP5ASRgGuPNDGE4Td6psb6HdSAmqFFhq+
+	VegZcR+vudziY3aKZ3Q==
+X-Google-Smtp-Source: AGHT+IGwiUuX9VtxNziIMNKFP7L3vhGfq/C2gnxBaVZw9+q+Hgp8MO4PmqGJrM1wwjJ1aM0vSDKzaVr3lt7Es4Y=
+X-Received: from wrbfr8.prod.google.com ([2002:a05:6000:2a88:b0:429:c639:ae9d])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:2682:b0:640:a03a:af98 with SMTP id 4fb4d7f45d1cf-6431a52ffc6mr2420889a12.18.1762951653173;
- Wed, 12 Nov 2025 04:47:33 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:47:22 +0000
+ 2002:a05:6000:1862:b0:3e7:428f:d33 with SMTP id ffacd0b85a97d-42b4ba7581cmr3109209f8f.16.1762951654322;
+ Wed, 12 Nov 2025 04:47:34 -0800 (PST)
+Date: Wed, 12 Nov 2025 12:47:23 +0000
 In-Reply-To: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1713; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=Us/zLvFyE9k9qHI3mL8Iz47DL6Q8odLnYIznsT0OSFA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpFIHfc7CzR4SxgRNX8ioWyORnLUfzvrYfKI4v+
- cRiUWGPoQOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRSB3wAKCRAEWL7uWMY5
- RowRD/0aRa47W4TvjdH1/jgUrSCq7q2C0cUfnbeyWGUCsg82SeCDLmnnpAzTKBivWMOVYS4qii3
- 8FO9TGsBIh1Rzq6YK7SVZHez3NC/lVGY9rTn4WB/VKe8CUjhBSWIEzOvBoerWvneoEH3E/gPUFZ
- cLrAFl/lL/Dq8MwgwRFuKHPI64cwzkKuE3DgsG6k/4lDDECobNO+kcAQ0x8O6XrZXURd2yDvRIZ
- IOdfikmSE57eQYZsmqrC5yeP3vYPTIYlMSiB2N68Rd69W/J7BvgDmxP7q9bfxy6qv75ZvqthlMH
- 9LnVxNgyhj/X0kxbweAnLUg9tU0glvYRFv/cl6xJia7GlJ5S2Efk/ThQQ9L04HHzxeM/XBE4wl1
- tdnIZ+Yb84KP8+/IqSWSV4kLC7+Q7i6roEjQlRkSxdWjCj+tgIqKKm2XsHgEyhXbii/txvV2AdI
- AFUVr4u3o5WnyYBBfTfCQq4cwQ+onY0UKjiHHu8uGoK2k46o+IaW1GjgIwCYV8dyJ2hfML9nEyw
- VVwgp5GMeSShzwusxIIcprO6NuJ9u+DJfKVTAf6G3rnlDxHDKRL7yQAeOBwfw/F7biQmDy4Tg/R
- HajzGoMwM+HDFl4l9Xj9bc/eYVcusshKUBwZb1p4G7doYj1uOhhytizCwYKANhD2CgRYAI+hLyx GPjWvySP41qQiiA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4865; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=6MeYm25HociD581vSqYtJ2eptFsvAZ44ncTNn+Udga4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpFIHfLA8vn0C1oY1F+euOlddJEO00TimBmnEge
+ +5HciDEBouJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRSB3wAKCRAEWL7uWMY5
+ RnUjD/0c7M1eODfqPcBGXBo+T+rTzLyzomD0QAN+EJQW7ks75vDyr8vXUY0fccukmGf72vM83jX
+ TetEr9WGw8TYvNjBfe6OeE05kpyYNiJT2D2LD54B/NmzJ+C14fLKd9q6PD55KfmfueF9EFDfTRF
+ vf4vbISE4CdjluR84fNh7ec7rfvOFT8UiPgV5dpGgN4eqV/T8bYbQtpiihbqJdhJ5nVgG0kWFHk
+ IwFl9Rll22aMRJiYuXV/oOH+4BPCmcewgXzOS8lJt2F0jGe4EyCn+klDZwVCOvdlh1ikRAcBKST
+ gXVTdtGPNQUe4HVyLMrzutiSqdYyduj3Urii+6+EmLzp8x13zKmavDuNK7TWk6D5if7ykzb9BTu
+ hAiJ5qde1qOOGO2tI97d5fYpnAkdZNAeiWUsqplx2gdBOMxgccpUS1kv/dk4SbJgB0ZCdNUz7Hy
+ YKpdkEAS5/md9jyA+5fcw/XMiVqqv3cMJFGmCPsMxEol7ty11xYstMPwOG3xpxoIqeB5Y8A6qvJ
+ qTNLp/MX9Gaf8bwT3GnuM5OxHcnrrP/4GdUx5tKQgY82+Jx1mRAMVgXbS5WiSFPpPEvRzAvwZev
+ 4Mls9REFDU4/LslOYobd3och2d6/SeTonlxiN1lxNRPyJ1WFiKIkSE7GVx7rkUJVukqU74Hx+Xd oYkefAVkH06Ln4g==
 X-Mailer: b4 0.14.2
-Message-ID: <20251112-binder-bitmap-v5-4-8b9d7c7eca82@google.com>
-Subject: [PATCH v5 4/6] rust: id_pool: do not supply starting capacity
+Message-ID: <20251112-binder-bitmap-v5-5-8b9d7c7eca82@google.com>
+Subject: [PATCH v5 5/6] rust: id_pool: do not immediately acquire new ids
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
 Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
@@ -102,56 +102,145 @@ Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Rust Binder wants to use inline bitmaps whenever possible to avoid
-allocations, so introduce a constructor for an IdPool with arbitrary
-capacity that stores the bitmap inline.
+When Rust Binder assigns a new ID, it performs various fallible
+operations before it "commits" to actually using the new ID. To support
+this pattern, change acquire_next_id() so that it does not immediately
+call set_bit(), but instead returns an object that may be used to call
+set_bit() later.
 
-The existing constructor could be renamed to with_capacity() to match
-constructors for other similar types, but it is removed as there is
-currently no user for it.
+The UnusedId type holds a exclusive reference to the IdPool, so it's
+guaranteed that nobody else can call find_unused_id() while the UnusedId
+object is live.
 
-Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 Reviewed-by: Burak Emir <bqe@google.com>
 Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/id_pool.rs | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ rust/kernel/id_pool.rs | 75 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 60 insertions(+), 15 deletions(-)
 
 diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-index 90836b05c6155f98ab8393c8291749f408dbd4da..dc856fc68f4cf38971332f15e63440f27868a3b6 100644
+index dc856fc68f4cf38971332f15e63440f27868a3b6..114e39176cb48b3806797aba48e4d43e0c42e3d2 100644
 --- a/rust/kernel/id_pool.rs
 +++ b/rust/kernel/id_pool.rs
-@@ -93,6 +93,18 @@ pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
- }
+@@ -23,8 +23,8 @@
+ /// Basic usage
+ ///
+ /// ```
+-/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+-/// use kernel::id_pool::IdPool;
++/// use kernel::alloc::AllocError;
++/// use kernel::id_pool::{IdPool, UnusedId};
+ ///
+ /// let mut pool = IdPool::with_capacity(64, GFP_KERNEL)?;
+ /// for i in 0..64 {
+@@ -32,13 +32,13 @@
+ /// }
+ ///
+ /// pool.release_id(23);
+-/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
++/// assert_eq!(23, pool.find_unused_id(0).ok_or(ENOSPC)?.acquire());
+ ///
+-/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
++/// assert!(pool.find_unused_id(0).is_none());  // time to realloc.
+ /// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
+ /// pool.grow(resizer);
+ ///
+-/// assert_eq!(pool.acquire_next_id(0), Some(64));
++/// assert_eq!(pool.find_unused_id(0).ok_or(ENOSPC)?.acquire(), 64);
+ /// # Ok::<(), Error>(())
+ /// ```
+ ///
+@@ -52,8 +52,8 @@
+ /// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
+ ///     let mut pool = guarded_pool.lock();
+ ///     loop {
+-///         match pool.acquire_next_id(0) {
+-///             Some(index) => return Ok(index),
++///         match pool.find_unused_id(0) {
++///             Some(index) => return Ok(index.acquire()),
+ ///             None => {
+ ///                 let alloc_request = pool.grow_request();
+ ///                 drop(pool);
+@@ -215,18 +215,18 @@ pub fn grow(&mut self, mut resizer: PoolResizer) {
+         self.map = resizer.new;
+     }
  
- impl IdPool {
-+    /// Constructs a new [`IdPool`].
-+    ///
-+    /// The pool will have a capacity of [`NO_ALLOC_MAX_LEN`].
-+    ///
-+    /// [`NO_ALLOC_MAX_LEN`]: BitmapVec::NO_ALLOC_MAX_LEN
-+    #[inline]
-+    pub fn new() -> Self {
-+        Self {
-+            map: BitmapVec::new_inline(),
-+        }
-+    }
-+
-     /// Constructs a new [`IdPool`] with space for a specific number of bits.
+-    /// Acquires a new ID by finding and setting the next zero bit in the
+-    /// bitmap.
++    /// Finds an unused ID in the bitmap.
      ///
-     /// A capacity below [`MAX_INLINE_LEN`] is adjusted to [`MAX_INLINE_LEN`].
-@@ -223,3 +235,10 @@ pub fn release_id(&mut self, id: usize) {
-         self.map.clear_bit(id);
+     /// Upon success, returns its index. Otherwise, returns [`None`]
+     /// to indicate that a [`Self::grow_request`] is needed.
+     #[inline]
+-    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
+-        let next_zero_bit = self.map.next_zero_bit(offset);
+-        if let Some(nr) = next_zero_bit {
+-            self.map.set_bit(nr);
+-        }
+-        next_zero_bit
++    #[must_use]
++    pub fn find_unused_id(&mut self, offset: usize) -> Option<UnusedId<'_>> {
++        // INVARIANT: `next_zero_bit()` returns None or an integer less than `map.len()`
++        Some(UnusedId {
++            id: self.map.next_zero_bit(offset)?,
++            pool: self,
++        })
+     }
+ 
+     /// Releases an ID.
+@@ -236,6 +236,51 @@ pub fn release_id(&mut self, id: usize) {
      }
  }
+ 
++/// Represents an unused id in an [`IdPool`].
++///
++/// # Invariants
++///
++/// The value of `id` is less than `pool.map.len()`.
++pub struct UnusedId<'pool> {
++    id: usize,
++    pool: &'pool mut IdPool,
++}
 +
-+impl Default for IdPool {
++impl<'pool> UnusedId<'pool> {
++    /// Get the unused id as an usize.
++    ///
++    /// Be aware that the id has not yet been acquired in the pool. The
++    /// [`acquire`] method must be called to prevent others from taking the id.
++    ///
++    /// [`acquire`]: UnusedId::acquire()
 +    #[inline]
-+    fn default() -> Self {
-+        Self::new()
++    #[must_use]
++    pub fn as_usize(&self) -> usize {
++        self.id
++    }
++
++    /// Get the unused id as an u32.
++    ///
++    /// Be aware that the id has not yet been acquired in the pool. The
++    /// [`acquire`] method must be called to prevent others from taking the id.
++    ///
++    /// [`acquire`]: UnusedId::acquire()
++    #[inline]
++    #[must_use]
++    pub fn as_u32(&self) -> u32 {
++        // CAST: By the type invariants:
++        // `self.id < pool.map.len() <= BitmapVec::MAX_LEN = i32::MAX`.
++        self.id as u32
++    }
++
++    /// Acquire the unused id.
++    #[inline]
++    pub fn acquire(self) -> usize {
++        self.pool.map.set_bit(self.id);
++        self.id
 +    }
 +}
++
+ impl Default for IdPool {
+     #[inline]
+     fn default() -> Self {
 
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
