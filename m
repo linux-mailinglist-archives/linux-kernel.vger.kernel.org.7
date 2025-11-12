@@ -1,200 +1,419 @@
-Return-Path: <linux-kernel+bounces-898038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C228C5433F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43103C5440B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3D0424BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF4F3AF40B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EA334DCE9;
-	Wed, 12 Nov 2025 19:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350A734FF7F;
+	Wed, 12 Nov 2025 19:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VhM3EOws";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f+fg8GWg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="luoCamOd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8vVy2E1i"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ueCv7JmA"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1158A34D92C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAB334C9BE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975763; cv=none; b=ZjfurBZumKucYnRbS2yZXtotFntrl1LzmwMi1gbxNUhp+cRgaeH1vX1AGYZLg99rcUWoEdXf3u1fn0VdmXg3WRo/SgUMmcN+kmiN+phiHdNfOG/Py+IoS0IchXIHsr63uPjvOobuMd1zj2fCKCVR1xAgM847PdS0aObOejX6N9M=
+	t=1762975794; cv=none; b=kq12IpFFEX8DQ2SMQp1Wn7ByNhizvDDt/4pxMarWpzn3ZGP5ND/jnmGSbgUWK+8jdXFc2rkc3fpXq8oxHkbLhQP3gdLGAE8MH6kX+eltvzPBJiF6QNXy+Mb89AO23OvFEFbiybeiBp5yso3+DsYa9ANX1cleeU/73d3gy08hX7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975763; c=relaxed/simple;
-	bh=FD7eUpod2UNtT0QKbAG2A1LcpQ+PqnkPwoOm9PKTAL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHxp7DmoyGWpxhYRJZuQnt4M0Oa4FW9l9NtQxg/0V4AeeS/uLDRD/KrJq8B0L5RmXK/UFY0bfrbEZs2XqmHLpU0Xi+60sTFbppKiQ8F+isbH5wi4ncyCwKFD+0EZWyp8OZuYqj/CgzGOTVd2sdm3Xnc18oyom0zioI0S6n6XRcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VhM3EOws; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f+fg8GWg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=luoCamOd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8vVy2E1i; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A7A3A1F798;
-	Wed, 12 Nov 2025 19:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762975759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BU5pkr1oCLNwoXlaGDpJq+j/j/Vf+8W3OKczzQ5Iz8c=;
-	b=VhM3EOwsUV1oEi6/J8VtZkVrxFgMwFAwM5eZnjaM+/hsNwlkP021onizIgFE/KDonYwgUr
-	T/MMbb4ffMDtWRkmLfgQG6GLn4oUO44bqVnlykHDgP32dSSCk9lJhGxwZUHaA8qp9LJMfK
-	xVxu1unhgA9rgZzK2RKT1e5TEZW3eo0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762975759;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BU5pkr1oCLNwoXlaGDpJq+j/j/Vf+8W3OKczzQ5Iz8c=;
-	b=f+fg8GWgGwdftEgJ9gld4BXp4cH5kY5GNPFF7B5+6edCiMI7ViP7k/beF+lhv2dD11DTWV
-	8aE5v5BT+tEqIOCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=luoCamOd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8vVy2E1i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762975758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BU5pkr1oCLNwoXlaGDpJq+j/j/Vf+8W3OKczzQ5Iz8c=;
-	b=luoCamOdSrS9JYnA+eTHNq/ECaqsMxjQeRWzZwV75WV27WRS1xVsFiEEHj68nMGet9k/ok
-	8cYxU3Q5Ay1IDRatTkjvsERX4GK/G8s5lKTsAf5hFMOT6P2GOED/0A2GIig/QdbqlLAJV3
-	l6tAAwyViuhE2mqB7Lo0pu/ik6XLd7s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762975758;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BU5pkr1oCLNwoXlaGDpJq+j/j/Vf+8W3OKczzQ5Iz8c=;
-	b=8vVy2E1iLSgjfVviuH6hvD8e7zISljyEqLYi/xDHQ+ldXmIFlZjCFgFkvJ2Ueby4jtr1Lb
-	tdMFhUVgOB6cOpBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 96D963EA61;
-	Wed, 12 Nov 2025 19:29:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uCx7JA7gFGm6WwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Nov 2025 19:29:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F1DEBA06F7; Wed, 12 Nov 2025 20:29:17 +0100 (CET)
-Date: Wed, 12 Nov 2025 20:29:17 +0100
-From: Jan Kara <jack@suse.cz>
-To: Baolin Liu <liubaolin12138@163.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Baolin Liu <liubaolin@kylinos.cn>
-Subject: Re: [PATCH v1] jbd2: use J_ASSERT instead of BUG_ON for checkpoint
- mutex
-Message-ID: <xjdoodv3rxgz74sfqoosfr6jt2td5zdxz55t6cuqknua5347r6@hfkq6e56jsmx>
-References: <20251112102914.82278-1-liubaolin12138@163.com>
+	s=arc-20240116; t=1762975794; c=relaxed/simple;
+	bh=oWT3QdfzIV3jbSGJXVBBh6ddTLW23EABmnAWQr4nZ1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QkRh8FZdFi5VJMAwvLAARD/7L6sgsuIRJ1JlNx9QGKhUX0hFvAmWMj0RDI0S4ZGsLKUy3juz13wTm6Wz3tzcqfzM8y32SMUifK6PCgWLS8sDBzG7Q1CK1QHqRN5D6sYngUntlz1R0nk6S/RDXXjw1YQv58no7gildmP4ed8hEbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ueCv7JmA; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b272a4ca78so6080485a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:29:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1762975791; x=1763580591; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7tukR8goduFTZ00FpwpL7JWktUWF3Mq7A3Wmoox3b0=;
+        b=ueCv7JmAjtqI0gF+tfVnACo9PU17ifJtvdmippVwrC5/JZH1bQevLHEZ0bn15lkr9S
+         Ier1nGktNolPrwiEgbq4RmATGAYT6iR9RlR/FR504QEJmNDBYJ2gZNWJ3/HrJbPGxjFk
+         G6koATqImxp133UblEdRRXaZHk7Mk3ne6qmST2sooUX15G91xUTeu/7hRygInlHBe2E+
+         hrMgegeuVmzq/nxFXlWJMi3qHZh/fBq05t8VElR4paYQ6l2EYxWSnu2hGX08rsyZkqyG
+         KAuI0J312Y/rXV8yQi5vycN/oZYwdjOOHvnrk9ClSEV0KSnvySm8HaOFR9CTa3iqNvjd
+         Loqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762975791; x=1763580591;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=T7tukR8goduFTZ00FpwpL7JWktUWF3Mq7A3Wmoox3b0=;
+        b=Hi7ndZ3NqS0G8GCDnJXkRtSmgXz9qudrOkKJ3bc/cUceFfB3mz0c0+9RAGEvmcNsvA
+         UhHM6Izg4rdWjzL/IIU2W7rtwerY+lRrLqFXgX41VRMvCduxWb+rnK+pB4Lt5AQUDhhE
+         2aWyPcH/mxDfMGyu5ngIaJn56kwPYkQ/TMIuXDzMTEE+FAzpbSu0KuoiuPa632YT1F+k
+         egoQgswg3tm6rMyF9sTuG/OZCycAUOhFB0pgaYx0DDddhEQPz1yacUvgPDI6P4pH2y9o
+         cmU+tEC346/qH4mrsehV4qABfq2j4UYDfH1+EiIsshn6dz6QNhMr49/YrSYS8eqmqHIp
+         Wduw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfOnFYsFThuSBzM9uvYnYIF32B0T0hfeTDGD54tQ63qcB2r27MpsVPrgoJ2c7UhpGxS7YmaNSNfsOR9Ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMWYK1F1a2dyrrXN2HxRlh+ryPc4pCVwmmBGr375iFELsAHSf/
+	74dq444n3V/XnKo6c1+GC739aWUB5duUcYpzw0FXM3jie56IT/nbLHuc00LswRlo1f48VQXR2sw
+	Dh32/
+X-Gm-Gg: ASbGncsP58ihtDYgr08r7jBm3QMm9TfGXBRpQiqYeOP83tYpvLbUYNcU9OZmdaAX8MD
+	LlEK9ZUA04wcn+C+RXzCdNmUiqjRceOnjVh/P8JVInroBRTJvQK+i6jrlGkJhmFgdi7PJA9B+rx
+	gjGuNq+SH0oYzYyg+S0BZoaLfcFuhP7fgqLZ2Kg/+RlPS8Un7abp6LTMsCweg4MXfk3DGwZNBIU
+	0riD25Xf4SFwh4Q8W+46UXERyDAjmn22wCFLQWPOMKTcgXri0aP2I+davJ8yhZtP31yLOhP2FNC
+	LyhCl2EEr4HJ3up0nvIH6Bq4xDd5qZASyGVZwqDvr4mVm3a7bZ9dT5yEEgqgBVtG2iBkHvxPHZD
+	qj8bK81SwKBPoK1o+dAetnXBrX22dPVSsXKwlyM6YZ7nPaU+y9/LzfAbJS6vyoELJuHi0l7lDS/
+	yscIe1jXFu+RUPqWcv6TndR52aHaMd1OgYOotzWiYTqUpfq0V2/WJoDKV3542ZdXaK
+X-Google-Smtp-Source: AGHT+IHo8OwgwUC032YSv60eOJd12q77M7KD3oUAYRPoiD1R5IwVdmpQvxPyI0R/rCY63GPtuNDIug==
+X-Received: by 2002:a05:620a:4406:b0:8a4:40da:b907 with SMTP id af79cd13be357-8b29b768ba9mr557487185a.32.1762975790793;
+        Wed, 12 Nov 2025 11:29:50 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.29.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 11:29:50 -0800 (PST)
+From: Gregory Price <gourry@gourry.net>
+To: linux-mm@kvack.org
+Cc: kernel-team@meta.com,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	longman@redhat.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	osalvador@suse.de,
+	ziy@nvidia.com,
+	matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com,
+	rakie.kim@sk.com,
+	byungchul@sk.com,
+	gourry@gourry.net,
+	ying.huang@linux.alibaba.com,
+	apopple@nvidia.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	kees@kernel.org,
+	muchun.song@linux.dev,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	rientjes@google.com,
+	jackmanb@google.com,
+	cl@gentwo.org,
+	harry.yoo@oracle.com,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	weixugc@google.com,
+	zhengqi.arch@bytedance.com,
+	yosry.ahmed@linux.dev,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	fabio.m.de.francesco@linux.intel.com,
+	rrichter@amd.com,
+	ming.li@zohomail.com,
+	usamaarif642@gmail.com,
+	brauner@kernel.org,
+	oleg@redhat.com,
+	namcao@linutronix.de,
+	escape@linux.alibaba.com,
+	dongjoo.seo1@samsung.com
+Subject: [RFC PATCH v2 01/11] mm: constify oom_control, scan_control, and alloc_context nodemask
+Date: Wed, 12 Nov 2025 14:29:17 -0500
+Message-ID: <20251112192936.2574429-2-gourry@gourry.net>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251112192936.2574429-1-gourry@gourry.net>
+References: <20251112192936.2574429-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112102914.82278-1-liubaolin12138@163.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A7A3A1F798
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[163.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
 
-Hello!
+The nodemasks in these structures may come from a variety of sources,
+including tasks and cpusets - and should never be modified by any code
+when being passed around inside another context.
 
-On Wed 12-11-25 18:29:14, Baolin Liu wrote:
-> From: Baolin Liu <liubaolin@kylinos.cn>
-> 
-> Replace BUG_ON with J_ASSERT to write the assertion in a positive form.
-> 
-> No functional change.
-> 
-> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+Signed-off-by: Gregory Price <gourry@gourry.net>
+---
+ include/linux/cpuset.h | 4 ++--
+ include/linux/mm.h     | 4 ++--
+ include/linux/mmzone.h | 6 +++---
+ include/linux/oom.h    | 2 +-
+ include/linux/swap.h   | 2 +-
+ kernel/cgroup/cpuset.c | 2 +-
+ mm/internal.h          | 2 +-
+ mm/mmzone.c            | 5 +++--
+ mm/page_alloc.c        | 4 ++--
+ mm/show_mem.c          | 9 ++++++---
+ mm/vmscan.c            | 6 +++---
+ 11 files changed, 25 insertions(+), 21 deletions(-)
 
-Thanks for the patch I don't think this is really useful. It is IMO just
-a pointless churn... If something, we could get rid of J_ASSERT,
-J_ASSERT_JH and J_ASSERT_BH macros which are mostly pointless obfuscation
-but even that will cause newer patches to not apply to later stable kernels
-and thus I don't think it's really worth it.
-
-								Honza
-
-> ---
->  fs/jbd2/journal.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d480b94117cd..c858ade1f7f3 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1058,7 +1058,7 @@ int __jbd2_update_log_tail(journal_t *journal, tid_t tid, unsigned long block)
->  	unsigned long freed;
->  	int ret;
->  
-> -	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
-> +	J_ASSERT(mutex_is_locked(&journal->j_checkpoint_mutex));
->  
->  	/*
->  	 * We cannot afford for write to remain in drive's caches since as
-> @@ -1863,7 +1863,7 @@ int jbd2_journal_update_sb_log_tail(journal_t *journal, tid_t tail_tid,
->  		return -EIO;
->  	}
->  
-> -	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
-> +	J_ASSERT(mutex_is_locked(&journal->j_checkpoint_mutex));
->  	jbd2_debug(1, "JBD2: updating superblock (start %lu, seq %u)\n",
->  		  tail_block, tail_tid);
->  
-> @@ -1897,7 +1897,7 @@ static void jbd2_mark_journal_empty(journal_t *journal, blk_opf_t write_flags)
->  	journal_superblock_t *sb = journal->j_superblock;
->  	bool had_fast_commit = false;
->  
-> -	BUG_ON(!mutex_is_locked(&journal->j_checkpoint_mutex));
-> +	J_ASSERT(mutex_is_locked(&journal->j_checkpoint_mutex));
->  	lock_buffer(journal->j_sb_buffer);
->  	if (sb->s_start == 0) {		/* Is it already empty? */
->  		unlock_buffer(journal->j_sb_buffer);
-> -- 
-> 2.39.2
-> 
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 2ddb256187b5..548eaf7ef8d0 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -80,7 +80,7 @@ extern bool cpuset_cpu_is_isolated(int cpu);
+ extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
+ #define cpuset_current_mems_allowed (current->mems_allowed)
+ void cpuset_init_current_mems_allowed(void);
+-int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask);
++int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask);
+ 
+ extern bool cpuset_current_node_allowed(int node, gfp_t gfp_mask);
+ 
+@@ -219,7 +219,7 @@ static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
+ #define cpuset_current_mems_allowed (node_states[N_MEMORY])
+ static inline void cpuset_init_current_mems_allowed(void) {}
+ 
+-static inline int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask)
++static inline int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
+ {
+ 	return 1;
+ }
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index d16b33bacc32..1a874917eae6 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3343,7 +3343,7 @@ extern int __meminit early_pfn_to_nid(unsigned long pfn);
+ extern void mem_init(void);
+ extern void __init mmap_init(void);
+ 
+-extern void __show_mem(unsigned int flags, nodemask_t *nodemask, int max_zone_idx);
++extern void __show_mem(unsigned int flags, const nodemask_t *nodemask, int max_zone_idx);
+ static inline void show_mem(void)
+ {
+ 	__show_mem(0, NULL, MAX_NR_ZONES - 1);
+@@ -3353,7 +3353,7 @@ extern void si_meminfo(struct sysinfo * val);
+ extern void si_meminfo_node(struct sysinfo *val, int nid);
+ 
+ extern __printf(3, 4)
+-void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...);
++void warn_alloc(gfp_t gfp_mask, const nodemask_t *nodemask, const char *fmt, ...);
+ 
+ extern void setup_per_cpu_pageset(void);
+ 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7fb7331c5725..5c96b2c52817 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1725,7 +1725,7 @@ static inline int zonelist_node_idx(const struct zoneref *zoneref)
+ 
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes);
++					const nodemask_t *nodes);
+ 
+ /**
+  * next_zones_zonelist - Returns the next zone at or below highest_zoneidx within the allowed nodemask using a cursor within a zonelist as a starting point
+@@ -1744,7 +1744,7 @@ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+  */
+ static __always_inline struct zoneref *next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	if (likely(!nodes && zonelist_zone_idx(z) <= highest_zoneidx))
+ 		return z;
+@@ -1770,7 +1770,7 @@ static __always_inline struct zoneref *next_zones_zonelist(struct zoneref *z,
+  */
+ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	return next_zones_zonelist(zonelist->_zonerefs,
+ 							highest_zoneidx, nodes);
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 7b02bc1d0a7e..00da05d227e6 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -30,7 +30,7 @@ struct oom_control {
+ 	struct zonelist *zonelist;
+ 
+ 	/* Used to determine mempolicy */
+-	nodemask_t *nodemask;
++	const nodemask_t *nodemask;
+ 
+ 	/* Memory cgroup in which oom is invoked, or NULL for global oom */
+ 	struct mem_cgroup *memcg;
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index e818fbade1e2..f5154499bafd 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -381,7 +381,7 @@ extern void swap_setup(void);
+ /* linux/mm/vmscan.c */
+ extern unsigned long zone_reclaimable_pages(struct zone *zone);
+ extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+-					gfp_t gfp_mask, nodemask_t *mask);
++					gfp_t gfp_mask, const nodemask_t *mask);
+ 
+ #define MEMCG_RECLAIM_MAY_SWAP (1 << 1)
+ #define MEMCG_RECLAIM_PROACTIVE (1 << 2)
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 52468d2c178a..cd3e2ae83d70 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -4238,7 +4238,7 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
+  *
+  * Are any of the nodes in the nodemask allowed in current->mems_allowed?
+  */
+-int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask)
++int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
+ {
+ 	return nodes_intersects(*nodemask, current->mems_allowed);
+ }
+diff --git a/mm/internal.h b/mm/internal.h
+index 1561fc2ff5b8..464e60dd7ba1 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -587,7 +587,7 @@ void page_alloc_sysctl_init(void);
+  */
+ struct alloc_context {
+ 	struct zonelist *zonelist;
+-	nodemask_t *nodemask;
++	const nodemask_t *nodemask;
+ 	struct zoneref *preferred_zoneref;
+ 	int migratetype;
+ 
+diff --git a/mm/mmzone.c b/mm/mmzone.c
+index 0c8f181d9d50..59dc3f2076a6 100644
+--- a/mm/mmzone.c
++++ b/mm/mmzone.c
+@@ -43,7 +43,8 @@ struct zone *next_zone(struct zone *zone)
+ 	return zone;
+ }
+ 
+-static inline int zref_in_nodemask(struct zoneref *zref, nodemask_t *nodes)
++static inline int zref_in_nodemask(struct zoneref *zref,
++				   const nodemask_t *nodes)
+ {
+ #ifdef CONFIG_NUMA
+ 	return node_isset(zonelist_node_idx(zref), *nodes);
+@@ -55,7 +56,7 @@ static inline int zref_in_nodemask(struct zoneref *zref, nodemask_t *nodes)
+ /* Returns the next zone at or below highest_zoneidx in a zonelist */
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	/*
+ 	 * Find the next suitable zone to use for the allocation.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 600d9e981c23..fd5401fb5e00 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3924,7 +3924,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 	return NULL;
+ }
+ 
+-static void warn_alloc_show_mem(gfp_t gfp_mask, nodemask_t *nodemask)
++static void warn_alloc_show_mem(gfp_t gfp_mask, const nodemask_t *nodemask)
+ {
+ 	unsigned int filter = SHOW_MEM_FILTER_NODES;
+ 
+@@ -3943,7 +3943,7 @@ static void warn_alloc_show_mem(gfp_t gfp_mask, nodemask_t *nodemask)
+ 	__show_mem(filter, nodemask, gfp_zone(gfp_mask));
+ }
+ 
+-void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
++void warn_alloc(gfp_t gfp_mask, const nodemask_t *nodemask, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
+diff --git a/mm/show_mem.c b/mm/show_mem.c
+index 3a4b5207635d..24685b5c6dcf 100644
+--- a/mm/show_mem.c
++++ b/mm/show_mem.c
+@@ -116,7 +116,8 @@ void si_meminfo_node(struct sysinfo *val, int nid)
+  * Determine whether the node should be displayed or not, depending on whether
+  * SHOW_MEM_FILTER_NODES was passed to show_free_areas().
+  */
+-static bool show_mem_node_skip(unsigned int flags, int nid, nodemask_t *nodemask)
++static bool show_mem_node_skip(unsigned int flags, int nid,
++			       const nodemask_t *nodemask)
+ {
+ 	if (!(flags & SHOW_MEM_FILTER_NODES))
+ 		return false;
+@@ -177,7 +178,8 @@ static bool node_has_managed_zones(pg_data_t *pgdat, int max_zone_idx)
+  * SHOW_MEM_FILTER_NODES: suppress nodes that are not allowed by current's
+  *   cpuset.
+  */
+-static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
++static void show_free_areas(unsigned int filter, const nodemask_t *nodemask,
++			    int max_zone_idx)
+ {
+ 	unsigned long free_pcp = 0;
+ 	int cpu, nid;
+@@ -399,7 +401,8 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+ 	show_swap_cache_info();
+ }
+ 
+-void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
++void __show_mem(unsigned int filter, const nodemask_t *nodemask,
++		int max_zone_idx)
+ {
+ 	unsigned long total = 0, reserved = 0, highmem = 0;
+ 	struct zone *zone;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b2fc8b626d3d..03e7f5206ad9 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -80,7 +80,7 @@ struct scan_control {
+ 	 * Nodemask of nodes allowed by the caller. If NULL, all nodes
+ 	 * are scanned.
+ 	 */
+-	nodemask_t	*nodemask;
++	const nodemask_t *nodemask;
+ 
+ 	/*
+ 	 * The memory cgroup that hit its limit and as a result is the
+@@ -6530,7 +6530,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+  * happens, the page allocator should not consider triggering the OOM killer.
+  */
+ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+-					nodemask_t *nodemask)
++				    const nodemask_t *nodemask)
+ {
+ 	struct zoneref *z;
+ 	struct zone *zone;
+@@ -6610,7 +6610,7 @@ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+ }
+ 
+ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+-				gfp_t gfp_mask, nodemask_t *nodemask)
++				gfp_t gfp_mask, const nodemask_t *nodemask)
+ {
+ 	unsigned long nr_reclaimed;
+ 	struct scan_control sc = {
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.1
+
 
