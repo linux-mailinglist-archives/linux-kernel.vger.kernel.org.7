@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-898274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528A3C54BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4CDC54BD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 809404E3F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408CA3A69F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D322E3AF1;
-	Wed, 12 Nov 2025 22:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6BB262FD1;
+	Wed, 12 Nov 2025 22:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gFuUU9NL"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIR7J83W"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE92A2E229F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90BD207A20
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762987250; cv=none; b=JVDN27hSd532H6d676zIpKkWhKIe8Tu8UqKZzJkKsHZiMjXsOkym0jnOIEPJaYvzGu952gXzl2Sokd4/pfAuTFHgFlqigv09bouukpuyO64Oy3wxK/7QLiN1sDe9H+g1VDCA9qSCgLlpvXccFiz1PT9iQ9/rLL7u+79zzsIuibg=
+	t=1762987607; cv=none; b=soOov3OST8+xtJvqOigjuh4wBDBVLL/CvD7fYTMyzLAXKJT0+bKoiz07VkU2cpJZeAAmX2au3ivOtTa6j6x4qXOP9DrSXnQyX7JpeS4zhmTFKRwVNaWur0CVEGZYTyZL3IPv0gzlLuZkVbFc71nIcSa/4Rhr5vvTDhLK1o3QksE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762987250; c=relaxed/simple;
-	bh=P8wB0FO0yByvcvYYoigc7wENN3w1QKW/CVSgfU3dczk=;
+	s=arc-20240116; t=1762987607; c=relaxed/simple;
+	bh=BhI42m5/V/YPwRzNwHA5N3q5IkiYtrcBIaW/cRAyGnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9Z6T8Vv5E+F0xuc+GCqB6UqPn+zGf0XEV66i18KC07cDLRLRrAHn2r/ryfV63EDRl8H/0yvbY2LYe8U3T/45EOdjnvrWYDdhCCisRZtf4rJBqbtZ8H3q0SYGzhQW1kQWiZ0XFixTFb+KnhYCVGMNg2Ck+VLSBH/1i87LKNFPHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gFuUU9NL; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8b272a4ca78so27671785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:40:48 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbSGTyiFjWH0rAS8KAGy+Jv2UzzZj3ecROR0ERQRJ4wLa4OIZZKYWPleEmgpx8SRuZAXLU3TbIFBLccBE5TiFZXSM7a9p5S3fSx4lWD5kVG6vzwFf/0Lz7Y9rMdpuCFBQerAj9hBnm3ksLfKaCTCJGTF09BMmFvvxYz1JntmTL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIR7J83W; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6431b0a1948so290751a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:46:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762987247; x=1763592047; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762987604; x=1763592404; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F17wxxxXjWtCXfhR3CI+FvZY7BooVKr92Re6tDYp9Fw=;
-        b=gFuUU9NLnPq0pZltIS7VfSRVBI9hAcVHRRKJ9jUfTXh4j/PYZz0aXktUxkZLvcSfp1
-         c/T2qLIVUjVgwvlm/T9qvbQOMG9DQnYApp/n3ZkuNUIngmsF9+V3bR9iZQzYnOGPsaqe
-         8FRJXOYxh8yKmxRqa6kJAGmVjutpalAZr+uuKWNkKOEDPM8f701eQ9wLu+EVC3Y9lmXF
-         bmJVI78QzSCqkdKZTA9vhq0GA3fdZNIXt6hewOe/8wGY2rFa25WFZME7G4lWynAoU5Jd
-         MktZ527Rw80xRWTW6pvVn1FkowIjeo660niVLgj5XfimGTKGzj2YYOpP4ondsd27ydr2
-         Y9gw==
+        bh=GUuBbxCl6I1CdWQKU2N/XRDL+CV1L2620AB2tNocDyk=;
+        b=NIR7J83WMo/S9HC3JWrx+YXrBgO52E+8AkjUuX/FwYrYZyr4r6DkvKgqBVG+YQYSAL
+         rjhcPbmYI26Ho+Iiw0tYNqdBGzifNBcBS/Va/DDdw9mR0ZV+JYdLU9ur/B2aBftQqlPq
+         ZewiR+epQ1+UC6C4eFpR1g8c+U4BBKTEUR6NrcNuzE7u5CM5HhYkViqvVpUBCm8wkm6s
+         hoO9jOBRMr4R9xWp/1XscAgA+fa5hSvnLw9/m3ujRLxVRETT3enkUzzZlZK88LY6R5XS
+         c1EL4Qqka9OKZ36z8C3ezpz40zIDxo472Z/IL0XYTYDSF4BlAwRfCruZzdDOGiifpJmG
+         OuTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762987247; x=1763592047;
+        d=1e100.net; s=20230601; t=1762987604; x=1763592404;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F17wxxxXjWtCXfhR3CI+FvZY7BooVKr92Re6tDYp9Fw=;
-        b=JWi+XgBie6HtynsRpDLj3GZnDV0awXR+/UjEalnTIy4e3r3dOCL6lqNAKZThZBwrPG
-         5fsLa+Nz80aShy19NS3tCyq5KAo33CNyL3yLmBTWrYrP/qeiZfdJlpkm6Ht6NLhwYA/r
-         /IXKI6xpWMRqyhxhmrYP9ExCJ2UMZwCOKTMhVgO5MHT5dqWZwXx2uPFqOLLV5h3p+bDt
-         I4bdzI3JpG4Pnjlyu5kiWBXsrF2zP8B+8L02++mw5JrEefWdEzI2sXPVz/tCD6gtYwKr
-         F0Z6BEZnqCButsp2rT7GrsBLUZPFCFydm+Ex/gGlAZymK6/87MH+OVV3oIR5K2gur5oc
-         33+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWI3EtBhoyP4DWxW2UKTyRN/7QG+XOsy0HQ5svNnGiuvtuZQHRhTmy9aZRgMN9lmm1Czrn6JuS6avqxNaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBbhv4VAUVBuZveXLVKKmYyCasYxshe2ZS2OseRv7l22ZpgiqJ
-	n1zPw/2s5GJLgwwV2R/0hRtqlfABK8zm3HZ8KiBniJfpdDPF/OfQU0Qxw3t3Sy91BC0=
-X-Gm-Gg: ASbGncvVvPUtWh06HfFQReOG86vxGKDPeMjQm+xm2SrzmxiahH68mUgiWXDbEqtS/Xh
-	4umSVOefEsB0rqMmgmhtCW+Vx7cKY2H1kYqNc1gb9sv0m8dHqO4yxCXT5JXt9oIRgNIv0sgWJn+
-	CVQ6H2GtRJyBR8pGDoqsZhSk6JVwadYBPdXa6J905pNZakMGHL5r5kDQL8vl6s3c7Goc1vLmyls
-	KwXufkkyAn8Rjrz8rV0/xYs0tp23D5NyZLRKIIzrtzB7STEW5Tnvm67DD4iQ5PRvhkxFw5XNwC0
-	WbVBKHaya6dF47yzsofY64tuAzXPIiANC23eSnQz25fIKd9aG73Y7p1rMMKlZR/7aWoHoAaBwnw
-	qka3c3zBMEscEvx3obHeDK+6OEwURHJ9bpRIpj44zhXuIoVGQizimnGetj9ClRa4UsFaUSA5myQ
-	hK3ZdxTa7H3YsOOrNbOAOtJRsvV7nyA570kwC0D006NSUseExouFTllSKT+mI=
-X-Google-Smtp-Source: AGHT+IHsrZxr2i8YDSF/b/oh9D32f8B4GcLii5rT3OW7CqVC+9w6JNHV8qPW/fd6ArMwiMM3EC3jWQ==
-X-Received: by 2002:a05:620a:4112:b0:8b2:1f8d:f115 with SMTP id af79cd13be357-8b29b7df2f6mr678375485a.65.1762987247480;
-        Wed, 12 Nov 2025 14:40:47 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2aee9eeb1sm12252285a.8.2025.11.12.14.40.46
+        bh=GUuBbxCl6I1CdWQKU2N/XRDL+CV1L2620AB2tNocDyk=;
+        b=adCz5JFkaXIvyer0QsR6KSk/c2X1KvurZ6jx/wL3mLoo6bQXK3a+U028FUkjyRWLcS
+         og/KqIhtLtKI4MK76dGrJIKDdjT5LLDgQamp3sU275hLFHnm9O32F77K5pJJUkMcDU2N
+         RYTTYGt3H8I9OzkPzZ92+XQwOu3ubMXjtgeke3amgIpdTCA8dCF/5t2ctvWTP5VMd9NX
+         K+L/gRqzSKaQy+fjwOVGk59lNskz1Bv8t0QlppId0MKb3w9W3cwmCL5e4wRqFWVP80bK
+         Zfg5uW+S+tGn/rvqUn/MM/9wm3iLPY2W+IxAjzWjyxyvao1143Z7tb84pQoRGAYe6d9r
+         8sNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUstFIOs+eK1LeEREgRi0o5Azq40NXF3v98+qVQ5P8By0mRqpwyBP+R3H6EehVJUXtKEGtgBOV2eGD81A8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYd229xPDl9V12Yv5s8dmzSkaeyCATmH+snYRazqdDeOi93LE5
+	FG2WCEpUyQ2dBPJHz4Nvu2b2wfU82nz2yMkL9+PN39tByrsmRD5Qtug=
+X-Gm-Gg: ASbGnct/C/7tCLKqiQ6GRGGz4etCxry2bcvEUyqwBWJliyKwzlIoyNv3R2yiM0ZoD3C
+	oeg/ZUelm1vVcQwYEDniU48jZi0RDCzsYPq5PlF20COxAMfpLEKrWTIuHrDvkn/7cChxFWzcCx/
+	118aIUmEcRcs6W8U/qteOiZzvLWKf2uvJv1QbE+SymP4jwYZZ3C8movSfDykRoeoVGFrNseo5bV
+	UVtrraGNDvND9sH3iTg37VnisrPaiKd0oM480aPBgFovIRAK/fPP2qfm9INtvPL2Nx0qdptXoib
+	wo7yeOi2HHhI7nur0peMQFq5K+zS1JHAJdsFrMZZ1iXhUTQMwvlqrZDHiGXPrlAHyy8w85MD5HY
+	2S03W3bL/rTqWvdo/q5L3TYbPy5UATal/ocmB0D/3xSjuMFIPG/zKjkjwPfO7ZimlftUGacWyuG
+	UNrQal4vk8DSgqPy4QSIwDpjahGQ2K6mk2pCAqhRkR0N6498PaCIvC
+X-Google-Smtp-Source: AGHT+IHcrF95A8IttbQd220KZ+XN8Onx1zyj/j88oCP/XalZVeCxgeiqMBCbWsP6NPGRO0Eqy0luzg==
+X-Received: by 2002:a05:6402:50d4:b0:639:f7b5:9c2d with SMTP id 4fb4d7f45d1cf-6431a4dc7e5mr4148506a12.9.1762987603798;
+        Wed, 12 Nov 2025 14:46:43 -0800 (PST)
+Received: from lithos ([2a02:810d:4a94:b300:ec52:7cf5:e31:cdb7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a3f96e2sm71050a12.16.2025.11.12.14.46.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 14:40:47 -0800 (PST)
-Date: Wed, 12 Nov 2025 17:40:45 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH 3/3] cxl/region: Remove local variable @inc in
- cxl_port_setup_targets()
-Message-ID: <aRUM7bij1XY6sInV@gourry-fedora-PF4VCD3F>
-References: <20251112205105.1271726-1-rrichter@amd.com>
- <20251112205105.1271726-4-rrichter@amd.com>
+        Wed, 12 Nov 2025 14:46:43 -0800 (PST)
+Date: Wed, 12 Nov 2025 23:46:37 +0100
+From: Florian Fuchs <fuchsfl@gmail.com>
+To: Artur Rojek <contact@artur-rojek.eu>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sh: maple: fix empty port handling
+Message-ID: <aRUOTfCJtqnNBjU3@lithos>
+References: <20251112190444.3631533-1-fuchsfl@gmail.com>
+ <4f70a38490b12d13858f45f3e7a531bf5dc2162d.camel@physik.fu-berlin.de>
+ <999e3970e1580def5ddbf1921a9ef4a4@artur-rojek.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,15 +92,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251112205105.1271726-4-rrichter@amd.com>
+In-Reply-To: <999e3970e1580def5ddbf1921a9ef4a4@artur-rojek.eu>
 
-On Wed, Nov 12, 2025 at 09:51:04PM +0100, Robert Richter wrote:
-> Simplify the code by removing local variable @inc. The variable is not
-> used elsewhere, remove it and directly increment the target number.
-> 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+Hi Artur,
+thank you so much for fixing the DC boot on linux again!
+Adrian, thank you for looking at it!
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+On 12 Nov 22:46, Artur Rojek wrote:
+> thanks for the patch! Can this be tested with just regular controllers?
 
+Yes, indeed you can test it with the controller, when you compile with
+joystick support, like:
+
+	CONFIG_MAPLE=y
+	CONFIG_INPUT=y
+	CONFIG_INPUT_JOYDEV=y
+	CONFIG_INPUT_EVDEV=y
+	CONFIG_INPUT_JOYSTICK=y
+	CONFIG_JOYSTICK_MAPLE=y
+
+You should not put a VMU in though, as thats currently broken (I have a
+patch ready).
+
+Then you can directly read from the evdev and listen for the button
+presses:
+	bash-5.3# cat /dev/input/event2 | xxd
+
+You need to press a button for 20-30 times, as it seems to buffer the
+events and outputs it in batches.
+
+Then, you should see the following outputs for the buttons:
+
+Button A:
+	00000000: 7800 0000 94c3 0d00 0100 3001 0000 0000  x.........0.....
+Button B:
+	000001e0: 7800 0000 94c3 0d00 0100 3101 0100 0000  x.........1....
+Button X:
+	000003b0: 7800 0000 94c3 0d00 0100 3301 0100 0000  x.........3.....
+Button Y:
+	00000900: 7800 0000 94c3 0d00 0100 3401 0100 0000  x.........4.....
+
+The Joystick should be detected like this:
+	/ # dmesg|grep maple
+	maple: bus core now registered
+	maple (null): detected Dreamcast Controller: function 0x1: at (2, 0)
+	maple (null): no driver found
+	input: Dreamcast Controller as /devices/maple/2:00.1/input/input2
+
+Another indicator is the dmesg log for empty ports:
+	maple (null): no devices to port 3
+
+These messages were previously not there, as the empty ports were never
+detected.
+
+btw, I have also a cdi file, that boots for me, although I heard there
+were issues on the NTSC-U devices, if helpful:
+https://github.com/foxdrodd/dreamcast-linux/releases/download/6.17.7/linux6177-joystick.cdi
+
+Thank you for your efforts,
+Florian
 
