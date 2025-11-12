@@ -1,149 +1,88 @@
-Return-Path: <linux-kernel+bounces-897345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED6CC52A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:20:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BCCC52B6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C530502604
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3ACA3B9A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49F725A343;
-	Wed, 12 Nov 2025 14:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zt3v8JFJ"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B9A26ED3A;
+	Wed, 12 Nov 2025 14:02:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8629122541C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE2D1F9F70
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762956123; cv=none; b=eg4YZGaHVFI1GvezAheesQf/o99+jRVAhAZDtQFUlx76nFwMm+ynLKZFZWA0LuKXXOK5yP6pPWH141GL1rHELBRy/6RugASfrg99gOafbOyAhi9ORRaECv7CMXQPcd7TDyUbhfm54tBLJ874MRr5GaaPjMTRP9uWrNIit0oNDNM=
+	t=1762956124; cv=none; b=UTG/uMKhB0OotcUgBicGx46+piC3OWughb/qCg/LdGNzL9OyaPg2eIvLSCok9g8LuJTDB9D/+XyApa5USR4Zh2WpYpMUoaErSTc+EaLxguKCIOo3WV3CSz0yQdHvE7VFk4uNKphAtI5ZYQXabaUxO9yGMgzvt1OicqNcjBRqqAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762956123; c=relaxed/simple;
-	bh=6flJNLXgwwe1bxyVIrBjw3X8D6FAWRej7avnnwS5w8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W+Fdk+Zb7Ltvl64fyReqmUEyoDjPpyhCjH5r9rOi7yczhEG2flWjMbAq16RW79jPdzzHODNrf6yX8h7gNs/6Qwm41crohvhtMAzws7yXFFw8MWtnbWTt61SVqHdzphIuEefL5SqWXPSJO8C8KOvYgd3aTyVPPe+rwoGevV/zEso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zt3v8JFJ; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47758595eecso4657295e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:02:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762956120; x=1763560920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cFiNysBG6OvNw9jo5O2oUZrLaPvoxn/0er906rz18Og=;
-        b=Zt3v8JFJyvZPmu3dSusMRTFJynteQLGAn/pjB7u/p8kyajCPsicxRsW4rac28gqUTu
-         jzBMdgS3Pr+1fLkH9tPQZIAM8nbRszr/QbQt0jkK3wX+Z00Z14q1oqxl2TO/XBYZora4
-         /U0KC8qbU4/ez5eBRh/z1GvQLxugJS0ba3mwJdMuP7VEOdXHEBwStYM5lgrnsN27IBZa
-         WWjDGGXt/gVuo2KyWTLsJ/8tM30LycKBm6DdZZpVYCyoaujjWI8HeDnuFaMWQs9YIC0F
-         CqYm/rFwJ3LNiNOCoLuQPcoXv5z7QOE1I08+WzNQDqfs//fw4gjqDQTHqnmv9T6O7KTu
-         l/3w==
+	s=arc-20240116; t=1762956124; c=relaxed/simple;
+	bh=snbivZtrvaG1Giymju1SmwAwKT9bcoBTBPPqMbO5G74=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QBQuDvmUassgSHnU1BaAtiKesOT6aqkQO5iS1He1a/K9Y8KNY6JHQ4Uh7R5TLkwveCP93rWoGzjZQEv+kmod1AEOrj07hlrhSyK/0GPfeFqhA/t5IVxxOrPtU3plnPn0hFjpJ3OPTqzUg+WdxDxgYuM4EEc4Qh385HVuLvS/IEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4330f62ef60so8224775ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:02:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762956120; x=1763560920;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cFiNysBG6OvNw9jo5O2oUZrLaPvoxn/0er906rz18Og=;
-        b=C6sL7xyLh2pEaPtlTffTS+crhxPutL1UyWWvuRWglbmmWm3rWEWFPk/wMq0bbDjctM
-         q1iL4Drk1jT7b5GVdzJNM9SQmhn6jF7V1Tis3wVQgRJEZqTJUkF/KEhUZ4l1l4L0a+CU
-         hb2y63RT6kMzC2J5BHqnF+jBDDRk5yKrXaDJY5BEcOQIrWB/yIqGAQw6tjpzCM55N7fA
-         DXxqIbNoJIkyZAD0glnH6L6SMMqWyQq5ADZcnCkGNjosA19Q4aol3EKwmowDXpKd/GZ6
-         EoTBrAIMntATHAIopwdxCJ51pyXKpo4Kp+rOC/kKqf5XDNBVyvw4Tyw9rGkpjV4DopNE
-         S6UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbhITA+R3aMXrzO5scZr2xNAefU9618NnVyD2rSIAs+BkPSa+GokQfITA5a8DkH61XbNXVKLGDTETZ3AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycuH4M9TUzYc2M1dlRHBo/3kDGk+s4GtXMXGxjp1VxNzdjYF9H
-	vnnR/c76k7y3k2YK6GXSLm/1DbQtnEdX9WpbOMwAGn4Ts91alkhyTti3
-X-Gm-Gg: ASbGncuNVKGeJxbS6i0CZ6R220aECYJ24MJa7kkmZHDeGY/GksO80TwoCmXkahtgle7
-	Uy+8bSkMk7xpbIMBTIAjOyM1gfLofV4ZG/76XrueszWBySnTZfRjCPf2tow2NWoHZZIDBPjy2kb
-	TsfBxfxOKW7RpCHEBhsC+v2DSW6KEbt3xSt+vdp62dhC5zvg17pU795YDL0qq5p+CfdkgEmYM3x
-	JE7w1aC20LXPym7hvu3RsW8ZZXR2KvHWSUNzqyf3FVybQsKW+jD03bCoW7yxN6GeSvsrY2vYuKu
-	vThIzAnrbth+iQg8SwOGgQJIveF1ZrO0OH4437orOV4zTJEvy/tar2n+02fYcv54bLbsV5KFuU1
-	Qlwa1nJNWn1b0yiqpOTxOlHidV+NM33i6tRfyIFJbEt81rJmVy1udLsPxy/J6ihpAl19KQt7pN9
-	5tOyZsbhklSgKt9FeSuEvYu0UZtAoIUBCuk+KazSbkMA==
-X-Google-Smtp-Source: AGHT+IEPEHr94PrGNc5EHN4MH5qDhAUHAyxSl1e3kw9Nt1S+if+1dRlR+YYzG83HBOq1lnqrURitPg==
-X-Received: by 2002:a05:600c:3b17:b0:475:de12:d3b2 with SMTP id 5b1f17b1804b1-477870cdce6mr27931775e9.36.1762956119466;
-        Wed, 12 Nov 2025 06:01:59 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47789ffea1esm16272835e9.13.2025.11.12.06.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:01:59 -0800 (PST)
-Date: Wed, 12 Nov 2025 14:01:57 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Chenghai Huang <huangchenghai2@huawei.com>, arnd@arndb.de,
- catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
- anshuman.khandual@arm.com, ryan.roberts@arm.com,
- andriy.shevchenko@linux.intel.com, herbert@gondor.apana.org.au,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-api@vger.kernel.org, fanghao11@huawei.com, shenyang39@huawei.com,
- liulongfang@huawei.com, qianweili@huawei.com
-Subject: Re: [PATCH RFC 4/4] arm64/io: Add {__raw_read|__raw_write}128
- support
-Message-ID: <20251112140157.24ff4f2e@pumpkin>
-In-Reply-To: <aRR9UesvUCFLdVoW@J2N7QTR9R3>
-References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
-	<20251112015846.1842207-5-huangchenghai2@huawei.com>
-	<aRR9UesvUCFLdVoW@J2N7QTR9R3>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1762956122; x=1763560922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zTASHaSa73grV7J3VFhGuf76I4PDhxdb2kchYRB9Gc=;
+        b=fZcPU3dW+KZEmCAXRDOyCfIrvo4qePoDra1mEdtQkUnIdCkYxB9N4XvDJsbs6XDQl4
+         oRrVqtsMieGAu9E9r+2dHOuHA0HBwjfhsXRMEh5nHT9qq7GsDi34wO+E8MMjiYFTioZZ
+         h+1/DzHrZn5KLy/MO/wcYn7RWjOgSwshdM41RfoVG5+tSN65G06M6z+BcpNQ8ITtokLH
+         kSSsQuxM8LvNZiGEz5G+srl3cliJleeI/V5SxAasSioClNGPUq3V24n5vy92eyYNRwti
+         2bG3dxrcaYvSYS1epmI+jqRCOLpSoPQTMc9D+kXPhbweE4ECMb9oTk16r48SuL18KdfG
+         1EsQ==
+X-Gm-Message-State: AOJu0Yzb9yTNLiLdQf749jPq+r+58lCOqBYgvyLKH+JPtN+F1wyA3Aws
+	4gDclmTSdClDPJ75r0QTwmoLRCPQ2mXpg42iwzeD31Z0kLKY51JUw7uiX4Zgy/7yupuao6M79P8
+	TFQKmT41tU7PN8hdckzP2WnFyA2ymzjb4BPBek50tXaLmmt+Hpfh8F0IfzaI=
+X-Google-Smtp-Source: AGHT+IG9cOPw5jBpeg6yMG/9LXOx9CPTegSMh/2ADyolc4taRKjgBrp3vtyrJktHnbdUU0ZTiKxZ5aYZJez3QiZY4EKE8CE66vbX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:350f:b0:433:2754:9468 with SMTP id
+ e9e14a558f8ab-43473dbc620mr39117735ab.16.1762956121913; Wed, 12 Nov 2025
+ 06:02:01 -0800 (PST)
+Date: Wed, 12 Nov 2025 06:02:01 -0800
+In-Reply-To: <CAMz+-CPAeuET_d_2b_tNEdNiVT1R7mzLYWih+nKa8=Dp0WjqHA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69149359.050a0220.3565dc.0001.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	vnranganath.20@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 12 Nov 2025 12:28:01 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
+Hello,
 
-> On Wed, Nov 12, 2025 at 09:58:46AM +0800, Chenghai Huang wrote:
-> > From: Weili Qian <qianweili@huawei.com>
-> >=20
-> > Starting from ARMv8.4, stp and ldp instructions become atomic. =20
->=20
-> That's not true for accesses to Device memory types.
->=20
-> Per ARM DDI 0487, L.b, section B2.2.1.1 ("Changes to single-copy atomicit=
-y in
-> Armv8.4"):
->=20
->   If FEAT_LSE2 is implemented, LDP, LDNP, and STP instructions that load
->   or store two 64-bit registers are single-copy atomic when all of the
->   following conditions are true:
->   =E2=80=A2 The overall memory access is aligned to 16 bytes.
->   =E2=80=A2 Accesses are to Inner Write-Back, Outer Write-Back Normal cac=
-heable memory.
->=20
-> IIUC when used for Device memory types, those can be split, and a part
-> of the access could be replayed multiple times (e.g. due to an
-> intetrupt).
+syzbot tried to test the proposed patch but the build/boot failed:
 
-That can't be right.
-IO accesses can reference hardware FIFO so must only happen once.
-(Or is 'Device memory' something different from 'Device register'?
-I'm also not sure that the bus cycles could get split by an interrupt,
-that would require a mid-instruction interrupt - very unlikely.
-Interleaving is most likely to come from another cpu.
+failed to apply patch:
+checking file net/wireless/util.c
+Hunk #1 FAILED at 963.
+1 out of 1 hunk FAILED
 
-More interesting would be whether the instructions generate a single
-PCIe TLP? (perhaps even only most of the time.)
-PCIe reads are high latency, anything that can be done to increase the
-size of the TLP improves PIO throughput massively.
 
-	David
 
->=20
-> I don't think we can add this generally. It is not atomic, and not
-> generally safe.
->=20
-> Mark.
-...
+Tested on:
+
+commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17cfe532580000
+
 
