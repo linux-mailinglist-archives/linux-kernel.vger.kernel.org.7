@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-897761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB4AC5381C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:50:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B33C53786
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0BA6352B74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:37:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B6B793577A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5958233D6E7;
-	Wed, 12 Nov 2025 16:36:41 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C0B2D130B;
+	Wed, 12 Nov 2025 16:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Lex7gHuB"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A322D130B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7654C33F8A4;
+	Wed, 12 Nov 2025 16:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965401; cv=none; b=ge+gogb4PgKxeYcudkSprKZngptMF5+w44vJTYV7fp1Ro9FGUwHV1/+uL6iZJWFlDe16avNLKV8ZlbmHsV/uF1xOzOXtzkvfQ3A/oTdIpSiIv0fO0DGiJqqNsPvE7RYzIXGbFqKYAs852MB0xUTZnobcPl+3XEdUp9TTBeqxq88=
+	t=1762964988; cv=none; b=OF+27crK6HiBHwwu6svUang67QWwsnX1icYIeoHyBXmA4AKK/D3B+RcF/87dplOBSy4vXZqvkp+eQHegqFL3RiEk+4txhRFSaqTXAhLlOaZqClZFlm3c3JMHY4c907cFdQ4yEkwYSGCptiTDAd8BrcLfA1YX0ikKGjVSYanZhUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965401; c=relaxed/simple;
-	bh=Sk/VdDOjP8jSOytlFi9s9mo2ys81rNWZ2228bwgTL4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AFoxpJebrTlzwLEROZ0Z3fKpzQeNpZOdMXYSqqGiOiDwWoHKDZLNThi+mqA0RBHAWYFAWNOC/vonadUWO3sFsFYWMNQCaHjma9YtATjTdKJNOgmHaDWy9Ay4h4YTTP8Es3obwOd4OUjHXppLTHi6BPg5uPz8IbWWCYXt4aUZF+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b25ed53fcbso143332985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:36:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762965398; x=1763570198;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sffz3tuaGapQMQeKbnEwNMkk8oLRrGLz73c/pcBk56A=;
-        b=TnLPrYdkKbfk1F/+6l8n5TYdtJuoLuT0Kvbuc2tisjRoo1V14zWhdx3HggL1VoL6nM
-         Bk0xiM60dbGviz431wv3oaoP9LOu5y8XR0RPSopdoUO/wRcKLBaICVRBjs+PIBo6nKwK
-         JkWwwK0F3gpDbmHI6tkMc5glHmPn1bCxH/pVsnJa4prpvvm6zRJ8z9mH/l2ZImMyJqrM
-         bhWW0LH5GwPbG+TkPTIHgbo5n0KwyKHbdH0vMVvC01xq9O33B6dtZBLqfjG+aqxd85sl
-         EN2HtTg2Ig7o32r+I1jIftDAzNYfI7VoZ8NfTxGoxo+rmgCmLKAiT42t5z7Pgv1ALLHQ
-         hsPg==
-X-Forwarded-Encrypted: i=1; AJvYcCURw5f+Q1oVDcizttXsY+Ic2LhqTm3q+3SkwfWKrn4jo7NGF78rAdQo7ndCJmo8sWrCukGxLO//bkBYbmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi+dBrW99hAAI/+EdTN63MCwaFmsVTPFpm5SUpIt7vgcaKdyS0
-	1gBUuWSg3+IFD0mYajQz89thLOcg79PnY4QSJjqnidImuUAKM+IKwOUIg1uLnuS6
-X-Gm-Gg: ASbGncstfo99OedIHedprsPMVm2uifjy1Uv5b9sYxu20X/oueizt7qxprHfWVGZCbWA
-	F53vSr97FMTqwFDJ/EpXQ8WjoTLkmBx/TSIm9ymCUv06Zt+Cdjzw9IMQLY39OawmmPMamJ1AfSR
-	OYGZx8KlqkGM+39mhhkYUzbba7fmBx++C1VPj0Xc4ii2kF9Cmym96GDIHEieFAiYclG/alt7fiy
-	AJb6JRgpVLzSqZWuYRS1Ohv4yaf4SWf0/9vPnMjTSOKoOZ0NQzl0VoDEJoQIZ7rkRZKCHAZ8ZUK
-	SwxhUPpMx+KbmQdCSE+xbzpbViSdN14jW1NmlFJLuxbHUl5AhuRKpXmgnOxRk9ETg04NozoK7w+
-	PTVC7Rbk7HFwf0pVaaAfwC6zMaj86XaCoSCgVFXK5DkDzXrHlUS0FJm+lQvYAFk3gyEbKagNc7m
-	ZIPpUQ+V9mV+tfhw0GM6rmkQ5dRvibbcz8gjkA9b63hONRgDMHzIsz
-X-Google-Smtp-Source: AGHT+IEC5WmfmYzKRTN/4xKvG7+gh3JUKQ/Nta0eU3GbtBtMshRDbq221ULSwh7Xa2onWJ/elmARnQ==
-X-Received: by 2002:a05:620a:4406:b0:8a4:40da:b907 with SMTP id af79cd13be357-8b29b768ba9mr470826985a.32.1762965398016;
-        Wed, 12 Nov 2025 08:36:38 -0800 (PST)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm218707385a.50.2025.11.12.08.36.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 08:36:37 -0800 (PST)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b25ed53fcbso143330785a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:36:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXhKVkVjAByV3zwN9ZEM6QziFL5+O17Ljhf431mUxrt97de5seBXhILpSG/O5nr9XQHk9vU9c1iAcb1y24=@vger.kernel.org
-X-Received: by 2002:a05:6102:2913:b0:5d7:ddf6:b3b7 with SMTP id
- ada2fe7eead31-5de07d0bbedmr1183622137.8.1762964930074; Wed, 12 Nov 2025
- 08:28:50 -0800 (PST)
+	s=arc-20240116; t=1762964988; c=relaxed/simple;
+	bh=CE16kltFzFqjrddLzR7/Ik/75YYEnP3wOW2uBkiaABM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=nGn/jF2Qw8IUIkPDwVjwmVkXhcJdOaVj+XXTULhzYbkbFoIsMisx7SjcZgCf5eOhBwNaooKzD1AqGBn4s8iNGXC5zVQ2gs+r0nIMlEf4ZVLLftZHZPPluKNiFNAkemVCmhiIkj9OqdTv5XQZ2UuGxFojbyHRmhID/QtDH/hiTdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Lex7gHuB; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACGT53V870373
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 08:29:06 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACGT53V870373
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762964947;
+	bh=CE16kltFzFqjrddLzR7/Ik/75YYEnP3wOW2uBkiaABM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Lex7gHuBbvK5cqsPYm7W/VXfOJuAR1NRyMhcQaqPG9PemQgiXgrJYsOmznbsnt3W5
+	 i0YkCz88MeUXYPLmbMaSsOQbG3OJzxfcbEoL+xc1O7IzrvAed+gqC0CDixOS4qlO+c
+	 zUDwJEyxDElDMrBAbF/c4Q8tCp5/u5hANGJqkgQcZoZj+DXQxs/AdnQviySwjSMXOK
+	 KMGoQVXgHDERu+0sinl9ZSqFy0NkpGkG9NVzzcCx+npfx+ilkKyghDSUxT5ugkgqfO
+	 ap8JFS6hXAGK+ALMLR+LkFgJPyx3pZlzFQSCHYobhQqMG+6cdsFyriNEDSO6cV69uX
+	 F/HgSnHyA17GA==
+Date: Wed, 12 Nov 2025 08:29:05 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Sohil Mehta <sohil.mehta@intel.com>, Ard Biesheuvel <ardb@kernel.org>
+CC: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Sean Christopherson <seanjc@google.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_4/9=5D_x86/alternatives=3A_?=
+ =?US-ASCII?Q?Disable_LASS_when_patching_kernel_code?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <6ab6e4d3-0caa-41e6-8231-2f3f45949876@intel.com>
+References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com> <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com> <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com> <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com> <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com> <E9396874-5D2D-413D-A5D1-A28E4D429C51@zytor.com> <CAMj1kXECkKeDUDdjmrQjcYk=2Y5ydTV2L1Pg73X7uCC-=DC9Ww@mail.gmail.com> <6ab6e4d3-0caa-41e6-8231-2f3f45949876@intel.com>
+Message-ID: <FF519694-C4F5-4843-8E68-FE9C06FDC357@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-3-yuntao.wang@linux.dev>
-In-Reply-To: <20251112143520.233870-3-yuntao.wang@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Nov 2025 17:28:38 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV_n1XBNkZ+4pYF2RyNn+LWu4DasUgOut9ZJg7RnZn1Ng@mail.gmail.com>
-X-Gm-Features: AWmQ_bk4xxmjNl-qRNjNfh_2vFa7asZw1z28h-USze4ilNHopbNHQRytaRHEDHs
-Message-ID: <CAMuHMdV_n1XBNkZ+4pYF2RyNn+LWu4DasUgOut9ZJg7RnZn1Ng@mail.gmail.com>
-Subject: Re: [PATCH 02/10] of/reserved_mem: Use dt_root_addr_size_bytes()
- instead of open-coding it
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
-	James Morse <james.morse@arm.com>, Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>, 
-	Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Changyuan Lyu <changyuanl@google.com>, Alexander Graf <graf@amazon.com>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 12 Nov 2025 at 15:37, Yuntao Wang <yuntao.wang@linux.dev> wrote:
-> Use dt_root_addr_size_bytes() instead of open-coding it in
-> __reserved_mem_reserve_reg() to improve code maintainability.
+On November 12, 2025 8:18:20 AM PST, Sohil Mehta <sohil=2Emehta@intel=2Ecom=
+> wrote:
+>On 11/12/2025 7:28 AM, Ard Biesheuvel wrote:
 >
-> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+>>>> d) calling SetVirtualAddressMap() does not result in all 1:1
+>>>> references being converted to the new mapping=2E
+>>>>
+>>>>
+>>>> To address d), the x86_64 implementation of efi_map_region() indeed
+>>>> maps an 1:1 alias of each remapped runtime regions, so that stray
+>>>> accesses don't fault=2E But the code addresses are all remapped, and =
+so
+>>>> the firmware routines are always invoked via their remapped aliases i=
+n
+>>>> the kernel VA space=2E Not calling SetVirtualAddressMap() at all, or
+>>>> calling it with a 1:1 mapping is not feasible, essentially because
+>>>> Windows doesn't do that, and that is the only thing that is tested on
+>>>> all x86 PCs by the respective OEMs=2E
+>>>>
+>>>> Given that remapping the code is dealt with by the firmware's PE/COFF
+>>>> loader, whereas remapping [dynamically allocated] data requires effor=
+t
+>>>> on the part of the programmer, I'd hazard a guess that 99=2E9% of tho=
+se
+>>>> bugs do not involve attempts to execute via the lower mapping, but
+>>>> stray references to data objects that were not remapped properly=2E
+>>>>
+>>>> So we might consider
+>>>> a) remapping those 1:1 aliases NX, so we don't have those patches of
+>>>> RWX memory around
+>>>> b) keeping LASS enabled during ordinary EFI runtime calls, as you sug=
+gest=2E
+>>>
+>>> Unless someone has a code pointer in their code=2E
+>>=20
+>> That is a good point, especially because the EFI universe is
+>> constructed out of GUIDs and so-called protocols, which are just
+>> structs with function pointers=2E
+>>=20
+>> However, EFI protocols are only supported at boot time, and the
+>> runtime execution context is much more restricted=2E So I'd still expec=
+t
+>> the code pointer case to be much less likely=2E
+>
+>But, that still leaves the stray data accesses=2E We would still need to
+>disable the LASS data access enforcement by toggling RFLAGS=2EAC during
+>the runtime calls=2E
+>
+>Can we rely on EFI to not mess up RFLAGS and keep the AC bit intact?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Let's not muck with this now; it is lately pointless and as you can see it=
+'s a rathole=2E
 
