@@ -1,170 +1,280 @@
-Return-Path: <linux-kernel+bounces-898192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24483C54887
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:00:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9470C54881
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72B53B3A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:00:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F9373493CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444D626B96A;
-	Wed, 12 Nov 2025 21:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA722D978A;
+	Wed, 12 Nov 2025 20:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9KNBCdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dyhhmm6E"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81705280A5A;
-	Wed, 12 Nov 2025 21:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4642D7DCF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981214; cv=none; b=em1LlZo2QxyKVtek/xlJyzkVurMsrVrvcs2wGcGdiH6LeepuT1MX/oEkiKvikVKA+8L3CuPqMyNipb1xfAPASekem1emDvUIEL0OCN+bQL6neRMJU4bWKr4vd26cfA+fxiVFyCSTV4jZYTp4WFipuzYUWM1oHaoO+cOaR2Z3D8E=
+	t=1762981194; cv=none; b=iM1eev4WHY9vY3eaXAYvbA6cfuZuClqvtPR8MVDkta+Eku1nzsVOmkYZW3n4uLTgVEWW88zMN8p46ZV9rGNV7e3Kje2JiZOCSCOCONENhxYnK3SocnCw2OFDcCsbrRYhfqT0g8HbwWlOB6vJEgAyj66BUkhWf9LCnfkoAzGsubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981214; c=relaxed/simple;
-	bh=y4Ld6BCnq7KX+vDSRVwSUYQvdimBcRrIcm5ooyZboEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ztot586rs/YeYgHpfY6L+xyCHw/iogxBy6IallQxdI/U5B65BwJnuuzIt6smwcmvLhwQYtVSCmLu33A6I5HtvpnOVi+m2KlITR0WuD4FoMvom9iR1TWXmhMuCMD5F0TPf68ftxTsymnUq2TUS/odj1u9Etk/SnlqjCAN1IIJ47U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9KNBCdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07FAC4CEF7;
-	Wed, 12 Nov 2025 21:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762981213;
-	bh=y4Ld6BCnq7KX+vDSRVwSUYQvdimBcRrIcm5ooyZboEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s9KNBCdIQnX4NqogZP5t9fr/bVLmOpAcYpydtyT11eaAXfRe32MGmyfP5gaQnnRhR
-	 o+9E5tSgi/SjmlpWTbxOuCyJKjMh8iu/ma+NnD2czJ9USvlo/1FIARwRNNJPQuEcRZ
-	 /4g8rMzdFJRGYzgPaU+OzpK68OoVqpft4p5G3p4J7J83YxYi3026N9ncSGU6UY00KB
-	 H5WQJ+8AuoptYS9SGk0WTrzT0LAq59zhNyFP5NdM0wliZ0bEPaYpsaVDwfj44z3cXW
-	 tPzbx8wfs1tCxUPsWgd8wKiDDPIUMvO69WBRCmocsFTY2PUNsJhNs6nJeuQQ+/jcz4
-	 LxJUKHmbuav0g==
-Date: Wed, 12 Nov 2025 12:58:32 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Ard Biesheuvel <ardb+git@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au
-Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
- guard API
-Message-ID: <20251112205832.GC1760@sol>
-References: <20251031103858.529530-23-ardb+git@google.com>
- <20251031103858.529530-31-ardb+git@google.com>
- <20251031134909.00006bf3@huawei.com>
- <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
- <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
- <20251103112836.00006966@huawei.com>
- <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
+	s=arc-20240116; t=1762981194; c=relaxed/simple;
+	bh=lSM8TUPBcAeqeTcRKSUm+acFgYjnvWEI/RvmNCSBz+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LoH6WTGLFZbY57frc2gOfZ3vcO1Df2VEuX9PoRlqTGMmA3Xl8nXo+THElm7k6jQp628amhXL2nmVQGi9X7OfRd5U4jzjqWgHKHyhYpK4hItaFsxpAcPx+4xeWuvXJfSdRTfYzJhte4K4MCguZeQ3fnDFUcF0s5fbYACsukedcuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Dyhhmm6E; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b72db05e50fso9364466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:59:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1762981190; x=1763585990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2uIncMys0gzBr3R1k/SsZNnB5Fy2d3cOf2SnN1h7VDg=;
+        b=Dyhhmm6EQZAisfusq9eQcBVTBkftcDMNslUJl2Fgl/qvnPvzxci8vY7adZ6EMYKaip
+         XisxfiNDnJOLZ8CzWKrP16LFgvBVTvJlYZvEL++WooSbXivTgIDCVgDBbxxMh3JUCG/c
+         lhnhoHy0o34VkZiOhuKhhodVpspr0h8c3Qj5g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762981190; x=1763585990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2uIncMys0gzBr3R1k/SsZNnB5Fy2d3cOf2SnN1h7VDg=;
+        b=DkELawJjS3tDKadkVsxSr9XmmW2UP90wWd7h0q6/rdvBIx+E5hn3VCIF1AWxFDpyQc
+         Lgf7RXI/Pjq9XrrGzCy1DG52P6DESYf3Woa81WA4lvDmMR7iOlCntnHthzNQTii0DJ5I
+         uTaluX0ha6EEJqdcC046QV5jV8wEpJgH45WJVAaE6XfbxRUxDO6E9r37wOAdJNu+1sP1
+         KHOi5wZHW77QnrNMakSRYHg5mO8bSvr63apsScOsSmDNwQeytdhFRMN1FK4t1jqKReCL
+         xzqny3GNFmA2oooSls30VI1wqUOTIFltsTzODnqOo56dTABI0K4drJPOUB7SFHF/ENcw
+         cGPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVf1wb0biCS/JZuVV3AYI3NrTtw1kWgedTY9zDWWCM5j1kpIDY+JezWgW6T/1Fq7ioKmjELaXMo2Ldmhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKtXdRni9UluvwKZm+dvTZ3ExX9t9PLu6uPngXJBeD1Zeo2IA/
+	eTVVYteIw8lducgPmePTO8ads+0HZG71IeCFjW7Y02BIcd3movxpWVn5DFiGD/2k2sp43UR2n4z
+	gF2FNVwfN
+X-Gm-Gg: ASbGnctmvCZ3Kzp/SO7NgGfNYJkke2F3Uul5gYmG6wTj5nYP6086SrxWLAY9af8Pquu
+	5E49oJ3xv0WEP7fCtdqahQW7aq1nhH2HYyEMT2sj1kWfrAC3QMODZEN2VjFxJykqkZcBt510ppY
+	Ybt4WX065/VuBgQkJaEM4ThcuALXn+VVDG/hz9XZEKKuqHNLjodN4dCsr911iOCdm21cM8rwzZg
+	UbivcNU4u98P8liHKTcx15v1f9Nw9rGHvVHhemvFNavoXeIs/vvsv50/dFPScQQxIzdJ5uXEW4E
+	U/xr6cyqGOrs0VffppbAa/3+iWWHoiD2IAicavsMg9fKYd1PmfxkH9fob22R0PcnnBfe4j8woqc
+	7VBN/tGb+3vXijHQoR6a6Lv2Lgl8Hmg9yh2pewfcYVJSD2hRzZoY1SEt6HfhGiTjtmuCNMvJfKf
+	1FE1jCgoImcGsIAaxjqQDzf1gj0ZfbuDooZK2+1PY=
+X-Google-Smtp-Source: AGHT+IHYU2XAsE6D7mzGXYAqztR9BUm/erCNSnipwjecFbpE1uo5dnteSFkUPSz5wibjDxG1jm0uYA==
+X-Received: by 2002:a17:906:c055:b0:b73:3d15:6337 with SMTP id a640c23a62f3a-b733d156369mr200775366b.21.1762981189703;
+        Wed, 12 Nov 2025 12:59:49 -0800 (PST)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad41d9sm1934266b.27.2025.11.12.12.59.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 12:59:47 -0800 (PST)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42b38de7940so54278f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:59:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWkaTRjwgLfAoB91uhX/0rKOUkRQB/wC/RuZORqkIQTNjuspYfbqRPOWDOQXnHIm8D6qua9zScZ66UrjcM=@vger.kernel.org
+X-Received: by 2002:a05:6000:25c1:b0:42b:41dc:1b5e with SMTP id
+ ffacd0b85a97d-42b4bdaac86mr4128064f8f.30.1762981187099; Wed, 12 Nov 2025
+ 12:59:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
+ <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org> <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
+ <312ca473-77a6-4b95-b558-bb121294fbc9@kernel.org>
+In-Reply-To: <312ca473-77a6-4b95-b558-bb121294fbc9@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 12 Nov 2025 12:59:35 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=W3CTMkWPMN5GqGg_L_bUT2Q9vLpc43p5kWAf+j5HBEGA@mail.gmail.com>
+X-Gm-Features: AWmQ_bksI8oQbHqO0tKCB6fGhils4SI8u_vpu8lWPsuVYWGsi5YvtKpP0DRmdHE
+Message-ID: <CAD=FV=W3CTMkWPMN5GqGg_L_bUT2Q9vLpc43p5kWAf+j5HBEGA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
+ blazer, and mustang
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Julius Werner <jwerner@chromium.org>, 
+	William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 04:32:28PM +0100, Ard Biesheuvel wrote:
-> On Mon, 3 Nov 2025 at 12:28, Jonathan Cameron
-> <jonathan.cameron@huawei.com> wrote:
+Hi,
+
+On Wed, Nov 12, 2025 at 1:49=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> >>> To avoid fragmenting the discussion, IMO:
+> >>> * Let's have the discussion about using the "dts" for SoC and the
+> >>>   "dtso" for the boards in response to the bindings (patch #1).
+> >>
+> >> That's discussion here, bindings are irrelevant to this.
+
+Ummm, OK. In any case, I'm going to wait until our discussion in the
+bindings patch about whether SoCs can be final compatibles, then if I
+still think extra discussion is needed I'll respond more on this
+thread.
+
+
+> >>> * If we want to have a discussion about putting "board-id" and
+> >>>   "model-id" at the root of the board overlays, we can have it
+> >>>   here. I'll preemptively note that the "board-id" and "model-id"
+> >>>   won't show up in the final combined device tree and they are just
+> >>>   used by the tool (mkdtimg). We could change mkdtimg to parse the
+> >>>   "compatible" strings of the overlays files (since I've put the IDs
+> >>>   there too), but official the docs [1] seem to indicate that
+> >>>   top-level properties like this are OK.
+> >>>
+> >>> In order for these device trees to pass validation without warnings,
+> >>> it's assumed you have my dtc patches:
+> >>> * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromiu=
+m.org
+> >>> * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromiu=
+m.org
+> >>>
+> >>> [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentati=
+on/dt-object-internal.txt?h=3Dmain
+
+> >>> +     board-id =3D <0x070306>;
+> >>> +     board-rev =3D <0x010000>;
+> >>
+> >> Undocumented ABI, which you cannot document because these properties a=
+re
+> >> not allowed. You cannot have them.
 > >
-> > On Fri, 31 Oct 2025 15:05:19 +0100
-> > Ard Biesheuvel <ardb@kernel.org> wrote:
+> > This is part of the discussion I want to have at Plumbers. But I suppos=
+e
+> > we can start here.
+>
+> Then the patch should be called RFC as not yet ready for merging. :)
+>
 > >
-> > > On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > >
-> > > > On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
-> > > > <jonathan.cameron@huawei.com> wrote:
-> > > > >
-> > > > > On Fri, 31 Oct 2025 11:39:07 +0100
-> > > > > Ard Biesheuvel <ardb+git@google.com> wrote:
-> > > > >
-> > > > > > From: Ard Biesheuvel <ardb@kernel.org>
-> > > > > >
-> > > > > > Before modifying the prototypes of kernel_neon_begin() and
-> > > > > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
-> > > > > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
-> > > > > > which encapsulates the calls to those functions.
-> > > > > >
-> > > > > > For symmetry, do the same for 32-bit ARM too.
-> > > > > >
-> > > > > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> > > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > > > ---
-> > > > > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
-> > > > > >  lib/crc/arm/crc32.h        | 11 ++++-------
-> > > > > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
-> > > > > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
-> > > > > >  4 files changed, 20 insertions(+), 39 deletions(-)
-> > > > > >
-> > > > > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
-> > > > > > index 63441de5e3f1..aaeeab0defb5 100644
-> > > > > > --- a/lib/crc/arm/crc-t10dif.h
-> > > > > > +++ b/lib/crc/arm/crc-t10dif.h
-> > > > >
-> > > > > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
-> > > > > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
-> > > > > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
-> > > > > >  {
-> > > > > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
-> > > > > > -             if (static_branch_likely(&have_pmull)) {
-> > > > > > -                     if (likely(may_use_simd())) {
-> > > > > > -                             kernel_neon_begin();
-> > > > > > -                             crc = crc_t10dif_pmull64(crc, data, length);
-> > > > > > -                             kernel_neon_end();
-> > > > > > -                             return crc;
-> > > > > > -                     }
-> > > > > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
-> > > > > > +                     scoped_ksimd()
-> > > > > > +                             return crc_t10dif_pmull64(crc, data, length);
-> > > > >
-> > > > > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> > > > > >                          static_branch_likely(&have_neon) &&
-> > > > > >                          likely(may_use_simd())) {
-> > > > >
-> > > > > I briefly thought this was a functional change but it's not because
-> > > > > of may_use_simd() being something that isn't going to change between
-> > > > > the two evaluations.
-> > > > >
-> > > > > Would it hurt at all to pull that up to be
-> > > > >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
-> > > > >                 if (static_branch_likely(&have_pmull)) {
-> > > > >                         scoped_ksimd()
-> > > > >                                 return crc_t10dif_pmull64(crc, data, length);
-> > > > >
-> > > > >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
-> > > > >                            static_branch_likely(&have_neon)) {
-> > > > >                 ...
-> > > > >
-> > > > > ?
-> > > > >
-> > > >
-> > > > Yeah that would be a reasonable cleanup, I guess.
-> > >
-> > > Actually, looking more closely, that would result in may_use_simd()
-> > > being evaluated even when the static keys are set to false, given that
-> > > the compiler is unlikely to be able to figure out by itself that
-> > > may_use_simd() has no side effects.
-> > Yeah. That was why it was a question :)
-> > Given everything is marked as likely I wasn't sure if we cared about when
-> > the static keys aren't set.
+> > The Android DTB partition format uses six 32-bit integers for matching,
+> > as opposed to a compatible string used in FIT images. Two of the intege=
+rs
+> > are the "id" and "rev" numbers in the example above. The remaining four
+> > are custom and left up to the (vendor) bootloader implementation.
 > >
-> 
-> Yeah, it is rather doubtful that those annotations (or the use of
-> static keys, for that matter) make a meaningful difference here.
+> > The values for these fields need to be stored somewhere with the .dts.
+> > The compiled DTB is useless if the user cannot build a proper image for
+> > the bootloader to consume, and that involves putting in the right numbe=
+rs
+> > in these fields. The android "mkdtimg" tool can either take the values
+> > from some known properties within the DTB, or have them fed to it
+> > externally.
+> >
+> > So if we don't want these numbers in the dts itself, then we should com=
+e
+> > up with some format to store them beside the dts files.
+>
+> Re-iterating comment from Rob long time ago: adding such new properties
+> is fine, but they must come for more than one user and be universal
+> across these users.
+>
+> And of course the ABI needs to be documented which did not happen here.
+>
+> I indeed said incorrectly that "properties are not allowed". The
+> properties could be allowed if we document them according to above Rob's
+> comment, but that did not happen.
+>
+> Adding these properties per one SoC vendor is not really allowed, like
+> qcom,board-id and qcom,msm-id, but maybe you intend to make it generic.
 
-Well, this change makes crc_t10dif_update() not usable during early boot
-on arm64, as it will start hitting the
-WARN_ON(!system_capabilities_finalized() in may_use_simd().
+Perhaps you have a link to Rob's comment from a long time ago?
 
-I doubt there are any current callers where that matters, but I've been
-trying to avoid this sort of unnecessary pitfall in the CRC functions.
+As per my comment "after the cut" in the original patch (see above),
+for my use case, I'm OK with removing the "board-id" and "board-rev"
+here. It wouldn't be terribly hard to teach my tool to parse the
+top-level compatible. That being said, it would be nice to allow them
+at a top-level like this. As Chen-Yu says, there are other interested
+parties.
 
-Checking the static key first eliminates this pitfall and is also more
-efficient on CPUs that don't support the relevant CPU feature.
+The official documentation that I referred to in my comment "after the
+cut" says this about properties directly in the overlays:
 
-- Eric
+```
+/dts-v1/;
+/plugin/; /* allow undefined references and record them */
+/ {
+    .... /* various properties for loader use; i.e. part id etc. */
+    fragment@0 {
+```
+
+So properties are clearly documented to be allowed here. When I read
+the above, I interpret it as the properties are "whatever the expected
+loader of this overlay would find convenient".
+
+I am more than happy to document which properties my "loader"
+(mkdtimg) needs if you have some proposed place or way for me to
+document them. I'm happy to do it in freeform text (or markup) for now
+if that's what people would accept. Maybe that lets us get started yet
+still document things while we figure out what the needs are?
+
+
+> > On a similar note, we would have a similar problem with FIT images and
+> > overlays. The FIT image format maps a (series of) compatible string(s)
+> > to one DTB and any number of overlays. If overlays are involved, then
+> > the compatible string cannot come from the DTB itself, and the mapping
+> > must be stored somewhere.
+>
+> I recall, although cannot find now references to, a email talk on the
+> list saying that such overlays should have their own compatible, thus
+> solving this mapping problem.
+
+If you have more details or if Rob wants to re-iterate his thoughts,
+I'm happy to discuss.
+
+In my mind, I'd rather this not be a "compatible" but I'm also not
+dead set on that. IMO, though it can be made to work, having a
+"compatible" here is sorta backwards from what we want. We faced this
+issue in ChromeOS when we used the top-level "compatible" to pick the
+device tree. Specifically, the normal usage of "compatible" is to
+start with the device tree which has a list of compatible strings.
+From there, we pick a driver that matches. AKA: we start with some
+"compatible" strings and find a matching "thing" (a driver). When
+using a "compatible" to pick an overlay / device tree, we start with a
+"thing" (a known board) and then pick a list of "compatible" strings
+that matches it. Hopefully it's clear how that's a bit different.
+
+As I said, the problems are mostly subtle, but this is how we ended up
+with the weirdness on Chromebooks where we had a pile of all equal
+"compatible" strings at the top level and that made all the DT folks
+grumpy. See, for instance, the sc7180-trogdor-lazor-r1.dts file where
+"google,lazor-rev1" and "google,lazor-rev2" are both there. We'll pick
+this same DTS for both revisions.
+
+It can be made to work, but IMO it's not a perfect fit.
+
+I'd rather us just pick some standard property that documents the
+information that the expected loader should need. Maybe you could even
+handle more than one loader type?
+
+/ {
+  loaders {
+    mkdtimg {
+      board-id =3D <0x1234>;
+      board-rev =3D <0x5678>;
+    };
+    other-loader {
+      something-else  <0xaaaa>;
+    };
+  };
+
+Then under the "loaders" node we have node names that need to match
+exactly for various loaders and then properties that they need.
+
+I haven't tested this, but I believe that since the "loaders" isn't
+under any "fragment" that it will just be ignored when the overlay is
+applied, so it will just be for the consumption of the loader.
+
+
+-Doug
 
