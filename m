@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-897266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C2C52748
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:24:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C08C52613
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE9E423A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:12:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A5434ECF71
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8E43396FE;
-	Wed, 12 Nov 2025 13:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829C31BCAB;
+	Wed, 12 Nov 2025 13:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kBYxLbE2"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B015F337BBD;
-	Wed, 12 Nov 2025 13:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="u/WG/Vyr"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F0F30B517
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762953110; cv=none; b=Iey1AQVIDXtvOSO+B429tt05ebkXjoAwrLFvqsSiQY1Z5CxoLtFvKMDdCuWh8pzMJm1RkJIsFODXGEP476Q1QthnZh8icWU7EeIUCIgXPsZG+CwIFd80OYv2P8ChrMTkKdOD90yP/ZbGi4Md+zfPCnIvyNjXyInrcUzuDXbCEvY=
+	t=1762952548; cv=none; b=P8zjE4/gWJWXShS5v8dcFBUe6O+D9kBP9robKILWgGzVQAXJkLCzYo6VLVA22PEoWRCwMG7iXHIkq1MErgX8OrXR315ur5002dQ45GkF62pM7DvvYMyU7cOfFdhT3p2cmSpF17EmfV9p1fCc74hgvHCsVfptBnZF1DthqUDvZow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762953110; c=relaxed/simple;
-	bh=EJzR4sIlnN9uNuZaGeDHic11ALulh1hmmkfzpNsZ/1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EIWsFJqBoYoFpLTHFsQQMyYx9VvUUG1f8h+qwIOP3XSwzgy6MEAyl2SVahq85Z3vhqsscIVDCZtTZhy6SWzwp+rPOK/0y7YIpuDJTKdtDoy16YiWIcAy6hlB1liOQ79OWBTUiTKOBVF0OlHc0yT6abH3zjtzmEIxRkGGFNRlPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kBYxLbE2; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1231)
-	id 5B7D9201335C; Wed, 12 Nov 2025 05:11:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B7D9201335C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762953108;
-	bh=se0x+F/xDG1dSGAj+MYIh+M/qnKmpcnkyeeS1RLVacA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kBYxLbE2+pcCXIDoUW/+o9R1RYBHIbANhi35cN3PMvBmqAg3RHebpEGwls2kV5LX0
-	 l9OW+Y3lPFa3DGXPDf8wzvpOZw1xClwubXXx2tlv2VUT/aulevyIAHJMCxd8unk6Wl
-	 gJ+OvPLUCU3RMaxe+0cqEy6npoR4kbvucg4f/fa0=
-From: Aditya Garg <gargaditya@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	longli@microsoft.com,
-	kotaranov@microsoft.com,
-	horms@kernel.org,
-	shradhagupta@linux.microsoft.com,
-	ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com,
-	leon@kernel.org,
-	mlevitsk@redhat.com,
-	yury.norov@gmail.com,
-	sbhatta@marvell.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1762952548; c=relaxed/simple;
+	bh=YGC+k0tk44NwbRkZMJ0Yk/EvTJZmov5Tk93vBGrfByI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V19CoUGbqS79MaKW8TAuGPpsZm8P3vnAVaRcS/RjcPd8dcvU5+GJni1YzhKGadzzbIdLSSf4KJZlE47xscgUJN29E69ImpG6jjz7qFSUQKzRxhLiUdbrO06kguYS78drDtzhIcbAIrgS9q3dc8RXuEh1Q0B66OTlcaRf4oc9b5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=u/WG/Vyr; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-880499b2bc7so6731716d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:02:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1762952545; x=1763557345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wiC6a6GdtF1gAjMY65zmuS3i8efcnY5DhFQLWpigTpg=;
+        b=u/WG/VyrzV6bznnNsPuNspwU17XECqH0bOZo8CJHLZtfH7e9gGeBjU5+l+doWr2Os0
+         kzs95YMj+i5dwh7LFjOFI/kESEIEj5WzsFGxUW+6H19MfKRzhJvUAtz0kUupklHW21/K
+         PWn+IHXo+cbB05YuJgErcjAZ6Uv73PR8pzycgHypWGGkIClYNAC4AIMZK2Iash1vMeTp
+         c+4sjz5qegHXgLqkWMYnlPm54UieAwxbEQSBcESuj2V+UezrthlKZBVZhcSyEaethfIo
+         iNwrPTwO0l42OMxMjwf/Ny0jeM+Y4KB+0YL5+N1PhrD5Oh6hmSspmazC0iYNGl0CgYCt
+         7OwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762952545; x=1763557345;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wiC6a6GdtF1gAjMY65zmuS3i8efcnY5DhFQLWpigTpg=;
+        b=hbJCWFLrMGtLbFY0u4LnHb9vWgbcWcrBC0dUrUyAvy8FamzokN1Pi3OJelJf6jzLMH
+         +MOrvwJfdxf59hXOWGQmwqQq4u2cFjRF25TrB2nn8qOlOGQZe0A5Or28OgypBkgFXmt1
+         57APxfgdf3rF0bBbR1jOGWrh2VSHroXhQIFIhgSIjOrR8+GuhSw33dygjC8zgofht5Wu
+         iPx5EiXjFuHeAMKFaWOJ1kG1TtR/x+KQlBSsKrO5u1HJnyErr0oYj4lNXKZexTXxILGF
+         5SxFRD424F4RnQ5Vt8fSYg4TndESZlgGhDDwoczmMVr6maNaAOHF3g+rEzuqeGep5rJh
+         FcVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBjqRMSVWg6OmoOvbNrImcu9tSBiiXNs+A6VJjASVCTuLFrhPqdM/lViR5j7FOC9dRV2NShQ4mO6tq66c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7cismo28JchlsogCL4dFsHFfctSveDkciulM1xcFllxXjbrqP
+	8NebW37u2UHb7QEqA52M9aXWGnsRPw6NOAmfpfDwYmiTbZvCEN1k+LylSPJth9zKk0s=
+X-Gm-Gg: ASbGncuhsfxhxvLMu3nuYEiIWzYZ5+o8IrWdNgLsxyy8fxt6VndNibdrZ8v2tdMZpPu
+	d/WDoHB8QI39kh0rj0bfm/K6GjLUlWM7IwkotWwaCtIu+DEVmmx6AQDR63f44Lu7ECJ5wAO/oN8
+	toydgx8WswfM4Ao1aaRUTCD7jVW1h0h1Gc3zQ6tK5dLM5LZHm7KFdUDYQTefDpTKf4iye1E/ozM
+	5c24ZuvptXBgBi61+PgKS+8d50ndIe0931lI+sXxzQ14PefHC/FMK5BKRlfnYbObnXTOQBPLXtU
+	Do+aXWmNfXR8rDTbrIhcKjrRAWegeWHlIdUGyvab74GNfp1EC5yYecF9es3mCrzLoSP+5iD45cq
+	KvO5veEdsgsgShoMPI6A8AyrnIscUHoNp0vxcJuBRbajIODGBdpEzdhXlQLToyuETxWZ4Smqx7A
+	0FFz8hKPdfKx1DHspqKK/2eUYWFFN0XwU=
+X-Google-Smtp-Source: AGHT+IFJh7J4bnE3VnVwlrGLXKscLfsnOg+NThjXCk7Mr3nxJJ9ceXnQi59SgZG4nVptSKeRj4ZhRw==
+X-Received: by 2002:a05:6214:f03:b0:87c:2270:2b37 with SMTP id 6a1803df08f44-88271a3cdd3mr41231576d6.58.1762952543164;
+        Wed, 12 Nov 2025 05:02:23 -0800 (PST)
+Received: from fedora (cpezg-94-253-146-68-cbl.xnet.hr. [94.253.146.68])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-88238b7499esm91362126d6.41.2025.11.12.05.02.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 05:02:22 -0800 (PST)
+From: Robert Marko <robert.marko@sartura.hr>
+To: srini@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	horatiu.vultur@microchip.com,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	gargaditya@microsoft.com
-Cc: Aditya Garg <gargaditya@linux.microsoft.com>
-Subject: [PATCH net-next v4 2/2] net: mana: Drop TX skb on post_work_request failure and unmap resources
-Date: Wed, 12 Nov 2025 05:01:46 -0800
-Message-Id: <1762952506-23593-3-git-send-email-gargaditya@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1762952506-23593-1-git-send-email-gargaditya@linux.microsoft.com>
-References: <1762952506-23593-1-git-send-email-gargaditya@linux.microsoft.com>
+	daniel.machon@microchip.com
+Cc: luka.perkov@sartura.hr,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v2 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
+Date: Wed, 12 Nov 2025 14:01:59 +0100
+Message-ID: <20251112130213.842337-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Drop TX packets when posting the work request fails and ensure DMA
-mappings are always cleaned up.
+Unlike LAN966x series which has 8K of OTP space, LAN969x series has 16K of
+OTP space, so document the compatible.
 
-Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 ---
-Changes in v4:
-* Fix warning during build reported by kernel test robot
----
- drivers/net/ethernet/microsoft/mana/gdma_main.c | 6 +-----
- drivers/net/ethernet/microsoft/mana/mana_en.c   | 7 +++----
- include/net/mana/mana.h                         | 1 +
- 3 files changed, 5 insertions(+), 9 deletions(-)
+Changes in v2:
+* Drop individual SoC models since they all use the same HW
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index effe0a2f207a..8fd70b34807a 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -1300,7 +1300,6 @@ int mana_gd_post_work_request(struct gdma_queue *wq,
- 			      struct gdma_posted_wqe_info *wqe_info)
- {
- 	u32 client_oob_size = wqe_req->inline_oob_size;
--	struct gdma_context *gc;
- 	u32 sgl_data_size;
- 	u32 max_wqe_size;
- 	u32 wqe_size;
-@@ -1330,11 +1329,8 @@ int mana_gd_post_work_request(struct gdma_queue *wq,
- 	if (wqe_size > max_wqe_size)
- 		return -EINVAL;
+ .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml        | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+index f97c6beb4766..c03e96afe564 100644
+--- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
++++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+@@ -25,6 +25,7 @@ properties:
+           - const: microchip,lan9662-otpc
+       - enum:
+           - microchip,lan9662-otpc
++          - microchip,lan9691-otpc
  
--	if (wq->monitor_avl_buf && wqe_size > mana_gd_wq_avail_space(wq)) {
--		gc = wq->gdma_dev->gdma_context;
--		dev_err(gc->dev, "unsuccessful flow control!\n");
-+	if (wq->monitor_avl_buf && wqe_size > mana_gd_wq_avail_space(wq))
- 		return -ENOSPC;
--	}
- 
- 	if (wqe_info)
- 		wqe_info->wqe_size_in_bu = wqe_size / GDMA_WQE_BU_SIZE;
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 67ae5421f9ee..066d822f68f0 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -491,9 +491,9 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 	if (err) {
- 		(void)skb_dequeue_tail(&txq->pending_skbs);
-+		mana_unmap_skb(skb, apc);
- 		netdev_warn(ndev, "Failed to post TX OOB: %d\n", err);
--		err = NETDEV_TX_BUSY;
--		goto tx_busy;
-+		goto free_sgl_ptr;
- 	}
- 
- 	err = NETDEV_TX_OK;
-@@ -513,7 +513,6 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	tx_stats->bytes += len + ((num_gso_seg - 1) * gso_hs);
- 	u64_stats_update_end(&tx_stats->syncp);
- 
--tx_busy:
- 	if (netif_tx_queue_stopped(net_txq) && mana_can_tx(gdma_sq)) {
- 		netif_tx_wake_queue(net_txq);
- 		apc->eth_stats.wake_queue++;
-@@ -1679,7 +1678,7 @@ static int mana_move_wq_tail(struct gdma_queue *wq, u32 num_units)
- 	return 0;
- }
- 
--static void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
- {
- 	struct mana_skb_head *ash = (struct mana_skb_head *)skb->head;
- 	struct gdma_context *gc = apc->ac->gdma_dev->gdma_context;
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 50a532fb30d6..d05457d3e1ab 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -585,6 +585,7 @@ int mana_set_bw_clamp(struct mana_port_context *apc, u32 speed,
- void mana_query_phy_stats(struct mana_port_context *apc);
- int mana_pre_alloc_rxbufs(struct mana_port_context *apc, int mtu, int num_queues);
- void mana_pre_dealloc_rxbufs(struct mana_port_context *apc);
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc);
- 
- extern const struct ethtool_ops mana_ethtool_ops;
- extern struct dentry *mana_debugfs_root;
+   reg:
+     maxItems: 1
 -- 
-2.43.0
+2.51.1
 
 
