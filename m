@@ -1,151 +1,163 @@
-Return-Path: <linux-kernel+bounces-897486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA69EC530A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B1FC5301C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACB3A544644
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC82505A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426663451C1;
-	Wed, 12 Nov 2025 14:55:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2712E33C538;
-	Wed, 12 Nov 2025 14:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82949345741;
+	Wed, 12 Nov 2025 14:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="imeLv9Ad"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F043451B4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959355; cv=none; b=jViOWprRy71WG1C56dzejqYxvq9Ml1/TG5qIIAz+vU9esUJPSjVkwuQ9Qw9uYkiwk0BTB+zSd3I4nzuEoNNU05o71/fuUFXqG8nCTAlxyhupFpzfm1cVg8DiP6CM9fcBEBXysG4Apqi9KTNe4e6jwuFsDorxC3w5r2Ux6JeXpkE=
+	t=1762959367; cv=none; b=kziAId4ZwkM6rDcnYgRF3IkLHjvruEznJPV2pgqeGCxKWh51xazMucPZPUtrRr+3YNKjCqk6sg+bgzGheXIoIdvRggT2w/1heNeLeCJyCi/nkl6AIC2wElgPIjr2WOkMztrOdXxrKwxX4Mig2aqKtxGPTybVH28gUaUGUTRZzh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959355; c=relaxed/simple;
-	bh=4L01zClc8R6G+alNNCVxBvcGcFvDCVWg9HTtGTFYt5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FcEofPHr9MR6HYZ18a9DN6wNWMwyC2Tl+l7lK6kM8lKaIRgeNEZSAv7KhZl9hxsCdPymkBiOeDoKjS/WKnfpyVi91X1GJkcMxatBMluz2JjBdQN9bPnHcEWLbBFT5p9+P2JCc6+8xLGIZEk3uI5XGn6NbsXnRWA5JjAS5taIhUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B993E1515;
-	Wed, 12 Nov 2025 06:55:45 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D483F66E;
-	Wed, 12 Nov 2025 06:55:48 -0800 (PST)
-Message-ID: <a9edf77f-41d8-4e3c-b621-e2d37604a410@arm.com>
-Date: Wed, 12 Nov 2025 14:55:47 +0000
+	s=arc-20240116; t=1762959367; c=relaxed/simple;
+	bh=hFHbE+e2+rqcptscvi53POsdj3oRwme2/t5EaZUq1E0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=smb/d8QDNiFPNTgnvaU1TK59FjAtUHaJfYFH2jZBUv9FHzMupt+wcWmfArcFcdr5g0Vmw0+1GyyTLP/ciE5745RxUFNGk6RjLCKupOT7+tMBRq8+bg6WyIPWzQevNcmN2mXzsiXmtyBLyEZtAZfZLjH71pBTtF3uNvdcJfikEuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=imeLv9Ad; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762959365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHgkPgcHPX1dFyUxLTbk1czGgEYnwCygEJaWcsX1mJg=;
+	b=imeLv9Ada4RXRM0jEvrzCRNzgJNTnrjGOiiYZDmZiXGcdKvA5HcmhxC9B3CcF9aJdrwsxW
+	MRe1LmSyhm/rxAa5rpqb052dFABOyRdpKXOa+uE45xjgcHqFGWKGKAXMgnyt483VeFTq+D
+	qTCUEI57iqecwj477oNCauPsJNWO1n0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-237-p3t-qYRxPlCzWGBkEOIRCA-1; Wed,
+ 12 Nov 2025 09:56:03 -0500
+X-MC-Unique: p3t-qYRxPlCzWGBkEOIRCA-1
+X-Mimecast-MFC-AGG-ID: p3t-qYRxPlCzWGBkEOIRCA_1762959362
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D08AB19773CA;
+	Wed, 12 Nov 2025 14:56:01 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.88.13])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E3F1196FC8B;
+	Wed, 12 Nov 2025 14:55:58 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,
+  linux-kernel@vger.kernel.org,  dev@openvswitch.org,  Eelco Chaudron
+ <echaudro@redhat.com>,  Willy Tarreau <w@1wt.eu>,  LePremierHomme
+ <kwqcheii@proton.me>,  Junvy Yang <zhuque@tencent.com>
+Subject: Re: [PATCH net] net: openvswitch: remove never-working support for
+ setting nsh fields
+In-Reply-To: <20251112112246.95064-1-i.maximets@ovn.org> (Ilya Maximets's
+	message of "Wed, 12 Nov 2025 12:14:03 +0100")
+References: <20251112112246.95064-1-i.maximets@ovn.org>
+Date: Wed, 12 Nov 2025 09:55:57 -0500
+Message-ID: <f7ty0obfgg2.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/33] ACPI / MPAM: Parse the MPAM table
-To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
- "james.morse@arm.com" <james.morse@arm.com>
-Cc: "amitsinght@marvell.com" <amitsinght@marvell.com>,
- "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
- "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
- "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
- "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dakr@kernel.org" <dakr@kernel.org>,
- "dave.martin@arm.com" <dave.martin@arm.com>,
- "david@redhat.com" <david@redhat.com>,
- "dfustini@baylibre.com" <dfustini@baylibre.com>,
- "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "gshan@redhat.com" <gshan@redhat.com>,
- "guohanjun@huawei.com" <guohanjun@huawei.com>,
- "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
- "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
- "kobak@nvidia.com" <kobak@nvidia.com>,
- "lcherian@marvell.com" <lcherian@marvell.com>,
- "lenb@kernel.org" <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "peternewman@google.com" <peternewman@google.com>,
- "quic_jiles@quicinc.com" <quic_jiles@quicinc.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "rohit.mathew@arm.com" <rohit.mathew@arm.com>,
- "scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
- "sdonthineni@nvidia.com" <sdonthineni@nvidia.com>,
- "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "xhao@linux.alibaba.com" <xhao@linux.alibaba.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-10-ben.horgan@arm.com>
- <OSZPR01MB8798996B4D879FF695AE216C8BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <OSZPR01MB8798996B4D879FF695AE216C8BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Shaopeng,
+Ilya Maximets <i.maximets@ovn.org> writes:
 
-On 11/12/25 07:01, Shaopeng Tan (Fujitsu) wrote:
-> Hello Ben,
-> 
->> From: James Morse <james.morse@arm.com>
->>
->> Add code to parse the arm64 specific MPAM table, looking up the cache level
->> from the PPTT and feeding the end result into the MPAM driver.
->>
->> This happens in two stages. Platform devices are created first for the MSC
->> devices. Once the driver probes it calls acpi_mpam_parse_resources() to
->> discover the RIS entries the MSC contains.
->>
->> For now the MPAM hook mpam_ris_create() is stubbed out, but will update the
->> MPAM driver with optional discovered data about the RIS entries.
->>
->> CC: Carl Worth <carl@os.amperecomputing.com>
->> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
->> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> The validation of the set(nsh(...)) action is completely wrong.
+> It runs through the nsh_key_put_from_nlattr() function that is the
+> same function that validates NSH keys for the flow match and the
+> push_nsh() action.  However, the set(nsh(...)) has a very different
+> memory layout.  Nested attributes in there are doubled in size in
+> case of the masked set().  That makes proper validation impossible.
+>
+> There is also confusion in the code between the 'masked' flag, that
+> says that the nested attributes are doubled in size containing both
+> the value and the mask, and the 'is_mask' that says that the value
+> we're parsing is the mask.  This is causing kernel crash on trying to
+> write into mask part of the match with SW_FLOW_KEY_PUT() during
+> validation, while validate_nsh() doesn't allocate any memory for it:
+>
+>   BUG: kernel NULL pointer dereference, address: 0000000000000018
+>   #PF: supervisor read access in kernel mode
+>   #PF: error_code(0x0000) - not-present page
+>   PGD 1c2383067 P4D 1c2383067 PUD 20b703067 PMD 0
+>   Oops: Oops: 0000 [#1] SMP NOPTI
+>   CPU: 8 UID: 0 Kdump: loaded Not tainted 6.17.0-rc4+ #107 PREEMPT(voluntary)
+>   RIP: 0010:nsh_key_put_from_nlattr+0x19d/0x610 [openvswitch]
+>   Call Trace:
+>    <TASK>
+>    validate_nsh+0x60/0x90 [openvswitch]
+>    validate_set.constprop.0+0x270/0x3c0 [openvswitch]
+>    __ovs_nla_copy_actions+0x477/0x860 [openvswitch]
+>    ovs_nla_copy_actions+0x8d/0x100 [openvswitch]
+>    ovs_packet_cmd_execute+0x1cc/0x310 [openvswitch]
+>    genl_family_rcv_msg_doit+0xdb/0x130
+>    genl_family_rcv_msg+0x14b/0x220
+>    genl_rcv_msg+0x47/0xa0
+>    netlink_rcv_skb+0x53/0x100
+>    genl_rcv+0x24/0x40
+>    netlink_unicast+0x280/0x3b0
+>    netlink_sendmsg+0x1f7/0x430
+>    ____sys_sendmsg+0x36b/0x3a0
+>    ___sys_sendmsg+0x87/0xd0
+>    __sys_sendmsg+0x6d/0xd0
+>    do_syscall_64+0x7b/0x2c0
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> The third issue with this process is that while trying to convert
+> the non-masked set into masked one, validate_set() copies and doubles
+> the size of the OVS_KEY_ATTR_NSH as if it didn't have any nested
+> attributes.  It should be copying each nested attribute and doubling
+> them in size independently.  And the process must be properly reversed
+> during the conversion back from masked to a non-masked variant during
+> the flow dump.
+>
+> In the end, the only two outcomes of trying to use this action are
+> either validation failure or a kernel crash.  And if somehow someone
+> manages to install a flow with such an action, it will most definitely
+> not do what it is supposed to, since all the keys and the masks are
+> mixed up.
+>
+> Fixing all the issues is a complex task as it requires re-writing
+> most of the validation code.
+>
+> Given that and the fact that this functionality never worked since
+> introduction, let's just remove it altogether.  It's better to
+> re-introduce it later with a proper implementation instead of trying
+> to fix it in stable releases.
+>
+> Fixes: b2d0f5d5dc53 ("openvswitch: enable NSH support")
+> Reported-by: Junvy Yang <zhuque@tencent.com>
+> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+> ---
 
->> +static struct platform_device * __init acpi_mpam_parse_msc(struct
->> +acpi_mpam_msc_node *tbl_msc) {
->> +	struct platform_device *pdev __free(platform_device_put) =
->> +		platform_device_alloc("mpam_msc", tbl_msc->identifier);
->> +	int next_res = 0, next_prop = 0, err;
->> +	/* pcc, nrdy, affinity and a sentinel */
->> +	struct property_entry props[4] = { 0 };
->> +	/* mmio, 2xirq, no sentinel. */
->> +	struct resource res[3] = { 0 };
->> +	struct acpi_device *companion;
->> +	enum mpam_msc_iface iface;
->> +	char uid[16];
->> +	u32 acpi_id;
->> +
->> +	if (!pdev)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	/* Some power management is described in the namespace: */
->> +	err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
-> 
-> It's a bit strange to store the uid length in the variable err.
+Thanks, this makes sense to me.  As you noted, the "fix" (I don't really
+know if it is the right word since the functionality never worked) is
+quite complex, and still might not be 'good enough' to not have further
+issues.  It makes more sense not to try and support something that never
+worked to begin with - especially since even in the userspace side we
+never really did a set(nsh()) thing (because it doesn't exist as
+functionality).
 
-A little, yes. The value is only used for error checking and it's not
-that uncommon so I'll leave it as is.
-
-linux$ git grep 'err = snprintf' | wc -l
-17
-
-> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-> 
-
-Thanks!
-Thanks,
-
-Ben
+Reviewed-by: Aaron Conole <aconole@redhat.com>
 
 
