@@ -1,673 +1,597 @@
-Return-Path: <linux-kernel+bounces-896660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9469C50ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46536C50E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF113AF43C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B1E1897B75
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961102C21E8;
-	Wed, 12 Nov 2025 07:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E72C158F;
+	Wed, 12 Nov 2025 07:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yxhk8FQO"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="pumh/Nih"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010009.outbound.protection.outlook.com [52.101.228.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E262C11F1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932155; cv=none; b=ASZpYYeMFeTIwlpe5BBlebQcBR1oYq+6qzNE+FG5lRB2n29mV9qRTBfwT5Rkma5lYHn3cHY0Dzr2iOf0OwfNS7aL55fDFtqwnmIPSv0isPKmBI7D22qXeR6U4/M4Zs75c6LnuZxXH3wHWaRDMgV7j7kyVj39lUv9WhYJTPSTXXI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932155; c=relaxed/simple;
-	bh=d2y2J7FLtv3rMZ++iSlAFE1+aNJqWa/d5+nXbCEKhnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NfhE73/wz61oUakB6sQ8YgPCgCvTWJEzlP216vmV0wLIe6ANUAKQEVdmDVzsPSbJnN9Vb4lJ2g+Li3BME8B4rdmlnmMjElgLGYKHmUdBUQeNgVVBPtht3MTYEC7gAz2xH1znksnE+xNAR1NhQoeputUbA2NUtT63CQl7aNEYfy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yxhk8FQO; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b7277324054so78922966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:22:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762932151; x=1763536951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3oHE1KfX4aQ+1xvWJhv972OfKgV4zsSVAGGgJpfkqM=;
-        b=Yxhk8FQOZfmx5vVYyYgEJShediUuCzv7VMtR51DrMvC5Rz/brdraLtRLLxw5iTlSck
-         13POno6QwMY4kcYK7xETBbXaLlJaSa4kTw1D65O9SftkvvNhEREoPPklZN0RJtR7XJIf
-         GesY3ijv/1jXHk1Z4nBjx7i3cmbgOgIvW6VtiFSEGnumpGwnQ7rqQceSEqY1cmiC11sQ
-         Ro//HBq/McYOfEJqvW94Tkk9bJNNMBYYw3rKGBx/KT1VyqLtcnn/giH8F0VEBbaJN+ax
-         1zQYqaHgioHHysMceSTWVOk5k2il74QrKP682IEL31vX8AjLg+YzwOAXsMydWDltjsin
-         kV6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762932151; x=1763536951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=n3oHE1KfX4aQ+1xvWJhv972OfKgV4zsSVAGGgJpfkqM=;
-        b=ZdhffSR8NmkYfqq43SKBWHVamM/PGlx1oCiSpyWSAmbqL+3xkt3gOopP5j87nziws5
-         v91lxTfBblTbqG9xqzcisAzS8NqTz0/qZC6cKCwUAfI6XAlPaDNMP1afD38Dvzm/+uH3
-         Qw+qApRKSKhiSOo7177pi2clRINWk08+z62dbywdYvE3fxMwyfDNI9nj1+f/DxKmWwiy
-         +dEPwNrfVP6q3aQqe1Y2sB0NEgclRy3oOHK5R4eB0WKCUrWAfiTf9shDoD+zIMRz+KtX
-         ZBKScJv9jZnLivm0+uFphhOG3VbEvXePNwEAiLVYvP08ycJZPI9FJhStrExqtHsEdXfW
-         0Www==
-X-Forwarded-Encrypted: i=1; AJvYcCX0xS0ZFJnb90YXMr6I6BBV+LpqQlOtIW93AfnhhhBJEfgupKGTtREWgJsyNF3O04SPMUoVEyJZ8F8bmzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbaj+tD3gycYjqOBqRRzqEHLJvwDaNUbgo2R7pHhR6g+7qvFa
-	1E9Gmf3rndgQI9cKc4OK4IthYTgAHTOVgx5QZoeoOQewDxQq9rdoGxq3+bB4z81qOu6sg7RP3VE
-	en9AO1/uLWUKchc982kQYWPcB7XIjYkCJy0wHl8c=
-X-Gm-Gg: ASbGnctNVrHPTXEsPoU91GpMvuF966yGD+4Ga5kU0/TdZhzbC0g6BqM5oolRN4FKvCm
-	vkvZlTR5u+FaT5z1TMJY4sR5yx9PrZWtcRq0VznZWoc+YHijXKVlGpoIPsEGVUq3Zu6pAYQcwxc
-	pvl8BPGZvK3LxNaFtej+vnMGHVmjwaqsr7EGG5nAvGdUJvbMIaCa0/KtU4lpYXk8eNru/qZSwf+
-	RhVM5utwqas1tQx6QRPe45zAzqwQX/DriYRv1rpIg5eqCJKfqgUhhISTbrLAA==
-X-Google-Smtp-Source: AGHT+IEonFZmYAOCOTGDIORxfN7vIurZgYl3tDJ8pJOdJvbPAPPZnlBT5TbXn5wiBKbtPNKFAWARW9O4N32F3d6I980=
-X-Received: by 2002:a17:907:6092:b0:b65:b9fb:e4a7 with SMTP id
- a640c23a62f3a-b7331a02050mr176045566b.9.1762932150273; Tue, 11 Nov 2025
- 23:22:30 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14A32C0F97;
+	Wed, 12 Nov 2025 07:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762932152; cv=fail; b=JFdbiZVCYUZpZpgLtuJCoVXDRRcQGLm0iWrIu2YBPHXqPtzvKbNACyttEFc8AqcLoCbaKYAppzQ/V5vtNwJNO+q3KbNvTr98Og06MY7qboCvB8duKKUmN+6hu5HDfSDEttj0OfaKXM+3s0cD2fW1LczbWUjIxPV0yngDXAw1Vhs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762932152; c=relaxed/simple;
+	bh=AX8mteooVZ+CixcOtWj78RMAorrwZXN0Gja+/rkDvD0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NXhoyEV7MS4uEaSdAvBIjXY1CL4OrvFppV2anGbAJKajdPwpM6Utn9m7AO4KCCJZ/XMsfG8uCamsFWFZqQmRC5MoxZxwaMWaVyNJSWh3kTH8iC4tMrb7YSmwQw2WjuouCUvUvgCAyMG7hcm4fSLkXSmzlyweJvFqiArdLxtipUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=pumh/Nih; arc=fail smtp.client-ip=52.101.228.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YZwKTaBIyP3XCMvpBotBuZQQ3ntpzk2CGUMJsiPZzCiWoqL29HRP4brxL+Je/ge6LoASjGxylfPBok9QVIndEqToKXBvHlVaLD4pJTMS79QnJFezAC2wIMPqv2YoIkCLYu1lF7k0mfwv3LxVy9k1xWJSfSCfRiaiRrMZMnrpwlK/1TuGdAxuCDlcFVG/sp4PPOZah3foso6LJhaMxBoIH6CUoG1OkgM4eRWwO61WTZ09flXRPo6Ivyahpkpffo9m41LpJ9YH+a1lWfCsKV1CF+EDHcLQqhcclGRWaErbiJ2/A+OJtcmwM7HD4U0Av0fc3oGAQiuq/GZAXwyUA94rbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AqGAvkvVCtw3ELJ24hT+zjVfy+dMzJ4LUyC7LaSwBUk=;
+ b=XljUT1MtM695KCzHzUADoYrgzJ1InQKXHBV0Rmi6ZhVvWRskoDZp9AUKifUq+dez3evX3yK6eO0tPB/B5HCDs7Eq2xdQlSe93bSHrjcm/W0dSojHDCc1c6cm7RQUWs4CK+5zExD7FAqU6HFzY551zMP8LafjfkyI73xVWpsRyBd0LNWI+5xNNZfLqwWQPaO6WioPuHDyH8mX3Gq9N3dLyiwLapEVDQzuzL9uCY7A6hqD40Sr0Ex6F1Tpi8dXz9H0h9HaujDYBcwhSHfcBU7za2JoTAvwjNZHjUbxHz3i0xbF7F5crXer28CLbn5Y2IzxCQbAd+oB8Pgy+0rwE5RI5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AqGAvkvVCtw3ELJ24hT+zjVfy+dMzJ4LUyC7LaSwBUk=;
+ b=pumh/NihP66wt1RlFRwWt8NTWs64KHpRYCAFAD/maDSchQabG0v9ZURp89JYf+v5pErNNkLt2G8nNaczURSU1E8/KK0WziQboORVUrZkTzaIsZh2+Y/h6rUFnadpPniNKJAo96nWpQMutWNz3V3R+Ri2DgClIzKS1IB1W2MGjzNWkRE3kKZyIhudNS8l9HKs0wNKtEg6YwbFORRMbn7Aek3GhKgt46jFA81ovVB5iPvcogI4PeGeDw3SjEP1glVbQMDEJoKzuRaD5DNeeSNilLYZsQMSt+yP/6n4pYn9GQm5vSg+nyTkNHNWYKlDjazx/8xU0hx1IyKGWRgsnsSHvA==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by OSBPR01MB16291.jpnprd01.prod.outlook.com (2603:1096:604:3f7::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
+ 2025 07:22:27 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 07:22:27 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'Ben Horgan' <ben.horgan@arm.com>, "james.morse@arm.com"
+	<james.morse@arm.com>
+CC: "amitsinght@marvell.com" <amitsinght@marvell.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "dakr@kernel.org"
+	<dakr@kernel.org>, "dave.martin@arm.com" <dave.martin@arm.com>,
+	"david@redhat.com" <david@redhat.com>, "dfustini@baylibre.com"
+	<dfustini@baylibre.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "gshan@redhat.com"
+	<gshan@redhat.com>, "guohanjun@huawei.com" <guohanjun@huawei.com>,
+	"jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+	"jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+	"kobak@nvidia.com" <kobak@nvidia.com>, "lcherian@marvell.com"
+	<lcherian@marvell.com>, "lenb@kernel.org" <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "peternewman@google.com" <peternewman@google.com>,
+	"quic_jiles@quicinc.com" <quic_jiles@quicinc.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"rohit.mathew@arm.com" <rohit.mathew@arm.com>, "scott@os.amperecomputing.com"
+	<scott@os.amperecomputing.com>, "sdonthineni@nvidia.com"
+	<sdonthineni@nvidia.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"will@kernel.org" <will@kernel.org>, "xhao@linux.alibaba.com"
+	<xhao@linux.alibaba.com>
+Subject: RE: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+Thread-Topic: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+Thread-Index: AQHcT+MjJGnJzuHoRkq4C2sKwzbbcbTuqI/Q
+Date: Wed, 12 Nov 2025 07:22:27 +0000
+Message-ID:
+ <OSZPR01MB879857F2126672D1EADA04668BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-11-ben.horgan@arm.com>
+In-Reply-To: <20251107123450.664001-11-ben.horgan@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=17982a8e-4265-41dd-b89b-ebe3fb70d42f;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-11-12T07:15:47Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|OSBPR01MB16291:EE_
+x-ms-office365-filtering-correlation-id: 66f59537-30b5-4368-e496-08de21bc3bac
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|1580799027|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?TG9rbkhtNHBaUlRFSlJ6cmlFRWNhNTlzSVhXUk83Uy9McVViWVdmQ1BW?=
+ =?iso-2022-jp?B?R3RSMnZ3TThpUWRkTDlzamV3OEIvcXMzMkJ0S2k5VzNNY1VlakpvV2h5?=
+ =?iso-2022-jp?B?Qm5ON1d1R3hpSFJGUElzV3JXcFJ3MHVTdS8vR1N6dGdvZjhRR2dQKy85?=
+ =?iso-2022-jp?B?YytMTEZPTm9ZYzRzS3NzUlpDaTB0UFZVejlhN2h0blJXaEFMUlQ2aEhS?=
+ =?iso-2022-jp?B?OVhxSTZoL2ZadWtzK2tVQVNoRjFjWGc3MVRtQURna2p0bGNIc3dQZ256?=
+ =?iso-2022-jp?B?azdERUFKZ0FraW0rY0d3Q3ZMR2hTZ3p2bDRLYUQ5UnZTLysrRlZsWDFT?=
+ =?iso-2022-jp?B?cWdHU2JEVXVOWWxsNmFRT3d2a0Vxd3l6VnRiZEowWTFJYmJDb0RRaUVl?=
+ =?iso-2022-jp?B?MU9id0wwS1BML3lSRHlSZVRoNlBnakw4WDVNV3pkbjRaVFZvYTR6dFlS?=
+ =?iso-2022-jp?B?cE5ncE5ZVHgxZ291clBqWWtQUlZYanVpRmVXMERkZ21nN3JYWmVYcDR6?=
+ =?iso-2022-jp?B?bG9mSDErbjlGNVFCL1RNL3B4ZUgrS1lGK2p3YURacVFZdUVpREZTSkcw?=
+ =?iso-2022-jp?B?R2F6cXpiUkRzd3lpcFUvazRDMDQ3MFAwTlducGlOQnNRSVlFdUZkR3pQ?=
+ =?iso-2022-jp?B?SzZiR3Q0WHZxaFp2WEl6STJycDBDNDJHT1hMNGttajcwWXlMaEtIL0Ri?=
+ =?iso-2022-jp?B?NWo3QmZvNFJva1N1T241Uk9iRzF0UW40TFlwUStUeVN4bWVwYVpQcEJs?=
+ =?iso-2022-jp?B?RnJ4YUsyejM0RmMxV2gweHpLMnpIN0VDS3kwL1gvTmtnaVA0ZUZ0L0Uz?=
+ =?iso-2022-jp?B?UEF5SURYeUpGa3VkUiszNTVqQ2xmWnU2TGRBMUNiNjVZSDB0b3FNMlZK?=
+ =?iso-2022-jp?B?aHVWTFZmb242SE5YbTBWWjVoMkxJamRkNE03aEFmZWhSZjlxYmVvUHZo?=
+ =?iso-2022-jp?B?aUxUc0RtU2tIYjJJVklNVFBDSzhob1ZISGRoRmtjem1PNjltTmdtdmFq?=
+ =?iso-2022-jp?B?ZmxreUJmR1VNd3MwSG9NbEd6d01jd0VWY2EwOVB4TWZvRXA4MjdwZUt1?=
+ =?iso-2022-jp?B?elNSUWVlczlGVlRZQThCOXJqK0M5M3lXVjA1VGlUSmZPRWpjRk1tbmJS?=
+ =?iso-2022-jp?B?YnNxTjhvZnB2NW9uOTAzUk1mbmxxY2h2ek5EazVlTXBQbDdqZ1NOeElw?=
+ =?iso-2022-jp?B?cU5JN04vSEoydUdQbWw2ZG83ZkJLSVVCc0F6U3ZVbVo4V0JPNzdudG1m?=
+ =?iso-2022-jp?B?WHhieFhVMU1iKzV0dWwvRTh1MXZVemNYYmVrRGxTZ0Z5bitSdDkyR0R6?=
+ =?iso-2022-jp?B?elpJYWlSTE9PSWlMUWVaZzFxTHBzQnZrc0hxb0VSdGpWREM2K2tzaXBD?=
+ =?iso-2022-jp?B?bm5QUWRSYllHZjF4TmZrUlQ1TFdLMkE2WkthTElMNENPdnFRSG9NYmR5?=
+ =?iso-2022-jp?B?c1VmanNKeDQ2ZDliNGFzODB5SlJCUW9FK0RnUmtMWnJOM2lZYmg1SjZR?=
+ =?iso-2022-jp?B?N2tNZ3ZWYkxQZklYUWw2L2wrTVhoT3lqMnR0eGw2b0V5N1Nxcm9YemE4?=
+ =?iso-2022-jp?B?d0FqUGNtQlFKYnk2VVRTVWExSS9aWThBMVpUVjFkUE9HNUE4UnRkYlRs?=
+ =?iso-2022-jp?B?UGRlMmcvWXM2YVVUNFU3enJCOHFLYXZpNm05KzlyYUw3VzVDVTVTSm5m?=
+ =?iso-2022-jp?B?TnFGVUJ5OGo5dEtuVUhDOUI1UExBL2ZVOVNpRFZGQjZJL3RSZzFTM2tP?=
+ =?iso-2022-jp?B?ZGtoVnZnVTFWTkRRMXJOTS9ON3dQaGZiUzdyYlNhbC9CTkd6QXhjZUF0?=
+ =?iso-2022-jp?B?NHc3T0E1b3JVNy9teWEwbmRqa2FlVWZJcThERWpjV0RtU3d3ellhazhJ?=
+ =?iso-2022-jp?B?a291RXNJQ2NHcWVwMUdLeUxCblAyeW5yYXNIUThTOTVISG40R1ZOc01O?=
+ =?iso-2022-jp?B?Wnl3cW1Sa3NpZktqTXRhVDFJbHVYOEMrd3JObkFZaTdqU0htcnpwVVFl?=
+ =?iso-2022-jp?B?SDRkcmFGcUJwOWpSVUZKT2lOa0RXMzYzOHgxNURjcTZXazlON1FKaFk2?=
+ =?iso-2022-jp?B?anYzWnJqYVRzSWE2RnI2dk5veENVY0VlaDdreEZCeldZaUZyU3ZQSXFT?=
+ =?iso-2022-jp?B?UlRncDZMNVhGWlIrZkt6SUI5MTRGRXhPc2h3MFNIL3RoMmhKK09FY2Js?=
+ =?iso-2022-jp?B?bml0MEE1TVlvalhBOW80aTNWT25Hc2lXeGV5N2ZqcDI2RXlCbTk1MlF4?=
+ =?iso-2022-jp?B?cmlrZz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(1580799027)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?STI3TmdYYUVyVTQrcVBMZTY2TkxpNG1iN0JPQmFndTkvdEcwaDYrQlJm?=
+ =?iso-2022-jp?B?clcxaTFENHEyNHJpMWlXQythTW41UkZqLytWUnhSZ05UVlpzS2hCN1Js?=
+ =?iso-2022-jp?B?MVd1WWlsV1dscklyMisvbzR0Umw3U0htM00yU2l1MzBJbmd6Tzdmb3Vh?=
+ =?iso-2022-jp?B?RXovTmhiWXRCVDM4KzNMNnNreEpudHBLYytJSUlkMEc3cDBuKzJTa1FH?=
+ =?iso-2022-jp?B?OGVvV3ppTldLTzVzKzI0WVl0TCs5bUNRbTdOUHBmK01CU0V6NnRpRUFB?=
+ =?iso-2022-jp?B?R1ZPcTMzdjFrTDBoT1pDOGFWNUNJUVJHS3BlZ0lSVVVaVFFQaVY5cE1S?=
+ =?iso-2022-jp?B?bkJ3ZkhMTDMrdGpzaWpMbE1ObDdKY3JVc1BpblJHM3hIUEdGc25tbWox?=
+ =?iso-2022-jp?B?Ui9DZ05UVUpIUDRBYmtnaFNYL2U2a3lyVDlwVUVPQlBiMU9tSHhuOHpJ?=
+ =?iso-2022-jp?B?Q1o4MWR5VDFSM1hSOXhQV3NmUGZuWFRYY1lRY3Vic3Z3dk9SL215Q1JW?=
+ =?iso-2022-jp?B?MXpFamt5cFA2R0dmNU83aDVhTTVEb0V2RjMrZE02OXliSnlFYzlnd1pV?=
+ =?iso-2022-jp?B?WUx6d3Z0TzlsbVJYaU1xVTNwMjEyOFhFZUN4aGVZUVdIY1hiaFIzQUc1?=
+ =?iso-2022-jp?B?T21NK3loYnNpd2NsR29tamlUWHJSMktjd1kwSUtGN1N0SVJ6MnZPYkU3?=
+ =?iso-2022-jp?B?NWM2RUNjMG1LcUJwajNOWnJVV1NiL1pnS3piMVFJRS9Vd2tPNjJIR3My?=
+ =?iso-2022-jp?B?VDc3Vm9YMkgxSXNWdUpzLzQyQVJBbGhzQWhkbmh6TDFWWStCaEpHUjFV?=
+ =?iso-2022-jp?B?dGhpdzlYRVkvdE5sSzZOdXRMUmpkVUlMaDlROElmUlU1WDg4N3d6MmRl?=
+ =?iso-2022-jp?B?ZEFtd1VyYVdpQkRmbzlnTkVzTFk0QjBBTWwrUlBGYy8wYnFTSHFNeWdX?=
+ =?iso-2022-jp?B?bTg4aFliRWNudXVvZG5zWnd1cnFOaWVUaTN6RzBGazFoMVphdytCVnZz?=
+ =?iso-2022-jp?B?TFhmWnRqT3JUQXNmejlRNFVFSnRiY0RGckhVVkVBMERYNEMzWitrUFhO?=
+ =?iso-2022-jp?B?UmpVbXV1U0FtNXE1VFFLQUtXVmU2eE1kWmEya1VzeUVUbXJFQWJPb0lt?=
+ =?iso-2022-jp?B?eFZPQjhIL0FDM3o2Wkx6QStnbHY0VVg0RHBiaHVsbElYaXFTYVNMWEY1?=
+ =?iso-2022-jp?B?THRFakFOUkRnUGdVR3B5a0h1S3BqWGt4WDI1Y1owVWxSNzdYMXdxYmJ0?=
+ =?iso-2022-jp?B?VG1pTWxPSHlZclJ4Q1I3YWJXRU9sN1ZKZ0xYTzl5TzdjZFZaY2pVNTM3?=
+ =?iso-2022-jp?B?VmE1ZXRwRHRIMHhrOWRJOGZRZ1hnU0txT0NsU3dYQ21GNkhsaGdEMVVT?=
+ =?iso-2022-jp?B?SHh1TlZLcEttWGVRKzFERHYxTk51Wis0eTIrZlJzbm01ZzUyTlQ0SDJr?=
+ =?iso-2022-jp?B?cGVLWmluQlpYNkxKK2JKRmxORUZIRmVQdy9KNnUwaXMvZ1N0YzVPQldQ?=
+ =?iso-2022-jp?B?c1dlYkFLcUg2ZnZadVA4UithNTMvekxtbTFSZXk2bVBQbGxjYXpSRjB3?=
+ =?iso-2022-jp?B?dUtLaXZDck1Vei82bWxUS0lMb2huaXlmSDd2NG1hTHVLUUd6UEFTdjh6?=
+ =?iso-2022-jp?B?alVvOTVJSG53RUxhaEtPbHRVdEZTekNRTFp2WkR0YThrcmUwTnBPa3FL?=
+ =?iso-2022-jp?B?VFNxK0llNE9rMU8wVVY0WDBxbFMwbk45T091WngxQWRIaHlZcHliVmp2?=
+ =?iso-2022-jp?B?QjZiRE0zOTYwZ3pTNWdsMEp2dW5NazJjbi9FSkgzZnVYeHVaTGJNQkl4?=
+ =?iso-2022-jp?B?NmhVNUozZkxxYUdMN21XLzMwNWRaVnRTbUFraGc5d3YxenhXczJDeFBk?=
+ =?iso-2022-jp?B?Y0dHVEh2UU5Uelo0TWlOdXliYUxtWEZNMVRxVVA2b2R3MlpydmFDUVRF?=
+ =?iso-2022-jp?B?cG81anNtVSt4Rmk2YmxtNHJyKzhsZW5uRFhzSXkraE1oTEZ5V0xnaFFP?=
+ =?iso-2022-jp?B?bkZSVHBjSER0eTloQlNNQW10eGRFQXhBdnIzVG13bXJXVnZBUDRPZUkw?=
+ =?iso-2022-jp?B?c0dIZXM0dUc2UHE5N1lWbXNDZG9laWxqMG45bnEvRGx3MVBLcVl5cDI1?=
+ =?iso-2022-jp?B?czFXa29iVUlLcURxeHhnbmlBL3ozNG80Rmpwc3VSaUpwVDA2UE1oNmNv?=
+ =?iso-2022-jp?B?b29OeThlcWQzeEJNSzRadXBQbjNscUF4Qk1sWUdCSURzYWIzYy8yTys5?=
+ =?iso-2022-jp?B?cVBzcm9zVS96bUVkK0hieFUrRml6UmVzQkhrYk1PSFVzdGhnWERMNHRD?=
+ =?iso-2022-jp?B?TnhrOHM4VWZBVGhqWTBnU0R5NEV4ZFV4UHc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112034333.2901601-1-dolinux.peng@gmail.com>
- <20251112141705.a7f2f79f6d7b058201307e89@kernel.org> <CAErzpmsHNRzB2pBFVSAG4ii=VN98NEtehEbnYNQY-4TBWgM3ag@mail.gmail.com>
- <20251112161017.d9da54e462817cc9053688f6@kernel.org>
-In-Reply-To: <20251112161017.d9da54e462817cc9053688f6@kernel.org>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 12 Nov 2025 15:22:18 +0800
-X-Gm-Features: AWmQ_bkdkr3hyKR3VxyIixB4buBO0tjZwv-exkykO_34Bm739UP7upVP_sXijeU
-Message-ID: <CAErzpmt-uEz_oRE3JEEap-Xr1sFDa6xSmUZxqTLrP5cXOdBLbw@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
- funcgraph-retaddr to work simultaneously
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Donglin Peng <pengdonglin@xiaomi.com>, 
-	Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66f59537-30b5-4368-e496-08de21bc3bac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 07:22:27.0790
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: B3KiSfomXHis7eSjk9AgzKgPIOChcxr8uEBK6GGq9md16igrOIC7lZ6DZuCZir7IGIC1dZBEkqIxscb8aE6B8vJrDlsEIO9H6s8zJzj4onA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB16291
 
-On Wed, Nov 12, 2025 at 3:10=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Wed, 12 Nov 2025 14:03:30 +0800
-> Donglin Peng <dolinux.peng@gmail.com> wrote:
->
-> > On Wed, Nov 12, 2025 at 1:17=E2=80=AFPM Masami Hiramatsu <mhiramat@kern=
-el.org> wrote:
-> > >
-> > > On Wed, 12 Nov 2025 11:43:33 +0800
-> > > Donglin Peng <dolinux.peng@gmail.com> wrote:
-> > >
-> > > > From: Donglin Peng <pengdonglin@xiaomi.com>
-> > > >
-> > > > Currently, the funcgraph-args and funcgraph-retaddr features are mu=
-tually exclusive.
-> > > > This patch resolves this limitation by modifying funcgraph-retaddr =
-to adopt the same
-> > > > implementation approach as funcgraph-args, specifically by storing =
-the return address
-> > > > in the first entry of the args array.
->
-> Ah, if you can update the patch, please keep each line shorter than
-> 70-75 characters.
+Hello Ben,
 
-Thanks, I will fix it in the next version.
+> From: James Morse <james.morse@arm.com>
+>=20
+> Probing MPAM is convoluted. MSCs that are integrated with a CPU may only =
+be
+> accessible from those CPUs, and they may not be online.
+> Touching the hardware early is pointless as MPAM can't be used until the
+> system-wide common values for num_partid and num_pmg have been
+> discovered.
+>=20
+> Start with driver probe/remove and mapping the MSC.
+>=20
+> CC: Carl Worth <carl@os.amperecomputing.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> ---
+> Changes since v3:
+> From Jonathan:
+> Include cleanup
+> Use devm_mutex_init()
+> Add an ERR_CAST()
+> Fenghua:
+> Return zero from update_msc_accessibility()
+> Additional:
+> Fail probe if MSC doesn't have an MMIO interface
+> ---
+>  arch/arm64/Kconfig              |   1 +
+>  drivers/Kconfig                 |   2 +
+>  drivers/Makefile                |   1 +
+>  drivers/resctrl/Kconfig         |  15 +++
+>  drivers/resctrl/Makefile        |   4 +
+>  drivers/resctrl/mpam_devices.c  | 194
+> ++++++++++++++++++++++++++++++++
+> drivers/resctrl/mpam_internal.h |  49 ++++++++
+>  7 files changed, 266 insertions(+)
+>  create mode 100644 drivers/resctrl/Kconfig  create mode 100644
+> drivers/resctrl/Makefile  create mode 100644 drivers/resctrl/mpam_devices=
+.c
+> create mode 100644 drivers/resctrl/mpam_internal.h
+>=20
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig index
+> c5e66d5d72cd..004d58cfbff8 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2025,6 +2025,7 @@ config ARM64_TLB_RANGE
+>=20
+>  config ARM64_MPAM
+>  	bool "Enable support for MPAM"
+> +	select ARM64_MPAM_DRIVER if EXPERT	# does nothing yet
+>  	select ACPI_MPAM if ACPI
+>  	help
+>  	  Memory System Resource Partitioning and Monitoring (MPAM) is an
+> diff --git a/drivers/Kconfig b/drivers/Kconfig index
+> 4915a63866b0..3054b50a2f4c 100644
+> --- a/drivers/Kconfig
+> +++ b/drivers/Kconfig
+> @@ -251,4 +251,6 @@ source "drivers/hte/Kconfig"
+>=20
+>  source "drivers/cdx/Kconfig"
+>=20
+> +source "drivers/resctrl/Kconfig"
+> +
+>  endmenu
+> diff --git a/drivers/Makefile b/drivers/Makefile index
+> 8e1ffa4358d5..20eb17596b89 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -194,6 +194,7 @@ obj-$(CONFIG_HTE)		+=3D hte/
+>  obj-$(CONFIG_DRM_ACCEL)		+=3D accel/
+>  obj-$(CONFIG_CDX_BUS)		+=3D cdx/
+>  obj-$(CONFIG_DPLL)		+=3D dpll/
+> +obj-y				+=3D resctrl/
+>=20
+>  obj-$(CONFIG_DIBS)		+=3D dibs/
+>  obj-$(CONFIG_S390)		+=3D s390/
+> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig new file m=
+ode
+> 100644 index 000000000000..ef2f3adf64a9
+> --- /dev/null
+> +++ b/drivers/resctrl/Kconfig
+> @@ -0,0 +1,15 @@
+> +menuconfig ARM64_MPAM_DRIVER
+> +	bool "MPAM driver"
+> +	depends on ARM64 && ARM64_MPAM && EXPERT
+> +	help
+> +	  Memory System Resource Partitioning and Monitoring (MPAM)
+> driver for
+> +	  System IP, e,g. caches and memory controllers.
+> +
+> +if ARM64_MPAM_DRIVER
+> +
+> +config ARM64_MPAM_DRIVER_DEBUG
+> +	bool "Enable debug messages from the MPAM driver"
+> +	help
+> +	  Say yes here to enable debug messages from the MPAM driver.
+> +
+> +endif
+> diff --git a/drivers/resctrl/Makefile b/drivers/resctrl/Makefile new file=
+ mode
+> 100644 index 000000000000..898199dcf80d
+> --- /dev/null
+> +++ b/drivers/resctrl/Makefile
+> @@ -0,0 +1,4 @@
+> +obj-$(CONFIG_ARM64_MPAM_DRIVER)			+=3D mpam.o
+> +mpam-y						+=3D
+> mpam_devices.o
+> +
+> +ccflags-$(CONFIG_ARM64_MPAM_DRIVER_DEBUG)	+=3D -DDEBUG
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_device=
+s.c
+> new file mode 100644 index 000000000000..6c6be133d73a
+> --- /dev/null
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2025 Arm Ltd.
+> +
+> +#define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/arm_mpam.h>
+> +#include <linux/cacheinfo.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/gfp.h>
+> +#include <linux/list.h>
+> +#include <linux/lockdep.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/printk.h>
+> +#include <linux/srcu.h>
+> +#include <linux/types.h>
+> +
+> +#include "mpam_internal.h"
+> +
+> +/*
+> + * mpam_list_lock protects the SRCU lists when writing. Once the
+> + * mpam_enabled key is enabled these lists are read-only,
+> + * unless the error interrupt disables the driver.
+> + */
+> +static DEFINE_MUTEX(mpam_list_lock);
+> +static LIST_HEAD(mpam_all_msc);
+> +
+> +struct srcu_struct mpam_srcu;
+> +
+> +/*
+> + * Number of MSCs that have been probed. Once all MSC have been probed
+> +MPAM
+> + * can be enabled.
+> + */
+> +static atomic_t mpam_num_msc;
+> +
+> +/*
+> + * An MSC can control traffic from a set of CPUs, but may only be
+> +accessible
+> + * from a (hopefully wider) set of CPUs. The common reason for this is
+> +power
+> + * management. If all the CPUs in a cluster are in PSCI:CPU_SUSPEND,
+> +the
+> + * corresponding cache may also be powered off. By making accesses from
+> + * one of those CPUs, we ensure this isn't the case.
+> + */
+> +static int update_msc_accessibility(struct mpam_msc *msc) {
+> +	u32 affinity_id;
+> +	int err;
+> +
+> +	err =3D device_property_read_u32(&msc->pdev->dev, "cpu_affinity",
+> +				       &affinity_id);
+> +	if (err)
+> +		cpumask_copy(&msc->accessibility, cpu_possible_mask);
+> +	else
+> +		acpi_pptt_get_cpus_from_container(affinity_id,
+> +						  &msc->accessibility);
+> +	return 0;
+> +}
+> +
+> +static int fw_num_msc;
+> +
+> +static void mpam_msc_destroy(struct mpam_msc *msc) {
+> +	struct platform_device *pdev =3D msc->pdev;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_del_rcu(&msc->all_msc_list);
+> +	platform_set_drvdata(pdev, NULL);
+> +}
+> +
+> +static void mpam_msc_drv_remove(struct platform_device *pdev) {
+> +	struct mpam_msc *msc =3D platform_get_drvdata(pdev);
+> +
+> +	if (!msc)
+> +		return;
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_msc_destroy(msc);
+> +	mutex_unlock(&mpam_list_lock);
+> +
+> +	synchronize_srcu(&mpam_srcu);
+> +}
+> +
+> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device
+> +*pdev) {
+> +	int err;
+> +	u32 tmp;
+> +	struct mpam_msc *msc;
+> +	struct resource *msc_res;
+> +	struct device *dev =3D &pdev->dev;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	msc =3D devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+> +	if (!msc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	err =3D devm_mutex_init(dev, &msc->probe_lock);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +	err =3D devm_mutex_init(dev, &msc->part_sel_lock);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +	msc->id =3D pdev->id;
+> +	msc->pdev =3D pdev;
+> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
+> +	INIT_LIST_HEAD_RCU(&msc->ris);
+> +
+> +	err =3D update_msc_accessibility(msc);
+> +	if (err)
+> +		return ERR_PTR(err);
 
->
-> > > >
-> > > > As a result, both features now coexist seamlessly and function as i=
-ntended.
-> > > >
-> > > > To verify the change, use perf to trace vfs_write with both options=
- enabled:
-> > > >
-> > > > Before:
-> > > >  # perf ftrace -G vfs_write --graph-opts args,retaddr
-> > > >  ......
-> > > >  0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
-> > > >  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 =
-*/
-> > > >  0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x1=
-60 */
-> > > >  0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x1=
-60 */
-> > > >  0)   0.754 us    |  }
-> > > >
-> > > > After:
-> > > >  # perf ftrace -G vfs_write --graph-opts args,retaddr
-> > > >  ......
-> > > >  0)               |  down_read(sem=3D0xffff8880100bea78) { /* <-n_t=
-ty_write+0xa3/0x540 */
-> > > >  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 =
-*/
-> > > >  0)   0.079 us    |    preempt_count_add(val=3D1); /* <-down_read+0=
-x3b/0x160 */
-> > > >  0)   0.077 us    |    preempt_count_sub(val=3D1); /* <-down_read+0=
-x8b/0x160 */
-> > > >  0)   0.754 us    |  }
-> > > >
-> > > > Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > > > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > > > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > > > Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
-> > >
-> > > Looks good to me except for a few nits, but it's a style issue.
-> > >
-> > > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > Thank you for ack.
-> >
-> > >
-> > > Thank you,
-> > >
-> > > > ---
-> > > > v3:
-> > > > - Replace min() with min_t() to improve type safety and maintainabi=
-lity
-> > > > - Keep only one Signed-off-by for cleaner attribution
-> > > > - Code refactoring for improved readability
-> > > >
-> > > > v2:
-> > > > - Preserve retaddr event functionality (suggested by Steven)
-> > > > - Store the retaddr in args[0] (suggested by Steven)
-> > > > - Refactor implementation logic and commit message clarity
-> > > > ---
-> > > >  include/linux/ftrace.h               |  11 --
-> > > >  kernel/trace/trace.h                 |   4 -
-> > > >  kernel/trace/trace_entries.h         |   6 +-
-> > > >  kernel/trace/trace_functions_graph.c | 145 ++++++++++++-----------=
-----
-> > > >  4 files changed, 69 insertions(+), 97 deletions(-)
-> > > >
-> > > > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > > > index 7ded7df6e9b5..88cb54d73bdb 100644
-> > > > --- a/include/linux/ftrace.h
-> > > > +++ b/include/linux/ftrace.h
-> > > > @@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
-> > > >       int depth;
-> > > >  } __packed;
-> > > >
-> > > > -/*
-> > > > - * Structure that defines an entry function trace with retaddr.
-> > > > - * It's already packed but the attribute "packed" is needed
-> > > > - * to remove extra padding at the end.
-> > > > - */
-> > > > -struct fgraph_retaddr_ent {
-> > > > -     unsigned long func; /* Current function */
-> > > > -     int depth;
-> > > > -     unsigned long retaddr;  /* Return address */
-> > > > -} __packed;
-> > > > -
-> > > >  /*
-> > > >   * Structure that defines a return function trace.
-> > > >   * It's already packed but the attribute "packed" is needed
-> > > > diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> > > > index 85eabb454bee..9fac291b913a 100644
-> > > > --- a/kernel/trace/trace.h
-> > > > +++ b/kernel/trace/trace.h
-> > > > @@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_ite=
-rator *iter);
-> > > >  extern int __trace_graph_entry(struct trace_array *tr,
-> > > >                              struct ftrace_graph_ent *trace,
-> > > >                              unsigned int trace_ctx);
-> > > > -extern int __trace_graph_retaddr_entry(struct trace_array *tr,
-> > > > -                             struct ftrace_graph_ent *trace,
-> > > > -                             unsigned int trace_ctx,
-> > > > -                             unsigned long retaddr);
-> > > >  extern void __trace_graph_return(struct trace_array *tr,
-> > > >                                struct ftrace_graph_ret *trace,
-> > > >                                unsigned int trace_ctx,
-> > > > diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entr=
-ies.h
-> > > > index de294ae2c5c5..593a74663c65 100644
-> > > > --- a/kernel/trace/trace_entries.h
-> > > > +++ b/kernel/trace/trace_entries.h
-> > > > @@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgrap=
-h_retaddr_ent_entry,
-> > > >       TRACE_GRAPH_RETADDR_ENT,
-> > > >
-> > > >       F_STRUCT(
-> > > > -             __field_struct( struct fgraph_retaddr_ent,      graph=
-_ent       )
-> > > > +             __field_struct( struct ftrace_graph_ent,        graph=
-_ent       )
-> > > >               __field_packed( unsigned long,  graph_ent,      func =
-           )
-> > > >               __field_packed( unsigned int,   graph_ent,      depth=
-           )
-> > > > -             __field_packed( unsigned long,  graph_ent,      retad=
-dr         )
-> > > > +             __dynamic_array(unsigned long,  args                 =
-           )
-> > > >       ),
-> > > >
-> > > >       F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entr=
-y->depth,
-> > > > -             (void *)__entry->retaddr)
-> > > > +             (void *)__entry->args[0])
-> > > >  );
-> > > >
-> > > >  #else
-> > > > diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/tr=
-ace_functions_graph.c
-> > > > index a7f4b9a47a71..f31eeeffbb2d 100644
-> > > > --- a/kernel/trace/trace_functions_graph.c
-> > > > +++ b/kernel/trace/trace_functions_graph.c
-> > > > @@ -16,6 +16,15 @@
-> > > >  #include "trace.h"
-> > > >  #include "trace_output.h"
-> > > >
-> > > > +#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> > > > +#define HAVE_RETADDR 1
-> > > > +#define ARGS_OFFS(args_size) \
-> > > > +     ((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
-> > > > +#else
-> > > > +#define HAVE_RETADDR 0
-> > > > +#define ARGS_OFFS(args_size) 0
-> > > > +#endif
-> > > > +
-> > > >  /* When set, irq functions will be ignored */
-> > > >  static int ftrace_graph_skip_irqs;
-> > > >
-> > > > @@ -27,21 +36,25 @@ struct fgraph_cpu_data {
-> > > >       unsigned long   enter_funcs[FTRACE_RETFUNC_DEPTH];
-> > > >  };
-> > > >
-> > > > +/*
-> > > > + * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layou=
-t, ent
-> > > > + * member repurposed for storage
-> > > > + */
-> > > >  struct fgraph_ent_args {
-> > > >       struct ftrace_graph_ent_entry   ent;
-> > > > -     /* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS en=
-tries */
-> > > > -     unsigned long                   args[FTRACE_REGS_MAX_ARGS];
-> > > > +     /*
-> > > > +      * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS +=
- HAVE_RETADDR)
-> > > > +      * entries with the first entry storing the return address fo=
-r
-> > > > +      * TRACE_GRAPH_RETADDR_ENT.
-> > > > +      */
-> > > > +     unsigned long           args[FTRACE_REGS_MAX_ARGS + HAVE_RETA=
-DDR];
-> > > >  };
-> > > >
-> > > >  struct fgraph_data {
-> > > >       struct fgraph_cpu_data __percpu *cpu_data;
-> > > >
-> > > >       /* Place to preserve last processed entry. */
-> > > > -     union {
-> > > > -             struct fgraph_ent_args          ent;
-> > > > -             /* TODO allow retaddr to have args */
-> > > > -             struct fgraph_retaddr_ent_entry rent;
-> > > > -     };
-> > > > +     struct fgraph_ent_args          ent;
-> > > >       struct ftrace_graph_ret_entry   ret;
-> > > >       int                             failed;
-> > > >       int                             cpu;
-> > > > @@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *=
-tr, struct ftrace_graph_ent *trace,
-> > > >       struct ring_buffer_event *event;
-> > > >       struct trace_buffer *buffer =3D tr->array_buffer.buffer;
-> > > >       struct ftrace_graph_ent_entry *entry;
-> > > > -     int size;
-> > > > +     unsigned long retaddr =3D 0;
-> > > > +     int size =3D sizeof(*entry);
-> > > > +     int type =3D TRACE_GRAPH_ENT;
-> > > > +     bool store_args =3D false;
-> > > > +     int nr_args =3D 0, args_offs =3D 0;
-> > > > +
-> > > > +     if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-> > > > +             retaddr =3D ftrace_graph_top_ret_addr(current);
-> > > > +             type =3D TRACE_GRAPH_RETADDR_ENT;
-> > > > +             nr_args +=3D 1;
-> > > > +     }
-> > > >
-> > > >       /* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size wo=
-rds */
-> > > > -     size =3D sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * s=
-izeof(long));
-> > > > +     if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
-> > > > +             store_args =3D !!fregs;
-> > > > +             if (store_args)
-> > > > +                     nr_args +=3D FTRACE_REGS_MAX_ARGS;
-> > > > +     }
-> > > >
-> > > > -     event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, =
-size, trace_ctx);
-> > > > +     size +=3D nr_args * sizeof(long);
-> > > > +     event =3D trace_buffer_lock_reserve(buffer, type, size, trace=
-_ctx);
-> > > >       if (!event)
-> > > >               return 0;
-> > > >
-> > > >       entry =3D ring_buffer_event_data(event);
-> > > >       entry->graph_ent =3D *trace;
-> > > >
-> > > > +     /* Store the retaddr in args[0] */
-> > > > +     if (type =3D=3D TRACE_GRAPH_RETADDR_ENT) {
-> > > > +             entry->args[0] =3D retaddr;
-> > > > +             args_offs +=3D 1;
-> > > > +     }
-> > > > +
-> > > >  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-> > > > -     if (fregs) {
-> > > > +     if (store_args) {
-> > > >               for (int i =3D 0; i < FTRACE_REGS_MAX_ARGS; i++)
-> > > > -                     entry->args[i] =3D ftrace_regs_get_argument(f=
-regs, i);
-> > > > +                     entry->args[i + args_offs] =3D ftrace_regs_ge=
-t_argument(fregs, i);
-> > > >       }
-> > > >  #endif
-> > > >
-> > > > @@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr=
-,
-> > > >       return __graph_entry(tr, trace, trace_ctx, NULL);
-> > > >  }
-> > > >
-> > > > -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> > > > -int __trace_graph_retaddr_entry(struct trace_array *tr,
-> > > > -                             struct ftrace_graph_ent *trace,
-> > > > -                             unsigned int trace_ctx,
-> > > > -                             unsigned long retaddr)
-> > > > -{
-> > > > -     struct ring_buffer_event *event;
-> > > > -     struct trace_buffer *buffer =3D tr->array_buffer.buffer;
-> > > > -     struct fgraph_retaddr_ent_entry *entry;
-> > > > -
-> > > > -     event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETAD=
-DR_ENT,
-> > > > -                                       sizeof(*entry), trace_ctx);
-> > > > -     if (!event)
-> > > > -             return 0;
-> > > > -     entry   =3D ring_buffer_event_data(event);
-> > > > -     entry->graph_ent.func =3D trace->func;
-> > > > -     entry->graph_ent.depth =3D trace->depth;
-> > > > -     entry->graph_ent.retaddr =3D retaddr;
-> > > > -     trace_buffer_unlock_commit_nostack(buffer, event);
-> > > > -
-> > > > -     return 1;
-> > > > -}
-> > > > -#else
-> > > > -int __trace_graph_retaddr_entry(struct trace_array *tr,
-> > > > -                             struct ftrace_graph_ent *trace,
-> > > > -                             unsigned int trace_ctx,
-> > > > -                             unsigned long retaddr)
-> > > > -{
-> > > > -     return 1;
-> > > > -}
-> > > > -#endif
-> > > > -
-> > > >  static inline int ftrace_graph_ignore_irqs(void)
-> > > >  {
-> > > >       if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ=
-_BIT))
-> > > > @@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent =
-*trace,
-> > > >       struct trace_array *tr =3D gops->private;
-> > > >       struct fgraph_times *ftimes;
-> > > >       unsigned int trace_ctx;
-> > > > -     int ret =3D 0;
-> > > >
-> > > >       if (*task_var & TRACE_GRAPH_NOTRACE)
-> > > >               return 0;
-> > > > @@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent=
- *trace,
-> > > >               return 1;
-> > > >
-> > > >       trace_ctx =3D tracing_gen_ctx();
-> > > > -     if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
-> > > > -         tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-> > > > -             unsigned long retaddr =3D ftrace_graph_top_ret_addr(c=
-urrent);
-> > > > -             ret =3D __trace_graph_retaddr_entry(tr, trace, trace_=
-ctx, retaddr);
-> > > > -     } else {
-> > > > -             ret =3D __graph_entry(tr, trace, trace_ctx, fregs);
-> > > > -     }
-> > > > -
-> > > > -     return ret;
-> > > > +     return __graph_entry(tr, trace, trace_ctx, fregs);
-> > > >  }
-> > > >
-> > > >  int trace_graph_entry(struct ftrace_graph_ent *trace,
-> > > > @@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *ite=
-r,
-> > > >                        * Save current and next entries for later re=
-ference
-> > > >                        * if the output fails.
-> > > >                        */
-> > > > -                     if (unlikely(curr->ent.type =3D=3D TRACE_GRAP=
-H_RETADDR_ENT)) {
-> > > > -                             data->rent =3D *(struct fgraph_retadd=
-r_ent_entry *)curr;
-> > > > -                     } else {
-> > > > -                             int size =3D min((int)sizeof(data->en=
-t), (int)iter->ent_size);
-> > > > +                     int size =3D min_t(int, sizeof(data->ent), it=
-er->ent_size);
-> > > >
-> > > > -                             memcpy(&data->ent, curr, size);
-> > > > -                     }
-> > > > +                     memcpy(&data->ent, curr, size);
-> > > >                       /*
-> > > >                        * If the next event is not a return type, th=
-en
-> > > >                        * we only care about what type it is. Otherw=
-ise we can
-> > > > @@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, =
-unsigned long long duration,
-> > > >
-> > > >  #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> > > >  #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
-> > > > -static void print_graph_retaddr(struct trace_seq *s, struct fgraph=
-_retaddr_ent_entry *entry,
-> > > > -                             u32 trace_flags, bool comment)
-> > > > +static void print_graph_retaddr(struct trace_seq *s, unsigned long=
- retaddr, u32 trace_flags,
-> > > > +                             bool comment)
-> > > >  {
-> > > >       if (comment)
-> > > >               trace_seq_puts(s, " /*");
-> > > >
-> > > >       trace_seq_puts(s, " <-");
-> > > > -     seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | T=
-RACE_ITER_SYM_OFFSET);
-> > > > +     seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFF=
-SET);
-> > > >
-> > > >       if (comment)
-> > > >               trace_seq_puts(s, " */");
-> > > >  }
-> > > >  #else
-> > > >  #define __TRACE_GRAPH_PRINT_RETADDR 0
-> > > > -#define print_graph_retaddr(_seq, _entry, _tflags, _comment)      =
-   do { } while (0)
-> > > > +#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)    =
-           do { } while (0)
-> > > >  #endif
-> > > >
-> > > >  #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTI=
-ON_GRAPH_RETADDR)
-> > > > @@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_s=
-eq *s, struct ftrace_graph_ent_entr
-> > > >               trace_seq_printf(s, "%ps", func);
-> > > >
-> > > >               if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long=
-)) {
-> > > > -                     print_function_args(s, entry->args, (unsigned=
- long)func);
-> > > > +                     print_function_args(s, entry->args + ARGS_OFF=
-S(args_size),
-> > > > +                                         (unsigned long)func);
-> > > >                       trace_seq_putc(s, ';');
-> > > > -             } else
-> > > > +             } else {
-> > >
-> > > nit: you don't need to add braces for a single line block.
-> >
-> > Thanks. I added the else braces for consistency with the
-> > multi-statement if branch,
-> > per coding-style.rst. Happy to remove if you prefer the
-> > single-statement exception.
->
-> Ah, OK. I also checked this passed checkpatch.pl. (some other
-> macros are warned but those are false positive.)
+Since the return value of update_msc_accessibility(msc) is always 0,
+this check is unnecessary.=20
 
-Thanks.
+Best regards,
+Shaopeng TAN
 
->
-> Thanks,
->
-> >
-> > https://elixir.bootlin.com/linux/v6.18-rc5/source/Documentation/process=
-/coding-style.rst#L213
-> >
-> > Do not unnecessarily use braces where a single statement will do.
-> >
-> > .. code-block:: c
-> >
-> > if (condition)
-> > action();
-> >
-> > and
-> >
-> > .. code-block:: c
-> >
-> > if (condition)
-> > do_this();
-> > else
-> > do_that();
-> >
-> > This does not apply if only one branch of a conditional statement is a =
-single
-> > statement; in the latter case use braces in both branches:
-> >
-> > .. code-block:: c
-> >
-> > if (condition) {
-> > do_this();
-> > do_that();
-> > } else {
-> > otherwise();
-> > }
-> >
-> > >
-> > > >                       trace_seq_puts(s, "();");
-> > > > +             }
-> > > >
-> > > >               if (print_retval || print_retaddr)
-> > > >                       trace_seq_puts(s, " /*");
-> > > > @@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq=
- *s, struct ftrace_graph_ent_entr
-> > > >       }
-> > > >
-> > > >       if (print_retaddr)
-> > > > -             print_graph_retaddr(s, (struct fgraph_retaddr_ent_ent=
-ry *)entry,
-> > > > -                                 trace_flags, false);
-> > > > +             print_graph_retaddr(s, entry->args[0], trace_flags, f=
-alse);
-> > > >
-> > > >       if (print_retval) {
-> > > >               if (hex_format || (err_code =3D=3D 0))
-> > > > @@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator =
-*iter,
-> > > >               trace_seq_printf(s, "%ps", (void *)ret_func);
-> > > >
-> > > >               if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long=
-)) {
-> > > > -                     print_function_args(s, entry->args, ret_func)=
-;
-> > > > +                     print_function_args(s, entry->args + ARGS_OFF=
-S(args_size),
-> > > > +                                         ret_func);
-> > > >                       trace_seq_putc(s, ';');
-> > > > -             } else
-> > > > +             } else {
-> > >
-> > > Ditto.
-> > >
-> > > >                       trace_seq_puts(s, "();");
-> > > > +             }
-> > > >       }
-> > > >       trace_seq_putc(s, '\n');
-> > > >
-> > > > @@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterato=
-r *iter,
-> > > >       args_size =3D iter->ent_size - offsetof(struct ftrace_graph_e=
-nt_entry, args);
-> > > >
-> > > >       if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long))
-> > > > -             print_function_args(s, entry->args, func);
-> > > > +             print_function_args(s, entry->args + ARGS_OFFS(args_s=
-ize), func);
-> > > >       else
-> > > >               trace_seq_puts(s, "()");
-> > > >
-> > > > @@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterato=
-r *iter,
-> > > >
-> > > >       if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
-> > > >               entry->ent.type =3D=3D TRACE_GRAPH_RETADDR_ENT)
-> > > > -             print_graph_retaddr(s, (struct fgraph_retaddr_ent_ent=
-ry *)entry,
-> > > > -                     tr->trace_flags, true);
-> > > > +             print_graph_retaddr(s, entry->args[0], tr->trace_flag=
-s, true);
-> > > >       trace_seq_putc(s, '\n');
-> > > >
-> > > >       if (trace_seq_has_overflowed(s))
-> > > > @@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_ent=
-ry *field, struct trace_seq *s,
-> > > >        * it can be safely saved at the stack.
-> > > >        */
-> > > >       struct ftrace_graph_ent_entry *entry;
-> > > > -     u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(lo=
-ng)];
-> > > > +     u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RET=
-ADDR) * sizeof(long)];
-> > > >
-> > > >       /* The ent_size is expected to be as big as the entry */
-> > > >       if (iter->ent_size > sizeof(save_buf))
-> > > > @@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_ite=
-rator *iter, u32 flags)
-> > > >               trace_assign_type(field, entry);
-> > > >               return print_graph_entry(field, s, iter, flags);
-> > > >       }
-> > > > -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> > > >       case TRACE_GRAPH_RETADDR_ENT: {
-> > > > -             struct fgraph_retaddr_ent_entry saved;
-> > > >               struct fgraph_retaddr_ent_entry *rfield;
-> > > >
-> > > >               trace_assign_type(rfield, entry);
-> > > > -             saved =3D *rfield;
-> > > > -             return print_graph_entry((struct ftrace_graph_ent_ent=
-ry *)&saved, s, iter, flags);
-> > > > +             return print_graph_entry((typeof(field))rfield, s, it=
-er, flags);
-> > > >       }
-> > > > -#endif
-> > > >       case TRACE_GRAPH_RET: {
-> > > >               struct ftrace_graph_ret_entry *field;
-> > > >               trace_assign_type(field, entry);
-> > > > --
-> > > > 2.34.1
-> > > >
-> > >
-> > >
-> > > --
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
->
+> +	if (cpumask_empty(&msc->accessibility)) {
+> +		dev_err_once(dev, "MSC is not accessible from any CPU!");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (device_property_read_u32(&pdev->dev, "pcc-channel", &tmp))
+> +		msc->iface =3D MPAM_IFACE_MMIO;
+> +	else
+> +		msc->iface =3D MPAM_IFACE_PCC;
+> +
+> +	if (msc->iface =3D=3D MPAM_IFACE_MMIO) {
+> +		void __iomem *io;
+> +
+> +		io =3D devm_platform_get_and_ioremap_resource(pdev, 0,
+> +							    &msc_res);
+> +		if (IS_ERR(io)) {
+> +			dev_err_once(dev, "Failed to map MSC base
+> address\n");
+> +			return ERR_CAST(io);
+> +		}
+> +		msc->mapped_hwpage_sz =3D msc_res->end -
+> msc_res->start;
+> +		msc->mapped_hwpage =3D io;
+> +	} else {
+> +		return ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	list_add_rcu(&msc->all_msc_list, &mpam_all_msc);
+> +	platform_set_drvdata(pdev, msc);
+> +
+> +	return msc;
+> +}
+> +
+> +static int mpam_msc_drv_probe(struct platform_device *pdev) {
+> +	int err;
+> +	struct mpam_msc *msc =3D NULL;
+> +	void *plat_data =3D pdev->dev.platform_data;
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	msc =3D do_mpam_msc_drv_probe(pdev);
+> +	mutex_unlock(&mpam_list_lock);
+> +	if (!IS_ERR(msc)) {
+> +		/* Create RIS entries described by firmware */
+> +		err =3D acpi_mpam_parse_resources(msc, plat_data);
+> +		if (err)
+> +			mpam_msc_drv_remove(pdev);
+> +	} else {
+> +		err =3D PTR_ERR(msc);
+> +	}
+> +
+> +	if (!err && atomic_add_return(1, &mpam_num_msc) =3D=3D
+> fw_num_msc)
+> +		pr_info("Discovered all MSC\n");
+> +
+> +	return err;
+> +}
+> +
+> +static struct platform_driver mpam_msc_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "mpam_msc",
+> +	},
+> +	.probe =3D mpam_msc_drv_probe,
+> +	.remove =3D mpam_msc_drv_remove,
+> +};
+> +
+> +static int __init mpam_msc_driver_init(void) {
+> +	if (!system_supports_mpam())
+> +		return -EOPNOTSUPP;
+> +
+> +	init_srcu_struct(&mpam_srcu);
+> +
+> +	fw_num_msc =3D acpi_mpam_count_msc();
+> +
+> +	if (fw_num_msc <=3D 0) {
+> +		pr_err("No MSC devices found in firmware\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return platform_driver_register(&mpam_msc_driver);
+> +}
+> +subsys_initcall(mpam_msc_driver_init);
+> diff --git a/drivers/resctrl/mpam_internal.h
+> b/drivers/resctrl/mpam_internal.h new file mode 100644 index
+> 000000000000..540066903eca
+> --- /dev/null
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +// Copyright (C) 2025 Arm Ltd.
+> +
+> +#ifndef MPAM_INTERNAL_H
+> +#define MPAM_INTERNAL_H
+> +
+> +#include <linux/arm_mpam.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/io.h>
+> +#include <linux/mutex.h>
+> +#include <linux/types.h>
+> +
+> +struct platform_device;
+> +
+> +struct mpam_msc {
+> +	/* member of mpam_all_msc */
+> +	struct list_head	all_msc_list;
+> +
+> +	int			id;
+> +	struct platform_device	*pdev;
+> +
+> +	/* Not modified after mpam_is_enabled() becomes true */
+> +	enum mpam_msc_iface	iface;
+> +	u32			nrdy_usec;
+> +	cpumask_t		accessibility;
+> +
+> +	/*
+> +	 * probe_lock is only taken during discovery. After discovery these
+> +	 * properties become read-only and the lists are protected by SRCU.
+> +	 */
+> +	struct mutex		probe_lock;
+> +	unsigned long		ris_idxs;
+> +	u32			ris_max;
+> +
+> +	/* mpam_msc_ris of this component */
+> +	struct list_head	ris;
+> +
+> +	/*
+> +	 * part_sel_lock protects access to the MSC hardware registers that
+> are
+> +	 * affected by MPAMCFG_PART_SEL. (including the ID registers that
+> vary
+> +	 * by RIS).
+> +	 * If needed, take msc->probe_lock first.
+> +	 */
+> +	struct mutex		part_sel_lock;
+> +
+> +	void __iomem		*mapped_hwpage;
+> +	size_t			mapped_hwpage_sz;
+> +};
+> +#endif /* MPAM_INTERNAL_H */
 > --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 2.43.0
+
 
