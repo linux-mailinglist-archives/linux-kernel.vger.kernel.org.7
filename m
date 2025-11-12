@@ -1,278 +1,142 @@
-Return-Path: <linux-kernel+bounces-897295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9C9C52832
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:39:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A05CC528BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:50:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560D11898FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA97A3BEB1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA5A338931;
-	Wed, 12 Nov 2025 13:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B54339B28;
+	Wed, 12 Nov 2025 13:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FMJuKDZ8"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZ5y3ykm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1F030B517;
-	Wed, 12 Nov 2025 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A883E338936;
+	Wed, 12 Nov 2025 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762954675; cv=none; b=uBbc2AZ0PbBjKaQrHql7/D1zxSi7e6L+FguwlQzyDOxXuKZqbajfs4qyr7aEUD+4XDnVfvtiWd7qTEGVYQJveqf2Vd5JeZsxktDfxk63tbGXMSkxNhoYMuN1shInmKtUXRPXz9gt0SUsWyon99zPPIqu30G9ZXRwu7RB+DzggOo=
+	t=1762954678; cv=none; b=HRDFYAtNdTagm0LhneZGPRxqz0JjappLtAtGGFbKjJKuKDcW1WSyM9ib64OwHFPr03gXe40PvZbZo9bvh1TTPkN/tVyNORlrJxjiLaJeOMlr0/i36KGzmmLqzj3OuxBlcYxC/wz/2TRWz16bC0kQqBEiLzRdaiqfJ6olTu9dDdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762954675; c=relaxed/simple;
-	bh=7HScbcnt+U5pMViwPUOapzVnPg1442mpZQQO/UftwMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KG6oVZxPfzwzBXMCnK+uuos0VekG6QKBsCEqH2U9HwHq6DR1zaMPxpX53mSTB3J8yFGkZy1dRR4KEPWUjwJJW8hfI4LttRRNO8selheUMQUSiYufKYEoVy5kkb6+Si3MktDhh3kldp3gZPIOUQvsHlNNV83i9FmzhSHL3usVH+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FMJuKDZ8; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id B1D2F4E41667;
-	Wed, 12 Nov 2025 13:37:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6ADE06070B;
-	Wed, 12 Nov 2025 13:37:50 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 126FA102F16E2;
-	Wed, 12 Nov 2025 14:37:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762954669; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=SgZfesCetY4oHvl5h838KNujUcn8Vd//cFUVGen2iPY=;
-	b=FMJuKDZ8BinI+FLM8rQQYM1P95xSOnbXoDKeJX1JKeNhlx2VD2Kgvt38kskzvKKYSJ/S78
-	vPGvQGQL/hJ659RvOdvPRl30w0qoHWa/n73nGPqDDVGqRWVzvLvfBF6NK9VrGALfq05uY8
-	nX9KCCokyIq4T5m9kAPBa1/z4YToLM7HYuWEMMpaXbflNe6dzzZwzFXv+2KmDRLEvQR2tY
-	BhxpY5iT3dgg88OczC6vCcb0MSmVTR67/YZTEmmjhgsu7L6DG8O0pA14w6r5bSpYj7ZNbe
-	3CnRca/IH3scqTddJqWPsgBrjX+qcBSFGY+9ac4YjgQn7AnZYl4vlHsTczY/Cw==
-Message-ID: <7c96aca1-ffa7-49b9-9fc2-04229da338b6@bootlin.com>
-Date: Wed, 12 Nov 2025 14:37:40 +0100
+	s=arc-20240116; t=1762954678; c=relaxed/simple;
+	bh=U7RoLsnYvGKocM2umwff9hFd9Cs4671agPc3xwEp9pA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsWjTIOzbL7tc4VYkMKVz/SZTld0fyH+ZzH0j9+4Ct8K20kgWbvTLztvBXc+52NPALuCNTQyb7qapm5RpD6k5qmPhAd0Yh1y/98FuyJJHsR6POjCNeiLgYsm39OsQ0UfFAwZKx8HKf5tBBNTKTwe7c6aHdvOjpa6iLS4x22NmF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZ5y3ykm; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762954677; x=1794490677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U7RoLsnYvGKocM2umwff9hFd9Cs4671agPc3xwEp9pA=;
+  b=ZZ5y3ykm2LRxNzmXN+4rx0Mf3qwNw/yXV+pAaIwfXPP/76U/cMUoEExw
+   WB0E0ULyRyndE0giUvI8JN6KiBXKSp8LjCbUTmMLo8eI8/Fdtl+qalZZS
+   i7EcC1cidK6lAx7ZPgNIYQJZnMBtFU08MlGJBDlZvwGtacAKPjQ7BRmNt
+   xrl1ETuWE1rB84Eg1rWsC+791OxNhni8CFeZdeCjLjSDbt11PK04rwok4
+   vvJwxECcOEwvWCnEFbzqsXNU+W1UebusT273pYMH+jTe1k3jEHs4C0pRM
+   ILKsTcpoh9i6Eiz2ymjCGCPAZBeqHQt3S54y/nYA7nJWxdOwVWMnGIdX+
+   A==;
+X-CSE-ConnectionGUID: SRvsRNEHR/CyvpqPnk2NYQ==
+X-CSE-MsgGUID: hUbwzqIfQHOUgtuDbcgeVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76364778"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="76364778"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:37:56 -0800
+X-CSE-ConnectionGUID: j5tJq1vISKaxP6tLzTzBiw==
+X-CSE-MsgGUID: EK+QKkEiRNiaccr2y9qYkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="189071651"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.214])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:37:52 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A8E80121DDE;
+	Wed, 12 Nov 2025 15:37:49 +0200 (EET)
+Date: Wed, 12 Nov 2025 15:37:49 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: hariconscious@gmail.com
+Cc: cezary.rojewski@intel.com, liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev, broonie@kernel.org, perex@perex.cz,
+	tiwai@suse.com, amadeuszx.slawinski@linux.intel.com,
+	khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: Intel: avs: Replace snprintf() with scnprintf()
+Message-ID: <aRSNrXnmPTElmx5H@kekkonen.localdomain>
+References: <20251112120235.54328-2-hariconscious@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 01/15] dt-bindings: net: Introduce the
- ethernet-connector description
-To: Rob Herring <robh@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
- <20251106094742.2104099-2-maxime.chevallier@bootlin.com>
- <20251112124355.GA1269790-robh@kernel.org>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251112124355.GA1269790-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112120235.54328-2-hariconscious@gmail.com>
 
-Hi Rob,
+Hi HariKrishna,
 
-On 12/11/2025 13:43, Rob Herring wrote:
-> On Thu, Nov 06, 2025 at 10:47:26AM +0100, Maxime Chevallier wrote:
->> The ability to describe the physical ports of Ethernet devices is useful
->> to describe multi-port devices, as well as to remove any ambiguity with
->> regard to the nature of the port.
->>
->> Moreover, describing ports allows for a better description of features
->> that are tied to connectors, such as PoE through the PSE-PD devices.
->>
->> Introduce a binding to allow describing the ports, for now with 2
->> attributes :
->>
->>  - The number of lanes, which is a quite generic property that allows
->>    differentating between multiple similar technologies such as BaseT1
->>    and "regular" BaseT (which usually means BaseT4).
->>
->>  - The media that can be used on that port, such as BaseT for Twisted
->>    Copper, BaseC for coax copper, BaseS/L for Fiber, BaseK for backplane
->>    ethernet, etc. This allows defining the nature of the port, and
->>    therefore avoids the need for vendor-specific properties such as
->>    "micrel,fiber-mode" or "ti,fiber-mode".
->>
->> The port description lives in its own file, as it is intended in the
->> future to allow describing the ports for phy-less devices.
->>
->> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
->> ---
->>  .../bindings/net/ethernet-connector.yaml      | 53 +++++++++++++++++++
->>  .../devicetree/bindings/net/ethernet-phy.yaml | 18 +++++++
->>  MAINTAINERS                                   |  1 +
->>  3 files changed, 72 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/net/ethernet-connector.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/net/ethernet-connector.yaml b/Documentation/devicetree/bindings/net/ethernet-connector.yaml
->> new file mode 100644
->> index 000000000000..2b67907582c7
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/ethernet-connector.yaml
->> @@ -0,0 +1,53 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/ethernet-connector.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Generic Ethernet Connector
->> +
->> +maintainers:
->> +  - Maxime Chevallier <maxime.chevallier@bootlin.com>
->> +
->> +description:
->> +  An Ethernet Connector represents the output of a network component such as
->> +  a PHY, an Ethernet controller with no PHY, or an SFP module.
->> +
->> +properties:
->> +
->> +  pairs:
->> +    description:
->> +      Defines the number of BaseT pairs that are used on the connector.
->> +    $ref: /schemas/types.yaml#/definitions/uint32
+On Wed, Nov 12, 2025 at 05:32:35PM +0530, hariconscious@gmail.com wrote:
+> From: HariKrishna Sagala <hariconscious@gmail.com>
 > 
-> Constraints? Wouldn't 4 pairs be the max?
+> As per the C99 standard snprintf() returns the length of the data
+> that *would have been* written if there were enough space for it.
+> It's generally considered safer to use the scnprintf() variant.
 
-Andrew also made that remark on the code, I'll add a constraint on
-1, 2 or 4 pairs.
+Not only that, but the code assumes scnprintf() behaviour to function
+correctly. This should be reflected in the commit message. I.e. this is a
+bugfix and should probably be cc'd to stable. Could you provide a Fixes:
+tag as well?
+
+The change itself seems fine to me, apart from indentation.
 
 > 
-> Is it possible you need to know which pairs are wired?
-
-For now I don't think so, except maybe for when 2 pairs are wired
-when 4 are supported on the PHY and connector, but even then I don't
-think HW designers have a choice about which one to use. It's unclear
-to me wether this would be useful.
-
+> Link: https://github.com/KSPP/linux/issues/105
+> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
+> ---
+> This patch replaces snprintf() varaint with scnprintf() in
+> scenario to know the actual length of the data rather than *would
+> have been* written data of snprintf().
+> No functional changes intended.
+> Reference Links:
+> https://lwn.net/Articles/69419/
+> https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.snprintf
 > 
->> +
->> +  media:
+> Note:
+> Compile & boot tested with necessary config parameters.
+> Other areas of AVS uses scnprintf() variant.
 > 
-> Both of these names are a bit generic though I don't have a better 
-> suggestion.
+>  sound/soc/intel/avs/debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->> +    description:
->> +      The mediums, as defined in 802.3, that can be used on the port.
->> +    enum:
->> +      - BaseT
->> +      - BaseK
->> +      - BaseS
->> +      - BaseC
->> +      - BaseL
->> +      - BaseD
->> +      - BaseE
->> +      - BaseF
->> +      - BaseV
->> +      - BaseMLD
->> +
->> +required:
->> +  - media
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        media:
->> +          contains:
->> +            const: BaseT
->> +    then:
->> +      required:
->> +        - pairs
+> diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
+> index 3534de46f9e4..100b95bfcd78 100644
+> --- a/sound/soc/intel/avs/debugfs.c
+> +++ b/sound/soc/intel/avs/debugfs.c
+> @@ -119,7 +119,7 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
+>  	}
+>  
+>  	for (i = 0; i < num_desc; i++) {
+> -		ret = snprintf(buf + len, PAGE_SIZE - len,
+> +		ret = scnprintf(buf + len, PAGE_SIZE - len,
+>  			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
+>  			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
+>  		if (ret < 0)
 > 
-> else:
->   properties:
->     pairs: false
-> 
-> ??
+> base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
 
-Ah I didn't know this was necessary, I'll add that, thanks !
+-- 
+Kind regards,
 
-> 
->> +
->> +additionalProperties: true
->> +
->> +...
->> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
->> index 2ec2d9fda7e3..f434768d6bae 100644
->> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
->> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
->> @@ -277,6 +277,17 @@ properties:
->>  
->>      additionalProperties: false
->>  
->> +  mdi:
->> +    type: object
->> +
->> +    patternProperties:
->> +      '^connector-[a-f0-9]+$':
-> 
-> Unit addresses are hex, index suffixes are decimal: connector-[0-9]+
-
-Ah right, indeed. I'll address that.
-
-> 
-> 
->> +        $ref: /schemas/net/ethernet-connector.yaml#
->> +
->> +        unevaluatedProperties: false
->> +
->> +    additionalProperties: false
->> +
->>  required:
->>    - reg
->>  
->> @@ -313,5 +324,12 @@ examples:
->>                      default-state = "keep";
->>                  };
->>              };
->> +            /* Fast Ethernet port, with only 2 pairs wired */
->> +            mdi {
->> +                connector-0 {
->> +                    pairs = <2>;
->> +                    media = "BaseT";
->> +                };
->> +            };
->>          };
->>      };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 1ab7e8746299..19ba82b98616 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -9276,6 +9276,7 @@ R:	Russell King <linux@armlinux.org.uk>
->>  L:	netdev@vger.kernel.org
->>  S:	Maintained
->>  F:	Documentation/ABI/testing/sysfs-class-net-phydev
->> +F:	Documentation/devicetree/bindings/net/ethernet-connector.yaml
->>  F:	Documentation/devicetree/bindings/net/ethernet-phy.yaml
->>  F:	Documentation/devicetree/bindings/net/mdio*
->>  F:	Documentation/devicetree/bindings/net/qca,ar803x.yaml
->> -- 
->> 2.49.0
->>
-
-Thanks for reviewing !
-
-Maxime
-
+Sakari Ailus
 
