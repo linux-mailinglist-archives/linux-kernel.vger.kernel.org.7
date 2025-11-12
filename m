@@ -1,178 +1,213 @@
-Return-Path: <linux-kernel+bounces-897956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C400C53FD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:50:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C080C53F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503433B9B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABEC334A532
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D434D911;
-	Wed, 12 Nov 2025 18:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A7E3446CC;
+	Wed, 12 Nov 2025 18:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bpK7oEWo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H0qqIlvc"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010035.outbound.protection.outlook.com [52.101.61.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA1F34B402;
-	Wed, 12 Nov 2025 18:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972742; cv=none; b=E6NiaB3Qle9XVeXswR+WcXzLypTTTWUD8O0RRQZp3W1F7xy+NvURTKTR39dCYJtXs3ZGO8AciE2O53hiy0XWydqPFRwxNnBEMlCaS9Y5PW5EptHXBE9Lm4ilSkJ5o0Opwg2b81GNusV7HCUv/Hf9KzJgC9vfCfucvavvlzxN00k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972742; c=relaxed/simple;
-	bh=POv7NkoF44sU+mFkRsPUnoPJGmeAATZEDnKOAGTsCOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFEbjrHFaGtMGUtkrTUsmZlJC/gGr1EJVJv99CRh9lu8EJINmnAb1XT6TNQrvV7kGp+2gVgKTYHkWIdZZ0GGpyqV82b9MlitwT0Uc/VvSHeh+51YekqHvcofmZkencVA7CQvF5eufbhckp/DRM9K7qoTizAqCjg5Iau1uLjeRq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bpK7oEWo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F00440E01CD;
-	Wed, 12 Nov 2025 18:38:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id e05PRrtV6K6R; Wed, 12 Nov 2025 18:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762972731; bh=0aGt+4sMYIhh0E/2xYmyk01i4uKCzPvyHNRoOm86K+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bpK7oEWoXCfaEHu+FD7jo28m0ekyWR9OOpd7z9cY6lLs5uKhm7JWeWb10WUL0A/sj
-	 RXBSMeCaZxHUyrgfTUfMUrDuScNwqBfe1RshpnxrmpUaIPNhcrYjt4dAK0yVnFJ3gA
-	 7eFkWE8nlYg5rX0Y2og5+hEDG9H/sdKzOxkFJXcRnlHFqfzgnqWrMKDNAdPMAmyVOa
-	 mSAtNk+V2BIEFqSAthAoUkANmulRtWNb2w1Z1iV3CwWamlalU/OwwYfEfy1VDGpf9Y
-	 nHvWLdM3PIOyUZKk1wMbaPRYzx0CN0SIG6r60f4DhW1EeHEbh0KghKDqRLSaauGw8Q
-	 RzRtwusNWPoiMF13u8l39hC7CE9tz5U8PWnJs+O9Qjd4jZIy7MlscahUsqOMuZ0AwI
-	 sjzVVHxRH3oKM+LaoPTF7LZIbVBJxeXwOsPmbBqCKK3q2qWcVWCAudWnTx7Aswt8RR
-	 FJKfmNFgM7NNlkpw6a2RYqcmW0mgRTE6SDORpA3I/LCczNSrqAKGysW9eWzMRkwTpU
-	 sjt446jcbqRMwbF3ofHFxzlDaLwqWGAc3Jx8ocUBRlBp95kriXALKiGLWP8HN79lvL
-	 ifK4phPmkuzePgi3Y5lOeGmWXtUtcR6epu9w0499t3nFkY4+XKkgAHqM5T42PqYF4B
-	 +fr1kmtKeAz9nw2Qzc7ufxuw=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 917FD40E0191;
-	Wed, 12 Nov 2025 18:38:42 +0000 (UTC)
-Date: Wed, 12 Nov 2025 19:38:36 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
- <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
- <aRTAlEaq-bI5AMFA@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E4026E703
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762972864; cv=fail; b=Ge0fkMcqjaTKh8p+5gFCrKhHJp8BXwwTDDBYZmEyNqrYCr6amCsElsB2v+f3InlU4dSKvL4OY1PCXlMVifTa3TRSGvRPyltnsO0WzTOOuH77Fqw04lNnsenGtVtMPtYdCrOH9z+t3QTmCWwCsVJEZaPbBWqcuiQK24pVM2bQQ0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762972864; c=relaxed/simple;
+	bh=80P/B3sAnF626HZrog7tiYGASUT2H3MKNUdWbiFeKts=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ydo6XyBaAnHUDHg7DWq68tWySOR3mH6mjaE9O8wm6LRzP1zsvP+IDzzJINjm973u/VDG9QPa+MP5268bvrdUl7520BKRMuoz/ed/3avnVHmAvrH0IOJgFDXd7u3G/49qKvnTx4vM+tVU8AkEvkmp3DvHqseMLpVmKjMJh0T3gME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H0qqIlvc; arc=fail smtp.client-ip=52.101.61.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UinMhRKPLnod+X2FeGFSk7BZMT6jDaK6dkPB7LQk8HWKlg0F4L8Niqk4aw/UnZ/zbKejFep0J67ap41Jx2IyAZ9AYNBH78R+W01OW8JJ2JOjfW1Zhm5y0HqBccIrVJ4F+jDs4zuSXkzIsSK1kWHHuNpTva4eZhvmq4VlFENs4UexfoCnwzW4KizGd14d4vwbIYzGr8Lvaev7HZ00LvsM0P4CsaeRkQUo8aD+zrE9zS8MSTpr/98FIr775UgYHwWy4jbjtfwsP9MgD7hTWPtuJNhbONd4PeRu2T7xvuixlhDZyNFm6iKPCCqL3ED7uW911BeIgEw0dNjiecWYAFq0oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eM4RVh7geEFk2TR43SoeiFjJcrODaxMHEpVGLbjA4RE=;
+ b=GLLwOr2hEjfgfWThJmJM16tjUsT4S3tGQGif1glYi7lTQfCzq5M2P+/C9L27I3dpFJh8EzazPQkEx3Q/0KdrfWzHnZRQ5uw7tTnsSrhgbFHZw3Lxy1Pr6rHaWufNKTibt8Uqakhp3lHnqsvFN0pohqAYM9FdBU4tKdeRCDq5cH8Gsen6isEALqwWSH17qakaBUPbD0VpjD2ubnl/gLXBVvfWXFZ1d4YSZKNcEZ32Sq3NZiMZf219ScS8p2eDO/9QMp+iZ65xzcch7Hix7pIHT4cdqnisC31VEqyxJS0YpbiQ/Sgg6yP+ra5zTkPqB55XfKF/1hfwlJgSGygqS49jyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eM4RVh7geEFk2TR43SoeiFjJcrODaxMHEpVGLbjA4RE=;
+ b=H0qqIlvcjWms0h6vBV7evYbtqBUve7u9hjNQKj6DEH2gdKyNuhF8s8ZADUfHZsckTOjBn3Fkn8pERM4GSvWrEnurT01nrZhtak39K5MaToBdnKeP+StqpSXdp+mvDixgmsZMx3oaFLGU4caH67Tw+ZDBr6zcIHhejgP2KjYtSmQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ IA1PR12MB8537.namprd12.prod.outlook.com (2603:10b6:208:453::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 18:40:57 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 18:40:57 +0000
+Message-ID: <8c534f45-80ee-4537-93b5-2643afccde8c@amd.com>
+Date: Thu, 13 Nov 2025 01:40:47 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 15/16] iommu/amd: Refactor logic to program the host
+ page table in DTE
+To: Jason Gunthorpe <jgg@nvidia.com>, Vasant Hegde <vasant.hegde@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+ will@kernel.org, joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
+ iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+ jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+ wnliu@google.com, gptran@google.com, kpsingh@google.com,
+ joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-16-suravee.suthikulpanit@amd.com>
+ <20251023130833.GF262900@nvidia.com>
+ <62ba61a5-d172-400e-beb5-e593297129ef@amd.com>
+ <20251108230348.GJ1932966@nvidia.com>
+Content-Language: en-US
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <20251108230348.GJ1932966@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0187.apcprd06.prod.outlook.com (2603:1096:4:1::19)
+ To DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aRTAlEaq-bI5AMFA@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|IA1PR12MB8537:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3017787-a210-4a65-e3b4-08de221b0499
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2FGWXJzQ2x5QjZiZVhwcXc4TnhoNlVHY0EwVjNhYlplUjlkSlRTdmlIK0pP?=
+ =?utf-8?B?NXNkVmJ6aG53NHRRV1hYNEQyR0JlWWxtbkZZZ2oveGhjMDNlRGVVcGlON3FO?=
+ =?utf-8?B?NjYzTjZCSVFSY3BvNXhCNnhUMkQ0dThNZks4b0hGSDRZUS94Y2VVc3kxNEVO?=
+ =?utf-8?B?UXAyVlpUZ2RxclJSQ2pnWjJSa3NlTE53bDlZeDh4VFJQcXRqNXZpQW9FVVFY?=
+ =?utf-8?B?Y3Njbko0eVNGRmxHWjdZMmpQb1pZdWhhUUh1OFpoeVJXcG5CUWIyNHQvYUhF?=
+ =?utf-8?B?SE02RmMrT1BJN29nMFVsSVpZbWlXYXUvb1hWa09Gbmhaa3ZScENXUkVNQzNw?=
+ =?utf-8?B?dUJBMXdEWFlpc1dIdWRxS0ZSWDJ3OStKMUwrUWs4KzhSckRpaUU2NEIyWnQ5?=
+ =?utf-8?B?ODltZzFaV0ZEQ3RCSVRyaGxFY2VZTElMVVhRRXJoZU5nd0owQjJCNnlwdzJH?=
+ =?utf-8?B?NXB5cWZITzRHdWpxYkNPRzZNVGgvZDRrSlNNL1owZTFCUzQ1T0pqUWhTNlVL?=
+ =?utf-8?B?ZS85QWpJV2JnTWFlRjVRbFIvKzNINkpYZ0RvSHRuVkdsVGxsT09yUUxJc0x2?=
+ =?utf-8?B?c29td3BNNEd6QjlXR1F0dkJjQ1pmOVVKTzU5bUkwQitsaElBaURxTExVdmxM?=
+ =?utf-8?B?bS82Mm1sRDRlUzdoN1RrbmtscUFDRUVkd0R5eDlJVnNiMTBERHVlQmszUVAx?=
+ =?utf-8?B?UElpR2tBdG9uV3lBVVNTaDhPVTdvVytBK0g0SW1ZMEh2ckVURXl1Qy9Gb3pW?=
+ =?utf-8?B?ZWpSc2liaW1LZ3g4dzhWUkFyTHZ2YjBnZHhuVjJTYTYzVW9OdUFMT1VBTDNt?=
+ =?utf-8?B?NXBkZVdKelJQV1krdm1QcVVaaVZUWUZJRHNsMWI4U0NwaTRDQU41eUczSjdW?=
+ =?utf-8?B?LzBiRHhtbll2dktEM2hIUE44eVp3Q3owRVRPT01VZnJaVllERDBEN1dnejZ2?=
+ =?utf-8?B?UEdwQmN5djNkakEwRVdkSFB4RVVFY21wVjk4bUdjd2dYZTZLTVZoRUZsN2Vl?=
+ =?utf-8?B?RU11dDlRL0RsNTRYRW5ML0lWSFZacHhiemVpN1hJMGRRUjJYelVpRXNtMHY2?=
+ =?utf-8?B?K09CUUhxVVVLR2pnMXErTmhBREI1UVhPcTI3a3lIRnJabnk3VEtpaU5YM2xX?=
+ =?utf-8?B?WVFkcXBycHRUWWlqeUNKclZtNlJmdExKQkMxZEdrd3VnanZYWjFmUWVMc1RG?=
+ =?utf-8?B?QlBRVUI5Y3Z4WmJ2V1NMVlhzYS9EYzd5TExpWTQrMVZtZENOcUsvMzVLT2lt?=
+ =?utf-8?B?VW0xNmRKSkkzOFZkeXdNWFljVzhNN0xFTWZPQis4eGFidGJ4bDhQZ3d5WDcy?=
+ =?utf-8?B?ckpua283VGlRYUdXR0c2NjQ3M2d1SC9KZE1VYlc3b2hQMkZGOXJ4R21sSVdR?=
+ =?utf-8?B?OTl0bXc1M2hzdkRSRTM0c3J4UGZ1QUt2RnRxV1RQNURIaXZSbEhYTzZlY2Vn?=
+ =?utf-8?B?VUU0V3VQWnRGTWhYNkJjS2tQUkpGeUdFUTFFajQ0QjhIL0Y1NmNGMlREZU1G?=
+ =?utf-8?B?c3ZIczlLKzYzanZlUTVFNXd6VmdML2wzVG8wd1hzNVhCZElHZ00wZzE4aXFG?=
+ =?utf-8?B?ZmpwTzMwcDkvSjRobTlibnJ5YmNpT2drejQxdlpid0VocGdBYk9hWXhZQTNU?=
+ =?utf-8?B?dW5HUlJMQWlEZ2ZuSVl6TktVaGc1S0FOamdHVVljQldFWUNZbnNocXZFUXhx?=
+ =?utf-8?B?aTNOc0dLaXlzTDI1TisrY2k5NGNXYXFhbFFQajdIcVJMWGExRS9VOFV0UWg0?=
+ =?utf-8?B?ak91SmxMRSt4Q1BLa2FuRmVyOFpSRUJGNTY5dm12eGtqVThXbyt4Z2hzYnpl?=
+ =?utf-8?B?MmRxaHhUeGVHSHR5Q0s0anZDYzVVaGxlWFZNTG8zdmlTekFHNzZ0SytvOVZM?=
+ =?utf-8?B?clVyQkdMMkFNSHl0aUltQW1NMWJCSkprcjA4VDZwVlNyTE9TR0IyQy9DekNn?=
+ =?utf-8?Q?3yd1Nno2CX5yUjKMpBNNSFvrndjJbKso?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2dvV1h5TGVEUVBWMWNsTGprbTBtVmVOWGg4ODJnQmhaVE90NTM0WU1zYVp2?=
+ =?utf-8?B?d1NLSG5CYnlrUXkwRnYvU2hXd2UyOEwzOTVnOXZpVUdpbWc2ZHp2Qmh4dXZw?=
+ =?utf-8?B?eG9NVUlkWWl1aDY1MnVLZkJoYVRoNWZIU1oyQm5Zaks5UDJiOVQxUG10b2Vq?=
+ =?utf-8?B?cCtsemNNYXdhUFJtcWdKTzVsZm9iaE9yaGx1ZkMvWmV2VzhXaUJYbnFyRmN5?=
+ =?utf-8?B?MGhnUnFuQnV3WWp6cnFoZDcrVis2bzVucGpKdkZUL21TYmNBNi9ac1Nndi9j?=
+ =?utf-8?B?NWMveTR3UUhFb2FvRGFlSlJCUDRXUEROV2svYlpSRzN4YkxkVElsNXZsZUY0?=
+ =?utf-8?B?ZWZ6bnFJbVV3ZEYzVFJhaFJVRng1ejlBTHdJK3hkaFhDYXBJN2RMZnNxMUZs?=
+ =?utf-8?B?RkhaM2s3U2ExaVR0SURxdzVCVHhIVUZybHF6TTlzNk8za0pZK2NIREp1TmQ2?=
+ =?utf-8?B?WFJDRWZ0SVVxMnNFR2lBMDVsRWhtSEJxSDVhYXBLRmEvblhlTDhaNEtnYnBk?=
+ =?utf-8?B?RDhNcVRJTWpuclBobGJMcjJhaEhhZEo4SGIyd0F0VUtUc0FCUXdNOHhNUFda?=
+ =?utf-8?B?cmR3VHVNZXRuTHFEbGF4MEh5UGwzclp1WW9lMG1jUy9BbFZMVmMyWmZCWjZk?=
+ =?utf-8?B?RGJHM2E0WS9aMFlnemhsZ1lHU3pKMWpCYzZHUmRNK2hQdnUyVUpoaWN3dUQv?=
+ =?utf-8?B?NHovN3dCVTVpK2cwZWowb0RSQWVEeGJxVW1ZUFVSaCtWQUR6Q1pNYWgvNDJY?=
+ =?utf-8?B?RFVlQi9NRzcyaFNaQmhmQzczYzdobXFCb0UwVDdPSVR4d2xHZ0RnUEdZVXVv?=
+ =?utf-8?B?Q0hXRnJPYkdGbkNITFVWWXlCd0dYTktyVUx2Q0lIWEpGY3g5UHpEK2o4RTdJ?=
+ =?utf-8?B?Z3BYWXcrYm05WVFLRkxiNjJNWkdWWHZvZFBoanNTaDdNRGhRd0dXdUJKdjFD?=
+ =?utf-8?B?MFJING4zanlwcXRQOWJEWkNFVTlqODlubFlLRjY3b3hxSXVtVWJEc1pTc1RK?=
+ =?utf-8?B?bVo5VXF6TG9FSUpPYzZLQlFJQkZWWldUWWtrT3oxTVdJWFphcnVabDNCUzdm?=
+ =?utf-8?B?bStKOHMveFU3eWRPYU9Bd3ovcy9KTUpCcWRKdzY5M3YxWGpOZTlWWlhpSWh0?=
+ =?utf-8?B?MmdmdzNCNVVmOFZKWHhZYktYVlZURDEzcmgxT2xvaHB2OTg0cVNzMmZBeXVS?=
+ =?utf-8?B?ODd6NUh5SmJqdE5nRzNTQ3d3NnNnYTMxR1p4U2NQL0dua2hHdDBBamRGTEJ5?=
+ =?utf-8?B?WWs5ZVVZcFNsdHNwaEd5Yk1rd2hCUW01Vm9uUGd2QkZmSGY4ZjE4VytVL3Nq?=
+ =?utf-8?B?ai8yUzREU0VtZSsyNUlzRnFLc21aM0NCUVZ6NFlidFhjVXN6NFlNYS9meEEw?=
+ =?utf-8?B?cUUvaXdSemxGbks4WVgxdGVSVEpqa2xDZ2FYaXpzWnhqcHh3VkVsQ01wMzB6?=
+ =?utf-8?B?SVBTRXRlalIyZmNVRDJQZUlMSEVxZUdXUWRlenpEdUhOa0JTVVZ3SDVjNDBp?=
+ =?utf-8?B?Rkl3V0Q5bGtHRmVVWWwyNllmUERWTjB3cGt3UWw0WElGWGd4YjFnUTJFTldh?=
+ =?utf-8?B?eFpJMjFGdmorVGNJQzAwaU9QTlUrTGhkSGpQOFZOaUVBMXJYY1FyTFRjOHlB?=
+ =?utf-8?B?b0QrWGR6OFl2TUY0N21xNE1aRnM4OElidE45U1kwNW5hNkxjRUs0bDUzc3Zu?=
+ =?utf-8?B?SkJNeDBNb1FSNVdramNmdkdSY04yNUFCR1ZqUHljY2pwVVFzWFlWSVo4N2NO?=
+ =?utf-8?B?UHJmUGlvcHlweWU0Nkw2dXhjL01hQ3l0aVM0SnRRWUJKcHd5TFltVkM5d0cv?=
+ =?utf-8?B?RFAzNGIwSWp4STVLMTRHRFY5YUszeW1tdlZaUnJ3NnZzZitMT0dOQlVSVUIw?=
+ =?utf-8?B?dHZaSlRad0lBallPMVhhZVY2eU1qempZYjd0TjBEdVAzV0trcDV5QXJEYU01?=
+ =?utf-8?B?UGQ4V2RrL3VyU3M0NCtyRjlhTExjbzdjTmZPSjZ2aDJJWEhqcUpremdhV0Ji?=
+ =?utf-8?B?QXJROFdwQ3lydzAvUVZmblZUa3dRU055dVVQS2QzTXJ5K2x3dkdvbmNkaUZD?=
+ =?utf-8?B?dmF1bWpKbDBFMVpORGErbVc0VTZ1OXdiSDdBb1JsNXdQaDBCRytYRFlwWTVO?=
+ =?utf-8?Q?xorZUE50PMlOfPlT8Nwo/Y8o6?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3017787-a210-4a65-e3b4-08de221b0499
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 18:40:57.3716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4YKXsoBPe6G0oFULVk4WwsAbumH9Wz+9Xg69SlvctB5DcT62ZeOV+jK8ksEtHd8e80DyfUSPD+R2I0VxYhvgPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8537
 
-On Wed, Nov 12, 2025 at 09:15:00AM -0800, Sean Christopherson wrote:
-> On Wed, Nov 12, 2025, Borislav Petkov wrote:
-> > On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-> > > @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
-> > >  	/* Load @regs to RAX. */
-> > >  	mov (%_ASM_SP), %_ASM_AX
-> > >  
-> > > +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
-> > 
-> > Oh wow. Alternatives interdependence. What can go wrong. :)
+
+
+On 11/9/2025 6:03 AM, Jason Gunthorpe wrote:
+> On Sat, Nov 08, 2025 at 10:56:38PM +0530, Vasant Hegde wrote:
+>> On 10/23/2025 6:38 PM, Jason Gunthorpe wrote: 
+>>> On Tue, Oct 21, 2025 at 01:43:23AM +0000, Suravee Suthikulpanit wrote:
+>>>
+>>> (though how does IDENTITY on a device with a PASID installed work?)
+>>
+>> Probably set_dte_identity() should call  set_dte_gcr3_table () and update
+>> relevant fields.
+
+Actually, PASID would not work with IDENTITY since it has no page table 
+(i.e. iommu=pt means DTE[Mode]=0 and does not have host table pointer).
+PASID only work with GCR3 table.
+
+Therefore, it does not make sense for set_dte_identity() to call 
+set_dte_gcr3_table(). Each one should be stand alone.
+
+Thanks,
+Suravee
+
+> Yeah, maybe so, though it might be best if the caller can detect it
+> and have it call both functions instead of trying to bury it.
 > 
-> Nothing, it's perfect. :-D
-
-Yeah. :-P
-
+> There is a fair number of variations here as you have
+> blocked/identity, RID/PASID attach and PASID detach to all consider.
 > 
-> > > +	ALTERNATIVE_2 "",								\
-> > > +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
-> > 
-> > So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
-> > 
-> >         if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
-> >             kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-> >                 flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
-> > 
-> > So how static and/or dynamic is this?
+> It would be nice if it worked properly, identity on RID while PASID is
+> in use has a strong real use case.
 > 
-> kvm_vcpu_can_access_host_mmio() is very dynamic.  It can be different between
-> vCPUs in a VM, and can even change on back-to-back runs of the same vCPU.
+> Jason
 
-Hmm, strange. Because looking at those things there:
-
-root->has_mapped_host_mmio and vcpu->kvm->arch.has_mapped_host_mmio
-
-they both read like something that a guest would set up once and that's it.
-But what do I know...
-
-> > IOW, can you stick this into a simple variable which is unconditionally
-> > updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
-> > otherwise it simply remains unused?
-> 
-> Can you elaborate?  I don't think I follow what you're suggesting.
-
-So I was thinking if you could set a per-guest variable in
-C - vmx_per_guest_clear_per_mmio or so and then test it in asm:
-
-		testb $1,vmx_per_guest_clear_per_mmio(%rip)
-		jz .Lskip_clear_cpu_buffers;
-		CLEAR_CPU_BUFFERS_SEQ;
-
-.Lskip_clear_cpu_buffers:
-
-gcc -O3 suggests also
-
-		cmpb   $0x0,vmx_per_guest_clear_per_mmio(%rip)
-
-which is the same insn size...
-
-The idea is to get rid of this first asm stashing things and it'll be a bit
-more robust, I'd say.
-
-And you don't rely on registers...
-
-and when I say that, I now realize this is 32-bit too and you don't want to
-touch regs - that's why you're stashing it - and there's no rip-relative on
-32-bit...
-
-I dunno - it might get hairy but I would still opt for a different solution
-instead of this fragile stashing in ZF. You could do a function which pushes
-and pops a scratch register where you put the value, i.e., you could do
-
-	push %reg
-	mov var, %reg
-	test or cmp ...
-	...
-	jz skip...
-skip:
-	pop %reg
-
-It is still all together in one place instead of spreading it around like
-that.
-
-Oh well.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
