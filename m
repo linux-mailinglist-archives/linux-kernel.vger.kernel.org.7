@@ -1,106 +1,163 @@
-Return-Path: <linux-kernel+bounces-897647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF9EC538B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:59:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E719C534AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFDF5665DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:55:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D67D351805
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A723446DE;
-	Wed, 12 Nov 2025 15:51:49 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1673451B4;
+	Wed, 12 Nov 2025 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="lLxLzmjm"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D624E4A1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED422345721;
+	Wed, 12 Nov 2025 15:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962708; cv=none; b=RjzWn3jEFo++TtPSvoWAYS17nnr0WeZIs+ENRO8DIX7A+p17iVOo6nJLSJ9ebLBlqugwMS+wDFLVgOpf5y+3kdHPKNbasqsrcI40pid0KZ9oHCb/7vGiUabDVIqo1Qf7pGqD2ZER5K/GVdsWDYadpCN5FMQSPA8Dp5/2v1oaNag=
+	t=1762962716; cv=none; b=qESQHRASZQ4VF5vQEs78fVV79Q+HgRG58gm8/h6/uZMMKmz4yFhnYOZzpfT81fa/DzkOwVdpVuNFyeqHcU85JViEkVDaJ2NJOvJfP0UilXrmXfz1fNkLi22KlJjRVap8RysM6lKCppAaPDoSGwPLLou40MoAThE/PspxQTxKumo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962708; c=relaxed/simple;
-	bh=hj4uv6C7HwyDgg028stZUSgjlW5iEffkR5x53Vqmd9s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EJHh4nc+tXSyYFnMxmfhZbRiD/dNJiPKv4L3NWBH38sLmQjFF1eLWw5t2+UsoQ3Dox3d+O/3lBg+t8cQ3xgO2wOS3T9ZjC42XrWMlnbVaYqXUeiKbnaW0CAtJnP19PgphDx3B3PjrR/pdYV4jA6e9RLiVsXpheWVwePiFyhlw18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433692f7479so26147005ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:51:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762962706; x=1763567506;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jYPqfz0aNwUGvgLGLiiMApttmmpUaWtKimeerB9Akps=;
-        b=OSQ3F6uCW4WoBGF8eLIJMXS8THkPpKQ1vv6PoHnH2SNFNsrhbBdHqLpDb5rs0XL7sg
-         blnqCVPf0u2qm0XggkAbqind55E/RZAuGFxsnYfPZe48+MDWfyiHW7HRF2WexFaklpid
-         DEvJtlbF9xG8EtfHnF4u/8Y8KdQFlp42cxopkx5Wv8PaCPxuspNAJWVvl0GUMetKsl0v
-         qx8nbjk32KEdu6uRscL4ZxDEvrKw+iuDJuNETeRjwzqfVqITZQ25+/6vVshilvw87Age
-         tSzIlRnJqachRNqiXTAAQlPnZ0Emo1wcLqviYJ6fn6oqg/q3ivX3NyVPefsbM55/LTMU
-         Pbtg==
-X-Gm-Message-State: AOJu0YyzVzJFCAI/FpvQU5KWOW9ngtM86bpI/UDXHhdx5TElt4BPzsD6
-	2sHTr60T162QO5t2TlZElnYrRbuR7caJQbY3rMK56O6HtZj9nCi8HBbAmF1aMptD9vhOZTikxCO
-	wMku+m+4JK5WpzWEn9COHBcOnq0jy+KxMOj1/wNua12x1fk5ZiZoenAO57z4=
-X-Google-Smtp-Source: AGHT+IHJAr8D2zbW8wFTvmr/T+9das2IIT+yXiFIfGlG6x49fqHIPWbBk3uiO0GDgLnQQQ9LWUqIe5/gvWmW2QSP4uwdOLHefUyU
+	s=arc-20240116; t=1762962716; c=relaxed/simple;
+	bh=XVJg2nVd4r3tM/7VXoGhscaG9rd8eM2TqSjjk7vRcoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6LAzN7YfuuqDEGHPvbAwqdLSuacagKfl+yw3xlh2Gh9LhIMdlcmFH1e4B2KBz+ayabVYTITKFhqxGhsJrWsBSfTOn95Q8BnupGhr7ab6mWKVd1VO3BlDYy/js7GBssroDcivBnTI4/7tV445K6Bqv7iPyB1XSyi3yFOSDrRAyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=lLxLzmjm; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de4574e.dip0.t-ipconnect.de [93.228.87.78])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id DCC4C2FC0061;
+	Wed, 12 Nov 2025 16:51:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1762962710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DDhhaEf5IZaUj+JRHazg5tIseXYULODwGRF5L2wNrvM=;
+	b=lLxLzmjmvYFvsGXe5fpSn7Ks5N+7FciUIpc3kSKCMBfkOofuZePoT9/ixnds04NDn2kPBo
+	ZC0N4e2+qmoeymWZUXs1cC9NMiJSxj8eT6+LlQ6llw2dQE1aibxVVL3eWUE9zm49e+ll4N
+	iGbzWqpxV/waeb1jK4LajILdzE0uVyo=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <ae75b604-9bdb-430a-bd4d-8e1e669cf4d8@tuxedocomputers.com>
+Date: Wed, 12 Nov 2025 16:51:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3103:b0:433:7e2f:83c5 with SMTP id
- e9e14a558f8ab-43473d08c88mr50100545ab.3.1762962705838; Wed, 12 Nov 2025
- 07:51:45 -0800 (PST)
-Date: Wed, 12 Nov 2025 07:51:45 -0800
-In-Reply-To: <68f6a48f.050a0220.91a22.0453.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6914ad11.a70a0220.3124cb.0007.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
-From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hid/hid-multitouch: Keep latency normal on deactivate
+ for reactivation gesture
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251112144837.499782-1-wse@tuxedocomputers.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <20251112144837.499782-1-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
-
-Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8=
-021d
-Author: vnranganath.20@gmail.com
-
-#syz test
-
-On Wed, Nov 12, 2025 at 9:03=E2=80=AFPM syzbot
-<syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com> wrote:
+Am 12.11.25 um 15:47 schrieb Werner Sembach:
+> Uniwill devices have a built in gesture in the touchpad to de- and
+> reactivate it by double taping the upper left corner. This gesture stops
+> working when latency is set to high, so this patch keeps the latency on
+> normal.
 >
-> Hello,
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+> Cc: stable@vger.kernel.org
+> ---
+> V1->V2: Use a quirk to narrow down the devices this is applied to.
+> V2->V3: Fix this patch breaking touchpads on some devices.
+>          Add another device ID.
 >
-> syzbot tried to test the proposed patch but the build/boot failed:
+> I have three Uniwill devices at hand right now that have at least two
+> physically different touchpads, but same Vendor + Product ID combination.
+> Maybe the vendor uses this product ID for all i2c connected touchpads, or
+> it is used as some kind of subvendor ID to indicate Uniwill?
 >
-> failed to apply patch:
-> checking file net/wireless/util.c
-> Hunk #1 FAILED at 963.
-> 1 out of 1 hunk FAILED
+> To be able to really narrow it down to Uniwill only devices I would need to
+> check DMI strings, but then I will probably narrow it down to much as I
+> only know what we at TUXEDO use there.
 >
+>   drivers/hid/hid-multitouch.c | 26 +++++++++++++++++++++++++-
+>   1 file changed, 25 insertions(+), 1 deletion(-)
 >
->
-> Tested on:
->
-> commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbbd3e7f3c2e28=
-265
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D878ddc3962f792e=
-9af59
-> compiler:
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1261465858=
-0000
->
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 179dc316b4b51..ed9eb4e0d5038 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
+>   #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
+>   #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
+>   #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
+> +#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
+>   
+>   #define MT_INPUTMODE_TOUCHSCREEN	0x02
+>   #define MT_INPUTMODE_TOUCHPAD		0x03
+> @@ -211,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
+>   #define MT_CLS_WIN_8_DISABLE_WAKEUP		0x0016
+>   #define MT_CLS_WIN_8_NO_STICKY_FINGERS		0x0017
+>   #define MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU	0x0018
+> +#define MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE	0x0019
+A college realized that at some points in the code some, but not all, of the 
+MT_CLS_WIN_8* classes are checked for directly. Should I add my new class there 
+too?
+>   
+>   /* vendor specific classes */
+>   #define MT_CLS_3M				0x0101
+> @@ -330,6 +332,15 @@ static const struct mt_class mt_classes[] = {
+>   			MT_QUIRK_CONTACT_CNT_ACCURATE |
+>   			MT_QUIRK_WIN8_PTP_BUTTONS,
+>   		.export_all_inputs = true },
+> +	{ .name = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
+> +		.quirks = MT_QUIRK_ALWAYS_VALID |
+> +			MT_QUIRK_IGNORE_DUPLICATES |
+> +			MT_QUIRK_HOVERING |
+> +			MT_QUIRK_CONTACT_CNT_ACCURATE |
+> +			MT_QUIRK_STICKY_FINGERS |
+> +			MT_QUIRK_WIN8_PTP_BUTTONS |
+> +			MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
+> +		.export_all_inputs = true },
+>   
+>   	/*
+>   	 * vendor specific classes
+> @@ -1998,7 +2009,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
+>   
+>   static void mt_on_hid_hw_close(struct hid_device *hdev)
+>   {
+> -	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+> +	struct mt_device *td = hid_get_drvdata(hdev);
+> +
+> +	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
+> +		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
+> +	else
+> +		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+>   }
+>   
+>   /*
+> @@ -2375,6 +2391,14 @@ static const struct hid_device_id mt_devices[] = {
+>   		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
+>   			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
+>   
+> +	/* Uniwill touchpads */
+> +	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
+> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+> +			USB_VENDOR_ID_PIXART, 0x0255) },
+> +	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
+> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+> +			USB_VENDOR_ID_PIXART, 0x0274) },
+> +
+>   	/* VTL panels */
+>   	{ .driver_data = MT_CLS_VTL,
+>   		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
 
