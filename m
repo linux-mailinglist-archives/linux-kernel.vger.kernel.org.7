@@ -1,125 +1,227 @@
-Return-Path: <linux-kernel+bounces-897798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3459C53BF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F858C53A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE184545898
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:05:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 428E7504019
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794D5343D64;
-	Wed, 12 Nov 2025 17:04:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4C434029C;
+	Wed, 12 Nov 2025 17:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tD69oBnI"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A65332EBA;
-	Wed, 12 Nov 2025 17:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB9032AAA7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967093; cv=none; b=BaX1vWplEKrA3cW1DMghdyermvm07DgAQktMuRqBNaJ/73m47IKe5Z6yfo0EG8TC3ooYeZmAxUznwZe6HFPymoFa75bJW8tDiYAYTYzMxPcmCtM7MjHr95AKVUWRMy7XIg0+7F0lqbXD/rBhDguXtM5t9gliQDLgmyHcCVVfa24=
+	t=1762967078; cv=none; b=ToTIPG0s7P5nARQYiao79kOz7TO8vo56s85tFlRzRhu3+w9+27o/31YY/Ok7Gn6ykxvgOkhtDo6Sm8H0vCqsMS0gXRJTXh0DVnCR1YMWb3hej1+D5q3iBmcvr89SpubkbeWnNq8LXHSiuZ/OOdEQNoeh50f+f4pJxTyFVkHKiqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967093; c=relaxed/simple;
-	bh=uH5f/z6kIZQRO+ui34K6fjH6ottwP5CE2hbwd5ZO8kE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tC6OY+5ETKLvywloqC8iA3AfiUWwMUO2iUMnxtYTY0JLwgPggLGvUv6a7ae0hK9Ev9hU1OxD2CL5V6/ydOOEDeKl0Tkk9cggm6vBstQDuucNJfNGD++bpvNYneaf4kiQuETDDJ1pX+oHY55hKZC2Bwg1ieZLTYD8umJgX5ykR9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: af970e5abfe911f0a38c85956e01ac42-20251113
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP
-	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU, AMN_GOOD
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:5ea7b5bf-b2d2-49e6-bfcb-634d4a9bd88c,IP:10,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:5
-X-CID-INFO: VERSION:1.3.6,REQID:5ea7b5bf-b2d2-49e6-bfcb-634d4a9bd88c,IP:10,URL
-	:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:5
-X-CID-META: VersionHash:a9d874c,CLOUDID:aadf697c3eae803522b2be0009bd78f9,BulkI
-	D:251113010444QKF7Z84X,BulkQuantity:0,Recheck:0,SF:10|66|78|102|850,TC:nil
-	,Content:0|15|50,EDM:5,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: af970e5abfe911f0a38c85956e01ac42-20251113
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(220.202.195.89)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1474637080; Thu, 13 Nov 2025 01:04:44 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: robin.clark@oss.qualcomm.com
-Cc: sean@poorly.run,
-	konradybcio@kernel.org,
-	lumag@kernel.org,
-	abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH v2] drm/msm: Fix NULL pointer dereference in crashstate_get_vm_logs()
-Date: Thu, 13 Nov 2025 01:04:11 +0800
-Message-Id: <20251112170411.479243-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762967078; c=relaxed/simple;
+	bh=fJ2UpAn9dwzJY1Yc747IUbNViB6Q4h6iljBno2rlX2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=riJjkRe7MhngglZR/yb7DjwfVgcVd2bIpaCRpvtXkw/MKN8veW6CaNzb9oPqNzclcSG2FpNLxM/LssGZlZd9uMgFekSOwpGc74FONQVZD57UvCItNj7aAgPTrLyLEb/wtRdiqhJdel6wLLLe7RGG9yb3O9sb7EAKoZ3uDp0dna4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tD69oBnI; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2980343d9d1so200965ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:04:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762967076; x=1763571876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kTmAoxf6PxaYgcSEvKFeK7hyUGw5oXTHUHETAvMAchc=;
+        b=tD69oBnI+oJOUxlWiSrz96IifgE3pVOUvLrSLQMwV3udqeYMUQYyfiA/Tks7aYUmDw
+         U9dqhpovnS3f6y8ms7rYgTbLOCXcrfT2Lnt45bQN0uKkZWeG2dFMt5Yks1apnu3M2Bc2
+         vz+fobRaQ0lY985CWi2NMY0zRNiemqCHY3qHtfjYmUDU/nj2f3F/trkkjrA9N2er1kzq
+         VNr7LXbndB5Y4R6Nsuowpxq1RlOYFVC7w29AeQ11Pu7zWZ7F6Secp3knDJtS50YXfNLg
+         TOPKpiAfn20ynJYGaol5qsihOBZNWnCGXx0iFcZeQQKBpaQM2JVbfLP+dIHCkAdmkFoY
+         wyog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762967076; x=1763571876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kTmAoxf6PxaYgcSEvKFeK7hyUGw5oXTHUHETAvMAchc=;
+        b=Chf6xvqn9ef0KWN5uqSv/aRJN/oLVCizx9QvlvXODRCnLNsWkHsPT4g2sjRHpoWye/
+         f3Hr5zk7cnzmaT4EBdsTeU3iHEJ+fJIPTEDRmDm0rmqwYofeV3Ne+L5sTXl9hgYLQDiZ
+         fJ5ojNEq2J+DUeo6oGsoYh/4Hi/c4xGOkDlyMVoWCYe1hRjxKYs+stNXAz+rZudrKPvD
+         SYP7ZjeUuMfrLFhDSsgwh1L36b62LWzeHeFTYd1iJo7qCRyzuvXDJ6Y6j9nx4FxqJ7VK
+         7UsLJZvGq7pVI1LGbIXmZDTQ2SgI81j9lpT9IUyH/89tUFQ8wbVpFdzunVzbBDq0zGey
+         9uSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXQHuFj+hdBy4oR3CMsArqwGJQEkABvwhV8nSCfJhYvRRA7xPPDRbUtyGPcm1oGdnZq06eJEyT+GJHxf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJgvZEGFd4vXuvU3VemlG7HdrOPH2V1/ZBBUv23E6Xw3bb6+G+
+	BOAXW0TiiFrzuhtJwl5sFLQQTlKXadj9viR3PWZKZ9tAUE19qfxsmUC30GwOccjZxyhTvpAW8rI
+	pZ6FvH408cpro0AsbazScAD/COKAiwiYbTYEjhD1h
+X-Gm-Gg: ASbGnctGL+M2Ftc0Dub+T4gXvyp7mmNhO4ftu51Z2W9Gc5OsLyRHRgQ+7WqX092D/k0
+	h5kfd/MrIAa0+ajgZOBS8tKJQiUaZCFcVu54Y/791233Mq8OOvBXRSTjwrdOsFJbYeiDa8lA7F3
+	mkZ/Q4uqhAtnrAILRX47haOLAvTilMoofqCksbxqCwAFAT0PnJ6UyYB5Ws+5Etb1vO+ol00h65t
+	capT/PBtQOzRmQ1ahjVdWBll4vA/Kl2wGF/xEGynqUUF+SE1oWVcoG1b7zxxBJXSKOk7vsVINJ6
+	/fRhbfjYlTiL+lPg6ayeDPnqDQ==
+X-Google-Smtp-Source: AGHT+IFXzM7Jyq/bZmLxDHJHOzz00TDAilxoWOVvrPTZb7+provUty+VWoLRgHERXxVpYKhELUVxNKe2owKDR8Bihek=
+X-Received: by 2002:a17:903:41d1:b0:290:d7fd:6297 with SMTP id
+ d9443c01a7336-2984f7a2f70mr5997435ad.2.1762967075871; Wed, 12 Nov 2025
+ 09:04:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251112164823.80168-1-zide.chen@intel.com>
+In-Reply-To: <20251112164823.80168-1-zide.chen@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Nov 2025 09:04:20 -0800
+X-Gm-Features: AWmQ_bkU64JSOZPD_LuedZUIfutBVM1nGmzxJZGEqecl7PeaJ94ZuGni1zqCCTw
+Message-ID: <CAP-5=fXWe7TJy_28gEyzJdFnE0USAMD6jDbgkG_W2+EtO_evSg@mail.gmail.com>
+Subject: Re: [PATCH V2] perf test: Add a perf event fallback test
+To: Zide Chen <zide.chen@intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, thomas.falcon@intel.com, 
+	dapeng1.mi@linux.intel.com, xudong.hao@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-crashstate_get_vm_logs() did not check the return value of
-kmalloc_array(). In low-memory situations, kmalloc_array() may return
-NULL, leading to a NULL pointer dereference when the function later
-accesses state->vm_logs.
+On Wed, Nov 12, 2025 at 8:55=E2=80=AFAM Zide Chen <zide.chen@intel.com> wro=
+te:
+>
+> This adds test cases to verify the precise ip fallback logic:
+>
+> - If the system supports precise ip, for an event given with the maximum
+>   precision level, it should be able to decrease precise_ip to find a
+>   supported level.
+> - The same fallback behavior should also work in more complex scenarios,
+>   such as event groups or when PEBS is involved
+>
+> Additional fallback tests, such as those covering missing feature cases,
+> can be added in the future.
+>
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Signed-off-by: Zide Chen <zide.chen@intel.com>
+> ---
+> v2:
+> - Incorporated Namhyung's suggestion to change cycles:ppp to cycles:P
+>
+>  .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
+>
+> diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/p=
+erf/tests/shell/test_event_open_fallback.sh
+> new file mode 100755
+> index 000000000000..9c411153c01b
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/test_event_open_fallback.sh
+> @@ -0,0 +1,86 @@
+> +#!/bin/bash
+> +# Perf event open fallback test
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +skip_cnt=3D0
+> +ok_cnt=3D0
+> +err_cnt=3D0
+> +
+> +cleanup()
+> +{
+> +       rm -f perf.data
+> +       rm -f perf.data.old
+> +       trap - EXIT TERM INT
+> +}
+> +
+> +trap_cleanup()
+> +{
+> +       cleanup
+> +       exit 1
+> +}
+> +
+> +trap trap_cleanup EXIT TERM INT
+> +
+> +perf_record()
+> +{
+> +       perf record "$@" -- true 1>/dev/null 2>&1
+> +}
+> +
+> +test_decrease_precise_ip()
+> +{
+> +       echo "Decrease precise ip test"
+> +
+> +       perf list pmu | grep -q 'cycles' || return 2
 
-Fix this by checking the return value of kmalloc_array() and setting
-state->nr_vm_logs to 0 if allocation fails.
+nit: I don't think this test can ever fail.
 
-Fixes: 9edc52967cc7 ("drm/msm: Add VM logging for VM_BIND updates")
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
----
-Changes in v2:
-- Simplify the failure exit path as suggested by Rob Clark.
-- Link to v1: https://lore.kernel.org/all/20251020113708.7403-1-hehuiwen@kylinos.cn
+Reviewed-by: Ian Rogers <irogers!@google.com>
 
- drivers/gpu/drm/msm/msm_gpu.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks,
+Ian
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 17759abc46d7..e23f70fbc8cb 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -348,6 +348,10 @@ static void crashstate_get_vm_logs(struct msm_gpu_state *state, struct msm_gem_v
- 
- 	state->vm_logs = kmalloc_array(
- 		state->nr_vm_logs, sizeof(vm->log[0]), GFP_KERNEL);
-+	if (!state->vm_logs) {
-+		state->nr_vm_logs = 0;
-+	}
-+
- 	for (int i = 0; i < state->nr_vm_logs; i++) {
- 		int idx = (i + first) & vm_log_mask;
- 
--- 
-2.43.0
-
+> +
+> +       if ! perf_record -e cycles; then
+> +               return 2
+> +       fi
+> +
+> +       # It should reduce precision level down to 0 if needed.
+> +       if ! perf_record -e cycles:P; then
+> +               return 1
+> +       fi
+> +       return 0
+> +}
+> +
+> +test_decrease_precise_ip_complicated()
+> +{
+> +       echo "Decrease precise ip test (complicated case)"
+> +
+> +       perf list pmu | grep -q 'mem-loads-aux' || return 2
+> +
+> +       if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; the=
+n
+> +               return 1
+> +       fi
+> +       return 0
+> +}
+> +
+> +count_result()
+> +{
+> +       if [ "$1" -eq 2 ] ; then
+> +               skip_cnt=3D$((skip_cnt + 1))
+> +               return
+> +       fi
+> +       if [ "$1" -eq 0 ] ; then
+> +               ok_cnt=3D$((ok_cnt + 1))
+> +               return
+> +       fi
+> +       err_cnt=3D$((err_cnt + 1))
+> +}
+> +
+> +ret=3D0
+> +test_decrease_precise_ip               || ret=3D$? ; count_result $ret ;=
+ ret=3D0
+> +test_decrease_precise_ip_complicated   || ret=3D$? ; count_result $ret ;=
+ ret=3D0
+> +
+> +cleanup
+> +
+> +if [ ${err_cnt} -gt 0 ] ; then
+> +       exit 1
+> +fi
+> +
+> +if [ ${ok_cnt} -gt 0 ] ; then
+> +       exit 0
+> +fi
+> +
+> +# Skip
+> +exit 2
+> --
+> 2.51.1
+>
 
