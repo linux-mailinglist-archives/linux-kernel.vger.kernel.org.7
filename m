@@ -1,104 +1,84 @@
-Return-Path: <linux-kernel+bounces-897613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6354FC5377A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:42:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA091C538D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7141C547C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1DA503938
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B23346E41;
-	Wed, 12 Nov 2025 15:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uB+6vhcX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EA733E354;
+	Wed, 12 Nov 2025 15:42:05 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00FF346A0C;
-	Wed, 12 Nov 2025 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4408833D6EE;
+	Wed, 12 Nov 2025 15:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962167; cv=none; b=o/Mng+nFkDu2Pm33T+ybkqC84AtGaRb2fkKHeM5G37/QQRmTfLZmssqh8m76CbTtpc+ir0uQBisiQLKyCTKwH8siPtXg/IeeIAMhFzbEn1EIKhLmu3RhAMHQ2XjawWRwQfBr9icO87dD2mf9QqTbDwj1OmbijB1aOxyfwFVRV9M=
+	t=1762962125; cv=none; b=FOCP4BZ5lweqNtr4CYKIB1PrCaClgjLuP+V/Kyf+w8ly789qdXJJ8YOZ+A5B0Pw/KxF0dQuBA4OIHivvP2/7LGObKkVqvj5cjTBd1mIbskOjv7G72s4cshVEO6N5XTTs0REyDjmsoQHt62StItM56kirC+if2Y/Je1E1u+oLaLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962167; c=relaxed/simple;
-	bh=FBvB31rC2k0tLRJF6QYnzPfHs35FSu/tgti7HSN3rF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eDB4qkVa5sO5/c5o4D6sMeaSyD7lh9sj374wmDwssEtRgfKH2otISfEYu+3B0ettOD+deojEpf2wbMKsaD52yRzEnuj3JWlpj1sJ9fTPdwThqg+1kVLR+OLSN0QnSsJjpk6SqFqMkU6I2ORIM4FBqBVKzi7Z7/HwNwxUUQvsUtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uB+6vhcX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9C4C4AF09;
-	Wed, 12 Nov 2025 15:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762962167;
-	bh=FBvB31rC2k0tLRJF6QYnzPfHs35FSu/tgti7HSN3rF0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uB+6vhcXgD2N/irb6B7wVJSD0ZCkAohTi91IssEJMN5ne6QnsOoRIjSATHwXszAJP
-	 KtwCRdxqtDCAbw63HqvPiHcVK1/ollFG5R5GF1vTt0cQkZUoiIBqEKDyZIVarM2GE7
-	 byMmioNTmy+MlAzqC5Ia3j5zEGYbKg4lS5S+CoAgb2jLfGCpRIA3cU620h3SF7I/Nz
-	 8hCl91wRfHQSzkBePKgMxNaSU8UQBiG2RasFpYimQp7eFui0xGIVKg5OP2UcAWld4V
-	 vw+4DdO6eicqU0FkjKljiRcCsYseK7y1tWx0cwGjdlNPFhU4NeET2lzLv17Q6hvz5V
-	 Io/xl7FbXk5ag==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	damon@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 9/9] Docs/mm/damon/maintainer-profile: fix grammartical errors
-Date: Wed, 12 Nov 2025 07:41:12 -0800
-Message-ID: <20251112154114.66053-10-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251112154114.66053-1-sj@kernel.org>
-References: <20251112154114.66053-1-sj@kernel.org>
+	s=arc-20240116; t=1762962125; c=relaxed/simple;
+	bh=3gkC8Ve81YewfEXHoyC7FppINRYMWESv+WWvKHpsTc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GI+IenHTn2G/gjkvhZjCQgiNRt/ZykNJg/OAhVG66xBr4ljlXCMuAmecK0UTxZ6sjMTAFJWmetvidTvZ9UY769iWxozP+3EqXGkH7sTg9R/NRss43auMrhu1o/DKLFIfUTXT/DumtdXBQi3t3/TZ6yqyWmOZpzTGWBGzRy25RRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 64F28598A0;
+	Wed, 12 Nov 2025 15:42:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 3030820014;
+	Wed, 12 Nov 2025 15:41:58 +0000 (UTC)
+Date: Wed, 12 Nov 2025 10:42:11 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yongliang Gao <leonylgao@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Yongliang Gao <leonylgao@tencent.com>,
+ Huang Cun <cunhuang@tencent.com>, frankjpliu@tencent.com
+Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251112104211.353de586@gandalf.local.home>
+In-Reply-To: <CAJxhyqDCFRT_fPWHb67x-PUu+Om91UrbrQEifcF7m+dkZ35dqA@mail.gmail.com>
+References: <20251015114952.4014352-1-leonylgao@gmail.com>
+	<20251110183854.48b33b50@gandalf.local.home>
+	<20251111081314.j8CFfAD6@linutronix.de>
+	<20251111102739.2a0a64cf@gandalf.local.home>
+	<CAJxhyqDCFRT_fPWHb67x-PUu+Om91UrbrQEifcF7m+dkZ35dqA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: f5hodjosu7kzs6izjjatumcmjqz5f6r9
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 3030820014
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX181HVt/Jt8xNZPVnRShk00n5xvMLvUt8L4=
+X-HE-Tag: 1762962118-722198
+X-HE-Meta: U2FsdGVkX18an0i7HOroGuJoECsASm+vl42v8JskrQGG4nqeTyt/Ejqax/Uo1nidWrZ37B0KbKZxCRMHhwBCyg6KOfc7cNVGZNKlVgg0/EOk1Ly/q02GL5kic0wcz8DNAKIGLxlMrnOhCwmbZmYGcfbrWDt9fks2omNSf7sUABUqi2BbD284lEOozpJcNArgp6pq4r7kNrkyVfK2erZ2+OljNU9+PCsvpt8rWJNyVT3ZAJMAexyVRu36u+kHkXmKPYPDXlx4/PsCPaCwchEq+3wfLKB4Op8ihBqk7apBJnAKXOWB0w4v4K/PpGd54gF60Sm9M/J0cRhwyGyeSIi7IKZVk3bIfOddUDdl+x+HxnMaf54QJueqzQ==
 
-Fix a few grammartical errors on DAMON maintainer-profile.
+On Wed, 12 Nov 2025 13:27:10 +0800
+Yongliang Gao <leonylgao@gmail.com> wrote:
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/mm/damon/maintainer-profile.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Thank you for your detailed response and the proposed RCU-like approach.
+> 
+> I've looked into using a regular seqlock instead of the current
+> implementation, but as you pointed out, the write side is indeed a
+> critical path. More importantly, I found that even with seqlock, the
+> write_seqlock() function internally uses spin_lock() which on
+> PREEMPT_RT gets converted to an mutex. This would cause the same
+> issues we're trying to avoid - potential sleep in atomic contexts.
 
-diff --git a/Documentation/mm/damon/maintainer-profile.rst b/Documentation/mm/damon/maintainer-profile.rst
-index f1aed6e55d31..e761edada1e9 100644
---- a/Documentation/mm/damon/maintainer-profile.rst
-+++ b/Documentation/mm/damon/maintainer-profile.rst
-@@ -27,8 +27,8 @@ maintainer.
- 
- Note again the patches for `mm-new tree
- <https://git.kernel.org/akpm/mm/h/mm-new>`_ are queued by the memory management
--subsystem maintainer.  If the patches requires some patches in `damon/next tree
--<https://git.kernel.org/sj/h/damon/next>`_ which not yet merged in mm-new,
-+subsystem maintainer.  If the patches require some patches in `damon/next tree
-+<https://git.kernel.org/sj/h/damon/next>`_ which have not yet merged in mm-new,
- please make sure the requirement is clearly specified.
- 
- Submit checklist addendum
-@@ -99,5 +99,5 @@ Schedules and reservation status are available at the Google `doc
- <https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing>`_.
- There is also a public Google `calendar
- <https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t>`_
--that has the events.  Anyone can subscribe it.  DAMON maintainer will also
--provide periodic reminder to the mailing list (damon@lists.linux.dev).
-+that has the events.  Anyone can subscribe to it.  DAMON maintainer will also
-+provide periodic reminders to the mailing list (damon@lists.linux.dev).
--- 
-2.47.3
+I believe there is a raw_read_seqcount() functionality that is safe for
+PREEMPT_RT. Have you looked into using that?
+
+-- Steve
 
