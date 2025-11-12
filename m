@@ -1,357 +1,206 @@
-Return-Path: <linux-kernel+bounces-896685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC55EC50FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:43:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C269CC50FA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38B534EDDB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:41:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22F2734ACA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F5C2DE6F7;
-	Wed, 12 Nov 2025 07:41:36 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFE635CBC5;
-	Wed, 12 Nov 2025 07:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF7A2C21CC;
+	Wed, 12 Nov 2025 07:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YWIyzax9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bEwNj5dU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C522DA76A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933295; cv=none; b=s0IfG8F05Yo6VpzSFeg0S35YtAvSb78gTzujR5TEGuy8r9irIXcAspF14yfr05qQnujqg6Dupo1jB1MzazenxF5GMwmpVuMbP12Dr0mBtZiru9KzWbmWZ3WBX+bkGZ+MA18c2XMVNdA421ARZzk2jEkQ7mX4kNIOOnAbEngCOSM=
+	t=1762933343; cv=none; b=AignYhpfYKnntRAwUNx3wjY+3+hCqnCrexPymzaNRTeh48hapVnizCv+2bXw7RCkgkhP5dXT5hL7Nis549YPk0ETrPUXNSQ7IgnfHOF1JI5Rrk4ZDZAqaTBtvEwMSBFTb63YCLu2/liWRWUqSU2QH3gP0bRgf0egJ4s6HjvB5kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933295; c=relaxed/simple;
-	bh=i3IPLPbblBL///PR2REpEMhn05zkGbRtvoLEmg418Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tfWPNUW/FcqRZ/Q1gGQha88vg5lkRAAXZBDfsGzgKwmUoKlf9HI7rt5x40cvYUAJ5sw9tkQWOPavDv0VxtJS5g3h915qgfBQFAE1eK7NK9/ruM/VjyflnmMpQj9sub62zR7aZZeVXSccnKbwN/z89ePeiTrq4bUftEsTqhfNmJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-5a-69143a24e040
-Date: Wed, 12 Nov 2025 16:41:18 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
-	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
-	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
-	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	ilias.apalodimas@linaro.org, willy@infradead.org,
-	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
-	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
-	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
-	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
-	dtatulea@nvidia.com
-Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
- page pool for net_iov not page-backed
-Message-ID: <20251112074118.GA31149@system.software.com>
-References: <20251103075108.26437-1-byungchul@sk.com>
- <20251103075108.26437-2-byungchul@sk.com>
- <20251106173320.2f8e683a@kernel.org>
- <20251107015902.GA3021@system.software.com>
- <20251106180810.6b06f71a@kernel.org>
- <20251107044708.GA54407@system.software.com>
- <20251107174129.62a3f39c@kernel.org>
+	s=arc-20240116; t=1762933343; c=relaxed/simple;
+	bh=qnRVyznIp2/9hXbw7y6c4CxmpQo/GrGH0lc7ReCMlUU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lC1bRFDYQJZo1rGNcwGj6sdv9CYwIUSekpRkUp5QX9sYxuCihnAOhvry2pb8jBy4ci7PkSxWTE9Cm6LXJ3jpRucChP/nxGMZHEyjJKBhLu13JTtiP2PVLScnCzz79GW2gk8aIo3axqmG02xoAzPW/BYWGLz52tUhydJV03vD260=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YWIyzax9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bEwNj5dU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC1HZi23683710
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=SRS46F7+myfHHV7nZlBsNh
+	Dj7nA6bojeVEV1V5g3wDE=; b=YWIyzax9YUBwsaSonDzsKghEcyFx6/U1y4L8mW
+	ban0xVOBCUoKlTcce2IG29NbgRhaRRyUmGpin5juhoFOuFVbSjYptMM6Lipu2rIY
+	x5OLA4j+ps3itXz63ERxFFoxJZalA6TWi5DHG7zYXp00dbdntiP9eSP98L2Lqsgz
+	T8er4KWq2XcUdn4WT4ly+2ZcbpmBnIVfY/vW/u3tRKBEgGR8y7qBJdvFBxkmty3p
+	5cONehSYKPf7sIcF2ig1VeJKktqd0D6TQnYoRGkeT4V4A/5AaB7O8yZijBaJbiud
+	jH4YOEq9HhHvRwirPNmZ06dcM0Z33AWvGoGa1MJ3WPWvKKZA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acgeu102h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:16 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297f8a2ba9eso15890065ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:42:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762933336; x=1763538136; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRS46F7+myfHHV7nZlBsNhDj7nA6bojeVEV1V5g3wDE=;
+        b=bEwNj5dUW2C0cGf1qM795quWS6aigjAGCEFw2t76ALB3sSYofBRM6auJtB6jOpa8Sl
+         KHt+2pmTqlBiUZ9/NHxu3Aufe0SXYSeuXNd44jHKuT+BUvkTc0b/0bAEhFy3GL2luLU5
+         HB5mpY9qoSeQEMKr0TASGQCqn9UePvOeXoWcyfkFwMeFWcdW0PkF6VQmqpnuDcjH14dW
+         7gwpsjdsyFjVUh2B/wgYcb+xp2ktHZqdCN5fRPvhVIOTdXiaxqlYqRM4WcdnLkf244Oo
+         GWpCYyTGU0gQlAcnveRaIgqv/UiSB9dWjWxntHZcTWENah/7MwACRU3RCpEbh482xrsA
+         +FAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762933336; x=1763538136;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SRS46F7+myfHHV7nZlBsNhDj7nA6bojeVEV1V5g3wDE=;
+        b=jkiHOoNEscG5gGH3MmMurjwZFAAJHH/RAZwECmsBsisuwBN9u0hsqBg9ZovAjtllUJ
+         s2QOAeAB2t9n/8WCVRo1px8Sdl2NUeHmFhH/Ol7643yJQVhNvuzMxMj0lSP/vtGb6cEx
+         7K8c/4FIpaSDYKOoikKN38jEBkWtABO7M5D1smSLjLxY7u1btm7dRN4eu4fvPeqEyY2H
+         qqX+sIC+kuPBT/cpHfYB19MQCzJA7u5iCUmklhX/2VWva1IDzGkwoDUK8BbHF2t9eHXp
+         z2G1m1xap9bCYQ9TcC6NVB1Lh3MaBdaxZbEiMTTAz9Owp0TwrhT3hp5oj3Mg6I68WXJX
+         bQ2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJHpltI+2NU4uEWFyX2DuDsaTd0SlPXcOcRgnMWAwcpIIGVbFYw6DaZYJRXjb8cvnlGJVSajjIKHUiu5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDPrxENqTCTUWjUC+HOPZ2nqd6HFS1BKQ4rI6WjPdQDy11MpzW
+	Gdld2wW+/cNx/gn/xjthWNH8mmv9UTsRCngECc5N1HBFP/IuaclZLECdSDwFKIDwrpBK7WRNCWN
+	pZ8fkunkkFVNhhsP0fnwgEypl2SaUKMmB/kDwNYRD4JQiWWf4phkj1Hy2t2zJxDxuywWavo8AEM
+	E=
+X-Gm-Gg: ASbGncse5iDOQmwquL3MAt9nJ3uA4KAH/TGMHES77SqvgBqg1LpmOcQKJ3zw6TFECpc
+	lzS/elaERrCSpFzzv2Fqy5BHtYBYzMAHCmsBS/lIxFuDT/6ddO5HgS48xIMjOz6mQys7zMnVfS5
+	MXoXdZMYaZ6IKDjBBlAiT66yn27ccsvbk5yF5e/00yozvQ50kOdQ2UAY8/lkYm0mCT7t5CA/I6V
+	Jjclnx2nHTtJnI0QmSOdkUx/ZGWx2vsAAomrTb3ISdMWdKr5c8VQX5ljb1NYSEPiJ1Q9Qy/f01r
+	2sfnlPYmwxjQRcqiwRIPWO/GDOnxO2xvw/15trhJ54k+bD2Pc/JkSje4jwVwGcDt0soHT6sgXxt
+	H1YGZAvx4n5SmYGc7yKoVk3CWK8yoWkI=
+X-Received: by 2002:a17:902:d4c3:b0:28e:756c:707e with SMTP id d9443c01a7336-2984eda94d4mr26638935ad.33.1762933335628;
+        Tue, 11 Nov 2025 23:42:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFY/P0lC5DPYonYSA0luXIUsZtxf8uIzeBz3ZJrJSJzy3UVuUdgdDSnbIliXj9jNA4GRFaMOw==
+X-Received: by 2002:a17:902:d4c3:b0:28e:756c:707e with SMTP id d9443c01a7336-2984eda94d4mr26638535ad.33.1762933335083;
+        Tue, 11 Nov 2025 23:42:15 -0800 (PST)
+Received: from hu-afaisal-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbf097esm20457705ad.32.2025.11.11.23.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 23:42:14 -0800 (PST)
+From: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 13:12:09 +0530
+Subject: [PATCH v3] arm64: dts: qcom: hamoa-iot-evk: Enable TPM (ST33) on
+ SPI11
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107174129.62a3f39c@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa1BMYRjH5z3n7DmnHavXFl76wKwME1IG8zCGPr7GZcwwY1wGh85otYUt
-	q8xgaQdFKypqLTbXbqaZjdpSLpWED5lMOgbdL4i2qcQq0mYM337zf575/Z8Pj8hqn6umivro
-	WNkYLRl0vJpTfxl3bV7gUn99iOW0L9gL8nnI+x4Ht5tdKvDkdzFgzy1CMOB5K8BIeTWC/qqn
-	PHRX9iG4njXIgr3WwsHXgh8slJR2IfiUcYeHjupWAfKca6DpVicHZSeLWWg9W8NDsmWIhXJP
-	jwDHXdmj4kKzAC+LrCpI+3GThWJzswCvSu08NOaPqKCzIpmDZ7YcDnrTq1hosoZBtWMSDL74
-	jKCqoJiBwTOXeajPLGXgXnm9AKl1Dh7aLE0I6ipbOUgfPsXDpWNWBEPfR5U9KQMquPSkUQgL
-	pscUhaeVn90svZvzhqGvM85xVHnwnKEltvcCdTgP0MLsIJqk1LHUmZvIU2ffeYG+e13G05qM
-	IY6WtCyhJa5+hiYn9PDrJm5WLwuXDXqTbJy/fIc6ovjC3H1dq+MST6SxZnRxRRLyEQleSH6e
-	rRH+sj03e4w5PJO03CwYYx7PIoriYb3sjwOJpTCTS0JqkcW9AslQGlXegR+OJb1u89iSBgOx
-	1TYgL2txIUPaL/j+ySeQZ5ntnJdZHESUXx+ZJCSOcgC5/Uv0xj44lFz92D7WOxHPII+KnjLe
-	LoIHRNJQ14L+HDqFPM5WuBSEbf9pbf9pbf+0DsTmIq0+2hQl6Q0LgyPio/Vxwbv2RjnR6Ifd
-	Ojy8xYX6Xq6vQFhEunEa0uan16okU0x8VAUiIqvz1wzvxHqtJlyKPyQb9243HjDIMRUoQOR0
-	kzULBg+Ga/FuKVaOlOV9svHvlBF9ppqRabHf1vmbG9a+WJa2cVH/pnOORM2T7mk9Rz5sq38Y
-	mjlZezEtfXvOyYDhspaE+3Mip+wv7X0054bbJR1tbl8Vid9fS3GvDKlNjd/BJdxL/eb+kjX9
-	Td/V4Lw93Xs2hEVq27aGb5I2WpeaX20Y8Z3ta73il5WzfL3ZMG/8oYOmDuoJDLmh42IipNAg
-	1hgj/QYWkDtbXQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+59zds7ZanSal05mBbMIVmlB5duFEqL6E13pQ9CXXHXSg/PS
-	ZqKBuMoyLU0ra85Fq8h7jGY5JxqxmTqtDMVaVGpmmiYq3sg0zRlR3348z/s875eHJRUlEj9W
-	jIoVtFFqjZKWUbL9Wy6sCdjsLa6trQwGk6WEhuIf8ZDfXi6B8ZJuAkxFZQhGxj8wMF1Vg2C4
-	upaG784hBA/ujZFgakymYNTykwR7RTeCXsMjGr7WdDBQbN0HbXldFFSm2EjouFZHQ3ryBAlV
-	4/0MnC8vmCku1TPgvOOSwJuyDAnc/PmQBJu+nYHmChMNrSXTEuhypFPgMhZSMJhdTUJbRgjU
-	mH1hrKEPQbXFRsDY1Ts0tORUEPC0qoWBG01mGr4ktyFocnZQkD15mYbccxkIJn7MVPZnjkgg
-	90UrExKEz7ndNHb2DZD4SeF7Ar81ZFHY/ayewHbjJwabrWdwaYEKp7mbSGwtSqWxdeg6gz++
-	raRxnWGCwvbPm7C9fJjA6Rf66YO+R2VbTwoaMU7QBm0LlYXbbq2O6d4bn3rpJqlHt7enISnL
-	c+t5U1EB42GKW8F/fmiZZZpbybvd46SHvbnlfHJpDpWGZCzJDTK8wd0q8RheXCw/OKCfPZJz
-	wBsb3yEPK7hSgu+8Nf+PvoB35XRSHiY5Fe+e6iHSEDvDi/n8KdYjS7l1/N2eztm/PlwA/7ys
-	lshEcuN/aeN/aeO/tBmRRchbjIqLVIuaDYG6iPCEKDE+8ER0pBXNbCgvcTKrHI0073YgjkXK
-	efKQFV6iQqKO0yVEOhDPkkpv+eRxTlTIT6oTzgra6GPaMxpB50CLWUq5UL7niBCq4MLUsUKE
-	IMQI2r8uwUr99GhHkCrPR6i66L/pyqLszFOhxtMRYmOjPslmq0s05c9zNJ2tbnnk2EgsCZ4z
-	mqS6tKOYeFMz2huQH2afGj7Ue3+qwcw9oxa4TAZXin13bjQrrZc2W745MzseE4ca8Ou5p19t
-	/qX5stRyQm33mzzgtUp7uPBxV+rrXcte3t7pP/icUFK6cPU6FanVqX8DpSw1ej8DAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v3-1-39b19eb55cc3@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAFA6FGkC/6XOwW7CMAwG4FdBOc8oTijNdtp7TBzc1qURpClxF
+ jGhvvsCpx12goul35L/zzclnDyL+tjcVOLixce5Bvu2Uf1E85HBDzUro02DqFugFPY7GLLApY8
+ BJgqRwMcMXE7AM3VnBsnWQl4CxBlk8YjQO9vYoR3ZGVa1e0k8+uvD/TrUPHnJMf083ih4374qF
+ gQE15GzXePGntrPKLK9fNO5loRtHeoOF/MHq2dPYgY0oEZyGt/bXbf/B1vX9ReW+/bGbgEAAA=
+ =
+X-Change-ID: 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-c8353d7fe82e
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762933331; l=1821;
+ i=khalid.ansari@oss.qualcomm.com; s=20251105; h=from:subject:message-id;
+ bh=qnRVyznIp2/9hXbw7y6c4CxmpQo/GrGH0lc7ReCMlUU=;
+ b=hQK4ahqXPHRqTxFOZI2jgILKMQy08qbldZr4ZchvuRI0nuFSBaW1PhU3Aih2AeuXv0MNXOWFx
+ il1jePjFzDvAZKUWV4TKSyyNUUZ0dwQr80Hn1xsoThSl07cIs5YxEfR
+X-Developer-Key: i=khalid.ansari@oss.qualcomm.com; a=ed25519;
+ pk=eBXrIUgTWV0cgG+GsNeZPPgvj1Tm6g9L2sfcoxMGrKo=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA2MCBTYWx0ZWRfX1JMVy5LsG+/b
+ IzzdRYibs7XTCGb2hIm4gIKtugk8LVwdIswmUDueWb5OY1pMO50MzI+73P9+UmSZCb4CnoHTR0f
+ noJfyJjCTTN3K3Y2sIbIlktIXnGxv+ozky5Lut8ajf6QAMJpZYxwYH3Jsc2wYk1frfzDLGeIzuq
+ FRbRkmoBS/IVoa6lOO3m4lX5tu/LsmyVmDiFhd8zeZSQUxesRqryEDD5El1fo7tcN2r7g8PzHzJ
+ Mll/puBJkAQzkRjJKYS7zCoxgzbw/P6y8Eev5tgRG0T/kYqF1v6Ud5kvR2nMflhtRoRfvJJ/BwM
+ UKl5/F5cYkueGWEww7TrJW/L3D1D5ghTzkuhSIRGs4pTAqNqVdIucUjXN+zLPDrwMFlZKQ/9k3N
+ UzLZygTcwYLsi57ibzKRyu3ayTD+FQ==
+X-Proofpoint-ORIG-GUID: ItEGDDzS1fkxuju1gpNzOy_qdujFTWxo
+X-Proofpoint-GUID: ItEGDDzS1fkxuju1gpNzOy_qdujFTWxo
+X-Authority-Analysis: v=2.4 cv=SvudKfO0 c=1 sm=1 tr=0 ts=69143a58 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=0o05X4pXTjTZH81ee54A:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_02,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120060
 
-On Fri, Nov 07, 2025 at 05:41:29PM -0800, Jakub Kicinski wrote:
-> On Fri, 7 Nov 2025 13:47:08 +0900 Byungchul Park wrote:
-> > The offset of page_type in struct page cannot be used in struct net_iov
-> > for the same purpose, since the offset in struct net_iov is for storing
-> > (struct net_iov_area *)owner.
-> 
-> owner does not have to be at a fixed offset. Can we not move owner
-> to _pp_mapping_pad ? Or reorder it with type, enum net_iov_type
-> only has 2 values we can smoosh it with page_type easily.
+Enable ST33HTPM TPM over SPI11 on the Hamoa IoT EVK by adding the
+required SPI and TPM nodes.
 
-At the beginning I tried to smoosh it with page_type but it requires the
-additional logic or something to save and restore the value of enum
-net_iov_type if the netmem is net_iov when updating page_type like:
+Signed-off-by: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+---
+Testing:
+- TPM detected via tpm_tis_spi
+- Verified functionality using tpm2-tools (e.g. tpm2_getrandom, tpm2_rsadecrypt)
 
-  if (netmem_is_net_iov(netmem))
-	type = get_type_from_niov(netmem_to_niov(netmem));
+Depends on:
+- <20251106102448.3585332-1-xueyao.an@oss.qualcomm.com>
+  Link: https://lore.kernel.org/linux-arm-msm/20251106102448.3585332-1-xueyao.an@oss.qualcomm.com/
+---
+Changes in v3:
+- Squashed patches touching the same file into one.
+- Link to v2: https://lore.kernel.org/r/20251111-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v2-0-101a801974b6@oss.qualcomm.com
 
-  /* Unconditionally clear the value of enum net_iov_type. */
-  __{Set,Clear}PageNetpp(__netmem_to_page((__force unsigned long)netmem & ~NET_IOV));
+Changes in v2:
+- Use "tcg,tpm_tis-spi" compatible to satisfy dtbs_check (was vendor-only).
+- Add dependency change in cover letter.
+- Link to v1: https://lore.kernel.org/r/20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com
+---
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-  if (netmem_is_net_iov(netmem))
-	set_type_to_niov(netmem_to_niov(netmem), type);
-
-Or page_pool_{set,clear}_pp_info() callers should handle it in a similar
-way.  I'd like to check if you are okay with this approach.
-
-Or I can make it simpler by adding page_type to struct net_iov like the
-following.  Jakub, do these approachs work for you?
-
-	Byungchul
+diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+index 36dd6599402b..aecaebebcef5 100644
+--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
++++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+@@ -917,6 +917,16 @@ &smb2360_2_eusb2_repeater {
+ 	vdd3-supply = <&vreg_l8b_3p0>;
+ };
+ 
++&spi11 {
++	status = "okay";
++
++	tpm@0 {
++		compatible = "st,st33htpm-spi", "tcg,tpm_tis-spi";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++	};
++};
++
+ &swr0 {
+ 	status = "okay";
+ 
 
 ---
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-index 5d51600935a6..def274f5c1ca 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-@@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdpsq *sq,
- 				xdpi = mlx5e_xdpi_fifo_pop(xdpi_fifo);
- 				page = xdpi.page.page;
- 
--				/* No need to check page_pool_page_is_pp() as we
-+				/* No need to check PageNetpp() as we
- 				 * know this is a page_pool page.
- 				 */
- 				page_pool_recycle_direct(pp_page_to_nmdesc(page)->pp,
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a3f97c551ad8..081e365caa1a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4252,10 +4252,9 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-  * DMA mapping IDs for page_pool
-  *
-  * When DMA-mapping a page, page_pool allocates an ID (from an xarray) and
-- * stashes it in the upper bits of page->pp_magic. We always want to be able to
-- * unambiguously identify page pool pages (using page_pool_page_is_pp()). Non-PP
-- * pages can have arbitrary kernel pointers stored in the same field as pp_magic
-- * (since it overlaps with page->lru.next), so we must ensure that we cannot
-+ * stashes it in the upper bits of page->pp_magic. Non-PP pages can have
-+ * arbitrary kernel pointers stored in the same field as pp_magic (since
-+ * it overlaps with page->lru.next), so we must ensure that we cannot
-  * mistake a valid kernel pointer with any of the values we write into this
-  * field.
-  *
-@@ -4290,26 +4289,6 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
- #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SHIFT - 1, \
- 				  PP_DMA_INDEX_SHIFT)
- 
--/* Mask used for checking in page_pool_page_is_pp() below. page->pp_magic is
-- * OR'ed with PP_SIGNATURE after the allocation in order to preserve bit 0 for
-- * the head page of compound page and bit 1 for pfmemalloc page, as well as the
-- * bits used for the DMA index. page_is_pfmemalloc() is checked in
-- * __page_pool_put_page() to avoid recycling the pfmemalloc page.
-- */
--#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
--
--#ifdef CONFIG_PAGE_POOL
--static inline bool page_pool_page_is_pp(const struct page *page)
--{
--	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
--}
--#else
--static inline bool page_pool_page_is_pp(const struct page *page)
--{
--	return false;
--}
--#endif
--
- #define PAGE_SNAPSHOT_FAITHFUL (1 << 0)
- #define PAGE_SNAPSHOT_PG_BUDDY (1 << 1)
- #define PAGE_SNAPSHOT_PG_IDLE  (1 << 2)
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 0091ad1986bf..edf5418c91dd 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -934,6 +934,7 @@ enum pagetype {
- 	PGTY_zsmalloc		= 0xf6,
- 	PGTY_unaccepted		= 0xf7,
- 	PGTY_large_kmalloc	= 0xf8,
-+	PGTY_netpp		= 0xf9,
- 
- 	PGTY_mapcount_underflow = 0xff
- };
-@@ -1078,6 +1079,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
- PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
- FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
- 
-+/*
-+ * Marks page_pool allocated pages.
-+ */
-+PAGE_TYPE_OPS(Netpp, netpp, netpp)
-+
- /**
-  * PageHuge - Determine if the page belongs to hugetlbfs
-  * @page: The page to test.
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index 651e2c62d1dd..b42d75ecd411 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -114,10 +114,21 @@ struct net_iov {
- 			atomic_long_t pp_ref_count;
- 		};
- 	};
-+
-+	unsigned int page_type;
- 	struct net_iov_area *owner;
- 	enum net_iov_type type;
- };
- 
-+/* Make sure 'the offset of page_type in struct page == the offset of
-+ * type in struct net_iov'.
-+ */
-+#define NET_IOV_ASSERT_OFFSET(pg, iov)			\
-+	static_assert(offsetof(struct page, pg) ==	\
-+		      offsetof(struct net_iov, iov))
-+NET_IOV_ASSERT_OFFSET(page_type, page_type);
-+#undef NET_IOV_ASSERT_OFFSET
-+
- struct net_iov_area {
- 	/* Array of net_iovs for this area. */
- 	struct net_iov *niovs;
-@@ -260,7 +271,7 @@ static inline unsigned long netmem_pfn_trace(netmem_ref netmem)
-  */
- #define pp_page_to_nmdesc(p)						\
- ({									\
--	DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));		\
-+	DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));				\
- 	__pp_page_to_nmdesc(p);						\
- })
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 600d9e981c23..01dd14123065 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1041,7 +1041,6 @@ static inline bool page_expected_state(struct page *page,
- #ifdef CONFIG_MEMCG
- 			page->memcg_data |
- #endif
--			page_pool_page_is_pp(page) |
- 			(page->flags.f & check_flags)))
- 		return false;
- 
-@@ -1068,8 +1067,6 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
- 	if (unlikely(page->memcg_data))
- 		bad_reason = "page still charged to cgroup";
- #endif
--	if (unlikely(page_pool_page_is_pp(page)))
--		bad_reason = "page_pool leak";
- 	return bad_reason;
- }
- 
-@@ -1378,9 +1375,12 @@ __always_inline bool free_pages_prepare(struct page *page,
- 		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
- 		folio->mapping = NULL;
- 	}
--	if (unlikely(page_has_type(page)))
-+	if (unlikely(page_has_type(page))) {
-+		/* networking expects to clear its page type before releasing */
-+		WARN_ON_ONCE(PageNetpp(page));
- 		/* Reset the page_type (which overlays _mapcount) */
- 		page->page_type = UINT_MAX;
-+	}
- 
- 	if (is_check_pages_enabled()) {
- 		if (free_page_is_bad(page))
-diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-index 23175cb2bd86..6b7d90b8ebb9 100644
---- a/net/core/netmem_priv.h
-+++ b/net/core/netmem_priv.h
-@@ -8,21 +8,15 @@ static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
- 	return netmem_to_nmdesc(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
- }
- 
--static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
--{
--	netmem_to_nmdesc(netmem)->pp_magic |= pp_magic;
--}
--
--static inline void netmem_clear_pp_magic(netmem_ref netmem)
--{
--	WARN_ON_ONCE(netmem_to_nmdesc(netmem)->pp_magic & PP_DMA_INDEX_MASK);
--
--	netmem_to_nmdesc(netmem)->pp_magic = 0;
--}
--
- static inline bool netmem_is_pp(netmem_ref netmem)
- {
--	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
-+	/* XXX: Now that the offset of page_type is shared between
-+	 * struct page and net_iov, just cast the netmem to struct page
-+	 * unconditionally by clearing NET_IOV if any, no matter whether
-+	 * it comes from struct net_iov or struct page.  This should be
-+	 * adjusted once the offset is no longer shared.
-+	 */
-+	return PageNetpp(__netmem_to_page((__force unsigned long)netmem & ~NET_IOV));
- }
- 
- static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 1a5edec485f1..27650ca789d1 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -699,7 +699,14 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
- void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
- {
- 	netmem_set_pp(netmem, pool);
--	netmem_or_pp_magic(netmem, PP_SIGNATURE);
-+
-+	/* XXX: Now that the offset of page_type is shared between
-+	 * struct page and net_iov, just cast the netmem to struct page
-+	 * unconditionally by clearing NET_IOV if any, no matter whether
-+	 * it comes from struct net_iov or struct page.  This should be
-+	 * adjusted once the offset is no longer shared.
-+	 */
-+	__SetPageNetpp(__netmem_to_page((__force unsigned long)netmem & ~NET_IOV));
- 
- 	/* Ensuring all pages have been split into one fragment initially:
- 	 * page_pool_set_pp_info() is only called once for every page when it
-@@ -714,7 +721,14 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
- 
- void page_pool_clear_pp_info(netmem_ref netmem)
- {
--	netmem_clear_pp_magic(netmem);
-+	/* XXX: Now that the offset of page_type is shared between
-+	 * struct page and net_iov, just cast the netmem to struct page
-+	 * unconditionally by clearing NET_IOV if any, no matter whether
-+	 * it comes from struct net_iov or struct page.  This should be
-+	 * adjusted once the offset is no longer shared.
-+	 */
-+	__ClearPageNetpp(__netmem_to_page((__force unsigned long)netmem & ~NET_IOV));
-+
- 	netmem_set_pp(netmem, NULL);
- }
- 
+base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+change-id: 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-c8353d7fe82e
+
+Best regards,
+-- 
+Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+
 
