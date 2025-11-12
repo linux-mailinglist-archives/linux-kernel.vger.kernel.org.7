@@ -1,144 +1,79 @@
-Return-Path: <linux-kernel+bounces-896395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DF5C50428
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:59:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A21C50452
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F263F18985C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057813A973E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F0299928;
-	Wed, 12 Nov 2025 01:58:11 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C442BEC53;
+	Wed, 12 Nov 2025 01:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HLILyDSY"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710F291C07;
-	Wed, 12 Nov 2025 01:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4982BE7DB;
+	Wed, 12 Nov 2025 01:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762912691; cv=none; b=PglijboaXmGjtxgKAW7Z0UT8e6r/SSMvkG6wdqvqwiN3PrqW6yZLtWFkSdFtDCurBAEO2QJRR+iR/zdpc8nYRYBPK9Gx7c+9f5Yx57/M5c/4RdVRArXiZQ8xvOcHbQkThC6nk7R6YXMNbxx0CNofuC0WNqyKQyGe8/r1brHIJvI=
+	t=1762912742; cv=none; b=KOi2B9OwqiNTW1h9Pd+4ZqDmqXe6m0eAY8QBKAmGP9u7KT89t1QIxNA37UCaDlFzaCVQGiUfEHRjYpumavPhFKnBULBXZleV9cJIX7iIFWWBov1Wls9c1EyyCibg1cbVgNoWVk7P1NSbXy3kwaaNml5dLwDM9hDiHFhwGDklApQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762912691; c=relaxed/simple;
-	bh=RnDE77SJ1Nifeal2yc5LVDNUJAzdbJdwbn21a299e54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2i2bO2NWkLWXkfwthq8NxygNXPCHVzxbwUcSILsReQxYlN+GGsOiF89u9Hh734UyfPntEtP9cXBtCA/KnANgB7SMxeVhupSpDXBaQ2wxjndLfuO/JSXEEScJH+g/aTGIBmG9byg5PUssqzduhdxLYXv4400Z16PLUpGsKDlKFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d5mkf03ynzKHMMf;
-	Wed, 12 Nov 2025 09:57:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E152E1A167A;
-	Wed, 12 Nov 2025 09:58:02 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBXs3mp6RNpY5DBAQ--.52487S2;
-	Wed, 12 Nov 2025 09:58:02 +0800 (CST)
-Message-ID: <86361412-7de0-46bc-9188-a32b634e43a3@huaweicloud.com>
-Date: Wed, 12 Nov 2025 09:58:01 +0800
+	s=arc-20240116; t=1762912742; c=relaxed/simple;
+	bh=APAKyQvFVIBcKOgb0uEOcq1Ddyo8JI5mya0p3PDa9LQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6OJjGlCIHdJ3IftNZjCnTUn1Oz4EJ6Z1TjO2azugVa6ixDOQGjTDnq7TZBsqHASlwMpzIrsXTMlPR/ZXmx5++ef7T1KyMINovYEISTw+OnhuSfJoc3b+ACuplurxbVJvSeIRbcaku/L8sXo/waqxTIDUcLm4hcLJy5xfl6TxCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HLILyDSY; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=APAKyQvFVIBcKOgb0uEOcq1Ddyo8JI5mya0p3PDa9LQ=;
+	b=HLILyDSYnDXEUpkIEhUHcKPLevgW3I2zFhuK/HL7Op8/kgiF1TT70cO9sH9gJ8
+	P4lmLuTlJrjVrgOthd7OJo8MYTLp/XCKjpUOBxGUV/2/k2yB2VV6CKUHbKopoM2x
+	XYuRz4WJ34IO4oXGvWtuL3aHMASNXoZiM5nwMgXPHyVec=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgAnLZPA6RNpuzvPAQ--.5587S3;
+	Wed, 12 Nov 2025 09:58:25 +0800 (CST)
+Date: Wed, 12 Nov 2025 09:58:23 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, frank.li@nxp.com, s.hauer@pengutronix.de,
+	festevam@gmail.com, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] Add vpcie3v3aux regulator for i.MX PCIe M.2
+ connector
+Message-ID: <aRPpvy2TtCyCCegm@dragon>
+References: <20251024073152.902735-1-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
- populated
-To: Waiman Long <llong@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
-References: <20251111132632.950430-1-chenridong@huaweicloud.com>
- <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
- <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
- <sebxxc2px767l447xr7cmkvlsewvdiazp7ksee3u2hlqaka522@egghgtj4oowf>
- <a4e61aa0-5c1f-490e-9cae-5e478ba809ee@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <a4e61aa0-5c1f-490e-9cae-5e478ba809ee@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXs3mp6RNpY5DBAQ--.52487S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw1fKryDJryfuFW5tw47urg_yoW5Wr4UpF
-	WjgF17JFs0ywnrC397Ka4Iq3WSvwn7GFW5Jrn5Jw1rAasxWr1F9r17KFZYkF4rZrn7JrWY
-	vFW5XrykWasFyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024073152.902735-1-hongxing.zhu@nxp.com>
+X-CM-TRANSID:M88vCgAnLZPA6RNpuzvPAQ--.5587S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0EfOUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNgLJL2kT6cJyogAA3T
 
+On Fri, Oct 24, 2025 at 03:31:45PM +0800, Richard Zhu wrote:
+> [PATCH v1 1/7] arm64: dts: imx8dxl-evk: Add vpcie3v3aux regulator for
+> [PATCH v1 2/7] arm64: dts: imx8mp-evk: Add vpcie3v3aux regulator for
+> [PATCH v1 3/7] arm64: dts: imx8mq-evk: Add vpcie3v3aux regulator for
+> [PATCH v1 4/7] arm64: dts: imx8qm-mek: Add vpcie3v3aux regulator for
+> [PATCH v1 5/7] arm64: dts: imx8qxp-mek: Add vpcie3v3aux regulator for
+> [PATCH v1 6/7] arm64: dts: imx95-15x15-evk: Add vpcie3v3aux regulator
+> [PATCH v1 7/7] arm64: dts: imx95-19x19-evk: Add vpcie3v3aux regulator
 
-
-On 2025/11/12 4:35, Waiman Long wrote:
-> On 11/11/25 2:25 PM, Michal Koutný wrote:
->> On Tue, Nov 11, 2025 at 10:16:33AM -0500, Waiman Long <llong@redhat.com> wrote:
->>> For internal helper like this one, we may not really need that as
->>> almost all the code in cpuset.c are within either a cpuset_mutex or
->>> callback_lock critical sections. So I am fine with or without it.
->> OK, cpuset_mutex and callback_lock are close but cgroup_is_populated()
->> that caught my eye would also need cgroup_mutex otherwise "the result
->> can only be used as a hint" (quote from cgroup.h).
->>
->> Or is it safe to assume that cpuset_mutex inside cpuset_attach() is
->> sufficient to always (incl. exits) ensure stability of
->> cgroup_is_populated() result?
->>
->> Anyway, I'd find some clarifications in the commit message or the
->> surrounding code about this helpful. (Judgment call, whether with a
->> lockdep macro. My opinion is -- why not.)
-> 
-> For attach_in_progress, it is protected by the cpuset_mutex. So it may make sense to add a
-> lockdep_assert_held() for that.
-> 
-
-Will add.
-
-> You are right that there are problems WRT the stability of cgroup_is_populated() value.
-> 
-> I think "cgrp->nr_populated_csets + cs->attach_in_progress" should be almost stable for the cgroup
-> itself with cpuset_mutex, but there can be a small timing window after cpuset_attach(), but before
-> the stat is updated where the sum is 0, but there are actually tasks in the cgroup.
-> 
-Do you mean there’s a small window after ss->attach (i.e., cpuset_attach) where
-cgrp->nr_populated_csets + cs->attach_in_progress could be 0?
-
-If I understand correctly:
-
-ss->can_attach: cs->attach_in_progress++, sum > 0
-css_set_move_task->css_set_update_populated: cgrp->nr_populated_csets++, sum > 0
-ss->attach->cpuset_attach: cs->attach_in_progress--, sum > 0
-
-What exactly is the small window you’re referring to where the sum equals 0?
-
-> For "cgrp->nr_populated_domain_children + cgrp->nr_populated_threaded_children", it also has the
-> problem that the sum can be 0 but there are attach_in_progress set in one or more of the child
-> cgroups. So even with this patch, we can't guarantee 100% that there can be no task in the partition
-> even if it has empty effective_cpus. It is only a problem for nested local partitions though as
-> remote partitions are not allowed to exhaust all the CPUs from root cgroup.
-> 
-> We should probably document that limitation to warn users if they try to create nested local
-> partitions where the parent partition root of the child partitions has empty effective_cpus.
-> 
-
-Hmm, but it was what the commit e2d59900d936 ("cgroup/cpuset: Allow no-task partition to have empty
-cpuset.cpus.effective") allowed, and it makes sense.
-
-
--- 
-Best regards,
-Ridong
+Applied all, thanks!
 
 
