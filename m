@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-897239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA8C525B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:01:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F630C524DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EACF93AE886
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE1E189ED0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF48328B78;
-	Wed, 12 Nov 2025 12:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5AE33555E;
+	Wed, 12 Nov 2025 12:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="IBN/EQeB"
-Received: from mail17.out.titan.email (mail17.out.titan.email [3.64.226.211])
+	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="Q1+mqiAo"
+Received: from mail303.out.titan.email (mail303.out.titan.email [3.68.153.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA12A32C33C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.226.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6142A30F800
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.68.153.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951838; cv=none; b=eHj9tSuwgzYXRfAtnQY4Vdm3qXAHdDM7NYXOarAS0+Ui9XdjdE6p9aWJ2UtbeP1VwYjCg6HYAGpVS2b1H0ir2yiKPlSo+sgPia+eXBZZ6dmZwq2attXJZIITTQA8XSAd5F9BT8iK7UpYkYxFySfiK2EPYulxUVxvOkctvAZidlk=
+	t=1762951538; cv=none; b=TuKE3SnUgIXku5wcsa5ArS6oBzgFvzJGPi/IWVOFtgKgIw2d+Rgvi8ader211fpcxgavkHRIXfolgLooMbNf8uQXpvxYRj/oBZICw+r+p1Wvi5Y5ncEQoWGyDPlml2E1C44WeZXknMPmc4/6muMNz5HvIkSB4LfiDmap42lvl9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951838; c=relaxed/simple;
-	bh=E5uUb7+fbX62Zh2Uz+APdCR0qyuD2bfcfohAbeZ7Yr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hHptK0x0kjTw7mY0tbfavZPafSPKlNiJmfzOlz4tIrpbhhmeS+BVlEs5YHc4MFGlUQBxI/t//h914N+RtNT8rQkXxpxDEu/wh0I0FxL7rGb74BpgG4fxp17mko1fyFKvbFfU6suKDIUNds2SJS94riL7umNaFo8KD+jeKkSwHaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=IBN/EQeB; arc=none smtp.client-ip=3.64.226.211
+	s=arc-20240116; t=1762951538; c=relaxed/simple;
+	bh=geeV3IjWgD6tk98/BEsAD58QhWgKlm8p4cu8VIhNzEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=q5JDG+VjAS8ZZMWUgugbFIlW2rH44Z2Mujl8gpk7njE9fen7obiU0/uTCN1kHsDsMmIu+tfWGyNpvzDbCbxK8jXobF+kGZRgJvlBdLV/LlUqX7swDJOJOlprqC7w5GXHLXEMuPyQO0zgJLKZiLvmeu4ZSofD5A59MDWF+W8y4XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=Q1+mqiAo; arc=none smtp.client-ip=3.68.153.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
 Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 4d62g634Jtz4vxN;
-	Wed, 12 Nov 2025 12:25:38 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=1ha9FVX34PW7qq5iLHUavAVRdbNPoP4zzhmRO+QDUeY=;
+	by smtp-out0101.titan.email (Postfix) with ESMTP id 4d62gJ6zsFz4vxR;
+	Wed, 12 Nov 2025 12:25:48 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=NOD69Z2Z6GRF71CeNbvPuLQNPzIehNNZNP+KY6DzNBw=;
 	c=relaxed/relaxed; d=techsingularity.net;
-	h=mime-version:subject:to:from:cc:date:message-id:from:to:cc:subject:date:message-id:in-reply-to:reply-to:references;
-	q=dns/txt; s=titan1; t=1762950338; v=1;
-	b=IBN/EQeBpjZssXUFnTUZFCa8q7TUhF3SWrBsezkJujqPqzfYf4Z4JNYge1HmRd54XtHFLuYx
-	6i75WHhJtF7/gf5VjCW5ueLgPkbsNr9csFTPWhMJ8G15haejHu4GdbSn0ptno/ULsX3GYv8fxqZ
-	oETrZVImnq6NcO++b+yj4bXo=
+	h=from:to:date:mime-version:cc:in-reply-to:references:subject:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1762950348; v=1;
+	b=Q1+mqiAo9cMavEOocuUdCTNJbXVmwxgoG9dEzZ5DRTPO1iEBhZaywXyxx7uAa3lqieVZz/xI
+	eARkJ5TGQaxhTzIqpNDVkc21TDoT+PZ4p4Oe79230l/zQYoUGrYgZkVKQd/1QZT/rSAwKJ2K7F0
+	xxxroRroh93yypj0JHlig3w8=
 Received: from morpheus.112glenside.lan (ip-84-203-16-53.broadband.digiweb.ie [84.203.16.53])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4d62g55m6nz4vxG;
-	Wed, 12 Nov 2025 12:25:37 +0000 (UTC)
+	by smtp-out0101.titan.email (Postfix) with ESMTPA id 4d62gJ30F8z4vxG;
+	Wed, 12 Nov 2025 12:25:48 +0000 (UTC)
 Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
 From: Mel Gorman <mgorman@techsingularity.net>
 To: Peter Zijlstra <peterz@infradead.org>
@@ -53,10 +54,12 @@ Cc: Ingo Molnar <mingo@redhat.com>,
 	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
 	linux-kernel@vger.kernel.org,
 	Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 0/2 v5] Reintroduce NEXT_BUDDY for EEVDF
-Date: Wed, 12 Nov 2025 12:25:19 +0000
-Message-ID: <20251112122521.1331238-1-mgorman@techsingularity.net>
+Subject: [PATCH 1/2] sched/fair: Enable scheduler feature NEXT_BUDDY
+Date: Wed, 12 Nov 2025 12:25:20 +0000
+Message-ID: <20251112122521.1331238-2-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251112122521.1331238-1-mgorman@techsingularity.net>
+References: <20251112122521.1331238-1-mgorman@techsingularity.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,48 +68,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1762950338277317561.1240.4361959595493664707@prod-euc1-smtp-out1002.
+X-Titan-Src-Out: 1762950348822632817.1240.7433418304940738252@prod-euc1-smtp-out1002.
 X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=d4QPyQjE c=1 sm=1 tr=0 ts=69147cc2
+X-CMAE-Analysis: v=2.4 cv=d4QPyQjE c=1 sm=1 tr=0 ts=69147ccc
 	a=SAet2ifMzLisiRUXZwfs3w==:117 a=SAet2ifMzLisiRUXZwfs3w==:17
-	a=CEWIc4RMnpUA:10 a=7qnGvtjcerDTETLpIb4A:9
+	a=CEWIc4RMnpUA:10 a=R_Myd5XaAAAA:8 a=AW7cwINLPZqLRmdQVWoA:9
+	a=L2g4Dz8VuBQ37YGmWQah:22
 
-Changes since v4
-o Splitout decisions into separate functions			(peterz)
-o Flow clarity							(peterz)
+The NEXT_BUDDY feature reinforces wakeup preemption to encourage the last
+wakee to be scheduled sooner on the assumption that the waker/wakee share
+cache-hot data. In CFS, it was paired with LAST_BUDDY to switch back on
+the assumption that the pair of tasks still share data but also relied
+on START_DEBIT and the exact WAKEUP_PREEMPTION implementation to get
+good results.
 
-Changes since v3
-o Place new code near first consumer				(peterz)
-o Separate between PREEMPT_SHORT and NEXT_BUDDY			(peterz)
-o Naming and code flow clarity					(peterz)
-o Restore slice protection					(peterz)
+NEXT_BUDDY has been disabled since commit 0ec9fab3d186 ("sched: Improve
+latencies and throughput") and LAST_BUDDY was removed in commit 5e963f2bd465
+("sched/fair: Commit to EEVDF"). The reasoning is not clear but as vruntime
+spread is mentioned so the expectation is that NEXT_BUDDY had an impact
+on overall fairness. It was not noted why LAST_BUDDY was removed but it
+is assumed that it's very difficult to reason what LAST_BUDDY's correct
+and effective behaviour should be while still respecting EEVDFs goals.
+Peter Zijlstra noted during review;
 
-Changes since v2
-o Review feedback applied from Prateek
+	I think I was just struggling to make sense of things and figured
+	less is more and axed it.
 
-I've been chasing down a number of schedule issues recently like many
-others and found they were broadly grouped as
+	I have vague memories trying to work through the dynamics of
+	a wakeup-stack and the EEVDF latency requirements and getting
+	a head-ache.
 
-1. Failure to boost CPU frequency with powersave/ondemand governors
-2. Processors entering idle states that are too deep
-3. Differences in wakeup latencies for wakeup-intensive workloads
+NEXT_BUDDY is easier to reason about given that it's a point-in-time
+decision on the wakees deadline and eligibilty relative to the waker. Enable
+NEXT_BUDDY as a preparation path to document that the decision to ignore
+the current implementation is deliberate. While not presented, the results
+were at best neutral and often much more variable.
 
-Adding topology into account means that there is a lot of machine-specific
-behaviour which may explain why some discussions recently have reproduction
-problems. Nevertheless, the removal of LAST_BUDDY and NEXT_BUDDY being
-disabled has an impact on wakeup latencies.
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ kernel/sched/features.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series enables NEXT_BUDDY and may select a wakee if it's eligible to
-run even though other unrelated tasks may have an earlier deadline.
-
-Mel Gorman (2):
-  sched/fair: Enable scheduler feature NEXT_BUDDY
-  sched/fair: Reimplement NEXT_BUDDY to align with EEVDF goals
-
- kernel/sched/fair.c     | 152 ++++++++++++++++++++++++++++++++++------
- kernel/sched/features.h |   2 +-
- 2 files changed, 131 insertions(+), 23 deletions(-)
-
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 3c12d9f93331..0607def744af 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -29,7 +29,7 @@ SCHED_FEAT(PREEMPT_SHORT, true)
+  * wakeup-preemption), since its likely going to consume data we
+  * touched, increases cache locality.
+  */
+-SCHED_FEAT(NEXT_BUDDY, false)
++SCHED_FEAT(NEXT_BUDDY, true)
+ 
+ /*
+  * Allow completely ignoring cfs_rq->next; which can be set from various
 -- 
 2.51.0
 
