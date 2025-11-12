@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-897682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDB3C539AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:13:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E207FC53953
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC92F504108
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01E13B7E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310A331326E;
-	Wed, 12 Nov 2025 16:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BA434BA53;
+	Wed, 12 Nov 2025 16:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CjC0fYF2"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ptjLiXEZ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C4F34676E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144D234B410
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963459; cv=none; b=lugX0shxPA8lOS5IXj52LXfK2uS9mzHkkflqbHiRUP95xLjxycae3hkGxmniBHXzGdnTar7yDmJs/MkxZKcktLx7eX1qjLJCf2C2anrxFF3h4slprgk/R48orAcuOWmyqNFiRk6uoumqE/6zRI0jPKOok4JljxZqOK8knJ/GdwE=
+	t=1762963473; cv=none; b=DhH1NLCMKxh7wVIqwUuByFERVB13cFpZ7swLpscICD3mAy/CYyyOhAvXi/09mooZCvqwkRzg446s0nHDjdmeINutcQyw7OyqAmZRGbEWQfYXUxlfSHcUlAfDRJUTHpob4lcjAI8DneUcRgKSA0uzBBn/Ce7jNzljdO4Wc/rhgG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963459; c=relaxed/simple;
-	bh=XHxubh2Ex6f1fNjOHyxSKBBVuRAcupgCiMdiGQQ8YlM=;
+	s=arc-20240116; t=1762963473; c=relaxed/simple;
+	bh=bdY34+Hk+iO6II3DlvBr0qmzUTdVLbu3xcJKQGcFbGw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ie7WjiLYJIqDit4DnIxsUuTV3KEP9e3uKL6Su3yeAq/896T7SnKot7nyF9TJ7tof95NiX77H8JhwNgPsg4GClNFRSxaP47MYgLHmmtYYJQz4zGpmxevVe0kH899Hpou8uzJcJl2BMMms3j9lemTgSn87J1THkuKYSPrq+Dlflk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CjC0fYF2; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version; b=agVHz/I7epEFOyUA3AeWMNa2C7nmaLR4uDBjdCQVGhZ5nzRBmG53PNnVc/XOTXLrP+5XJ1XUrscmtpp4bDauykAlbL8RiNpsMpjc6jR+IGOkDIXPPSKsh0iHsYHzhii2H9nDvPfiu3jqvUVQVE8jGBpuUoPFySktzRlNJ8A4bAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ptjLiXEZ; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACFVv00012507;
-	Wed, 12 Nov 2025 16:04:11 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACFRHv5008644;
+	Wed, 12 Nov 2025 16:04:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=C8PDU
-	hjr06wv8rRe2HDeqvlGwH4SkM+T43NMmoaRcYQ=; b=CjC0fYF2EC4cTmcqNeUh7
-	+KnsXgTHa13scRl0IdSpcn1BYoIxfNx+N0jjxE2GxN15BBbVxT3lHPvtvvWKF6mO
-	9q2Ox5menzKFWpsHVQhe1zMZk4Nac3lIGOCIY1R3s10Wv1JHjgzaiIR7hJsa8foa
-	XHqe2dKgJSuMI6e5No7njZXS7lrNVoXdSQJoS+eR3MpXc2vHI9zfdUbL7ziXcA8K
-	CunE/UoIIHq+0lTvVQe3TSo3tTRhYt3gz2LrdZSztFC/QAR8/HnECd1cialBzQdn
-	zlj3tBRwZ09kLYcrAJQMW3Q0BkFRJB6LBpNeSrvjw+s4F9HuImj3aysKz4ubMvCN
-	A==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=UFlCn
+	5Lj55QJAeI6msqkpGV89L9woRHvuDucSYgSwT4=; b=ptjLiXEZY6Mc9AxRj+rvk
+	N37y2eSRr4iHaNrlIvDgpKCkGEE8qlb8BW+9IUV5yk1rGnvTU1p9JL8iNOgFhD4C
+	Xr4buLDEEcrJcQ4+vIlHCdOdMed7sdLnbMK4GPKEAXG7kM6guSn+YVxlsWufQ7r0
+	7Z+ErbijAWWX2YVrqRJ2jGDz5TJI32pHQcol9+uxhL8RdA4nsK5sLq5CNf9qBCFQ
+	3MyE8/49vWYnaOBT1/J8UvucmRdlyUdzFlNyvD+GIJlswywXnZtfLkkRnxCm2VcQ
+	X6UjsOVI6CW/zHJtQO+JIqNV6CqZtXvgj69pwwAjH6y/CfughLS8Z4/mSNOczk3q
+	w==
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acv97r6cy-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acvssr4p0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 16:04:11 +0000 (GMT)
+	Wed, 12 Nov 2025 16:04:26 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEG4WS018708;
-	Wed, 12 Nov 2025 16:04:10 GMT
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEG3BJ018617;
+	Wed, 12 Nov 2025 16:04:25 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaavqak-1
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaavqp5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 16:04:10 +0000
+	Wed, 12 Nov 2025 16:04:25 +0000
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ACFxw3e004655;
-	Wed, 12 Nov 2025 16:04:09 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ACFxw3w004655;
+	Wed, 12 Nov 2025 16:04:25 GMT
 Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-154-173-131.vpn.oracle.com [10.154.173.131])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaavnq6-13;
-	Wed, 12 Nov 2025 16:04:09 +0000
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaavnq6-22;
+	Wed, 12 Nov 2025 16:04:25 +0000
 From: Alexandre Chartre <alexandre.chartre@oracle.com>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org,
         peterz@infradead.org
 Cc: alexandre.chartre@oracle.com
-Subject: [PATCH v3 12/28] objtool: Improve register reporting during function validation
-Date: Wed, 12 Nov 2025 17:02:59 +0100
-Message-ID: <20251112160315.2207947-13-alexandre.chartre@oracle.com>
+Subject: [PATCH v3 21/28] objtool: Disassemble jump table alternatives
+Date: Wed, 12 Nov 2025 17:03:08 +0100
+Message-ID: <20251112160315.2207947-22-alexandre.chartre@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20251112160315.2207947-1-alexandre.chartre@oracle.com>
 References: <20251112160315.2207947-1-alexandre.chartre@oracle.com>
@@ -84,137 +84,100 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxs
  mlxlogscore=999 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
  definitions=main-2511120130
-X-Authority-Analysis: v=2.4 cv=Cseys34D c=1 sm=1 tr=0 ts=6914affb b=1 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=bJUb4f+Z c=1 sm=1 tr=0 ts=6914b00a b=1 cx=c_pps
  a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=SYeOCZSjma0EYi-zULIA:9
-X-Proofpoint-ORIG-GUID: EmJLTHF4VeqE7mSKJsraZf-GB8jBduoB
-X-Proofpoint-GUID: EmJLTHF4VeqE7mSKJsraZf-GB8jBduoB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDExOSBTYWx0ZWRfXwWOQEbfRKFOh
- 0cMJYVafvWqoln7pBV3U3bI/ojpQavkIYhAVDSbDLZDt/rT8XhUDprGYxmIJL5/Yv1KTQiP5NUq
- axhEjev0mCV5uS00f8LEc7sH/NJ3In2w1cwpzghCOTGW2/pk2DYnTS4VvY22zpX7ZVX2AfusYOI
- ecUbgMGMIbSEcfzoVEMFcgzz48SvEj4R/dHQ1ZzagB3RbK9U5ckUdx1iJIIUfs78YJYPBjiKnWy
- soIlgVI4YARwyFTw1qj1joowu3OWM/Zi/m8O0Gq9VKBpNiROLxC18F9lg7Am8yd3gBDUeAF2Oxx
- MqjR5kEQBu14vnmm6W7NZsIjF+ITU/+hP6SIPdTLNjfjKqAnrqXJouZtT1b4tJNONI5j0Tf3jKf
- yL/7T39Z3RMcUYTNF/Lh074SMI9uTQ==
+ a=lcG_xirucoqnFA0wguoA:9
+X-Proofpoint-GUID: hsdOicLNgVhBevOXSRQUNa_FPBE2LXKz
+X-Proofpoint-ORIG-GUID: hsdOicLNgVhBevOXSRQUNa_FPBE2LXKz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEyMyBTYWx0ZWRfX8l7edgIap+tZ
+ kWDOA27MR7BGFoR06nM5n924saegBM1et4vBr+9pmihfL6shFLqeX6zndygwI+KnKq/rNhB1U0S
+ 80U2Dimi68N/i20nCGHvh3bCd6qfOhCOIjD2ZNzPMaU9tUDF3DXMRwFu0qbdX2yzCJ+8OOfKL1O
+ I9Fklksk4X4DvIG19yQoaKlv33+HO5kENGpIKTYBIsdt3g2cO4qI0fiYj124iuTh5DD4s6Aw4PS
+ Z2NbmITYmKp0d5PzAe6whRdkKlpPZYc2VtSXi2mS2XnUUbrbF3K3wfh5gdAgII0x82GrmzdU60s
+ ArrfpL3Zp3oJHFN3rkX6bFgM0aoIm2RQAxb/AQFlJ4JakNPBiCh5awYeqxhtS9Ta9/h56yGGzzU
+ OQH1AWWZCcxNYRlI8vqaKNmZG8gpKw==
 
-When tracing function validation, instruction state changes can
-report changes involving registers. These registers are reported
-with the name "r<num>" (e.g. "r3"). Print the CPU specific register
-name instead of a generic name (e.g. print "rbx" instead of "r3"
-on x86).
+When using the --disas option, also disable jump tables.
 
 Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
- tools/objtool/arch/loongarch/decode.c | 11 +++++++++++
- tools/objtool/arch/powerpc/decode.c   | 12 ++++++++++++
- tools/objtool/arch/x86/decode.c       |  8 ++++++++
- tools/objtool/include/objtool/arch.h  |  2 ++
- tools/objtool/trace.c                 |  7 +++++++
- 5 files changed, 40 insertions(+)
+ tools/objtool/disas.c | 41 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-diff --git a/tools/objtool/arch/loongarch/decode.c b/tools/objtool/arch/loongarch/decode.c
-index 7645409918f5b..2c1a6cb61f76f 100644
---- a/tools/objtool/arch/loongarch/decode.c
-+++ b/tools/objtool/arch/loongarch/decode.c
-@@ -8,6 +8,17 @@
- #include <linux/objtool_types.h>
- #include <arch/elf.h>
+diff --git a/tools/objtool/disas.c b/tools/objtool/disas.c
+index 42f3bf310b033..96056e873f97e 100644
+--- a/tools/objtool/disas.c
++++ b/tools/objtool/disas.c
+@@ -547,6 +547,9 @@ static int disas_alt_init(struct disas_alt *dalt,
+ 		case ALT_TYPE_EX_TABLE:
+ 			str = strdup("EXCEPTION");
+ 			break;
++		case ALT_TYPE_JUMP_TABLE:
++			str = strdup("JUMP");
++			break;
+ 		default:
+ 			str = strfmt("ALTERNATIVE %d", alt_num);
+ 			break;
+@@ -580,6 +583,34 @@ static int disas_alt_add_insn(struct disas_alt *dalt, int index, char *insn_str,
+ 	return 0;
+ }
  
-+const char *arch_reg_name[CFI_NUM_REGS] = {
-+	"zero", "ra", "tp", "sp",
-+	"a0", "a1", "a2", "a3",
-+	"a4", "a5", "a6", "a7",
-+	"t0", "t1", "t2", "t3",
-+	"t4", "t5", "t6", "t7",
-+	"t8", "u0", "fp", "s0",
-+	"s1", "s2", "s3", "s4",
-+	"s5", "s6", "s7", "s8"
-+};
++static int disas_alt_jump(struct disas_alt *dalt)
++{
++	struct instruction *orig_insn;
++	struct instruction *dest_insn;
++	char suffix[2] = { 0 };
++	char *str;
 +
- int arch_ftrace_match(char *name)
- {
- 	return !strcmp(name, "_mcount");
-diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
-index 9c3f49c455871..74d1a8603535a 100644
---- a/tools/objtool/arch/powerpc/decode.c
-+++ b/tools/objtool/arch/powerpc/decode.c
-@@ -10,6 +10,18 @@
- #include <objtool/builtin.h>
- #include <objtool/endianness.h>
- 
-+const char *arch_reg_name[CFI_NUM_REGS] = {
-+	"r0",  "sp",  "r2",  "r3",
-+	"r4",  "r5",  "r6",  "r7",
-+	"r8",  "r9",  "r10", "r11",
-+	"r12", "r13", "r14", "r15",
-+	"r16", "r17", "r18", "r19",
-+	"r20", "r21", "r22", "r23",
-+	"r24", "r25", "r26", "r27",
-+	"r28", "r29", "r30", "r31",
-+	"ra"
-+};
++	orig_insn = dalt->orig_insn;
++	dest_insn = dalt->alt->insn;
 +
- int arch_ftrace_match(char *name)
- {
- 	return !strcmp(name, "_mcount");
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 7bd874871c31b..d651d8921ab47 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -24,6 +24,14 @@
- #include <objtool/builtin.h>
- #include <arch/elf.h>
- 
-+const char *arch_reg_name[CFI_NUM_REGS] = {
-+	"rax", "rcx", "rdx", "rbx",
-+	"rsp", "rbp", "rsi", "rdi",
-+	"r8",  "r9",  "r10", "r11",
-+	"r12", "r13", "r14", "r15",
-+	"ra"
-+};
-+
- int arch_ftrace_match(char *name)
- {
- 	return !strcmp(name, "__fentry__");
-diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
-index 2bd7a76f053d9..5bcd0df5d8b61 100644
---- a/tools/objtool/include/objtool/arch.h
-+++ b/tools/objtool/include/objtool/arch.h
-@@ -103,6 +103,8 @@ unsigned long arch_pc_relative_offset(struct instruction *insn,
- unsigned int arch_reloc_size(struct reloc *reloc);
- unsigned long arch_jump_table_sym_offset(struct reloc *reloc, struct reloc *table);
- 
-+extern const char *arch_reg_name[CFI_NUM_REGS];
-+
- #ifdef DISAS
- 
- #include <bfd.h>
-diff --git a/tools/objtool/trace.c b/tools/objtool/trace.c
-index f45ae3e88d428..ef9250d4646bb 100644
---- a/tools/objtool/trace.c
-+++ b/tools/objtool/trace.c
-@@ -34,6 +34,7 @@ int trace_depth;
- static const char *cfi_reg_name(unsigned int reg)
- {
- 	static char rname_buffer[CFI_REG_NAME_MAXLEN];
-+	const char *rname;
- 
- 	switch (reg) {
- 	case CFI_UNDEFINED:
-@@ -46,6 +47,12 @@ static const char *cfi_reg_name(unsigned int reg)
- 		return "(bp)";
- 	}
- 
-+	if (reg < CFI_NUM_REGS) {
-+		rname = arch_reg_name[reg];
-+		if (rname)
-+			return rname;
++	if (orig_insn->type == INSN_NOP) {
++		if (orig_insn->len == 5)
++			suffix[0] = 'q';
++		str = strfmt("jmp%-3s %lx <%s+0x%lx>", suffix,
++			     dest_insn->offset, dest_insn->sym->name,
++			     dest_insn->offset - dest_insn->sym->offset);
++	} else {
++		str = strfmt("NOP%d", orig_insn->len);
 +	}
 +
- 	if (snprintf(rname_buffer, CFI_REG_NAME_MAXLEN, "r%d", reg) == 1)
- 		return NULL;
++	if (!str)
++		return -1;
++
++	disas_alt_add_insn(dalt, 0, str, 0);
++
++	return 1;
++}
++
+ /*
+  * Disassemble an exception table alternative.
+  */
+@@ -762,10 +793,7 @@ static void *disas_alt(struct disas_context *dctx,
+ 		if (err)
+ 			goto error;
  
+-		/*
+-		 * Only group alternatives and exception tables are
+-		 * supported at the moment.
+-		 */
++		count = -1;
+ 		switch (dalt->alt->type) {
+ 		case ALT_TYPE_INSTRUCTIONS:
+ 			count = disas_alt_group(dctx, dalt);
+@@ -773,8 +801,9 @@ static void *disas_alt(struct disas_context *dctx,
+ 		case ALT_TYPE_EX_TABLE:
+ 			count = disas_alt_extable(dalt);
+ 			break;
+-		default:
+-			count = 0;
++		case ALT_TYPE_JUMP_TABLE:
++			count = disas_alt_jump(dalt);
++			break;
+ 		}
+ 		if (count < 0)
+ 			goto error;
 -- 
 2.43.5
 
