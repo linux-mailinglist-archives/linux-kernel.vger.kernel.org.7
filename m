@@ -1,176 +1,113 @@
-Return-Path: <linux-kernel+bounces-897738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC92C53777
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:41:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB4AC5381C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9BB1A358F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:27:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0BA6352B74
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44AA33F8A4;
-	Wed, 12 Nov 2025 16:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHSSCKHn"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5958233D6E7;
+	Wed, 12 Nov 2025 16:36:41 +0000 (UTC)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F733DEFD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A322D130B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964838; cv=none; b=G4qwD5R9iV9zMKxq9sE7AQpNvRM67X2TM5MNKZZBwG/CfPP4Ic+WdDeRI7kJlMNDwIznw5zho9vOEA+TNJVjZMRonTqX4lyV5ovW02gN/wScqMNAnTvbxxcVVKKRVLyXQvsFHVI7P9n7XyOVal+f+xtPh9X6opHHlmcIO3lh0fs=
+	t=1762965401; cv=none; b=ge+gogb4PgKxeYcudkSprKZngptMF5+w44vJTYV7fp1Ro9FGUwHV1/+uL6iZJWFlDe16avNLKV8ZlbmHsV/uF1xOzOXtzkvfQ3A/oTdIpSiIv0fO0DGiJqqNsPvE7RYzIXGbFqKYAs852MB0xUTZnobcPl+3XEdUp9TTBeqxq88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964838; c=relaxed/simple;
-	bh=2J28k+rkBGEIQnqpoey6EUz8XjM8ez1dZhEzYa6oxzE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=spHAm/zMDGY3LvP3rgbg070B2o/r3+XfO60A8q24YRAB3bfkXIUVarfndxLWePVKLCwVwS83ohtbuzF1ARfFiXpvOOGCnG0fIi4w9LuA4Hai85UtyjYT7qvKq17BxhYmv/sgt1Q8dNlqEUThnxQITh7CsnzyZgJVOIzpss1uPzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHSSCKHn; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4775e891b5eso5430555e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:27:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762964834; x=1763569634; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPkr/JoKjH8U6Lko6pTK2QTabDhqIIQDxw6EgSjYcZo=;
-        b=wHSSCKHnFTRV00rAxT009La1Du5NEQJaKZH9AbdB26v4vqbTgXKgj3mip6not0+Lwg
-         A4gNov04WOH0YsN8SPaHW10GP7KGY9yPwHtl2IKsNrhqf1rRg+n4STC/Zf8s4x4B1KLd
-         k8x12lI/BaQ+9eXdQ13uhPxQccKZnJUMCaXVjlqVm0qDxmf1Vv3EQ3WxaArVLzofA5O/
-         NK/dEWeJknpSvn4iFNSdKIJ1ET/8wbSdcQbfpQE/hvDDVEPoNlv8w/fakLKYXYA8fR5R
-         GKzAKYfp3Pa5nzfIqs8S4gNG8GMWvLrAsi1IiAmzbsmne8fPYroaxVvjpDaSA6J+s5Vw
-         8lIg==
+	s=arc-20240116; t=1762965401; c=relaxed/simple;
+	bh=Sk/VdDOjP8jSOytlFi9s9mo2ys81rNWZ2228bwgTL4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AFoxpJebrTlzwLEROZ0Z3fKpzQeNpZOdMXYSqqGiOiDwWoHKDZLNThi+mqA0RBHAWYFAWNOC/vonadUWO3sFsFYWMNQCaHjma9YtATjTdKJNOgmHaDWy9Ay4h4YTTP8Es3obwOd4OUjHXppLTHi6BPg5uPz8IbWWCYXt4aUZF+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b25ed53fcbso143332985a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:36:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762964834; x=1763569634;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762965398; x=1763570198;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YPkr/JoKjH8U6Lko6pTK2QTabDhqIIQDxw6EgSjYcZo=;
-        b=dtAzFr3NZetb+TccrYBxer3Tgj1mJvOWd6lJg+mFH1zhkkJ5TJBgtWysSOvmYIIVNn
-         Uqta9R8rDdhSaoK+fQkaD3BtiCI7wzlFNt580WInEKUJUORqgTMWZnPT/L45z2qaaD+I
-         XZHm8CzKAnt61X0KbGK5QqfNdUIbwJ0Rz9px/lwSy8casrqZdMw59+so1OHYiMkDvwYN
-         fnqPF2N28QBqXOzGiLOrdKShOkQHN1PBZFC0ZmHI96jtmzodysY7TM3AvHmwItnofpAS
-         I/Z9TDmz9eTft7XMPTt7bVaZtbHHgAcZBoiRhZzzSjrItGwa/OXqRiIG9pe/m2G18L3i
-         HyEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsY7+PedouZsJ9zuO4i1hzm1pXvbyT3D2YyBpNP34goZ7OtgSQyfYr972b+WlIUnFQKJvJ78C38bpSZdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgSEU4Z3Vf/C+i9Q2AHyVlLHlFVzreU7PTWI07ANfagueIMkY/
-	HB61fKTFMsVClLede8kk8VWj6X0A7KThpwNqvy5ZoZpQveJ9dX2Q3fwc5c9I7Z9YLvA=
-X-Gm-Gg: ASbGncvndFKKn8RiOArqjEdmhIfjUUuM4X/V0CnnrohHH7Fs2Wx8b/C5YFYXDSfn766
-	k5qilzwaS+Njh+CFChj/SoBJRe+9ZuVvNSVdDPGOZgoPckr7F52cOkTXyqK3NKsZgDO0jKauFEH
-	7MFXDTrhI9Is/q9D14WBpavpODKHexDCPqE4DCf7a8+3DOie4YYA43yDwfRlvvl6ETJ7497Y1bk
-	eKtmmMzHtc0oSIzHjA3Nsqe++kG179AH1WYtfHr1I48PerendyrG5+sIwttWk4CF7VqpC1QageV
-	Tghm6LJ57/qKH7nsvR+oefW11JIT91ryqQq0T5ietzyqnmyaXSQwIBwwcd9XlwAeHWw0Wu4oyI9
-	WSReVJ81gwRh+RzON4jBK0e2n59dbC23zNa4HLUmhFr4VRk56pX+dgo04VH9FAvpQ/+Wfe/6Vcc
-	6LO2UTfVa3Udf3KMCctuvqB3nxtfPAOa4=
-X-Google-Smtp-Source: AGHT+IGkEoN4sWg2lAUJ3rXUtrl89smNrKDWX680+800326hJYTJQMWhDrBhsVLjs3L/pc050EyNZw==
-X-Received: by 2002:a05:600c:1c85:b0:477:76cb:4812 with SMTP id 5b1f17b1804b1-47787000e64mr38038745e9.0.1762964834332;
-        Wed, 12 Nov 2025 08:27:14 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e36ca3sm48534815e9.5.2025.11.12.08.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 08:27:13 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 0/2] Add new phy_notify_state() api
-Date: Wed, 12 Nov 2025 16:27:05 +0000
-Message-Id: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
+        bh=Sffz3tuaGapQMQeKbnEwNMkk8oLRrGLz73c/pcBk56A=;
+        b=TnLPrYdkKbfk1F/+6l8n5TYdtJuoLuT0Kvbuc2tisjRoo1V14zWhdx3HggL1VoL6nM
+         Bk0xiM60dbGviz431wv3oaoP9LOu5y8XR0RPSopdoUO/wRcKLBaICVRBjs+PIBo6nKwK
+         JkWwwK0F3gpDbmHI6tkMc5glHmPn1bCxH/pVsnJa4prpvvm6zRJ8z9mH/l2ZImMyJqrM
+         bhWW0LH5GwPbG+TkPTIHgbo5n0KwyKHbdH0vMVvC01xq9O33B6dtZBLqfjG+aqxd85sl
+         EN2HtTg2Ig7o32r+I1jIftDAzNYfI7VoZ8NfTxGoxo+rmgCmLKAiT42t5z7Pgv1ALLHQ
+         hsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCURw5f+Q1oVDcizttXsY+Ic2LhqTm3q+3SkwfWKrn4jo7NGF78rAdQo7ndCJmo8sWrCukGxLO//bkBYbmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi+dBrW99hAAI/+EdTN63MCwaFmsVTPFpm5SUpIt7vgcaKdyS0
+	1gBUuWSg3+IFD0mYajQz89thLOcg79PnY4QSJjqnidImuUAKM+IKwOUIg1uLnuS6
+X-Gm-Gg: ASbGncstfo99OedIHedprsPMVm2uifjy1Uv5b9sYxu20X/oueizt7qxprHfWVGZCbWA
+	F53vSr97FMTqwFDJ/EpXQ8WjoTLkmBx/TSIm9ymCUv06Zt+Cdjzw9IMQLY39OawmmPMamJ1AfSR
+	OYGZx8KlqkGM+39mhhkYUzbba7fmBx++C1VPj0Xc4ii2kF9Cmym96GDIHEieFAiYclG/alt7fiy
+	AJb6JRgpVLzSqZWuYRS1Ohv4yaf4SWf0/9vPnMjTSOKoOZ0NQzl0VoDEJoQIZ7rkRZKCHAZ8ZUK
+	SwxhUPpMx+KbmQdCSE+xbzpbViSdN14jW1NmlFJLuxbHUl5AhuRKpXmgnOxRk9ETg04NozoK7w+
+	PTVC7Rbk7HFwf0pVaaAfwC6zMaj86XaCoSCgVFXK5DkDzXrHlUS0FJm+lQvYAFk3gyEbKagNc7m
+	ZIPpUQ+V9mV+tfhw0GM6rmkQ5dRvibbcz8gjkA9b63hONRgDMHzIsz
+X-Google-Smtp-Source: AGHT+IEC5WmfmYzKRTN/4xKvG7+gh3JUKQ/Nta0eU3GbtBtMshRDbq221ULSwh7Xa2onWJ/elmARnQ==
+X-Received: by 2002:a05:620a:4406:b0:8a4:40da:b907 with SMTP id af79cd13be357-8b29b768ba9mr470826985a.32.1762965398016;
+        Wed, 12 Nov 2025 08:36:38 -0800 (PST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm218707385a.50.2025.11.12.08.36.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 08:36:37 -0800 (PST)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b25ed53fcbso143330785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:36:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXhKVkVjAByV3zwN9ZEM6QziFL5+O17Ljhf431mUxrt97de5seBXhILpSG/O5nr9XQHk9vU9c1iAcb1y24=@vger.kernel.org
+X-Received: by 2002:a05:6102:2913:b0:5d7:ddf6:b3b7 with SMTP id
+ ada2fe7eead31-5de07d0bbedmr1183622137.8.1762964930074; Wed, 12 Nov 2025
+ 08:28:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFm1FGkC/3XOQWrDMBAF0KsErSszM/JEdle9R8lCiSRb0FpGE
- qYm+O6RA20pSZd/4L8/V5FdCi6L18NVJLeEHOJUA78cxGU00+BksDULAmLQoOQ8rnKKJfhVzp+
- 5mOKkBzob5o78kUUtzsn58HVH3081jyGXmNb7xoL7dedaBCACZOZGKUWoOklydsWlZkjB+zC9f
- YTJpNjENIgdWui7/O8vC0mQ/oLHHlrVI+oHQ/0aHT43VDXU2Rrugdla9WC0PwYi0lOjrYZGbXU
- H0FvkP8a2bTdj3YVgegEAAA==
-X-Change-ID: 20250703-phy-notify-pmstate-f02ba5582f65
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2163;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=2J28k+rkBGEIQnqpoey6EUz8XjM8ez1dZhEzYa6oxzE=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFLVcYFXUfJuYXtUM4uyqJbaJ6Y1c9sCsE32zd
- GbAifZjux+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRS1XAAKCRDO6LjWAjRy
- uuElD/4upiReXgng0xFPts/n3ptS/LaaZKG8BuwXA9peTmNePtMCmrgipdYQQQsNQZT9JEnLwcE
- QeLVgaAbODCp1WU4xlw0FbDR8+OMJciud3OLA8iOEOJyFC2vulmkIsS2QIaQO55LJeRhV7L2Iuu
- qC0S6fV8h8R8NJhJS0eQmrvfOXcMt7X8QFWO83xULfVXJWokZws2c29b7EMmEVn1e5mXTXo8F/t
- HToMgLlEvniN5KzxOLHsP1JyOuO5Olv3CeN9T9aIsgu4g4MWOUNp9WcMiyctkWhteU+JCpU+7+1
- 2hBbhq+w4MKQNZUwk+Zp29lg/GvHe3jKc8kBMigkZdMZj0PTC11GmRw32DUdefMIuQd009Cmq+C
- FmI11O9/5DbloYzPvg6YAqVY9a+161ADKITnyKyNG/gqk3fUvb1RMYXMcliZlmMi8Yk98/jlDzc
- YwhGGmuv7jM2/74e59posAroBT8heOInlLav7HBMLlOnBfB6FffTE58bhIxFbFu5ciQ+Iqutf6K
- KzVQoeGGKtmYv2cnxrTTBwgEMrqGpNnod3X+cN8WArmlhDOotvgoK8HP71X3l/l3SaXav6bvDus
- +SRPz7xb1rHLxLRZHelG9PmQrZwriY8z3QAQhfT5Z5M8StdtGAi9jmxfWYeappyFNvp7T2Hb3e0
- P1VM8WhxE15WVgg==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-3-yuntao.wang@linux.dev>
+In-Reply-To: <20251112143520.233870-3-yuntao.wang@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Nov 2025 17:28:38 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV_n1XBNkZ+4pYF2RyNn+LWu4DasUgOut9ZJg7RnZn1Ng@mail.gmail.com>
+X-Gm-Features: AWmQ_bk4xxmjNl-qRNjNfh_2vFa7asZw1z28h-USze4ilNHopbNHQRytaRHEDHs
+Message-ID: <CAMuHMdV_n1XBNkZ+4pYF2RyNn+LWu4DasUgOut9ZJg7RnZn1Ng@mail.gmail.com>
+Subject: Re: [PATCH 02/10] of/reserved_mem: Use dt_root_addr_size_bytes()
+ instead of open-coding it
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
+	James Morse <james.morse@arm.com>, Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>, 
+	Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Changyuan Lyu <changyuanl@google.com>, Alexander Graf <graf@amazon.com>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-This series adds a new phy_notify_state() API to the phy subsystem. It is
-designed to be used when some specific runtime configuration parameters
-need to be changed when transitioning to the desired state which can't be
-handled by phy_calibrate()or phy_power_{on|off}().
+On Wed, 12 Nov 2025 at 15:37, Yuntao Wang <yuntao.wang@linux.dev> wrote:
+> Use dt_root_addr_size_bytes() instead of open-coding it in
+> __reserved_mem_reserve_reg() to improve code maintainability.
+>
+> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 
-The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
-need to issue some register writes when entering and exiting the hibern8
-link state.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-A separate patch will be sent for ufs-exynos driver to make use of this new
-API in the hibern8 callbacks.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-Changes in v5:
-- Fix typo phy_notify_phystate to phy_notify_state in phy.h (Russell)
-- Link to v4: https://lore.kernel.org/r/20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org
+                        Geert
 
-Changes in v4:
-- Add missing 'used' word in commit description (Vinod)
-- Fix 0-day compiler warning
-- Link to v3: https://lore.kernel.org/r/20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org
-
-Changes in v3:
-- Rename API to phy_notify_state(). (Mani/Neil)
-- Remove inline kerneldoc comment (Mani)
-- s/phy/PHY (Mani)
-- peripheral specific enums in phy.h (Vinod)
-
-- Link to v2: https://lore.kernel.org/r/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org
-
-Changes in v2:
-- Add new phy_notify_pmstate API() instead of using phy_set_mode() (Vinod)
-- Link to v1: https://lore.kernel.org/r/20241002201555.3332138-1-peter.griffin@linaro.org
-
----
-Peter Griffin (2):
-      phy: add new phy_notify_state() api
-      phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
-
- drivers/phy/phy-core.c                | 25 ++++++++++++++++++++++
- drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.c | 40 +++++++++++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.h |  7 ++++++
- include/linux/phy/phy.h               | 19 +++++++++++++++++
- 5 files changed, 119 insertions(+)
----
-base-commit: b179ce312bafcb8c68dc718e015aee79b7939ff0
-change-id: 20250703-phy-notify-pmstate-f02ba5582f65
-
-Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
