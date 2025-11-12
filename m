@@ -1,149 +1,149 @@
-Return-Path: <linux-kernel+bounces-898227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B630EC54A32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:39:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F995C54A35
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C233B19A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:38:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 266BA4E57B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B012E1F03;
-	Wed, 12 Nov 2025 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872DF27D782;
+	Wed, 12 Nov 2025 21:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgTEENXw"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYDbErJu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116C2DC338
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC98B25783C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762983480; cv=none; b=G9Ivz9FmfW03oid6MvGioKSUxC/lXeGhdLF5QGb/WDBiDLuheRNC60fwRonVtsYSzmd9LKUAVuAffdaqVep2CLjI14VJw6QqeAkUEO6ENaxWNyk1hSae5kt1kVMBsuzCey+38kYOVZuIbV2UruO/ILVFzt7OhfA0XPwAcWPzupI=
+	t=1762983506; cv=none; b=JJ6z4ta6gzL2rPlXV7vgRNZGOp/7txk4HTcxCW95JMMTQD7Yzs8h3QW4hwZk+W+B5vGVfMkWK6D9Z3IDuUQbyb6bIgVQ1AHItLVnWLWrJdglv5HJnJ2nkkvjN7JPIiTlNKpxHBmeSX1zQ7p1QKIehQcT6OVGDz6IpLHRABpECiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762983480; c=relaxed/simple;
-	bh=+bUleK0B8PiE7Fk0SaUF+J+QNb/VCv1zue5xnjCOWY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1y/KUmodGhWzHM/rASdkpBySxOI7ZRosgIP1Wvco5zL2YSlbBxnXj7tqeI5eM1W5OmdrENhgtGcUgIJFo/PrymDTimv54INVAVOrRQIIXUBiduePmMCPvjz0yFz1e/0reHKTKOHB+xoV9PN3wvgAYmRcqazHOMIpFkVxBgTJIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SgTEENXw; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4777707a7c2so10534375e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:37:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762983477; x=1763588277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4evj7W1RMWi1DGU6HCMJFRDOHQDQQckuWXz5qPHKAuA=;
-        b=SgTEENXwXrs74kTMQbThyXnkys1A6gZLa3d1WHDrC6/TMD2l3++C49aCIiKGttnrih
-         ConG8RSwlQk13NCsGtQqov+KrOZsNUVgYM75HAkfcAz370LT4dfAkZlfvbQ+oLUTSvVz
-         /0IK3Izf8I/+tjfaUnxK2hu6+dwJCeutLY/oD9wskfeZYLqk5ludPX1Rgzi5uh+GZwmo
-         dKbhwxbUT1I68+D2FnxU7+shM+aTpJpqf2JaGqplFyeYbGkybwL9Z7bbgwnOPVabkd3R
-         sBlfQa6pBC0YtnNAHaW9iVGRuMD0ssASooVXLxZxlzjb7pg/C58jOqtlL4rcFn+8r37B
-         WGig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762983477; x=1763588277;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4evj7W1RMWi1DGU6HCMJFRDOHQDQQckuWXz5qPHKAuA=;
-        b=ZZnxh2u5Rcwl6rihEfuXZHBnu449S/3iTtioYfFpIWCEtXsW0OFpMCYCnuIrgKZOVp
-         7QU4g3vM8qnjm1nymhlql+JmOVExSNe4l4x/FGyGebAmr+I7dnE/iflf3uRzUQHQyqN4
-         ZR9Y4awdgy5p5z+8MtXBf2k5GZERxhpbTdZk98Gk85H28MaXqhYSh8nJRGwXA+peLVf1
-         kNy8uD1MRleCG/dW0gFQavXBDDCYzJJ0wUcu8cvdr/DB12R3bYl3dg1kBUXtUp2tnB9Q
-         +qX2V6GKw4/Xb9TJUOsfbDz4HhvWlQ8d8WgXfDS8URD0o/QWfoYCfJ9W0jH1AAXZalUr
-         LVMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1pnJVMWC1jaJl+T52F89JnAVoxCW3wKEdX5pxnehrXzmSyCemKkC13E32A7lkqscHVRw1G7CkzXOLQx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTN/hCsBzsWIhKKXf/BbkTPiYJsNampduxe2jPapwxj4SKqGff
-	ieUHWxAbqLsO6Pw4kVQwMMLpH54ffrpG0grZ0ofISdMELH9yBgsFyLsm
-X-Gm-Gg: ASbGncv6PJW62U0YVjWyy81MJ2v8Opt5nSwtn8rS+wMiCD12CQIyUJ3/LF3Dcfd68Io
-	qqhC6Fya93iexHaCQD1PDujgTpvFcIbMQiNIagI7R9No0YbSEJX0ahQvrNqAtoNIxhPHqjo69HD
-	AW7U4iWwRSkFCcJqfEkAy1tquNaeDEeCfcB/PeS7EesFMOeFsP1Xk4TMJZpB7/Ob7qDiWps+j4m
-	Kkiiy0CcwQoBchvFjgpssMtzTTKZHdwnMe794PhncNPdfI3YdT9RU/Zchcm2WqgfVzN9sPQTmBC
-	DXejUWnwKpzsglcdT8CKXcYNXETkAmv7OuqErZaVysKj5wuxtntcNADZROLmJn7PtjtvNLuLlsf
-	dJQ3tMj9KG9Tz5CA7eAJaAtMO1svWRTG8yUQ847Q778aBOfCoQBZWil8Dks9FrvL1NSBBmwju+j
-	MctsOAKeLeMEOyuqxU13zYdsRWM+5sbaPiKRGJKYcn1MNLfiiIKWA62SC1dGsoD2w4K+iF48uyH
-	4nCjMuXu6OYQNX/fsC5YFdl2r8cQwEFcQHUv/O6BgOc6toQ
-X-Google-Smtp-Source: AGHT+IFVREUT6iLk315iqZFQJC6ImzRQ9dAqU1Gfy56ootTo9We7Wq3zsRANNkZ3GC+r7RPmOIr7dg==
-X-Received: by 2002:a05:600c:4ed0:b0:475:d9de:952e with SMTP id 5b1f17b1804b1-4778bd2ccf9mr9501615e9.1.1762983477135;
-        Wed, 12 Nov 2025 13:37:57 -0800 (PST)
-Received: from HYB-DlYm71t3hSl.ad.analog.com (aftr-82-135-81-2.dynamic.mnet-online.de. [82.135.81.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e953e3sm54307145e9.14.2025.11.12.13.37.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 13:37:56 -0800 (PST)
-Date: Wed, 12 Nov 2025 22:37:55 +0100
-From: Jorge Marques <gastmaier@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Jorge Marques <jorge.marques@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: accel: Change adxl345 depend to negate adxl35x
-Message-ID: <whsmsygljixaqh3mfs34fnnlcyptxxxxlsujljawdj7jyl2ce2@a6oshhvsi6dv>
-References: <20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com>
- <aQSL0wCr56zr5Y35@smile.fi.intel.com>
+	s=arc-20240116; t=1762983506; c=relaxed/simple;
+	bh=kJuIkLvSHwWWhGY0rIDCqACoepGxKTwg++6iKoxpkgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nb3rHJrt1AIG5i+NkMthqzmysu04dB3k9XxeuSCIYYJ7njwCxpnzx+bzxhc9OUexUIDboH/LAcxUFK7UrOn/QQ9iDHjAwZAH0iOSDfVRW8PD87EPH6PuWsLZpNP1KLnattyESanGV+Xr1nE8RB0WTMsofJPb477XvbsLPhQo+tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYDbErJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 708E1C19422
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762983506;
+	bh=kJuIkLvSHwWWhGY0rIDCqACoepGxKTwg++6iKoxpkgk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UYDbErJunvhgKNYY4o6XrtmDW27UFy6msl6Ltd+gtUoyfxw5ENzkxV/hPuYvj+VCv
+	 E8sRox/M1T4+xe/ZHKSZfI+asyylw86McNk3XXUFNK2LskzXYS+AR2vqDGgsA0W5i1
+	 82VlsCYrqJZXGWN71TzHbPqL/QM7BsGbWgvlmcEFh6HRzA7mdW4V8o09O+QgdSeYGI
+	 L+yC9q1T2hyWFbNkkMNIuCD9u6VtXPYF4Eoz7SQxDLbW4zUKSBd9wCRUNSHtWOI2j9
+	 edGWBJ6405I3LJyFpCnmUtKbkRGOce2OPX40Hq4kSu1N9s7NSnvm3Re7HRPLxGOhF0
+	 mtb45TXqe93GQ==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-45085a4ab72so44566b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:38:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX/v52ZvbLeFS8qYaHlKBBhkBfvsirSKyN3lLXTlxZC6cG8XzageZzSMXq5+vC4xXdXe8FrkCNSoGh4WrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytzMfyF7/CqmMSZw0+Hgwjf9ZpAyLAIrUWVI/DUnn8FVDAOwAU
+	dN93SZzLgiK5/VLaaal0drJD6KcnLAl+iCRx5tVBjEw5iU0ftXJaxeDAZ2GZyFzDsJibp5S/5tX
+	iTFvWEnP1UiF38WmGphrVQ8+svpE7XeA=
+X-Google-Smtp-Source: AGHT+IFr8y7vuGeeebfdU2FLfgfK72tZdHVnb7ogJwqZqUj0ziPfYWjBqjf3ijtTyjxZTHoh/HIfqSk5hx82HnviRxs=
+X-Received: by 2002:a05:6808:650a:b0:43f:b94a:14f2 with SMTP id
+ 5614622812f47-4507445ca4emr2233847b6e.16.1762983505781; Wed, 12 Nov 2025
+ 13:38:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQSL0wCr56zr5Y35@smile.fi.intel.com>
+References: <13883374.uLZWGnKmhe@rafael.j.wysocki> <20251112063941.kbg44srt5f7rfkjb@lcpd911>
+ <5068916.31r3eYUQgx@rafael.j.wysocki> <6914fbb5a6ce_1d911001b@dwillia2-mobl4.notmuch>
+In-Reply-To: <6914fbb5a6ce_1d911001b@dwillia2-mobl4.notmuch>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Nov 2025 22:38:14 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i0U=BYFH+QmeVjSpcyrVhVR0zjke3Vve3wxnpNzcDcoQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bn6YDvmk2NX9_6zpWQoI1iGQ5XBQQj83W27xBkXn5nlh_3iGLtRjukhi6U
+Message-ID: <CAJZ5v0i0U=BYFH+QmeVjSpcyrVhVR0zjke3Vve3wxnpNzcDcoQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] PM: runtime: Wrapper macros for usage counter guards
+To: dan.j.williams@intel.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Dhruva Gole <d-gole@ti.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Frank Li <Frank.Li@nxp.com>, 
+	Linux PM <linux-pm@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>, 
+	Zhang Qilong <zhangqilong3@huawei.com>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Bjorn Helgaas <helgaas@kernel.org>, Alex Williamson <alex.williamson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 12:13:39PM +0200, Andy Shevchenko wrote:
-> On Fri, Oct 31, 2025 at 11:05:08AM +0100, Jorge Marques wrote:
-> > Change 'depends on INPUT_ADXL34X=n' to '!(INPUT_ADXL34X)' to allow both
-> > drivers to be compiled as modules. The user then can use the blacklist
-> > to block loading one.
-> 
-> > ---
-> > There are two drivers for the compatible:
-> > 
-> > - adi,adxl345
-> > 
-> > * IIO: 
-> >   drivers/iio/accel/adxl345_core.c
-> >   drivers/iio/accel/adxl345_spi.c
-> >   drivers/iio/accel/adxl345_i2c.c
-> > * Inputs:
-> >   drivers/input/misc/adxl34x-spi.c
-> >   drivers/input/misc/adxl34x-i2c.c
-> > 
-> > To disallows both being complied, the depends INPUT_ADXL34X=n
-> > was added to ADXL345 symbols. However, it should be possible to compile
-> > both as modules, then blacklist one of them in the /etc/modprobe.d/blacklist.conf
-> > file. This patch changes the rule to !(INPUT_ADXL34X) to allow both as
-> > modules, but still disallow INPUT_ADXL34X to be built-in and ADXL345 as
-> > module.
-> > 
-> > The following compatibles are not shared between both drivers:
-> > 
-> > * IIO:
-> >   adi,adxl375 spi/i2c
-> > * Inputs:
-> >   adi,adxl34x i2c
-> 
-> I like the idea, but I think this needs to be clearly stated in the Kconfig
-> help for both symbols. So user will _know_ that in such a case it's their
-> responsibility of properly made choice. On top of that you might want to
-> investigate existing DTS in the kernel and see if some of the choices may be
-> made at the platform / CPU level.
+On Wed, Nov 12, 2025 at 10:27=E2=80=AFPM <dan.j.williams@intel.com> wrote:
+>
+> Rafael J. Wysocki wrote:
+> > On Wednesday, November 12, 2025 7:39:41 AM CET Dhruva Gole wrote:
+> > > On Nov 07, 2025 at 19:35:09 +0100, Rafael J. Wysocki wrote:
+> > > > Hi All,
+> > > >
+> > > > The runtime PM usage counter guards introduced recently:
+> > > >
+> > > > https://lore.kernel.org/linux-pm/6196611.lOV4Wx5bFT@rafael.j.wysock=
+i/
+> > > >
+> > > > and then fixed:
+> > > >
+> > > > https://lore.kernel.org/linux-pm/5943878.DvuYhMxLoT@rafael.j.wysock=
+i/
+> > > >
+> > > > should generally work, but using them feels sort of arcane and cryp=
+tic
+> > > > even though the underlying concept is relatively straightforward.
+> > > >
+> > > > For this reason, runtime PM wrapper macros around ACQUIRE() and
+> > > > ACQUIRE_ERR() involving the new guards are introduced in this serie=
+s
+> > > > (patch [1/3]) and then used in the code already using the guards (p=
+atches
+> > > > [2/3] and [3/3]) to make it look more straightforward.
+> > >
+> > > The patches look okay to me,
+> > > Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> >
+> > Thank you and Jonathan for the tags, but since Frank is not convinced, =
+let me
+> > bounce one more idea off all of you.
+> >
+> > Namely, I think that Frank has a point when he wonders if PM_RUNTIME_AC=
+QUIRE_ERR
+> > hides too much information and I agree with Jonathan that may be misund=
+erstood,
+> > so what about defining the wrapper macros so they don't hide the guard =
+variable
+> > name, like in the patch below?
+>
+> I had been reluctant about offering an enthusiastic tag on this series
+> given that information hiding, but with this change:
+>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
-Sure, I will add a info for the user in the symbols. I think the choice
-is on the defconfig that the user uses, the driver is a accelerometer,
-but one exposes as an IIO device while the other as input (e.g., for
-screen rotation).
+Thanks!
 
-Best regards,
-Jorge
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+> However, I prefer that the scope variable declaration vs usage
+> (reference) cases should maintain visual separation with an operator,
+> i.e.:
+>
+>         PM_RUNTIME_ACQUIRE(dev, pm);
+>         if (PM_RUNTIME_ACQUIRE_ERR(&pm))
+>                 return -ENXIO;
+>
+> Otherwise we have a case of different flavors of *_ACQUIRE_ERR
+> implementing various styles. I initially looked at hiding the '&':
+>
+> http://lore.kernel.org/681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch
+>
+> ...but it grew on me precisely because it provides a clue about how this
+> magic operates.
+
+Fair enough.
+
+I'll resend the series with this change then.
+
+Thank you!
 
