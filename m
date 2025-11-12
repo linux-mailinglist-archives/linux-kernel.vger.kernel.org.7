@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-898242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA77C54AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3282EC54ABF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DE014E3D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:57:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC6764E4D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6063C2E6CA5;
-	Wed, 12 Nov 2025 21:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16E72E7177;
+	Wed, 12 Nov 2025 21:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MADdVJDY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GP6NBbif"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiByVJTn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631F429B233;
-	Wed, 12 Nov 2025 21:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184462E5B0D;
+	Wed, 12 Nov 2025 21:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762984651; cv=none; b=W1CkSBm96HGVPDj5xsTVUKcijsUzdOvkXTqSr7kW8BHXi5KigUhaSAUh51gB34ukzcCyDJMf9joo2nnZTiUOByacVGCb1PyrRY8D4JvamvgugmDtqBHzMqX9fiHwWK/3E8AbltT6p6NDLGB54w9GmMb8B0fx5/X+nhD8YHP/ae8=
+	t=1762984709; cv=none; b=hQdSUyt8AAfuogggaOSIYAQGltWOcNQe6UyDiKcLT/BKmtY77tvs+sjYpu/bhTLsp4gSpdMA81Yh34H0RKDZoiohV1VfMqp5c04MCVlOqh4qJ9sEGlef2D6UvnGHNP77rJSe0CoPy4lP9L4PF1IT7I2pzG46trd4318mNnFyXzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762984651; c=relaxed/simple;
-	bh=mkOEgj2acWYW3QgEMNEaG8bU+/P170whur803Yam0ac=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lVQSFz6G4WH2428dJMmcFJxHLuitZLRqq2l8lMtZZH2BR4gMq7u5T/hqD6YMKRvVy+NL7wMq8WbNJ1tLCR7QBXAiwtMd1bM3ZxxkkXugpQ/ZEsTzseqbuR+R92arK7pqo6SXghWX+5hAw4uzlJ4CthMCjqc7SOqE24p17jgpPFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MADdVJDY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GP6NBbif; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762984648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQmPFrko68lFDC866Huq+wp9LzzLLlaGuL5IsTID5Qo=;
-	b=MADdVJDYEPVjXl5hUf/4cAxdxnWEfoHCpsGhFnByHQKhbWtOomd23WXTn5ZGWVvQnLdmN0
-	oz1iaNVvtd3kvhbgTWU5AYMPQjimP3jkntioflV2bqg1smN3HanPuLzwN1m3j5YoRIXZyC
-	ytyLBVXaoTRXiPXwOGONNl1Jb6gZKSE7tvd65MJbXxEzZfpb+dyvc6q4qJYQNx2sL3YLLV
-	j8I4jVJdmVPpO+3LWCiGI++LsnW+IqmvfMUNI+/sFphH2p4+egQtS8S534675Uj5RYvGAK
-	Hq7ovANEDkNY//7SMy51HoHpp3PLm+PlgF+dZDcUwdccJIRkcWOG0q7Y6ZfgTQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762984648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UQmPFrko68lFDC866Huq+wp9LzzLLlaGuL5IsTID5Qo=;
-	b=GP6NBbifM+KA2vlmk1e9Cn8NhjUfqZKJ3EdLeRmag3DNGdhKPsPncSfvpG2zXgp6mp2iIC
-	Of1ATE8jlCJ9KWCA==
-To: Prakash Sangappa <prakash.sangappa@oracle.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Madadi
- Vineeth Reddy <vineethr@linux.ibm.com>, K Prateek
- Nayak <kprateek.nayak@amd.com>, Steven Rostedt <rostedt@goodmis.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann
- <arnd@arndb.de>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [patch V3 00/12] rseq: Implement time slice extension mechanism
-In-Reply-To: <F940B2E6-2B76-4008-98B9-B29C27512A60@oracle.com>
-References: <20251029125514.496134233@linutronix.de>
- <03687B00-0194-4707-ABCB-FB3CD5340F11@oracle.com>
- <2eee5e37-e541-4ac7-9479-cef3e62f234d@efficios.com>
- <b28c9f26-7a79-473c-a390-f502b74b02ac@efficios.com>
- <F940B2E6-2B76-4008-98B9-B29C27512A60@oracle.com>
-Date: Wed, 12 Nov 2025 22:57:27 +0100
-Message-ID: <87cy5mewxk.ffs@tglx>
+	s=arc-20240116; t=1762984709; c=relaxed/simple;
+	bh=DCH5YBw66ErM1uxNNoYc8WJxzsfE8ZpJahysVMrqAkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hxqshhjba5mE7PIgnYCLb+02JiBId14tiFS+4oWgkwCj5EW8QPNF4WAVVt5cwtVG0WozBJeDzAMRlAnRxMK9HrM4YGYEYaus/HmpbKVBDZS4y7nwK/fwY6nHQnv6myXO1wXE5LTaAjv+8F7GQjrHlvaqrHVKgUFyjVAr8/G5su8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiByVJTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A965AC19423;
+	Wed, 12 Nov 2025 21:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762984708;
+	bh=DCH5YBw66ErM1uxNNoYc8WJxzsfE8ZpJahysVMrqAkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oiByVJTnWtO3RGPuzsmVE4E2uE/UfTblS478WXOkC0X6nxJ04o4iYt40TAukSmtzM
+	 b9LjYsPnXMBkDmACHOOjmm+zPI6GlG8BVFMZ/BbVVkrwXCk0fM+OYtixdNnylkimVG
+	 i+/E/UN8DriSWpPQR9nP/eEzoEHPcfm3AmmhuWMzlvK/fJAB6l4bg/wcqXi2tZxha6
+	 ydiIQOZf886r2mu/1FfxaVQ4sdGVWWPcML1X3WB+XAgPk16zytV9u170+XMXXONFx/
+	 s2lGF8aKLMP7rPymB7B6IYBACriIQPv1lknibV0I139ZO3Y2oxU044TziB1secfV/p
+	 rlx8c+ZIzYF8w==
+Message-ID: <69451eb5-a36e-4443-8e34-7a06627b087d@kernel.org>
+Date: Wed, 12 Nov 2025 22:58:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net V3 1/2] veth: enable dev_watchdog for detecting
+ stalled TXQs
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?=
+ <toke@toke.dk>, Eric Dumazet <eric.dumazet@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ ihor.solodrai@linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
+ makita.toshiaki@lab.ntt.co.jp, toshiaki.makita1@gmail.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel-team@cloudflare.com
+References: <176236363962.30034.10275956147958212569.stgit@firesoul>
+ <176236369293.30034.1875162194564877560.stgit@firesoul>
+ <20251106172919.24540443@kernel.org>
+ <b9f01e64-f7cc-4f5a-9716-5767b37e2245@kernel.org>
+ <20251107175445.58eba452@kernel.org>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20251107175445.58eba452@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12 2025 at 06:30, Prakash Sangappa wrote:
-> The problem reproduces on a 2 socket AMD(384 cpus) bare metal system.
-> It occurs soon after system boot up.  Does not reproduce on a 64cpu VM.
 
-Can you verify that the top most commit of the rseq/slice branch is:
 
-    d2eb5c9c0693 ("selftests/rseq: Implement time slice extension test")
+On 08/11/2025 02.54, Jakub Kicinski wrote:
+> On Fri, 7 Nov 2025 14:42:58 +0100 Jesper Dangaard Brouer wrote:
+>>> I think this belongs in net-next.. Fail safe is not really a bug fix.
+>>> I'm slightly worried we're missing a corner case and will cause
+>>> timeouts to get printed for someone's config.
+>>
+>> This is a recovery fix.  If the race condition fix isn't 100% then this
+>> patch will allow veth to recover.  Thus, to me it makes sense to group
+>> these two patches together.
+>>
+>> I'm more worried that we we're missing a corner case that we cannot
+>> recover from. Than triggering timeouts to get printed, for a config
+>> where NAPI consumer veth_poll() takes more that 5 seconds to run (budget
+>> max 64 packets this needs to consume packets at a rate less than 12.8
+>> pps). It might be good to get some warnings if the system is operating
+>> this slow.
+>>
+>> Also remember this is not the default config that most people use.
+>> The code is only activated if attaching a qdisc to veth, which isn't
+>> default. Plus, NAPI mode need to be activated, where in normal NAPI mode
+>> the producer and consumer usually runs on the same CPU, which makes it
+>> impossible to overflow the ptr_ring.  The veth backpressure is primarily
+>> needed when running with threaded-NAPI, where it is natural that
+>> producer and consumer runs on different CPUs. In our production setup
+>> the consumer is always slower than the producer (as the product inside
+>> the namespace have installed too many nftables rules).
+> 
+> I understand all of this, but IMO the fix is in patch 2.
+> This is a resiliency improvement, not a fix.
 
-Thanks,
+As maintainer you have the final say, so I send a [V4]. Notice that
+doing it this way will cause a merge conflict once net and net-next gets
+merged.
 
-        tglx
+[V4] 
+https://lore.kernel.org/all/176295319819.307447.6162285688886096284.stgit@firesoul/
+
+--Jesper
 
