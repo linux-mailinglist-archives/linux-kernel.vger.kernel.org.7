@@ -1,195 +1,163 @@
-Return-Path: <linux-kernel+bounces-897835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FBAC53B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:33:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98D0C53CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7BB0534685D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:30:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1182E4F76DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7242D73A3;
-	Wed, 12 Nov 2025 17:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345A345CA4;
+	Wed, 12 Nov 2025 17:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DpaMM+iO"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010049.outbound.protection.outlook.com [52.101.201.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvQo99hU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3942620A5E5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968611; cv=fail; b=m6Lpr3GULceT6UuqlQcjXgE1wx1tlWEos2YDgScY1cs0GLriK6Fi2xAy1aT/CaKGqR751SYoHmTzGeMsnROvn5UvUScv4VguUvvlYnHW0ZrmXlSE3N2hLAEP9/EZ8+pCPJyAwT9DJk7Tl2vqQ86y5tsvM+tGlchD0aieILtq8gI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968611; c=relaxed/simple;
-	bh=xVdW/ju6M2S2W6Xt5m0Nk7bqm+eunAy8jwNpuswkwv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=LoKJ0iL4541q8tS4Z4NOAKgk8iub7P1bEtoOVeNQH8CzUukL7fTI4XD6+BR+mr9dldZra3Wni9XZXbo+ZBgdvwaEbH1B2x/Kp1pH7B1qk5nuuFvnjUQ9pNlwAOo6h0PTQCiKgHaemPouYUcjiRvK1Umw/GHBlqpdwIeNURlu/pA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DpaMM+iO; arc=fail smtp.client-ip=52.101.201.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aMBvIbOoygi410EU72fVbo/h5ULlZfrq9zUVwjdRkaboXUtuHG5rEZS3qcKrwNjv2L9XaItOCf/auAXLHEYY6H4oRbTNjp+4kw7xdKDIX9LBRVDE/8c+g6Ka0Fh+TnS2t+rJmWIgJ6U4qdmSQGTGIADsMf5V3sqoMINkuYV7Cqh9KDakbQpuYZOYOo3Ca/ofoDfM2xNEgdetwpfUzO6+QgaL6IOqXiUECriH/FflEjfhM5ts1jyfUfPQNq1tkeNF2Q49vueo5cEVTVqjWP8kC3Sm8WggpMoggTLrvV6BdfvjyObimnl5IgZQCOVonotbBhXxR5MX3W7R0zN68PVo3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=USLQNf7ov7Ud7GFFqT79t0YCPGWt3tJk/9UDShrBEDE=;
- b=AONonaJ13u7FBHTa/EwqwOZZjLIJWhtyMftyx+kN8k0J7c9Gz2yrlfbxhywQI+YEAzLA6RJDR8WWTj+JoS+uEaCsf8V0CcYwIzJr1VZsuseajfiwR6dO2SWN3RvjIPZ1p5UmWilYFmlChk0upi7XZUMomVoCwz6JKqaFZ++9goMVU9XonV9v3FpQ25NtvRGU+6QNtZno2SD539zc97Z660Ma4HGgj9kN1mhn5hOuqXmRedykN3lsQFldn065i4li3WnK8JfHQ7747IKdDuZsEuPXwTyQxA8t0phKONlMD4+LakYFzQFhk9iHvo4CHtrL6YZ6E7+dwnIB1OQYTJaVtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=USLQNf7ov7Ud7GFFqT79t0YCPGWt3tJk/9UDShrBEDE=;
- b=DpaMM+iOkvxf7ZvNzhollyojXAYYnH2N5g1kTJsw43xHFxOazWOuclODzGjtWV42xNQSrhD6dOLHME0VgxDkEIVI79+Ddt4C/oJnHAVMEJurFJVUaogONoXPWWyXiBfJfdkLh1dMd3ExUWlq7g1DoWMlu+fh6GGHk6rit99AmSpKtn88WF4Wtjnp8JcYtJUHrK+ZuMBPDre2uO6A44xh87Rkj85EdiSQYoWvaBZ2CVtU3S6dQtOcUahuMus2afVEBXz7mL/SscMrE5iZWar7xpOkcm8MujCO9tyPr6iT9CCeD8/m9KWBIJv86Ypsjd+NuXb9uTxXVVUhSFBOeRpOHw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS0PR12MB7678.namprd12.prod.outlook.com (2603:10b6:8:135::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 17:29:53 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
- 17:29:53 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.19] sched_ext: Update comments replacing breather with aborting mechanism
-Date: Wed, 12 Nov 2025 18:29:45 +0100
-Message-ID: <20251112172945.299874-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.51.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI0P293CA0005.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::19) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ABD314D07;
+	Wed, 12 Nov 2025 17:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762968675; cv=none; b=JQAJ676T5gp7DA+wFcTgsX0RqMAOGrptb3Y8BiVA5I4LcJWcvViEeQR2JoTZohxzCK4XWUMBlVFu1pv2Xvsq/0buBNHCurSW3c6jgcMG9iQ+weaPlxMDOfU27rgv/X3fkPxciGakcMIHOJs2fYRJoftyN6L8R6nq+PyqAth876Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762968675; c=relaxed/simple;
+	bh=HyJO29fVvlE6qNpkA9aSHviDDs3+KNwJRw9lc3P0PXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKZJOwJAcH4THHnIq2r21pvdNH9N9R9+JwL+lbrY/sB5XVevLlcK52hRZS9DPheEKVcyy85CFMJl4zj9yXg7j7RJDPqkC9Vo/zR4yaeJC9GLOW7vhoMFKvaNixZ7d/kbREyA66tJ4Urlx0COpQ/bYYs3OSqDpKIb1Zg5EvtVh6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvQo99hU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99AE2C4CEF7;
+	Wed, 12 Nov 2025 17:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762968675;
+	bh=HyJO29fVvlE6qNpkA9aSHviDDs3+KNwJRw9lc3P0PXI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VvQo99hUvCIo83FMCDkbn+6A9BxHjn4r/P3yvr/Gfp5dyZTqAPBhj22zYt0nX555B
+	 hZER0+n4ui1ZGhE68GTsXkUnqxWkYCSyC+xB48MmwyH8vd6nMw4uqpClFQw3ZrM8ki
+	 ejJ1FjHZSSPoFavIN3qBDMcx/0svqMuxAQj2cFWQPQ9beeqtcyv2MR7XkxquVsAv+D
+	 +QjZy4BbYTgO0XJhJlSJUKIBNO8MyMFKBePYjXmKg8Z+R+NzXdN33kbpheHF22cXXn
+	 ORoIuIJlA0Xt23JdTXc/NHTkrnEjnNO9E1zo95tJ9/Rix2v0joSKj7TVV7zH8QkuNL
+	 6uVdHNAUXS/Mg==
+Date: Wed, 12 Nov 2025 23:01:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: kernel test robot <lkp@intel.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: drivers/pci/controller/cadence/pci-j721e.c:648:undefined
+ reference to `cdns_pcie_host_disable'
+Message-ID: <wwgrzgcdqralnyrhvufoldiyautpkp2d2chveovgnen5qvt4p6@l6xdmkezpdd2>
+References: <202511111705.MZ7ls8Hm-lkp@intel.com>
+ <h4yvzfhpd7exv2o2oxed7ocobn5zpwmtvzoxffj4rqsiq2dqfr@sobzxhwa5c23>
+ <cc48c040dac2edc27b453bc482d62309cea25c06.camel@ti.com>
+ <znkojajaxfudm3xn43ed4my5fcwyszv4gxajnizonqu3pf5t6g@bph3av5mzmg7>
+ <85fb83a9-6d8c-4c9d-8c78-2d3f5d473ea2@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB7678:EE_
-X-MS-Office365-Filtering-Correlation-Id: f827e155-5d58-4a2c-ae93-08de22111782
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QDltBUQ1T0Ku7ax5AnUDxvN5jp1dBQztaeU2OJYMraArlU/vDgwyYXbWIcYO?=
- =?us-ascii?Q?US3fVZqFLHM/66qPsqRy02XVvDiKTgVHcqdTux1BmyMyGxXPQnt91BpwaZmI?=
- =?us-ascii?Q?jZHgpz4SEUF6ZLOhBj6rtCHT9VpvGCsSyPvFgNio9pcD/x68p5FAILwgdp75?=
- =?us-ascii?Q?pvBPRqQOR0rdI2W5TQRQJGte1mqMSkGpSx/6zpbTJxXebF3d+iiF9XS0k53O?=
- =?us-ascii?Q?22a8wDtaCjR4MFZfNnmjFYG7bSr4jFR2IoGXxEFbh2JNRn1aDPmEDVYysyHP?=
- =?us-ascii?Q?AQ6NB9f+Wv9iaQbXYqtzQKt9Pg8mCLVYEk7yBMKK3cHvcXkAU/sORE+JybCV?=
- =?us-ascii?Q?eIf908r4rbTr/LzefsomMVwpfGdLbl9ifgXqEMskFtu49UewM7dkbBaRmKc4?=
- =?us-ascii?Q?5d6CTEK3O2vrNnHvkuEzMJRq91dZLJsSVNYDP1/CPBnlBsWZxU3QZ4Ah8nYu?=
- =?us-ascii?Q?14RtH9YAOmIXKRJnd2qWbDdrjhaCuWXzicWdzC+KXXfDj9H45atEkgyNV+Fp?=
- =?us-ascii?Q?ibFIzoLVHtAcQWG23TEtyKTSsWI3eLCimkZg9DZ+UW2V+OD4wkeUpBb8vhg9?=
- =?us-ascii?Q?Kbew74r4auIZsflEKmK0biVt0RbUhleiakK2SbY8Cvp765gM9dO5mvF0Sqt3?=
- =?us-ascii?Q?FfGduvf1T7snAJYLi7zoEYE7GoJl9B13CLOaM8oU261+nxyfNFdFj5Dm02s3?=
- =?us-ascii?Q?+XaBaz44MM/323f6PPurXzK86QacHNJo0p2VrvRirevc//UmiEtjBVAz5BTy?=
- =?us-ascii?Q?2JK1P8TMAiQpVhLJ0UDF0Lnirkr2Hr016avL0c8oCFzlmih1/y32BxavSGCE?=
- =?us-ascii?Q?o7JRnz2moRPagyg1p3xmUQ8F5I/udQhnkUgZ8UNsfqXsGVGb1aAgnyjOQCH2?=
- =?us-ascii?Q?33J29gS17K3otIAe4fQVLkbVqz8xuI+uh7kshIyOcaIhLW0lL9muHz0YQy8v?=
- =?us-ascii?Q?22H12Tb/NMOKHRcijMx7GuvgcSS3mBGIC6uC8NSiw4nS66Pc8HzoaZaF0W1H?=
- =?us-ascii?Q?PkeFww5OWzql1i/1MYrncU4fYoqxll5pSIDaNIMkKi7W9TirOvtFh2D+x3IM?=
- =?us-ascii?Q?lDR+JdTTjjLQFjZiBvFkhb6iJjHKGzm6KrOZjpwgRBy2ldSZzj8r2hpeDN/p?=
- =?us-ascii?Q?DFIhgXJVd9ZNilSSW5Giu7QNa6wWbJdEY4QinIy/wzBzcmsU7avihSleTfsw?=
- =?us-ascii?Q?uyPPEVlj4/B/M+vC8Bq1BxXUXtcfGpl+u5X4nBVODUdg4yFvvBZ5ucgF+MAz?=
- =?us-ascii?Q?I8kK50m6ExlQwZTuQpfQRj+r5CELQzAZKeTobO6P512oUI+TjP/WFKuY8v9P?=
- =?us-ascii?Q?ZGz+vMWr8/AyBHUpAYYDfo+5Dedfn/GswBqY0O/kWd2SwnwH5CO4RyAIhrbE?=
- =?us-ascii?Q?EV6oK1rAK8nQ5GZvJ2pfgo2tWdKSsJpigkreH/69+v13+I90x5xiXIEZe049?=
- =?us-ascii?Q?FY6hbBjkZZDhcXi699l5lZPjMKF+Os18?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bNSIxF9MD3dihEenGCGOSnBDJrzVgDdiwFlUnLb+lk+ow0TJ+xFGaCsYu2T8?=
- =?us-ascii?Q?ksooZd4Fw1EPQM05RdGCIg9JhdZTyIUg5k5rimkDqAEloNtAPG3z+KfawAIQ?=
- =?us-ascii?Q?034QBJYtP0MwxTP35JxxkUN4u4/V1188T6ohN2O7AdRAyrzC8zAlj7NFRvt1?=
- =?us-ascii?Q?Ej/TNOoRvZ6NiE/72YK/8kXrFEEGPHr8tDhDNu+lkgUMXaP6KDCh4Xlj+VKY?=
- =?us-ascii?Q?aIlTNZAn0I6xliE/C53prpdVMnMai+6hBAoqwFhRQVn+WvID5eg41MsM3FXh?=
- =?us-ascii?Q?R8k809atEiAkmHBuYMJKveSRWV01A62ng+KrttDfMdOHNLO8nIVLznkcSPFE?=
- =?us-ascii?Q?CCA09qjCAybQ8F4o0AY0Ht45FMq9EIwx8vQS5Nlu7WJgnRtTmdrBKmmsFQcW?=
- =?us-ascii?Q?8L+uXTB8iFHbxgg30Ebx1m77k1YrkKrqHCQvMcZhKkLVBkxHf3fbMINBLumR?=
- =?us-ascii?Q?AdbwaBc7eEykOiiHjlhnd8TekROrR0scHulQf37uxET8BWrHbUu873fPLwFe?=
- =?us-ascii?Q?BdUmZoLDrtDMvbSQ81h2IQGKs6w8C+h0HHhMOYwc3kzHVqgEbryXRR4VPFR8?=
- =?us-ascii?Q?tnLuHGRT9d1hPzr9APN/KBGxm2BXh90RJQHPQk5F9FU3IYyN7wq85opjGD6/?=
- =?us-ascii?Q?zsYUIY8S2eJN/Pxf6AyzK7DB+Pl9pSb0ECJrnjBIUeDhgDCCOlYtkFHbeiVL?=
- =?us-ascii?Q?czFVKZSwurGBPW9+/mXGYgF6M66MzBf/B0m9y2flDYxTTZhXwrYeCKQSimLx?=
- =?us-ascii?Q?WB2wNT4JoorcR0U3osW8Ug8Apy8Fn6AY+mF1GuSol6p0k1mL5EvfHFKP6JH3?=
- =?us-ascii?Q?sJrZ56IaJHtKVebbLWm7JYUUNH7JFtxLBM8R1Uzy3VRUkKl2DtH6Kudshgy7?=
- =?us-ascii?Q?g3MeafXGKYkyfUy2xqSPfblbs17u7TjBDDsc7mHO+kaVcVmkYT3CR2PmrgWB?=
- =?us-ascii?Q?2r1hKhFbKlcZQiqzIn9KSTx5p6uBPmfssyrAAqbQVpTcx0AarSEHQMvqxexS?=
- =?us-ascii?Q?m5czeeA+rs80YFaGkR4wLtVMJ+JHkpr0uEROj5/mePgOKuUOxN+5TGD4GO8A?=
- =?us-ascii?Q?l1qKPvpWFBzmhTnxLQqeTR//5SXUnyTVU+/+BNSa+5YBeJSwCtEztiCgHpio?=
- =?us-ascii?Q?f5Kfe+dQtQxpaEhBSbXRnflykQvMmfXaniSo22+XI5sYZiZjQMItsUJSU2m7?=
- =?us-ascii?Q?lir7CoZeIxv3+osjgTHvfaVpGMgNf/v1KhIH2iVS81mocmbGb9IhLfMt2tzi?=
- =?us-ascii?Q?DJBpENnNX8Qaz0WnaPnP8cTNj8G8l6T00vLt+NPMpuCJIvFu2k4O4oY9MrSq?=
- =?us-ascii?Q?ppAaYIlZHB5RhJfaJqV7gch6AGAm/suP/uXACLJHXxLgWcreO7uLwC8QAEYS?=
- =?us-ascii?Q?jN0KCxLVnpnBGDsbbiwonWcJteO8S98Ms75T5eWKQoZ9Me9Mazx2nBnuHH5W?=
- =?us-ascii?Q?5XZufw8IobwtvkLBCKI8l7Ct+D3M9XpoyRFCM7p3Vdos4WCZucC4JlPe2Ma/?=
- =?us-ascii?Q?PfvcvkljTqTWsSVL/PdvKu5QURiQlKOFweBR6loVB4Ve3B7VzhS8EVWVUJ5M?=
- =?us-ascii?Q?9DS5HwzdKpr0zFLOwD/YrREv98QYv/e8B6jKzScu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f827e155-5d58-4a2c-ae93-08de22111782
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 17:29:53.9036
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RP5MLkpz7eJa4BP52IvT5Pvt9I7QrwNp/MV1GIlMTtUTxgQOLGMIYHCAxWTTLEtSBm+9TDsRk2bLFsWh4VG6QA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7678
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85fb83a9-6d8c-4c9d-8c78-2d3f5d473ea2@ti.com>
 
-Commit 5ebec443fb96a ("sched_ext: Exit dispatch and move operations
-immediately when aborting") replaced the breather mechanism with the
-scx_aborting flag.
+On Tue, Nov 11, 2025 at 08:29:48PM +0530, Siddharth Vadapalli wrote:
+> On 11/11/25 7:39 PM, Manivannan Sadhasivam wrote:
+> > On Tue, Nov 11, 2025 at 05:09:25PM +0530, Siddharth Vadapalli wrote:
+> > > On Tue, 2025-11-11 at 16:24 +0530, Manivannan Sadhasivam wrote:
+> > > 
+> > > Hello Mani,
+> > > 
+> > > > + Siddharth
+> > > 
+> > > Thank you for notifying me of this.
+> > > 
+> > > > 
+> > > > On Tue, Nov 11, 2025 at 05:28:54PM +0800, kernel test robot wrote:
+> > > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > > > head:   4427259cc7f7571a157fbc9b5011e1ef6fe0a4a8
+> > > > > commit: 1c72774df028429836eec3394212f2921bb830fc PCI: sg2042: Add Sophgo SG2042 PCIe driver
+> > > > > date:   8 weeks ago
+> > > > > config: loongarch-randconfig-r113-20251110 (https://download.01.org/0day-ci/archive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/config)
+> > > > > compiler: loongarch64-linux-gcc (GCC) 15.1.0
+> > > > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/reproduce)
+> > > > > 
+> > > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > > > the same patch/commit), kindly add following tags
+> > > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > > Closes: https://lore.kernel.org/oe-kbuild-all/202511111705.MZ7ls8Hm-lkp@intel.com/
+> > > > > 
+> > > > > All errors (new ones prefixed by >>):
+> > > > > 
+> > > > >     loongarch64-linux-ld: drivers/pci/controller/cadence/pci-j721e.o: in function `j721e_pcie_remove':
+> > > > > > > drivers/pci/controller/cadence/pci-j721e.c:648:(.text+0x83c): undefined reference to `cdns_pcie_host_disable'
+> > > > > 
+> > > > 
+> > > >  From .config:
+> > > > 
+> > > > CONFIG_PCIE_CADENCE=y
+> > > > CONFIG_PCIE_CADENCE_HOST=m
+> > > > CONFIG_PCIE_CADENCE_EP=y
+> > > > CONFIG_PCIE_CADENCE_PLAT=y
+> > > > # CONFIG_PCIE_CADENCE_PLAT_HOST is not set
+> > > > CONFIG_PCIE_CADENCE_PLAT_EP=y
+> > > > CONFIG_PCIE_SG2042_HOST=m
+> > > > CONFIG_PCI_J721E=y
+> > > > # CONFIG_PCI_J721E_HOST is not set
+> > > > CONFIG_PCI_J721E_EP=y
+> > > > 
+> > > > PCI_J721E selects PCIE_CADENCE_HOST only if PCI_J721E_HOST is selected,
+> > > > otherwise, it will not select it. This will take care of the dependency between
+> > > > PCI_J721E and PCIE_CADENCE_{HOST/EP}.
+> > > > 
+> > > > But if PCIE_CADENCE_HOST is selected as a module by other drivers like,
+> > > > CONFIG_PCIE_SG2042_HOST=m, then if PCI_J721E is selected as a built-in using
+> > > > CONFIG_PCI_J721E_EP=y, it results in this build error as the built-in driver
+> > > > becomes dependent on a symbol from a loadable module.
+> > > 
+> > > While I don't deny the build error associated with the above config, it is
+> > > an invalid config in the sense that the Glue drivers for two different
+> > > devices are being enabled. This seems to be a generic issue wherein
+> > > multiple drivers tend to depend on a library/common driver. How is it
+> > > handled in such cases?
+> > 
+> > AFAIK, the common library should be built-in to avoid issues like this.
+> 
+> Ok. If that is the usual approach then I have no objections to it.
+> 
+> > 
+> > > Is there a notion of reordering configs to ensure that such build errors
+> > > are avoided?
+> > > 
+> > > If PCI_J721E_EP was selected as 'y' before 'PCI_SG2042_HOST' being selected
+> > > as 'm', it would have resulted in 'PCIE_CADENCE_EP' being selected as 'y'
+> > > and this won't cause a build error even with 'PCI_SG2042_HOST' selected as
+> > > 'm'.
+> > > 
+> > > > 
+> > > > I guess, we should force PCIE_CADENCE_{HOST/EP} to be 'bool' as it is getting
+> > > > selected by multiple drivers.
+> > > 
+> > > This will defeat the purpose of the series that enabled loadable module
+> > > support for the pci-j721e.c driver and the pcie-cadence-host/ep.c drivers.
+> > > 
+> > 
+> > Your 'pci-j721e.c' can still be a loadable module, only the common library will
+> > be built-in, which is not that bad.
+> 
+> Yes, this will work.
+> 
+> Please let me know if you want me to post the patch to update
+> CONFIG_PCIE_CADENCE_{EP/HOST} to a bool.
+> 
 
-Update comments removing references to the breather mechanism to avoid
-confusion.
+Yes, please.
 
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/ext.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+- Mani
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index c900667b25b88..8a3b8f64a06be 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3732,7 +3732,7 @@ bool scx_rcu_cpu_stall(void)
-  * live-lock the system by making many CPUs target the same DSQ to the point
-  * where soft-lockup detection triggers. This function is called from
-  * soft-lockup watchdog when the triggering point is close and tries to unjam
-- * the system by enabling the breather and aborting the BPF scheduler.
-+ * the system and aborting the BPF scheduler.
-  */
- void scx_softlockup(u32 dur_s)
- {
-@@ -4315,9 +4315,9 @@ static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind)
- 		return false;
- 
- 	/*
--	 * Some CPUs may be trapped in the dispatch paths. Enable breather
--	 * immediately; otherwise, we might not even be able to get to
--	 * scx_bypass().
-+	 * Some CPUs may be trapped in the dispatch paths. Set the aborting
-+	 * flag to break potential live-lock scenarios, ensuring we can
-+	 * successfully reach scx_bypass().
- 	 */
- 	WRITE_ONCE(scx_aborting, true);
- 	return true;
 -- 
-2.51.2
-
+மணிவண்ணன் சதாசிவம்
 
