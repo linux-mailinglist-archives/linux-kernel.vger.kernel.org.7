@@ -1,89 +1,143 @@
-Return-Path: <linux-kernel+bounces-897938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF91C53F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:45:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E3C53F5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47C404E3423
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:38:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 44D5E34C033
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A8035A121;
-	Wed, 12 Nov 2025 18:27:42 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE234E763;
+	Wed, 12 Nov 2025 18:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gJlsX3vr"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0951834DB7F;
-	Wed, 12 Nov 2025 18:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FDA34DCDF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972062; cv=none; b=KWQihmptsr210TxGrbct/0DOK027ukTSw4ButmFjm8u39cFHsBYSFKMGAXicQ6hl7dZ0zzAQo8EzAUj7whtFtz3kyfqYo9bI/ziijua8ovTguDWv8XF5lCjYhz2d72I/BITYYVAn9nXGmtOlxfbGqUh2rIWNHzn2nhuFlYfPHRI=
+	t=1762972087; cv=none; b=LixS89eX0dQ4ABKRCEpPbG9k8dCNZYfYlmDkzEZJkGV+eL/+NCw1I8cArhNkCB82+9GIU3HqhY73ICciZ0heCpe2zWWwZtvffXEC1qUpHp2b4gDDZ8o2fHhzQLz+iYbZuqED7bZ8ZgwzBEYodV2O3zIhEoHlehFq0/KfA3E6SIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972062; c=relaxed/simple;
-	bh=lvk/smEJNeQBj0VHoIfrwk0u+PsEGYCtIbgwF2adYTQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RYMU7JqbAbm97HU6VSn/ez3gFMARHr6hJNuhBWPk0+zEYfqxswfyYlk8OD3G030QOYSysuT4T88Ap4i4UT8srcLIOblZ6RThugJMD4Q9iz0l1oyZdZGRK5Ptt+k3OjxDK+Qn63UXAkdzoHN7MvoGDOAsA2Xite40FCXs5zWZQn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6BhP52h0zHnH4q;
-	Thu, 13 Nov 2025 02:27:17 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3B7011402FB;
-	Thu, 13 Nov 2025 02:27:37 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
- 2025 18:27:36 +0000
-Date: Wed, 12 Nov 2025 18:27:35 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
- Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
-	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
-	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
- Elisei" <alexandru.elisei@arm.com>
-Subject: Re: [PATCH v4 17/26] genirq: Add request_percpu_irq_affinity()
- helper
-Message-ID: <20251112182735.00001363@huawei.com>
-In-Reply-To: <20251020122944.3074811-18-maz@kernel.org>
-References: <20251020122944.3074811-1-maz@kernel.org>
-	<20251020122944.3074811-18-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762972087; c=relaxed/simple;
+	bh=QApjoMI+8ByELox6Jbpc/gdGu9NKN2+G9kU7+u7Amew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PAa5e3XGHUBUYT2DA1qB2rxpwR7w6GqL8IaAh8PQ50bnTzZrj5/yfhh8UugjUY0mFWaWt7O+jSXB8pYGUZZU+G6fwHLQi4BroLWB6F5RqZwYzKO3kRFzmxme5vLv0dkYXbUhXNh2vaFvhMYDdYwzxwRr0F5XAzXt1fE1jmBf9FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gJlsX3vr; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Qqvw
+	ADMeQOU0/kC8oioJpTVGdMfqaZId8Kp7HJeg/tI=; b=gJlsX3vr0JekrvgpOult
+	titedxzMYjNll3mJgok1OzGyl90E3cBglPqCr+KZNvW3t5YtjtXG8N/Eb39O/jdT
+	bIuOxNeDobe9M+Q8asqZpf4JCwYaZwHVce02w3NgGfD5hZ/oNOy0/Mc06Oml3oMJ
+	OJKB3xqPt+wOXnE5ggeNQ97ibTyQ/x6SF9jdLx3jZ4dyL2y41p8Luh0ARIktFJl8
+	oiLo6AgrdJShcMt4Zs4rgJsR4eNdY1Y18PWex0zkxlhQDp1ytdKH7IN67ZbLMRos
+	04kXyzXyslGDfB/jgRXzN8TP42ouhqZanwgYogYSJN6uD6fx0fGwg7/gARN0C8DH
+	bg==
+Received: (qmail 1598894 invoked from network); 12 Nov 2025 19:28:03 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Nov 2025 19:28:03 +0100
+X-UD-Smtp-Session: l3s3148p1@0Ci97GlDTy1tKPOv
+Date: Wed, 12 Nov 2025 19:28:02 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, ulf.hansson@linaro.org,
+	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 2/3] mmc: renesas_sdhi: Switch to
+ SYSTEM_SLEEP_PM_OPS()/RUNTIME_PM_OPS() and pm_ptr()
+Message-ID: <aRTRshYq2MznnCYc@shikoro>
+References: <20251008042526.3312597-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251008042526.3312597-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXUqsU6MKh8WSO4EmrxCfUg8FZkrJKb7OH-KwMY4+iC4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HL9AJta6crLX28DN"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXUqsU6MKh8WSO4EmrxCfUg8FZkrJKb7OH-KwMY4+iC4Q@mail.gmail.com>
 
-On Mon, 20 Oct 2025 13:29:34 +0100
-Marc Zyngier <maz@kernel.org> wrote:
 
-> While it would be nice to simply make request_percpu_irq() take
-> an affinity mask, the churn is likely to be on the irritating side
-> given that most drivers do not give a damn about affinities.
+--HL9AJta6crLX28DN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Only 37 instances. I'd have been tempted to do it anyway :)
+Hi Geert,
 
-> 
-> So take the more innocuous path to provide a helper that parallels
-> request_percpu_irq(), with an affinity as a bonus argument.
-> 
-> Yes, request_percpu_irq_affinity() is a bit of a mouthful.
-> 
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> > -#ifdef CONFIG_PM
+> >  int tmio_mmc_host_runtime_suspend(struct device *dev);
+> >  int tmio_mmc_host_runtime_resume(struct device *dev);
+> > -#endif
+>=20
+> This change is indeed needed, because RUNTIME_PM_OPS() now
+> references these two functions unconditionally...
+>=20
+> >
+> >  static inline u16 sd_ctrl_read16(struct tmio_mmc_host *host, int addr)
+> >  {
+> > diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_m=
+mc_core.c
+> > index 775e0d9353d5..8be642f737c7 100644
+> > --- a/drivers/mmc/host/tmio_mmc_core.c
+> > +++ b/drivers/mmc/host/tmio_mmc_core.c
+> > @@ -1286,7 +1286,6 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *h=
+ost)
+> >  }
+> >  EXPORT_SYMBOL_GPL(tmio_mmc_host_remove);
+> >
+> > -#ifdef CONFIG_PM
+> >  static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+> >  {
+> >         if (!host->clk_enable)
+> > @@ -1331,7 +1330,6 @@ int tmio_mmc_host_runtime_resume(struct device *d=
+ev)
+> >         return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
+> > -#endif
+>=20
+> ... however, no actual code referencing them is emitted in the
+> CONFIG_PM=3Dn case, as renesas_sdhi_internal_dmac_dev_pm_ops is not used
+> due to the use of pm_ptr().  Hence the changes to this file are needed.
+> (verified with m68k allmodconfig/allyesconfig builds)
+
+Since you confirmed all this, did you forget a Rev-by? Or do you
+actually describe an issue which I am overlooking?
+
+Happy hacking,
+
+   Wolfram
+
+--HL9AJta6crLX28DN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkU0bIACgkQFA3kzBSg
+KbYr2Q//aGc29Ggixatnz96WuqMKwRcn8axP50B9nX7nf1stI0AoNxeK86dMamE4
+B1rb413S3Cn1hFZXdBjZ0r4C03vSjFkkcQkszASmA9HqKoLDpZFz72sYmR9lqYdG
+eR29vKWxhJIzZXcK8qJk9ayyVqKtzb6kuR2wCcEEsRk9e5wrfe8/5pCBwBMkWuO6
++5BvMUINXiOPqJ3s6sfXPLwTYgyPsp+d8FWCVxzPQ4BKbIUab0wW9PrVxxkmpqWd
+XTmtrmSkdJzR5kmzgKTkJiXVvl8gjJ0kZTPJAw0PRcLCFozqX6jSMW/wlkk/5yaE
+8HPf5KzPuSArl6vCdd15S6kTO/EjDd1HFqdjGfP+lvn/Hajset29zz18qD8l9Bro
+j87sVunj0umaBziEBmOvm8F5rkfsK6Wwwvxew399Is9xiDbPpt00MShFXHp0x4EU
+UVaxfa7oyz7spjkWAIDm11cwLN5zaatjQ/fbiuGKDrSQS9jwnpFa++61x3BJWV4U
+Ii2d/clCh2/pltn+VEEZXDF/01tQ5o5jrLG8YOw7fHSBHmrZK4N57VjcU0axF8Mj
+vZSd6FAADKVaD0Pa4eXGBMKxSNzsl+Nbj5ZLSeH4EKObcCTWmw7zebhr8i6rLjLH
+vWpmGPt2tsTVf4ps29N5tvDxtJ5DdqEsqzmfTGljc/4mBxN8l90=
+=w0i0
+-----END PGP SIGNATURE-----
+
+--HL9AJta6crLX28DN--
 
