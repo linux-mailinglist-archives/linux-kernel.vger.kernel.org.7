@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-897149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57122C52276
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:04:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CBBC5229D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2E63B5D18
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:56:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45E964F4C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5F7316185;
-	Wed, 12 Nov 2025 11:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363943164BC;
+	Wed, 12 Nov 2025 11:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="deevkO+6"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010048.outbound.protection.outlook.com [52.101.46.48])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ShNaGBsk"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013069.outbound.protection.outlook.com [40.93.201.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6D2314D05;
-	Wed, 12 Nov 2025 11:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A95C315D45;
+	Wed, 12 Nov 2025 11:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948547; cv=fail; b=dPh9pMygxgPMLuqdsctGi/U7siJgxS23MJZmw5iAQj0TWhy0uy/17w2KACOxIkyk3oD8/AjhaVuxVhiratVXhpmyUn4mRlUeqOxID0Vop4GhgNMgd1bkL2YFih3Mk/36Il4KDuKeRTNuMCERVgEEKkL2vEeb/edikHjFsZNUXrY=
+	t=1762948549; cv=fail; b=Tne4wmykBOC6IH/gtbYbmL1Jq43q814M9lBD/Aj1T9d9wqcA3vioDfSvpZRrz35NJ4ZdG+xcJq0GUF32sJPv7S2RGnx7BFzvIPlBGtYx8cMR9j1Z8NygjV96n9LDQnVwrJ0qNr6a1vqT59fr9ITB9lj2QKKpDF+zKVivYSikzyg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948547; c=relaxed/simple;
-	bh=2AzDDQ/c33gDTUejdZzmjwebk2IrQn3OwFoYgpL3lnQ=;
+	s=arc-20240116; t=1762948549; c=relaxed/simple;
+	bh=4rBwKidSbn9blA+n5wuerKp3imV0bTVzcWPaBuglL20=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cr6VceF8oC/+6D59uYUTjcfOjPMPz8koxBLxjvs21TkccxbbrnpfVCPjpILLBkW4xrwXXBjQmYcL708XTpEh0W1Psmd86Ksnk4ngbChcJsI1tnqvA4uKtkW9fm5zkhLO+ZACfR2x/xIKt8605iPh74Vp1y398bG7CnB2NCPcslY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=deevkO+6; arc=fail smtp.client-ip=52.101.46.48
+	 MIME-Version:Content-Type; b=h8Bilr12JWO/Ye08xPg1zyo8xoyiAV53FCVgMGb1bia6LPOxXHaovAsvhkd+1Ix1dwqyq3yxqvP0JSBCQ0AIJWgb9vHYWQE0UiVllVWKbSBBaXvLrrt1wDO7H1+MKVvh+IBoMTCyrMuLMcEq6XRtJiNzjqM0hXCxHHmOJJ0JrWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ShNaGBsk; arc=fail smtp.client-ip=40.93.201.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NR/4yjykcvgjK0UqeHkH7RGKM8jGrJU4iLloLlcTA3DCra5eG9QzOUYAaYZEqpgD17uWg1g4gjfJNRpoZHdB949EUZcAGu3LMwm5ZZeHqriPEnf2jnNRerz1qdt9wayEvJ0RNiQcRByFB/s3GfXmRGqqdszs80bY12P80qReFGCSd/AJmsVt8YF26ZvzYEQkiXnNCmwVsx6gdxfZ7tbE0t4/mgaRKODdsS4q2VCO3sid5hJ3NPwKki+wuw+1iEuHukiIM2Y9OsVEWEF0cldJY99OOTYdZ31aiVGF2+0pwV9ZTonRybjU+ArqIOtAPU6wEm88czOVhRTUXecJM+tKsg==
+ b=joZhleOGtM9KOu8cXufPr52IK2FE/y74h3aDTEicTizqFnjjaR/iEHibzZsE6JodbbE2CXhAhpyXwgd7Qg2ur4hEq3T9k7upEOhh2gZ0wP4RmjYuDEec0PqsK+d/tdmh0xG76MoO/848GmVi9ZIP6RvTuAloFEJJJjor+SjkpehiIWlghEsasHBKJ2sgchbl0gwuJNJsjHbB2Ayl2lo/a9OydLyaCP0N9WWBzdSzkYqe+YxNLydrb/Vtbz2mb2IbcTL3OOP4PE66f0jQjQnOGRB3rP2QWsfX4fP1pIL0QebUchG309IKzsmo5ignHjHwxH4Tz/n13EQ5jhx+dTB0yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m2uVnM4fJLG2Q8yNrNtcnhK4gAywDIJhuWg84A8RS4A=;
- b=QzU1IE/Z9NCialdX6UJAKpBbK/Kad/oOILEmSnxKg6BiNI9q2LzefCsWFT5MWGaLgqLcN/5gQYU3EP2Z73KGU+Da/QNAJhW9vw+qMlyNyqWc1xaJWItAWEVg6hz/pd0ERQA8QZD/Dmo23qR/iU1+K1b12TlpET5Ka1zEEbAOWNfr0A1xGsX1OHAzP0HFSYnmGUNbIf9yQTlbwmLvzCfEHUzx5ayjX0Nbp4JSCEypiaQHBon8/Q3DPt6jlSbF8n4FUknFlVL0nzJ69bEdABybfdGx7+6ErsuaFNUVJOCcDq6s1kXh5/UrfP2jVUXtFMl88Xs5LdEhSl6USfyMyui4yg==
+ bh=GyVyCVqgCQoXvGXC4P8xhVLXQaOeR+l2SevswnZsEgA=;
+ b=mzXZ1A++fFt7PhdaiJLw/qD1VV0Wqv3vi5a1RO6y/izW1fubH7rPu6ba7EeC+olt+NFPtD+DBFR2vLgqaHBrPrBgpUrP5aXXIXN2hDDRf53aL9iIkr6NrI9iM5SP2AW6IUq62CfgkeyVD/ntENdXbVFNkMTPRRyswehtiOg7zj9joQvYxQ/oWHwKqAplqHRclqq9EVKMSC7iyeCs0ueWHD8E4K6xRspZ/DYGOGTYzTjJ9xIxTjh31qPVDzwXIe3BPbGlReGfYDjd51VOUBsYNFux3YwqpJyRQShptwAwRntNkQlEbXT4OiuaC9ziqL8eng6Sur6/qL6vs6i92HRwYA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m2uVnM4fJLG2Q8yNrNtcnhK4gAywDIJhuWg84A8RS4A=;
- b=deevkO+6V9gq5IqLGSkVeEIlJpTIWfsBMzPX61Zpvxf0+RwFkUcxisjgAmn+4UWOPbz8g3/hmsGPO3BqQRvUDelwIACAjMc1b0iwpaIQHqByXxC+OLDMD4ls2+HBtkYQLNmLaZe8ZWBbftAHn2qBoyJ3qIC3leWDFntooGwQ5nY=
-Received: from BYAPR02CA0048.namprd02.prod.outlook.com (2603:10b6:a03:54::25)
- by MW4PR10MB6348.namprd10.prod.outlook.com (2603:10b6:303:1ea::5) with
+ bh=GyVyCVqgCQoXvGXC4P8xhVLXQaOeR+l2SevswnZsEgA=;
+ b=ShNaGBskLvg7oW8ar2gXdheT4rjpOcC+wBQqQnLAj2LWB/I7ruGwhdlGFZ0cDb0ol+/cPsH/wqUVNloaUiR/edbHUr5tdl/05dyfGNxQWq1gW36+AU2YzyYWkIfo2aIjVphYBV0orMvVgbstQf1GWUMSZN3XMpmDrEeRsMu85yE=
+Received: from BY5PR04CA0018.namprd04.prod.outlook.com (2603:10b6:a03:1d0::28)
+ by SJ1PR10MB5905.namprd10.prod.outlook.com (2603:10b6:a03:48c::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 11:55:41 +0000
-Received: from SJ5PEPF00000204.namprd05.prod.outlook.com
- (2603:10b6:a03:54:cafe::81) by BYAPR02CA0048.outlook.office365.com
- (2603:10b6:a03:54::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
- 12 Nov 2025 11:55:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 11:55:44 +0000
+Received: from MWH0EPF000971E7.namprd02.prod.outlook.com
+ (2603:10b6:a03:1d0:cafe::1e) by BY5PR04CA0018.outlook.office365.com
+ (2603:10b6:a03:1d0::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Wed,
+ 12 Nov 2025 11:55:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- SJ5PEPF00000204.mail.protection.outlook.com (10.167.244.37) with Microsoft
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ MWH0EPF000971E7.mail.protection.outlook.com (10.167.243.75) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 11:55:39 +0000
-Received: from DFLE207.ent.ti.com (10.64.6.65) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 11:55:43 +0000
+Received: from DFLE205.ent.ti.com (10.64.6.63) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 05:55:33 -0600
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:55:40 -0600
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 05:55:33 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:55:40 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 12 Nov 2025 05:55:33 -0600
+ Transport; Wed, 12 Nov 2025 05:55:40 -0600
 Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACBsxbs2638977;
-	Wed, 12 Nov 2025 05:55:27 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACBsxbt2638977;
+	Wed, 12 Nov 2025 05:55:33 -0600
 From: Rishikesh Donadkar <r-donadkar@ti.com>
 To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
 	<mripard@kernel.org>
@@ -92,9 +92,9 @@ CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
 	<sjoerd@collabora.com>, <dan.carpenter@linaro.org>,
 	<hverkuil+cisco@kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v8 04/18] media: ti: j721e-csi2rx: prepare SHIM code for multiple contexts
-Date: Wed, 12 Nov 2025 17:24:45 +0530
-Message-ID: <20251112115459.2479225-5-r-donadkar@ti.com>
+Subject: [PATCH v8 05/18] media: ti: j721e-csi2rx: allocate DMA channel based on context index
+Date: Wed, 12 Nov 2025 17:24:46 +0530
+Message-ID: <20251112115459.2479225-6-r-donadkar@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251112115459.2479225-1-r-donadkar@ti.com>
 References: <20251112115459.2479225-1-r-donadkar@ti.com>
@@ -109,59 +109,60 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000204:EE_|MW4PR10MB6348:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04773e69-2606-4cad-3e7c-08de21e2662c
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E7:EE_|SJ1PR10MB5905:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3c20b81-690d-418c-21fe-08de21e26871
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026;
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EY1VPh+A8pYpruR3SE95qaPVgHvEjCLkzfAkf8XWFDnRf/g8SBv+nQxNo4W3?=
- =?us-ascii?Q?A3EBHTI1nliL5AXWlnvpdTmfgrn+b7dt4QHSJl1NkwV2rB9/CNlBJfKSHoPh?=
- =?us-ascii?Q?AS2Ou2RFUoGjSFSP9eFjFIfhT2BNat0AzVkOPhhf6dgRmSu/qgEw3owhflRy?=
- =?us-ascii?Q?Y28rH4s96eLeCeJ3bUvn7/y+S6JxeuqSKZlXTHmPeORtf24ZJJ8cM5SpiX+l?=
- =?us-ascii?Q?lR5CvXzxtsHIQ5Faj6BkVoAViBH5E2EBLlcemet14AUfY+/pPbcHK5kymz6z?=
- =?us-ascii?Q?ryCdJdqKtZ1mqlE6A6NzvOZ/VxOT+aTwIDaaSQSgXV+lxofsBeaoAvHAP7xe?=
- =?us-ascii?Q?7emsdZ6hEZk1AFbHnv1PwypUybT1tYLQzKYyR3wfjjkhPsxw1A0I91879dol?=
- =?us-ascii?Q?AXVjesJc0d1csCQ5lAPjUtxo1ywX+aJjnj46rqcRfUVSuIKTh9ve9c7h2W3v?=
- =?us-ascii?Q?QTS3C7JYSfzrD9TVBvGRt54lv9SNfzKT8VCVLu/nAdb8CQLkasEn37YI0Qsg?=
- =?us-ascii?Q?whc3/fh8wiKD5TsBWSBW8QC6nvt7MnzHZk7dToPL8jeKagcJAk9WH0xwlIo1?=
- =?us-ascii?Q?0u4/OAE+KsK4s7CyeDNgSla3sInq67qIVi2WGjAz2wzHgxEOboeaKYNh29/t?=
- =?us-ascii?Q?UCuT4kG50sFbOnRgewXdPzwlBbI3xN8l3LihkosqyMPIlIRpAoe7M3C4kvhG?=
- =?us-ascii?Q?wE8Dy3Dg8fCY7wR3oW71+h5HVYBCcv7AdJ6U1dXw86Smf6JtkJiCcTpV+L4V?=
- =?us-ascii?Q?7oEDGmd/CVwQ+Ku6gKYtpg0qUE82O2R+DmI3aMfCYdAD5PQjszv/Jdl5P4Bv?=
- =?us-ascii?Q?EVViGnlL7TjXOeffWGDoiAaJAPCwvlB+Y+EG7/O4ls2z3o3hxQrIqzZB5DJp?=
- =?us-ascii?Q?WR8+QCWB5AgKV87hikHPQoV4SKRS04/Z1lpEXwOI4zm9fm+iQby16NZv5wAW?=
- =?us-ascii?Q?l1uv45ikgEAbV3g9Y3Sel4yrcp3l+6vyolZUwlYAlPzc0YYA+1oFndwWQoFF?=
- =?us-ascii?Q?zxTuTvSJEbiHv8ZyBxVZm9u6acZzwblf9GkUCxYekbhOTZSM+aL5/bWa877i?=
- =?us-ascii?Q?lAdsFY5XLzjEJyEe3WiVvopXgJA0dWPbqCUZQPDspGqdk1FNSyK6QV+DBnat?=
- =?us-ascii?Q?EkTiznULr1XuXhzk8zPs1142LOOtX4Yp2O4wKX94J/CDUHsTrLUNXiY3pMSQ?=
- =?us-ascii?Q?36KYpqVcGVyMAUKN2fistYrUbXibbNx/WEbanM6lfJo8+yz3Jzk5jzW50uBi?=
- =?us-ascii?Q?QoTDlYj60MsYMQ85PmZ4Gm5jPr8l6CEqo1nZBfZ7sCtodaJSLANT3SrDrBcu?=
- =?us-ascii?Q?t5GVCHHI9n5LhTrtz+XZHbvQ/ETOvoo+IgbeKk9U8HjuUUoIU99fgfmBYF6s?=
- =?us-ascii?Q?jUA7e7lWv7ysHgfoHrnBwTfY+ByuSPZ/5FT0NQ97xknoMeTKyoPTTByXHWTQ?=
- =?us-ascii?Q?14+OLqB01VJVdqS47WeqzlVpguSXov44tGiNsgY+O+ObyDKBKIbkhMhZ2oCM?=
- =?us-ascii?Q?LWxfiPOzLQGG+kdYJCXsjaOd1EGKjBBbNnheGnVJ0ZahImVMy81dO9kk5zPi?=
- =?us-ascii?Q?aBphiFr3/4r+FQj0E18=3D?=
+	=?us-ascii?Q?UFztSly3HVb8C0XdQGT88KM5BQrvztdxGdNXTuynOucem0adVHfE5vs7xgMH?=
+ =?us-ascii?Q?DP/KU77cRroejTt1IkKpG961DWo9vVJVrPUUmV4xITpKkWmKNEq2v3tLuWA2?=
+ =?us-ascii?Q?qjBhID3IjmovhSkfdAfkZF/SQMAlkphwVMikKYlPyyyQbZb+pmQD5E85QX1O?=
+ =?us-ascii?Q?rH4CW4aS3S+sm3JahmzaVpqaot8wqjaxgLVuqp9heOVMx1pYaMPUX2n6eatQ?=
+ =?us-ascii?Q?DxsXDLisln5ZPB3+dMQc98DTnEb256OJQPmcJ8HBi6rMbI8XRi7zqTauKVaI?=
+ =?us-ascii?Q?seYkx+nfOGXDksAze6l2eIr7qplTPHHVr26vsFXoO9DL+HqiWl35LTuRRd80?=
+ =?us-ascii?Q?0yF+T/WRBJltuqHVarHCt4gRRIfy9Ch4WLkV5yenh/IL6wasV69ebPOOgMqL?=
+ =?us-ascii?Q?RS9g8xGZby2SPlnM1aQp0nW/2sidLLNdzM6dH+8p1/8rsJbCG7RosZQQRsHX?=
+ =?us-ascii?Q?beKIhtmyn5+0rRBpR0x/oFj64fJVe8cwHEv5Va1rlW210l5FT46xdlJuCCEi?=
+ =?us-ascii?Q?5MIL+6BfivBi4y1UTiMHyBruA2YaAn3+FXxkRgqFMj/WvE1ojL2CBg+I3vzr?=
+ =?us-ascii?Q?JRK9ckq4xEQLIfF0fpLVUo3kuvZNbec/lXzf+ZccrjRrInj7qQ0MHmXpHKYd?=
+ =?us-ascii?Q?dSVLRxB9Zug2m9e2b2cIpKmA5tzbsTt6zF1CvkX8LuQYCuuMl+VQRk3JueIK?=
+ =?us-ascii?Q?skdUk8o2sJyh1LDvwENLF9DcrwPghCPYlvculcTf0zXgBIIEVcjqs121sMlK?=
+ =?us-ascii?Q?IfqZxdG+CtdFRSfXUFcODD2be/7fB5SUVmeGy/gjk137G6I2HDMyQSOp4eqj?=
+ =?us-ascii?Q?2vyF1xw0H76SPXJNC18GEdiQZDlnY4NrvoEE+ZIb/F87wg65/4+IsZS3Rwhv?=
+ =?us-ascii?Q?gUSZMYMTAzz80L4RVCmosQtrmeK6NozlzKCORN7G4G/A+wNe9/pDpreJmqI6?=
+ =?us-ascii?Q?aN86/kv8wXC6bG2xmV5IWJ4RLcjUmYSO3p5HrK+xSEZL4gWfaic6FXNixexx?=
+ =?us-ascii?Q?LrQUJz8xr9MDSkEH+OOsaz3VKKf55M6csASifxbu4AHw9qVdZu5eaAa/TlWs?=
+ =?us-ascii?Q?C69TbPAwhdZgka0zUDV8ndlWbdESC31vjCaMS2P3TFzbogK1swRMFO7dh+jp?=
+ =?us-ascii?Q?rAIXaHqI+1HYapKX03Xea7zvpBV2bQELFtE6SGhcxWB43mkmaDPDh7ETlXWd?=
+ =?us-ascii?Q?3aqgd7J7ASOQK0MFu1j1r9OSVCFLl9QPFpVzczZIwR1v8oV+3yI/DOM6fJsr?=
+ =?us-ascii?Q?LWPYnW5EjBLP98xxnah5jX7VnILYl+yyg1D4RMiwxvVYwK/zW24gXfE3seU3?=
+ =?us-ascii?Q?Edi45s037BQR/PvSlCn97bl7wKm+dPdCgj8NsMtaePb3bgy/2cjyhrEoR50o?=
+ =?us-ascii?Q?J1kNndO2kPQqCiVfDUmWiKX+OQaWvBKNTsBtf3eejzN9Se24fb3MUHtrJvCZ?=
+ =?us-ascii?Q?6PCnzoutbMm3k5yh9zgMB8ucap55FYttelbVsBWPTXYdfUTG/hcMus9uIF8y?=
+ =?us-ascii?Q?ZnMMVykDVL2lUIb42YnaYBkceCMyKgFZ49b0W3usbmqbJrFg9zn9IpNzat5C?=
+ =?us-ascii?Q?DzkCxABdOpeGEKRxPO0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 11:55:39.2948
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 11:55:43.0717
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04773e69-2606-4cad-3e7c-08de21e2662c
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3c20b81-690d-418c-21fe-08de21e26871
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000204.namprd05.prod.outlook.com
+	MWH0EPF000971E7.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6348
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB5905
 
 From: Pratyush Yadav <p.yadav@ti.com>
 
-Currently the SHIM code to configure the context only touches the first
-context. Add support for writing to the context's registers based on the
-context index.
+With multiple contexts, there needs to be a different DMA channel for
+each context. Earlier, the DMA channel name was hard coded to "rx0" for
+the sake of simplicity. Generate the DMA channel name based on its index
+and get the channel corresponding to the context.
 
 Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
 Signed-off-by: Jai Luthra <j-luthra@ti.com>
@@ -171,65 +172,26 @@ Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 ---
- .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index 23717a3b6c4cf..fdbe72df5c5f8 100644
+index fdbe72df5c5f8..f66d68edcd57a 100644
 --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
 +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -27,7 +27,7 @@
- #define SHIM_CNTL			0x10
- #define SHIM_CNTL_PIX_RST		BIT(0)
+@@ -1038,9 +1038,11 @@ static int ti_csi2rx_init_dma(struct ti_csi2rx_ctx *ctx)
+ 	struct dma_slave_config cfg = {
+ 		.src_addr_width = DMA_SLAVE_BUSWIDTH_16_BYTES,
+ 	};
++	char name[5];
+ 	int ret;
  
--#define SHIM_DMACNTX			0x20
-+#define SHIM_DMACNTX(i)			(0x20 + ((i) * 0x20))
- #define SHIM_DMACNTX_EN			BIT(31)
- #define SHIM_DMACNTX_YUV422		GENMASK(27, 26)
- #define SHIM_DMACNTX_DUAL_PCK_CFG	BIT(24)
-@@ -38,7 +38,7 @@
- #define SHIM_DMACNTX_SIZE_16		1
- #define SHIM_DMACNTX_SIZE_32		2
+-	ctx->dma.chan = dma_request_chan(ctx->csi->dev, "rx0");
++	snprintf(name, sizeof(name), "rx%u", ctx->idx);
++	ctx->dma.chan = dma_request_chan(ctx->csi->dev, name);
+ 	if (IS_ERR(ctx->dma.chan))
+ 		return PTR_ERR(ctx->dma.chan);
  
--#define SHIM_PSI_CFG0			0x24
-+#define SHIM_PSI_CFG0(i)		(0x24 + ((i) * 0x20))
- #define SHIM_PSI_CFG0_SRC_TAG		GENMASK(15, 0)
- #define SHIM_PSI_CFG0_DST_TAG		GENMASK(31, 16)
- 
-@@ -568,11 +568,13 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
- 		break;
- 	}
- 
--	writel(reg, csi->shim + SHIM_DMACNTX);
-+	reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
-+
-+	writel(reg, csi->shim + SHIM_DMACNTX(ctx->idx));
- 
- 	reg = FIELD_PREP(SHIM_PSI_CFG0_SRC_TAG, 0) |
- 	      FIELD_PREP(SHIM_PSI_CFG0_DST_TAG, 0);
--	writel(reg, csi->shim + SHIM_PSI_CFG0);
-+	writel(reg, csi->shim + SHIM_PSI_CFG0(ctx->idx));
- }
- 
- static void ti_csi2rx_drain_callback(void *param)
-@@ -890,7 +892,7 @@ static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int count)
- err_pipeline:
- 	video_device_pipeline_stop(&ctx->vdev);
- 	writel(0, csi->shim + SHIM_CNTL);
--	writel(0, csi->shim + SHIM_DMACNTX);
-+	writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
- err:
- 	ti_csi2rx_cleanup_buffers(ctx, VB2_BUF_STATE_QUEUED);
- 	return ret;
-@@ -905,7 +907,7 @@ static void ti_csi2rx_stop_streaming(struct vb2_queue *vq)
- 	video_device_pipeline_stop(&ctx->vdev);
- 
- 	writel(0, csi->shim + SHIM_CNTL);
--	writel(0, csi->shim + SHIM_DMACNTX);
-+	writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
- 
- 	ret = v4l2_subdev_call(csi->source, video, s_stream, 0);
- 	if (ret)
 -- 
 2.34.1
 
