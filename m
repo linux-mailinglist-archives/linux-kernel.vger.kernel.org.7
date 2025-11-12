@@ -1,88 +1,165 @@
-Return-Path: <linux-kernel+bounces-896479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2598CC507A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:07:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB48C507AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:07:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7170D1897C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:07:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80A2B4E8A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2442C3268;
-	Wed, 12 Nov 2025 04:07:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927E82C3268;
+	Wed, 12 Nov 2025 04:07:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421D62594BD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758762820DB;
+	Wed, 12 Nov 2025 04:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762920424; cv=none; b=gEzB3QELmOoGTQGd2K8jZdBocc/5yLztvu8C5JYJgh3zM4gOatjONFVkZs8aOV2Ra4H9MrHXwQ3qQsdp8WSMcZj7ZNdvdH40GWuiIRSOzxQAYVW769bFLX+gLzPRwf8rgT8sxcOP/AvmfuVGMLAb+VzWtTN3QIpJ/afjUz5ltMI=
+	t=1762920437; cv=none; b=qEUmiljW22B64gGJz2kSbxHMa+lR7Z5K1h/r56lcgvUOWZSsB2ZUu3Qb8Jt7ZsqZiWkTKZDrBCZUgBhuqV1+GJSi/5K8vgaMohUr78CfQLJcUZX+szBPLw4ryO15j1uvag5gEXdw1IEWbmQupYU61OTyRNAe/hmJrCpULbdJCCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762920424; c=relaxed/simple;
-	bh=gWujzDmq797eIGweX0kiDqqhrTMmMFfgbWstpK3QQew=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=o+tM4sK8mLwIP6uP9AeJf410xB0yb27E3rYpCZhZwZLpyBlqU5D9s02VC5LWwYTgcbUYl88mXgOvDEdmQiuqbGsILrBTq5PCUhJSyvyoqO8EIM2oC8Pn4npH7qzwTsni9hkqpmBN+x/YCbfKLw9P8hOSnWaGAYZl/b2k8Ilb+4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433692f7479so12390145ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:07:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762920422; x=1763525222;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZGC6srK0UBsNZVToxudO1JhINuHL7PrwcDUZk54PkY=;
-        b=uop01aeDvftC75Y5DDWyLVn1O1b14TDZHsWe5rFf89LLKHb6stty54KdXtAJ7qZYet
-         hAjQNaSwZtg08zf+Otw8G8yCEawoqZOgv+6KP+3UgffcD4nfWmmyaWBRjeYTArrfvOen
-         lcqZnDUsMnhRaVzKCtXhhWMBoX5cWz+ACJAyzs6jXEnSYWhv/OOYjDXswvivm1d6hiMr
-         uKMb/iP1zDzAUekyzpa9IR06v8X55vg/Du1VXshhvSFOmhqFYzmrSZRr1YwIei2o48wH
-         bTnvpmRRaw+LflCRqEYUFPsrBsVBh/20At/8aJBT13ZeH4FwILXrxp/RT6Jo2/9sAh1J
-         kndA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDuZ9GNd0AHkSW2W2JUbfU9gnTuDVCbcGtMYoezN0x96f0KbagLDf6VHlZ1PKGyOGZrEK6+0eqawI0/7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwinTVw0+RtXqRZWRRBETmYaQjf11RrbrnN5NKJIiJ8W11uOaDO
-	X+RVbv5mgOzfR7kLGFsztzkDskhyOT2cOeD2mn+51dVne0gEzupeE3zmBqjj322IJ1PAzcAI1ZL
-	Cg69nYLRlDi85kkHmYCeiSDfS7tfjjXcVvaIx6OotsrXVAw5isjS3oQCnK8g=
-X-Google-Smtp-Source: AGHT+IE//vwcBRSspew8ysSz1OrPytRuuCdUEkH2X3LmiXWwmf9pdLMY8BcXHD6hDRSHrbZTj8rYNzK12Q8f5xJ/+AUzZrrKj5YQ
+	s=arc-20240116; t=1762920437; c=relaxed/simple;
+	bh=cScFm02nwlwZeY8pfG80ctyyXNzrHj/7vnVK1zAfUq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O2w1DODw0tvHI4jDFTStYYSBiMcSo/bF7PJFC4r2DQnvoW4VAvwN/Swbr7AwRfLkSChbLr/K9fhzW2Z6qN1orWbBaSlBbbX18hlDwepfORRYPdx4Ak9Ya3sWs5rOg/kqHwGgtQvekaCB6lO/U9ohiGpItKuDqaH03qyP6HYNusk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5qbK2FWszYQtGx;
+	Wed, 12 Nov 2025 12:06:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 24D311A1A7E;
+	Wed, 12 Nov 2025 12:07:05 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP4 (Coremail) with SMTP id gCh0CgDnDlznBxRp4ajLAQ--.10098S2;
+	Wed, 12 Nov 2025 12:07:05 +0800 (CST)
+Message-ID: <6e2e4f6a-a6a0-47b1-b037-c52f0c786018@huaweicloud.com>
+Date: Wed, 12 Nov 2025 12:07:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6e:b0:433:2aac:c540 with SMTP id
- e9e14a558f8ab-43473d3c496mr23907955ab.14.1762920422464; Tue, 11 Nov 2025
- 20:07:02 -0800 (PST)
-Date: Tue, 11 Nov 2025 20:07:02 -0800
-In-Reply-To: <CAKYAXd86eFyX5sVi_5exaFJ-wGn2U16n_L1c9ouDBnFGPuH_qg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691407e6.050a0220.417c2.0003.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
+ populated
+To: Waiman Long <llong@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20251111132632.950430-1-chenridong@huaweicloud.com>
+ <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
+ <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
+ <sebxxc2px767l447xr7cmkvlsewvdiazp7ksee3u2hlqaka522@egghgtj4oowf>
+ <a4e61aa0-5c1f-490e-9cae-5e478ba809ee@redhat.com>
+ <86361412-7de0-46bc-9188-a32b634e43a3@huaweicloud.com>
+ <3019dd82-5388-427f-8618-30b5d8b06fd8@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <3019dd82-5388-427f-8618-30b5d8b06fd8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnDlznBxRp4ajLAQ--.10098S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF4rCr4kXw43AFy8Cry8Krg_yoWrWF1DpF
+	WUWF17tws0yw12kws7K3WIq3WSv3srKF45Xr95JryrAasxWr1Fvr12yFWF9Fyjgrn7GrWj
+	vFW5XryxWa4qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
-Tested-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+On 2025/11/12 10:21, Waiman Long wrote:
+> On 11/11/25 8:58 PM, Chen Ridong wrote:
+>>
+>> On 2025/11/12 4:35, Waiman Long wrote:
+>>> On 11/11/25 2:25 PM, Michal Koutný wrote:
+>>>> On Tue, Nov 11, 2025 at 10:16:33AM -0500, Waiman Long <llong@redhat.com> wrote:
+>>>>> For internal helper like this one, we may not really need that as
+>>>>> almost all the code in cpuset.c are within either a cpuset_mutex or
+>>>>> callback_lock critical sections. So I am fine with or without it.
+>>>> OK, cpuset_mutex and callback_lock are close but cgroup_is_populated()
+>>>> that caught my eye would also need cgroup_mutex otherwise "the result
+>>>> can only be used as a hint" (quote from cgroup.h).
+>>>>
+>>>> Or is it safe to assume that cpuset_mutex inside cpuset_attach() is
+>>>> sufficient to always (incl. exits) ensure stability of
+>>>> cgroup_is_populated() result?
+>>>>
+>>>> Anyway, I'd find some clarifications in the commit message or the
+>>>> surrounding code about this helpful. (Judgment call, whether with a
+>>>> lockdep macro. My opinion is -- why not.)
+>>> For attach_in_progress, it is protected by the cpuset_mutex. So it may make sense to add a
+>>> lockdep_assert_held() for that.
+>>>
+>> Will add.
+>>
+>>> You are right that there are problems WRT the stability of cgroup_is_populated() value.
+>>>
+>>> I think "cgrp->nr_populated_csets + cs->attach_in_progress" should be almost stable for the cgroup
+>>> itself with cpuset_mutex, but there can be a small timing window after cpuset_attach(), but before
+>>> the stat is updated where the sum is 0, but there are actually tasks in the cgroup.
+>>>
+>> Do you mean there’s a small window after ss->attach (i.e., cpuset_attach) where
+>> cgrp->nr_populated_csets + cs->attach_in_progress could be 0?
+>>
+>> If I understand correctly:
+>>
+>> ss->can_attach: cs->attach_in_progress++, sum > 0
+>> css_set_move_task->css_set_update_populated: cgrp->nr_populated_csets++, sum > 0
+>> ss->attach->cpuset_attach: cs->attach_in_progress--, sum > 0
+>>
+>> What exactly is the small window you’re referring to where the sum equals 0?
+> Yes, the nr_populated_csets is incremented before calling cpuset_attach(). I think I had mixed up
+> the ordering. Thanks for the clarification.
+>>
+>>> For "cgrp->nr_populated_domain_children + cgrp->nr_populated_threaded_children", it also has the
+>>> problem that the sum can be 0 but there are attach_in_progress set in one or more of the child
+>>> cgroups. So even with this patch, we can't guarantee 100% that there can be no task in the partition
+>>> even if it has empty effective_cpus. It is only a problem for nested local partitions though as
+>>> remote partitions are not allowed to exhaust all the CPUs from root cgroup.
+>>>
+>>> We should probably document that limitation to warn users if they try to create nested local
+>>> partitions where the parent partition root of the child partitions has empty effective_cpus.
+>>>
+>> Hmm, but it was what the commit e2d59900d936 ("cgroup/cpuset: Allow no-task partition to have empty
+>> cpuset.cpus.effective") allowed, and it makes sense.
+> 
+> This commit will allow user to not waste a CPU if users want to set up a nested local partitions
+> where there is no task in some intermediate levels. One way to address this gap is to iterate down
+> the cpuset hierarchy to check if any of its attach_in_progress count is set. So it is a solvable
+> problem.
+> 
 
-Tested on:
+Yes, the modification needed is to replace cpuset_for_each_child with cpuset_for_each_descendant_pre
+in partition_is_populated.
 
-commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15c48212580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a8d60a580000
+> There is also a flip side where cgroup_is_populated() returns a non-zero value, but the tasks are
+> actively being moved away. This false positive is less a problem even though it can cause a failure
+> in distributing out all the CPUs to child partitions. The users can retry and it should work the
+> second time.
+> 
 
-Note: testing is done by a robot and is best-effort only.
+Agree. This is a short-lived state, and it’s difficult to determine if any tasks are in the
+partition during this period. Users should retry.
+
+-- 
+Best regards,
+Ridong
+
 
