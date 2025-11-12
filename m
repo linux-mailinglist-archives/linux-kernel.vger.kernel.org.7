@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-898086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C76AC54597
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:08:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB82AC54540
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EED9B4F489A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:53:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 178164F9C2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D32529A309;
-	Wed, 12 Nov 2025 19:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BF22C2369;
+	Wed, 12 Nov 2025 19:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DYkCqFzw"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzAxCyBP"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8819F248F7C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6924A044
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762977199; cv=none; b=ksnGE/dCpB2rUs1yCag3XucBdEONPIxAC16y8Hv9rJ2Ix/P9t6MACza/EoOpEQlPwqNE7TvSyvgIPQFegbDiQVRB9LKCG7LDB47Mh4wp78LMOz4ZXhxq3L1Ix9JZwFyleW2BhgjmJ+clI32cmyBjXG01S0llPQfE1lRsWMjpzTs=
+	t=1762977201; cv=none; b=syHEb3Z3cpWD6x6GqU33XpsdJC4Ec+kxWdPWTBhe7UhyIc8VE+Fdfh4naE1wSlCJ2kDZN7A0cU2mqrz1bVsS/w8vfdwxyZQ0D95USQAszeluf6lXuwrOhG/bwo4gKusLP0mnaRx/zFu/gps74xBYrDgvbW4dDAIILs7nb5z8HAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762977199; c=relaxed/simple;
-	bh=Mt4PkZwYOMGZoupVLZfiSVDVEqcX3IkEmjMvcMEiubE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=KU77aKGWpnUFrc6UC5GfdJcFUGCErYJg4RLlaQV8Fi13eAAt/zggkLuKsh9fmqq+06RFcVq0DHdYjzRr2O8Snj85c7/6JOZOIs8v19q+NBubE6Zqf0vQuxs5Ib9NFIFCfXDqznpLs9M/GQQFAR1wdtJ/6Gtlzk5zetIFt3CMtDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DYkCqFzw; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1762977201; c=relaxed/simple;
+	bh=w4mXTwIUioCEf3aLDXcvRdVOG3IPPERu6LaKLIbBAuQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=YsV/e3FmnXFdDJU5xitKC7/oWwFzVevbfZXK8YYTMzrSqKVmKimsPRLj95LUSwYVSk7bCeZWa3ntHOq/P1Vqa4a00cHn8AOLEBKjMWQpyNiVyN/bo1W1efUNrPTJWT8dKpGt1Y4qCzpy0hv4C4FI0FL2+nQ7EKCJcmOty/g53zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzAxCyBP; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-295592eb5dbso223525ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:53:18 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297dde580c8so242335ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762977198; x=1763581998; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=84G8eoSACWzBai0CppLU75VrSMUpLrAmepVMsjUJ5vs=;
-        b=DYkCqFzwjdhrQPiY5wYYne+HD6HqUpVna5tILWJLVyLPda3JIfiWc1wu73zxd8ViS+
-         chIP5Cn5MXE2hyctowEiplffu+x4w6HCzxaPvGVgEy9tAaegBgV4hMAmtRMGCWzFt1SD
-         epJdBxygVVMKhNjw+7egtHSIISJx88dkg2xp89Y6IElcx2yaqmUZq3CNSTXnxkJomMg7
-         x6AM2OAI6gfwp9yj7bSe7+pME5LCtgHANExMln6GOBY7qkJH7fC20+H2EXce9gKqji+Y
-         FiQUG8Nehge3NWK+SFdWWJ9CaQK0vtUVUYjshetU3KpnLZDsVpX2pR6ZVKTyTgtbS/80
-         64FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762977198; x=1763581998;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1762977200; x=1763582000; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=84G8eoSACWzBai0CppLU75VrSMUpLrAmepVMsjUJ5vs=;
-        b=CKCO1hBx9P0PC9WmCkrnTq/NI6Br4gvzRQg2iiTRIW8jKq4M+/ixqPw/y9q978qc8w
-         JwrdtqmzH5/kjnvwKZ3vDc2I3ua7QX8Lv96uuyOF9hIZoUSlyo93nPRTo369ZE4fd8gy
-         UJX4ec2ItDJSr3LPKgLeNfK/L9qA309yzohHtTlIs3vAtV9sho9OIVpIPDbYEInbB+9C
-         66BG5xDLJZy3VSbfIbn7QqTLGP+I8uegLmpT6pw4iLc8ujMFSIyxmcUyfGUBnNpCvTiv
-         naOEc7bp2mmCaddTlDrtoqTndTyfqy6he/gHKb3Ztj41PB7V5a4bQQ2QW7KsMguI8fM7
-         3vbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxvjoQ6TRpla7fQEODBHKfwGoQGEostNqNZcR4oifBcWpWz2H0atrfeC/xzrqVyBJOEDENqalOtkpgoE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6RZg6i7onr2dQkczspXkJ54aO50OqZnGo5rBh8D0nqAymZSV4
-	jiOHY+TWfHzcHsG52E8QHmU1RI3DH240j+szZtuBk/c+Ce/WAk9a5x2eQQI+AS/TCqeHxf5CSFU
-	GnNbbzWggxQ==
-X-Google-Smtp-Source: AGHT+IGJsZZQpwRbl5QFTT9oCGX/5ODEzI1gvvBHeZMwOQsfJYRjBRBRZfYsO6gV6qpNlx5+42xlWie3dztl
-X-Received: from dlqq42.prod.google.com ([2002:a05:7022:63aa:b0:119:c6ec:cc42])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:fa7:b0:27e:f018:d312
- with SMTP id d9443c01a7336-2984ed2b587mr55528845ad.1.1762977197818; Wed, 12
- Nov 2025 11:53:17 -0800 (PST)
-Date: Wed, 12 Nov 2025 11:53:07 -0800
+        bh=LOuSUBzWe69YA4hvkhtZgT3oWHyjTIb2wmtwYv6DBRI=;
+        b=vzAxCyBPzRnyIRaauU/fx86vo4gYt+70bb+iB9XG1wi1zlMKTNbupZ/JciE4LSVL+i
+         p12SgE2IkNlEyOYWKjBoLKg1A662vf359UJ8HGWH5+1szvFuNcThuo4HZ34FJSWgF4CJ
+         YND+pcpzjBiHldyV0gywxg5qV+bcox2eeB4ufIhazzf01r5/+xBC2T1pJobhfaYtEjv8
+         9vhlaVeZkcGZwWHmgPkscSk5EEa/Sxvvhkr+hxwq7lGutC7JUvUx1Bu1TuVgLLJPPOYU
+         iuih4kzjpYVdExWqW9G/7SQ/0CLlldS5JdnP+OKZx1LnhIeUrp4qxRUuo/R4y9NTFdJM
+         ZSDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762977200; x=1763582000;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOuSUBzWe69YA4hvkhtZgT3oWHyjTIb2wmtwYv6DBRI=;
+        b=gY6IfjYrCntLzYrroUIatKj/NLsN7cpDOJGT2mEiLQrJd655YWN6ynj5n4kTVkyyia
+         XyB/fDkFzzOAV4C4N3PMu/03Xgg0yBTfnmqPKmc3Vs2pD4hCM++kFgzIS3PCKwvDoeCF
+         5n0Jp38SJP+U6IQWnlTWRuJNJHCT9SQQvlBMT3zUC2o37GNuDLSp06PAymTzpuiA8fEE
+         kNOBQa8JRV2yGsTMCvlYU4O7FEey3oGA7sjgjzBfI6SXA9jIzuptI8JWPLSYGTOdVq1K
+         8Q6Kkw6n0ry2Ea0QkFLylUo3h8bhGaUwTc+hJ4G02oipGqmixML4zBv8OwCK0aOmGVor
+         A7mg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAGCr/lpipzU/Ix1AXN/xDoYUq5dQJZ5CwdmDK6UhIVV6jAa+bmUkpHWlFZkIBDP5GmY+OTJQtXryB8kI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb7oEO8zz7swQsrGNUKmA0c3TddZSoNldmwLV9Gi9cMjabf1/l
+	jo29HA4o74nqOWZyEeVH0h+Xmz9rFDGySBqF3KNd68ft6wjJrNeZ8b61a/z8WQyzWuSSNDXEKMP
+	ZxrV4cauckg==
+X-Google-Smtp-Source: AGHT+IEtfQ4Sqv4rc5xvV8ORzN3/URZ7AozB19pmumlIecktr+wJTuUJm0/zwgHJS4tdicZktfBpuuvUUUKu
+X-Received: from dlbqd14.prod.google.com ([2002:a05:7023:b0e:b0:119:78ff:fe0e])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dace:b0:297:d777:a2d4
+ with SMTP id d9443c01a7336-2984ede0342mr58377285ad.46.1762977199650; Wed, 12
+ Nov 2025 11:53:19 -0800 (PST)
+Date: Wed, 12 Nov 2025 11:53:08 -0800
+In-Reply-To: <20251112195311.1673981-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251112195311.1673981-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112195311.1673981-1-irogers@google.com>
-Subject: [PATCH v2 0/4] Test fixes and debug logging
+Message-ID: <20251112195311.1673981-2-irogers@google.com>
+Subject: [PATCH v2 1/4] perf test: Be tolerant of missing json metric none value
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -83,26 +86,38 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Testing in a hypervisor guest showed some issues that these patches
-try to address, or improve the debug situation upon.
+print_metric_only_json and print_metric_end in stat-display.c may
+create a metric value of "none" which fails validation as isfloat. Add
+a helper to properly validate metric numeric values.
 
-v2: Rebase. Tested Arnaldo repeat case on Intel but didn't repro,
-    assume was fixed as part of the legacy metric json test fixes.
-
-v1: https://lore.kernel.org/lkml/20250914182900.1960567-1-irogers@google.com/
-
-Ian Rogers (4):
-  perf test: Be tolerant of missing json metric none value
-  perf parse-events: Add debug logging to perf_event
-  perf test: Don't fail if user rdpmc returns 0 when disabled
-  perf stat: Display metric-only for 0 counters
-
- tools/perf/tests/mmap-basic.c                       | 2 +-
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
  tools/perf/tests/shell/lib/perf_json_output_lint.py | 5 ++++-
- tools/perf/util/parse-events.c                      | 2 ++
- tools/perf/util/stat-display.c                      | 3 +++
- 4 files changed, 10 insertions(+), 2 deletions(-)
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/tools/perf/tests/shell/lib/perf_json_output_lint.py b/tools/perf/tests/shell/lib/perf_json_output_lint.py
+index 1369baaa0361..dafbde56cc76 100644
+--- a/tools/perf/tests/shell/lib/perf_json_output_lint.py
++++ b/tools/perf/tests/shell/lib/perf_json_output_lint.py
+@@ -43,6 +43,9 @@ def isint(num):
+ def is_counter_value(num):
+   return isfloat(num) or num == '<not counted>' or num == '<not supported>'
+ 
++def is_metric_value(num):
++  return isfloat(num) or num == 'none'
++
+ def check_json_output(expected_items):
+   checks = {
+       'counters': lambda x: isfloat(x),
+@@ -57,7 +60,7 @@ def check_json_output(expected_items):
+       'event-runtime': lambda x: isfloat(x),
+       'interval': lambda x: isfloat(x),
+       'metric-unit': lambda x: True,
+-      'metric-value': lambda x: isfloat(x),
++      'metric-value': lambda x: is_metric_value(x),
+       'metric-threshold': lambda x: x in ['unknown', 'good', 'less good', 'nearly bad', 'bad'],
+       'metricgroup': lambda x: True,
+       'node': lambda x: True,
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
