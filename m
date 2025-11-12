@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-897780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A5AC53B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5AAC53C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8654B502CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:50:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 966B15464A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C7E341AD8;
-	Wed, 12 Nov 2025 16:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978C03446A4;
+	Wed, 12 Nov 2025 16:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SC8HyX6o"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="z4xQD0O3"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DFC340280
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F8335563;
+	Wed, 12 Nov 2025 16:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966217; cv=none; b=RWB0kVlh8CRsDdAlirlenTARCsR039Hv4LUPHMXwFrmn5tto35Tj711DTnxeazBkBbipKan/+EdDerbYVi8MPp3vbYD9Fk2lzr7zhMCKvWbcxyRqfFyBeZuX9El7hCDGJBY5DzEbrrLXj05knptyG103TUtm1nxFPIQTodpV3ec=
+	t=1762966493; cv=none; b=fdxOAD4FBmVHpJ2E3erZgjcTRbcWtq8zkg4NRvSJEz+1QPnWpU4Yacdp47e/E23LmvHd4Aj59MXu9MgqXWp31TBiqIGby5bgXd65Ytxt8gYsJS0EwzavoBhUhWLica8SideyznQvWfeplfS4+VwEp0XyxLkLhtcOsXNyLePVpMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966217; c=relaxed/simple;
-	bh=Tiwbde6lhRPpVFkuGMnOq1cdj+tm313o4sMRI6JbwIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDnmRHWFCIfWdd5ylZrzPt8YpkXw630RwPxwfvwub/SdBOQzdMmdGuxdURAEXNI6c9Yd8gs5L1Y+mbb5RpxJNgXcOQyJCLNw8Ks56McPbvgqkZFGCPgihUkqlzwyV7uOiPZheHgHUcTpo5gnHiXXkdKltACCPH9qqFjgPQ6iWFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SC8HyX6o; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-295c64cb951so231915ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762966214; x=1763571014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=im8M93syO4Wdo1dQDINgUp1S7N0dhhvUu+q127lgjpw=;
-        b=SC8HyX6ol1VS7yWQdw286KVJ2HzJk/P4NyrY+t/lIjSFo5wQeNL0ViuXlqUEBsj33T
-         haoBOEJf7mMfhIAkF4hisuoPVktrIP7/wVRsoHraT3g9uZJIzQS1pSw9byeMzhtpegWY
-         oW0Pf0G+IuiPChZm3j0Y3W7VPD9aq0DhH4q8DWFfJjGoA6f8cl4KP/Y9EuE/JPFSfwdT
-         fSa07FvLuuUhLbe+5iN7HjphxyoZZDj12SvDsQbtF06SuDJMGfQ2SKw5L15WTNGugn4s
-         rkhKC2OtkiPEOw1g7ToDNXyokxEAhpXlXm1eASemufSpfRvO5baEbRAdKXpren4fOavj
-         Vqjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762966214; x=1763571014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=im8M93syO4Wdo1dQDINgUp1S7N0dhhvUu+q127lgjpw=;
-        b=DcwgEBOTgky8OTfTxT2PipjCOiK3HLsP08tx3FeRnUZBkg8VarcdOu6uYfdedtbV8f
-         lFx3P8nxz7Z8I1Pqiii81a6fcu5Fh0jqcfnZHZf70cq7Np/a0hjXhwXG/xsHupsfcuXu
-         LlgSJLPsEMultvGbQeZWIegDcMCcMp+5xaQpjcr14Gt6PWKtuEacjKFyzG3+eEzvqE1G
-         pOOqCM/Benpw8hnrrQIlLpbUVEqj6+UZ2BImQrUH728XeqDeFLdWd/RFNJqPgWYUzBZM
-         Y/eTQCo9d9ZTFX4S2y1gr71QC0mTOcpSuIPldec9D9OCHgjDGPxdQdZhEdOotlFOC8pI
-         WEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCULTMdRpJQ+KExdvCyE9kSp0vz0djNkJemTU0tPwgQK3BoF565jtnnw1VSxaQovLYmILqYfpW0DlFw3isI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRHBw5cV8RFg9qOE46q/0+LtRs12xY2dXs+JP/ka99BYhKC5po
-	s1m9k2tnUIu6Ci8BXCMVHpPVYVzLfQMudsgBYx+0FLAFENkhpSNq3rC8msdMEYLXd/2D/Op8w8p
-	EApObVo/juhWQq/yETjtqqkqeLDxBGBx/YXu+PVMjV9bsoZYiXK9b5dE2
-X-Gm-Gg: ASbGncuV7yh5d62SFlz+ELnOlao3yn3Ld/9AEcXvfD5Wa2DZU95xRHnFHxbchzh1ZhD
-	1e8gIJ2iT3OUu5J1rOqE6UPKFQBfmFpaIbY5C1NpVOm7xTZQa4a54ozme8b6hkR0Cnebv4e/FbD
-	QBvqKEP/WAl/0c0K5xm2Fl7rm/vpNs4EA1qC0VVCQoOgLa19d0PciYA46PpIkUx3FtpFuKA4piD
-	SEgbuJVEcz0puujWxLm9rkA3G4WkeKuS6hHGhcrtfrw0aKLwRp5qb1xU4wfSOKMhNRZlKO0lzPh
-	1+PlTWBLkPvasTzk6aSWl78OKQAnpBR5SrXW
-X-Google-Smtp-Source: AGHT+IGwx5bn7xQydBmWpG2XwjQli5nNX+W9qsqwOXGCIONZx5bVCiDz/zbGXu7F7IfB1kae8B/JhUVm1uX9/31LFp0=
-X-Received: by 2002:a17:903:1a68:b0:295:5138:10f2 with SMTP id
- d9443c01a7336-29850761942mr2821745ad.11.1762966213583; Wed, 12 Nov 2025
- 08:50:13 -0800 (PST)
+	s=arc-20240116; t=1762966493; c=relaxed/simple;
+	bh=VD8a4SS0yMO53+ZVV1cx5tlNfRvslXgHHNGKFKMUuYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=acwNI6BchfoEGToIU1XD9tVyBqtZiS1pqGrfPcuxe3Zz/XV27jf535celGnv3wbaAnnGmiAokIwAID9qI/gFBa5JAJbihfpNOIddu2VrXyI7GaZMArjz/hnOib3vclmcbVwhPO/xIcPYm+FaLs2ZBtT077plD/OsypyH8g5eIas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=z4xQD0O3; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4d68Ym0zQkzm0yQW;
+	Wed, 12 Nov 2025 16:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1762966282; x=1765558283; bh=VD8a4SS0yMO53+ZVV1cx5tlN
+	fRvslXgHHNGKFKMUuYY=; b=z4xQD0O3nCJBMEpVijbOigC1jYOrKfDT7TZfyFTM
+	HJeTrRpdDiuKh7RyvI5J0osFC8eL6P0eaCYWgdVAm1VTYBPf30t5kReE2TtAOdUe
+	mvCSXJTkYWBfD6dRRDiTteaIQ1/71sJqUG/5sQFKSeFC2vOAZ5s7OE3s/Z1DPfb7
+	UPkmH3OfzEG05CKo2p10OGqZ9nXrBrUqOL6E1pQhyw8cMxN2UZLMKETKmBA1Xo/s
+	RG1Aer/CpbKrOk9ZITR5GssteDdAPabel266+cNMxl5cU0Hi+289CAtGBTP3AxUw
+	wR7i1oGoTqKl3xVSNj0UVs9sQaST/AbTrdanQ2dYuhia0Q==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id hzMhZbm0qqQ4; Wed, 12 Nov 2025 16:51:22 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4d68Yb5grLzm0yQB;
+	Wed, 12 Nov 2025 16:51:15 +0000 (UTC)
+Message-ID: <1bf9f247-8cd7-400e-a5c8-6f3936927dfc@acm.org>
+Date: Wed, 12 Nov 2025 08:51:13 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-perf-pmu-cap-docs-v2-1-3c451f7b0b2e@collabora.com> <d01d3f15-c144-4e2a-9aee-6308a897f3f2@linux.intel.com>
-In-Reply-To: <d01d3f15-c144-4e2a-9aee-6308a897f3f2@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Nov 2025 08:50:02 -0800
-X-Gm-Features: AWmQ_bl2JhgUXo9a1z19NSTipK_Tr2OyLPJE-WcM9aaK9x3Mjo8BIxtSG8U4n3s
-Message-ID: <CAP-5=fU2=s+88RQE0iq8DD+mxjMUca4UHkSM3TjkS8T_7p=KKA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2] perf/headers: Document PERF_PMU_CAP capability flags
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, kernel@collabora.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Clark <james.clark@linaro.org>, "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] UFS: Make TM command timeout configurable from host side
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "beanhuo@micron.com" <beanhuo@micron.com>,
+ "sh043.lee@samsung.com" <sh043.lee@samsung.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "storage.sec@samsung.com" <storage.sec@samsung.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+References: <CGME20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2@epcas1p2.samsung.com>
+ <20251106012654.4094-1-sh043.lee@samsung.com>
+ <e98df6a1b10d185358bdadf98cb3a940e5322dcb.camel@mediatek.com>
+ <009401dc52e7$5d042cf0$170c86d0$@samsung.com>
+ <f3b1641b9e611f2e4cac55e20a6410f9a9a88fa3.camel@mediatek.com>
+ <be4dc430-ce62-46a8-bd42-16eb0c23c0a0@acm.org>
+ <8d239f26e1011eee49b7c678ba07fd4d9ca81d24.camel@mediatek.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <8d239f26e1011eee49b7c678ba07fd4d9ca81d24.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 10, 2025 at 8:11=E2=80=AFPM Mi, Dapeng <dapeng1.mi@linux.intel.=
-com> wrote:
->
->
-> On 9/9/2025 7:39 PM, Nicolas Frattaroli wrote:
-> > Over the years, capability flags for perf PMUs were introduced in a
-> >
-> > piecemeal fashion whenever a new driver needed to signal to the perf
-> >
-> > core some limitation or special feature.
-> >
-> >
-> >
-> > Since one more undocumented flag that can have its meaning inferred fro=
-m
-> >
-> > the commit message and implementation never seems that bad, it's
-> >
-> > understandable that this resulted in a total of 11 undocumented
-> >
-> > capability flags, which authors of new perf PMU drivers are expected to
-> >
-> > set correctly for their particular device.
-> >
-> >
-> >
-> > Since I am in the process of becoming such an author of a new perf
-> >
-> > driver, it feels proper to pay it forward by documenting all
-> >
-> > PERF_PMU_CAP_ constants, so that no future person has to go through an
-> >
-> > hour or two of git blame + reading perf core code to figure out which
-> >
-> > capability flags are right for them.
-> >
-> >
-> >
-> > Add comments in kernel-doc format that describes each flag. This follow=
-s
-> >
-> > the somewhat verbose "Object-like macro documentation" format, and can
-> >
-> > be verified with
-> >
-> >
-> >
-> >       ./scripts/kernel-doc -v -none include/linux/perf_event.h
-> >
-> >
-> >
-> > The current in-tree kernel documentation does not include a page on the
-> >
-> > perf subsystem, but once it does, these comments should render as prope=
-r
-> >
-> > documentation annotation. Until then, they'll also be quite useful for
-> >
-> > anyone looking at the header file.
-> >
-> >
-> >
-> > Reviewed-by: James Clark <james.clark@linaro.org>
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> LGTM. Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-Ping.
+On 11/11/25 6:58 PM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
+> Using a module parameter is a flexible method if the customer
+> is using a device that may require an extended timeout value.
+
+Introducing a new kernel module parameter for a timeout that depends on
+the UFS device model doesn't sound ideal to me.
+
+Can't we increase the default timeout (TM_CMD_TIMEOUT)? Increasing the=20
+default timeout shouldn't affect any configuration negatively, isn't it?
 
 Thanks,
-Ian
+
+Bart.
 
