@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-896841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69849C5158E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:27:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50155C51588
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E08188C8EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:27:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B936334B36C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E262FD7A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74862C0262;
 	Wed, 12 Nov 2025 09:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euNYJl9Z"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="d7ZEEf2E"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4457A26CE04
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598C52F3600
 	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939606; cv=none; b=DVyzG+SqtWydcznbc0zDXzIpONhJxwkA8iSDIzmvTHwpgyrqfhgUY2QeEC4KLEOpwehD9/ZKGCE+XJvrdGGgubVvgnQQsENUXE651nQPrQzRcdqZRdCGIGJ9DDUcnFTNfyRdZx7tcI6iULTy0v3uR8gQMIqu6lTMZmF2NEGcu/Q=
+	t=1762939607; cv=none; b=UmvCpDk3lOQFvqd1YqmMbt5v+/Xvxfzx8E31s+Pf9bFfXuJdT0O7/2lVXo0vBlOFTqcEflradSvgdFfYiMORXt2ZIPNMhtL3svtRWYh2at8/OkERPnUntPboFs1IDP4otx9apZ1HOwaYanc1OyKexxEBz9yKg/e7hjPA9ly/Maw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939606; c=relaxed/simple;
-	bh=13U7AVC+v5UBTnrbtBPdFJDstqOHomUS2ScWYjnJ9zw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jKZv++yV0Gu6qXdezKn+NP36ayGp9YLx/K6gCF4cNYr62rPdL1ICUnJn2LHF5oZt9v+YWksnM+6509BGo79wGp/46qe2ktj/fDDua+9V/j8RfaMQjFvtbyhr+3chSkAy2GATxAbJvLELBXZn2G1shfRc7DyF4eum/rrEUHSNrXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=euNYJl9Z; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7880686d178so6747677b3.1
+	s=arc-20240116; t=1762939607; c=relaxed/simple;
+	bh=Bv1vk741p4JJsa9EJzAU8Q1WivVpE6uUjg664knKdrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c3SCVeUyBFhuuw2HYEA2E8DAWu8JqtTWmB7bx4Oky2QZ11EJrGs5LXqNSo/j7AosrkH1rX1w/hjYetPZtNjsFKUjpQD2WPrF0teAJd6L7yxrvDonJBXw9/5B+WHtcKjZ2K1863qCXzVmLBT3FSKDBM4JgqkIKwCYQ5qY8jdhs0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=d7ZEEf2E; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b2a0c18caso477701f8f.1
         for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762939604; x=1763544404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=13U7AVC+v5UBTnrbtBPdFJDstqOHomUS2ScWYjnJ9zw=;
-        b=euNYJl9ZPbauanN8nO67FCtuHDkt/SsxxTJpPhT8Fqrk8cH52AKRx6jy6VJV+LcTdg
-         +UVWfR1+JXaZ2pIAGnr61azQ355SNuQZfg62DRMDlDuV4/6irSYFZ6IyGjKix8dHhj5i
-         wIQ0VOTb+9pPCMfEnTtcgIeWF6WUk1X32WAtH+6M9lSpQpMgqIF6uJ2OVYyLl8wblBLK
-         0hywloITwE7CH/zMpYlO7Vz0a/UfDNeVADTGtQ3WmBxw9hZyNPpyrndBJy5irkGJY2/k
-         tM4PUDIhtf52LxzTJtqTq0PSOS0mt3Z8XG980ItvaUJmvKGU6M1CsOowhfkf7ntV3LRc
-         /b7A==
+        d=ursulin.net; s=google; t=1762939604; x=1763544404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K6o4ShRZkHRUWNEA1Gxq8wchbZOAVId9k8T/+YEnweQ=;
+        b=d7ZEEf2EH/zDKu3+zrMiagnra+nXBIkHmcP98xMHtAi9iDqSiJvsRA+wBWlAQSbdVb
+         iXgpntjHw03/ZdykDrBX0Txom7wZoSnjNF5UeI+igJSSg36ZlyxFc4WKmrvWgpdFYafp
+         CD0szmxAZEnp512soI+Y/aPKUneETXFjElTrakl4Dqcl3LbTLWI45ZVRntTrH5STDfzE
+         8lBVAp+W3JK+kyaIsbvneXUJBVU7HJlnTq0xGsfySjLqovCCE6Y3AAUouCXMg5gt76Qo
+         /XN7emR9THCw0sZcuhwsHif0mEgQyhrb2XcX4w0q731bpDV23S+CCcWxki6rHdJIC+cD
+         7DWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762939604; x=1763544404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=13U7AVC+v5UBTnrbtBPdFJDstqOHomUS2ScWYjnJ9zw=;
-        b=LnKpie3C1VTPikCCA/VjZsY+BvSeD0eBYjaqNLRkNnvxz+BFTwQ7KdpsP0EL1aolgH
-         4xrZNbWY/k3vXy9HJXwtjQ9p9hFak0zGsYoWHmMi2Kma8JXbKCEWxwNDEXhTYgb6ba6P
-         Xt1gO9DrtMNgom057sdyjOPI9f9Dvy/taVdh9Vn0N81AdeY9A5NaSsGaYn7WEqASuGwX
-         0kEIseE5B9JbHCIeSdNj9cEB4AqDztvEQ/hZvW3BRA8c67VXCSN3c8BEppdhmCv8gxaH
-         q6tvNNAdd9G6E8ALE2zzDXf9hgeP3H9hZKUdI6pLSDmLXCxMNUDzySrSs3Ynp5srKgHj
-         QXjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVgn7mWo074cqv4SFtZzHKbic6w4KU16g4qwvLKkB4VNKoWtFoWfcLQBEt4iOu5VQ0ETT9L0phl7TK9r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJX3SAsSSZdSXhAQRsFqzhTAbKluzVpMMZNvAy0lZL2uh1EJSm
-	Vzxxg68h4hbSaZ0QsWLdNChp4XrOTtnwsOSJWcNeeFWcWazOtyVgofP94GnmviV6GxP9FiPnZfa
-	/OrkD5rJ9Ljz+XUKg5dd/C+x/ceGBX3U=
-X-Gm-Gg: ASbGncvwXiMDwJYSBnPi7iZheBriAvGzWU1KvRtlXJJ4fgmjx7D67/Ff2g7IZE7+LjL
-	WqlLYWF5tpS63/kIar2vo/cb8k3cB+BDoWrzTgdfxNtPGnvdzAhm7ZQU1iM5iIUmJw94+XuXrl4
-	GcZf+BTD5EGvl0Q5ddUnFPlF6xBR7S54My1a2ZSvIDRDWPLh5qYTbsb7C7Kp1BH+zKGidzDfdoE
-	bNKqfFjXYvWRUyfy8QrzxV6sOKW5umxak2MuuEvHm99mEfUKm+BN9kZ+iodrxpM8WBiIM+Q6S83
-	lLdYa5vTeiQhP+yjlQ==
-X-Google-Smtp-Source: AGHT+IFeg2Gqvtsptiri6ePX3FBgv70zi6fuHZ1BwTdto3EYCmKxE4YFDolr1iUmWcSeBCbWwr8e8FtaD2C0e2n3xP0=
-X-Received: by 2002:a05:690c:a742:b0:784:a232:b3d9 with SMTP id
- 00721157ae682-78813621726mr15697227b3.18.1762939604074; Wed, 12 Nov 2025
- 01:26:44 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K6o4ShRZkHRUWNEA1Gxq8wchbZOAVId9k8T/+YEnweQ=;
+        b=LOnQOat8sxnM6SQp46mvX0BYuM3MgUQptm1InK0bdwhZStIFIwmbDA0G40pcYcPnHh
+         i1lQh3KYEZixMmT0aSrofVbL33Pve39aqLpxRIWRY4p2VF7FuVUU8H1LM7nU33m01gvb
+         hEpT3+POzNr+eT2xBC+I3x7A+blH5KTx7x8p/DTykuOOpXkY22fChRrTSqDSNm26uFA1
+         9CzkTnVLyWLMMMyBAbgeoXmR1XYjL+gqMTXDcYIFbpHrFl2YaOylnaK0HOIG+vZTUTAb
+         lwmC32l53GwyAglS7YORFpitR1bfdXzyjsWrTCDt8f9QJqzeJQm192M2BUPJRfYPDFTv
+         kDEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRE23UTO37Pp0datNEffQe9r6Rlfg3buX/qC/a/MWqYDh733/Gg1++aHoQPQZhvx/DyomaRQWdn+nVmCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO5C8P50kUhO8NAH3K4R2TGKN/7GDHRcSc9/isp3lXOVKoEX5/
+	nNgjN7U2XJfYXwYULeotimDNl9aTXMMQUPmBP5oFx80Gd++Sul/F7We5ldYEnHinKEU=
+X-Gm-Gg: ASbGncsYlQ05hJjclWS6Z26jZnWT5eWXkQN/7klZ9F7BIJzM3a1KhfCdKOLXIRZeWVK
+	uSkHLoeclclGWcojUlrq3OtrVPIviuW0XrYWWx0ablOWH0gztMgDr6KyOxDAq+0Fo5lqPBSkAqK
+	nYjDO1cS2ggx2wnVCr4Ebr/e6sxukgeRS2x4wZ2aP7+qllS2l6pPz1CFO+7IrE8t0msnz/EB+m5
+	JG45tpcV5ElqqH1D4zV62rMQwLPEhR2BZCmg1682ggn23ySixjBWxrE2Jbr2pnsQ80gChwEr42e
+	YqqUfpkg8/e1GK4mLVqtYu4eleNQx2LOmHfTHnwifKbFc0Rv2KxIBCMHh8FpH54Ysw+kJlTsSwv
+	ge1BXNG3q0toy+VYLGH8AT0EaDWJnIO71hJYKuLafAGP7zE7X0eHKIWn9NXqrec0ERjrSI85Gyv
+	7k3bkEzYQnTGyFTG+OVNaryg==
+X-Google-Smtp-Source: AGHT+IFY7UcjIa0YdZIgSPVahVRS/IE+hi9DKKHSOUoFypj2RLkC1gFWvUzqpprhzIE1XretNfh8CA==
+X-Received: by 2002:a5d:5f87:0:b0:42b:41dc:1b58 with SMTP id ffacd0b85a97d-42b4bdb8247mr1934029f8f.45.1762939603510;
+        Wed, 12 Nov 2025 01:26:43 -0800 (PST)
+Received: from [192.168.0.101] ([90.240.106.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63df69sm32884187f8f.13.2025.11.12.01.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:26:43 -0800 (PST)
+Message-ID: <04291a87-24c9-433b-9bb6-7e70ea19459f@ursulin.net>
+Date: Wed, 12 Nov 2025 09:26:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112031631.2315651-1-kartikey406@gmail.com>
- <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com> <aRRPvn4DYAhuGtq3@localhost.localdomain>
-In-Reply-To: <aRRPvn4DYAhuGtq3@localhost.localdomain>
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-Date: Wed, 12 Nov 2025 14:56:32 +0530
-X-Gm-Features: AWmQ_bmaI_JIe64abNiasFhIiNWEIeB6vR-Ar5fHJ7UfN9zGaffX73JU93uBIJ0
-Message-ID: <CADhLXY7-62Q51_fCXs01kiZ5u=qpieXJbjqrJnvwGEpaR37khg@mail.gmail.com>
-Subject: Re: [PATCH] mm/memfd: clear hugetlb pages on allocation
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Hugh Dickins <hughd@google.com>, Muchun Song <muchun.song@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
-	baolin.wang@linux.alibaba.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Oscar,
-
-Thank you for catching these issues!
-
-I have a question about scope: Should I fix all three issues (zeroing,
-locking, uptodate) in a single patch for v2, or would you prefer:
-
-1. My current patch for just the zeroing (security fix), and
-2. A separate follow-up patch for the locking and uptodate issues?
-
-I'm happy to do either - just want to make sure I'm following the preferred
-approach for the mm subsystem.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Fix outdated sched_job docu
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251111161502.86180-2-phasta@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20251111161502.86180-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+On 11/11/2025 16:15, Philipp Stanner wrote:
+> There is no such thing as a "done_list" anymore. Remove mention of it.
+> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>   include/drm/gpu_scheduler.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index fb88301b3c45..18d6210ce2d0 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -320,7 +320,7 @@ struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
+>    * struct drm_sched_job - A job to be run by an entity.
+>    *
+>    * @queue_node: used to append this struct to the queue of jobs in an entity.
+> - * @list: a job participates in a "pending" and "done" lists.
+> + * @list: for enqueueing the job into the list of pending jobs.
+>    * @sched: the scheduler instance on which this job is scheduled.
+>    * @s_fence: contains the fences for the scheduling of job.
+>    * @finish_cb: the callback for the finished fence.
 
-Thanks,
-Deepanshu
+Interesting that I cannot see there was a done list at the time when 
+that comment was added. Anyway, I did not dig much further back since 
+for the current state the correction is obviously correct.
+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+
+Regards,
+
+Tvrtko
+
 
