@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-898062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0875C543F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 991FAC544E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFAC74F3A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:39:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D08F4F55FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5713434FF55;
-	Wed, 12 Nov 2025 19:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E9134F246;
+	Wed, 12 Nov 2025 19:36:53 +0000 (UTC)
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC07534D91E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252573538BF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762976205; cv=none; b=COCd4lmqaN7bK1IvYocHzYJAnWa4sQ7bb5hdDkRzwwkup2862ZPOD13Dt5K/B81SbkcfHCLduuvkfhWONdgw5pehm0AFR2P7vyQQCEq8SKZJJM7XewckcbafWpHlfLIAGxBUiPISxmxUqz2kx8gNHYSKshIzLbEKOgQoy+AeJTo=
+	t=1762976213; cv=none; b=mV3Rghw2e0kl5qzrGGNFdrtX+mRF09Y2DM/PST5gXY+UOsVRKgy/LgkF5nHEr2bip62FkzbOqKCPIaF/5FnH3gnBjkK0io/gYr0L4bRvK7+kF2lDP/WRJHl0G1/PDNgZG2YGP3kqXiJHvM84HVKOWTvh2appPNsrCYPBiCwtYFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762976205; c=relaxed/simple;
-	bh=cJRleMYkhB7ftVmOOWDmYy5Xb7gMv+BWoTmEtMo3il0=;
+	s=arc-20240116; t=1762976213; c=relaxed/simple;
+	bh=Qq4Tp00GXzNvEm9j0Ogoy9B+mJlCtDLzO+gAdCsskZk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XTok5axa8TEjSHGyHTA6fDoJD5rR6/+U/XXwgMmjMRr5iUrzn8vIAvqlyvCUgR8q4FLdE4iKzH/JW+Mb4Bw33eCiXRyypomvj0VNzT+t1hS5SfK0ncIJlT1rH5/RC61NQ1aTlBGHi40AT949a/78Xkc+QqZRTgsodxyC8cfht4A=
+	 MIME-Version; b=AXU0lCba6Xxx4oAlEO67Alr4Qx+2eCi4zPj+5USulGAIVIvWfGKGMKFCJ7/R3a28ONHSAErj273itsNxRNY+TeaP6JWLw/GJXcgRRxQObhTSsovzgGd/MUcs3lZJnpwcBE6DPx/nWj8k5GgQzrPY08fem4/eZkL1V+Zzq8oyvlg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
@@ -32,7 +32,7 @@ Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3A00C1F7A1;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BF7CE1F7BD;
 	Wed, 12 Nov 2025 19:36:42 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
@@ -40,11 +40,11 @@ Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2403D3EA61;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8A2D3EA61;
 	Wed, 12 Nov 2025 19:36:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6IBNCMrhFGm+YgAAD6G6ig
+	id 0NyiKMrhFGm+YgAAD6G6ig
 	(envelope-from <neelx@suse.com>); Wed, 12 Nov 2025 19:36:42 +0000
 From: Daniel Vacek <neelx@suse.com>
 To: Chris Mason <clm@fb.com>,
@@ -53,9 +53,9 @@ To: Chris Mason <clm@fb.com>,
 Cc: Daniel Vacek <neelx@suse.com>,
 	linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/8] btrfs: add a bio argument to btrfs_csum_one_bio
-Date: Wed, 12 Nov 2025 20:36:03 +0100
-Message-ID: <20251112193611.2536093-4-neelx@suse.com>
+Subject: [PATCH v6 4/8] btrfs: add orig_logical to btrfs_bio
+Date: Wed, 12 Nov 2025 20:36:04 +0100
+Message-ID: <20251112193611.2536093-5-neelx@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251112193611.2536093-1-neelx@suse.com>
 References: <20251112193611.2536093-1-neelx@suse.com>
@@ -69,7 +69,7 @@ Content-Transfer-Encoding: 8bit
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
-X-Rspamd-Queue-Id: 3A00C1F7A1
+X-Rspamd-Queue-Id: BF7CE1F7BD
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
@@ -83,132 +83,83 @@ X-Spamd-Result: default: False [-4.00 / 50.00];
 
 From: Josef Bacik <josef@toxicpanda.com>
 
-We only ever needed the bbio in btrfs_csum_one_bio, since that has the
-bio embedded in it.  However with encryption we'll have a different bio
-with the encrypted data in it, and the original bbio.  Update
-btrfs_csum_one_bio to take the bio we're going to csum as an argument,
-which will allow us to csum the encrypted bio and stuff the csums into
-the corresponding bbio to be used later when the IO completes.
+When checksumming the encrypted bio on writes we need to know which
+logical address this checksum is for.  At the point where we get the
+encrypted bio the bi_sector is the physical location on the target disk,
+so we need to save the original logical offset in the btrfs_bio.  Then
+we can use this when csum'ing the bio instead of the
+bio->iter.bi_sector.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Daniel Vacek <neelx@suse.com>
 ---
-Compared to v5 this needed to adapt to recent async csum changes.
+No code changes other than context since v5.
 ---
- fs/btrfs/bio.c       |  4 ++--
- fs/btrfs/bio.h       |  1 +
- fs/btrfs/file-item.c | 17 ++++++++---------
- fs/btrfs/file-item.h |  2 +-
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ fs/btrfs/bio.c       | 10 ++++++++++
+ fs/btrfs/bio.h       |  2 ++
+ fs/btrfs/file-item.c |  2 +-
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index a73652b8724a..a69174b2b6b6 100644
+index a69174b2b6b6..aba452dd9904 100644
 --- a/fs/btrfs/bio.c
 +++ b/fs/btrfs/bio.c
-@@ -542,9 +542,9 @@ static int btrfs_bio_csum(struct btrfs_bio *bbio)
- 	if (bbio->bio.bi_opf & REQ_META)
- 		return btree_csum_one_bio(bbio);
- #ifdef CONFIG_BTRFS_EXPERIMENTAL
--	return btrfs_csum_one_bio(bbio, true);
-+	return btrfs_csum_one_bio(bbio, &bbio->bio, true);
- #else
--	return btrfs_csum_one_bio(bbio, false);
-+	return btrfs_csum_one_bio(bbio, &bbio->bio, false);
- #endif
- }
+@@ -94,6 +94,8 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
+ 	if (bbio_has_ordered_extent(bbio)) {
+ 		refcount_inc(&orig_bbio->ordered->refs);
+ 		bbio->ordered = orig_bbio->ordered;
++		bbio->orig_logical = orig_bbio->orig_logical;
++		orig_bbio->orig_logical += map_length;
+ 	}
+ 	bbio->csum_search_commit_root = orig_bbio->csum_search_commit_root;
+ 	atomic_inc(&orig_bbio->pending_ios);
+@@ -726,6 +728,14 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+ 		goto end_bbio;
+ 	}
  
++	/*
++	 * For fscrypt writes we will get the encrypted bio after we've
++	 * remapped our bio to the physical disk location, so we need to
++	 * save the original bytenr so we know what we're checksumming.
++	 */
++	if (bio_op(bio) == REQ_OP_WRITE && is_data_bbio(bbio))
++		bbio->orig_logical = logical;
++
+ 	map_length = min(map_length, length);
+ 	if (use_append)
+ 		map_length = btrfs_append_map_length(bbio, map_length);
 diff --git a/fs/btrfs/bio.h b/fs/btrfs/bio.h
-index deaeea3becf4..c5a6c66d51a0 100644
+index c5a6c66d51a0..5015e327dbd9 100644
 --- a/fs/btrfs/bio.h
 +++ b/fs/btrfs/bio.h
-@@ -58,6 +58,7 @@ struct btrfs_bio {
- 			struct btrfs_ordered_sum *sums;
- 			struct work_struct csum_work;
- 			struct completion csum_done;
-+			struct bio *csum_bio;
+@@ -52,6 +52,7 @@ struct btrfs_bio {
+ 		 * - pointer to the checksums for this bio
+ 		 * - original physical address from the allocator
+ 		 *   (for zone append only)
++		 * - original logical address, used for checksumming fscrypt bios.
+ 		 */
+ 		struct {
+ 			struct btrfs_ordered_extent *ordered;
+@@ -61,6 +62,7 @@ struct btrfs_bio {
+ 			struct bio *csum_bio;
  			struct bvec_iter csum_saved_iter;
  			u64 orig_physical;
++			u64 orig_logical;
  		};
+ 
+ 		/* For metadata reads: parentness verification. */
 diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index 72be3ede0edf..474949074da8 100644
+index 474949074da8..d2ecd26727ac 100644
 --- a/fs/btrfs/file-item.c
 +++ b/fs/btrfs/file-item.c
-@@ -765,21 +765,19 @@ int btrfs_lookup_csums_bitmap(struct btrfs_root *root, struct btrfs_path *path,
- 	return ret;
- }
+@@ -812,7 +812,7 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async)
+ 	if (!sums)
+ 		return -ENOMEM;
  
--static void csum_one_bio(struct btrfs_bio *bbio, struct bvec_iter *src)
-+static void csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, struct bvec_iter *iter)
- {
- 	struct btrfs_inode *inode = bbio->inode;
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
--	struct bio *bio = &bbio->bio;
- 	struct btrfs_ordered_sum *sums = bbio->sums;
--	struct bvec_iter iter = *src;
- 	phys_addr_t paddr;
- 	const u32 blocksize = fs_info->sectorsize;
- 	int index = 0;
- 
- 	shash->tfm = fs_info->csum_shash;
- 
--	btrfs_bio_for_each_block(paddr, bio, &iter, blocksize) {
-+	btrfs_bio_for_each_block(paddr, bio, iter, blocksize) {
- 		btrfs_calculate_block_csum(fs_info, paddr, sums->sums + index);
- 		index += fs_info->csum_size;
- 	}
-@@ -791,19 +789,18 @@ static void csum_one_bio_work(struct work_struct *work)
- 
- 	ASSERT(btrfs_op(&bbio->bio) == BTRFS_MAP_WRITE);
- 	ASSERT(bbio->async_csum == true);
--	csum_one_bio(bbio, &bbio->csum_saved_iter);
-+	csum_one_bio(bbio, bbio->csum_bio, &bbio->csum_saved_iter);
- 	complete(&bbio->csum_done);
- }
- 
- /*
-  * Calculate checksums of the data contained inside a bio.
-  */
--int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
-+int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async)
- {
- 	struct btrfs_ordered_extent *ordered = bbio->ordered;
- 	struct btrfs_inode *inode = bbio->inode;
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
--	struct bio *bio = &bbio->bio;
- 	struct btrfs_ordered_sum *sums;
- 	unsigned nofs_flag;
- 
-@@ -822,12 +819,14 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
- 	btrfs_add_ordered_sum(ordered, sums);
- 
- 	if (!async) {
--		csum_one_bio(bbio, &bbio->bio.bi_iter);
-+		struct bvec_iter iter = bio->bi_iter;
-+		csum_one_bio(bbio, bio, &iter);
- 		return 0;
- 	}
- 	init_completion(&bbio->csum_done);
- 	bbio->async_csum = true;
--	bbio->csum_saved_iter = bbio->bio.bi_iter;
-+	bbio->csum_bio = bio;
-+	bbio->csum_saved_iter = bio->bi_iter;
- 	INIT_WORK(&bbio->csum_work, csum_one_bio_work);
- 	schedule_work(&bbio->csum_work);
- 	return 0;
-diff --git a/fs/btrfs/file-item.h b/fs/btrfs/file-item.h
-index 5645c5e3abdb..d16fd2144552 100644
---- a/fs/btrfs/file-item.h
-+++ b/fs/btrfs/file-item.h
-@@ -64,7 +64,7 @@ int btrfs_lookup_file_extent(struct btrfs_trans_handle *trans,
- int btrfs_csum_file_blocks(struct btrfs_trans_handle *trans,
- 			   struct btrfs_root *root,
- 			   struct btrfs_ordered_sum *sums);
--int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async);
-+int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async);
- int btrfs_alloc_dummy_sum(struct btrfs_bio *bbio);
- int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
- 			     struct list_head *list, int search_commit,
+-	sums->logical = bio->bi_iter.bi_sector << SECTOR_SHIFT;
++	sums->logical = bbio->orig_logical;
+ 	sums->len = bio->bi_iter.bi_size;
+ 	INIT_LIST_HEAD(&sums->list);
+ 	bbio->sums = sums;
 -- 
 2.51.0
 
