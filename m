@@ -1,490 +1,158 @@
-Return-Path: <linux-kernel+bounces-896531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55E4C5098B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:17:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FA6C50991
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5338E34888A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70EE13A6F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ED92D5936;
-	Wed, 12 Nov 2025 05:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8842D6630;
+	Wed, 12 Nov 2025 05:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiyvXHYx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nVEg4d4H"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D323E1F09B3;
-	Wed, 12 Nov 2025 05:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83FD15D1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762924628; cv=none; b=XqBm42LMMLVQfL68AuqSbNzOVhSMsnxQ4wdflUd53LZs03os/NkE9PnziI/BqxjHFm7Z4Q6pVU3YWLoROcE1osCuuGdjuihmfc3bNck/ZqrGvOL8WwZu6eSt6ejyg/6p4RMcPaKuLbDM2Mv1uX0SUJJWOs93Cn43GvdgYytJEOk=
+	t=1762924689; cv=none; b=pDxyXss+EmOga4l6vP/PxVPhNexptzUkD16HEjIVRWEqGFIDWLzC0v09cEoLNeAIIZgWmZeuh4lYsvLkB0BFvGwy6Sk6TThCXBdkZHG0+C/LxcKzbuUBa8bKK4SIPMkqqOf+NsrRC/fFnFyqAlbbwhB+7CagfG/DvQIlFXlYUls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762924628; c=relaxed/simple;
-	bh=Qc6zFId9hf91WOA1GqK1vXtORZRACz2KGZzQpH/Gm74=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LTMliRUpJDtK3tCpcQGRUkfZR5qVQojl0m8hle33WJSZClOgODsRVyT6I20HCWyicI/b9WUeqBrbB87O1tzRaUpMiAY9bJNskzvnbBgwFyL6rzQpv6vKiA9DJGD2QnX9J0hoXJOD0ASVH/hEUV0PslHjXMH9OqcKXGkLJffDhh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiyvXHYx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43E40C2BC87;
-	Wed, 12 Nov 2025 05:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762924628;
-	bh=Qc6zFId9hf91WOA1GqK1vXtORZRACz2KGZzQpH/Gm74=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uiyvXHYxcKPEUAI+s0eRphFA6wDDWsi1UtHGjk+kDXEwejuguX93WthUGGWwsmmql
-	 v8FGOdXjth1b+xANMOUAX0+yLZ3iA6bcXVkJgA5cNWpVMfhIlLPnXdmsSBqfSuN3e6
-	 RWLBogyzOFDqGWVejz5kBX3gckgm1vDUih2aP+GwZd2XRN2q4weClNQWwn0hhAaptW
-	 plwRxUummaZ7LPwVlIvo5iFRC3b89Is1AdRdlAVYb2xKik/AnFQHUlUbGSRQGED3dM
-	 F/IFUpB1V9M4d6OMaKw2VyhDUmlL2hxem0PFwGkKrGeYqJ2B/XAqpIZh2OEEAlnybk
-	 +8e1Sq6O2FNFQ==
-Date: Wed, 12 Nov 2025 14:17:05 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: rostedt@goodmis.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Donglin Peng <pengdonglin@xiaomi.com>, Sven
- Schnelle <svens@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
- funcgraph-retaddr to work simultaneously
-Message-Id: <20251112141705.a7f2f79f6d7b058201307e89@kernel.org>
-In-Reply-To: <20251112034333.2901601-1-dolinux.peng@gmail.com>
-References: <20251112034333.2901601-1-dolinux.peng@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762924689; c=relaxed/simple;
+	bh=N2i7mYhy/wako5FItulAn51gZ+92I+axWJfXi+cvC60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7GWxH5lKyhTPWtJxTlnXvfqadrCFlhxx1XOGBwn8dMEdIDaREGJqEpKXYEMeF3glwhlVrHgLXW1/OfwXOO8myZ0+mf1x0p/xCEZ31CYxzLJEYjJDxZEbkjPA+BIhKItwng1GO3NU9wBpqBqjE04FD17JaCoRrWL1W8vpQROTCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nVEg4d4H; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-ba599137cf7so399553a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1762924687; x=1763529487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kJv5UmqfgHdkO0lr5oB99ha660rGNd0N5LAs+dq++Iw=;
+        b=nVEg4d4HFceVmE6td0hEsE1pz6FLQdDsA7zlIePdMeu8XFli/T7Owb0EmJ1tnoUDeE
+         3PIT+yiFk9ZfTQlm4d9hfwnkPPNcHi4PfQ/t170txOTcL484VoqPv47gSe/dc2EztecI
+         1LeIbBUB1qt2O2gDEx0pqsC3jp/Dv1XUhQX8I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762924687; x=1763529487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kJv5UmqfgHdkO0lr5oB99ha660rGNd0N5LAs+dq++Iw=;
+        b=fahLDGFtLXfVE6e73wueUNp3fqLAEiV9fOCYTPFKrxt4miJIwMYEoEsU9QtqwOQFaP
+         xcX6/kyShdkKp3yHpm5nxswPlDDyrhLW7sQtXLMpwjkAGk01VVrvZTpX/lvvZwjYxLwL
+         pUlRjggghvazCSvDGNXB9FTtxtBHabPTx6JWneXEaI+ENfnN/SciTwPW2Ekpvrfa5kGY
+         bkSO6TeT0BixEz5pbrB01Pb0zHbc3qXPuVtpzDH/3+o3D7NRao3WKS38/Pddv3fSJ3ku
+         Ipf6pxsSPMzSIvpDpqsVnM4MNBSS56qgp867+Tp8ocgveP3kpgHDoNQbGUz9CVVl/SwJ
+         WN3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUozehKYqX1fa7b/qtIC4NGqDibRB6snI0oXp6n72WqHbqzpOowtBq2lQqol5M0BUsI3GsWa6cFP11oJyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIk544pIzZX6te++ZEWUwArjsRCn9mMTFriwda+HG4eR5f9Nuw
+	fQhtFVN6jppEMqqkuDeSckiCrzowpWiGTw2Rf7xx1Bl513ww9BKMDFMFhmtGfAeZaQ==
+X-Gm-Gg: ASbGncvdX0c0GLzXnIRcB0OC20lwxsR+9fq8C1DkaESjKycb7t7CyMy2kQv2hVI3PB4
+	a0CWL5xAOcI/QhqlAVqJ1QJSikUeccCcmXMXt56Lj2NzswHatyeSchY7KIlxoxAOGLb04cGhJYQ
+	AJeuUk/lfQBkL3oa1GLHxX+CMYqGgLePbV06BQ/Vag1f8vMNTMHNASO1wt4XzIUxwiGfqYTf1/q
+	UDG3j3X0L5W5k/9630yniO0MzpZdJitjuLOzvCILWwERG8SL3UTyuWzpXaUD/mR5U25fwa27L1O
+	wOFwjCM+AxuDcMcGGkeSJCVP8BsyV21gRG65wRC18dctX5juAQqbTrU0McWtBdtwxA4tMdpIF9Q
+	QDywipJX7lsWEkv55eIPBzgRLhJPlQrwm1is515lC2mkdzr4Wa8m5iroJoimdOY30lV18NkqHY4
+	1q+/UA07B8/0vLKw4=
+X-Google-Smtp-Source: AGHT+IGbKMmfp62moQ55XqRXlYknpv7VsvU1R/1ooo2QU9Rce7Cy8tcLuOmjURe+U+W+1KDGa9Khaw==
+X-Received: by 2002:a17:902:e5d0:b0:295:1aa7:edbe with SMTP id d9443c01a7336-2984ee021demr25227455ad.41.1762924686858;
+        Tue, 11 Nov 2025 21:18:06 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:2495:f9c3:243d:2a7e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbf550bsm15774345ad.33.2025.11.11.21.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 21:18:06 -0800 (PST)
+Date: Wed, 12 Nov 2025 14:18:01 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yuwen Chen <ywen.chen@foxmail.com>
+Cc: axboe@kernel.dk, akpm@linux-foundation.org, bgeffon@google.com, 
+	licayy@outlook.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, liumartin@google.com, minchan@kernel.org, richardycc@google.com, 
+	senozhatsky@chromium.org
+Subject: Re: [PATCH v4] zram: Implement multi-page write-back
+Message-ID: <htycvrcqbnkk7ldhpaqxesy7uhz3lssymwqm7nzkhyhnid3krm@mfju626njxvb>
+References: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
+ <tencent_0FBBFC8AE0B97BC63B5D47CE1FF2BABFDA09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_0FBBFC8AE0B97BC63B5D47CE1FF2BABFDA09@qq.com>
 
-On Wed, 12 Nov 2025 11:43:33 +0800
-Donglin Peng <dolinux.peng@gmail.com> wrote:
-
-> From: Donglin Peng <pengdonglin@xiaomi.com>
-> 
-> Currently, the funcgraph-args and funcgraph-retaddr features are mutually exclusive.
-> This patch resolves this limitation by modifying funcgraph-retaddr to adopt the same
-> implementation approach as funcgraph-args, specifically by storing the return address
-> in the first entry of the args array.
-> 
-> As a result, both features now coexist seamlessly and function as intended.
-> 
-> To verify the change, use perf to trace vfs_write with both options enabled:
-> 
-> Before:
->  # perf ftrace -G vfs_write --graph-opts args,retaddr
->  ......
->  0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
->  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
->  0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x160 */
->  0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x160 */
->  0)   0.754 us    |  }
-> 
-> After:
->  # perf ftrace -G vfs_write --graph-opts args,retaddr
->  ......
->  0)               |  down_read(sem=0xffff8880100bea78) { /* <-n_tty_write+0xa3/0x540 */
->  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
->  0)   0.079 us    |    preempt_count_add(val=1); /* <-down_read+0x3b/0x160 */
->  0)   0.077 us    |    preempt_count_sub(val=1); /* <-down_read+0x8b/0x160 */
->  0)   0.754 us    |  }
-> 
-> Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
-
-Looks good to me except for a few nits, but it's a style issue.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> ---
-> v3:
-> - Replace min() with min_t() to improve type safety and maintainability
-> - Keep only one Signed-off-by for cleaner attribution
-> - Code refactoring for improved readability
-> 
-> v2:
-> - Preserve retaddr event functionality (suggested by Steven)
-> - Store the retaddr in args[0] (suggested by Steven)
-> - Refactor implementation logic and commit message clarity
-> ---
->  include/linux/ftrace.h               |  11 --
->  kernel/trace/trace.h                 |   4 -
->  kernel/trace/trace_entries.h         |   6 +-
->  kernel/trace/trace_functions_graph.c | 145 ++++++++++++---------------
->  4 files changed, 69 insertions(+), 97 deletions(-)
-> 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index 7ded7df6e9b5..88cb54d73bdb 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
->  	int depth;
->  } __packed;
+On (25/11/06 09:49), Yuwen Chen wrote:
+[..]
+> +	blk_start_plug(&plug);
+> +	while ((req->pps = select_pp_slot(ctl))) {
+>  		spin_lock(&zram->wb_limit_lock);
+>  		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
+>  			spin_unlock(&zram->wb_limit_lock);
+> @@ -774,15 +884,15 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+>  		}
+>  		spin_unlock(&zram->wb_limit_lock);
 >  
-> -/*
-> - * Structure that defines an entry function trace with retaddr.
-> - * It's already packed but the attribute "packed" is needed
-> - * to remove extra padding at the end.
-> - */
-> -struct fgraph_retaddr_ent {
-> -	unsigned long func; /* Current function */
-> -	int depth;
-> -	unsigned long retaddr;  /* Return address */
-> -} __packed;
+> -		if (!blk_idx) {
+> -			blk_idx = alloc_block_bdev(zram);
+> -			if (!blk_idx) {
+> +		if (!req->blk_idx) {
+> +			req->blk_idx = alloc_block_bdev(zram);
+> +			if (!req->blk_idx) {
+>  				ret = -ENOSPC;
+>  				break;
+>  			}
+>  		}
+>  
+> -		index = pps->index;
+> +		index = req->pps->index;
+>  		zram_slot_lock(zram, index);
+>  		/*
+>  		 * scan_slots() sets ZRAM_PP_SLOT and relases slot lock, so
+> @@ -792,22 +902,32 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+>  		 */
+>  		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
+>  			goto next;
+> -		if (zram_read_from_zspool(zram, page, index))
+> +		if (zram_read_from_zspool(zram, req->page, index))
+>  			goto next;
+>  		zram_slot_unlock(zram, index);
+>  
+> -		bio_init(&bio, zram->bdev, &bio_vec, 1,
+> +		bio_init(&req->bio, zram->bdev, &req->bio_vec, 1,
+>  			 REQ_OP_WRITE | REQ_SYNC);
+> -		bio.bi_iter.bi_sector = blk_idx * (PAGE_SIZE >> 9);
+> -		__bio_add_page(&bio, page, PAGE_SIZE, 0);
 > -
->  /*
->   * Structure that defines a return function trace.
->   * It's already packed but the attribute "packed" is needed
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index 85eabb454bee..9fac291b913a 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator *iter);
->  extern int __trace_graph_entry(struct trace_array *tr,
->  			       struct ftrace_graph_ent *trace,
->  			       unsigned int trace_ctx);
-> -extern int __trace_graph_retaddr_entry(struct trace_array *tr,
-> -				struct ftrace_graph_ent *trace,
-> -				unsigned int trace_ctx,
-> -				unsigned long retaddr);
->  extern void __trace_graph_return(struct trace_array *tr,
->  				 struct ftrace_graph_ret *trace,
->  				 unsigned int trace_ctx,
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index de294ae2c5c5..593a74663c65 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
->  	TRACE_GRAPH_RETADDR_ENT,
->  
->  	F_STRUCT(
-> -		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
-> +		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
->  		__field_packed(	unsigned long,	graph_ent,	func		)
->  		__field_packed(	unsigned int,	graph_ent,	depth		)
-> -		__field_packed(	unsigned long,	graph_ent,	retaddr		)
-> +		__dynamic_array(unsigned long,	args				)
->  	),
->  
->  	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
-> -		(void *)__entry->retaddr)
-> +		(void *)__entry->args[0])
->  );
->  
->  #else
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-> index a7f4b9a47a71..f31eeeffbb2d 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -16,6 +16,15 @@
->  #include "trace.h"
->  #include "trace_output.h"
->  
-> +#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> +#define HAVE_RETADDR	1
-> +#define ARGS_OFFS(args_size) \
-> +	((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
-> +#else
-> +#define HAVE_RETADDR	0
-> +#define ARGS_OFFS(args_size)	0
-> +#endif
+> -		/*
+> -		 * XXX: A single page IO would be inefficient for write
+> -		 * but it would be not bad as starter.
+> -		 */
+> -		err = submit_bio_wait(&bio);
+> +		req->bio.bi_iter.bi_sector = req->blk_idx * (PAGE_SIZE >> 9);
+> +		req->bio.bi_end_io = zram_writeback_endio;
+> +		req->bio.bi_private = req;
+> +		__bio_add_page(&req->bio, req->page, PAGE_SIZE, 0);
 > +
->  /* When set, irq functions will be ignored */
->  static int ftrace_graph_skip_irqs;
->  
-> @@ -27,21 +36,25 @@ struct fgraph_cpu_data {
->  	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
->  };
->  
-> +/*
-> + * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
-> + * member repurposed for storage
-> + */
->  struct fgraph_ent_args {
->  	struct ftrace_graph_ent_entry	ent;
-> -	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
-> -	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-> +	/*
-> +	 * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR)
-> +	 * entries with the first entry storing the return address for
-> +	 * TRACE_GRAPH_RETADDR_ENT.
-> +	 */
-> +	unsigned long		args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR];
->  };
->  
->  struct fgraph_data {
->  	struct fgraph_cpu_data __percpu *cpu_data;
->  
->  	/* Place to preserve last processed entry. */
-> -	union {
-> -		struct fgraph_ent_args		ent;
-> -		/* TODO allow retaddr to have args */
-> -		struct fgraph_retaddr_ent_entry	rent;
-> -	};
-> +	struct fgraph_ent_args		ent;
->  	struct ftrace_graph_ret_entry	ret;
->  	int				failed;
->  	int				cpu;
-> @@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
->  	struct ring_buffer_event *event;
->  	struct trace_buffer *buffer = tr->array_buffer.buffer;
->  	struct ftrace_graph_ent_entry *entry;
-> -	int size;
-> +	unsigned long retaddr = 0;
-> +	int size = sizeof(*entry);
-> +	int type = TRACE_GRAPH_ENT;
-> +	bool store_args = false;
-> +	int nr_args = 0, args_offs = 0;
+> +		list_del_init(&req->pps->entry);
+> +		submit_bio(&req->bio);
 > +
-> +	if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-> +		retaddr = ftrace_graph_top_ret_addr(current);
-> +		type = TRACE_GRAPH_RETADDR_ENT;
-> +		nr_args += 1;
-> +	}
->  
->  	/* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words */
-> -	size = sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long));
-> +	if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
-> +		store_args = !!fregs;
-> +		if (store_args)
-> +			nr_args += FTRACE_REGS_MAX_ARGS;
-> +	}
->  
-> -	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size, trace_ctx);
-> +	size += nr_args * sizeof(long);
-> +	event = trace_buffer_lock_reserve(buffer, type, size, trace_ctx);
->  	if (!event)
->  		return 0;
->  
->  	entry = ring_buffer_event_data(event);
->  	entry->graph_ent = *trace;
->  
-> +	/* Store the retaddr in args[0] */
-> +	if (type == TRACE_GRAPH_RETADDR_ENT) {
-> +		entry->args[0] = retaddr;
-> +		args_offs += 1;
-> +	}
-> +
->  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-> -	if (fregs) {
-> +	if (store_args) {
->  		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
-> -			entry->args[i] = ftrace_regs_get_argument(fregs, i);
-> +			entry->args[i + args_offs] = ftrace_regs_get_argument(fregs, i);
->  	}
->  #endif
->  
-> @@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr,
->  	return __graph_entry(tr, trace, trace_ctx, NULL);
->  }
->  
-> -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-> -int __trace_graph_retaddr_entry(struct trace_array *tr,
-> -				struct ftrace_graph_ent *trace,
-> -				unsigned int trace_ctx,
-> -				unsigned long retaddr)
-> -{
-> -	struct ring_buffer_event *event;
-> -	struct trace_buffer *buffer = tr->array_buffer.buffer;
-> -	struct fgraph_retaddr_ent_entry *entry;
-> -
-> -	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_ENT,
-> -					  sizeof(*entry), trace_ctx);
-> -	if (!event)
-> -		return 0;
-> -	entry	= ring_buffer_event_data(event);
-> -	entry->graph_ent.func = trace->func;
-> -	entry->graph_ent.depth = trace->depth;
-> -	entry->graph_ent.retaddr = retaddr;
-> -	trace_buffer_unlock_commit_nostack(buffer, event);
-> -
-> -	return 1;
-> -}
-> -#else
-> -int __trace_graph_retaddr_entry(struct trace_array *tr,
-> -				struct ftrace_graph_ent *trace,
-> -				unsigned int trace_ctx,
-> -				unsigned long retaddr)
-> -{
-> -	return 1;
-> -}
-> -#endif
-> -
->  static inline int ftrace_graph_ignore_irqs(void)
->  {
->  	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
-> @@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
->  	struct trace_array *tr = gops->private;
->  	struct fgraph_times *ftimes;
->  	unsigned int trace_ctx;
-> -	int ret = 0;
->  
->  	if (*task_var & TRACE_GRAPH_NOTRACE)
->  		return 0;
-> @@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
->  		return 1;
->  
->  	trace_ctx = tracing_gen_ctx();
-> -	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
-> -	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-> -		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
-> -		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
-> -	} else {
-> -		ret = __graph_entry(tr, trace, trace_ctx, fregs);
-> -	}
-> -
-> -	return ret;
-> +	return __graph_entry(tr, trace, trace_ctx, fregs);
->  }
->  
->  int trace_graph_entry(struct ftrace_graph_ent *trace,
-> @@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *iter,
->  			 * Save current and next entries for later reference
->  			 * if the output fails.
->  			 */
-> -			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
-> -				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
-> -			} else {
-> -				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
-> +			int size = min_t(int, sizeof(data->ent), iter->ent_size);
->  
-> -				memcpy(&data->ent, curr, size);
-> -			}
-> +			memcpy(&data->ent, curr, size);
->  			/*
->  			 * If the next event is not a return type, then
->  			 * we only care about what type it is. Otherwise we can
-> @@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
->  
->  #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
->  #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
-> -static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_entry *entry,
-> -				u32 trace_flags, bool comment)
-> +static void print_graph_retaddr(struct trace_seq *s, unsigned long retaddr, u32 trace_flags,
-> +				bool comment)
->  {
->  	if (comment)
->  		trace_seq_puts(s, " /*");
->  
->  	trace_seq_puts(s, " <-");
-> -	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
-> +	seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
->  
->  	if (comment)
->  		trace_seq_puts(s, " */");
->  }
->  #else
->  #define __TRACE_GRAPH_PRINT_RETADDR 0
-> -#define print_graph_retaddr(_seq, _entry, _tflags, _comment)		do { } while (0)
-> +#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)		do { } while (0)
->  #endif
->  
->  #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
-> @@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
->  		trace_seq_printf(s, "%ps", func);
->  
->  		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
-> -			print_function_args(s, entry->args, (unsigned long)func);
-> +			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-> +					    (unsigned long)func);
->  			trace_seq_putc(s, ';');
-> -		} else
-> +		} else {
+> +		do {
+> +			req = zram_writeback_next_request(req_pool, req_pool_cnt, &cnt_off);
+> +			if (!req) {
+> +				blk_finish_plug(&plug);
+> +				wait_for_completion_io(&done);
+> +				blk_start_plug(&plug);
+> +			}
+> +		} while (!req);
 
-nit: you don't need to add braces for a single line block.
-
->  			trace_seq_puts(s, "();");
-> +		}
->  
->  		if (print_retval || print_retaddr)
->  			trace_seq_puts(s, " /*");
-> @@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
->  	}
->  
->  	if (print_retaddr)
-> -		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
-> -				    trace_flags, false);
-> +		print_graph_retaddr(s, entry->args[0], trace_flags, false);
->  
->  	if (print_retval) {
->  		if (hex_format || (err_code == 0))
-> @@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  		trace_seq_printf(s, "%ps", (void *)ret_func);
->  
->  		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
-> -			print_function_args(s, entry->args, ret_func);
-> +			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-> +					    ret_func);
->  			trace_seq_putc(s, ';');
-> -		} else
-> +		} else {
-
-Ditto.
-
->  			trace_seq_puts(s, "();");
-> +		}
->  	}
->  	trace_seq_putc(s, '\n');
->  
-> @@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
->  	args_size = iter->ent_size - offsetof(struct ftrace_graph_ent_entry, args);
->  
->  	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
-> -		print_function_args(s, entry->args, func);
-> +		print_function_args(s, entry->args + ARGS_OFFS(args_size), func);
->  	else
->  		trace_seq_puts(s, "()");
->  
-> @@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
->  
->  	if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
->  		entry->ent.type == TRACE_GRAPH_RETADDR_ENT)
-> -		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
-> -			tr->trace_flags, true);
-> +		print_graph_retaddr(s, entry->args[0], tr->trace_flags, true);
->  	trace_seq_putc(s, '\n');
->  
->  	if (trace_seq_has_overflowed(s))
-> @@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *field, struct trace_seq *s,
->  	 * it can be safely saved at the stack.
->  	 */
->  	struct ftrace_graph_ent_entry *entry;
-> -	u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)];
-> +	u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR) * sizeof(long)];
->  
->  	/* The ent_size is expected to be as big as the entry */
->  	if (iter->ent_size > sizeof(save_buf))
-> @@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
->  		trace_assign_type(field, entry);
->  		return print_graph_entry(field, s, iter, flags);
->  	}
-> -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
->  	case TRACE_GRAPH_RETADDR_ENT: {
-> -		struct fgraph_retaddr_ent_entry saved;
->  		struct fgraph_retaddr_ent_entry *rfield;
->  
->  		trace_assign_type(rfield, entry);
-> -		saved = *rfield;
-> -		return print_graph_entry((struct ftrace_graph_ent_entry *)&saved, s, iter, flags);
-> +		return print_graph_entry((typeof(field))rfield, s, iter, flags);
->  	}
-> -#endif
->  	case TRACE_GRAPH_RET: {
->  		struct ftrace_graph_ret_entry *field;
->  		trace_assign_type(field, entry);
-> -- 
-> 2.34.1
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Why do you do this do-while loop here?
 
