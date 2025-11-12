@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-897803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982DFC539E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:16:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6184C539F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:17:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EBB06342C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:15:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D78A7344902
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DAA345721;
-	Wed, 12 Nov 2025 17:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A0F346A0D;
+	Wed, 12 Nov 2025 17:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Os9YyjqN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ggSu3pVJ"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D53343D76;
-	Wed, 12 Nov 2025 17:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBCA345757
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967694; cv=none; b=bvEa5ox+AjMhzs3DbYl0/2Y7w/vSMHEArbMHY0uXPaY60MYm9OhDlp9J9d26GodE1j3BhWrGERjNoGo6kzyXhFyte2smyFON+b8Fi4wQfZbgILc8TQKRBu40WeBoo10xd8d8qoZSE85sWox7Lu3oGiOZglFjubpRFE88NBnAltE=
+	t=1762967703; cv=none; b=s47wdn6ehNR/1Hw+V0hKpEXi/LxngCthePfTUkcAF9/WjXu22uRRwPLQxUBHpRpsqX+B/+n8As8gINzKrwIUN5snFNtC0IwTBc8TNJ35TdP6SbKrPI9AAvWJ11B9GAHdDGxvopUhoVxS/uCvu2G8uVj0yL9HoI+t7QTN9IU8pMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967694; c=relaxed/simple;
-	bh=0hPBNyo4oNjc7cd3pRNgm/5T/U2NWpO2lwFxU+nsiEc=;
-	h=Date:From:To:Message-ID; b=F20kSHqGJ7QSYBVNBqqEkSxZkpmF+pMg9cIrLc6uOZyWyCVoB0QIXfGb5sQVUueI6LGMWQD7bILQgBBZ2vV3t34aie0bZgAcV36e3NLwCFXNpmGaPeC7uG3e70qkCPxlxJ7YWu07XFGGNQBQy84pmpCcCIZeMmu+Pnk/3HxW+3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Os9YyjqN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05D4FC16AAE;
-	Wed, 12 Nov 2025 17:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762967694;
-	bh=0hPBNyo4oNjc7cd3pRNgm/5T/U2NWpO2lwFxU+nsiEc=;
-	h=Date:From:To:From;
-	b=Os9YyjqNR62vSBYCiPeckl0mnobkSX5loopfpyMbZe0bQiol6xXCZi/jj/iJmf3Ua
-	 Bip+/r541OKfE69+m1oOx/unWJP+fKMxKBPjEWFM4fM9PGa7Vl0754QZny8F2hgFmh
-	 bY3QwyjgR/nnmoAT1k+4ux7W9lGVxrqFwp1J9iN5XrQv/uulI3o44AOnM9T/X17KBE
-	 P3nFmAXjM0Yq9LtDIL/df9BF/FZUV5Tf7scQxqIzFpC43w3UZRP5Ywf7R/WxcV4Eu9
-	 ZfeRSuyANOfo/WTNRFwB2vxOzVw2AWJl4JkLvHoKKWzdkrrAiJ/tKXIN3QpFLeXmxI
-	 IqHWAi+4JAapw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1vJEQm-00000009iKx-0Xuz;
-	Wed, 12 Nov 2025 18:14:52 +0100
-Date: Wed, 12 Nov 2025 18:14:52 +0100
-From: mchehab+huawei@kernel.org
-To: linux-doc@vger.kernel.org, corbet@lwn.net, mchehab+huawei@kernel.org,
- linux-kernel@vger.kernel.org, rdunlap@infradead.org
-Message-ID: <20251112171452.Y5jX9%mchehab+huawei@kernel.org>
-User-Agent: s-nail v14.9.25
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1762967703; c=relaxed/simple;
+	bh=9Vl4M+L7saM4H5FI9WoIntBj62joT4QeAS05d655lsE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Lfkq3/jFrMEkbV8Q0JuAZ5MCpYR0Ye6cfUEMZggpJO/wwvpeXjNtjzUtGJwg83zqb5hOecR7D49B2lMDX+pG1/87S1+RLgCD1WaAxOsc4PCqCzNi4+Xtwj36OtC9tJNatW8kCFFK871fYMApzzn0s/yXdwpUri2N7v8WKK9iPzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ggSu3pVJ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-295592eb5dbso11865475ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762967701; x=1763572501; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=86qJtDww2XHXYjGdCBBHyykKWyscomPO9oojHmUWOnc=;
+        b=ggSu3pVJqSFerjEAGe1wRjxRPxtPY+ZhrT5jiwuf1KgX25tWUjy+XT6BZBJttiBTM5
+         /tJj4i31h2RPaycEqIE1hUvRuxmmg6BMe3Iw6QlHNz54DJQu0Z0kEB5pGmC7ENNB0yrb
+         WA9dltwJTS0LygM2joX+c3wPXnCPKcFQcuqNvfnHIWudUhT0PtnYJZ5LD1pcEmCMyE2c
+         Cc9DfdFFenBRKOeZzWGNcf0EmBGFQYcfzdZmH+RV71YOF48PO1InFUGhPkoPusNGQRCA
+         v36KLheJQH2uSuNPkqbhF6w8vIYWNZDLqCk0BlNt95IgUP6zW6wSqD6RO4KKh4InX21E
+         aW/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762967701; x=1763572501;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=86qJtDww2XHXYjGdCBBHyykKWyscomPO9oojHmUWOnc=;
+        b=Gde+Ihm4LHOhBluUwC5W2LWwXNQl5UeWNjZVZamLkZqLTpJ7ONeLOc6iwZxjlsK12h
+         bJMFgKYqDt8TL/XGsMgDBQcykyf15YdxwkLMJE4PMBcl1o1Z9GsBvXF/5BYYJrkJco45
+         OxR7fSuoTw1EiQKUJSRzrnT9r6TdC0u/S8+yjWLlIls36HTJf5okHbmu/CwInHyJ2hN/
+         7uG6Up1jWpg7Ue8ixVUp1vhi8dgzpZ73A/8dNMyjiCcXcPzIYKJPZtQAvyKBg0uphxzy
+         NUyj7JCVx5GpFgNdTIcVRKkeFi1DdCmEH95Kj1YBuzVydFwOJTPWJOILMs/8nRZmTKuS
+         kReQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcf966zONWN3ypa4GVJZH7lD1u4yy2V2AIt5lFsKHzVDQMfadD3upJ5ab8IAwSavXdHy2dfDecXLTDtt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRDzcevh7VN0nHRJPgQ9pLzQFtwBZMve9212YH3h3ulDPFoREE
+	sgQqDf/HahMZC/GaPMu0l9SdCNqVmU/IT5/T3fdeccg/L8LNWu66HQujUzPnpxVekm/IOz+8sn7
+	2VG5q1g==
+X-Google-Smtp-Source: AGHT+IGrMR5JgwNv/Me2MYMypHfVwaZ3yclITiMGko+pOjGEm/IXIepqef+u9s5d279WEqGMcQz9Rix8Ljg=
+X-Received: from plcr3.prod.google.com ([2002:a17:903:143:b0:273:67d3:6303])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:28c:b0:27e:f018:d2fb
+ with SMTP id d9443c01a7336-2984ed2b896mr45483095ad.6.1762967701625; Wed, 12
+ Nov 2025 09:15:01 -0800 (PST)
+Date: Wed, 12 Nov 2025 09:15:00 -0800
+In-Reply-To: <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-5-seanjc@google.com>
+ <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+Message-ID: <aRTAlEaq-bI5AMFA@google.com>
+Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
+ assembly via ALTERNATIVES_2
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] scripts: docs: kdoc_files.py: don't consider symlinks as directories
-Date: Wed, 12 Nov 2025 18:14:49 +0100
-Message-ID: <73c3450f34e2a4b42ef2ef279d7487c47d22e3bd.1762967688.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+On Wed, Nov 12, 2025, Borislav Petkov wrote:
+> On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
+> > @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >  	/* Load @regs to RAX. */
+> >  	mov (%_ASM_SP), %_ASM_AX
+> >  
+> > +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
+> 
+> Oh wow. Alternatives interdependence. What can go wrong. :)
 
-As reported by Randy, currently kdoc_files can go into endless
-looks when symlinks are used:
+Nothing, it's perfect. :-D
 
-	$ ln -s . Documentation/peci/foo
-	$ ./scripts/kernel-doc Documentation/peci/
-	...
-	  File "/new_devel/docs/scripts/lib/kdoc/kdoc_files.py", line 52, in _parse_dir
-	    if entry.is_dir():
-	       ~~~~~~~~~~~~^^
-	OSError: [Errno 40] Too many levels of symbolic links: 'Documentation/peci/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo'
+> > +	ALTERNATIVE_2 "",								\
+> > +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
+> 
+> So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
+> 
+>         if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
+>             kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+>                 flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+> 
+> So how static and/or dynamic is this?
 
-Prevent that by not considering symlinks as directories.
+kvm_vcpu_can_access_host_mmio() is very dynamic.  It can be different between
+vCPUs in a VM, and can even change on back-to-back runs of the same vCPU.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/linux-doc/80701524-09fd-4d68-8715-331f47c969f2@infradead.org/
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/lib/kdoc/kdoc_files.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> IOW, can you stick this into a simple variable which is unconditionally
+> updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
+> otherwise it simply remains unused?
 
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 061c033f32da..1fd8d17edb32 100644
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -49,7 +49,7 @@ class GlobSourceFiles:
-             for entry in obj:
-                 name = os.path.join(dirname, entry.name)
- 
--                if entry.is_dir():
-+                if entry.is_dir(follow_symlinks=False):
-                     yield from self._parse_dir(name)
- 
-                 if not entry.is_file():
--- 
-2.51.1
+Can you elaborate?  I don't think I follow what you're suggesting.
 
+> 
+> Because then you get rid of that yuckiness.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
