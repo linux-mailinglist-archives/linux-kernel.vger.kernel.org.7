@@ -1,178 +1,359 @@
-Return-Path: <linux-kernel+bounces-897258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988B4C5267C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:13:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0582C52664
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:11:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3544F66DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8624518E0FDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080723375DF;
-	Wed, 12 Nov 2025 13:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2F433A032;
+	Wed, 12 Nov 2025 13:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQg7vxCO"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IFFta6FM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B95337107
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952898; cv=none; b=CljKMZzWh/ffND18Op70K29AvCmFdpplXCa5Xiqi6BHi/PO9OBzBZYg1Ec+Yfo7xuR/mVH13etvwjoXCffF9ciLoMvwe4ynd4AeBFpK6jHoFy96axf0EcohTTPQ3PRsVa39APg9nqqVWGTfE5ljfkIPkwqGLtJlqHA8OqAM+mAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952898; c=relaxed/simple;
-	bh=5BUX+aPleMlR+0TV9/SdhpG8VKnucDfm0cN98ifo74I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oWlx5RUJBHaELsBJ//fYDowgGoJrOhbjRLildQdM3lD2bZDyMRPOZQeODuVBsTEvsWjk1woz3KLaBpKfmFl1RCUvR1abxWB2ixMxCxkXbSyMXefGO7gaRWDREI545uPznjYYti5gRN88n3FFFYPukEpr0BDBfcvSP33gdJPK6R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQg7vxCO; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3c965ca9so451200f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:08:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762952895; x=1763557695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZszFFp41//TiDs/7bMBLMV0kim0Oaw39R679g7Q4aw=;
-        b=MQg7vxCOxVtjqzVjZJeg/LG4xhBIwo76dywzPY96rMrD3A9azjUcGX0FyAADfrolrO
-         4VfFXGYT3InoubzSj5W2zBnVXnURQGYktXlLwSnBJipaWsaUu23cRMK5clUZr9L/S6ZU
-         4OCohlM5hkbvxvgrQL29L5aaXvlypjt9nY6e8DHUT/Y/BTJmKLM6JfwhTopIFh9YsOG/
-         /ERq0WZEJr8DyCgbLoJV6TvdnUK8BTEJmvcKf0enugFZbMyRoYgZIyxopwJicMwozSb0
-         GCJb8jucLiUNuNmQkN+5nhu9SIYdlOmusAJI2mQ+bgeQAnbYnFeFTmEW9USQUrSAhwX+
-         WUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762952895; x=1763557695;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rZszFFp41//TiDs/7bMBLMV0kim0Oaw39R679g7Q4aw=;
-        b=bKbPG/EDIMyQrQBLmrJcUEWb2z7xNCeA/qtxVMxQyLmiarY6IqWsyjPxw8h1Dk7RK7
-         JRM/FsEWDviDjgb4R0a4x685DkMcaCuDVIU1wTV3XKy2QBq4soKfWR7/ddYpdXU/OPFY
-         KwP2Icx0+b98wme7CvRnwXzd4lf8V4d9zCWxTiqfst24aDFjZii4ijtu7wZLRibAFWwM
-         e1vBM0zBjvlyq61UYRvgsyqiJJbx+9So1LvMoYoNIWk3C+s/GAq7wVNU/4TypB5pSsjF
-         NiRyj6+qwB3IR/hipFBF/VKvkxrB752A1zWrrVN4DeOjMOEokWO+Oupmtjok8e62nH5t
-         8Gow==
-X-Forwarded-Encrypted: i=1; AJvYcCWCgCUCBvxjQGKd945jR0BJV6OWTVw6Ri6ebCcbtw7z0em5OcW88baokNj4gWL7GBY6ZWx3h2tyBs6k6i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4HlZxrjM77PEECXMU7Yf2BVEWjqA3Dm5gtgj5Ezq2FEmBK08
-	X7IwEEOc84eiMfz8Qlu8//NM7lP0gavfeMvoblwnEbrI1y0Ke5krv7lZ
-X-Gm-Gg: ASbGncswuEONaHJZK45MSEjH+IEvoWiIb2MY2nupHqKGXC0/FCb7XIY84eOxIkVHKEW
-	OE8f1qcbLEQwEBIGZxLeH59SJzZ0e1t9SoIaHBiqIkeOj7RPOwjHx3mBS9VAmbBvAaiDyTjA7Uf
-	JcbjneKUdpNn6n+kWcd4QTRdIoDugDRBNMGP/UU1384Ej7FYN05LmNQpfAUx9vR1NMC8yxvpgiY
-	mcQQ71nLNN6ad7LMKbN/BD6uSTnOJiAMq7bOmuHi6nu6yrv5KfwjymEsx6Qvr2tUxtaptnuESEJ
-	t1epTOba6yM+foK72YyqOMn6J956ISiQi0/B7O/wjpvwWcu2q5SZxGkV6RZ5/a6KgkLw1zA2zlI
-	UpWKs/+NSpenwG2jTkMzWCqvApY6oMKeI8JBu2F6xvMIWSbocja0Ig9LL83JDI+pDlTW9+up9+2
-	Bh9UKO5wge9SwV+5+vAAKnyJ0kzTf9CiUVo6+0ChGgSA==
-X-Google-Smtp-Source: AGHT+IHL9AQYgo6qFd6z0/B2T05jAm1hrIoKtL5TpQMpLpCe7ZFr6wNffq1HGZAD0MUTPoLFq+5yjg==
-X-Received: by 2002:a5d:5889:0:b0:42b:3c25:cd07 with SMTP id ffacd0b85a97d-42b4bdd2288mr2450774f8f.61.1762952894523;
-        Wed, 12 Nov 2025 05:08:14 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b4789896esm8318176f8f.38.2025.11.12.05.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 05:08:14 -0800 (PST)
-Date: Wed, 12 Nov 2025 13:08:12 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Maciej Wieczor-Retman
- <maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
- James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, Drew
- Fustini <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
- <yu.c.chen@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
- event counters
-Message-ID: <20251112130812.51532c2e@pumpkin>
-In-Reply-To: <20251029162118.40604-13-tony.luck@intel.com>
-References: <20251029162118.40604-1-tony.luck@intel.com>
-	<20251029162118.40604-13-tony.luck@intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FFE3358BE;
+	Wed, 12 Nov 2025 13:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762952925; cv=fail; b=kRFOIlvIdCo36LenGG0FobMxyOzQo8nPSli+WrwPz6a3jy4HxG282pXwYzn2bfci1l3X6kB8L9mhU8b/L4+iJ64yC7CdaAVuspJMbvjUpMmxmaoDdwvs2XSTyN6asBU3C1mpp8DxatAsT0KxHcLTn/5VhUAZ3OOSav37bA9gyqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762952925; c=relaxed/simple;
+	bh=/c4MvlHhxDQxHQKP5/HtI4QuK2YJlBrRadbxxIibj00=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oOEOnKYWSSQhn1G9RrVUaEQ0pQoVb7sWDNr4iAmA9qWs2prT3LaZvcLg2aFDYtrpnTXPPstosK6vJ3790o0OY67gN2aelIgK2XQDXynj47Q0SmELMsOetp7SIDr9AdLixh6FeWeavo9wcYO8+sUF4JdSvK4VMK9nVAHnvDBt12k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IFFta6FM; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762952924; x=1794488924;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/c4MvlHhxDQxHQKP5/HtI4QuK2YJlBrRadbxxIibj00=;
+  b=IFFta6FMeHCQnyZHytBw6BMgiGxE/6Xj7Jvul/9/5pTCoaJ/DcDgw7Ur
+   fhIP4hPD1zjYq+gXc8yYF5wdtP+jftfbQuqgO/RnI6gnDgPIJBX44j2xy
+   u9X9h6iAHlp6Szzwpr2VvJYfKiWx4VlTT39qTXY9pIEXhnsxjVp8p+9je
+   /qt+9kNcF8aLvepJBWdDJvUChUjNcEKgOVkmYNutCvslUISpzNuc2VGrA
+   3Y9HHB/FdvWGCF2xoUqImpxtphFPk58HMQQ1gd0icKGD8z8feokOTvHyw
+   FrDgm3CuPryPn4OmPSdGMfLvN8bKlQYb8HZ/BQXvOID0fttJj1Gwfy2f0
+   g==;
+X-CSE-ConnectionGUID: L3T9kZ/KQcqKRBRLXtdMUw==
+X-CSE-MsgGUID: mBI1VKNXS7CVczoNMxh85w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="87654257"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="87654257"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:08:42 -0800
+X-CSE-ConnectionGUID: Gq+VjfyKTcevUqk9Frl5eQ==
+X-CSE-MsgGUID: qBeZvXGRSxyA9Qaxq07gMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="189480902"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:08:40 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 05:08:40 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 05:08:39 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.1) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 05:08:39 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EjYvPK0itG2rwNCL0jPNWz4b5aRSU+TpYrXl9IzwjaFtcxAHkMAvNkzs4nnR7Awyqyf+sTvimeJ638WgFS/juXMt3KpKlUyNbKmNz5HgCgFPrQHdV10n6caMtw77SuCRXkt7+f+Qv/0PP4tc4UHXZ6DtBo21FkQmgjg8qGZMzfe9wfbZ2t3er4e90gfMN1nmu05xJHCw/QJjBsF6ny9JKAWGlqb5xLSBPaP2dndKuMEyXtv07A4TfkNoC8bnSe+tol2ipRzOCpACNFNPA8DRJGvcWsDLJGD3kbDbzz89hDG18jgngussM0hZkPe6CK6CEP3ZG7gwIu8O4plwjgxhTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PhJgaab7N/myqjWkXTyCLevbjXSoab1F/OGzWwVzsGI=;
+ b=KnJp7XhfbXayehfAjOwNjeWaKoBDF4fKh5Y0CkzfF0u2sfuGtvZ2O7L55EG+ho3meCc/6hnA7eTCLpF8FN6gKr2E+hwnPOr3y/STlC9f1D2lQ+Hap+futFN56H3584HVclNo8/kjUV89pDtLi/y41Ddp0WhWZzRZN/iGOd198m8OxXM3QP91R6Vl+AU4yfjlH0kcfyLdEavY/lDtmEEbuYXhudzm+/l9qUo4lpg7+CPB9qGL/BlgQeovyRHABMVyFp9ZalQbHfn52jz3RIny11gpzUmLhBLQ1MGh5i1RyXifC0V7QDK01l0586ZxTkBWP4drKuVxpx6OToaf2BJsbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
+ by DS7PR11MB6128.namprd11.prod.outlook.com (2603:10b6:8:9c::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.15; Wed, 12 Nov 2025 13:08:35 +0000
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408%3]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 13:08:35 +0000
+From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
+	<corey@minyard.net>, =?iso-8859-2?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann
+	<tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>, "Brost, Matthew"
+	<matthew.brost@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Lifshits,
+ Vitaly" <vitaly.lifshits@intel.com>, Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, "Vadim
+ Fedorenko" <vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Karan Tilak Kumar
+	<kartilak@cisco.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, "Casey
+ Schaufler" <casey@schaufler-ca.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Max Kellermann <max.kellermann@ionos.com>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "openipmi-developer@lists.sourceforge.net"
+	<openipmi-developer@lists.sourceforge.net>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "amd-gfx@lists.freedesktop.org"
+	<amd-gfx@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
+	<freedreno@lists.freedesktop.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>, "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+	<linux-trace-kernel@vger.kernel.org>
+CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
+	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
+	<sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, "David
+ Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+	<abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul
+	<sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>, "De Marchi, Lucas"
+	<lucas.demarchi@intel.com>, =?iso-8859-2?Q?Thomas_Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Nguyen,
+ Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, =?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?=
+	<kwilczynski@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, Rodolfo Giometti <giometti@enneenne.com>,
+	Richard Cochran <richardcochran@gmail.com>, Jonathan Lemon
+	<jonathan.lemon@gmail.com>, Stefan Haberland <sth@linux.ibm.com>, "Jan
+ Hoeppner" <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Satish Kharat <satishkh@cisco.com>,
+	"Baddela, Sesidhar" <sebaddel@cisco.com>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Xiubo
+ Li" <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Masami Hiramatsu
+	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: RE: [Intel-wired-lan] [PATCH v2 10/21] igb: Switch to use %ptSp
+Thread-Topic: [Intel-wired-lan] [PATCH v2 10/21] igb: Switch to use %ptSp
+Thread-Index: AQHcUwbAW3+yA5BeK0OppAjS2cyJKbTvBMIQ
+Date: Wed, 12 Nov 2025 13:08:35 +0000
+Message-ID: <IA3PR11MB8986FC6F03EB47A625D37A89E5CCA@IA3PR11MB8986.namprd11.prod.outlook.com>
+References: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+ <20251111122735.880607-11-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20251111122735.880607-11-andriy.shevchenko@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|DS7PR11MB6128:EE_
+x-ms-office365-filtering-correlation-id: fd2aa9e1-8b8f-4d4a-4902-08de21ec96a9
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021|921020;
+x-microsoft-antispam-message-info: =?iso-8859-2?Q?neXLULHeLxamYiW+QWwIGxQ1DA5RZ76CNpT7emInZEbpW1suScYAE32rmw?=
+ =?iso-8859-2?Q?Vx7Sp1cRblNnLZph+dX6G2wqn8U8kcggfqTc9CNt5Ng5O5HJ0RDLG6qFiy?=
+ =?iso-8859-2?Q?Px1gXif53xmnnTxp8AZ6hzMKpd/yDp3g0BFgYSrvYEYmTJrh7mgvDujeOj?=
+ =?iso-8859-2?Q?MSOcsoLwKSn11g4BMXfPU6lTxcbx5tuKk6pURlwDbXhRlWJRZdB6d8Xvp3?=
+ =?iso-8859-2?Q?C8ByJAM9diyvWDdxbOw7+7LzmC9ZnemuT+4WLoT6VXd9VV4CW8VPBxz3em?=
+ =?iso-8859-2?Q?kbELoqBH9Q6lScJGW+lfRaNXurs4dBwoB+DnBSTbsN9CYB8LQ02EGngOVH?=
+ =?iso-8859-2?Q?DkU00Q0b3Rk1wQq4zWBR+pSNiO1EU6z2MZ5NDJUB/ZGE6hqZoxEuslaHZJ?=
+ =?iso-8859-2?Q?0LRc4sAM4oLsUVuYDiiaLu5KE0/kVxE4YcK8hC9FjIMIj/AFGYYjlI7mgn?=
+ =?iso-8859-2?Q?cHui7czNb7+okN+z1vCH/zqrkRqcExghP+V24Pd/Bgln1vZEiy343taPfV?=
+ =?iso-8859-2?Q?v05xXAoiVTfhWeioW6IpVlqJxpcsbjgZ6gqp7yAfWSCrE9QCYv7Ssp1iJ9?=
+ =?iso-8859-2?Q?95WH553hTGhQpGZl3FwBSSzb2G2Ma5nJPLr78YdvRq3hMgrpcKIFUvRUjY?=
+ =?iso-8859-2?Q?KHbyEMwmTwz9SCUtWuYt/ECMqYFOwmnEZWq3AcQfkGw1qKXJRlY0FIAJBW?=
+ =?iso-8859-2?Q?IhC13KNHxhiowlyyleGsK6vM93Ja4ecok9vCFYIdBu7SjIjpVX0BNjyg+V?=
+ =?iso-8859-2?Q?ytYp9cwgwZyhx+R92Ho/4aGQ3K5CtOFtBc4jejOb3UscZ/BdMaZhpfmXbT?=
+ =?iso-8859-2?Q?C0GRp3ewbKHHB3zHE4xVnbutkS6FJXrXDQaWrr4QWk0ZrDX7sKuItyD+OL?=
+ =?iso-8859-2?Q?4bBBAIeLZ5S7PtNHjQ1GpQWJzh/le0+OXWWhU1/qdAaIxO+YM0dWtrBOLA?=
+ =?iso-8859-2?Q?gn2rTji6AlpunVNE4WSvO6KD3f5qN/B5XrFjvIZx6WPs5+rXqKaXxCb35c?=
+ =?iso-8859-2?Q?btgBHT4WPdPIXxUvsaMU/YbJuuuphMuE5qxQXVLLDryq6Gq8wXh2n5D6Uj?=
+ =?iso-8859-2?Q?BDgVKiwR+1h4ZiaeO1iu5r3VyztN8vNiI8HZduGt5AFOkWG2XoBwpkTlkd?=
+ =?iso-8859-2?Q?9u4fgEl6lCGSdml2ykmMEcJ5NG0+3dKs5gTcNVbTj9msZLlxCzERM49boH?=
+ =?iso-8859-2?Q?ofwFH9xudIG3TKLO05yY6oKsN9yCCaijxSNk/RgCpM+Q+Nbn2ZbeNE+/zY?=
+ =?iso-8859-2?Q?3vkPeCBq4sv6sQk15FRu/ealV3gbnOVEqh9yYmtrmOGrBkIa2Um+mACDn1?=
+ =?iso-8859-2?Q?NgWVMYkj6w4vw8A4VjVRsjmrIl4zWFfR1YhOra56lBDLLz4dDpso9kAna/?=
+ =?iso-8859-2?Q?RXNncqZi7QnHoCjT0oVqAaNkHC4u7Y6gBLmQMVktXPsfPsFtaETH5VwEXp?=
+ =?iso-8859-2?Q?y7ZXo2MT3ihqXx8CCPCCpEATFQEOfreZk/jHYqJdP0gxU7SoifDXA1rqGY?=
+ =?iso-8859-2?Q?H98wpMlV2D/z4ZDtAolUSKUQFCFJuD27896SM4UwhAC4Uk8U/gnxt6N09f?=
+ =?iso-8859-2?Q?qf98XmiljSJonn4VTJTVY5OGhgJQJa281s36rDGN71D5TCOJ4A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-2?Q?44rD2PiUoeiTgtKLeSAcStnKOAK8d0M9DNsWPjx4EukRYJ1rBulYB0tZ1Z?=
+ =?iso-8859-2?Q?CeL3HFOwyKfiVYDam64M9JDTxj8UTioVI9qU3EA1kYxcXl9oYfQ1vphT+7?=
+ =?iso-8859-2?Q?ttxnaY5GM7HnnrwMlf1n698o2Yl+VdtUis+WSNep4dr1a7Wc77+73/AdwE?=
+ =?iso-8859-2?Q?6+mUGXHCf4VrWFL5Lhz4eKB6DTuqrGgGJhrvKUWTqKcLOL9dsU0bbDNlXD?=
+ =?iso-8859-2?Q?dP/iL+OZATCfw6dqT4JqQfvHGm9Sf6r1y5MMDknik5wTfcWeazVG61NG3j?=
+ =?iso-8859-2?Q?P8dVfR6Vytl5hsnCFe6yKg4JwOmCe6bqYIiWTJ0JQnTSU9bvXSLO/Iw7CZ?=
+ =?iso-8859-2?Q?RWQrqohv7Zx0NlH1jJJmWBzNiudXrs6LsoS4ZAQvOQoefCjf03Qpjc/6Lw?=
+ =?iso-8859-2?Q?XVBlombV1TpkQkenoXN31EFPJq1i81Ca731q0OML2+48RrVvVgjfsBhQkt?=
+ =?iso-8859-2?Q?4o/TCqZ4gSq0A5/e3Zrh3I5GWqUEIA3H8pp8SYswr0MqQt1AtkPRGVOB7+?=
+ =?iso-8859-2?Q?bIyGN4q0sJ7LQU0d+kC+bm/hJxehk62NQYIm1hVBzhnHrvFRMNKKU6sshe?=
+ =?iso-8859-2?Q?K68h+9ySTZdPk+eVeWV/bbV9ikBipmitnzqaAv8Bcj6Ma8VnuB7keTlX8b?=
+ =?iso-8859-2?Q?0zpcHHKqVbWrE2IZTRuD7IWO/PnsfnQ19VcVi7LEA9AXUFHdzOsSfImjhz?=
+ =?iso-8859-2?Q?SS5OL6WeoEswm0mNNn+WHRSWfShtJpv9gUV35eAhz4p1StIFEgIyKnMGb4?=
+ =?iso-8859-2?Q?Jc2RstJJXjDDwukFlv6N2ThHGtrGtELeBRjuQI98R7InjNGZnfp9pDOoEM?=
+ =?iso-8859-2?Q?ifBrnTYoJYvZFsUl/6fAI8aE+zgpIXxHsAZJp4TjMwF6j87toPQKb14j91?=
+ =?iso-8859-2?Q?+/Zb0PECp7FNk3U+x6nqygLfZy06OCBtOPP8qmWYMI5T9LcGF1Zm9NIKmd?=
+ =?iso-8859-2?Q?hx/9Mk22jX0hlRjCOerk4tv5TcUn5i2lnjPEKFqsNkmadfV+0IsPJNYJls?=
+ =?iso-8859-2?Q?EQ2mTlWh1nvLg2Owv6TfzSaXsIszIXDNwGWaBQMMURZCscOmULncuY7rEX?=
+ =?iso-8859-2?Q?m8Me5Jijh5yQ8wcS8Gs/uRBcElR5JOyLhX0pCnl1tNST5SaSTgVcGlsdM+?=
+ =?iso-8859-2?Q?QE2X4pCeE3uwW/Lx2zcFJNJJLxx22dm4VWr7+bBgUp0XJrMqW7lq+ICq12?=
+ =?iso-8859-2?Q?Jmlh+h0q5YpOMrnSOisNzk6YJCPo1tm7w6rL6A6A5koh1vz3rQQCi3vbvz?=
+ =?iso-8859-2?Q?vECXmmsaRXnxe3hkzCwFc62fziZH1CmxHBBQqMUR0t0IP37J6amQ8f0CK3?=
+ =?iso-8859-2?Q?X27b7Nr5KEs3adVeiJv0VuGMRCU8+c1a4vIGiOdgKMdvwvlcJrMdf7+Htq?=
+ =?iso-8859-2?Q?sKpVkTcCgQHLTtwW3+bgPmVk2ORwl1xlu72UPLQzwE9ehXlRGVrYPY7MPh?=
+ =?iso-8859-2?Q?GUdtKYEKm5c1/axgvGCbEpY1yCvW3EM6kOOr7ogti6u+wnv2laCPH7fJlL?=
+ =?iso-8859-2?Q?+naclpSoQyfi4ZxHmNUYjWUZUERjU2CrqUuYwk4gAqwV0DGrc7i7AcUPr4?=
+ =?iso-8859-2?Q?VWWklFUiduDV2Yjo7sFnedjbAz/zTEsQWfiKcN1cc9CuBdgsrkzSxfPVMy?=
+ =?iso-8859-2?Q?/yLEkp/62PDNYYKCY/2Xp66m9OH3L21KMVs+rMUvy6bNZY4hQyid32Hw?=
+ =?iso-8859-2?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd2aa9e1-8b8f-4d4a-4902-08de21ec96a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 13:08:35.6427
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FYXuuuoHipMXPR1l0pbZwX8udZSh3+eyKsePJohm4nmdDk7yTsTwdhdo3DFiVg5bpD/lD/HWOIESzymXjgF3cKbUxDLsJ0H+CU3E6zt6QvM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6128
+X-OriginatorOrg: intel.com
 
-On Wed, 29 Oct 2025 09:20:55 -0700
-Tony Luck <tony.luck@intel.com> wrote:
 
-> resctrl assumes that all monitor events can be displayed as unsigned
-> decimal integers.
-> 
-> Hardware architecture counters may provide some telemetry events with
-> greater precision where the event is not a simple count, but is a
-> measurement of some sort (e.g. Joules for energy consumed).
-> 
-> Add a new argument to resctrl_enable_mon_event() for architecture code
-> to inform the file system that the value for a counter is a fixed-point
-> value with a specific number of binary places.
-> Only allow architecture to use floating point format on events that the
-> file system has marked with mon_evt::is_floating_point.
-> 
-> Display fixed point values with values rounded to an appropriate number
-> of decimal places for the precision of the number of binary places
-> provided. Add one extra decimal place for every three additional binary
-> places, except for low precision binary values where exact representation
-> is possible:
-> 
->   1 binary place is 0.0 or 0.5			=> 1 decimal place
->   2 binary places is 0.0, 0.25, 0.5, 0.75	=> 2 decimal places
->   3 binary places is 0.0, 0.125, etc.		=> 3 decimal places
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
+> Of Andy Shevchenko
+> Sent: Tuesday, November 11, 2025 1:20 PM
+> To: Corey Minyard <corey@minyard.net>; Christian K=F6nig
+> <christian.koenig@amd.com>; Dr. David Alan Gilbert
+> <linux@treblig.org>; Alex Deucher <alexander.deucher@amd.com>; Thomas
+> Zimmermann <tzimmermann@suse.de>; Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com>; Rob Clark
+> <robin.clark@oss.qualcomm.com>; Brost, Matthew
+> <matthew.brost@intel.com>; Ulf Hansson <ulf.hansson@linaro.org>; Andy
+> Shevchenko <andriy.shevchenko@linux.intel.com>; Lifshits, Vitaly
+> <vitaly.lifshits@intel.com>; Manivannan Sadhasivam <mani@kernel.org>;
+> Niklas Cassel <cassel@kernel.org>; Calvin Owens <calvin@wbinvd.org>;
+> Vadim Fedorenko <vadim.fedorenko@linux.dev>; Sagi Maimon
+> <maimon.sagi@gmail.com>; Martin K. Petersen
+> <martin.petersen@oracle.com>; Karan Tilak Kumar <kartilak@cisco.com>;
+> Hans Verkuil <hverkuil+cisco@kernel.org>; Casey Schaufler
+> <casey@schaufler-ca.com>; Steven Rostedt <rostedt@goodmis.org>; Petr
+> Mladek <pmladek@suse.com>; Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>;
+> Max Kellermann <max.kellermann@ionos.com>; linux-doc@vger.kernel.org;
+> linux-kernel@vger.kernel.org; openipmi-
+> developer@lists.sourceforge.net; linux-media@vger.kernel.org; dri-
+> devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; amd-
+> gfx@lists.freedesktop.org; linux-arm-msm@vger.kernel.org;
+> freedreno@lists.freedesktop.org; intel-xe@lists.freedesktop.org;
+> linux-mmc@vger.kernel.org; netdev@vger.kernel.org; intel-wired-
+> lan@lists.osuosl.org; linux-pci@vger.kernel.org; linux-
+> s390@vger.kernel.org; linux-scsi@vger.kernel.org; linux-
+> staging@lists.linux.dev; ceph-devel@vger.kernel.org; linux-trace-
+> kernel@vger.kernel.org
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>; Sergey Senozhatsky
+> <senozhatsky@chromium.org>; Jonathan Corbet <corbet@lwn.net>; Sumit
+> Semwal <sumit.semwal@linaro.org>; Gustavo Padovan
+> <gustavo@padovan.org>; David Airlie <airlied@gmail.com>; Simona Vetter
+> <simona@ffwll.ch>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> <mripard@kernel.org>; Dmitry Baryshkov <lumag@kernel.org>; Abhinav
+> Kumar <abhinav.kumar@linux.dev>; Jessica Zhang
+> <jesszhan0024@gmail.com>; Sean Paul <sean@poorly.run>; Marijn Suijten
+> <marijn.suijten@somainline.org>; Konrad Dybcio
+> <konradybcio@kernel.org>; De Marchi, Lucas <lucas.demarchi@intel.com>;
+> Thomas Hellstr=F6m <thomas.hellstrom@linux.intel.com>; Vivi, Rodrigo
+> <rodrigo.vivi@intel.com>; Vladimir Oltean <olteanv@gmail.com>; Andrew
+> Lunn <andrew@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
+> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
+> Abeni <pabeni@redhat.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Krzysztof Wilczy=F1ski
+> <kwilczynski@kernel.org>; Kishon Vijay Abraham I <kishon@kernel.org>;
+> Bjorn Helgaas <bhelgaas@google.com>; Rodolfo Giometti
+> <giometti@enneenne.com>; Richard Cochran <richardcochran@gmail.com>;
+> Jonathan Lemon <jonathan.lemon@gmail.com>; Stefan Haberland
+> <sth@linux.ibm.com>; Jan Hoeppner <hoeppner@linux.ibm.com>; Heiko
+> Carstens <hca@linux.ibm.com>; Vasily Gorbik <gor@linux.ibm.com>;
+> Alexander Gordeev <agordeev@linux.ibm.com>; Christian Borntraeger
+> <borntraeger@linux.ibm.com>; Sven Schnelle <svens@linux.ibm.com>;
+> Satish Kharat <satishkh@cisco.com>; Baddela, Sesidhar
+> <sebaddel@cisco.com>; James E.J. Bottomley
+> <James.Bottomley@HansenPartnership.com>; Mauro Carvalho Chehab
+> <mchehab@kernel.org>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+> Xiubo Li <xiubli@redhat.com>; Ilya Dryomov <idryomov@gmail.com>;
+> Masami Hiramatsu <mhiramat@kernel.org>; Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com>; Andrew Morton <akpm@linux-
+> foundation.org>
+> Subject: [Intel-wired-lan] [PATCH v2 10/21] igb: Switch to use %ptSp
+>=20
+> Use %ptSp instead of open coded variants to print content of struct
+> timespec64 in human readable format.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  include/linux/resctrl.h            |  3 +-
->  fs/resctrl/internal.h              |  8 +++
->  arch/x86/kernel/cpu/resctrl/core.c |  6 +--
->  fs/resctrl/ctrlmondata.c           | 84 ++++++++++++++++++++++++++++++
->  fs/resctrl/monitor.c               | 10 +++-
->  5 files changed, 105 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index 702205505dc9..a7e5a546152d 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -409,7 +409,8 @@ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
->  u32 resctrl_arch_system_num_rmid_idx(void);
->  int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
->  
-> -void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu);
-> +void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu,
-> +			      unsigned int binary_bits);
->  
->  bool resctrl_is_mon_event_enabled(enum resctrl_event_id eventid);
->  
-> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-> index 40b76eaa33d0..f5189b6771a0 100644
-> --- a/fs/resctrl/internal.h
-> +++ b/fs/resctrl/internal.h
-> @@ -62,6 +62,9 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
->   *			Only valid if @evtid is an MBM event.
->   * @configurable:	true if the event is configurable
->   * @any_cpu:		true if the event can be read from any CPU
-> + * @is_floating_point:	event values are displayed in floating point format
-> + * @binary_bits:	number of fixed-point binary bits from architecture,
-> + *			only valid if @is_floating_point is true
->   * @enabled:		true if the event is enabled
->   */
->  struct mon_evt {
-> @@ -71,6 +74,8 @@ struct mon_evt {
->  	u32			evt_cfg;
->  	bool			configurable;
->  	bool			any_cpu;
-> +	bool			is_floating_point;
-> +	unsigned int		binary_bits;
->  	bool			enabled;
->  };
+>  drivers/net/ethernet/intel/igb/igb_ptp.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/intel/igb/igb_ptp.c
+> b/drivers/net/ethernet/intel/igb/igb_ptp.c
+> index a7876882aeaf..bd85d02ecadd 100644
+> --- a/drivers/net/ethernet/intel/igb/igb_ptp.c
+> +++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
+> @@ -840,14 +840,11 @@ static void igb_ptp_overflow_check(struct
+> work_struct *work)
+>  	struct igb_adapter *igb =3D
+>  		container_of(work, struct igb_adapter,
+> ptp_overflow_work.work);
+>  	struct timespec64 ts;
+> -	u64 ns;
+>=20
+>  	/* Update the timecounter */
+> -	ns =3D timecounter_read(&igb->tc);
+> +	ts =3D ns_to_timespec64(timecounter_read(&igb->tc));
+>=20
+> -	ts =3D ns_to_timespec64(ns);
+> -	pr_debug("igb overflow check at %lld.%09lu\n",
+> -		 (long long) ts.tv_sec, ts.tv_nsec);
+> +	pr_debug("igb overflow check at %ptSp\n", &ts);
+>=20
+>  	schedule_delayed_work(&igb->ptp_overflow_work,
+>  			      IGB_SYSTIM_OVERFLOW_PERIOD);
+> --
+> 2.50.1
 
-Nit: You've added 4 bytes of padding.
-
-	David
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
 
