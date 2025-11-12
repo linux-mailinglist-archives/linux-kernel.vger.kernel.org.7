@@ -1,159 +1,338 @@
-Return-Path: <linux-kernel+bounces-897288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9431C5285A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:43:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C17C52866
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 403184EF2E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:34:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 331614F8114
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA53385BE;
-	Wed, 12 Nov 2025 13:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A633859C;
+	Wed, 12 Nov 2025 13:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrJfWier"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETRSj4/b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FA932D44F;
-	Wed, 12 Nov 2025 13:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5839230C34A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762954446; cv=none; b=jUz0nkMwJaO+OaWHAoRvJkKHl8YpK4gwehxG67OlYa2sM74lt+H5tGHqpo8eAmm5t6eWfWTiAIDBCzka7docfUZ4lWEviELqxWRvFiat/XHGSmtuG905/01wFX2zqHUU0dVp8v/6oiwYA753kPItr2YT4+ESkaSwC47X6ViWT8s=
+	t=1762954459; cv=none; b=Qzhqtpq0Af6e3tdWvzR+tbpVBa5lBqYQaMhGkX1tjCAoSWDvzpyH/TTuhlwPlgLoAZxele6H2LHajHklBzPk9HgdYFFe88EV0A5o7CGz4ulMDxOsFyyaRFmTsjEe6eOtIJT0i+C8cOY3HmzzkokTrxxAQV5BshEyz9v51vMR43c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762954446; c=relaxed/simple;
-	bh=qbSj2P7cauAyPGofpRuk2eH237ghZw6hFXEaJ7Ed/gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqiCi7rtc//VzqOofAOUEXXm6t4vQf3tx5Ufws+NjYOVNesoM+aQlmBPg7qX+Sny1fU7Pmnupyhhom5OGNjRBQnyBP/OTC4GbzBkeDrAd5dU5cmOfC/RSDgUSPTvIwwAvwg4cRJPzXC/rld39OJFChDNjwg3x1obhbazBcx1yGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrJfWier; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41D9C16AAE;
-	Wed, 12 Nov 2025 13:33:43 +0000 (UTC)
+	s=arc-20240116; t=1762954459; c=relaxed/simple;
+	bh=Iswk76xrOcOZ+ghm9k0OtsD4f3QfWzKcacySZovmqZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbnLrAyY5jkS4m/qTc7nPiT/p2v+Nnxd4MT4LThUq9LtZ//lJ5K33uaemC8OCuoascVlJ2c/y9/BpmeUMhaY+TbEMgYEiPvxpezsNgY9Pq1aRPXK1byZgz6RipvN1yRHlK/K0t91sPDCifDGvE5yVX+lfRz5yrMb6nXtR8h6kg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETRSj4/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E467C2BC9E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762954445;
-	bh=qbSj2P7cauAyPGofpRuk2eH237ghZw6hFXEaJ7Ed/gc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZrJfWierYi07WtFcEryrFiK6Au3xJI//n+EazQJsB4b0URzBvOjJ2BPBvBPoM7FvZ
-	 XWPWQhLqrXXbk6Los7kqf3Hu8uafXdEsjQxORzsfBLgMdTU6sehs9FlWa9STelJO6B
-	 OWz3HlWFH/uCzNh2VZL47Gng+Ch9YiD7yBzskEndLdC70aFjLKWUcBaq0XFoDHp60t
-	 0wx+iCnlCp9J1RZS79PtlT4DNB84z8R8sl+GyTqFXcqT3qGXpr8ALU3f1PIB1jKeK2
-	 8K/l0BTJHUIz6SWhepPCUMWA1Uk5bb1RAQCRj5RdZtH28whozTzBEJKm7YoNIweTse
-	 RnTOFGNsvHEfQ==
-Date: Wed, 12 Nov 2025 15:33:39 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRSMsz4zy8QBbsIH@kernel.org>
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com>
- <aRObz4bQzRHH5hJb@kernel.org>
- <CA+CK2bDnaLJS9GdO_7Anhwah2uQrYYk_RhQMSiRL-YB=8ZZZWQ@mail.gmail.com>
- <CA+CK2bD3hps+atqUZ2LKyuoOSRRUWpTPE+frd5g13js4EAFK8g@mail.gmail.com>
- <aRRflLTejNQXWa1Z@kernel.org>
- <CA+CK2bB8731z-EKv2K8-x5SH8rjOTTuWkfkrc4Qj6skW+Kr7-g@mail.gmail.com>
+	s=k20201202; t=1762954459;
+	bh=Iswk76xrOcOZ+ghm9k0OtsD4f3QfWzKcacySZovmqZI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ETRSj4/bajJ1ZD0uaFMjWWqub+ltFHUXncRTGPcSP9amKobJ60Knkj1FVZCzd20Lk
+	 K+cmkbylppaNMhLqcKKGLpm3VNN3U6bvyEri7jaqbob2Yv7fQodEiNl7eZk1OqZjVr
+	 O71YjSPK1dyCXJs/QOUCdmCyFrYzxxqIYgd68TY0J+IfEXcyiK7MuApxSfAO9QJNpv
+	 Vw5uBc2LAsDLLZNwvSpoq/C7upmFEYHwW+tpvKujh5subfImZjSw6Tj6sQBqPh8W/W
+	 ZhM1jD2TmimZEIiV6H/uzkkmAyCBaXYXZyupPDJfoNA5diVznGX196ZidMwKSxRCLu
+	 EGpCLdYq8vhFw==
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c8632fcbso603771f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:34:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXUb+xL98Vm/f7Eh1z5WonKKL5DqURynKBHRFcooPhRhlGtZjokYRh9boUVRPjhj/vOMK6NGun3TxqVQSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb8OKPfIe2UeYhliCh9Qi7E7Ozlk07N+G0QzQfCcv83EY/U3I4
+	qzPFOzUW9iXTewMsljDkgQzXs4pzDpbjUBH+PRfwjdb8e50XffYgWZGMxJUIAY5iOKK1CHOB5vZ
+	n/h46Yn71krFU9epA5jTJ/a9+WSre3apc3Vq0lCMdxQ==
+X-Google-Smtp-Source: AGHT+IF9bcWOvDByXeJcPGdpBQ62WykCFYRS8f6AjV3YIWckQFEoXL97S1nJnKOvcUbeL/OiU294pxGnu8ThdwoRQ1E=
+X-Received: by 2002:a05:6000:4210:b0:427:8c85:a4ac with SMTP id
+ ffacd0b85a97d-42b4bdb4cfcmr2474633f8f.47.1762954457534; Wed, 12 Nov 2025
+ 05:34:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bB8731z-EKv2K8-x5SH8rjOTTuWkfkrc4Qj6skW+Kr7-g@mail.gmail.com>
+References: <20251109124947.1101520-1-youngjun.park@lge.com>
+In-Reply-To: <20251109124947.1101520-1-youngjun.park@lge.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 12 Nov 2025 05:34:05 -0800
+X-Gmail-Original-Message-ID: <CACePvbV80ZtC2FL6Z-Y4Rg=5bzdi1O8zqQSMEGuxqhj5P0txsA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkQL-nIO8ItDYbzVpVznojBy7HPNB9u7fXNkmn_UNYWv8e_ajah8xnS1QY
+Message-ID: <CACePvbV80ZtC2FL6Z-Y4Rg=5bzdi1O8zqQSMEGuxqhj5P0txsA@mail.gmail.com>
+Subject: Re: [RFC] mm/swap, memcg: Introduce swap tiers for cgroup based swap control
+To: Youngjun Park <youngjun.park@lge.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kasong@tencent.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, shikemeng@huaweicloud.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, gunho.lee@lge.com, taejoon.song@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 07:46:23AM -0500, Pasha Tatashin wrote:
-> On Wed, Nov 12, 2025 at 5:21 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Tue, Nov 11, 2025 at 03:42:24PM -0500, Pasha Tatashin wrote:
-> > > On Tue, Nov 11, 2025 at 3:39 PM Pasha Tatashin
-> > > <pasha.tatashin@soleen.com> wrote:
-> > > >
-> > > > > >       kho_memory_init();
-> > > > > >
-> > > > > > +     /* Live Update should follow right after KHO is initialized */
-> > > > > > +     liveupdate_init();
-> > > > > > +
-> > > > >
-> > > > > Why do you think it should be immediately after kho_memory_init()?
-> > > > > Any reason this can't be called from start_kernel() or even later as an
-> > > > > early_initcall() or core_initall()?
-> > > >
-> > > > Unfortunately, no, even here it is too late, and we might need to find
-> > > > a way to move the kho_init/liveupdate_init earlier. We must be able to
-> > > > preserve HugeTLB pages, and those are reserved earlier in boot.
-> > >
-> > > Just to clarify: liveupdate_init() is needed to start using:
-> > > liveupdate_flb_incoming_* API, and FLB data is needed during HugeTLB
-> > > reservation.
-> >
-> > Since flb is "file-lifecycle-bound", it implies *file*. Early memory
-> > reservations in hugetlb are not bound to files, they end up in file objects
-> > way later.
-> 
-> FLB global objects act similarly to subsystem-wide data, except their
-> data has a clear creation and destruction time tied to preserved
-> files. When the first file of a particular type is added to LUO, this
-> global data is created; when the last file of that type is removed
-> (unpreserved or finished), this global data is destroyed, this is why
-> its life is bound to file lifecycle. Crucially, this global data is
-> accessible at any time while LUO owns the associated files spanning
-> the early boot update boundary.
+Hi Youngjun,
 
-But there are no files at mm_core_init(). I'm really confused here.
- 
-> > So I think for now we can move liveupdate_init() later in boot and we will
-> > solve the problem of hugetlb reservations when we add support for hugetlb.
-> 
-> HugeTLB reserves memory early in boot. If we already have preserved
-> HugeTLB pages via LUO/KHO, we must ensure they are counted against the
-> boot-time reservation. For example, if hugetlb_cma_reserve() needs to
-> reserve ten 1G pages, but LUO has already preserved seven, we only
-> need to reserve three new pages and the rest are going to be restored
-> with the files.
-> 
-> Since this count is contained in the FLB global object, that data
-> needs to be available during the early reservation phase. (Pratyush is
-> working on HugeTLB preservation and can explain further).
+Sorry for the late reply, I have been super busy in the last two weeks
+and I am still catching up on my backlogs.
 
-Not sure I really follow the design here, but in my understanding the gist
-here is that hugetlb reservations need to be aware of the preserved state.
-If that's the case, we definitely can move liveupdate_init() to an initcall
-and revisit this when hugetlb support for luo comes along.
- 
-> Pasha
-> 
+Thanks for the patches. I notice that your cover letter does not have
+[0/3] on it. One tool I found useful is using the b4 to send out
+patches in series. Just for your consideration, it is not an ask. I
+can review patches not sent out from b4 just fine.
 
--- 
-Sincerely yours,
-Mike.
+On Sun, Nov 9, 2025 at 4:50=E2=80=AFAM Youngjun Park <youngjun.park@lge.com=
+> wrote:
+>
+> Hi all,
+>
+> In constrained environments, there is a need to improve workload
+> performance by controlling swap device usage on a per-process or
+> per-cgroup basis. For example, one might want to direct critical
+> processes to faster swap devices (like SSDs) while relegating
+> less critical ones to slower devices (like HDDs or Network Swap).
+>
+> Initial approach was to introduce a per-cgroup swap priority
+> mechanism [1]. However, through review and discussion, several
+> drawbacks were identified:
+>
+> a. There is a lack of concrete use cases for assigning a fine-grained,
+>    unique swap priority to each cgroup.
+> b. The implementation complexity was high relative to the desired
+>    level of control.
+> c. Differing swap priorities between cgroups could lead to LRU
+>    inversion problems.
+>
+> To address these concerns, I propose the "swap tiers" concept,
+> originally suggested by Chris Li [2] and further developed through
+> collaborative discussions. I would like to thank Chris Li and
+> He Baoquan for their invaluable contributions in refining this
+> approach, and Kairui Song, Nhat Pham, and Michal Koutn=C3=BD for their
+> insightful reviews of earlier RFC versions.
+>
+> Concept
+> -------
+> A swap tier is a grouping mechanism that assigns a "named id" to a
+> range of swap priorities. For example, all swap devices with a
+> priority of 100 or higher could be grouped into a tier named "SSD",
+> and all others into a tier named "HDD".
+>
+> Cgroups can then select which named tiers they are permitted to use for
+> swapping via a new cgroup interface. This effectively restricts a
+> cgroup's swap activity to a specific subset of the available swap
+> devices.
+>
+> Proposed Interface
+> ------------------
+> 1. Global Tier Definition: /sys/kernel/mm/swap/tiers
+>
+> This file is used to define the global swap tiers and their associated
+> minimum priority levels.
+>
+> - To add tiers:
+>   Format: + 'tier_name':'prio'[,|' ']'tier_name 2':'prio']...
+>   Example:
+>   # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
+
+I think a lot of this documentation nature of the cover letter should
+move into a kernel document commit. Maybe
+Documentation/mm/swap_tiers.rst
+
+Another suggestion is use "+SSD:100,+HDD:2,-SD" that kind of flavor
+similar to "cgroup.subtree_control" interface, which allows adding or
+removing cgroups. That way you can add and remove in one line action.
+
+>
+>   There are several rules for defining tiers:
+>   - Priority ranges for tiers must not overlap.
+
+We can add that we suggest allocating a higher priority range for
+faster swap devices. That way more swap page faults will likely be
+served by faster swap devices.
+
+>   - The combination of all defined tiers must cover the entire valid
+>     priority range (DEF_SWAP_PRIO to SHRT_MAX) to ensure every swap devic=
+e
+>     can be assigned to a tier.
+>   - A tier's prio value is its inclusive lower bound,
+>     covering priorities up to the next tier's prio.
+>     The highest tier extends to SHRT_MAX, and the lowest tier extends to =
+DEF_SWAP_PRIO.
+>   - If the specified tiers do not cover the entire priority range,
+>     the priority of the tier with the lowest specified priority value
+>     is set to SHRT_MIN
+>   - The total number of tiers is limited.
+>
+> - To remove tiers:
+>   Format: - 'tier_name'[,|' ']'tier_name2']...
+>   Example:
+>   # echo "- SSD,HDD" > /sys/kernel/mm/swap/tiers
+
+See above, make the '-SSD, -HDD' similar to the "cgroup.subtree_control"
+>
+>   Note: A tier cannot be removed if it is currently in use by any
+>   cgroup or if any active swap device is assigned to it. This acts as
+>   a reference count to prevent disruption.
+>
+> - To show current tiers:
+>   Reading the file displays the currently configured tiers, their
+>   internal index, and the priority range they cover.
+>   Example:
+>   # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
+>   # cat /sys/kernel/mm/swap/tiers
+>   Name      Idx   PrioStart   PrioEnd
+>             0
+>   SSD       1    100         32767
+>   HDD       2     -1         99
+>
+>   - `Name`: The name of the tier. The unnamed entry is a default tier.
+>   - `Idx`: The internal index assigned to the tier.
+>   - `PrioStart`: The starting priority of the range covered by this tier.
+>   - `PrioEnd`: The ending priority of the range covered by this tier.
+>
+> Two special tiers are predefined:
+> - "": Represents the default inheritance behavior in cgroups.
+This belongs to the memory.swap.tiers section.
+"" is not a real tier's name. It is just a wide cast to refer to all tiers.
+
+> - "zswap": Reserved for zswap integration.
+
+One thing I realize is that, we might need to have per swap tier have
+a matching zswap tier. Otherwise when we refer to zswap, there is no
+way for the cgroup to select which backing swapfile does this zswap
+use for allocating the swap entry.
+
+We can avoid this complexity by providing a dedicated ghost swapfile,
+which only zswap can use to allocate swap entries.
+
+> 2. Cgroup Tier Selection: memory.swap.tiers
+>
+> This file controls which swap tiers are enabled for a given cgroup.
+>
+> - Reading the file:
+>   The first line shows the operation that was written to the file.
+>   The second line shows the final, effective set of tiers after
+>   merging with the parent cgroup's configuration.
+>
+> - Writing to the file:
+>   Format: [+/-] [+|-][TIER_NAME]...
+>   - `+TIER_NAME`: Explicitly enables this tier for the cgroup.
+>   - `-TIER_NAME`: Explicitly disables this tier for the cgroup.
+>   - If a tier is not specified, its setting is inherited from the
+>     parent cgroup.
+>   - A standalone `+` at the beginning resets the configuration: it
+>     ignores the parent's settings, enables all globally defined tiers,
+>     and then applies the subsequent operations in the command.
+>   - A standalone `-` at the beginning also resets: it ignores the
+>     parent's settings, disables all tiers, and then applies subsequent
+>     operations.
+>   - The root cgroup defaults to an implicit `+`, enabling all swap
+>     devices.
+>
+>   Example:
+>   # echo "+ -SSD -HDD" > /sys/fs/cgroup/my_cgroup/memory.swap.tiers
+>   This command first resets the cgroup's configuration to enable all
+>   tiers (due to the leading `+`), and then explicitly disables the
+>   "SSD" and "HDD" tiers.
+>
+> Further Discussion and Open Questions
+> -------------------------------------
+> I seek feedback on this concept and have identified several key
+> points that require further discussion (though this is not an
+> exhaustive list). This topic will also be presented at the upcoming
+> Linux Plumbers Conference 2025 [3], and I would appreciate any
+> feedback here on the list beforehand, or in person at the conference.
+
+All very good questions. Thanks for preparing that.
+
+>
+> 1.  The swap fast path utilizes a percpu cluster cache for efficiency.
+>     In swap tiers, this has been changed to a per-device per-cpu
+>     cluster cache. (See the first patch in this series.)
+>     An alternative approach would be to cache only the swap_info_struct
+>     (si) per-tier per-cpu, avoiding cluster caching entirely while still
+>     maintaining fast device acquisition without `swap_avail_lock`.
+>     Should we pursue this alternative, or is the current per-device
+>     per-cpu cluster caching approach preferable?
+>
+> 2.  Consistency with cgroup parent-child semantics: Unlike general
+>     resource distribution, tier selection may bypass parent
+>     constraints (e.g., a child can enable a tier disabled by its
+>     parent). Is this behavior acceptable?
+>
+> 3.  Per-cgroup swap tier limit: Is a `swap.tier.max` needed in
+>     addition to the existing `swap.max`?
+
+I really hope not.
+
+>
+> 4.  Parent-child tier mismatch: If a zombie memcg (child) uses a tier
+>     that is not available to its new parent, how should this be
+>     handled during recharging or reparenting? (This question is raised
+>     in the context of ongoing work to improve memcg reparenting and
+>     handle zombie memcgs [4, 5].)
+
+I really want to avoid doing the reparenting.
+
+Chris
+
+
+>
+> 5.  Tier mask calculation: What are the trade-offs between calculating
+>     the effective tier mask at runtime vs. pre-calculating it when the
+>     interface is written to?
+>
+> 6.  If a swap tier configuration is applied to a memcg, should we
+>     migrate existing swap-out pages that are on devices not belonging
+>     to any of the cgroup's allowed tiers?
+>
+> 7.  swap tier could be good abstraction layer. Discuss on extended usage =
+of swap tiers.
+>
+> Any feedback on the overall concept, interface, and these specific
+> points would be greatly appreciated.
+>
+> Best Regards,
+> Youngjun Park
+>
+> References
+> ----------
+> [1] https://lore.kernel.org/linux-mm/aEvLjEInMQC7hEyh@yjaykim-PowerEdge-T=
+330/T/#mbbb6a5e9e30843097e1f5f65fb98f31d582b973d
+> [2] https://lore.kernel.org/linux-mm/20250716202006.3640584-1-youngjun.pa=
+rk@lge.com/
+> [3] https://lpc.events/event/19/abstracts/2296/
+> [4] https://lore.kernel.org/linux-mm/20230720070825.992023-1-yosryahmed@g=
+oogle.com/
+> [5] https://blogs.oracle.com/linux/post/zombie-memcg-issues
+>
+> Youngjun Park (3):
+>   mm, swap: change back to use each swap device's percpu cluster
+>   mm: swap: introduce swap tier infrastructure
+>   mm/swap: integrate swap tier infrastructure into swap subsystem
+>
+>  Documentation/admin-guide/cgroup-v2.rst |  32 ++
+>  MAINTAINERS                             |   2 +
+>  include/linux/memcontrol.h              |   4 +
+>  include/linux/swap.h                    |  16 +-
+>  mm/Kconfig                              |  13 +
+>  mm/Makefile                             |   1 +
+>  mm/memcontrol.c                         |  69 +++
+>  mm/page_io.c                            |  21 +-
+>  mm/swap.h                               |   4 +
+>  mm/swap_state.c                         |  93 ++++
+>  mm/swap_tier.c                          | 602 ++++++++++++++++++++++++
+>  mm/swap_tier.h                          |  75 +++
+>  mm/swapfile.c                           | 169 +++----
+>  13 files changed, 987 insertions(+), 114 deletions(-)
+>  create mode 100644 mm/swap_tier.c
+>  create mode 100644 mm/swap_tier.h
+>
+> base-commit: 02dafa01ec9a00c3758c1c6478d82fe601f5f1ba
+> --
+> 2.34.1
+>
+>
 
