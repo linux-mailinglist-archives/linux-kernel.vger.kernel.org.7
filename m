@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-896883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9DAC5178B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:52:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F0DC517E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2933AB09D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:42:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A832E3BBBC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3922FE570;
-	Wed, 12 Nov 2025 09:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F408C2FDC5B;
+	Wed, 12 Nov 2025 09:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="dU+8lRRE"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBleDw50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FA2FDC5B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E0E2D663B;
+	Wed, 12 Nov 2025 09:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940538; cv=none; b=gbwoVGsveNNBD4miTJmoBDe/LJo/IFg2INrx1C6cHSZT658ycYBBGUp8Ilze+/ZlvkWdA0inik6us3cSlbihAKeU0FH+eteDMjexAh685uwCapCrzc0ID8M4qpAJ4272GWkRu5KElHrY7x8xjZmMY0vkhq9d2c6OebkPsVurt44=
+	t=1762940559; cv=none; b=o/G0ECOtSCllTOlqaUaS+Rlojik4uBr6qkWOtvq6UIuMEIF8ETEp40Mco8jpmnK+hN8mxwJqj2yBtC4NJ31yMDgviW/t/dJuQQBidm/oiPaMXYI7dWrAJZf0EDsgHskBKGBK781ByEVTegeUpjJH7llJXf0IIE83rtrMadydaV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940538; c=relaxed/simple;
-	bh=anc7Iw04tHnWj+aWsPc3gyh5YEPw2RAWClKgxhtljig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twXL4sqtGlLY/KARackdoY3qnmV/QPruG8VHb+bqpJRb+Ip1DVoknkj+snQ/RpHckYZFyhbFEHA4HlgflVybCqr+ZaB+AwHrh7k5yQNEReYv9K1J28/NrYI/yrFtRJ4XRNwiSTEJ1s6ot0lNXJwdjpFvdnwsRtbc9yMpTcvS6/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=dU+8lRRE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-477632d9326so3920045e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:42:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin.net; s=google; t=1762940534; x=1763545334; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=non7jFyDgpV9ioaJdY/PWd6esrFFlJ4jS7hnF3MLWcI=;
-        b=dU+8lRRERmyGs8a5PSiBowRYyxIW+lvsnBbMZhXCZdryH7CDU6H2AuRyhk3g/TZJ63
-         UkI9AI7BVtvBR0pz7mNQiWUuBhNWtD1jtu+hJxjsIYbEH2rTRxiCtE3PGu8I6nXent0b
-         /yScrqaSI4tWiTjXpCC8kTpl/yk/N0qplHLhUmxaL/XMpLRuBfu2gZ4oj9Pi/cGEIgKK
-         LZMuy3p5V+Q9g6p/QaPS7GJRVjFQM70AYDEmvRl3kXN6LBrA6WJ8fTPNwrF40yu0kwlk
-         cdVoZqMhDY2+1mI4uHP/sszeTmpNwQ8bv5nN67sA+ZAAz0+Md6hREADM5fTFXIhrSs0b
-         z33A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762940534; x=1763545334;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=non7jFyDgpV9ioaJdY/PWd6esrFFlJ4jS7hnF3MLWcI=;
-        b=MtjfIImeNL0yxL75lviaiHcUZ2o74QP+WwBuUDIXBllvRIQN0qn66DZNgzdBsKB89f
-         /SIjhJhx6K+gQcwlvfbAOtn67lve/YZ0zAi385CLL9GwRVOiuEZxLALwyn6xCa+sqFQ9
-         gvcOLK9+0nkgPzSepyiwONPXlP5ML4TGKF8tZvVfRs71O5hillEpgk1VgZhCVAoiI+LG
-         7OMqnqM0NzaNuOgN2h3bvd73ebwdnAaJJnMuwP++xwZAaICaUixdf4Pqap1ZHBL0SbpS
-         pxOvc1xxY1MuDkVeHiAEZZN1ycJMCrnGS5LNIU4E5IrboFK/l5BD2+2YhXr+1nX6xkd0
-         viNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXX1J0TYbOcb5N2NdXPggxjN/jrg+lK6oAX8x7IqCJwerWPoHB8MNnkOWKgcpTMAfmye6EE/jt7kIfdNVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaDz98eNXHDmL+5zkmzJhK1VoUo3yLEyxCvTVnERvit70YRq2M
-	GBoKp++isEi7DKPc4g2wri1ku4+kavfka1UejS+UTrd/E6T7ymesEhIPW/daSVsAu3c=
-X-Gm-Gg: ASbGncudyvBh2VrRsvdUtTH1ER6Ez+cKN+1R2ZKaOwdM2hSZkqNF59cPT8sP9l48RgX
-	jr8EcZCHbw1UVDzpEfcVb1IwgfSA8nPRSniLUBYitbXrIjdaY2J/Z8mIVsIZSapu0J7/o89HTJh
-	I09yhIAmXgjNNI544OZ+KnP++Fu5R+2CQPnZGbu2JZ/6o9OkKfZxM5hSF4K4gDWZg7opf5gZKD0
-	69GgOQ4WVQHTWWA3kf3k8LTcLOofVPuh2QSVOijS9z4UTM0hlOiCFlGAKE63d08AXqNKxvlSEcX
-	VJSZ+PhpHFxFj51Gcr12aRkW1onPbC/hxf1vqrik7QcR3IaUVu/j6dbumwcrOhALGeXeAWL18he
-	qnEdnnpg5m/t2NLF5DOWVSLKbu1AVVxAb1meaGh874sU6fA/RZnJRuwWJc/9OBua5jdBvuW5yyp
-	wZyn/Gy+vl/aztkrrRDOjJ9UL3MHa4pr+L
-X-Google-Smtp-Source: AGHT+IEUD7F/bL8359XxwqylO1O60OBLZSd4tmhEK3pFqGhIuhFA3c+ouW/g75Uh+RBAA2Oa4hCSZA==
-X-Received: by 2002:a05:600c:1c08:b0:475:df91:de03 with SMTP id 5b1f17b1804b1-477870b67d1mr22341115e9.39.1762940534598;
-        Wed, 12 Nov 2025 01:42:14 -0800 (PST)
-Received: from [192.168.0.101] ([90.240.106.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e486fbsm25160545e9.5.2025.11.12.01.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:42:14 -0800 (PST)
-Message-ID: <e9c02871-fa80-46c7-8b96-bad3a6a2c5b9@ursulin.net>
-Date: Wed, 12 Nov 2025 09:42:13 +0000
+	s=arc-20240116; t=1762940559; c=relaxed/simple;
+	bh=sCz/KdI7yKdeZV5sd5nf35uwO2Z+AByDIOej6Yw2MbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGnnJACiYlAydLTPj4J8UX6ZVfkuA+NmSpI26YZTovF8Q5k3CzGHX1BW2LniPLCBwklvfyeb3aDtOT2jOAyqyXnAOgXEcoUJZVeu7AJJ5mVUsTjvgQoq/Ffs7JRLyBDaBjW2AYjyH+RTiP4awOHJBgU1QFFevGYNzXLFFGugyfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBleDw50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF40C19425;
+	Wed, 12 Nov 2025 09:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762940558;
+	bh=sCz/KdI7yKdeZV5sd5nf35uwO2Z+AByDIOej6Yw2MbQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBleDw50dDNRKiVI1Z2wGSzS2owwso1IIDe6LfKqfClawIOOcFVtgbN0audnqB+v0
+	 FrccyMGEEIQgg1EFQHPD+Eiah/HP/6ID/fDKkcS456qJavx9BO71MVWXa2twQorRJJ
+	 KkxC0yXuZUV/Hpdot7a4yggHz3538ZLj25th/+ugIUZZPMNesBHL8b0aNphLv4JRiL
+	 OtFFEgEut4gbnd/zGdyZujRpA1LTLYJNu+AizFaSzJRYDOylbwqztoPtnPo3F8t/4K
+	 jzygTdjb7eTmUo+yY8EiqMhgOJTY9bihh1moF5EBT6l1ccbSJtsvtn9/Dw0R7nncu6
+	 oAM15FPsNlQoQ==
+Date: Wed, 12 Nov 2025 10:42:34 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrei Vagin <avagin@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
+ grab_requested_mnt_ns
+Message-ID: <20251112-gelitten-sanduhr-17a9d8b97ec8@brauner>
+References: <20251111062815.2546189-1-avagin@google.com>
+ <20251111-umkleiden-umgegangen-c19ef83823c1@brauner>
+ <CAEWA0a5ZjWuyFM9b6076GT6yEn0jYZu06C=huPxpqyxWQiM7QA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched: Document racy behavior of
- drm_sched_entity_push_job()
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251112073138.93355-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20251112073138.93355-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEWA0a5ZjWuyFM9b6076GT6yEn0jYZu06C=huPxpqyxWQiM7QA@mail.gmail.com>
 
-
-On 12/11/2025 07:31, Philipp Stanner wrote:
-> drm_sched_entity_push_job() uses the unlocked spsc_queue. It takes a
-> reference to that queue's tip at the start, and some time later removes
-> that entry from that list, without locking or protection against
-> preemption.
-
-I couldn't figure out what you refer to by tip reference at the start, 
-and later removes it. Are you talking about the top level view from 
-drm_sched_entity_push_job() or where exactly?
-> This is by design, since the spsc_queue demands single producer and
-> single consumer. It was, however, never documented.
+On Tue, Nov 11, 2025 at 08:20:46AM -0800, Andrei Vagin wrote:
+> )
 > 
-> Document that you must not call drm_sched_entity_push_job() in parallel
-> for the same entity.
+> On Tue, Nov 11, 2025 at 1:13 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, Nov 11, 2025 at 06:28:15AM +0000, Andrei Vagin wrote:
+> > > grab_requested_mnt_ns was changed to return error codes on failure, but
+> > > its callers were not updated to check for error pointers, still checking
+> > > only for a NULL return value.
+> > >
+> > > This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
+> > > PTR_ERR() to correctly check for and propagate errors.
+> > >
+> > > Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Signed-off-by: Andrei Vagin <avagin@google.com>
+> > > ---
+> >
+> > Thanks. I've folded the following diff into the patch to be more in line
+> > with our usual error handling:
 > 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   drivers/gpu/drm/scheduler/sched_entity.c | 3 +++
->   1 file changed, 3 insertions(+)
+> The diff looks good, thanks. I have another question regarding
+> 7b9d14af8777 ("fs: allow mount namespace fd"). My understanding is that
+> the intention was to allow using mount namespace file descriptors
+> (req->spare) for the statmount and listmounts syscalls. If this is
+> correct and I haven't missed anything, we need to make one more change:
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 5a4697f636f2..b31e8d14aa20 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -562,6 +562,9 @@ void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
->    * drm_sched_entity_push_job - Submit a job to the entity's job queue
->    * @sched_job: job to submit
->    *
-> + * It is illegal to call this function in parallel, at least for jobs belonging
-> + * to the same entity. Doing so leads to undefined behavior.
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 9124465dca556..3250cadde6fc4 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5738,7 +5738,7 @@ static int copy_mnt_id_req(const struct
+> mnt_id_req __user *req,
+>         ret = copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
+>         if (ret)
+>                 return ret;
+> -       if (kreq->spare != 0)
+> +       if (kreq->spare != 0 && kreq->mnt_ns_id != 0)
+>                 return -EINVAL;
 
-One thing that is documented in the very next paragraph is that the 
-design implies a lock held between arm and push. At least to ensure 
-seqno order matches the queue order.
+Yeah, that's right. I'm going to rename the field to mnt_ns_fd as
+well... Thanks!
 
-I did not get what other breakage you found, but I also previously did 
-find something other than that. Hm.. if I could only remember what it 
-was. Probably mine was something involving drm_sched_entity_select_rq(), 
-drm_sched_entity_modify_sched() and (theoretical) multi-threaded 
-userspace submit on the same entity. Luckily it seems no one does that.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 76f6e868f352..2bad25709b2c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5727,7 +5727,7 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+        ret = copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
+        if (ret)
+                return ret;
+-       if (kreq->spare != 0)
++       if (kreq->mnt_ns_fd != 0 && kreq->mnt_ns_id)
+                return -EINVAL;
+        /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
+        if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
+@@ -5744,15 +5744,12 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
+ {
+        struct mnt_namespace *mnt_ns;
 
-The issue you found is separate and not theoretically fixed by this 
-hypothetical common lock held over arm and push?
+-       if (kreq->mnt_ns_id && kreq->spare)
+-               return ERR_PTR(-EINVAL);
+-
+        if (kreq->mnt_ns_id) {
+                mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
+-       } else if (kreq->spare) {
++       } else if (kreq->mnt_ns_fd) {
+                struct ns_common *ns;
 
-Regards,
+-               CLASS(fd, f)(kreq->spare);
++               CLASS(fd, f)(kreq->mnt_ns_fd);
+                if (fd_empty(f))
+                        return ERR_PTR(-EBADF);
 
-Tvrtko
-
-> + *
->    * Note: To guarantee that the order of insertion to queue matches the job's
->    * fence sequence number this function should be called with drm_sched_job_arm()
->    * under common lock for the struct drm_sched_entity that was set up for
-
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 7fa67c2031a5..5d3f8c9e3a62 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -197,7 +197,7 @@ struct statmount {
+  */
+ struct mnt_id_req {
+        __u32 size;
+-       __u32 spare;
++       __u32 mnt_ns_fd;
+        __u64 mnt_id;
+        __u64 param;
+        __u64 mnt_ns_id;
 
