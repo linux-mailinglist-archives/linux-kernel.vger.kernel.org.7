@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-897527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18E7C530CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:32:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EA5C5335F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CB7DB353876
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:15:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0B6F544C68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074FC277CB8;
-	Wed, 12 Nov 2025 15:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E33633F36D;
+	Wed, 12 Nov 2025 15:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YCIWhukC"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Mko/5yoV"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD80291C13
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5AD337BAC;
+	Wed, 12 Nov 2025 15:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960466; cv=none; b=OpTeSEkOdD14xp0LuFvO87LuimCeVUGicHYb6WFkWPibMhB2/zD6EWlgVuJVZpWFVwzvucP1kqTDhzgg2ta4AAtEqtoghrJA+dHJnmtDqOhktvzUMJhpu1PvmYm6RBUtUbWOUySesMzG8gl82SBdq4P6wcgRMtP1TbrmmACVbGY=
+	t=1762960477; cv=none; b=H+Qb5ivWigedGDi5tsAQSRaiGjAssz0tAw7scSZtz+XN+2lKEAnS+P0BTldAq49655EVlk42gkP1GKfhZ1ndqHVgScqOO0GTa9hzMkr7fIzuEvyAhJi5/sF04ClH0k07Hy10gBIBwYCV9lPBL6k+k+mWUaQ4Gc5T8hUz0sQ70eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960466; c=relaxed/simple;
-	bh=KfVyXzQbeDETL/yDrjvNOh4rHGAiw+f1sfvOwR4EZZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fU6XuYltpSm22CiyDrN37vwRkOQvWRvlZrPOACGPraSLq63sTMUukQnWQn+ciI0y8crtSQhHn2mamPuVFY/CAosNYYjoN5xKV44bN/SaN+hVQLDiAg8N+/8j23Jk3O5pHzfGCNrpeywcitRVCDOsW+cES2vm5+uDhPlQ7hdZtk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YCIWhukC; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-37a5bc6b491so6828421fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762960463; x=1763565263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X+QdVkbf95zLodOyO1kTFJXDz9bbg2/C6I/0nfO7/gA=;
-        b=YCIWhukCeT6XBRug/feA8iYPlSslZVaPV/AY8RZG++FFOnHA3h/KdP+u4yPr6MS2N8
-         SPb8KvqvqFa2YH7wPT1ZhEKss/Kd4STNazUnbzQifxnpUAg4pPl60A6tCdnZzTINx053
-         OT86mRqpkcdcQyrhblx68Z/KADzgCrRjc/2laDs16kCLDbCFRgO0oo4KTFVVGw+QpNy2
-         Q5CjxsMtVLe3KJQKCcbOZInSAGZOkrjIx7PnR1lFHZStPCw6jXAWh0ZNH2Gj2mNJPe7P
-         Af//DG/WfGMXaadQT8VHibT/Fipoq0YTCs8qDyqtZxoalSyUoSo11UA6TDyXjdMoz5Ga
-         m07Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762960463; x=1763565263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=X+QdVkbf95zLodOyO1kTFJXDz9bbg2/C6I/0nfO7/gA=;
-        b=GsAsol2QcDREnQUDL9x5lFJmRUGg7R65R8i8eWklvStnNB9lb/9ePs0UgP4t4+TZ/x
-         +Eu9A/wpS7P9aIAU+CfWqq2pIpzjPjiLhT60UdJ+fhpj3N9yXbsvQI+q24jg1wL2A1j+
-         QXXCzc5Xynpz6CCv1em4N1Y2a5eV55RysxmDCRR3lJo9Ud8zFPOlmLg/N656QKPPHCmk
-         fTbPuwRRSDNRk4C8p158KalKA56v201Yd/HKnxRwing0hc6xukw5FSFYsGQAy1J8kn5m
-         iIFzuLYut4EK9c+rdLP+SPS9jhWVfGaZ3F3tAWg3jcotz9Sjt6m1BKqr6YgqRuwzAx15
-         Mbfw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2FGmUqqHPBoFEq3UBhHx45277jdDv8bvScEoOFo4wJnCegifzlq1asTgjdfjYktxLZEK+x2x9ESls3zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3T8zalN/Ys9Su4hUmThKlzlkUp95zNlcbONFChisFz4KZv2CH
-	tk/eEw8xoHmoiCRReyy/8ki0sVQ4HbTOTxrvYfTLK6bwP5xNLmbwSEKJvJy5MKiMtNeQlEtDFlP
-	/K0Up952tAskQ8+QXAeKo6K8Dv0PRmK0BWvyjjpVwLaTqTH5/Sl7OYbc=
-X-Gm-Gg: ASbGncsmupc7/hPiDa1ejc8Dim40JzOxWhsdlw3bWkE+qcvFNWWFilHsiVwf2vqzcCM
-	FRgg+MgHswrFd3vMdNmmL1fv+xLVVvLMY3bZpYcEohypsd3RgWrNyxOzfPc0vgi8WA7WrHsDcoT
-	4qpsb4Vwxh5sH9xEYiMoa7fx8qerJXXmVc2+1mDfgQl4mtsfudfFmtTt7ZO4ssReVek8FcRFFz+
-	5+b0uQcMPkWKKgcQN2xz/7lBU2nkhJwx04SnRMdy0NrcSK1BUB2/HhUVUlHvU2IlqGNorY88Y7A
-	WaQtcJK89JTd
-X-Google-Smtp-Source: AGHT+IFMDfiNQYOXVyFCJlLDwzpVyDmixLDSHAogUbbhy+wq6OHS7KGEO7K1heDM21yAh2VvGTgQF8A0HAZeooRc84w=
-X-Received: by 2002:a05:6512:e88:b0:594:2db8:312b with SMTP id
- 2adb3069b0e04-59576df1d90mr1036256e87.7.1762960463070; Wed, 12 Nov 2025
- 07:14:23 -0800 (PST)
+	s=arc-20240116; t=1762960477; c=relaxed/simple;
+	bh=Jnp4IlflwgSMycJi01qBlU7Sv1wGXj0nFB6lrlCZrlE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I5F1YicKrkPJ0AFB8llQ1I+4Z11x0MPEIB5OjhRmlV3/K5v1qqWM5Z1E4iSnJ5MhwQPuS/M1OSWSd2fqi3MP2PX8f3zsb37zVDszSc8r6cp9xQz+ogwOMVmHThyH+5ClSMb/rINMDadt6T10/pTirorvyDoTb2SI7D1wl2z3h70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Mko/5yoV; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id ED52E1A1A31;
+	Wed, 12 Nov 2025 15:14:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C0C806070B;
+	Wed, 12 Nov 2025 15:14:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 04983102F187F;
+	Wed, 12 Nov 2025 16:14:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762960471; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=TQgXjxSgHcT+NWP+SefXHNsxBqz2GVfd0mxc5Ppvkuw=;
+	b=Mko/5yoVvgtVcnpBGG/WcDNSfej+OFBndYnTCcBmVzaCvpL9kgreyq/JjmJCG8O8G8WVIR
+	poqxuoU/+AjIgK0jRbGdpzwzaqOUddETZIoXIBLC9+Vmsi9rFsmKn8s01Nm1IKDyABLqZ3
+	iTTZDUSjfdcyWn+430OGqt+e0zTSSxtH04/fSkv4GNdTvMQN5dijO604uxdG8M5NC46Nee
+	BYR9g892I6KeRqYta6RGkakg2W20T87V1S1GFIXi/BGV7bjo5FLytxZE2Pe/HvSA0gYOXg
+	Z/IX87MMXILW69Gcy/75DC8F3WIqnMqlsyvLN55v5BNEXGeZRnngR7OmF69Ueg==
+From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
+Subject: [PATCH v4 0/2] Enable 1GHz OPP am335x-bonegreen-eco
+Date: Wed, 12 Nov 2025 16:14:19 +0100
+Message-Id: <20251112-fix_tps65219-v4-0-696a0f55d5d8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112034040.457801-1-raag.jadav@intel.com>
-In-Reply-To: <20251112034040.457801-1-raag.jadav@intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 12 Nov 2025 16:14:11 +0100
-X-Gm-Features: AWmQ_bnpZz6ks3T2w4bfBK2oOgS0eQRCxr7lzgLUOHXAN4GCLssFxg_TaDnqeoc
-Message-ID: <CAMRc=MfYZq8vKxb736RRc17Ufu1A+6YDMuKDSME3Ly73y1ZRvw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Introduce Intel Elkhart Lake PSE I/O
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com, 
-	andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org, 
-	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEukFGkC/3WMwQ6CMBAFf4Xs2Zp2KUU8+R/GGGiLbKItaUmjI
+ fy7hZOaeJz3MjNDtIFshGMxQ7CJInmXQe4K0EPrbpaRyQzIsRKCK9bT8zqNUVUoGmaMQiGFQdQ
+ 9ZGUMNv9b7nzJPFCcfHht9YTr+ieUkHHW1kbxg5ZYY3/qvJ/u5PbaP2BNpfJDF/ijl1m3sunaT
+ moutP3Wl2V5A/X0fz7pAAAA
+X-Change-ID: 20251106-fix_tps65219-dd62141d22cf
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Lee Jones <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Andrew Davis <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Nov 12, 2025 at 4:41=E2=80=AFAM Raag Jadav <raag.jadav@intel.com> w=
-rote:
->
-> This series adds Intel Elkhart Lake PSE I/O driver which enumerates the
-> PCI parent device and splits two child I/O devices (GPIO and Timed I/O
-> which are available as a single PCI function through shared MMIO) to thei=
-r
-> respective I/O drivers.
->
-> In spirit, it is a continuation of PSE TIO series[1] which received
-> objection from Greg for abusing platform device and has now been reworked
-> to use auxiliary device instead.
->
-> Currently TIO driver[2] falls under PPS subsystem supporting generator
-> functionality and will be coming up in a separate follow-up series for
-> its independent design changes as per below roadmap.
->
-> =3D> Extend TIO driver[2] to support PPS client functionality.
-> =3D> Develop a PPS common driver which hooks to both generator and client
->    counterparts.
-> =3D> Develop an auxiliary glue driver for PPS common driver.
->
-> [1] https://lore.kernel.org/r/20250307052231.551737-1-raag.jadav@intel.co=
-m
-> [2] https://lore.kernel.org/r/20250219040618.70962-1-subramanian.mohan@in=
-tel.com
->
-> v2:
-> - Consolidate OFFSET and SIZE macros (Andy)
-> - Make child device objects parent managed (Andy)
-> - Fix double free on error path (Andy)
-> - Shorten child device names to fit id string length (Andy)
->
-> v3:
-> - Use auxiliary_device_create() (Andy)
->
-> Raag Jadav (2):
->   platform/x86/intel: Introduce Intel Elkhart Lake PSE I/O
->   gpio: elkhartlake: Convert to auxiliary driver
->
->  MAINTAINERS                             |  7 ++
->  drivers/gpio/Kconfig                    |  2 +-
->  drivers/gpio/gpio-elkhartlake.c         | 36 ++++++-----
->  drivers/platform/x86/intel/Kconfig      | 13 ++++
->  drivers/platform/x86/intel/Makefile     |  1 +
->  drivers/platform/x86/intel/ehl_pse_io.c | 86 +++++++++++++++++++++++++
->  include/linux/ehl_pse_io_aux.h          | 24 +++++++
->  7 files changed, 151 insertions(+), 18 deletions(-)
->  create mode 100644 drivers/platform/x86/intel/ehl_pse_io.c
->  create mode 100644 include/linux/ehl_pse_io_aux.h
->
-> --
-> 2.43.0
->
+The vdd_mpu regulator maximum voltage was previously limited to 1.2985V,
+which prevented the CPU from reaching the 1GHz operating point. This
+limitation was put in place because voltage changes were not working
+correctly, causing the board to stall when attempting higher frequencies.
+Increase the maximum voltage to 1.3515V to allow the full 1GHz OPP to be
+used.
 
-When this goes into the x86 tree, can you make it available on an
-immutable branch for me to pull into the GPIO tree? Either just patch
-1/2 or both of them with my Ack.
+Add a TPS65219 PMIC driver fixes that properly implement the LOCK register
+handling, to make voltage transitions work reliably.
 
-Bart
+Changes in v4:
+- Move the registers unlock in the probe instead of a custom regmap write
+  operation.
+- Link to v3: https://lore.kernel.org/r/20251112-fix_tps65219-v3-0-e49bab4c01ce@bootlin.com
+
+Changes in v3:
+- Remove an unused variable
+- Link to v2: https://lore.kernel.org/r/20251106-fix_tps65219-v2-0-a7d608c4272f@bootlin.com
+
+Changes in v2:
+- Setup a custom regmap_bus only for the TPS65214 instead of checking
+  the chip_id every time reg_write is called.
+- Add the am335x-bonegreen-eco devicetree change in the same patch
+  series.
+
+Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+---
+Kory Maincent (TI.com) (2):
+      mfd: tps65219: Implement LOCK register handling for TPS65214
+      ARM: dts: am335x-bonegreen-eco: Enable 1GHz OPP by increasing vdd_mpu voltage
+
+ arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts | 2 +-
+ drivers/mfd/tps65219.c                             | 7 +++++++
+ include/linux/mfd/tps65219.h                       | 2 ++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+---
+base-commit: 1c353dc8d962de652bc7ad2ba2e63f553331391c
+change-id: 20251106-fix_tps65219-dd62141d22cf
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
