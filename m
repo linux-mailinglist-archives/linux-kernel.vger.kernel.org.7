@@ -1,272 +1,186 @@
-Return-Path: <linux-kernel+bounces-896996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9035C51BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA2FC51C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313DE3B29B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 048D23A349D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4061C30506A;
-	Wed, 12 Nov 2025 10:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C010E305053;
+	Wed, 12 Nov 2025 10:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="tpi7CiGY";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="loHqrz9M"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv/j9nxi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BE62EDD72;
-	Wed, 12 Nov 2025 10:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8CA223DD6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943987; cv=none; b=IhFKWEVI2ZDa4+/+Mn/vDIWCS9pTd+1vUc7K84rVqcXsxkyfbhW7M3tUmYPK4g5MfLpZmzuRO7nq48UzHTUVV5APvD9IpyV1uHm7FBjozbUTzfFBk8HvEh800TeulekKekagkDnpT6THuYwfRBXTV1r69FAECn12rS2HjDsDvPM=
+	t=1762944177; cv=none; b=tvoCkoTfX9PX0rDRHLSF7jhp5l2PRNF4Q3uz5CAjI1I1kb4HmxYDW+lf2v9gUj+b7p3sEX1wobdlQGDG8WNhfOM+YH0A+fJHegqJtHdXToiZYsdDrqA7qQ2qNwIoqfFpXZJZ9VVZUTt9gXm/VHa5eqZvfgpmkDeXyx5gKNpsm3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943987; c=relaxed/simple;
-	bh=yWDof+1qEzhv6GT7rwx5p9FNpnexr95sdjmcrwq8LTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSMsXuu3ECKdsnOk186MmDj3rDYaveSGwp03VyTP3qadPTJPMR4BCKqhYaFIS+2Zs+hzayonjueChqF3dtVit65tuU/2VnZqjSOQ3JIbuoac3RiZLnk2EYACSSwzpgaog9VSQzsxNAX04Tudbage6jRS1fD1euKIIfC0M6smTiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=tpi7CiGY; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=loHqrz9M; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1762943959; bh=xSG2qOcvmKVU4hZhsVCuMJL
-	8mdn9d4nzXlX6j84DGrw=; b=tpi7CiGYmW6FZZ9r7P3dLgyq3EkNHbI/hAwwEsd4UTh4FJaJe6
-	kOGOZOfLgf7IEJAQX6XEpn+QNPe/YRwb48U7kjqcLqRp6PSC/RZbQP/+Y5vnBessgd2lrc5niqd
-	Ypyx2uGE1+7U57kWgGOqKJ1/ssJkPF7YD75IC1pnFvLsZOP0wCM5HU7Mf7EpvsBdQfwOaMlrqJ3
-	Lhp36TgVCOJZq/upvGQYR2QA3/fCiTGbqELhUFIbt6esiHRmBBspRs/U8xIT2NyrshdIbX1OH00
-	YDAqh94UQyLv71a2JA9FhYlae0hQN6DrvW0sw5yBdKhJTcygLIwFhr2d1ESwqgvdaeQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1762943959; bh=xSG2qOcvmKVU4hZhsVCuMJL
-	8mdn9d4nzXlX6j84DGrw=; b=loHqrz9MD++YfnK3wbq+zQzUwoXWPPWKDraMnYzbGuZYKxHP05
-	IvzDWCisIgeVXkj8g6jdWTH7yqQ5PpT8iKAQ==;
-Message-ID: <f8648a65-133b-4b9f-975b-725ffd93020d@damsy.net>
-Date: Wed, 12 Nov 2025 11:39:18 +0100
+	s=arc-20240116; t=1762944177; c=relaxed/simple;
+	bh=yd524j2UYdF9T60dZKoUWbXfiU/+4GqqehDLlNYZFPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W3p+Noz6XTJFYU7yQKoY/HqobfFg7cPzJ9CxF058WYxZ6cmi++sv+/HoyRHP8TGcsX7Y7CuIaybhIxlBQZyGRIPzEGVfSxgExi/IaJyIGHlIu3VxIAQC/9a8IG8dOA4EIQ6QJa/tRCLV7JP+2QjPnwj94Vyi/ds12wIKsozK3hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv/j9nxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F16C2BCB1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762944176;
+	bh=yd524j2UYdF9T60dZKoUWbXfiU/+4GqqehDLlNYZFPQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nv/j9nxiepBqtVQU8PK3bUIFsPYEb9kXlebOfV8SEtbg96Lpxb1gK5sI80MAYGaub
+	 moDxcoLxZH1q2BvPcTPyr5XLwe3KSmDmLjtiKRYXFGZiw/CYrWJFbvngwJRUUzGLAA
+	 9s8+xOZdHeOShR0y/1BKdDAuIm0c6ESTgFXnOM3/Lqu6nMvja67LtVc48sV3CjcnXT
+	 O/4hs4fo3sgK9YkY00Qyu8x9Mdb4z7FxmSso8ro5o75o9LDy5DtmZ4nYNM45BbSAJq
+	 Qm44CO9X0KmtX9/IoJZMYsAhnFXz0WFjT7eeCAqhi2MRb0ZwsOCEKxgSB9n+SAmuB2
+	 J6yTWlWqf4tJg==
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-640d790d444so604528d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:42:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWppNZkWa6rYNTrE3l6VprRrK6ONgGQIQFXF5PaaFPmSsIqDIUQsp8ZRI2aRZV7527LgHpabrc0CpUFw3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeyXufGTDBj2XOjRrrOZMypwO8pk566wjT1ZOyHFkSZgpFKzvd
+	BHI++DxpeQpEuetXj75B3ZlXepm40rLlwUD0p+gWUDmkR8GzPBuKKLAj6M/aNfgdStto0pYIy34
+	K+hawGKin02iLu4OauDSBW5nOhqOonWA9Srt4KyEcCA==
+X-Google-Smtp-Source: AGHT+IGpzC31MKqwjg37OYzkgE4JfNhCv8x/koPXoGpSYX9bTIBUawoA0Cj3921m0wicSy1w8LKVD7CXORcIJ008s+A=
+X-Received: by 2002:a05:690e:d4a:b0:63f:b9fc:c65d with SMTP id
+ 956f58d0204a3-64101a34891mr2438331d50.12.1762944176056; Wed, 12 Nov 2025
+ 02:42:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 11/20] drm/amdgpu: use multiple entities in
- amdgpu_fill_buffer
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20251104083605.13677-1-pierre-eric.pelloux-prayer@amd.com>
- <20251104083605.13677-12-pierre-eric.pelloux-prayer@amd.com>
- <0f9aa878-46c4-48d6-9ad5-774a0927b291@amd.com>
- <7395bf47-68fd-4af6-8720-e51dc75253bc@damsy.net>
- <29c2e42d-6d94-4462-9302-af71f489a928@amd.com>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <29c2e42d-6d94-4462-9302-af71f489a928@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251111-swap-fix-vma-uaf-v1-1-41c660e58562@tencent.com> <87ldkchv4r.fsf@DESKTOP-5N7EMDA>
+In-Reply-To: <87ldkchv4r.fsf@DESKTOP-5N7EMDA>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 12 Nov 2025 02:42:45 -0800
+X-Gmail-Original-Message-ID: <CACePvbW+WT2obgoKs_ZPoMqnyCzO=_ir4uKX6xxY+rk_+=Zrcw@mail.gmail.com>
+X-Gm-Features: AWmQ_bm5A-7V0WTqXR0dV28f2BzUEkhRXXIItSKog2jneau9hBijp83WKJIbfs0
+Message-ID: <CACePvbW+WT2obgoKs_ZPoMqnyCzO=_ir4uKX6xxY+rk_+=Zrcw@mail.gmail.com>
+Subject: Re: [PATCH] mm, swap: fix potential UAF issue for VMA readahead
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 11, 2025 at 5:56=E2=80=AFPM Huang, Ying
+<ying.huang@linux.alibaba.com> wrote:
+>
+> Kairui Song <ryncsn@gmail.com> writes:
+>
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Since commit 78524b05f1a3 ("mm, swap: avoid redundant swap device
+> > pinning"), the common helper for allocating and preparing a folio in th=
+e
+> > swap cache layer no longer tries to get a swap device reference
+> > internally, because all callers of __read_swap_cache_async are already
+> > holding a swap entry reference. The repeated swap device pinning isn't
+> > needed on the same swap device.
+> >
+> > Caller of VMA readahead is also holding a reference to the target
+> > entry's swap device, but VMA readahead walks the page table, so it migh=
+t
+> > encounter swap entries from other devices, and call
+> > __read_swap_cache_async on another device without holding a reference t=
+o
+> > it.
+> >
+> > So it is possible to cause a UAF when swapoff of device A raced with
+> > swapin on device B, and VMA readahead tries to read swap entries from
+> > device A. It's not easy to trigger, but in theory, it could cause real
+> > issues.
+> >
+> > Make VMA readahead try to get the device reference first if the swap
+> > device is a different one from the target entry.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning")
+> > Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> > Sending as a new patch instead of V2 because the approach is very
+> > different.
+> >
+> > Previous patch:
+> > https://lore.kernel.org/linux-mm/20251110-revert-78524b05f1a3-v1-1-8831=
+3f2b9b20@tencent.com/
+> > ---
+> >  mm/swap_state.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index 0cf9853a9232..da0481e163a4 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -745,6 +745,7 @@ static struct folio *swap_vma_readahead(swp_entry_t=
+ targ_entry, gfp_t gfp_mask,
+> >
+> >       blk_start_plug(&plug);
+> >       for (addr =3D start; addr < end; ilx++, addr +=3D PAGE_SIZE) {
+> > +             struct swap_info_struct *si =3D NULL;
+> >               softleaf_t entry;
+> >
+> >               if (!pte++) {
+> > @@ -759,8 +760,19 @@ static struct folio *swap_vma_readahead(swp_entry_=
+t targ_entry, gfp_t gfp_mask,
+> >                       continue;
+> >               pte_unmap(pte);
+> >               pte =3D NULL;
+> > +             /*
+> > +              * Readahead entry may come from a device that we are not
+> > +              * holding a reference to, try to grab a reference, or sk=
+ip.
+> > +              */
+> > +             if (swp_type(entry) !=3D swp_type(targ_entry)) {
+> > +                     si =3D get_swap_device(entry);
+> > +                     if (!si)
+> > +                             continue;
+> > +             }
+> >               folio =3D __read_swap_cache_async(entry, gfp_mask, mpol, =
+ilx,
+> >                                               &page_allocated, false);
+> > +             if (si)
+> > +                     put_swap_device(si);
+> >               if (!folio)
+> >                       continue;
+> >               if (page_allocated) {
+>
+> Personally, I prefer to call put_swap_device() after all swap operations
+> on the swap entry, that is, after possible swap_read_folio() and
+> folio_put() in the loop to make it easier to follow the
+> get/put_swap_device() rule.  But I understand that it will make
+>
+> if (!folio)
+>         continue;
+>
+> to use 'goto' and introduce more change.  So, it's up to you to decide
+> whether to do that.
 
+Personally I prefer it to keep the put_swap_device() in the current
+location, closer to the matching get_swap_device(). To me that is
+simpler, I don't need to reason about other branch out conditions.
+Those error handling branch conditions are very error prone, I have
+made enough mistakes on those goto branch handling in my past
+experience. The si reference is only needed for the
+__read_swap_cache_async() anyway.
 
-Le 05/11/2025 à 14:03, Christian König a écrit :
-> On 11/5/25 11:39, Pierre-Eric Pelloux-Prayer wrote:
->> Le 04/11/2025 à 17:40, Christian König a écrit :
->>> On 11/4/25 09:35, Pierre-Eric Pelloux-Prayer wrote:
->>>> The benefits of using multiple entities is that multiple fill jobs
->>>> can run in parallel. Otherwise, even if the entity has access
->>>> to multiple engines, a burst of N independent jobs will all
->>>> run on the same engine because an entity guarantees the ordering
->>>> of execution matches the ordering of the submission.
->>>>
->>>> Callers can opt-out of this behavior by passing the entity they
->>>> want to use (see amdgpu_move_blit).
->>>
->>> That still sounds like a really bad idea to me.
->>>
->>> First of all we can't reserve so many fence slots in the release handler, previously we basically just relied on the fact that the BO will most likely be mostly idle.
->>>
->>> I think we should just use a single SDMA engine for each clear and distribute clearing different BOs over multiple engines.
->>
->> So N clear entities, each one having access to a single engine. And all jobs to clear a single BO go to the same entity?
->>
->> Is that what you mean?
-> 
-> More or less.
-> 
-> N clear entities, each one has access to all engines. When a BO needs to be cleared it picks the next best entity and submits the jobs.
-> 
-> This way clear entities still load balance with moves and page table updates but we can keep the clearing logic simple.
+To it to the end also works, just take more brain power to reason it.
 
-OK, I'll drop this change from patchset as a tradeoff: we lose a bit of 
-performance (because if a BO is built of N regions, then the N clears will 
-execute sequentially) but it keep the code simple.
+> Otherwise, LGTM, Thanks for doing this!  Feel free to add my
+>
+> Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
 
-Pierre-Eric
+Thank you for the review.
 
-
-
-> 
-> Christian.
-> 
->>
->> Pierre-Eric
->>
->>>
->>> Regards,
->>> Christian.
->>>
->>>>
->>>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->>>> ---
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 84 ++++++++++++++++++-------
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h |  1 +
->>>>    2 files changed, 64 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> index c357a6d9763a..839ea8c7f6be 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> @@ -2224,6 +2224,7 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
->>>>            adev->mman.clear_entities = kcalloc(num_clear_entities,
->>>>                                sizeof(struct amdgpu_ttm_entity),
->>>>                                GFP_KERNEL);
->>>> +        atomic_set(&adev->mman.next_clear_entity, 0);
->>>>            if (!adev->mman.clear_entities)
->>>>                goto error_free_entity;
->>>>    @@ -2498,10 +2499,12 @@ int amdgpu_fill_buffer(struct amdgpu_ttm_entity *entity,
->>>>    {
->>>>        struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
->>>>        struct amdgpu_ring *ring = adev->mman.buffer_funcs_ring;
->>>> +    struct dma_fence *fences[TTM_FENCES_MAX_SLOT_COUNT] = {};
->>>>        struct dma_fence *fence = NULL;
->>>>        struct dma_resv *resv = NULL;
->>>>        struct amdgpu_res_cursor dst;
->>>> -    int r;
->>>> +    uint64_t cur_size, to;
->>>> +    int r, e, n_fences;
->>>>          /* The fences will be either added to the resv object or the last fence
->>>>         * will be returned to the caller. In the latter case, all fill jobs will
->>>> @@ -2515,53 +2518,92 @@ int amdgpu_fill_buffer(struct amdgpu_ttm_entity *entity,
->>>>        }
->>>>          if (!entity) {
->>>> -        entity = &adev->mman.clear_entities[0];
->>>>            resv = &bo->tbo.base._resv;
->>>> -        r = dma_resv_reserve_fences(resv, 1);
->>>> +
->>>> +        /* Determine how much fences we're going to add to the
->>>> +         * resv object.
->>>> +         */
->>>> +        n_fences = 0;
->>>> +        amdgpu_res_first(bo->tbo.resource, 0, amdgpu_bo_size(bo), &dst);
->>>> +        while (dst.remaining) {
->>>> +            cur_size = min(dst.size, 256ULL << 20);
->>>> +
->>>> +            n_fences += 1;
->>>> +            amdgpu_res_next(&dst, cur_size);
->>>> +        }
->>>> +        if (n_fences == 0)
->>>> +            return 0;
->>>> +
->>>> +        /* One slot per entity at most. */
->>>> +        n_fences = MIN(n_fences, adev->mman.num_clear_entities);
->>>> +
->>>> +        r = dma_resv_reserve_fences(resv, n_fences);
->>>>            if (r)
->>>>                return r;
->>>> +    } else {
->>>> +        mutex_lock(&entity->gart_window_lock);
->>>>        }
->>>>          amdgpu_res_first(bo->tbo.resource, 0, amdgpu_bo_size(bo), &dst);
->>>>    -    mutex_lock(&entity->gart_window_lock);
->>>>        while (dst.remaining) {
->>>> -        struct dma_fence *next;
->>>> -        uint64_t cur_size, to;
->>>> -
->>>>            /* Never fill more than 256MiB at once to avoid timeouts */
->>>>            cur_size = min(dst.size, 256ULL << 20);
->>>>    +        if (resv) {
->>>> +            /* Pick a new entity for each partial clear so they can
->>>> +             * execute in parallel.
->>>> +             */
->>>> +            e = atomic_inc_return(&adev->mman.next_clear_entity) %
->>>> +                adev->mman.num_clear_entities;
->>>> +            entity = &adev->mman.clear_entities[e];
->>>> +            mutex_lock(&entity->gart_window_lock);
->>>> +        }
->>>> +
->>>>            r = amdgpu_ttm_map_buffer(&entity->base,
->>>>                          &bo->tbo, bo->tbo.resource, &dst,
->>>>                          entity->gart_window_id1, ring, false,
->>>>                          &cur_size, &to,
->>>>                          dependency,
->>>>                          resv);
->>>> -        if (r)
->>>> +        if (r) {
->>>> +            mutex_unlock(&entity->gart_window_lock);
->>>>                goto error;
->>>> +        }
->>>>              r = amdgpu_ttm_fill_mem(ring, &entity->base,
->>>>                        src_data, to, cur_size, resv,
->>>> -                    &next, true, k_job_id);
->>>> -        if (r)
->>>> +                    &fence, true, k_job_id);
->>>> +        if (r) {
->>>> +            mutex_unlock(&entity->gart_window_lock);
->>>>                goto error;
->>>> -
->>>> -        if (resv) {
->>>> -            dma_resv_add_fence(resv, next, DMA_RESV_USAGE_KERNEL);
->>>> -            dma_fence_put(next);
->>>> -        } else {
->>>> -            dma_fence_put(fence);
->>>> -            fence = next;
->>>>            }
->>>>              amdgpu_res_next(&dst, cur_size);
->>>> +
->>>> +        if (resv) {
->>>> +            /* Delay the addition of the fences to resv, otherwise the next partial
->>>> +             * clears will depend on this one.
->>>> +             */
->>>> +            fences[e] = fence;
->>>> +            mutex_unlock(&entity->gart_window_lock);
->>>> +        } else {
->>>> +            dma_fence_put(*f);
->>>> +            *f = fence;
->>>> +        }
->>>>        }
->>>>    error:
->>>> -    mutex_unlock(&entity->gart_window_lock);
->>>> -    if (f)
->>>> -        *f = dma_fence_get(fence);
->>>> -    dma_fence_put(fence);
->>>> +    if (resv) {
->>>> +        for (e = 0; e < adev->mman.num_clear_entities; e++) {
->>>> +            if (fences[e]) {
->>>> +                dma_resv_add_fence(resv, fences[e], DMA_RESV_USAGE_KERNEL);
->>>> +                dma_fence_put(fences[e]);
->>>> +            }
->>>> +        }
->>>> +    } else {
->>>> +        mutex_unlock(&entity->gart_window_lock);
->>>> +    }
->>>> +
->>>>        return r;
->>>>    }
->>>>    diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> index 38df2b5b4bc7..3fc31c7c6bfe 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> @@ -73,6 +73,7 @@ struct amdgpu_mman {
->>>>          struct amdgpu_ttm_entity default_entity; /* has no gart windows */
->>>>        struct amdgpu_ttm_entity *clear_entities;
->>>> +    atomic_t next_clear_entity;
->>>>        u32 num_clear_entities;
->>>>        struct amdgpu_ttm_entity move_entities[TTM_FENCES_MAX_SLOT_COUNT];
->>>>        u32 num_move_entities;
-
+Chris
 
