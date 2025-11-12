@@ -1,58 +1,98 @@
-Return-Path: <linux-kernel+bounces-897608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64813C538BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A336AC534AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA85D54650E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:45:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06442501EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932C33ADA2;
-	Wed, 12 Nov 2025 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E3433BBC4;
+	Wed, 12 Nov 2025 15:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWKbwFmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCfySJkf"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCE433F381;
-	Wed, 12 Nov 2025 15:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DDF33F8CF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962151; cv=none; b=QMUb3J9QCBTQWphf+L8u7yElR+Vm4jLqLNKT7TrwGrHMiy6sOX6dFEeSn59b3KWg4XPPDyp299FtwcHzaYp7HbCfyqhDb5jgmxbGnjuIDha7BBuWY4Q3m7SkshLL3vFz9uCtMJYc0vs2OoNi5Aukkkuq3FYTo2AJXVU9AvMya/I=
+	t=1762962093; cv=none; b=A3YnsJXPvgyZhW1kYq9iF0LXSzkEtseIrLPI9qwSWutQp78V4JNSBCLQc2XUaX4cyzLIZEfUsisXImY7AkUnzYXIcJTdHHaaiNuXtGAKz0bT6Q7Dfl2+ONanG/GVegYE1mstGT+GfjfmkLNFb9hhSUmmPoaE8N+BooH+DGNOiVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962151; c=relaxed/simple;
-	bh=oV9KpZkPcPBVuXqYBkV9kaSGZ1/EOa6v/e8B2pFRGFI=;
+	s=arc-20240116; t=1762962093; c=relaxed/simple;
+	bh=T35+cYLS7/MVLQYR3L4zZ3jVtXxwtTE09atiMIdrc8g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bIPwupGuQFuh1UwpBkhDnwYedch2O09gEqU7p8jVvQbp7beINY1tmaIetyTpVtAnSEb6eZq8rIFnha82XlJKpbON8FIp/jqqsYAWVSWJJYZ+/aWIM0UHYk639Nvv/RzcQtnXHSwe7BxWkfDcV9GfUxLiDA5DMabPYJsEq8h+Kbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWKbwFmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DCEC4CEF8;
-	Wed, 12 Nov 2025 15:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762962150;
-	bh=oV9KpZkPcPBVuXqYBkV9kaSGZ1/EOa6v/e8B2pFRGFI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uWKbwFmZmbqtbdTh322aK72q/tDo78ckesGHoFb9PYCGYvrGLRtAd5Az9X4HS373a
-	 GAdfpe+jcawZ78w7TlE8qpfEqZr9g/lqyVEONHn6SkUnAbSCZlcerqNSYMe+zixwSg
-	 8zACGTEcu8xIYXj6kzCNxaJIrnPHPe6w9ZgzGscoJHlmjXfRelvA5SimG+/3PNI9hj
-	 C4LTWi2mlE0qsAZGTTGeC1sk5LVXHaAtax17Z9DxukagyT9NEcB/wNmPUQ3wyDoI59
-	 4DJ0HX2Syt6kAsGAZbtwJC7pwahLw75Bc3MKf/wnqALNCc6Rn5YQuozQ+ATbZ2Qup0
-	 Z97FMaJjH7ecg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
+	 MIME-Version; b=Fzh/UX5v1Er5PqOKg2Tz8AbM8Hk3t77veb2h2r5O4A7pQg6I2NrLlhDQtf1a/9AJOM3Z8+cm9D4mf1PsyHaRbXwMirCNmApusmxrHLr4NToNQfDUbFjKOBN7SNZGBw2mpkHch+XOTnNJ6dUk9JfEYhTGT5JwwYPm/j052/7RIUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCfySJkf; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1562388a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:41:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762962089; x=1763566889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XTTxnEs3Raq/piGJ6Bf3ZQhcim/5IOYY6Is9ElUM8U=;
+        b=VCfySJkfaF4H1SuLHBZ6uZUs7y1y5ShqS5KINQ0QKt0AjekuJSsU+srHLQF/BL40Sa
+         YxwJI9GFXHTkWadOZXgJDfD87PonrTHnEMqBnWeRERVYA4gdGN1PBeYo9xU8te9pcSJg
+         OD/gDp+rzw4rU3pHzzq0+JhlmUx5PQYOVyWCOnawFK5LcWdSP05rudAP6CFvBC2YIepT
+         MVOyNzraMkvHAAUX6Q0YMqB3fkYmVcJqM97197mBhZgqOwyE8FGN24KdCq/BM/ykNoK6
+         +LcMvTkt30Id8NEQbyBVKRRH8weJhIdjJRlwzEUs7J2Bp3q2L8i4ZHHbzz40qv49G0oZ
+         sAgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962089; x=1763566889;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4XTTxnEs3Raq/piGJ6Bf3ZQhcim/5IOYY6Is9ElUM8U=;
+        b=suX7wIVyH2IUJGdOzHXFyNyU+iydIif2J+0iR3c4bq5JnpALJbicMUXkL6FwtSJ4p4
+         yMeu9HrE2vm9jcvGR5DjRcy+1/ZitI+3fXjwFUKBgxan01pV5JhYy7UN4iABqMbQAPnK
+         HN8yvDWeD4WkWkTgsAQ16aQVOcP9FuxwNBsChJsV+43IpZ/EtAWfBD6MZ8BXvi7SVDz3
+         YLOdLk/p+lJpzKXR1A05WLAm6BIrBekBbdtAnu1b47paiENBW5hO20/ZgdlW/Q52Kecr
+         uBwt4dei7XFR1VbP+ZOgvb2dyXazakScjVAeimTGmqEGUYoA/RoacKysmGea/zqC/uCg
+         R82A==
+X-Forwarded-Encrypted: i=1; AJvYcCWm27HjnDmmaUymJOa2W9MeVwUvfGvqGuJxn+ZPNDtSC9YaTZXaimiNRpbof0tPURQPFD7yeZKCgzrtqdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0csel65SH4jdxKNqE6198A089ssOkRePlb93Xg6Mka9wSN5Lp
+	0JxwoPMplsHfrvYBuk5rR7Zm7MTztwnAqMdH6eZLqXGI+zst+Ul1zkNJ
+X-Gm-Gg: ASbGncst7HhWAUF0A2cXepCXS6JHeqRjbTEKNy8fR1U3QHS1sOogz9WlLf0kpjVpPi6
+	om2SJbEwAFIn5baNx6wogsiMsecoUNcZ/tW+iT9v+OnSMutyMFx037eW+Nt3jBvwCzjt3K0b+WY
+	leEmz8OrrLYHvK/V/2dkPbuBQ2gDYKTFPRt6DDDJ2giItHdf/h+bjzNYPoE8y0wJ6Zgmf+ld+8o
+	fIw7cNU+8dGumZqSw/DcskBpm/R15/JLcoh3nUAC+cvHIJU1BikaVqhobpT2S5EWHDmPCT1w0T7
+	PV2xy4N3LnBWOR8V4x5+eEXk5SBSxnyzgY8hmRnrBZPu/6G3TfUK8nvjy1DVtkqydndpuKelIFr
+	qPyWi7z2MdBA3bQ/vTC4FeJGLjzc1m0KQJEExV4VHXxpjcE2u+9KBPG2QBRvnBUMhURmMIDpmok
+	7ZSnveu1tMAV+pOuUdyQ0aW7anE96jdFQWpe8XNXf8HvnKzi/N8j+uDdigOw8LyauUudjVa2Xh0
+	H/gVA==
+X-Google-Smtp-Source: AGHT+IGcT9Q73iX6iO06eyvMeqFfiaMCp9upzjhrl6xZANlRXTJ6HWG9Es1iaU+beLhBFmY+7jsDbw==
+X-Received: by 2002:a17:907:849:b0:b72:aa52:6034 with SMTP id a640c23a62f3a-b7331971161mr407545166b.21.1762962089077;
+        Wed, 12 Nov 2025 07:41:29 -0800 (PST)
+Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 07:41:28 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	David Hildenbrand <david@kernel.org>
-Subject: [PATCH 4/9] mm/damon/vaddr: use vm_normal_folio{,_pmd}() instead of damon_get_folio()
-Date: Wed, 12 Nov 2025 07:41:07 -0800
-Message-ID: <20251112154114.66053-5-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251112154114.66053-1-sj@kernel.org>
-References: <20251112154114.66053-1-sj@kernel.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 6/7] ASoC: renesas: rz-ssi: Add support for 24 bits sample width
+Date: Wed, 12 Nov 2025 15:41:07 +0000
+Message-ID: <20251112154115.1048298-7-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+References: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,103 +101,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A few page table walk entry callback functions in vaddr.c uses
-damon_get_folio() with p{te,md}_pfn() to get the folio, and then
-put_folio().  Simplify and drop unnecessary folio get/put by using
-vm_normal_folio() and its friends instead.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Note that this cleanup was suggested by David Hildenbrand during a
-review of another patch series [1] and the patch was updated following
-the suggestion.  This patch further applies the cleanup to DAMON code
-that merged before the patch.
+Add support for 24 bits sample format width for RZ/G2L SoCs.
 
-[1] https://lore.kernel.org/0cb3d5a5-683b-4dba-90a8-b45ab83eec53@redhat.com
-
-Suggested-by: David Hildenbrand <david@kernel.org>
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- mm/damon/vaddr.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ sound/soc/renesas/rz-ssi.c | 76 +++++++++++++++++++++++++++++---------
+ 1 file changed, 58 insertions(+), 18 deletions(-)
 
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index 0ad1ce120aa1..9c06cfe4526f 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -442,7 +442,7 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index 839934e4b76a..5ebaaa440141 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -38,6 +38,7 @@
+ #define SSICR_MST		BIT(14)
+ #define SSICR_BCKP		BIT(13)
+ #define SSICR_LRCKP		BIT(12)
++#define SSICR_PDTA		BIT(9)
+ #define SSICR_CKDV(x)		(((x) & 0xf) << 4)
+ #define SSICR_TEN		BIT(1)
+ #define SSICR_REN		BIT(0)
+@@ -74,7 +75,7 @@
+ #define PREALLOC_BUFFER_MAX	(SZ_32K)
  
- 		if (!pmd_present(pmde))
- 			goto huge_out;
--		folio = damon_get_folio(pmd_pfn(pmde));
-+		folio = vm_normal_folio_pmd(walk->vma, addr, pmde);
- 		if (!folio)
- 			goto huge_out;
- 		if (pmd_young(pmde) || !folio_test_idle(folio) ||
-@@ -450,7 +450,6 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
- 						addr))
- 			priv->young = true;
- 		*priv->folio_sz = HPAGE_PMD_SIZE;
--		folio_put(folio);
- huge_out:
- 		spin_unlock(ptl);
+ #define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-48kHz */
+-#define SSI_FMTS		SNDRV_PCM_FMTBIT_S16_LE
++#define SSI_FMTS		(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+ #define SSI_CHAN_MIN		2
+ #define SSI_CHAN_MAX		2
+ #define SSI_FIFO_DEPTH		32
+@@ -294,11 +295,25 @@ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
+ 	}
+ 
+ 	/*
+-	 * DWL: Data Word Length = 16 bits
++	 * DWL: Data Word Length = {16, 24} bits
+ 	 * SWL: System Word Length = 32 bits
+ 	 */
+ 	ssicr |= SSICR_CKDV(clk_ckdv);
+-	ssicr |= SSICR_DWL(1) | SSICR_SWL(3);
++	switch (ssi->hw_params_cache.sample_width) {
++	case 16:
++		ssicr |= SSICR_DWL(1);
++		break;
++	case 24:
++		ssicr |= SSICR_PDTA;
++		ssicr |= SSICR_DWL(5);
++		break;
++	default:
++		dev_err(ssi->dev, "Not support %u data width",
++			ssi->hw_params_cache.sample_width);
++		return -EINVAL;
++	}
++
++	ssicr |= SSICR_SWL(3);
+ 	rz_ssi_reg_writel(ssi, SSICR, ssicr);
+ 	rz_ssi_reg_writel(ssi, SSIFCR, SSIFCR_AUCKE | SSIFCR_FIFO_RST);
+ 
+@@ -459,7 +474,6 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ {
+ 	struct snd_pcm_substream *substream = strm->substream;
+ 	struct snd_pcm_runtime *runtime;
+-	u16 *buf;
+ 	int fifo_samples;
+ 	int frames_left;
+ 	int samples;
+@@ -494,12 +508,23 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 			break;
+ 
+ 		/* calculate new buffer index */
+-		buf = (u16 *)runtime->dma_area;
+-		buf += strm->buffer_pos * runtime->channels;
++		if (ssi->hw_params_cache.sample_width == 16) {
++			u16 *buf;
+ 
+-		/* Note, only supports 16-bit samples */
+-		for (i = 0; i < samples; i++)
+-			*buf++ = (u16)(rz_ssi_reg_readl(ssi, SSIFRDR) >> 16);
++			buf = (u16 *)runtime->dma_area;
++			buf += strm->buffer_pos * runtime->channels;
++
++			for (i = 0; i < samples; i++)
++				*buf++ = (u16)(rz_ssi_reg_readl(ssi, SSIFRDR) >> 16);
++		} else {
++			u32 *buf;
++
++			buf = (u32 *)runtime->dma_area;
++			buf += strm->buffer_pos * runtime->channels;
++
++			for (i = 0; i < samples; i++)
++				*buf++ = rz_ssi_reg_readl(ssi, SSIFRDR);
++		}
+ 
+ 		rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
+ 		rz_ssi_pointer_update(strm, samples / runtime->channels);
+@@ -517,7 +542,6 @@ static int rz_ssi_pio_send(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 	int frames_left;
+ 	int i;
+ 	u32 ssifsr;
+-	u16 *buf;
+ 
+ 	if (!rz_ssi_stream_is_valid(ssi, strm))
+ 		return -EINVAL;
+@@ -546,12 +570,23 @@ static int rz_ssi_pio_send(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
  		return 0;
-@@ -463,14 +462,13 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	ptent = ptep_get(pte);
- 	if (!pte_present(ptent))
- 		goto out;
--	folio = damon_get_folio(pte_pfn(ptent));
-+	folio = vm_normal_folio(walk->vma, addr, ptent);
- 	if (!folio)
- 		goto out;
- 	if (pte_young(ptent) || !folio_test_idle(folio) ||
- 			mmu_notifier_test_young(walk->mm, addr))
- 		priv->young = true;
- 	*priv->folio_sz = folio_size(folio);
--	folio_put(folio);
- out:
- 	pte_unmap_unlock(pte, ptl);
- 	return 0;
-@@ -718,18 +716,16 @@ static int damos_va_migrate_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	/* Tell page walk code to not split the PMD */
- 	walk->action = ACTION_CONTINUE;
  
--	folio = damon_get_folio(pmd_pfn(pmde));
-+	folio = vm_normal_folio_pmd(walk->vma, addr, pmde);
- 	if (!folio)
- 		goto unlock;
+ 	/* calculate new buffer index */
+-	buf = (u16 *)(runtime->dma_area);
+-	buf += strm->buffer_pos * runtime->channels;
++	if (ssi->hw_params_cache.sample_width == 16) {
++		u16 *buf;
++
++		buf = (u16 *)(runtime->dma_area);
++		buf += strm->buffer_pos * runtime->channels;
++
++		for (i = 0; i < samples; i++)
++			rz_ssi_reg_writel(ssi, SSIFTDR, ((u32)(*buf++) << 16));
++	} else {
++		u32 *buf;
  
- 	if (damos_va_filter_out(s, folio, walk->vma, addr, NULL, pmd))
--		goto put_folio;
-+		goto unlock;
+-	/* Note, only supports 16-bit samples */
+-	for (i = 0; i < samples; i++)
+-		rz_ssi_reg_writel(ssi, SSIFTDR, ((u32)(*buf++) << 16));
++		buf = (u32 *)(runtime->dma_area);
++		buf += strm->buffer_pos * runtime->channels;
++
++		for (i = 0; i < samples; i++)
++			rz_ssi_reg_writel(ssi, SSIFTDR, *buf++);
++	}
  
- 	damos_va_migrate_dests_add(folio, walk->vma, addr, dests,
- 		migration_lists);
+ 	rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_TDE, 0);
+ 	rz_ssi_pointer_update(strm, samples / runtime->channels);
+@@ -662,8 +697,13 @@ static int rz_ssi_dma_slave_config(struct rz_ssi_priv *ssi,
+ 	cfg.direction = is_play ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
+ 	cfg.dst_addr = ssi->phys + SSIFTDR;
+ 	cfg.src_addr = ssi->phys + SSIFRDR;
+-	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+-	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++	if (ssi->hw_params_cache.sample_width == 24) {
++		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++	} else {
++		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++	}
  
--put_folio:
--	folio_put(folio);
- unlock:
- 	spin_unlock(ptl);
- 	return 0;
-@@ -752,18 +748,15 @@ static int damos_va_migrate_pte_entry(pte_t *pte, unsigned long addr,
- 	if (pte_none(ptent) || !pte_present(ptent))
- 		return 0;
- 
--	folio = damon_get_folio(pte_pfn(ptent));
-+	folio = vm_normal_folio(walk->vma, addr, ptent);
- 	if (!folio)
- 		return 0;
- 
- 	if (damos_va_filter_out(s, folio, walk->vma, addr, pte, NULL))
--		goto put_folio;
-+		return 0;
- 
- 	damos_va_migrate_dests_add(folio, walk->vma, addr, dests,
- 		migration_lists);
--
--put_folio:
--	folio_put(folio);
- 	return 0;
+ 	return dmaengine_slave_config(dma_ch, &cfg);
  }
+@@ -981,7 +1021,7 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned int rate = params_rate(params);
+ 	int ret;
  
+-	if (sample_bits != 16) {
++	if (!(sample_bits == 16 || sample_bits == 24)) {
+ 		dev_err(ssi->dev, "Unsupported sample width: %d\n",
+ 			sample_bits);
+ 		return -EINVAL;
 -- 
-2.47.3
+2.43.0
+
 
