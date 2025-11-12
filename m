@@ -1,338 +1,92 @@
-Return-Path: <linux-kernel+bounces-898304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E923C54D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:46:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98454C54D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 032BE34A170
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:45:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAE2F4E1160
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F0C264A76;
-	Wed, 12 Nov 2025 23:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sZnHBhM/"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40522173F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 23:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62CB265298;
+	Wed, 12 Nov 2025 23:47:46 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7383A1C2BD;
+	Wed, 12 Nov 2025 23:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762991130; cv=none; b=pGYJo5wiTV1zWNTVWb2rJJdL2ptOGJN+RNG2KWszsx7+2PslIk8ryAo0RVOxKKr30Kn5HZzurBWZCc2uR0kq56d0cEDTwQkJvWFeHH1cVNiyDD3f+CdZj/ya8ZResv416cEAYHtFqYQZPa5+5BbO51KbtwyEG9CwV7cuhSjWrhc=
+	t=1762991266; cv=none; b=aS/vuJ6H5C2ts4CVRrVRCjx8h4EBso/8BJ9XPzLTQOEq+HOY1qS5oZ3uJExm4ZE21zZJMgRIhiCArMjB8OwJw2cXOcbfnPjEVulI+OU4oCITdJZItkWLUO/B1tgwoLI82HJdEOg2G/wsOgK1HFACF4QSrfqAMwg+OdmmLkoxFUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762991130; c=relaxed/simple;
-	bh=98gBhiY7eHNgspoeN/g8z2ZGxsyp3RbJi2m1Sysa/N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MWoqMZli6NU/KQOj5r5zjjtJyzrjK3wHGV8/HAAxCdt88md0u+XTdLcV7bEgcID+erWSJgx42kE8FcD/Ujuk7DAmphB9Wag7dgsk34pU+mgrBqZmd+C+jZERUuniEOQi75eb4qFP8F3YywyIpkFmcBhvYnNa5GM/l/A2Bqu5l7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sZnHBhM/; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-880503ab181so1908716d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:45:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762991127; x=1763595927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BM873e7SMffWd45MQMkDcJju/5ouVQmW954EgyfduEY=;
-        b=sZnHBhM/LTxWH3DSf3MbNw29yA6v0GDPJ/5rsLbEBxLoW3KY+uOENxy6Ca6+2R9Iy7
-         uBYMIU/nUznZoG0GFLnHBfac+9i7x8jQOinhjU1pjzKFdIG0ZghrOINwQztmzRyeCLOo
-         FugyUneeJH1C04EPzL4T6kzcFOxa8INZv9vUcIi09hZkaFoysV5lnwy1Hqoh9AD3taa8
-         +2NvvHvEmjqx+TCuhIjSQP90g1uxLK9WcEbI8wScX8cETJr3SBClQTz0hGBEL1R9FpNc
-         HLGhrbjYfgGheoC3iT0aDwJHc9QiVkMkFCfvHeCDUF7GszR18G9t/8yg+lbeDW7u1mKP
-         5l0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762991127; x=1763595927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BM873e7SMffWd45MQMkDcJju/5ouVQmW954EgyfduEY=;
-        b=QqT++FeeGOc1kB0dimRYFE1gcJraxt2pTw7g/OvRZ9CcHUgkiSQXUvfEyiordl2gxh
-         p04UgbyPFyh6+SaEvRWOilIZVpda6j77sW98TNk6Yo9czqIrdn5eMOlM7u35xZ8sBId8
-         D1UaSVeyJrAep+ZtttSIyys7V2BTrE+C3NX7pl3YMDOBnGAsVVhjDhf0FU8TqoaBD1aa
-         8OTu1lFakti4/ZvMfXscok9eU95OEy51CHwxXpuxush6Ocg60KGxvVQPn5CEPoHjp1b6
-         VbQhqJqOfuqCXqvYcsTfEXsJp5DrwnH8Rf8Aws3Qn45mDx2EAqExDSlQS+Z8S5qu1aET
-         qZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZBCC/kp3Z3M26nvP7qHcsR2FUa3PhSAtO9meqaJKgCUlKok2Cy0HEmwWmvln5kT2lLMRa4+fBKToIZbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHeyov7ciyl4RyJf/spJyFlRa5yUfntSF8c5wpXIPK5IzhihLg
-	uOr36PhbchmOUjoPfk/uChkfWkP65w6O5GcN5Sj2fcBK6D8gzXZN1jvzJmBVLqiHPvCfH5BGm43
-	PxHU2PXTMfha67OJwsyKPBxEzxgqj3DE+iQnYV54B
-X-Gm-Gg: ASbGncsLoY2oRRSjB/EEZDvKcGO2r2qdCAR6cRm/g6BzDJ+t6l0jLbM3ES6RCG9Ek1j
-	nNGAwV0ALrINpE/gF/pthbIwGBX6eKhLLsdxNGoEw049XrOUGQ+OBTLMnzX01MJj08kHLRN8v+E
-	OtaA7umbnWwT52fWIIN4QLwE0GbV58Pu6MLPQlQgoAIWg9UWjCa235GwrTpZjnDk+xvnFEGmpCJ
-	Pdph2ONd6vzIw+zkGrcYDNo4S+YRh2OkGMnSC+C1w//Cns+Q/uSh2Pvb1yQ+EGuX8+ukz5KpJQA
-	tT5HtgxZ2BBbDG3OshVIwE+pZS99
-X-Google-Smtp-Source: AGHT+IEQmXMMWgUJYMSsXf8PXmcSJWCgzzvhaS0nAT5hecado0KMJB6Ms9uH+7zj6g5B2jxwuh/zNTPNlYAP8aoBzqU=
-X-Received: by 2002:a05:6214:20c6:b0:882:375d:7ed9 with SMTP id
- 6a1803df08f44-88271900e7emr73367376d6.10.1762991127050; Wed, 12 Nov 2025
- 15:45:27 -0800 (PST)
+	s=arc-20240116; t=1762991266; c=relaxed/simple;
+	bh=wj6zWnzx+RJYwATqI4vHF86YXU+OlrXFmsLHg7q0G+Q=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=P1JYQZdDJFFQU4aEZgz55RnlO9vDfWkMPXi3fzPyi6yV3RJpfeMA1+9+YeKop7lii0nOf5MbDDz87QVOrEI3bEUDePAxB6QukGaQH4uM3AD2B3i3uuLVYrH8qTRWzu5ycFBo26A9PixdgEAZtiP9VM9wHb4pUlybSBaJFYB6ark=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id DC55392009C; Thu, 13 Nov 2025 00:47:42 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id CEDD192009B;
+	Wed, 12 Nov 2025 23:47:42 +0000 (GMT)
+Date: Wed, 12 Nov 2025 23:47:42 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
+ uniquification
+In-Reply-To: <aRSXxKacvz4h9_Th@alpha.franken.de>
+Message-ID: <alpine.DEB.2.21.2511121802260.25436@angie.orcam.me.uk>
+References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk> <aRMrmjJcLJYR8QO-@alpha.franken.de> <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk> <aRRZtbBdCfEEhad9@alpha.franken.de> <alpine.DEB.2.21.2511121046350.25436@angie.orcam.me.uk>
+ <aRSXxKacvz4h9_Th@alpha.franken.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
- <20251111-lid-switch-notifier-v2-1-789723d78d89@google.com> <s7nk2xerfa7ocscyaaez7qnygkmrdy2ch355uziodda654ws5p@zswljdmx3747>
-In-Reply-To: <s7nk2xerfa7ocscyaaez7qnygkmrdy2ch355uziodda654ws5p@zswljdmx3747>
-From: Jonathan Denose <jdenose@google.com>
-Date: Wed, 12 Nov 2025 17:45:16 -0600
-X-Gm-Features: AWmQ_bmpS3vCBfRvf7T-EU2BsZ-k_feNAK_h9t-NbYfMhWpnT3WrADM6NtW4CKs
-Message-ID: <CAMCVhVNUrcWD5avaBGotnEgQ-kS9HMPaDpkYczscozSg5H-NfA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] Input: Add lid switch notifier
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Dmitry,
+On Wed, 12 Nov 2025, Thomas Bogendoerfer wrote:
 
-Thanks for your review.
+> > > Update on the issue: Your patch is good and the segmentation faults,
+> > > I'm seeing, have IMHO a different reason. Instead of removing the call
+> > > to r4k_tlb_uniquify() I've replaced the jal in the binary with a nop.
+> > > And the issue is still there with this patched kernel. I've seen
+> > > something similair on a R12k Octanes, which comes and goes probably
+> > > depeding on code layout. So far I wasn't able to nail this down :-(
+> > 
+> >  Oh dear!  Something to do with the cache?  Or code alignment perhaps?
+> 
+> code alignment is probably the trigger. It's reproducible on an R4400SC
+> and R5000 Indy, but not on a R4000SC Indy. Main difference other than
+> clock speed is L1 cache size...
 
-On Tue, Nov 11, 2025 at 4:34=E2=80=AFPM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> Hi Jonathan,
->
-> On Tue, Nov 11, 2025 at 09:34:06PM +0000, Jonathan Denose wrote:
-> > This change creates a new input handler which can be included in the
-> > build via a new Kconfig option CONFIG_INPUT_LID_NOTIFIER. This input
-> > handler listens for lid switch events and publishes them through an
-> > atomic notification chain. Other modules may register for events
-> > through this notification chain with register_lid_notifier.
-> >
-> > Signed-off-by: Jonathan Denose <jdenose@google.com>
-> > ---
-> >  drivers/input/Kconfig        | 11 +++++
-> >  drivers/input/Makefile       |  1 +
-> >  drivers/input/lid-notifier.c | 98 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  include/linux/input.h        |  2 +
-> >  4 files changed, 112 insertions(+)
-> >
-> > diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
-> > index 88ecdf5218ee9ba35e1efec6341f8605b621bd49..16f6d24fd04ac8cb5af9d36=
-cc47155ea9be0e177 100644
-> > --- a/drivers/input/Kconfig
-> > +++ b/drivers/input/Kconfig
-> > @@ -38,6 +38,17 @@ config INPUT_LEDS
-> >         To compile this driver as a module, choose M here: the
-> >         module will be called input-leds.
-> >
-> > +config INPUT_LID_NOTIFIER
-> > +     tristate "Include notifier for lid switch events"
-> > +     help
-> > +       Say Y here if you would like to create a notifier to publish li=
-d switch
-> > +             events.
-> > +
-> > +       If unsure, say N.
-> > +
-> > +       To compile this driver as a module, choose M here: the
-> > +       module will be called lid-notifier.
->
-> I think this better not surfaced to users but rather interested drivers
-> 'select' it.
+ So both combined!  Trust my guts' feeling. ;)  At least you now have a 
+reproducer you can fiddle with.  But good luck with debugging as this 
+stuff can be tough!
 
-That makes sense to me, but how could I get the lid-notifier.c file to
-compile in that case? That was my only reason for adding it as a
-config option.
+> And I've missremembered the R12k Octane problem. It's not a segmentation
+> fault but a bus error, because of an illegal instruction. I tracked it
+> down to a incorrect data in I-Cache (all 0 cache line, iirc), but never
+> found the reason for that.
 
-> > +
-> >  config INPUT_FF_MEMLESS
-> >       tristate "Support for memoryless force-feedback devices"
-> >       help
-> > diff --git a/drivers/input/Makefile b/drivers/input/Makefile
-> > index 2cd6e1c9a77844fe09cd3d99533e5d3efb038c7d..1efdba04f79a97e2a122b91=
-98341b18a1855b4b9 100644
-> > --- a/drivers/input/Makefile
-> > +++ b/drivers/input/Makefile
-> > @@ -15,6 +15,7 @@ obj-$(CONFIG_INPUT_MATRIXKMAP)      +=3D matrix-keyma=
-p.o
-> >  obj-$(CONFIG_INPUT_VIVALDIFMAP)      +=3D vivaldi-fmap.o
-> >
-> >  obj-$(CONFIG_INPUT_LEDS)     +=3D input-leds.o
-> > +obj-$(CONFIG_INPUT_LID_NOTIFIER)     +=3D lid-notifier.o
-> >  obj-$(CONFIG_INPUT_MOUSEDEV) +=3D mousedev.o
-> >  obj-$(CONFIG_INPUT_JOYDEV)   +=3D joydev.o
-> >  obj-$(CONFIG_INPUT_EVDEV)    +=3D evdev.o
-> > diff --git a/drivers/input/lid-notifier.c b/drivers/input/lid-notifier.=
-c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..954b9855532dbd0514860e3=
-09d0b76982e947673
-> > --- /dev/null
-> > +++ b/drivers/input/lid-notifier.c
-> > @@ -0,0 +1,98 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + *  Lid event notifier
-> > + *
-> > + *  Copyright (c) 2025 Jonathan Denose <jdenose@google.com>
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/input.h>
-> > +#include <linux/notifier.h>
-> > +
-> > +static struct input_handler lid_handler;
-> > +static struct atomic_notifier_head input_notifier_head;
-> > +
-> > +int register_lid_notifier(struct notifier_block *notifier)
-> > +{
-> > +     return atomic_notifier_chain_register(&input_notifier_head, notif=
-ier);
-> > +}
-> > +EXPORT_SYMBOL(register_lid_notifier);
->
-> I wonder if we want to expose the "raw" notifier or if we want to
-> provide a higher-level API that would allocate a notifier blocki, set up
-> the callback, and return a "cookie" that can be used to free notifier
-> block later. This way we do not need to worry that some enterprising
-> driver suppresses notifications for the rest by returning NOTIFY_STOP.
->
-> > +
-> > +static int lid_handler_connect(struct input_handler *handler,
-> > +             struct input_dev *input_dev, const struct input_device_id=
- *id)
->
-> Proper alignment of the arguments please.
->
-> > +{
-> > +     struct input_handle *handle;
-> > +     int error;
-> > +
-> > +     handle =3D devm_kzalloc(&input_dev->dev, sizeof(struct input_hand=
-le), GFP_KERNEL);
->
-> This is not driver probe path so devm_kzalloc must not be used here.
-> Also "sizeof(*handle)".
+ Bummer!
 
-So in that case, would I just use kzalloc?
+> > > Do you want to send a v2 of the patch ? I'm fine with the current version
+> > > for applying...
+> > 
+> >  I'll send v2 with an update for the Wired register as we talked.  It may 
+> > take a day or two.
+> 
+> no problem, thank you.
 
-> > +     if (!handle)
-> > +             return -ENOMEM;
-> > +
-> > +     handle->dev =3D input_dev;
-> > +     handle->handler =3D handler;
-> > +     handle->name =3D "lid";
-> > +
-> > +     error =3D input_register_handle(handle);
-> > +     if (error)
-> > +             goto err_free_handle;
-> > +
-> > +     error =3D input_open_device(handle);
-> > +     if (error)
-> > +             goto err_unregister_handle;
-> > +
-> > +     return 0;
-> > +
-> > + err_unregister_handle:
-> > +     input_unregister_handle(handle);
-> > + err_free_handle:
-> > +     kfree(handle);
->
-> Just FYI: One must never use kfree() with devm_kalloc()ed memory.
+ Now posted.  It's often good to sleep on things (an afternoon nap in this 
+case).  Thanks for taking the Malta fix BTW.
 
-Noted!
-
-> > +     return error;
-> > +}
-> > +
-> > +static void lid_handler_disconnect(struct input_handle *handle)
-> > +{
-> > +     input_close_device(handle);
-> > +     input_unregister_handle(handle);
->
->         kfree(handle);
->
-> > +}
-> > +
-> > +static void lid_handler_event(struct input_handle *handle, unsigned in=
-t type,
-> > +             unsigned int code, int value)
-> > +{
-> > +     if (type =3D=3D EV_SW && code =3D=3D SW_LID)
-> > +             atomic_notifier_call_chain(&input_notifier_head, value, h=
-andle->dev);
->
-> Why do you need to pass the device from which SW_LID originated?
-
-It isn't needed, I'll pass NULL instead.
-
-> > +}
-> > +
-> > +static const struct input_device_id lid_handler_ids[] =3D {
-> > +     {
-> > +             .flags =3D INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_=
-MATCH_SWBIT
-> > +                                             | INPUT_DEVICE_ID_MATCH_B=
-US,
-> > +             .evbit =3D { BIT_MASK(EV_SW) },
-> > +             .swbit =3D { [BIT_WORD(SW_LID)] =3D BIT_MASK(SW_LID) },
-> > +             .bustype =3D 0x19
->
-> Why do we need to match in bus type? The LID does not have to always
-> come from ACPI.
-
-On the specific chromebook where this touchpad is found, when the lid
-switch is opened or closed, `cros_ec_buttons` also sends SW_LID
-events, so lid_handler_event was unnecessarily called twice. To
-prevent that, I'm filtering on the bus type to get only the events
-originating from the lid switch.
-
-> > +     },
-> > +     { },
-> > +};
-> > +
-> > +static struct input_handler lid_handler =3D {
-> > +     .connect =3D lid_handler_connect,
-> > +     .disconnect =3D lid_handler_disconnect,
-> > +     .event =3D lid_handler_event,
-> > +     .name =3D "lid",
-> > +     .id_table =3D lid_handler_ids
-> > +};
-> > +
-> > +static int __init lid_notifier_init(void)
-> > +{
-> > +     return input_register_handler(&lid_handler);
-> > +}
-> > +module_init(lid_notifier_init);
-> > +
-> > +static void __exit lid_notifier_exit(void)
-> > +{
-> > +     input_unregister_handler(&lid_handler);
-> > +}
-> > +module_exit(lid_notifier_exit);
-> > +
-> > +MODULE_AUTHOR("Jonathan Denose <jdenose@google.com>");
-> > +MODULE_DESCRIPTION("Lid event notifier");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/include/linux/input.h b/include/linux/input.h
-> > index 7d7cb0593a63e93c4906c49cde430188db2d1ab5..023eb92c77d9e8721d482b9=
-787632a671671de08 100644
-> > --- a/include/linux/input.h
-> > +++ b/include/linux/input.h
-> > @@ -592,3 +592,5 @@ int input_ff_create_memless(struct input_dev *dev, =
-void *data,
-> >               int (*play_effect)(struct input_dev *, void *, struct ff_=
-effect *));
-> >
-> >  #endif
->
-> I think this should go into include/linux/lid-notifier.h.
->
-> > +
-> > +int register_lid_notifier(struct notifier_block *notifier);
->
-> Thanks.
->
-> --
-> Dmitry
---=20
-Jonathan
+  Maciej
 
