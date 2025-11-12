@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-897989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EFEC54161
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DB5C5416A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82D83B7345
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B113B7C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58BE34DCFF;
-	Wed, 12 Nov 2025 19:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2072334D4C1;
+	Wed, 12 Nov 2025 19:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="KMw8kXPo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="XnM5RjMU";
-	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="AYR+cCAa";
-	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="AbEkgjaS"
-Received: from sender6.mail.selcloud.ru (sender6.mail.selcloud.ru [5.8.75.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a59aUyku"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACBF34DB68;
-	Wed, 12 Nov 2025 19:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A080434CFC7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762974527; cv=none; b=QLXV676/6dDTayfTbIPdzoojbbQqRS4MCLbkSN4I5vgMQw06zptgy0PI74WarIKmQWzoVfYitb3QBeEmE9C1ZRcoW+vWNXi/yqPgt834ub3GVjt90X4N4UPZe4G0fzZXHxjcluzP0MtFofO9YWR+7Gm521NSeTiqiFAW4gF1sHI=
+	t=1762974554; cv=none; b=G0l0/vob77cf5nvkjSwqqP13/WfEFHXyH71JEg85n7X4A50S/3NezMUOQ7X40CGXxOAxu3eLbeX7NKUP2B6xO0tBafLHa152Kz8znlmoK8FTmp0iKKCJsl/Jht2TnVqabomW4Ay0SSPO0j/qizhkpXG/bmL/10nBvFXb0OZEdLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762974527; c=relaxed/simple;
-	bh=jBGfuob7zOPXWGRZTOoC3Q/HdN2ubZFd5hDIK7o931Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NpWD8LcqcYY8V2Rt3uTogosN2nUj37QDUksr0MI60kesBJPzKDvMENkmDgKoUJdY2ZiH+GQ5w5zNce+ZSe7rNssvEAXx42hkp3IO5kpYQpqXu0XkqhVy1SVfzFGtWrqT1ZfgBIUeO7i+O+lD3n6CucUU9piTOYHZoneNl+I7XT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=KMw8kXPo; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=XnM5RjMU; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=AYR+cCAa; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=AbEkgjaS; arc=none smtp.client-ip=5.8.75.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:List-id:
-	List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FE2/yEfUZslK/B3nL6QvDOFYUETlNN+H40NdrpdBDW0=; t=1762974525; x=1763147325;
-	 b=KMw8kXPo98DqY0tyXSCSeILMK81JFjid91axPZlA1mJDZe6iE3K/706SVHMD18ZmdPOABZ12tK
-	N5eREiDIFDncjhnc6+SdBH03KxP9zaVJ7yX3ROMHcRgGFqi7NM8eJ1wJZaY9NUfLz/wruGGsngBJp
-	PB8Uz+ws7SDiibFYsxHE=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
-	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=FE2/yEfUZslK/B3nL6QvDOFYUETlNN+H40NdrpdBDW0=; t=1762974525; x=1763147325;
-	 b=XnM5RjMUHRVqvdf0i+5udzg5ivBYz6GJNxjSJbtykp/n7xT/kP15P//AlYztAC9HgCGqjVPmoC
-	bqPiipUfzwLa+tIYId5zixCcYK7d5Ujs17vU6NoEnjGKa1lRIUR5XaA70U6APDJKFXMRW/in+Yym8
-	qpxu6rjODI9WfZ0U6WJI=;
-Precedence: bulk
-X-Issuen: 1428244
-X-User: 149890965
-X-Postmaster-Msgtype: 3849
-Feedback-ID: 1428244:15965:3849:samotpravil
-X-From: foxido.dev
-X-from-id: 15965
-X-MSG-TYPE: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-X-blist-id: 3849
-X-Gungo: 20251107.120132
-X-SMTPUID: mlgnr60
-DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1762973419; bh=FE2/yEfUZslK/B3nL6QvDOF
-	YUETlNN+H40NdrpdBDW0=; b=AYR+cCAamjnzXOOR0V9avs6U9l3H2kL9xg4isgFgBCy4UzN+VO
-	jOncwSS0nVyz2hwt9zpMSPnsaleop72+dlmsofmWTG2M2E6OoMdOPRzOywlMvG6YeG7HJMbTSVi
-	NG5jtO6jWF1WnWhlqtVP3eUnXcFl8xphNQ2TdMpYOEC+mreUOR3rnFE9nTMcVehr8yvJ48TJ1xZ
-	/ZKJPJoHCeL+7ijsL+27gxXcU0pcWQ/zRgfsPs1uOV+7X3RpJ5f7oOZSP/uDJO02DHYxzpSEc9C
-	SYPpEt4ePP9Zl9cM3mEUjCRV1zU5jrugjhkX/ZgR8cXMfQwl6x3b1sPQMfRV5FOKslA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1762973419; bh=FE2/yEfUZslK/B3nL6QvDOF
-	YUETlNN+H40NdrpdBDW0=; b=AbEkgjaSz91Gjo+gwQzG3fbcPSettj0x988gXYXP8ZM1MMEl4t
-	QnKuNLeaADJ8CljJublXQysVWezmr83YYwAg==;
-From: Gladyshev Ilya <foxido@foxido.dev>
-To: foxido@foxido.dev
-Cc: Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
+	s=arc-20240116; t=1762974554; c=relaxed/simple;
+	bh=vCZSV1WWxWmjtBXURpOwW4cZm8n5J6wXTTO5rnBlH+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ayiuLSz+ECXm+phnY6k427ED9omJfJh9nZQlRNZYRgzYGJTpzUMjL8Tfn6WTNfdVzGf+o8i7Rx1v1GANaKy8y/4NmyNSVfl2uJvLXKFSR6wIzBO9N+63qCE62GvDtKlU98W8hNN3Mmaohm4pPJM/PA0YPvOZfe0UwUAsJ6oUy/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a59aUyku; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b4736e043f9so16864166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:09:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762974551; x=1763579351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4HxarC/0cHfwsXI7e4vj+A1IpTTWGHNmxw+3uenBi0=;
+        b=a59aUykuNRw4+z3fOG8ikc96jaHow3Q0L4qu/mex+YNiU8CneTyklFguK6oco36jOD
+         c3Iegn8U4IlzPlqkVp0htrKXaUx0HifdOur9VKnTXTiOl+N7U4NCtS06bwKZKYYzyEj2
+         h8jD0faL2eGyjnY/xwb7OO736aT5zxLBgluctFZbU/2jcVFTPaVn0rM36cjsqL1Zhhni
+         ZtYgHL6ODzjmifxrd9Eyi9t417FjvxIGQa1X7qDkLyEvq2lA/UH2UnMTS2MUb14BwVOo
+         yP2u23I1J0h4JCgjFnch6NNmAwAdGmPx1yQfxOtEGUfa3gFCsy1zHvVA+5wUSreDUP20
+         0ArQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762974551; x=1763579351;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i4HxarC/0cHfwsXI7e4vj+A1IpTTWGHNmxw+3uenBi0=;
+        b=XFgN51LSKMrq901mLI9T9U1D4CAzAMoOMO08XnDS6EFoX34FIyolGEn0epVYsy2qYD
+         OcHs1m1J4Sp7c4LgvlYm6yqWCHP1UbaiIMw/+rKJ0FvrYBB/eADS9ZVS6Sfn8sqJyKu/
+         f21wF1owX6R6EYsJS43q94P+RMhHuPfyYhNGFjDwfuh4BAr2p6y8JtDC69s2yXRYldQu
+         rr9WDy5R5+KcKPxNYMXtWZval0mO9MGo5XghCVKfQSxbtX8xX4DVjJK7QNhoE6xBEEb6
+         TodLTCjYxeicp2K3va1hJwBakMwtSdqdEDfkXuYl0mAWSXBo3FUAIPLf4HtkVMzw4yoY
+         GAAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXifSPzcbGdDASaSruS0/S/8k6buh5avryHs7AXsviKJh4UJ0CgmfQPB4Ex4pnclHjMbD+gSkH6pGKXZXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLaTT0tK1jG4o7JKNbQ08g3OYW2q/Hxts/rahTXUgLtDG8p5oS
+	xqtXLTxf9hCBQpuQvAwi1LkXk4EGGn7RiCX7PNanUp2IUuETib7+UhY=
+X-Gm-Gg: ASbGncvmtHjnzZaVHgQreR6SQ/o5viw+iy/i7GbpvROtahxuSQFn/VjN37neKIWWQg2
+	W4bLvtSlSfQ+8d5USSBp+6FIw2RT5GL/uSxGi3AIxDSSOoLvJD21uNPda1EOp7DXDDlIH1Oya3K
+	62Kps5K+64MbiIlRV4GI9SBusjG5psSM2Cg2iyIoQdSlZbgVcQ75HEBzMcee6triTteujGF28GA
+	FTl9rsLJHISZFJHiIVR+V9gj+tutxtjskB5gY+gBNUD5ExezEQAY5JJvSs/HAyVmNymyJrrM4GE
+	p1sYfW3jvT9FXINZXuZrcy9UW1JPDLMS//2P205MaeX2B4a8uLr35UgzpIZEuBJ4HPFXUSMr7aK
+	TF2qf3Om2Vib6yCK+VT1bb9ovtfKh3dhJ9txsQeopKlfD+K3xO30wxT8GiNrZGHTEsT9whxpCh5
+	augJAW4eFkV94UwnzXrx43Fhoc7HieomPySKmpNUw1cUHwMn7fA3RnRtc8iug2yCMfkOc=
+X-Google-Smtp-Source: AGHT+IHxy8pjSz5ZXQAhsov6reJ0AmK0QM7dpISGdovz9adYZVIS0mObDjcrOiPl+EMnu74xwF1Gww==
+X-Received: by 2002:a17:907:e895:b0:b5f:c2f6:a172 with SMTP id a640c23a62f3a-b7331a70378mr423238766b.30.1762974550736;
+        Wed, 12 Nov 2025 11:09:10 -0800 (PST)
+Received: from localhost ([2a02:810d:4a94:b300:ec52:7cf5:e31:cdb7])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b72bfa24d14sm1659239866b.74.2025.11.12.11.09.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 11:09:10 -0800 (PST)
+From: Florian Fuchs <fuchsfl@gmail.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	linux-sh@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 8/8] btrfs: simplify cleanup in btrfs_add_qgroup_relation
-Date: Wed, 12 Nov 2025 21:49:44 +0300
-Message-ID: <d9e7808a976e6325bfdc41100bd9b38892663a8b.1762972845.git.foxido@foxido.dev>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <cover.1762972845.git.foxido@foxido.dev>
-References: <cover.1762972845.git.foxido@foxido.dev>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Florian Fuchs <fuchsfl@gmail.com>
+Subject: [PATCH] sh: maple: fix empty port handling
+Date: Wed, 12 Nov 2025 20:04:44 +0100
+Message-ID: <20251112190444.3631533-1-fuchsfl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,102 +90,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove from cleanup path mutex_unlock via guard() and kfree via
-__free(kfree) macro. With those two cleanups gone, we can remove `out`
-label and replace all gotos with direct returns.
+Handle timeout response from empty ports of the maple bus to prevent a
+stuck maple_sentq and a blocked maple bus.
 
-Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+When only some ports are used, e.g. if only keyboard is connected and the
+other ports are empty, the device tends to timeout and return 0xff for
+the empty port. This needs to be handled, just like the
+MAPLE_RESPONSE_NONE response, to detect empty ports and to have usable
+peripherals, if not all of the ports are utilized. Previously, an empty
+port resulted in a never cleared maple_sentq which totally blocked the
+maple bus to be used.
+
+Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
 ---
- fs/btrfs/qgroup.c | 42 ++++++++++++++++--------------------------
- 1 file changed, 16 insertions(+), 26 deletions(-)
+Note: This patch was tested on real Sega Dreamcast hardware and resulted
+in a usable keyboard, even when only 1 or 2 ports where populated. The
+hot-plugging of the keyboard does also work fine.
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index 9b2f2c8ca505..238c17c7d969 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -1528,65 +1528,55 @@ static int quick_update_accounting(struct btrfs_fs_info *fs_info,
-  * callers and transferred here (either used or freed on error).
-  */
- int btrfs_add_qgroup_relation(struct btrfs_trans_handle *trans, u64 src, u64 dst,
--			      struct btrfs_qgroup_list *prealloc)
-+			      struct btrfs_qgroup_list *_prealloc)
- {
- 	struct btrfs_fs_info *fs_info = trans->fs_info;
- 	struct btrfs_qgroup *parent;
- 	struct btrfs_qgroup *member;
- 	struct btrfs_qgroup_list *list;
-+	struct btrfs_qgroup_list *prealloc __free(kfree) = _prealloc;
- 	int ret = 0;
+The description of the timeout response can be obtained on the bottom of
+of the page: https://mc.pp.se/dc/maplebus.html: "If no response is
+received before the timeout, a word with all bits set (FFFFFFFF) is
+written at the Result address."
+
+ drivers/sh/maple/maple.c | 1 +
+ include/linux/maple.h    | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/sh/maple/maple.c b/drivers/sh/maple/maple.c
+index 6dc0549f7900..3d6c716cfc98 100644
+--- a/drivers/sh/maple/maple.c
++++ b/drivers/sh/maple/maple.c
+@@ -649,6 +649,7 @@ static void maple_dma_handler(struct work_struct *work)
+ 			list_del_init(&mq->list);
+ 			switch (code) {
+ 			case MAPLE_RESPONSE_NONE:
++			case MAPLE_RESPONSE_TIMEOUT:
+ 				maple_response_none(mdev);
+ 				break;
  
- 	ASSERT(prealloc);
+diff --git a/include/linux/maple.h b/include/linux/maple.h
+index 3be4e567473c..4ae3cc6678a8 100644
+--- a/include/linux/maple.h
++++ b/include/linux/maple.h
+@@ -27,7 +27,8 @@ enum maple_code {
+ 	MAPLE_COMMAND_BWRITE,
+ 	MAPLE_COMMAND_BSYNC,
+ 	MAPLE_COMMAND_SETCOND,
+-	MAPLE_COMMAND_MICCONTROL
++	MAPLE_COMMAND_MICCONTROL,
++	MAPLE_RESPONSE_TIMEOUT = 255
+ };
  
- 	/* Check the level of src and dst first */
- 	if (btrfs_qgroup_level(src) >= btrfs_qgroup_level(dst)) {
--		kfree(prealloc);
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&fs_info->qgroup_ioctl_lock);
--	if (!fs_info->quota_root) {
--		ret = -ENOTCONN;
--		goto out;
--	}
-+	guard(mutex)(&fs_info->qgroup_ioctl_lock);
-+
-+	if (!fs_info->quota_root)
-+		return -ENOTCONN;
-+
- 	member = find_qgroup_rb(fs_info, src);
- 	parent = find_qgroup_rb(fs_info, dst);
--	if (!member || !parent) {
--		ret = -EINVAL;
--		goto out;
--	}
-+	if (!member || !parent)
-+		return -EINVAL;
- 
- 	/* check if such qgroup relation exist firstly */
- 	list_for_each_entry(list, &member->groups, next_group) {
--		if (list->group == parent) {
--			ret = -EEXIST;
--			goto out;
--		}
-+		if (list->group == parent)
-+			return -EEXIST;
- 	}
- 
- 	ret = add_qgroup_relation_item(trans, src, dst);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	ret = add_qgroup_relation_item(trans, dst, src);
- 	if (ret) {
- 		del_qgroup_relation_item(trans, src, dst);
--		goto out;
-+		return ret;
- 	}
- 
--	spin_lock(&fs_info->qgroup_lock);
-+	guard(spinlock)(&fs_info->qgroup_lock);
- 	ret = __add_relation_rb(prealloc, member, parent);
- 	prealloc = NULL;
- 	if (ret < 0) {
--		spin_unlock(&fs_info->qgroup_lock);
--		goto out;
-+		return ret;
- 	}
--	ret = quick_update_accounting(fs_info, src, dst, 1);
--	spin_unlock(&fs_info->qgroup_lock);
--out:
--	kfree(prealloc);
--	mutex_unlock(&fs_info->qgroup_ioctl_lock);
--	return ret;
-+	return quick_update_accounting(fs_info, src, dst, 1);
- }
- 
- static int __del_qgroup_relation(struct btrfs_trans_handle *trans, u64 src,
+ enum maple_file_errors {
+
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
 -- 
-2.51.1.dirty
+2.43.0
 
 
