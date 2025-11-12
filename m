@@ -1,210 +1,173 @@
-Return-Path: <linux-kernel+bounces-898248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5254C54B20
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:12:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5879FC54AE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 529C74E2920
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42CC3B1CA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83E72D94B7;
-	Wed, 12 Nov 2025 22:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEF22EA159;
+	Wed, 12 Nov 2025 22:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="OpM7dkA7"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="yn/7LuWP"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE48227E1D7;
-	Wed, 12 Nov 2025 22:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8574C28CF56;
+	Wed, 12 Nov 2025 22:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762985228; cv=none; b=afGslvTSgTM79/fJZx+D2uOD909UC4XQYvxncXKies0Qc8Y1badMYQmrtSmxxBz97+jXfpQwxYvkpSMcfYKeFK7xN/0h1c4LUuRO9nCX3hXPTQeaGiD45f6AkCimoUpbDK2LDllQNfnbtq7QyVrY1+qi0WaaZI78Z9QutUB7C2M=
+	t=1762985255; cv=none; b=nDQyjN9ltmjIgRt9lQ3AmQj3qROCxBCMh0ZqAQzAgtH8hCzxImNCAxzgorGZ68fL5Mq+jYF2tfYlW11dTkOH/Ed5q8WAGmc4douT4h9u+ykqGgKmkCuIOrNFJqrk3a8z0uNoBEnLeaBGCEIIhtJcoWd3HYfGZumLdxCp1M0IP20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762985228; c=relaxed/simple;
-	bh=NWNQWQtgXB9lxG6Z3RvO1fP1+VWNeupgLceuYxPJYoY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Y11F9gaNxDGRJOQDBfEHmRuahuTPNcZxbgckbwfdOjvbP9vFxTSMxyh4Sg8J5KX7CgMJbaL0NZ9XxeK2WAK8uARzmGaAa5b6Gt6i1JIO8GgI4G2N+pArm+JgPeGuAfdfsxp4/g1jE8a1dlP6rpgrdZrpaAP0gahxqnyP0ZjScrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=OpM7dkA7; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACLfvWU2822525;
-	Wed, 12 Nov 2025 17:06:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=p3dYgZtyFgq3UP4PJjCI8l8uT2E
-	rSdGDa8/dxkqVwpE=; b=OpM7dkA70d3wrXShTxiU+5gFcuiFu1Mvehx4DT3KR5b
-	JwdNxMU5tzoZRxEIwWadF1ypBS7lEGSrlM89KXa4SA7Olehg6nafCMeEr1WSkJVO
-	VnngNLyu80u5GWCj8+fq8OCoUsESHNjSeRCqUrtdcl7EIBOO1voygHUpXSIdJevP
-	Bqvql9vW6fY+EGL5Buve7828JmsgI5ZlZ1YQJlwaQanXs6WKe/JVyS5YEN/ejSS/
-	0ZSZCFAqKHDcJk9NmRMNJnkd2Uh56nf9a7wjOGXi6pvfF4mGOX3DFJfus3c8sWEw
-	maM2uQ/X4JR6TKJkE7pFPzVGMiaQut1KMu+CGwneUyw==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4acpk2kxkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 17:06:56 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5ACM6tVP029738
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Nov 2025 17:06:55 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Wed, 12 Nov 2025 17:06:55 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Wed, 12 Nov 2025 17:06:55 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Wed, 12 Nov 2025 17:06:55 -0500
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([10.66.6.192])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5ACM6jSq001880;
-	Wed, 12 Nov 2025 17:06:47 -0500
-From: Jorge Marques <jorge.marques@analog.com>
-Date: Wed, 12 Nov 2025 23:06:38 +0100
-Subject: [PATCH v2] iio: accel: Change adxl345 depend to negate adxl35x
+	s=arc-20240116; t=1762985255; c=relaxed/simple;
+	bh=vFb162fQrfik4BXt5CZU9D4wyBDl0W+eQVuWkuKKRQE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUAkkIAS7Pc0++SO/i6aUDhiRZha6bWdmcKqY5XBVq7iJZpthojq82OQBv2fwU9M1c+ZL2dL8MGMYFnJEWnqIx8mqrIb9pc7ZYf9+8xknxgUDYfei0sjFDJiA7qGAe0KOTXr93xnLIlyi3EwiRXh15dw+rs/YteURWOXIrinp7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=yn/7LuWP; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 5ACJUfBW1517738;
+	Wed, 12 Nov 2025 14:07:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=dyPzt6jYWQBlgpZrAEGm
+	Ly5XUl+8bBVMINlubHmdpe8=; b=yn/7LuWPdJq/zbD+UyTGYFExLs8tgTr1y7wU
+	2Zv29CCZ4VQiHQtyLQXIyzjrO9fzfejC12xm3+TkiB/U/q2lw9rBFvF/3W4/DNJy
+	5P+1cU6wBM+vQ3deX5bZW4L1oDpPiy0r71E8PNqZ/KOHuUofBBxi/zjFx6YBL852
+	ZXyVOoe48thRkpwNBvwqwNdeObw4saxPu0rm9U+qz+pjNeqNwi3LaKXG0jmiSZU4
+	DqG74+vDWgoXlzyU4lz812TpM8nyg93ooHGOpyPKyRwn658CPqiZqQbEX4p1YfFy
+	3RrkonWK6VX80t+//cARdziEKEbs/rvAIDOnR+0DDvoaT0kRNw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 4acuj7cdkn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 12 Nov 2025 14:07:26 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Wed, 12 Nov 2025 22:07:25 +0000
+Date: Wed, 12 Nov 2025 14:07:20 -0800
+From: Alex Mastro <amastro@fb.com>
+To: David Matlack <dmatlack@google.com>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Alex Williamson
+	<alex@shazbot.org>, Jason Gunthorpe <jgg@nvidia.com>,
+        Josh Hilke
+	<jrhilke@google.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        Raghavendra Rao Ananta
+	<rananta@google.com>,
+        Vipin Sharma <vipinsh@google.com>
+Subject: Re: [PATCH v2 00/18] vfio: selftests: Support for multi-device tests
+Message-ID: <aRUFGHPe+EXao10B@devgpu015.cco6.facebook.com>
+References: <20251112192232.442761-1-dmatlack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251112-adxl345-allow-adxl34x-mod-v2-1-5b1561eae5a0@analog.com>
-X-B4-Tracking: v=1; b=H4sIAO0EFWkC/43NQQ6CMBAF0KuQWTuGAYrgynsYFu20QpNCSWsQQ
- 7i7lXgAl+8n//8NognWRLhmGwSz2Gj9lFCcMuBBTr1Bq5OhyAtBeUko9erKSqB0zr9+WnH0Ghs
- uFRErUXENqT8H87DrsX3vkgcbnz68j6uFvuk/qwshIetaXKpWyablm5yk8/2Z/Qjdvu8fmNrAG
- 8MAAAA=
-X-Change-ID: 20251031-adxl345-allow-adxl34x-mod-8c3b11cb54c6
-To: Jonathan Cameron <jic23@kernel.org>,
-        David Lechner
-	<dlechner@baylibre.com>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        "Andy
- Shevchenko" <andy@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <gastmaier@gmail.com>, Jorge Marques <jorge.marques@analog.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762985205; l=2855;
- i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
- bh=NWNQWQtgXB9lxG6Z3RvO1fP1+VWNeupgLceuYxPJYoY=;
- b=iwA6ZQ8hNbOvjo2wvoTVgEREQYY2kjehG6fD7z6+9dNYQSvftlQrVczEBsrJKkyqFZhYo6K5V
- uW6x9qosEppDW1q4HjuNoERePzd78t2JL221p4101SpoFgMJnEF4RrK
-X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
- pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=d8D4CBjE c=1 sm=1 tr=0 ts=69150501 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=mWDnpkxqepvMiBNsm70A:9 a=QEXdDO2ut3YA:10
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251112192232.442761-1-dmatlack@google.com>
+X-Proofpoint-GUID: a6rH3zQb7kVzxe_6ShyBkjTM7yvOQYUf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE3OSBTYWx0ZWRfX0bCPA514uoLx
+ UFqKskTLffagL1adLoObxbJOYTr/g/DXCg270IplUb0WBp3nA+xzwAyrizRtc/4UFmZgfCL9+XP
+ Q834SzfrPCTPFoYGazp/90tKnyEail34Kb1gOrzMbQw7/46laste7h7Ydm7l/lqQJA9ZIGsNJtV
+ ilaS1miMxZYN6/3pY6MJ7H+rvzt9YnW/ng2V5Y+LMPe2lJFz6ewBxSSqv3xc3WwFGPqtkAz5JeX
+ eAB3baQ8FbjkgbqniFioNSBeaFDdkw7ThgcTwE5E2K2ykGgYwFKxZ4/Q2nJl1yUXpZ90QXnLY87
+ c0NmJdqefd+VDrHMkjSei5zVzh2fbJN21NbfiDpWWMlBLp4Fu665ALYeODcaLMT1bvduvBcRH/F
+ 4WTPBo+GKjK1qDHEtT8oDz5jMPbhVQ==
+X-Authority-Analysis: v=2.4 cv=H8LWAuYi c=1 sm=1 tr=0 ts=6915051e cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=BPcALthgWs1Ll9ulZ4YA:9 a=CjuIK1q_8ugA:10
  a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: jFNvueJ5ppIMI9ZCVV6RFPxBg6yUEMGG
-X-Proofpoint-ORIG-GUID: jFNvueJ5ppIMI9ZCVV6RFPxBg6yUEMGG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE3OCBTYWx0ZWRfX98L1ZnU4TWQk
- 6FQSJy2r+vLIRbxGYJ7fWYDjr/FuRaKsLois2ZJlDaKkMSi5VtvZKAJatKQXlKgu7fSQZSFmYqk
- LbFmwVFwPV2XibfZEatYBZg6MDPN6xBulAk+95YzA7T0RxVEtPi9+r9QswO9GPNkh0P7T5H7h1Z
- 8EDX00ilUY6zJWbqt4A9MLuD4SrmCr0nb0wuR5bq32Xm2YnoCERxdJna7j2Uum0yJBK41wW+1FD
- Y0yiNsKpDPMTjnwzvGBC1HeTqKcYe4r833QmzRjONhRwvXh1x2nmEMy1zICT88/LWgAAfaTRs9u
- yc6nGNdSjFpAgORFulnp/3jMNxCV7clkf3/1FZrFlKHeBPqAwO1Aq7icLO9bgBpeOMnaS6r7HTw
- OSk0eVoj02ekWy632RqfF60M1YA3iQ==
+X-Proofpoint-ORIG-GUID: a6rH3zQb7kVzxe_6ShyBkjTM7yvOQYUf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120178
 
-Change 'depends on INPUT_ADXL34X=n' to '!(INPUT_ADXL34X)' to allow both
-drivers to be compiled as modules. The user then can use the blacklist
-to block loading one.
+On Wed, Nov 12, 2025 at 07:22:14PM +0000, David Matlack wrote:
+> This series adds support for tests that use multiple devices, and adds
+> one new test, vfio_pci_device_init_perf_test, which measures parallel
+> device initialization time to demonstrate the improvement from commit
+> e908f58b6beb ("vfio/pci: Separate SR-IOV VF dev_set").
 
-Signed-off-by: Jorge Marques <jorge.marques@analog.com>
----
-There are two drivers for the compatible:
+The new test runs and passes for me.
 
-- adi,adxl345
+Tested-by: Alex Mastro <amastro@fb.com>
 
-* IIO: 
-  drivers/iio/accel/adxl345_core.c
-  drivers/iio/accel/adxl345_spi.c
-  drivers/iio/accel/adxl345_i2c.c
-* Inputs:
-  drivers/input/misc/adxl34x-spi.c
-  drivers/input/misc/adxl34x-i2c.c
+$ vfio_pci_device_init_perf_test $(readlink -f /sys/class/vfio-dev/*/../.. | xargs -n1 basename)
+Testing parallel initialization of 24 devices:
+    0000:05:00.0
+    0000:06:00.0
+    0000:27:00.0
+    0000:28:00.0
+    0000:e5:00.0
+    0000:e6:00.0
+    0000:e7:00.0
+    0000:e8:00.0
+    0000:e9:00.0
+    0000:ea:00.0
+    0000:c5:00.0
+    0000:c6:00.0
+    0000:07:00.0
+    0000:c7:00.0
+    0000:c8:00.0
+    0000:c9:00.0
+    0000:ca:00.0
+    0000:08:00.0
+    0000:09:00.0
+    0000:0a:00.0
+    0000:23:00.0
+    0000:24:00.0
+    0000:25:00.0
+    0000:26:00.0
+TAP version 13
+1..5
+# Starting 5 tests from 5 test cases.
+#  RUN           vfio_pci_device_init_perf_test.vfio_type1_iommu.init ...
+Wall time: 1.440004083s
+Min init time (per device): 1.236283226s
+Max init time (per device): 1.440002010s
+Avg init time (per device): 1.258762246s
+#            OK  vfio_pci_device_init_perf_test.vfio_type1_iommu.init
+ok 1 vfio_pci_device_init_perf_test.vfio_type1_iommu.init
+#  RUN           vfio_pci_device_init_perf_test.vfio_type1v2_iommu.init ...
+Wall time: 1.448952696s
+Min init time (per device): 1.242623358s
+Max init time (per device): 1.448951915s
+Avg init time (per device): 1.264836317s
+#            OK  vfio_pci_device_init_perf_test.vfio_type1v2_iommu.init
+ok 2 vfio_pci_device_init_perf_test.vfio_type1v2_iommu.init
+#  RUN           vfio_pci_device_init_perf_test.iommufd_compat_type1.init ...
+Wall time: 1.446931666s
+Min init time (per device): 1.242316634s
+Max init time (per device): 1.446927360s
+Avg init time (per device): 1.264904097s
+#            OK  vfio_pci_device_init_perf_test.iommufd_compat_type1.init
+ok 3 vfio_pci_device_init_perf_test.iommufd_compat_type1.init
+#  RUN           vfio_pci_device_init_perf_test.iommufd_compat_type1v2.init ...
+Wall time: 1.449211729s
+Min init time (per device): 1.243377853s
+Max init time (per device): 1.449211729s
+Avg init time (per device): 1.264266785s
+#            OK  vfio_pci_device_init_perf_test.iommufd_compat_type1v2.init
+ok 4 vfio_pci_device_init_perf_test.iommufd_compat_type1v2.init
+#  RUN           vfio_pci_device_init_perf_test.iommufd.init ...
+Wall time: 1.447583702s
+Min init time (per device): 1.241216318s
+Max init time (per device): 1.447582350s
+Avg init time (per device): 1.264159293s
+#            OK  vfio_pci_device_init_perf_test.iommufd.init
+ok 5 vfio_pci_device_init_perf_test.iommufd.init
+# PASSED: 5 / 5 tests passed.
+# Totals: pass:5 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-To disallows both being complied, the depends INPUT_ADXL34X=n
-was added to ADXL345 symbols. However, it should be possible to compile
-both as modules, then blacklist one of them in the /etc/modprobe.d/blacklist.conf
-file. This patch changes the rule to !(INPUT_ADXL34X) to allow both as
-modules, but still disallow INPUT_ADXL34X to be built-in and ADXL345 as
-module.
-
-The following compatibles are not shared between both drivers:
-
-* IIO:
-  adi,adxl375 spi/i2c
-* Inputs:
-  adi,adxl34x i2c
----
-Changes in v2:
-- Added warning to Kconfig for users to not add both to the kernel.
-  A similar patch will be sent to the input subsystem.
-- Link to v1: https://lore.kernel.org/r/20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com
----
- drivers/iio/accel/Kconfig | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
-index 76911278fb217..3d3f8d8673dde 100644
---- a/drivers/iio/accel/Kconfig
-+++ b/drivers/iio/accel/Kconfig
-@@ -64,7 +64,7 @@ config ADXL345
  
- config ADXL345_I2C
- 	tristate "Analog Devices ADXL345 3-Axis Digital Accelerometer I2C Driver"
--	depends on INPUT_ADXL34X=n
-+	depends on !INPUT_ADXL34X
- 	depends on I2C
- 	select ADXL345
- 	select REGMAP_I2C
-@@ -74,11 +74,12 @@ config ADXL345_I2C
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called adxl345_i2c and you will also get adxl345_core
--	  for the core module.
-+	  for the core module. INPUT_ADXL34X share compatibles with this
-+	  driver, do not add both modules to the kernel.
- 
- config ADXL345_SPI
- 	tristate "Analog Devices ADXL345 3-Axis Digital Accelerometer SPI Driver"
--	depends on INPUT_ADXL34X=n
-+	depends on !INPUT_ADXL34X
- 	depends on SPI
- 	select ADXL345
- 	select REGMAP_SPI
-@@ -88,7 +89,8 @@ config ADXL345_SPI
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called adxl345_spi and you will also get adxl345_core
--	  for the core module.
-+	  for the core module. INPUT_ADXL34X share compatibles with this
-+	  driver, do not add both modules to the kernel.
- 
- config ADXL355
- 	tristate
-
----
-base-commit: 70437bbd7529e9860fb7f0c92a89e0e6abaa994e
-change-id: 20251031-adxl345-allow-adxl34x-mod-8c3b11cb54c6
-
-Best regards,
--- 
-Jorge Marques <jorge.marques@analog.com>
-
 
