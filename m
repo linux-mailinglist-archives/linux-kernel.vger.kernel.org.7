@@ -1,81 +1,57 @@
-Return-Path: <linux-kernel+bounces-897187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0679AC523D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:24:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F197C523BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79DD422450
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E62994E5D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4D831B11C;
-	Wed, 12 Nov 2025 12:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A129F277029;
+	Wed, 12 Nov 2025 12:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E8POWZ4S"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="SRs5tryj"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325A631A813
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949656; cv=none; b=WXImFr3042eDdzrljzFYmuRTENwGEdMrzI48Jay7mSxMeQ9Zyyxx2b1d9v2Hld0WSVb8d9VpNVRugRcKTXtSvo7Nkg1Rr+aDfKWpy621wV7wLBM3DpBh2RQMGrKsMaEkO4RKAxNTGMYu3YWZorfdoAjf0aqG/sygWZAxD8678ng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949656; c=relaxed/simple;
-	bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VAtlNsOWdJxkHZkVbE9/OkOTiI0BB7iSh4OL9VywgvTUQ48y6g1NNZoQFxcFc5R0gelckK1DNqjzdT+6SJK4IbohD0Kkeh5W7NnXHbRrcYmdcTfzQAALbCKwgPnCJHqXQVIWDRCXCfitFbJxapX4oLFW38zGx+E2dn6DRH9/Ab0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E8POWZ4S; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477632d45c9so5566785e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:14:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762949652; x=1763554452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
-        b=E8POWZ4S1gqsLQ/VtHBqeaVnes5P7kDH+FtPQUwFBJ4eT2GcS7CJIRZg/JgIsimfYN
-         eE7U9INocW9J6B4KZQ2vNivTIhMHptHV/awujlk2IzOr5o1n5K90hstpBInvXuWgVMZ1
-         V8AvsAvuW4KZ7ZFTL81fLLXnk6Ji4hC5kZA1eSFtvdW2QO0qVhGhE0R4T82RQwpHGtUj
-         YqVosqmQFO4g3w6VdYKe5YRMTRBrhBBEoEq2IFKDCPp6j/sgSmNobxIY8Nto4Qa8urBg
-         5kDBvWxbUrVgBWsg5EQeCSsangSyLJZfz477x5ivLb1pWZr9OJGuYGAKpAw/ouxx5i7g
-         NTiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762949652; x=1763554452;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
-        b=eXKcC9FZFinstlrSCCYyTKhbQfNCrD6VFjfsZjeJwG5srLW7mf3oKK1rC1DwwG8y94
-         4wEs7VsX8mH3MFIWGvl9nImNv9QQzpXoxBUSpQU5sbJTQx8co+E3/DVM4Fepmrrawn61
-         rtJe4YQKbP7srTiCdj2MRkb/e0MCnZSspWnjE8SD8WZe4hJoau61jrFqRO6ASDEB7KsT
-         VkMcMolkHbvrp1n+iiuosOvHu6ZBtr6jO3y1zG6DvYF+U+WhPp6m+jgVA/WsFOLGllUv
-         svcze1Lb261D4sIY1aXUgFCMu8GmkOe9s1iYwzeZ/8bX/heCOyJhv+88G2HXth32rS2W
-         QUyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ikakArhZQutkF9rEIFT0k2gh+Yagb5JNnNqoP1Q0CtZzPYnXFd6kgvwFeZiV/GpDLLiw+FGELELvlSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlMlkjH3/SCFBp/cH3kvUA1fxeAVGaRU+hMxufr1PLq+rLkzZX
-	QvZW2CVwJxoow2nFmssQHfAbhXR+sWngLz9tzj6PucQpLXELVwXV3j8s72AgqDnKhCE=
-X-Gm-Gg: ASbGncso6LoGPfuxO145p1E9Iwcuw931Y0EI4evGMK+ioeO8vbukli53Ae8YTzqO9Fn
-	2b1B/4RehiSSfCg6b6tfnGpQMjEOXydz1WUrYTRjiHGqXc7lhGhCbUEY+OtiMGWxXchlhf15V2X
-	rTGNM84nsDFszwgwjLVnMfzxz1w3rwyz7+kDeZt7sD/sOKE8J2V5VxHtTulr703u3xrek/jeh3C
-	OSeoNqQ5I5nSEv+KqMB+gsQL1mVEE2N8RPevfVgG1kRimDV4FP+s/qYT312B4wZvZbZkKqJ9pQm
-	aKF6fuqnNGJ4Xs9lK4VQyPNUvKd6OlOg/FjHEAW5i7GenEOGbESNfQ3sFF8X9Z3GA3pkkPZLiiO
-	TDPa2UO+u00NPh6A2cIhhwZUJhuCb6sZEIiXlpssXVU4zqqpyfM2E/yKIs5uyAUxPxVNEEyp6Ge
-	13dXY6+g==
-X-Google-Smtp-Source: AGHT+IHE9gQcKzRZRfVJPwal2CO92YTTNKWhjd3PMe37ZiWw8lo0M7TWEe/XDmM7RYwtcvi4g7le8w==
-X-Received: by 2002:a05:600c:3511:b0:477:54cd:2021 with SMTP id 5b1f17b1804b1-47787041346mr27268155e9.8.1762949652523;
-        Wed, 12 Nov 2025 04:14:12 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e8f3d6sm31531675e9.16.2025.11.12.04.14.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 04:14:12 -0800 (PST)
-Message-ID: <984524c4-e51b-45af-a775-477977df2695@linaro.org>
-Date: Wed, 12 Nov 2025 14:14:10 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D95C30B51F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762949689; cv=pass; b=GtAkx7EaoOEA3EgRkmoz2vZVf7b8IkJIw1pS/PJlY6ZXJ8ebKwNjfjXbWWF5RtI7HIpP3dijveEJ3Er9J1syR1zMVLCIeVCVyhSTb4zgrkUGfpg10MKcSSnpSP5DMwzqOZceCvk+kdZDPYJL5m1ThChsl5UehiP6a31yfruwYx8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762949689; c=relaxed/simple;
+	bh=3ZEPn6uNg0r0DPR0L5r0sNLOzUAIwJp0GJubMAxZRTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ihSrGI8jWQ/NF779g5+labu00z1X7ES1b09oSa05MDuAH/XDnppzQEyc8xnT2xM+hY841wQVt+gPG9CEiV2dEQFGBGSP/iNsszQGFfBz4CZzXPd+ddjs9fi5r+QGV1CC8H9Pb++Q92fCjR/YNigkXfGRJdXOaGZfTRDLP3vgpjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=SRs5tryj; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762949666; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Tq41fjFTE3/OKHQwL7fEBdcp85ytUO1rZb9J9zC19p5oD41+fTOzFcII58A4LjcN1GByptyv58IGJRmAFpk1L6FFz6xe9xJlKp+fLWsL7rStjlwto7FGezaIeSSWaqut8WgdU+dtDQKOxh11+Sb5q2/Q/ugY8UCkRmO+CfVtT1Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762949666; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=nmNu0BqiQLMXek9pjsJjeBE69VJ7PBIoc9imrwDBnVg=; 
+	b=YOpuWJFMlrkISfgVrifEWm+2MnwoMq4GSzBK2a0Whe1nZe4nzAG4E9pLfnH8ETGq71kHTCRaLrXZrAbEnl7ZHE0zliQ0qVP2WL80KEglRHm4WxfAB/6KO11pza12VbnnIntm6vrL0Fd5q55PwWUlEoefPd04Jhc8OTQWdrkeEHg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762949666;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=nmNu0BqiQLMXek9pjsJjeBE69VJ7PBIoc9imrwDBnVg=;
+	b=SRs5tryjPucGQ9+xDnpxckIRb8Irfyf6zeo6F2nS3USjvphhDEKpJkbh1VuzX0Aq
+	S8kc9BVBIQYUf2nyhYT6gh85Pt/kC8IvzOpngAwdR6pW1e4I0GGWdbbvq1sfK2thICB
+	Kk+6YZSm1S6CAwB6FgY4zyuWu9S2/qpZuEmL2rQE=
+Received: by mx.zohomail.com with SMTPS id 1762949664552644.4534275519923;
+	Wed, 12 Nov 2025 04:14:24 -0800 (PST)
+Message-ID: <855ebbf1-0b02-45b5-8fa9-b50c05793e19@collabora.com>
+Date: Wed, 12 Nov 2025 15:14:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,21 +59,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] mtd: spi-nor: micron-st: add mt35xu01gbba support
-To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-References: <20251112-nor-v4-0-e4637be82a0a@nxp.com>
- <20251112-nor-v4-4-e4637be82a0a@nxp.com>
+Subject: Re: [PATCH 1/3] drm/virtio: support VIRTIO_GPU_F_BLOB_ALIGNMENT
+To: Sergio Lopez <slp@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20251110125213.12633-1-slp@redhat.com>
+ <20251110125213.12633-2-slp@redhat.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251112-nor-v4-4-e4637be82a0a@nxp.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20251110125213.12633-2-slp@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Super!
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+On 11/10/25 15:52, Sergio Lopez wrote:
+> +	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_BLOB_ALIGNMENT)) {
+> +		vgdev->has_blob_alignment = true;
+> +		virtio_cread_le(vgdev->vdev, struct virtio_gpu_config,
+> +				blob_alignment, &blob_alignment);
+> +		vgdev->blob_alignment = blob_alignment;
+
+Shouldn't blob_alignment be max(guest_alignment, host_alignment)?
+
+-- 
+Best regards,
+Dmitry
 
