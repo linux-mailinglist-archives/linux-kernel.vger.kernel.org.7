@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-896559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30461C50AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:14:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C3CC50AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FBF189811F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:14:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 526314E6B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F5C2DBF40;
-	Wed, 12 Nov 2025 06:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7938E2DC32B;
+	Wed, 12 Nov 2025 06:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTB+v3NM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="dsv+t/L0"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E112B35958;
-	Wed, 12 Nov 2025 06:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952A92D97B5;
+	Wed, 12 Nov 2025 06:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762928047; cv=none; b=J+F09p3kO5s53sNO82CAFXzRqoATppIRecJ62G13myzj5wPgYIoCCD5yBV22yQG13uTSqhK8XzUEHLRV4UqSP6zeLAIhn4KGyKpVIKmc0T0vS3uWbML3Jcf9FggusMPNyb7zxQhLKxNgzqpXig7P4Hhsm2w/8INDvo1o71Y1AM0=
+	t=1762928093; cv=none; b=h0bimNrKqdGrtasOzoImYH+p4UlGgJW9mk2vci7r20h6RUyy0Xo+Xcc6xHEY7J1nWMlyCJor6rvIkBxkPQFebyNl+Khag/yWFzpsj2c08GOYc4C43tPuEKhWlPhqid3S+kuUj5QVz3rDnj9BfEOzTvTnD3K86eS0ilr+fiZVOuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762928047; c=relaxed/simple;
-	bh=G5iECnerdsVT4LC6jCWPFJW8NjU+pWzUl9LUg8UPdS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrohlA2BNAIKPHnsvxeOT1NVVxOmFrVSOMcqicTPCwVclBx+ue1XHOipz2KQ+DB8+xMPeCPkGKiQe7gj/Cy7o4U90Rl0RisXo9Glz4+Jzyz2DJgUd55NhUg6Tk1s7vj13V3oNvt+E7i96beXjNDRHUDPTGII5RMX7zbEe0NPqgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTB+v3NM; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762928045; x=1794464045;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G5iECnerdsVT4LC6jCWPFJW8NjU+pWzUl9LUg8UPdS0=;
-  b=VTB+v3NMuSB+9B4sXPk+1XcquxedfQit3ZXhrxUg1LOUbE0ZBeregZIR
-   2hvIes5bpidoi65KW1EVjGpauCn4z6MxoVB4UfFHsA/kQJPIpRTt7yLFn
-   jnbxQUbaTTwudVcfu+Uu9EpwPtIDAVKZXFbpp1x4wMDp+aDDrWI3eZHQS
-   yGZERiOMOhotcWCWmr0BHu4Cy8PKInGGVP/smLluMR3TOwiK/z9jtx9E1
-   kjCyPSsAfOrUZQhkWnijiXuxj331hYK92kJ9TiIluMlf0EbUnHslmFnx+
-   8A55XV3+K3UOxJBORojqz4wns7y8h2uLrAKLV+scGIOAYIy2g85q0PUgL
-   w==;
-X-CSE-ConnectionGUID: pjYLlPz8Sse/F4vvq7ly9A==
-X-CSE-MsgGUID: 1yWYr1moQ2Swan4XGu1rKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68847726"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="68847726"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:14:04 -0800
-X-CSE-ConnectionGUID: IgPIk0HvSlWi8rgYEjGXFA==
-X-CSE-MsgGUID: d+pvoL3VSaihQb/3BgbAkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="212528421"
-Received: from yungchua-mobl2.ccr.corp.intel.com (HELO [10.246.105.97]) ([10.246.105.97])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:14:03 -0800
-Message-ID: <679f8b6d-727e-44b2-abd8-714dffc35228@linux.intel.com>
-Date: Wed, 12 Nov 2025 14:13:53 +0800
+	s=arc-20240116; t=1762928093; c=relaxed/simple;
+	bh=ZzwUCfCOYUTbEaBhH3v6UCAZXDLHw9mxwZkVmB9i0/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0QiEccohOpMoa4Cvgp2s7SA6VpCgTbPOh0F0rs6d4Sl6qNZYchbZLbaUrxI9ocD6uAfVa5awzWuVZ44RCYPQByCVJYWvKqZqkvSs/0n9qzCzD/8oCb20m9ZiF4yTXUHSEE5kXOxqalkfsjJPVkTdX4CghNAsKi1BLkNvnIohLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=dsv+t/L0; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762928085;
+	bh=T8n6eKWtt9uTv/6xGBgqlzn+awiCOgVLvVexDCR5CIA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=dsv+t/L0hZpxmzM25xtrzvlpzl/6ym7opx1xRp9CftNoGZAA/4jjPvgKvQ5N6Ih8J
+	 Fg31AtsAMtb0STpgv+HXTsISny+8mGoMkZEZM8ek/Ew28pogUfAimAtm2hyE8R1b2V
+	 sIXYYTFRorH4QjdDJBOXfdPku6xxvk26fkM2JQkg=
+X-QQ-mid: esmtpsz10t1762928081t5c587094
+X-QQ-Originating-IP: kbEYhoF8GacQU0UCEfUev11PykziyM/ntLfoFyAF7Zo=
+Received: from = ( [120.239.196.22])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 12 Nov 2025 14:14:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12126374271057103050
+EX-QQ-RecipientCnt: 13
+Date: Wed, 12 Nov 2025 14:14:38 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-i2c@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH v2 2/4] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
+Message-ID: <01C031AEFDAD4CE5+aRQlzq76t3huDaLg@kernel.org>
+References: <20251027-p1-kconfig-fix-v2-0-49688f30bae8@linux.spacemit.com>
+ <20251027-p1-kconfig-fix-v2-2-49688f30bae8@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] soundwire: send multi sections in one BPT stream
-To: Vinod Koul <vkoul@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- pierre-louis.bossart@linux.dev, bard.liao@intel.com
-References: <20251021094355.132943-1-yung-chuan.liao@linux.intel.com>
- <aRQXWpLqDm8EduYN@vaman>
-Content-Language: en-US
-From: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
-In-Reply-To: <aRQXWpLqDm8EduYN@vaman>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027-p1-kconfig-fix-v2-2-49688f30bae8@linux.spacemit.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OLiMdF5B5RXDirk+iOar4cHbn/oBh9NiY7VH8rCICYxlTi4PIxJeIKi5
+	eQy9J80mzoft/dgGoNX6br99A7raws5YsFxPzsC1XtpqYysuR9vJV3VCF6gfLlx7T1Wga9I
+	b1NBSoZv/ylxg8qk7IC9nDHRjhdDAQY42AVX5hZjsQXYVmhMHCR70IwXzo19/OGMRJ8EIVK
+	beXQ874kf0rGmvMT8R/6WnZHdwiv7V5lDPrvPjc+G2Afi9njImiCef11uIK3wrRI0XHkFH9
+	dx649kUtADjckxhx67v0t+uxGrs3iz2059TsFYh2H6PkMwKmRLxkrKLWkLj1b72EhsPI0Xk
+	T0fzdRM2d3tz5DWCY+y6Awh7DKaBAwRRbEHL5HuxOZB1YYLJm5UKg43Sht27lGHX0PPB7Ya
+	obmaSrTKLby9YZe7KLBUsRSbAOibV4EdnqI9S9040IaZehiPQAg5utsGwOyq8byP1GkT70V
+	yvboqwRLYlCUOFEPp3w+/ma2hl4zzgxRUmY52sbkwe5rRUxRZejOMbeY6Aj+dwuXFgV6tiJ
+	RqntBnsUxxsutXeJ7Ha9HIhCUCv8D8juC6JzrDB+inBsn8UYm3qRBnyxaRUBj1Y8GoZarQt
+	fSKG51MXZxRFirFUKpQi0U/3ix/HyAZkGMjBOIUFfEmIFqBGu14LAcUoyS+OmiItqMrJo1J
+	UNZtShUGffic7g9CGVYRuSz+gUc/aP9LgI1PE0/gws4Z5qI1UrL/EHoEGLk5ONw+x0kmmRq
+	9eTMErroZb3SMZncrKZAg+wP07656iKcv4eGBBjuQr9D+lKL8x7tdqMFYqqcPda++qWgjve
+	MfoQ8AhvzxYQnqDMg1YuL0cDLwJp6A9etwkQJuclzBK9KfWsiYuJUxm3UnLoSt/jmKkt7KH
+	Xna6M0qBkddSTfYWK3oOBZ+M9NbbpLKOYGaJM0fJ5onDkjmNcvhYuQ9G8DXTwJrxt9QxjS5
+	orbwx7POjvddmYozYOxOmqLE1wTZ79HSRn8h5UZWQJbRGnxyzVfJlEyitCaTspwOh8eLrnY
+	UNlqFtxqD7o3kFH4WUIDuy614DbaCY6Xdij0bWhOXRiIhBNTt+yDQPyQ+Sv3ytVdsl1g5Xk
+	Uo17uxdFkxQzlBXLG5Bn/tPpyZZpTVf56SIKf7asyTg
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 11/12/2025 1:12 PM, Vinod Koul wrote:
-> On 21-10-25, 17:43, Bard Liao wrote:
->> Currently we send a BRA message with a start address with continuous
->> registers in a BPT stream. However, a codec may need to write different
->> register sections shortly. It makes more sense to send different
->> register sections in a BPT stream and no need to close/open the BPT
->> stream repeatedly.
->>
->> This series depends on the "ASoC/soundwire: add fake BPT frame to align
->> Intel DMA buffer size" series. Sending it now to get more review time.
+On Mon, Oct 27, 2025 at 01:48:06PM +0800, Troy Mitchell wrote:
+> The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> master mode operations is determined by the ILCR (I2C Load Count Register).
+> Previously, the driver relied on the hardware's reset default
+> values for this register.
 > 
-> I have applied it on top of above series, pls check why it is not
-> applying in :
-> error: patch failed: drivers/soundwire/intel_ace2x.c:156
-> error: drivers/soundwire/intel_ace2x.c: patch does not apply
+> The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+> frequencies lower than intended. For example, with the default
+> 31.5 MHz input clock, these default settings result in an SCL
+> frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> These frequencies are below the 100 kHz/400 kHz nominal speeds.
 > 
+> This patch integrates the SCL frequency management into
+> the Common Clock Framework (CCF). Specifically, the ILCR register,
+> which acts as a frequency divider for the SCL clock, is now registered
+> as a managed clock (scl_clk) within the CCF.
+> 
+> This patch also cleans up unnecessary whitespace
+> in the included header files.
+> 
+> Reviewed-by: Yixun Lan <dlan@gentoo.org>
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+> This patch was affected by the P1 Kconfig, which caused the maintainer
+> to revert it.
+> The current commit is a direct cherry-pick and reserves the original changelog.
+> This note is to clarify for anyone who sees the cover letter marked as v2
+> while the changelog entries reach v4.
+Hi Andi,
+Since the issue affecting the I2C patch has been fixed [1],
+I think it should be ready to be merged now. What do you think?
 
-Hi Vinod,
+Link: https://lore.kernel.org/all/176244506110.1925720.10807118665958896958.b4-ty@kernel.org/ [1]
 
-I just tried "git am" this series again and it can apply on top of
-04878e873d94 ("ASoC/soundwire: add fake BPT frame to align Intel DMA
-buffer size").
-Also, I checked drivers/soundwire/intel_ace2x.c line 156 and it has the
-same content as the "soundwire: introduce BPT section" patch.
-Sorry, I have no idea why it didn't apply. Could you please try again?
-
+                                    - Troy
 
