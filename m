@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-898031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A273C54225
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3D8C5422B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A87334257A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:28:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08416344BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE911350A2F;
-	Wed, 12 Nov 2025 19:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ACC351FDE;
+	Wed, 12 Nov 2025 19:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i8cG4LGT"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dNiGLOrG"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F3E3502B0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECB0350A2A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975470; cv=none; b=LkZvNaaDfAwUd6mOXGMQvuS10g00Rx8AWv5VDmQqTKFi3PNfpURDXyOcZQ4z7MTHihVnF7A3HgDVhbbBGdCXXEx8Hgx1yoRuE3IdTl2/74dXKdIEparDAX6YTivNyYrjflFdq3JnP7kqmi6sDZMAHTmXXXCAlWz70cQOx81c43Q=
+	t=1762975473; cv=none; b=lGeVbuskI0Sp4Rn1r65F0lhZ667pmStN5pnx3aoJyiUvVmpqtlEBqX28UKunnOeQG9bs6KR3cQns1WUr0cwaTjYz6eOjq9qpTLTKWOPGnauHthsTxJ5R1R4IIJ/I+uiXmpGXnPruRBpWyj9HIQnOjvSK//e3ZXX+k2/WjCNeI9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975470; c=relaxed/simple;
-	bh=U1wRohHj26D11My7hyn5Fjdv4sejotMbBGmzGh0UhXc=;
+	s=arc-20240116; t=1762975473; c=relaxed/simple;
+	bh=97ZKBa3Mxok7Ixq5KQmA3/oV4Kbeh4dCnPI534aVGCs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Xw6bjRyrSbosR75FORXEiVs9MFKpxVAfnaGdyq+5kKQd76AXP71aEbhy+vUk5tGgiCF52Ntc3JusbFdYAmCYPZ1CumalBcV+6rfic/rj+lnZ4CzcjkHGhsrhquejHorcYBeJ5Kxrlp9b23oYOvQCyehX7/7aXep6CFDSFAjNVAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lrizzo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i8cG4LGT; arc=none smtp.client-ip=209.85.208.73
+	 To:Cc:Content-Type; b=O2FERdbWfrCtM7o5PAkDddOHEb7U3M8cSzanWUeNC4vqtM6wVCEaLlAPDvro2e1nixBv5Mpl82E6ZSNYnMuQqBre0Akp+x1QNPl78skAawAGAmQkqOoJf9WQMGdLMwVsNtqzwrucBmqCXJDTJ7AdIsWu9Ac2pa+YHFNR2Igc+io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lrizzo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dNiGLOrG; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lrizzo.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-6408222225eso1402a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:24:28 -0800 (PST)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-6418122dd7bso14136a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:24:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762975467; x=1763580267; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762975469; x=1763580269; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIoXEE+S06QHrqc9zlnHrp1tKevTOCIMWDXUdlSULxc=;
-        b=i8cG4LGTFBIlpmu5dMCuJZ7Q48y2UjORI1YkwIz3f8jUKd92CDbSpPTIB7HuuF7enN
-         vVJaQAZeDWTepgMuxGM8hnZlRfQ1dZMFvOkLbOkyhur91IZYVEdiP0+4iUtaFH3wJFb+
-         I2faD2Bccfo5cQqS+Tq8lQ21c20lu4Xez4BS7f2fcYfC3Prx59MlMkZBGUrHLfUxooKO
-         Qjw+wDMUPF7QTyeiVamr5Mx8UveqPGz7gtHpa2Ie8Cy4e1Iv0Js3JQ2EjYlkeCNbwChi
-         RjI3V95c492yczXz9Plm/5l+mLRhwpu3X1imTd09RzmP00I1EeN1Frc2CpHBuh64447M
-         Ut4A==
+        bh=4QyPyRpqYf57hBi/oo2GFY86WIPxhm1a6MpX+EQajfk=;
+        b=dNiGLOrGPnhTXioWgUTfX1qZwcB/llIBCsA6x0/FZWQx4Zd8rguFW3q3peMHvXZSr6
+         f0KqeOlZXjXeMSIysk8lkjB6BFLwZMTjAC/WR/h9hmnxRjyxX4mWGfoFgLvlR3O4hJYE
+         D5iSk9HOZO/KzPQ0v3PO3jZF9JgFpXW0xHtInuogIonTtWUtOl9jQSTjvqp76clLYBtz
+         1w1Ba3WraeOWGvjeli5HU1+zZcSa7lLrsjSi+Nb0Ww9VbAMWDt7GggZTFqR19n8oBejd
+         fs4SWpKyMwZwxHDqqTJYy9fjckHNBTi7rOV0dH2clHtXVmv12FQxqgws2wthmeBK4ENI
+         d02A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975467; x=1763580267;
+        d=1e100.net; s=20230601; t=1762975469; x=1763580269;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIoXEE+S06QHrqc9zlnHrp1tKevTOCIMWDXUdlSULxc=;
-        b=D1TMOWzwkNPFma8x0eE1ZGhunjhXIecPbECUo+fH9kyqKqqwcsM6wkOzomMgGJU/mm
-         G6Dioq5yumNvjX2IuvBwAa1TCsnD4D2BKh+4T2vwzjrTH0dj4ovHrxuWjvOrVQQCmkrJ
-         hShLaCokn996iOrbboxu4zCBfqVR4BXyQo8+CLdMRTrGa1HL9XG2Fer6lvLH1c1ymO3F
-         k/O++3DVZqpk1d7aFZItQBiefss0eyi9If3L6gJ2EtMKjRZmmCKQV2BrBLHXz88SY9tr
-         7P2fyGw/vYYUqDD8+U3fcUWUYp+DN3PCUFOnh8fR/92xszNSapeFpnfclgi56+wzTCl+
-         logA==
-X-Gm-Message-State: AOJu0Yy+WixM1rq80BOV4vxA651asyNMb7yeG0AYblOIXfv+qZ7PphtK
-	SYqhCrSqqGtAvJy3Ucd9yj388+8v5Sq4HZhLE5u2mnmnS49W2Xzb/LKd285CFoj1ZLsj9l9GF/Q
-	v4BJqAw==
-X-Google-Smtp-Source: AGHT+IFKilkduTNedmFbVR6dbNG+KpfIItVMFlp40IXZ01vb1nyeI/Op4xDBXuM1bNYEeMsk9RIyypHkw1k=
-X-Received: from edok5.prod.google.com ([2002:aa7:c045:0:b0:640:9a27:321e])
- (user=lrizzo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:909:b0:63c:1170:656a
- with SMTP id 4fb4d7f45d1cf-6431a586af8mr3787278a12.37.1762975467428; Wed, 12
- Nov 2025 11:24:27 -0800 (PST)
-Date: Wed, 12 Nov 2025 19:24:05 +0000
+        bh=4QyPyRpqYf57hBi/oo2GFY86WIPxhm1a6MpX+EQajfk=;
+        b=Nex9eQvTj4dYjY7cpXBUhnkegNvaAvxUSK59gRlINxyl2YcXOlWI+UIwU8XHvcIIY/
+         Ar/+jIIGoYloJ1bXZW6R+fT+kw9eg9vu85nz7xnmIxtWUif/b1/jQLEkafQEUqFd+VD6
+         w37AJWFYksyGpem1xCUKrlsOCALI0eOLF3EgYSJDxnbNtXVJnmxJNJddljxdIo7VUFZj
+         ECl0UiN9oBcLfiIX6B3ANbQTMAjQTPEq6bNfJneq+2cWUZJQpl/wVp0ToDYqlMv8ILuH
+         vzNVbGOZhW/Vqdg+/f1XWRtmc1sC0Diwl0UhZKLl8W0tpv+G9OZNmvbrfbJR+7mFIR90
+         OQog==
+X-Gm-Message-State: AOJu0YysFdecAv7bh2CQBXBbF9fZdt2RBI0jXUheKbdYIB4pEl9Zi7Ke
+	SQEnHgZDTWVvCx5yzgGY/p8KfQcd40ye/8Vel3dMW/R5roHL612s41Zs+tPBlZ71ywogsrp0CA7
+	PZbnFLw==
+X-Google-Smtp-Source: AGHT+IFy70lDf/WZnWuSVrEkhLrRAG32Pal9GLoXRspx3Ed8ppMs2VQXtd1kFgrTgnPzuZI/FsqN/nSPurw=
+X-Received: from edc23.prod.google.com ([2002:a05:6402:4617:b0:640:b66f:1e57])
+ (user=lrizzo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:26c4:b0:640:b497:bf71
+ with SMTP id 4fb4d7f45d1cf-6431a4bf92cmr3903806a12.8.1762975469487; Wed, 12
+ Nov 2025 11:24:29 -0800 (PST)
+Date: Wed, 12 Nov 2025 19:24:06 +0000
 In-Reply-To: <20251112192408.3646835-1-lrizzo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251112192408.3646835-1-lrizzo@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112192408.3646835-4-lrizzo@google.com>
-Subject: [PATCH 3/6] genirq: soft_moderation: activate hooks in handle_irq_event()
+Message-ID: <20251112192408.3646835-5-lrizzo@google.com>
+Subject: [PATCH 4/6] genirq: soft_moderation: implement adaptive moderation
 From: Luigi Rizzo <lrizzo@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>, 
 	Luigi Rizzo <rizzo.unipi@gmail.com>, Paolo Abeni <pabeni@redhat.com>, 
@@ -84,112 +84,291 @@ Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
 	Luigi Rizzo <lrizzo@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Activate soft_moderation via the hooks in handle_irq_event()
-and per-CPU and irq_desc initialization.
+Add two control parameters (target_irq_rate and hardirq_percent)
+to indicate the desired maximum values for these two metrics.
 
-This change only implements fixed moderation. It needs to be
-explicitly enabled at runtime on individual interrupts.
+Every update_ms the hook in handle_irq_event() recomputes the total and
+local interrupt rate and the amount of time spent in hardirq, compares
+the values with the targets, and adjusts the moderation delay up or down.
 
-Example (kernel built with CONFIG_SOFT_IRQ_MODERATION=y)
+The interrupt rate is computed in a scalable way by counting interrupts
+per-CPU, and aggregating the value in a global variable only every
+update_ms. Only CPUs that actively process interrupts are actually
+accessing the shared variable, so the system scales well even on very
+large servers.
 
-  # enable fixed moderation
+EXAMPLE TESTING
+
+Need some workload that can exceed the limits, such as heavy
+network or disk traffic. For testing, one can use very low thresholds
+(e.g. target_irq_rate=50000, hardirq_frac=10) to make it easier to go
+above the limit.
+
+  # configure maximum delay (which is also the fixed moderation delay)
   echo "delay_us=400" > /proc/irq/soft_moderation
 
   # enable on network interrupts (change name as appropriate)
   echo on | tee /proc/irq/*/*eth*/../soft_moderation
 
-  # show it works by looking at counters in /proc/irq/soft_moderation
-  cat /proc/irq/soft_moderation
-
-  # Show runtime impact on ping times changing delay_us
+  # ping times should reflect the 400us
   ping -n -f -q -c 1000 ${some_nearby_host}
-  echo "delay_us=100" > /proc/irq/soft_moderation
+  # show actual per-cpu delays and statistics
+  less /proc/irq/soft_moderation
+
+  # configure adaptive bounds. The control loop will adjust values
+  # based on actual load
+  echo "target_irq_rate=1000000" > /proc/irq/soft_moderation
+  echo "hardirq_percent=70" > /proc/irq/soft_moderation
+
+  # ping times now should be much lower
   ping -n -f -q -c 1000 ${some_nearby_host}
 
-Configuration via module parameters (irq_moderation.${name}=${value}) or
-echo "${name}=${value}" > /proc/irq/soft_moderation)
+  # show actual per-cpu delays and statistics
+  less /proc/irq/soft_moderation
 
-delay_us   0=off, range 1-500, default 100
-  how long an interrupt is disabled after it fires. Small values are
-  accumulated until they are large enough, e.g. 10us. As an example, a 2us value
-  means that the timer is set only every 5 interrupts.
+By generating high interrupt or hardirq load, one can also test
+the effectiveness of the control scheme and the sensitivity to
+control parameters.
 
-timer_rounds  0-20, default 0
-  How many extra timer runs before re-enabling interrupts. This allows
-  reducing the number of MSI interrupts while keeping delay_us small.
-  This is similar to the "napi_defer_hard_irqs" option in NAPI, but with
-  some subtle differences (e.g. here the number of rounds is
-  deterministic, and interrupts are disabled at MSI level).
+NEW PARAMETERS
 
-Change-Id: I47c5059ad537fcb9561f924620cf68e1d648aae6
+target_irq_rate   0 off, 0-50000000, default 0
+  the total maximum acceptable interrupt rate.
+
+hardirq_percent   0 off,  0-100, default 0
+  the maximum acceptable percentage of time spent in hardirq.
+
+update_ms         1-100, default 1
+  how often the control loop will readjust the delay.
+
+Change-Id: I3cdc72041be1e3c793013d8804f484cdcbb455ab
 ---
- arch/x86/kernel/cpu/common.c | 1 +
- drivers/irqchip/irq-gic-v3.c | 2 ++
- kernel/irq/handle.c          | 3 +++
- kernel/irq/irqdesc.c         | 1 +
- 4 files changed, 7 insertions(+)
+ include/linux/irq_moderation.h |   9 ++-
+ kernel/irq/irq_moderation.c    | 143 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 147 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 02d97834a1d4d..1953419fde6ff 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2440,6 +2440,7 @@ void cpu_init(void)
- 
- 		intel_posted_msi_init();
- 	}
-+	irq_moderation_percpu_init();
- 
- 	mmgrab(&init_mm);
- 	cur->active_mm = &init_mm;
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 3de351e66ee84..902bcbf9d85d8 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1226,6 +1226,8 @@ static void gic_cpu_sys_reg_init(void)
- 		WARN_ON(gic_dist_security_disabled() != cpus_have_security_disabled);
- 	}
- 
-+	irq_moderation_percpu_init();
-+
- 	/*
- 	 * Some firmwares hand over to the kernel with the BPR changed from
- 	 * its reset value (and with a value large enough to prevent
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index e103451243a0b..2cacceaaea9d0 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -12,6 +12,7 @@
- #include <linux/random.h>
- #include <linux/sched.h>
- #include <linux/interrupt.h>
-+#include <linux/irq_moderation.h>
- #include <linux/kernel_stat.h>
- 
- #include <asm/irq_regs.h>
-@@ -254,9 +255,11 @@ irqreturn_t handle_irq_event(struct irq_desc *desc)
- 	irqd_set(&desc->irq_data, IRQD_IRQ_INPROGRESS);
- 	raw_spin_unlock(&desc->lock);
- 
-+	irq_moderation_hook(desc); /* may disable irq so must run unlocked */
- 	ret = handle_irq_event_percpu(desc);
- 
- 	raw_spin_lock(&desc->lock);
-+	irq_moderation_epilogue(desc); /* start moderation timer if needed */
- 	irqd_clear(&desc->irq_data, IRQD_IRQ_INPROGRESS);
- 	return ret;
+diff --git a/include/linux/irq_moderation.h b/include/linux/irq_moderation.h
+index 4d90d7c4ca26b..45df60230e42e 100644
+--- a/include/linux/irq_moderation.h
++++ b/include/linux/irq_moderation.h
+@@ -89,6 +89,8 @@ static inline void irq_moderation_start_timer(struct irq_mod_state *ms)
+ 			       /*range*/2000, HRTIMER_MODE_REL_PINNED_HARD);
  }
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index db714d3014b5f..e3efbecf5b937 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -134,6 +134,7 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
- 	desc->tot_count = 0;
- 	desc->name = NULL;
- 	desc->owner = owner;
-+	irq_moderation_init_fields(desc);
- 	for_each_possible_cpu(cpu)
- 		*per_cpu_ptr(desc->kstat_irqs, cpu) = (struct irqstat) { };
- 	desc_smp_init(desc, node, affinity);
+ 
++void __irq_moderation_adjust_delay(struct irq_mod_state *ms, u64 delta_time, u64 update_ns);
++
+ static inline bool irq_moderation_enabled(void)
+ {
+ 	return READ_ONCE(irq_mod_info.delay_us);
+@@ -119,8 +121,13 @@ static inline void irq_moderation_adjust_delay(struct irq_mod_state *ms)
+ 	/* Fetch important state */
+ 	ms->delay_ns = clamp(irq_mod_info.delay_us, 1u, 500u) * NSEC_PER_USEC;
+ 
++	/* If config changed, restart from the highest delay */
++	if (ktime_compare(irq_mod_info.procfs_write_ns, ms->last_ns) > 0)
++		ms->mod_ns = ms->delay_ns;
++
+ 	ms->last_ns = now;
+-	ms->mod_ns = ms->delay_ns;
++	/* Do the expensive processing */
++	__irq_moderation_adjust_delay(ms, delta_time, update_ns);
+ }
+ 
+ /* Return true if timer is active or delay is large enough to require moderation */
+diff --git a/kernel/irq/irq_moderation.c b/kernel/irq/irq_moderation.c
+index a9d2bdcf4d8c7..0229697a6a95a 100644
+--- a/kernel/irq/irq_moderation.c
++++ b/kernel/irq/irq_moderation.c
+@@ -81,22 +81,127 @@ static_assert(offsetof(struct irq_mod_info, procfs_write_ns) == 64);
+ struct irq_mod_info irq_mod_info ____cacheline_aligned = {
+ 	.delay_us = 100,
+ 	.update_ms = 1,
++	.scale_cpus = 100,
+ 	.count_timer_calls = true,
++	.decay_factor = 16,
++	.grow_factor = 8,
+ };
+ 
+ module_param_named(delay_us, irq_mod_info.delay_us, uint, 0444);
+ MODULE_PARM_DESC(delay_us, "Max moderation delay us, 0 = moderation off, range 10..500.");
+ 
++module_param_named(hardirq_percent, irq_mod_info.hardirq_percent, uint, 0444);
++MODULE_PARM_DESC(hardirq_percent, "Target max hardirq percentage, 0 off.");
++
++module_param_named(target_irq_rate, irq_mod_info.target_irq_rate, uint, 0444);
++MODULE_PARM_DESC(target_irq_rate, "Target max interrupt rate, 0 off.");
++
+ module_param_named(timer_rounds, irq_mod_info.timer_rounds, uint, 0444);
+ MODULE_PARM_DESC(timer_rounds, "How many extra timer polls once moderation triggered.");
+ 
++module_param_named(update_ms, irq_mod_info.update_ms, uint, 0444);
++MODULE_PARM_DESC(update_ms, "Update interval in milliseconds, range 1-100");
++
+ DEFINE_PER_CPU_ALIGNED(struct irq_mod_state, irq_mod_state);
+ 
++static inline uint get_grow_factor(void) { return clamp(irq_mod_info.grow_factor, 8u, 64u); }
++static inline uint get_decay_factor(void) { return clamp(irq_mod_info.decay_factor, 8u, 64u); }
++static inline uint get_scale_cpus(void) { return clamp(irq_mod_info.scale_cpus, 50u, 1000u); }
++
+ static void smooth_avg(u32 *dst, u32 val, u32 steps)
+ {
+ 	*dst = ((64 - steps) * *dst + steps * val) / 64;
+ }
+ 
++/* Adjust the moderation delay, called at most every update_ns */
++void __irq_moderation_adjust_delay(struct irq_mod_state *ms, u64 delta_time, u64 update_ns)
++{
++	/* Fetch configuration */
++	u32 target_rate = clamp(irq_mod_info.target_irq_rate, 0u, 50000000u);
++	u32 hardirq_percent = clamp(irq_mod_info.hardirq_percent, 0u, 100u);
++	bool below_target = true;
++	/* Compute decay steps based on elapsed time */
++	u32 steps = delta_time > 10 * update_ns ? 10 : 1 + (delta_time / update_ns);
++
++	if (target_rate == 0 && hardirq_percent == 0) {	/* use fixed delay */
++		ms->mod_ns = ms->delay_ns;
++		ms->irq_rate = 0;
++		ms->my_irq_rate = 0;
++		ms->cpu_count = 0;
++		return;
++	}
++
++	if (target_rate > 0) {	/* control total and individual CPU rate */
++		u64 irq_rate, my_irq_rate, tmp, delta_irqs, num_cpus;
++		bool my_rate_ok, global_rate_ok;
++
++		/* Update global number of interrupts */
++		if (ms->irq_count < 1)	/* make sure it is always > 0 */
++			ms->irq_count = 1;
++		tmp = atomic_long_add_return(ms->irq_count, &irq_mod_info.total_intrs);
++		delta_irqs = tmp - ms->last_total_irqs;
++
++		/* Compute global rate, check if we are ok */
++		irq_rate = (delta_irqs * NSEC_PER_SEC) / delta_time;
++		global_rate_ok = irq_rate < target_rate;
++
++		ms->last_total_irqs = tmp;
++
++		/*
++		 * num_cpus is the number of CPUs actively handling interrupts
++		 * in the last interval. CPUs handling less than the fair share
++		 * target_rate / num_cpus do not need to be throttled.
++		 */
++		tmp = atomic_long_add_return(1, &irq_mod_info.total_cpus);
++		num_cpus = tmp - ms->last_total_cpus;
++		/* scale proportionally to time, reduce errors if we are idle for too long */
++		num_cpus = 1 + (num_cpus * update_ns + delta_time / 2) / delta_time;
++
++		/* Short intervals may underestimate sources. Apply a scale factor */
++		num_cpus = num_cpus * get_scale_cpus() / 100;
++
++		/* Compute our rate, check if we are ok */
++		my_irq_rate = (ms->irq_count * NSEC_PER_SEC) / delta_time;
++		my_rate_ok = my_irq_rate * num_cpus < target_rate;
++
++		ms->irq_count = 1;	/* reset for next cycle */
++		ms->last_total_cpus = tmp;
++
++		/* Use instantaneous rates to react. */
++		below_target = global_rate_ok || my_rate_ok;
++
++		/* Statistics (rates are smoothed averages) */
++		smooth_avg(&ms->irq_rate, irq_rate, steps);
++		smooth_avg(&ms->my_irq_rate, my_irq_rate, steps);
++		smooth_avg(&ms->cpu_count, num_cpus * 256, steps); /* scaled */
++		ms->my_irq_high += !my_rate_ok;
++		ms->irq_high += !global_rate_ok;
++	}
++
++	if (hardirq_percent > 0) {		/* control time spent in hardirq */
++		u64 cur = kcpustat_this_cpu->cpustat[CPUTIME_IRQ];
++		u64 irqtime = cur - ms->last_irqtime;
++		bool hardirq_ok = irqtime * 100 < delta_time * hardirq_percent;
++
++		below_target &= hardirq_ok;
++		ms->last_irqtime = cur;
++		ms->hardirq_high += !hardirq_ok;	/* statistics */
++	}
++
++	/* Controller: move mod_ns up/down if we are above/below target */
++	if (below_target) {
++		ms->mod_ns -= ms->mod_ns * steps / (steps + get_decay_factor());
++		if (ms->mod_ns < 100)
++			ms->mod_ns = 0;
++	} else if (ms->mod_ns < 500) {
++		ms->mod_ns = 500;
++	} else {
++		ms->mod_ns += ms->mod_ns * steps / (steps + get_grow_factor());
++		if (ms->mod_ns > ms->delay_ns)
++			ms->mod_ns = ms->delay_ns;	/* cap to delay_ns */
++	}
++}
++
+ /* moderation timer handler, called in hardintr context */
+ static enum hrtimer_restart moderation_timer_cb(struct hrtimer *timer)
+ {
+@@ -172,6 +277,13 @@ static void set_moderation_mode(struct irq_desc *desc, bool mode)
+ 	}
+ }
+ 
++/* irq_to_desc is not exported. Wrap it in this function for a specific use. */
++void irq_moderation_set_mode(int irq, bool mode)
++{
++	set_moderation_mode(irq_to_desc(irq), mode);
++}
++EXPORT_SYMBOL(irq_moderation_set_mode);
++
+ #pragma clang diagnostic error "-Wformat"
+ /* Print statistics */
+ static int moderation_show(struct seq_file *p, void *v)
+@@ -215,12 +327,32 @@ static int moderation_show(struct seq_file *p, void *v)
+ 	seq_printf(p, "\n"
+ 		   "enabled              %s\n"
+ 		   "delay_us             %u\n"
++		   "target_irq_rate      %u\n"
++		   "hardirq_percent      %u\n"
+ 		   "timer_rounds         %u\n"
+-		   "count_timer_calls    %s\n",
++		   "update_ms            %u\n"
++		   "scale_cpus           %u\n"
++		   "count_timer_calls    %s\n"
++		   "decay_factor         %u\n"
++		   "grow_factor          %u\n",
+ 		   str_yes_no(delay_us),
+-		   delay_us,
+-		   irq_mod_info.timer_rounds,
+-		   str_yes_no(irq_mod_info.count_timer_calls));
++		   delay_us, irq_mod_info.target_irq_rate, irq_mod_info.hardirq_percent,
++		   irq_mod_info.timer_rounds, irq_mod_info.update_ms,
++		   irq_mod_info.scale_cpus,
++		   str_yes_no(irq_mod_info.count_timer_calls),
++		   get_decay_factor(), get_grow_factor());
++
++	seq_printf(p,
++		   "irq_rate             %lu\n"
++		   "irq_high             %lu\n"
++		   "my_irq_high          %lu\n"
++		   "hardirq_percent_high %lu\n"
++		   "total_interrupts     %lu\n"
++		   "total_cpus           %lu\n",
++		   active_cpus ? irq_rate / active_cpus : 0,
++		   irq_high, my_irq_high, hardirq_high,
++		   READ_ONCE(*((ulong *)&irq_mod_info.total_intrs)),
++		   READ_ONCE(*((ulong *)&irq_mod_info.total_cpus)));
+ 
+ 	return 0;
+ }
+@@ -238,7 +370,10 @@ struct var_names {
+ 	int max;
+ } var_names[] = {
+ 	{ "delay_us", &irq_mod_info.delay_us, 0, 500 },
++	{ "target_irq_rate", &irq_mod_info.target_irq_rate, 0, 50000000 },
++	{ "hardirq_percent", &irq_mod_info.hardirq_percent, 0, 100 },
+ 	{ "timer_rounds", &irq_mod_info.timer_rounds, 0, 50 },
++	{ "update_ms", &irq_mod_info.update_ms, 1, 100 },
+ 	{ "count_timer_calls", &irq_mod_info.count_timer_calls, 0, 1 },
+ 	{}
+ };
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
