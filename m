@@ -1,232 +1,574 @@
-Return-Path: <linux-kernel+bounces-897369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411BFC52C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:43:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BDDC52CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1336E4A55FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:20:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF66A34F2F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770102C234B;
-	Wed, 12 Nov 2025 14:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="c0t5zoZa"
-Received: from mail-m15580.qiye.163.com (mail-m15580.qiye.163.com [101.71.155.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51A433AD98;
+	Wed, 12 Nov 2025 14:42:50 +0000 (UTC)
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F0A288515;
-	Wed, 12 Nov 2025 14:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDB8330B33;
+	Wed, 12 Nov 2025 14:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957188; cv=none; b=DeTlpcrUVNZGmiUbV+Eu7B32+EBoAz9nTbGsFATp4d7yfUNf51xeMWbqPlj29XgAU8AjVpcYVjgQiynfpWJbkR1pFfXL5W5bCKZa8HcsPLiTZAA8trubPXtQmAx/xuXn33PjPnEB8N3UixYAKIBkV8dL/8Hhg7Y7ODtMPjcs73A=
+	t=1762958569; cv=none; b=RIofjAFWK8BWQud/OYIOW9sXz064BLSWbStKUXTMIZVibl8XcO5/y8ICbHD1W4Q9dAJGqkgUG8OOJ3egnotInRdxPakZ0XvzoMPNb1MgNtqVGj0sGkOrUaORtOk6nU7ALbzfrVJ3gF4hyKNM1nJiJXBk5srliUbt60M0kUP6Ruw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957188; c=relaxed/simple;
-	bh=SsTFJkWuITgqkIxGn8JxWBb6ZQEfGlyeD6HU5BTM8kg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZWEmuX1gq3kmvX+HjbsHIeTEpX+JBlCSonXgSg9vQcBas+UdUUIaOb6em1IT/IvzTBlsLeEghI1Ppr2pyZbDdKuz1RKqsQ1fCE/ptG+/yJKGvIyE2Zf4VbETJUPznTTj0vQ/IY8xsBQg7rlic73KTmW5d9nqG8hL1dnkhs3B2hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=c0t5zoZa; arc=none smtp.client-ip=101.71.155.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 295a0398b;
-	Wed, 12 Nov 2025 22:14:31 +0800 (GMT+08:00)
-Message-ID: <cc754788-084f-4066-b2fa-9cca613e791b@rock-chips.com>
-Date: Wed, 12 Nov 2025 22:14:30 +0800
+	s=arc-20240116; t=1762958569; c=relaxed/simple;
+	bh=7kgk05jR1DYbLx7fmcPVyzDPEa4zB1Mzv7bqh2gTxSg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bMGxgbG7iSCx8PF7IFksGH/GCQGsX985QtrS7RupLEoVv4h5Bwb5/1l/HHJ09syyJVaNv7Gp7iO6Ai4zx01KMszvsmq0HBdhVI8SvmCFk3BbUQBiuqbPB00mq0uzgn1g+cEL4Mb5ttQrFYUeaHLmEfcos3m/SqmCFRbrBEgEZdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net; spf=pass smtp.mailfrom=hadess.net; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hadess.net
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id A8738580E5A;
+	Wed, 12 Nov 2025 14:15:08 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CC41843E3B;
+	Wed, 12 Nov 2025 14:15:00 +0000 (UTC)
+Message-ID: <82ec5223f83eaa89278997fe95ee9ea83236a4a1.camel@hadess.net>
+Subject: Re: [RFC PATCH 1/1] HID: input: Add support for multiple batteries
+ per device
+From: Bastien Nocera <hadess@hadess.net>
+To: Lucas Zampieri <lzampier@redhat.com>, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, Benjamin
+ Tissoires <bentiss@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ linux-pm@vger.kernel.org
+Date: Wed, 12 Nov 2025 15:15:00 +0100
+In-Reply-To: <20251111105634.1684751-2-lzampier@redhat.com>
+References: <20251111105634.1684751-1-lzampier@redhat.com>
+	 <20251111105634.1684751-2-lzampier@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Promote the th1520 reset handling
- to ip level
-To: Jisheng Zhang <jszhang@kernel.org>
-References: <20251112001426.17252-1-jszhang@kernel.org>
- <25d5ba5f-3f07-411a-a4d2-ae4a06a44a94@rock-chips.com>
- <aRSHZeurjbC266cd@xhacker>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <aRSHZeurjbC266cd@xhacker>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a786b080009cckunm6c897d4b1b1445
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQklMGVYfT0gZSRgeSE5ITRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=c0t5zoZard6OBUs+5foGzrMFZaFQfKrdzCdsXas3UCKJ4gNy/HOWfBilQM8XUUM4EZwidfYriW7GrXkGiQsqFv39t5qZqrgTeXDiw8Zx9KsojfFdDODbkR5fbIf7wKqN68BVhrciTMgwr4WTytmwCVMSJySYimZTidWw2b5rbTI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=1DWRM62LV4tw80JdrLTDw1XX8YN0Yeh+aEY58Uqbl9c=;
-	h=date:mime-version:subject:message-id:from;
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdegvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttderjeenucfhrhhomhepuegrshhtihgvnhcupfhotggvrhgruceohhgruggvshhssehhrgguvghsshdrnhgvtheqnecuggftrfgrthhtvghrnhepieffgfehtedtgefgjeeggfffgeeuvdegveekveejfeekkedujeehteffueefffeunecukfhppedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfedphhgvlhhopeglkffrvheimedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfegnpdhmrghilhhfrhhomhephhgruggvshhssehhrgguvghsshdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehliigrmhhpihgvrhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrn
+ hgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: hadess@hadess.net
 
+Hey Lucas,
 
-在 2025/11/12 星期三 21:11, Jisheng Zhang 写道:
-> On Wed, Nov 12, 2025 at 03:01:43PM +0800, Shawn Lin wrote:
->> Hi Jisheng,
-> 
-> Hi
-> 
->>
->> 在 2025/11/12 星期三 8:14, Jisheng Zhang 写道:
->>> Commit 27e8fe0da3b7 ("mmc: sdhci-of-dwcmshc: Prevent stale command
->>> interrupt handling") clears pending interrupts when resetting
->>> host->pending_reset to ensure no pending stale interrupts after
->>> sdhci_threaded_irq restores interrupts. But this fix is only added for
->>> th1520 platforms, in fact per my test, this issue exists on all
->>> dwcmshc users, such as cv1800b, sg2002, and synaptics platforms.
->>>
->>> So promote the above reset handling from th1520 to ip level.
->>>> Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo
->> CV1800B and SG2002")
->>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
->>> ---
->>>    drivers/mmc/host/sdhci-of-dwcmshc.c | 35 ++++++++++++++++-------------
->>>    1 file changed, 20 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
->>> index eebd45389956..c17168edc9fd 100644
->>> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
->>> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
->>> @@ -289,6 +289,19 @@ static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
->>>    	sdhci_adma_write_desc(host, desc, addr, len, cmd);
->>>    }
->>> +static void dwcmshc_reset(struct sdhci_host *host, u8 mask)
->>> +{
->>> +	sdhci_reset(host, mask);
->>> +
->>> +	/* The dwcmshc does not comply with the SDHCI specification
->>> +	 * regarding the "Software Reset for CMD line should clear 'Command
->>> +	 * Complete' in the Normal Interrupt Status Register." Clear the bit
->>> +	 * here to compensate for this quirk.
->>> +	 */
->>> +	if (mask & SDHCI_RESET_CMD)
->>> +		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
->>> +}
->>> +
->>>    static unsigned int dwcmshc_get_max_clock(struct sdhci_host *host)
->>>    {
->>>    	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>> @@ -686,7 +699,7 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->>>    		reset_control_deassert(priv->reset);
->>>    	}
->>> -	sdhci_reset(host, mask);
->>> +	dwcmshc_reset(host, mask);
->>
->> Thanks for the patch. However, I'm afraid it's overkill for the IP used
->> by Rockchip at least. From the databook v1.70a released by synopsys, it
->> clearly says:
->>
->> "The following registers and bits are cleared by this bit:
->> - Present State register - Command Inhibit (CMD) bit
->> - Normal Interrupt Status register - Command Complete bit
->> - Error Interrupt Status - Response error statuses related
->> to Command Inhibit (CMD) bit "
-> 
-> The fact seems different. I have both 1.70a and 1.80a platforms, and
-> the issue exists on both plaforms.
-> 
->>
->> To be more rigorous, I askeed my IC team performed a simulation this
->> morning. The results confirmed that the IP's behavior complies with the
->> description in the databook.
-> 
-> See above. NOTE: this isn't 100% reproduced. And per my testing, doesn't
-> exists with EMMC case. It's easier to be reproduced when using the host
-> for sdio card, e.g sdio wifi.
+(Follow-up to a chat we had about this patch privately)
 
-That's interesting...How come the digital logic to clear a register is
-different between EMMC and SDIO, regarding to the reset signal of
-cmdline, I don't know, THB.
+On Tue, 2025-11-11 at 10:56 +0000, Lucas Zampieri wrote:
+> Add support for multiple batteries per HID device by introducing
+> struct hid_battery to encapsulate individual battery state and using
+> a list to track multiple batteries identified by report ID. The
+> legacy
+> dev->battery field is maintained for backwards compatibility.
 
-But FYI, dwcmshc on Rockchip platform only supports eMMC because of the
-IP configuration, that might explain the fact I didn't see it before, if
-your test was correct.
+The cover letter mentions specific hardware, you probably want to
+mention this in the commit message itself, as the cover letter will be
+disconnected from this commit once this gets merged. Don't hesitate to
+link to product pages directly if you want to show specific products as
+potential users of that capability.
 
-> 
->>
->> Is this a problem with an early version of the dwc IP? If so, I think it
-> 
-> See above, this exists on 1.80a too. And I belive the ip version on th1520,
-> cv1800b and sg2002 is not earlier than 1.70a.
+You mentioned that you tested this patchset with a custom firmware for
+a split keyboard. It would be great if the firmware could be made
+available to show how this was tested and mention that in the commit
+message.
 
-Could you possible request a errata from Synopsys? Otherwise I coudld
-try to ask one if possible.
+bentiss will also likely want a hid-recorder output for the device that
+shows the batteries being instantiated. This would also likely be used
+to test whether upower continues working as expected.
 
-> 
->  From another side, clearing SDHCI_INT_RESPONSE does no harm.
+Talking of upower, I think we'll need an systemd/hwdb + upower changes
+to differentiate batteries within a single device, as I don't think we
+can have enough metadata in the HID report to differentiate them.
 
-I know it's harmless but still I hesitate to extend it to Rockchip IP 
-before I could understand what is going on, but not based on speculation 
-and testing.
+Last comment about the patch itself, do you think it would be feasible
+to split this in 2 or 3? One to introduce the hid_battery struct,
+another to use it to replace direct power_supply access, and finally
+one to allow a list of hid_batteries?
 
-> 
->> should cc all users of this driver to have a check if making it a IP
->> level change.
->>
->>>    }
->>>    static int dwcmshc_rk35xx_init(struct device *dev, struct sdhci_host *host,
->>> @@ -832,15 +845,7 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
->>>    	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
->>>    	u16 ctrl_2;
->>> -	sdhci_reset(host, mask);
->>> -
->>> -	/* The T-Head 1520 SoC does not comply with the SDHCI specification
->>> -	 * regarding the "Software Reset for CMD line should clear 'Command
->>> -	 * Complete' in the Normal Interrupt Status Register." Clear the bit
->>> -	 * here to compensate for this quirk.
->>> -	 */
->>> -	if (mask & SDHCI_RESET_CMD)
->>> -		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
->>> +	dwcmshc_reset(host, mask);
->>>    	if (priv->flags & FLAG_IO_FIXED_1V8) {
->>>    		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>> @@ -886,7 +891,7 @@ static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->>>    	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
->>>    	u32 val, emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
->>> -	sdhci_reset(host, mask);
->>> +	dwcmshc_reset(host, mask);
->>>    	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
->>>    		val = sdhci_readl(host, priv->vendor_specific_area1 + CV18XX_SDHCI_MSHC_CTRL);
->>> @@ -958,7 +963,7 @@ static void cv18xx_sdhci_post_tuning(struct sdhci_host *host)
->>>    	val |= SDHCI_INT_DATA_AVAIL;
->>>    	sdhci_writel(host, val, SDHCI_INT_STATUS);
->>> -	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
->>> +	dwcmshc_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
->>>    }
->>>    static int cv18xx_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
->>> @@ -1080,7 +1085,7 @@ static inline void sg2042_sdhci_phy_init(struct sdhci_host *host)
->>>    static void sg2042_sdhci_reset(struct sdhci_host *host, u8 mask)
->>>    {
->>> -	sdhci_reset(host, mask);
->>> +	dwcmshc_reset(host, mask);
->>>    	if (mask & SDHCI_RESET_ALL)
->>>    		sg2042_sdhci_phy_init(host);
->>> @@ -1100,7 +1105,7 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
->>>    	.set_bus_width		= sdhci_set_bus_width,
->>>    	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
->>>    	.get_max_clock		= dwcmshc_get_max_clock,
->>> -	.reset			= sdhci_reset,
->>> +	.reset			= dwcmshc_reset,
->>>    	.adma_write_desc	= dwcmshc_adma_write_desc,
->>>    	.irq			= dwcmshc_cqe_irq_handler,
->>>    };
->>> @@ -1121,7 +1126,7 @@ static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
->>>    	.set_bus_width		= sdhci_set_bus_width,
->>>    	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
->>>    	.get_max_clock		= dwcmshc_get_max_clock,
->>> -	.reset			= sdhci_reset,
->>> +	.reset			= dwcmshc_reset,
->>>    	.adma_write_desc	= dwcmshc_adma_write_desc,
->>>    	.irq			= dwcmshc_cqe_irq_handler,
->>>    	.hw_reset		= dwcmshc_bf3_hw_reset,
->>
-> 
+Don't hesitate to CC: on future versions.
 
+Cheers
+
+>=20
+> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+> ---
+> =C2=A0drivers/hid/hid-core.c=C2=A0 |=C2=A0=C2=A0 4 +
+> =C2=A0drivers/hid/hid-input.c | 193 +++++++++++++++++++++++++++----------=
+-
+> --
+> =C2=A0include/linux/hid.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 42 ++++++++-
+> =C2=A03 files changed, 176 insertions(+), 63 deletions(-)
+>=20
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index a5b3a8ca2fcb..76d628547e9a 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -2990,6 +2990,10 @@ struct hid_device *hid_allocate_device(void)
+> =C2=A0	mutex_init(&hdev->ll_open_lock);
+> =C2=A0	kref_init(&hdev->ref);
+> =C2=A0
+> +#ifdef CONFIG_HID_BATTERY_STRENGTH
+> +	INIT_LIST_HEAD(&hdev->batteries);
+> +#endif
+> +
+> =C2=A0	ret =3D hid_bpf_device_init(hdev);
+> =C2=A0	if (ret)
+> =C2=A0		goto out_err;
+> diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+> index e56e7de53279..071df319775b 100644
+> --- a/drivers/hid/hid-input.c
+> +++ b/drivers/hid/hid-input.c
+> @@ -454,7 +454,8 @@ static int hidinput_get_battery_property(struct
+> power_supply *psy,
+> =C2=A0					 enum power_supply_property
+> prop,
+> =C2=A0					 union power_supply_propval
+> *val)
+> =C2=A0{
+> -	struct hid_device *dev =3D power_supply_get_drvdata(psy);
+> +	struct hid_battery *bat =3D power_supply_get_drvdata(psy);
+> +	struct hid_device *dev =3D bat->dev;
+> =C2=A0	int value;
+> =C2=A0	int ret =3D 0;
+> =C2=A0
+> @@ -465,13 +466,13 @@ static int hidinput_get_battery_property(struct
+> power_supply *psy,
+> =C2=A0		break;
+> =C2=A0
+> =C2=A0	case POWER_SUPPLY_PROP_CAPACITY:
+> -		if (dev->battery_status !=3D HID_BATTERY_REPORTED &&
+> -		=C2=A0=C2=A0=C2=A0 !dev->battery_avoid_query) {
+> +		if (bat->status !=3D HID_BATTERY_REPORTED &&
+> +		=C2=A0=C2=A0=C2=A0 !bat->avoid_query) {
+> =C2=A0			value =3D
+> hidinput_query_battery_capacity(dev);
+> =C2=A0			if (value < 0)
+> =C2=A0				return value;
+> =C2=A0		} else=C2=A0 {
+> -			value =3D dev->battery_capacity;
+> +			value =3D bat->capacity;
+> =C2=A0		}
+> =C2=A0
+> =C2=A0		val->intval =3D value;
+> @@ -482,20 +483,20 @@ static int hidinput_get_battery_property(struct
+> power_supply *psy,
+> =C2=A0		break;
+> =C2=A0
+> =C2=A0	case POWER_SUPPLY_PROP_STATUS:
+> -		if (dev->battery_status !=3D HID_BATTERY_REPORTED &&
+> -		=C2=A0=C2=A0=C2=A0 !dev->battery_avoid_query) {
+> +		if (bat->status !=3D HID_BATTERY_REPORTED &&
+> +		=C2=A0=C2=A0=C2=A0 !bat->avoid_query) {
+> =C2=A0			value =3D
+> hidinput_query_battery_capacity(dev);
+> =C2=A0			if (value < 0)
+> =C2=A0				return value;
+> =C2=A0
+> -			dev->battery_capacity =3D value;
+> -			dev->battery_status =3D HID_BATTERY_QUERIED;
+> +			bat->capacity =3D value;
+> +			bat->status =3D HID_BATTERY_QUERIED;
+> =C2=A0		}
+> =C2=A0
+> -		if (dev->battery_status =3D=3D HID_BATTERY_UNKNOWN)
+> +		if (bat->status =3D=3D HID_BATTERY_UNKNOWN)
+> =C2=A0			val->intval =3D POWER_SUPPLY_STATUS_UNKNOWN;
+> =C2=A0		else
+> -			val->intval =3D dev->battery_charge_status;
+> +			val->intval =3D bat->charge_status;
+> =C2=A0		break;
+> =C2=A0
+> =C2=A0	case POWER_SUPPLY_PROP_SCOPE:
+> @@ -513,33 +514,53 @@ static int hidinput_get_battery_property(struct
+> power_supply *psy,
+> =C2=A0static int hidinput_setup_battery(struct hid_device *dev, unsigned
+> report_type,
+> =C2=A0				=C2=A0 struct hid_field *field, bool
+> is_percentage)
+> =C2=A0{
+> +	struct hid_battery *bat;
+> =C2=A0	struct power_supply_desc *psy_desc;
+> -	struct power_supply_config psy_cfg =3D { .drv_data =3D dev, };
+> +	struct power_supply_config psy_cfg;
+> =C2=A0	unsigned quirks;
+> =C2=A0	s32 min, max;
+> =C2=A0	int error;
+> +	int battery_num =3D 0;
+> =C2=A0
+> -	if (dev->battery)
+> -		return 0;	/* already initialized? */
+> +	list_for_each_entry(bat, &dev->batteries, list) {
+> +		if (bat->report_id =3D=3D field->report->id)
+> +			return 0;	/* already initialized */
+> +		battery_num++;
+> +	}
+> =C2=A0
+> =C2=A0	quirks =3D find_battery_quirk(dev);
+> =C2=A0
+> -	hid_dbg(dev, "device %x:%x:%x %d quirks %d\n",
+> -		dev->bus, dev->vendor, dev->product, dev->version,
+> quirks);
+> +	hid_dbg(dev, "device %x:%x:%x %d quirks %d report_id %d\n",
+> +		dev->bus, dev->vendor, dev->product, dev->version,
+> quirks,
+> +		field->report->id);
+> =C2=A0
+> =C2=A0	if (quirks & HID_BATTERY_QUIRK_IGNORE)
+> =C2=A0		return 0;
+> =C2=A0
+> -	psy_desc =3D kzalloc(sizeof(*psy_desc), GFP_KERNEL);
+> -	if (!psy_desc)
+> +	bat =3D kzalloc(sizeof(*bat), GFP_KERNEL);
+> +	if (!bat)
+> =C2=A0		return -ENOMEM;
+> =C2=A0
+> -	psy_desc->name =3D kasprintf(GFP_KERNEL, "hid-%s-battery",
+> -				=C2=A0=C2=A0 strlen(dev->uniq) ?
+> -					dev->uniq : dev_name(&dev-
+> >dev));
+> +	psy_desc =3D kzalloc(sizeof(*psy_desc), GFP_KERNEL);
+> +	if (!psy_desc) {
+> +		error =3D -ENOMEM;
+> +		goto err_free_bat;
+> +	}
+> +
+> +	/* Create unique name for each battery based on report ID */
+> +	if (battery_num =3D=3D 0) {
+> +		psy_desc->name =3D kasprintf(GFP_KERNEL, "hid-%s-
+> battery",
+> +					=C2=A0=C2=A0 strlen(dev->uniq) ?
+> +						dev->uniq :
+> dev_name(&dev->dev));
+> +	} else {
+> +		psy_desc->name =3D kasprintf(GFP_KERNEL, "hid-%s-
+> battery-%d",
+> +					=C2=A0=C2=A0 strlen(dev->uniq) ?
+> +						dev->uniq :
+> dev_name(&dev->dev),
+> +					=C2=A0=C2=A0 battery_num);
+> +	}
+> =C2=A0	if (!psy_desc->name) {
+> =C2=A0		error =3D -ENOMEM;
+> -		goto err_free_mem;
+> +		goto err_free_desc;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	psy_desc->type =3D POWER_SUPPLY_TYPE_BATTERY;
+> @@ -559,98 +580,148 @@ static int hidinput_setup_battery(struct
+> hid_device *dev, unsigned report_type,
+> =C2=A0	if (quirks & HID_BATTERY_QUIRK_FEATURE)
+> =C2=A0		report_type =3D HID_FEATURE_REPORT;
+> =C2=A0
+> -	dev->battery_min =3D min;
+> -	dev->battery_max =3D max;
+> -	dev->battery_report_type =3D report_type;
+> -	dev->battery_report_id =3D field->report->id;
+> -	dev->battery_charge_status =3D
+> POWER_SUPPLY_STATUS_DISCHARGING;
+> +	/* Initialize battery structure */
+> +	bat->dev =3D dev;
+> +	bat->min =3D min;
+> +	bat->max =3D max;
+> +	bat->report_type =3D report_type;
+> +	bat->report_id =3D field->report->id;
+> +	bat->charge_status =3D POWER_SUPPLY_STATUS_DISCHARGING;
+> +	bat->status =3D HID_BATTERY_UNKNOWN;
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Stylus is normally not connected to the device and thus
+> we
+> =C2=A0	 * can't query the device and get meaningful battery
+> strength.
+> =C2=A0	 * We have to wait for the device to report it on its own.
+> =C2=A0	 */
+> -	dev->battery_avoid_query =3D report_type =3D=3D HID_INPUT_REPORT
+> &&
+> -				=C2=A0=C2=A0 field->physical =3D=3D HID_DG_STYLUS;
+> +	bat->avoid_query =3D report_type =3D=3D HID_INPUT_REPORT &&
+> +			=C2=A0=C2=A0 field->physical =3D=3D HID_DG_STYLUS;
+> =C2=A0
+> =C2=A0	if (quirks & HID_BATTERY_QUIRK_AVOID_QUERY)
+> -		dev->battery_avoid_query =3D true;
+> +		bat->avoid_query =3D true;
+> =C2=A0
+> -	dev->battery =3D power_supply_register(&dev->dev, psy_desc,
+> &psy_cfg);
+> -	if (IS_ERR(dev->battery)) {
+> -		error =3D PTR_ERR(dev->battery);
+> +	psy_cfg.drv_data =3D bat;
+> +	bat->ps =3D power_supply_register(&dev->dev, psy_desc,
+> &psy_cfg);
+> +	if (IS_ERR(bat->ps)) {
+> +		error =3D PTR_ERR(bat->ps);
+> =C2=A0		hid_warn(dev, "can't register power supply: %d\n",
+> error);
+> =C2=A0		goto err_free_name;
+> =C2=A0	}
+> =C2=A0
+> -	power_supply_powers(dev->battery, &dev->dev);
+> +	power_supply_powers(bat->ps, &dev->dev);
+> +
+> +	list_add_tail(&bat->list, &dev->batteries);
+> +
+> +	/*
+> +	 * The legacy single battery API is preserved by exposing
+> the first
+> +	 * discovered battery. Systems relying on a single battery
+> view maintain
+> +	 * unchanged behavior.
+> +	 */
+> +	if (battery_num =3D=3D 0) {
+> +		dev->battery =3D bat->ps;
+> +		dev->battery_min =3D bat->min;
+> +		dev->battery_max =3D bat->max;
+> +		dev->battery_report_type =3D bat->report_type;
+> +		dev->battery_report_id =3D bat->report_id;
+> +		dev->battery_charge_status =3D bat->charge_status;
+> +		dev->battery_status =3D bat->status;
+> +		dev->battery_avoid_query =3D bat->avoid_query;
+> +	}
+> +
+> =C2=A0	return 0;
+> =C2=A0
+> =C2=A0err_free_name:
+> =C2=A0	kfree(psy_desc->name);
+> -err_free_mem:
+> +err_free_desc:
+> =C2=A0	kfree(psy_desc);
+> -	dev->battery =3D NULL;
+> +err_free_bat:
+> +	kfree(bat);
+> =C2=A0	return error;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static void hidinput_cleanup_battery(struct hid_device *dev)
+> =C2=A0{
+> +	struct hid_battery *bat, *next;
+> =C2=A0	const struct power_supply_desc *psy_desc;
+> =C2=A0
+> -	if (!dev->battery)
+> -		return;
+> +	list_for_each_entry_safe(bat, next, &dev->batteries, list) {
+> +		psy_desc =3D bat->ps->desc;
+> +		power_supply_unregister(bat->ps);
+> +		kfree(psy_desc->name);
+> +		kfree(psy_desc);
+> +		list_del(&bat->list);
+> +		kfree(bat);
+> +	}
+> =C2=A0
+> -	psy_desc =3D dev->battery->desc;
+> -	power_supply_unregister(dev->battery);
+> -	kfree(psy_desc->name);
+> -	kfree(psy_desc);
+> =C2=A0	dev->battery =3D NULL;
+> =C2=A0}
+> =C2=A0
+> -static bool hidinput_update_battery_charge_status(struct hid_device
+> *dev,
+> +static struct hid_battery *hidinput_find_battery(struct hid_device
+> *dev,
+> +						 int report_id)
+> +{
+> +	struct hid_battery *bat;
+> +
+> +	list_for_each_entry(bat, &dev->batteries, list) {
+> +		if (bat->report_id =3D=3D report_id)
+> +			return bat;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +static bool hidinput_update_battery_charge_status(struct hid_battery
+> *bat,
+> =C2=A0						=C2=A0 unsigned int
+> usage, int value)
+> =C2=A0{
+> =C2=A0	switch (usage) {
+> =C2=A0	case HID_BAT_CHARGING:
+> -		dev->battery_charge_status =3D value ?
+> -					=C2=A0=C2=A0=C2=A0=C2=A0
+> POWER_SUPPLY_STATUS_CHARGING :
+> -					=C2=A0=C2=A0=C2=A0=C2=A0
+> POWER_SUPPLY_STATUS_DISCHARGING;
+> +		bat->charge_status =3D value ?
+> +				=C2=A0=C2=A0=C2=A0=C2=A0 POWER_SUPPLY_STATUS_CHARGING :
+> +				=C2=A0=C2=A0=C2=A0=C2=A0
+> POWER_SUPPLY_STATUS_DISCHARGING;
+> +		if (bat->dev->battery =3D=3D bat->ps)
+> +			bat->dev->battery_charge_status =3D bat-
+> >charge_status;
+> =C2=A0		return true;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	return false;
+> =C2=A0}
+> =C2=A0
+> -static void hidinput_update_battery(struct hid_device *dev, unsigned
+> int usage,
+> -				=C2=A0=C2=A0=C2=A0 int value)
+> +static void hidinput_update_battery(struct hid_device *dev, int
+> report_id,
+> +				=C2=A0=C2=A0=C2=A0 unsigned int usage, int value)
+> =C2=A0{
+> +	struct hid_battery *bat;
+> =C2=A0	int capacity;
+> =C2=A0
+> -	if (!dev->battery)
+> +	bat =3D hidinput_find_battery(dev, report_id);
+> +	if (!bat)
+> =C2=A0		return;
+> =C2=A0
+> -	if (hidinput_update_battery_charge_status(dev, usage,
+> value)) {
+> -		power_supply_changed(dev->battery);
+> +	if (hidinput_update_battery_charge_status(bat, usage,
+> value)) {
+> +		power_supply_changed(bat->ps);
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	if ((usage & HID_USAGE_PAGE) =3D=3D HID_UP_DIGITIZER && value =3D=
+=3D
+> 0)
+> =C2=A0		return;
+> =C2=A0
+> -	if (value < dev->battery_min || value > dev->battery_max)
+> +	if (value < bat->min || value > bat->max)
+> =C2=A0		return;
+> =C2=A0
+> =C2=A0	capacity =3D hidinput_scale_battery_capacity(dev, value);
+> =C2=A0
+> -	if (dev->battery_status !=3D HID_BATTERY_REPORTED ||
+> -	=C2=A0=C2=A0=C2=A0 capacity !=3D dev->battery_capacity ||
+> -	=C2=A0=C2=A0=C2=A0 ktime_after(ktime_get_coarse(), dev-
+> >battery_ratelimit_time)) {
+> -		dev->battery_capacity =3D capacity;
+> -		dev->battery_status =3D HID_BATTERY_REPORTED;
+> -		dev->battery_ratelimit_time =3D
+> +	if (bat->status !=3D HID_BATTERY_REPORTED ||
+> +	=C2=A0=C2=A0=C2=A0 capacity !=3D bat->capacity ||
+> +	=C2=A0=C2=A0=C2=A0 ktime_after(ktime_get_coarse(), bat->ratelimit_time)=
+) {
+> +		bat->capacity =3D capacity;
+> +		bat->status =3D HID_BATTERY_REPORTED;
+> +		bat->ratelimit_time =3D
+> =C2=A0			ktime_add_ms(ktime_get_coarse(), 30 * 1000);
+> -		power_supply_changed(dev->battery);
+> +
+> +		if (dev->battery =3D=3D bat->ps) {
+> +			dev->battery_capacity =3D bat->capacity;
+> +			dev->battery_status =3D bat->status;
+> +			dev->battery_ratelimit_time =3D bat-
+> >ratelimit_time;
+> +		}
+> +
+> +		power_supply_changed(bat->ps);
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0#else=C2=A0 /* !CONFIG_HID_BATTERY_STRENGTH */
+> @@ -664,8 +735,8 @@ static void hidinput_cleanup_battery(struct
+> hid_device *dev)
+> =C2=A0{
+> =C2=A0}
+> =C2=A0
+> -static void hidinput_update_battery(struct hid_device *dev, unsigned
+> int usage,
+> -				=C2=A0=C2=A0=C2=A0 int value)
+> +static void hidinput_update_battery(struct hid_device *dev, int
+> report_id,
+> +				=C2=A0=C2=A0=C2=A0 unsigned int usage, int value)
+> =C2=A0{
+> =C2=A0}
+> =C2=A0#endif	/* CONFIG_HID_BATTERY_STRENGTH */
+> @@ -1533,7 +1604,7 @@ void hidinput_hid_event(struct hid_device *hid,
+> struct hid_field *field, struct
+> =C2=A0		return;
+> =C2=A0
+> =C2=A0	if (usage->type =3D=3D EV_PWR) {
+> -		hidinput_update_battery(hid, usage->hid, value);
+> +		hidinput_update_battery(hid, report->id, usage->hid,
+> value);
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> diff --git a/include/linux/hid.h b/include/linux/hid.h
+> index a4ddb94e3ee5..a6e36835fb3c 100644
+> --- a/include/linux/hid.h
+> +++ b/include/linux/hid.h
+> @@ -634,6 +634,36 @@ enum hid_battery_status {
+> =C2=A0	HID_BATTERY_REPORTED,		/* Device sent unsolicited
+> battery strength report */
+> =C2=A0};
+> =C2=A0
+> +/**
+> + * struct hid_battery - represents a single battery power supply
+> + * @list: list node for linking into hid_device's battery list
+> + * @dev: pointer to the parent hid_device
+> + * @ps: the power supply device
+> + * @capacity: current battery capacity
+> + * @min: minimum battery value
+> + * @max: maximum battery value
+> + * @report_type: type of report (HID_INPUT_REPORT,
+> HID_FEATURE_REPORT)
+> + * @report_id: report ID for this battery
+> + * @charge_status: current charge status
+> + * @status: battery status (unknown, queried, reported)
+> + * @avoid_query: if true, don't query battery (wait for device
+> reports)
+> + * @ratelimit_time: time for rate limiting battery updates
+> + */
+> +struct hid_battery {
+> +	struct list_head list;
+> +	struct hid_device *dev;
+> +	struct power_supply *ps;
+> +	__s32 capacity;
+> +	__s32 min;
+> +	__s32 max;
+> +	__s32 report_type;
+> +	__s32 report_id;
+> +	__s32 charge_status;
+> +	enum hid_battery_status status;
+> +	bool avoid_query;
+> +	ktime_t ratelimit_time;
+> +};
+> +
+> =C2=A0struct hid_driver;
+> =C2=A0struct hid_ll_driver;
+> =C2=A0
+> @@ -670,8 +700,16 @@ struct hid_device {
+> =C2=A0#ifdef CONFIG_HID_BATTERY_STRENGTH
+> =C2=A0	/*
+> =C2=A0	 * Power supply information for HID devices which report
+> -	 * battery strength. power_supply was successfully
+> registered if
+> -	 * battery is non-NULL.
+> +	 * battery strength. Each battery is tracked separately in
+> the
+> +	 * batteries list.
+> +	 */
+> +	struct list_head batteries;		/* List of
+> hid_battery structures */
+> +
+> +	/*
+> +	 * Legacy single battery support - kept for backwards
+> compatibility.
+> +	 * Points to the first battery in the list if any exists.
+> +	 * power_supply was successfully registered if battery is
+> non-NULL.
+> +	 * DEPRECATED: New code should iterate through batteries
+> list instead.
+> =C2=A0	 */
+> =C2=A0	struct power_supply *battery;
+> =C2=A0	__s32 battery_capacity;
 
