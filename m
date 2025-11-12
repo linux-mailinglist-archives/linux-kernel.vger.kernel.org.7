@@ -1,87 +1,96 @@
-Return-Path: <linux-kernel+bounces-896454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315D1C506A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:16:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63895C506BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 404734E3EC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:16:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEB594E4B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2254922FE11;
-	Wed, 12 Nov 2025 03:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31B729D297;
+	Wed, 12 Nov 2025 03:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRwlb1kA"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="t7R/EWsG"
+Received: from sonic313-21.consmr.mail.sg3.yahoo.com (sonic313-21.consmr.mail.sg3.yahoo.com [106.10.240.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4955518A6AD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAC627B348
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762917382; cv=none; b=YNqql5bdAjrgJLzYCuXxzwFtr9hlSrytTh8rslvzFO9DOtmsz1WV9eFAgxCIiiQejul0GiaPzLIu5crU8xlQakf/V2NQAuZQDlIJh50INRATY8S2SwZnhA476KhYPyo9Owwd5o9pEf7IbZ9rRUVPlc5jQHCDyQ4RwCJpO4lT2Zc=
+	t=1762918612; cv=none; b=PWZk2VdhGKZU+OS5ekeL6lMl3fVE8BBIxJtmUkK056wAaVdeKKXiY7n+lkBcCBMOXsN/GqypWm2sDVCZhGa6Fmyh4mbYMAhQ69mc7JnbEd39gHRBJjjyQvYimxaI6TVFnV+ogW1yufXlpx171mAQdtznzRQrFSp2UGsCgAVZ8h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762917382; c=relaxed/simple;
-	bh=YXxlNM2mCJ3yWjO2RgNzi+FapYAS28gXPrNxdKoxXIc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kpOSegxK9+q2oNE9bzRxWsOLHkOs5WQe+3vdS8brSmLxj9ypORa5bZW/2ECJGYd9HbJCjDvoBgfEqx76DwNz2MvA14pGpY/wIN348zzZJFmhoqVonynm4V9gMdpmt9Th3euWRrp9N5VuF0DchLl0VXzjPyXMarrpp733YYlpAIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRwlb1kA; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3438d4ae152so528471a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762917379; x=1763522179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMSz+99d4EOMeU2VZ6n7ylJEv7aF/Q1HwLIUzQgMnZE=;
-        b=bRwlb1kARncE8iKHTpOCAAMCLK8zfSxDM8cnKTH12N9tCBEQ4lgVtVhV3QFUH3BJjF
-         pJbw/tfyxb9cFe+zorCEqX/nZ2p5bWXNEo8S80Voz7Rt/V82v5Dxgb5O0wDyeZ4IdOZ2
-         hxA0CrEq1CwF/VW8Qb7xe9aPmzirr6y6EibJRasy+/Ccfppn3IKzLq1+G0IhTFWmwL0z
-         GhSG7NjAYEJEL40glvZqpk2E8Hckp3JTYyc+kgZ3VPfwt0COVPyq2a9to3vxQJcxNnTY
-         YMJYDzf90rOw7xp9btm9Is+ov/SRrWgX4cSy2y41H6HNA5NIk4v8VNRd0kczUo8Ue/j3
-         A4gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762917379; x=1763522179;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uMSz+99d4EOMeU2VZ6n7ylJEv7aF/Q1HwLIUzQgMnZE=;
-        b=gojvbJaLEMwNo6MonSyZ7NhMvL63/cmq3Aq1pYuMYKOgofAdhnkJpZhXqKkMUdYjBT
-         zGwPLqO1ROO8E8YViO+B7N9owZ6acy7qAOKU4yvcANkSl8b41A8UyRWyCynB8HHHcyCT
-         qYNZfKtvixRpePEsbcxDes3mcLjkDCcUrTZHWmVBTLK400fUWLVUP17BKY4xxtMfOi4Z
-         7boKUhfXZRf/3gY9Jn2fNBF8WcPSHgN+/+kTPUCjb5pmVLLMRFQhwPMLyM9x0UDAFfOs
-         dYgpJxaNFmgX8QyCaLnqsXD+cbw6dRPqTep5mjwbKEEGKuY4Nnlkn+eZnD5rjgeD0MtQ
-         gq2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKCBFVicm8avEnY5eiqITK/2TSr0P5HNmKIP0676/ggjOX8jIoz9rrGvOphyL3N+uVzYy0poWUjsXhZcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/tOr1KdFWKWwPSyF2nNuwe1IrCCOiDvAw/a3B9YVLng2ucfFk
-	dpUbJnfXfTH6HPegKnPqXHPpIkQ1eFuhA5pKuehW2/UiV8N5O08g/fAXQFFzXwmc9z4=
-X-Gm-Gg: ASbGncsJhvl5m5mNfJNMjR4a8ScmBS9wx4Y6qWLM6s5ZoTN8iK4o66As+WLF9LcJfWf
-	jLq5AeZJe8k4mhjmhMeWRXA2oVbO17J01zoBJP1DgKEzAyjIE+LemsrZJlbeVrYJp59p/3Ta57a
-	FWtc1qlUF0Th4Q9mLQCQX0u7fmfKG+CZT/z+sn6G4jT34uAbw0HaqjILshe4C0IxkfdP/VkiHtJ
-	wJSg/wjHBe3cU/lnSPnyYLax1rdwOAk7WYwAwKTBQtbDrJd62cfDOB3v9Bbo/oORPjyGtBQ2Yji
-	eiD+rBFXA5Vw3b+rrTGujgpL10rEXkb2GkyBfJH9VamJIeUFaswNW4qBgQrFVK6HeE+oRKklmv6
-	37N7XHCfQ4lUmgNrdUNqe1YsOyeQgukIsFT2JyR4WOmpSQmkHghoW3khFASPP40q+NEmg9mRTPU
-	adzkmJoDTWEwy0V/Uff6EjhZmy0OI=
-X-Google-Smtp-Source: AGHT+IFS69JHU5uWce5iiIBppMA/Mtl8JzloMg9v4rbAes1reLc1kwzL5R+GHrtQDZzDsXdgLBwq4g==
-X-Received: by 2002:a17:90a:d403:b0:33b:cfac:d5c6 with SMTP id 98e67ed59e1d1-343dde8b414mr1931878a91.29.1762917379417;
-        Tue, 11 Nov 2025 19:16:19 -0800 (PST)
-Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e06fbc0dsm672041a91.2.2025.11.11.19.16.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 19:16:18 -0800 (PST)
-From: Donglin Peng <dolinux.peng@gmail.com>
-To: rostedt@goodmis.org
-Cc: linux-trace-kernel@vger.kernel.org,
+	s=arc-20240116; t=1762918612; c=relaxed/simple;
+	bh=Bqc5MWVXAYPapWswck3KTvUFUUcE64qQzbuAoQzW7Rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EiijNKACxLB6oqwhAiG11vIhEkGeToHLLyxQPiBMWjhybZVG5fm4EDJAyYjX1PoC7p6ywa7Z6JtfbcoOGjUXPzgI5fAeSEXF3atyM0oME7MaJ655yFOGPuDPF0UD2W/lLvbYMCoZ9l1+y6TUt1zNfpeQA9536PitS475yn5u1X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=t7R/EWsG; arc=none smtp.client-ip=106.10.240.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762918608; bh=DfqdO3iXrWbO4uBssqKRQ276sSUPpFPYITqgJr3Z2C8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=t7R/EWsGqHQZWh5J1R3fwcgQ7rPcVPK2m6VRRQzQ/G2koXETAjqxayqCeYzZbKAlcI+CcN6EKbvQSYTr9Eea3X6LhCbkFgRx9hsWHadDWhB1mFs6ynEyqd7ZFiv+BYjskab+g1WU9wAtg0TVDerwjrUTNQ76VVYjG2SB/oqLUkE1cP+jNpyQoESKpYrMfTKx02g6cfgT1z/IiftT0R/3zzFmcEFnkac5Lz/fUeHxXiLJRdi4eYinCck4lMHefLbeHkW6X6+nxkAdfIPWQSLTbPA/SrH+oxe3w8SdfBw1eFao/sjYPKRCf9nmBKS6i4lIJBGNviEvQsskVMqqq+0GTw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762918608; bh=tgtxacK39xBx4RJedH0CFNEUPz122MUx+07kBK99mgF=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=LSehDbqQW8HVqoxYEnO4aDfuw8KwV9oMFbisxZgGsnX87QByPubkirQtR6w/DJP3nrFOlASiyKeZZyiroK9qkq9ViEJ0DPgmyAPlgBeLB16KfkuqEJ335VZNGckxLJigg1kk9i97yyb8m2f6wNMhAtnv1HPBEMII10tT9Jc+/vPnr/LVrFvDjbmXCiVxWXidw5uaBkfGKHencl3vgxjJ8JII3AWuGlSqHNSGZ/fq/INIiTHFlIuo6VybAqY2NVaPheftFbVms2fKYxADonsl87fetiNgqLiLMmesdOzGCtC+AkRZJhQyStjSKKpdwePqMEKM/40Xj/IGTyW+JZT77A==
+X-YMail-OSG: lzMZSl4VM1niLCJYY3BgUt_8IEKYN5oBRWuDUf7w1ZnLO43pw5Q138hlPsnIj.r
+ RB5NEfOiVsDVFEUMIyF51dRkYRBzY6sulmfu5ZyefMNOKBTlt6S3iiFR5VsECRTVTDugiRzzv6UW
+ m6mNjf3QYPMTxgy.UrIXm7INscsAJvGxMGuhV1mDtkCIsyrhnnbfZwUV.LbLW2Yj4tAPycIX_IjP
+ pzg9hCy9Q08lBVk6018P0vSxDWlCRecreEMum9alhvDv_cHqcpcmzELBKEluxgSHIZw0o3Sg0ZDG
+ Mpo2o1uHZSPnVhVZGeQFDPv2xcw8.9HozE9OcaPfpV6rypOJuvtvjWyfKXI3ZWIzRd2W5mhNJ7o0
+ 0TGqkvSwiaHXftlXKUumV.eWErhqhYSzdA7ceT0iQJbBhOicxBteAdKtwrNjA3_iJLr29ssva5aF
+ WnFAcb5KSjoxvNLI.h_rtW1IzcG4_yBTmXUWfIr0YuSkovtMM7wErvijQJAfvg3Y4lL4tWeh.G2C
+ SUrEueNjqPZjZpGith6OI_eM4JcMe.I9xjwTKIcX57lVv73.H8SLBQ3FdyreQQ7TJGUmoEoo6Bxi
+ w8k3ZnRCOYmr5hptHnMK94wYE0mPTxbpSG1WHgkocpsF..1bFP12Dy1rCf.fmpZUZww78KUxQw.m
+ 5tKYB7HTglI7ARCzCLsWE0GerRK5vRFJz.mWlvJ1vVkJ.TGJBTD2ZWmvONvuTIitQYNOFuTorzPB
+ otsTEf02mrnwq93Yil9Jad0Ac55gwmo2gFyg0eS9RDcyPXZhTt_mDRbg0ojx0.22y1YeBPdY468N
+ 9At9Dw7s8DEX21z149SEtu.vnKLkPrB0yXgSdoPZ2DQE6cqA2ELy.6F4WglLLWYqFJ_RScXDhg..
+ LbMMD9jvXxQCv0sc9B5JJSm3V9UkiRZL6z_sYP5wfTclvXncpB5NfQm0oFUiuw4R2hqtFOXh_IEJ
+ Q7pkoiOgA.b2Ze3QoF7P2qDxKHGF3wmW_bvL59bOMvkkeVA9l66YS5lV6hJvS3tiKX4DEwkJN6NC
+ qrOsIo.ev6V2hrHBwFtP1F5jf_5k9XJNFDz.Sx1urEuhlaxaR9nll6.Jf0GuoCZenvjf2kciot2C
+ HQMmjLWd0WrKU_xrk2aLrr2EDjPIYabaRco.9T.dcSYn9EII1MnWkqQ6A1kUBpl_.hCJHqroKrhq
+ UmX9GVrOzHYUbBo9NzuQi20BmznYqRz8zyeMFLJ1il0U3o5CsLycI4k2pi55QxmQ2dXDDDJUitwG
+ g12fbtxM6R5f2TEV9Bu0soTlw.nlmjqE0TaxUgHLQC70HQa.gdaLmAUbg211jOMQS.FC0_K25tu1
+ EvUAaNuLQTrbhJLD5VvGc9NGqsJjFAgroVyItsxRJEFXlePZa_bKS3ItlP4i8sc6wZvgU7HNTS0X
+ .vceOdfpkNDIeVkjQd9KOl7p1c2isEHSQ2Rr72M5NqDm4610roOsqNau.uZ6q8WRQmn88QONhvxb
+ f5Eb_cEn3nLq1VBm4oBclRuN3OcCsIqZrk4Pgjo_O83Tv7EqTfjbuFTkaDe.jJmeqNV9UvUZKkVq
+ sxih8dcCx_KZDDfQqZMQ4z89lEBTgfc5fHgztlCD_7spoC2SIr_u6ID_kgr2Lknm5pkxsamTThmq
+ ZQHxEnrVfoDYGErv_Dx3ppSaTirqeCpUi3TJXTEo.i4K8sgNBpQ2U76XQf9M0t2xGvQ0Vfpcm6vD
+ g5S97u0Sb9UkCAsDOsGIO..6hSalVolsadmHI3XmeCVKamwf_Dh5xJ5mfZEmrcA_Ec.993GUwq4P
+ CqqdSw5_IlIQEHErPe7qvUJDT437tdxkAEPqvc_V5bW1or8iHq2MMGouwDgc0bX9SAzO7RCank_u
+ 3GuCDbyq1fmfPD3CDNjAUa.wSLx4rv0GYHMi1zCw.x2NEPzdAh6IQOMqDiuYQDl.uC1tgRCJ0SaU
+ S9HQIVHbfoUXjew3Dp4m63cQaLgKljZLpqFXzzi4UraCDOjgc0BIDb2jrMBgTlnTpV4.BolboaY.
+ cN8z5D9D0zNVDwxuhfn.hks9gM0OWF1syu3YuK0xMfWbT4SSxWW2uD6MZ6QhnnE2K4L2740JQwx2
+ yWy_UJZR1_FZTu7B9QSrtcEdPp26v4aXitAgDE0qoc.8yG09HPKZub46.1tpnmx1AchO9iz5FkKe
+ faO_4iNrrKXBHFnRH_HeRkmaJ0Aa9_PIvf01cjhVz5bcnNKkhOBiwhNI8ubDgxrPt4oM_L3o6war
+ UovwWm5FxvDWY2m.xbwwCqNswM9880olIO2TgxSzf03AxfpcxvXP.rUiEwyx2OS5Y48tkeXf4MQp
+ dlqEKhyW4sSLrJ0ZsdzRiNJrPfn1Hn6iRT0Us
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: 597644d1-cd42-43a9-bfc7-eb4b5b6dfa75
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.sg3.yahoo.com with HTTP; Wed, 12 Nov 2025 03:36:48 +0000
+Received: by hermes--production-ne1-55f4cd58bd-xpw5m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e4690b395d94bf0002e45a0b77724bf8;
+          Wed, 12 Nov 2025 03:16:28 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: jstultz@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	sumanth.gavini@yahoo.com,
+	tglx@linutronix.de,
+	clingutla@codeaurora.org,
+	mingo@kernel.org,
+	sashal@kernel.org,
+	boqun.feng@gmail.com,
+	gregkh@linuxfoundation.org,
+	ryotkkr98@gmail.com,
+	kprateek.nayak@amd.com
+Cc: elavila@google.com,
 	linux-kernel@vger.kernel.org,
-	Donglin Peng <pengdonglin@xiaomi.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v3] function_graph: Enable funcgraph-args and funcgraph-retaddr to work simultaneously
-Date: Wed, 12 Nov 2025 11:15:48 +0800
-Message-Id: <20251112031548.2876504-1-dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	stable@vger.kernel.org
+Subject: [PATCH V2 6.1] softirq: Add trace points for tasklet entry/exit
+Date: Tue, 11 Nov 2025 21:16:20 -0600
+Message-ID: <20251112031620.121107-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CANDhNCq_11zO4SNWsYzxOeDuwN5Ogrq9s4B9PVJ=mkx_v8RT9Q@mail.gmail.com>
+References: <CANDhNCq_11zO4SNWsYzxOeDuwN5Ogrq9s4B9PVJ=mkx_v8RT9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,412 +99,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Donglin Peng <pengdonglin@xiaomi.com>
+commit f4bf3ca2e5cba655824b6e0893a98dfb33ed24e5 upstream.
 
-From: Donglin Peng <pengdonglin@xiaomi.com>
+Tasklets are supposed to finish their work quickly and should not block the
+current running process, but it is not guaranteed that they do so.
 
-Currently, the funcgraph-args and funcgraph-retaddr features are mutually exclusive.
-This patch resolves this limitation by modifying funcgraph-retaddr to adopt the same
-implementation approach as funcgraph-args, specifically by storing the return address
-in the first entry of the args array.
+Currently softirq_entry/exit can be used to analyse the total tasklets
+execution time, but that's not helpful to track individual tasklets
+execution time. That makes it hard to identify tasklet functions, which
+take more time than expected.
 
-As a result, both features now coexist seamlessly and function as intended.
+Add tasklet_entry/exit trace point support to track individual tasklet
+execution.
 
-To verify the change, use perf to trace vfs_write with both options enabled:
+Trivial usage example:
+   # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_entry/enable
+   # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_exit/enable
+   # cat /sys/kernel/debug/tracing/trace
+ # tracer: nop
+ #
+ # entries-in-buffer/entries-written: 4/4   #P:4
+ #
+ #                                _-----=> irqs-off/BH-disabled
+ #                               / _----=> need-resched
+ #                              | / _---=> hardirq/softirq
+ #                              || / _--=> preempt-depth
+ #                              ||| / _-=> migrate-disable
+ #                              |||| /     delay
+ #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+ #              | |         |   |||||     |         |
+           <idle>-0       [003] ..s1.   314.011428: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
+           <idle>-0       [003] ..s1.   314.011432: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
+           <idle>-0       [003] ..s1.   314.017369: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
+           <idle>-0       [003] ..s1.   314.017371: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
 
-Before:
- # perf ftrace -G vfs_write --graph-opts args,retaddr
- ......
- 0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
- 0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
- 0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x160 */
- 0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x160 */
- 0)   0.754 us    |  }
+Signed-off-by: Lingutla Chandrasekhar <clingutla@codeaurora.org>
+Signed-off-by: J. Avila <elavila@google.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Link: https://lore.kernel.org/r/20230407230526.1685443-1-jstultz@google.com
 
-After:
- # perf ftrace -G vfs_write --graph-opts args,retaddr
- ......
- 0)               |  down_read(sem=0xffff8880100bea78) { /* <-n_tty_write+0xa3/0x540 */
- 0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
- 0)   0.079 us    |    preempt_count_add(val=1); /* <-down_read+0x3b/0x160 */
- 0)   0.077 us    |    preempt_count_sub(val=1); /* <-down_read+0x8b/0x160 */
- 0)   0.754 us    |  }
+[elavila: Port to android-mainline]
+[jstultz: Rebased to upstream, cut unused trace points, added
+ comments for the tracepoints, reworded commit]
 
-Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
+The intention is to keep the stable branch in sync with upstream fixes
+and improve observability without introducing new functionality.
+
+Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+
+Changes in V2:
+- No code changes
+- Link to V1: https://lore.kernel.org/all/20250812161755.609600-1-sumanth.gavini@yahoo.com/
+- Updated the comment msg before the signed-off-by
 ---
-v3:
-- Replace min() with min_t() to improve type safety and maintainability
-- Keep only one Signed-off-by for cleaner attribution
-- Code refactoring for improved readability
+ include/trace/events/irq.h | 47 ++++++++++++++++++++++++++++++++++++++
+ kernel/softirq.c           |  9 ++++++--
+ 2 files changed, 54 insertions(+), 2 deletions(-)
 
-v2:
-- Preserve retaddr event functionality (suggested by Steven)
-- Store the retaddr in args[0] (suggested by Steven)
-- Refactor implementation logic and commit message clarity
----
- include/linux/ftrace.h               |  11 --
- kernel/trace/trace.h                 |   4 -
- kernel/trace/trace_entries.h         |   6 +-
- kernel/trace/trace_functions_graph.c | 145 ++++++++++++---------------
- 4 files changed, 69 insertions(+), 97 deletions(-)
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 7ded7df6e9b5..88cb54d73bdb 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
- 	int depth;
- } __packed;
- 
--/*
-- * Structure that defines an entry function trace with retaddr.
-- * It's already packed but the attribute "packed" is needed
-- * to remove extra padding at the end.
-- */
--struct fgraph_retaddr_ent {
--	unsigned long func; /* Current function */
--	int depth;
--	unsigned long retaddr;  /* Return address */
--} __packed;
--
- /*
-  * Structure that defines a return function trace.
-  * It's already packed but the attribute "packed" is needed
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 85eabb454bee..9fac291b913a 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator *iter);
- extern int __trace_graph_entry(struct trace_array *tr,
- 			       struct ftrace_graph_ent *trace,
- 			       unsigned int trace_ctx);
--extern int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr);
- extern void __trace_graph_return(struct trace_array *tr,
- 				 struct ftrace_graph_ret *trace,
- 				 unsigned int trace_ctx,
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index de294ae2c5c5..593a74663c65 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
- 	TRACE_GRAPH_RETADDR_ENT,
- 
- 	F_STRUCT(
--		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
-+		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
- 		__field_packed(	unsigned long,	graph_ent,	func		)
- 		__field_packed(	unsigned int,	graph_ent,	depth		)
--		__field_packed(	unsigned long,	graph_ent,	retaddr		)
-+		__dynamic_array(unsigned long,	args				)
- 	),
- 
- 	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
--		(void *)__entry->retaddr)
-+		(void *)__entry->args[0])
+diff --git a/include/trace/events/irq.h b/include/trace/events/irq.h
+index eeceafaaea4c..a07b4607b663 100644
+--- a/include/trace/events/irq.h
++++ b/include/trace/events/irq.h
+@@ -160,6 +160,53 @@ DEFINE_EVENT(softirq, softirq_raise,
+ 	TP_ARGS(vec_nr)
  );
  
- #else
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index a7f4b9a47a71..f31eeeffbb2d 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -16,6 +16,15 @@
- #include "trace.h"
- #include "trace_output.h"
- 
-+#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-+#define HAVE_RETADDR	1
-+#define ARGS_OFFS(args_size) \
-+	((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
-+#else
-+#define HAVE_RETADDR	0
-+#define ARGS_OFFS(args_size)	0
-+#endif
++DECLARE_EVENT_CLASS(tasklet,
 +
- /* When set, irq functions will be ignored */
- static int ftrace_graph_skip_irqs;
- 
-@@ -27,21 +36,25 @@ struct fgraph_cpu_data {
- 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
- };
- 
-+/*
-+ * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
-+ * member repurposed for storage
++	TP_PROTO(struct tasklet_struct *t, void *func),
++
++	TP_ARGS(t, func),
++
++	TP_STRUCT__entry(
++		__field(	void *,	tasklet)
++		__field(	void *,	func)
++	),
++
++	TP_fast_assign(
++		__entry->tasklet = t;
++		__entry->func = func;
++	),
++
++	TP_printk("tasklet=%ps function=%ps", __entry->tasklet, __entry->func)
++);
++
++/**
++ * tasklet_entry - called immediately before the tasklet is run
++ * @t: tasklet pointer
++ * @func: tasklet callback or function being run
++ *
++ * Used to find individual tasklet execution time
 + */
- struct fgraph_ent_args {
- 	struct ftrace_graph_ent_entry	ent;
--	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
--	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-+	/*
-+	 * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR)
-+	 * entries with the first entry storing the return address for
-+	 * TRACE_GRAPH_RETADDR_ENT.
-+	 */
-+	unsigned long		args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR];
- };
- 
- struct fgraph_data {
- 	struct fgraph_cpu_data __percpu *cpu_data;
- 
- 	/* Place to preserve last processed entry. */
--	union {
--		struct fgraph_ent_args		ent;
--		/* TODO allow retaddr to have args */
--		struct fgraph_retaddr_ent_entry	rent;
--	};
-+	struct fgraph_ent_args		ent;
- 	struct ftrace_graph_ret_entry	ret;
- 	int				failed;
- 	int				cpu;
-@@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
- 	struct ring_buffer_event *event;
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
- 	struct ftrace_graph_ent_entry *entry;
--	int size;
-+	unsigned long retaddr = 0;
-+	int size = sizeof(*entry);
-+	int type = TRACE_GRAPH_ENT;
-+	bool store_args = false;
-+	int nr_args = 0, args_offs = 0;
++DEFINE_EVENT(tasklet, tasklet_entry,
 +
-+	if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-+		retaddr = ftrace_graph_top_ret_addr(current);
-+		type = TRACE_GRAPH_RETADDR_ENT;
-+		nr_args += 1;
-+	}
- 
- 	/* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words */
--	size = sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long));
-+	if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
-+		store_args = !!fregs;
-+		if (store_args)
-+			nr_args += FTRACE_REGS_MAX_ARGS;
-+	}
- 
--	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size, trace_ctx);
-+	size += nr_args * sizeof(long);
-+	event = trace_buffer_lock_reserve(buffer, type, size, trace_ctx);
- 	if (!event)
- 		return 0;
- 
- 	entry = ring_buffer_event_data(event);
- 	entry->graph_ent = *trace;
- 
-+	/* Store the retaddr in args[0] */
-+	if (type == TRACE_GRAPH_RETADDR_ENT) {
-+		entry->args[0] = retaddr;
-+		args_offs += 1;
-+	}
++	TP_PROTO(struct tasklet_struct *t, void *func),
 +
- #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
--	if (fregs) {
-+	if (store_args) {
- 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
--			entry->args[i] = ftrace_regs_get_argument(fregs, i);
-+			entry->args[i + args_offs] = ftrace_regs_get_argument(fregs, i);
- 	}
- #endif
++	TP_ARGS(t, func)
++);
++
++/**
++ * tasklet_exit - called immediately after the tasklet is run
++ * @t: tasklet pointer
++ * @func: tasklet callback or function being run
++ *
++ * Used to find individual tasklet execution time
++ */
++DEFINE_EVENT(tasklet, tasklet_exit,
++
++	TP_PROTO(struct tasklet_struct *t, void *func),
++
++	TP_ARGS(t, func)
++);
++
+ #endif /*  _TRACE_IRQ_H */
  
-@@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr,
- 	return __graph_entry(tr, trace, trace_ctx, NULL);
- }
- 
--#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
--int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr)
--{
--	struct ring_buffer_event *event;
--	struct trace_buffer *buffer = tr->array_buffer.buffer;
--	struct fgraph_retaddr_ent_entry *entry;
--
--	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_ENT,
--					  sizeof(*entry), trace_ctx);
--	if (!event)
--		return 0;
--	entry	= ring_buffer_event_data(event);
--	entry->graph_ent.func = trace->func;
--	entry->graph_ent.depth = trace->depth;
--	entry->graph_ent.retaddr = retaddr;
--	trace_buffer_unlock_commit_nostack(buffer, event);
--
--	return 1;
--}
--#else
--int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr)
--{
--	return 1;
--}
--#endif
--
- static inline int ftrace_graph_ignore_irqs(void)
- {
- 	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
-@@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
- 	struct trace_array *tr = gops->private;
- 	struct fgraph_times *ftimes;
- 	unsigned int trace_ctx;
--	int ret = 0;
- 
- 	if (*task_var & TRACE_GRAPH_NOTRACE)
- 		return 0;
-@@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
- 		return 1;
- 
- 	trace_ctx = tracing_gen_ctx();
--	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
--	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
--		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
--		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
--	} else {
--		ret = __graph_entry(tr, trace, trace_ctx, fregs);
--	}
--
--	return ret;
-+	return __graph_entry(tr, trace, trace_ctx, fregs);
- }
- 
- int trace_graph_entry(struct ftrace_graph_ent *trace,
-@@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *iter,
- 			 * Save current and next entries for later reference
- 			 * if the output fails.
- 			 */
--			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
--				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
--			} else {
--				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
-+			int size = min_t(int, sizeof(data->ent), iter->ent_size);
- 
--				memcpy(&data->ent, curr, size);
--			}
-+			memcpy(&data->ent, curr, size);
- 			/*
- 			 * If the next event is not a return type, then
- 			 * we only care about what type it is. Otherwise we can
-@@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
- 
- #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
- #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
--static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_entry *entry,
--				u32 trace_flags, bool comment)
-+static void print_graph_retaddr(struct trace_seq *s, unsigned long retaddr, u32 trace_flags,
-+				bool comment)
- {
- 	if (comment)
- 		trace_seq_puts(s, " /*");
- 
- 	trace_seq_puts(s, " <-");
--	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
-+	seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
- 
- 	if (comment)
- 		trace_seq_puts(s, " */");
- }
- #else
- #define __TRACE_GRAPH_PRINT_RETADDR 0
--#define print_graph_retaddr(_seq, _entry, _tflags, _comment)		do { } while (0)
-+#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)		do { } while (0)
- #endif
- 
- #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
-@@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 		trace_seq_printf(s, "%ps", func);
- 
- 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
--			print_function_args(s, entry->args, (unsigned long)func);
-+			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-+					    (unsigned long)func);
- 			trace_seq_putc(s, ';');
--		} else
-+		} else {
- 			trace_seq_puts(s, "();");
-+		}
- 
- 		if (print_retval || print_retaddr)
- 			trace_seq_puts(s, " /*");
-@@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 	}
- 
- 	if (print_retaddr)
--		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
--				    trace_flags, false);
-+		print_graph_retaddr(s, entry->args[0], trace_flags, false);
- 
- 	if (print_retval) {
- 		if (hex_format || (err_code == 0))
-@@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 		trace_seq_printf(s, "%ps", (void *)ret_func);
- 
- 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
--			print_function_args(s, entry->args, ret_func);
-+			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-+					    ret_func);
- 			trace_seq_putc(s, ';');
--		} else
-+		} else {
- 			trace_seq_puts(s, "();");
-+		}
- 	}
- 	trace_seq_putc(s, '\n');
- 
-@@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
- 	args_size = iter->ent_size - offsetof(struct ftrace_graph_ent_entry, args);
- 
- 	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
--		print_function_args(s, entry->args, func);
-+		print_function_args(s, entry->args + ARGS_OFFS(args_size), func);
- 	else
- 		trace_seq_puts(s, "()");
- 
-@@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
- 
- 	if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
- 		entry->ent.type == TRACE_GRAPH_RETADDR_ENT)
--		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
--			tr->trace_flags, true);
-+		print_graph_retaddr(s, entry->args[0], tr->trace_flags, true);
- 	trace_seq_putc(s, '\n');
- 
- 	if (trace_seq_has_overflowed(s))
-@@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *field, struct trace_seq *s,
- 	 * it can be safely saved at the stack.
- 	 */
- 	struct ftrace_graph_ent_entry *entry;
--	u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)];
-+	u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR) * sizeof(long)];
- 
- 	/* The ent_size is expected to be as big as the entry */
- 	if (iter->ent_size > sizeof(save_buf))
-@@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
- 		trace_assign_type(field, entry);
- 		return print_graph_entry(field, s, iter, flags);
- 	}
--#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
- 	case TRACE_GRAPH_RETADDR_ENT: {
--		struct fgraph_retaddr_ent_entry saved;
- 		struct fgraph_retaddr_ent_entry *rfield;
- 
- 		trace_assign_type(rfield, entry);
--		saved = *rfield;
--		return print_graph_entry((struct ftrace_graph_ent_entry *)&saved, s, iter, flags);
-+		return print_graph_entry((typeof(field))rfield, s, iter, flags);
- 	}
--#endif
- 	case TRACE_GRAPH_RET: {
- 		struct ftrace_graph_ret_entry *field;
- 		trace_assign_type(field, entry);
+ /* This part must be outside protection */
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 9ab5ca399a99..fadc6bbda27b 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -822,10 +822,15 @@ static void tasklet_action_common(struct softirq_action *a,
+ 		if (tasklet_trylock(t)) {
+ 			if (!atomic_read(&t->count)) {
+ 				if (tasklet_clear_sched(t)) {
+-					if (t->use_callback)
++					if (t->use_callback) {
++						trace_tasklet_entry(t, t->callback);
+ 						t->callback(t);
+-					else
++						trace_tasklet_exit(t, t->callback);
++					} else {
++						trace_tasklet_entry(t, t->func);
+ 						t->func(t->data);
++						trace_tasklet_exit(t, t->func);
++					}
+ 				}
+ 				tasklet_unlock(t);
+ 				continue;
 -- 
-2.34.1
+2.43.0
 
 
