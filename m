@@ -1,173 +1,207 @@
-Return-Path: <linux-kernel+bounces-897569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAD5C5349D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:08:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB39C5325B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D54615071F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B67D535A042
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BC62C08D0;
-	Wed, 12 Nov 2025 15:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A8533E354;
+	Wed, 12 Nov 2025 15:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="et7SB2ie"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K/nqaxmh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BFE33BBA7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195752882D3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961307; cv=none; b=G4bCt4H/P3tRmSbixDD59gGqpzhbvNof/Btf7/1tpUp5BE9rTEsf/AXUNorTjHGTiBTUaUcN/1gZ3DF0/ocPCb0rezNk7kCLM3CefdAs6Bb0LXjb4xZytNAeBBqFbCz2klNz7IvpeQDFDp7dc8g4Ljd9xvS7u/dgNHndOzgoJLU=
+	t=1762961361; cv=none; b=U1V4zpRp6taSPA4+KZMmYRhansgUDFIa5VETAJBx/XCi/QrfP88qedRCa3CIXBSFW9oANu0MEVnRTX6/WiQSYJvtHlPrmVGn+VKSCZniQA25FqaicR6cPsPMiD+3TyEtkkJkyq1aXEdhEF+ZGdml+YfTRJJVeqGGHo8GbXYC99c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961307; c=relaxed/simple;
-	bh=Tp/Oos39fG6Rt6CEYu6p8aP1uEaAHS2MI4e8EuiAzrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rlXDTFiPsUWkeQ/S4AqPNpq94ZgNnq+hA/QAAM+CRFsNo5VdmW+roANlG74CFz9SX0wVXqZHxt2b2IcC7wypUQ2KLdgdg3x/DACRwqU3yvbqRaDXNNC8fdWTW47SyQsRpdwzmx+fyEmQ8LO9CpaGmYzR3uDqysXWMoqsoZfsPoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=et7SB2ie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A686CC4AF09
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762961306;
-	bh=Tp/Oos39fG6Rt6CEYu6p8aP1uEaAHS2MI4e8EuiAzrk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=et7SB2ieZMadA/JvC7jUJCGdCnGfMy71tJH2tp9D3+hV/xkqZw5l6Y9MDC7bE06tg
-	 8tL78pxUomD5m+liN/d7g7wIaEgEyOW0EBQh0en4MdScpMVkg0Qhgi+lmR73TKhzX1
-	 XpY0BHuuQIQ6SHAUpP69ThYir7AAWhYOoZoFQY+BVod6ZbJ5It2+EMsCqWoBVFm/Gf
-	 XKfABh7MRua5WLTou8ItAiSOS/KSOkmgqGYxgAPiV6ozeAW3LaUsdabEUm9a5yi9dv
-	 au+XOENywP2pt0efPtfLOLRPNmjRDU4a+YcZ/GV7zkqGwkv/nGQtFMtEclbmcyDKlw
-	 XDy6pa4J6is/g==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-592ff1d80feso1092500e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:28:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXyyWasSLL03OAFWz7mMxK1AmmN7wgJ5BKJ5iKjNku0ytAixiDAdsajOnjOPlpDCiWwTKAdAT8Yj0QBHXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHiSbhDT5yqjn+0tuHDq/DnTzkT0ENifdUMj8D0vkPst87biFK
-	tK102HDYkEY4GsskDgM74QU+tItDXPKIrOT41AyaaDHAxINtWGrZ4x/9qVQhtbJrYRvVeS28953
-	N+MEzS2/elTI+fqYi/YuZuCiWmVpkt3c=
-X-Google-Smtp-Source: AGHT+IHvpXz5FAxXakLAllU2lH9LAYAjCAIp7Ff2/9yxXEII2MZtL6hl3MqXketkutBXtpWAJfsWh0I/hj7LuroaZy4=
-X-Received: by 2002:a05:6512:3b9d:b0:594:2efe:ead5 with SMTP id
- 2adb3069b0e04-59576e44fcfmr1285666e87.53.1762961304971; Wed, 12 Nov 2025
- 07:28:24 -0800 (PST)
+	s=arc-20240116; t=1762961361; c=relaxed/simple;
+	bh=VlJF84qCp1Uyg620SIsOKU74gKm4VBZZnvZQ9+f0L20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rdo49pNA8edvmEjqdWLfLg8gATEed/YL+Fcc5WMUACK3yp2e4AulxHG73gCXGJiapvnB4pts03/+bjFvUIyn1aoZ8j1ebaAs5UFaBvaPAC89AsX9hZzHxR88k/HpZXzDXkBScGb/TKdP/NMhdjhoPsOy8DoRwrTdOaHhSFBuJ+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K/nqaxmh; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC5w6du002505;
+	Wed, 12 Nov 2025 15:28:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Lyrv2L
+	F21jqf+yWamAUy/LYlJYIIFIMhy7BdaLH2d1g=; b=K/nqaxmh5O7asegHsMWaB1
+	uUBN+Govmi5gsGUMftawK6c6UkNctn9CADRW7j3nfPRI4/QZHglRJ6vMajF6t9RR
+	XSbvHaH59QrPQDiwqIv0JdE0raBAlRvvth2cl9d+yuJ5YQLYOdw0dxAY7TffAcAx
+	SXSo7JPUZbR9LQKB/7JFsSvGaZ0I1B+LHuo8ZCBHhng+vD63OAJ1jLL4YnLa2kDx
+	XXvKLrg1FtUkqT/DE39hQ5QY4AGdGvWc1COblUaiVUt9TkiWMk76VftQxwR7/c/4
+	f7AJfifqnMZXa++niUd46NKgJOp9bfMdXdIMo+cEhiSSdFeqp3CGfX3Mpa1GhulA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5cja1xe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:28:32 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ACF3Md5000535;
+	Wed, 12 Nov 2025 15:28:31 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5cja1x9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:28:31 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACDCOs0014841;
+	Wed, 12 Nov 2025 15:28:30 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpk8vqc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:28:29 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACFSRPf12583258
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 15:28:27 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEF7B20043;
+	Wed, 12 Nov 2025 15:28:27 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F32820040;
+	Wed, 12 Nov 2025 15:28:24 +0000 (GMT)
+Received: from [9.124.217.11] (unknown [9.124.217.11])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Nov 2025 15:28:24 +0000 (GMT)
+Message-ID: <01dcb63e-9ebd-42ca-9418-a822bf081bfc@linux.ibm.com>
+Date: Wed, 12 Nov 2025 20:58:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com>
- <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com>
- <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com> <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
- <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com> <E9396874-5D2D-413D-A5D1-A28E4D429C51@zytor.com>
-In-Reply-To: <E9396874-5D2D-413D-A5D1-A28E4D429C51@zytor.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 12 Nov 2025 16:28:12 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXECkKeDUDdjmrQjcYk=2Y5ydTV2L1Pg73X7uCC-=DC9Ww@mail.gmail.com>
-X-Gm-Features: AWmQ_blwOyFxQE32pbr8LGfqIke9Ktv3MU0a68eclFWL2Ds2jepFFjUJAha1mFU
-Message-ID: <CAMj1kXECkKeDUDdjmrQjcYk=2Y5ydTV2L1Pg73X7uCC-=DC9Ww@mail.gmail.com>
-Subject: Re: [PATCH v11 4/9] x86/alternatives: Disable LASS when patching
- kernel code
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org, 
-	Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Sean Christopherson <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] sched/fair: Small cleanup to sched_balance_newidle()
+To: Peter Zijlstra <peterz@infradead.org>, vincent.guittot@linaro.org
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linux-kernel@vger.kernel.org,
+        Chris Mason
+ <clm@meta.com>,
+        Joseph Salisbury <joseph.salisbury@oracle.com>,
+        Adam Li <adamli@os.amperecomputing.com>,
+        Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+        Josh Don <joshdon@google.com>
+References: <20251107160645.929564468@infradead.org>
+ <20251107161739.525916173@infradead.org>
+ <2acd7c1d-e2b4-40a0-85de-55f9b2635dad@linux.ibm.com>
+ <20251112144241.GP278048@noisy.programming.kicks-ass.net>
+ <20251112150818.GG4068168@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <20251112150818.GG4068168@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Ss+dKfO0 c=1 sm=1 tr=0 ts=6914a7a0 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Rhmd8u9pI6_gtBkjpRgA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5NSBTYWx0ZWRfX2e3TSrofYT5n
+ ROC3EAng5guQbBQ8yba+nCUzx/3kiTh2tQ9xueAxNL/Pkt//Q6ND/crsR1EJbTF79cz8YcBHP6s
+ 9taZYt9Kk7kL5PW8qnrFBSDGy6p9q1eqYIuv5nAU2UjyXEWJZcZcequXiVcqwp0DgZaB2waO7Iz
+ QlmsFBbun22KHML4BU1Xzb9Q+gZ7ap9eiQJz4U5VzImlwwVZJfyKwgaZ0bGAuiZojv3qUWxzANN
+ 9XikDaiS1TCYUFF8tH38uAdFtiE5ZtHjhJs3Ky0P1JnGnpMJLTyvfXXL/NeaRpik2zmVIFTAWZe
+ b3RzesblZIyrCIkRxRFPKo0gx70ZLLWXpnJp+ZpzR9P7Qt/FGT0aUofsZDDnNJKXW6W6qzzGBb/
+ erI0hrov9Ya+UZRV4nhGWarIOA4GDQ==
+X-Proofpoint-GUID: SA1OuiGgw6YsiqJ7lgLW20NC0vbggzM-
+X-Proofpoint-ORIG-GUID: bTTCZ27tsKr0u8G2q56EcvfkfT31HRht
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_04,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080095
 
-On Wed, 12 Nov 2025 at 16:23, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> On November 12, 2025 7:18:33 AM PST, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >On Wed, 12 Nov 2025 at 15:58, H. Peter Anvin <hpa@zytor.com> wrote:
-> >>
-> >> On November 12, 2025 6:51:45 AM PST, Dave Hansen <dave.hansen@intel.com> wrote:
-> >> >On 11/12/25 05:56, Ard Biesheuvel wrote:
-> >> >...
-> >> >>> it looks like we would now need to toggle
-> >> >>> CR4.LASS every time we switch to efi_mm. The lass_enable()/_disable()
-> >> >>> naming would be more suitable for those wrappers.
-> >> >>>
-> >> >> Note that Linux/x86 uses SetVirtualAddressMap() to remap all EFI
-> >> >> runtime regions into the upper [kernel] half of the address space.
-> >> >>
-> >> >> SetVirtualAddressMap() itself is a terrible idea, but given that we
-> >> >> are already stuck with it, we should be able to rely on ordinary EFI
-> >> >> runtime calls to only execute from the upper address range. The only
-> >> >> exception is the call to SetVirtualAddressMap() itself, which occurs
-> >> >> only once during early boot.
-> >> >
-> >> >Gah, I had it in my head that we needed to use the lower mapping at
-> >> >runtime. The efi_mm gets used for that SetVirtualAddressMap() and the
-> >> >efi_mm continues to get used at runtime. So I think I just assumed that
-> >> >the lower mappings needed to get used too.
-> >> >
-> >> >Thanks for the education!
-> >> >
-> >> >Let's say we simply delayed CR4.LASS=1 until later in boot. Could we
-> >> >completely ignore LASS during EFI calls, since the calls only use the
-> >> >upper address range?
-> >> >
-> >> >Also, in practice, are there buggy EFI implementations that use the
-> >> >lower address range even though they're not supposed to? *If* we just
-> >> >keep LASS on for these calls is there a chance it will cause a
-> >> >regression in some buggy EFI implementations?
-> >>
-> >> Yes, they are. And there are buggy ones which die if set up with virtual addresses in the low half.
-> >
-> >To elaborate on that, there are systems where
-> >
-> >a) not calling SetVirtualAddressMap() crashes the firmware, because,
-> >in spite of being clearly documented as optional, not calling it
-> >results in some event hook not being called, causing the firmware to
-> >misbehave
-> >
-> >b) calling SetVirtualAddressMap() with an 1:1 mapping crashes the
-> >firmware (and so this is not a possible workaround for a))
-> >
-> >c) calling SetVirtualAddressMap() crashes the firmware when not both
-> >the old 1:1 and the new kernel mapping are already live (which
-> >violates the UEFI spec)
-> >
-> >d) calling SetVirtualAddressMap() does not result in all 1:1
-> >references being converted to the new mapping.
-> >
-> >
-> >To address d), the x86_64 implementation of efi_map_region() indeed
-> >maps an 1:1 alias of each remapped runtime regions, so that stray
-> >accesses don't fault. But the code addresses are all remapped, and so
-> >the firmware routines are always invoked via their remapped aliases in
-> >the kernel VA space. Not calling SetVirtualAddressMap() at all, or
-> >calling it with a 1:1 mapping is not feasible, essentially because
-> >Windows doesn't do that, and that is the only thing that is tested on
-> >all x86 PCs by the respective OEMs.
-> >
-> >Given that remapping the code is dealt with by the firmware's PE/COFF
-> >loader, whereas remapping [dynamically allocated] data requires effort
-> >on the part of the programmer, I'd hazard a guess that 99.9% of those
-> >bugs do not involve attempts to execute via the lower mapping, but
-> >stray references to data objects that were not remapped properly.
-> >
-> >So we might consider
-> >a) remapping those 1:1 aliases NX, so we don't have those patches of
-> >RWX memory around
-> >b) keeping LASS enabled during ordinary EFI runtime calls, as you suggest.
->
-> Unless someone has a code pointer in their code.
 
-That is a good point, especially because the EFI universe is
-constructed out of GUIDs and so-called protocols, which are just
-structs with function pointers.
 
-However, EFI protocols are only supported at boot time, and the
-runtime execution context is much more restricted. So I'd still expect
-the code pointer case to be much less likely.
+On 11/12/25 8:38 PM, Peter Zijlstra wrote:
+> On Wed, Nov 12, 2025 at 03:42:41PM +0100, Peter Zijlstra wrote:
+> 
+>>> if sd is null, i think we are skipping these compared to earlier.
+>>>
+>>>          t0 = sched_clock_cpu(this_cpu);
+>>>          sched_balance_update_blocked_averages(this_cpu);
+>>
+>> let me pull that sched_balance_update_blocked_averages() thing up a few
+>> lines.
+> 
+> Something like so..
+> 
+> ---
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9946,15 +9946,11 @@ static unsigned long task_h_load(struct
+>   }
+>   #endif /* !CONFIG_FAIR_GROUP_SCHED */
+>   
+> -static void sched_balance_update_blocked_averages(int cpu)
+> +static void __sched_balance_update_blocked_averages(struct rq *rq)
+>   {
+>   	bool decayed = false, done = true;
+> -	struct rq *rq = cpu_rq(cpu);
+> -	struct rq_flags rf;
+>   
+> -	rq_lock_irqsave(rq, &rf);
+>   	update_blocked_load_tick(rq);
+> -	update_rq_clock(rq);
+>   
+>   	decayed |= __update_blocked_others(rq, &done);
+>   	decayed |= __update_blocked_fair(rq, &done);
+> @@ -9962,7 +9958,15 @@ static void sched_balance_update_blocked
+>   	update_blocked_load_status(rq, !done);
+>   	if (decayed)
+>   		cpufreq_update_util(rq, 0);
+> -	rq_unlock_irqrestore(rq, &rf);
+> +}
+> +
+> +static void sched_balance_update_blocked_averages(int cpu)
+> +{
+> +	struct rq *rq = cpu_rq(cpu);
+> +
+> +	guard(rq_lock_irqsave)(rq);
+> +	update_rq_clock(rq);
+> +	__sched_balance_update_blocked_averages(rq);
+>   }
+>   
+>   /********** Helpers for sched_balance_find_src_group ************************/
+> @@ -12865,6 +12869,8 @@ static int sched_balance_newidle(struct
+>   	if (!cpu_active(this_cpu))
+>   		return 0;
+>   
+> +	__sched_balance_update_blocked_averages(this_rq);
+> +
+
+is this done only when sd == null ?
+
+>   	/*
+>   	 * This is OK, because current is on_cpu, which avoids it being picked
+>   	 * for load-balance and preemption/IRQs are still disabled avoiding
+> @@ -12891,7 +12897,6 @@ static int sched_balance_newidle(struct
+>   	raw_spin_rq_unlock(this_rq);
+>   
+>   	t0 = sched_clock_cpu(this_cpu);
+> -	sched_balance_update_blocked_averages(this_cpu);
+>   
+>   	rcu_read_lock();
+>   	for_each_domain(this_cpu, sd) {
+
+Referring to commit,
+9d783c8dd112a (sched/fair: Skip update_blocked_averages if we are defering load balance)
+I think vincent added the max_newidle_lb_cost check since sched_balance_update_blocked_averages is costly.
+
 
