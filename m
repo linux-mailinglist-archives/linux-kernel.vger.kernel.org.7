@@ -1,209 +1,170 @@
-Return-Path: <linux-kernel+bounces-898189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1CAC54877
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24483C54887
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1236134A0F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72B53B3A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C13A2D8393;
-	Wed, 12 Nov 2025 20:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444D626B96A;
+	Wed, 12 Nov 2025 21:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HctSb3c/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aOgRbWow"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9KNBCdI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CA72D5924
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81705280A5A;
+	Wed, 12 Nov 2025 21:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981091; cv=none; b=pMKt5GTsp4c5F3Jn3dMrrAH1WXW6jf3Cq7e+vB31iXM5qOgSgUiw01XzWOd6bTyqzUkVf9X1MD891LPWQ+US6pwfas1HN8PmRkneZqUTfCu9M+OAzAnCF+o9e29NXd1XTMUzauaj9S9LRdfc5RyP8auiC09PP/C1bo207znxBDk=
+	t=1762981214; cv=none; b=em1LlZo2QxyKVtek/xlJyzkVurMsrVrvcs2wGcGdiH6LeepuT1MX/oEkiKvikVKA+8L3CuPqMyNipb1xfAPASekem1emDvUIEL0OCN+bQL6neRMJU4bWKr4vd26cfA+fxiVFyCSTV4jZYTp4WFipuzYUWM1oHaoO+cOaR2Z3D8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981091; c=relaxed/simple;
-	bh=AagDWdOBppQWSYzA9tVtQ+1NN/5U2UCNvVcwCAoYND4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Aqix7bIAw/NETfWNRzZJ09agPJr24O05xMQj5QdSJQHe3ZAWiKndwSFivLo+RHQs3VageloepIMbsuHhgHiq7uNeUaDa35JF9JI1ZeGjzQEPGCm1iD0odgaCX+J0NkGRBnzOmvLdkUOSQWFhq6h9AyDTc8tT6z6ElwJJGl3Zx8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HctSb3c/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aOgRbWow; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762981088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s3qyywzMcYqyk3Ae6Ps8PBByhEa/6CN7lJvjKibJCTQ=;
-	b=HctSb3c/jsnJOtQpumNu1HDuqfV5wUDZlCCFgVfqU+b17yH8/6enXDuQqb9PTGHMIDQRko
-	XGMWKyswWhAsA1H8d5/WsFuIGHa0NN0kTo+9F9RA2Kspz0oD8n/p/aYP6fDYu+cOZ2K2AF
-	sz852ylNAZ/AEwhc+mB++IeMPwwL2jM=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-OpzEWMnNP16k81OA-dN2NQ-1; Wed, 12 Nov 2025 15:58:07 -0500
-X-MC-Unique: OpzEWMnNP16k81OA-dN2NQ-1
-X-Mimecast-MFC-AGG-ID: OpzEWMnNP16k81OA-dN2NQ_1762981086
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b26e9214deso45426085a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:58:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762981086; x=1763585886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s3qyywzMcYqyk3Ae6Ps8PBByhEa/6CN7lJvjKibJCTQ=;
-        b=aOgRbWowOfa2PpsyQEBaGZk0J6bQy6EfA7St5QRgbT6egpQGtGyjid/FYoOxG1Q3K1
-         wRqmsiqd92bTfjqTdK0h/KL3j6LShUh1kANleaUuc/3PdicDONZipMz9LFSzpqQgJiKd
-         me8fA70MxlIJLlsrX4P7CyYMajz28rzpw5tYOjt/rtdN4vY9AdLi5ixhTTx+93joSxHe
-         issOon7PVkDPZ5UkJYOOAjbxu36K7CQ5BbeKlihYZch8+ozYQ3t66TyQrH+id8HqbHzn
-         OUaSRyZqN3EqTcEQ5ATxckYf2gT7uL3AT+WdwHxPoGaLewp40Pa72spyU09pEeWQx+CS
-         fcvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762981086; x=1763585886;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3qyywzMcYqyk3Ae6Ps8PBByhEa/6CN7lJvjKibJCTQ=;
-        b=nSYewtCnPexcTEtKn2aU3nxEuGufwX9VAdb/xehaRsgbP8UGxVpkwnsoedEE8uWBEa
-         bg5hPJZBXBQ8giPzh6nB9YpLjC5QH+907JBH5uaDFb5u5qoyvhJXmtDMNx6lbd+UcRm4
-         obb/ude8yQzMz5yaWkfSwNQs6KcKC5LZDq+5HRc5Ce7FxnKTJSIQeEAJNxWvAQ5PtaYw
-         IxIy7bBM2UWmHJXpwuPP2C/P7xyeGtjxUYveNqlH47dwYH/LryKwIlyZ2umhi3HMn6Zc
-         ijBwwqxHWnUIt96bbWr9F9u10kwGCvEsj3Pb/wFHGJ9X9jARrhkV1du2ylusah9rHeIM
-         /69g==
-X-Forwarded-Encrypted: i=1; AJvYcCXns/TOFCbSVjZonV3Z9CAzgaF4L7sF5lMlApn6WH0f3seJ1GwRZ92iAc36p0LU6NuQMuA3CDJ1c0DL6HY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYLVy7C5achdVkSh7H8KBbHaGTbJ2Eyl/jL2qTau5W1TItcYi/
-	4iXm2zPUNpU8phPs8/IOXxAZdv1ZaLgKb+glrHLoxGyiSEbx5Ks6VmTB6+Wg3cR7flfLwCxHiLz
-	RhojCKBnI28D4nvrCz4F4e9zKSAZ1v+qK7zZ/qZaYKCb6bLacKSIOHiuZzfhukTQTZw==
-X-Gm-Gg: ASbGncuQlzi6Y3rIJ5MntGWnT4HFiQ7TXrdVB1cnyT4jafREmwIahWsx3GBFz0gqpEB
-	xkSrjTqDbU5xr7xhdXEtu/0gipvDWP9qCpWRVqJzKBrehx7s2dt3QkiAo5ftRyyoyEW0pqe3PxD
-	BK1poSooE4lBlCWQDyw8iSyeVYSbv3rEBIgjCNpi2u3is7K7VRo7RdmpXao3zy0mACMST5VEHBX
-	vzbANnH9XT/9gQONd2cc0dFb0zOSgl+6PMD6wfwl36pbamU5qIRD/KlbJaZXRldF4EFpZpxGgjq
-	gpVpi9gPVLSwndUzA6ZAmnUj2KtGorpgqaCx1uUZKH+vpaMv07DosamUQok0+F5yY2lM8fu367k
-	rLqg265MmrSmwfCiTpNdUzgzag0oHxir0I5+sjJDYrOuMFw==
-X-Received: by 2002:a05:620a:1a1f:b0:8b2:772b:5f65 with SMTP id af79cd13be357-8b29b76454dmr607886985a.22.1762981086530;
-        Wed, 12 Nov 2025 12:58:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEtwNXcaZXsiBjiET7BW6yYn14H6fZ6yu60XPNbEB9AbYsWhYxCebg+fOwt+3xxjmdVh+jBuA==
-X-Received: by 2002:a05:620a:1a1f:b0:8b2:772b:5f65 with SMTP id af79cd13be357-8b29b76454dmr607883785a.22.1762981086122;
-        Wed, 12 Nov 2025 12:58:06 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a84ae3csm261456285a.6.2025.11.12.12.58.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 12:58:05 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <91e163ac-4379-4875-9f08-bddebb1e616c@redhat.com>
-Date: Wed, 12 Nov 2025 15:58:04 -0500
+	s=arc-20240116; t=1762981214; c=relaxed/simple;
+	bh=y4Ld6BCnq7KX+vDSRVwSUYQvdimBcRrIcm5ooyZboEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ztot586rs/YeYgHpfY6L+xyCHw/iogxBy6IallQxdI/U5B65BwJnuuzIt6smwcmvLhwQYtVSCmLu33A6I5HtvpnOVi+m2KlITR0WuD4FoMvom9iR1TWXmhMuCMD5F0TPf68ftxTsymnUq2TUS/odj1u9Etk/SnlqjCAN1IIJ47U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9KNBCdI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07FAC4CEF7;
+	Wed, 12 Nov 2025 21:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762981213;
+	bh=y4Ld6BCnq7KX+vDSRVwSUYQvdimBcRrIcm5ooyZboEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9KNBCdIQnX4NqogZP5t9fr/bVLmOpAcYpydtyT11eaAXfRe32MGmyfP5gaQnnRhR
+	 o+9E5tSgi/SjmlpWTbxOuCyJKjMh8iu/ma+NnD2czJ9USvlo/1FIARwRNNJPQuEcRZ
+	 /4g8rMzdFJRGYzgPaU+OzpK68OoVqpft4p5G3p4J7J83YxYi3026N9ncSGU6UY00KB
+	 H5WQJ+8AuoptYS9SGk0WTrzT0LAq59zhNyFP5NdM0wliZ0bEPaYpsaVDwfj44z3cXW
+	 tPzbx8wfs1tCxUPsWgd8wKiDDPIUMvO69WBRCmocsFTY2PUNsJhNs6nJeuQQ+/jcz4
+	 LxJUKHmbuav0g==
+Date: Wed, 12 Nov 2025 12:58:32 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Ard Biesheuvel <ardb+git@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au
+Subject: Re: [PATCH v4 08/21] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
+ guard API
+Message-ID: <20251112205832.GC1760@sol>
+References: <20251031103858.529530-23-ardb+git@google.com>
+ <20251031103858.529530-31-ardb+git@google.com>
+ <20251031134909.00006bf3@huawei.com>
+ <CAMj1kXHMa_Vj3DsuoAR-rvWW12Bsnz10w+BAze6mtngqpABZPw@mail.gmail.com>
+ <CAMj1kXH_YCuBT4CbidTcVDNz2qNvYK9afS+v9eNkNggB3gopBw@mail.gmail.com>
+ <20251103112836.00006966@huawei.com>
+ <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 06/22] cpuset: introduce partition_update()
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
- <20251025064844.495525-7-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20251025064844.495525-7-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGog9bwqc=1qCv+Lh3giK081jf9h4AFCvQ=6Ls6N27LyA@mail.gmail.com>
 
-On 10/25/25 2:48 AM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> Introduce partition_update() to centralize updates to key cpuset structures
-> during a partition update, including:
-> - effective_xcpus
-> - exclusive_cpus
->
-> Key operations performed:
-> - Adding and removing exclusive CPUs via partition_xcpus_add()/del()
-> - Synchronizing the effective exclusive CPUs mask
-> - Updating the exclusive CPUs mask when modification is required
-> - Triggering necessary system updates and workqueue synchronization
-> - Updating the partition's exclusive flag
-> - Sending partition change notifications
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 47 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 47 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 4a79db1cdec1..3e414e19ae31 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1604,6 +1604,53 @@ static void partition_disable(struct cpuset *cs, struct cpuset *parent,
->   	notify_partition_change(cs, old_prs);
->   }
->   
-> +/**
-> + * partition_update - Update an existing partition configuration
-> + * @cs: The cpuset to update
-> + * @prs: Partition root state (must be positive)
-> + * @xcpus: New exclusive CPUs mask for the partition (NULL to keep current)
-> + * @excpus: New effective exclusive CPUs mask
-> + * @tmp: Temporary masks
-> + *
-> + * Updates partition-related fields. The tmp->addmask is the CPU mask that
-> + * will be added to the subpartitions_cpus and removed from parent's
-> + * effective_cpus, and the tmp->delmask vice versa.
-> + */
-> +static void partition_update(struct cpuset *cs, int prs, struct cpumask *xcpus,
-> +				  struct cpumask *excpus, struct tmpmasks *tmp)
-> +{
-> +	bool isolcpus_updated;
-> +	bool excl_updated;
-> +	struct cpuset *parent;
-> +	int old_prs;
-> +
-> +	lockdep_assert_held(&cpuset_mutex);
-> +	WARN_ON_ONCE(!cpuset_v2());
-> +	WARN_ON_ONCE(prs <= 0);
-> +
-> +	parent = is_remote_partition(cs) ? NULL : parent_cs(cs);
-> +	old_prs = cs->partition_root_state;
-> +	excl_updated = !cpumask_empty(tmp->addmask) ||
-> +		       !cpumask_empty(tmp->delmask);
-Should partition_update() only be called if at least one of 
-addmask/delmask is not empty? If they are both empty, no update is 
-really needed. Right?
-> +
-> +	spin_lock_irq(&callback_lock);
-> +	isolcpus_updated = partition_xcpus_add(prs, parent, tmp->addmask);
-> +	isolcpus_updated |= partition_xcpus_del(prs, parent, tmp->delmask);
+On Tue, Nov 04, 2025 at 04:32:28PM +0100, Ard Biesheuvel wrote:
+> On Mon, 3 Nov 2025 at 12:28, Jonathan Cameron
+> <jonathan.cameron@huawei.com> wrote:
+> >
+> > On Fri, 31 Oct 2025 15:05:19 +0100
+> > Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > > On Fri, 31 Oct 2025 at 14:52, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > >
+> > > > On Fri, 31 Oct 2025 at 14:49, Jonathan Cameron
+> > > > <jonathan.cameron@huawei.com> wrote:
+> > > > >
+> > > > > On Fri, 31 Oct 2025 11:39:07 +0100
+> > > > > Ard Biesheuvel <ardb+git@google.com> wrote:
+> > > > >
+> > > > > > From: Ard Biesheuvel <ardb@kernel.org>
+> > > > > >
+> > > > > > Before modifying the prototypes of kernel_neon_begin() and
+> > > > > > kernel_neon_end() to accommodate kernel mode FP/SIMD state buffers
+> > > > > > allocated on the stack, move arm64 to the new 'ksimd' scoped guard API,
+> > > > > > which encapsulates the calls to those functions.
+> > > > > >
+> > > > > > For symmetry, do the same for 32-bit ARM too.
+> > > > > >
+> > > > > > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> > > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > > > > ---
+> > > > > >  lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
+> > > > > >  lib/crc/arm/crc32.h        | 11 ++++-------
+> > > > > >  lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
+> > > > > >  lib/crc/arm64/crc32.h      | 16 ++++++----------
+> > > > > >  4 files changed, 20 insertions(+), 39 deletions(-)
+> > > > > >
+> > > > > > diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
+> > > > > > index 63441de5e3f1..aaeeab0defb5 100644
+> > > > > > --- a/lib/crc/arm/crc-t10dif.h
+> > > > > > +++ b/lib/crc/arm/crc-t10dif.h
+> > > > >
+> > > > > >  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
+> > > > > > @@ -20,21 +19,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
+> > > > > >  static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+> > > > > >  {
+> > > > > >       if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
+> > > > > > -             if (static_branch_likely(&have_pmull)) {
+> > > > > > -                     if (likely(may_use_simd())) {
+> > > > > > -                             kernel_neon_begin();
+> > > > > > -                             crc = crc_t10dif_pmull64(crc, data, length);
+> > > > > > -                             kernel_neon_end();
+> > > > > > -                             return crc;
+> > > > > > -                     }
+> > > > > > +             if (static_branch_likely(&have_pmull) && likely(may_use_simd())) {
+> > > > > > +                     scoped_ksimd()
+> > > > > > +                             return crc_t10dif_pmull64(crc, data, length);
+> > > > >
+> > > > > >               } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> > > > > >                          static_branch_likely(&have_neon) &&
+> > > > > >                          likely(may_use_simd())) {
+> > > > >
+> > > > > I briefly thought this was a functional change but it's not because
+> > > > > of may_use_simd() being something that isn't going to change between
+> > > > > the two evaluations.
+> > > > >
+> > > > > Would it hurt at all to pull that up to be
+> > > > >         if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE && likely(may_use_simd())) {
+> > > > >                 if (static_branch_likely(&have_pmull)) {
+> > > > >                         scoped_ksimd()
+> > > > >                                 return crc_t10dif_pmull64(crc, data, length);
+> > > > >
+> > > > >                 } else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
+> > > > >                            static_branch_likely(&have_neon)) {
+> > > > >                 ...
+> > > > >
+> > > > > ?
+> > > > >
+> > > >
+> > > > Yeah that would be a reasonable cleanup, I guess.
+> > >
+> > > Actually, looking more closely, that would result in may_use_simd()
+> > > being evaluated even when the static keys are set to false, given that
+> > > the compiler is unlikely to be able to figure out by itself that
+> > > may_use_simd() has no side effects.
+> > Yeah. That was why it was a question :)
+> > Given everything is marked as likely I wasn't sure if we cared about when
+> > the static keys aren't set.
+> >
+> 
+> Yeah, it is rather doubtful that those annotations (or the use of
+> static keys, for that matter) make a meaningful difference here.
 
-I see now that there is no adding and deleting boolean flags to indicate 
-if the cpumasks are empty or not, so you have to add the empty cpumask 
-check in those helpers. Please state that in your patch 2.
+Well, this change makes crc_t10dif_update() not usable during early boot
+on arm64, as it will start hitting the
+WARN_ON(!system_capabilities_finalized() in may_use_simd().
 
-Cheers,
-Longman
+I doubt there are any current callers where that matters, but I've been
+trying to avoid this sort of unnecessary pitfall in the CRC functions.
 
-> +	/*
-> +	 * Need to update effective_xcpus and exclusive_cpus now as
-> +	 * update_sibling_cpumasks() below may iterate back to the same cs.
-> +	 */
-> +	cpumask_copy(cs->effective_xcpus, excpus);
-> +	if (xcpus)
-> +		cpumask_copy(cs->exclusive_cpus, xcpus);
-> +	spin_unlock_irq(&callback_lock);
-> +	update_unbound_workqueue_cpumask(isolcpus_updated);
-> +	if (excl_updated)
-> +		cpuset_force_rebuild();
-> +	update_partition_exclusive_flag(cs, prs);
-> +	notify_partition_change(cs, old_prs);
-> +}
-> +
->   /*
->    * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
->    * @prstate: partition root state to be checked
+Checking the static key first eliminates this pitfall and is also more
+efficient on CPUs that don't support the relevant CPU feature.
 
+- Eric
 
