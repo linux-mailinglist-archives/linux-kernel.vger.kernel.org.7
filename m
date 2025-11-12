@@ -1,106 +1,112 @@
-Return-Path: <linux-kernel+bounces-896377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E95EC50398
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B682C503F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEA754E8F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:42:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623C11889C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF6427FB1B;
-	Wed, 12 Nov 2025 01:42:54 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDF028D8CC;
+	Wed, 12 Nov 2025 01:54:13 +0000 (UTC)
+Received: from r9206.ps.combzmail.jp (r9206.ps.combzmail.jp [160.16.62.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F149C27B348;
-	Wed, 12 Nov 2025 01:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B6261B9C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.62.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762911773; cv=none; b=raVRcnwj4A9kXaHjOjnGSYMpMNoRGCFRnm9xEGj3LHAIxfnN73HWRqjNdPnw7w/4prkSpqifF0H3sMmkRQBVlNx4tPd48FP2PLc4SD1z3o9ekKXdWwbNoHVU2jCc/D+mwttZXTSIr91sRlsFBpujBfwrfIUFF+bpnXITuYLe3O4=
+	t=1762912453; cv=none; b=M2Xa0zMiS63zm0/quOwSlbbWvyX/sHfZgY26bJa+5VVFSgnkdWiazDjQsiIfZMftRLM2dgPHRST0B25YsjDmogrG6WUcVw5MhhYcRywVVpByrrfye3OGy3iyNO3szqMFhqxlfVj2DEmWvUIgJs7TOMXyBecAED7pRi2GFA90a0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762911773; c=relaxed/simple;
-	bh=iXJzpszPFFgqyF131PAUcV/1KSKkkZ7UBUuJCB04/PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mDBtB5IC3XhiwzAilJFizMnT5JKVcv8LgSzk0pYpVi3OzVh1kRsinpYBBWzR8AiGhr0d+yCsASmkD+bWQbQ99MvfR+vy5mtIfKJ8H/Y7KgKzbNJfg23ZWphPeGhTt0bcTIV77s/XkowbUuqxjXS1xk/F0NEI1Uj7H3xq74q1Nrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5mNq6qpkzYQtg7;
-	Wed, 12 Nov 2025 09:42:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 970FD1A0C78;
-	Wed, 12 Nov 2025 09:42:47 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBXs3kW5hNpWlLAAQ--.49377S2;
-	Wed, 12 Nov 2025 09:42:47 +0800 (CST)
-Message-ID: <5c9af868-ec66-481d-b25f-7d0f7c2bc6d8@huaweicloud.com>
-Date: Wed, 12 Nov 2025 09:42:46 +0800
+	s=arc-20240116; t=1762912453; c=relaxed/simple;
+	bh=MbJdxlQuC72L2/Wk4PEfLWempqScnpfV07BvSd1zw9M=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=tK0ilYKK0fDxImTKuGv3CovIm+If5GEcHdajLhyN+6Obhv/8Vss10IailTsJEqJXDro4Z47jL5Ixb+lqsSO2CVL4+F5pEhfxAxgi402EyxGhbbCufCFtNNHGhbrQP92wWcm5lSjrOJxa2Dr8DKQDaZm09MGP+fnMfxsM/ovzMXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.62.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9206.ps.combzmail.jp (Postfix, from userid 99)
+	id D618E1034A2; Wed, 12 Nov 2025 10:43:09 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9206.ps.combzmail.jp D618E1034A2
+To: linux-kernel@vger.kernel.org
+From: =?ISO-2022-JP?B?GyRCJEgkLSRvRGIlVSVpJXMlQSVjJSQlOjt2TDM2SRsoQg==?= <info@gosso.biz>
+X-Ip: 19936271597168
+X-Ip-source: k85gj76048dnsareu0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCQ08waCRLIUk9aSFJPVBFOSRHQUAkJiEiGyhC?=
+ =?ISO-2022-JP?B?GyRCPkZGeSVeITwlMSVDJUgbKEI=?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
- populated
-To: Waiman Long <llong@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
-References: <20251111132632.950430-1-chenridong@huaweicloud.com>
- <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
- <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXs3kW5hNpWlLAAQ--.49377S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrXw4xZrWxGF1UGFWDCF45Wrg_yoWxGrX_Zw
-	4Skr1q9r4Fvr4fKa1rKFZ8WrnrAa1vy34UJ395JrWUZas5XFZ3Xr1rC3s5JFy3GF4IqFsr
-	Cwn0va9Y9a429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: 60re
+X-uId: 6763325039485967644955161020
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20251112014339.D618E1034A2@r9206.ps.combzmail.jp>
+Date: Wed, 12 Nov 2025 10:43:09 +0900 (JST)
 
+$B!!(B
+$B!!(B
+$B!!?7$?$J;v6H$r$*9M$($N7P1D<TMM$X(B
+$B!!(B
+$B!!(B
+$B!!$$$D$b$*@$OC$K$J$j$^$9!#(B
+$B!!(B
+$B!!BT$A;~4V(B0$BIC$N0{$_J|Bj!!$rDs6!$9$k!"(B
+$B!!>FFy<r>l!V(B $B$H$-$oDb(B $B!W$N%U%i%s%A%c%$%:%7%9%F%`@bL@2q$r$40FFb$$$?$7$^$9!#(B
+$B!!(B
+$B!!(B
+$B!!$o$:$+(B2$BG/H>$GA49q(B80$BE9J^E83+$7$?(B
+$B!!!V(B0$BIC%l%b%s%5%o!<!!$H$-$oDb!W$N(B
+$B!!(B
+$B!!%S%8%M%9%b%G%k!"<}1W@-$d:G?7$N0{?);T>l<BBV$r(B
+$B!!%*%s%i%$%s$K$h$k@bL@2q7A<0$G$40FFb$7$^$9!#(B
+$B!!(B
+$B!!(B
+$B!!BhFsIt$G$O!"(B
+$B!!!VM;;q$rK~3[0z$-=P$9(B $B;v6H7W2h=q$N=q$-J}!W(B
+$B!!$K$D$$$F$bE0Dl2r@b$$$?$7$^$9$N$G(B
+$B!!(B
+$B!!!&6d9TM;;q$r<u$1$d$9$/$J$k%3%D$r$7$j$?$$(B
+$B!!!&0{?)E9$N7P1D$K6=L#$,$"$k(B
+$B!!!&>FFy20$N7P1D<BBV$,$7$j$?$$(B
 
+$B!!$3$&$$$C$?J}$O!"$<$R$*5$7Z$K$4;kD0$/$@$5$$$^$;!#(B
+$B!!(B
+$B!!(B
+$B!!"'!!%*%s%i%$%s@bL@2q$N$4;kD0M=Ls$O$3$A$i!!"'(B
+$B!!!!!!(Bhttps://tokiwatei-fc.work/online/
 
-On 2025/11/11 23:16, Waiman Long wrote:
-> On 11/11/25 9:01 AM, Michal Koutný wrote:
->> Hi Ridong.
->>
->> On Tue, Nov 11, 2025 at 01:26:32PM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->> ...
->>> +static inline bool cs_is_populated(struct cpuset *cs)
->>> +{
->>> +    /* Tasks in the process of attaching should be considered as populated */
->>> +    return cgroup_is_populated(cs->css.cgroup) ||
->>> +        cs->attach_in_progress;
->>> +}
->> s/process/cpuset/ in the subject
->> and
->> s/Tasks/Cpusets/ in the comment above
-> Agreed.
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
 
-Thanks, will update.
+$B!!"#!!$4@bL@$9$k%U%i%s%A%c%$%:%7%9%F%`(B
+$B!!!!(B0$BIC%l%b%s%5%o!<!!@gBf%[%k%b%s>FFy<r>l$H$-$oDb(B
 
--- 
-Best regards,
-Ridong
+$B!!"#!!3+:EF|Dx(B
+$B!!!&(B11$B7n(B25$BF|!J2P!K(B15$B;~!A(B17$B;~!!!w%*%s%i%$%s3+:E(B
+$B!!(B
+$B!!"#!!Dj0w(B
+$B!!!&(B10$B<R(B
+$B!!(B
+$B!!"#!!;22CHq(B
+$B!!!&ITMW(B
 
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+$BK\%a!<%k$,ITMW$NJ}$K$OBgJQ<:Ni$7$^$7$?!#(B
+$B:#8e$40FFb$,ITMW$J:]$O!"2<5-(BURL$B$K$FG[?.2r=|$r>5$C$F$$$^$9!#(B
+https://tokiwatei-fc.work/mail/
+
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+$B<g:E!'(BGOSSO$B3t<02q<R!J$H$-$oDb%U%i%s%A%c%$%:K\It!K(B
+$BEl5~ET=BC+6h1'ED@nD.(B14-13 $B1'ED@n%S%k%G%#%s%0(B6F
+03-6316-8191$B!!(B
+$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
 
