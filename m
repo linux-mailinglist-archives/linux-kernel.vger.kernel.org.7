@@ -1,230 +1,125 @@
-Return-Path: <linux-kernel+bounces-897561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549A7C53720
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D017C53308
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 108CA4F8A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406C5507B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AD333B6E8;
-	Wed, 12 Nov 2025 15:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FDE33DEE8;
+	Wed, 12 Nov 2025 15:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nyOIr48c";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aPg9RSi1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0pXpeRpE"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB533B6D1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C029C1339A4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961053; cv=none; b=djXooyL3ufwvfUC+Xzhfn1rrGWE7zrme7632/EdgYD+0zOQ2PzZlbCx+JtPPf3nXGB6HyKkmaoP6E2VjCi/dsslHYPFEh1Nud3oDkMgbM+p7NkoSm2EBJ8nlyqW/FMb4CJi0KuZBqpKeP1lCrq9kSFbcOh/N9es2nUEtmriejXM=
+	t=1762961168; cv=none; b=Lt0JnSUYd0qLyCqBbR4u8M0Wp8P67/qv58kjbwUOV17+h06y/V5ysfANkIJ4WpkDf1LsuQbGyELnJqWyOGvkS1xmQ7wZIp1dGMxto43uUSIdG75RaH+slj5NwPS7i6GqjYAAfy9jEyWbeFhA6iiJwoMCv0OH800AN319KnMDoA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961053; c=relaxed/simple;
-	bh=usTnuHJtz1Fz0mFW9SJRLD/bL8QQaZ1NZaYRGimhwQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=naRqzwnqTGu2HMjaRsr9jyKEI8pyQ1F/HpSt43sjkNMdmeRuuFMzJj2z+1XHIlnFS49RUT4QldC+pvjzFre8qUdRqbHitR7MzthdikzZvjytt//S3tPTBUtCXVvyAt81zm3nHEkjyCxKp1bUK5BZtTpCbmnxZUz2ozYaw+ic9/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nyOIr48c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aPg9RSi1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACDsKQK1314316
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=; b=nyOIr48co+h+o1Cz
-	HygO/wJc8ZHCMfgKx0gjfjMvZHul+p0ZowGi/MoH24Y2jHUDNPCI67gh2tBExAuF
-	zCt45lyCHifL6newdSlmVb5C6hHIZx9XRuDwdYpXzAwKclPyQ6SQK6SuMQaz5AOj
-	9RWl78903N2EQZgofPPAQ+BHMQAG812EqO0GAtxRZ2NhNmmwSJHmBkxEWHRiJQhA
-	dK5/ThsHRIoL5lpUDve1VSYPl8ErEP5SHa44dvI1DFVAnU1GEMg78u5veAneg3ij
-	1/XsmUe/Lo/OHwk/SiHRuT3gv2JrcfCAWYDLzkoVLEpICMIXxQxArJ4LloMBjFl7
-	4KdzLQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acuhg09m0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:10 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3436d81a532so2039662a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:24:10 -0800 (PST)
+	s=arc-20240116; t=1762961168; c=relaxed/simple;
+	bh=S3HgcwMVfZzHMTxf+gvcGSq00lyXdOZbvgaMm4vD83o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OCf23KnemZO+FuNnRjrfUqCaiUp0yCAOrb2nJDWWVozsNEPzH9eNZsRO9oPfbPYRYe5we082mWhZST/F0eUoHNQ76tJYTCWgVECAJqtQIrBRT0RjpAijbaJIQzgACe+MIIQSKpiiJF/DPahR44l18w+1ndkrbubf6PJaxdUjzKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0pXpeRpE; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-948c962a0edso24127439f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:26:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762961050; x=1763565850; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=;
-        b=aPg9RSi1P+6JJMt4Bha4hOnqc2YhxrhkDdada9z/AIaIu/0ZS10DxY8OocJfqTw/im
-         F0D12pqNdyAHcrtuKxytcfvUs5sXI/Pd2XlxQElC5i48Vlb7KHHHyiCMjYqM+k8CCBMs
-         KmktJ9lEbDUkZTR3Guywiz3sOaUaCPFRI3LuL8J2P1FzmxvHqkDOAM3MoxyP82TRn+T/
-         /NpHLvOt34rS9/qxL+DZkO/IVpw2U9CLx5YJJOX231XZbtKzz/gHWyfj35OKP8W3etrJ
-         hmfg/OjX6PLhP0j/ikEuDZzVeTwmWFadkbhc7XklRqNTlfE+AIuDUgD2q2lVinnb/P/s
-         QMwA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762961164; x=1763565964; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhfi1JuTKDb5v2cN/vHFWbcXiiQnvSefPdXao0zAnOY=;
+        b=0pXpeRpELAJ2GDaxwqZ+8ZRABbERL+ScFGuWSu8hL2QOcCWw2Tegey+8OzpdLsf5OH
+         NJwrVtJ07l024X4JsoV5L122Ic1XV+pwxuLmkhWcs+C9K24mBfrjvKTw7jusV5JXwK1S
+         r25zQ2K3C/I5H3078KIc3B/Cz9VaP3bPthlc9ZkTo97bs66EARkVjTcxGcPAckqzNL6F
+         kboH7yGvP0VhwqgliKJ3oQAsXFGl1z7R+tfuUP4kD0MYsPB4VmNcePM9EDB+7WoL21G8
+         S5MJLAFzglwj1BbYCzQmFitltc+b9+beb1o7y0QEJn4Uq3d1z8Oh2EaN8ysQw81AkTt9
+         1f6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762961050; x=1763565850;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=;
-        b=uL6kHhCbwabsj1PK49gxPMqt2pEL/v0vBQrut3R8SjVFg5W6HsUHsJQOnjm+nJs1WE
-         6Q9OuIOo5gWEq1Q5DED6sw+V9MfeNrrIU6b+62ncf3S8Go+fbhKh0pSNYBbxWSG4dFOa
-         IafqArwHYkbJRwxUY9W9etZNt2F75NsmqKDurGHxMAEFgM+A6e6Y7IoGwJpZ+/xSfgB4
-         CVPFlPhhR8A5e3r3nWM4iv1Dwj/Cin4R7AL0O0tiW4602+uLd/bv9Xj5oRxs5jvT2MBA
-         J83QRaEKuOzBLa1MnRskEFoHV4L8+wrTvVvBcDTS0LS9QIQyo4xZR1HF5HqCOEKnLGYb
-         S4dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6Vz8WS5zHeLsZVMB1TNRmcUirnvN5oJdRDqIVtczmVGAsx09QQ9bXyCIRHLa41iQvKovvM+9uwRv1SpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx820Xl8A4R/txoOCRhIsvk0NMd2Z3h0OEphaSUUSUw20j8QkrV
-	j58NYef7Md931gYo6qKtvxsFFNE4GybHpXjd+CHpvCq2IYzjAp0NZKz0THOefpHLaa9HhOFYBlE
-	9iEE4oywK/gkGZoZv6+4K8gGbdttKWDoQLfZVsDt6qcIONjGaAz1lMPTfzcjPnYrSsFA=
-X-Gm-Gg: ASbGncvO5uZBC/92tSYHtgTXrekiNrQaiUBTjRgeCiG7OslyjTkBb6fFq7FjMWqzvXi
-	au1NIS1/h9G5iSDWGxr2nSYT58C7HC0umDVbeD+YdBADIl9rTJp73ijBU5sTQDk7HES6k0Vu0ar
-	NuzIRBbEgOB2fWWaQgYSRWCIt2+7qrkhSueBQVZKDNmKvPcYV2iaXUfGBktptbRotsYOfkusA06
-	rmWBDpSktukwDxGIUMTCpo+vc3ADg1Z+XZKZ3Xb200qTT8+32UWhRmxbEDfA+Pk0zcvzsbdirXG
-	NP9PlTDMQhxMy/bfBdw8K/Y4LHzU10qGRsuRfGYBs6yNhPLVcIvNEXODndcttSVsLAotp3TUQcs
-	dS4sqJVBGRQlbWjge3rSTEDzOWOk4Mb3D
-X-Received: by 2002:a17:90b:2dca:b0:340:b152:65c0 with SMTP id 98e67ed59e1d1-343dde8b78amr4377268a91.26.1762961049666;
-        Wed, 12 Nov 2025 07:24:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH8mVyyxybDIpgRW0JbU3tFRvdQFBdXI1yZP7qme4Gqt+0BL84cd+jtP2J4tTiW28FMBPTCrQ==
-X-Received: by 2002:a17:90b:2dca:b0:340:b152:65c0 with SMTP id 98e67ed59e1d1-343dde8b78amr4377207a91.26.1762961049087;
-        Wed, 12 Nov 2025 07:24:09 -0800 (PST)
-Received: from [10.219.49.108] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e07d2e4asm2944260a91.18.2025.11.12.07.24.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 07:24:08 -0800 (PST)
-Message-ID: <49fbb3f6-706d-40dc-a242-c3d6a57898eb@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 20:54:03 +0530
+        d=1e100.net; s=20230601; t=1762961164; x=1763565964;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uhfi1JuTKDb5v2cN/vHFWbcXiiQnvSefPdXao0zAnOY=;
+        b=DKLOQtKSR/jYbeyb7FJtNGSHITPmBT66MDmZ/oxWnyScRMGhL8FI4XenKg+0tC8Y4B
+         0RqyTVgMqVrTlgdJ+2uceahbSVzcglB6zfxesoE2CLSFhMlVTvUSE2iblxdz9GqvOKpw
+         VeFCb9M3MahebnpYY23hx2IfcAr0ZM/QxnWzgFKML1H4pVU/6PD0iIZfuGvFip1h+icc
+         zATujVdiQp7ksn1IVH3UioVrDLdjzqzeCk7THpAJDaHoDaO7xh0UTmQlUNfrpg/2LvHi
+         3l2TO8luNcbHRCRZS5d6DBEc7yh7nKXwn0B134vbFxUVi6jRHcv7MZtueq1hDcBxgURE
+         qCUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8L1fXdLGAmfg/L7OPkXHJh3dh/4LtX4ihHpMjcz01756w+cJiviZIA0vOpvkH6KbyJP7bOqCLiuACoSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+BEmnEa9KDUO+elStpOaJrW0Rh+snE1CJzzAaakIkmxe/IJ4v
+	zUUdVK+CIx2AzoZeFEipEDGYz4zeyhcUWe6WRbYXIoAIkQRTNt8pec7p4/RCgvJ98T8MK771Pwy
+	1YElE
+X-Gm-Gg: ASbGnctIDTJP15cXW+kgxZkw/Q2nXaavV4U2DV1hk4jnonjDbX6dVPdk5Rtr7/DRrJL
+	7sfTUd2ZGFvOrrKYcBGhAIaAqamW+255Z/EIO5y004dpIypuiRLVa/CJH57hyfsKZHCfVwqP0h/
+	kMrfYpwM4cwY+8Bm2BylR+aqg6NKmnFqivEyUfV5jmdxoqE0PaNrEbGXE6/ZXEl0amGE9zbNo6M
+	/6zZ6PXEZe6hIqSGjlIz7Kfv7wNL5ehIDv4QWqW32aC+Q+iMAXinz6e3jKpzMTpKCke3r8ZWaKN
+	7yA109W6V7FCS3hICM+RD+oyNNnwTSNIT2clr+G9jZ+QdDSRTV5B2+4bswwag3SIEXgs2t/qfKU
+	dGzwxicGKgoCY1GsyHKVuQeqJ+yUTqEIv0EM+RsNPg3lW6orRHZvl1dtJWC40ddBv5zyt
+X-Google-Smtp-Source: AGHT+IGqo/ElyNGaDcWY1T7XkvUdBijvAO9psWKrSyA4l0qa2YEYORSe/5hiqsBqgoiwFhOiCOknzQ==
+X-Received: by 2002:a05:6e02:3388:b0:433:7c86:74ec with SMTP id e9e14a558f8ab-43473dcf6a8mr41773375ab.23.1762961163853;
+        Wed, 12 Nov 2025 07:26:03 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43473398d5dsm11421195ab.27.2025.11.12.07.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 07:26:02 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>, 
+ Chaitanya Kulkarni <kch@nvidia.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251111191530.1268875-1-csander@purestorage.com>
+References: <20251111191530.1268875-1-csander@purestorage.com>
+Subject: Re: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as
+ number of bvecs
+Message-Id: <176296116216.24001.10740596505863921319.b4-ty@kernel.dk>
+Date: Wed, 12 Nov 2025 08:26:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: soundwire: qcom: Add SoundWire v2.2.0
- compatible
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
-Content-Language: en-US
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-In-Reply-To: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=NbnrFmD4 c=1 sm=1 tr=0 ts=6914a69a cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=x8bQnJUcN0kwi81saDsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: JxRpG3s0WwXNNf-ADm_kQJWf0IvplWx5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEyNCBTYWx0ZWRfXwGIBDNz6yUeh
- uThjRM0z58TrQQK37A3c6AyJgBew9tSCZzTX6kFBDsffx+Y8aFchh2VUOp5RREfFkv/l7rudq2R
- oVgTGiqHorM0caQyhKFQfccoL2q9/bXagsYBdMUrQ3K1JtPoPMxrgT6+mJzA6hpSe2NzCxuCcKD
- DT+zJ6DKIK/sAwLSr2Wikg6xgc1lFZlgDpNspX/rXTv48TiQcIQZ9dZjOuSoE0JVVn4vuMWsCto
- jXuX/uEisShyLwGfEb4gX4I0h3CE7OUcGOgwFyKMcsKqmhS6DYY+DSq4aLm/id0azzDnFTV/+MP
- 1lUrno7XwWcP741k1i3eVN3dPZPpTdqfE2CFqbeQLHAgsc/Yjm1QA6MQQh39rCcXxJer42v4zfI
- u7hcQdk7CzuDMAWfsshFoK4lVU7vzA==
-X-Proofpoint-ORIG-GUID: JxRpG3s0WwXNNf-ADm_kQJWf0IvplWx5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_05,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 spamscore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511120124
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-++ @Vinod,
 
-Hi Vinod,
+On Tue, 11 Nov 2025 12:15:29 -0700, Caleb Sander Mateos wrote:
+> io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
+> the number of bvecs in the request. However, bvecs may be split into
+> multiple segments depending on the queue limits. Thus, the number of
+> segments may overestimate the number of bvecs. For ublk devices, the
+> only current users of io_buffer_register_bvec(), virt_boundary_mask,
+> seg_boundary_mask, max_segments, and max_segment_size can all be set
+> arbitrarily by the ublk server process.
+> Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
+> loop actually yields. However, continue using blk_rq_nr_phys_segments()
+> as an upper bound on the number of bvecs when allocating imu to avoid
+> needing to iterate the bvecs a second time.
+> 
+> [...]
 
-I missed including you in this change because,  some how your name 
-didn't auto add to the list when i tried with "b4 prep --auto-to-cc".
+Applied, thanks!
 
-As this is single change left over in this series and having reviewed 
-tag, Could you please help to pick it in the next merge cycle?
+[1/1] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as number of bvecs
+      commit: 2d0e88f3fd1dcb37072d499c36162baf5b009d41
 
-Thanks,
-Prasad
+Best regards,
+-- 
+Jens Axboe
 
-On 11/5/2025 5:49 PM, Prasad Kumpatla via B4 Relay wrote:
-> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->
-> Add qcom,soundwire-v2.2.0 to the list of supported Qualcomm
-> SoundWire controller versions. This version falls back to
-> qcom,soundwire-v2.0.0 if not explicitly handled by the driver.
->
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> ---
-> Add audio support for Kaanapali MTP boards. Introduces supporting
-> dependencies required to enable audio functionality on MTP platforms.
-> These changes have been validated on Kaanapali MTP hardware.
->
-> Changes in [v4]:
-> 	- Dropped merged patches.
-> 	- Link to v3: https://lore.kernel.org/linux-arm-msm/20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com/
->
-> Changes in [v3]:
-> 	- Correct SoB chain, comments from Krzysztof.
-> 	- Link to v2: https://lore.kernel.org/linux-arm-msm/20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com/
->
-> Changes in [v2]:
-> 	- Addressed compilation issue for lpass version check patch.
-> 	- Sorted compatible string in machine driver.
-> 	- Link to v1: https://lore.kernel.org/linux-arm-msm/20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com/
->
-> Konrad Dybcio (1):
->    ASoC: codecs: va-macro: Rework version checking
->
-> Prasad Kumpatla (4):
->    ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
->    ASoC: qcom: sc8280xp: Add support for Kaanapali
->    dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
->    ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
->
->   .../bindings/sound/qcom,lpass-rx-macro.yaml   |  1 +
->   .../bindings/sound/qcom,lpass-tx-macro.yaml   |  1 +
->   .../bindings/sound/qcom,lpass-va-macro.yaml   |  1 +
->   .../bindings/sound/qcom,lpass-wsa-macro.yaml  |  1 +
->   .../bindings/sound/qcom,sm8250.yaml           |  1 +
->   .../bindings/soundwire/qcom,soundwire.yaml    |  1 +
->   sound/soc/codecs/lpass-va-macro.c             | 90 +++++++++++++------
->   sound/soc/qcom/sc8280xp.c                     |  1 +
->   8 files changed, 70 insertions(+), 27 deletions(-)
->
-> --
-> 2.34.1
-> ---
->   Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-> index 95d947fda6a7..1c4b0bdbb044 100644
-> --- a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-> +++ b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
-> @@ -26,6 +26,7 @@ properties:
->         - items:
->             - enum:
->                 - qcom,soundwire-v2.1.0
-> +              - qcom,soundwire-v2.2.0
->             - const: qcom,soundwire-v2.0.0
->   
->     reg:
->
-> ---
-> base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
-> change-id: 20251014-knp-audio-v2-9a37752cdc15
->
-> Best regards,
+
+
 
