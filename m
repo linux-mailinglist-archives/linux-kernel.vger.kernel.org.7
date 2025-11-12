@@ -1,147 +1,223 @@
-Return-Path: <linux-kernel+bounces-896987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE3C51BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:43:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F00C51BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA24D4FB599
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:33:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2002E4FD59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8744A30AD08;
-	Wed, 12 Nov 2025 10:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F2B30B508;
+	Wed, 12 Nov 2025 10:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbxRRbWo"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lozUXJCC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FCD303C8D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EAD3009D9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943517; cv=none; b=S8RVicIENzqp+Vx6vYUPpmuT5XMffsss7T3uEDf3FesasziQXF4wbTlWlSFxOP3bFaY4nu1SZ+fXD3yIcis5+FjFjeD9kQxwNlx7RzeCeK0ifQK2NYgTSuf6awgIJuby25uvCxo/PJ+e0piLWgoxeTXIUk6PIrtCFCJDYwcgmNo=
+	t=1762943556; cv=none; b=g+mNT/FANmFmNw2b7T0/LJk6AaAPP72+F798Z7vYO6h7K4ZdyB8X8D2VfRH/geNhLu89Ah1/q3ISqJPxVuTYkSjcFzG6qcCN52l2Mp+0zvfW4R8+0XQ3LvdyqTgY9KnQSX+mMkVPdlK3iDMkJPHc3qsHkzUMYaufbjAMYi2CjPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943517; c=relaxed/simple;
-	bh=hTiR7gME9diwEPlbbmudB9vKlvbylWB6Ycsv9PWANY0=;
+	s=arc-20240116; t=1762943556; c=relaxed/simple;
+	bh=ywubOylLCebiTSUrMRLnw9fCTyEak2lItra9Lxo4L9o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mq9Vlmh7VxFHJilYtNZeZhjo8i1rL3xbqOTGqn16p52PCmad/9EVDm/Gq8LDoMoOYqJ1M7jA2nDab+9a8tmgrgWREPPhRk0WBQiyGr0eOl5kn25EF+qYNugRIqKW0cLIkhLlo1y/Rz001Ek0SnVdMoZDZsclqvNwIAWRMY7Fluo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbxRRbWo; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so1136419a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:31:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762943514; x=1763548314; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C5KYsB/xGiFO8Ch1ObOukAbrFTRdbE6vFKr6OLCIdZU=;
-        b=TbxRRbWo4ic+8c+oQLM5nnRi8iOH+gwIcITrQc5Wvp47tPhxzpp/JtTp7QbgjebDfo
-         TAxsO6G009EfwiqWDh3Vkpr3bSmn6urNRHAuyG1AfjDDHG15BGk5zUfjFDgET43JI1Cd
-         t9m+0aUG0k1TRfnR6TMOuRWPZ7Tp7FFns0V9Kqb3LO6OSux/VfBZvEI+MODnvw3ve9Ud
-         QodH98uFSRI5NyjK2CLqV//wwKtLj8WeB9s7Xcl5o0Wiqs8i5B2ocmiCbZFebir4DpLo
-         sKsc03rOSuIMOiSPy/sWNSHbNWUWfUL7qE1SHE2tOIK87vcHUT26aLCu9+xzb1DRtKwU
-         /vLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762943514; x=1763548314;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=C5KYsB/xGiFO8Ch1ObOukAbrFTRdbE6vFKr6OLCIdZU=;
-        b=qUSZP8R2mM4+TADvYqNeCG8ighgXJAe8vhuJ/x4ajdrK919b7eEQFcKPmLIQHp5558
-         jISmTQ/9JOthxb+sjYd1FYVyApE4i14R8FIHYsDg90oGV4rvJbnOlf2AIpY6U/xZQYHI
-         z8KbFqFF4WNXB3Euk/jH1ibWGeVtp+TNFzlTIOaHgwm/kminHav3jB1d2ePZ6Al6y4/a
-         06bGooh6eiTDLt9HGHTjNTcf22srOwMChJQSViti8OKpVlCfFAErnRpYUw7OjbelO7HT
-         zUfr+tsD7Bg8JpAS7AMjJ1gGdcZIdKkl6Hjw9ZquPPhaJV7jndzGEopqrgOUERT48CYb
-         Tu/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVrW6/ZfatXurox7UGxHSYlIquTWdqj+6+M1bBXy7EsE4nUrrLLa+bTvwshQL6Lfv4NNv1rvecYAus87j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGZvKNE6lxZD7zZyvzXZ1Ge89UKsEemwFVUCJy798ErBwmDXeA
-	44nFgp1++AVefFuBKBMqIGit2WLP8SDsdW4OzO0qQYZg8rdkK29yS/tjddEyiitetODgZgYLNy2
-	0UOj+XZ1l2ffynMUebgd5loR2Xw6IrCg=
-X-Gm-Gg: ASbGncsqaL9MDEAWTiQlb8vMVOtgmahKkdM+Vb0s29y9AJgkWUfGW3gPPqDYNYXz2Wu
-	S4Gd3ThLZqzb7UT9ayOedv2sQE+B7h/IALCBDP+uujlgVWqXrl1bJVKrtJSqO4w5YNwePvwoxHd
-	YfLYtSgsaqFeRkzMcnDiZ3T9wN7npmWvHIb13VnY0/u1+nl4+IgkTYdghFrwnnRBzstTknKX4wp
-	XQCKC42Zcnne6A4Xn6pS4nMZeR7bS5ObjXKWmGOPj94Hr0DmAVOTS5V10RgmdJNauPueDZmhbTl
-	UbDpLwO6UDtFxaY=
-X-Google-Smtp-Source: AGHT+IHYbSz+Y+ITaul58aAUNyOjKF8K0I08raTjfUAizetAQOHgPirCyxIcU5MJfQljhtodoSounsHIDJBAg0bKeTI=
-X-Received: by 2002:a05:6402:2082:10b0:640:be87:a862 with SMTP id
- 4fb4d7f45d1cf-6431a561bc3mr1768337a12.24.1762943514401; Wed, 12 Nov 2025
- 02:31:54 -0800 (PST)
+	 To:Cc:Content-Type; b=hNQa8V7opWwdqACsGr2NM4izKNTU+dR+MDbcc81eZaaW28CnGRxJ1ctby3CwPyUXDy+0+QezfHzODrQBRqTJdGMLBVrx9mSxy2fyrke1qaAYV5hy+K/YvZ8sbQ/Pzv7aJ6v+6E/PhtUlb4rGZibMxmSFlpVf+OBHvrIrU4Kz5VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lozUXJCC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C444C4CEF5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762943556;
+	bh=ywubOylLCebiTSUrMRLnw9fCTyEak2lItra9Lxo4L9o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lozUXJCCBKuEa9qQ4I0eArY7t6Npnh8rBdaPFD6MqAKwV6BmGNA+b2+z8M4nu8fV+
+	 RoGM2BQUIPMWWhx2wf833+y4HqznotSAJeVZ+Ck87uGOmxy3D0FbdZaBZwtvTNCnOu
+	 1VjmITr5UP6qo2B6GAQgZQIoq//thkwgw5C5j/IeN+jzzvV7NvO6pPb8qltA2an6FM
+	 cLxpj21KNmjdeWgGa1GAEMl9dHq8sMjeYapP9Gf/VaF+R8WOidl9BrvtI/w99u47iS
+	 WXoB8b8Bdl206A56coAA145gNbCesYyTAzmXnUtnFTZs3MX/3ohNhHrpTeFv9YD/ZH
+	 IHoPc6t/WXcJg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5957c929a5eso359566e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:32:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWYCgEJPkWld1Jd3cYBXyWVZgIaGHs9lG0Xlk1H2CqsfzJuErP8ulDkZqbR1nfoW1bpvXmpcZQy4o7EPp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMkkVdsHARejndG/2Pc8BGy5Od31yLXuwTSJ+dxfSznfdSJwZU
+	soRgmnYte3O8qkccg+zEffiiAOOsklu1xIftlmN7QNyk66kWOTwDEJ4/VOucjOg9WKDdYuPpfhn
+	3ppeWXH+ayXyHjTd43In5Ho8SyqufSbk=
+X-Google-Smtp-Source: AGHT+IFMI1NWnlseQ2188hDT4d4Fwv2qI5ssFRnfdwUkxpJylGlSWzLDUQSzBOICWQAiTDvP3niRGlzQ+YcXKWMiwj8=
+X-Received: by 2002:a05:6512:61cd:10b0:595:7a6c:7dd3 with SMTP id
+ 2adb3069b0e04-5957a6c81cbmr478959e87.5.1762943554915; Wed, 12 Nov 2025
+ 02:32:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110095634.1433061-1-mjguzik@gmail.com> <20251112-mondfinsternis-rednerpult-f3efbf92cf8a@brauner>
-In-Reply-To: <20251112-mondfinsternis-rednerpult-f3efbf92cf8a@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 12 Nov 2025 11:31:42 +0100
-X-Gm-Features: AWmQ_bmee1SeKAl3NlBlETUlo3-v4Pt3rAK-dj5ohMsS4GxQXL5eLWQ5IebIgyU
-Message-ID: <CAGudoHGTOLXH=BtiU+ja9vbdR=cMCLFTDmtHtCNa32yka6huRg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: move fd_install() slowpath into a dedicated
- routine and provide commentary
-To: Christian Brauner <brauner@kernel.org>
-Cc: jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
+References: <20251109234726.638437-1-ebiggers@kernel.org> <20251109234726.638437-3-ebiggers@kernel.org>
+ <CAMj1kXE1mhu7u5RwhCBA_RUGV6JSDV-GQPpq+thE-0-oVxrmfw@mail.gmail.com>
+ <CAMj1kXHoH2K0dpqyrgFJ-OBmP2QrUWZD3aCfaA_eoPzGsLbPMw@mail.gmail.com> <20251111194603.GB1748@sol>
+In-Reply-To: <20251111194603.GB1748@sol>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 12 Nov 2025 11:32:23 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHZ9vaMHNvBb1ByjazwqJANv0pATGE7q0X=RmgsxS5i+w@mail.gmail.com>
+X-Gm-Features: AWmQ_bk9G0YzBoCkb5nXtZ33vCph-hbQkuXNLFM_L9tnc29akWRGwOHjoeGq1aU
+Message-ID: <CAMj1kXHZ9vaMHNvBb1ByjazwqJANv0pATGE7q0X=RmgsxS5i+w@mail.gmail.com>
+Subject: Re: [PATCH 2/9] lib/crypto: polyval: Add POLYVAL library
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-this may get the dreaded missing arg description working, how about this on=
- top:
-diff --git a/fs/file.c b/fs/file.c
-index 3f56890068aa..022e98525c65 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -641,8 +641,10 @@ void put_unused_fd(unsigned int fd)
-
- EXPORT_SYMBOL(put_unused_fd);
-
--/*
-- * Install a file pointer in the fd array while it is being resized.
-+/**
-+ * fd_install_slowpath - install a file pointer in the fd array while
-it is being resized
-+ * @fd: file descriptor to install the file in
-+ * @file: the file to install
-  *
-  * We need to make sure our update to the array does not get lost as
-the resizing
-  * thread can be copying the content as we modify it.
-
-On Wed, Nov 12, 2025 at 10:30=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
+On Tue, 11 Nov 2025 at 20:47, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> On Mon, 10 Nov 2025 10:56:34 +0100, Mateusz Guzik wrote:
-> > On stock kernel gcc 14 emits avoidable register spillage:
-> >       endbr64
-> >       call   ffffffff81374630 <__fentry__>
-> >       push   %r13
-> >       push   %r12
-> >       push   %rbx
-> >       sub    $0x8,%rsp
-> >       [snip]
+> On Tue, Nov 11, 2025 at 08:42:29AM +0100, Ard Biesheuvel wrote:
+> > On Mon, 10 Nov 2025 at 16:21, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Mon, 10 Nov 2025 at 00:49, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > >
+> > > > Add support for POLYVAL to lib/crypto/.
+> > > >
+> > > > This will replace the polyval crypto_shash algorithm and its use in the
+> > > > hctr2 template, simplifying the code and reducing overhead.
+> > > >
+> > > > Specifically, this commit introduces the POLYVAL library API and a
+> > > > generic implementation of it.  Later commits will migrate the existing
+> > > > architecture-optimized implementations of POLYVAL into lib/crypto/ and
+> > > > add a KUnit test suite.
+> > > >
+> > > > I've also rewritten the generic implementation completely, using a more
+> > > > modern approach instead of the traditional table-based approach.  It's
+> > > > now constant-time, requires no precomputation or dynamic memory
+> > > > allocations, decreases the per-key memory usage from 4096 bytes to 16
+> > > > bytes, and is faster than the old polyval-generic even on bulk data
+> > > > reusing the same key (at least on x86_64, where I measured 15% faster).
+> > > > We should do this for GHASH too, but for now just do it for POLYVAL.
+> > > >
+> > >
+> > > Very nice.
+> > >
+> > > GHASH might suffer on 32-bit, I suppose, but taking this approach at
+> > > least on 64-bit also for GHASH would be a huge improvement.
+> > >
+> > > I had a stab at replacing the int128 arithmetic with
+> > > __builtin_bitreverse64(), but it seems to make little difference (and
+> > > GCC does not support it [yet]). I've tried both arm64 and x86, and the
+> > > perf delta (using your kunit benchmark) is negligible in either case.
 > >
-> > [...]
+> > Sigh. I intended to only apply the generic patch and the kunit test,
+> > but applied the whole series in the end, which explains perfectly why
+> > x86_64 and arm64 performance are identical, given that the generic
+> > code isn't even used.
+> >
+> > So trying this again, on a Cortex-A72 without Crypto Extensions, I do
+> > get a ~30% performance improvement doing the below. I haven't
+> > re-tested x86, but given that it does not appear to have a native
+> > scalar bit reverse instruction (or __builtin_bitreverse64() is broken
+> > for it), there is probably no point in finding out.
+> >
+> > Not saying we should do this for POLYVAL, but something to keep in
+> > mind for gf128mul.c perhaps.
+> >
+> >
+> > --- a/lib/crypto/polyval.c
+> > +++ b/lib/crypto/polyval.c
+> > @@ -42,11 +42,48 @@
+> >   * 256-bit => 128-bit reduction algorithm.
+> >   */
+> >
+> > -#ifdef CONFIG_ARCH_SUPPORTS_INT128
+> > +#if defined(CONFIG_ARCH_SUPPORTS_INT128) ||
+> > __has_builtin(__builtin_bitreverse64)
+> >
+> >  /* Do a 64 x 64 => 128 bit carryless multiplication. */
+> >  static void clmul64(u64 a, u64 b, u64 *out_lo, u64 *out_hi)
+> >  {
+> > +       u64 a0 = a & 0x1111111111111111;
+> > +       u64 a1 = a & 0x2222222222222222;
+> > +       u64 a2 = a & 0x4444444444444444;
+> > +       u64 a3 = a & 0x8888888888888888;
+> > +
+> > +       u64 b0 = b & 0x1111111111111111;
+> > +       u64 b1 = b & 0x2222222222222222;
+> > +       u64 b2 = b & 0x4444444444444444;
+> > +       u64 b3 = b & 0x8888888888888888;
+> > +
+> > +#if __has_builtin(__builtin_bitreverse64)
+> > +#define brev64 __builtin_bitreverse64
+> > +       u64 c0 = (a0 * b0) ^ (a1 * b3) ^ (a2 * b2) ^ (a3 * b1);
+> > +       u64 c1 = (a0 * b1) ^ (a1 * b0) ^ (a2 * b3) ^ (a3 * b2);
+> > +       u64 c2 = (a0 * b2) ^ (a1 * b1) ^ (a2 * b0) ^ (a3 * b3);
+> > +       u64 c3 = (a0 * b3) ^ (a1 * b2) ^ (a2 * b1) ^ (a3 * b0);
+> > +
+> > +       a0 = brev64(a0);
+> > +       a1 = brev64(a1);
+> > +       a2 = brev64(a2);
+> > +       a3 = brev64(a3);
+> > +
+> > +       b0 = brev64(b0);
+> > +       b1 = brev64(b1);
+> > +       b2 = brev64(b2);
+> > +       b3 = brev64(b3);
+> > +
+> > +       u64 d0 = (a0 * b0) ^ (a1 * b3) ^ (a2 * b2) ^ (a3 * b1);
+> > +       u64 d1 = (a0 * b1) ^ (a1 * b0) ^ (a2 * b3) ^ (a3 * b2);
+> > +       u64 d2 = (a0 * b2) ^ (a1 * b1) ^ (a2 * b0) ^ (a3 * b3);
+> > +       u64 d3 = (a0 * b3) ^ (a1 * b2) ^ (a2 * b1) ^ (a3 * b0);
+> > +
+> > +       *out_hi = ((brev64(d0) >> 1) & 0x1111111111111111) ^
+> > +                 ((brev64(d1) >> 1) & 0x2222222222222222) ^
+> > +                 ((brev64(d2) >> 1) & 0x4444444444444444) ^
+> > +                 ((brev64(d3) >> 1) & 0x8888888888888888);
 >
-> Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+> Yeah, that's an interesting idea!  So if we bit-reflect the inputs, do
+> an n x n => n multiplication, and bit-reflect the output and right-shift
+> it by 1, we get the high half of the desired n x n => 2n multiplication.
+> (This relies on the fact that carries are being discarded.)  Then we
+> don't need an instruction that does an n x n => 2n multiplication or
+> produces the high half of it.
 >
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
+> The availability of hardware bit-reversal is limited, though.  arm32,
+> arm64, and mips32r6 have it.  But all of those also have a "multiply
+> high" instruction.  So the 30% performance improvement you saw on arm64
+> seems surprising to me, as umulh should have been used.  (I verified
+> that it's indeed used in the generated asm with both gcc and clang.)
 >
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
+
+Yeah - it might be just the compiler making a mess of things. GCC is
+already considerably faster than Clang doing the u128 arithmetic (75
+vs 67 MB/s on RPi4). But the bit reverse code manages 85 MB/s [which
+is only 26% faster btw, so a bit less than when I tried this the other
+day].
+
+I re-tested Apple M2 (which doesn't need this code, but for
+comparison), and there the GCC generated u128 code is as fast or
+slightly faster than the Clang generated bitreverse code.
+
+So I guess this is more a matter of fixing the u128 related codegen on Clang.
+
+
+> The available bit-reversal abstractions aren't too great either, with
+> __builtin_bitreverse64() being clang-specific and <linux/bitrev.h>
+> having a table-based, i.e. non-constant-time, fallback.  So presumably
+> we'd need to add our own which is guaranteed to use the actual
+> instructions and not some slow and/or table-based fallback.
 >
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
+
+__builtin_bitreverse64() does exist on x86 too, but generates a huge
+pile of code, so the mere availability is not a good reason to use it
+either.
+
+> I'll definitely look into this more later when bringing this improvement
+> to GHASH too.  But for now I think we should go with the version I have
+> in my patch.
 >
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.19.misc
->
-> [1/1] fs: move fd_install() slowpath into a dedicated routine and provide=
- commentary
->       https://git.kernel.org/vfs/vfs/c/6ecf5292038e
+
+For now, definitely. And I'll see if I can file a Clang bug somewhere.
+But I don't think we'll be making use of bitreverse for GHASH either.
 
