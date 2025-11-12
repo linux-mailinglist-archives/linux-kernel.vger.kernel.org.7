@@ -1,142 +1,264 @@
-Return-Path: <linux-kernel+bounces-898216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AC7C549D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:29:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F78FC549E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CF4E1B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:26:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06F294E46F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0817B2DAFD7;
-	Wed, 12 Nov 2025 21:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DCA252906;
+	Wed, 12 Nov 2025 21:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="l4sYpKrF"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KaOyBbZW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1535CBC9;
-	Wed, 12 Nov 2025 21:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762982770; cv=none; b=bG5zmyxH1HBnkjsu/vxuMwN+1igxF83N6v1v2Glxl7/nY9NmU8gJw89DpK7+Bsg+LVvXxRYv4XnTgyGI13bCyHYUsUVTxgnI66TcRoe2q/77NfCCbGV4dIdHX8MqnWQTmQwEeuFPNx0vg98bK/kL+KEI+dlFWuk+QNuGulpMpZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762982770; c=relaxed/simple;
-	bh=SioGFd0C7lxIkSMsxeKFwmjfLz0wr4SniCII2cKk08c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSwOrHQiUSE3zx8wV9kOXW/8Prjeeus5XHtNpYfEW3v1pGehQ5TWqpcQmYAF1v8G57sgMBemvlmJovhpvUsHklS76n+NVqaNYNLwNgYkftxqL6NrBm2labcVJADX6V7DYPoZiTcHs/Ow+PaMmsDU4+e5Cq5sqsgp9UJLAnPndHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=l4sYpKrF reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACLPBM51004081
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 12 Nov 2025 13:25:12 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACLPBM51004081
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762982714;
-	bh=8N8ijlsC6KhiWuu4QbjeYznaUps6aMGSWXMdwdxDAxw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l4sYpKrFCrAsnPAUyghmeRvLc4mPQ58O8qoEOPAzhg8jBuxPwak/5xDhgQWN78fys
-	 QSjKjYsvalXcxtnp9HzBoEO9qWXhDIdwf/mwzIQAdam4tfqTBiqVbrOwIPxfHQoLAw
-	 b47MS7R2RlNPoDYTPCOFO35llNJHDLZ32JwpBzoo/VDXeoj8K6OPCRL4/0wrcjT7KN
-	 MdFFSLf5wVH/PLLOFkI8gZtVJTzqi6kqtcDUYAveaXx2MXgCBoAwdEOCse1XChFlwr
-	 q6x51Xhio24ZjGTMigtf82gbuTS5LTfHI4ZHCnNNQzanQco9yEzECdXehZ6JdLUc3a
-	 knoLwc6mpTVhg==
-Message-ID: <d5531acf-cd79-428d-80d1-eb7562cf3922@zytor.com>
-Date: Wed, 12 Nov 2025 13:25:11 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520EC2DF6F7;
+	Wed, 12 Nov 2025 21:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762982844; cv=fail; b=ndjRqX292c0ktiLLRYb/1gOtzZLm3PIUJtsQ9lbyjZ+zQC4/aeGF1wKJr//HltUDlAt5s65nI1IAzZ1DzmtqeSe1zx5e1uUJaXU+uHWSv4AZb5oa59fJDi2pI84fuIg/qlzzWCbxGIMgRWydeMwfYuAFZDmC4kt+4MCTD8kQHYs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762982844; c=relaxed/simple;
+	bh=ofgZU0tmhNGbCjK5AozfRL9mIee6k3zAZn2WViwVXkY=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=gtss9veZY61st9xcBEB3xBrADiCmcGhLcHoF5HY06ahU1PUJIlzDJwdYjmc5Z+v5ct6zvZNSZEtY5PI8NthZVtAKdd3Tg7QrwY9M3WHsEBcq/QLzeH8WVnrNyRyWEaUHrXyHICF66nwrn2POfkEAJNkUEULxjIHbr6WPyHjWVFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KaOyBbZW; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762982843; x=1794518843;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=ofgZU0tmhNGbCjK5AozfRL9mIee6k3zAZn2WViwVXkY=;
+  b=KaOyBbZWjDopMO5up9wo066nkn6oeTa4OGfWXnRBwSp1DH4DgXtUjabJ
+   hRPsWltwA9TbSO01D3akbZ87glBVJZA3BID52WVpf8Qr6G54NH07xWDll
+   b/wQOZTwGBtBaZZVvzFQAWKH6/FE1feWOikecMtBttnsHVcJemqHh5Yl/
+   f/kRfQi4r0yIPb+5lWy2D3kugWiIAWU6y5VT2D/mbRHh1MEpGqGAsn4DU
+   S+BYvx9d8HQH2To7f81nNTapTvpvGoZYv7VSoypmoLnivJzOH7HUHWNxE
+   ctraGr0t4ht9L61ffZ9J91n9ZvAsKco4LfMr4fjjRlq1f4DcaIHR88d1C
+   Q==;
+X-CSE-ConnectionGUID: yPnOzwEdQ8a9JcbTI0ykkA==
+X-CSE-MsgGUID: T58t13jgTQOoVEXjdwOFEg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76161684"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="76161684"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:27:22 -0800
+X-CSE-ConnectionGUID: Ip3Uhx7QS8yv8G327P5e/Q==
+X-CSE-MsgGUID: obPNIj3qTYimjKqKAKrD7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="189106147"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:27:21 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 13:27:21 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 13:27:21 -0800
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.59) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 13:27:21 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SvDcAjBrjdE0WV+5yJASX5DL55NGCJFGWjfvoT5nvlCko//9+hYRLcjY5HpXBFnfkRkyoLL3AdXL0W3OVyTPpgLwYGxgrdAloH3yGTydinLlNUezCOXGIcb91ETLXZtM9410eBSrwLB/vhXJbVA48s2ENemfua1VTx/A586EpUN5dej7A3u1KLVOGWQO3/C3vF5trWhOj7Sn8fGExTl7+ggf6Ob01wJAPV0hWmhuiEfPN/3PmAi44IuImcR01RoZ+imzfhguaZ9//5RsMe0w2FV4YxCDXpp10IhlV8l0XQ+b6LYM3N0muQqoLk2t17xDU2Gx3u8k0SB0vifK3FuWWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7VY9lJmqj6Jq5nP5dGbaf7nNuzkO579T6BZL4iftvck=;
+ b=wFbaqi9p0D1eQFCLGpZXjyG7nkNV/61ITgbUGbBo8edZ6zLb6VU8Y2Cdy0ZVXDGGQTpT6oQ25xfMBnSa3DPUOUccfyeG0lVYW7espJkZZEEu+3Ma0NBPCh6WYnagS2QctEeSIKvOqhdTjknO9QIrI01QS5VbJFuI6yy21DSlGR/LLtpfqxGaYgie5ht95xmkOyJjwzed08N74SQTXMgj3kSBHM5Yt+U4CVe/uh5Aj51Bv2BfBG/9Pz8WynQb9dHD5tw/KTSw+JLdXFNjhGMJtslMB7Z+biJvFAfJXAjyhE8MdRlUtzLDat2TsVGvRSKNPECsaLuqCTmfL+NqN7GC1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com (2603:10b6:806:2f1::13)
+ by SJ0PR11MB4960.namprd11.prod.outlook.com (2603:10b6:a03:2ac::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Wed, 12 Nov
+ 2025 21:27:18 +0000
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec]) by SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 21:27:18 +0000
+From: <dan.j.williams@intel.com>
+Date: Wed, 12 Nov 2025 13:27:17 -0800
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Dhruva Gole <d-gole@ti.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Frank Li <Frank.Li@nxp.com>
+CC: Linux PM <linux-pm@vger.kernel.org>, Linux ACPI
+	<linux-acpi@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, LKML
+	<linux-kernel@vger.kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>, "Dan
+ Williams" <dan.j.williams@intel.com>, Linux PCI <linux-pci@vger.kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>, Alex Williamson
+	<alex.williamson@redhat.com>
+Message-ID: <6914fbb5a6ce_1d911001b@dwillia2-mobl4.notmuch>
+In-Reply-To: <5068916.31r3eYUQgx@rafael.j.wysocki>
+References: <13883374.uLZWGnKmhe@rafael.j.wysocki>
+ <20251112063941.kbg44srt5f7rfkjb@lcpd911>
+ <5068916.31r3eYUQgx@rafael.j.wysocki>
+Subject: Re: [PATCH v1 0/3] PM: runtime: Wrapper macros for usage counter
+ guards
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0370.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::15) To SA3PR11MB8118.namprd11.prod.outlook.com
+ (2603:10b6:806:2f1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
-        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
-        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-sgx@vger.kernel.org, x86@kernel.org
-References: <20251112043730.992152-1-hpa@zytor.com>
- <20251112043730.992152-8-hpa@zytor.com>
- <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com>
-Content-Language: en-US, sv-SE
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR11MB8118:EE_|SJ0PR11MB4960:EE_
+X-MS-Office365-Filtering-Correlation-Id: eea81b73-8f16-4f56-20cb-08de223241f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ejJaMHZ5VUJSTUozYWtZazFTQTJOOCtnWFo5dzMwRWFscUtRTFFBNzlERnk1?=
+ =?utf-8?B?a0E4L2hTTTJGSDBLbU5aTWsxU1pJWWVVTXF2NTFDSVB2R29BaWJHT0ZhSWtU?=
+ =?utf-8?B?SWt5ZnEyTTlYbk55UzdLU05MVHgzeG53Zzk0WlBSblBrWE1DTldYZVdSNjFT?=
+ =?utf-8?B?VGF4cXBuSnZPMU9SaUVhSFZPVTZqeGUxYXM0Znlxb2RmdGR1U0RTNlNpdTJj?=
+ =?utf-8?B?Y2dicUVaRm42Z3dXMDRxc3N2cEpXSFBzL0ovcFRYOWdsN1gzcm1UT1NQWEsy?=
+ =?utf-8?B?NTJDUUdwRXFOYmNqN1dpMTRQKzUxczVOSGtKd3FDTWtHSE9GeDhwREljdVM2?=
+ =?utf-8?B?UUY3c1BUK0ZzdGl2VGdPNXkvb2J4aUtUOGtMT21Pd1p2bjZwOFdYUHgwMXhj?=
+ =?utf-8?B?aERZK0tVaDJ3blRXejFURWQ0ODlrdFVwWjhJcFN3NFBERDhmUWkvNkJKRlIw?=
+ =?utf-8?B?bG90djlCb1dtV0lGem4yWTRqVmxydEJWRDVTZmhpSXdST1o5TEFtcjN5UmtI?=
+ =?utf-8?B?dlY1RjdYZTdxaURwRjZlZzV5amJWTE8vN0RDVlhWUGF5TXNkWVJhZGtDb1lX?=
+ =?utf-8?B?b2U3MzlUdnpnRW4vL1duTmwrK3RWb3pnTlBiN1JtVEVqckM0MndITStnZXJT?=
+ =?utf-8?B?NW5kZXk3akJ1R3Exc0NnRGxZMGtXRmh2RWxEZGFQbVhzY0pMTTlSN1Q2ZEFZ?=
+ =?utf-8?B?b3N4OExkL0ZoRVpNZHJrWkM4SVFsRDBsalgydVA4NUJPMEFodE9SWHQwWGxv?=
+ =?utf-8?B?SEdid1M3ckJRbGhNQWZaY0lMWEdmanFzb1pTM0JONXM2K201NUxBRFUxQTli?=
+ =?utf-8?B?YjY5N0JMYUNTK3MxK3hGdFQ2YjNPckNRRittV0pBNXpMODQvSml0SDJHU1pL?=
+ =?utf-8?B?aGkwZFIvUk5yS3Q3RXVxWW8xbkRIRmdJRmp3OWkrOW9QWGw5ZDIxOW5IV2x3?=
+ =?utf-8?B?RlEzOHNQLzZPRER2Ym90QVJiNlJ2YzNUUFVTaXRQRk5QNndrMThObWMwTEIv?=
+ =?utf-8?B?TDV6b3NZbHZTSmkzMjYvbWhqVHdPNldYVnpoMFo2QStMaWhzdmh2RFEwRjJE?=
+ =?utf-8?B?aUpBSlNYaUhVY2NkN210Yk5lRXNsdHFVUExpKy95MWlFeHFkS2IxY0JLa2Fo?=
+ =?utf-8?B?akVjMEUrcVRHOTUwVkFLUDQrKytQSWM2bmFuWWdmRUM2cU9sS29BbFdPMm1h?=
+ =?utf-8?B?QXZ2RDdIdnU4bVJJUWdRZWI3R1dtcGJoT2RJREFzaWxnTDZDdGJxbmRWd29O?=
+ =?utf-8?B?V09qVnV3NmZJVzNyNnF1dWJDT1pZcEp2VWVYeWhzRk9LVDJrWm8rU2ZyUjlq?=
+ =?utf-8?B?aURPZFpVdmxBbDluTmREVi9DbTNvdk5wWmRsTWhxTVRPRlRYNms5Szh1S0lj?=
+ =?utf-8?B?U0pMYmhua2lZVTdIbHVQbzYwTDUrMmoydkoxcXg5QlloNU04bDBTT2FvOWpx?=
+ =?utf-8?B?VFYyQmZwUnAxYjN4cW1nUmZGQ2RtckFORmZsTVFkYWJsL3dxTHkrU0V1dzl0?=
+ =?utf-8?B?eDhNQStuYTNtM1Fkc2RXSVhicXF4Sk5MVFpoVkZtWEtyUXFTZ0QwemJ1Uk9S?=
+ =?utf-8?B?ZlpaZmJTNEZPMDZ4VHBRU3lYYUF4eGFmQWgxMlFkblVkTEwzR2lkcVJMbFF1?=
+ =?utf-8?B?YUExQlFkNkh2cUVicmtrc0d4cWhSUjI4ODcyK2RZQnJlT2l4ZHJCVjFpRzN0?=
+ =?utf-8?B?K213Y01GcFdOR2Y1TzU3T2s5TlE1b0ZtcWdLNkI1TWZ4V1hHK3JYSlVUQUF2?=
+ =?utf-8?B?czVLQm03bVRHcEFtbWRUR1ZqYytKSmE3VjNyMGFsWmhIc0lYYVpBUmlUVmQ0?=
+ =?utf-8?B?UUJLUGhrajBDVlFjVUt0RGNaOWI5UXFFbVJvVWdjQVo2VWQ5d3FmY1B0RFRn?=
+ =?utf-8?B?dXphZnYzWEJIODdOOGxPM0pDOVQ5alhaaERXdjlFMUp6WFRudXFmdWRGRDlM?=
+ =?utf-8?B?WjRKQ1NyMnZMQVZhSzFBTUtVS0tTeEg4L0EvWWRROGc0dlUxNGNSbVFhRjVV?=
+ =?utf-8?B?TXpEaEY0Q09RPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8118.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VDNMYmpwTDVoWFVZZ2ZFTzJpcTZ2b3J1QnFVSXdEUTRheW5FOXQ3K1hQTklo?=
+ =?utf-8?B?eDV1b0l5Z0IxODVnVXN0MTlhTmdYeFh2bVpiOGlPQTlJeFVqRDVoMkt3ZmFn?=
+ =?utf-8?B?T1h1U2tkK2wza2QyOVJ3OXdESnVxVWpXd2NNaUpDMDQ3YVYrQ2cyOXlidUt5?=
+ =?utf-8?B?OG1lQXZTODNETEdVelNRdmNiUXBKRTFQQytOUFZLZTExemp5SkZ6dnBtT1JR?=
+ =?utf-8?B?VzVucTkwWStlakxQL0RIMGpKNUlNOS96Y0lMYnUvRVZxQWVqcUhaTHpsaWhC?=
+ =?utf-8?B?WXI2TGlNMWxZU3h1TzNYWDYzd0VJMW93aHRxYTNmeWw5VWM2d2t6VWJEUXNW?=
+ =?utf-8?B?bm1Tclk2dFZMNm9qdEJyMmVvTU1EUUY2L0FqYng1SmV1NkUvU1ZUbjU5Wlph?=
+ =?utf-8?B?dWYxZzVEZ29VcDhIV3U2T2NzQXZTZ0FwUnBiR0hCVEFCSUsrVzZVZjdWb2VV?=
+ =?utf-8?B?RVE4cXhLY3Z3ZzdPQVVuUE5Ga2VZNUJqMkZQMnE4YlpLS2ljU3BPbVdQTXFx?=
+ =?utf-8?B?SjFvbjdhRkJpa3NRVTZyYlpLaUNFMWVCMk9TRGVDbEZ3NVZtYnAxUGhOM1RE?=
+ =?utf-8?B?SEhhSXh1UmF5ZEcyVUUyTnJuanF2MWI2c0g0anlzRTZLdXFrSWdoQ1RHMkJK?=
+ =?utf-8?B?aXhsV0QvU3MwVWNQWjhKZVBORm5ZM1RqNG1ZSFozOHdLdkpGbEJuZlJDUTNW?=
+ =?utf-8?B?ZWJUcUFoa2RzU2drN1VmRERCQkgwVEd2bTlEQU15d3FHMlJCZFQydjc4Y0NF?=
+ =?utf-8?B?Tk8wYktRN2N2Qkc2R2ZHcG5XQWNTM0JUbE5VQ1d2dkZzcSthOTZhOXdkNE1M?=
+ =?utf-8?B?c3d4VGcvTmplb0l2VVBPQXBFL2UvWTF3dUhvQjNnek5lMVFEN0N0MEtvSGN1?=
+ =?utf-8?B?eHFYYi9zUERQRTN2YXFmNzZZRDkxb0xZRWlqK2taVWNsM0ZVUUwwSUtMaFhV?=
+ =?utf-8?B?MEViaDdzMk5sU3NNVEdOczV3cmx4S3BlV3lKRU5OZy9sVnhMdE93NVVKY0Ix?=
+ =?utf-8?B?UXhlRGZreUp5azgzbUlnNy9NU2o3OVRUUjJYM0IxdW9VT2E1a2E1OFVtNVFF?=
+ =?utf-8?B?ZkUyRXdsUnB3SldFVjZkM2lOZVhkcDVWT1RvSzlEalNKNUMwRWx2RkRsL3pB?=
+ =?utf-8?B?Ty9ucDdncTUwRjc1M0FvMGpaQmpKRzEyWHB0RHdRNmlhUW5OQzhXS0hSZG10?=
+ =?utf-8?B?UUw5MFhIN3g1TlZUN1luOVFDYVJMNXA3NDEvdmFMQnZHcVB4R2Y1NzZ1VDRL?=
+ =?utf-8?B?YzRMMnMwNUtUcGZxQ0RVMWlwTzZmYk1tK0xOQW9McjBSa29yYUxHeXUwSkNO?=
+ =?utf-8?B?c1EwTXlmZHFFME9tWGZGdnU3WjBhK0VuZm5YVXYwdFFxQS9ENm1RYkV4aFRn?=
+ =?utf-8?B?Q1JocGhrUkRIaHZ2c2E3VGc0cEtmeVBlWlQ5RjYzM0tIZkdSVnJsRjdKSUQ2?=
+ =?utf-8?B?R09TaGx5YmI5K2Z5MGV1Y1RFUGN5UnVPRzJVY2h6c1k0TWMwSVdsVGw5L2Ji?=
+ =?utf-8?B?c0RZcWlJQ1NWTGhJdlhuSndMV2VtcUl4enYxY3JweHpyaHZzRytzNUdFVkRL?=
+ =?utf-8?B?VnYweU1WUWZzK1lYRE5WUytQczNBMEhNQ1ZQQjd3bFVBYTZzS256QTBCV1lQ?=
+ =?utf-8?B?ZWpZV2VadFRGY2c0UlhYZC84eGZaTGk2bHhYV0M1TTFjc0xpMCtWQTdTTGdR?=
+ =?utf-8?B?N3ZGcnlQeUY3c1lHV295NURGMHM0WGZBaStSc1g3blN3bld4bG5YRDNNNlpY?=
+ =?utf-8?B?VlVvbzdTN2tnNGZvVU9ZMHFjOUlpUGVZaUVYRThWNXljUFhKR1VES2pxbTJ1?=
+ =?utf-8?B?dmJsQkZIVHBRVTFGREpBQnMxcG5VNzdYNUFic2k5QWFudVdOTFVvVVo4dVh3?=
+ =?utf-8?B?ZElrVFI1MzRwbllEdVd0QXBRVVhnL2FnemppM3BKRXhFVmlsZVFpSHFYTzd1?=
+ =?utf-8?B?cE0zcWZCbEI0YXRFZ3JBaXFLWHNOUndMN0ljdjNkTGxhYlVhVm00dnJNTkpp?=
+ =?utf-8?B?c0YxN0h0aGhJUjM4QUJCSHhHbndkSE1PN0REZHQ4QTJxZ2lKZEZrSnRBSEQw?=
+ =?utf-8?B?ejdBVUpleWdYU1FJNXJPZFhkY2RocW9OakJxL09XYVZ5MGE3RWtJUU00Z3l5?=
+ =?utf-8?B?eFVNVjd4WDU5VnVHM3U2MDcvQ1llQXF0eWd4R25nUkd6UWUwRjdtZkRWa1E1?=
+ =?utf-8?B?c3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: eea81b73-8f16-4f56-20cb-08de223241f0
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8118.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 21:27:18.4692
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nt7CPtWdCgvbyNrcNVDWT136qrtYbsVzBj5eA7MNCY0ViNAQ60v2i6QW/PIaWD3yQnxIB21wC8ed3cFeuqlBnRn0dW83MNWRMnWjOqDItSc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4960
+X-OriginatorOrg: intel.com
 
-On 2025-11-12 02:31, Uros Bizjak wrote:
+Rafael J. Wysocki wrote:
+> On Wednesday, November 12, 2025 7:39:41 AM CET Dhruva Gole wrote:
+> > On Nov 07, 2025 at 19:35:09 +0100, Rafael J. Wysocki wrote:
+> > > Hi All,
+> > > 
+> > > The runtime PM usage counter guards introduced recently:
+> > > 
+> > > https://lore.kernel.org/linux-pm/6196611.lOV4Wx5bFT@rafael.j.wysocki/
+> > > 
+> > > and then fixed:
+> > > 
+> > > https://lore.kernel.org/linux-pm/5943878.DvuYhMxLoT@rafael.j.wysocki/
+> > > 
+> > > should generally work, but using them feels sort of arcane and cryptic
+> > > even though the underlying concept is relatively straightforward.
+> > > 
+> > > For this reason, runtime PM wrapper macros around ACQUIRE() and
+> > > ACQUIRE_ERR() involving the new guards are introduced in this series
+> > > (patch [1/3]) and then used in the code already using the guards (patches
+> > > [2/3] and [3/3]) to make it look more straightforward.
+> > 
+> > The patches look okay to me,
+> > Reviewed-by: Dhruva Gole <d-gole@ti.com>
 > 
-> Unfortunately, %ebp is still special with -fno-omit-frame-pointer, so
-> using "ebp" as _sys_arg6 on 32-bit targets will result in:
+> Thank you and Jonathan for the tags, but since Frank is not convinced, let me
+> bounce one more idea off all of you.
 > 
-> error: bp cannot be used in ‘asm’ here
-> 
-> Please see how %ebp register is handled in
-> arch/x86/include/asm/vmware.h, vmware_hypercall_hb_out() and
-> vmware_hypercall_hb_in().
-> 
+> Namely, I think that Frank has a point when he wonders if PM_RUNTIME_ACQUIRE_ERR
+> hides too much information and I agree with Jonathan that may be misunderstood,
+> so what about defining the wrapper macros so they don't hide the guard variable
+> name, like in the patch below?
 
-#ifdef CONFIG_X86_64
-#define VMW_BP_CONSTRAINT "r"
-#else
-#define VMW_BP_CONSTRAINT "m"
-#endif
+I had been reluctant about offering an enthusiastic tag on this series
+given that information hiding, but with this change:
 
-        asm_inline volatile (
-                UNWIND_HINT_SAVE
-                "push %%" _ASM_BP "\n\t"
-                UNWIND_HINT_UNDEFINED
-                "mov %[in6], %%" _ASM_BP "\n\t"
-                "rep outsb\n\t"
-                "pop %%" _ASM_BP "\n\t"
-                UNWIND_HINT_RESTORE
-                : "=a" (out0), "=b" (*out1)
-                : "a" (VMWARE_HYPERVISOR_MAGIC),
-                  "b" (cmd),
-                  "c" (in2),
-                  "d" (in3 | VMWARE_HYPERVISOR_PORT_HB),
-                  "S" (in4),
-                  "D" (in5),
-                  [in6] VMW_BP_CONSTRAINT (in6)
-                : "cc", "memory");
-        return out0;
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
-That code is actually incorrect, in at least two ways:
+However, I prefer that the scope variable declaration vs usage
+(reference) cases should maintain visual separation with an operator,
+i.e.:
 
+        PM_RUNTIME_ACQUIRE(dev, pm);
+        if (PM_RUNTIME_ACQUIRE_ERR(&pm))
+                return -ENXIO;
 
-1. It should be conditioned on frame pointers enabled, not x86-64 vs i386.
-2. The compiler is perfectly within its right to emit an %esp-relative
-   reference for the "m"-constrained [in6]. This is particularly likely
-   when *not* compiled with frame pointers, see #1.
+Otherwise we have a case of different flavors of *_ACQUIRE_ERR
+implementing various styles. I initially looked at hiding the '&':
 
-A better sequence might be:
+http://lore.kernel.org/681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch
 
-	pushl %[in6]
-	push %ebp
-	mov 4(%esp),%ebp
-	<stuff>
-	pop %ebp
-	pop %[junk]
-
-Then %[in6] can even safely be a "g" constraint (hence pushl).
-
-	-hpa
-
+...but it grew on me precisely because it provides a clue about how this
+magic operates.
 
