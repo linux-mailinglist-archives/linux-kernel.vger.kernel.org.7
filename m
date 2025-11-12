@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-896538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C6EC509CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:26:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C6BC509B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E713AF058
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:26:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 09B6D34AFDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29302D97A9;
-	Wed, 12 Nov 2025 05:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7672D8387;
+	Wed, 12 Nov 2025 05:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEPWaH13"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBmFw60v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6D1146588;
-	Wed, 12 Nov 2025 05:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607A115D1;
+	Wed, 12 Nov 2025 05:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762925208; cv=none; b=qhX2KpYxvKDD5UI+L+1aQIWIOvImhdgVKC3sldCWDd4xxUUXEU22vCuDAvASfxupiflAcsYjpBEDk9BpeXsyV1Hl7++owt+X3Zf7xSMKPzQg3jovEKt6687WJ+ePFKsx9iP9wBaDANfhQ+/lYGQhoFunCF/ZEb2rFOHwBeMfYhc=
+	t=1762925008; cv=none; b=VEKqkTOOFDXZzUDnagJ5df3dU7fwMHlCUgYJqpx4An/kj4Lx6II8rlW81rw5qNA5y1NnvrDNIdgqmLausZxuxTPobGU4sWqFm3glkSc4TqIQfnVvihRYehQaKHB7/Onu8i5Zy5DFxxrAJV+Q3n1b1fC/3Bv8QcAFnjVVUfUC9qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762925208; c=relaxed/simple;
-	bh=J2yCx8gANXEoEptcoVy/jvxBGR0sLdZaZJNtdCJDhDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gch/8+hOKsq8/aK41tX1OusqUI/zOYQfcoBoElxyUAIaQDstg3lv0lBnNhNVrXM+9k4kSJ0W1WOzvHEKPJKq0yQ3ARWueRpj+uctJgMroP2d8MpZOqVvHEtAWWi3xs3JkkzYHcVSxrCC1Ikf35xL40tr8/XSI+b7PSK2xxrSTs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEPWaH13; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762925206; x=1794461206;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=J2yCx8gANXEoEptcoVy/jvxBGR0sLdZaZJNtdCJDhDQ=;
-  b=CEPWaH13QuEHeyuMYIU1ab3uCDunT91ibG8+ITiwmGV/4rNBp0FVol4V
-   0z8xBgPDrfPVWk6HdgpC7Defilr/MJa2GtSZlzk/NFTxtJTK4UUlkOSsO
-   p4CnXaCDA+h8F/7Tf801CtamAQhuPe5m4e5ACvbPLk+MIlzHAn7QU+Og6
-   uyfLG5LJSqBnGZkt3qk2HDAHbCGwgxZkk9c9KUjcFXz+5NeM5QArLRCYk
-   BeMQu+wJlrIl3ov+RTlVM+ko2m6a07fPGEKkiiHhCu7le1LXoNVBDOZrQ
-   Qpvk2HC/+VA3cRMgMFkeYN5WIAK95wLxmoWU7QPM3X7qInRxl7nYBrbmB
-   w==;
-X-CSE-ConnectionGUID: 0XBEb4WGQSm14BHCoeKlrw==
-X-CSE-MsgGUID: 4RcpEAYDR3qVrZgGX7I63A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76331295"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="76331295"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:26:45 -0800
-X-CSE-ConnectionGUID: 2KuqqVv9TuS5cZ/Ryocc5Q==
-X-CSE-MsgGUID: jYiQEfIURoe/1ab0ampM7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="189381942"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:26:41 -0800
-Message-ID: <f6e4ca74-2b76-4662-97eb-a1c5eab62c9a@linux.intel.com>
-Date: Wed, 12 Nov 2025 13:22:38 +0800
+	s=arc-20240116; t=1762925008; c=relaxed/simple;
+	bh=G4AswcjweoTcMDRqGcf3nc+qhS391EN2XY6+IwKLitI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/lCoTZn2lhzRVbM3BF6li+ajvcs6Qc71aqlf9F8wcOajcFoPveRLuGvH25wk4CK4u/WXsTyCGDVPD2ABVMsNoCVzcZ1y6sw6XHpDnFaejeyYmAsIc+qx6iLTzWVnVDz3QOQTcCshwhPQraC0mQhXO8s3+Qemwb7IdyQnEpBpDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBmFw60v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F82C16AAE;
+	Wed, 12 Nov 2025 05:23:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762925008;
+	bh=G4AswcjweoTcMDRqGcf3nc+qhS391EN2XY6+IwKLitI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBmFw60vUaCLqWP2sTvALWy7G8kst4qhmOQauC2I1tKyzlIoeqW21T1UAy7EGmpoH
+	 r3HLaN7uvoIRgR47dFW218NULHfky8r5h/zx5WfVFsFpo/VhK1F9ehBZuqZVA+0EYV
+	 j+oRnWySQOM52G884nOArkjF7MbjMOajE8fie7vR1M0ZfCW53ofdwt7tTQKPa8b1X4
+	 fLXJlwrxSXFHxtJztCjcME5sM0zFPDQT4DEgl0I08sYhrbqTe/jSVf533O4DRC4rG3
+	 fQ1Pxu28T9fjtWQE0GfT1rcRGeCGQKgA7DMcMy2UADH8Ure5gBDot7Njh9T4LzuogI
+	 6wR2ZWohozbNg==
+Date: Tue, 11 Nov 2025 21:23:27 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Baokun Li <libaokun1@huawei.com>, linux-ext4@vger.kernel.org,
+	adilger.kernel@dilger.ca, jack@suse.cz,
+	linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
+	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
+	Baokun Li <libaokun@huaweicloud.com>
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+Message-ID: <20251112052327.GL196358@frogsfrogsfrogs>
+References: <cd2201c9-ff7f-4cfd-acfc-2bba265b3a29@huawei.com>
+ <44d3fbd7-1c53-4f94-a4c8-586873a47146@huawei.com>
+ <20251112040220.GO2988753@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] iommu: Tiny domain for iommu_setup_dma_ops()
-To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, afael@kernel.org,
- bhelgaas@google.com, alex@shazbot.org, jgg@nvidia.com, kevin.tian@intel.com
-Cc: will@kernel.org, robin.murphy@arm.com, lenb@kernel.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, patches@lists.linux.dev,
- pjaroszynski@nvidia.com, vsethi@nvidia.com, helgaas@kernel.org,
- etzhao1900@gmail.com
-References: <cover.1762835355.git.nicolinc@nvidia.com>
- <431cccb8279eb84376c641981f57e9ceece8febf.1762835355.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <431cccb8279eb84376c641981f57e9ceece8febf.1762835355.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112040220.GO2988753@mit.edu>
 
-On 11/11/25 13:12, Nicolin Chen wrote:
-> This function can only be called on the default_domain. Trivally pass it
-> in. In all three existing cases, the default domain was just attached to
-> the device.
+On Tue, Nov 11, 2025 at 11:02:20PM -0500, Theodore Ts'o wrote:
+> On Wed, Nov 12, 2025 at 10:19:06AM +0800, Baokun Li wrote:
+> > I am using a slightly older version of xfstests, and when running the
+> > 64k tests I also encountered similar failures. The cover letter stated
+> > "no Oops" for the 64k tests rather than "no new failures," meaning that
+> > some cases did fail, but no severe issues such as BUG_ON or softlock
+> > were observed.
 > 
-> This avoids iommu_setup_dma_ops() calling iommu_get_domain_for_dev() the
-> that will be used by external callers.
+> Sorry, I misread your cover letter.  It's good you are seeing similar
+> failures.
 > 
-> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
-> ---
->   drivers/iommu/dma-iommu.h | 5 +++--
->   drivers/iommu/dma-iommu.c | 4 +---
->   drivers/iommu/iommu.c     | 6 +++---
->   3 files changed, 7 insertions(+), 8 deletions(-)
+> 
+> On Wed, Nov 12, 2025 at 10:49:19AM +0800, Baokun Li wrote:
+> > I checked the code of the swapon syscall in mm/swapfile.c, and currently
+> > the swapfile does not support LBS. Therefore, some failing test cases can
+> > be filtered out based on this.
+> 
+> Ah, OK. What's happening is with XFS the swap tests are being skipped
+> automatically if the swapon fails.  From _require_scratch_swapfils:
+> 
+> 	*)
+> 		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> 			_scratch_unmount
+> 			_notrun "swapfiles are not supported"
+> 		fi
+> 		;;
+> 
+> 
+> But ext4 has different logic:
+> 
+> 	# ext* has supported all variants of swap files since their
+> 	# introduction, so swapon should not fail.
+> 
+> << famous last words >>
+> 
+> 	case "$FSTYP" in
+> 	ext2|ext3|ext4)
+> 		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> 			if _check_s_dax "$SCRATCH_MNT/swap" 1 >/dev/null; then
+> 				_scratch_unmount
+> 				_notrun "swapfiles are not supported"
+> 			else
+> 				_scratch_unmount
+> 				_fail "swapon failed for $FSTYP"
+> 			fi
+> 		fi
+> 		;;
+> 
+> 
+> I guess we could add logic to _require_scratch_swapfile in common/rc
+> to also _notrun if swapon fails and block size is greater that page
+> size.  Or I might just add an exclusion in my test appliance runner
+> for now for all tests in group swap.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+https://lore.kernel.org/fstests/176169820051.1433624.4158113392739761085.stgit@frogsfrogsfrogs/T/#u
+
+Hm?
+
+--D
+
+> 
+> 						- Ted
+> 
 
