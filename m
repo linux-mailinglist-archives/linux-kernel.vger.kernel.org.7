@@ -1,161 +1,103 @@
-Return-Path: <linux-kernel+bounces-896789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A8FC51399
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D90C51402
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF5824F3920
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8696F3BB403
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE02FD672;
-	Wed, 12 Nov 2025 08:53:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5F62FD67B;
+	Wed, 12 Nov 2025 08:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0XI7kQwN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iYc+Xf07"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3782EE5FE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324F72EE5FE;
+	Wed, 12 Nov 2025 08:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937605; cv=none; b=ZUjuguJrUpUe3xbYMUGcUrSfF9nfC2Vf7s2hbu4oejSs0F/EYQxR2Wocc0WSxTL3AY+LpPA71rLemWyInk27P0UqOGAsq8fWHvZJ8WrqPIyZREyj7ij7cT2rfAePcC2QHxz3tSbovHrxhM0ulWz/XLKzAhwxz/AGp2UB7AkvXZU=
+	t=1762937648; cv=none; b=VHxOeL86MZ7LcoW8/wrgSQi2hI3kXVDymORT7CZSvC2c8zh/MKv6zSidaIm6sig4r1grP9maepUETKeND03g/yiBInWqMEz2Z1sayvy3nMpj9D67wa5wkTW5UeipVp0alCEwGREFubfsUHO2SiupA0Nx3fe994YceAMAj07Y5PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937605; c=relaxed/simple;
-	bh=MhaFweMhCshHOQ3Abf/QyZEE0utz6JnGC5ikWxSKunw=;
+	s=arc-20240116; t=1762937648; c=relaxed/simple;
+	bh=tSeDYSdTakR0Jp4OF2Jm0a9M8Zm7izlqpSwMYkUzRVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sx+qFQ5eRjOqgwcc/9+arYMj6nUkm771DxiCiPw9CvbjDMDMH03AWOL/OIh16NRXRnBbvUXMwlGDEVcloRLSuZdhdzVaKqw71GFmpwHOcFjVznXYYKr6SlM7KkO0nygsmTBWwOq3VuI2ZU9uz9dwvzCNRcCDmH9gcK7Pv0sAS4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6bF-0003Cr-LJ; Wed, 12 Nov 2025 09:53:09 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6bF-0003JA-1K;
-	Wed, 12 Nov 2025 09:53:09 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 2AB8649D94F;
-	Wed, 12 Nov 2025 08:53:09 +0000 (UTC)
-Date: Wed, 12 Nov 2025 09:53:09 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
-	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RESEND PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add
- rk3576 CAN controller
-Message-ID: <20251112-faithful-olive-orangutan-0dd207-mkl@pengutronix.de>
-References: <20251112015940.3695638-1-zhangqing@rock-chips.com>
- <20251112015940.3695638-2-zhangqing@rock-chips.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PiuM6m0qkeuv/yD+wrqxmBIpA3be+X+T67A/J9hVsOHE3B3CM4ZJyb/sk5iNHPiqxylsxg+ODEnmEZb8VxTuOYKnpiYSHIUTFBBr7IXYlk+LBKAYQ/hjMoc4ukPxLOYVh4xgXI3pi8PAbVpwF91KDkdTJBIROLVnbikMhlY/RSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0XI7kQwN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iYc+Xf07; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Nov 2025 09:54:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762937644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V65kbZ9DU351geqXdbjAKHkaUI37Nqr4MUCHI9acFg=;
+	b=0XI7kQwNRmOiy++ujh+bSWLTTxUj12k6FNh+VqQ0qP0Aa7jEBI+SRJfSv9sa68oMiPh+TS
+	YmlnV5Y0dnwWZ7pgENZpBHPa96fz2hEpI18ydhmq4M50UrKPDFYoyWvJzofOH6Hd1I/Dd+
+	il03UZHcMCtjIq7tGI9eE4Q599rnWD1utwrvMLz2XFstp190lCfO4+YqpRECS4UcJAhFIm
+	VHZrN5t1iY1HFmSaQdLVy55GaJ/lJO5z9vOR2WXcqMpMjRNHuQVre3eeHTn0J6SWsL9m8M
+	+1mIPodxkf3F4OTU4YE/IC8SByzgY+L+rGaOamuOkCfBQfRE7+vyOUxsm2uncQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762937644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V65kbZ9DU351geqXdbjAKHkaUI37Nqr4MUCHI9acFg=;
+	b=iYc+Xf072ZiHDDTNwwAtlbIIW6UxlrZjsGBEUM25STRuau127eoPUU3ZFohjg511KAUkGS
+	qrweraEEcSKJeiBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Qi Zheng <qi.zheng@linux.dev>,
+	hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
+	lorenzo.stoakes@oracle.com, ziy@nvidia.com, imran.f.khan@oracle.com,
+	kamalesh.babulal@oracle.com, axelrasmussen@google.com,
+	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <20251112085403.DDv0RU5k@linutronix.de>
+References: <aRFKY5VGEujVOqBc@hyeyoo>
+ <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+ <aRF7eYlBKmG3hEFF@hyeyoo>
+ <aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
+ <8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
+ <aRKqm24Lrg-JnCoh@hyeyoo>
+ <20251111084900.babaOj0w@linutronix.de>
+ <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+ <20251112074930.mKu1J__U@linutronix.de>
+ <aRRJe3PzN3cmgvcB@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6j5z6jy5bzcqxtvr"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251112015940.3695638-2-zhangqing@rock-chips.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <aRRJe3PzN3cmgvcB@hyeyoo>
 
+On 2025-11-12 17:46:51 [+0900], Harry Yoo wrote:
+> > > Is PREEMPT_RT fine with this?
+> > 
+> > Yes.
+> > The local_irq_save() is not strictly needed but I am fine with it to
+> > keep it simple. The inner part is just counting.
+> 
+> Yeah I was wondering about this... and thanks for confirming!
+The preempt_disable_nested() and no in-IRQ user makes it okay. Not the
+counting, that was meant as "it is a small section". That might have
+been too short of an explanation.
 
---6j5z6jy5bzcqxtvr
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RESEND PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add
- rk3576 CAN controller
-MIME-Version: 1.0
-
-On 12.11.2025 09:59:37, Elaine Zhang wrote:
-> Add documentation for the rockchip rk3576 CAN controller.
->
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-=
-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-ca=
-nfd.yaml
-> index a077c0330013..22e10494e7d1 100644
-> --- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
-aml
-> +++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
-aml
-> @@ -10,13 +10,12 @@ title:
->  maintainers:
->    - Marc Kleine-Budde <mkl@pengutronix.de>
->
-> -allOf:
-> -  - $ref: can-controller.yaml#
-> -
-
-What happened to the allOf?
-
->  properties:
->    compatible:
->      oneOf:
-> -      - const: rockchip,rk3568v2-canfd
-> +      - enum:
-> +          - rockchip,rk3568v2-canfd
-> +          - rockchip,rk3576-can
->        - items:
->            - const: rockchip,rk3568v3-canfd
->            - const: rockchip,rk3568v2-canfd
-> @@ -43,6 +42,13 @@ properties:
->        - const: core
->        - const: apb
->
-> +  dmas:
-> +    maxItems: 1
-> +
-> +  dma-names:
-> +    items:
-> +      - const: rx
-> +
->  required:
->    - compatible
->    - reg
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---6j5z6jy5bzcqxtvr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSvEACgkQDHRl3/mQ
-kZxpxQf9HZ67/DDxNczIiTdL1rc5POLN6x4dvvla46CMBBsqZIYGLcy/POss2VvD
-OPScDEziboS5XmeA7yGdbl3XwrGL9tnn4DyQX8Xk6WbqxNrsVcVbFfyon2xDcOYT
-ulS67nJ5ZWjWqZIcU4BD5sZBMgko0x/nIdGH0n3omcb7h+Pi8s9dhI5RE2chc59z
-jsCgNBHqO//Wf7hjm50LJBOQ6mUn/djAEJS4132v2EFpsCFNm/2j3TZKTT2N6P1S
-Z0GMk0rpaSkltF5goiQy9v5WZYnD2Maoqqc3aCH2/d/bTtin07vdTZlw8iijm8r1
-70MAitU6N1mjEufhlI5md6FOaui2FA==
-=EB7b
------END PGP SIGNATURE-----
-
---6j5z6jy5bzcqxtvr--
+Sebastian
 
