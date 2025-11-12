@@ -1,169 +1,165 @@
-Return-Path: <linux-kernel+bounces-898119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A97AC5465A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:16:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FECCC5469D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6B5AE3441E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE963A9A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3EB2C0294;
-	Wed, 12 Nov 2025 20:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278152C0F97;
+	Wed, 12 Nov 2025 20:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T730cRJI"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UI8K9vEG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kw0RuamT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6843C28468E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02E263C9F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762978611; cv=none; b=fyUD4Bo3f3sVmtQQOhWHsarVoNriIM3yuwIQv8PmTkTBwWNtCpJCCNfpIHmqZYfqlb8srUW8mxWWv8uwqG/XGbdip1R4Zx3k6GSr2p7m1nQcJFNq1o1kxPXHdhYymi+l+LGF7fqI8GFA97ldJOi6vlbUtmlRmDrYDA7YF5pd5iM=
+	t=1762978706; cv=none; b=RRNBmk5S1G3HTqEPJbSWhwcaoGALga22EzlGp1WjMldSL0LZOFXpXKmFKn5Yu9k7bBJjag/PoMj5AOa2+hf9lcM9ZFWOABlGaEqiGfife+Ermp4bePPa2Wqxhj+5u7JOh2oXzOep4mkkMp1W3tyqmy+KwCDB3LXrTWw3Eco/CHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762978611; c=relaxed/simple;
-	bh=gPFd5y0rR8p21X+3l9xdR7CUDfAx+2Mt5Sfjeix2bIg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ip2E3BAtvCZl8UY/MNcletrso5P7tyjoYNg9MyXkY3R5p33KkUrcgJZelI22+svb+W75yAlNJOGQTmjDZ3ngHQHteFIf4BxK+Br0MGXnELzNv0TUmk+ZJVvtOg7hDvAWaLelNpOmnNuaQD7ZsVAPTUsvrAMK56l1QrV01lAMaWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T730cRJI; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3434700be69so67562a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:16:49 -0800 (PST)
+	s=arc-20240116; t=1762978706; c=relaxed/simple;
+	bh=R0NjxuliBgbPkUjoVxV/GQwermGfgOh84UIqfogg6Q8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Tlbf1MXJ/S7nL7DW6oY26+cGi2dYMld4TUO9dIWwEmN1Z+PpQo+XMtGuAKZkC/jm6vVqUJNBlAPWug3ptZOBDk1t3cGbhSlw6ZX+hOiv1QoV85cPTMpWHJRZ4E1sI9XHQDM6NA2OxifTgTa+ZdUew3xIQbTXMeYuIt93UTc4Nik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UI8K9vEG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kw0RuamT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762978703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiNpCdZq1yfcHhaQQsyCMfmIiO/UkkDH35120jYscgA=;
+	b=UI8K9vEGLvSWWTVuJaPv71TxiaruhHChA6YRiXjQfy5UmUsNlp8h8R880Hs+l7/KdBQqLn
+	MfIzdozaKA2aA4Fp16BiFgyOaNbY9uG1Yq1djQzEHkAIoW18wiw96DjPHHaqoZWY30mPR9
+	2J/sWrnFfVa/2CkJvv/myI4/R1Pc7FI=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-264-6W4r6MmTNl-keCLasjnwIA-1; Wed, 12 Nov 2025 15:18:19 -0500
+X-MC-Unique: 6W4r6MmTNl-keCLasjnwIA-1
+X-Mimecast-MFC-AGG-ID: 6W4r6MmTNl-keCLasjnwIA_1762978699
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ed74ab4172so1155661cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:18:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762978609; x=1763583409; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iy9QvFMHYMC0PPM0G9nClDSW+eIfFhvEVPmCMvOH2bQ=;
-        b=T730cRJIVCoveDDyvJsa0KCNTZ+y3j/zaGwV/2dwfVnOB0MZQjO2aFprPO2zno3hjz
-         0+YXOQhBfBCGZi2kZloyHSIY5eu2ejrHZ8kv+BB1PuVbJCu0R43CWsGGTEuo/Zpox2se
-         heLiJsa3BOWgOW/7ndnx4B2IEj15/l9QUj3tKr5HnFa+1CiGI6rCr1KZDXqUrWQLbu3l
-         xaqh2QMvvrlbddPgNHKaOX423zXnB+L5Qpu2qnOyaA9zPVpbmK8O3/Mk/HIATU8uFb7o
-         BjMkzGeRu2L6lnhRrLnoah+n1uaZcLYviZSz1Ev4UypfyhShJJvhl0K/HJk1tZ+vYFE7
-         VD2A==
+        d=redhat.com; s=google; t=1762978699; x=1763583499; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PiNpCdZq1yfcHhaQQsyCMfmIiO/UkkDH35120jYscgA=;
+        b=kw0RuamT9bR7PKCMVEk5oSxaxHTjhr1O320Swyjo3YvNmpY62gflAZzhay0NJgxb5Q
+         yPi2IO+kmwF4UiMex9moU/L9XDgZI8Pysp4QeMUt9p5QQWF+mXbW4YM6lgGJqY50cLYo
+         nrRj4EoRsEmQLKm9isxeKc/DOX41+5qYWOYUr5+lamp/EEwAQmNH7VSoMOCzW/l3JUC0
+         mlgv8iCYjJJkxeSusnaUqtWRk53s/QHe9NwJLo/J2I57wWljW4Jlt2nWMptKDU2PPoU0
+         qhZuzpzKodePbY4LYeT/drm/OilrSE29hNiJ3JMc5Lpe3h5VyjLAWfHDAPiLtCKRE6N0
+         R75g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762978609; x=1763583409;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+        d=1e100.net; s=20230601; t=1762978699; x=1763583499;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iy9QvFMHYMC0PPM0G9nClDSW+eIfFhvEVPmCMvOH2bQ=;
-        b=Mz1YJa/v4Qmn1fx4Z2BVK+Mp6e3KYQBQ0gRhFbQEcq6q9qOotLBsmHthtFYx9alrHT
-         Y80vHEqDrzdOJNsOC4ZrAxACkh1H3bjEoD1+5gDWCOdOgDkXURKiu2YM1ahOAzU+b8Fc
-         XlADH45WbBQV14AzhoEg9ALw45WWhvpQwlMV2E8pjqBH+942YiNv/DPglxZM0eb+CiZD
-         CWrZMFrifoEjP7iKSQutjo5Psfmd/j8s94Ayj6W08MLGnUbowKAN/mZAqaNN4jUBffNf
-         7QCYw6FQMrCpPtnTvVcpdLB1/ZRW/H0NJPMiZXWLqf6e/0AefB51Z3B0NKJjG5lYuts2
-         Keig==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ6HXXHZhvcMKUNmbusf9fqkU+VmKcOp7ZLXcmmvBJZ7owfsFN2wUO70a2/QeGbG+2PZOWE+NX+SFvHJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp+3pDJRfK8T9tW/5yVQtHQFGxkWvUPHvhRtFFuHJqdelw+WuT
-	Qoqy7Wx9i2/lpR6mQfBoD3K7SxU0ZWCNl13EXyL14Cp0jee/VrabWWJv
-X-Gm-Gg: ASbGnctnuABKaniBkeUwzuVU065bwHEob+Tj/cjjzoYAvBRwvKoaAbJ3+GL3oIQ5Miy
-	kVGit0hitHrZ87DQudiNNKEJFPd59VHAcftpx00O9LN8VQ6w+ERhADSEVo2kyAk1f+JZD/DdNu/
-	DyKoBKOFJh5WOBNO08x8/Jqeyr/wCSduWMESZ9m/eJb+aKTs1wP88UJVK1DbirnLyOjfJXsoMpE
-	XJhBqMn5eeS5kPN+oeFIShLQ6z/ticjhS0yKC6ns8/utGRlotEA7k+vo5ltMAWplzDo5NQ2/GwG
-	7CY2Ft86fxvG1Dg86UNyxkidHIhxxCxV0wkvodV34RFSWoEefb/+4eYuDBgejBU52uLHkY+vP9h
-	LGrN3IMSl0+5hoiLzt078v4yGENT+ZjviRJEsuGj4BOT2A2Es7QzFKqAMSDCNSSqa8GQ6sKn/3z
-	oyFC0PFa/M97rc1HbkuznGzxICXrUGNtoMQecW
-X-Google-Smtp-Source: AGHT+IFT2kSJitShWf+rBUmQwnvP/sUF7RjsGACgdyKqifAKv6G5C/wsXFal3/hzc9Gwi+9nzTbYqg==
-X-Received: by 2002:a17:90b:3a92:b0:341:3ea2:b615 with SMTP id 98e67ed59e1d1-343dde29c37mr5533570a91.15.1762978608682;
-        Wed, 12 Nov 2025 12:16:48 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:3e6d:747b:3d83:10e8? ([2620:10d:c090:500::6:aa7e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e072580dsm3532839a91.8.2025.11.12.12.16.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 12:16:48 -0800 (PST)
-Message-ID: <31a5fcc60535d93b8b8ab7e9ca38487038fc38f7.camel@gmail.com>
-Subject: Re: [PATCH v2 1/2] libbpf: fix BTF dedup to support recursive
- typedef definitions
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Paul Houssel <paulhoussel2@gmail.com>, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Martin Horth <martin.horth@telecom-sudparis.eu>, Ouail Derghal	
- <ouail.derghal@imt-atlantique.fr>, Guilhem Jazeron
- <guilhem.jazeron@inria.fr>,  Ludovic Paillat <ludovic.paillat@inria.fr>,
- Robin Theveniaut <robin.theveniaut@irit.fr>, Tristan d'Audibert	
- <tristan.daudibert@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau	 <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song	 <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,  Paul Houssel
- <paul.houssel@orange.com>
-Date: Wed, 12 Nov 2025 12:16:45 -0800
-In-Reply-To: <c1b79b23c2a20964792961f23348970ebaee14b8.1762956565.git.paul.houssel@orange.com>
-References: <cover.1762956564.git.paul.houssel@orange.com>
-	 <c1b79b23c2a20964792961f23348970ebaee14b8.1762956565.git.paul.houssel@orange.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=PiNpCdZq1yfcHhaQQsyCMfmIiO/UkkDH35120jYscgA=;
+        b=qxg10sqlkPB2G+8bfbQrmyUKJmv4VCKTS1YVKQyNlTTGl1ToNhZKYmFup6Cx4lcTno
+         2SGOdfdA1sd7h6SzgzZDMLY4aYFIGlK/MUVxCvS3Ic5PvU8qr4nkzLI0+UWW0N70Dn3t
+         qTCptM4GsBPvCUj4ySI+qdsezou1v7ireg+kqmVVNEsRS916sci0POiabYI4TGCa1Gdx
+         U0BEtNGIBNMOcZBtZzoiJT68IfBQwhQe0A0CiDhXQmzXwruMZvZN+B6MjLfvU4tVqBJ/
+         shbeYeDc+0QCFRaEG0RlAIF0e73A+QcjyKHT3RYKI5pt5B+Yro+XbK1CsJMhimbR+MmC
+         C6uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtCMZEsaOt17b1Sx59L9vG9HKFcH/2gL/dSZQU4n5ch/YGOmR9GS6ahV+I30aPgcjVBpRI1Crh7KNNEFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOUD3/ICnZVkf/JwD1LnG5mNkrk+A94nChglh4saSrnpNmDpIJ
+	lM3Ru3nAbyGKq+8QVTgsnU1+O44SWbUtcK0LhmherjsZ5iAJCU9tZg/YSezKQQt2+4DmLwjR5aI
+	AVeH2k1hNzsL8n7iGaROr3z4xb9sAAAie7ttLvfXpruYanx1rU2xRIjYcnbhYcz7Uww==
+X-Gm-Gg: ASbGnctcvExIqrMgi61TGHaXmVqyuLueokYfQZmlCfaq/08xvgewCS26x0zXbpCPBlT
+	48L1iQzGhonwSSZDzRAKjOEjUVcwYplDpRZacDAN+YuqtL5suXrBDligf//dHcaZlVsZg5ZUdOw
+	qkIN8ICQQV0kGtHuqKV3OMv5pxH63mY5lJ+hIzWylLlRFEBB27k7ngIZE195nH7GBISO3MGbYsV
+	9gQLiSWd1TC654WEZyk2WlmpVI0gMyJ22/K4F7FCj5UQW+vWHRLqnFWDIEvbrxvxPaIn34zX9mp
+	vWmBkqgh75QMvvNAn6MK8d9uvMJdZO0lX/5lqibNK+8zhKMGh5r29+BACvucnmIcpxU8wKkCY6q
+	5rQHtYPvFWQ1PG2MP0iT2dH8QuGlhelpHmLH+Wnmtr9bfZg==
+X-Received: by 2002:a05:622a:54e:b0:4ec:f34f:f7f6 with SMTP id d75a77b69052e-4eddbe34594mr55363571cf.64.1762978698914;
+        Wed, 12 Nov 2025 12:18:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHfJnTBGSA2/ZdUe+2Kwow914SDODXO/M57MSGE/+FIMwjvG6SblDsSpzNVwFL52eipuYAbVw==
+X-Received: by 2002:a05:622a:54e:b0:4ec:f34f:f7f6 with SMTP id d75a77b69052e-4eddbe34594mr55363141cf.64.1762978698461;
+        Wed, 12 Nov 2025 12:18:18 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ede87e2a78sm14921cf.22.2025.11.12.12.18.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 12:18:18 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <3c449d75-2a44-4acc-b3f6-0b2c261db1bd@redhat.com>
+Date: Wed, 12 Nov 2025 15:18:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 02/22] cpuset: add early empty cpumask check in
+ partition_xcpus_add/del
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <20251025064844.495525-3-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20251025064844.495525-3-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-11-12 at 15:11 +0100, Paul Houssel wrote:
-> Handle recursive typedefs in BTF deduplication
->=20
-> Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
-> Podman) due to recursive type definitions that create reference loops
-> not representable in C. These recursive typedefs trigger a failure in
-> the BTF deduplication algorithm.
->=20
-> This patch extends btf_dedup_ref_type() to properly handle potential
-> recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
-> handled for BTF_KIND_STRUCT. This allows pahole to successfully
-> generate BTF for Go binaries using recursive types without impacting
-> existing C-based workflows.
->=20
-> Co-developed-by: Martin Horth <martin.horth@telecom-sudparis.eu>
-> Signed-off-by: Martin Horth <martin.horth@telecom-sudparis.eu>
-> Co-developed-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
-> Signed-off-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
-> Co-developed-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
-> Signed-off-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
-> Co-developed-by: Ludovic Paillat <ludovic.paillat@inria.fr>
-> Signed-off-by: Ludovic Paillat <ludovic.paillat@inria.fr>
-> Co-developed-by: Robin Theveniaut <robin.theveniaut@irit.fr>
-> Signed-off-by: Robin Theveniaut <robin.theveniaut@irit.fr>
-> Suggested-by: Tristan d'Audibert <tristan.daudibert@gmail.com>
-> Signed-off-by: Paul Houssel <paul.houssel@orange.com>
->=20
+On 10/25/25 2:48 AM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> Add a check for an empty cpumask at the start of partition_xcpus_add()
+> and partition_xcpus_del(). This allows the functions to return early,
+> avoiding unnecessary computation when there is no work to be done.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
+>   kernel/cgroup/cpuset.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 6af4d80b53c4..3ba9ca4e8f5e 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1345,6 +1345,9 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
+>   
+>   	WARN_ON_ONCE(new_prs < 0);
+>   	lockdep_assert_held(&callback_lock);
+> +	if (cpumask_empty(xcpus))
+> +		return false;
+> +
+>   	if (!parent)
+>   		parent = &top_cpuset;
+>   
+> @@ -1377,6 +1380,9 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+>   
+>   	WARN_ON_ONCE(old_prs < 0);
+>   	lockdep_assert_held(&callback_lock);
+> +	if (cpumask_empty(xcpus))
+> +		return false;
+> +
+>   	if (!parent)
+>   		parent = &top_cpuset;
+>   
 
-No differences in BTF generated for kernel when using pahole built
-against libbpf with and without this patch.
+partition_xcpus_add() and partition_xcpus_del() are supposed to be 
+called only when action is really needed. The empty xcpus check should 
+be done earlier to avoid calling them in the first  place. So unless you 
+are planning to change the logic that they will always be called even if 
+action is not really needed. If so, you have to state in the commit log.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Cheers,
+Longman
 
-> @@ -4939,7 +4979,7 @@ static int btf_dedup_struct_types(struct btf_dedup =
-*d)
->  /*
->   * Deduplicate reference type.
->   *
-> - * Once all primitive and struct/union types got deduplicated, we can ea=
-sily
-> + * Once all primitive, struct/union and typedef types got deduplicated, =
-we can easily
->   * deduplicate all other (reference) BTF types. This is done in two step=
-s:
->   *
->   * 1. Resolve all referenced type IDs into their canonical type IDs. Thi=
-s
-
-Nit: this passage continues as:
-
-      * There is no danger of encountering cycles because in C type
-      * system the only way to form type cycle is through struct/union, so =
-any chain
-      * of reference types, even those taking part in a type cycle, will in=
-evitably
-      * reach struct/union at some point.
-
-     I think it needs adjustment to refer to typedef as well.
-
-[...]
 
