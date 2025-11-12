@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-896358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A62BC50308
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:19:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1E4C50311
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CE214E6664
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772533B149C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E765233128;
-	Wed, 12 Nov 2025 01:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709D022A4E9;
+	Wed, 12 Nov 2025 01:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLPc63+d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="rsb8QHDT"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9145146A66;
-	Wed, 12 Nov 2025 01:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA3ADF72;
+	Wed, 12 Nov 2025 01:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762910331; cv=none; b=u0NOcJ/5i1aJVpS5uPcSibiI62KUgrz3AU7UkbT1CEH5T2g+TvrNBMZzCzNRrPaSKW0q6hH8dm8NdMwZRcNFOMLbxXvquCXDk4DbqBTuSM61vn1Ofbn++CJ6/gDg/Ja3gQg1Gl24CgSJfPfMue3ImwkLmfemDj+AFyRRX1wBoIQ=
+	t=1762910439; cv=none; b=feeTjAx2k7lKxsBGL8P97Kbiz0fO+bfvZ71grjoYQB2wHFM9cecjojzbklwRtFbsqroU+2ARnhXmsmlZyJF+ljnYkQ+mXCDiqDPW1YgYICUIgwlfP496Lha4rBJ95L/CgMeSZ/tQ+I7cfghKbuRcUBX01KwRMkssZaDi1u3cZWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762910331; c=relaxed/simple;
-	bh=97xU45qdEBpW2fivb5PGMD/llcOzvONkpb6RqID0mCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cgj73TtJgUrJJrKF6rCXlDnGhefWRfLLKJ6Dpr9+74GJe5Xo3tkI2SizkQ49gj7wMJRkgYihFDJeso/806uR+WnrNi59HMs4TnWmDTR+MrX8J9ZC3qqHu2U2MtXpC/zemO1nrlD3IO8p+oVL5zyemPyQslVEGQuEJ60O/MZRXpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLPc63+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B678C4CEF5;
-	Wed, 12 Nov 2025 01:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762910330;
-	bh=97xU45qdEBpW2fivb5PGMD/llcOzvONkpb6RqID0mCE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TLPc63+dMvlBPnRfG3N925Xo9BAPQn4nhuvICt7vX/ogkcFEEN5FSjfLzWsafcs3B
-	 GdGLo8ylkJMcxrzw6Z5FZjYEDnhTUV4BCC5ciI2Dg3rRy2pW1UTw+wzO58PyzHh5UD
-	 Yiib+/YdGwGcgVHWYD3oDSt9AESHDpAGpZV5Odn0t7wEK7GmXVhwxO3IQEcKKIvpmQ
-	 xFNI1jij7O84TF632Q+3tOuHvTo2QLvYzhtrsXvwRBzslAj3FMI/vvvORx8/g2xkIU
-	 woBXRh6PHna01qzjnYUi+jWSguds+VpSYdCzIKALeSux0JOr2HiFoNcBpvdASddpVL
-	 gt7o9OCHfd7KA==
-Date: Tue, 11 Nov 2025 17:18:48 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Alexei
- Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Stanislav
- Fomichev <sdf@fomichev.me>, Simon Horman <horms@kernel.org>, srk@ti.com,
- Meghana Malladi <m-malladi@ti.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH net-next v2 0/7] net: ethernet: ti: am65-cpsw: add
- AF_XDP zero copy support
-Message-ID: <20251111171848.1a4c8c03@kernel.org>
-In-Reply-To: <20251109-am65-cpsw-xdp-zc-v2-0-858f60a09d12@kernel.org>
-References: <20251109-am65-cpsw-xdp-zc-v2-0-858f60a09d12@kernel.org>
+	s=arc-20240116; t=1762910439; c=relaxed/simple;
+	bh=i/kJ9FzcUzzJbN+8egCrW+P9oVxUgXOunl/yOHbhvEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LihjbfnMCUrCr2+jNEXf1U0zWaXB/Yv2qm6rRGZtHkuc200AnU1ooi//6rk66yLGxdXkSAUBXk29HgNFqH0QH+HjSKD4dYvH7BteSHE6E1iPFsHxauYF4tFIjxVrGU79nKhBLJ+J3wg6MoJjPVJVrnyTwVg2x2bcc3iNjSJFc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=rsb8QHDT; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=3foWcY4mqyY24vhktD3T8660J0H3J/4ohG+XUqORjVo=;
+	b=rsb8QHDT2jx28W2WOoLFAoV2bBM1NPZ5i6SXuE890zAiKLcvonBIHfgjKWS1gr6L3zxaNzD5+
+	SW/dMAMYsAu1WWisoQHIRWXRKFHJK11M+PRV/IYpZLK9QG+P8IQ3TU4I6XyF8Oyw7hIVEagg5ut
+	t/Ry2AzU64cBYwezvwSkunA=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d5lsn2SqrzLlrc;
+	Wed, 12 Nov 2025 09:18:53 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4966F1A0188;
+	Wed, 12 Nov 2025 09:20:32 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 12 Nov
+ 2025 09:20:31 +0800
+Message-ID: <fd63cace-a4fe-4f4b-9ad0-72201db9e6e6@huawei.com>
+Date: Wed, 12 Nov 2025 09:20:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 24/24] ext4: enable block size larger than page size
+Content-Language: en-GB
+To: Theodore Ts'o <tytso@mit.edu>, Pankaj Raghav <kernel@pankajraghav.com>
+CC: <linux-ext4@vger.kernel.org>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <mcgrof@kernel.org>, <ebiggers@kernel.org>,
+	<willy@infradead.org>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<chengzhihao1@huawei.com>, <libaokun1@huawei.com>, Baokun Li
+	<libaokun@huaweicloud.com>
+References: <20251111142634.3301616-1-libaokun@huaweicloud.com>
+ <20251111142634.3301616-25-libaokun@huaweicloud.com>
+ <880280be-1cd0-41b6-bc89-9168f374a9b9@pankajraghav.com>
+ <20251111211148.GL2988753@mit.edu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251111211148.GL2988753@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Sun, 09 Nov 2025 23:37:50 +0200 Roger Quadros wrote:
-> This series adds AF_XDP zero coppy support to am65-cpsw driver.
-> 
-> Tests were performed on AM62x-sk with xdpsock application [1].
-> 
-> A clear improvement is seen in 64 byte packets on Transmit (txonly)
-> and receive (rxdrop).
-> 1500 byte test seems to be limited by line rate (1G link) so no
-> improvement seen there in packet rate. A test on higher speed link
-> (or PHY-less setup) might be worthwile.
-> 
-> There is some issue during l2fwd with 64 byte packets and benchmark
-> results show 0. This issue needs to be debugged further.
-> A 512 byte l2fwd test result has been added to compare instead.
+On 2025-11-12 05:11, Theodore Ts'o wrote:
+> On Tue, Nov 11, 2025 at 07:01:20PM +0100, Pankaj Raghav wrote:
+>> If you are planning to send another revision, then it would be nice to include
+>> the corresponding patch to mke2fs as well? I don't know how ext4 process works but
+>> just a suggestion.
+> It's actually more convenient for me not to mix userspace and kernel
+> patches, because b4 doesn't know the difference.  For that matter
+> replying with an unrelated patch can also confuse b4, so it's a bit
+> easier for people using b4 to send unrelated patches as a separate
+> mail thread, using git format-patch / git send-email.
+>
+> In this case, the corresponding patch to mke2fs is pretty simple, and
+> I've already pushed it to the e2fsprogs git repo:
+>
+>    https://github.com/tytso/e2fsprogs/commit/6d9033ff854eb346746176f43aa063137275d4b1
+>
+> :-)
+>
+> Cheers,
+>
+> 					- Ted
 
-It appears that the drivers/net/ethernet/ti/am65-* files do not fall
-under any MAINTAINERS entry. Please add one or extend the existing CPSW
-entry as the first patch of the series.
+Thank you for the adaptation in mke2fs!
+
+
+Cheers,
+Baokun
+
 
