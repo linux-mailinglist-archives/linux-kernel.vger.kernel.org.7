@@ -1,159 +1,155 @@
-Return-Path: <linux-kernel+bounces-897537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A288CC530B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:31:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8957CC53843
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE27E34DF93
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911BB425792
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227A267F57;
-	Wed, 12 Nov 2025 15:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA85819C566;
+	Wed, 12 Nov 2025 15:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiiUja3v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H4y0cpRa"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC791339A4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426611339A4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960728; cv=none; b=jTYHm21JmGBVQRX3CL1JkbsixAVL8MtbCuMQGfK7sAND7WlZ6UKh8k0fxoscvMKB8LGEZGEwcQ0/J8fgebUSrwv5DbA0oTRP8h0+guC8eWDDiBvclmeoHBtilcH9oqJKZWyYh3cex2t48RsdtS3v7033yyOU0cViT5g+rvAmAW4=
+	t=1762960832; cv=none; b=tkVgAwnHpDfn8ETE2qCNwRM72hdca06j3+JBCI7DGGEvoTiNEcX/hYZyJogGqZPqNA2r9tVp8lEQtq4deTP0VXLzrCDytSw5w4QI2jtBxSAdwasWnxovQKNtSsSedsgTgm75OcJw4XnK3MS/DN+7Dx431zYsq82ZwLqvxwJSr6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960728; c=relaxed/simple;
-	bh=iLnxgFyU1QDbMTELG3Fxbzkq6isaDRxHBg0vdYSv7AE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oV6r4fMhbt68RMWN0zoT5FeVQfUXhFe1TOr243VKUo54inTZh98F1lncJF6hxOk7lRqwmOTkLchuat+L6jzwyv+icAw8saym3eYGRlNFGJBBqFA0Dd82qfACIix+K5osZRGaEidHTE/+3w4RZYtttCX71AjNBlXR6nENaGPySWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiiUja3v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C85C4CEF7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762960727;
-	bh=iLnxgFyU1QDbMTELG3Fxbzkq6isaDRxHBg0vdYSv7AE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fiiUja3v+vFcmSw4Q0GFwzo3fqUmohUje6NewY/PGyV8NhiY4wHdlmdNa0Xy2QF9k
-	 YijfBlZAchxESyHE4k1iN/Wdeej5gEemMEqrnPInKMg7XFElHj7DoyMiczr6peW+wx
-	 4izTbgyGFuWgV24hvUwztPJGHbLuyodUhEzAFL7/ZVugSE3Oi0SSY4jpPCMsLt76y1
-	 ZKF3vC8Cp0qHY+ciUhuKZiJuA+HLjMfaR3UmpcN3ZROkgkxL+fBJ1gAggvm53w9lQu
-	 o/CbfCbxJM1AcoHqDGhTCFx/SnwXhd/kVdMjSPqz2eaR2itGzB6lxnYT4S6Bc1qRRI
-	 1iw9HHpHUD4hg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37a3a4d3d53so8802221fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:18:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUJXnGilQRXk+I0yYmQilb3XplUe3mQ116g3NqbKDXnXXCqfdSUH96zAz43bA6cLZwxfiI0owQdz0k56aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDYmOkVfZeasO5IJiyPTHXuUQ+79sQT6eD8wsYZc2C/q7mg/be
-	jXyY+l1hKcLNZu3keVhhfUcPt2JZMySa8TM0PKk+QogvMR6fgSl2V+cKvSd/OE4pp38xa3EE1jN
-	pMOE87fx1LPBhvo4sK4YlkqxfGQtnxmY=
-X-Google-Smtp-Source: AGHT+IEZJNYM8RSAWY7JhY3msblJGctSWnuxWyOr/XKZCDnEvnzTK0CVMbYL+FXUVQmYYZDS5c4FeflgFcwTg/j1yso=
-X-Received: by 2002:a2e:8a90:0:b0:37a:5990:2ba8 with SMTP id
- 38308e7fff4ca-37b8c39eb6emr7262651fa.23.1762960725360; Wed, 12 Nov 2025
- 07:18:45 -0800 (PST)
+	s=arc-20240116; t=1762960832; c=relaxed/simple;
+	bh=rEpygOMMw7NwEYesZSUo2zkOakUI/YYLib06u9nMkGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PkTPHTf0nv8+1cM4dVGX0nQoju3D3iY5p9rHzIjMytd5nOWTHKBqlS85dqYOTqk8NknVVJR70I++sIRDy61N1HyvqPAMnqtN4Wy17+kKre56lmE5V4cyCk/w9jDsh5rX2iqpH0aRueV3H/ft4HuwHs7lb77YbnrB8zrmMHp1y9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H4y0cpRa; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47758595eecso5157495e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:20:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762960828; x=1763565628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fP98tE+6C4+JA6WXZcx1VIO3VTsbvfDFJnIQEdGi7xY=;
+        b=H4y0cpRaLOTzhfKePTQ9WT5Uzjh+Se4UHUzXACXmb+odLUQYVvNINmesjBRo/StF7C
+         6smS3xuwmBglmHTV9IMdSeS2zzkHrsRUBCpdXk9oezdtU1zhjgz+fRhpLoh8M4TXm6KM
+         9+uNNzRXOXSJ5nRp8qo6WSX7boxbL2yt/OWkIFPZZXv7uw4rCTDmHXV4cuCmQAzDVDTw
+         xhO9RRATPKhtYBK7i4KYK/it/Lr6oN5ZyQUiK75zSkgqsfiVyYDGdoIk2LjZBNPXkBgq
+         yw6d2FSYF7txUXsrNif1QBU88z+jqQ3XWg+fE6Cxr+UFRIjmae8tDV/1JN/UFwabAUyh
+         Xo1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762960828; x=1763565628;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fP98tE+6C4+JA6WXZcx1VIO3VTsbvfDFJnIQEdGi7xY=;
+        b=IrnqNLQr6q0eqxX6wie9joAcdkkVrAWqxrpBIYzz/YbS1FE1/pYcNlB0/Mrffrc2qP
+         19IAF6nBOsX9x7oHA1SyVnUIjfkce9VdxSTtBHvTZ6rwOF1mcZ0hLLwPT0PRbkTdtbTx
+         1NxfheVPA6pJfGOmmWwF/IknAlgkPNcMzknT6hbZJ2I7lKD15QcMK+6JXT+Ve/RhMoVt
+         IUIdg/8kWW16+XpHofKhGxX89OuJFGv4UQnJ2lWFIPcq8t9jml6KAz1NBombLaYhh9b2
+         oPLHCOF0QwQGu+i7KTe08DyHGJqrGrYCKhYX0gh362jKuoPMcfDTfSxKmyZsuUt/t0lD
+         C4iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNsRGjrCpQh4ykEyuVTrQMlTYE7LeAte6lIggZ9ds2LKLbN44uD988rTm0IYY/eJ2Uw3vpaz98yGP80Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHWG5m94yMyBS3Qspfa2mmTOUfUseQ2Cpjr7IFxCPh6YD4h+Qq
+	r1YwmctKg+Npgcpdcl52sK/lFNG5CGq/YEr3fzEO6QWlaxINXZTsSvu7mSyejao4IuFAlzSknaV
+	5SuSJkcs=
+X-Gm-Gg: ASbGnctSB3yCnAngOkzinPOcaK+vICBO1eGP+KAezh5v0gxrYSvlc9Iea/NK9H4C+Wu
+	fFe+2vZIeBBPHGEnMgzC4tH+zgjJnkqv+bxTNnJFqvI0BjQbhZNmdw+wi925F7fMigGVOaKMe6P
+	VoioAxah86qtDFdR6BcN+HtLn4eIaa1w+2zj1Tz52LyHaf4opMKbsyHjytkvLwJ1KfO5eTCZPOC
+	kVoSbePdjhgsoeKMh2P1VMv/E3WWrFrfaKJGEpiwk+zSsdy/9eY4/4qNSbNvu1i9rmvM2hCMD4C
+	TjlBK/1NhS+RWIi2X9PmmW3yI6Q2kRT0DU36MG138jNZEGHl+TosyF2rpX/1vsd4D3vCDDVOMAi
+	T1buViKQCNEEDdWZwWjySEo9IesRs1dNVNC1gldviP0D6Tx9TpLDnZrWHHdb/9IkRlvjYXKX0ZP
+	Eii/Blcz7B80vL2+8ypyCAYUoMwrcwkg9Kw+ycEeUG66D/ESMQcK4w
+X-Google-Smtp-Source: AGHT+IEprFPstSQ+3E3u6YiNYfO4Gol0Ya3k5yap0VxtuJKCAKc39SIMvK5oEgD93PdAZoZSQeoVgQ==
+X-Received: by 2002:a05:600c:3511:b0:46e:32d4:46a1 with SMTP id 5b1f17b1804b1-477870b9825mr35270655e9.22.1762960828563;
+        Wed, 12 Nov 2025 07:20:28 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d? ([2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-477889bfda6sm16495655e9.1.2025.11.12.07.20.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 07:20:27 -0800 (PST)
+Message-ID: <a964500b-3363-456a-bfcc-38ec289cc57f@linaro.org>
+Date: Wed, 12 Nov 2025 16:20:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com>
- <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com>
- <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com> <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
-In-Reply-To: <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 12 Nov 2025 16:18:33 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkATy8eQW1W11WM4a6PnYbNwFNrApQpl2tGvWjez9wDd66g-WVyWrnM5Mw
-Message-ID: <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com>
-Subject: Re: [PATCH v11 4/9] x86/alternatives: Disable LASS when patching
- kernel code
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org, 
-	Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Sean Christopherson <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] clocksource/drivers/nxp-pit: Prevent driver unbind
+To: Johan Hovold <johan@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20251111153226.579-1-johan@kernel.org>
+ <20251111153226.579-3-johan@kernel.org>
+ <6336a324-3597-4726-b2ff-fe0f561c59bc@linaro.org>
+ <aRRpFWfgz0OYpdWy@hovoldconsulting.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <aRRpFWfgz0OYpdWy@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Nov 2025 at 15:58, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> On November 12, 2025 6:51:45 AM PST, Dave Hansen <dave.hansen@intel.com> wrote:
-> >On 11/12/25 05:56, Ard Biesheuvel wrote:
-> >...
-> >>> it looks like we would now need to toggle
-> >>> CR4.LASS every time we switch to efi_mm. The lass_enable()/_disable()
-> >>> naming would be more suitable for those wrappers.
-> >>>
-> >> Note that Linux/x86 uses SetVirtualAddressMap() to remap all EFI
-> >> runtime regions into the upper [kernel] half of the address space.
-> >>
-> >> SetVirtualAddressMap() itself is a terrible idea, but given that we
-> >> are already stuck with it, we should be able to rely on ordinary EFI
-> >> runtime calls to only execute from the upper address range. The only
-> >> exception is the call to SetVirtualAddressMap() itself, which occurs
-> >> only once during early boot.
-> >
-> >Gah, I had it in my head that we needed to use the lower mapping at
-> >runtime. The efi_mm gets used for that SetVirtualAddressMap() and the
-> >efi_mm continues to get used at runtime. So I think I just assumed that
-> >the lower mappings needed to get used too.
-> >
-> >Thanks for the education!
-> >
-> >Let's say we simply delayed CR4.LASS=1 until later in boot. Could we
-> >completely ignore LASS during EFI calls, since the calls only use the
-> >upper address range?
-> >
-> >Also, in practice, are there buggy EFI implementations that use the
-> >lower address range even though they're not supposed to? *If* we just
-> >keep LASS on for these calls is there a chance it will cause a
-> >regression in some buggy EFI implementations?
->
-> Yes, they are. And there are buggy ones which die if set up with virtual addresses in the low half.
+On 11/12/25 12:01, Johan Hovold wrote:
+> On Wed, Nov 12, 2025 at 11:00:05AM +0100, Daniel Lezcano wrote:
+>> On 11/11/25 16:32, Johan Hovold wrote:
+>>> The driver does not support unbinding (e.g. as clockevents cannot be
+>>> deregistered) so suppress the bind attributes to prevent the driver from
+>>> being unbound and rebound after registration (and disabling the timer
+>>> when reprobing fails).
+>>>
+>>> Even if the driver can currently only be built-in, also switch to
+>>> builtin_platform_driver() to prevent it from being unloaded should
+>>> modular builds ever be enabled.
+>>>
+>>> Fixes: bee33f22d7c3 ("clocksource/drivers/nxp-pit: Add NXP Automotive s32g2 / s32g3 support")
+>>> Signed-off-by: Johan Hovold <johan@kernel.org>
+>>> ---
+>>>    drivers/clocksource/timer-nxp-pit.c | 3 ++-
+>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clocksource/timer-nxp-pit.c b/drivers/clocksource/timer-nxp-pit.c
+>>> index 2d0a3554b6bf..d1740f18f718 100644
+>>> --- a/drivers/clocksource/timer-nxp-pit.c
+>>> +++ b/drivers/clocksource/timer-nxp-pit.c
+>>> @@ -374,9 +374,10 @@ static struct platform_driver nxp_pit_driver = {
+>>>    	.driver = {
+>>>    		.name = "nxp-pit",
+>>>    		.of_match_table = pit_timer_of_match,
+>>> +		.suppress_bind_attrs = true,
+>>>    	},
+>>>    	.probe = pit_timer_probe,
+>>>    };
+>>> -module_platform_driver(nxp_pit_driver);
+>>> +builtin_platform_driver(nxp_pit_driver);
+>>
+>> Do not use builtin_platform here. You can add the tristate Kconfig
+>> option for this driver, I tested it.
+> 
+> As I just commented on the cover letter, that's not relevant here;
+> builtin_platform_driver() only prevents unloading a driver built as a
+> module (which is something we want to prevent for these drivers).
 
-To elaborate on that, there are systems where
+I see your point, I agree. That is something we want to prevent for 
+drivers having a clockevent.
 
-a) not calling SetVirtualAddressMap() crashes the firmware, because,
-in spite of being clearly documented as optional, not calling it
-results in some event hook not being called, causing the firmware to
-misbehave
-
-b) calling SetVirtualAddressMap() with an 1:1 mapping crashes the
-firmware (and so this is not a possible workaround for a))
-
-c) calling SetVirtualAddressMap() crashes the firmware when not both
-the old 1:1 and the new kernel mapping are already live (which
-violates the UEFI spec)
-
-d) calling SetVirtualAddressMap() does not result in all 1:1
-references being converted to the new mapping.
+Even if the core framework will prevent the module to be unloaded, we 
+can consider these changes an additional guard.
 
 
-To address d), the x86_64 implementation of efi_map_region() indeed
-maps an 1:1 alias of each remapped runtime regions, so that stray
-accesses don't fault. But the code addresses are all remapped, and so
-the firmware routines are always invoked via their remapped aliases in
-the kernel VA space. Not calling SetVirtualAddressMap() at all, or
-calling it with a 1:1 mapping is not feasible, essentially because
-Windows doesn't do that, and that is the only thing that is tested on
-all x86 PCs by the respective OEMs.
 
-Given that remapping the code is dealt with by the firmware's PE/COFF
-loader, whereas remapping [dynamically allocated] data requires effort
-on the part of the programmer, I'd hazard a guess that 99.9% of those
-bugs do not involve attempts to execute via the lower mapping, but
-stray references to data objects that were not remapped properly.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-So we might consider
-a) remapping those 1:1 aliases NX, so we don't have those patches of
-RWX memory around
-b) keeping LASS enabled during ordinary EFI runtime calls, as you suggest.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
