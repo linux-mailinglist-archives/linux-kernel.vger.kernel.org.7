@@ -1,252 +1,218 @@
-Return-Path: <linux-kernel+bounces-898197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A0CC548C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:08:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773BDC548B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10B90347ABF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:07:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57A734E1061
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F8B2DEA80;
-	Wed, 12 Nov 2025 21:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1152D8393;
+	Wed, 12 Nov 2025 21:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OpapdDNA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Up1JNdmi"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A92DBF40
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1A2299A84
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981663; cv=none; b=EAtlrmD7V4bo4gulzWXS8XokU4zw6nRLc+7KBsQXJpn92zrvgrynjIZYiqCKKvOIwdFqYgq+qpKa5bWHxiz/0EA94LlHYaJ+ss3lEjGqB4104qNbRslh9tDRmdcYpJQM5/ABjCm6furbAc+6yncWQxrl4pamsDQi6SICRVHG42Q=
+	t=1762981662; cv=none; b=ijpI90Y4xHjPf+KyR9XL2WhW+PPsWgU4lWV6emn4TlokelbTIpQpE3720CvcDVU9vWn4gSIUKpkPqQMGigvgnP+/N9qTRap37tuOG4KlkxGJFqMfDA4PJedAgxExUoAgAFmRqCEoZa3h/i9Has7MFyYmPKafNnXpfKRv8Fg3Wog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981663; c=relaxed/simple;
-	bh=u8q2TZF20ibeYFuY8h4yCLkgQDj7Xrhx2gKQ62/nSkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dppwb/zwk80tr58MbWKqJQGeBRpYkyQxLHuh1DBMKWIUXAotSo+AMNiQT9/h6+QeulMuQeI+JpwDzcMZKlaGmmpo90nAqgtSiuhzTFxhhoy2f2pG5ss4cRFcMN1zV2/f9Oy3X9CO6pk4TzeF/GFH7bWJvWI/v+xOgsMhsl+YE8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OpapdDNA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25F5C4CEF7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762981663;
-	bh=u8q2TZF20ibeYFuY8h4yCLkgQDj7Xrhx2gKQ62/nSkk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OpapdDNACSR267OhJbCyOl0GSq+kEctnyi539mp5A4flj8Ce7BO61hi/+/0SJpSUM
-	 uVXtO38jP7N/CfC2ZCzyJB5mebDwIfaWtEBUyYmlym08Qtwb1yOzbaa9nHSVkXYPIY
-	 sQ83RtymazNV4l6Zu7K9C97kbdPYBAwkrbqJZVzJDUqSw0wHsJP8/MB5KCotDKpl5V
-	 7e6l4aMpnMO1PuUhdldqzMOTgmU+xS/sH68Dh355JbLnZjoOb+fcyiq4xLp97EOaB5
-	 dMuwj1YiVxJ0AruPNEd0bwOhZTZCtiGoeS0BZhu4z2BG+jClzJDtNfBgMr+H91qFgl
-	 lZLhx5z41+Dow==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so148498a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:07:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUqkokGFLFrHzVuQcpTUIqKTBhg4NceL6XG5EpRbE1pJM2xI02YMH4971M9bTPj54cJSdR7NvwTB3izb4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6ixqO5Zed4yZZoqPDTZBbjUriu3Dsu7hNZKabw0zO4nNy3gSW
-	qXzvvUdNJN4AD+Y53FqkuRNwJxDqoKAtnVb49Tv7DxgDx5hoE9oLENuo6+pp4qFquiTlo13mhZc
-	9PUe9xVbnKA4H3kyeTo+E0KD61+HpGg==
-X-Google-Smtp-Source: AGHT+IEIy21Sb3B7FBrgAI8SVidk1uSmlkEpW+/mXMU6zQinRFFusx79rk2YkYD+SPkgL7pLFxsxRVnlBhzaVvKVnfk=
-X-Received: by 2002:a05:6402:2106:b0:641:27d8:ec72 with SMTP id
- 4fb4d7f45d1cf-6431a39656dmr3803888a12.4.1762981660959; Wed, 12 Nov 2025
- 13:07:40 -0800 (PST)
+	s=arc-20240116; t=1762981662; c=relaxed/simple;
+	bh=zO1tn0kzmFWbDQVibNc9JCshb0yeiQ/8QxyO7P2LQ/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OdiAi6D23pZnNSYl4Np4wpNFsf9OWBySWEpWjpx3HWNd1vBzXQHtvaoruLHHtDkcGW4rshj+7UD9llxY8qb4iSbDwJOePxh26iFUVmqaKPnkPm41D/n5O5lW9gqw2Fmc4Vz/auU8T+lUOkd2bQkFirpt6hKaA5NqPxW0mr/W4j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Up1JNdmi; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b32ff5d10so794650f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:07:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762981658; x=1763586458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pffp4YJmgEPVehQhCQRpQbir/4Kf8MhgjOlBoJD1oA4=;
+        b=Up1JNdmirOvyD4YhMfjZdEkl46/RcVydq7wDZlx41/sj3aPOPeUtQvPZviHJNPx1rn
+         oLDjPAmn+aZNXJaGL2iRzyZiba+xScTawopaSeH4yTRcQPBNUHqcVe6kwVpqeQLliRCX
+         FOia5/RLzs/KK8IGyknPh7tGU5obd1trUDZ96qLrHZkiT+hVZH9gUpprENSpR5+ont21
+         RFBuaJfFZcz5flTBbWXCfJcsBHpu1jMNtKxUIVFZHWlpcUck+7YiU/FkRin1vfpeT1OQ
+         glNiVYNk4ESQ3aUufWhC5a5Y59nSEJ+kEJO2xUazHqO8vS1Zq/Z5JtQmdBLNwDefM7hX
+         8ccw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762981658; x=1763586458;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pffp4YJmgEPVehQhCQRpQbir/4Kf8MhgjOlBoJD1oA4=;
+        b=FWJemd8bqh++bJA2aqTyiAr9gQ5mYT0kOZVZXN5+RVmmsWQeop+UXTqVysgWdOCkDZ
+         A6cMue+ZmBFb7FlPZjeH407Y8n9VY0rZPsO1+RWqS5AHvbmQrVg4fwwnaPybUHM4wUWx
+         WtTLm5S+aKM1njx8LmGonHEmieVjVs0tMjV1hZQXhYrC8Yxvbr81h1ac1l4ONCjokCWj
+         w+Win3KHBKASIr6r5JokfC6QuSIDIKdX2MlSkqE7SuN6ieYcIekMrc7+AznfeRVLI7My
+         1kg5rZULyTVwPOBzOML7VMwXUNcvC/ZDc50T+DkwIF585cT4ycJ4f48vY8gfAuMOtE9t
+         CyDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWN1YpT5iLhberAJ0LDwT3IOZBYWn7U9N3/jOlNOHTLSKy+jBQzm8mcCJ/2ex5vGD4sq5mrLX/I/FhDFKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwg+kd81xy94+FM8cWzIlAxN+Mr1gbl9E6zYaf0ZXxQdhs1AAH
+	sDiLYr6A6SJs5TN8/GlAcwpsng5RTBGVvU9iJK1q29/tVjJdNbpa6GXpxwlev+oTZ34=
+X-Gm-Gg: ASbGnctPKSXPAT2pwrxSCC+Aeabice1X531mIoPKipLJT1cGKxV40ONeWLJGQn5QMQM
+	uwOsptdqXsJoW3YaD3zsBqpft4SgxpvBMGzI09n78xv5OscCpoAT/AI1iRtnfc9t+87KQRj4+U+
+	EcLFrJ9rj/sVfFP3Z7j0102TcB65QcsWGcNfPyOEDiz+v4rlyc8e50I1eQywny23Z75/HeZtydK
+	x9XDiQKmeRR1Cj6kOpYL/+nXWQKl7NkNs7QD3sSfafW9I6/Te007SxP6+mzsS7e+KF67Fqywivn
+	5B+qkhAvWCk8qXZSSvaGXvMvRwCC2s3Gvu6IJQepgSW6k+pO26b7IPWDQP6/Wgiwd98lFtNghcd
+	MI4zGWW94+9B1WbkQOogQrZKxy578cH2wKNuqyUA4EHS0vdoX7rMERH9Db8P/ZIVMiQRNDcvX1F
+	UNjQIGcUs+Ar4y1P/wXgRqwx65F8rL
+X-Google-Smtp-Source: AGHT+IFLR/PY6esgcwfjs4A9FCu/jTJNK1jUYqNqnAfA53Hlv7rJfDhMGwHeBPiUNwQ6IqLyeKwhHA==
+X-Received: by 2002:a05:6000:2911:b0:429:cc35:7032 with SMTP id ffacd0b85a97d-42b52821778mr809980f8f.23.1762981658086;
+        Wed, 12 Nov 2025 13:07:38 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2376f6sm972395ad.21.2025.11.12.13.07.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 13:07:37 -0800 (PST)
+Message-ID: <56d545ff-3b72-430b-86e9-fd630dbac942@suse.com>
+Date: Thu, 13 Nov 2025 07:37:33 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
-In-Reply-To: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Nov 2025 15:07:29 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkhxcdj-NsfzZ0QRxOltuG2xQHMKmcPZ2R7l6HHsGWU07rxfsx54qGm66Y
-Message-ID: <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
-Subject: Re: [PATCH 0/9] Add support for handling PCIe M.2 Key E connectors in devicetree
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/8] btrfs: add orig_logical to btrfs_bio
+To: Daniel Vacek <neelx@suse.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251112193611.2536093-1-neelx@suse.com>
+ <20251112193611.2536093-5-neelx@suse.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20251112193611.2536093-5-neelx@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 8:45=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
-<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
->
-> Hi,
->
-> This series is the continuation of the series [1] that added the initial =
-support
-> for the PCIe M.2 connectors. This series extends it by adding support for=
- Key E
-> connectors. These connectors are used to connect the Wireless Connectivit=
-y
-> devices such as WiFi, BT, NFC and GNSS devices to the host machine over
-> interfaces such as PCIe/SDIO, USB/UART and NFC. This series adds support =
-for
-> connectors that expose PCIe interface for WiFi and UART interface for BT.=
- Other
-> interfaces are left for future improvements.
->
-> Serdev device support for BT
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
-> Adding support for the PCIe interface was mostly straightforward and a lo=
-t
-> similar to the previous Key M connector. But adding UART interface has pr=
-oved to
-> be tricky. This is mostly because of the fact UART is a non-discoverable =
-bus,
-> unlike PCIe which is discoverable. So this series relied on the PCI notif=
-ier to
-> create the serdev device for UART/BT. This means the PCIe interface will =
-be
-> brought up first and after the PCIe device enumeration, the serdev device=
- will
-> be created by the pwrseq driver. This logic is necessary since the connec=
-tor
-> driver and DT node don't describe the device, but just the connector. So =
-to make
-> the connector interface Plug and Play, the connector driver uses the PCIe=
- device
-> ID to identify the card and creates the serdev device. This logic could b=
-e
-> extended in the future to support more M.2 cards. Even if the M.2 card us=
-es SDIO
-> interface for connecting WLAN, a SDIO notifier could be added to create t=
-he
-> serdev device.
->
-> Open questions
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Though this series adds the relevant functionality for handling the M.2 K=
-ey M
-> connectors, there are still a few open questions exists on the design.
->
-> 1. I've used the M.2 card model name as the serdev device name. This is f=
-ound
-> out by comparing the PCIe VID:PID in the notifier. Is this approach accep=
-table?
-> I did not use the PID as the serdev name since it will vary if the SDIO
-> interface is used in the future.
->
-> 2. PCIe client drivers of some M.2 WLAN cards like the Qcom QCA6390, rely=
- on
-> the PCIe device DT node to extract properties such as
-> 'qcom,calibration-variant', 'firmware-name', etc... For those drivers, sh=
-ould we
-> add the PCIe DT node in the Root Port in conjunction with the Port node a=
-s
-> below?
->
-> pcie@0 {
->         wifi@0 {
->                 compatible =3D "pci17cb,1103";
->                 ...
->                 qcom,calibration-variant =3D "LE_X13S";
->         };
->
->         port {
->                 pcie4_port0_ep: endpoint {
->                         remote-endpoint =3D <&m2_e_pcie_ep>;
->                 };
->         };
-> };
->
-> This will also require marking the PMU supplies optional in the relevant =
-ath
-> bindings for M.2 cards.
->
-> 3. Some M.2 cards require specific power up sequence like delays between
-> regulator/GPIO and such. For instance, the WCN7850 card supported in this=
- series
-> requires 50ms delay between powering up an interface and driving it. I've=
- just
-> hardcoded the delay in the driver, but it is a pure hack. Since the pwrse=
-q
-> driver doesn't know anything about the device it is dealing with before p=
-owering
-> it ON, how should it handle the device specific power requirements? Shoul=
-d we
-> hardcode the device specific property in the connector node? But then, it=
- will
-> no longer become a generic M.2 connector and sort of defeats the purpose =
-of the
-> connector binding.
->
-> I hope to address these questions with the help of the relevant subsystem
-> maintainers and the community. Until then, this series is *not* mergeable=
- as a
-> whole.
->
-> Testing
-> =3D=3D=3D=3D=3D=3D=3D
->
-> This series, together with the devicetree changes [2] was tested on the
-> Qualcomm X1e based Lenovo Thinkpad T14s Laptop which has the WCN7850 WLAN=
-/BT M.2
-> card connected over PCIe and UART.
->
-> [1] https://lore.kernel.org/linux-pci/20251108-pci-m2-v2-0-e8bc4d7bf42d@o=
-ss.qualcomm.com
-> [2] https://github.com/Mani-Sadhasivam/linux/commit/d39b81b3ff1ecfb0d423b=
-4da0771925d41648b5a
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
-com>
+
+
+在 2025/11/13 06:06, Daniel Vacek 写道:
+> From: Josef Bacik <josef@toxicpanda.com>
+> 
+> When checksumming the encrypted bio on writes we need to know which
+> logical address this checksum is for.  At the point where we get the
+> encrypted bio the bi_sector is the physical location on the target disk,
+> so we need to save the original logical offset in the btrfs_bio.  Then
+> we can use this when csum'ing the bio instead of the
+> bio->iter.bi_sector.
+
+We have already btrfs_bio::csum_saved_iter, we can just reuse it to grab 
+logical bytenr by csum_saved_iter->bi_iter.bi_sector.
+
+Although that member is only for data writes with data checksum, it's 
+not hard to adapt it for encryption.
+
+But in that case, we may want to rename that member to something more 
+generic, maybe like write_saved_iter?
+
+Thanks,
+Qu
+
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
-> Manivannan Sadhasivam (9):
->       serdev: Convert to_serdev_device() and to_serdev_controller() helpe=
-rs to macros
->       serdev: Add serdev device based driver match support
->       serdev: Allow passing the serdev device name to serdev_device_add()
->       serdev: Add an API to find the serdev controller associated with th=
-e devicetree node
->       serdev: Add modalias support for serdev client devices
->       serdev: Skip registering serdev devices from DT is external connect=
-or is used
->       dt-bindings: connector: Add PCIe M.2 Mechanical Key E connector
->       Bluetooth: hci_qca: Add support for WCN7850 PCIe M.2 card
->       power: sequencing: pcie-m2: Add support for PCIe M.2 Key E connecto=
-rs
->
->  .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++
->  MAINTAINERS                                        |   1 +
->  drivers/bluetooth/hci_qca.c                        |  20 ++
->  drivers/platform/x86/dell/dell-uart-backlight.c    |   2 +-
->  .../x86/lenovo/yoga-tab2-pro-1380-fastcharger.c    |   2 +-
->  drivers/platform/x86/x86-android-tablets/core.c    |   2 +-
->  drivers/power/sequencing/Kconfig                   |   1 +
->  drivers/power/sequencing/pwrseq-pcie-m2.c          | 218 +++++++++++++++=
-+++++-
->  drivers/tty/serdev/core.c                          |  77 +++++++-
->  include/linux/mod_devicetable.h                    |   8 +
->  include/linux/serdev.h                             |  25 ++-
->  scripts/mod/devicetable-offsets.c                  |   3 +
->  scripts/mod/file2alias.c                           |   8 +
->  13 files changed, 494 insertions(+), 27 deletions(-)
+> No code changes other than context since v5.
 > ---
-> base-commit: db81ec30672bb228cd7cd809edeeae661d621f2d
+>   fs/btrfs/bio.c       | 10 ++++++++++
+>   fs/btrfs/bio.h       |  2 ++
+>   fs/btrfs/file-item.c |  2 +-
+>   3 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+> index a69174b2b6b6..aba452dd9904 100644
+> --- a/fs/btrfs/bio.c
+> +++ b/fs/btrfs/bio.c
+> @@ -94,6 +94,8 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
+>   	if (bbio_has_ordered_extent(bbio)) {
+>   		refcount_inc(&orig_bbio->ordered->refs);
+>   		bbio->ordered = orig_bbio->ordered;
+> +		bbio->orig_logical = orig_bbio->orig_logical;
+> +		orig_bbio->orig_logical += map_length;
+>   	}
+>   	bbio->csum_search_commit_root = orig_bbio->csum_search_commit_root;
+>   	atomic_inc(&orig_bbio->pending_ios);
+> @@ -726,6 +728,14 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+>   		goto end_bbio;
+>   	}
+>   
+> +	/*
+> +	 * For fscrypt writes we will get the encrypted bio after we've
+> +	 * remapped our bio to the physical disk location, so we need to
+> +	 * save the original bytenr so we know what we're checksumming.
+> +	 */
+> +	if (bio_op(bio) == REQ_OP_WRITE && is_data_bbio(bbio))
+> +		bbio->orig_logical = logical;
+> +
+>   	map_length = min(map_length, length);
+>   	if (use_append)
+>   		map_length = btrfs_append_map_length(bbio, map_length);
+> diff --git a/fs/btrfs/bio.h b/fs/btrfs/bio.h
+> index c5a6c66d51a0..5015e327dbd9 100644
+> --- a/fs/btrfs/bio.h
+> +++ b/fs/btrfs/bio.h
+> @@ -52,6 +52,7 @@ struct btrfs_bio {
+>   		 * - pointer to the checksums for this bio
+>   		 * - original physical address from the allocator
+>   		 *   (for zone append only)
+> +		 * - original logical address, used for checksumming fscrypt bios.
+>   		 */
+>   		struct {
+>   			struct btrfs_ordered_extent *ordered;
+> @@ -61,6 +62,7 @@ struct btrfs_bio {
+>   			struct bio *csum_bio;
+>   			struct bvec_iter csum_saved_iter;
+>   			u64 orig_physical;
+> +			u64 orig_logical;
+>   		};
+>   
+>   		/* For metadata reads: parentness verification. */
+> diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
+> index 474949074da8..d2ecd26727ac 100644
+> --- a/fs/btrfs/file-item.c
+> +++ b/fs/btrfs/file-item.c
+> @@ -812,7 +812,7 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async)
+>   	if (!sums)
+>   		return -ENOMEM;
+>   
+> -	sums->logical = bio->bi_iter.bi_sector << SECTOR_SHIFT;
+> +	sums->logical = bbio->orig_logical;
+>   	sums->len = bio->bi_iter.bi_size;
+>   	INIT_LIST_HEAD(&sums->list);
+>   	bbio->sums = sums;
 
-git show db81ec30672bb228cd7cd80
-fatal: ambiguous argument 'db81ec30672bb228cd7cd80': unknown revision
-or path not in the working tree.
-Use '--' to separate paths from revisions, like this:
-'git <command> [<revision>...] -- [<file>...]'
-
-This series doesn't apply.
-
-Rob
 
