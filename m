@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-896570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4135C50B34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:27:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DAAC50B25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2899A34A3EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF64E3B5271
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912252DC32B;
-	Wed, 12 Nov 2025 06:27:13 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602692E0412;
+	Wed, 12 Nov 2025 06:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GNvc0dFn"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4252D5A14
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F682DF6F8;
+	Wed, 12 Nov 2025 06:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762928833; cv=none; b=UQF2SAwYu2DnSh6pKpidbNT6mS/hpAW4/kuw4vjS0Rvht5QmVNDR/R1ho4zu8jibU7y92GPr2IQ6SlB0z7VJPjayuSAP36gYYyK2YG2XlGRsFUDtzkUqFmdpPZwMpH8L+2Psi9pndR8QfAvRD2Be7ztRL4Op0gb4I/xCBC3wTdc=
+	t=1762928751; cv=none; b=TxB+P6Vd41R1LT680GjYKU0GTjut7/y1bW2I30MGoRCTrRmGtyxg0vDqutRqzRML0lfxPmhligxZ2Aw64ckWu+KBurA1zh87MXqJFQh3NMglk1ZBnKWNjhi7A0lB21Zd2LjZB3USd4Q8ToV7Gc9WfqwXNxi7WqL2VHKzR55eWr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762928833; c=relaxed/simple;
-	bh=q0x9863NyZPznVGgtSlgo5WmBVe+9hU1zEgg1WnKurQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PcrPOgowEBXm6Lr2nxYKXjCnti1ubwM0y9WS4KvTpWWzn8gVEUi61iB/Bi890/wwwx3s6+I11STaNDXoKpxCoyLjkMFNLohmvsgO5Vt5hrs5NdxRkCBW2B6wnislRIkB0Ma4O+QDMUnWUwQLJO4aLhFt7gRe254H5472E/kh6/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAHoM+uKBRpZD1wAA--.849S2;
-	Wed, 12 Nov 2025 14:26:55 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	andriy.shevchenko@linux.intel.com
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] phy: hisilicon: Fix OF node reference leak
-Date: Wed, 12 Nov 2025 14:22:46 +0800
-Message-ID: <20251112062246.852-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762928751; c=relaxed/simple;
+	bh=V8lpm8QJ4lXgG02nCO8rtalnqI+BYwQEyPvZ0LBvYuM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
+	 References:In-Reply-To; b=jMqhKsCVyyD9RyEBrG05ka2tim4oa9k6A70yYnjvkbDOh7ZLn2wKumlt02nPhudx9sg8P1CGByff44z6LAOy9rEMJtFHfpxFkpmQyIlrKOX0h7zCTDXtgIt1CA7/HQ46GG3nO2wzGXujETBYPE1zw0Eizgd7Bv2S93AtTGndv1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GNvc0dFn; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABKlmTe005808;
+	Wed, 12 Nov 2025 06:25:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NkE3Qk
+	sqEBdmdL/XrDKZg7mI0tsvtwuVamNTFbTzG6c=; b=GNvc0dFndzaY0fzg1ETsQS
+	HeBLiDxYL2qiYQiqOcF1/A4ilj3H2Bq+VWCu5C9MD5X8NZIQojmzhRmoK4snVx9L
+	3mv9z1UzX+gvBiWm9h6qdfmGvOkX3WKIFSjneoz4d2VM+y0VifsZ76qasrLh62vE
+	AoDpOw2qaWa4z6FqkHsUM51rfehiq5W1HX3j/Xc5BG1xpScA6RvZReYGf218tNJ0
+	6IxNPMUsFE12FVytYKFFhLQtwHSrXp8prq8sPWT+CU1NUjuxaGiVj48m5aoBDaNs
+	kCNDjivo8HK2Np9m5SIpI+7jfPOyW/ANHcUKoQ5LyeYKdM4S4DFHLc2cwhZDnsIw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgwyk19-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 06:25:47 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC5mKAV007375;
+	Wed, 12 Nov 2025 06:25:46 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajdjef6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 06:25:46 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AC6PhIB27001462
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 06:25:43 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C4752004D;
+	Wed, 12 Nov 2025 06:25:43 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E58892004B;
+	Wed, 12 Nov 2025 06:25:42 +0000 (GMT)
+Received: from darkmoore (unknown [9.111.61.55])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Nov 2025 06:25:42 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAHoM+uKBRpZD1wAA--.849S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AryfJFW3tF18JFykArW5Wrg_yoW8Xr47pF
-	4YkFWakF4UW3yF9F40vF1UWFyY9an8Ca43A34Ikw4FvFnYyryDXayUXFy0v3ZIyFWkZFWU
-	KFWUtF1UJF4UtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUILvNUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREEA2kUFx1CbgAAsE
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Nov 2025 07:25:08 +0100
+Message-Id: <DE6I2KA0FPCX.IKTZXU74CPDX@linux.ibm.com>
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <borntraeger@de.ibm.com>, <frankja@linux.ibm.com>, <nsg@linux.ibm.com>,
+        <nrb@linux.ibm.com>, <seiden@linux.ibm.com>, <hca@linux.ibm.com>,
+        <svens@linux.ibm.com>, <agordeev@linux.ibm.com>, <gor@linux.ibm.com>,
+        <david@redhat.com>, <gerald.schaefer@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 04/23] KVM: s390: Add gmap_helper_set_unused()
+X-Mailer: aerc 0.20.1
+References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+ <20251106161117.350395-5-imbrenda@linux.ibm.com>
+In-Reply-To: <20251106161117.350395-5-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4gwAgylh-BBYJQdN823d49WrTVNulepN
+X-Proofpoint-ORIG-GUID: 4gwAgylh-BBYJQdN823d49WrTVNulepN
+X-Authority-Analysis: v=2.4 cv=VMPQXtPX c=1 sm=1 tr=0 ts=6914286b cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=Y6CA1nhfU0GbWGwoTcwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfXzqbXUMdn6okH
+ fxFdN8VDJtVWeEwunpovR7oCjr45qPYsoz2nND6W5wOmmEpxsyGGYz+I2GXMGDNwbVk4m8A/z8r
+ TIXKV3jbkbakv1btqmLfUGl9ungPllHQHK/+w/MPmwhwIc1D3uS2PT331OczaT5UJv7CXAf4rlu
+ oxRbABnc3PQ7MxONpbEnmQf8N7bvz7V0hKpgWc05QB4yRm2Qu0nJNEuFEbg5l9MEFKiU8eMjKpR
+ y8fGB8vtlX/zq97LZ4BJ0yhQK6KpHQM93MycniTj8/RDDRXL1CaqTWj3ODjiH/Kk77UddhgzFtR
+ MwT9JKtE1bXAARd+gWPReowPpN+YEgGRgNdUDlbD1JEkCLL07m0PC9BZ350rRWt608m+aEK2c9O
+ ht9XLqVHDa7b0zb8B06SmpoCfWSWGw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_01,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
-hi3670_pcie_get_resources_from_pcie() leaks an OF node reference
-obtained by of_get_child_by_name(). The reference is not released
-on any of the error paths or on successful return, causing a
-reference count leak.
+On Thu Nov 6, 2025 at 5:10 PM CET, Claudio Imbrenda wrote:
+> Add gmap_helper_set_unused() to mark userspace ptes as unused.
+>
+> Core mm code will use that information to discard unused pages instead
+> of attempting to swap them.
+>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Reviewed-by: Nico Boehr <nrb@linux.ibm.com>
+> Tested-by: Nico Boehr <nrb@linux.ibm.com>
 
-Fix this by declaring the device node with the __free(device_node)
-cleanup construct to ensure the reference is automatically released.
+Acked-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-Fixes: 73075011ffff ("phy: HiSilicon: Add driver for Kirin 970 PCIe PHY")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/phy/hisilicon/phy-hi3670-pcie.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/hisilicon/phy-hi3670-pcie.c b/drivers/phy/hisilicon/phy-hi3670-pcie.c
-index dbc7dcce682b..fc4f50aa31cd 100644
---- a/drivers/phy/hisilicon/phy-hi3670-pcie.c
-+++ b/drivers/phy/hisilicon/phy-hi3670-pcie.c
-@@ -558,11 +558,10 @@ static int hi3670_pcie_noc_power(struct hi3670_pcie_phy *phy, bool enable)
- 
- static int hi3670_pcie_get_resources_from_pcie(struct hi3670_pcie_phy *phy)
- {
--	struct device_node *pcie_port;
- 	struct device *dev = phy->dev;
- 	struct device *pcie_dev;
--
--	pcie_port = of_get_child_by_name(dev->parent->of_node, "pcie");
-+	struct device_node *pcie_port __free(device_node) =
-+		of_get_child_by_name(dev->parent->of_node, "pcie");
- 	if (!pcie_port) {
- 		dev_err(dev, "no pcie node found in %s\n",
- 			dev->parent->of_node->full_name);
--- 
-2.50.1.windows.1
-
+> ---
+>  arch/s390/include/asm/gmap_helpers.h |  1 +
+>  arch/s390/mm/gmap_helpers.c          | 79 ++++++++++++++++++++++++++++
+>  2 files changed, 80 insertions(+)
 
