@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-898215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F927C549C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:22:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AC7C549D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B97D84E29FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:22:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CF4E1B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CCC2D9792;
-	Wed, 12 Nov 2025 21:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0817B2DAFD7;
+	Wed, 12 Nov 2025 21:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="am92Mmc6"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="l4sYpKrF"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953352673B0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1535CBC9;
+	Wed, 12 Nov 2025 21:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762982540; cv=none; b=mbfWgbBaQbvcIX5TNHODJmxry7aCnMMpIYxcUpNTIPmoG7rRvwnGiQJZZgJ5uIcTQNBwaQdvBrvY+4gWyA51qX0qR/4dmHLvof0E2/KMZJX4s9yrECU/q/hWn8FrZFj4OPfRAY+ANW1bkInFMMBMzkrvifzochh4EDXj8J3oraE=
+	t=1762982770; cv=none; b=bG5zmyxH1HBnkjsu/vxuMwN+1igxF83N6v1v2Glxl7/nY9NmU8gJw89DpK7+Bsg+LVvXxRYv4XnTgyGI13bCyHYUsUVTxgnI66TcRoe2q/77NfCCbGV4dIdHX8MqnWQTmQwEeuFPNx0vg98bK/kL+KEI+dlFWuk+QNuGulpMpZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762982540; c=relaxed/simple;
-	bh=4SgRlDDvU5istjyUir1XwDs733sVp33z3Rp103M2gAQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=jjw5XHP3bORRc2cI9SOK80e1AAExdwFUPfS896HrjvbYqur7ic7jT4NySD5Heo+X7vedbDBVp921SSFdhRQZ007xqU0aqLHiWf2WCS9vaIoBSqkDq/x/X7wdni9pfLWN85jkT34vchdG4UIMkLrA5hLCFBn80ghFn7XoQb3QlPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=am92Mmc6; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762982526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4SgRlDDvU5istjyUir1XwDs733sVp33z3Rp103M2gAQ=;
-	b=am92Mmc6V1CmAgaBbJ+aUSSO3USMV7oCACilqoA2O+FCF6/5JIJlOUvyH8rgcfuNMMZSAu
-	7kT2b0mvzdMcQmhqnFG/x6JkWwwuhY2VFfmssN7hit5UIb504pdV/1MkW4rBfLegpt0occ
-	/JuhJ/WilLM64y6Y23zmRhI/FjboKak=
+	s=arc-20240116; t=1762982770; c=relaxed/simple;
+	bh=SioGFd0C7lxIkSMsxeKFwmjfLz0wr4SniCII2cKk08c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tSwOrHQiUSE3zx8wV9kOXW/8Prjeeus5XHtNpYfEW3v1pGehQ5TWqpcQmYAF1v8G57sgMBemvlmJovhpvUsHklS76n+NVqaNYNLwNgYkftxqL6NrBm2labcVJADX6V7DYPoZiTcHs/Ow+PaMmsDU4+e5Cq5sqsgp9UJLAnPndHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=l4sYpKrF reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACLPBM51004081
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 13:25:12 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACLPBM51004081
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762982714;
+	bh=8N8ijlsC6KhiWuu4QbjeYznaUps6aMGSWXMdwdxDAxw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l4sYpKrFCrAsnPAUyghmeRvLc4mPQ58O8qoEOPAzhg8jBuxPwak/5xDhgQWN78fys
+	 QSjKjYsvalXcxtnp9HzBoEO9qWXhDIdwf/mwzIQAdam4tfqTBiqVbrOwIPxfHQoLAw
+	 b47MS7R2RlNPoDYTPCOFO35llNJHDLZ32JwpBzoo/VDXeoj8K6OPCRL4/0wrcjT7KN
+	 MdFFSLf5wVH/PLLOFkI8gZtVJTzqi6kqtcDUYAveaXx2MXgCBoAwdEOCse1XChFlwr
+	 q6x51Xhio24ZjGTMigtf82gbuTS5LTfHI4ZHCnNNQzanQco9yEzECdXehZ6JdLUc3a
+	 knoLwc6mpTVhg==
+Message-ID: <d5531acf-cd79-428d-80d1-eb7562cf3922@zytor.com>
+Date: Wed, 12 Nov 2025 13:25:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH RESEND] KVM: TDX: Use struct_size and simplify
- tdx_get_capabilities
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <4a2a74e01bfd31bc4bd7a672452c2d3d513c33db.camel@intel.com>
-Date: Wed, 12 Nov 2025 22:22:02 +0100
-Cc: "seanjc@google.com" <seanjc@google.com>,
- "x86@kernel.org" <x86@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "kas@kernel.org" <kas@kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <79605B58-CBB6-460D-8B72-F648F962E1BA@linux.dev>
-References: <20251112171630.3375-1-thorsten.blum@linux.dev>
- <4a2a74e01bfd31bc4bd7a672452c2d3d513c33db.camel@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
+        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-sgx@vger.kernel.org, x86@kernel.org
+References: <20251112043730.992152-1-hpa@zytor.com>
+ <20251112043730.992152-8-hpa@zytor.com>
+ <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <CAFULd4aMOueG5y3K7F57ryLtt-JUhE-yfsDODC=5+bgjF_gtSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 12. Nov 2025, at 20:59, Edgecombe, Rick P wrote:
-> It looks like you are conducting a treewide pattern matching cleanup?
+On 2025-11-12 02:31, Uros Bizjak wrote:
+> 
+> Unfortunately, %ebp is still special with -fno-omit-frame-pointer, so
+> using "ebp" as _sys_arg6 on 32-bit targets will result in:
+> 
+> error: bp cannot be used in ‘asm’ here
+> 
+> Please see how %ebp register is handled in
+> arch/x86/include/asm/vmware.h, vmware_hypercall_hb_out() and
+> vmware_hypercall_hb_in().
+> 
 
-Just a few instances here and there, but not really treewide.
+#ifdef CONFIG_X86_64
+#define VMW_BP_CONSTRAINT "r"
+#else
+#define VMW_BP_CONSTRAINT "m"
+#endif
 
-> In the handling of get_user(nr_user_entries, &user_caps->cpuid.nent), =
-the old
-> code forced -EFAULT, this patch doesn't. But it leaves the =
-copy_to_user()'s to
-> still force EFAULT. Why?
+        asm_inline volatile (
+                UNWIND_HINT_SAVE
+                "push %%" _ASM_BP "\n\t"
+                UNWIND_HINT_UNDEFINED
+                "mov %[in6], %%" _ASM_BP "\n\t"
+                "rep outsb\n\t"
+                "pop %%" _ASM_BP "\n\t"
+                UNWIND_HINT_RESTORE
+                : "=a" (out0), "=b" (*out1)
+                : "a" (VMWARE_HYPERVISOR_MAGIC),
+                  "b" (cmd),
+                  "c" (in2),
+                  "d" (in3 | VMWARE_HYPERVISOR_PORT_HB),
+                  "S" (in4),
+                  "D" (in5),
+                  [in6] VMW_BP_CONSTRAINT (in6)
+                : "cc", "memory");
+        return out0;
 
-get_user() already returns -EFAULT and the error can just be forwarded,
-whereas copy_to_user() returns the number of bytes that could not be
-copied and we must return -EFAULT manually.
+That code is actually incorrect, in at least two ways:
 
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com> (really the TDX =
-CI)
 
-Thanks,
-Thorsten
+1. It should be conditioned on frame pointers enabled, not x86-64 vs i386.
+2. The compiler is perfectly within its right to emit an %esp-relative
+   reference for the "m"-constrained [in6]. This is particularly likely
+   when *not* compiled with frame pointers, see #1.
+
+A better sequence might be:
+
+	pushl %[in6]
+	push %ebp
+	mov 4(%esp),%ebp
+	<stuff>
+	pop %ebp
+	pop %[junk]
+
+Then %[in6] can even safely be a "g" constraint (hence pushl).
+
+	-hpa
 
 
