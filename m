@@ -1,103 +1,51 @@
-Return-Path: <linux-kernel+bounces-897572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4AB3C5324E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:46:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25A7C53428
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E940F35195B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:31:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DD54505955
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1682C0F71;
-	Wed, 12 Nov 2025 15:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="K7oK3++D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kKiWXRvT"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC0226A0DB;
+	Wed, 12 Nov 2025 15:30:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8442C1593;
-	Wed, 12 Nov 2025 15:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD7B2C11E1;
+	Wed, 12 Nov 2025 15:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961413; cv=none; b=QksUi8G4sNjoofFhL2M/FzQV1LJ1JkzT1fbywhKXoRwbhyzd5ceZ4mKjqUI2XsKXZNM7ZZqh/VHGEL4AL9yS8NmLCRu57H2GNu4YmDmNyHwef/YkxoSDrexCgeNx1kF/d5uhxAcSgWNsnpNCLwZDYRuOb9DYxYCXNb7ZhjH06Eo=
+	t=1762961433; cv=none; b=kj3oIRzoJCciMEAuYmHTtVmzyFrNkDDvK0WD05mFuYxRxE3i6cxLvOxU/UbbWAxaJnCL12r9A5iQKT3IUIhgoOuyohT3ZxG4uO/600loC2o8QsuQ3BmBDuvu+mvTHZIhPQ+JfxPKysNgvt0R7+Ig+yemQxI1qUsCoIDkyL3M9jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961413; c=relaxed/simple;
-	bh=001wyCEKrO3mqSIGETLIkf6QND/1jgkqpT40N1/GwCI=;
+	s=arc-20240116; t=1762961433; c=relaxed/simple;
+	bh=7VFsJfEGUrKyNCaCQcPW8jB+qtLLTYHyL0f1OcWn7bA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DaIhvJby/VcUwHl6dN19tNiuw4vOK0+MwTiRVdlQMBoBVXcqd1LZfJe8Keltm488f9rdT7FYieGZng6LAowP7IlGR9M9NdV2VwOzQ24oahUL2h/m3HsVw3/i3Vn2JdMqoM9Jw+RqWVXYQwXvKkFaBCK2OAWQCWsBhURp1tDt8Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=K7oK3++D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kKiWXRvT; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id 7391C1300CAD;
-	Wed, 12 Nov 2025 10:30:08 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Wed, 12 Nov 2025 10:30:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762961408;
-	 x=1762968608; bh=uArHWjw+8HGdLtfQCvoLqxfM9tZpffpVJb80hFO/JPY=; b=
-	K7oK3++Diz89tOqK4vLR34LtpL4guiH4VYfUr2+FOAlIXPpXTu52xGjdCMr7+t+U
-	MjiMotHHCBsFTLiMcqOQ9axpjzdodCxKkUWvzggFDy+/89yZQ89V/1wLg3GqHOIr
-	+Jl30tNJ/8f/QjG4nrk2qfE42bimaAzGqOFdbc2FOUNzHuyrqb9o2Tva+vLSbjeB
-	GJcmaK4fEoj7X63vBQoeO//hXZheR9nWToGm6BQRjvK3m76KTqGML6Bd0U50VaN+
-	eRY3RjYcoHE08XPl1TWM8cSeN3AruR+k/1NnMpqlaWGG4Su8jn7ZP3pqrwYbev5L
-	7Mjz0hvxpfOYCegPSYOY1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762961408; x=
-	1762968608; bh=uArHWjw+8HGdLtfQCvoLqxfM9tZpffpVJb80hFO/JPY=; b=k
-	KiWXRvTXj4iBFjd5BF+dLoJdwhsiiifYfF9IHuIzMZ889HrKN0swoL9BhCHsjCJ3
-	35l2Hy/MoSMrgGVJjNd1h7OrZBMMPXcupz7iA0rFBnrfYpuC9ntI6z6WUA5h7FIj
-	BU2vAcYGZhwmkhevyU0cd9L59bdTHs0oCnqB1knBOmmCKTjREjoR+r8bYx+W76od
-	wNxnVArchTkgkhuIVYYwQP9iauH6ikxAq1N07qG4eGtSa1fEaqhwt0I1uEMbsUUl
-	vJH0GwGC9ZHLs2ZFJ1CkiNEhgSpqd6NqzK9oC5Lq2B4tr5GkEReOmxLQf+OE3aAy
-	cRAevJwc+kw0G64Agk8SQ==
-X-ME-Sender: <xms:_6cUaSWYGo_-gHTbAw8mGrukwNYtHyVRVZ5xhQclMkJdk3YXSU0u1A>
-    <xme:_6cUaYplbX1atmIhLxyVP-uOv4Jd-pY9661ZK9Djaq-M_vYjzAfUwP6weErWEN0SY
-    aTFeI_D60UHNfXqrVnCOfZo1uxmdajjG-TciH36gF3kBUd3OLbA>
-X-ME-Received: <xmr:_6cUaWST4GsfR4lCo6DjP8CUeYiMVLJrIVrDOGqzK7Tb7p1TyTmy37rb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeggeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucfrhhhishhhihhnghdqkffkrfgprhhtucdliedtjedmne
-    cujfgurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgig
-    ucghihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrf
-    grthhtvghrnhephedvtdeuveejudffjeefudfhueefjedvtefgffdtieeiudfhjeejhffh
-    feeuvedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhgvgiesshhhrgiisghothdrohhr
-    ghdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprg
-    hmrghsthhrohesfhgsrdgtohhmpdhrtghpthhtohepughmrghtlhgrtghksehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehjghhgseiiihgvphgvrdgtrgdprhgtphhtthhopehkvhhmsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:_6cUaa2Uo9m4B140EgKN0QSmdo1sM7m4pFAbPsmqhUyTjxx4fZ9n6Q>
-    <xmx:_6cUaaB5QksbqJfc8OMTw2VYkHX75peXOe1C73ZYYZO_wkdwJXR1MQ>
-    <xmx:_6cUaeim_BiZZLF29jHdpni83Fj1yloWMIPwDMyKUdE_dUpHCB8reA>
-    <xmx:_6cUaUMPptfUksNmez_0H1PHfG1pFpCvK4nZOGZUdCBDgByJ3BIoOg>
-    <xmx:AKgUaRlJBH8Emgdm1l8wsI3hfP68KV44G-IiKaYLpIuoOZhRV6Jwo7Dl>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 10:30:07 -0500 (EST)
-Date: Wed, 12 Nov 2025 08:30:05 -0700
-From: Alex Williamson <alex@shazbot.org>
-To: Alex Mastro <amastro@fb.com>
-Cc: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-Message-ID: <20251112083005.542e0b7f.alex@shazbot.org>
-In-Reply-To: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
-References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
+	 MIME-Version:Content-Type; b=XdzqJBnCte6l+kSO4oeFr1GEVWEtRmGfUsn2PqsktGeqeqI/vZAClxLqXHwKtLpp7thd/t8JTtliBH7cxZ+UV3b54/HxlOoEvAgGm6vKN72D5eynfpNGLqjA/0ipiv7xPO2a0deMlK3SV/aH5PFQbkPeTJmZmC1bRqtpzm5Rx7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 9965713B422;
+	Wed, 12 Nov 2025 15:30:23 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id AC37B20013;
+	Wed, 12 Nov 2025 15:30:21 +0000 (UTC)
+Date: Wed, 12 Nov 2025 10:30:34 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Donglin Peng <dolinux.peng@gmail.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin
+ Peng <pengdonglin@xiaomi.com>, Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
+ funcgraph-retaddr to work simultaneously
+Message-ID: <20251112103034.5ad110db@gandalf.local.home>
+In-Reply-To: <20251112141705.a7f2f79f6d7b058201307e89@kernel.org>
+References: <20251112034333.2901601-1-dolinux.peng@gmail.com>
+	<20251112141705.a7f2f79f6d7b058201307e89@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,56 +54,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: AC37B20013
+X-Stat-Signature: bj43mu58c6ce8wkdpk3z68tpzwdis5y8
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/gHN7wjFfY6NcK1Tl9vFvDbpHUzBRzwxI=
+X-HE-Tag: 1762961421-782756
+X-HE-Meta: U2FsdGVkX1+gFwiHrxTmh9NNMhbUhR/STGPwvRdFNQPfAAC450SqwgPrxSNlSZjeH12u58E0VJiXedhviRrVqvmmlCqviVzbvwWG2NQXkLYWoeLiSrRi7faeh0SXO2/wdN7eecz2cHEZ8+dm+Fz4LR2MSfSmLrBjqJzqGD1lAwEXML4LLS1qtvl1/7APnpyIgCRVwRkRVlr7dsqh+SAxBEOnGf2kCnuVuARtRYEeYbKY084wgu7ig4CK0s9HcaehYspEWqiswPuO0D6lGozT86NzgQIixixjVr7HLDww9JnmGdl0jS0b75QnASiOca02SRKlYtBDS8lEQoosIeC+eg0tVTCmnJLnFg3JN6eQc/VOp8tqIthS/w==
 
-On Tue, 11 Nov 2025 10:48:23 -0800
-Alex Mastro <amastro@fb.com> wrote:
+On Wed, 12 Nov 2025 14:17:05 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-> Not all IOMMUs support the same virtual address width as the processor,
-> for instance older Intel consumer platforms only support 39-bits of
-> IOMMU address space. On such platforms, using the virtual address as the
-> IOVA and mappings at the top of the address space both fail.
+> >  #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
+> > @@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
+> >  		trace_seq_printf(s, "%ps", func);
+> >  
+> >  		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+> > -			print_function_args(s, entry->args, (unsigned long)func);
+> > +			print_function_args(s, entry->args + ARGS_OFFS(args_size),
+> > +					    (unsigned long)func);
+> >  			trace_seq_putc(s, ';');
+> > -		} else
+> > +		} else {  
 > 
-> VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
-> VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
-> respectively. These provide compatible arrays of ranges from which we
-> can construct a simple allocator.
+> nit: you don't need to add braces for a single line block.
 > 
-> Use this new allocator in place of reusing the virtual address, and
-> incorporate the maximum supported IOVA into the limit testing.  This
-> latter change doesn't test quite the same absolute end-of-address space
-> behavior but still seems to have some value.
-> 
-> This series is based on Alex Williamson's "Incorporate IOVA range info"
-> [1] along with feedback from the discussion in David Matlack's "Skip
-> vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
-> 
-> Given David's plans to split IOMMU concerns from devices as described
-> in [3], this series' home for `struct iova_allocator` and IOVA
-> range helpers are likely to be short lived, since they reside in
-> vfio_pci_device.c. I assume that the rework can move this functionality
-> to a more appropriate location next to other IOMMU-focused code, once
-> such a place exists.
-> 
-> [1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/#t
-> [2] https://lore.kernel.org/all/20251107222058.2009244-1-dmatlack@google.com/
-> [3] https://lore.kernel.org/all/aRIoKJk0uwLD-yGr@google.com/
-> 
-> To: Alex Williamson <alex@shazbot.org>
-> To: David Matlack <dmatlack@google.com>
-> To: Shuah Khan <shuah@kernel.org>
-> To: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Alex Mastro <amastro@fb.com>
-> 
-> Changes in v3:
-> - Update capability chain cycle detection
-> - Clarify the iova=vaddr commit message
-> - Link to v2: https://lore.kernel.org/r/20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com
+> >  			trace_seq_puts(s, "();");
+> > +		}
+> >  
 
-Applied to vfio for-linus branch for v6.18.  Thanks for the quick
-resolution on this!
+Actually you do.
 
-Alex
+The rule for if/else is if one side requires { }, then both do.
+
+  https://docs.kernel.org/process/coding-style.html#placing-braces-and-spaces
+
+Yes, this has been inconsistent and my older code breaks this rule, but I
+try to follow it in newer code.
+
+-- Steve
 
