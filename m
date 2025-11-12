@@ -1,182 +1,325 @@
-Return-Path: <linux-kernel+bounces-898150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37309C5474B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:31:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3228BC5475A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 412D03430AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:31:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03144343AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7AC2D131D;
-	Wed, 12 Nov 2025 20:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC912C375E;
+	Wed, 12 Nov 2025 20:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fKQ/aivs"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qd7x3q/d"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010002.outbound.protection.outlook.com [52.101.46.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C32C15A0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762979461; cv=none; b=DiTrVChgfZR20rviRx9Rcw49B/b7b38V3cld9PHz7WVFkOB67+Xbg9OmPx63huiVMHHvJA1uBniSbHNdxsBu+f/EC1cxH54XF5+vL4Ks2moG4Wbr2LMJUXOl6DkUhzqsZUHEQsA9oFaQji3VT7MCi5cE/vTPB8kLWufQl7/Lx5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762979461; c=relaxed/simple;
-	bh=kOM7+BU1YIthguYmgcMSdOiBt9UUIb0U6mtzZrgVI6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b54nQKm/4OsoDBV/EFiHm2fITi7E5vktfXfxbevndGVTQR4fUgqrCbKuubBSbR19K7uSkq1o1Ju1hTs4+/XXBZiicsfU7YzSVH/dhAdm+kBE0oztGEDTS0YXnwMT1lJgEj/B5/jiQykv0kLQityZvSP34HNMNUvRqR7IfF+gvvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fKQ/aivs; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429c82bf86bso55312f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:30:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762979458; x=1763584258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AP2d64WqTFzGeOFQ+5qPzI1m1QRdrXsf+Q314tyBbEo=;
-        b=fKQ/aivsD69B/2AQG4mPWIR6Ppgt7hSBJ1Fh1Ig9copOOByesNCtzXhnzK7iJmDp2c
-         rdnYyVRsMbTlJ5xVOfSao3JNEo0m9cW5mY0V8eFhvKV15uGCrosh1nmeKjKaOl9xhmF/
-         Bv4xfYR808KQf3j84OcVXLnuHuHziFvLp/RK4atGuvm0Nq4uiTgTOK+a8B13XHNdGSua
-         NDzpZogJGl9hpQSYKkl9mDJ4E0Xx12N0xrqyQYlmp3DkuLKShB0v4t4lSN1jLcJ5Hndy
-         cKIOBcTdOj7U2PoAVVEM9t66z19DFSzImJA3duN4KT+bkFmFPqr+h7M7DY5IFXtF/koZ
-         yH1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762979458; x=1763584258;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AP2d64WqTFzGeOFQ+5qPzI1m1QRdrXsf+Q314tyBbEo=;
-        b=pTaQ3CkxoWfPx3WfI1mNVIsRtmZViGs6DAieJOvIj15tmtGz6E43ffGmDW9nSz1iwm
-         4m9oLdFMMWPCTuPD8ibX7HL0splfhssckWJAj+iJGo44NSBbqnVFd2sIIgKWMCxw6Fje
-         lX3j6C7s99OK13XdNJpbKkoSSZ0C+5HcTpS8X+DG8bGogjKkkV8aRC8PJ++5M2yx5WOP
-         fGM7XgGMvIhd2mzFqAdjR3UZxq2D13HqEBk2lK2wcilVkyJs2AxIS9SmMwwm1B2I2OCH
-         15PJ5W369Zy1Xghs6f1c7P2j9aZ04QtQ1M8AQzAqJOeXKMiilUxnSB4YsivENeSsMB/U
-         Rl3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXnlf6c9dvO4LUhk0+95ZZmQ1Ca4/6QmQMDBaZbQhiLQuGGxU+girtmX2KiKnDOwy/tfYbvakYEpEgspg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQxC1FxjIGvXfy4KOrTOP7+JxeyM4yDg7rQJRZDcKLz4nvLuav
-	TwGYMf8+VA027Nf6Pz2pAiUuxsYNS5lSOITcP5O5P31wA72VmSx6HUcIv3FufQ5IErU=
-X-Gm-Gg: ASbGnctJdCqP4nasa+JmCfpcOw3M/Nl3EsPGuSEFY8w9/o9oJ+rS/5ahg0+CXEUDssI
-	+6P/7SgL+dePp27DmoxGTynnIw3c5SW3sHU+x33+0nILH9ScuHHNKkhLB5D/McgGowsIQY6JSSK
-	3C0YTUQEDESgjuP/wf/C1ElBy+ZJFdZkSkC+9Wqcm0Kh8R5PFIqYq/4n0kQ6OsC6WUUJeosdKNv
-	ifqKbUWAhYD+cNN0w14V62RBENyL0fty0f+JJhQZ2ejh13yx8LXQHNSA/q9ai1ApcV7cES6OiHT
-	Krm8LhD8OmVsjskJPQ9ywiMBbpX8KORBM/8QaUV6M6DScwRzHCWP69YAsaZpJuPNxt/ejCn1Uox
-	WvVZtaqxs4vMLe5kVfS3xym/hDX/cGClBeIeYI7bFzoM819YKYqqZhkdTvqNNOnneCJhBHt/cPD
-	vJDXoGljdX3nnH2/R82sHPagHB9qfq
-X-Google-Smtp-Source: AGHT+IH7qoeEeaDSvivNQBoKbfmaf8s+0DfrcnZwbNGDV0U23zo4yYtXfaWYobPSvm+PX/e3u4SgLQ==
-X-Received: by 2002:a05:6000:24c7:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-42b4bb98114mr4420838f8f.14.1762979457689;
-        Wed, 12 Nov 2025 12:30:57 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b750e400fdsm4249900b3a.17.2025.11.12.12.30.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 12:30:57 -0800 (PST)
-Message-ID: <74034783-1715-4020-a22b-45db6cd389be@suse.com>
-Date: Thu, 13 Nov 2025 07:00:53 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E301E2C08AD;
+	Wed, 12 Nov 2025 20:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762979523; cv=fail; b=CzWPl1BO/Ny1r8xlRRhK5MCV4ZA2dEucRS7CRbznxa56QwtTsmzFkZ+Of2H/ljRNt6JNsbqPH0Y+R1PdkX5UnU87LsdOj0xscGcB4zT7W2AdKfLpRbm+hNzicRk48guOvWC6sUbpdGCnIDaTbLnF8y3nGHsQFv+WRyrfnTry1VY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762979523; c=relaxed/simple;
+	bh=M4EkzQkbquA6WJrZCFNWHH/wEIBCdXy9UDDXyf9SC+Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N9bhB+QoyYuvnuDj+9SNlmu6aMq/X4xJQ00IAlw/DRupg1q51Uz6C9zXzpBLesTHfD++BNiSKAJW2QhBSfChfDuXVPDTmVLqMJPN6AYlRIUcOr7whVM+XvSEKtyBSnTDktwMosLnENj2YPX/ZvEqSVz9FyftyLTQjZcAPbA3Ghc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qd7x3q/d; arc=fail smtp.client-ip=52.101.46.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pzM02K20OR1OaqDv2ChKxZ/Odw+cPwYlSrhs9dTXIV1FqQP+VOXhCxKgsUVdljkLEzhq2sIyyMHt7JKXRn0AIdrVl0FpUkvdgqq1zZ2L+t9qymtnbxnzEDVUEm9rVIaBqmbjbMahw3c7kSxTxh+FuTA/v82UxqtjDfJ34BK/swgGkhCT8FOAUftgBMwyTsH9TiaOR6sY9rPrUvMJbUSmcYQ/whZnvhB6hF1Si4uKfjao/SyCePJahjftV1UtD9sO/TK6x6zdR2vKpLVm8vW6mFE3I9jv2tnLNNhWYuceCoOxVvRZ0tsa5bVgYXIQX2ndBD6GoP7tmXlRTXPHBEmf6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cvUX0JH2uCoLfhLjeH+NbDVdP8JQ2VfjBfKbvjaGIEI=;
+ b=eTGUBjBICWz6SxF9Q8xs/zkDG1Y8i/24hVpfqGs/gWCtJAEClVanFXLmAEzxWKXAWNQCy/LihyocnC3aTwlzf/9+FREEBo5l6nbbBRycuoA/dAQTB3ThYJRecmkRduFUMWscNwX1ZBrUaDyG0FXbIQb6vmocd9xzqn7fzcWem3fSXhtXgseDSzZTnEKmanQ+JsjnyV9HC3IyHnGdoUlyjXfEYPLbaMGJH9jcA3HtN13yeuvlwvJCQb0SKmJNXq6V+NNLgokNCZfQ+NruH+8Gpj7xPBW2wyWbDcBKrYR08FP3uR7LK9JuQGPsD7nNngbUrkduU1XFc5EFWLI6lV+84g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cvUX0JH2uCoLfhLjeH+NbDVdP8JQ2VfjBfKbvjaGIEI=;
+ b=qd7x3q/dpFi7+z5gOXAkufF7xMDgaWaolzzyjld0Msw/mpzryGaPYNHB5+ITdz5/WQknMjecADMIJd8zC227U3WnCO3xi/JdIDPzQDMmVuta/pMKO+/iUbw2TZfI+Z3sdMhDzHLwM9O0UrPevSiYYPW0RYctMTJprYvt2uJOS50=
+Received: from CH0P221CA0046.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11d::19)
+ by BY5PR12MB4163.namprd12.prod.outlook.com (2603:10b6:a03:202::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 20:31:57 +0000
+Received: from CH1PEPF0000AD80.namprd04.prod.outlook.com
+ (2603:10b6:610:11d:cafe::33) by CH0P221CA0046.outlook.office365.com
+ (2603:10b6:610:11d::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Wed,
+ 12 Nov 2025 20:31:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH1PEPF0000AD80.mail.protection.outlook.com (10.167.244.90) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 20:31:56 +0000
+Received: from rric.localdomain (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 12 Nov
+ 2025 12:31:54 -0800
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
+	<gourry@gourry.net>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Robert Richter <rrichter@amd.com>
+Subject: [PATCH v5 00/11] cxl: ACPI PRM Address Translation Support and AMD Zen5 enablement
+Date: Wed, 12 Nov 2025 21:31:27 +0100
+Message-ID: <20251112203143.1269944-1-rrichter@amd.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/8] btrfs: move kfree out of btrfs_create_qgroup's
- cleanup path
-To: Gladyshev Ilya <foxido@foxido.dev>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1762972845.git.foxido@foxido.dev>
- <79f3f83eb5f693ad88b0cad9d37e2db214ba1491.1762972845.git.foxido@foxido.dev>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <79f3f83eb5f693ad88b0cad9d37e2db214ba1491.1762972845.git.foxido@foxido.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD80:EE_|BY5PR12MB4163:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c624c86-3085-46ef-15cc-08de222a864e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3RWcm1KMWh6YWlEVFpkb1phRDdXNE03WVVGMDNYbW1FU29MekpLTjRMd00x?=
+ =?utf-8?B?c2lIUUdPSGc5WFJScDJHZ0lFMlJjNWVqSUJlTkxjTzdDV05yQ2lBQjZSWits?=
+ =?utf-8?B?N2RubkRYVGlCMWx1YjBpeGlQcTBCU1IzYm9KK2ExcHhVVlVWQXN0c0F0eXVP?=
+ =?utf-8?B?RnZ2cXhHNHc0THY3dERRaVU2WDBwYkhRNHhtTlFIdHd5NG9ud2RUc0IvWlZv?=
+ =?utf-8?B?S2Qyc3c1TUxTd3FvSE9UVlc2d01XdWdkbGlUUXZGK2IxNUtXMXkyVFpzT1No?=
+ =?utf-8?B?ZmxrcG4zZEdkTWplZExPcHF1bFN4SDNRalh0S0F0VU5hdlNEbHpjOXg1aWdM?=
+ =?utf-8?B?MUQ3RTl3WWZCcTVpOHpLSFFPQlNYWE5KeE1QQXh1dTlSWkE2WUFaSHg3N25L?=
+ =?utf-8?B?M3FubHpwbVdGc2FCbzlHQ0hiMFFCc0NocWpPYzFNWHNoc0tTelU3cDA4TUMr?=
+ =?utf-8?B?ZUpQeXh5MlRnZE9Rb1A1SVZkQTgyWjNYY3JZZjV1TWllaXNVMS9tTVI3MU91?=
+ =?utf-8?B?V3JuWGFHeFJsY2loVHRVdCtldUJVSEVJaU4xRkNRSTRTZUFzTStoaWd3aWl6?=
+ =?utf-8?B?UEViL3hCaEhOYTk2ditiaTdPQ3dSaFF0WWJGRzZzTElpMGVZZkQyNFBFaWZZ?=
+ =?utf-8?B?VzdxblJJYytiWG15aTA2Mmc1MStxdm5ONlRDS1Jod1lqb2pyekpycXFxSUJh?=
+ =?utf-8?B?NmlBQUIvTlBWTldlR2l0eXhCcXN0QzJVZTZaRk1UTWJHcXVDaDVkdjZORUc4?=
+ =?utf-8?B?Z2RucVRHRURNUS9lN29weitseXJVMEVKSzkxeFVyNVFEbmpaeEJWM0swOVFY?=
+ =?utf-8?B?ZFEySUVmMkxUUnVLUTNzUGJKNWlOeUtsa3hoaHpKN3hCeE83NW5HNXRFWWRO?=
+ =?utf-8?B?cUFaRFBMT0tBbFhYZkp3aGgwMkI5K3V4Q1Z1MFlRZTZpZGdURnYwOEYzcC8x?=
+ =?utf-8?B?bnJId2hkdm55NzJDRnhwcmdPalcrWEczMWhmR0ppNzJ2ZStOaWN5MjNTWEJN?=
+ =?utf-8?B?MVovTktNZ0w5MitXZWVnTEdxaERRN28wSGx0NU5SWE0vaUw5djdmcjdOZ3Fn?=
+ =?utf-8?B?T3VmT09vUWZnL0MvaUgyQjIvNWwxY210Z0dhY1M1Y1pDVGJ5Ny8rZ3dIdGtB?=
+ =?utf-8?B?MjlZeGZSY1Vwb0c1cmpHdnhpQzJENThEUzJHeG80TjA4bjBuL0tXQ0k3M2Ey?=
+ =?utf-8?B?TEZHU2lyNDYyaWREVDVNRnJpL2hQSWJiRzFZSnJ6cWxHZVhhYmhrQ2U5MmlU?=
+ =?utf-8?B?b3h0Q2ZyYzVreE1qdnYrdEZTKzJ5NHN5dWs2citkS0M1VEsrMm9KdEFvejNi?=
+ =?utf-8?B?SEZTVVB5dmlXUXRkVFBmeDM1T1Z3cjVSY1pZVGZyU2U1V1hITlFqOE90SHE1?=
+ =?utf-8?B?OG13OXA4c1l2ZHVKd2psWVlUQlA1SCtlVjNwWkxmSGRkaUlBSXczaFMwVE1W?=
+ =?utf-8?B?UW9LNFlaTGNNY2pxd0Fhbm5JdkxRSmhCYjN2UWhZTitqWHpWZkZNWE5rQkk4?=
+ =?utf-8?B?SzJEUEkvaGp5YWZWcTdMaVUwOGp3NFNnZFJwTlBwUy9SNStLdTdrY3RTYzNV?=
+ =?utf-8?B?SEVTVG9DS1g1VENaakdGbURjVTJTN2kvT2Q0U2RGVEFqN1JFQkVzc21UL3hm?=
+ =?utf-8?B?SVk5MGdSVStINGthR1VpOW5PNUEzSytDdFYvZmNxcU5ZcG45VExtMWpFQStz?=
+ =?utf-8?B?RXBaSUhFM3JPOW82MWdpenhNYUJEblkrT3ZIdUhpZk1NQ2p4Z0VTTHhiaVUr?=
+ =?utf-8?B?cVZCTldiTytNODNhNDQ1aDF2YmNyOHIzZUVjak8xaTJ1emFvR2daN1NnMGpN?=
+ =?utf-8?B?UHFuK1pVQlhaVExXalVCRmFha2lFdTZkaWZpUE1uQW5VdzNHNGplR0ZXVzZm?=
+ =?utf-8?B?ajU4SFJyQWRqTjBYd1NxbytYV3hvQXRLRnN3SWJwWCthUWI0a1hOb1E3RS9i?=
+ =?utf-8?B?UjVBZDArNEVTZ3BCdUhESEJFTk1DNjUyNzAwd25kbjA3UWNESW5BQTcyTk5n?=
+ =?utf-8?B?eDNPZEsxb04wVHc2Zy9yazdsY2NpblVNZ0lIMmh5WnluUUJ0dXp1VkFJU3A1?=
+ =?utf-8?Q?k4MxXI?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 20:31:56.9880
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c624c86-3085-46ef-15cc-08de222a864e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD80.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4163
+
+This patch set adds support for address translation using ACPI PRM and
+enables this for AMD Zen5 platforms. v4 is the current appoach in
+response to earlier attempts to implement CXL address translation:
+
+ * v1: [1] and the comments on it, esp. Dan's [2],
+ * v2: [3] and comments on [4], esp. Dave's [5],
+ * v3: [6] and comments on it, esp. Dave's [7],
+ * v4: [8].
+
+This version addresses review comments. No major changes compared to
+the previous submission. See the changelog for details. Thank you all
+for your reviews and testing.
+
+Documentation of CXL Address Translation Support will be added to the
+Kernel's "Compute Express Link: Linux Conventions". This patch
+submission will be the base for a documention patch that describes CXL
+Address Translation support accordingly.
+
+The CXL driver currently does not implement address translation which
+assumes the host physical addresses (HPA) and system physical
+addresses (SPA) are equal.
+
+Systems with different HPA and SPA addresses need address translation.
+If this is the case, the hardware addresses esp. used in the HDM
+decoder configurations are different to the system's or parent port
+address ranges. E.g. AMD Zen5 systems may be configured to use
+'Normalized addresses'. Then, CXL endpoints have their own physical
+address base which is not the same as the SPA used by the CXL host
+bridge. Thus, addresses need to be translated from the endpoint's to
+its CXL host bridge's address range.
+
+To enable address translation, the endpoint's HPA range must be
+translated to the CXL host bridge's address range. A callback is
+introduced to translate a decoder's HPA to the CXL host bridge's
+address range. The callback is then used to determine the region
+parameters which includes the SPA translated address range of the
+endpoint decoder and the interleaving configuration. This is stored in
+struct cxl_region which allows an endpoint decoder to determine that
+parameters based on its assigned region.
+
+Note that only auto-discovery of decoders is supported. Thus, decoders
+are locked and cannot be configured manually.
+
+Finally, Zen5 address translation is enabled using ACPI PRMT.
+
+This series bases on cxl/next.
+
+V5:
+ * fixed build error with !CXL_REGION (kbot),
+ * updated sob-chains,
+ * added note to get_cxl_root_decoder() to drop reference after use
+   (Dave),
+ * moved initialziation of base* variables in
+   cxl_prm_translate_hpa_range() (Dave, Jonathan),
+ * fixed initialization of cxlr->hpa_range for the non-auto case
+   (Alison),
+ * added description of the @hpa_range arg to
+   cxl_calc_interleave_pos() (kbot),
+ * removed optional patches 12-14 to send them separately (Alison,
+   Dave),
+ * reordered patches 1-6 to reduce dependencies between them and give
+   way for early pick up candidates,
+ * rebased onto cxl/next (c692f5a947ad),
+ * added commas in comment in cxl_add_to_region() (Jonathan),
+ * removed cxlmd from struct cxl_region_context (Dave, Jonathan),
+ * removed use of PTR_ERR_OR_ZERO() (Jonathan),
+ * increased wrap width to 80 chars for comments in cxl_atl.c (Jonathan),
+ * moved (ways > 1) check out of while loop in cxl_prm_translate_hpa_range()
+   (Jonathan),
+ * removed trailing comma in struct prm_cxl_dpa_spa_data initializer (Jonathan),
+ * updated patch description on locking the decoders (Dave, Jonathan),
+ * spell fix in patch description (Jonathan),
+
+V4:
+ * rebased onto v6.18-rc2 (cxl/next),
+ * updated sob-chain,
+ * reworked and simplified code to use an address translation callback
+   bound to the root port,
+ * moved all address translation code to core/atl.c,
+ * cxlr->cxlrd change, updated patch description (Alison),
+ * use DEFINE_RANGE() (Jonathan),
+ * change name to @hpa_range (Dave, Jonathan),
+ * updated patch description if there is a no-op (Gregory),
+ * use Designated initializers for struct cxl_region_context (Dave),
+ * move callback handler to struct cxl_root_ops (Dave),
+ * move hanler inialization to acpi_probe() (Dave),
+ * updated comment where Normalized Addressing is checked (Dave),
+ * limit PRM enablement only to AMD supported kernel configs (AMD_NB)
+   (Jonathan),
+ * added 3 related optional cleanup patches at the end of the series,
+
+V3:
+ * rebased onto cxl/next,
+ * complete rework to reduce number of required changes/patches and to
+   remove platform specific code (Dan and Dave),
+ * changed implementation allowing to add address translation to the
+   CXL specification (documention patch in preparation),
+ * simplified and generalized determination of interleaving
+   parameters using the address translation callback,
+ * depend only on the existence of the ACPI PRM GUID for CXL Address
+   Translation enablement, removed platform checks,
+ * small changes to region code only which does not require a full
+   rework and refactoring of the code, just separating region
+   parameter setup and region construction,
+ * moved code to new core/atl.c file,
+ * fixed subsys_initcall order dependency of EFI runtime services
+   (Gregory and Joshua),
+
+V2:
+ * rebased onto cxl/next,
+ * split of v1 in two parts:
+   * removed cleanups and updates from this series to post them as a
+     separate series (Dave),
+   * this part 2 applies on top of part 1, v3,
+ * added tags to SOB chain,
+ * reworked architecture, vendor and platform setup (Jonathan):
+   * added patch "cxl/x86: Prepare for architectural platform setup",
+   * added function arch_cxl_port_platform_setup() plus a __weak
+     versions for archs other than x86,
+   * moved code to core/x86,
+ * added comment to cxl_to_hpa_fn (Ben),
+ * updated year in copyright statement (Ben),
+ * cxl_port_calc_hpa(): Removed HPA check for zero (Jonathan), return
+   1 if modified,
+ * cxl_port_calc_pos(): Updated description and wording (Ben),
+ * added sereral patches around interleaving and SPA calculation in
+   cxl_endpoint_decoder_initialize(),
+ * reworked iterator in cxl_endpoint_decoder_initialize() (Gregory),
+ * fixed region interleaving parameters() (Alison),
+ * fixed check in cxl_region_attach() (Alison),
+ * Clarified in coverletter that not all ports in a system must
+   implement the to_hpa() callback (Terry).
+
+[1] https://lore.kernel.org/linux-cxl/20240701174754.967954-1-rrichter@amd.com/
+[2] https://lore.kernel.org/linux-cxl/669086821f136_5fffa29473@dwillia2-xfh.jf.intel.com.notmuch/
+[3] https://patchwork.kernel.org/project/cxl/cover/20250218132356.1809075-1-rrichter@amd.com/
+[4] https://patchwork.kernel.org/project/cxl/cover/20250715191143.1023512-1-rrichter@amd.com/
+[5] https://lore.kernel.org/all/78284b12-3e0b-4758-af18-397f32136c3f@intel.com/
+[6] https://patchwork.kernel.org/project/cxl/cover/20250912144514.526441-1-rrichter@amd.com/
+[7] https://lore.kernel.org/all/20250912144514.526441-8-rrichter@amd.com/T/#m23c2adb9d1e20770ccd5d11475288bda382b0af5
+[8] https://patchwork.kernel.org/project/cxl/cover/20251103184804.509762-1-rrichter@amd.com/
+
+Robert Richter (11):
+  cxl/region: Rename misleading variable name @hpa to @hpa_range
+  cxl/region: Store root decoder in struct cxl_region
+  cxl/region: Store HPA range in struct cxl_region
+  cxl: Simplify cxl_root_ops allocation and handling
+  cxl/region: Separate region parameter setup and region construction
+  cxl/region: Add @hpa_range argument to function
+    cxl_calc_interleave_pos()
+  cxl/region: Use region data to get the root decoder
+  cxl: Introduce callback for HPA address ranges translation
+  cxl/acpi: Prepare use of EFI runtime services
+  cxl: Enable AMD Zen5 address translation using ACPI PRMT
+  cxl/atl: Lock decoders that need address translation
+
+ drivers/cxl/Kconfig       |   5 +
+ drivers/cxl/acpi.c        |  17 ++--
+ drivers/cxl/core/Makefile |   1 +
+ drivers/cxl/core/atl.c    | 207 ++++++++++++++++++++++++++++++++++++++
+ drivers/cxl/core/cdat.c   |   8 +-
+ drivers/cxl/core/core.h   |   8 ++
+ drivers/cxl/core/port.c   |   9 +-
+ drivers/cxl/core/region.c | 156 +++++++++++++++++-----------
+ drivers/cxl/cxl.h         |  31 ++++--
+ 9 files changed, 356 insertions(+), 86 deletions(-)
+ create mode 100644 drivers/cxl/core/atl.c
 
 
-
-在 2025/11/13 05:19, Gladyshev Ilya 写道:
-> Relocate kfree() from the generic cleanup path to the specific error
-> exit where the allocation could leak. This prepares for future
-> simplification by allowing removal of the 'out' label and use of
-> mutex_guard for cleaner resource management.
-> 
-> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
-> ---
->   fs/btrfs/qgroup.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index 9904bcfd3a60..a8474d0a9c58 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -1659,7 +1659,7 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
->   	struct btrfs_fs_info *fs_info = trans->fs_info;
->   	struct btrfs_root *quota_root;
->   	struct btrfs_qgroup *qgroup;
-> -	struct btrfs_qgroup *prealloc = NULL;
-> +	struct btrfs_qgroup *prealloc;
->   	int ret = 0;
->   
->   	mutex_lock(&fs_info->qgroup_ioctl_lock);
-> @@ -1681,18 +1681,18 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
->   	}
->   
->   	ret = add_qgroup_item(trans, quota_root, qgroupid);
-> -	if (ret)
-> +	if (ret) {
-> +		kfree(prealloc);
->   		goto out;
-> +	}
->   
->   	spin_lock(&fs_info->qgroup_lock);
->   	qgroup = add_qgroup_rb(fs_info, prealloc, qgroupid);
->   	spin_unlock(&fs_info->qgroup_lock);
-> -	prealloc = NULL;
->   
->   	ret = btrfs_sysfs_add_one_qgroup(fs_info, qgroup);
->   out:
->   	mutex_unlock(&fs_info->qgroup_ioctl_lock);
-
-You're not on the latest for-next branch, which has the following patch 
-applied doing the extra sanity checks:
-
-https://lore.kernel.org/linux-btrfs/20251024102143.236665-5-mssola@mssola.com/
-
-With the extra ASSERT()s, the old code makes more sense.
-
-Thanks,
-Qu
-> -	kfree(prealloc);
->   	return ret;
->   }
->   
+base-commit: c692f5a947ad17ab155dc78631342b44acce5a96
+-- 
+2.47.3
 
 
