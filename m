@@ -1,213 +1,281 @@
-Return-Path: <linux-kernel+bounces-897957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C080C53F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:47:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8349DC53FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ABEC334A532
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D7A3BA347
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A7E3446CC;
-	Wed, 12 Nov 2025 18:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2752BF001;
+	Wed, 12 Nov 2025 18:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H0qqIlvc"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010035.outbound.protection.outlook.com [52.101.61.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQXuK2XY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E4026E703
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972864; cv=fail; b=Ge0fkMcqjaTKh8p+5gFCrKhHJp8BXwwTDDBYZmEyNqrYCr6amCsElsB2v+f3InlU4dSKvL4OY1PCXlMVifTa3TRSGvRPyltnsO0WzTOOuH77Fqw04lNnsenGtVtMPtYdCrOH9z+t3QTmCWwCsVJEZaPbBWqcuiQK24pVM2bQQ0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972864; c=relaxed/simple;
-	bh=80P/B3sAnF626HZrog7tiYGASUT2H3MKNUdWbiFeKts=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ydo6XyBaAnHUDHg7DWq68tWySOR3mH6mjaE9O8wm6LRzP1zsvP+IDzzJINjm973u/VDG9QPa+MP5268bvrdUl7520BKRMuoz/ed/3avnVHmAvrH0IOJgFDXd7u3G/49qKvnTx4vM+tVU8AkEvkmp3DvHqseMLpVmKjMJh0T3gME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H0qqIlvc; arc=fail smtp.client-ip=52.101.61.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UinMhRKPLnod+X2FeGFSk7BZMT6jDaK6dkPB7LQk8HWKlg0F4L8Niqk4aw/UnZ/zbKejFep0J67ap41Jx2IyAZ9AYNBH78R+W01OW8JJ2JOjfW1Zhm5y0HqBccIrVJ4F+jDs4zuSXkzIsSK1kWHHuNpTva4eZhvmq4VlFENs4UexfoCnwzW4KizGd14d4vwbIYzGr8Lvaev7HZ00LvsM0P4CsaeRkQUo8aD+zrE9zS8MSTpr/98FIr775UgYHwWy4jbjtfwsP9MgD7hTWPtuJNhbONd4PeRu2T7xvuixlhDZyNFm6iKPCCqL3ED7uW911BeIgEw0dNjiecWYAFq0oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eM4RVh7geEFk2TR43SoeiFjJcrODaxMHEpVGLbjA4RE=;
- b=GLLwOr2hEjfgfWThJmJM16tjUsT4S3tGQGif1glYi7lTQfCzq5M2P+/C9L27I3dpFJh8EzazPQkEx3Q/0KdrfWzHnZRQ5uw7tTnsSrhgbFHZw3Lxy1Pr6rHaWufNKTibt8Uqakhp3lHnqsvFN0pohqAYM9FdBU4tKdeRCDq5cH8Gsen6isEALqwWSH17qakaBUPbD0VpjD2ubnl/gLXBVvfWXFZ1d4YSZKNcEZ32Sq3NZiMZf219ScS8p2eDO/9QMp+iZ65xzcch7Hix7pIHT4cdqnisC31VEqyxJS0YpbiQ/Sgg6yP+ra5zTkPqB55XfKF/1hfwlJgSGygqS49jyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eM4RVh7geEFk2TR43SoeiFjJcrODaxMHEpVGLbjA4RE=;
- b=H0qqIlvcjWms0h6vBV7evYbtqBUve7u9hjNQKj6DEH2gdKyNuhF8s8ZADUfHZsckTOjBn3Fkn8pERM4GSvWrEnurT01nrZhtak39K5MaToBdnKeP+StqpSXdp+mvDixgmsZMx3oaFLGU4caH67Tw+ZDBr6zcIHhejgP2KjYtSmQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- IA1PR12MB8537.namprd12.prod.outlook.com (2603:10b6:208:453::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 18:40:57 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 18:40:57 +0000
-Message-ID: <8c534f45-80ee-4537-93b5-2643afccde8c@amd.com>
-Date: Thu, 13 Nov 2025 01:40:47 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/16] iommu/amd: Refactor logic to program the host
- page table in DTE
-To: Jason Gunthorpe <jgg@nvidia.com>, Vasant Hegde <vasant.hegde@amd.com>
-Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
- will@kernel.org, joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
- iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
- jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
- wnliu@google.com, gptran@google.com, kpsingh@google.com,
- joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-16-suravee.suthikulpanit@amd.com>
- <20251023130833.GF262900@nvidia.com>
- <62ba61a5-d172-400e-beb5-e593297129ef@amd.com>
- <20251108230348.GJ1932966@nvidia.com>
-Content-Language: en-US
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20251108230348.GJ1932966@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR06CA0187.apcprd06.prod.outlook.com (2603:1096:4:1::19)
- To DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C8433A016;
+	Wed, 12 Nov 2025 18:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762972888; cv=none; b=fZd/7JPYmSGN2r2yFUgwGs5kcfHMV3OsfAz2miqNtk6aDiYZXWkrkendjoh2YHt4N81ReYdk1xjhYTFARVxdfMdWUmfDu1Q3f7spwKCZvVAwDxJTpH3H0RVTT1TfsFShATbA65MXKUX3Vw+ZDdrC+SgIq4HSuhqYux/eW9rX954=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762972888; c=relaxed/simple;
+	bh=KHFw9Fj0TSvi+G3yTQ4AOGjx13r1Cdtagbf3JpY/9Hg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gXAzo+mOa7iSRrA/RwLcyXRf7SwR47GWJW1feLP6GuIlCZVBuqmK8a3K3GbvibkigN3LUU4vuoAe4kfaA1p5fVJ4BSt9QL7ghkMHQKAU+3NMGRf4VOMnuE5qA6jmQF09K7q3gC/ISR38h/Dc5E31T13AORJX2r3H0JJtr5AiQKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQXuK2XY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E8CC4CEF1;
+	Wed, 12 Nov 2025 18:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762972888;
+	bh=KHFw9Fj0TSvi+G3yTQ4AOGjx13r1Cdtagbf3JpY/9Hg=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=fQXuK2XYp3xTsoEOAnwtxwVXxwKYpeIg3zWGfnk83tVJapjtggCyEes9l6kJEZpzt
+	 fgCtyU5OA6D+zB5YHURrwF6BaubyZ+6LkINr/UKLNiEeS8pBh0ANpNKWl+smi4Yifb
+	 nOhpcG/cOyCyY1lrzx8IroceOEBWDIsE3widuegLPRa90erf7Pn3IKQnTBc7vmc+ug
+	 EkJvNBF1wZ2NctAqOsbXrV8237Ofoybgl95v+0B7lSpc5Jky7EUeqnznqH+GEX4mc0
+	 rLQdsp4tQrJcowC8NmhIxrVAIPycTu0ohy02xo/kEFIsny8z0PfRXfIhqVlxksfUp/
+	 ijpB8RXY9s3VQ==
+Message-ID: <95aaafe2-a362-4f55-9d38-c0d2dcb21cf0@kernel.org>
+Date: Wed, 12 Nov 2025 12:41:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|IA1PR12MB8537:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3017787-a210-4a65-e3b4-08de221b0499
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d2FGWXJzQ2x5QjZiZVhwcXc4TnhoNlVHY0EwVjNhYlplUjlkSlRTdmlIK0pP?=
- =?utf-8?B?NXNkVmJ6aG53NHRRV1hYNEQyR0JlWWxtbkZZZ2oveGhjMDNlRGVVcGlON3FO?=
- =?utf-8?B?NjYzTjZCSVFSY3BvNXhCNnhUMkQ0dThNZks4b0hGSDRZUS94Y2VVc3kxNEVO?=
- =?utf-8?B?UXAyVlpUZ2RxclJSQ2pnWjJSa3NlTE53bDlZeDh4VFJQcXRqNXZpQW9FVVFY?=
- =?utf-8?B?Y3Njbko0eVNGRmxHWjdZMmpQb1pZdWhhUUh1OFpoeVJXcG5CUWIyNHQvYUhF?=
- =?utf-8?B?SE02RmMrT1BJN29nMFVsSVpZbWlXYXUvb1hWa09Gbmhaa3ZScENXUkVNQzNw?=
- =?utf-8?B?dUJBMXdEWFlpc1dIdWRxS0ZSWDJ3OStKMUwrUWs4KzhSckRpaUU2NEIyWnQ5?=
- =?utf-8?B?ODltZzFaV0ZEQ3RCSVRyaGxFY2VZTElMVVhRRXJoZU5nd0owQjJCNnlwdzJH?=
- =?utf-8?B?NXB5cWZITzRHdWpxYkNPRzZNVGgvZDRrSlNNL1owZTFCUzQ1T0pqUWhTNlVL?=
- =?utf-8?B?ZS85QWpJV2JnTWFlRjVRbFIvKzNINkpYZ0RvSHRuVkdsVGxsT09yUUxJc0x2?=
- =?utf-8?B?c29td3BNNEd6QjlXR1F0dkJjQ1pmOVVKTzU5bUkwQitsaElBaURxTExVdmxM?=
- =?utf-8?B?bS82Mm1sRDRlUzdoN1RrbmtscUFDRUVkd0R5eDlJVnNiMTBERHVlQmszUVAx?=
- =?utf-8?B?UElpR2tBdG9uV3lBVVNTaDhPVTdvVytBK0g0SW1ZMEh2ckVURXl1Qy9Gb3pW?=
- =?utf-8?B?ZWpSc2liaW1LZ3g4dzhWUkFyTHZ2YjBnZHhuVjJTYTYzVW9OdUFMT1VBTDNt?=
- =?utf-8?B?NXBkZVdKelJQV1krdm1QcVVaaVZUWUZJRHNsMWI4U0NwaTRDQU41eUczSjdW?=
- =?utf-8?B?LzBiRHhtbll2dktEM2hIUE44eVp3Q3owRVRPT01VZnJaVllERDBEN1dnejZ2?=
- =?utf-8?B?UEdwQmN5djNkakEwRVdkSFB4RVVFY21wVjk4bUdjd2dYZTZLTVZoRUZsN2Vl?=
- =?utf-8?B?RU11dDlRL0RsNTRYRW5ML0lWSFZacHhiemVpN1hJMGRRUjJYelVpRXNtMHY2?=
- =?utf-8?B?K09CUUhxVVVLR2pnMXErTmhBREI1UVhPcTI3a3lIRnJabnk3VEtpaU5YM2xX?=
- =?utf-8?B?WVFkcXBycHRUWWlqeUNKclZtNlJmdExKQkMxZEdrd3VnanZYWjFmUWVMc1RG?=
- =?utf-8?B?QlBRVUI5Y3Z4WmJ2V1NMVlhzYS9EYzd5TExpWTQrMVZtZENOcUsvMzVLT2lt?=
- =?utf-8?B?VW0xNmRKSkkzOFZkeXdNWFljVzhNN0xFTWZPQis4eGFidGJ4bDhQZ3d5WDcy?=
- =?utf-8?B?ckpua283VGlRYUdXR0c2NjQ3M2d1SC9KZE1VYlc3b2hQMkZGOXJ4R21sSVdR?=
- =?utf-8?B?OTl0bXc1M2hzdkRSRTM0c3J4UGZ1QUt2RnRxV1RQNURIaXZSbEhYTzZlY2Vn?=
- =?utf-8?B?VUU0V3VQWnRGTWhYNkJjS2tQUkpGeUdFUTFFajQ0QjhIL0Y1NmNGMlREZU1G?=
- =?utf-8?B?c3ZIczlLKzYzanZlUTVFNXd6VmdML2wzVG8wd1hzNVhCZElHZ00wZzE4aXFG?=
- =?utf-8?B?ZmpwTzMwcDkvSjRobTlibnJ5YmNpT2drejQxdlpid0VocGdBYk9hWXhZQTNU?=
- =?utf-8?B?dW5HUlJMQWlEZ2ZuSVl6TktVaGc1S0FOamdHVVljQldFWUNZbnNocXZFUXhx?=
- =?utf-8?B?aTNOc0dLaXlzTDI1TisrY2k5NGNXYXFhbFFQajdIcVJMWGExRS9VOFV0UWg0?=
- =?utf-8?B?ak91SmxMRSt4Q1BLa2FuRmVyOFpSRUJGNTY5dm12eGtqVThXbyt4Z2hzYnpl?=
- =?utf-8?B?MmRxaHhUeGVHSHR5Q0s0anZDYzVVaGxlWFZNTG8zdmlTekFHNzZ0SytvOVZM?=
- =?utf-8?B?clVyQkdMMkFNSHl0aUltQW1NMWJCSkprcjA4VDZwVlNyTE9TR0IyQy9DekNn?=
- =?utf-8?Q?3yd1Nno2CX5yUjKMpBNNSFvrndjJbKso?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2dvV1h5TGVEUVBWMWNsTGprbTBtVmVOWGg4ODJnQmhaVE90NTM0WU1zYVp2?=
- =?utf-8?B?d1NLSG5CYnlrUXkwRnYvU2hXd2UyOEwzOTVnOXZpVUdpbWc2ZHp2Qmh4dXZw?=
- =?utf-8?B?eG9NVUlkWWl1aDY1MnVLZkJoYVRoNWZIU1oyQm5Zaks5UDJiOVQxUG10b2Vq?=
- =?utf-8?B?cCtsemNNYXdhUFJtcWdKTzVsZm9iaE9yaGx1ZkMvWmV2VzhXaUJYbnFyRmN5?=
- =?utf-8?B?MGhnUnFuQnV3WWp6cnFoZDcrVis2bzVucGpKdkZUL21TYmNBNi9ac1Nndi9j?=
- =?utf-8?B?NWMveTR3UUhFb2FvRGFlSlJCUDRXUEROV2svYlpSRzN4YkxkVElsNXZsZUY0?=
- =?utf-8?B?ZWZ6bnFJbVV3ZEYzVFJhaFJVRng1ejlBTHdJK3hkaFhDYXBJN2RMZnNxMUZs?=
- =?utf-8?B?RkhaM2s3U2ExaVR0SURxdzVCVHhIVUZybHF6TTlzNk8za0pZK2NIREp1TmQ2?=
- =?utf-8?B?WFJDRWZ0SVVxMnNFR2lBMDVsRWhtSEJxSDVhYXBLRmEvblhlTDhaNEtnYnBk?=
- =?utf-8?B?RDhNcVRJTWpuclBobGJMcjJhaEhhZEo4SGIyd0F0VUtUc0FCUXdNOHhNUFda?=
- =?utf-8?B?cmR3VHVNZXRuTHFEbGF4MEh5UGwzclp1WW9lMG1jUy9BbFZMVmMyWmZCWjZk?=
- =?utf-8?B?RGJHM2E0WS9aMFlnemhsZ1lHU3pKMWpCYzZHUmRNK2hQdnUyVUpoaWN3dUQv?=
- =?utf-8?B?NHovN3dCVTVpK2cwZWowb0RSQWVEeGJxVW1ZUFVSaCtWQUR6Q1pNYWgvNDJY?=
- =?utf-8?B?RFVlQi9NRzcyaFNaQmhmQzczYzdobXFCb0UwVDdPSVR4d2xHZ0RnUEdZVXVv?=
- =?utf-8?B?Q0hXRnJPYkdGbkNITFVWWXlCd0dYTktyVUx2Q0lIWEpGY3g5UHpEK2o4RTdJ?=
- =?utf-8?B?Z3BYWXcrYm05WVFLRkxiNjJNWkdWWHZvZFBoanNTaDdNRGhRd0dXdUJKdjFD?=
- =?utf-8?B?MFJING4zanlwcXRQOWJEWkNFVTlqODlubFlLRjY3b3hxSXVtVWJEc1pTc1RK?=
- =?utf-8?B?bVo5VXF6TG9FSUpPYzZLQlFJQkZWWldUWWtrT3oxTVdJWFphcnVabDNCUzdm?=
- =?utf-8?B?bStKOHMveFU3eWRPYU9Bd3ovcy9KTUpCcWRKdzY5M3YxWGpOZTlWWlhpSWh0?=
- =?utf-8?B?MmdmdzNCNVVmOFZKWHhZYktYVlZURDEzcmgxT2xvaHB2OTg0cVNzMmZBeXVS?=
- =?utf-8?B?ODd6NUh5SmJqdE5nRzNTQ3d3NnNnYTMxR1p4U2NQL0dua2hHdDBBamRGTEJ5?=
- =?utf-8?B?WWs5ZVVZcFNsdHNwaEd5Yk1rd2hCUW01Vm9uUGd2QkZmSGY4ZjE4VytVL3Nq?=
- =?utf-8?B?ai8yUzREU0VtZSsyNUlzRnFLc21aM0NCUVZ6NFlidFhjVXN6NFlNYS9meEEw?=
- =?utf-8?B?cUUvaXdSemxGbks4WVgxdGVSVEpqa2xDZ2FYaXpzWnhqcHh3VkVsQ01wMzB6?=
- =?utf-8?B?SVBTRXRlalIyZmNVRDJQZUlMSEVxZUdXUWRlenpEdUhOa0JTVVZ3SDVjNDBp?=
- =?utf-8?B?Rkl3V0Q5bGtHRmVVWWwyNllmUERWTjB3cGt3UWw0WElGWGd4YjFnUTJFTldh?=
- =?utf-8?B?eFpJMjFGdmorVGNJQzAwaU9QTlUrTGhkSGpQOFZOaUVBMXJYY1FyTFRjOHlB?=
- =?utf-8?B?b0QrWGR6OFl2TUY0N21xNE1aRnM4OElidE45U1kwNW5hNkxjRUs0bDUzc3Zu?=
- =?utf-8?B?SkJNeDBNb1FSNVdramNmdkdSY04yNUFCR1ZqUHljY2pwVVFzWFlWSVo4N2NO?=
- =?utf-8?B?UHJmUGlvcHlweWU0Nkw2dXhjL01hQ3l0aVM0SnRRWUJKcHd5TFltVkM5d0cv?=
- =?utf-8?B?RFAzNGIwSWp4STVLMTRHRFY5YUszeW1tdlZaUnJ3NnZzZitMT0dOQlVSVUIw?=
- =?utf-8?B?dHZaSlRad0lBallPMVhhZVY2eU1qempZYjd0TjBEdVAzV0trcDV5QXJEYU01?=
- =?utf-8?B?UGQ4V2RrL3VyU3M0NCtyRjlhTExjbzdjTmZPSjZ2aDJJWEhqcUpremdhV0Ji?=
- =?utf-8?B?QXJROFdwQ3lydzAvUVZmblZUa3dRU055dVVQS2QzTXJ5K2x3dkdvbmNkaUZD?=
- =?utf-8?B?dmF1bWpKbDBFMVpORGErbVc0VTZ1OXdiSDdBb1JsNXdQaDBCRytYRFlwWTVO?=
- =?utf-8?Q?xorZUE50PMlOfPlT8Nwo/Y8o6?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3017787-a210-4a65-e3b4-08de221b0499
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 18:40:57.3716
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4YKXsoBPe6G0oFULVk4WwsAbumH9Wz+9Xg69SlvctB5DcT62ZeOV+jK8ksEtHd8e80DyfUSPD+R2I0VxYhvgPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8537
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: socfpga: add Agilex3 board
+To: niravkumarlaxmidas.rabara@altera.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251112105657.1291563-1-niravkumarlaxmidas.rabara@altera.com>
+ <20251112105657.1291563-3-niravkumarlaxmidas.rabara@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20251112105657.1291563-3-niravkumarlaxmidas.rabara@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 11/9/2025 6:03 AM, Jason Gunthorpe wrote:
-> On Sat, Nov 08, 2025 at 10:56:38PM +0530, Vasant Hegde wrote:
->> On 10/23/2025 6:38 PM, Jason Gunthorpe wrote: 
->>> On Tue, Oct 21, 2025 at 01:43:23AM +0000, Suravee Suthikulpanit wrote:
->>>
->>> (though how does IDENTITY on a device with a PASID installed work?)
->>
->> Probably set_dte_identity() should call  set_dte_gcr3_table () and update
->> relevant fields.
-
-Actually, PASID would not work with IDENTITY since it has no page table 
-(i.e. iommu=pt means DTE[Mode]=0 and does not have host table pointer).
-PASID only work with GCR3 table.
-
-Therefore, it does not make sense for set_dte_identity() to call 
-set_dte_gcr3_table(). Each one should be stand alone.
-
-Thanks,
-Suravee
-
-> Yeah, maybe so, though it might be best if the caller can detect it
-> and have it call both functions instead of trying to bury it.
+On 11/12/25 04:56, niravkumarlaxmidas.rabara@altera.com wrote:
+> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
 > 
-> There is a fair number of variations here as you have
-> blocked/identity, RID/PASID attach and PASID detach to all consider.
-> 
-> It would be nice if it worked properly, identity on RID while PASID is
-> in use has a strong real use case.
-> 
-> Jason
+> Agilex3 SoCFPGA development kit is a small form factor board similar to
+> Agilex5 013b board.
+> Agilex3 SoCFPGA is derived from Agilex5 SoCFPGA, with the main difference
+> of CPU cores — Agilex3 has 2 cores compared to 4 in Agilex5.
 
+Please fix up the message's formatting a bit. I don't think you need the 
+additional newline.
+
+> 
+> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> ---
+> v3 change:
+>   - Add agilex5 fallback compatible string.
+> 
+> v2 link:
+> https://lore.kernel.org/all/97fea9a15bfe2a3d52d5b75bee6bda25615422e7.1762840092.git.niravkumarlaxmidas.rabara@altera.com/
+> 
+> v2 changes:
+>   - Use separate dtsi file for agilex3 instead of using agilex5 dtsi.
+> 
+> v1 link:
+> https://lore.kernel.org/all/aa19e005a2aa2aab63c8fe8cbaee7f59c416690f.1762756191.git.niravkumarlaxmidas.rabara@altera.com/
+> 
+>   arch/arm64/boot/dts/intel/Makefile            |   1 +
+>   .../arm64/boot/dts/intel/socfpga_agilex3.dtsi |  17 +++
+>   .../boot/dts/intel/socfpga_agilex3_socdk.dts  | 127 ++++++++++++++++++
+>   3 files changed, 145 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex3.dtsi
+>   create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex3_socdk.dts
+> 
+> diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
+> index 391d5cbe50b3..a117268267ee 100644
+> --- a/arch/arm64/boot/dts/intel/Makefile
+> +++ b/arch/arm64/boot/dts/intel/Makefile
+> @@ -2,6 +2,7 @@
+>   dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
+>   				socfpga_agilex_socdk.dtb \
+>   				socfpga_agilex_socdk_nand.dtb \
+> +				socfpga_agilex3_socdk.dtb \
+>   				socfpga_agilex5_socdk.dtb \
+>   				socfpga_agilex5_socdk_013b.dtb \
+>   				socfpga_agilex5_socdk_nand.dtb \
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex3.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex3.dtsi
+> new file mode 100644
+> index 000000000000..4e55513d93c4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex3.dtsi
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025, Altera Corporation
+> + */
+> +
+> +/dts-v1/;
+> +#include "socfpga_agilex5.dtsi"
+> +
+> +/ {
+> +	compatible = "intel,socfpga-agilex3", "intel,socfpga-agilex5";
+> +
+> +/* Agilex3 has only 2 CPUs */
+> +&{/cpus} {
+> +	/delete-node/ cpu@2;
+> +	/delete-node/ cpu@3;
+> 
+There's no need for another dtsi if you're referencing the Agilex5 dtsi.
+
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex3_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_agilex3_socdk.dts
+> new file mode 100644
+> index 000000000000..76efaac82e27
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex3_socdk.dts
+> @@ -0,0 +1,127 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025, Altera Corporation
+> + */
+> +#include "socfpga_agilex3.dtsi"
+
+Include socfpga_agilex5.dtsi here.
+
+> +
+> +/ {
+> +	model = "SoCFPGA Agilex3 SoCDK";
+> +	compatible = "intel,socfpga-agilex3-socdk", "intel,socfpga-agilex3",
+> +		     "intel,socfpga-agilex5";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		ethernet2 = &gmac2;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+
+Just add this here:
+
++       cpus {
++               /delete-node/ cpu@2;
++               /delete-node/ cpu@3;
++       };
+
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led0 {
+> +			label = "hps_led0";
+> +			gpios = <&porta 1 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		led1 {
+> +			label = "hps_led1";
+> +			gpios = <&porta 12 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +	};
+> +
+> +	memory@80000000 {
+> +		device_type = "memory";
+> +		/* We expect the bootloader to fill in the reg */
+> +		reg = <0x0 0x80000000 0x0 0x0>;
+> +	};
+> +};
+> +
+> +&gmac2 {
+> +	status = "okay";
+> +	phy-mode = "rgmii-id";
+> +	phy-handle = <&emac2_phy0>;
+> +	max-frame-size = <9000>;
+> +
+> +	mdio0 {
+> +		compatible = "snps,dwmac-mdio";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		emac2_phy0: ethernet-phy@0 {
+> +			reg = <0>;
+> +			rxc-skew-ps = <0>;
+> +			rxdv-skew-ps = <0>;
+> +			rxd0-skew-ps = <0>;
+> +			rxd1-skew-ps = <0>;
+> +			rxd2-skew-ps = <0>;
+> +			rxd3-skew-ps = <0>;
+> +			txc-skew-ps = <0>;
+> +			txen-skew-ps = <60>;
+> +			txd0-skew-ps = <60>;
+> +			txd1-skew-ps = <60>;
+> +			txd2-skew-ps = <60>;
+> +			txd3-skew-ps = <60>;
+> +		};
+> +	};
+> +};
+> +
+> +&gpio0 {
+> +	status = "okay";
+> +};
+> +
+> +&gpio1 {
+> +	status = "okay";
+> +};
+> +
+> +&osc1 {
+> +	clock-frequency = <25000000>;
+> +};
+> +
+> +&qspi {
+> +	status = "okay";
+> +	flash@0 {
+> +		compatible = "jedec,spi-nor";
+
+You need a specific type of the qpsi memory here.
+
+> +		reg = <0>;
+> +		spi-max-frequency = <100000000>;
+> +		m25p,fast-read;
+> +		cdns,read-delay = <2>;
+> +		cdns,tshsl-ns = <50>;
+> +		cdns,tsd2d-ns = <50>;
+> +		cdns,tchsh-ns = <4>;
+> +		cdns,tslch-ns = <4>;
+> +		spi-tx-bus-width = <4>;
+> +		spi-rx-bus-width = <4>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			qspi_boot: partition@0 {
+> +				label = "u-boot";
+> +				reg = <0x0 0x00600000>;
+> +			};
+> +
+> +			root: partition@4200000 {
+> +				label = "root";
+> +				reg = <0x00600000 0x03a00000>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&smmu {
+> +	status = "okay";
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+
+No USB?
 
