@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-896463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F48C506DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1982DC5070C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F1E3A4456
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A20B3A8461
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759BF2D592A;
-	Wed, 12 Nov 2025 03:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532262701DC;
+	Wed, 12 Nov 2025 03:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+J5tV3G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQB5op3R"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3122D29C2;
-	Wed, 12 Nov 2025 03:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C64223339
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762918900; cv=none; b=MvpSxeHo87l91FjFBf/fV6oR+foEW8e4JNTpxdjaIx9uh5vvZe4Ri1ryZ+FvYLPMwgl2WBTexk9F1kZyfOCFr/MccRB44BYvMxJqVpnqN3xouDD8dJWUs2qUhb6YD/fqhYIzefJFHzhH8ScBYyKMjsgIe63rwOCXdVv9SFKbw04=
+	t=1762919223; cv=none; b=cGeggSQ5ABcDmmsFPgkFHbsM0b/xEt80ClgBoHNAzhsbrXFzuy5GabYCmiCR6ucLTv/rWEtzMA4tF8dxA1XhxZd+iyrPmuitOkjiPa7JDKnvJl0FdlS6y6ftG0gjMXh+bQjX7IfV48A9nDggIj0pJGtUOxL13ekvaSaZGX5uTtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762918900; c=relaxed/simple;
-	bh=DE/v2b6ENt1oLsOk2NZCT7yKWmhqmWwExeH+pvIBpxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iW0mXpZQwtP4YFgukiNq0fSg8SWolV3bptGKWp2szfJavKkhm5F1l8SwrfonH0fRtWy4vcIYIfHYDWkcQEFtUjoX1NHf2BvbLU7biDlIDVHe7Iga3LnlCnIsI36Do3yJmgzt8B9d3Bk3fafa1ib5J0Ii6wRIclYFKRZZRoa0DZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+J5tV3G; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762918899; x=1794454899;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DE/v2b6ENt1oLsOk2NZCT7yKWmhqmWwExeH+pvIBpxg=;
-  b=c+J5tV3GHVkmR5QlazY8Nn5Y7yhwcm3+e1i1NoyM5T3qyLAnvSL2Q3v5
-   twzva6dis2MfG0Pj4CP6uT7tWqZRP1Zu65+eocig5mEp+LRvoV/ZnsQX7
-   MyFmjhSsIhU6SixdOrXKnArvak43E0N/DQd8pckIMbX2MUuj08IMjwn2Z
-   HtgBmhvNnzr1j8IHVcPYgm0x3TDSjLmlomqdxu2A7GKNVIZqR9pMR3lcC
-   ARn27wIL9gzxTDReuR12hzrxWvQhux5JWgEKp5icjm3yYNluUOdK45K32
-   Yrm1taYztDB74Vanvn5AjW6AA5MW38fcl/5hit/2CImNIv++98qRMH0Fj
-   Q==;
-X-CSE-ConnectionGUID: VDLq6RnUTgKcDnXOK4QW3Q==
-X-CSE-MsgGUID: c0CVj/SnQ7KhO9U1uUgytg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="90450223"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="90450223"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 19:41:39 -0800
-X-CSE-ConnectionGUID: lfpfmXOETtawRYY8miIVmg==
-X-CSE-MsgGUID: puv8V+38RzqIHUbGz1pw+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="188752305"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa007.fm.intel.com with ESMTP; 11 Nov 2025 19:41:36 -0800
-From: Raag Jadav <raag.jadav@intel.com>
-To: hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1762919223; c=relaxed/simple;
+	bh=MA3xVJ9Qa5LgEn3Isru+8Auz0E90qTBrwY7B0gRC5qk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BG0Qki+uJlpT6QQC3o/IaIZfMjyI/ThB75t5wtFLP9IzxvIgfMEirfg75lSm1jZ6FGa5dt8GOvIM8zwxCNOzNeBhOIrt6hThswtI7TfSG0wbFyUIiaFb6kWBSqC1i0UVH08nhb0eQT60QWqf7OU1eQlZTymUqEsosNoNXgCExK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQB5op3R; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29516a36affso4219425ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:47:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762919221; x=1763524021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IZ3Wj9xxSoZvv/DwqlD+7LPPya77ctMQlkmOBnWkSHQ=;
+        b=ZQB5op3Rs/L0cadkDyBv8ZpEOM3MeaTmJ0FROvqpfGWmqjFWXHgSbMaDBhByb6hL/a
+         BB6dM7xfN0DZdT5Qmf4/hJwKR0ZOu75FgbLRnDzwkso+fywfd93qMIVwbaNX7soKdOCN
+         dzcZ/X128WzQXMjtZ35PTWJcjLQr2LFEnj03sIkVj2qtFCNBi5tjki+5EFeH/YMCgYTr
+         a/XSzWVt2gZB1AQvJ48ld5gkBt0pFw9jL0UaonwU2rTkiT0B5Svq3WAJlmc8NHJlQ6qP
+         f+cv56pxmrB4HMBY3Y6PPjxmkSI5CH0QT2MbrSQA20gLAqM+1gMMBkBIH07zriC7oIoK
+         INZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762919221; x=1763524021;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IZ3Wj9xxSoZvv/DwqlD+7LPPya77ctMQlkmOBnWkSHQ=;
+        b=MhhwU7w2cAtJl91RcIC8FDhmEldCqAMVOvdgogf3t0QazaYkDTdvg22oYzh/TeJ+7j
+         HIODsBEV0cGf6gz7JsFzRUdpRI2XxL11AR+NHwLpcT3jYWVrBCq04p2Nm6dfj30F6ZD7
+         MFEMLr2BzI4vPmysfnmHS+ysjUC4C8+0QijwFO4rKUcy3rhg/s6IzWu+IIOD+0g8SzM7
+         +mMg73vTVZi04hvPQS3AL5v+sYd9TW0ChG3/Ldzb2yb9sYIJkioDrph5C/5D6lg/G6tK
+         l+HfY4KTdok/8BMY3dbQ7kVVRzto0lNsdqG1aPoR72/SHN0vlwL+DM8KnmI8jLnIW/Mp
+         cmsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Hj9JMkE7F4On/awTGum8+iu8WPsEvMb3GcXpNqbRG0QNuLkBbDBAil6RY/beKszcnWSVm31FHCNCfcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXCSdQ1RZ9ev7W3mvUh0kD4E+CUn47//UyX9t63bIEz7w+SaOH
+	e3mcU91JQbqIwwUAYbr8eAuraCYhP3kaqqscVYsoYGX+w+NZ/goS0Bsd
+X-Gm-Gg: ASbGncsunwO+0mKFCogSRH0sHcM8OZfXshSf2wkxkRVpowMBeDisGF7eQo5Ig9V+H+I
+	c8uZsSCeZP29ZT4oz54m8SEm/HbQQ+D882EH3RQ3gxqkJBtIAFknfwTY713Ix4/8zAIC+AM8FKl
+	cbm9DoZr1t0s0xjkN2rzuLdxBWxo3Vr8T1C0NMg5gQ5YagEbEnkcqzp2RgAWPXCd4fXQJ4bz2I9
+	LokhjxsLaUo3V5YZi9xEBdd2mOiBKNCemHX8FWJn/nrczv+ijgm85/GVKrZAD3RkLnrO4R2Tp+G
+	OOtyNZXh/PkZd8blm7uA9IDgs50wJRZbKpfVp54nGJFgjAlqCcqoel+OStJzFsuJj+kPFY5HVbC
+	7NwbbZJxi6vuW/vH12aagDJ8tm0/P4Z1RIn8uSgWnjNB040QVyTs+RIV+XvX9nyn8awOOYxFAFA
+	sFL+Z1m3lJ38ypt9dG
+X-Google-Smtp-Source: AGHT+IFSacnbaaILVGg6oSrfQNH0DzgWjgDifbhcDM1shgEtqKRaipHBCiPa0yg7MlDnJxKjXpvyow==
+X-Received: by 2002:a17:903:4b04:b0:298:529b:8956 with SMTP id d9443c01a7336-298529b8bd1mr766385ad.56.1762919220588;
+        Tue, 11 Nov 2025 19:47:00 -0800 (PST)
+Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dc9fed7sm13058175ad.68.2025.11.11.19.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 19:46:59 -0800 (PST)
+From: Donglin Peng <dolinux.peng@gmail.com>
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 2/2] gpio: elkhartlake: Convert to auxiliary driver
-Date: Wed, 12 Nov 2025 09:10:11 +0530
-Message-ID: <20251112034040.457801-3-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251112034040.457801-1-raag.jadav@intel.com>
-References: <20251112034040.457801-1-raag.jadav@intel.com>
+	Donglin Peng <pengdonglin@xiaomi.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and funcgraph-retaddr to work simultaneously
+Date: Wed, 12 Nov 2025 11:43:33 +0800
+Message-Id: <20251112034333.2901601-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,125 +90,410 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since PCI device should not be abusing platform device, MFD parent to
-platform child path is no longer being pursued for this driver. Convert
-it to auxiliary driver, which will be used by EHL PSE auxiliary device.
+From: Donglin Peng <pengdonglin@xiaomi.com>
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Currently, the funcgraph-args and funcgraph-retaddr features are mutually exclusive.
+This patch resolves this limitation by modifying funcgraph-retaddr to adopt the same
+implementation approach as funcgraph-args, specifically by storing the return address
+in the first entry of the args array.
+
+As a result, both features now coexist seamlessly and function as intended.
+
+To verify the change, use perf to trace vfs_write with both options enabled:
+
+Before:
+ # perf ftrace -G vfs_write --graph-opts args,retaddr
+ ......
+ 0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
+ 0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+ 0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x160 */
+ 0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x160 */
+ 0)   0.754 us    |  }
+
+After:
+ # perf ftrace -G vfs_write --graph-opts args,retaddr
+ ......
+ 0)               |  down_read(sem=0xffff8880100bea78) { /* <-n_tty_write+0xa3/0x540 */
+ 0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+ 0)   0.079 us    |    preempt_count_add(val=1); /* <-down_read+0x3b/0x160 */
+ 0)   0.077 us    |    preempt_count_sub(val=1); /* <-down_read+0x8b/0x160 */
+ 0)   0.754 us    |  }
+
+Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
 ---
- drivers/gpio/Kconfig            |  2 +-
- drivers/gpio/gpio-elkhartlake.c | 36 +++++++++++++++++----------------
- 2 files changed, 20 insertions(+), 18 deletions(-)
+v3:
+- Replace min() with min_t() to improve type safety and maintainability
+- Keep only one Signed-off-by for cleaner attribution
+- Code refactoring for improved readability
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 7ee3afbc2b05..d4b4451b4696 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1413,7 +1413,7 @@ config HTC_EGPIO
+v2:
+- Preserve retaddr event functionality (suggested by Steven)
+- Store the retaddr in args[0] (suggested by Steven)
+- Refactor implementation logic and commit message clarity
+---
+ include/linux/ftrace.h               |  11 --
+ kernel/trace/trace.h                 |   4 -
+ kernel/trace/trace_entries.h         |   6 +-
+ kernel/trace/trace_functions_graph.c | 145 ++++++++++++---------------
+ 4 files changed, 69 insertions(+), 97 deletions(-)
+
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 7ded7df6e9b5..88cb54d73bdb 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
+ 	int depth;
+ } __packed;
  
- config GPIO_ELKHARTLAKE
- 	tristate "Intel Elkhart Lake PSE GPIO support"
--	depends on X86 || COMPILE_TEST
-+	depends on INTEL_EHL_PSE_IO
- 	select GPIO_TANGIER
- 	help
- 	  Select this option to enable GPIO support for Intel Elkhart Lake
-diff --git a/drivers/gpio/gpio-elkhartlake.c b/drivers/gpio/gpio-elkhartlake.c
-index 95de52d2cc63..b96e7928b6e5 100644
---- a/drivers/gpio/gpio-elkhartlake.c
-+++ b/drivers/gpio/gpio-elkhartlake.c
-@@ -2,43 +2,46 @@
+-/*
+- * Structure that defines an entry function trace with retaddr.
+- * It's already packed but the attribute "packed" is needed
+- * to remove extra padding at the end.
+- */
+-struct fgraph_retaddr_ent {
+-	unsigned long func; /* Current function */
+-	int depth;
+-	unsigned long retaddr;  /* Return address */
+-} __packed;
+-
  /*
-  * Intel Elkhart Lake PSE GPIO driver
-  *
-- * Copyright (c) 2023 Intel Corporation.
-+ * Copyright (c) 2023, 2025 Intel Corporation.
-  *
-  * Authors: Pandith N <pandith.n@intel.com>
-  *          Raag Jadav <raag.jadav@intel.com>
-  */
+  * Structure that defines a return function trace.
+  * It's already packed but the attribute "packed" is needed
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 85eabb454bee..9fac291b913a 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator *iter);
+ extern int __trace_graph_entry(struct trace_array *tr,
+ 			       struct ftrace_graph_ent *trace,
+ 			       unsigned int trace_ctx);
+-extern int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr);
+ extern void __trace_graph_return(struct trace_array *tr,
+ 				 struct ftrace_graph_ret *trace,
+ 				 unsigned int trace_ctx,
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index de294ae2c5c5..593a74663c65 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
+ 	TRACE_GRAPH_RETADDR_ENT,
  
-+#include <linux/auxiliary_bus.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/module.h>
--#include <linux/platform_device.h>
- #include <linux/pm.h>
+ 	F_STRUCT(
+-		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
++		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+ 		__field_packed(	unsigned int,	graph_ent,	depth		)
+-		__field_packed(	unsigned long,	graph_ent,	retaddr		)
++		__dynamic_array(unsigned long,	args				)
+ 	),
  
-+#include <linux/ehl_pse_io_aux.h>
+ 	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
+-		(void *)__entry->retaddr)
++		(void *)__entry->args[0])
+ );
+ 
+ #else
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index a7f4b9a47a71..f31eeeffbb2d 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -16,6 +16,15 @@
+ #include "trace.h"
+ #include "trace_output.h"
+ 
++#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
++#define HAVE_RETADDR	1
++#define ARGS_OFFS(args_size) \
++	((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
++#else
++#define HAVE_RETADDR	0
++#define ARGS_OFFS(args_size)	0
++#endif
 +
- #include "gpio-tangier.h"
+ /* When set, irq functions will be ignored */
+ static int ftrace_graph_skip_irqs;
  
- /* Each Intel EHL PSE GPIO Controller has 30 GPIO pins */
- #define EHL_PSE_NGPIO		30
+@@ -27,21 +36,25 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
  
--static int ehl_gpio_probe(struct platform_device *pdev)
-+static int ehl_gpio_probe(struct auxiliary_device *adev, const struct auxiliary_device_id *id)
- {
--	struct device *dev = &pdev->dev;
-+	struct device *dev = &adev->dev;
-+	struct ehl_pse_io_data *data;
- 	struct tng_gpio *priv;
--	int irq, ret;
-+	int ret;
++/*
++ * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
++ * member repurposed for storage
++ */
+ struct fgraph_ent_args {
+ 	struct ftrace_graph_ent_entry	ent;
+-	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
+-	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++	/*
++	 * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR)
++	 * entries with the first entry storing the return address for
++	 * TRACE_GRAPH_RETADDR_ENT.
++	 */
++	unsigned long		args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR];
+ };
  
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	data = dev_get_platdata(dev);
-+	if (!data)
-+		return -ENODATA;
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
+ 	/* Place to preserve last processed entry. */
+-	union {
+-		struct fgraph_ent_args		ent;
+-		/* TODO allow retaddr to have args */
+-		struct fgraph_retaddr_ent_entry	rent;
+-	};
++	struct fgraph_ent_args		ent;
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
+ 	struct ring_buffer_event *event;
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+ 	struct ftrace_graph_ent_entry *entry;
+-	int size;
++	unsigned long retaddr = 0;
++	int size = sizeof(*entry);
++	int type = TRACE_GRAPH_ENT;
++	bool store_args = false;
++	int nr_args = 0, args_offs = 0;
++
++	if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
++		retaddr = ftrace_graph_top_ret_addr(current);
++		type = TRACE_GRAPH_RETADDR_ENT;
++		nr_args += 1;
++	}
  
--	priv->reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	priv->reg_base = devm_ioremap_resource(dev, &data->mem);
- 	if (IS_ERR(priv->reg_base))
- 		return PTR_ERR(priv->reg_base);
+ 	/* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words */
+-	size = sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long));
++	if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
++		store_args = !!fregs;
++		if (store_args)
++			nr_args += FTRACE_REGS_MAX_ARGS;
++	}
  
- 	priv->dev = dev;
--	priv->irq = irq;
-+	priv->irq = data->irq;
+-	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size, trace_ctx);
++	size += nr_args * sizeof(long);
++	event = trace_buffer_lock_reserve(buffer, type, size, trace_ctx);
+ 	if (!event)
+ 		return 0;
  
- 	priv->info.base = -1;
- 	priv->info.ngpio = EHL_PSE_NGPIO;
-@@ -51,25 +54,24 @@ static int ehl_gpio_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "tng_gpio_probe error\n");
+ 	entry = ring_buffer_event_data(event);
+ 	entry->graph_ent = *trace;
  
--	platform_set_drvdata(pdev, priv);
-+	auxiliary_set_drvdata(adev, priv);
- 	return 0;
++	/* Store the retaddr in args[0] */
++	if (type == TRACE_GRAPH_RETADDR_ENT) {
++		entry->args[0] = retaddr;
++		args_offs += 1;
++	}
++
+ #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+-	if (fregs) {
++	if (store_args) {
+ 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
+-			entry->args[i] = ftrace_regs_get_argument(fregs, i);
++			entry->args[i + args_offs] = ftrace_regs_get_argument(fregs, i);
+ 	}
+ #endif
+ 
+@@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr,
+ 	return __graph_entry(tr, trace, trace_ctx, NULL);
  }
  
--static const struct platform_device_id ehl_gpio_ids[] = {
--	{ "gpio-elkhartlake" },
-+static const struct auxiliary_device_id ehl_gpio_ids[] = {
-+	{ EHL_PSE_IO_NAME "." EHL_PSE_GPIO_NAME },
- 	{ }
- };
--MODULE_DEVICE_TABLE(platform, ehl_gpio_ids);
-+MODULE_DEVICE_TABLE(auxiliary, ehl_gpio_ids);
+-#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+-int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr)
+-{
+-	struct ring_buffer_event *event;
+-	struct trace_buffer *buffer = tr->array_buffer.buffer;
+-	struct fgraph_retaddr_ent_entry *entry;
+-
+-	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_ENT,
+-					  sizeof(*entry), trace_ctx);
+-	if (!event)
+-		return 0;
+-	entry	= ring_buffer_event_data(event);
+-	entry->graph_ent.func = trace->func;
+-	entry->graph_ent.depth = trace->depth;
+-	entry->graph_ent.retaddr = retaddr;
+-	trace_buffer_unlock_commit_nostack(buffer, event);
+-
+-	return 1;
+-}
+-#else
+-int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr)
+-{
+-	return 1;
+-}
+-#endif
+-
+ static inline int ftrace_graph_ignore_irqs(void)
+ {
+ 	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
+@@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
+ 	struct trace_array *tr = gops->private;
+ 	struct fgraph_times *ftimes;
+ 	unsigned int trace_ctx;
+-	int ret = 0;
  
--static struct platform_driver ehl_gpio_driver = {
-+static struct auxiliary_driver ehl_gpio_driver = {
- 	.driver	= {
--		.name	= "gpio-elkhartlake",
- 		.pm	= pm_sleep_ptr(&tng_gpio_pm_ops),
- 	},
- 	.probe		= ehl_gpio_probe,
- 	.id_table	= ehl_gpio_ids,
- };
--module_platform_driver(ehl_gpio_driver);
-+module_auxiliary_driver(ehl_gpio_driver);
+ 	if (*task_var & TRACE_GRAPH_NOTRACE)
+ 		return 0;
+@@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
+ 		return 1;
  
- MODULE_AUTHOR("Pandith N <pandith.n@intel.com>");
- MODULE_AUTHOR("Raag Jadav <raag.jadav@intel.com>");
+ 	trace_ctx = tracing_gen_ctx();
+-	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
+-	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+-		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
+-		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
+-	} else {
+-		ret = __graph_entry(tr, trace, trace_ctx, fregs);
+-	}
+-
+-	return ret;
++	return __graph_entry(tr, trace, trace_ctx, fregs);
+ }
+ 
+ int trace_graph_entry(struct ftrace_graph_ent *trace,
+@@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
+-				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
+-			} else {
+-				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
++			int size = min_t(int, sizeof(data->ent), iter->ent_size);
+ 
+-				memcpy(&data->ent, curr, size);
+-			}
++			memcpy(&data->ent, curr, size);
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
+@@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+ #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
+-static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_entry *entry,
+-				u32 trace_flags, bool comment)
++static void print_graph_retaddr(struct trace_seq *s, unsigned long retaddr, u32 trace_flags,
++				bool comment)
+ {
+ 	if (comment)
+ 		trace_seq_puts(s, " /*");
+ 
+ 	trace_seq_puts(s, " <-");
+-	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
++	seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
+ 
+ 	if (comment)
+ 		trace_seq_puts(s, " */");
+ }
+ #else
+ #define __TRACE_GRAPH_PRINT_RETADDR 0
+-#define print_graph_retaddr(_seq, _entry, _tflags, _comment)		do { } while (0)
++#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)		do { } while (0)
+ #endif
+ 
+ #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
+@@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
+ 		trace_seq_printf(s, "%ps", func);
+ 
+ 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+-			print_function_args(s, entry->args, (unsigned long)func);
++			print_function_args(s, entry->args + ARGS_OFFS(args_size),
++					    (unsigned long)func);
+ 			trace_seq_putc(s, ';');
+-		} else
++		} else {
+ 			trace_seq_puts(s, "();");
++		}
+ 
+ 		if (print_retval || print_retaddr)
+ 			trace_seq_puts(s, " /*");
+@@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
+ 	}
+ 
+ 	if (print_retaddr)
+-		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
+-				    trace_flags, false);
++		print_graph_retaddr(s, entry->args[0], trace_flags, false);
+ 
+ 	if (print_retval) {
+ 		if (hex_format || (err_code == 0))
+@@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 		trace_seq_printf(s, "%ps", (void *)ret_func);
+ 
+ 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+-			print_function_args(s, entry->args, ret_func);
++			print_function_args(s, entry->args + ARGS_OFFS(args_size),
++					    ret_func);
+ 			trace_seq_putc(s, ';');
+-		} else
++		} else {
+ 			trace_seq_puts(s, "();");
++		}
+ 	}
+ 	trace_seq_putc(s, '\n');
+ 
+@@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
+ 	args_size = iter->ent_size - offsetof(struct ftrace_graph_ent_entry, args);
+ 
+ 	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
+-		print_function_args(s, entry->args, func);
++		print_function_args(s, entry->args + ARGS_OFFS(args_size), func);
+ 	else
+ 		trace_seq_puts(s, "()");
+ 
+@@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
+ 
+ 	if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
+ 		entry->ent.type == TRACE_GRAPH_RETADDR_ENT)
+-		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
+-			tr->trace_flags, true);
++		print_graph_retaddr(s, entry->args[0], tr->trace_flags, true);
+ 	trace_seq_putc(s, '\n');
+ 
+ 	if (trace_seq_has_overflowed(s))
+@@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *field, struct trace_seq *s,
+ 	 * it can be safely saved at the stack.
+ 	 */
+ 	struct ftrace_graph_ent_entry *entry;
+-	u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)];
++	u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR) * sizeof(long)];
+ 
+ 	/* The ent_size is expected to be as big as the entry */
+ 	if (iter->ent_size > sizeof(save_buf))
+@@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
+ 		trace_assign_type(field, entry);
+ 		return print_graph_entry(field, s, iter, flags);
+ 	}
+-#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+ 	case TRACE_GRAPH_RETADDR_ENT: {
+-		struct fgraph_retaddr_ent_entry saved;
+ 		struct fgraph_retaddr_ent_entry *rfield;
+ 
+ 		trace_assign_type(rfield, entry);
+-		saved = *rfield;
+-		return print_graph_entry((struct ftrace_graph_ent_entry *)&saved, s, iter, flags);
++		return print_graph_entry((typeof(field))rfield, s, iter, flags);
+ 	}
+-#endif
+ 	case TRACE_GRAPH_RET: {
+ 		struct ftrace_graph_ret_entry *field;
+ 		trace_assign_type(field, entry);
 -- 
-2.43.0
+2.34.1
 
 
