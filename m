@@ -1,115 +1,221 @@
-Return-Path: <linux-kernel+bounces-897744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E614C53726
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93FEC537B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73675354EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 65649354679
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7162341648;
-	Wed, 12 Nov 2025 16:29:49 +0000 (UTC)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D313E33C538;
+	Wed, 12 Nov 2025 16:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N7KjYCqs"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF5C33A026
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CDD24E4A1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964989; cv=none; b=rNFWf0y9AbbeXV3b/Kof+QdPysv0ueJmAyo5ajwgb6TWErbf1hnAFFVd5xUE5TsNcxCC0RdgfuDaoXNpL2MjBso5aFF/QVsY2TwUKUUxjf5uD8yIzLXqvUAQ+B3KN55ih+2QUsiWm5BJZ8TmFnKM76uGZM7fLCBYZsr/eGcE2F8=
+	t=1762965156; cv=none; b=R2qrvl5Mgc58VX4c/n1i8hbEvA8lxPrG4Y2LddI6aOcn2jOmAlItsGFEsG+ptBL7tcHgAb9675eXpTVCF1VmXb0N+yIHMH1/8HZ4hES4mJrIkFrEc6XtSqRC7QKTmU0mOGOOsmFI6hlbyFk0BRAP1rK1LE2B1sKdWs39dBWm9aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964989; c=relaxed/simple;
-	bh=ooqPLYgT35A3bEL0/xnB1JjqBchWAKRzEk/UuyfrXgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kvYBIfIKStk35NcAUSikLFO3qVgGn8GcpZjnyIBIwPQjGTAdiqygBdQoVQ7TztEk/lpKARwZWWfpQ9V3Oi0jcqCrbKOwulUb4/9r0GZV82/PiCJ18Ep16t2f+waW7t88d3JD/yoilO+1rY9V+x87H44D+w7Z9yMI8kZvY/ezaJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-89018e9f902so599055241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:29:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762964986; x=1763569786;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZ9QkedKrbl8l0TkhBp4GhEXOSA8xdv451nd8vqtfOo=;
-        b=lY7/FMC10KpzlDWJwwoLuOY3GfNkJnPwuWFGQiAUxgGiKO8vsCFKNrHFe2R39yyP/T
-         tObfGMrKzkCLvZyKxSsvniQ/b/+8Go6XmkWhVOnygfGBNmd23LzTSUnS2NzOi9TIY7uv
-         juHxYR+Pv9sfZ3vLkV8Rfks0Eydgrlcmsn6eUZb5lTBY5G4hX8z6wwgit+vYg+9sLSO1
-         GDEuE90bdYfwgCn6JJ61x8AvtCLGqctRfEBO+jfu/S0mXhcm1uXrXcDuUrq352IGlvcv
-         vQXwGvz2PYF0zXew/vS4Kg4GKCUwZt05uUZs/0bHrNLVH6QM6ZlrPWBhPkmgELp+D4Mc
-         1isg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAdBzE/qFEhtvDZYk/JN82QyR7d4NLo9YWoL+4Kj6725w1lizIzjAHst4w/lYYGjGj5y6cw7nqBGCW8d4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzctbgXH+JKNOmu8V/8JeHYYy3mTA6i4rFM7q+Cbf6TqyKz5uIT
-	8k/uAL5QtkNQlsiAS+cM7NwH7MEgv1dch0rjHQQnmCiBm0bqnWF1goGRR+oyOJ/7
-X-Gm-Gg: ASbGncsu/sQ1du309KzkM7weEkhn13K/LSGRcdMQdenS2iuZHHxZyj8dE9ql9uAL9DH
-	J9EzszmHaNVXFRsT5tluj5E7wDr6RkVEe9XgLrSgSrqHDN9JHYqqrLCegzWXldopj/xpxV4ucqW
-	TKbGycnXMjn7o+9w5mTSxl9wUHtjxIBZ+Mzf1qqk1KqvjHslYu/J6ATbAtIsxJ04KavHXHF3Tpg
-	YpEwvReq6VJYr5bN7vbDuzONz6BI/vnUbSGUNvenA7TwqJwNyjK3e5ONGzFjmriJxJMYI5K9Cd5
-	xNaLJDSWiHit8G9ZXJQaWv1UAQQQQ64FlcO0Y81loh305CS5VZhezYL+noSrcmmD1ZT1ONddptH
-	u4fzFK+B7SQxOGGKeNFNKhHyszb+EvjV4I/+dhldXwkvRrVnLfNH/ulTmGpQow4OpbEUStdgXZn
-	PjH9WdlVCmDGNR/l+8zCUkuYxPoH1YWqP4jCdcgeG+9w==
-X-Google-Smtp-Source: AGHT+IGgBGv0vf12EsNaP2JUSN/31TglgJkiMftjQxcKrvmHs8yy1vEayRDJ1SjagUJhHeXyWDoGVg==
-X-Received: by 2002:a05:6102:4414:b0:5dd:888a:5d54 with SMTP id ada2fe7eead31-5de07e67c33mr1259985137.33.1762964986071;
-        Wed, 12 Nov 2025 08:29:46 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93727691ea7sm4982144241.8.2025.11.12.08.29.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 08:29:45 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-9374ecdccb4so557510241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:29:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWIyDLAbEAqJBPP19zIrJ9elDG4L41UZN2iLdhMvw7vAc6seeD1Wv1m/vuCszw6ZhZRD8AlK+iAxaVwRM=@vger.kernel.org
-X-Received: by 2002:a05:6102:3a09:b0:529:fc9e:84ae with SMTP id
- ada2fe7eead31-5de07e07256mr1206304137.24.1762964984856; Wed, 12 Nov 2025
- 08:29:44 -0800 (PST)
+	s=arc-20240116; t=1762965156; c=relaxed/simple;
+	bh=eGCCxOqbBm6Jly0TcaepFPdDTUT8uH/jBlS6bx+ZGOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Crau3s8XWLAWBIS3IGuXYrIDi/Xaf7fUX9N5szFEgbD+/GwHUIMZz7BZPbgwKEqyF+bugosIJbnLyFHTWcnP2zFFSUuJVsJ013PRd1wMf8glUJLFNxkzyMMznBXRm+ZOVCbqQr/R5VS1mtP4mYO/tOUQO99ILkXrcR+hvlJfXXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N7KjYCqs; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762965141;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHDwCxqBHRsF8+YQINTwrK2Wm0+gA9njAFM2wxpLMvg=;
+	b=N7KjYCqsPuxcunWyZJcY+hUvg09Pt6HTHQJonMNNDs5fkyEcMNIKNp783i5TD/hlsFTsYj
+	0HbTdy1E/xh+QmrksW/DDEHXLqtL+59smsYSAJtU/TLqRkhJhGZLOQpKUOEY3Gqwdu2Lrl
+	p238vkowc/fSQU9wehfMa/I9NcjNKzs=
+From: Tao Chen <chen.dylane@linux.dev>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v6 1/2] perf: Refactor get_perf_callchain
+Date: Thu, 13 Nov 2025 00:31:47 +0800
+Message-ID: <20251112163148.100949-2-chen.dylane@linux.dev>
+In-Reply-To: <20251112163148.100949-1-chen.dylane@linux.dev>
+References: <20251112163148.100949-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-4-yuntao.wang@linux.dev>
-In-Reply-To: <20251112143520.233870-4-yuntao.wang@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Nov 2025 17:29:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVUaWzqhq72vAXCTvDzB5ErE1Gc40BULACBpOo=iTap5g@mail.gmail.com>
-X-Gm-Features: AWmQ_bkC0_Wg5fCJJPXQ6L_Q8L_w-f8b7m8ocLXvvZvYMQwFGXBxxwK4Ooi7Isk
-Message-ID: <CAMuHMdVUaWzqhq72vAXCTvDzB5ErE1Gc40BULACBpOo=iTap5g@mail.gmail.com>
-Subject: Re: [PATCH 03/10] of/reserved_mem: Use dt_root_addr_size_bytes()
- instead of open-coding it
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
-	James Morse <james.morse@arm.com>, Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>, 
-	Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Changyuan Lyu <changyuanl@google.com>, Alexander Graf <graf@amazon.com>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 12 Nov 2025 at 15:37, Yuntao Wang <yuntao.wang@linux.dev> wrote:
-> Use dt_root_addr_size_bytes() instead of open-coding it in
-> fdt_scan_reserved_mem_reg_nodes() to improve code maintainability.
->
-> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+From BPF stack map, we want to ensure that the callchain buffer
+will not be overwritten by other preemptive tasks. Peter
+suggested provide more flexible stack-sampling APIs, which
+can be used in BPF, and we can still use the perf callchain
+entry with the help of these APIs. The next patch will modify
+the BPF part.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In the future, these APIs will also make it convenient for us to
+add stack-sampling kfuncs in the eBPF subsystem, just as Andrii and
+Alexei discussed earlier.
 
-But please combine with the previous patch with the same subject.
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ include/linux/perf_event.h |  9 +++++
+ kernel/events/callchain.c  | 73 ++++++++++++++++++++++++--------------
+ 2 files changed, 56 insertions(+), 26 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index fd1d91017b9..edd3058e4d8 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
+ 	u32				nr;
+ 	short				contexts;
+ 	bool				contexts_maxed;
++	bool				add_mark;
+ };
+ 
+ typedef unsigned long (*perf_copy_f)(void *dst, const void *src,
+@@ -1718,6 +1719,14 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
+ 
+ extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+ extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
++
++extern void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
++				      struct perf_callchain_entry *entry,
++				      u32 max_stack, bool add_mark);
++
++extern void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
++extern void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
++
+ extern struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+ 		   u32 max_stack, bool crosstask, bool add_mark);
+diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+index 808c0d7a31f..dfb7cdbd470 100644
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -216,13 +216,54 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
+ #endif
+ }
+ 
++void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
++			       struct perf_callchain_entry *entry,
++			       u32 max_stack, bool add_mark)
++
++{
++	ctx->entry		= entry;
++	ctx->max_stack		= max_stack;
++	ctx->nr			= entry->nr = 0;
++	ctx->contexts		= 0;
++	ctx->contexts_maxed	= false;
++	ctx->add_mark		= add_mark;
++}
++
++void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
++{
++	if (user_mode(regs))
++		return;
++
++	if (ctx->add_mark)
++		perf_callchain_store_context(ctx, PERF_CONTEXT_KERNEL);
++	perf_callchain_kernel(ctx, regs);
++}
++
++void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
++{
++	int start_entry_idx;
++
++	if (!user_mode(regs)) {
++		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
++			return;
++		regs = task_pt_regs(current);
++	}
++
++	if (ctx->add_mark)
++		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
++
++	start_entry_idx = ctx->entry->nr;
++	perf_callchain_user(ctx, regs);
++	fixup_uretprobe_trampoline_entries(ctx->entry, start_entry_idx);
++}
++
+ struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+ 		   u32 max_stack, bool crosstask, bool add_mark)
+ {
+ 	struct perf_callchain_entry *entry;
+ 	struct perf_callchain_entry_ctx ctx;
+-	int rctx, start_entry_idx;
++	int rctx;
+ 
+ 	/* crosstask is not supported for user stacks */
+ 	if (crosstask && user && !kernel)
+@@ -232,34 +273,14 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+ 	if (!entry)
+ 		return NULL;
+ 
+-	ctx.entry		= entry;
+-	ctx.max_stack		= max_stack;
+-	ctx.nr			= entry->nr = 0;
+-	ctx.contexts		= 0;
+-	ctx.contexts_maxed	= false;
++	__init_perf_callchain_ctx(&ctx, entry, max_stack, add_mark);
+ 
+-	if (kernel && !user_mode(regs)) {
+-		if (add_mark)
+-			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
+-		perf_callchain_kernel(&ctx, regs);
+-	}
+-
+-	if (user && !crosstask) {
+-		if (!user_mode(regs)) {
+-			if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+-				goto exit_put;
+-			regs = task_pt_regs(current);
+-		}
++	if (kernel)
++		__get_perf_callchain_kernel(&ctx, regs);
+ 
+-		if (add_mark)
+-			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+-
+-		start_entry_idx = entry->nr;
+-		perf_callchain_user(&ctx, regs);
+-		fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
+-	}
++	if (user && !crosstask)
++		__get_perf_callchain_user(&ctx, regs);
+ 
+-exit_put:
+ 	put_callchain_entry(rctx);
+ 
+ 	return entry;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.48.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
