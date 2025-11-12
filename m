@@ -1,101 +1,47 @@
-Return-Path: <linux-kernel+bounces-896882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9D6C5179A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:52:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516F4C516B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569093AC62C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B30F189EBDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919902FD7D0;
-	Wed, 12 Nov 2025 09:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A00929AB1D;
+	Wed, 12 Nov 2025 09:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fB2en+/2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jxxSIL4p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltg5lIfw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7292F90EA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898652DC76C;
+	Wed, 12 Nov 2025 09:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940502; cv=none; b=Eq5fuIIBf23LukRuPclEweGIk5sAX6FcsnmU4IuVliciblPwR10GinyVfKg9+IuvBPJHVORnUtzffZKb2s/Yq6Oin+Sm5q91/ZdwBy8ul0wJaECHKS5qbGapOV1nTEbAcFvLXAMRnMCEX+EbzGGPt9+5QqnMvRnUsbeuWuw1xps=
+	t=1762940465; cv=none; b=F+EWgFwXnPmZqYUuPxq9Y4hIkRdd7wxKFpy1AhcIJRc4LrDy+Z8wLqp63hSF+a3SMmTCiXnAphSDs//FsqD3dsLDxK8w+DK3LTKHt8jUTxLCRp8OO8gf4f/jRDR9vnsYnu2wDroZSo2TBT3Ofc8yjpS5FoUOBuHf7Nk44EmVkqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940502; c=relaxed/simple;
-	bh=yEpfRnXwpng+YAbKiDkRctzbO6mZ6cOtzRE8XZb0WYs=;
+	s=arc-20240116; t=1762940465; c=relaxed/simple;
+	bh=aohnBiD8zjwta6/vj3ml+5jrDbZpsyfgY3SwEm9hV1Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TY/bD4egb65XBUVOnR4lk3CxIhyp1EIGqyfxje+n9fZ1Vu14qIEEXA+BQZwpO0XWBPadZXHOZtjEmhTHjXgl3OU8+GIBEK/6s1UCbIOjeL307fsuYgWGKkSxsB8d5lIw3lFkK13cSWxB3Xb8+uMDOBsjfqXBCC876kT12kbcI90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fB2en+/2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jxxSIL4p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9SLvq4078737
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:41:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	niMngB1STMCCBtBn00XVFAnSjuGH6D0XJXQ5Yz9BtZ4=; b=fB2en+/2vl1MO2zV
-	8TLZYpt+VTsVSs8oGF2+fJ5IeBxHZIQeqigEmA2Q1i8TAxVVKm0NtgwAaEc8OI3N
-	Lflr+EdWdg8s1fq9Z9EJvDM1/X5oJhTFoaWjvyFLNuq1J7Rm7mWJcWfZxtqO2Lsk
-	LWBqBAKY+mKKt1S+npVQLMvh9PFqyjtgi8pi6iTMln1bNDy9PoSry3UKbcioAW1S
-	TJabnXJ82RbZeikCXi18jCUFFhMO1MPyiJbMmZzC9O0M5W5wYtKCKTBXA+5uAA3V
-	Xx9AmNP1sp0YLmOjm4RmrGZPCN19FY6uidJjW+MUGY9twyzEecjXDrAMitLkd/XJ
-	qvZtCQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acguah9x1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:41:38 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b29f90f9fdso15303885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:41:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762940416; x=1763545216; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=niMngB1STMCCBtBn00XVFAnSjuGH6D0XJXQ5Yz9BtZ4=;
-        b=jxxSIL4pUEMh1IYrt4i3IYXWUNfTS/r/nLy9fkFuaHNQScLLX5NJN33kzx8GqaP2GQ
-         WpLnwwzpPylFZthYhlyd1BYwqmlW51wEGnaDC7OZFg1pJx39EAn1aXJrK6BwQn0/3Qc0
-         NUBxc1ltoosd0dKlMBfyqqvmuWeD9KojgLWBQ5a0RaZKuxXyPY4XWEs1/7erekNMQKG4
-         zIyhFeYOBI7UBbh/qXbFgAZ3hKdeeWatjvH0mVmmYBjzQb03cYXrcWfLo2Oov20Ss3dB
-         6vxX5O9EJw4vrvcly1a/SfT4iei67oKz08dp5CJZBF7dzEOt1TMKLWyNUhTVXSj39G6Y
-         WZWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762940416; x=1763545216;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=niMngB1STMCCBtBn00XVFAnSjuGH6D0XJXQ5Yz9BtZ4=;
-        b=Hvm40+zw2btH6abjuIJ2LOdk8A8kYIft5w/o9+GEXRKcbYSqh4bl2WAsQzk8jxAJ02
-         brkgVKKYonD2QHpe0EwB6V/FoW1141VtKQoYWDbySNLk5e0YOjXGGwmFkdGVjkw7shwp
-         3mhdQxAoBxhoXyIL7ohITQ9nj5wP8pkXcKFCSvdywAzrykCa+ti6gOY8I1v5kKvYtNSH
-         u7ru6KCBnoNPD2qLcoSS1OnbOM/TthP4J1R6xgIeqvmqwvENkvCMoIr0PmboLRPbY4Ie
-         1bdvBUmynQP+ioYfNRuWqEBaoJ7J82FNnDVEeaTCzhKHM33p0ShxWwvmSNFLanFQTjGN
-         xWMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVn4YGEWMC9Bj3mNkLcgfv1TUrLlyImnD/Kn0SK9/zj3nkOypmnGuwa/UM5UzXTFldcrKGlyBdZiMM68KQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzex5C7y3caHd3hhJIV7kDB3r+FcHEAQ1GUUQE4EVl5toEBat9I
-	Sy4MsAVpg0KiZwVwinzr/j8dQiz4ZMQuERGM+7dN+IZ0yAcURrR2pZ5OPrpA7peA1mafbFGP/nR
-	4NY3/Tj6Mh6+ydW4pd5UdxRYWoIurU+DpLtMtUQAkOlxQas+EKTHnMhco7QxFrbg6E6o=
-X-Gm-Gg: ASbGncvxF+lwCpxtN6PvHBr0ZcFBlrBFEk1ltNzqMh4rzLFoPS0k6vXPDy1bTnx2u+4
-	oDcgIIS/uFouYg73P5AkTECAwOeBRU7g/I39gKlkKj7DecHOqY9BIQXT77j0wek9yh2CApGAeDD
-	IDfaRNy20D4V2nY40USed1p7mUSdWaoW2Y74x+VKElriYqMzC4QW0XjGVi6frnbS6qOWLGAQlsd
-	N5nkGBALZVWvDSc6H9aVXYhDsWUOvs2yz8jtsOz3F/KaLIGU6XAERe1fXbXMTWriRsSTA/2oVi4
-	AWe8DoLukt/HpFyaCNO4JOyTd0r4O4vcLrTISmkatLXhbi49HSJY9StLGq7PDT8aVPqhdOsRtfk
-	xy37K2D2OTfauhLIGN7Hkidllh5CCqQYs+dn4oU5WjpMY12Xf2SsrR0VY
-X-Received: by 2002:a05:620a:444f:b0:8b1:95e2:4827 with SMTP id af79cd13be357-8b29b6c22aemr196979985a.0.1762940416308;
-        Wed, 12 Nov 2025 01:40:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF/UBVido4T7ElH3fCCu3qQd1JXXvVZZsxAdEl4gufrjb0+yrWlo30YT4rDW3v1gJasBUixsg==
-X-Received: by 2002:a05:620a:444f:b0:8b1:95e2:4827 with SMTP id af79cd13be357-8b29b6c22aemr196979185a.0.1762940415789;
-        Wed, 12 Nov 2025 01:40:15 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf4fd021sm1539442166b.25.2025.11.12.01.40.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:40:15 -0800 (PST)
-Message-ID: <9d296c2b-da69-4b50-8774-9fae6b360f89@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 10:40:13 +0100
+	 In-Reply-To:Content-Type; b=ZeKm1hCfzaJeuNoLPVYFiN8Fo0v3aPEfdtnWI9SZG8Xl/FJ1VrcuE9PC98YG6E71tVC8u0J7b7H0fl1OFNEsFj8NaElYEcb0j1ohuFUDmA1b9l8d1pT9Vuwa8fE1isVyV9ps0P9p3wA0ReuAtanR/Mr/B9BgEXI83uFJ+XaKOkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltg5lIfw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF1BEC16AAE;
+	Wed, 12 Nov 2025 09:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762940465;
+	bh=aohnBiD8zjwta6/vj3ml+5jrDbZpsyfgY3SwEm9hV1Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ltg5lIfwiD3IiigrhFwiUF+6cj1rjzWbQeQ05SAKpgSXIBOCA+skvpx4VMQ9x9g1r
+	 8vUpX0AOhOEH60QfWSVCmWW99sIrbXHhLOPuthKr1OhQDrn8IuOe6BMU6+UKJH4qPT
+	 UP0WwXuL7QFh6gOeY7Qc4mtN4OA+XXwTksHYQ56/n2el0WeuR+EFcTzUNcT+iwoykW
+	 zlPncb0DgTiwUinaGa51JTl2SWOMsV/PCEYiJMahMRcVGHiUc/5HjOp32YYLyOJKi7
+	 jMQ3EFetI8D3WTqz2yLaQBU54IGSrMaqpaVajsmDX/+23sPSZR1wTtys8bOxCzTX6Z
+	 GoEacIpgYx92Q==
+Message-ID: <56530f64-6ddf-4d2a-a079-0578db260449@kernel.org>
+Date: Wed, 12 Nov 2025 10:40:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,58 +49,194 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: dts: qcom: talos: Drop opp-shared from QUP OPP
- table
-To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmitry.baryshkov@linaro.org
-Cc: mukesh.savaliya@oss.qualcomm.com
-References: <20251111170350.525832-1-viken.dadhaniya@oss.qualcomm.com>
+Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>,
+ Rogerio Pimentel <rpimentel.silva@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de,
+ alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com,
+ marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de,
+ joao.goncalves@toradex.com, frieder.schrempf@kontron.de,
+ josua@solid-run.com, francesco.dolcini@toradex.com, primoz.fiser@norik.com,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Xiaofeng Wei <xiaofeng.wei@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+ Joseph Guo <qijian.guo@nxp.com>
+References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
+ <20251109214515.121742-2-rpimentel.silva@gmail.com>
+ <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
+ <CAEnQRZCvpXzGt=7NGv7-s+y0gvOg7Jx4OqbfbW3uv8jDp-jroQ@mail.gmail.com>
+ <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com>
+ <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
+ <CAEnQRZBBJ4PGDOk7hBP_qsk7bBiec8pHb0DYKs2mhOAahNyKww@mail.gmail.com>
+ <baafb460-fb65-4cd2-9911-89d828199d9b@kernel.org>
+ <2e160fe1-bcb2-41cf-817e-ac2a36959b16@kernel.org>
+ <CAEnQRZDg0yAjR-a-4J2ZKAjh3mm8NeQCA=o2kyNJtXMAFCMLAA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251111170350.525832-1-viken.dadhaniya@oss.qualcomm.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAEnQRZDg0yAjR-a-4J2ZKAjh3mm8NeQCA=o2kyNJtXMAFCMLAA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: QJs9PBAZRMeK7ZMrk0kUMhvW_ybdDZri
-X-Authority-Analysis: v=2.4 cv=ao2/yCZV c=1 sm=1 tr=0 ts=69145652 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=nWGZzGPzcphSW76LlmIA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: QJs9PBAZRMeK7ZMrk0kUMhvW_ybdDZri
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3NyBTYWx0ZWRfXyzHZTBLTof+t
- szqKescHp9eSjOydyxZCUYJzXRLdkVODd/+b2E79AibC5bEBEp4eRBLBn0iITzVaRpWZkue/Wbn
- SFx8S7WabODTz5c/B6egub5UP8gHcvTihTiZ1ptyYoQwp4LKyumbPtQnj6CoJO3W4578wLMSvKY
- qbb1hrH7aHXSMDEjgUKQea9XyJgUbMd30gt6Kf8C8F8JibSKRskrL9+YIAQUm3gPFUUouU3HUHF
- FUh7Mp8RhGXeK/2+tA/9AWjXbNTSdBbE37IStEAm0bgb3T//XZnlWs8nR8iZrzFXO2XZQqQPuoG
- 17Fc56O6UdAgY04gwUEx/6ES28O5jtyMaItQzajVLc9EOMoNM4icRYG8pztY/8fPndMQ2IQgdeG
- j4uep/A8M02rv6EeeUfPfuxk6peACg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 phishscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120077
+Content-Transfer-Encoding: 8bit
 
-On 11/11/25 6:03 PM, Viken Dadhaniya wrote:
-> QUP devices are currently marked with opp-shared in their OPP table,
-> causing the kernel to treat them as part of a shared OPP domain. This
-> leads to the qcom_geni_serial driver failing to probe with error
-> -EBUSY (-16).
+On 12/11/2025 10:32, Daniel Baluta wrote:
+> On Wed, Nov 12, 2025 at 11:14 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 12/11/2025 10:08, Krzysztof Kozlowski wrote:
+>>> On 12/11/2025 09:15, Daniel Baluta wrote:
+>>>> On Tue, Nov 11, 2025 at 2:49 PM Daniel Baluta <daniel.baluta@gmail.com> wrote:
+>>>>>
+>>>>> On Tue, Nov 11, 2025 at 1:50 PM Fabio Estevam <festevam@gmail.com> wrote:
+>>>>>>
+>>>>>> Hi Daniel,
+>>>>>>
+>>>>>> On Tue, Nov 11, 2025 at 5:45 AM Daniel Baluta <daniel.baluta@gmail.com> wrote:
+>>>>>>
+>>>>>>> In addition to that, Rogerio please read:
+>>>>>>>
+>>>>>>> https://docs.kernel.org/process/submitting-patches.html
+>>>>>>>
+>>>>>>> At this moment I think you should keep the original author of the
+>>>>>>> patch.
+>>>>>>
+>>>>>> Right, but NXP makes a total mess with authorship.
+>>>>>
+>>>>> I cannot disagree with you on this, let me clarify it internally with
+>>>>> NXP colleagues
+>>>>> and sort everything out.
+>>>>
+>>>> Hi Fabio & Rogerio,
+>>>>
+>>>> Checked internally and to track the correct authorship and development work
+>>>> here is how NXP would prefer to get credit.
+>>>
+>>> Sorry, but individual contributors do not need to give any credits to
+>>> NXP. If NXP wanted to sent the patches to have credit, they would do it.
+>>>
+>>> Did sending happened?
+>>>
+>>> If not, then any contributor is rightful to take the patches from
+>>> downstream and send them only, ONLY with their authorship. That's what
+>>> DCO allows and that's what established practice as well.
+>>>
+>>> NXP had a chance to upstream. When they decided not to, they forfeit any
+>>> rights to claim they want any authorship.
+>>>
+>>>
+>>>>
+>>>> #Use git commit --amend --author="Xiaofeng Wei <xiaofeng.wei@nxp.com>"
+>>>
+>>> NAK, there is no single patch like that from above author:
+>>>
+>>> https://lore.kernel.org/all/?q=f%3Axiaofeng.wei%40nxp.com
+>>>
+>>> Remember, downstream code does not matter. Does not exist.
+>>>
+>>>
+>>
+>>
+>> ... and because last two months there were two or three cases where
+>> vendor companies bullied individual contributors, I will be quite strict
+>> about that. Vendor company does not receive any authorship on patches
+>> sent by independent contributors which the vendor NEVER submitted,
+>> unless author really wants that. But I will treat any such insisting on
+>> authorship by vendor like NXP as bullying and working AGAINST the community.
 > 
-> Remove the opp-shared property to ensure the OPP framework treats the
-> QUP OPP table as device-specific, allowing the serial driver to probe
-> successfully
+> I'm sorry that people use "bully" in this context. We are just trying
+> to help with
+> the limited time we have and create a friendly environment around NXP
+> upstream support.
 > 
-> Fixes: f6746dc9e379 ("arm64: dts: qcom: qcs615: Add QUPv3 configuration")
-> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> ---
+> We (NXP) immensely  appreciate individual contributions from everyone.
+> 
+> We need to be fair, the v1 of this patchset was taken from NXP
+> downstream without
+> respecting the Developer Certificate of Origin.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+No, it wasn't. Please read carefully DCO. The chain here was not
+correct, but that's the only thing.
 
-Konrad
+> 
+> E.g there were commits pulled in from our internal tree without
+> keeping the S-o-B tags.
+
+Read DCO, please. It is not mandatory to keep 3rd party SoB. It is
+perfectly fine to skip it, if needed according to (b) of DCO certifying.
+
+Otherwise please point me which aspect of certification was not kept or
+was broken.
+
+> As I said keeping the original author is a sign of respecting the
+> initial work of NXP developers
+> and a recommendation from NXP.
+
+Which is purely up to the author. The NXP made their choice by not ever
+sending it to upstream.
+
+> 
+> What is your suggestion on moving on with this? Would keeping the
+> authorship from Rogerio
+> and adding S-o-B and C-d-b tags as above work for everyone?
+To me it is pretty simple and that's what I commented on - I expect
+conforming to submitting patches and DCO, thus the sender's SoB MUST BE
+ALWAYS the last.
+
+This is the only issue with this patch.
+
+Now, whom Rogerio wants to make the author I really do not care.
+Although I care a lot about NXP coming to upstream and claiming they
+have any authorship of their downstream code.
+
+Assuming this was even taken from downstream, which was not proven yet,
+although does not matter.
+
+Again, whatever you have downstream absolutely does not matter, EXCEPT
+THE LICENSE, for us.
+
+
+Best regards,
+Krzysztof
 
