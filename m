@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-896510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A52C508B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:39:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E7FC508BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8FA9C34C31A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:39:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D931934C44E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728892E11BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C272E173B;
 	Wed, 12 Nov 2025 04:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="NY2cqwKa"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i/IQlisW"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787A7267AF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A22594BD;
 	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922333; cv=none; b=rAOZ0VSnvHEvpuOKQK9QyWjJqsTy0KYLWxxEWJ3rrvgCs+DJ7b+hzMYfJ1YPYUZ4P+zgfbTFlTVJFD5e75ujzdLdpznp92XJUpE356Kc98bOBg7WMcw5/uT/nCmdC1HHSQcgwAxh9dLyAeXL4MPoVLbqwliXfMQd2qkp7Y7rFPY=
+	t=1762922331; cv=none; b=nNPshbnlC2gchhCunN5c3krjePovjAmkel3SzTGelRsHA9kaST408EbYP8AQVTGnpGQx3a/RrVXZuXGCFpaTCANTnEX6EDxW2E83YPkOUdLiFOd/PTbUedXT0Jjwe9QSU3h/AxTq6Nyf+3RrIyhAZvoBTPGAjWEFskn16r1hUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762922333; c=relaxed/simple;
-	bh=n8DS8/bVWfEAqP+RG4F4Zwx0jbai7PHujUHiYLIhE6k=;
+	s=arc-20240116; t=1762922331; c=relaxed/simple;
+	bh=Z2D64GuUMELOolw9cKf4hzojFFY66C+zfDABA364ROY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iROcXDYBVzy/3tZ5z4CQs2Rw12Ng5xI8B3nJfmQNWu2fTrQXX/kB0p4mTXTt446nS3mL0iOiN+JKF+D44Ss6fAG8uAiQx+IiXraGLRMoJ2pF4CWHyBy5BMAlvykdBJG1IRhGuCIBmvZAu5cilUIMu61+Tnf7GGBVHiz+9DyqiGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=NY2cqwKa; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=KSmhVBBgbj/v1Mt2ORJvC3vtpNEBWbJKBzEwJ/cEfAemtfS1Q6bBXveszR/bMnmZVj+T+aWvcn3jDeQqqbaQtHbqiwhK1e7MAA8tVb/s/zmWsACfIAbusCWE7iWRkQ4lRohZMUXHyULLPdJP2UvIjoJ6g9jxG1hxZc7HKHggOs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i/IQlisW; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
 	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDS542538
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDT542538
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:46 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDS542538
+	Tue, 11 Nov 2025 20:37:47 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDT542538
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922267;
-	bh=JZWb39kaxm/aTHHHAoGRq7ylnE7bG8wlHoUJFfzGXJY=;
+	s=2025102301; t=1762922269;
+	bh=DMqdBX9HO8+AZngQ2hCIyYV6RLWAiIgEKxARiQLqOYw=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=NY2cqwKaIrKZUtfTvxfjn6R8wymEXPWHv7bYCi+aME4HmaudXcZTxAmPw5vWao3g7
-	 LPA092rWorB2+oPLf8bRPnWf5jVZohiBbEFPMOzoUsWrk32k4PtN+0fvwXfzU6+U/u
-	 h6pVDUWk1TNQ02FdIyxmMiUTdM60BaRxbt4KgfjkkhgQgD4t9Ufb+CbC5h7sK/WdlY
-	 4UmBUhsjz/0R9+ZJjl6AZpLqIZEcQd0M23JdbmIMP8PoXd/GqGdLG937KVnVjr4WId
-	 kJmFy4PbZrHDGH6h6bbnODmuUUz+EdIQI748dLPbJoE1xKdaCGb4TeT0yglAfgHCDn
-	 qsJkhlUpgl5eQ==
+	b=i/IQlisWVBkqsZ6VqZoTW83K3NVYrvQYBx0Y3VkaFX9h4lgeU4fUuaWq30rZcuIfu
+	 XxS/8UghVlWbL0SCp+tLs8Fk2bfBUHUipw/HU6f/H/nc0F2JzQYokibRdQER9Ie4hj
+	 c0RHigxm1QzqyUHYFgj3dOqwCl1+cnp4EXzXWDWsjiujzBy+V55yG8akBI7m236YLU
+	 fMMeyjFmYgfkdjPkTZMozP2KakLOnmUdmszea/IKCcggFtzUEQHAt0JRRp1xPis5og
+	 fFV3A9zysNWH0QZLfWebtuLgf82jFhrCqMVCOJX0gl+5XFk/9aL7qrfrGqvQQ201hn
+	 p7Q6pDw2hu7Sg==
 From: "H. Peter Anvin" <hpa@zytor.com>
 To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
@@ -63,9 +63,9 @@ To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 6/9] x86/entry/vdso: include GNU_PROPERTY and GNU_STACK PHDRs
-Date: Tue, 11 Nov 2025 20:37:24 -0800
-Message-ID: <20251112043730.992152-7-hpa@zytor.com>
+Subject: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
+Date: Tue, 11 Nov 2025 20:37:25 -0800
+Message-ID: <20251112043730.992152-8-hpa@zytor.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
 References: <20251112043730.992152-1-hpa@zytor.com>
@@ -77,119 +77,304 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently the vdso doesn't include .note.gnu.property or a GNU noexec
-stack annotation (the -z noexecstack in the linker script is
-ineffective because we specify PHDRs explicitly.)
+Abstract out the calling of true system calls from the vdso into
+macros.
 
-The motivation is that the dynamic linker currently do not check
-these.
+It has been a very long time since gcc did not allow %ebx or %ebp in
+inline asm in 32-bit PIC mode; remove the corresponding hacks.
 
-However, this is a weak excuse: the vdso*.so are also supposed to be
-usable at link libraries, and there is no reason why the dynamic
-linker might not want or need to check these in the future, so add
-them back in -- it is trivial enough.
+Remove the use of memory output constraints in gettimeofday.h in favor
+of "memory" clobbers. The resulting code is identical for the current
+use cases, as the system call is usually a terminal fallback anyway,
+and it merely complicates the macroization.
+
+This patch adds only a handful of more lines of code than it removes,
+and in fact could be made substantially smaller by removing the macros
+for the argument counts that aren't currently used, however, it seems
+better to be general from the start.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
 ---
- arch/x86/entry/vdso/common/vdso-layout.lds.S | 51 +++++++++++---------
- 1 file changed, 28 insertions(+), 23 deletions(-)
+ arch/x86/include/asm/vdso/gettimeofday.h | 108 ++------------------
+ arch/x86/include/asm/vdso/sys_call.h     | 119 +++++++++++++++++++++++
+ 2 files changed, 127 insertions(+), 100 deletions(-)
+ create mode 100644 arch/x86/include/asm/vdso/sys_call.h
 
-diff --git a/arch/x86/entry/vdso/common/vdso-layout.lds.S b/arch/x86/entry/vdso/common/vdso-layout.lds.S
-index ec1ac191a057..696bacb99ed8 100644
---- a/arch/x86/entry/vdso/common/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/common/vdso-layout.lds.S
-@@ -26,7 +26,7 @@ SECTIONS
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
+index 73b2e7ee8f0f..3cf214cc4a75 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -18,6 +18,7 @@
+ #include <asm/msr.h>
+ #include <asm/pvclock.h>
+ #include <clocksource/hyperv_timer.h>
++#include <asm/vdso/sys_call.h>
  
- 	. = SIZEOF_HEADERS;
+ #define VDSO_HAS_TIME 1
  
--	.hash		: { *(.hash) }			:text
-+	.hash		: { *(.hash) }		:text
- 	.gnu.hash	: { *(.gnu.hash) }
- 	.dynsym		: { *(.dynsym) }
- 	.dynstr		: { *(.dynstr) }
-@@ -34,7 +34,7 @@ SECTIONS
- 	.gnu.version_d	: { *(.gnu.version_d) }
- 	.gnu.version_r	: { *(.gnu.version_r) }
+@@ -53,130 +54,37 @@ extern struct ms_hyperv_tsc_page hvclock_page
+ 	__attribute__((visibility("hidden")));
+ #endif
  
--	.dynamic	: { *(.dynamic) }		:text	:dynamic
-+	.dynamic	: { *(.dynamic) }	:text :dynamic
- 
- 	.rodata		: {
- 		*(.rodata*)
-@@ -45,31 +45,28 @@ SECTIONS
- 		*(.bss*)
- 		*(.dynbss*)
- 		*(.gnu.linkonce.b.*)
--	}						:text
-+	}					:text
- 
--	/*
--	 * Discard .note.gnu.property sections which are unused and have
--	 * different alignment requirement from vDSO note sections.
--	 */
--	/DISCARD/ : {
-+	.note.gnu.property : {
- 		*(.note.gnu.property)
--	}
--	.note		: { *(.note.*) }		:text	:note
+-#ifndef BUILD_VDSO32
 -
--	.eh_frame_hdr	: { *(.eh_frame_hdr) }		:text	:eh_frame_hdr
--	.eh_frame	: { KEEP (*(.eh_frame)) }	:text
-+	}					:text :note :gnu_property
-+	.note		: {
-+		*(.note*)
-+	}					:text :note
- 
-+	.eh_frame_hdr	: { *(.eh_frame_hdr) }	:text :eh_frame_hdr
-+	.eh_frame	: {
-+		KEEP (*(.eh_frame))
-+		*(.eh_frame.*)
-+	}					:text
- 
- 	/*
- 	 * Text is well-separated from actual data: there's plenty of
- 	 * stuff that isn't used at runtime in between.
--	 */
--
-+	*/
- 	.text		: {
- 		*(.text*)
--	}						:text	=0x90909090,
--
--
-+	}					:text	=0x90909090
- 
- 	.altinstructions	: { *(.altinstructions) }	:text
- 	.altinstr_replacement	: { *(.altinstr_replacement) }	:text
-@@ -87,15 +84,23 @@ SECTIONS
-  * Very old versions of ld do not recognize this name token; use the constant.
-  */
- #define PT_GNU_EH_FRAME	0x6474e550
-+#define PT_GNU_STACK	0x6474e551
-+#define PT_GNU_PROPERTY	0x6474e553
- 
- /*
-  * We must supply the ELF program headers explicitly to get just one
-  * PT_LOAD segment, and set the flags explicitly to make segments read-only.
-- */
-+*/
-+#define PF_R	FLAGS(4)
-+#define PF_RW	FLAGS(6)
-+#define PF_RX	FLAGS(5)
-+
- PHDRS
+ static __always_inline
+ long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
  {
--	text		PT_LOAD		FLAGS(5) FILEHDR PHDRS; /* PF_R|PF_X */
--	dynamic		PT_DYNAMIC	FLAGS(4);		/* PF_R */
--	note		PT_NOTE		FLAGS(4);		/* PF_R */
--	eh_frame_hdr	PT_GNU_EH_FRAME;
-+	text		PT_LOAD		PF_RX FILEHDR PHDRS;
-+	dynamic		PT_DYNAMIC	PF_R;
-+	note		PT_NOTE		PF_R;
-+	eh_frame_hdr	PT_GNU_EH_FRAME PF_R;
-+	gnu_stack	PT_GNU_STACK	PF_RW;
-+	gnu_property	PT_GNU_PROPERTY	PF_R;
+-	long ret;
+-
+-	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
+-	     "0" (__NR_clock_gettime), "D" (_clkid), "S" (_ts) :
+-	     "rcx", "r11");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_gettime,64,_clkid,_ts);
  }
+ 
+ static __always_inline
+ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+ 			   struct timezone *_tz)
+ {
+-	long ret;
+-
+-	asm("syscall" : "=a" (ret) :
+-	    "0" (__NR_gettimeofday), "D" (_tv), "S" (_tz) : "memory");
+-
+-	return ret;
++	return VDSO_SYSCALL2(gettimeofday,,_tv,_tz);
+ }
+ 
+ static __always_inline
+ long clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+ {
+-	long ret;
+-
+-	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
+-	     "0" (__NR_clock_getres), "D" (_clkid), "S" (_ts) :
+-	     "rcx", "r11");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_getres,_time64,_clkid,_ts);
+ }
+ 
+-#else
+-
+-static __always_inline
+-long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+-{
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_gettime64), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
++#ifndef CONFIG_X86_64
+ 
+ static __always_inline
+ long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
+ {
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_gettime), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
+-
+-static __always_inline
+-long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+-			   struct timezone *_tz)
+-{
+-	long ret;
+-
+-	asm(
+-		"mov %%ebx, %%edx \n"
+-		"mov %2, %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret)
+-		: "0" (__NR_gettimeofday), "g" (_tv), "c" (_tz)
+-		: "memory", "edx");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_gettime,,_clkid,_ts);
+ }
+ 
+ static __always_inline long
+-clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+-{
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_getres_time64), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
+-}
+-
+-static __always_inline
+-long clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
++clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
+ {
+-	long ret;
+-
+-	asm (
+-		"mov %%ebx, %%edx \n"
+-		"mov %[clock], %%ebx \n"
+-		"call __kernel_vsyscall \n"
+-		"mov %%edx, %%ebx \n"
+-		: "=a" (ret), "=m" (*_ts)
+-		: "0" (__NR_clock_getres), [clock] "g" (_clkid), "c" (_ts)
+-		: "edx");
+-
+-	return ret;
++	return VDSO_SYSCALL2(clock_getres,,_clkid,_ts);
+ }
+ 
+ #endif
+diff --git a/arch/x86/include/asm/vdso/sys_call.h b/arch/x86/include/asm/vdso/sys_call.h
+new file mode 100644
+index 000000000000..6b1fbcdcbd5c
+--- /dev/null
++++ b/arch/x86/include/asm/vdso/sys_call.h
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Macros for issuing an inline system call from the vDSO.
++ */
++
++#ifndef X86_ASM_VDSO_SYS_CALL_H
++#define X86_ASM_VDSO_SYS_CALL_H
++
++#include <linux/compiler.h>
++#include <asm/cpufeatures.h>
++#include <asm/alternative.h>
++
++/*
++ * Note: only three arguments are currently supported,
++ * because there are no constraint letters for r10, r8, r9.
++ */
++#ifdef CONFIG_X86_64
++/* Using dummy output registers instead of clobbers avoids messing up
++   user-specified clobbers. */
++#define __sys_instr	"syscall"
++#define __sys_clobber	"rcx", "r11", "memory"
++#define __sys_nr(x,y)	__NR_ ## x
++#define __sys_reg1	"rdi"
++#define __sys_reg2	"rsi"
++#define __sys_reg3	"rdx"
++#define __sys_reg4	"r10"
++#define __sys_reg5	"r8"
++#define __sys_reg6	"r9"
++#else
++#define __sys_instr	"call __kernel_vsyscall"
++#define __sys_clobber	"memory"
++#define __sys_nr(x,y)	__NR_ ## x ## y
++#define __sys_reg1	"ebx"
++#define __sys_reg2	"ecx"
++#define __sys_reg3	"edx"
++#define __sys_reg4	"esi"
++#define __sys_reg5	"edi"
++#define __sys_reg6	"ebp"
++#endif
++
++/*
++ * Example usage:
++ *
++ * result = VDSO_SYSCALL3(foo,64,x,y,z);
++ *
++ * ... calls foo(x,y,z) on 64 bits, and foo64(x,y,z) on 32 bits.
++ */
++#define _VDSO_SYSCALL(name,suf32,...)					\
++	({								\
++		long _sys_num_ret = __sys_nr(name,suf32);		\
++		asm_inline volatile(					\
++			__sys_instr					\
++			: "+a" (_sys_num_ret)				\
++			: __VA_ARGS__					\
++			: __sys_clobber);				\
++		_sys_num_ret;						\
++	})
++
++#define VDSO_SYSCALL0(name,suf32)					\
++	_VDSO_SYSCALL(name,suf32)
++#define VDSO_SYSCALL1(name,suf32,a1)					\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1));				\
++	})
++#define VDSO_SYSCALL2(name,suf32,a1,a2)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2));	\
++	})
++#define VDSO_SYSCALL3(name,suf32,a1,a2,a3)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3));				\
++	})
++#define VDSO_SYSCALL4(name,suf32,a1,a2,a3,a4)				\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4));	\
++	})
++#define VDSO_SYSCALL5(name,suf32,a1,a2,a3,a4,a5)			\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4),		\
++			      "r" (_sys_arg5));				\
++	})
++#define VDSO_SYSCALL6(name,suf32,a1,a2,a3,a4,a5,a6)			\
++	({								\
++		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
++		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
++		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
++		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
++		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
++		register long _sys_arg6 asm(__sys_reg6) = (long)(a6);	\
++		_VDSO_SYSCALL(name,suf32,				\
++			      "r" (_sys_arg1), "r" (_sys_arg2),		\
++			      "r" (_sys_arg3), "r" (_sys_arg4),		\
++			      "r" (_sys_arg5), "r" (_sys_arg6));	\
++	})
++
++#endif /* X86_VDSO_SYS_CALL_H */
 -- 
 2.51.1
 
