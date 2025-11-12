@@ -1,91 +1,89 @@
-Return-Path: <linux-kernel+bounces-897115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EF0C52099
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:43:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE22AC5206F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC053A6643
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0780188A2A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D463D311C35;
-	Wed, 12 Nov 2025 11:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6AD3126D0;
+	Wed, 12 Nov 2025 11:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTSplVLt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEwD8B7g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1022F3621;
-	Wed, 12 Nov 2025 11:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205A311592
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947432; cv=none; b=VzqS6O71Rmx6ZA1RIu0PZ7pzmpk/GKlkjIvNJSvh2yTACHUyX2jhloTeA2sIkP7GpIpy9gcBa8u975LwNXtQ4DjnqC0b0jkVOV0V7g6b485IhjotMSeteUsHnyGn56ycGzzx6xcJjyji/QDJEvNcB0tZPhPFt7LEU+jdc6jZUZE=
+	t=1762947474; cv=none; b=d0zLFBUV5mxzRW6wW1eVq2UtiASiYaVnVTm9IPQnlEExI64dgOd5Een4S4t8TLQ5Tw4AejzCHuS/QazRUhJw/mUtyMNtlrrhbOT+m3CO0vayxQ2vg2getdQ+5fNpZzcfQFfCJtWpNg0PFPhyyy+o7KCVLkzVZ1ueoAKP8RoktVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947432; c=relaxed/simple;
-	bh=ymCfGk4AxYo4bd74CdMZkB02vK66A3ulrQ4KUB+F6wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nLqXeYT514ejVpZ612oF87jTXXCO1Nqv2fZwGN+kx1hvxAqXSCk9kj3tX9rvl5uzbbo4MmQNvPkBeogA87bLR1VPaLH7JdRhHxXgx0tt/xLde2ems6wZvhj2u8n4U1mF7cmy4ST96iA8maYHwD7zY+6u2P8Bbj/GUdwiP1ORPfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTSplVLt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F73FC4CEF7;
-	Wed, 12 Nov 2025 11:37:10 +0000 (UTC)
+	s=arc-20240116; t=1762947474; c=relaxed/simple;
+	bh=9eyje3n8F9JrQInIWg9SjS5SLlOCIS9dvxtClXH/S58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IXrOlp1+1SxFzXhGsh0PYL6E0Jxw0BRNaZ+1oZbuNNNnvrltLjqAhfDNTNW1y674KNgnH6HAL4CqzyIJBx8wBUDvINdUewyGTfjxboZ87l2Sk0Pv3IdiPFa6cD1yX0ATxTySdb++BPphSjFb5EQ4drOQMLoz7Dr1upekM8ZlOYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEwD8B7g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8312C4CEF5;
+	Wed, 12 Nov 2025 11:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762947431;
-	bh=ymCfGk4AxYo4bd74CdMZkB02vK66A3ulrQ4KUB+F6wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rTSplVLtdX0NamxtioaiuZdXlSof29fiiG/qEJXf4CmgfrBTyY3YX83kegMriynp3
-	 ySuGL3f+j0DNkWzNw41Y9kCgUIS40koqYfyVR0RLTPrrdu7KQbmnPRWbKYszw2XoM3
-	 SuHNK5rm2jQtC4uZuR+ZaFt/F+QOHm2QrEArvluLwMkKaqMGtKxVdaH7jJ2EaG1uiO
-	 HkHAfjqY7BM/NrEs+7wOl0+gooulTesZq1Dd3OGeQ3bDNhImQsHVVE3PX149JkAPD9
-	 cdG6chGChJsLGrjmhkMtyyTnaZ6ZQHR8t15pQYTmgSEEnX8YTEU/sjWuGYucusqsU/
-	 wOcDm//eAQOZQ==
-Date: Wed, 12 Nov 2025 17:07:08 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] slimbus: ngd: Fix reference count leak in
- qcom_slim_ngd_notify_slaves
-Message-ID: <aRRxZCWCWMFD23b4@vaman>
-References: <20251027060601.33228-1-linmq006@gmail.com>
- <176292442599.64339.7709313480733902465.b4-ty@kernel.org>
- <7eed86f6-97a9-487a-8161-3617597f7391@oss.qualcomm.com>
+	s=k20201202; t=1762947474;
+	bh=9eyje3n8F9JrQInIWg9SjS5SLlOCIS9dvxtClXH/S58=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uEwD8B7glVH6j11jaKszi38avvOs2oESpjLRTBSIDErI9HiggDfkmqXocjiUnGIjV
+	 d2W2FQ5cWoocJsjekXCNKL2CgOE9M3IxlHKC9b2UQxRbFX0F9jcWVk7Sy8riPT1j9d
+	 WpQBHfiPHB6Z/gTGkAEhjPuSq5xM1ZE1mtQs/axU+eE+pjjwaMj9sBQUYxg7JLHm8O
+	 1jtHqHxYgfRbAnTIGgEogHwHTQ028SRmGO45rRcK9o+pctC4Xg+PoRaOEGVTPlo0sP
+	 fiMO8CtVZLmDNaGLGaNgJjaizA+Um/q48vsx7226cuJ/EmEWEKQhKf42x5xVyT/ZuM
+	 a6hRoxm1Mz55w==
+Message-ID: <4e6286a6-721d-45cd-a4ea-e79e90e14fc7@kernel.org>
+Date: Wed, 12 Nov 2025 12:37:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7eed86f6-97a9-487a-8161-3617597f7391@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: softleaf device private fixes in
+ remove_migration_pmd()
+To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>
+References: <20251112044634.963360-1-balbirs@nvidia.com>
+ <20251112044634.963360-2-balbirs@nvidia.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251112044634.963360-2-balbirs@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12-11-25, 10:09, Srinivas Kandagatla wrote:
-> 
-> 
-> On 11/12/25 5:13 AM, Vinod Koul wrote:
-> > 
-> > On Mon, 27 Oct 2025 14:06:01 +0800, Miaoqian Lin wrote:
-> >> The function qcom_slim_ngd_notify_slaves() calls of_slim_get_device() which
-> >> internally uses device_find_child() to obtain a device reference.
-> >> According to the device_find_child() documentation,
-> >> the caller must drop the reference with put_device() after use.
-> >>
-> >> Found via static analysis and this is similar to commit 4e65bda8273c
-> >> ("ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()")
-> >>
-> >> [...]
-> > 
-> > Applied, thanks!
-> 
-> These are slimbus patches? any reason why they are going via soundwire tree?
+On 12.11.25 05:46, Balbir Singh wrote:
+> commit a6ca2ba46390 ("mm: replace pmd_to_swp_entry() with softleaf_from_pmd()")
 
-My mistake, sorry :-( dropped now
+So should this be squashed into Lorenzo patch, or incorporated in his 
+series in case he has to resend?
+
+> does not work with device private THP entries. softleaf_is_migration_young()
+> asserts that the entry be a migration entry, but in the current code, the
+> entry might already be replaced by a device private entry by the time the
+> check is made. The issue exists with commit
+> 7385dbdbf841 ("mm/rmap: extend rmap and migration support device-private entries")
+> 
+
+Because this confuses me. If it's already a problem in the 
+commit-to-go-upstream-first, it should be fixed in that commit?
 
 -- 
-~Vinod
+Cheers
+
+David
 
