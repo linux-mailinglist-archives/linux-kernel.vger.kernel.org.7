@@ -1,297 +1,161 @@
-Return-Path: <linux-kernel+bounces-896856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B983CC516FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:47:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F659C5160F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B12D54FD13D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:33:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38F994F8F13
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7159A302CBF;
-	Wed, 12 Nov 2025 09:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8CF2FDC27;
+	Wed, 12 Nov 2025 09:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LsSrczqz"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011027.outbound.protection.outlook.com [40.107.208.27])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j3xbodKG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BGeXR9b6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B713030171D;
-	Wed, 12 Nov 2025 09:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939917; cv=fail; b=eVtBmIZgpniryn4GfxK9VdZqoeHF1zMagZ49otwvhc4YYMCNxh0TgeD0gpo6TQH5SuTQCAEQxorRukkCY5UuHU3E2WcOC+rZrTSyxIJk3xOn+d6JRckWiHDyZ8VfQGfdiHA3ugn+BC6RQ1RKnKuwLmy8fpR5g/FgcqIQQgNa6zg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939917; c=relaxed/simple;
-	bh=6+8J5fXdYtTAgjTAl/vq7oLWmLSNqiWNvewLLYr8AHs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f675lpUhcEP8j7JzZ45EXK8vvl9hb2AIraunUoRYitmiH5CC4QM7/UbpzOAwcoUYjs7m+pNVZcvj4rpXKgKbzbJfmqjrvbBLGfv1oECiaIcCfH155xHxrpkP6PyVPbw8s2FtuEl4fMSKMBh76331g1Gtrk661HzmeALzS0h30QE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LsSrczqz; arc=fail smtp.client-ip=40.107.208.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=knRSOXMANAX/u8xNf4jmL4psfUOIozpmUTJVevupUgwgyvpTRD1ah2MoHETlWdkwrB8msUjWp83raSM5+ZbPxqNFtkHNzlWf4d82qGaeHxB0D9KdVrzUnk0GZ12G8VvzCKKoSJesPpNLbaAZpOSD42C0X/yf8uEKNdEO3dyJ0gT8olt1or8rAxnKHFU9J+fQmJPp7/7O8PaFbPUAy10rOjG/CDD7MjMfAWkYDN1ZJezh6TWN6JfL66+OOELFpiqj+Tzpwu6xhvr9e3FfKYcJQZWAdSJ/Ex0a24xybPStXJz2OcC224nkE7867ITlbjGutFm3IhK6kpX3tTG9D60/Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AHgdYUvepELlIiDZePohvyoDJdCdwiSzu3OJEQikPKc=;
- b=w9WAG92BvLa2q4FCn3s9Al/RbzVFQ8ct03xl+0KOV8pqsYNJ7eWGbPwPVfXyKcQ46m2+ixZb9PLfKhSFBHcWC7oUxkwRnu5ATvRaQzivKSTQAsRzJ7tR5hJ3U7kT/EexLopcFSeaNr0KtewIfGw0wTKTaNrGNNhwXEMUlRVVCVgLENh6sq3Js6qKd2FZNs1XCiSuP9fcQyQpLAUc9gxolLfuHBbG7S9Y+ekXukZCNW8Fsf1/eCLEGshaEgqnjGl6qOC9so0ICdGqeYAEjEJQ1royFWcOOg4WX+6hNQBWebjdfjNOhsa1PIDKiFIvojWK6nktSvS46Cp3GRcjzFLYrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AHgdYUvepELlIiDZePohvyoDJdCdwiSzu3OJEQikPKc=;
- b=LsSrczqzVW28EGFkgYeI9sPi269Vwxnbzi/37gWMV4GfCqkvv9wxTSuz5BcQDDDa65q9i4KS4uwThxDuuIRd43qZlk5DQ0G1u3K5w6lzaT0634bcZjp8UJZEGG5Tf45Pww3kgRzhS0CK7wMj8NmogH5+y5dFBdadDL0U51Z7dCi2jT6LcAYJnT0tOyMvP8chovsldP8dC432nxJ5IxilvXk6iKDPh86/2bcCK3URwsewms5nQ68NriO9jqOeinlqc39qljSE5QtFsh3jlVBNyM65Q8BMdKkGN7CtX7dHNLbsgDaujaUfSygc95mVqiPy+RAlprCRF0IiZAEU0CzvCw==
-Received: from SA9PR13CA0160.namprd13.prod.outlook.com (2603:10b6:806:28::15)
- by SA0PR12MB4448.namprd12.prod.outlook.com (2603:10b6:806:94::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 09:31:50 +0000
-Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
- (2603:10b6:806:28:cafe::76) by SA9PR13CA0160.outlook.office365.com
- (2603:10b6:806:28::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Wed,
- 12 Nov 2025 09:31:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 09:31:50 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 01:31:33 -0800
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 01:31:32 -0800
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Wed, 12
- Nov 2025 01:31:26 -0800
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Leon Romanovsky
-	<leonro@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>, William Tu
-	<witu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>, Nimrod Oren
-	<noren@nvidia.com>, Alex Lazar <alazar@nvidia.com>
-Subject: [PATCH net-next 5/6] net/mlx5e: Update XDP features in switch channels
-Date: Wed, 12 Nov 2025 11:29:08 +0200
-Message-ID: <1762939749-1165658-6-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
-In-Reply-To: <1762939749-1165658-1-git-send-email-tariqt@nvidia.com>
-References: <1762939749-1165658-1-git-send-email-tariqt@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6162D7DC2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762939755; cv=none; b=YcI8GQkYCiQd252a07OT/dJh7mzkQMCDywyAMzhxmTnRkoE95Dw2fByNtXGFWhDL6pYEFUoZJ36PYeBr45nP6JuvVJda9HoUaBxkb+78ZnshI3Tam1Snt8H58qm4djkNXJpfgRmFClRZO7hM89FPgy2VDPGHutDA0bJcsRv/oes=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762939755; c=relaxed/simple;
+	bh=Pm0KcGLdkUyYMLvnx9ZOl4Og/wEoF0xNClvZWZLEXWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XWJi+LumV40G6ivWiBNVnRCzoyz6uu6WrhDwv9CAesZ6TbC4eWw00qtj+QkzO5sX3NCpUzwo6/TlhY201eR8Y4Gsm1c6jxHMubgW37mHfszi2f4RXQG6i5+NrsyEd18bMNsFShJKONqKs8Q9pFoa9zFwcO7RyTlSUKsrmxLEbNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j3xbodKG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BGeXR9b6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC7baCr3503482
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:29:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Th69YKPq2o8N+ogj+emLojAGgDHwBfgYI/xXUfF0z4k=; b=j3xbodKGGdYS/RVC
+	JvpIgMvofdY2F5xxtIvNLjjbc2+3PkZ9ZPtun3h3jWl0SGhM8jFfXGNPkltsrZLB
+	lp/by6zszbPcDeXGXo9QCIW4e6wVuoUXovJTHTcf4BLY4y97twD3v9EEca71laly
+	tIS6rxoBDXzjYjT4F5U4idZ3iNZ79+Q4PiAWDWxAZGAAfcyz/u6OJ8s0DT5p7KXd
+	VR30pGRsl2O5rbyOKexAS/XHOSkzKDu23fTXzW65WSZYyXuchFh88C+X74r1imN3
+	sk2hG4AE9hrvko6lKb2zXpO7bzEqu0ZRI72A0B4gwPYKwP9hj8nyig+QJee7jQ0V
+	lxZqyw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acdcc1rtu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:29:13 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ede0bd2154so605981cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:29:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762939752; x=1763544552; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Th69YKPq2o8N+ogj+emLojAGgDHwBfgYI/xXUfF0z4k=;
+        b=BGeXR9b64Gez2nQdMZA7mj5cy+bDR4rgjRcVSMmcc9woJ9gzjsFGwc8XbXtWKvWphV
+         2VizsfeJby/573uAcF756o616Kd6elwigngP7rKOTBT4kwtZ2Q6lYEoGPhrVZ5xSiGsm
+         7NgUxilSdafs1L22WW90BbsY2iK0QjbpZIgqofLtWigTWbYBZjpWdfjv4J0OjGb5Olsi
+         IN2XsVDWq22rexxmDyNQoimHDl8c7EtjrYDvzKMc1J0bDMWmpJz3J7TkXvZSyOiDw1aL
+         tI8IJdUw0W8cxBPOv6jfsKOwfnqSIS4JeQvwa0eP4sWZ2ddUSgRbXARAaYv6XCpkKfWo
+         y+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762939752; x=1763544552;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Th69YKPq2o8N+ogj+emLojAGgDHwBfgYI/xXUfF0z4k=;
+        b=imU2olg7HVDrWRfQ5LrTHcn9V+S+B7TIxipbKtRbz+/WADIB7BoWFPxGyM8NXrPZGG
+         4zp7BgdRX++TD2RfOqsbP/f3ijVXuSOejdHX3owQxdAOtV9qPAI9ePPNPUa6vgeNfBud
+         uEdLQFcphWnsyGeEloh+LXHfH07l0lVrUEBKcIRvh0IgAY2t04RyuK8uVnM4m7YX9s7s
+         PQleuO7kguocwOxkQ+0JtFmdm3Wo3D+U1z49fgD5jIGfFVX28ADs61Gowb7zUoHxxS4Q
+         sXDnXCiivPQ0EGRAGFWZWxqJ30UtS+y+Uro6RBvWEQT/8KcJvqUMsZCErY7Yo+k02/kg
+         MIoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZy0UPShDC2/R4tQha2PlEMVkMc2YXfHrl7btajILq4D9OfgRpzTZ02ahd8JGr+sJU+PzqON2ifIgk348=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznnolrtcZ0JEBdtTF0P6KTzEbO6dQDfiD7yE5NYUc4fcm7WFhB
+	KjoUn+WY6GhWaSFKmlCQuTOkk6LOrDhvSdbRm8Rz8II8NiJBx771Bc7DxXpA5q7Y3pmR7zdwjZX
+	ONy5QxnaEgoca2gmnvPu3E/4qGv8PWCWyQ4mlA3UQMQNYvObEWg3H9wyemKt7Rj8BTY4=
+X-Gm-Gg: ASbGncvPBmI9HyGZQfxZJ7FQIc+BKUxnGwSbdSE9YG93JMPFQGRvABqaIG4/ZkFXaYp
+	MLHPHVnHzQ3Kd2WAmYkDWViOG6LHwZEbF/ZPJv9J63l931ChmdFS3qN6Cvdi8O8+08jlNSwpoOk
+	c2A4I0Vdr8p0HsELOpUqMQveK0KIVLVNRzMvySJkZS9swJRFTj2ASmkVC1Ch7R2psvvrKu62UC6
+	D9u96Fy5QjteimnwCxJvgT431dB3tD3k3nVLFAVTqH62Yj3ZJcQ7OsWPRh1hwrgUjQLYuPFjLZM
+	efd0yaufOFupGyc/YDp7CbybemLYbluiMm+P+OBZIhVo5PaH+iIvCD8Ku/sErvcjKg6t3gvMy25
+	LLh4Sr0igUQY7R8sN8K+Hs6JrlElHEeYSkvi9Zd4cOjijNez2RVyeK55O
+X-Received: by 2002:a05:622a:1808:b0:4ed:3cfa:638a with SMTP id d75a77b69052e-4eddbd6f1bdmr17958821cf.8.1762939752202;
+        Wed, 12 Nov 2025 01:29:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEqlHgXC45rT8J+7YIfCSleUn1AIbYKCpDCT55SsVNBiHkKcHouXI74qE3/rDIrYIBNFZHQdQ==
+X-Received: by 2002:a05:622a:1808:b0:4ed:3cfa:638a with SMTP id d75a77b69052e-4eddbd6f1bdmr17958671cf.8.1762939751809;
+        Wed, 12 Nov 2025 01:29:11 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf7231dcsm1551653366b.31.2025.11.12.01.29.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:29:11 -0800 (PST)
+Message-ID: <9d959c15-5b19-4173-9a02-4dbeed2609de@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:29:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|SA0PR12MB4448:EE_
-X-MS-Office365-Filtering-Correlation-Id: c62c9881-8d43-4fc3-908f-08de21ce4f3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FVfQvooXAqBaMLfZ+zh+CxMWr+A/3d8+Z835L8K+P2h+4t1wBOXQ/I7ZKL8y?=
- =?us-ascii?Q?PIlS3hoUy3+JV9w40F0KuNbtO6zxUFTYJ4bTLfhJTC5KNMB9Ekcgubislch+?=
- =?us-ascii?Q?w40SkXj7TJy1WXOtNCFGxhU9g6mmqGkfWWbkGLO5EnHc6I5aS4tC3CVLbSF7?=
- =?us-ascii?Q?CFFkTGHyafJiAJHOZt7C/Ywfz4nsOmiT5MDsXAzoRGhxGnhXgnhf5hSW3Glk?=
- =?us-ascii?Q?psC5aw0j1PSEy9eo1TLs18VBcf0CfRdVefhEQqK6OOi4ECSSU9o7OKaxx3kh?=
- =?us-ascii?Q?is+ghBw1kdaQ4706GYtFFPOxK+3iWCvOT7BD6AnEZKgLzEm6J72P5sW1cFZX?=
- =?us-ascii?Q?1HGiw0+VxxFZSsYqC2UeXk6EJnVji9K+SUP4Mpf+ekwnj9v1b3BXdM0oSC0H?=
- =?us-ascii?Q?hs9T2B4yiJgskJY6S9pXAZRZvEAz8aWRX13sW+/A3XPhVG8aE8tvwAVBz5tu?=
- =?us-ascii?Q?joid9L4tA6C9/qqfkjHRzYVT+LPUlhwWUgvKO4e11tUYhXhmuDXiPukuHa7y?=
- =?us-ascii?Q?gxcyWHOZrxBvBLP7aD4uLIZpP0Tzhh38xu8g1fp3F0GW93sRDleGkat/tQaV?=
- =?us-ascii?Q?gj0tPsPx+FfiL3l0ah8kpPAijKbvZe7C2klsJyY6pcX0vvPz8ZgO/tvqVk3H?=
- =?us-ascii?Q?j+BpxtYnPaLPAz8ZnjemWklL9XfDeIOUdIEVtndRdDT+s6dvCCm97q1/pKba?=
- =?us-ascii?Q?JDUIIppDG8hULaf8iEZezS39f0RA5ld+KGyjZWIHtoQv8xo9fEJTeG5Vd7rX?=
- =?us-ascii?Q?2dZWpEGuBbL/m/sOODlhqrD1fkUUV/gBUx4zb2TslI+wGYm8ytQQ9QhwY3vC?=
- =?us-ascii?Q?7HbKOQqD2wX1trmCv7H9hGI7v9B2Q+YZ6ydjOWUchZj0eeHKr1JKFkx/331R?=
- =?us-ascii?Q?Im+09RDDvCT8OIp8M3bfqNV5aYgACLqrvZOLvFyGp/zylk+hKaZ7YtttNPxP?=
- =?us-ascii?Q?lYIdjmDKwZ9VGvGkbCIVKtBxyTiKSDRUARyYOUnoYcxSe+VhxmAmgjj2lMRU?=
- =?us-ascii?Q?iBVkEsRd2l7nQ6gm8ZDNM2TqqzLw8Dmdu2QJrTIabJZiPW3jeAHlqm6WsxdY?=
- =?us-ascii?Q?wUe2HPypgzJjsJ68dv9f5FRL3V4v7VnLZ65Dh44GH+XzkzVgMorG92VLroKG?=
- =?us-ascii?Q?aZhe4rE1FuXJg3Hm9jfi8PePxe0PmJ5TdQo36l5gjavHRvh3QKNveXxv4tSe?=
- =?us-ascii?Q?TcIm7ALug9XeOr06v2TTSD4jDXTTQvy9Xjgorr4Cbup2KjGAviLA8tk6mITF?=
- =?us-ascii?Q?S7JVKbV5vs5wYEvvWCf9q4t+Y4CKk46egfOrFQen4a3iRL8NQF5MaxcL1W8O?=
- =?us-ascii?Q?c9cqZ6SVsqGlHmY3WLeTyNi2Nzc44jl/B2dO9O3nL9JL5OhhXZL1DCaCI8qe?=
- =?us-ascii?Q?eK6dazK8jtzuwoyGeqy3QSEzxzXBqmCRN/yfkMNlDBhmwLzuDWVjgSx9Ps1j?=
- =?us-ascii?Q?HbAKrLnt3hk2WZkPtnq8+WA1p+QkrswHdwf13YaZPg+0gm+yP0rYB5ve6o44?=
- =?us-ascii?Q?OS4l+v6/4+pbi7suqLPywCzxTTahkk3oRQbRLS4x9L3DEbVElTfvh8hubXHF?=
- =?us-ascii?Q?Zc+Cd1G79vvvIXmlCOI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 09:31:50.8045
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c62c9881-8d43-4fc3-908f-08de21ce4f3a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF0000150A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4448
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 3/3] arm64: dts: qcom: sm8750-qrd: Add SDC2 node for
+ sm8750 qrd board
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
+        Abel Vesa <abel.vesa@linaro.org>
+References: <20251112071234.2570251-1-sarthak.garg@oss.qualcomm.com>
+ <20251112071234.2570251-4-sarthak.garg@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251112071234.2570251-4-sarthak.garg@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: HY0bQULUuXBiv35hsP_VQ_ov-n53EgRZ
+X-Proofpoint-ORIG-GUID: HY0bQULUuXBiv35hsP_VQ_ov-n53EgRZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3NSBTYWx0ZWRfX/xvaX3EE9KCA
+ Vi5/WEoqtr0u0lBxA/bRcEZNpCyjnnnikq17pe2+J6J5yw2RcMPJ4OjmoZ8bsUOtcx33iXCgqsl
+ ZfH+izEq1wsxFn9Xe11CQ1itIwvbW8Gt1uGTYRlFWT31aLamxJH8390E+Ij9pDcT0ig14y0sl4d
+ QzgydxegOFoEihm1+M1slLrAn9KNxonQmdpVB0qILSy0eE/cpiwalvr5hhGolXPDxxVYIH0KsN4
+ f9vl6CUtBUOhk4Ci6gw1YOUpXgU4tWDZurBeNCIW0c50XYUQSmWg2tkIsrJSODF7iw4NO8EQAqN
+ vJH6m7mXEdImAFeviZ2S352evkPS5bvKgEGpT3Ff9JLjTBKHEuQAosCER0BP3j9R6jMGrFj1M4c
+ Tf6Npvw+vd+fntQCrJez88xNs34ZpQ==
+X-Authority-Analysis: v=2.4 cv=L/0QguT8 c=1 sm=1 tr=0 ts=69145369 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=UtbPLzXqTwk2hxi6kqQA:9 a=QEXdDO2ut3YA:10 a=l-yEoJkE5-sA:10
+ a=zgiPjhLxNE0A:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511120075
 
-The XDP features state might depend of the state of other features, like
-HW-LRO / HW-GRO.
+On 11/12/25 8:12 AM, Sarthak Garg wrote:
+> Enable SD Card host controller for sm8750 qrd board.
+> 
+> Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-In general, move the re-evaluation announcement of the XDP features
-(xdp_set_features_flag_locked) into the flow where configuration gets
-changed. There's no point in updating them elsewhere.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-This is a more appropriate place, as this modifies the announced
-features while channels are inactive, which avoids the small interval
-between channel activation and the proper setting of the XDP features.
-
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-Reviewed-by: William Tu <witu@nvidia.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en.h        |  2 +-
- .../net/ethernet/mellanox/mlx5/core/en_ethtool.c    | 10 +---------
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c   | 13 ++++++-------
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c    |  2 +-
- 4 files changed, 9 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en.h b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-index fea26a3a1c87..f857ed407cb0 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -1288,7 +1288,7 @@ void mlx5e_netdev_attach_nic_profile(struct mlx5e_priv *priv);
- void mlx5e_set_netdev_mtu_boundaries(struct mlx5e_priv *priv);
- void mlx5e_build_nic_params(struct mlx5e_priv *priv, struct mlx5e_xsk *xsk, u16 mtu);
- 
--void mlx5e_set_xdp_feature(struct net_device *netdev);
-+void mlx5e_set_xdp_feature(struct mlx5e_priv *priv);
- netdev_features_t mlx5e_features_check(struct sk_buff *skb,
- 				       struct net_device *netdev,
- 				       netdev_features_t features);
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-index 01b8f05a23db..73d567ccd289 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -2286,7 +2286,6 @@ static int set_pflag_rx_striding_rq(struct net_device *netdev, bool enable)
- 	struct mlx5e_priv *priv = netdev_priv(netdev);
- 	struct mlx5_core_dev *mdev = priv->mdev;
- 	struct mlx5e_params new_params;
--	int err;
- 
- 	if (enable) {
- 		/* Checking the regular RQ here; mlx5e_validate_xsk_param called
-@@ -2307,14 +2306,7 @@ static int set_pflag_rx_striding_rq(struct net_device *netdev, bool enable)
- 	MLX5E_SET_PFLAG(&new_params, MLX5E_PFLAG_RX_STRIDING_RQ, enable);
- 	mlx5e_set_rq_type(mdev, &new_params);
- 
--	err = mlx5e_safe_switch_params(priv, &new_params, NULL, NULL, true);
--	if (err)
--		return err;
--
--	/* update XDP supported features */
--	mlx5e_set_xdp_feature(netdev);
--
--	return 0;
-+	return mlx5e_safe_switch_params(priv, &new_params, NULL, NULL, true);
- }
- 
- static int set_pflag_rx_no_csum_complete(struct net_device *netdev, bool enable)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index d1dbba1a7a2f..078fd591c540 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -3417,6 +3417,7 @@ static int mlx5e_switch_priv_params(struct mlx5e_priv *priv,
- 		}
- 	}
- 
-+	mlx5e_set_xdp_feature(priv);
- 	return 0;
- }
- 
-@@ -3448,6 +3449,7 @@ static int mlx5e_switch_priv_channels(struct mlx5e_priv *priv,
- 		}
- 	}
- 
-+	mlx5e_set_xdp_feature(priv);
- 	if (!MLX5_CAP_GEN(priv->mdev, tis_tir_td_order))
- 		mlx5e_close_channels(old_chs);
- 	priv->profile->update_rx(priv);
-@@ -4461,10 +4463,10 @@ static int mlx5e_handle_feature(struct net_device *netdev,
- 	return 0;
- }
- 
--void mlx5e_set_xdp_feature(struct net_device *netdev)
-+void mlx5e_set_xdp_feature(struct mlx5e_priv *priv)
- {
--	struct mlx5e_priv *priv = netdev_priv(netdev);
- 	struct mlx5e_params *params = &priv->channels.params;
-+	struct net_device *netdev = priv->netdev;
- 	xdp_features_t val;
- 
- 	if (!netdev->netdev_ops->ndo_bpf ||
-@@ -4513,9 +4515,6 @@ int mlx5e_set_features(struct net_device *netdev, netdev_features_t features)
- 		return -EINVAL;
- 	}
- 
--	/* update XDP supported features */
--	mlx5e_set_xdp_feature(netdev);
--
- 	return 0;
- }
- 
-@@ -5911,7 +5910,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
- 	netdev->netmem_tx = true;
- 
- 	netif_set_tso_max_size(netdev, GSO_MAX_SIZE);
--	mlx5e_set_xdp_feature(netdev);
-+	mlx5e_set_xdp_feature(priv);
- 	mlx5e_set_netdev_dev_addr(netdev);
- 	mlx5e_macsec_build_netdev(priv);
- 	mlx5e_ipsec_build_netdev(priv);
-@@ -6009,7 +6008,7 @@ static int mlx5e_nic_init(struct mlx5_core_dev *mdev,
- 
- 	mlx5e_psp_register(priv);
- 	/* update XDP supported features */
--	mlx5e_set_xdp_feature(netdev);
-+	mlx5e_set_xdp_feature(priv);
- 
- 	if (take_rtnl)
- 		rtnl_unlock();
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-index 0335ca8277ef..ee9595109649 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -867,7 +867,7 @@ static void mlx5e_build_rep_params(struct net_device *netdev)
- 	if (take_rtnl)
- 		rtnl_lock();
- 	/* update XDP supported features */
--	mlx5e_set_xdp_feature(netdev);
-+	mlx5e_set_xdp_feature(priv);
- 	if (take_rtnl)
- 		rtnl_unlock();
- 
--- 
-2.31.1
-
+Konrad
 
