@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-896702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C0AC5100A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A38DDC51016
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9409634D633
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:49:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C10C34D687
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C36F2EDD76;
-	Wed, 12 Nov 2025 07:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996F52ECEA7;
+	Wed, 12 Nov 2025 07:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f2HB/A/h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l0o/LkGf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hEHdimdQ"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6331B2D9ED1;
-	Wed, 12 Nov 2025 07:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCE22ED853
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933775; cv=none; b=rZD0OdrdIhHcx8SnX0ukdeL7opDz/KyqhPevwZ4+zTBCOEppsGrnopNwQ0m9qzztkcZxu5wZp8MeVP2uQN6A85oJJibRr2u3ym8OgoE83OiPv9DAbonmJHskoxo2WN5tF9pNM0a57x/9LT/Suc3qMFLN+2z+l0WyaIKEjvuUyLQ=
+	t=1762933811; cv=none; b=QJzRbiWjkfJcunKfQh+MMRIMaDhbzCAtYjqbPoVWZNpSdm2xge8eUcmeXxO2VWJSbKBIDuY21EkrqAprH0+g3KIPRGbSe4HcyYZbA1wav+ulzV2owzrMn70+xVEeHHmnejuSTl4vxjBl1lvxi19BXxvZYWSCqxnzVcrFPkyUi3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933775; c=relaxed/simple;
-	bh=xbvMcM1IoFXOayGu/dX6p8mJi1v8/NnppEEb+PdNlEU=;
+	s=arc-20240116; t=1762933811; c=relaxed/simple;
+	bh=vQGEuOEI5CcliGhoSpli1L+Hj54P/8blyd40sP9gSxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzPhLPBwxxW47eFjd4oRBtG8OFS3KlseKuDOlp92OhtiwVN1XBVBGcNhaRK5fb7vEnAKhXTwnKD7lBlKAHZUpmQ+5yrwIHLrCOcg5S0mgBKC4XL5LsW1oP8Z1QnP63n/WHV4W/X77wyqXAEgcdGVpgNiMs3mHG3eG9wCJFsG41k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f2HB/A/h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l0o/LkGf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Nov 2025 08:49:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762933772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hjmsQNbabVrHMjgajgEZibUL+efg9RjKcTRD2S+ysQ8=;
-	b=f2HB/A/hb6zPD+MvHy/KC6OdmWpC1V68JL0jW4qNfv0jLBEggJ0szbe/6OorO2hbDxG684
-	ArYQRJhVOGOBDvhNEI2ERthAEZnlBT2HjBfL/kf0+8KhcCPVsge0dLNgregR4MX6nJg5oo
-	bpS9gAPhIWKi072xVwjJTvnB0IiQKxoKaQNhLFwvkVDMFFkJ7UIf+oDNa48WnLmlaNROEq
-	5h/cgHgPc0QS7fhyI9Ff7mQduVeKdQ5HLfc6YYwGKQbSuZEok9BR/stoGLsi4VpqGFRO3c
-	EeLwmycKHbL72hmLC4HFwiReBONSFKPSBT/oOafm0ECnUZHz10SG/AKDCb3VVg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762933772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hjmsQNbabVrHMjgajgEZibUL+efg9RjKcTRD2S+ysQ8=;
-	b=l0o/LkGfxoyEmPkG6koDawTBPXTEvwbAYcuza/5SjiqDSmJto9UrhdHQKSLqA10+aCQusg
-	Q2gtdV349a9ij4Dg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>,
-	hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
-	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
-	lorenzo.stoakes@oracle.com, ziy@nvidia.com, imran.f.khan@oracle.com,
-	kamalesh.babulal@oracle.com, axelrasmussen@google.com,
-	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-Message-ID: <20251112074930.mKu1J__U@linutronix.de>
-References: <aQ3yLER4C4jY70BH@harry>
- <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
- <aRFKY5VGEujVOqBc@hyeyoo>
- <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
- <aRF7eYlBKmG3hEFF@hyeyoo>
- <aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
- <8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
- <aRKqm24Lrg-JnCoh@hyeyoo>
- <20251111084900.babaOj0w@linutronix.de>
- <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+	 Content-Type:Content-Disposition:In-Reply-To; b=haDwgFLk/1/4fzu2B8sC1evbw06cVIdJ04lR9KXtZs5tMzNEfgLKGCUCdXi858h1lzYC4P3lEYrxs5/zG38JPiaMxU3cdln8FuT9eVana+bLD94WunLkmQAgUXpsUo7U2Nhfw/cbcSjJxfayKAH8/GfvwdbyTdf5BgBt+Ki0BJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hEHdimdQ; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7272012d30so82436866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:50:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762933807; x=1763538607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ipL3Z/6wC6GRR63sS5vId/ptcyhjHxEgUXfHm/LakcE=;
+        b=hEHdimdQqrJZbhfw9mvGHyq7rfhp84Azrx0gry1bPRHTdG8f22gD2OL0GA2oGBU5Gf
+         ekAfxxBO4vHF56sNu2h8bQq2IM8btoSuuTlnPATXj7/Jk3Z8Z1QiU/BnJdVgibbr0BI4
+         T5mbbqn8lFDxNp1J7cLdJ/p7F49KY1OXaIxqK9eWVHOxiB8MK5TpI9uJ+XcHPETqhb8G
+         xwwyTIFjEu3d7uLd5nsbndZXfPog6fGyKLJ8oJ6UL4N6Zw3P9xf9YRLAZlSe2oeZblQD
+         gWaKa1LJWRF0DeXl9elOZFE7jKzh2EEXOdKDe642naCoXfMsr/anzAk9+AITTOAryKF+
+         VxcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762933807; x=1763538607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipL3Z/6wC6GRR63sS5vId/ptcyhjHxEgUXfHm/LakcE=;
+        b=OG2wMudHticzNi0kNsGOBSofheGekHuY2cLml5SXFi6iwdbJiQsQsmPMtqbugi3Q3w
+         mT292W87N2PbiQDbXSPZgNfaItgE7BgBnPXbCy1lxUae+ZT+vcGTtyhjINLI3Yi+MUTB
+         mEKRwTVR+i/Xc1NDqwoG+jpwev1yOYYf2YppIF8ZmwjiClyhVcFYqwDr2csrXUgMiZnq
+         nOogfU1o7CbzcWf0udw7WIfUtpg0k93Qh+gj6GP/n8+aBc0EVkFzY82pBwYAIEenAv1q
+         zwdGNObQraBP+spSHqwLcf0N56ehitHeKeI7Jgp7B/fvUEjENuTUQ7Lpz7E63UV4csGh
+         fyFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaO9qpcIWcFHIrb9EihfcmPUO4DvV+UfP8EymEevakncZSsVS40ISPKqUkx4UwiKYvQg/zjrgTG89Lnmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVyUDWOt2Mskhi1Wc6EB1p2we1QqCULRpDMUPYqAngs370SyIV
+	pQaRZTVMDMI+qPIq5QFByAuqmhdkMzZtXEJUwGYDkCmb2omyZuMiDVjxzSrNmhgfigI=
+X-Gm-Gg: ASbGncvMDYbzWmjSftv776GDW6dQepCEFGwW4qFuTBh2V5ZZzq6GM+xoCx1YoAfz+q/
+	dwqpVo6d64Cj7H6RmuBP3ktMoUuXx2MJxXu6tdd9TdyVQtflIfmgNzJW9l+EubH9VIrU90MPLGK
+	WRNfq+Wtr9eUihrpaPc8kbZqYpTtcC/wJCBBCbnuU5LD2cN0n+wFF7gCE74EvGhZt7aK4vtdgeX
+	5HLNAfL0BE8AiE5rkJnbuM+QMzrbHphOieDYspcOryLuKFf30ouMHzI3AMJPn+gauu4YGyvFuLb
+	/uomo9iMsU8PnPb5Gez+z3tioqUnFvSZd3h6G/iERCnFzx3LXdmZE1UgxVuctHWfgcp8BOa6Kvt
+	f3fIHP+AshPDHADdI5BaDE/vysw4CqoeCTg30ZNSVyp/wLsIx4AZ+KtJc+Hv2pz8LrtBuWikByS
+	PV9lHtynjo86o7sA==
+X-Google-Smtp-Source: AGHT+IFkrb3GSMhhW1bzYaSDD1E5kGgIrUWkWimOuuxU6/CLGbZTn7iNA2cGrP2NCWseV/3pUPbNoQ==
+X-Received: by 2002:a17:907:7e8e:b0:b73:2bc4:ebf with SMTP id a640c23a62f3a-b73319649c1mr168849366b.2.1762933806298;
+        Tue, 11 Nov 2025 23:50:06 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bc214sm1583946166b.52.2025.11.11.23.50.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 23:50:06 -0800 (PST)
+Date: Wed, 12 Nov 2025 08:50:05 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 13/23] mm: introduce bpf_out_of_memory() BPF kfunc
+Message-ID: <aRQ8LQWxoRF0kgXk@tiehlicka>
+References: <20251027232206.473085-1-roman.gushchin@linux.dev>
+ <20251027232206.473085-3-roman.gushchin@linux.dev>
+ <aRG0ZyL93jWm4TAa@tiehlicka>
+ <87qzu4pem7.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+In-Reply-To: <87qzu4pem7.fsf@linux.dev>
 
-On 2025-11-11 08:44:14 [-0800], Shakeel Butt wrote:
-> On Tue, Nov 11, 2025 at 09:49:00AM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2025-11-11 12:16:43 [+0900], Harry Yoo wrote:
-> > > > However, in the !CONFIG_HAVE_CMPXCHG_LOCAL case, mod_node_page_state()
-> > > > still calls local_irq_save(). Is this feasible in the PREEMPT_RT kernel?
-> > > 
-> > > Hmm I was going to say it's necessary, but AFAICT we don't allocate
-> > > or free memory in hardirq context on PREEMPT_RT (that's the policy)
-> > > and so I'd say it's not necessary to disable IRQs.
-> > > 
-> > > Sounds like we still want to disable IRQs only on !PREEMPT_RT on
-> > > such architectures?
-> > > 
-> > > Not sure how seriously do PREEMPT_RT folks care about architectures
-> > > without HAVE_CMPXCHG_LOCAL. (riscv and loongarch have ARCH_SUPPORTS_RT
-> > > but doesn't have HAVE_CMPXCHG_LOCAL).
-> > 
-> > We take things seriously and you shouldn't make assumption based on
-> > implementation. Either the API can be used as such or not.
-> > In case of mod_node_page_state(), the non-IRQ off version
-> > (__mod_node_page_state()) has a preempt_disable_nested() to ensure
-> > atomic update on PREEMPT_RT without disabling interrupts.
-> > 
+On Tue 11-11-25 11:13:04, Roman Gushchin wrote:
+> Michal Hocko <mhocko@suse.com> writes:
 > 
-> Harry is talking about mod_node_page_state() on
-> !CONFIG_HAVE_CMPXCHG_LOCAL which is disabling irqs.
+> > On Mon 27-10-25 16:21:56, Roman Gushchin wrote:
+> >> Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
+> >> an out of memory events and trigger the corresponding kernel OOM
+> >> handling mechanism.
+> >> 
+> >> It takes a trusted memcg pointer (or NULL for system-wide OOMs)
+> >> as an argument, as well as the page order.
+> >> 
+> >> If the BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK flag is not set, only one OOM
+> >> can be declared and handled in the system at once, so if the function
+> >> is called in parallel to another OOM handling, it bails out with -EBUSY.
+> >> This mode is suited for global OOM's: any concurrent OOMs will likely
+> >> do the job and release some memory. In a blocking mode (which is
+> >> suited for memcg OOMs) the execution will wait on the oom_lock mutex.
+> >
+> > Rather than relying on BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK would it make
+> > sense to take the oom_lock based on the oc->memcg so that this is
+> > completely transparent to specific oom bpf handlers?
 > 
-> void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
-> 					long delta)
-> {
-> 	unsigned long flags;
-> 
-> 	local_irq_save(flags);
-> 	__mod_node_page_state(pgdat, item, delta);
-> 	local_irq_restore(flags);
-> }
-> 
-> Is PREEMPT_RT fine with this?
+> Idk, I don't have a super-strong opinion here, but giving the user the
+> flexibility seems to be more future-proof. E.g. if we split oom lock
+> so that we can have competing OOMs in different parts of the memcg tree,
+> will we change the behavior?
 
-Yes.
-The local_irq_save() is not strictly needed but I am fine with it to
-keep it simple. The inner part is just counting.
+The point I've tried to make is that this OOM invocation is no different
+from the global one from the locking perspective. Adding an external
+flag to control the behavior might be slightly more flexible but it adds
+a new element. Unless there is a very strong reason for that I would go
+with the existing locking model.
 
-Sebastian
+-- 
+Michal Hocko
+SUSE Labs
 
