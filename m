@@ -1,92 +1,151 @@
-Return-Path: <linux-kernel+bounces-897816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902BAC53C28
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:44:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3917C53C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50059421F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5428E5423D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07F341661;
-	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2326E3446D2;
+	Wed, 12 Nov 2025 17:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNl4CBpu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9TrqFbN"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA782BE650;
-	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1D344046
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968038; cv=none; b=uilYzTHvIjv70NU3G/wxsv0x7J1gB+s496QlvG76/XBby5RcA/xZhjNR6oxpEpbGnNZS0XxomoaftSZyVdY8/kzaW01JFhbTwCWR8j0gU97GTMTTE2rzqB+mUKLekJEEz1m/5SnmAjTS0+3XQweX2u3MLNv37imBXaJmwbFjHB8=
+	t=1762968070; cv=none; b=TUowZZCo16i4Zguv9JZKRLu6kp89XGPwz0DH2nrkkMn50w+Ku4a4vhi7y+az3Bhj8PxxpB5fPzMk+45D1f2gHt2KuD5sMvvR5k7AKUy1Vwl8CAfUSXjsYpt4CzfkuMc1m0Dh5j6u9jH8yDKCURe9l0JxqOP1S7ZH2ZwNC6RsArg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968038; c=relaxed/simple;
-	bh=nW3H/DwEWgKnHgIH5rXpU/yUG/VcFQxcP/8RtuTjMsk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VEv9RFxXlUX0WM1utGOEI7rr6roE+TKftTwJtlAI6np2DOss/KRW+fhc0YS15wonZSkjXrdSFVGKtAqv9ySLDYlP37z4pP+rXrWZaocpgPcEKmpobqoOClU3K1BiJgEJS6pj51gaYzAwNvaXmuul0+cICv+tzUtDR96PIfZqjI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNl4CBpu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F68C4CEF7;
-	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762968038;
-	bh=nW3H/DwEWgKnHgIH5rXpU/yUG/VcFQxcP/8RtuTjMsk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WNl4CBpuS20B7vVmRJQ0e6wJfRyRb+9V7SJZ9jvkr/qIFrXGSFDenHOLV+dpSIGEp
-	 z+aQAuS0eM82PXUu6VkfElNNEi5TZn7/m2voNWUPolS4256YRyhyD88DMeqgtbw2U9
-	 cPxJRrHgOfC+g0UjDf9BMmH2Z11b7aI9FhyIyBt5Dc1V9iDSlt3IDujWoGokXg/EhE
-	 8qOGpsdYDGm2N4jsxA1OW+j/7Jo6gT6yhazq7Ff/2ZjDX/cUFiyDpZmXw75u8JIn1N
-	 2PU+nRAaVllbKRXzoRF+Hr79knF4eXtiLYOX7+GlDpJcEWZweE00yShebV+EZwaxnP
-	 r2qBJMwrr1/ew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB13639EFA62;
-	Wed, 12 Nov 2025 17:20:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762968070; c=relaxed/simple;
+	bh=zGm3bjPIXNlAXsn923/poaK7/h5DdSgopChHq1KIJug=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=NwGJbzePu5q5tlYeT/T+d6YzBwGtZqm2jWQRFhKhHlIT0XA/5S66a3zYnnPJlDKjbw6eg4SgWC1vfTikRjeEKb7liP6RDSjGnkfZoiSYx5AWtx7ZHfBFA1vfNyF77BqrH1eISDQRZ0N7asqbjBvKLqbyTLUqepS9Ja4As0kszwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9TrqFbN; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b312a086eso816945f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:21:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762968064; x=1763572864; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+D8BoUvcqK/7rHl2L0r4XdY6giRmTPN9ngtKeR3ez90=;
+        b=S9TrqFbNcrP3YS5Uc7rdz6PzAL3g54MeF9cHf4b6VqPeDafcgVsOwmw3sVcAxW+SYf
+         +kYZ8G5A1zVPRayt8sMogwJOaPtvzFRjp83uHjY4bmuhyPP/ULvORLZSyu5rRukDMrAv
+         oe4Mtob5tFI/QAhL8K4A08M6tRgspAZr9rFNkqKY1CuEyuwiRzlmha0ipW1jef88mufh
+         HtUdnYZGD29e3ULyHYB1AJmA5sxwYg3TX4ME9YuPK0B3SXLXHMIOCCKL0iDeU7NUoyZc
+         6RXESpaWDJd3iV94l7X2grwZG3XtoyE+63VFil56xuS/4XFFO9EM+x/SF0Bk/4MevcWB
+         Rh2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762968064; x=1763572864;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+D8BoUvcqK/7rHl2L0r4XdY6giRmTPN9ngtKeR3ez90=;
+        b=uKEcvfTzQC3CC6Xm8a486z0xD/N7PmVM8R6Z2YN0G3Z6fzp0yr7EWMIWhZOvR9wo9+
+         G0wn2YA5WxFKo05eJ59q9LRS1epnmOZ9PQRVg6PmceXZ5if/QpPwOBjtCUWyPvjbuRhm
+         TpH4laLzIOAOzT+bV9fKZfl8O+eUiLCp9d64AEbuBucxcFh0op9EbsHrfub35e8n9vZB
+         DV7FVz7cYYmPZ6Mq4ITcGoSB6YnfhsIFwiDI9anZMoW/m1JrnVwqYFhWPdSJrBUJbEqB
+         WKcJVECSyBmPGZgqBtu3Hti3HQAoWChrQrV8RdzB4XaBeO8h4gM91izgSHUhiFCCz2/n
+         IdQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn+3lz1M1F82oSs7+WoF6CaZDb3dsshC7AnsbFVWdNZ5sQ+WSmXwhcn18ZuSW8cIIKQVq8MswQKaWCesw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztxCaASE7SPeyIFtktlxsl9JnBLtkbyINottHOenIsvIUqmLrQ
+	iJ25CElfzUHZ0nvwebFGnDtG8JotArSuFo/UFd8CLaW2efKiYnCFnWaU+yzG18KOS90=
+X-Gm-Gg: ASbGncsLfeeEHWVX/OiGr942CEcKfhg6hJ6Ro/259JEU2G6xlwRJUc5xemjAfOVrbUd
+	tMVXcndlp3tjgRHe5pGkeLn1nIGVHRNtLGVm8t7NhJhiWS5zJ3LYQc5INU4LqBqOEpIPFpU+H3r
+	wlP2hghqfAsk7ej0s/zGrixcgcXCFMCaN4rAY1+1dYDNtxbW5lNOr7Ikj8iVldleSyMFgOBI2cc
+	BTTKqvtjU/U9azf9eFldXtTbmRHqh1Z3Y6s1sgR3t5OmEBYK+ecOcCUKS4Pin0gWcZo5UdOIxDC
+	C8WkhTM/KBGeIk9Dk0vAdPeIJ6kWu9l03YxL87uNP90CwJd7YIjUXqUYKArrmYRrDT20+t8Gib0
+	hJ9dZd20NaYdcllyfar0eqMVDqCgYHqEBzzIwmSR1RhTZ/SUBdpJEMtAIJ0dJzgv6ka9Fvq/6G3
+	FXh12tuHuUXboBZDw=
+X-Google-Smtp-Source: AGHT+IFOnruwkehrKtiSlIIluNpW1jCcNK6zjknkUp1TXGQBb3IO3OG62+bnEz116c3kPlLyvXv7bg==
+X-Received: by 2002:a5d:5f53:0:b0:3ec:ea73:a91e with SMTP id ffacd0b85a97d-42b4bb90b60mr3558763f8f.12.1762968064363;
+        Wed, 12 Nov 2025 09:21:04 -0800 (PST)
+Received: from localhost ([2a02:c7c:7259:a00:4fbd:5c9b:d8a2:ee64])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b4789896esm9558995f8f.38.2025.11.12.09.21.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 09:21:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] r8169: add support for RTL8125K
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176296800777.91007.9216007329700190108.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Nov 2025 17:20:07 +0000
-References: <20251111092851.3371-1-javen_xu@realsil.com.cn>
-In-Reply-To: <20251111092851.3371-1-javen_xu@realsil.com.cn>
-To: javen <javen_xu@realsil.com.cn>
-Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 12 Nov 2025 17:21:03 +0000
+Message-Id: <DE6W0RIF2Y26.1MENYDV2RIAIP@linaro.org>
+Subject: Re: [PATCH v3 05/12] ASoC: codecs: wsa881x: split into common and
+ soundwire drivers
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Srinivas
+ Kandagatla" <srini@kernel.org>
+Cc: "Mark Brown" <broonie@kernel.org>, <linux-sound@vger.kernel.org>, "Liam
+ Girdwood" <lgirdwood@gmail.com>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Dmitry Baryshkov"
+ <lumag@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Konrad
+ Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Jaroslav Kysela"
+ <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
+ <20250522-rb2_audio_v3-v3-5-9eeb08cab9dc@linaro.org>
+ <f1337654-ff69-4489-840a-a1b38efb7f74@oss.qualcomm.com>
+In-Reply-To: <f1337654-ff69-4489-840a-a1b38efb7f74@oss.qualcomm.com>
 
-Hello:
+On Thu May 29, 2025 at 11:05 AM BST, Srinivas Kandagatla wrote:
+>
+>
+> On 5/22/25 6:40 PM, Alexey Klimov wrote:
+>> This is required in order to introduce wsa881x driver that works
+>> in analog mode and is configurable via i2c only.
+>> Functional changes, if any, are kept to be minimal and common
+>> parts or parts that can be shared are moved into wsa881x-common
+>> helper driver.
+>> The regmap config structure now contains 0x3000 offset as required
+>> by soundwire spec.
+>>=20
+>> While at this, also fix the typo in WSA881X_ADC_EN_SEL_IBIAS
+>> register name and rename wsa881x_set_sdw_stream() to
+>> wsa881x_set_stream() and update registers description in the
+>> header and use the new defines in wsa881x_init_common() and
+>> in wsa881x_digital_mute().
+>>=20
+>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Cc: Srinivas Kandagatla <srini@kernel.org>
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> ---
+>>  sound/soc/codecs/Kconfig          |   4 +
+>>  sound/soc/codecs/Makefile         |   2 +
+>>  sound/soc/codecs/wsa881x-common.c | 193 +++++++++++++++
+>>  sound/soc/codecs/wsa881x-common.h | 458 +++++++++++++++++++++++++++++++=
+++++
+>>  sound/soc/codecs/wsa881x.c        | 493 +------------------------------=
+-------
+>
+> How about we have something like wsa881x.c wsa881x-sdw.c wsa881x-i2c.c ?
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I am totaly open to suggestions. Splitting to wsa881x-{sdw,i2c}.c sounds
+good to me.
+I kept the original name to keep the changes minimal.
 
-On Tue, 11 Nov 2025 17:28:51 +0800 you wrote:
-> This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
-> based on the one with XID 0x688, but with different firmware file.
-> 
-> Signed-off-by: javen <javen_xu@realsil.com.cn>
-> ---
-> v2: This adds support for chip RTL8125K. Reuse RTL_GIGA_MAC_VER_64 as its
-> chip version number.
-> 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v2] r8169: add support for RTL8125K
-    https://git.kernel.org/netdev/net-next/c/1479493c91fc
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[...] (the rest of the patch was quoted and sent but I didn't find any
+comments there, please let me know if I missed something there)
 
+Best regards,
+Alexey
 
 
