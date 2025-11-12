@@ -1,147 +1,168 @@
-Return-Path: <linux-kernel+bounces-897728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A791C538C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F7DC53831
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C3B4A1F14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9864A5815
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B3B33AD9A;
-	Wed, 12 Nov 2025 16:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A937A311C3F;
+	Wed, 12 Nov 2025 16:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z5urpiHk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V0OHB0Uv"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49F71F4176;
-	Wed, 12 Nov 2025 16:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D3533B6E1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964638; cv=none; b=OCtiRrykHUyTRia/9pexyzddkRDYd1J/rGkNCNLv9u3evZAPHZfocb7H+OLvTjI3zdoy8vTgLo1ciz7gTiykU+qe4KWFUGTDQo10Vh7hlL/W3xsNrypAFOjciwDntbDuS8Vm4aQSrk538O5T1XMx8TKWyED11WwgI3mB7ZXC1C0=
+	t=1762964687; cv=none; b=j3psZakHmQbkBId5/+Dk3KORkQxqiTF3ZD7sScJi4rGMPRO+KTKLOVRjrS3WS1ubyLpv3fVAmbtTQUgeB7ZbKgvAXvSi6BOGnf1fQNCxotvtkvNu+HK5kkS4l8c7Mb2Y577VNH12q9suwQUMPIEYLfV9k6epeOjv6kwUygHSodQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964638; c=relaxed/simple;
-	bh=85iOPPCnPTcylTWGYbyHyZLBg6P3sq4n5iKzl/1KuRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtVtzvKp5g5sGyXxAxo0lCmUpzMl2EjM2jQrJv9CKiHbVc/IwDBrmGGu5GvE5tYEESJqkMz6p6tlTeohw1pgeiwNjWxyXvOAOOIrck+VbniqHFpnTm8cqdvpiRn2FKOww4zoWb4QeSPBCugwS34CiD0aLt/QFOREy/AYmsilRQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z5urpiHk; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762964637; x=1794500637;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=85iOPPCnPTcylTWGYbyHyZLBg6P3sq4n5iKzl/1KuRY=;
-  b=Z5urpiHkztlHyPHs8Z7b3bDObhBrV7Y7xaarsKaoZ8kTMa4gUCVL/jTV
-   yZ3BnNLXIFuy3C0C8Oc28rk0Zf45qKDhZJZILvcG53TlCjiX7xHGFKDE5
-   EmHJGQczS2OSV7+38Cj5BBmMSLwwOhegkGx6dIKqbsNW4q6x460X5lmRs
-   XjmqwvTeozJ+J8rjrhWnTmrIRsrPaNG5qqexrPkITOsb4dasOoloXOKLN
-   L2Nz3yB5sFE/I6XP+2jXUu+uj6xEV518jiwmQamivjrGgBwJLQ2CS57rr
-   30UYdgEuiSaECDwiLlx8rD4X6nO97+KzmpM4OupOF1oGB/cfpy7Iqf7bR
-   Q==;
-X-CSE-ConnectionGUID: 6vVWxrioSva/GRCkdb3BgA==
-X-CSE-MsgGUID: wpYJIXDQSPS8u6uQ0kdqXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="75713345"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="75713345"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:23:56 -0800
-X-CSE-ConnectionGUID: 4LRDhCj/TKSWDdJePcx9ow==
-X-CSE-MsgGUID: t8SFj0J3SgmXb8XzxAYDZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="189248987"
-Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.108.30]) ([10.125.108.30])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:23:56 -0800
-Message-ID: <4270add5-8ef1-4400-b884-c47b8af98b19@intel.com>
-Date: Wed, 12 Nov 2025 09:23:54 -0700
+	s=arc-20240116; t=1762964687; c=relaxed/simple;
+	bh=IAFz6HvD1HqgBGKZf/vmrYIzO04GOyUd7HHrwKSp1Qo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=EjLpWF+Hyc+zs/f2kJh+9u2k2RiknsRPKJS3OgbOtfu6cPp9Z9pyk+4pTexkOrkntVVamuHH0DXiPN08B1waxhgnknCtU7oihsfSfslEEzZGiEZjKD8dA5JfpCJIHkKctZkwigOg9YqBP58xet14uGd86JryPl6C7AhKc//mG54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V0OHB0Uv; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-29809acd049so12440895ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:24:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762964685; x=1763569485; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2k/4sgiqyEzPJrtOKnDWo378laZvIgrqxzza06nCo4w=;
+        b=V0OHB0UvuSHr5l7mCvrCfI2bs3Tp9fU0VPLoMexuII8AGP5jgod4Fb7YJuofw4/YMJ
+         +TJJB4eIFdJQk3sWVAFqo9xVkgV8ZTWPod3y30kwgzj2R/nQV+4ular9bo/+IRFiFUd2
+         krXsh+HR/1Atzs28tV2ZiNL9STmPmopHYRgg3zI8lpYk97FSkGN1b+9SPiSJDZW1j6dE
+         iaqJL8X4SBiZizPSMcxb/Fe05YSF1SrZnk1drr3p6MXa5V5rkEZeq/I0Mv+XXeGJH+bX
+         Ohu/A7yX1ru6IrAfd8jlItS9vm7XB5pxBBdnYiS60aNnAdYyDM4ZJxCIp57o4vByUiOo
+         jAPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762964685; x=1763569485;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2k/4sgiqyEzPJrtOKnDWo378laZvIgrqxzza06nCo4w=;
+        b=ManLkso7mCPwieNM8rAgjA0wi9CXE2T4ded2Ivh1utlHktLqcnAl28Mr1Z9FJyex1h
+         msUOe44VUPgUoRhBuYZTmIGeFmYJR6imFhVF3qQauyDumei1aULIdBhyvOaLu3tgTSnB
+         +GntBoemrglUw3WDO/9N5pkcSO4dFZWDAL+JBfdClBf+RN726oczHNl6P4IGg+GjcjbN
+         S+0uOea5cSPfFCixIfH1SoE5qZe8ZNO6obLf8Zv5T8dkHZuzUXcDaMvS0bDi9IcPYUU2
+         up3m/c9P1DBd+XWqV7WnWd8eHs4bh4TtKxUz08uSHZEEYlyLAIB+9ZZU9Ovhmimp/YzZ
+         vuAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOY0dwMNiDUj8rwKDCiQFiCr769I3IHdRjy2//6JT0FKHyOSIsjokot5UCFkhnKUI2vAqb13UzAnETuC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbk2VNpFyE/dpBGl5ttpeAKHSLnKqt6qg7xZ/3DXQ8sDZYEQwu
+	6900e1bGqkP550eFzRXAHKwX2IW25OFyAs1pJ1SaWFG7kRVqMtv9Ii7GgioquPPQb9aOAEGGpkP
+	YLf55KU/Xyg==
+X-Google-Smtp-Source: AGHT+IF0nVwY5tvfnLuL9pHgSRiLyebsOlZqwtBrsEiSpZb6JrB31Jxvbsk87QVKKHU3IaMKufVApxvvSQd7
+X-Received: from dybml43.prod.google.com ([2002:a05:7301:152b:b0:2a4:6b4f:4044])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1103:b0:298:481c:cbd0
+ with SMTP id d9443c01a7336-2984ede110bmr41038115ad.55.1762964684490; Wed, 12
+ Nov 2025 08:24:44 -0800 (PST)
+Date: Wed, 12 Nov 2025 08:24:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/14] cxl/region: Rename misleading variable name @hpa
- to @hpa_range
-To: Jonathan Cameron <jonathan.cameron@huawei.com>,
- Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
- <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-4-rrichter@amd.com>
- <20251111144149.00007c63@huawei.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251111144149.00007c63@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251112162439.1553368-1-irogers@google.com>
+Subject: [PATCH v1] perf vendor metrics s390: Avoid has_event(INSTRUCTIONS)
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+The instructions event is now provided in json meaning the has_event
+test always succeeds. Switch to using non-legacy event names in the
+affected metrics.
 
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Closes: https://lore.kernel.org/linux-perf-users/3e80f453-f015-4f4f-93d3-8df6bb6b3c95@linux.ibm.com/
+Fixes: 0012e0fa221b ("perf jevents: Add legacy-hardware and legacy-cache json")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/pmu-events/arch/s390/cf_z16/transaction.json | 8 ++++----
+ tools/perf/pmu-events/arch/s390/cf_z17/transaction.json | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-On 11/11/25 7:41 AM, Jonathan Cameron wrote:
-> On Mon, 3 Nov 2025 19:47:44 +0100
-> Robert Richter <rrichter@amd.com> wrote:
-> 
->> @hpa is actually a @hpa_range, rename variables accordingly.
->>
->> Reviewed-by: Gregory Price <gourry@gourry.net>
->> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Passing comment below on readability (unrelated to the change you made)
-> 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> 
-> Dave, I wonder if it is reasonable to queue at least some of Robert's series
-> like this one so that people can start basing on top of those and the
-> merge conflicts will be less painful in the long run.
-
-We can certainly do that, if the patches can be split out to a different series. Next week is the last week I'll take patches for this cycle.
-
-DJ
-
-> 
->> ---
->>  drivers/cxl/core/region.c | 30 ++++++++++++++++--------------
->>  1 file changed, 16 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index a780e65532a7..bb889c891cf7 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
-> 
->> @@ -3577,12 +3578,13 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->>  		return -ENXIO;
->>  
->>  	/*
->> -	 * Ensure that if multiple threads race to construct_region() for @hpa
->> -	 * one does the construction and the others add to that.
->> +	 * Ensure that if multiple threads race to construct_region()
->> +	 * for the HPA range one does the construction and the others
->> +	 * add to that.
-> 
-> Unrelated but a few commas would make this easier to read. Something like:
-> 
-> 	 * Ensure that, if multiple threads race to construct_region()
-> 	 * for the HPA range, one does the construction and the others
-> 	 * add to that.
-> 
->>  	 */
->>  	mutex_lock(&cxlrd->range_lock);
->>  	struct cxl_region *cxlr __free(put_cxl_region) =
->> -		cxl_find_region_by_range(cxlrd, hpa);
->> +		cxl_find_region_by_range(cxlrd, hpa_range);
->>  	if (!cxlr)
->>  		cxlr = construct_region(cxlrd, cxled);
->>  	mutex_unlock(&cxlrd->range_lock);
-> 
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z16/transaction.json b/tools/perf/pmu-events/arch/s390/cf_z16/transaction.json
+index 3ab1d3a6638c..57b785307a85 100644
+--- a/tools/perf/pmu-events/arch/s390/cf_z16/transaction.json
++++ b/tools/perf/pmu-events/arch/s390/cf_z16/transaction.json
+@@ -7,17 +7,17 @@
+   {
+     "BriefDescription": "Cycles per Instruction",
+     "MetricName": "cpi",
+-    "MetricExpr": "CPU_CYCLES / INSTRUCTIONS if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "CPU_CYCLES / INSTRUCTIONS if has_event(CPU_CYCLES) else 0"
+   },
+   {
+     "BriefDescription": "Problem State Instruction Ratio",
+     "MetricName": "prbstate",
+-    "MetricExpr": "(PROBLEM_STATE_INSTRUCTIONS / INSTRUCTIONS) * 100 if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "(PROBLEM_STATE_INSTRUCTIONS / INSTRUCTIONS) * 100 if has_event(PROBLEM_STATE_INSTRUCTIONS) else 0"
+   },
+   {
+     "BriefDescription": "Level One Miss per 100 Instructions",
+     "MetricName": "l1mp",
+-    "MetricExpr": "((L1I_DIR_WRITES + L1D_DIR_WRITES) / INSTRUCTIONS) * 100 if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "((L1I_DIR_WRITES + L1D_DIR_WRITES) / INSTRUCTIONS) * 100 if has_event(L1I_DIR_WRITES) else 0"
+   },
+   {
+     "BriefDescription": "Percentage sourced from Level 2 cache",
+@@ -52,7 +52,7 @@
+   {
+     "BriefDescription": "Estimated Instruction Complexity CPI infinite Level 1",
+     "MetricName": "est_cpi",
+-    "MetricExpr": "(CPU_CYCLES / INSTRUCTIONS) - (L1C_TLB2_MISSES / INSTRUCTIONS) if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "(CPU_CYCLES / INSTRUCTIONS) - (L1C_TLB2_MISSES / INSTRUCTIONS) if has_event(CPU_CYCLES) else 0"
+   },
+   {
+     "BriefDescription": "Estimated Sourcing Cycles per Level 1 Miss",
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z17/transaction.json b/tools/perf/pmu-events/arch/s390/cf_z17/transaction.json
+index 74df533c8b6f..7ded6a5a76c0 100644
+--- a/tools/perf/pmu-events/arch/s390/cf_z17/transaction.json
++++ b/tools/perf/pmu-events/arch/s390/cf_z17/transaction.json
+@@ -7,17 +7,17 @@
+   {
+     "BriefDescription": "Cycles per Instruction",
+     "MetricName": "cpi",
+-    "MetricExpr": "CPU_CYCLES / INSTRUCTIONS if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "CPU_CYCLES / INSTRUCTIONS if has_event(CPU_CYCLES) else 0"
+   },
+   {
+     "BriefDescription": "Problem State Instruction Ratio",
+     "MetricName": "prbstate",
+-    "MetricExpr": "(PROBLEM_STATE_INSTRUCTIONS / INSTRUCTIONS) * 100 if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "(PROBLEM_STATE_INSTRUCTIONS / INSTRUCTIONS) * 100 if has_event(PROBLEM_STATE_INSTRUCTIONS) else 0"
+   },
+   {
+     "BriefDescription": "Level One Miss per 100 Instructions",
+     "MetricName": "l1mp",
+-    "MetricExpr": "((L1I_DIR_WRITES + L1D_DIR_WRITES) / INSTRUCTIONS) * 100 if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "((L1I_DIR_WRITES + L1D_DIR_WRITES) / INSTRUCTIONS) * 100 if has_event(L1I_DIR_WRITES) else 0"
+   },
+   {
+     "BriefDescription": "Percentage sourced from Level 2 cache",
+@@ -52,7 +52,7 @@
+   {
+     "BriefDescription": "Estimated Instruction Complexity CPI infinite Level 1",
+     "MetricName": "est_cpi",
+-    "MetricExpr": "(CPU_CYCLES / INSTRUCTIONS) - (L1C_TLB2_MISSES / INSTRUCTIONS) if has_event(INSTRUCTIONS) else 0"
++    "MetricExpr": "(CPU_CYCLES / INSTRUCTIONS) - (L1C_TLB2_MISSES / INSTRUCTIONS) if has_event(L1C_TLB2_MISSES) else 0"
+   },
+   {
+     "BriefDescription": "Estimated Sourcing Cycles per Level 1 Miss",
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
 
