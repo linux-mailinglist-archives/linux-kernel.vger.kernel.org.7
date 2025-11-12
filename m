@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-896402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C673C5046D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:00:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BD3C50488
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37B33B39D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C192C189C271
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FB1299AAA;
-	Wed, 12 Nov 2025 01:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BBC29AB1D;
+	Wed, 12 Nov 2025 01:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dDEMgj8B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SNh991fB"
+Received: from mail-m49223.qiye.163.com (mail-m49223.qiye.163.com [45.254.49.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C69296BB6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ABE29994B;
+	Wed, 12 Nov 2025 01:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762912792; cv=none; b=j333QYEqUMgpSzUdo8PkBu1EPs6b1037/DBgfoxRMA7HeGekKFFr1WvU+mtz6Zpld01uGPcDMKEmLwFGvuV346dV9gnORqWp07cf9dRnabJnmGbte2/HbWY+AoaYpPt2Np1k9K0MN0nKektYPsxGf6jsk5C+55NyRNMwFAh5qNE=
+	t=1762912795; cv=none; b=PeSad0n9zQEn1LHLpqPRgJ4O2rCyspDB93MJoHSHQA+6Dp3WqfyV0e3nD6Qdohc94DowTSBa2UpNBzuvY3BCBmtreFPZfUGzEz+Yc6EiQyNwbXoEicmZ9NNAIFrc2DvoPd8a+B8q+8HGIFcNTlPq2jldWM2gE5+ZNDeB8bcDbwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762912792; c=relaxed/simple;
-	bh=Wfr3708VkOzQuU9pmmB7aToKJOPuRgH/eukxjbY9KU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEegDF4HH/q/dzicBKau2YP7akCOKBkypV7azB63QocLE7A9A+D+s0VOtlj/i3QjBBRw7OorVF1/6mSD83MvRjog9qB49T9EyHWp/2SUaMdiKvZ0NPPXJLvWD0+61tywPvY8ijgU91rZyQQuVULe2Ba6hanQm4zdKxTUf1pGUhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dDEMgj8B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762912787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wngBwJkqZcDDqt4ItO4kcRZbl92Nxn6rjpRy3iP5nl0=;
-	b=dDEMgj8BcWzCgUBB5abIQHl10Pas6yrpF82tpOqJekbDX5wK4b9ZAxDeNZaNq/eAFMzF64
-	gl7V4QzyJ7KZl2OIOB6Y++SL2xQa1F80gFg3lVOEkM3TIgqzcIKQDmU2qTpEN/M0NlWA+f
-	l0InVqbDHnQgeDSOq9KiJ9bCsfAY3z0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-AcWe2vnTNfGQGEaV41nhWQ-1; Tue,
- 11 Nov 2025 20:59:44 -0500
-X-MC-Unique: AcWe2vnTNfGQGEaV41nhWQ-1
-X-Mimecast-MFC-AGG-ID: AcWe2vnTNfGQGEaV41nhWQ_1762912782
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F243219560B2;
-	Wed, 12 Nov 2025 01:59:41 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.179])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D790D18004D8;
-	Wed, 12 Nov 2025 01:59:36 +0000 (UTC)
-Date: Wed, 12 Nov 2025 09:59:31 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Keith Busch <kbusch@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as
- number of bvecs
-Message-ID: <aRPqA1XGWnY4YpIm@fedora>
-References: <20251111191530.1268875-1-csander@purestorage.com>
- <aRPcdmpZoet2fwbu@fedora>
- <CADUfDZovn5fPh_E6GGvGkPYbW12L2z6BS4jPkpQjuEjNd=bRGA@mail.gmail.com>
+	s=arc-20240116; t=1762912795; c=relaxed/simple;
+	bh=zJO17dFWztKd52ye3rVlJnGNdN8EwFkk+B4EwPpOQNk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PGVqTlnViuvAy/QLmFtKQpYQGxuJiDWK94112BIVqmLSPIo/39ianeGRlYvFo7LspASVhlpnDATccLBfLq3jUJ8ovwakvW8MhxZvXtHUenLsOdwtcdsYm6WO/9R1EEJWhGy82s19r2FIfzjEwsUDvrUMuP7+g3dmrIdkxVloovc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SNh991fB; arc=none smtp.client-ip=45.254.49.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2941ca60b;
+	Wed, 12 Nov 2025 09:59:42 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RESEND PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add rk3576 CAN controller
+Date: Wed, 12 Nov 2025 09:59:37 +0800
+Message-Id: <20251112015940.3695638-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251112015940.3695638-1-zhangqing@rock-chips.com>
+References: <20251112015940.3695638-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZovn5fPh_E6GGvGkPYbW12L2z6BS4jPkpQjuEjNd=bRGA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-HM-Tid: 0a9a75ca4a2803a3kunm5e00f3261f0708
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkgfSVZKT0MdTUwYSR9PS0JWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=SNh991fBzKaGqM8MsVy8B0PE/YSM+BRhYc8Al6YvWYQn8cf0a3DO5a5cDFwZD2B4x1hesZ/H0zJsHsA9jfnmV4NDATUk9RfNwuHUhEPZlKZT9X/ZXM5oBe3jkoJa4zHiMHov/cdLIxyT0mnQxdJwZMFrsdlos+rRWPvhuh/KMCI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=5jlNOBZ/fcIvDq+MUV6cC4EWNKpgXZB+f3K4bCpTHTU=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Nov 11, 2025 at 05:44:18PM -0800, Caleb Sander Mateos wrote:
-> On Tue, Nov 11, 2025 at 5:01 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Tue, Nov 11, 2025 at 12:15:29PM -0700, Caleb Sander Mateos wrote:
-> > > io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
-> > > the number of bvecs in the request. However, bvecs may be split into
-> > > multiple segments depending on the queue limits. Thus, the number of
-> > > segments may overestimate the number of bvecs. For ublk devices, the
-> > > only current users of io_buffer_register_bvec(), virt_boundary_mask,
-> > > seg_boundary_mask, max_segments, and max_segment_size can all be set
-> > > arbitrarily by the ublk server process.
-> > > Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
-> > > loop actually yields. However, continue using blk_rq_nr_phys_segments()
-> > > as an upper bound on the number of bvecs when allocating imu to avoid
-> > > needing to iterate the bvecs a second time.
-> > >
-> > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
-> >
-> > Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> >
-> > BTW, this issue may not be a problem because ->nr_bvecs is only used in
-> > iov_iter_bvec(), in which 'offset' and 'len' can control how far the
-> > iterator can reach, so the uninitialized bvecs won't be touched basically.
-> 
-> I see your point, but what about iov_iter_extract_bvec_pages()? That
-> looks like it only uses i->nr_segs to bound the iteration, not
-> i->count. Hopefully there aren't any other helpers relying on nr_segs.
+Add documentation for the rockchip rk3576 CAN controller.
 
-iov_iter_extract_bvec_pages() is only called from iov_iter_extract_pages(),
-in which 'maxsize' is capped by i->count. 
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-> If you really don't think it's a problem, I'm fine deferring the patch
-> to 6.19. We haven't encountered any problems caused by this bug, but
-> we haven't tested with any non-default virt_boundary_mask,
-> seg_boundary_mask, max_segments, or max_segment_size on the ublk
-> device.
-
-IMO it should belong to v6.18: your fix not only makes code more robust, but
-also it is correct thing to do.
-
-I am just thinking why the issue wasn't triggered because we have lots of
-test cases(rw verify, mkfs & mount ...) 
-
-> 
-> >
-> > Otherwise, the issue should have been triggered somewhere.
-> >
-> > Also the bvec allocation may be avoided in case of single-bio request,
-> > which can be one future optimization.
-> 
-> I'm not sure what you're suggesting. The bio_vec array is a flexible
-> array member of io_mapped_ubuf, so unless we add another pointer
-> indirection, I don't see how to reuse the bio's bi_io_vec array.
-> io_mapped_ubuf is also used for user registered buffers, where this
-> optimization isn't possible, so it may not be a clear win.
-
-io_mapped_ubuf->acct_pages can be one field reused for the indirect
-pointer, please see lo_rw_aio() about how to reuse the bvec array.
-
-Thanks,
-Ming
+diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+index a077c0330013..22e10494e7d1 100644
+--- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
++++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+@@ -10,13 +10,12 @@ title:
+ maintainers:
+   - Marc Kleine-Budde <mkl@pengutronix.de>
+ 
+-allOf:
+-  - $ref: can-controller.yaml#
+-
+ properties:
+   compatible:
+     oneOf:
+-      - const: rockchip,rk3568v2-canfd
++      - enum:
++          - rockchip,rk3568v2-canfd
++          - rockchip,rk3576-can
+       - items:
+           - const: rockchip,rk3568v3-canfd
+           - const: rockchip,rk3568v2-canfd
+@@ -43,6 +42,13 @@ properties:
+       - const: core
+       - const: apb
+ 
++  dmas:
++    maxItems: 1
++
++  dma-names:
++    items:
++      - const: rx
++
+ required:
+   - compatible
+   - reg
+-- 
+2.34.1
 
 
