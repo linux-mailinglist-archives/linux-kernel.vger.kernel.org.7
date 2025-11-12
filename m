@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-897170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E1C52301
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:09:45 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8EFC52258
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5D91893013
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:02:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 507B6341AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96687314A9B;
-	Wed, 12 Nov 2025 12:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214743191D8;
+	Wed, 12 Nov 2025 12:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="X2vSnTgk"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhFEWhTb"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D372E305044
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7947B3191D2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948898; cv=none; b=akeZzqKc1l/ePmwaFn8tVuqCMphyfUQ4iId8auvG2RLhBh6nGNX0b4MK9WylnyHDctmJg1Oc+gX5bb90qBrBLqFQyLFp9omkzYmEg8EHnAqG+QECjFh6WGvSsbs3JUC2w8JnbIGW8TN2RrDAdj+byPACdHJ9i8Oq9YzuhJIFqBM=
+	t=1762948931; cv=none; b=f7qGrJtJAJGF3kDXpitGUFywxejuexup2PMZ8udYGPAM9YlOEEQcvW64zf2VZNNN+HIiCsBgDd/wQDDAH1eux6YQDrqNHWzRjVM1WV5PqwLlZVcUKmkBqfPdc3+Z1OhXbRLVcs7Zg3yGnr/utgsoDurk3f2c4lZhzAEJ5bSv0uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948898; c=relaxed/simple;
-	bh=sFj2zazGV4WYL81m3zn9aJ05ODam9PIsgaadkAnP5mY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sXR2XK4eZHvhvxJZ5Mmot09127Ogyj4uPFODG96Ft4/xPsl2/bdKafK7/lZXORaBnAsEdlgMrJHiEx3jel70wEDLACpbhZTN6bHJzeX/qTC7wOGsUFVaHwbwbSsRpLF6ngIo3W5RwH5YgYaCIIH4B2dGMP0b30VJbPqoIAclDKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=X2vSnTgk; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47758595eecso3911695e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:01:35 -0800 (PST)
+	s=arc-20240116; t=1762948931; c=relaxed/simple;
+	bh=4sUM7WH1+VY7rTzxu9qxTHMaY+e1s7RNkZKkLmmtrjg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b11+fdTDj4//V6iEHTDzICeWBt6KxWDxT5UZ5fKTJdOZJQsyudAy7/jxJblo8+X/erai63/8kW+z4PufHhnWN9qX+FpOu0LtsS22XITWpPoeYg5bacPfXkyr4jP8BXM8Qsb/peLg3ZHSUFaBzrSIoRwrM3ZOJw1e1Un7BCxBiWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhFEWhTb; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5943d1d6471so762926e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:02:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762948894; x=1763553694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zV0gPAsgv2Yz7X77lNEHJyr8BfPRe8t/jR17bseIeNE=;
-        b=X2vSnTgkiqS7cCumeiS0W4AR/OsZDnjMfYr9vFIUfFdkijRZ41oSGZPm0DGM4uf33d
-         kPmiHe6/ehIYS3XZykt8ZDNL46cboy+n8IjCo6pQRhwZtkg7uErvPxJjC4qPrVHkc2b0
-         p26ngF445mYPHg55Pg1bVa6smD8PSP4VRoj4CMDHf3g6pONlzZdG2h1gopsO1Zawtc1a
-         1Z5k+DHS0MdqBqlugb/dXz7/NtNxtTARxp0guMKMyiSRRbVIqdtQXrfkfH3LbqNPfgrd
-         PGxNuhT/8RBemQNbBDBw563aPMTJE1+qBTYTWHjC9rXn1uU7b0AXU4PZ6gCgqZKrm7hh
-         7ASA==
+        d=gmail.com; s=20230601; t=1762948926; x=1763553726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eH+LicKzZZKQtDjwYrqOgwxCOyN5rsbgFwrU7hAVtFg=;
+        b=QhFEWhTbAXDEKp36aeO++QErfncDnhgnHRCy39Rkg8/IMKBVjJy5JOD0VEAj3H/XLJ
+         ayN/9h4po3JJTKKld1s8PjgGF9Xp8aC5r61Fnq9tCwk32FQM5EEljTRVV+KRCa2x4yX0
+         L1g/68nCCWScOZE2yMcKe8SYD/laYAkY0d/V8iaItfZPNrWf7DNiefWYGoqXKatsK5Ks
+         dy/g1Rl/9pBfLWGG7qtac5KOYgGVzrjJ5wZxA4LIz69qryrb44NXdXShosDY0nmcaAeT
+         +5is5g5mp5MivyuCKisnb0RsGm2ff4SvtR/0tIShDfurDvg3GVAlknlR90gbUuxsXbHC
+         4eog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762948894; x=1763553694;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zV0gPAsgv2Yz7X77lNEHJyr8BfPRe8t/jR17bseIeNE=;
-        b=chHsc6dlHtKbFIALBHTpBI+fRQYO8PAYa6+5COUsOYzhc/QOvaqRRlBNJPoG2+y7B8
-         GGm0D2LCy/s/9fpOThdpqHziIjiKbca8to3YTkHSbkQeuB3M2V2XrZeFzLYUQb0wEark
-         A6damac1P6onWQRgFPC9DdjIzPH2CocQG13ZRplCBxmGriPobPaTRsxmxC8sWpA6s0yZ
-         lc4bYqSauSKQ6jKioe8/q+g7lAxD8ELXQHtkxfGz4vN/qARfAjmHlqwu+4OxnQNrFMnc
-         M9/N+14ox7pD8LglDSSW9vEwtuBmSYnAQY0tZxRZK9TpwzWpQ6+SfhdcR3bDAI51NBQJ
-         idEg==
-X-Gm-Message-State: AOJu0Yy5VwfcjDyn5aCUG8PX+kS2myR0b17yb7RZzlNsD/PTUP+6+E9f
-	2Z3XsnLzz6vTfE0HMq7Kq/Yl8wH0UrUrzJePhmzUw7Osvkyyjwiy40UjLnmBbOR/u3acZEf80q9
-	fCLpQ
-X-Gm-Gg: ASbGncvyuJCCquPdX7cgOvta82KBJwAkfLJXH97eS3/gyPW1Jd1C8OBudedPSgd5xvN
-	e8yW+6GR2O2ajW5WyXaofQqwxp8c0mnkM33YzBEBIt9+OLCLCnYhqsBRTnQt3w8+IdixS7MPQQX
-	ecBwnH+SOsfmP24Tw1B3KH2fXuovcufB5Qf/fAcHQ6hVmYEKm5LrCxARxgNUDH4z2r1mqyXfZuC
-	gZO50EgfWW/4edxgqRpUqJyYmnNdcpisDzM8OSzVplHGRmkQwTWJqWVyfxJPVZ3+KVmfr2+s4OE
-	zUfMSm+dNGo+hQ6emLW866RYh7uDjc35EifiOsK9B6hLEmbfpi/INDDH6kZKOWtHC1jD+7ZH64D
-	j3UeigtgC5ANNMjMSG1Hx6J9CGitc50ul63d7JZKPI5Ynrmd3A674pR2azcwW64/xAqDKwDe6KJ
-	GGqyvoAQzxpHQ8IDk=
-X-Google-Smtp-Source: AGHT+IF5tkBJyCw/2/U+967Ak/tlZAJQIixZ0cO5ez5rZhOo0gjntdhB2by2OMFhbQV9h7jsFeGSLg==
-X-Received: by 2002:a05:600c:138b:b0:46d:ba6d:65bb with SMTP id 5b1f17b1804b1-477870c31c4mr25267855e9.31.1762948893841;
-        Wed, 12 Nov 2025 04:01:33 -0800 (PST)
-Received: from linux.fritz.box ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm38158832f8f.41.2025.11.12.04.01.32
+        d=1e100.net; s=20230601; t=1762948926; x=1763553726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eH+LicKzZZKQtDjwYrqOgwxCOyN5rsbgFwrU7hAVtFg=;
+        b=dE9yxTIjMafmEWnI1SyVJNi8zFTE66/oDQqOisPRiy3/xMhC7xN+JLLcNAWyrUFhjN
+         7Gxt1/QQyY2L7rO4W9k3UxpAFXGWH+si+2SFaBshIrhxD29sReY8JGrTZrpxCad46nBT
+         pcNBBv0Z/x9mOLQlqDUw0llbGJJmA/RRi3yhtlyRFRj5X8iJuFZ573Z3yTEd6WgTIXR7
+         nTYJY+4A8fvfCwMaOeK503Z0fxGFqqBKFaeKT+QFF5nbe4X4y6iRIroj/Whl6oV+KA0i
+         HnMpU0Fl1tE752qPDdD6EEwvdj1N0/QNvxtlrHDat9AOeOv+RH1OPhJE6XMYelyfqi2e
+         dEZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMqSE9cWMKs8Zj1UDiGeVBCIuFRkyhQnDkkDx11TZd0EJJS1cFNufNL9ydgQRyXCoNtMBXlz6/Snh8Emo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHYUJYmxNdPLzgnwDonOIvanpbApYR9iobChxcpxbDhAVVmEqC
+	LF+YGf2Kce/Zt6+Gp+TLKE0EBWy/FR5eL3QcT4BsFP+MQ44Za/dIa4boJ1qwWH/m
+X-Gm-Gg: ASbGncsp3y6sd2R1A4XRVt3qK30wT4Ykc6fMagsfPXl+e4atibCI1X5pC4Rg6+4v9Cl
+	/C4nDtK6ucHlbxf7F78qRX+AtZtYRqdeVjdiJTjCna4gqLUmnaCXOmy0/TLimPoPQpsfsq/mT4K
+	qNM1DLHDisQHt6vspzu/AWbhVGSDhgyH3W3suj88XRZG2+zu2YsQxFAoxIv9egQLWkmpDexDH9J
+	NamSHnpnKJbAIJmdejBOsqML4o+rIyo21G4Leku6IQpSCHha+IOQizP8OhQjAYEqJnyJJwQjmWl
+	rHzWcjCWUks3cJKcIfzzep6FlS1j6kMHkPADSYT1vqsIhmxU8UxyQu3D07vKLFFxX7ZoaOjORtF
+	E4vEHsw1O9Cd08bfTgyOpW0fun276bg+5DMRMFgHKIy4=
+X-Google-Smtp-Source: AGHT+IGeLcgI5bn0B3LCjEKOV3352o8Vh1fI0N1HmS2Z+2cWfmHBHleSetqNFG1K+QPTgI04aqR5aw==
+X-Received: by 2002:a05:6512:23a2:b0:591:c898:e82b with SMTP id 2adb3069b0e04-59576dee887mr955091e87.8.1762948925597;
+        Wed, 12 Nov 2025 04:02:05 -0800 (PST)
+Received: from milan ([2001:9b1:d5a0:a500::24b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5957d7db7a5sm129387e87.20.2025.11.12.04.02.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 04:01:33 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Subject: [PATCH v2] firewire: core: add WQ_UNBOUND to alloc_workqueue users
-Date: Wed, 12 Nov 2025 13:01:25 +0100
-Message-ID: <20251112120125.124578-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        Wed, 12 Nov 2025 04:02:04 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@milan>
+Date: Wed, 12 Nov 2025 13:02:03 +0100
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	syzbot ci <syzbot+ci9989da8336cb2bc7@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, hch@lst.de, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, vishal.moola@gmail.com, syzbot@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: make vmalloc gfp flags usage more apparent
+Message-ID: <aRR3O7l2Ewx-VRoE@milan>
+References: <20251110160457.61791-1-vishal.moola@gmail.com>
+ <69123b72.a70a0220.22f260.0105.GAE@google.com>
+ <aROasppMPmek9Afh@milan>
+ <aRQyMck_MeVvvCdX@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRQyMck_MeVvvCdX@infradead.org>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Tue, Nov 11, 2025 at 11:07:29PM -0800, Christoph Hellwig wrote:
+> On Tue, Nov 11, 2025 at 09:21:06PM +0100, Uladzislau Rezki wrote:
+> > > Unexpected gfp: 0x100000 (__GFP_HARDWALL). Fixing up to gfp: 0xdc0 (GFP_KERNEL|__GFP_ZERO). Fix your code!
+> > >
+> > It looks like we need to add __GFP_HARDWALL to the white-list-mask.
+> 
+> __GFP_HARDWALL is part of GFP_USER.  Doing GFP_USER vmalloc sounds like
+> a bit of an odd idea to me, but there are a few users mostly in bpf
+> and drm code (why do these always show up for odd API usage patterns?).
+> 
+> So I guess yes, we'll need to allow it for now, but I'd like to start
+> a discussion if it really makes much sense.
+> 
+<snip>
+	/* plain bpf_prog allocation */
+	prog = bpf_prog_alloc(bpf_prog_size(attr->insn_cnt), GFP_USER);
+	if (!prog) {
+<snip>
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+I assume that was the place that triggered the splat.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Vishal, will you send the patch adding GFP_USER to address the splat?
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This change adds the WQ_UNBOUND flag to explicitly request
-alloc_workqueue() to be unbound, because this specific workload has no
-benefit being per-cpu.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
-Changes in v2:
-- This workload benefit from an unbound workqueue. So change WQ_PERCPU
-  with WQ_UNBOUND_WQ.
-
-- Rebased on 6.18-rc5
----
- drivers/firewire/core-transaction.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
-index c65f491c54d0..a9677a8affb7 100644
---- a/drivers/firewire/core-transaction.c
-+++ b/drivers/firewire/core-transaction.c
-@@ -1437,7 +1437,8 @@ static int __init fw_core_init(void)
- {
- 	int ret;
- 
--	fw_workqueue = alloc_workqueue("firewire", WQ_MEM_RECLAIM, 0);
-+	fw_workqueue = alloc_workqueue("firewire", WQ_MEM_RECLAIM | WQ_UNBOUND,
-+				       0);
- 	if (!fw_workqueue)
- 		return -ENOMEM;
- 
--- 
-2.51.1
-
+--
+Uladzislau Rezki
 
