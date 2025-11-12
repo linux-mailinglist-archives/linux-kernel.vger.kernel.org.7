@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-898087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB82AC54540
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:04:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EDAC54546
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 178164F9C2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:53:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23CE94EF20C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BF22C2369;
-	Wed, 12 Nov 2025 19:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3337629BDB0;
+	Wed, 12 Nov 2025 19:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzAxCyBP"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jv7fIxo3"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6924A044
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5473E263C8A;
+	Wed, 12 Nov 2025 19:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762977201; cv=none; b=syHEb3Z3cpWD6x6GqU33XpsdJC4Ec+kxWdPWTBhe7UhyIc8VE+Fdfh4naE1wSlCJ2kDZN7A0cU2mqrz1bVsS/w8vfdwxyZQ0D95USQAszeluf6lXuwrOhG/bwo4gKusLP0mnaRx/zFu/gps74xBYrDgvbW4dDAIILs7nb5z8HAE=
+	t=1762977198; cv=none; b=ALrvhsbt6WbGPpqHOlc5sFRdZVUkuT5H2De6A/tSmqZGUGoBQ2v2vogoZMcB3hUy/1C+wk0CKzx6O9EEEQDaNXr+cilg4yzITyIPHa5ed7AIpe7nCmt+T0pvdiMbbapYNPZFA2HZKTN/2KFRiSOtqvyW0Iv80WbNYhG/dNSJTb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762977201; c=relaxed/simple;
-	bh=w4mXTwIUioCEf3aLDXcvRdVOG3IPPERu6LaKLIbBAuQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=YsV/e3FmnXFdDJU5xitKC7/oWwFzVevbfZXK8YYTMzrSqKVmKimsPRLj95LUSwYVSk7bCeZWa3ntHOq/P1Vqa4a00cHn8AOLEBKjMWQpyNiVyN/bo1W1efUNrPTJWT8dKpGt1Y4qCzpy0hv4C4FI0FL2+nQ7EKCJcmOty/g53zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzAxCyBP; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297dde580c8so242335ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:53:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762977200; x=1763582000; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LOuSUBzWe69YA4hvkhtZgT3oWHyjTIb2wmtwYv6DBRI=;
-        b=vzAxCyBPzRnyIRaauU/fx86vo4gYt+70bb+iB9XG1wi1zlMKTNbupZ/JciE4LSVL+i
-         p12SgE2IkNlEyOYWKjBoLKg1A662vf359UJ8HGWH5+1szvFuNcThuo4HZ34FJSWgF4CJ
-         YND+pcpzjBiHldyV0gywxg5qV+bcox2eeB4ufIhazzf01r5/+xBC2T1pJobhfaYtEjv8
-         9vhlaVeZkcGZwWHmgPkscSk5EEa/Sxvvhkr+hxwq7lGutC7JUvUx1Bu1TuVgLLJPPOYU
-         iuih4kzjpYVdExWqW9G/7SQ/0CLlldS5JdnP+OKZx1LnhIeUrp4qxRUuo/R4y9NTFdJM
-         ZSDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762977200; x=1763582000;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOuSUBzWe69YA4hvkhtZgT3oWHyjTIb2wmtwYv6DBRI=;
-        b=gY6IfjYrCntLzYrroUIatKj/NLsN7cpDOJGT2mEiLQrJd655YWN6ynj5n4kTVkyyia
-         XyB/fDkFzzOAV4C4N3PMu/03Xgg0yBTfnmqPKmc3Vs2pD4hCM++kFgzIS3PCKwvDoeCF
-         5n0Jp38SJP+U6IQWnlTWRuJNJHCT9SQQvlBMT3zUC2o37GNuDLSp06PAymTzpuiA8fEE
-         kNOBQa8JRV2yGsTMCvlYU4O7FEey3oGA7sjgjzBfI6SXA9jIzuptI8JWPLSYGTOdVq1K
-         8Q6Kkw6n0ry2Ea0QkFLylUo3h8bhGaUwTc+hJ4G02oipGqmixML4zBv8OwCK0aOmGVor
-         A7mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAGCr/lpipzU/Ix1AXN/xDoYUq5dQJZ5CwdmDK6UhIVV6jAa+bmUkpHWlFZkIBDP5GmY+OTJQtXryB8kI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb7oEO8zz7swQsrGNUKmA0c3TddZSoNldmwLV9Gi9cMjabf1/l
-	jo29HA4o74nqOWZyEeVH0h+Xmz9rFDGySBqF3KNd68ft6wjJrNeZ8b61a/z8WQyzWuSSNDXEKMP
-	ZxrV4cauckg==
-X-Google-Smtp-Source: AGHT+IEtfQ4Sqv4rc5xvV8ORzN3/URZ7AozB19pmumlIecktr+wJTuUJm0/zwgHJS4tdicZktfBpuuvUUUKu
-X-Received: from dlbqd14.prod.google.com ([2002:a05:7023:b0e:b0:119:78ff:fe0e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dace:b0:297:d777:a2d4
- with SMTP id d9443c01a7336-2984ede0342mr58377285ad.46.1762977199650; Wed, 12
- Nov 2025 11:53:19 -0800 (PST)
+	s=arc-20240116; t=1762977198; c=relaxed/simple;
+	bh=fPOItTe4MhWlwM1qZlsETPb1P1Ays8zKdKDNdcBIyXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HaCwC7bQEw+FEzmZRmvstxcv4NXL+Yuk/ZnAk1EnXoyAdI5lkT5OnrLTl01N1AD1wDcw5vxxUIdlkO8zPuVRji8P3I5EvQZgzCfgiAxQT920kNtoLIBbrhOVWnafeaY2yXa4rR53qQdUc6vbHFOP6NSpb+ao0q1EU+nrUxWEGnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jv7fIxo3 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACJr8Wl965042
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 11:53:08 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACJr8Wl965042
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762977189;
+	bh=tzmyj1MRJKjkyUstPNOZ9/5/u7pOY7r+PXviKNRwppQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jv7fIxo3DC98TzFggWI1fO5WO4CiFO+3GBx2ZsTMOcc6y7exswgvw5hp/WiIYIdKp
+	 n4Nw5/7tgv+e6z+a0+pqQXPaYjmNPQ7SbC/n9hF0Ij2kP24vaLKYd1BYNmXdaWP6gz
+	 tT7sQjSzmcJGRs/mKIlXm+BlyJIJtBPS+lrln2MSV/47B+pAPEY8V02kzhpVGl7/j6
+	 lKN5/gJq1FxSxRD2mt4Z+zMU/0yUBINzssHXqyYLKBuG99g9y2vs8ymWdi4plcUMTc
+	 0wSRKJ7lbOOyfbOlzCPo/oU5fCluE8ydHnOEVOIoBG5cmtHCPE8wHjnVK0gRKjri5G
+	 Dc9bk4uwDePQQ==
+Message-ID: <12e5757c-dc07-40a2-b9c5-57d77dfaffac@zytor.com>
 Date: Wed, 12 Nov 2025 11:53:08 -0800
-In-Reply-To: <20251112195311.1673981-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112195311.1673981-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112195311.1673981-2-irogers@google.com>
-Subject: [PATCH v2 1/4] perf test: Be tolerant of missing json metric none value
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
+ <2025111214-doily-anyway-b24b@gregkh>
+ <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
+ <2025111241-domestic-moonstone-f75f@gregkh>
+ <DD67C0CF-D330-4D40-B610-FD3EB7AA0218@zytor.com>
+ <2025111227-equipment-magnetism-1443@gregkh>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <2025111227-equipment-magnetism-1443@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-print_metric_only_json and print_metric_end in stat-display.c may
-create a metric value of "none" which fails validation as isfloat. Add
-a helper to properly validate metric numeric values.
+On 2025-11-12 11:39, Greg KH wrote:
+> 
+>> 3. The only way to determine the type of a tty driver is reading and parsing /proc/tty/drivers; that information is exported neither through ioctl nor sysfs. Exporting *that* through sysfs is probably the easiest of all the improvements.
+> 
+> The "type" is interesting.  We keep adding new "types" of serial ports
+> to the uapi list, and they don't really show up very well to userspace,
+> as you say.  Adding this export to sysfs is fine with me, but we should
+> make it a string somehow, and not just a random number like the current
+> types are listed as, to give people a chance to keep track of this.
+> 
+> So yes, this too should be done.
+> 
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/lib/perf_json_output_lint.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yes, this one is pretty obvious:
 
-diff --git a/tools/perf/tests/shell/lib/perf_json_output_lint.py b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-index 1369baaa0361..dafbde56cc76 100644
---- a/tools/perf/tests/shell/lib/perf_json_output_lint.py
-+++ b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-@@ -43,6 +43,9 @@ def isint(num):
- def is_counter_value(num):
-   return isfloat(num) or num == '<not counted>' or num == '<not supported>'
- 
-+def is_metric_value(num):
-+  return isfloat(num) or num == 'none'
-+
- def check_json_output(expected_items):
-   checks = {
-       'counters': lambda x: isfloat(x),
-@@ -57,7 +60,7 @@ def check_json_output(expected_items):
-       'event-runtime': lambda x: isfloat(x),
-       'interval': lambda x: isfloat(x),
-       'metric-unit': lambda x: True,
--      'metric-value': lambda x: isfloat(x),
-+      'metric-value': lambda x: is_metric_value(x),
-       'metric-threshold': lambda x: x in ['unknown', 'good', 'less good', 'nearly bad', 'bad'],
-       'metricgroup': lambda x: True,
-       'node': lambda x: True,
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+>> 4. There isn't a device-independent way to determine if a device is "real" (configured for hardware) or not without opening it and executing one of the termios ioctls like TCGETS (returns -EIO if there isn't anything behind it.) For a UART port it is possible to come up with an educated guess based on the aforementioned sysfs properties (does it have any kind of address associated with it?), but seriously, should stty -a /dev/ttyS0 really glitch RTS# and DTR# even though there is no intent of using the port for communication? 
+> 
+> Determining "realness" is going to be hard I think (is a usb-serial
+> device real or not?  Some are, some are not, but how do we even know?)
+> Does a "real" uart mean that the device is real?  How do you define
+> that?  What about virtual ones?  Modem chips that do have full line
+> discipline support on USB connections?  There's a lot out there to deal
+> with here and I think some "fake" ones do pass TCGETS calls just because
+> they lie.)
+> 
+
+What I mean with "real" is that the device exists at all, unlike e.g.
+/dev/ttyS* device nodes which are *only* available for the purpose of binding.
+
+So "bound to a hardware device" is what I mean, not that it is a device with
+RS232 drivers on it (which would be impossible to determine, as you very
+correctly point out.)
+
+> And addresses are only the "very old" method, many "real" PCI uarts
+> don't have them, same for USB ones.
+> 
+> And changing 'stty -a' is going to be hard, unless you want to use the
+> new flag?
+
+That's exactly the idea: use the new open flag.
+
+> But yes, making this more sane is always good, 2 of your things here
+> should be pretty simple to knock up if someone wants to.  The others
+> might be more difficult just due to backwards compatibility issues.
+
+
+Indeed. Which is the whole reason for this RFC thread.
+
+	-hpa
 
 
