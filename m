@@ -1,154 +1,105 @@
-Return-Path: <linux-kernel+bounces-897585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EFCC53257
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:47:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FE5C53567
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF65E351C51
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:38:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 547365000D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A06302CD7;
-	Wed, 12 Nov 2025 15:38:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101D269811;
-	Wed, 12 Nov 2025 15:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6F033B6D8;
+	Wed, 12 Nov 2025 15:38:02 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B9A29B78F;
+	Wed, 12 Nov 2025 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961880; cv=none; b=ShWHSTybVGZoHCZgCC7nmiwtfu+I1Skb3fldtIlV56UzYK1vKsSwbX5NUKI7c2gzSuSKdooMHKzAzdKF6nem7DBBd+M1DgjibDj0KG2qTdLopNBqJKfBXUR28GxkZcjuRqFp7liO7p28EVlW/WyUojdaxJ32mr44rtw75khBq20=
+	t=1762961882; cv=none; b=MU7Hynd0ouOPD59sbU0JJfEqEcFEUlzar0ITAwoFZfZ7HD9vICLWuLzio5O3GAVkQvIFkDmmN452ka12Gl0+O7MLAaiJFKvW1vpgplObs4j+uj4S1MymoB3Ucdyyp1VoE6H9LfkY7EN427V57oXsIayia6JgqoZQEt5Et2IOIF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961880; c=relaxed/simple;
-	bh=ehcjdwzwHqCLwN5zy3PgTPFC6JJphL3yRBrEu05kED8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mshUWqZ2r5qbc6RDtpjKNtkwncaz98rRxXQLXjewYWOQeKV2cf6hvpBqDGWux+uqN4cjILBTIVYs60aJZ3NThACo3n7sT7M0loITb681iXAqSiXHOQTc7i8EfZC3Zr1lSiJR3AsYY8BAKcUx9V2og0W+9cIF0Pm8+WyMLXfNfJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17ED01515;
-	Wed, 12 Nov 2025 07:37:50 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2670E3F66E;
-	Wed, 12 Nov 2025 07:37:53 -0800 (PST)
-Message-ID: <83ba6e8f-30be-4e82-ae1f-2443a0f16d3c@arm.com>
-Date: Wed, 12 Nov 2025 15:37:51 +0000
+	s=arc-20240116; t=1762961882; c=relaxed/simple;
+	bh=hlpKTafb8GK7Ub3ROyL9kf18Ly4pyM4eaJtlKKSfkCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aYyYc+6KWttDHkRdYtYaAQugT6+tb9KYVuzUNTl71UYyJdTuu1SPdWiFZ6nW5uZyyw72IxqpTLoTSxymX1F4af0zHEmHPoEhh+kAMN5gZsMuwBpFHOhOFZeCQOvKI4WDzTthq69krflpUyUfQ2G+8AIKP61qdBnVqVUY426TjeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 51A004CDC7;
+	Wed, 12 Nov 2025 15:37:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 4E6732F;
+	Wed, 12 Nov 2025 15:37:51 +0000 (UTC)
+Date: Wed, 12 Nov 2025 10:38:04 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin
+ Peng <pengdonglin@xiaomi.com>, Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
+ funcgraph-retaddr to work simultaneously
+Message-ID: <20251112103804.4a43591a@gandalf.local.home>
+In-Reply-To: <CAErzpms8oRkqJhxk1R6LMUq1GeZT3TqkPOm2yRAfY1ph_F2YNw@mail.gmail.com>
+References: <20251112034333.2901601-1-dolinux.peng@gmail.com>
+	<CAErzpms8oRkqJhxk1R6LMUq1GeZT3TqkPOm2yRAfY1ph_F2YNw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
- kbuild boiler plate
-To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
- "james.morse@arm.com" <james.morse@arm.com>
-Cc: "amitsinght@marvell.com" <amitsinght@marvell.com>,
- "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
- "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
- "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
- "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dakr@kernel.org" <dakr@kernel.org>,
- "dave.martin@arm.com" <dave.martin@arm.com>,
- "david@redhat.com" <david@redhat.com>,
- "dfustini@baylibre.com" <dfustini@baylibre.com>,
- "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "gshan@redhat.com" <gshan@redhat.com>,
- "guohanjun@huawei.com" <guohanjun@huawei.com>,
- "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
- "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
- "kobak@nvidia.com" <kobak@nvidia.com>,
- "lcherian@marvell.com" <lcherian@marvell.com>,
- "lenb@kernel.org" <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "peternewman@google.com" <peternewman@google.com>,
- "quic_jiles@quicinc.com" <quic_jiles@quicinc.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "rohit.mathew@arm.com" <rohit.mathew@arm.com>,
- "scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
- "sdonthineni@nvidia.com" <sdonthineni@nvidia.com>,
- "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "xhao@linux.alibaba.com" <xhao@linux.alibaba.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-11-ben.horgan@arm.com>
- <OSZPR01MB879857F2126672D1EADA04668BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <OSZPR01MB879857F2126672D1EADA04668BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 4E6732F
+X-Stat-Signature: s5fwrt7ws4byfa63c5z9k3dujotzoyjr
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/7hBq4gRd/dHHQ3qVz2I9TBXY8zPd3jgY=
+X-HE-Tag: 1762961871-310067
+X-HE-Meta: U2FsdGVkX1+3fbg35+Tgwrit8u4tPx8LdgQC0mr0Kb3FDZVNCYptfQXaqHcySTqEXiiakz8TLtwci9hQup0oheVP71e2zKwk1CX5lAeTi1eOSx4C+BIWD+hsXA5o+9ueTVdv1lTSBVZqBxuL5ffVUgihJIX7OVS6COfmExKkwAQ5B6UejZdpidqW5axlilDbwVev8KBm4Afyw5PPtxer3RE5bEi+yKDYv2sj+gSKix2u8gepYD4E2u0ZmV2i4hGDIOjXTryxghntvRFt/06Vp791iMb+hEL9OEhKNChQvTCxt8KpOfuwZIg6MOQfkFak29pHIzC7qnB9q8UfCTj/to4rIqexDjdR
 
-Hi Shaopeng,
+On Wed, 12 Nov 2025 17:00:10 +0800
+Donglin Peng <dolinux.peng@gmail.com> wrote:
 
-On 11/12/25 07:22, Shaopeng Tan (Fujitsu) wrote:
-> Hello Ben,
+> I have a question regarding the behavior of the funcgraph-args option.
 > 
->> From: James Morse <james.morse@arm.com>
->>
->> Probing MPAM is convoluted. MSCs that are integrated with a CPU may only be
->> accessible from those CPUs, and they may not be online.
->> Touching the hardware early is pointless as MPAM can't be used until the
->> system-wide common values for num_partid and num_pmg have been
->> discovered.
->>
->> Start with driver probe/remove and mapping the MSC.
->>
->> CC: Carl Worth <carl@os.amperecomputing.com>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
-[...]
->> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device
->> +*pdev) {
->> +	int err;
->> +	u32 tmp;
->> +	struct mpam_msc *msc;
->> +	struct resource *msc_res;
->> +	struct device *dev = &pdev->dev;
->> +
->> +	lockdep_assert_held(&mpam_list_lock);
->> +
->> +	msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
->> +	if (!msc)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	err = devm_mutex_init(dev, &msc->probe_lock);
->> +	if (err)
->> +		return ERR_PTR(err);
->> +	err = devm_mutex_init(dev, &msc->part_sel_lock);
->> +	if (err)
->> +		return ERR_PTR(err);
->> +	msc->id = pdev->id;
->> +	msc->pdev = pdev;
->> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
->> +	INIT_LIST_HEAD_RCU(&msc->ris);
->> +
->> +	err = update_msc_accessibility(msc);
->> +	if (err)
->> +		return ERR_PTR(err);
-> 
-> Since the return value of update_msc_accessibility(msc) is always 0,
-> this check is unnecessary.
+> Currently, when the funcgraph-args flag is set, the function arguments
+> are saved.
+> However, when the flag is cleared, the trace output still displays the function
+> arguments unconditionally.
 
-Yes, I've changed update_msc_accessibility() to return void.
-> 
-> Best regards,
-> Shaopeng TAN
-> 
-Thanks,
+Yes. The flag affects the behavior of the recording and not the displaying
+of the arguments. There's no reason *not* to show them if they have already
+been recorded. Recording the arguments causes a noticeable overhead which
+is why it is optional.
 
-Ben
+> 
+> I expected that the flag would control both saving and displaying the arguments.
+> But it seems that the current design only controls the saving. This
+> behavior seems
+> inconsistent.
 
+Not at all. The option is only for the recording. Otherwise, one might
+expect than they could do the recording and then after the fact enable
+"func-args" and expect to see them. That would be more inconsistent.
+
+> 
+> I think we should add a check for the flag in the display part,
+> specifically before
+> calling print_function_args, to ensure that the arguments are only
+> displayed when
+> the flag is set.
+> 
+> What are your thoughts?
+
+Big nope!
+
+The retaddr is different, as the information is somewhat redundant to the
+call chain and may cause more noise then needed.
+
+-- Steve
 
