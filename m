@@ -1,260 +1,470 @@
-Return-Path: <linux-kernel+bounces-896470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4680DC5075A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:57:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B91C50760
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C02AB34C028
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:57:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5EF14E5599
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF192D0C70;
-	Wed, 12 Nov 2025 03:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198BD2C21DA;
+	Wed, 12 Nov 2025 03:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h2VeDbcO"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aaWNtN1g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C6D2877E6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BB92877E6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762919844; cv=none; b=G6JznCf9fGtZraBVUjaX3ysodQvj0oLm8fNe4OthnoSEZ6PaM4uS/YBW2Gzsr9UCB0+lPWmkxYN62mLdNSQbvHYVTVdHu8x731vTfRgQYyYefs0Cl5i8JoVboQFyyT1lf/DnkkOXFQL9JSdX9RmQD4rxS3ywwCHddF1u52c4nww=
+	t=1762919925; cv=none; b=SrhJGcMBPcbKsSrE/EoH4yC6EQ2eiRk0NcXGvSvO46PolUYlNtLWnsqFF10yEYiQAXVQ6AID4J7hHI8iP1tWRg9cj3elVq4Kidv44eK+fSegQArw//SgzR3IZ7QlDd07HOvEKwjTrHvZgYJBc7mkmdDBcGkq1K6D8fUcvWRQFlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762919844; c=relaxed/simple;
-	bh=8UrXATVEOSkpcOqAwYDPjZ/LwNgFCgVkt2cRW5OlIyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlme7WeTSdvL+rLSiu8cZlAOTghsiQJcS+BbiIHT8GzVLa4JshXN4GYJi2L5m9oMJe/AI8OhYG8h8G7tVeVX2E0E6QXfaj2cVT63JD02kLIyydnSogzR5UhVn1gS9Tg0JIK6MKtXLAgP/bOOKMULKE/kKG6tlZ3D5li+zodFx1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h2VeDbcO; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3437af8444cso356996a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:57:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762919842; x=1763524642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovVpRNi0EQ6lOoutzsikI7movk3CjwrYn04Q7//VyJg=;
-        b=h2VeDbcOJy+eyCjz9XR4Itw7E2lmCnI66r6HIVx7hECtt7bnN/VUstgHH02rAqpNh2
-         n3ed9max9IEh/itP+BR5XkTc4i0QVn+/1TsYBxUrrigO4l6jbR1jIBVBvK9k8INgXsV3
-         t3goUFHASs3xp0HS5JzrBd13qYyB2TLUuaWCM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762919842; x=1763524642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ovVpRNi0EQ6lOoutzsikI7movk3CjwrYn04Q7//VyJg=;
-        b=g8/OF8qth68xTNecrvl6fbSZ1vSA7PEtx00FjJd87nLAFqoBhvJ/laHhmEMLMYXj9W
-         cNpa1I1hHmiDFsi5+Sai/hlXlN7pJJQB5nkQgTEO+wsXT1JAUQQ8FaLq0LLUtjTYYMpJ
-         226zNftlUXgg8hcVP6wMxptYmiyilTKwX72ZvFWysf7Kr/jt7irZvjm5vBwT1ufvIPVS
-         9lrVQQ/c56/Q9BPZFnvSa8H2hG/rGZiW8P2hzzH95M1zQ70jXBa5KY7PQJYxvMmvjt/8
-         /qAis+7zuBWWn3qMojAz3ian7ttERfQW3kcAqrSCyH3wwFPW0itTZSpick4khpXRFL9o
-         93hA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmrka/YjdezsDL89FgAQfsvqxekBhz9GZYNixgRa2osibrrM7QDRlLeOry20z31sWgbG3fCZf4WGXozcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1WslRbz8uMuuRBuYwxeJwuqNcJR+MorY+yjWAWDT8MqgP2dOY
-	Q+cWYhhONrPDSZW1dsj039UdCsR4dAPnjzg7U6Ve+Jm1WcqcH8XzlJag6izvERFW7Q==
-X-Gm-Gg: ASbGncuzi2OLm9Pm0NqlJa4gedjlAaqk+iS0reyoLSVwcmf5Q5JTpkn4oeUK03ILPJk
-	kGq822gxHBZxl891jmGDwlVC2ew0HnzajeBK+OxhwGh16VkJlHQhdQYHLvr8w+tUE4w9t2A7Xb1
-	8ffRBIc6VNyGLgwGh7Tz9jXISjKi9U+E3GjWcNLvgH0m9aWAXxvScDQdHeej/28tKsyp8f2NEdP
-	jL9Qaf82HcSGLGer7L4aOdMlAraaC3PRThMJorjY+gt6tlrDtbnznG88Dup/ZJFGHvzZLMZNj68
-	Ud9bmVvsu9ltPW61kin3lRCOFXDpwnQRBAn1eSJEcBkdg44oFFXM7Dm6HURhqRiWadVPkdqGLDx
-	VylJFs3nsAnOwRnysz1GfKLuFLCeKgge20gcoNm5BponXDoJ7rfmZOqfl/xkdb12FzP2q7Y16O5
-	mFoaCxxWn2CMaZd0pNJ951VuPBHFokpVjW
-X-Google-Smtp-Source: AGHT+IFuC7JCagvpoSYGItHOD5crq2vbUP/LygFRR5OO11qZWWEU7YvPgPRxAneMXyaEw4LK8Np9Xg==
-X-Received: by 2002:a17:90b:1fc5:b0:340:6f9c:b25b with SMTP id 98e67ed59e1d1-343dde030a0mr2130204a91.11.1762919841636;
-        Tue, 11 Nov 2025 19:57:21 -0800 (PST)
-Received: from google.com ([2a00:79e0:201d:8:8b66:5f0b:945c:64eb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b783087c08sm1168218b3a.3.2025.11.11.19.57.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 19:57:21 -0800 (PST)
-Date: Wed, 12 Nov 2025 11:57:17 +0800
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical
- Key M connector
-Message-ID: <20251112035717.GA3363355@google.com>
-References: <20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com>
- <20251108-pci-m2-v2-1-e8bc4d7bf42d@oss.qualcomm.com>
+	s=arc-20240116; t=1762919925; c=relaxed/simple;
+	bh=c/h+aA41Clq7jcaacbawmPY+fy/4YciowdLYV+X/BAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uKY9O9oNEKrHvG/ku7+AkIYRIH6zJqRRJDG0WD55VbLClRlQYRMGQEg1aLPiiROhPWZU2nWhdaCIYPymp81aHwWaWvj2D6vbqw2DGkb25twRee1E0G+6j0WD3o2aFILni98+v6kJ2JjKklemCBWIoD2gd0z48btgI393Ga1nU/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aaWNtN1g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762919921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HVGjzJVLKYy854UeaTbnQV8hoz0i2+ZeLSoZeWbkDos=;
+	b=aaWNtN1gNKj51ml/fWNk7ss7AxZg6NT99gtQLozzm68NVcGs3K6Ks/VcIoOeCIWSmrAOzS
+	nTa+HzT/S8lR9PWwfURn30iHOM6bhv5x9u3eBshQgEsc0i06Prhby3QD24u3CR/ywKOeg3
+	wnzk8+sZnsZYmiKs5v32iowmoXzeHG8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-r370gV40O42hI_X01s8uVg-1; Tue,
+ 11 Nov 2025 22:58:38 -0500
+X-MC-Unique: r370gV40O42hI_X01s8uVg-1
+X-Mimecast-MFC-AGG-ID: r370gV40O42hI_X01s8uVg_1762919917
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8233F19560B0;
+	Wed, 12 Nov 2025 03:58:36 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.81.133])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E70E81800451;
+	Wed, 12 Nov 2025 03:58:32 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Chen Ridong <chenridong@huawei.com>,
+	Pingfan Liu <piliu@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [cgroup/for-6.19 PATCH] cgroup/cpuset: Make callback_lock a raw_spinlock_t
+Date: Tue, 11 Nov 2025 22:57:59 -0500
+Message-ID: <20251112035759.1162541-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108-pci-m2-v2-1-e8bc4d7bf42d@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat, Nov 08, 2025 at 08:53:19AM +0530, Manivannan Sadhasivam wrote:
-> Add the devicetree binding for PCIe M.2 Mechanical Key M connector defined
-> in the PCI Express M.2 Specification, r4.0, sec 5.3. This connector
-> provides interfaces like PCIe and SATA to attach the Solid State Drives
-> (SSDs) to the host machine along with additional interfaces like USB, and
-> SMB for debugging and supplementary features. At any point of time, the
-> connector can only support either PCIe or SATA as the primary host
-> interface.
-> 
-> The connector provides a primary power supply of 3.3v, along with an
-> optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> 1.8v sideband signaling.
-> 
-> The connector also supplies optional signals in the form of GPIOs for fine
-> grained power management.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->  .../bindings/connector/pcie-m2-m-connector.yaml    | 122 +++++++++++++++++++++
->  1 file changed, 122 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..be0a3b43e8fd2a2a3b76cad4808ddde79dceaa21
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> @@ -0,0 +1,122 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: PCIe M.2 Mechanical Key M Connector
-> +
-> +maintainers:
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> +
-> +description:
-> +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical Key M
-> +  connector. The Mechanical Key M connectors are used to connect SSDs to the
-> +  host system over PCIe/SATA interfaces. These connectors also offer optional
-> +  interfaces like USB, SMB.
-> +
-> +properties:
-> +  compatible:
-> +    const: pcie-m2-m-connector
-> +
-> +  vpcie3v3-supply:
-> +    description: A phandle to the regulator for 3.3v supply.
-> +
-> +  vio1v8-supply:
-> +    description: A phandle to the regulator for VIO 1.8v supply.
+The callback_lock is a spinlock_t which is acquired either to read
+a stable set of cpu or node masks or to modify those masks when
+cpuset_mutex is also acquired. Sometime it may need to go up the
+cgroup hierarchy while holding the lock to find the right set of masks
+to use. Assuming that the depth of the cgroup hierarch is finite and
+typically small, the lock hold time should be limited.
 
-FYI I just added vpcie1v8-supply to the core DT schema [1]. vpcie1v8
-instead of vio1v8 was requested by Rob.
+Some externally callable cpuset APIs like cpuset_cpus_allowed() and
+cpuset_mems_allowed() acquires callback_lock with irq disabled to ensure
+stable cpuset data. These APIs currently have the restriction that they
+can't be called when a raw spinlock is being held. This is needed to
+work correctly in a PREEMPT_RT kernel. This requires additional code
+changes to work around this limitation. See [1] for a discussion of that.
 
-[1] https://github.com/devicetree-org/dt-schema/pull/176
+Make these external cpuset APIs more useful by changing callback_lock
+to a raw_spinlock_t to remove this limitation so that they can be called
+from within other raw spinlock critical sections if needed.
 
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    description: OF graph bindings modeling the interfaces exposed on the
-> +      connector. Since a single connector can have multiple interfaces, every
-> +      interface has an assigned OF graph port number as described below.
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: PCIe/SATA interface
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: USB interface
-> +
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: SMB interface
-> +
-> +    required:
-> +      - port@0
-> +
-> +  clocks:
-> +    description: 32.768 KHz Suspend Clock (SUSCLK) input from the host system to
-> +      the M.2 card. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.1 for
-> +      more details.
-> +    maxItems: 1
-> +
-> +  pedet-gpios:
-> +    description: GPIO controlled connection to PEDET signal. This signal is used
-> +      by the host systems to determine the communication protocol that the M.2
-> +      card uses; SATA signaling (low) or PCIe signaling (high). Refer, PCI
-> +      Express M.2 Specification r4.0, sec 3.3.4.2 for more details.
-> +    maxItems: 1
-> +
-> +  led1-gpios:
-> +    description: GPIO controlled connection to LED_1# signal. This signal is
-> +      used by the M.2 card to indicate the card status via the system mounted
-> +      LED. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.2 for more
-> +      details.
-> +    maxItems: 1
-> +
-> +  viocfg-gpios:
-> +    description: GPIO controlled connection to IO voltage configuration
-> +      (VIO_CFG) signal. This signal is used by the M.2 card to indicate to the
-> +      host system that the card supports an independent IO voltage domain for
-> +      the sideband signals. Refer, PCI Express M.2 Specification r4.0, sec
-> +      3.1.15.1 for more details.
-> +    maxItems: 1
-> +
-> +  pwrdis-gpios:
-> +    description: GPIO controlled connection to Power Disable (PWRDIS) signal.
-> +      This signal is used by the host system to disable power on the M.2 card.
-> +      Refer, PCI Express M.2 Specification r4.0, sec 3.3.5.2 for more details.
-> +    maxItems: 1
-> +
-> +  pln-gpios:
-> +    description: GPIO controlled connection to Power Loss Notification (PLN#)
-> +      signal. This signal is use to notify the M.2 card by the host system that
-> +      the power loss event is expected to occur. Refer, PCI Express M.2
-> +      Specification r4.0, sec 3.2.17.1 for more details.
-> +    maxItems: 1
-> +
-> +  plas3-gpios:
-> +    description: GPIO controlled connection to Power Loss Acknowledge (PLA_S3#)
-> +      signal. This signal is used by the M.2 card to notify the host system, the
-> +      status of the M.2 card's preparation for power loss.
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - vpcie3v3-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # PCI M.2 Key M connector for SSDs with PCIe interface
-> +  - |
-> +    connector {
-> +        compatible = "pcie-m2-m-connector";
-> +        vpcie3v3-supply = <&vreg_nvme>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +
-> +                endpoint {
-> +                    remote-endpoint = <&pcie6_port0_ep>;
-> +                };
-> +            };
-> +        };
-> +    };
-> 
-> -- 
-> 2.48.1
-> 
+[1] https://lore.kernel.org/lkml/20251110014706.8118-1-piliu@redhat.com/
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/cgroup/cpuset.c | 94 +++++++++++++++++++++---------------------
+ 1 file changed, 47 insertions(+), 47 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 976bce6e5673..7b3a0345ee76 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -289,16 +289,16 @@ void cpuset_full_unlock(void)
+ 	cpus_read_unlock();
+ }
+ 
+-static DEFINE_SPINLOCK(callback_lock);
++static DEFINE_RAW_SPINLOCK(callback_lock);
+ 
+ void cpuset_callback_lock_irq(void)
+ {
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ }
+ 
+ void cpuset_callback_unlock_irq(void)
+ {
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ }
+ 
+ static struct workqueue_struct *cpuset_migrate_mm_wq;
+@@ -1616,11 +1616,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 	    prstate_housekeeping_conflict(new_prs, tmp->new_cpus))
+ 		return PERR_HKEEPING;
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+ 	cs->remote_partition = true;
+ 	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	update_isolation_cpumasks();
+ 	cpuset_force_rebuild();
+ 	cs->prs_err = 0;
+@@ -1647,7 +1647,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+ 	WARN_ON_ONCE(!is_remote_partition(cs));
+ 	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cs->remote_partition = false;
+ 	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
+ 	if (cs->prs_err)
+@@ -1658,7 +1658,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+ 	/* effective_xcpus may need to be changed */
+ 	compute_excpus(cs, cs->effective_xcpus);
+ 	reset_partition_data(cs);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	update_isolation_cpumasks();
+ 	cpuset_force_rebuild();
+ 
+@@ -1717,7 +1717,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 			goto invalidate;
+ 	}
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	if (adding)
+ 		partition_xcpus_add(prs, NULL, tmp->addmask);
+ 	if (deleting)
+@@ -1729,7 +1729,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 	cpumask_copy(cs->effective_xcpus, excpus);
+ 	if (xcpus)
+ 		cpumask_copy(cs->exclusive_cpus, xcpus);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	update_isolation_cpumasks();
+ 	if (adding || deleting)
+ 		cpuset_force_rebuild();
+@@ -2060,7 +2060,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 	 * Newly added CPUs will be removed from effective_cpus and
+ 	 * newly deleted ones will be added back to effective_cpus.
+ 	 */
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	if (old_prs != new_prs)
+ 		cs->partition_root_state = new_prs;
+ 
+@@ -2073,7 +2073,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 	if (deleting)
+ 		partition_xcpus_add(new_prs, parent, tmp->delmask);
+ 
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	update_isolation_cpumasks();
+ 
+ 	if ((old_prs != new_prs) && (cmd == partcmd_update))
+@@ -2154,9 +2154,9 @@ static void compute_partition_effective_cpumask(struct cpuset *cs,
+ 			/*
+ 			 * Invalidate child partition
+ 			 */
+-			spin_lock_irq(&callback_lock);
++			raw_spin_lock_irq(&callback_lock);
+ 			make_partition_invalid(child);
+-			spin_unlock_irq(&callback_lock);
++			raw_spin_unlock_irq(&callback_lock);
+ 			notify_partition_change(child, old_prs);
+ 			continue;
+ 		}
+@@ -2301,7 +2301,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+ 			new_prs = cp->partition_root_state;
+ 		}
+ 
+-		spin_lock_irq(&callback_lock);
++		raw_spin_lock_irq(&callback_lock);
+ 		cpumask_copy(cp->effective_cpus, tmp->new_cpus);
+ 		cp->partition_root_state = new_prs;
+ 		if (!cpumask_empty(cp->exclusive_cpus) && (cp != cs))
+@@ -2316,7 +2316,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+ 				    cp->cpus_allowed, parent->effective_xcpus);
+ 		else if (new_prs < 0)
+ 			reset_partition_data(cp);
+-		spin_unlock_irq(&callback_lock);
++		raw_spin_unlock_irq(&callback_lock);
+ 
+ 		notify_partition_change(cp, old_prs);
+ 
+@@ -2566,12 +2566,12 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+ 
+ 	partition_cpus_change(cs, trialcs, &tmp);
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cpumask_copy(cs->cpus_allowed, trialcs->cpus_allowed);
+ 	cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
+ 	if ((old_prs > 0) && !is_partition_valid(cs))
+ 		reset_partition_data(cs);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	/* effective_cpus/effective_xcpus will be updated here */
+ 	update_cpumasks_hier(cs, &tmp, force);
+@@ -2631,12 +2631,12 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+ 	trialcs->prs_err = PERR_NONE;
+ 	partition_cpus_change(cs, trialcs, &tmp);
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cpumask_copy(cs->exclusive_cpus, trialcs->exclusive_cpus);
+ 	cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
+ 	if ((old_prs > 0) && !is_partition_valid(cs))
+ 		reset_partition_data(cs);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	/*
+ 	 * Call update_cpumasks_hier() to update effective_cpus/effective_xcpus
+@@ -2851,9 +2851,9 @@ static void update_nodemasks_hier(struct cpuset *cs, nodemask_t *new_mems)
+ 			continue;
+ 		rcu_read_unlock();
+ 
+-		spin_lock_irq(&callback_lock);
++		raw_spin_lock_irq(&callback_lock);
+ 		cp->effective_mems = *new_mems;
+-		spin_unlock_irq(&callback_lock);
++		raw_spin_unlock_irq(&callback_lock);
+ 
+ 		WARN_ON(!is_in_v2_mode() &&
+ 			!nodes_equal(cp->mems_allowed, cp->effective_mems));
+@@ -2906,9 +2906,9 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
+ 
+ 	check_insane_mems_config(&trialcs->mems_allowed);
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cs->mems_allowed = trialcs->mems_allowed;
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	/* use trialcs->mems_allowed as a temp variable */
+ 	update_nodemasks_hier(cs, &trialcs->mems_allowed);
+@@ -2962,9 +2962,9 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 	spread_flag_changed = ((is_spread_slab(cs) != is_spread_slab(trialcs))
+ 			|| (is_spread_page(cs) != is_spread_page(trialcs)));
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cs->flags = trialcs->flags;
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed) {
+ 		if (cpuset_v2())
+@@ -3082,14 +3082,14 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+ 		update_partition_exclusive_flag(cs, new_prs);
+ 	}
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cs->partition_root_state = new_prs;
+ 	WRITE_ONCE(cs->prs_err, err);
+ 	if (!is_partition_valid(cs))
+ 		reset_partition_data(cs);
+ 	else if (isolcpus_updated)
+ 		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	update_isolation_cpumasks();
+ 
+ 	/* Force update if switching back to member & update effective_xcpus */
+@@ -3403,7 +3403,7 @@ int cpuset_common_seq_show(struct seq_file *sf, void *v)
+ 	cpuset_filetype_t type = seq_cft(sf)->private;
+ 	int ret = 0;
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 
+ 	switch (type) {
+ 	case FILE_CPULIST:
+@@ -3434,7 +3434,7 @@ int cpuset_common_seq_show(struct seq_file *sf, void *v)
+ 		ret = -EINVAL;
+ 	}
+ 
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	return ret;
+ }
+ 
+@@ -3627,12 +3627,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 
+ 	cpuset_inc();
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	if (is_in_v2_mode()) {
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 		cs->effective_mems = parent->effective_mems;
+ 	}
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	if (!test_bit(CGRP_CPUSET_CLONE_CHILDREN, &css->cgroup->flags))
+ 		goto out_unlock;
+@@ -3659,12 +3659,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 	}
+ 	rcu_read_unlock();
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cs->mems_allowed = parent->mems_allowed;
+ 	cs->effective_mems = parent->mems_allowed;
+ 	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
+ 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ out_unlock:
+ 	cpuset_full_unlock();
+ 	return 0;
+@@ -3715,7 +3715,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
+ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+ {
+ 	mutex_lock(&cpuset_mutex);
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 
+ 	if (is_in_v2_mode()) {
+ 		cpumask_copy(top_cpuset.cpus_allowed, cpu_possible_mask);
+@@ -3727,7 +3727,7 @@ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+ 		top_cpuset.mems_allowed = top_cpuset.effective_mems;
+ 	}
+ 
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	mutex_unlock(&cpuset_mutex);
+ }
+ 
+@@ -3890,10 +3890,10 @@ hotplug_update_tasks(struct cpuset *cs,
+ 	if (nodes_empty(*new_mems))
+ 		*new_mems = parent_cs(cs)->effective_mems;
+ 
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 	cpumask_copy(cs->effective_cpus, new_cpus);
+ 	cs->effective_mems = *new_mems;
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 
+ 	if (cpus_updated)
+ 		cpuset_update_tasks_cpumask(cs, new_cpus);
+@@ -4055,7 +4055,7 @@ static void cpuset_handle_hotplug(void)
+ 	/* For v1, synchronize cpus_allowed to cpu_active_mask */
+ 	if (cpus_updated) {
+ 		cpuset_force_rebuild();
+-		spin_lock_irq(&callback_lock);
++		raw_spin_lock_irq(&callback_lock);
+ 		if (!on_dfl)
+ 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
+ 		/*
+@@ -4073,17 +4073,17 @@ static void cpuset_handle_hotplug(void)
+ 			}
+ 		}
+ 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
+-		spin_unlock_irq(&callback_lock);
++		raw_spin_unlock_irq(&callback_lock);
+ 		/* we don't mess with cpumasks of tasks in top_cpuset */
+ 	}
+ 
+ 	/* synchronize mems_allowed to N_MEMORY */
+ 	if (mems_updated) {
+-		spin_lock_irq(&callback_lock);
++		raw_spin_lock_irq(&callback_lock);
+ 		if (!on_dfl)
+ 			top_cpuset.mems_allowed = new_mems;
+ 		top_cpuset.effective_mems = new_mems;
+-		spin_unlock_irq(&callback_lock);
++		raw_spin_unlock_irq(&callback_lock);
+ 		cpuset_update_tasks_nodemask(&top_cpuset);
+ 	}
+ 
+@@ -4176,7 +4176,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 	unsigned long flags;
+ 	struct cpuset *cs;
+ 
+-	spin_lock_irqsave(&callback_lock, flags);
++	raw_spin_lock_irqsave(&callback_lock, flags);
+ 
+ 	cs = task_cs(tsk);
+ 	if (cs != &top_cpuset)
+@@ -4198,7 +4198,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 			cpumask_copy(pmask, possible_mask);
+ 	}
+ 
+-	spin_unlock_irqrestore(&callback_lock, flags);
++	raw_spin_unlock_irqrestore(&callback_lock, flags);
+ }
+ 
+ /**
+@@ -4269,9 +4269,9 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
+ 	nodemask_t mask;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&callback_lock, flags);
++	raw_spin_lock_irqsave(&callback_lock, flags);
+ 	guarantee_online_mems(task_cs(tsk), &mask);
+-	spin_unlock_irqrestore(&callback_lock, flags);
++	raw_spin_unlock_irqrestore(&callback_lock, flags);
+ 
+ 	return mask;
+ }
+@@ -4363,12 +4363,12 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
+ 		return true;
+ 
+ 	/* Not hardwall and node outside mems_allowed: scan up cpusets */
+-	spin_lock_irqsave(&callback_lock, flags);
++	raw_spin_lock_irqsave(&callback_lock, flags);
+ 
+ 	cs = nearest_hardwall_ancestor(task_cs(current));
+ 	allowed = node_isset(node, cs->mems_allowed);
+ 
+-	spin_unlock_irqrestore(&callback_lock, flags);
++	raw_spin_unlock_irqrestore(&callback_lock, flags);
+ 	return allowed;
+ }
+ 
+-- 
+2.51.1
+
 
