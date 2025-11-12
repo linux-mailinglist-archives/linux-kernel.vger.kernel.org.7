@@ -1,128 +1,499 @@
-Return-Path: <linux-kernel+bounces-897451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96510C52CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ECCC52CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C98335037D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6317835071B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09D733ADB7;
-	Wed, 12 Nov 2025 14:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8548033B97B;
+	Wed, 12 Nov 2025 14:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nu1tFFT0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8bwPHKz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4283F2BEFF3;
-	Wed, 12 Nov 2025 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726C2B2DA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958628; cv=none; b=EOot4TRDmhifI2VigAyse5QPES6e1fUnr5NoeQ8p38M9rIoFWNUwS1MAc6osWtOVY+IJhReQpsiC9wJVB88XTqLqqFmo+REQGJSK/SPEb2svh5QNEKxKmwj0HrT0PsZwQ+tXI+HGlVMTCOJB1SYyaP7SA5zh6KQARSDTiKgJxZs=
+	t=1762958675; cv=none; b=SXh4PxV1uy4moMIfX3ZHtmrzaci8W1jddTxOPKf3uWv8IfMsC2UaGM46jQz5WX2Q/NOg1GVJTLVKm+hPR8CyWTO4g7HcmphfUkZjus895U3XKBMlasmstuHsye+xMLCaE48YgjOExnCfM900jyUOyunoME2e7ON7ssjt0QD0i9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958628; c=relaxed/simple;
-	bh=ilC6tGexmJ0iIDVMobFd8bh9Opvb8ZsC7ENTeTEJYZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJYRizbsGUaUFcQCZr/8Ctrfjrlcg6Nwwtz1vDAyuDoxkQg7E1pYwRiqlO8qlEAHhoXRC/iHFA+kjIxdyV1iDVscsqhkIQ2XCXIT7R40UUMsIBMv/L6fpPm+Nm53KbwOvs0ZjtjhdsiynC7uCsHBI5/5rgf4t1uJXcQCQYbEjJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nu1tFFT0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762958627; x=1794494627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ilC6tGexmJ0iIDVMobFd8bh9Opvb8ZsC7ENTeTEJYZw=;
-  b=Nu1tFFT0ANv5EzPxsV+8iJpFp5r47Pmuk3lGBZIAwtbpBuWfci1VZp6x
-   G2uxoB3EiL9iDyz8m8GJogRaoIqUIf53Od1U2M/rUV7X7DvywLhb2tVmG
-   uKyh89lPYana+DilAvEHiIyFyZ6cMDfnQRNg3tFgyjewtcu+3UJ0SaBZ9
-   c34BrrGEG/MNu5Hb32n1w7KuOTtozQ7RChEcnwJmpvc29jGD+YHiWW7Ns
-   ozA1ZMqd127oQ0DNzu7TjU70/6Hys8OnbfQO0MaieiyTGHDt3ou1hYIfX
-   3RXwvKrr5iA+HrO3ihLmbeuHXDOvK8enk/+vnNL/VvqLTau80Eq/iGZyE
-   w==;
-X-CSE-ConnectionGUID: 6WGC9r3YQQKIbmTgcEjBvg==
-X-CSE-MsgGUID: fksfhszQQlGbstPrpl627w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="87662344"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="87662344"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:43:46 -0800
-X-CSE-ConnectionGUID: Tof3iMyERSKtKocPqcmnTA==
-X-CSE-MsgGUID: sm94GNjRSQmH4cACIOSAUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="194217467"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2025 06:43:43 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id EE0D195; Wed, 12 Nov 2025 15:43:41 +0100 (CET)
-Date: Wed, 12 Nov 2025 15:43:41 +0100
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Denis Benato <denis.benato@linux.dev>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Limonciello, Mario" <mario.limonciello@amd.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com,
-	Denis Benato <benato.denis96@gmail.com>
-Subject: Re: [PATCH v17 0/9] platform/x86: Add asus-armoury driver
-Message-ID: <aRSdHcO1WCPmG63W@black.igk.intel.com>
-References: <20251102215319.3126879-1-denis.benato@linux.dev>
+	s=arc-20240116; t=1762958675; c=relaxed/simple;
+	bh=PDnwftZCtKItMvQXS6vPJzVdQydGaJntJOyOabcBAHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ftYleQ1xdX8B20ATUsW7sTRFwbu9qDDo1jM3+pkC1KPEsNKRhmQW7OI10LRAp44fe0nQ1pqPwzbf9Oxl0SXmWmMYgitbbiukz+FXdxtS1PbYYAdE+eUIvpyxq9TC484qeme3+P+6BQiaqMDU0UOmhmIepa6o+wN/QnqyYDZNsM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8bwPHKz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ED2C2BC86
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762958675;
+	bh=PDnwftZCtKItMvQXS6vPJzVdQydGaJntJOyOabcBAHo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H8bwPHKzfUN/JGbVuzz/f9oALQIK1EG8jgmga7Gfpp8GN7QKqeRQdz2nb5K4L3VRm
+	 FTsh5wlzH5cXeJncoRa+Uz9thGZrOImi59EyQOM/HahHKrPiPssJ7EFiwgM/1AMRUg
+	 tbU3tKT2e/eI2CLvsyAxMMDSJ6sOBCo8YJkEEN51dbRh4V/rIcRn9aW90R1fA5kx0r
+	 n0HNJzKGOdv/tTSl/SlTdzHBBPflTK01Pz1ZkL9q/tqAM5syvCgyvVeSi7XmSQNJ2c
+	 QaF0Uaef/CZ7RvrZ5Upg9W57/QXRNMALTEwH4uzuVomm5jCTzLa2NclB2klTT2NKam
+	 fLmPOm8oQ+0aA==
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-786a85a68c6so9242177b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:44:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUy6mdmSrXfCwoNw3TqlJoKkJk8Au5s3sEo8Ly6PGvzSmysLms84zutbekkDvSUkVwh6FPQOBg6fk/7zyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7tJT7vGf/HE4Q4AZSE7TW6r5ZkQBD4VddE/FXYC+MK97KVcPG
+	+kfuW8FspsjYVdK71g5wLQsLUowGpr0FA3cwaN6RMqCwo+OCo3vRYRzaaEn7DjSwxX/xLA1vEIr
+	dOkSioliVQSiPB87XnlWW270liLgAxvm+80q94GjO5w==
+X-Google-Smtp-Source: AGHT+IG5JeTs0/2jzgHnGQg6hAHz8vnJj97AKy982sF7acTacZdbTAFqicgdDUf8Z5OFDVpjMi1dXerlN4/1YJlDLLQ=
+X-Received: by 2002:a05:690c:6805:b0:786:9be4:749c with SMTP id
+ 00721157ae682-78813666b4fmr29760027b3.31.1762958674170; Wed, 12 Nov 2025
+ 06:44:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251102215319.3126879-1-denis.benato@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251109124947.1101520-1-youngjun.park@lge.com> <20251109124947.1101520-4-youngjun.park@lge.com>
+In-Reply-To: <20251109124947.1101520-4-youngjun.park@lge.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 12 Nov 2025 06:44:23 -0800
+X-Gmail-Original-Message-ID: <CACePvbU+NviPmpXQAJUrY4rTqmY_rvYy2JvDBAfT290GmQmfZg@mail.gmail.com>
+X-Gm-Features: AWmQ_bn2uFL5WDija3FNTBnu9eTA0Dq7KEi83tdS-oW7tHAdZkh7qgGbpcQOn8o
+Message-ID: <CACePvbU+NviPmpXQAJUrY4rTqmY_rvYy2JvDBAfT290GmQmfZg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into swap subsystem
+To: Youngjun Park <youngjun.park@lge.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kasong@tencent.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, shikemeng@huaweicloud.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, gunho.lee@lge.com, taejoon.song@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 02, 2025 at 10:53:10PM +0100, Denis Benato wrote:
-> Hi all,
-> 
-> the TL;DR:
-> 1. Introduce new module to contain bios attributes, using fw_attributes_class
-> 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
-> 3. Remove those in the next LTS cycle
-> 
-> The idea for this originates from a conversation with Mario Limonciello
-> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
-> 
-> It is without a doubt much cleaner to use, easier to discover, and the
-> API is well defined as opposed to the random clutter of attributes I had
-> been placing in the platform sysfs. Given that Derek is also working on a
-> similar approach to Lenovo in part based on my initial work I'd like to think
-> that the overall approach is good and may become standardised for these types
-> of things.
-> 
-> Regarding PPT: it is intended to add support for "custom" platform profile
-> soon. If it's a blocker for this patch series being accepted I will drop the 
-> platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
-> separately to avoid holding the bulk of the series up. Ideally I would like
-> to get the safe limits in so users don't fully lose functionality or continue
-> to be exposed to potential instability from setting too low, or be mislead
-> in to thinking they can set limits higher than actual limit.
-> 
-> The bulk of the PPT patch is data, the actual functional part is relatively
-> small and similar to the last version.
-> 
-> Unfortunately I've been rather busy over the months and may not cover
-> everything in the v7 changelog but I've tried to be as comprehensive as I can.
+It seems you should introduce the tiers first. Allow users to define tiers.
+Then the follow up patches use tiers defined here.
 
-This is more files starter with asus in PDx86.
-Perhaps it's a time to have drivers/platform/x86/asus/ ?
+The patch order seems reversed to me.
 
--- 
-With Best Regards,
-Andy Shevchenko
+See some feedback below, to be continued.
+
+Chhris
 
 
+On Sun, Nov 9, 2025 at 4:50=E2=80=AFAM Youngjun Park <youngjun.park@lge.com=
+> wrote:
+>
+> Integrate the swap tier infrastructure into the existing swap subsystem
+> to enable selective swap device usage based on tier configuration.
+>
+> Signed-off-by: Youngjun Park <youngjun.park@lge.com>
+> ---
+>  mm/memcontrol.c | 69 ++++++++++++++++++++++++++++++++++++
+>  mm/page_io.c    | 21 ++++++++++-
+>  mm/swap_state.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  mm/swapfile.c   | 15 ++++++--
+>  4 files changed, 194 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index bfc986da3289..33c7cc069754 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -68,6 +68,7 @@
+>  #include <net/ip.h>
+>  #include "slab.h"
+>  #include "memcontrol-v1.h"
+> +#include "swap_tier.h"
+>
+>  #include <linux/uaccess.h>
+>
+> @@ -3730,6 +3731,7 @@ static void mem_cgroup_free(struct mem_cgroup *memc=
+g)
+>  {
+>         lru_gen_exit_memcg(memcg);
+>         memcg_wb_domain_exit(memcg);
+> +       swap_tiers_put_mask(memcg);
+>         __mem_cgroup_free(memcg);
+>  }
+>
+> @@ -3842,6 +3844,11 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *p=
+arent_css)
+>                 page_counter_init(&memcg->kmem, &parent->kmem, false);
+>                 page_counter_init(&memcg->tcpmem, &parent->tcpmem, false)=
+;
+>  #endif
+> +#ifdef CONFIG_SWAP_TIER
+> +               memcg->tiers_mask =3D 0;
+> +               memcg->tiers_onoff =3D 0;
+> +#endif
+> +
+>         } else {
+>                 init_memcg_stats();
+>                 init_memcg_events();
+> @@ -3850,6 +3857,10 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *p=
+arent_css)
+>  #ifdef CONFIG_MEMCG_V1
+>                 page_counter_init(&memcg->kmem, NULL, false);
+>                 page_counter_init(&memcg->tcpmem, NULL, false);
+> +#endif
+> +#ifdef CONFIG_SWAP_TIER
+Again, don't need this config.
+
+> +               memcg->tiers_mask =3D DEFAULT_FULL_MASK;
+
+Is this  memcg->tiers_mask a cached value after evaluating the
+swap.tiers onoff list by looking up the parent?
+
+I was thinking of starting with always evaluating the tiers_mask. Then
+we don't need to store it here. How do you indicate the tiers_mask is
+out of date?
+
+> +               memcg->tiers_onoff =3D DEFAULT_ON_MASK;
+>  #endif
+>                 root_mem_cgroup =3D memcg;
+>                 return &memcg->css;
+> @@ -5390,6 +5401,56 @@ static int swap_events_show(struct seq_file *m, vo=
+id *v)
+>         return 0;
+>  }
+>
+> +#ifdef CONFIG_SWAP_TIER
+> +static int swap_tier_show(struct seq_file *m, void *v)
+> +{
+> +       struct mem_cgroup *memcg =3D mem_cgroup_from_seq(m);
+> +
+> +       swap_tiers_show_memcg(m, memcg);
+> +       return 0;
+> +}
+> +
+> +static ssize_t swap_tier_write(struct kernfs_open_file *of,
+> +                               char *buf, size_t nbytes, loff_t off)
+> +{
+> +       struct mem_cgroup *memcg =3D mem_cgroup_from_css(of_css(of));
+> +       struct tiers_desc desc[MAX_SWAPTIER] =3D {};
+> +       char *pos =3D buf, *token;
+> +       int nr =3D 0;
+> +       int ret;
+> +
+> +       while ((token =3D strsep(&pos, " \t\n")) !=3D NULL) {
+
+Not allowing plain space " "? Compare pointer !=3D NULL is redundant.
+
+> +               if (!*token)
+> +                       continue;
+> +
+> +               if (nr >=3D MAX_SWAPTIER)
+> +                       return -E2BIG;
+> +
+> +               if (token[0] !=3D '+' && token[0] !=3D '-')
+> +                       return -EINVAL;
+> +
+> +               desc[nr].ops =3D (token[0] =3D=3D '+') ? TIER_ON_MASK : T=
+IER_OFF_MASK;
+> +
+> +               if (strlen(token) <=3D 1) {
+> +                       strscpy(desc[nr].name, DEFAULT_TIER_NAME);
+> +                       nr++;
+> +                       continue;
+> +               }
+> +
+> +               if (strscpy(desc[nr].name, token + 1, MAX_TIERNAME) < 0)
+> +                       return -EINVAL;
+> +
+> +               nr++;
+I don't think you need this nr, you will reach to the end of the
+string any way. What if the user specifies the same tier more than
+once? It is not optimal but the kernel should take it.
+
+OK, I see what is going on now, this whole desc thing can be greatly
+simplified. You shouldn't need to maintain the desc[nr], that desc
+array is the onoff mask in my mind. You just need to keep the tier
+bits in order.
+
+Notice in the memory.swap.tiers. Except for the default tier pattern,
+which always the first one if exists. The rest of the tier + - order
+does not matter. You look up the tier name into the tier mask bit.
+Just set the onoff bits for that tier.
+
+> +       }
+> +
+> +       ret =3D swap_tiers_get_mask(desc, nr, memcg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return nbytes;
+> +}
+> +#endif
+> +
+>  static struct cftype swap_files[] =3D {
+>         {
+>                 .name =3D "swap.current",
+> @@ -5422,6 +5483,14 @@ static struct cftype swap_files[] =3D {
+>                 .file_offset =3D offsetof(struct mem_cgroup, swap_events_=
+file),
+>                 .seq_show =3D swap_events_show,
+>         },
+> +#ifdef CONFIG_SWAP_TIER
+> +       {
+> +               .name =3D "swap.tiers",
+> +               .flags =3D CFTYPE_NOT_ON_ROOT,
+> +               .seq_show =3D swap_tier_show,
+> +               .write =3D swap_tier_write,
+> +       },
+> +#endif
+>         { }     /* terminate */
+>  };
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 3c342db77ce3..2b3b1154a169 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/delayacct.h>
+>  #include <linux/zswap.h>
+>  #include "swap.h"
+> +#include "swap_tier.h"
+>
+>  static void __end_swap_bio_write(struct bio *bio)
+>  {
+> @@ -233,6 +234,24 @@ static void swap_zeromap_folio_clear(struct folio *f=
+olio)
+>         }
+>  }
+>
+> +#if defined(CONFIG_SWAP_TIER) && defined(CONFIG_ZSWAP)
+> +static bool folio_swap_tier_zswap_test_off(struct folio *folio)
+> +{
+> +       struct mem_cgroup *memcg;
+> +
+> +       memcg =3D folio_memcg(folio);
+> +       if (memcg)
+> +               return swap_tier_test_off(memcg->tiers_mask,
+> +                       TIER_MASK(SWAP_TIER_ZSWAP, TIER_ON_MASK));
+> +
+> +       return false;
+> +}
+> +#else
+> +static bool folio_swap_tier_zswap_test_off(struct folio *folio)
+> +{
+> +       return false;
+> +}
+> +#endif
+>  /*
+>   * We may have stale swap cache pages in memory: notice
+>   * them here and get rid of the unnecessary final write.
+> @@ -272,7 +291,7 @@ int swap_writeout(struct folio *folio, struct swap_io=
+cb **swap_plug)
+>          */
+>         swap_zeromap_folio_clear(folio);
+>
+> -       if (zswap_store(folio)) {
+> +       if (folio_swap_tier_zswap_test_off(folio) || zswap_store(folio)) =
+{
+>                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+>                 goto out_unlock;
+>         }
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 3f85a1c4cfd9..2e5f65ff2479 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -25,6 +25,7 @@
+>  #include "internal.h"
+>  #include "swap_table.h"
+>  #include "swap.h"
+> +#include "swap_tier.h"
+>
+>  /*
+>   * swapper_space is a fiction, retained to simplify the path through
+> @@ -836,8 +837,100 @@ static ssize_t vma_ra_enabled_store(struct kobject =
+*kobj,
+>  }
+>  static struct kobj_attribute vma_ra_enabled_attr =3D __ATTR_RW(vma_ra_en=
+abled);
+>
+> +#ifdef CONFIG_SWAP_TIER
+> +static ssize_t tiers_show(struct kobject *kobj,
+> +                                    struct kobj_attribute *attr, char *b=
+uf)
+> +{
+> +       return swap_tiers_show_sysfs(buf);
+> +}
+> +
+> +static ssize_t tiers_store(struct kobject *kobj,
+> +                               struct kobj_attribute *attr,
+> +                               const char *buf, size_t count)
+> +{
+> +       struct tiers_desc desc[MAX_SWAPTIER] =3D {};
+> +       int nr =3D 0;
+> +       char *data, *p, *token;
+> +       int ret =3D 0;
+> +       bool is_add =3D true;
+> +
+> +       if (!count)
+> +               return -EINVAL;
+> +
+> +       data =3D kmemdup_nul(buf, count, GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       p =3D data;
+> +
+> +       if (*p =3D=3D '+')
+> +               p++;
+> +       else if (*p =3D=3D '-') {
+> +               is_add =3D false;
+> +               p++;
+> +       } else
+> +               return -EINVAL;
+> +
+> +       while ((token =3D strsep(&p, ", \t\n")) !=3D NULL) {
+> +               if (!*token)
+> +                       continue;
+> +
+> +               if (nr >=3D MAX_SWAPTIER) {
+> +                       ret =3D -E2BIG;
+> +                       goto out;
+> +               }
+> +
+> +               if (is_add) {
+> +                       char *name, *prio_str;
+> +                       int prio;
+> +
+> +                       name =3D strsep(&token, ":");
+> +                       prio_str =3D token;
+> +
+> +                       if (!name || !prio_str || !*name || !*prio_str) {
+> +                               ret =3D -EINVAL;
+> +                               goto out;
+> +                       }
+> +
+> +                       if (strscpy(desc[nr].name, name, MAX_TIERNAME) < =
+0) {
+> +                               ret =3D -EINVAL;
+> +                               goto out;
+> +                       }
+> +
+> +                       if (kstrtoint(prio_str, 10, &prio)) {
+> +                               ret =3D -EINVAL;
+> +                               goto out;
+> +                       }
+> +
+> +                       desc[nr].prio_st =3D prio;
+> +               } else {
+> +                       if (strscpy(desc[nr].name, token, MAX_TIERNAME) <=
+ 0) {
+> +                               ret =3D -EINVAL;
+> +                               goto out;
+> +                       }
+> +                       desc[nr].prio_st =3D 0;
+> +               }
+> +               nr++;
+> +       }
+> +
+> +       if (is_add)
+> +               ret =3D swap_tiers_add(desc, nr);
+> +       else
+> +               ret =3D swap_tiers_remove(desc, nr);
+> +
+> +out:
+> +       kfree(data);
+> +       return ret ? ret : count;
+> +}
+> +
+> +static struct kobj_attribute tier_attr =3D __ATTR_RW(tiers);
+> +#endif
+> +
+>  static struct attribute *swap_attrs[] =3D {
+>         &vma_ra_enabled_attr.attr,
+> +#ifdef CONFIG_SWAP_TIER
+> +       &tier_attr.attr,
+> +#endif
+>         NULL,
+>  };
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index a5c90e419ff3..8715a2d94140 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -49,6 +49,7 @@
+>  #include "swap_table.h"
+>  #include "internal.h"
+>  #include "swap.h"
+> +#include "swap_tier.h"
+>
+>  static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+>                                  unsigned char);
+> @@ -1296,7 +1297,8 @@ static bool get_swap_device_info(struct swap_info_s=
+truct *si)
+>
+>  /* Rotate the device and switch to a new cluster */
+>  static void swap_alloc_entry(swp_entry_t *entry,
+> -                           int order)
+> +                           int order,
+> +                           int mask)
+>  {
+>         unsigned long offset;
+>         struct swap_info_struct *si, *next;
+> @@ -1304,6 +1306,8 @@ static void swap_alloc_entry(swp_entry_t *entry,
+>         spin_lock(&swap_avail_lock);
+>  start_over:
+>         plist_for_each_entry_safe(si, next, &swap_avail_head, avail_list)=
+ {
+> +               if (swap_tiers_test_off(si->tier_idx, mask))
+> +                       continue;
+>                 /* Rotate the device and switch to a new cluster */
+>                 plist_requeue(&si->avail_list, &swap_avail_head);
+>                 spin_unlock(&swap_avail_lock);
+> @@ -1376,6 +1380,7 @@ int folio_alloc_swap(struct folio *folio)
+>  {
+>         unsigned int order =3D folio_order(folio);
+>         unsigned int size =3D 1 << order;
+> +       int mask;
+>         swp_entry_t entry =3D {};
+>
+>         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> @@ -1400,8 +1405,8 @@ int folio_alloc_swap(struct folio *folio)
+>         }
+>
+>  again:
+> -       swap_alloc_entry(&entry, order);
+> -
+> +       mask =3D swap_tiers_collect_compare_mask(folio_memcg(folio));
+> +       swap_alloc_entry(&entry, order, mask);
+>         if (unlikely(!order && !entry.val)) {
+>                 if (swap_sync_discard())
+>                         goto again;
+> @@ -2673,6 +2678,8 @@ static void _enable_swap_info(struct swap_info_stru=
+ct *si)
+>
+>         /* Add back to available list */
+>         add_to_avail_list(si, true);
+> +
+> +       swap_tiers_assign(si);
+>  }
+>
+>  static void enable_swap_info(struct swap_info_struct *si, int prio,
+> @@ -2840,6 +2847,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
+alfile)
+>         spin_lock(&swap_lock);
+>         spin_lock(&p->lock);
+>         drain_mmlist();
+> +       swap_tiers_release(p);
+>
+>         swap_file =3D p->swap_file;
+>         p->swap_file =3D NULL;
+> @@ -4004,6 +4012,7 @@ static int __init swapfile_init(void)
+>                 swap_migration_ad_supported =3D true;
+>  #endif /* CONFIG_MIGRATION */
+>
+> +       swap_tiers_init();
+>         return 0;
+>  }
+>  subsys_initcall(swapfile_init);
+> --
+> 2.34.1
+>
+>
 
