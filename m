@@ -1,303 +1,177 @@
-Return-Path: <linux-kernel+bounces-897194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD31C5237F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A2BC52391
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2929349952
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:17:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F0C69349952
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A010328610;
-	Wed, 12 Nov 2025 12:17:24 +0000 (UTC)
-Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5B5328265
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA477328602;
+	Wed, 12 Nov 2025 12:18:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F2D328B40
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949844; cv=none; b=bSK/V4qGFVwNOGBlm1BzWdDnGdW2xDZbn9pqoPWvjrldOe4MXC/ye0I3jyeDdw7uomyMSprWX25pNlClPqukFsFArrWqNRwucS/phMcoIiZzOA5zT7xbF/VRq5w18Ypl57J5Mh03yis162Jqvs/cTloZbEy7n/PIcAUiqKP4Muk=
+	t=1762949888; cv=none; b=eiR/B4yykMvz8zoaPsCJ/wAu4OPLAIRMk2hFVQ450OE4TX8SOJHLvvM74/mRdO7L1Ne9hsOqwjE5V9a6rKN07Lmr5KL7pLRjaNCzoM1hM4XBAts8rRpuT0uHZ1fe7lgyayFrlOMWKp/06vXDgN6sJ5wRy53HdoBEl820S954Bsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949844; c=relaxed/simple;
-	bh=9vWMazpI5btDdSq2LNtxK3ucEth8RCVpHckot45FST0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TiIGGgffRhfqvg6HDRcGgR2SYOL9Wz4UazZe6X3GJdHIudYREmnxSrfHCgj0rJo/PYLJVdiWJQtZCKddw1iIp+17Qu52zIbz4ij/op+ityChcBhB7lQ6rSqhnTOyz1Uex/Xv5BDijJsWvA5cc7u4nCQdiyBkmqvnZqIL4MD/Gis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Nov
- 2025 13:17:19 +0100
-Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
- Wed, 12 Nov 2025 13:17:19 +0100
-From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] regulator: pca9450: Add support for setting debounce settings
-Date: Wed, 12 Nov 2025 13:17:09 +0100
-Message-ID: <20251112121710.2623143-2-martijn.de.gouw@prodrive-technologies.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20251112121710.2623143-1-martijn.de.gouw@prodrive-technologies.com>
-References: <20251112121710.2623143-1-martijn.de.gouw@prodrive-technologies.com>
+	s=arc-20240116; t=1762949888; c=relaxed/simple;
+	bh=U1wkHqQ/RzPc5yZ4GQaY0fCPrrdhvptHL5fIHNTPZ3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOu84UFAqHv8yD/NbCfI9khl/oaHEjpMQ9mwke+BnqtlJH7i94j/XfAG/3ByGpHwKA8cv0SpsMh0FArGaf0MxQlWeZ9TN+GvwfnJAFwsdSm4bS0MxG8zBoSwu9/otwFG0W3LzdewUuRZ1KcGKEeVLQEXBduMhbHlFnhORjHfEe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B83B61515;
+	Wed, 12 Nov 2025 04:17:53 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F11C3F5A1;
+	Wed, 12 Nov 2025 04:18:00 -0800 (PST)
+Date: Wed, 12 Nov 2025 12:17:54 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kprobes@vger.kernel.org,
+	linux-kernel@vger.kernel.org, will@kernel.org,
+	catalin.marinas@arm.com, masami.hiramatsu@linaro.org
+Subject: Re: [PATCH] arm64: insn: Route BTI to simulate_nop to avoid XOL/SS
+ at function entry
+Message-ID: <aRR68v7oABi_72zo@J2N7QTR9R3>
+References: <20251106104955.2089268-1-khaja.khaji@oss.qualcomm.com>
+ <aRMPZB6W04_l7iSB@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <aRMPZB6W04_l7iSB@J2N7QTR9R3>
 
-Make the different debounce timers configurable from the devicetree.
-Depending on the board design, these have to be set different than the
-default register values.
+On Tue, Nov 11, 2025 at 10:26:44AM +0000, Mark Rutland wrote:
+> On Thu, Nov 06, 2025 at 04:19:55PM +0530, Khaja Hussain Shaik Khaji wrote:
+> > On arm64 with branch protection, functions typically begin with a BTI
+> > (Branch Target Identification) landing pad. Today the decoder treats BTI
+> > as requiring out-of-line single-step (XOL), allocating a slot and placing
+> > an SS-BRK. Under SMP this leaves a small window before DAIF is masked
+> > where an asynchronous exception or nested probe can interleave and clear
+> > current_kprobe, resulting in an SS-BRK panic.
+> 
+> If you can take an exception here, and current_kprobe gets cleared, then
+> XOL stepping is broken in general, but just for BTI.
 
-Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
----
- drivers/regulator/pca9450-regulator.c | 158 ++++++++++++++++++++++----
- include/linux/regulator/pca9450.h     |  32 ++++++
- 2 files changed, 171 insertions(+), 19 deletions(-)
+Sorry, I typo'd the above. That should say:
 
-diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
-index 4be270f4d6c35..82084d122cc12 100644
---- a/drivers/regulator/pca9450-regulator.c
-+++ b/drivers/regulator/pca9450-regulator.c
-@@ -1117,6 +1117,143 @@ static int pca9450_i2c_restart_handler(struct sys_off_data *data)
- 	return 0;
- }
- 
-+static int pca9450_of_init(struct pca9450 *pca9450)
-+{
-+	struct i2c_client *i2c = container_of(pca9450->dev, struct i2c_client, dev);
-+	int ret;
-+	unsigned int val;
-+	unsigned int reset_ctrl;
-+	unsigned int rstb_deb_ctrl;
-+	unsigned int t_on_deb, t_off_deb;
-+	unsigned int t_on_step, t_off_step;
-+	unsigned int t_restart;
-+
-+	if (of_property_read_bool(i2c->dev.of_node, "nxp,wdog_b-warm-reset"))
-+		reset_ctrl = WDOG_B_CFG_WARM;
-+	else
-+		reset_ctrl = WDOG_B_CFG_COLD_LDO12;
-+
-+	/* Set reset behavior on assertion of WDOG_B signal */
-+	ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_RESET_CTRL,
-+				 WDOG_B_CFG_MASK, reset_ctrl);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret, "Failed to set WDOG_B reset behavior\n");
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "npx,pmic_rst_b-debounce-ms", &val);
-+	if (ret == -EINVAL)
-+		rstb_deb_ctrl = T_PMIC_RST_DEB_50MS;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 10: rstb_deb_ctrl = T_PMIC_RST_DEB_10MS; break;
-+		case 50: rstb_deb_ctrl = T_PMIC_RST_DEB_50MS; break;
-+		case 100: rstb_deb_ctrl = T_PMIC_RST_DEB_100MS; break;
-+		case 500: rstb_deb_ctrl = T_PMIC_RST_DEB_500MS; break;
-+		case 1000: rstb_deb_ctrl = T_PMIC_RST_DEB_1S; break;
-+		case 2000: rstb_deb_ctrl = T_PMIC_RST_DEB_2S; break;
-+		case 4000: rstb_deb_ctrl = T_PMIC_RST_DEB_4S; break;
-+		case 8000: rstb_deb_ctrl = T_PMIC_RST_DEB_8S; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+	ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_RESET_CTRL,
-+				 T_PMIC_RST_DEB_MASK, rstb_deb_ctrl);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret, "Failed to set PMIC_RST_B debounce time\n");
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "nxp,pmic_on_req-on-debounce-us", &val);
-+	if (ret == -EINVAL)
-+		t_on_deb = T_ON_DEB_20MS;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 120: t_on_deb = T_ON_DEB_120US; break;
-+		case 20000: t_on_deb = T_ON_DEB_20MS; break;
-+		case 100000: t_on_deb = T_ON_DEB_100MS; break;
-+		case 750000: t_on_deb = T_ON_DEB_750MS; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "nxp,pmic_on_req-off-debounce-us", &val);
-+	if (ret == -EINVAL)
-+		t_off_deb = T_OFF_DEB_120US;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 120: t_off_deb = T_OFF_DEB_120US; break;
-+		case 2000: t_off_deb = T_OFF_DEB_2MS; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "nxp,power-on-step-ms", &val);
-+	if (ret == -EINVAL)
-+		t_on_step = T_ON_STEP_2MS;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 1: t_on_step = T_ON_STEP_1MS; break;
-+		case 2: t_on_step = T_ON_STEP_2MS; break;
-+		case 4: t_on_step = T_ON_STEP_4MS; break;
-+		case 8: t_on_step = T_ON_STEP_8MS; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "nxp,power-down-step-ms", &val);
-+	if (ret == -EINVAL)
-+		t_off_step = T_OFF_STEP_8MS;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 2: t_off_step = T_OFF_STEP_2MS; break;
-+		case 4: t_off_step = T_OFF_STEP_4MS; break;
-+		case 8: t_off_step = T_OFF_STEP_8MS; break;
-+		case 16: t_off_step = T_OFF_STEP_16MS; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+
-+	ret = of_property_read_u32(i2c->dev.of_node, "nxp,restart-ms", &val);
-+	if (ret == -EINVAL)
-+		t_restart = T_RESTART_250MS;
-+	else if (ret)
-+		return ret;
-+	else {
-+		switch (val) {
-+		case 250: t_restart = T_RESTART_250MS; break;
-+		case 500: t_restart = T_RESTART_500MS; break;
-+		default: return -EINVAL;
-+		}
-+	}
-+
-+	ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_PWRCTRL,
-+				 T_ON_DEB_MASK | T_OFF_DEB_MASK | T_ON_STEP_MASK |
-+				 T_OFF_STEP_MASK | T_RESTART_MASK,
-+				 t_on_deb | t_off_deb | t_on_step |
-+				 t_off_step | t_restart);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret,
-+				     "Failed to set PWR_CTRL debounce configuration\n");
-+
-+	if (of_property_read_bool(i2c->dev.of_node, "nxp,i2c-lt-enable")) {
-+		/* Enable I2C Level Translator */
-+		ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_CONFIG2,
-+					 I2C_LT_MASK, I2C_LT_ON_STANDBY_RUN);
-+		if (ret)
-+			return dev_err_probe(&i2c->dev, ret,
-+					     "Failed to enable I2C level translator\n");
-+	}
-+
-+	return 0;
-+}
-+
- static int pca9450_i2c_probe(struct i2c_client *i2c)
- {
- 	enum pca9450_chip_type type = (unsigned int)(uintptr_t)
-@@ -1126,7 +1263,6 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
- 	struct regulator_dev *ldo5;
- 	struct pca9450 *pca9450;
- 	unsigned int device_id, i;
--	unsigned int reset_ctrl;
- 	int ret;
- 
- 	pca9450 = devm_kzalloc(&i2c->dev, sizeof(struct pca9450), GFP_KERNEL);
-@@ -1224,25 +1360,9 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
- 	if (ret)
- 		return dev_err_probe(&i2c->dev, ret,  "Failed to clear PRESET_EN bit\n");
- 
--	if (of_property_read_bool(i2c->dev.of_node, "nxp,wdog_b-warm-reset"))
--		reset_ctrl = WDOG_B_CFG_WARM;
--	else
--		reset_ctrl = WDOG_B_CFG_COLD_LDO12;
--
--	/* Set reset behavior on assertion of WDOG_B signal */
--	ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_RESET_CTRL,
--				 WDOG_B_CFG_MASK, reset_ctrl);
-+	ret = pca9450_of_init(pca9450);
- 	if (ret)
--		return dev_err_probe(&i2c->dev, ret, "Failed to set WDOG_B reset behavior\n");
--
--	if (of_property_read_bool(i2c->dev.of_node, "nxp,i2c-lt-enable")) {
--		/* Enable I2C Level Translator */
--		ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_CONFIG2,
--					 I2C_LT_MASK, I2C_LT_ON_STANDBY_RUN);
--		if (ret)
--			return dev_err_probe(&i2c->dev, ret,
--					     "Failed to enable I2C level translator\n");
--	}
-+		return dev_err_probe(&i2c->dev, ret, "Unable to parse OF data\n");
- 
- 	/*
- 	 * For LDO5 we need to be able to check the status of the SD_VSEL input in
-diff --git a/include/linux/regulator/pca9450.h b/include/linux/regulator/pca9450.h
-index 85b4fecc10d82..0df8b3c48082f 100644
---- a/include/linux/regulator/pca9450.h
-+++ b/include/linux/regulator/pca9450.h
-@@ -223,12 +223,44 @@ enum {
- #define IRQ_THERM_105			0x02
- #define IRQ_THERM_125			0x01
- 
-+/* PCA9450_REG_PWRCTRL bits */
-+#define T_ON_DEB_MASK			0xC0
-+#define T_ON_DEB_120US			(0 << 6)
-+#define T_ON_DEB_20MS			(1 << 6)
-+#define T_ON_DEB_100MS			(2 << 6)
-+#define T_ON_DEB_750MS			(3 << 6)
-+#define T_OFF_DEB_MASK			0x20
-+#define T_OFF_DEB_120US			(0 << 5)
-+#define T_OFF_DEB_2MS			(1 << 5)
-+#define T_ON_STEP_MASK			0x18
-+#define T_ON_STEP_1MS			(0 << 3)
-+#define T_ON_STEP_2MS			(1 << 3)
-+#define T_ON_STEP_4MS			(2 << 3)
-+#define T_ON_STEP_8MS			(3 << 3)
-+#define T_OFF_STEP_MASK			0x06
-+#define T_OFF_STEP_2MS			(0 << 1)
-+#define T_OFF_STEP_4MS			(1 << 1)
-+#define T_OFF_STEP_8MS			(2 << 1)
-+#define T_OFF_STEP_16MS			(3 << 1)
-+#define T_RESTART_MASK			0x01
-+#define T_RESTART_250MS			0
-+#define T_RESTART_500MS			1
-+
- /* PCA9450_REG_RESET_CTRL bits */
- #define WDOG_B_CFG_MASK			0xC0
- #define WDOG_B_CFG_NONE			0x00
- #define WDOG_B_CFG_WARM			0x40
- #define WDOG_B_CFG_COLD_LDO12		0x80
- #define WDOG_B_CFG_COLD			0xC0
-+#define T_PMIC_RST_DEB_MASK		0x07
-+#define T_PMIC_RST_DEB_10MS		0x00
-+#define T_PMIC_RST_DEB_50MS		0x01
-+#define T_PMIC_RST_DEB_100MS		0x02
-+#define T_PMIC_RST_DEB_500MS		0x03
-+#define T_PMIC_RST_DEB_1S		0x04
-+#define T_PMIC_RST_DEB_2S		0x05
-+#define T_PMIC_RST_DEB_4S		0x06
-+#define T_PMIC_RST_DEB_8S		0x07
- 
- /* PCA9450_REG_CONFIG2 bits */
- #define I2C_LT_MASK			0x03
--- 
-2.39.2
+  If you can take an exception here, and current_kprobe gets cleared,
+  then XOL stepping is broken in general, *not* just for BTI.
 
+I took a look at the exception entry code, and AFIACT DAIF is not
+relevant. Upon exception entry, HW will mask all DAIF exception, and we
+don't unmask any of those while handling an EL1 BRK.
+
+Given that, IIUC the only way this can happen is if we can place a
+kprobe on something used during kprobe handling (since BRK exceptions
+aren't masked by DAIF). I am certain this is possible, and that kprobes
+isn't generally safe; the existing __kprobes annotations are inadequent
+and I don't think we can make kprobes generally sound without a
+significant rework (e.g. to make it noinstr-safe).
+
+Can you share any details on how you triggered this? e.g. what functions
+you had kprobes on, whether you used any specific tooling?
+
+Mark.
+
+> > Handle BTI like NOP in the decoder and simulate it (advance PC by one
+> > instruction). This avoids XOL/SS-BRK at these sites and removes the
+> > single-step window, while preserving correctness for kprobes since BTI’s
+> > branch-target enforcement has no program-visible effect in this EL1
+> > exception context.
+> 
+> One of the reasons for doing this out-of-line is that we should be able
+> to mark the XOL slot as a guarded page, and get the correct BTI
+> behaviour. It looks like we don't currently do that, which is a bug.
+> 
+> Just skipping the BTI isn't right; that throws away the BTI target
+> check.
+> 
+> > In practice BTI is most commonly observed at function entry, so the main
+> > effect of this change is to eliminate entry-site single-stepping. Other
+> > instructions and non-entry sites are unaffected.
+> > 
+> > Signed-off-by: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
+> > ---
+> >  arch/arm64/include/asm/insn.h            | 5 -----
+> >  arch/arm64/kernel/probes/decode-insn.c   | 9 ++++++---
+> >  arch/arm64/kernel/probes/simulate-insn.c | 1 +
+> >  3 files changed, 7 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+> > index 18c7811774d3..7e80cc1f0c3d 100644
+> > --- a/arch/arm64/include/asm/insn.h
+> > +++ b/arch/arm64/include/asm/insn.h
+> > @@ -452,11 +452,6 @@ static __always_inline bool aarch64_insn_is_steppable_hint(u32 insn)
+> >  	case AARCH64_INSN_HINT_PACIASP:
+> >  	case AARCH64_INSN_HINT_PACIBZ:
+> >  	case AARCH64_INSN_HINT_PACIBSP:
+> > -	case AARCH64_INSN_HINT_BTI:
+> > -	case AARCH64_INSN_HINT_BTIC:
+> > -	case AARCH64_INSN_HINT_BTIJ:
+> > -	case AARCH64_INSN_HINT_BTIJC:
+> > -	case AARCH64_INSN_HINT_NOP:
+> >  		return true;
+> >  	default:
+> >  		return false;
+> > diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
+> > index 6438bf62e753..7ce2cf5e21d3 100644
+> > --- a/arch/arm64/kernel/probes/decode-insn.c
+> > +++ b/arch/arm64/kernel/probes/decode-insn.c
+> > @@ -79,10 +79,13 @@ enum probe_insn __kprobes
+> >  arm_probe_decode_insn(u32 insn, struct arch_probe_insn *api)
+> >  {
+> >  	/*
+> > -	 * While 'nop' instruction can execute in the out-of-line slot,
+> > -	 * simulating them in breakpoint handling offers better performance.
+> > +	 * NOP and BTI (Branch Target Identification) have no program‑visible side
+> > +	 * effects for kprobes purposes. Simulate them to avoid XOL/SS‑BRK and the
+> > +	 * small single‑step window. BTI’s branch‑target enforcement semantics are
+> > +	 * irrelevant in this EL1 kprobe context, so advancing PC by one insn is
+> > +	 * sufficient here.
+> >  	 */
+> > -	if (aarch64_insn_is_nop(insn)) {
+> > +	if (aarch64_insn_is_nop(insn) || aarch64_insn_is_bti(insn)) {
+> >  		api->handler = simulate_nop;
+> >  		return INSN_GOOD_NO_SLOT;
+> >  	}
+> 
+> I'm not necessarily opposed to emulating the BTI, but:
+> 
+> (a) The BTI should not be emulated as a NOP. I am not keen on simulating
+>     the BTI exception in software, and would strongly prefer that's
+>     handled by HW (e.g. in the XOL slot).
+> 
+> (b) As above, it sounds like this is bodging around a more general
+>     problem. We must solve that more general problem.
+> 
+> > diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+> > index 4c6d2d712fbd..b83312cb70ba 100644
+> > --- a/arch/arm64/kernel/probes/simulate-insn.c
+> > +++ b/arch/arm64/kernel/probes/simulate-insn.c
+> > @@ -200,5 +200,6 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
+> >  void __kprobes
+> >  simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+> >  {
+> > +	/* Also used as BTI simulator: both just advance PC by one insn. */
+> >  	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+> >  }
+> 
+> This comment should go.
+> 
+> Mark.
+> 
 
