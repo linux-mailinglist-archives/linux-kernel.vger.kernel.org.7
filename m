@@ -1,187 +1,224 @@
-Return-Path: <linux-kernel+bounces-896334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35440C5020E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:35:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D29C50217
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5ABD4E5181
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:35:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6E904E567C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687531A38F9;
-	Wed, 12 Nov 2025 00:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051ED17A2F0;
+	Wed, 12 Nov 2025 00:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLRxDIeq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MMjVB8JT"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010013.outbound.protection.outlook.com [52.101.85.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BFE35CBB1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762907708; cv=none; b=sBtyLzJZ6OzxFffyijFo7Xzg6U9FuQTbWW8NFONock22LTaZiW7lOJ3F1JYTvyAc+JupdbnC0gsRqb4lZAEh52NFLDBCMY/ZhdPlmIwLiWFfNmmdlhJvDlykrcsSk/h+BS+qgr8JzurMRbvbqiOodpO7i91Ixw8z3U80paSgX6s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762907708; c=relaxed/simple;
-	bh=/uddJhBBzzW8L+E3X13d+vydY17/3a+z2ohQB6rVS6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NzFB7Sh371b3zav3lnqqT7aMRpE94bS3s5yyfYIHHC+6X4TBNGlsrMqNr+xDkyJBp9O26SUpQr07E12yjqSfyuZVYwqzCoT9vYA6+tic3fVRHMvWVAkmHuDjwp4E8QHqo8L/ETFAn0J+Ur9y7PtgGqrNmaTt1MvM8EZWk6KlKas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLRxDIeq; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b73301e6ab5so52935166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762907704; x=1763512504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q8bA5fyqCC+W6u0vk7OwR/d5lvOlTqdfez3AJaemrP4=;
-        b=lLRxDIeqpWVSjy4aNVeVN/KjYWHErAt+n6I2YfgUZK1vsm0QKU9D4XExHJWxxYQM98
-         ZCPQqfZ+bf4uqq7tU0EldzfQbVl/Ss4E4AZYLgDZ8Kv20O3WU313bIo+YD/JdSe7CVwe
-         Fwkk5tnKwmJ8BH8d5C4lwrwj4IDVQ+/+eyZUyMBlD8WGLQeim89f6UqQ60qi/KlG349N
-         mj30GspfrfyAGlHxi5n0aNCSoAWAqWowEaacIBoAJ7CZDisa6j2DIxe4ELP6JPYOgiow
-         K+yJJYUs4+LNhOgHZb4yCtyxhX/GxM5Kcb0T7BRTwr1174lfI9SKmCZ+4Z1L1GwJ/JtL
-         7XwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762907704; x=1763512504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8bA5fyqCC+W6u0vk7OwR/d5lvOlTqdfez3AJaemrP4=;
-        b=ThZvrqljCYCdcdd4LDhH4kBBh1oi774srDwNNnWmDR51z/HE1i0vxgRcGYDLsviEVd
-         xRVgd93kOqUMfqWxRBbFWkANNTtgjJxh0rkg2wESloCHpmhS5eevQXjAkKyWRVtv3MWN
-         txslwvy1wifVpVcruEtDG55Qh/vVKjbnqmFoxxg7dk1Cr/CiaWPNaLIPmw0l6Ns8siBi
-         fvTgbt9Mnk0+5lzq19azbyk+NMO7pcZjdJYbWpGSiZZ8OAxOXzbwKpxCtY+xrI2147be
-         tOkbL1zcyhbOSIMChrg7HzX21iBMJVSFVh0hypHe6ocUnms5YpDCxNG1WKVbg6OhupGG
-         IOlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsov6czTJ7lSRXvAJXxpzMJwsyrnuaAq7b78FhzM8FCyAtpKvaUd2vNOezFv2XyitXAbC1OxjWUqY2NWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo+sLm/aekLRWZFMCuvNqBhEpgWgS9Xc4o3ciYpjAq7ZQkIZPB
-	IGoOwPUgfiCWy4Gkz9WDjrDyzq2YEf8T+Ho9K9Cb9FFvyLgiQiIFtHkEiXXD6PXP
-X-Gm-Gg: ASbGnct+n91iCEtTic7mZQw35w6ifdRe0q2AY+U2SAKMPHdnETA7QxHXBFlT9BABUa3
-	KK/SXuTOT3tQIjoQTwKjxwvoIuIfs2lTJbd7YQkkQAZUiN43D/vGsUepVejIdFZ05vbhR52dF4w
-	PUL6M2KW+AAcZFDHcVXzLvtkaIDvDBYSgMmGebfudpYZWHve6MZi5JC8S3xkPmjplx0hCJusb7V
-	9XzgYwr9TLoEK+KOsr11Q1txlLZLM8nlB++n/eYlYPbmI3dZT6/y79n6yQ+1JEsO1ITfsdhCRRA
-	uKhxEVKEQ/xEYFWL0FQRrOnmZnoYx+BajUywG+ipXrRMvyYAoZfHgxsf0c2DXNMjaGyZC3F0r9D
-	VFGMg8JXzPKNgEac94frnAPrMKp5sMpWYvj0onF0OoCnisMhG0owZgQ7C20nDGwtITbd5svircl
-	imVpUi5675ZLw=
-X-Google-Smtp-Source: AGHT+IGqrNbW7Y2frs0SjkA276j6v0NPZI9klOiEtgkLEjlg+yLRP1GOA3gr1+LqrmTZn0GT7QZWpQ==
-X-Received: by 2002:a17:907:3e1e:b0:b6f:9da9:4b46 with SMTP id a640c23a62f3a-b7331bb64cdmr106614966b.43.1762907704029;
-        Tue, 11 Nov 2025 16:35:04 -0800 (PST)
-Received: from localhost.localdomain ([46.10.223.24])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbcb0aasm1434568666b.11.2025.11.11.16.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 16:35:03 -0800 (PST)
-From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-To: jiri@resnulli.us,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
-Subject: [PATCH net] team: Move team device type change at the end of team_port_add
-Date: Wed, 12 Nov 2025 02:34:44 +0200
-Message-ID: <20251112003444.2465-1-zlatistiv@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0E6148FE6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762907805; cv=fail; b=hWj+GuE/25bboas6vtLR15WIMYawuBvGmDK364FmmrqFUVFoqMHnnpW9Q434+2lEkq/iOT9jRfYEoRE7snTkCp05F0Vgoq6CBw7VqCP//dTRQ7KX65DBzU/80eyPeovixmZKe7mj7tec5E7V1Xz8wXu7ATHUeBwpaq6qhyWs7To=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762907805; c=relaxed/simple;
+	bh=nTRxcExNBVXPHJVL4Y577w0hKQJnSuAm9zo7mtOhDkU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DgSRx+qpVE5AHdfHDZx+p3um1JGcJyRWzYU5UKqVw8XJ+EuR4xwHyHGE1E5FNYP57tMerhhi3E4KdbSdbiWL0tPao71+A3bScTdnPLAc16k/k8HdzbmFD4VuN2tXgFD9oDtBdbCyPoFiWqDBOKShFDzXcJjaCxu8QlJ8hyYjr9E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MMjVB8JT; arc=fail smtp.client-ip=52.101.85.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t3JIz3DMjlGQBRlLnX9J/xUMfHoqF4OiCtj+X5MZeV7qsLaAtYZDL6gzonfoMcoPSKQB+KDWaWWc3WXwhWtUhTZo2E1qbiLNeJItkbJkL27xAl/udJS0ak0z5tpg2jffnRXg3v6Tmx5AiFCdyI41qx9T4o/AkD7xpUM4As7iHTRzQzBcSDN7ab/h6I3fOcM6CD23FL3ebksNT6ojSvXlH1PxLgFSkGcLgZ2JchJ+czc7DX1iCeQYEdsokm6XOTYKm7MXeT4W+gnxyt0I7fL+5vU9aVmWR/Dqcb9GAsoLFD+mVkXuQhS8KlS2BHij+hf9s9Va9hXpS5wSPCL0oh59ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MM8lgBCm6UUgN6+1hhX+Oa6dRSRxkRGTEj5lsNqDe0w=;
+ b=yzM5euwa2Is7WXoj6kVh6eXDRQd7sGdLdb4/B4ul6OiCmA1i8jWzbD2sQSh5JT9sOwzIeky+X7ihPZrQgrUxfTZX3FBPWCcn2POpWdKS9ZpgVhfAQpJmpEMhfFx1lCsLEWyNiSKJ9EFz/hCfU1Im+3NIY1n5jNOs5mxtbtOdHclYzEWnBWq6zJvw6bmUlEYDSitIKvgipppArmfK/XyIpehOmoSKuUSAUffiveUaBy7dcAZZoe3H6AtyHBx78BDkyA1/0a0pBRId337XmEcYRc+70ekhxBwwhvv7xJtSqaQH1sMNI5V/BHf4Lfb6jN8x21IGOgekrGpbEAiZtKJHPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MM8lgBCm6UUgN6+1hhX+Oa6dRSRxkRGTEj5lsNqDe0w=;
+ b=MMjVB8JT36TGgvAstnPgMkm3EBxQWPMoFttzpM3Z4H8zOhG9iHddSeFeIyu63elRTdpuc0yvIhR4tAdXmKAtl+L6IcZtl32DkZ+uYW3KnSFcVFxFGzye13oGKZ/1HiV1ILkc6AWMoFyehLML+C0Y36A7kjvhgvpnSlDtPxlhAxeSnEERdRlefc+ZED6TIfK6zwrhxUS+7oih1i4rfl/WUWU9+X3uFS1qA6f+mlR/pl5Kttg49lyP8UHqkOSyTMdN6E+VFAi1ai0ptDYelbfCt3eEhTCgYSNYcwNGN9WGpDrkqx+uZyJc41Ax9ZRWsk1uREoxs8q4mRZCOOe5J0HXOQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by PH0PR12MB5630.namprd12.prod.outlook.com (2603:10b6:510:146::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 00:36:38 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
+ 00:36:38 +0000
+Message-ID: <fce3cb20-07b8-4cd7-ae7e-5800bbb53ae7@nvidia.com>
+Date: Wed, 12 Nov 2025 11:36:29 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 00/16] mm: support device-private THP
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Brost <matthew.brost@intel.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20251001065707.920170-1-balbirs@nvidia.com>
+ <20251008201740.d9507f4807a73058d4da23a8@linux-foundation.org>
+ <a5992f11-5841-4bbf-b190-b5df41b68b0c@nvidia.com>
+ <aOePfeoDuRW+prFq@lstrano-desk.jf.intel.com>
+ <20251111154326.bc48466a6962fbbffd8ebdd0@linux-foundation.org>
+ <7a0f2704-80b5-4cbd-8f3b-ac03692eefd3@nvidia.com>
+ <20251111162403.709f37d86b67254765c7846b@linux-foundation.org>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <20251111162403.709f37d86b67254765c7846b@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0377.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::22) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|PH0PR12MB5630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1fffc63e-0c59-450f-aa50-08de21838a9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|1800799024|376014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZFQvbTk5M1Rxc0UwYk44Zi9iWGk5NHdkWU11Si9uVEdNdlk1SjhkR3h3dmYv?=
+ =?utf-8?B?a3hYS2dmL1BrQnlONzFmSWw2ditTd0FkNWlmbjF6T0FuVkFINGRxckhYM2Jl?=
+ =?utf-8?B?bGNOa0U3Z1VpVEhoN21IRDBFbHQ5UVRBbW5MVjNWTTdOY2Y0ZnloL040N0VQ?=
+ =?utf-8?B?NHk2OEFxd3VSYm1pV2pyZ1ZHelNnTWlWSEFmYVEyK3VPUnpONFM4ZG1VVmJp?=
+ =?utf-8?B?NlZPUU8yQlpyVDJObUVhb2s2VjY4ZlJKeGY0d041UCtMT0t5NFk3b0k2MVFS?=
+ =?utf-8?B?Rmt3K0pqd2EzK296K0RxVVdiWHpmV2RCRDlzdHJlaDFJRmI2Zkh0U2ZXZ0xB?=
+ =?utf-8?B?VXJqb3dBdDJmNi9uOW5veVZqa0Z1VGV3K05FU2JsOGV2Q2F0TGlkanc2dWtt?=
+ =?utf-8?B?NUlBazY3NEk4Y205YlQ3QzB5R1l0djBKNlBpWnRBdXBhaDdHbGZJMmhmS0Jz?=
+ =?utf-8?B?VGFhTEdCbGNuNnNScVdzMWVaS0lVUm5PVGllNVZhaW83TmhwVVBJNi82R04y?=
+ =?utf-8?B?TkE1V0FENzEyRDB2U0tFMUpYbU8vajlUc1hJYXFRcDJLQzJSa0RVMjdSc3Uv?=
+ =?utf-8?B?dnVzNVQwTm1mRitQRDZybFU2elBKcWdhclllTkRyRUltN3BJa3IzNTI5Zlpu?=
+ =?utf-8?B?aFlpMW8xMy9XNjJLWFNFdFM4TlFRcTFuZTlUWEQ5cDRaVnF4UU9VcDFhNm9D?=
+ =?utf-8?B?eTJGZkIvWnB2VGlGTEJhWlhuWmp1VEhVcFpFUWFuNkt5NStLT3RmNk16ZXgx?=
+ =?utf-8?B?cmozMGhwQkc5ZmlTTHdRYUxZYlVlRGlFUkNscXUvcDZmOGpBZ0pYOTNiTUVw?=
+ =?utf-8?B?QjA0RWVDSHRrcE5uNlJTTDU4enpJWU5pZXFjZ1JKL29PSHFteWJveGJMK09C?=
+ =?utf-8?B?d1BuWXpUMWV1NjRKM0VPZ050TE5LTkxTYzltVTdNMUJIcGhaTUQ2YkxJTEw3?=
+ =?utf-8?B?aStlRmM2ZXoxSTEvNHAwODI5Rm9TdDNRNmsrK3drUlhCZ3FJS3dZT2d3L1Zn?=
+ =?utf-8?B?anhYZWdDd0hlVWF3M2VFbEIwejZ2c3VyWG1PTG9ySFhlTDZuWlZGWDYwSUFn?=
+ =?utf-8?B?YlJYOTlDOTZCR3Q4OVU0MmUybUh1cUhQRlAvOWV1VU5lRkZRNGlnUGFqWEFU?=
+ =?utf-8?B?QlB2aDlFUGNWZ25BaTREcDNTK3REQmlBdDdvRElIM3B1WHNVRnlmTHJYeUVx?=
+ =?utf-8?B?dk5Ia2lIMUh5aXB5UjNyU0lZWG5vQUN6U3V6dWFIZGFXY0pUM0J1ZldtOFg2?=
+ =?utf-8?B?Q1R0VzdCbjByZ2QrWi8xZzNtaEtrajAwMzJzdW01MUVxT01zMUJTeC9oQlB0?=
+ =?utf-8?B?ODMyMzNzd1Eyckk4UGRqTDhJOUY2aHB2MEZNRzJFbUsrZkY1b1VBNmh6NUl6?=
+ =?utf-8?B?K3FpN3RuTTNuTm9EOTJUUkl4ZDN6azBsU0RXaG5zUDAyVGtwM3hNUUU0a2JD?=
+ =?utf-8?B?K2pQeEN2dTFSbjcxRVo3NjVYOVl6VTlNY25EUFU5Q1RBbFBNcnlQY1dQVXNB?=
+ =?utf-8?B?bzFWRnh6eVFCendaT0U1OGp1aC9zZkVMSW9oc2hMTzVQT3c0NFlIS0pYczVY?=
+ =?utf-8?B?OFBYa2dodE5FUWFIN2VmMTFFaUxLSzA3aEwwRG9va1VZZlNINmdxc21NL2VC?=
+ =?utf-8?B?Q0VGNXdaZUFCWm5xRVkybmNTdmhQdHN5ZmFwQ0lYWEFZeUpkWmt0UStOVTRj?=
+ =?utf-8?B?d2x5Qk4wZHl6UzhVbE1BYU5vbTFNOHFLeituQlFUQTZyUGNWN1YzbmZvajdq?=
+ =?utf-8?B?dC81bkFZU0w4Q1JjN29ON04zR3BFdjA4bHJ1aEc0eWRLSk03ODlhakJ1bjZU?=
+ =?utf-8?B?ZmFwL2U5NVZPN3VxVUFNU3g3SXRHOWdBV0FDQmtKOHR5eUtUd3VwVEkyM2Rh?=
+ =?utf-8?B?bGFEdzlUM2k1K3o3QlVBRTVMeFVVWUZFNmxKZm1RN1E0Yk1Qa250cEI4UXlh?=
+ =?utf-8?B?dUdqTWVaR1A5eU5ycXkzaC9wbEg2WVdSdUNZUmx1ekNVTGFpR1hjWGlxMzNr?=
+ =?utf-8?B?RC9pV00wMElnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L1k4K1JaZlhGMkd4aGwzVVpEWktpY05qRC9pRS9LSk9lY0NDbm5RVDIzNGM3?=
+ =?utf-8?B?VXNkcCtFaDRiTkFmSFNpT1VTcjFBcGJ3M0ZZaDQvME1mQ0M0WHo1RkY4WXB5?=
+ =?utf-8?B?ZXhuUVFDdHRrWEJBQlY5NjAvU0pGNTZzdE16Rmg1bzUzWmRneWNTN2pnS0VU?=
+ =?utf-8?B?SSs1bU9PcU9GTi9kUDlKOXVOYnI1QmJFbmtLaWM1cmtzK1NzbVJSc2VBb3N5?=
+ =?utf-8?B?WW8vNlhFZGY3aW1MSGxORWhNZjV5VlczMlZRQm1hZlUrVzNBSXZvSS82V0M4?=
+ =?utf-8?B?N2NjVG9qQjBsajNMMDNvV1M1Z1B0djBJVFdXMEpsWXBBV3dyVjljRnpJTmNY?=
+ =?utf-8?B?N1l1aWc5bUlZUkMyeHdSWlNaZk5MR2NnZnBUQ2FqUy9GSThpWEFOc1JyNHpx?=
+ =?utf-8?B?SGlXWVU5aU5WTmpoZHk5MnRUcXlzc0dmTGhQUjFGS1pZYkFxcllOeWdZSVJF?=
+ =?utf-8?B?YVhoQVlLWWVCbHhIN2g2bFRUWVZha3grSFQxWWR3QXR6eUk0RXB4NWl4TENK?=
+ =?utf-8?B?YmpEdDZNWDNDNzR2VzZ3OUJzZ29YY0VWSnZ2M3pDcDUxeWsxU3YrRG1JOFov?=
+ =?utf-8?B?TmNBcmpyeDRrR2YwbXRzRFNmZ1grV002enppU0tHdHhld2tGUUVSN1BiR0c4?=
+ =?utf-8?B?SngzYzRhUHpyUFB6L2NIb3NWSm9wcXhEZGNJMGU0ZElQU0JUbHM0TXZDRFJm?=
+ =?utf-8?B?SklvSk9xR2ZyU21SczB2VTFjRHh2RU9jVzlxelFMNlNUVWdKaStRdHpYSERk?=
+ =?utf-8?B?YStJMzZQVWhOQlVCaTc1YnRlbUdPRmovdVQ4L2xOeDRheklGZmNMaEdIS1Mx?=
+ =?utf-8?B?NEp3NUkvTDJRMjN2bXpydHVLajByTllJNjA4MzNBeGNLVXVTSTRoMTZiMGtu?=
+ =?utf-8?B?Z2d0NW5scnNuSXVha0s5WFRFKzkxdkxuaXB5UnhlM2VNM2JYcVdCUThWL2NL?=
+ =?utf-8?B?NUF1VzNtVlJIeUsyNGtIWWxHZlN5dEs0TDgwT2JjdzdDSHFITURaVEhoTWxP?=
+ =?utf-8?B?a1o4Q0ZJS3FuaU94QXBPTGtSWU9qRkhCYkVUYVVHVFVlRGtCc1E3RGdkQTNy?=
+ =?utf-8?B?MU9SOUg1TzFubysrdjVMUmE0Z0cwVDlHMVV5RG1Zb2RobDRadTc1WTFsQWtP?=
+ =?utf-8?B?Y0RRZU14dmJSaHlGNjFxRkxVakpQS0lzOW12R2N1aDBBYkxCR0NneW5IZTZq?=
+ =?utf-8?B?QjZROU8xNXhlaXZ6S2tnUFhFQ1dJU0lURUNYYjlQelViVm1IMk5uYXFPK2ZK?=
+ =?utf-8?B?c0lkQXNiellkSXdieSsxOEJORWhUa2w4RzZ1aUp3cW12ejhwanI3MkJaRkRU?=
+ =?utf-8?B?algvNURXVjRsNG1jbzczOXA3dTIzTEFqMHdaSDgwd2ZUcFJZNVh5cDNzWS9j?=
+ =?utf-8?B?RnJvcVRRbEVzY1BQT1NZYUlGUEZRSmtkWVErUkFaaVNGc0hVNXpLNDV6QjBU?=
+ =?utf-8?B?K3hpcklyU2J3bkkxVDN3dHdqc1dVNGMvTjNNMWRkbXlBVGtFdW9Jc29tTkUz?=
+ =?utf-8?B?NGNPVGZLWkxtQmdlWlIxNFRTeFRoWHRtTGQxMW5CY3hlZWkvSFR0dzZnOUVI?=
+ =?utf-8?B?WjExTS81UTVTM3g0T1ZNanVwUHR4d3FScitlVDRZQUZDWFJodzhCbXZXWGZo?=
+ =?utf-8?B?RHRSenMwcDFISExVaDljVW5CTW0wZ05WSi9UakZyYlZucjd6cjA0VjFTd01h?=
+ =?utf-8?B?d2pMR0ZUeU4zSTl5dVl1a0l0am1lQzNxcURJNGxtcnJuQ3JOa3VOcmhaNThU?=
+ =?utf-8?B?S0M3empyUFEwVEljMS9yT09vdnFVKzEybkVvbFJIRmwxVjRCamxYQk1QRHp2?=
+ =?utf-8?B?NzdQZGp0UlhXSDdsNzg1cXFDamFBZTZlaGVRM0p0SVhmN0ZYK3VxVGJxa1ZM?=
+ =?utf-8?B?MFc5eVFWMnZIQWx5b3l6aUNBNDVqRThjOXJ6aEFGNlpJZGx1WDI2VzJ6V1I4?=
+ =?utf-8?B?TURndzhoUTAxZzY4NTNPL01YaFlHeWhoMUorQzRQVG9SQW9PK2N5WUx0bUw1?=
+ =?utf-8?B?MVpWWkM5di91eHRSdVFSSDZLNFFmano4REdTOUxWZy9pN2xiNmRINjlWZWla?=
+ =?utf-8?B?cUV4TUxWRzRzQWliWkNLbHVpNTFPVjBvNGJvOEJuci9FMTVab2hjQ2E5UHJo?=
+ =?utf-8?B?R0x6bk5LaENvZEhiNWdLblVKdVY1NjFWdjErTGVRK1lKVHNOWG1jUy8xNGds?=
+ =?utf-8?Q?Zlyp4bnt4eywv+VcfVGnBAn2VlLeYMxbaKBAud+a7cS/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fffc63e-0c59-450f-aa50-08de21838a9d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 00:36:38.5372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QiyH4ElMwM+3E1o12PZq1QUMKvencNocWFOIZwo5VU5R6HOs3nls/Un5escJDp4+xVIiERqdZhcFVTaesn7G/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5630
 
-Attempting to add a port device that is already up will expectedly fail,
-but not before modifying the team device header_ops.
+On 11/12/25 11:24, Andrew Morton wrote:
+> On Wed, 12 Nov 2025 10:52:43 +1100 Balbir Singh <balbirs@nvidia.com> wrote:
+> 
+>>> https://lkml.kernel.org/r/62073ca1-5bb6-49e8-b8d4-447c5e0e582e@
+>>>
+>>
+>> I can't seem to open this
+> 
+> https://lore.kernel.org/all/62073ca1-5bb6-49e8-b8d4-447c5e0e582e@nvidia.com/T/#u
+> 
+>>> plus a general re-read of the
+>>> mm-migrate_device-add-thp-splitting-during-migration.patch review
+>>> discussion.
+>>>
+>> That's the patch I have
+>>
+> 
+> What I meant was - please re-read the review against that patch (it was
+> fairly long) and double-check that everything was addressed.
+> 
 
-In the case of the syzbot reproducer the gre0 device is
-already in state UP when it attempts to add it as a
-port device of team0, this fails but before that
-header_ops->create of team0 is changed from eth_header to ipgre_header
-in the call to team_dev_type_check_change.
+The last discussion ended at https://lore.kernel.org/all/CABzRoyZZ8QLF5PSeDCVxgcnQmF9kFQ3RZdNq0Deik3o9OrK+BQ@mail.gmail.com/T/#m2368cc4ed7d88b2ae99157a649a9a5877585f006
 
-Later when we end up in ipgre_header() struct *ip_tunnel points to nonsense
-as the private data of the device still holds a struct team.
+In summary, removing the cluster_info and deferred_list handling
+into another function lead to duplication and so I've avoided
+going down that route. I'll send the new patch out shortly
 
-Move team_dev_type_check_change down where all other checks have passed
-as it changes the dev type with no way to restore it in case
-one of the checks that follow it fail.
-
-Also make sure to preserve the origial mtu assignment:
-  - If port_dev is not the same type as dev, dev takes mtu from port_dev
-  - If port_dev is the same type as dev, port_dev takes mtu from dev
-
-Testing:
-  - team device driver in-tree selftests
-  - Add/remove various devices as slaves of team device
-  - syzbot
-
-Reported-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a2a3b519de727b0f7903
-Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
----
- drivers/net/team/team_core.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index 29dc04c299a3..94c149e89231 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -1134,10 +1134,6 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 		return -EPERM;
- 	}
- 
--	err = team_dev_type_check_change(dev, port_dev);
--	if (err)
--		return err;
--
- 	if (port_dev->flags & IFF_UP) {
- 		NL_SET_ERR_MSG(extack, "Device is up. Set it down before adding it as a team port");
- 		netdev_err(dev, "Device %s is up. Set it down before adding it as a team port\n",
-@@ -1155,10 +1151,12 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 	INIT_LIST_HEAD(&port->qom_list);
- 
- 	port->orig.mtu = port_dev->mtu;
--	err = dev_set_mtu(port_dev, dev->mtu);
--	if (err) {
--		netdev_dbg(dev, "Error %d calling dev_set_mtu\n", err);
--		goto err_set_mtu;
-+	if (dev->type == port_dev->type) {
-+		err = dev_set_mtu(port_dev, dev->mtu);
-+		if (err) {
-+			netdev_dbg(dev, "Error %d calling dev_set_mtu\n", err);
-+			goto err_set_mtu;
-+		}
- 	}
- 
- 	memcpy(port->orig.dev_addr, port_dev->dev_addr, port_dev->addr_len);
-@@ -1233,6 +1231,10 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 		}
- 	}
- 
-+	err = team_dev_type_check_change(dev, port_dev);
-+	if (err)
-+		goto err_set_dev_type;
-+
- 	if (dev->flags & IFF_UP) {
- 		netif_addr_lock_bh(dev);
- 		dev_uc_sync_multiple(port_dev, dev);
-@@ -1251,6 +1253,7 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 
- 	return 0;
- 
-+err_set_dev_type:
- err_set_slave_promisc:
- 	__team_option_inst_del_port(team, port);
- 
--- 
-2.51.0
-
+Balbir
 
