@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-898140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA31C54709
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:26:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A0BC5470C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E38F9346517
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:26:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCB3F349E41
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC252D3EF2;
-	Wed, 12 Nov 2025 20:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A492D8370;
+	Wed, 12 Nov 2025 20:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MMV7TwLQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JhCnyOnI"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18066266568;
-	Wed, 12 Nov 2025 20:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3A2D73B5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762979088; cv=none; b=OhCIB2yqHgz3qB0obX6B2iB6qaeqXVe8DWd3T4JbkAvb/ydRkyAY9dbMg9Tetvbaw0neAT1sRPbgaCX2bZh3YgqIZoCKETG9kCQL2bXbfVJRQ1G7T1zFI8oJ9Aek8yae4fUKNwZ1ZAW6RqPCbpiQGs0o3m+dxIwTId9TxFPFAuE=
+	t=1762979102; cv=none; b=D71zlYDHA0KeMHfrkl5etzR0uogvlaeC9neGmAHoIs2VKQu2Aw7RuGTadJBLm+nsaIB1daJ1m+aZOfxRbkIjR1zaW7PoZEzUHytOVpe+Cl7j04W4U24Np0rwbJVaLOpaPytwKBh53AyAI3zmeaCEeH2FXeuX9epLSfSf0S6F1/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762979088; c=relaxed/simple;
-	bh=TW9NSBuZC0pCuqNjfj0PDRPjYM0/XDdyBFkYzlhTUz4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=O4urPvFt2zIhfjXXBYwjr9zPXBFE9yTZUx2PYgp/CDraMgu8geF7aIcSKMhmV5dqE6DNfT2xYrNAs9gi/9qJatYRUkKcVQ2+p9D5J8Tgoe/5zdtppFevgdLfWRxAMtitxwGdN86WcgNKmZ8S/9hekSzaSKAehG74Zg/Z/HltGMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MMV7TwLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F883C4CEF1;
-	Wed, 12 Nov 2025 20:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762979087;
-	bh=TW9NSBuZC0pCuqNjfj0PDRPjYM0/XDdyBFkYzlhTUz4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MMV7TwLQJIgxVHH9Jfnn46TzH8kkfNaH3YCBvwOtvaROgcrfmaOqvv1Qxyj2a9TSq
-	 d59+NX27bhJounNl3b67AuiZlrcIpp9Pcs/XTM8FabyhC4qlmByxyR1JDVPmcsFkgf
-	 8YB4+GRYweYr9seeG6OE4aQ5UMPKXUBln5Ehofag=
-Date: Wed, 12 Nov 2025 12:24:46 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka
- <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, Jann Horn <jannh@google.com>,
- stable@vger.kernel.org,
- syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm/mmap_lock: Reset maple state on lock_vma_under_rcu()
- retry
-Message-Id: <20251112122446.e1f2c037550dc591a4d6b307@linux-foundation.org>
-In-Reply-To: <aoq7jyue2qamctxmvtlic4nv53phskj6k7iizh7k6kwruwdgxk@qgjnaib7xgze>
-References: <20251111215605.1721380-1-Liam.Howlett@oracle.com>
-	<8219599b-941e-4ffd-875f-6548e217c16c@suse.cz>
-	<CAJuCfpESKECudgqvm8CQ_whi761hWRPAhurR5efRVC4Hp2r8Qw@mail.gmail.com>
-	<kfqzb2dfxubn6twcbiu3frihfkf6u34g2rcnui2m63rbc4x4kk@dh3bxvpzpnmp>
-	<CAJuCfpEWMD-Z1j=nPYHcQW4F7E2Wka09KTXzGv7VE7oW1S8hcw@mail.gmail.com>
-	<aoq7jyue2qamctxmvtlic4nv53phskj6k7iizh7k6kwruwdgxk@qgjnaib7xgze>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762979102; c=relaxed/simple;
+	bh=xOBJurVKNAB+JN8ysTBvLTNXtFm6u8VFeaWdmIXvjpo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Btlgo+bB7hyKXtLvFLRMlsxsw98BH6dmln+sAWXtLNwWQ0WOsqN5yW/MI8PbLJc5iAsx/UUS35tuYsFrERLjj2Q+sj83Kv5TKoUVHpjrWGJet1u8KizMRfVtkEjoBdSTdcY39yQtEyoIEqm2SlKvZgN6xxkEhZlvN7o0p1K10Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JhCnyOnI; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-343bf6ded5cso170876a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:24:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762979099; x=1763583899; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R19jKoKnEOV3T9FY0coy72Eb+Kw/7o9G8gT0tt1VVRU=;
+        b=JhCnyOnIGcwn7l6ksRX/pWX3zXo+XDeKvhReY30Pbiwn4nk+nQuvMTLTEsPc17UdrZ
+         MhHEfxhMIy/nHQFpa6TNLU5QuuW3VEHCXdZCFQ3lm5HX9wYO+w8rT/lJl/KifE3J0J7H
+         pEeDIbmro/hEitmzrsC0uPm2B+mk3gvl3mRFr1k7o5Hujo/VBpSUUc6NSmiTBGo8V8hN
+         8IR+VCXWNz2JEH2E73lMtTyt6mtepF7oGdZXf4Tz8dVsk26qPdMEcsyAMGy8OtvB28VM
+         FwdAI7DstVQBYggajFUmw859Dlkt1vCD/eE3ccuY9jUjAF5n/WDzzdbIwnMUstkryyJE
+         PcRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762979099; x=1763583899;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R19jKoKnEOV3T9FY0coy72Eb+Kw/7o9G8gT0tt1VVRU=;
+        b=e+JjgTPO9onpiOcsNbssqUXsDTWruGmycefzbwl/gOK1DwyZkwXCg7Cy9m+1a0y9z0
+         H7CcdFHP2Ra8bZZd5jqKp7ue4yiPTnmRux/DxAkYg7MzFLCqdlk+qmqU1JGBHvYzr4+X
+         p47XZ8QNLh6XYlnLQw+k04D6f0eEbWnGk5pofRU1oSn7uQbhuFXVgYWnEEk2GUZ8a/D8
+         PT6DHekkPK7JvHY6Wg6FI2vd4gbjfcaWlVK4gjaYiOxGP+0/v9ISjj53050w7j3O/EYT
+         H2QGuDaY3994AzI9F+mVOtoVphcjDvvxQLdgQB84ekM2NnJU/CR0K6GYS2mLa6o7zp0z
+         EWOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTCsqlGAWqQuMOLnV7b/TUyxCSon+CMiX8j9QQkMnl6XzY40TEBP7N2Z05utcWsGcFUM1o9SCUcTZOeXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyh3kJLyvQRVqdDjyj0pARBvwQuU/G0a/pp8jmx5nnpDvvR/Or
+	UY4Ns+ta8KsjQEz6iV6cayn637snCbN66ZGvVgEgAZkrtAyOHeXPJ0dk4nkX7YZcHnJGSt+VcJj
+	RP8roOg==
+X-Google-Smtp-Source: AGHT+IEhrkRuxdVjG9E1wg6vwlC1Maca+rkxHkRIYFv3rPQj/aKYOj4uyC5LCnl4mOfkA9YSmbhXYZTSx+4=
+X-Received: from pjbgc20.prod.google.com ([2002:a17:90b:3114:b0:340:bb32:f5cf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2741:b0:340:d569:d295
+ with SMTP id 98e67ed59e1d1-343ddec5a1amr5597730a91.24.1762979099327; Wed, 12
+ Nov 2025 12:24:59 -0800 (PST)
+Date: Wed, 12 Nov 2025 12:24:57 -0800
+In-Reply-To: <4a2a74e01bfd31bc4bd7a672452c2d3d513c33db.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251112171630.3375-1-thorsten.blum@linux.dev> <4a2a74e01bfd31bc4bd7a672452c2d3d513c33db.camel@intel.com>
+Message-ID: <aRTtGQlywvaPmb8v@google.com>
+Subject: Re: [PATCH RESEND] KVM: TDX: Use struct_size and simplify tdx_get_capabilities
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"thorsten.blum@linux.dev" <thorsten.blum@linux.dev>, "bp@alien8.de" <bp@alien8.de>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kas@kernel.org" <kas@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 11 Nov 2025 21:18:19 -0500 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
-
-> > Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
-> > lock on failure"), vma_start_read() would drop rcu read lock and
-> > return NULL, so the retry would not have happened. However, now that
-> > vma_start_read() drops rcu read lock on failure followed by a retry,
-> > we may end up using a freed maple tree node cached in the maple state.
+On Wed, Nov 12, 2025, Rick P Edgecombe wrote:
+> On Wed, 2025-11-12 at 18:16 +0100, Thorsten Blum wrote:
 > 
-> Yes, sounds good.
+> kvm x86 logs are suggested to start with a short summary of the patch. Maybe:
 > 
-> Andrew, can you make this change and also drop Cc stable tag?
+> Simplify the logic for copying the KVM_TDX_CAPABILITIES struct to userspace.
 
-Done.
+Yeah, I have this locally as two separate patches:
 
-> This needs to be a hot fix, as Vlastimil said earlier.
+  KVM: TDX: Use struct_size to simplify tdx_get_capabilities()
+  KVM: TDX: Check size of user's kvm_tdx_capabilities array before allocating
 
-Yup.
+Your CI caught me just in time; I applied this locally last week, but haven't
+fully pushed it to kvm-x86 yet. :-)
+
+> It looks like you are conducting a treewide pattern matching cleanup?
+> 
+> > > Retrieve the number of user entries with get_user() first and return
+> > > -E2BIG early if 'user_caps' is too small to fit 'caps'.
+> > > 
+> > > Allocate memory for 'caps' only after checking the user buffer's number
+> > > of entries, thus removing two gotos and the need for premature freeing.
+> > > 
+> > > Use struct_size() instead of manually calculating the number of bytes to
+> > > allocate for 'caps', including the nested flexible array.
+> > > 
+> > > Finally, copy 'caps' to user space with a single copy_to_user() call.
+> 
+> In the handling of get_user(nr_user_entries, &user_caps->cpuid.nent), the old
+> code forced -EFAULT, this patch doesn't. But it leaves the copy_to_user()'s to
+> still force EFAULT. Why?
+
+I'll tweak it to explicitly return -EFAULT.  Doesn't matter terribly, but KVM's
+standard pattern is to explicitly return -EFAULT.
+
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com> (really the TDX CI)
 
