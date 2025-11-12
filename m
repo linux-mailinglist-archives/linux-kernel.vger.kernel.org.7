@@ -1,206 +1,244 @@
-Return-Path: <linux-kernel+bounces-896686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C269CC50FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A835DC50FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22F2734ACA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD4E3A3A61
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF7A2C21CC;
-	Wed, 12 Nov 2025 07:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998682DBF7C;
+	Wed, 12 Nov 2025 07:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YWIyzax9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bEwNj5dU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e/39kuo1"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C522DA76A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5552C11FE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933343; cv=none; b=AignYhpfYKnntRAwUNx3wjY+3+hCqnCrexPymzaNRTeh48hapVnizCv+2bXw7RCkgkhP5dXT5hL7Nis549YPk0ETrPUXNSQ7IgnfHOF1JI5Rrk4ZDZAqaTBtvEwMSBFTb63YCLu2/liWRWUqSU2QH3gP0bRgf0egJ4s6HjvB5kE=
+	t=1762933397; cv=none; b=MhHOh8es7V9sDvRAudxgJvT8EiAEZ+Y2EDs3ETpeiu+SAVQFnDURq43EsgCZiVkNFuRgrWPIgXN03yAzruo4qgNnHeheT5imXYWDS736d691Dz9Cu7Zc+t1h71HN9FHuTUIpnjhZs6kxIkSBGrI2SInZtVrH5bw0mcX/4s3fkWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933343; c=relaxed/simple;
-	bh=qnRVyznIp2/9hXbw7y6c4CxmpQo/GrGH0lc7ReCMlUU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lC1bRFDYQJZo1rGNcwGj6sdv9CYwIUSekpRkUp5QX9sYxuCihnAOhvry2pb8jBy4ci7PkSxWTE9Cm6LXJ3jpRucChP/nxGMZHEyjJKBhLu13JTtiP2PVLScnCzz79GW2gk8aIo3axqmG02xoAzPW/BYWGLz52tUhydJV03vD260=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YWIyzax9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bEwNj5dU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC1HZi23683710
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=SRS46F7+myfHHV7nZlBsNh
-	Dj7nA6bojeVEV1V5g3wDE=; b=YWIyzax9YUBwsaSonDzsKghEcyFx6/U1y4L8mW
-	ban0xVOBCUoKlTcce2IG29NbgRhaRRyUmGpin5juhoFOuFVbSjYptMM6Lipu2rIY
-	x5OLA4j+ps3itXz63ERxFFoxJZalA6TWi5DHG7zYXp00dbdntiP9eSP98L2Lqsgz
-	T8er4KWq2XcUdn4WT4ly+2ZcbpmBnIVfY/vW/u3tRKBEgGR8y7qBJdvFBxkmty3p
-	5cONehSYKPf7sIcF2ig1VeJKktqd0D6TQnYoRGkeT4V4A/5AaB7O8yZijBaJbiud
-	jH4YOEq9HhHvRwirPNmZ06dcM0Z33AWvGoGa1MJ3WPWvKKZA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acgeu102h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:42:16 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297f8a2ba9eso15890065ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:42:16 -0800 (PST)
+	s=arc-20240116; t=1762933397; c=relaxed/simple;
+	bh=QZumcc+aGuEyWSU11cBF1Lm2JEA58vA2/+jRiRWwFsM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=mNtMuXXDaHRGE45kMTH5WkIXC17rj1cERnrVjn04CF5cCA4XRt53UbvdeXs4pVKfQAAXxwg0jDiBw91yeH3NcosnHuDWd2WQELWqgPncd0429ij5PghF6noy9i2EOj5n39lpFo3tp0CF4KgYG4Tqd+6CJIB2b7r8P8lksVFkm6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e/39kuo1; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-ba265ee0e34so479830a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762933336; x=1763538136; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SRS46F7+myfHHV7nZlBsNhDj7nA6bojeVEV1V5g3wDE=;
-        b=bEwNj5dUW2C0cGf1qM795quWS6aigjAGCEFw2t76ALB3sSYofBRM6auJtB6jOpa8Sl
-         KHt+2pmTqlBiUZ9/NHxu3Aufe0SXYSeuXNd44jHKuT+BUvkTc0b/0bAEhFy3GL2luLU5
-         HB5mpY9qoSeQEMKr0TASGQCqn9UePvOeXoWcyfkFwMeFWcdW0PkF6VQmqpnuDcjH14dW
-         7gwpsjdsyFjVUh2B/wgYcb+xp2ktHZqdCN5fRPvhVIOTdXiaxqlYqRM4WcdnLkf244Oo
-         GWpCYyTGU0gQlAcnveRaIgqv/UiSB9dWjWxntHZcTWENah/7MwACRU3RCpEbh482xrsA
-         +FAg==
+        d=google.com; s=20230601; t=1762933396; x=1763538196; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iDxlg3rjq7IUfgkqdF3QzT2vSrqjrpZ2K7ERAvuReQE=;
+        b=e/39kuo1C1lGdvfxoN0gl8F6uTFSZt4e7U9TS2Vd2sELFIfULh2ZIq+VzwP+xe0s55
+         SQgY/4068kWD/yakY0b5ZQL6g/cLnkY21QMaH46M0SWv/czamM7z2j/+ygi0FVS2zHMk
+         nG/skQ/NgXFKKgEWxaZIuZvo0bhQnDH0a0fblDHB7ZRLFToe54D3/5t8USDeNd+Xbjci
+         pxvVd1V4FYEDgcSMJ4yeEezC6lK+6UOdNK8NjbphiSIDYsNWXZjSflNYABXq+uoC0/vC
+         l7R3U3TFIRr/X8qAMVsqyWg4HAX3bWradXz+JeLfAPa0VJ6qci/9b1g3kSt4ktkWP3xS
+         kZbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762933336; x=1763538136;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SRS46F7+myfHHV7nZlBsNhDj7nA6bojeVEV1V5g3wDE=;
-        b=jkiHOoNEscG5gGH3MmMurjwZFAAJHH/RAZwECmsBsisuwBN9u0hsqBg9ZovAjtllUJ
-         s2QOAeAB2t9n/8WCVRo1px8Sdl2NUeHmFhH/Ol7643yJQVhNvuzMxMj0lSP/vtGb6cEx
-         7K8c/4FIpaSDYKOoikKN38jEBkWtABO7M5D1smSLjLxY7u1btm7dRN4eu4fvPeqEyY2H
-         qqX+sIC+kuPBT/cpHfYB19MQCzJA7u5iCUmklhX/2VWva1IDzGkwoDUK8BbHF2t9eHXp
-         z2G1m1xap9bCYQ9TcC6NVB1Lh3MaBdaxZbEiMTTAz9Owp0TwrhT3hp5oj3Mg6I68WXJX
-         bQ2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJHpltI+2NU4uEWFyX2DuDsaTd0SlPXcOcRgnMWAwcpIIGVbFYw6DaZYJRXjb8cvnlGJVSajjIKHUiu5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDPrxENqTCTUWjUC+HOPZ2nqd6HFS1BKQ4rI6WjPdQDy11MpzW
-	Gdld2wW+/cNx/gn/xjthWNH8mmv9UTsRCngECc5N1HBFP/IuaclZLECdSDwFKIDwrpBK7WRNCWN
-	pZ8fkunkkFVNhhsP0fnwgEypl2SaUKMmB/kDwNYRD4JQiWWf4phkj1Hy2t2zJxDxuywWavo8AEM
-	E=
-X-Gm-Gg: ASbGncse5iDOQmwquL3MAt9nJ3uA4KAH/TGMHES77SqvgBqg1LpmOcQKJ3zw6TFECpc
-	lzS/elaERrCSpFzzv2Fqy5BHtYBYzMAHCmsBS/lIxFuDT/6ddO5HgS48xIMjOz6mQys7zMnVfS5
-	MXoXdZMYaZ6IKDjBBlAiT66yn27ccsvbk5yF5e/00yozvQ50kOdQ2UAY8/lkYm0mCT7t5CA/I6V
-	Jjclnx2nHTtJnI0QmSOdkUx/ZGWx2vsAAomrTb3ISdMWdKr5c8VQX5ljb1NYSEPiJ1Q9Qy/f01r
-	2sfnlPYmwxjQRcqiwRIPWO/GDOnxO2xvw/15trhJ54k+bD2Pc/JkSje4jwVwGcDt0soHT6sgXxt
-	H1YGZAvx4n5SmYGc7yKoVk3CWK8yoWkI=
-X-Received: by 2002:a17:902:d4c3:b0:28e:756c:707e with SMTP id d9443c01a7336-2984eda94d4mr26638935ad.33.1762933335628;
-        Tue, 11 Nov 2025 23:42:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFY/P0lC5DPYonYSA0luXIUsZtxf8uIzeBz3ZJrJSJzy3UVuUdgdDSnbIliXj9jNA4GRFaMOw==
-X-Received: by 2002:a17:902:d4c3:b0:28e:756c:707e with SMTP id d9443c01a7336-2984eda94d4mr26638535ad.33.1762933335083;
-        Tue, 11 Nov 2025 23:42:15 -0800 (PST)
-Received: from hu-afaisal-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbf097esm20457705ad.32.2025.11.11.23.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 23:42:14 -0800 (PST)
-From: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 13:12:09 +0530
-Subject: [PATCH v3] arm64: dts: qcom: hamoa-iot-evk: Enable TPM (ST33) on
- SPI11
+        d=1e100.net; s=20230601; t=1762933396; x=1763538196;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iDxlg3rjq7IUfgkqdF3QzT2vSrqjrpZ2K7ERAvuReQE=;
+        b=gUoIwwqvA3X7/aOywfgEwB+78u5lV6MlO/pqedb9waLhb8V+y+9nLaulnYlBVsWZ9x
+         iHDBA5+gl3sXlrmJxzvRQA5Hft/qwF0KiiE6ioCl9O80SATzDNU+NHwWaEhAsAUGH5XJ
+         2G8c18CLTxQ6wrkOreEL8BRRCz3NXinrrc1AphrEegdg4V5gLVJQwmmxa1+p2o7ZqdT1
+         VEflHRvOEsCg0aOe6pU5f9soslRbb/dTS77zJCLWyq7taNhmZgzTm2zx2VK1YTwjknZ1
+         lp8ZybkaYWggjuzGvHn4i9QkDoFTBZmflIW7cWdfKIn3HZV4OGj/J5UClBZkWwxaSeje
+         xxVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXshd85c5Vflp6J+/Jek7eLc22urpdCHSn0F771XNxh8n+17t1GwnJJoxnAFtcOkxgM+9P4beYgDj5k414=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya28ae7vaBb+1lXL2nhmSLoK28QnUHe73Xg7GfIc8fElzKGJ5Z
+	L35ap2aEyqbyXbjfhkOJPooU4bf8uDWGU0w2zfJpGOIkcnHpHbSu6Cy2Eky1C2mkfUq2yzeDs+L
+	sf1UHFjnVjA==
+X-Google-Smtp-Source: AGHT+IFlCJoHl4U0qhCyKZm/cv+eMqTRrwx9eTjHB4ufjp5u24z+RJZmtmB6/nLtuNj70VwaJ52q87cSYoOs
+X-Received: from dlbdx18.prod.google.com ([2002:a05:7022:e12:b0:119:49ca:6b96])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3c8d:b0:34e:cc0a:40b2
+ with SMTP id adf61e73a8af0-3590b02ad56mr2632422637.30.1762933395749; Tue, 11
+ Nov 2025 23:43:15 -0800 (PST)
+Date: Tue, 11 Nov 2025 23:43:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v3-1-39b19eb55cc3@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAFA6FGkC/6XOwW7CMAwG4FdBOc8oTijNdtp7TBzc1qURpClxF
- jGhvvsCpx12goul35L/zzclnDyL+tjcVOLixce5Bvu2Uf1E85HBDzUro02DqFugFPY7GLLApY8
- BJgqRwMcMXE7AM3VnBsnWQl4CxBlk8YjQO9vYoR3ZGVa1e0k8+uvD/TrUPHnJMf083ih4374qF
- gQE15GzXePGntrPKLK9fNO5loRtHeoOF/MHq2dPYgY0oEZyGt/bXbf/B1vX9ReW+/bGbgEAAA=
- =
-X-Change-ID: 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-c8353d7fe82e
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762933331; l=1821;
- i=khalid.ansari@oss.qualcomm.com; s=20251105; h=from:subject:message-id;
- bh=qnRVyznIp2/9hXbw7y6c4CxmpQo/GrGH0lc7ReCMlUU=;
- b=hQK4ahqXPHRqTxFOZI2jgILKMQy08qbldZr4ZchvuRI0nuFSBaW1PhU3Aih2AeuXv0MNXOWFx
- il1jePjFzDvAZKUWV4TKSyyNUUZ0dwQr80Hn1xsoThSl07cIs5YxEfR
-X-Developer-Key: i=khalid.ansari@oss.qualcomm.com; a=ed25519;
- pk=eBXrIUgTWV0cgG+GsNeZPPgvj1Tm6g9L2sfcoxMGrKo=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA2MCBTYWx0ZWRfX1JMVy5LsG+/b
- IzzdRYibs7XTCGb2hIm4gIKtugk8LVwdIswmUDueWb5OY1pMO50MzI+73P9+UmSZCb4CnoHTR0f
- noJfyJjCTTN3K3Y2sIbIlktIXnGxv+ozky5Lut8ajf6QAMJpZYxwYH3Jsc2wYk1frfzDLGeIzuq
- FRbRkmoBS/IVoa6lOO3m4lX5tu/LsmyVmDiFhd8zeZSQUxesRqryEDD5El1fo7tcN2r7g8PzHzJ
- Mll/puBJkAQzkRjJKYS7zCoxgzbw/P6y8Eev5tgRG0T/kYqF1v6Ud5kvR2nMflhtRoRfvJJ/BwM
- UKl5/F5cYkueGWEww7TrJW/L3D1D5ghTzkuhSIRGs4pTAqNqVdIucUjXN+zLPDrwMFlZKQ/9k3N
- UzLZygTcwYLsi57ibzKRyu3ayTD+FQ==
-X-Proofpoint-ORIG-GUID: ItEGDDzS1fkxuju1gpNzOy_qdujFTWxo
-X-Proofpoint-GUID: ItEGDDzS1fkxuju1gpNzOy_qdujFTWxo
-X-Authority-Analysis: v=2.4 cv=SvudKfO0 c=1 sm=1 tr=0 ts=69143a58 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=0o05X4pXTjTZH81ee54A:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_02,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120060
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251112074311.1440101-1-irogers@google.com>
+Subject: [PATCH v2] perf libbfd: Ensure libbfd is initialized prior to use
+From: Ian Rogers <irogers@google.com>
+To: Guilherme Amadio <amadio@gentoo.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable ST33HTPM TPM over SPI11 on the Hamoa IoT EVK by adding the
-required SPI and TPM nodes.
+Multiple threads may be creating and destroying BFD objects in
+situations like `perf top`. Without appropriate initialization crashes
+may occur during libbfd's cache management. BFD's locks require
+recursive mutexes, add support for these.
 
-Signed-off-by: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+Reported-by: Guilherme Amadio <amadio@gentoo.org>
+Closes: https://lore.kernel.org/lkml/aQt66zhfxSA80xwt@gentoo.org/
+Fixes: 95931d9a594d ("perf libbfd: Move libbfd functionality to its own file")
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-Testing:
-- TPM detected via tpm_tis_spi
-- Verified functionality using tpm2-tools (e.g. tpm2_getrandom, tpm2_rsadecrypt)
-
-Depends on:
-- <20251106102448.3585332-1-xueyao.an@oss.qualcomm.com>
-  Link: https://lore.kernel.org/linux-arm-msm/20251106102448.3585332-1-xueyao.an@oss.qualcomm.com/
+v2: Remove unneeded unistd.h include.
 ---
-Changes in v3:
-- Squashed patches touching the same file into one.
-- Link to v2: https://lore.kernel.org/r/20251111-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v2-0-101a801974b6@oss.qualcomm.com
+ tools/perf/util/libbfd.c | 38 ++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/mutex.c  | 14 ++++++++++----
+ tools/perf/util/mutex.h  |  2 ++
+ 3 files changed, 50 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- Use "tcg,tpm_tis-spi" compatible to satisfy dtbs_check (was vendor-only).
-- Add dependency change in cover letter.
-- Link to v1: https://lore.kernel.org/r/20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com
----
- arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-index 36dd6599402b..aecaebebcef5 100644
---- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-+++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-@@ -917,6 +917,16 @@ &smb2360_2_eusb2_repeater {
- 	vdd3-supply = <&vreg_l8b_3p0>;
+diff --git a/tools/perf/util/libbfd.c b/tools/perf/util/libbfd.c
+index 01147fbf73b3..6434c2dccd4a 100644
+--- a/tools/perf/util/libbfd.c
++++ b/tools/perf/util/libbfd.c
+@@ -38,6 +38,39 @@ struct a2l_data {
+ 	asymbol **syms;
  };
  
-+&spi11 {
-+	status = "okay";
++static bool perf_bfd_lock(void *bfd_mutex)
++{
++	mutex_lock(bfd_mutex);
++	return true;
++}
 +
-+	tpm@0 {
-+		compatible = "st,st33htpm-spi", "tcg,tpm_tis-spi";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+	};
-+};
++static bool perf_bfd_unlock(void *bfd_mutex)
++{
++	mutex_unlock(bfd_mutex);
++	return true;
++}
 +
- &swr0 {
- 	status = "okay";
++static void perf_bfd_init(void)
++{
++	static struct mutex bfd_mutex;
++
++	mutex_init_recursive(&bfd_mutex);
++
++	if (bfd_init() != BFD_INIT_MAGIC) {
++		pr_err("Error initializing libbfd\n");
++		return;
++	}
++	if (!bfd_thread_init(perf_bfd_lock, perf_bfd_unlock, &bfd_mutex))
++		pr_err("Error initializing libbfd threading\n");
++}
++
++static void ensure_bfd_init(void)
++{
++	static pthread_once_t bfd_init_once = PTHREAD_ONCE_INIT;
++
++	pthread_once(&bfd_init_once, perf_bfd_init);
++}
++
+ static int bfd_error(const char *string)
+ {
+ 	const char *errmsg;
+@@ -132,6 +165,7 @@ static struct a2l_data *addr2line_init(const char *path)
+ 	bfd *abfd;
+ 	struct a2l_data *a2l = NULL;
  
-
----
-base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
-change-id: 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-c8353d7fe82e
-
-Best regards,
++	ensure_bfd_init();
+ 	abfd = bfd_openr(path, NULL);
+ 	if (abfd == NULL)
+ 		return NULL;
+@@ -288,6 +322,7 @@ int dso__load_bfd_symbols(struct dso *dso, const char *debugfile)
+ 	bfd *abfd;
+ 	u64 start, len;
+ 
++	ensure_bfd_init();
+ 	abfd = bfd_openr(debugfile, NULL);
+ 	if (!abfd)
+ 		return -1;
+@@ -393,6 +428,7 @@ int libbfd__read_build_id(const char *filename, struct build_id *bid, bool block
+ 	if (fd < 0)
+ 		return -1;
+ 
++	ensure_bfd_init();
+ 	abfd = bfd_fdopenr(filename, /*target=*/NULL, fd);
+ 	if (!abfd)
+ 		return -1;
+@@ -421,6 +457,7 @@ int libbfd_filename__read_debuglink(const char *filename, char *debuglink,
+ 	asection *section;
+ 	bfd *abfd;
+ 
++	ensure_bfd_init();
+ 	abfd = bfd_openr(filename, NULL);
+ 	if (!abfd)
+ 		return -1;
+@@ -480,6 +517,7 @@ int symbol__disassemble_bpf_libbfd(struct symbol *sym __maybe_unused,
+ 	memset(tpath, 0, sizeof(tpath));
+ 	perf_exe(tpath, sizeof(tpath));
+ 
++	ensure_bfd_init();
+ 	bfdf = bfd_openr(tpath, NULL);
+ 	if (bfdf == NULL)
+ 		abort();
+diff --git a/tools/perf/util/mutex.c b/tools/perf/util/mutex.c
+index bca7f0717f35..7aa1f3f55a7d 100644
+--- a/tools/perf/util/mutex.c
++++ b/tools/perf/util/mutex.c
+@@ -17,7 +17,7 @@ static void check_err(const char *fn, int err)
+ 
+ #define CHECK_ERR(err) check_err(__func__, err)
+ 
+-static void __mutex_init(struct mutex *mtx, bool pshared)
++static void __mutex_init(struct mutex *mtx, bool pshared, bool recursive)
+ {
+ 	pthread_mutexattr_t attr;
+ 
+@@ -27,21 +27,27 @@ static void __mutex_init(struct mutex *mtx, bool pshared)
+ 	/* In normal builds enable error checking, such as recursive usage. */
+ 	CHECK_ERR(pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK));
+ #endif
++	if (recursive)
++		CHECK_ERR(pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE));
+ 	if (pshared)
+ 		CHECK_ERR(pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED));
+-
+ 	CHECK_ERR(pthread_mutex_init(&mtx->lock, &attr));
+ 	CHECK_ERR(pthread_mutexattr_destroy(&attr));
+ }
+ 
+ void mutex_init(struct mutex *mtx)
+ {
+-	__mutex_init(mtx, /*pshared=*/false);
++	__mutex_init(mtx, /*pshared=*/false, /*recursive=*/false);
+ }
+ 
+ void mutex_init_pshared(struct mutex *mtx)
+ {
+-	__mutex_init(mtx, /*pshared=*/true);
++	__mutex_init(mtx, /*pshared=*/true, /*recursive=*/false);
++}
++
++void mutex_init_recursive(struct mutex *mtx)
++{
++	__mutex_init(mtx, /*pshared=*/false, /*recursive=*/true);
+ }
+ 
+ void mutex_destroy(struct mutex *mtx)
+diff --git a/tools/perf/util/mutex.h b/tools/perf/util/mutex.h
+index 38458f00846f..70232d8d094f 100644
+--- a/tools/perf/util/mutex.h
++++ b/tools/perf/util/mutex.h
+@@ -104,6 +104,8 @@ void mutex_init(struct mutex *mtx);
+  * process-private attribute.
+  */
+ void mutex_init_pshared(struct mutex *mtx);
++/* Initializes a mutex that may be recursively held on the same thread. */
++void mutex_init_recursive(struct mutex *mtx);
+ void mutex_destroy(struct mutex *mtx);
+ 
+ void mutex_lock(struct mutex *mtx) EXCLUSIVE_LOCK_FUNCTION(*mtx);
 -- 
-Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+2.51.2.1041.gc1ab5b90ca-goog
 
 
