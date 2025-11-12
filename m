@@ -1,188 +1,136 @@
-Return-Path: <linux-kernel+bounces-896533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B88C50994
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:18:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AF7C509A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D992918975EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:19:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCFD64E9E4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618FB2C0F6C;
-	Wed, 12 Nov 2025 05:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57572D73BB;
+	Wed, 12 Nov 2025 05:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuGX/lhx"
-Received: from mail-io1-f67.google.com (mail-io1-f67.google.com [209.85.166.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cghgf9Jg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C27810942
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A9C10942;
+	Wed, 12 Nov 2025 05:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762924727; cv=none; b=GsObFsdhpiHTapxDzOZIgylk8FXth9Sb9by966c4SSpdFnLhR0B0R0XaWiYwkLCDCHpoewwFC7odd13tKlFUBtBQ0RlaTHbQUp3FUm1XnJbvFLggeNKP+5l4ys6sjjj9fsLqqwquHJPnVu5rFL5ps6XiNpVrHLLz5ZXs1eT/u5U=
+	t=1762924857; cv=none; b=sG+v9yA7Qnbh9zpOg3Y/LdIPcebQuoszqEMAuwIcYMSVocbKHHWTNl6qwR9r8KoeOHRPBmDZk5K2oYY+IX8EzJ9nm7lOQ+lZyFyXQ/HlbrLGE0NHVbzcRGdEAphK00JW1IZNaDrJBLMYrsCHxbrOKzYVUsZ24LiqbNT+rACcxfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762924727; c=relaxed/simple;
-	bh=c6/7tzoz4PT3gVjKzbmDjcFcQEgyG78OrsyW90YOUEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mlct3RcDVDH+9ZIloQxjzCUKIuhMZZelpa2dJ1H3pxX5RQkNwGlpkgv5cA0S2rZuxbK8maVftJg4RllWdX35PkDVQBuzqtDAV06eI5ovdoqLKirBGQihE/uiTp88PjKdAFQzhvZbuhIzraCZyce4rfCyl20mX9oPBphTaToZkwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fuGX/lhx; arc=none smtp.client-ip=209.85.166.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f67.google.com with SMTP id ca18e2360f4ac-9489deb42a5so2173139f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:18:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762924725; x=1763529525; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ezl4SSQLTdq74CW82/F96/qsFWv/FcEbMyqJZMgIA2A=;
-        b=fuGX/lhxdEkwgSppFeSMYg2ghPZTsDMmrIUNuTA7q3MUD3fuPbPeY627TNGdxhqIGG
-         +7K1PeFFUKcjmeEzHeKgmqzmYujQGhtsWq/e9nefL2T+dEtLGtbxvJ8wgLsfoqiFzmXs
-         g2T0AZMiMTc+D2GD3ALvs5RKK744C0jLKgtM4J/yS/FGldJkF187VG/kDYMo42rhVUrr
-         C/zj4lGIYORb5X6mxjPMrnJS2GLYPDsg1qm5dEYsajpBsYlk0nmBxA3xUtKCCc/CLtNt
-         Yf4aKKTIa7jDcrTk18MOjg5WX9tel1AqCh+3H7LzN9ASoKoUh1ID82BOODowPukpJ3z1
-         VBwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762924725; x=1763529525;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ezl4SSQLTdq74CW82/F96/qsFWv/FcEbMyqJZMgIA2A=;
-        b=S33FwPUT8HXpwXoYTm848e756ROffta7yA9tjPzbiuOAs2Mqx5xwg2qT79cwIpa/ZE
-         rM7Xmyl5WReRgaFLddaqko1z/k59T+cueJqP3CatJTlRitv0Cim65OGOwIRNTYc8WRgc
-         +vUXFN4TGcS6tASu15oyDCY4cbTI8u332cw5QchX24mU06rbtJBcc9fiJm+QxB4e2I1j
-         a4KQbJDXrhinEpyAUkjc49cLx18nEaYZ436fI07vmkYqmIPbaUGXRt+7zsZiDJjnCB26
-         xAesi3IyAhis+qk6e3L/RHFPiAtswTLxcc+GuPPzlO9stAETPMPYsmKPe5mAgDK7UXDu
-         FoyA==
-X-Gm-Message-State: AOJu0YzAMs3UA/ah3F+WxKkiweJFwhfWHIVeIVgCXAG9xDW/+L3zUVq6
-	BgwYaTKqra1YM6ohTmnUxMqZ0sxFiJ1dS4hZZUpH5HmwU8r+fv8ltKL6
-X-Gm-Gg: ASbGncuCh80hVZv1E+UPUNnmzW2qsefbRbxjQXBTnxrc1H9MHJLFtU3HhPG24s2ucnn
-	wiB9CCjjGXUZNAhQfI9G/stnHzDkiFGih8ExcMV6kHFs/9pdV5sBShGo3QjRoLmDjyORBi0QfQh
-	Dc+5WeeU6Hx0wGTxUoL6tBIWwg/150q0dGkBt/EgKpERX2OEsgQBUJVvbImdDSxlZuwjDy64Fr0
-	9/XESyY5Eagd5yevo16Bz4/oIhdCXbMguffTmrB454DAP3FMiFIeN8R6OofNAQ0uBsMw69OwmN9
-	LAbi7I4bFtU4ONTHBFmHIzVxlFbWiz1q+LkI+ClPEgxzTaF5uDqJ09TJ7GuPwqcP/vEAqqtMUyC
-	bJJNTQnx6LGMtlq7+NpM1eo85LdcefShNc6ya1ejI6XMl3ceBgz45PrYtokWGpcLmuBmFYAweOt
-	OQRsFscm74
-X-Google-Smtp-Source: AGHT+IG+CGWHKYLx/mgjt5y0vC6+WM/NIsUYelFqXQlQ4OGrBX/1QS3A/YpW77DPQRnBU2qp1nCKvA==
-X-Received: by 2002:a05:6e02:3807:b0:433:2421:d752 with SMTP id e9e14a558f8ab-43473de377cmr8414505ab.7.1762924725169;
-        Tue, 11 Nov 2025 21:18:45 -0800 (PST)
-Received: from kf-m2g5 ([2607:fb90:cf2c:12ad:3e02:9a49:f465:3655])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4347338d4d7sm6753305ab.20.2025.11.11.21.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 21:18:44 -0800 (PST)
-Date: Tue, 11 Nov 2025 23:18:35 -0600
-From: Aaron Rainbolt <arraybolt3@gmail.com>
-To: linux-mm@kvack.org, cryptsetup@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, adrelanos@whonix.org
-Subject: Hard system lock-ups when using encrypted swap and RAM is exhausted
-Message-ID: <20251111231835.1232ad8f@kf-m2g5>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762924857; c=relaxed/simple;
+	bh=hrO0ewnqqzCFawUB64Btsqfz1Tkqa/+Z0vCIkt7E0lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEN9J6B8h/BNWABgK67UrbsfSSidMVrvKoUaIXxQT/EN2AfiO4J2kK1+fyMEzfWjLqY8+Mu7/YJzcwy1tPdCKfzjWAx+wfM9Pdu7GHkLDzl0x6i81txHNY8DtXWeDRvf54xfPdEMjbM80n5v95dpdweblQ0d2JJlpMgsHlLJnW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cghgf9Jg; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762924855; x=1794460855;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hrO0ewnqqzCFawUB64Btsqfz1Tkqa/+Z0vCIkt7E0lY=;
+  b=Cghgf9Jgt7lzQfYI8CjIzcL1Bg5RGpgQZD4UaIzMxFjxfE1JYSlGCO5L
+   XcfmB5Z5GddPWKL0ZnXMMjKiAaYzVkibSeRNAEaR5oLMYpyxLV7pj4F9F
+   wyTBZp4exTx6Q8pEA4rMtEspRcHkkvjdD9425zqwDfjiW4hCN9RAjN3Wk
+   hJtCwmJmYsPqMt7vcgrzbKZReXI1TGpAETpeFv4urhyYa3KckQhnkpVMU
+   YGZfaG+fGXlXQWONZ7GqYKGVQE/VCGkA7BWm6dav0mpod0zGeaUPCDl8b
+   nf35Ky9lXTNs0PqfIjMMFQ9jUcx1I6TbOVIwKy/G9E8Dh8wcqhhKXwvq1
+   g==;
+X-CSE-ConnectionGUID: d+cieDNIQxmBgTC2Md2Igg==
+X-CSE-MsgGUID: VrltV6T6QcaWf3IEEL9jIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="63988251"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="63988251"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:20:54 -0800
+X-CSE-ConnectionGUID: VjJkPS8QQMmObjQj1fEL4A==
+X-CSE-MsgGUID: Ccc46b0vROmNwkgdlrVN9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="188389334"
+Received: from unknown (HELO [10.238.3.175]) ([10.238.3.175])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:20:52 -0800
+Message-ID: <cb49c1be-99a5-4aba-b3da-f902058a4996@linux.intel.com>
+Date: Wed, 12 Nov 2025 13:20:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Z4RQJJ68rzCF8i_e+DrlMou";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the tip tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20251112154200.4d3671f9@canb.auug.org.au>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251112154200.4d3671f9@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/Z4RQJJ68rzCF8i_e+DrlMou
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Not sure if this is a memory management issue, a LUKS issue, or both,
-so I wrote both mailing lists.
+On 11/12/2025 12:42 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the tip tree, today's linux-next build (i386 defconfig)
+> failed like this:
+>
+> arch/x86/events/intel/ds.c: In function 'intel_pmu_drain_arch_pebs':
+> arch/x86/events/intel/ds.c:2983:24: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>  2983 |         top = (void *)((u64)cpuc->pebs_vaddr +
+>       |                        ^
+> arch/x86/events/intel/ds.c:2983:15: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+>  2983 |         top = (void *)((u64)cpuc->pebs_vaddr +
+>       |               ^
+> cc1: all warnings being treated as errors
 
-I'm seeing an issue with both the latest mainline kernel (6.18-rc5) and
-Debian 13's 6.12 kernel package. When physical memory fills up, the
-entire system locks up hard, as if it hit rather severe thrashing,
-despite the fact that there appears to be disk cache that can still be
-evicted, and there is ample amounts of swap space remaining (gigabytes
-of it). This issue did not occur with the 6.1 kernel in Debian 12. I'm
-seeing this occur in very low-memory Debian VMs, with between 512 and
-900 MB RAM, running under VirtualBox and KVM. (I suspect, but have not
-verified, that I'm seeing similar behavior under Xen as well.) These
-VMs generally use a swappiness of 1, though I have seen a lockup occur
-even with a swappiness of 60. The filesystem in use, in case it
-matters, is ext4.
+Thanks for reporting the issue. I suppose the below patch would fix the
+building error. I would post it as an independent patch later.
 
-To reproduce on a system running Linux 6.18-rc5, with :
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index c93bf971d97b..f695de9f7049 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2979,7 +2979,7 @@ static void intel_pmu_drain_arch_pebs(struct pt_regs
+*iregs,
+        }
 
-* Follow the steps from
-  https://gitlab.com/cryptsetup/cryptsetup/-/wikis/FrequentlyAskedQuestions,
-  section "2.3 How do I set up encrypted swap?", but creating a
-  swapfile rather than a swap partition. I created an 8 GB swapfile
-  with fallocate. Reboot the system when done.
-* In a TTY, open a terminal multiplexer (or something you can abuse as
-  one, Vim works well), and open two terminals. In one terminal, run
-  `htop` so you can observe memory and swap usage.
-* In the `htop` terminal, sort by M_RESIDENT.
-* In the other terminal, create a new file `test.py`, that will
-  gradually fill memory at a relatively fast pace and print an
-  indicator that it's still alive. I used the following code for this:
+        base = cpuc->pebs_vaddr;
+-       top = (void *)((u64)cpuc->pebs_vaddr +
++       top = (void *)((unsigned long)cpuc->pebs_vaddr +
+                       (index.wr << ARCH_PEBS_INDEX_WR_SHIFT));
 
-    import time
+        index.wr = 0;
 
-    count =3D 0
-    mem_list =3D []
-    while True:
-        mem_list.append([x for x in range(2048)])
-        count +=3D 1
-        time.sleep(0.002)
-        print(count)
 
-* Run the script with `python3 test.py`.
-* While the script runs, observe the growing memory usage in `htop`.
-  Swap usage should start at or near 0, RAM usage will gradually
-  increase. Once RAM usage starts getting high, some data will start
-  being swapped out as expected, but after a short while the whole VM
-  will lock up despite there being gigabytes of swap left. (On my KVM
-  VM, the last time htop updated its screen, it showed RAM usage of
-  712M/846M, and swap usage of 328M/7.40G. The python3 process
-  running the script was consuming 551M memory. The VM is entirely
-  unresponsive. Incidentally, the python3 process also was in
-  uninterruptible sleep when htop last updated its screen, but that
-  could mean nothing since it might have come out of sleep between the
-  last screen update and the VM lockup.)
-
-Under Bookworm with Linux 6.1, the Python script would occasionally
-freeze, but the VM would remain responsive, and the script would
-eventually resume. Even with kernel 6.12, both unencrypted swapfiles and
-swapfiles that are technically unencrypted but live on a LUKS volume
-both behave as expected. It's only swapfiles that are themselves
-encrypted that seem to trigger these lockups.
-
-I haven't looked at the code at all, but it seems like maybe memory
-LUKS needs available in order to operate is being consumed, thus
-making it impossible to swap anything in and out of the swapfile? That
-seems like it would cause these symptoms or similar, though I don't
-know.
-
-Let me know if I can provide any further information on the issue. I'm
-happy to bisect the kernel if it will help.
-
---
-Aaron
-
---Sig_/Z4RQJJ68rzCF8i_e+DrlMou
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEudh48PFXwyPDa0wGpwkWDXPHkQkFAmkUGKsACgkQpwkWDXPH
-kQk4ARAAqk9d7FDHR97lXxeh1nY89u028mDQ/739cRtbBMzWbgbiEsNkgGPq+L+M
-Umbu80ExIyDXuNEE2fxWsYvqguj4YI9nuOFHIX+PGIGagiYFlwWlnaQcrmO8PmA4
-A9qXirRq+PxxBYMwsEcS++DafDtoH54fHMGjhKf8KCi/DmwES4bdbWkHRiYojmYE
-CpjyvLuCXOiXMe/pAgzfp++EpBX1AiF948MFKf6/a4qagycypVrX8AWluIVwEjBw
-w40yZjZ5t5Fwm6F86VfnalBf+YGFOeiLUbPe/+deYmhQUHSc8RXGq7SBaYJJhCpq
-lE90ypvTOCRnhGSe8PaTOvekAJhCzVCFqyUmgsUHAkb7uOKcdiaNVKJdpS9q6ZWf
-UF5vhWZ8AEe2qyISOQW4cFRsNF4MMxyJsDbi5XAJDii1UP+RoAJfcdvljVKfSfnD
-A5VXJAMmtCUFak67VYp7Cr8787LOs84b1HtjLpGH+aWOx4csJWKyKwq8KBbxayon
-DHW36A/8546cgHR2/P8ke8Hfi5QI+qq6v8M0ACCoYUsKXw/MSttNa4H7To0F+MW7
-9XUYisaBv/h0NM38aVl1E6FnRM/9HlBzUYmGVJLGg02IIZkqM77l0eJHhz1wVnm7
-+h7ExBaCaI57vjOkHGm2dH1XitrwKCjAWf4nVlzs+P8hOzLDSFM=
-=xCmb
------END PGP SIGNATURE-----
-
---Sig_/Z4RQJJ68rzCF8i_e+DrlMou--
+>
+> Caused by commit
+>
+>   d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragments")
+>
+> I have reverted commits
+>
+>   2093d8cf80fa ("perf/x86/intel: Optimize PEBS extended config")
+>   02da693f6658 ("perf/x86/intel: Check PEBS dyn_constraints")
+>   bd24f9beed59 ("perf/x86/intel: Add a check for dynamic constraints")
+>   bb5f13df3c45 ("perf/x86/intel: Add counter group support for arch-PEBS")
+>   52448a0a7390 ("perf/x86/intel: Setup PEBS data configuration and enable legacy groups")
+>   e89c5d1f290e ("perf/x86/intel: Update dyn_constraint base on PEBS event precise level")
+>   2721e8da2de7 ("perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR")
+>   d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragments")
+>
+> for today.
+>
 
