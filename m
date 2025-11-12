@@ -1,120 +1,172 @@
-Return-Path: <linux-kernel+bounces-898073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BD0C54513
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:02:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5909C5449A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2914A5037DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE01F3BDC70
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC82F350D77;
-	Wed, 12 Nov 2025 19:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CDC340287;
+	Wed, 12 Nov 2025 19:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YpdvedV0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwLNam1F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C07E34E767;
-	Wed, 12 Nov 2025 19:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24FC212F98
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762976346; cv=none; b=TICpFp3NN5qgxYsF3NXdNtfbQxF8QTLX8UovyhSi932uUVO+zLXDhtl9RQXkqWMmevX4HxLrsGzN+JfHzCvUAMdnLRcdNpbHASah6Unry+p8U5/58Roi5AvHmNbccTkWqu5F6TIfG27y9VOGHYMRLA7kBjtZgq4tp0jJ1hKT/Gg=
+	t=1762976458; cv=none; b=Ew6vGeOh2nFwowJxmPBBx8G33o53UXSEXfE1UPdz+ToRcZAyNT/SbSRhYEKfJ8pJ6Tr3ZZTolImxMtiBOpGPRoT8YipHLVQpoBsuO4FrrYnQp77DZhPV2a8pobb0s81vu4hQ8Un/VXwrIQj/2o1QAIFsees6lqw4QqxcmNQiAj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762976346; c=relaxed/simple;
-	bh=k1pexc4a8vypWQvNhaqIbF7+K8FCYfDuX8jXVUTiEsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sjzHiQwU0wDnVFEROTrd2B6Tyg+9j6sbAa4ZRJLIuAIJ4zxUimFWsDOJ4ORgi/2Siy/ohp/4xjITPAKQYeeff4HBAk/ZgNc5imjisGP2Xj5UBo+B05YO7CMJW4WVdr0pa0JSlIH5g/Gj9XoBdcZMP5d28Yat3WkumwkJMoo4d9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YpdvedV0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206ABC4CEF7;
-	Wed, 12 Nov 2025 19:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762976343;
-	bh=k1pexc4a8vypWQvNhaqIbF7+K8FCYfDuX8jXVUTiEsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YpdvedV06NWmMxjnjOa/4j9U8gnHnp8i4q8qvXTgsyutWVHZBybBZxwUv5K1S/pff
-	 GuWGwwsT8a2EpIMX/hxbDJv4l/jGiRUJCVIqSmraQH1VtSVgVVFkA56btpSJL+Qk30
-	 L/H9A03pTn8iDYN0VyQQSrkoDsrDaWbF6qLdtvXM=
-Date: Wed, 12 Nov 2025 14:39:00 -0500
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-Message-ID: <2025111227-equipment-magnetism-1443@gregkh>
-References: <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
- <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
- <20251110201933.GH2988753@mit.edu>
- <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
- <20251111035143.GJ2988753@mit.edu>
- <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
- <2025111214-doily-anyway-b24b@gregkh>
- <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
- <2025111241-domestic-moonstone-f75f@gregkh>
- <DD67C0CF-D330-4D40-B610-FD3EB7AA0218@zytor.com>
+	s=arc-20240116; t=1762976458; c=relaxed/simple;
+	bh=1CEb0exxHNbFTNrWD8OFik1gh5Iji875G0YGz0rm2tE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jNXxU6CllJZTcejepGZS1puMVmfJIzk8jOU1DkFXfTtMqHpu1yYuTmpVosT7MIzesQsHhYwrOtUbvNq5DX17rRuOGisR+Sr4Ro+r+R2c4VptAmf1cdAZWo0IY1nUHicle0w1M6c4w/+s64lS45c7zl3vorOo9xUrBtXoRFvmhCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwLNam1F; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762976457; x=1794512457;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1CEb0exxHNbFTNrWD8OFik1gh5Iji875G0YGz0rm2tE=;
+  b=GwLNam1Fs10e44VD+iXdpLLZ+Gq4+yjFd3EJtGF7ZvSaQWVUMAwJou88
+   A2/3yECXTy44+a4z2xaZRN3jMH8Yi2m3gk72vh/NCO7uT38SP27aj7Zdt
+   DCvVuMeYwrU3poCv9eK2/obnDggNbsQBXtgWL3uPjba3i6AP3+o8wWggn
+   q7dSUazDPSX03SjOeCuNbiEpioztivRuEsXKhBTVZ4cKXbBaPlvEKJk0R
+   ddn3PcOBhDrsWwb+uHTUY+R6muat5EXoYFurmFRdSMTk0W+T3jx3wHIrg
+   U/h0T7VbUPoOYWa7ATy/LCAttLHx68v/gBbgXYupiVTxu1ONKlMiZJKxi
+   Q==;
+X-CSE-ConnectionGUID: aSbLHmmyREuhMshfm/aWag==
+X-CSE-MsgGUID: NZFKatfnTU6YOzjMWifQTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="68899798"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="68899798"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 11:39:43 -0800
+X-CSE-ConnectionGUID: /0qMLToMSJaGNFV1iOZRcg==
+X-CSE-MsgGUID: OSGF5WF3QNyy4bQejpbmWA==
+X-ExtLoop1: 1
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.108.22]) ([10.125.108.22])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 11:39:41 -0800
+Message-ID: <0dbdd1ff-bf23-4306-bace-97f745800c13@intel.com>
+Date: Wed, 12 Nov 2025 11:39:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DD67C0CF-D330-4D40-B610-FD3EB7AA0218@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/21] x86/mm/asi: set up asi_nonsensitive_pgd
+To: Brendan Jackman <jackmanb@google.com>, Andy Lutomirski <luto@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
+ david@redhat.com, derkling@google.com, junaids@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
+ rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
+ yosry.ahmed@linux.dev
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
+ <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
+ <b0fb40f6-8baa-498f-bb88-50113cb80f53@intel.com>
+ <DD7W6FACMRPU.BXJCZU93UMVQ@google.com>
+ <9502454a-8065-4a65-9644-2b7fe0ec5f7f@intel.com>
+ <DD80BJMZM5EF.4V737FVJY4F3@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <DD80BJMZM5EF.4V737FVJY4F3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Trimming out stuff to get to the real questions:
-
-On Wed, Nov 12, 2025 at 11:12:22AM -0800, H. Peter Anvin wrote:
-> Things that I have identified, at least in my opinion:
+On 10/2/25 10:19, Brendan Jackman wrote:
+> On Thu Oct 2, 2025 at 4:14 PM UTC, Dave Hansen wrote:
+...>> What is the point of having a pgd if you can't put it in CR3? If you:
+>>
+>> 	write_cr3(asi_nonsensitive_pgd);
+>>
+>> you'll just triple fault because all kernel text is !_PAGE_PRESENT.
+>>
+>> The critical point is when 'asi_nonsensitive_pgd' is functional enough
+>> that it can be loaded into CR3 and handle a switch to the normal
+>> init_mm->pgd.
 > 
-> 1. Opening a device for configuration as opposed to data streaming; in the tty case that doesn't just improve the DTR# and RTS# issue but allows setserial, configuring line disciplines and so on.
-> 
-> As I have said, this is application-specific intent, which is why I strongly believe that it needs to be part of the open system call. I furthermore believe that it would have use cases beyond ttys and serial ports, which is why I'm proposing a new open flag as opposed to a sysfs attribute, which actually was my initial approach (yes, I have already prototyped some of this, and as referenced before there is an existing patchset that was never merged.)
+> Hm, are you saying that I should expand the scope of the patchset from
+> "set up the direct map" to "set up an ASI address space"? If so, yeah I
+> can do that, I don't think the patchset would get that much bigger. I
+> only left the other bits out because it feels weird to set up a whole
+> address space but never actually switch into it. Setting up the logic to
+> switch into it would make the patchset really big though.
 
-I think this is going to be the most difficult.  I don't remember why I
-rejected the old submission, but maybe it would have modified the
-existing behaviour?  A new open flag "O_DO_NOT_TOUCH_ANYTHING" might be
-the simplest?
+The patch set has to _do_ something, though. It's fine for a patch
+series to add code that then gets turned on at the end of the series.
+But, at the end of the series, it has to have something to show for it.
 
-> 2. Currently the setserial configurables are available in sysfs, but *only* for UARTs, whereas TIOC[GS]SERIAL is at least available to all serial devices. That code should presumably be hoisted into a higher layer; this shouldn't be too difficult.
+If the series is small *and* useful, all the better. But, if I have to
+choose between small or useful, it's always going to be useful.
 
-I agree, this shouldn't be hard, no reason to not do this.
+> Like I said in the cover letter, I could also always change tack:
+> we could instead start with all the address-space switching logic, but
+> just have the two address spaces be clones of each other. Then we could
+> come back and start poking holes in the ASI one for the second series. I
+> don't have a really strong opinion about the best place to start, but
+> I'll stick to my current course unless someone else does have a strong
+> opinion.
 
-> 3. The only way to determine the type of a tty driver is reading and parsing /proc/tty/drivers; that information is exported neither through ioctl nor sysfs. Exporting *that* through sysfs is probably the easiest of all the improvements.
-
-The "type" is interesting.  We keep adding new "types" of serial ports
-to the uapi list, and they don't really show up very well to userspace,
-as you say.  Adding this export to sysfs is fine with me, but we should
-make it a string somehow, and not just a random number like the current
-types are listed as, to give people a chance to keep track of this.
-
-So yes, this too should be done.
-
-> 4. There isn't a device-independent way to determine if a device is "real" (configured for hardware) or not without opening it and executing one of the termios ioctls like TCGETS (returns -EIO if there isn't anything behind it.) For a UART port it is possible to come up with an educated guess based on the aforementioned sysfs properties (does it have any kind of address associated with it?), but seriously, should stty -a /dev/ttyS0 really glitch RTS# and DTR# even though there is no intent of using the port for communication? 
-
-Determining "realness" is going to be hard I think (is a usb-serial
-device real or not?  Some are, some are not, but how do we even know?)
-Does a "real" uart mean that the device is real?  How do you define
-that?  What about virtual ones?  Modem chips that do have full line
-discipline support on USB connections?  There's a lot out there to deal
-with here and I think some "fake" ones do pass TCGETS calls just because
-they lie.)
-
-And addresses are only the "very old" method, many "real" PCI uarts
-don't have them, same for USB ones.
-
-And changing 'stty -a' is going to be hard, unless you want to use the
-new flag?
-
-But yes, making this more sane is always good, 2 of your things here
-should be pretty simple to knock up if someone wants to.  The others
-might be more difficult just due to backwards compatibility issues.
-
-thanks,
-
-greg k-h
+Yeah, but the end of the series has to have holes poked that are
+marginally useful for *SOMETHING*, at least if anyone wants it applied.
 
