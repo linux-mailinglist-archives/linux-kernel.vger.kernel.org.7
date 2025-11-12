@@ -1,276 +1,196 @@
-Return-Path: <linux-kernel+bounces-897468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE5DC52E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:07:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BE7C52E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E11A934C321
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225CA5000BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26063347BC7;
-	Wed, 12 Nov 2025 14:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE6C328636;
+	Wed, 12 Nov 2025 14:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itV1AiRM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BnLRB4F5";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nfE6lf8+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B734575F;
-	Wed, 12 Nov 2025 14:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34650289811
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958848; cv=none; b=k6xHHeoTb8YVXU75bHo0kVd3H03zPb/Hgf/Fiz8z7a3pI/hE/AkVjrTJKpPJzXm83PNGpG3SP7lIE8zwBzvHFTJO6r+f4PfT1cLgW+wmZBdwDg0u7X/vaLKtTCTXIf5h3UApdvXJlvQksa5fVweOUfSvZXtdJVCncy8ZcdWxHOs=
+	t=1762957277; cv=none; b=k+8ohqRLYtGFdE6hNt8iu6Q+KRbY4esbNpSXN2joIzPZo+BYYJIE1tPGiZaBd93rOpLYg4w3hxCiNMSWxay7q+Ovb+kNbobMo9gQmfjPabMnjchWqhjIWUa1ShvYQP4nh+oVG2U0qvxjrOmfmMvXuNPxF2ddEdh4KA1J5pAHgGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958848; c=relaxed/simple;
-	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RsM9idpJTjqVMPqVP92gnHCq+RiJS4XoIuTMfbpPrdWHbpfqwsdwSzcdq0xQa5KQk8odVdzc+tdyKrvNnHI0mAGkqfVr/qI4bivCfB+yXap/QLpjqAGCC1pfpYrOhEIOekjEgZRNA1Z14mYSkdN/+Xsec95JFwpHnQ5ppzttzXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itV1AiRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947FAC4CEF5;
-	Wed, 12 Nov 2025 14:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762958847;
-	bh=LGC+gPUi20dbwpDZ2iiKklnaCXgd8YE+RKxSMV7nTb4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=itV1AiRMd7y4y3qoxBClifgykBN9dX5H7xtjMIBkeXRP3xGyVaMjTXJJAN0gGrHsZ
-	 SgyGKheDoapWW5FXVi+DYMUm3y1rgkONtUqLRqgkyDwL3ARG6NMIWQn7gcE/46gFN4
-	 ABiR8sBoNyZIo1ywp5kx8xENwIlZ9W5rVgye1h2F9qeSbh2PYpdlQT/YLb5fUa276F
-	 xpUJUGUX9/+RochbyH65lbOusP/VHDJPgOTJetAosZanQwSCPntDezuM/aHGuPwzlm
-	 Twg42xIYipa7RVmrBvxsAIR48NnKJOFr5wOEVF1xvrb27fGIFpnYNQdeVpwQo1a5W1
-	 cf1+xmznQr+OA==
-Message-ID: <cb5e89380ea2f156e1fed63835c649d125c78fe1.camel@kernel.org>
-Subject: Re: [PATCH v5 03/14] VFS: tidy up do_unlinkat()
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner
-	 <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason	
- <clm@fb.com>, David Sterba <dsterba@suse.com>, David Howells
- <dhowells@redhat.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich	
- <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, Miklos Szeredi	
- <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, Olga
- Kornievskaia	 <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Namjae
- Jeon	 <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, Sergey
- Senozhatsky	 <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
- John Johansen	 <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, Stephen Smalley	 <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,  Mateusz Guzik <mjguzik@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger	
- <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, 	linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Date: Wed, 12 Nov 2025 09:47:23 -0500
-In-Reply-To: <20251106005333.956321-4-neilb@ownmail.net>
-References: <20251106005333.956321-1-neilb@ownmail.net>
-	 <20251106005333.956321-4-neilb@ownmail.net>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+	s=arc-20240116; t=1762957277; c=relaxed/simple;
+	bh=u3JhEMeaHqCCm3K2TgktQ2sf6pbkWpeo3IYBAWNLKUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tvWfsCb27zLNQpBKIL5WeROExeJ5OJyzfz3JjDCi+L3VonAMywBqMzLi9qgkfaY8+sBsLsduKVZZPAfW5r5b4X9LRl28zMfCYR+EXZmIfCfJZS5EADEfaFMl3n6EqgMNBFk21yq1858ULAMfDBIoSt4CwKIQI4LMZms2sDVCcQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BnLRB4F5; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nfE6lf8+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from pathway.suse.cz (unknown [10.100.208.146])
+	by smtp-out2.suse.de (Postfix) with ESMTP id E55921F807;
+	Wed, 12 Nov 2025 14:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762957274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqiSBpirJiJgacOo4S6qpog2Igj/FxV7fepY1Ud1yj0=;
+	b=BnLRB4F5kJvWwq0uNFeHowmv1KnJLRD/SadwOgmpAPdbqJwMwnI2r67nMU7639gySQO1fw
+	JaE3y0NsrSLvGGxVw9iHHz7i8Z+lbkGWc/CDpNdA3Gh0MkYEUAQPXr76+w/l+22E8RAm8m
+	7M67Qyji0EBagdLVxL6cWqvJYII5ebM=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762957273; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqiSBpirJiJgacOo4S6qpog2Igj/FxV7fepY1Ud1yj0=;
+	b=nfE6lf8+xSB8X6uMB6MAvfX9g5LM0PTktLSW/TjYc8aWLCrkOH2loOODKkGAZ7ffflRX/g
+	7JGH4bmjSV1stI5Nvw5xWQD+yt0coyQ5lnK9Q4yzEhFYwkTC8fOw+OPXGP7/DtyrDJG0+E
+	ynBOFl4UpXHJAr2iReFapL95pgRSQZY=
+From: Petr Mladek <pmladek@suse.com>
+To: Petr Pavlu <petr.pavlu@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v2 4/7] kallsyms: Cleanup code for appending the module buildid
+Date: Wed, 12 Nov 2025 15:20:00 +0100
+Message-ID: <20251112142003.182062-5-pmladek@suse.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251112142003.182062-1-pmladek@suse.com>
+References: <20251112142003.182062-1-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-5.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[atomlin.com,iogearbox.net,gmail.com,kernel.org,arm.com,google.com,vger.kernel.org,suse.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,pathway.suse.cz:helo];
+	R_RATELIMIT(0.00)[to_ip_from(RLw9bydq1j5bti46rxed9sjz7y)];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -5.30
+X-Spam-Level: 
 
-On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
-> From: NeilBrown <neil@brown.name>
->=20
-> The simplification of locking in the previous patch opens up some room
-> for tidying up do_unlinkat()
->=20
-> - change all "exit" labels to describe what will happen at the label.
-> - always goto an exit label on an error - unwrap the "if (!IS_ERR())" bra=
-nch.
-> - Move the "slashes" handing inline, but mark it as unlikely()
-> - simplify use of the "inode" variable - we no longer need to test for NU=
-LL.
->=20
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  fs/namei.c | 55 ++++++++++++++++++++++++++----------------------------
->  1 file changed, 26 insertions(+), 29 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 231e1ffd4b8d..93c5fce2d814 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4755,65 +4755,62 @@ int do_unlinkat(int dfd, struct filename *name)
->  	struct path path;
->  	struct qstr last;
->  	int type;
-> -	struct inode *inode =3D NULL;
-> +	struct inode *inode;
->  	struct inode *delegated_inode =3D NULL;
->  	unsigned int lookup_flags =3D 0;
->  retry:
->  	error =3D filename_parentat(dfd, name, lookup_flags, &path, &last, &typ=
-e);
->  	if (error)
-> -		goto exit1;
-> +		goto exit_putname;
-> =20
->  	error =3D -EISDIR;
->  	if (type !=3D LAST_NORM)
-> -		goto exit2;
-> +		goto exit_path_put;
-> =20
->  	error =3D mnt_want_write(path.mnt);
->  	if (error)
-> -		goto exit2;
-> +		goto exit_path_put;
->  retry_deleg:
->  	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
->  	error =3D PTR_ERR(dentry);
-> -	if (!IS_ERR(dentry)) {
-> +	if (IS_ERR(dentry))
-> +		goto exit_drop_write;
-> =20
-> -		/* Why not before? Because we want correct error value */
-> -		if (last.name[last.len])
-> -			goto slashes;
-> -		inode =3D dentry->d_inode;
-> -		ihold(inode);
-> -		error =3D security_path_unlink(&path, dentry);
-> -		if (error)
-> -			goto exit3;
-> -		error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
-> -				   dentry, &delegated_inode);
-> -exit3:
-> +	/* Why not before? Because we want correct error value */
-> +	if (unlikely(last.name[last.len])) {
-> +		if (d_is_dir(dentry))
-> +			error =3D -EISDIR;
-> +		else
-> +			error =3D -ENOTDIR;
->  		end_dirop(dentry);
-> +		goto exit_drop_write;
->  	}
-> -	if (inode)
-> -		iput(inode);	/* truncate the inode here */
-> -	inode =3D NULL;
-> +	inode =3D dentry->d_inode;
-> +	ihold(inode);
-> +	error =3D security_path_unlink(&path, dentry);
-> +	if (error)
-> +		goto exit_end_dirop;
-> +	error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
-> +			   dentry, &delegated_inode);
-> +exit_end_dirop:
-> +	end_dirop(dentry);
-> +	iput(inode);	/* truncate the inode here */
->  	if (delegated_inode) {
->  		error =3D break_deleg_wait(&delegated_inode);
->  		if (!error)
->  			goto retry_deleg;
->  	}
-> +exit_drop_write:
->  	mnt_drop_write(path.mnt);
-> -exit2:
-> +exit_path_put:
->  	path_put(&path);
->  	if (retry_estale(error, lookup_flags)) {
->  		lookup_flags |=3D LOOKUP_REVAL;
-> -		inode =3D NULL;
->  		goto retry;
->  	}
-> -exit1:
-> +exit_putname:
->  	putname(name);
->  	return error;
-> -
-> -slashes:
-> -	if (d_is_dir(dentry))
-> -		error =3D -EISDIR;
-> -	else
-> -		error =3D -ENOTDIR;
-> -	goto exit3;
->  }
-> =20
->  SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, =
-flag)
+Put the code for appending the optional "buildid" into a helper
+function, It makes __sprint_symbol() better readable.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Also print a warning when the "modname" is set and the "buildid" isn't.
+It might catch a situation when some lookup function in
+kallsyms_lookup_buildid() does not handle the "buildid".
+
+Use pr_*_once() to avoid an infinite recursion when the function
+is called from printk(). The recursion is rather theoretical but
+better be on the safe side.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/kallsyms.c | 42 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index ffb64eaa0505..f25b122397ce 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -432,6 +432,37 @@ int lookup_symbol_name(unsigned long addr, char *symname)
+ 	return lookup_module_symbol_name(addr, symname);
+ }
+ 
++#ifdef CONFIG_STACKTRACE_BUILD_ID
++
++static int append_buildid(char *buffer,  const char *modname,
++			  const unsigned char *buildid)
++{
++	if (!modname)
++		return 0;
++
++	if (!buildid) {
++		pr_warn_once("Undefined buildid for the module %s\n", modname);
++		return 0;
++	}
++
++	/* build ID should match length of sprintf */
++#ifdef CONFIG_MODULES
++	static_assert(sizeof(typeof_member(struct module, build_id)) == 20);
++#endif
++
++	return sprintf(buffer, " %20phN", buildid);
++}
++
++#else /* CONFIG_STACKTRACE_BUILD_ID */
++
++static int append_buildid(char *buffer,   const char *modname,
++			  const unsigned char *buildid)
++{
++	return 0;
++}
++
++#endif /* CONFIG_STACKTRACE_BUILD_ID */
++
+ /* Look up a kernel symbol and return it in a text buffer. */
+ static int __sprint_symbol(char *buffer, unsigned long address,
+ 			   int symbol_offset, int add_offset, int add_buildid)
+@@ -454,15 +485,8 @@ static int __sprint_symbol(char *buffer, unsigned long address,
+ 
+ 	if (modname) {
+ 		len += sprintf(buffer + len, " [%s", modname);
+-#if IS_ENABLED(CONFIG_STACKTRACE_BUILD_ID)
+-		if (add_buildid && buildid) {
+-			/* build ID should match length of sprintf */
+-#if IS_ENABLED(CONFIG_MODULES)
+-			static_assert(sizeof(typeof_member(struct module, build_id)) == 20);
+-#endif
+-			len += sprintf(buffer + len, " %20phN", buildid);
+-		}
+-#endif
++		if (add_buildid)
++			len += append_buildid(buffer + len, modname, buildid);
+ 		len += sprintf(buffer + len, "]");
+ 	}
+ 
+-- 
+2.51.1
+
 
