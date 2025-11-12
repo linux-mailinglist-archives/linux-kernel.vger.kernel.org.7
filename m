@@ -1,101 +1,44 @@
-Return-Path: <linux-kernel+bounces-896481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC3AC507C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:09:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999D7C507D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D9F34E52BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682221887A83
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B382D3231;
-	Wed, 12 Nov 2025 04:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVZld2PA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ekFg/j6a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AE92D3A9B;
+	Wed, 12 Nov 2025 04:12:05 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36B82C21F1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CE1239573;
+	Wed, 12 Nov 2025 04:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762920576; cv=none; b=RFyuok7ibICfb8O/j45FIaWf+0Ql7fxkLCCzzUuFSQgga55bHi9EWcM9+BS412v3cDV1Y5koEX83sQlQ4lmrYjWm6AO5+Kcu50CCACtzc3ijCMBdhEwRj1eXOwtbAf354v5C0hHCk+RTbUkcffOyS3H+8n9XwHCEnBglh3LAyYo=
+	t=1762920725; cv=none; b=RbJmGhL6+QSUwYXQeeR82VWaVTA/TawbW//B4o0lFV1B8AQQiIEazB5oGAyVwnmNqKoFqxLIFc7gOtOlHU1jHCLOs1TZtpE1I2FUcxaqKUspHml+iaoYgZznOD+VJ2XE5fy/QCacPWBARzoovgwKi7D91uKPvnO8jtYxMchEklM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762920576; c=relaxed/simple;
-	bh=9PW+A3JHWzURTlDXLHDmB0OKXZRnM2OGKf4qPL38i74=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=p22DTwIvQ1ojp7rSkuj6W9ij7NaOmFgChr3AeidVZwAbrealgCP9DOMc85E/isuHY371FJjrLRASvvXSZqg7i+AsopP0oitVViWCRpb6Mul+vBSuRTV8HQjiqBDW+K6tX8jgYy1NThDGcTT8ZAd64glCkGqfwV7VsCyTjQtCXtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVZld2PA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ekFg/j6a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762920573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jBULf+ZIkA9FqHKiIs1320k4feJF2I1rgP/b6d4F0Mk=;
-	b=iVZld2PAXjpRSlGTe0cH5HmVZ7v+UYe//tagccXLrsM8Le4IMe23vWbNtoFPhWZ1kY4cui
-	bjnNI8UlLVTXreSWMSXEYj1CPWRBFgbcmKjg5UIYP3ejJWBC02NT8hxCy3gf+uIezeIafV
-	UtyE/GiYSVJTfcGu+dr99GDHf+n9/HE=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-d6eXpE3AMB-ILyyG_JW-ow-1; Tue, 11 Nov 2025 23:09:31 -0500
-X-MC-Unique: d6eXpE3AMB-ILyyG_JW-ow-1
-X-Mimecast-MFC-AGG-ID: d6eXpE3AMB-ILyyG_JW-ow_1762920571
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ed74e6c468so5223311cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:09:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762920571; x=1763525371; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jBULf+ZIkA9FqHKiIs1320k4feJF2I1rgP/b6d4F0Mk=;
-        b=ekFg/j6aJfbuCI/fUdbBHYO8FmybPehHCL7m55Fnh0HjygoTnq+HTAe0eYnXO+75oz
-         Fc/b/tdXULJVMhXcohj3c9qQols4VKsA1uFCztCyQgeRvso/io1K3UYQOljc0E7lPLOC
-         a7MkjAXGg5R/2WA/oNYIs38rFTE2fgEU6SPP7l+txRfcjQccaIN3MMVprsaiGheYPSRw
-         2uSTJBPY6bHhz1IPfk0FC7zX37tPfX7h76Lkz4aggmGZbmos5zAqXRePPhu+9+HUHeRQ
-         8egx2jc37454HovImtru3UjyT1psiGVYihYQnxj2zGv7G+hS/9k9nQHJj9x/0KlEVR2A
-         g//g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762920571; x=1763525371;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBULf+ZIkA9FqHKiIs1320k4feJF2I1rgP/b6d4F0Mk=;
-        b=dyNLic2qpGSbNcknhvDMcJPUrm8A324/APwoGaVzjsFPmMbKWSvM7A30NQDM9I7dIF
-         bX2ww1KYY+i7XCELwUvVRnDprd+V2mA01+Pg6O6X6qM8Bh+m4tf3AXB/+zI3vB5d3DG9
-         VzYXMn8fl7DVQN0Opt7QAK9LfQqfKfNqS9toZtu/8UGIXr4WVv7vvHlRUjfnVxkbyO9b
-         DqhbKxtxKUohJUoNoIJrAmpX6ILUrYlxk9aDvU2UC4mMD2I2hH5smQl5EzI/KmGrMxrB
-         vN3jSGkMQYThDQr4Jy88mOV/uClgbO9VgMXbhDvBJXCVhghSDu/ylQgcuYJp3SiVNs3c
-         9LRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6IoxxZV3IPD31nUCG9L9uW7kT92yEpugAtPMqgqEE7xs9Ybm1tAjfOXf653ws1D4WEKn+9isFQAbCutw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5IrjuIBb6mOLsuIXQkQwpcOQIMYNp8Xu/hIZ6iJ23EvJVlU8T
-	b/KjIG9MOeI3s9N3UQW5+HADyGGoAM64lAbRQQ9lyB8PBItjzWJlhalToTf9ZqezwCIJgoZTHFO
-	Zp62f13/CvzEKPeM/H9nYpZ9Q80uEDGXiavWBij9yd/MELy5XrpSR7Xe97NyeDg3yTw==
-X-Gm-Gg: ASbGncv9XH7gX12xYzVcGbLTLP4rAVUzASxSwMxmoxKzG+poXihBmfXHBAAEzba+6Bo
-	D5zs+YdqtqI7EMK8dDkeO3m4VqEYtlXaYiOB/cYnMMRaRVuC0j6DKctf8f9aBvWTTE6MrNJW81+
-	nuXOihA5Zya0ZOltU1fCiLDNpblFvJLSRDvqIU+pWBmRiMGZw1NmajBPtFI7iZjF8zOtXo4Vlhn
-	EaWL9c/TiFT2CkXx3+X4lD7FcOatgYoe3LmR9qfC1fBYHZ5hGCXTX67E9kVzolKUkZmUPkJ6ynS
-	79wKTzQt2UEPfI/uehusnSWKF6FcgB0ffmlrrF5kTRPgLbaePrHcKQzJ3kEGBVlf7y1kDN7r4gx
-	Xkg3TuzR+3tPi6iRTCTH2AT3Q9JQvrxRqQA2BZCGEjQ9FWA==
-X-Received: by 2002:ac8:5a15:0:b0:4e8:ada0:450a with SMTP id d75a77b69052e-4eddbd774bamr18423741cf.45.1762920571007;
-        Tue, 11 Nov 2025 20:09:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPWTMesD++oG9Eb6d/7De7HTmZLuSnw0p9oUBYq3+RbK0SLKI1SdBODf1yz+ndvuVag3fpAg==
-X-Received: by 2002:ac8:5a15:0:b0:4e8:ada0:450a with SMTP id d75a77b69052e-4eddbd774bamr18423691cf.45.1762920570668;
-        Tue, 11 Nov 2025 20:09:30 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda563fbfcsm77229701cf.10.2025.11.11.20.09.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 20:09:30 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <b9dce00a-4728-4ac8-ae38-7f41114c7c81@redhat.com>
-Date: Tue, 11 Nov 2025 23:09:29 -0500
+	s=arc-20240116; t=1762920725; c=relaxed/simple;
+	bh=RxRAGYGYU5PFONAM3lzzTzxdGF7ioygfDYl3P/MNw3k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SCDHBzrO7TwSu1jU7XhJHKnQ/rOGXjl3u5gyxyNWdiIaxcEC6Pn/eLtB7OpQH3l24DMZ0mG+v0Q+QY0WXuUVYypqxyudLyvJnTbO2DI20SwhYOXjbzipBhnu7TibOJHa+YpZt2vkfv8vNmq8Mf6msmI+DE+xjVCfUM4rdi6UcTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5qj01TgXzYQts6;
+	Wed, 12 Nov 2025 12:11:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0AC651A08DC;
+	Wed, 12 Nov 2025 12:12:00 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgAHQUoPCRRpBKTHAQ--.28912S2;
+	Wed, 12 Nov 2025 12:11:59 +0800 (CST)
+Message-ID: <c5c4e977-9194-42c8-9045-0ed0ff16f5a5@huaweicloud.com>
+Date: Wed, 12 Nov 2025 12:11:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,71 +46,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
-To: Chen Ridong <chenridong@huaweicloud.com>,
- Sun Shaojie <sunshaojie@kylinos.cn>
-Cc: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, shuah@kernel.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20251112021120.248778-1-sunshaojie@kylinos.cn>
- <380567da-9079-4a4d-afae-42bde42d2a58@huaweicloud.com>
+Subject: Re: [PATCH RFC v2 00/22] cpuset: rework local partition logic
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <31b58b15-0b46-4eba-bd50-afc99203695a@huaweicloud.com>
 Content-Language: en-US
-In-Reply-To: <380567da-9079-4a4d-afae-42bde42d2a58@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <31b58b15-0b46-4eba-bd50-afc99203695a@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAHQUoPCRRpBKTHAQ--.28912S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45trWfCr48try7GFy3Arb_yoWrGF45pF
+	98Gayft34UJry5C3srJFs7Aw4FgwsrJFyUt3ZxZw1xJr12yw1vvFWIy395Za42gr98Ary8
+	ZFnFgrs7u3WUu3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 11/11/25 10:33 PM, Chen Ridong wrote:
->
-> On 2025/11/12 10:11, Sun Shaojie wrote:
-> Hello Shaojie,
->
->> Currently, when a non-exclusive cpuset's "cpuset.cpus" overlaps with a
->> partitioned sibling, the sibling's partition state becomes invalid.
->> However, this invalidation is often unnecessary.
->>
->> This can be observed in specific configuration sequences:
->>
->> Case 1: Partition created first, then non-exclusive cpuset overlaps
->>   #1> mkdir -p /sys/fs/cgroup/A1
->>   #2> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
->>   #3> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
->>   #4> mkdir -p /sys/fs/cgroup/B1
->>   #5> echo "0-3" > /sys/fs/cgroup/B1/cpuset.cpus
->>   // A1's partition becomes "root invalid" - this is unnecessary
->>
->> Case 2: Non-exclusive cpuset exists first, then partition created
->>   #1> mkdir -p /sys/fs/cgroup/B1
->>   #2> echo "0-1" > /sys/fs/cgroup/B1/cpuset.cpus
->>   #3> mkdir -p /sys/fs/cgroup/A1
->>   #4> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
->>   #5> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
->>   // A1's partition becomes "root invalid" - this is unnecessary
->>
->> In Case 1, the effective CPU mask of B1 can differ from its requested
->> mask. B1 can use CPUs 2-3 which don't overlap with A1's exclusive
->> CPUs (0-1), thus not violating A1's exclusivity requirement.
->>
->> In Case 2, B1 can inherit the effective CPUs from its parent, so there
->> is no need to invalidate A1's partition state.
->>
->> This patch relaxes the overlap check to only consider conflicts between
->> partitioned siblings, not between a partitioned cpuset and a regular
->> non-exclusive one.
->>
-> Does this rule have any negative impact on your products?
->
-> The CPUs specified by the user (including cpuset.cpus and cpuset.cpus.exclusive) can be treated as
-> the dedicated exclusive CPUs for the partition. For the cases you provided, both siblings can be
-> partitions. For example, in case 1, A1 can also be converted to a partition. If this rule is
-> relaxed, I don’t see any check for exclusive conflicts when A1 becomes a partition.
->
-> Additionally, I think we should preserve the CPU affinity as the user intends as much as possible.
 
-Where does the original patch sent to? I didn't see it.
 
-Anyway it is late for me. I will take a further look tomorrow.
+On 2025/11/3 19:18, Chen Ridong wrote:
+> 
+> 
+> On 2025/10/25 14:48, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> The current local partition implementation consolidates all operations
+>> (enable, disable, invalidate, and update) within the large
+>> update_parent_effective_cpumask() function, which exceeds 300 lines.
+>> This monolithic approach has become increasingly difficult to understand
+>> and maintain. Additionally, partition-related fields are updated in
+>> multiple locations, leading to redundant code and potential corner case
+>> oversights.
+>>
+>> This patch series refactors the local partition logic by separating
+>> operations into dedicated functions: local_partition_enable(),
+>> local_partition_disable(), and local_partition_update(), creating
+>> symmetry with the existing remote partition infrastructure.
+>>
+>> The series is organized as follows:
+>>
+>> 1. Fix a bug that isolcpus stat in root partition.
+>>
+>> 2. Infrastructure Preparation (Patches 2-3):
+>>    - Code cleanup and preparation for the refactoring work
+>>
+>> 3. Introduce partition operation helpers (Patches 4-6):
+>>    - Intoduce out partition_enable(), partition_disable(), and
+>>      partition_update() functions.
+>>
+>> 4. Use new helpers for remote partition (Patches 7-9)
+>>
+>> 5. Local Partition Implementation (Patches 10-13):
+>>    - Separate update_parent_effective_cpumask() into dedicated functions:
+>>      * local_partition_enable()
+>>      * local_partition_disable()
+>>      * local_partition_invalidate()
+>>      * local_partition_update()
+>>
+>> 6. Optimization and Cleanup (Patches 14-22):
+>>    - Remove redundant partition-related operations
+>>    - Additional optimizations based on the new architecture
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Added bugfix for root partition isolcpus at series start.
+>> - Completed helper function implementations when first introduced.
+>> - Split larger patches into smaller, more reviewable units.
+>> - Incorporated feedback from Longman.
+>>
+>> Chen Ridong (22):
+>>   cpuset: fix isolcpus stay in root when isolated partition changes to
+>>     root
+>>   cpuset: add early empty cpumask check in partition_xcpus_add/del
+>>   cpuset: generalize validate_partition() interface
+>>   cpuset: introduce partition_enable()
+>>   cpuset: introduce partition_disable()
+>>   cpuset: introduce partition_update()
+>>   cpuset: use partition_enable() for remote partition enablement
+>>   cpuset: use partition_disable() for remote partition disablement
+>>   cpuset: use partition_update() for remote partition update
+>>   cpuset: introduce local_partition_enable()
+>>   cpuset: introduce local_partition_disable()
+>>   cpuset: introduce local_partition_invalidate()
+>>   cpuset: introduce local_partition_update()
+>>   cpuset: remove update_parent_effective_cpumask
+>>   cpuset: remove redundant partition field updates
+>>   cpuset: simplify partition update logic for hotplug tasks
+>>   cpuset: unify local partition disable and invalidate
+>>   cpuset: use partition_disable for compute_partition_effective_cpumask
+>>   cpuset: use validate_local_partition in local_partition_enable
+>>   cpuset: introduce validate_remote_partition
+>>   cpuset: simplify update_prstate() function
+>>   cpuset: remove prs_err clear when notify_partition_change
+>>
+>>  kernel/cgroup/cpuset.c | 1000 +++++++++++++++++++---------------------
+>>  1 file changed, 463 insertions(+), 537 deletions(-)
+>>
+> 
+> Hi Longman,
+> 
+> I'd appreciate it if you could have a look at this series when you have a moment.
+> 
 
-Cheers,
-Longman
+Hi Longman,
+
+Could you kindly take a look at this series when you have a moment?
+I'd appreciate any feedback you might have, and I’ll update the series accordingly.
+
+-- 
+Best regards,
+Ridong
 
 
