@@ -1,229 +1,138 @@
-Return-Path: <linux-kernel+bounces-896705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95F6C51034
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:52:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA2DC5104C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4341896FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:52:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8A2A4EC013
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CF02F0681;
-	Wed, 12 Nov 2025 07:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3E22D9EDD;
+	Wed, 12 Nov 2025 07:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xvGcVPOt"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012056.outbound.protection.outlook.com [52.101.43.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JGwKsVaH"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA20C1E492A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933919; cv=fail; b=GLhBkWpkkj9fl1RRBrImDRFe1j+NtegvclCZ1UyvfNK8CcY4yMgRTti2eaOYNO4Vsl10KGxi6SreexnOUtTeFzh3qxmMQ32wVueGVdzQS5Z08xdf1sQtf4rddUfBmxCRpMROFVCnnAPjsqDtBnFqvyKVnMlqfvv+8nbMollDwgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933919; c=relaxed/simple;
-	bh=Gp3Ve3/y4TH6jOv7nlHXDPAtodn2C69Kjm974cA8HmQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hYg+p5mg/Q9q8pbayqEQzNgro5pHrkgT7v+cSIEHse1m02L9DlLe2k7DZ8sEZt9ci4JmfSAKhSzLYVd5v6h7B+JyFh1EurAUadFN0tAdxUYsAr/Mn5hdmhlcVsTIo2Vw6j2LCH3uQ9lC6s0r5rt3WoiMF3lI7VWrsMK8mePxD8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xvGcVPOt; arc=fail smtp.client-ip=52.101.43.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lWuAqhgQgAw8lYMr/b9VyYN98w1ox6y85SsEL39kqpNGXDeZ8uHq4qryGcP0FSx0cP0YRpZ7DZ//2bcCovBvD04IETe5qjiRmaPOnEBbDUXrQi3BaDSzCpeiaPi3hhBUddXmhcV+JFZ6bJq+vW9Yr4FXq2ZfUQPabqaay51E6lqzeTM5CGEtrXFd795kjDCgXk9nhRnmm2FqzdBL4WuGh4x+Lva9+0VCC8hlsH1GsIDWmGrQBBBq9MsDTirYLKZlZtey+l0O4z+TiejwWswTSeDREO0cDng24o5gNbR8LoDN075rk/Y+xVzboRZFoT61uZ3wpPvrODPQdC3rUyNsZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZ8ZXd2L8ch/2ZCm0u7EeWmsvqVHah5l2CR6xMBIbaI=;
- b=jaGrDr7jigOxsG0+k9sbhWrsnxXf9r2yzS54fkbX+3HcuhBHujNKP4tmRrB3flgYsHbxEKcqvx/9n5zw2FaJRcfzkQ8K3B2YLcqmQ4qrF+kVPRJHQnew5+fyB/1iK3PkNRQVJ3TnFpCfyEBx6qMrLOqE+qf/JvfyvVl/Xl+LxgY/HM5qEv39w+syUgdyP9I2QP2LRYzxdM+/Yz5HCZDKfzbcpqCOZ/9xhNjAJI/Y2lKCBK9t3dhZIlwh3gVLRWYSafDVISlwObs7pdahVDw73kXoN8CLKKBay6+Gv9342+p0AmoF25MPJsCnLrAc4/Ir4700zwsYvq9ji5No3Mwbdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XZ8ZXd2L8ch/2ZCm0u7EeWmsvqVHah5l2CR6xMBIbaI=;
- b=xvGcVPOtTgOaR6iWJ0xbV+unrdKrC49ttXpccB45g1a5QMR3cqIKH26Bkl2/UnX5/SCaDVsLQbckniseLFApcK5DvcJlhKT7GMcgzi+MRWRRmJnPRi46tRpKXsm7t/5G2VbDse1gQXDFMc+cXY5h9mehFLeAnwIRHnis5L1Vu5o=
-Received: from MW4PR03CA0279.namprd03.prod.outlook.com (2603:10b6:303:b5::14)
- by SJ2PR12MB8883.namprd12.prod.outlook.com (2603:10b6:a03:538::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 07:51:54 +0000
-Received: from MWH0EPF000A6731.namprd04.prod.outlook.com
- (2603:10b6:303:b5:cafe::c0) by MW4PR03CA0279.outlook.office365.com
- (2603:10b6:303:b5::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Wed,
- 12 Nov 2025 07:51:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000A6731.mail.protection.outlook.com (10.167.249.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 07:51:53 +0000
-Received: from honglei-remote.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 11 Nov
- 2025 23:51:49 -0800
-From: Honglei Huang <honglei1.huang@amd.com>
-To: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>,
-	<Ray.Huang@amd.com>
-CC: Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
-	<olvaffe@gmail.com>, <dri-devel@lists.freedesktop.org>,
-	<virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Honglei
- Huang" <Honglei1.Huang@amd.com>
-Subject: [PATCH v3 0/6] virtio-gpu: Add userptr support for compute workloads
-Date: Wed, 12 Nov 2025 15:51:35 +0800
-Message-ID: <20251112075135.3719490-1-honglei1.huang@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4AB1E492A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762933934; cv=none; b=OtY5no8Fe7dWpmaxnVZ1yipGESlyLudEywg/Y79IFFRdnU8GPXEeduZ4dTwwAFZPvdunO0JcZELKP19cQQrdvAX2aQkHpqEo6zYHui9aHuQTD1jZGOecFD8uVXzIPMTmO4Ll2KTJtQSZ/hWeh7cen1WAsPe7+7Qh0GXY223LMjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762933934; c=relaxed/simple;
+	bh=PI6ZGWyo084vtAmcwr3XK4acwTrj1OVP/mypm1sK568=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QH4ANWMoDyXZ1gfTSyTt0vJBBa94IZefOY2+dyRR8dUkOVqtHprYpNbgckzABwPyjxVVKCHNsLA4EtQzO1LBMbRxy7tR4NhaqGcyIDIdiAsoL8bHfTGKH2eETrtPEx+/78kYBE4O9GXuzuHWW/6RLaVxaTKfXNo4kixjCvCrmdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JGwKsVaH; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640aaa89697so633071a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:52:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762933930; x=1763538730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=baF77Nd6PddrT+NcaQcnWaJHYcsWM5/03L4b2UgZmEs=;
+        b=JGwKsVaHr8J3u8f5yM34xz/z8I/lHfkBPaYAZw0pV1K7/gIreV8H31BSZwAZfUpuLt
+         82gmiOm4YXWwNV9/GzKQZxn4JtsNt3da7H5Ea6H/2BLCDXEXDG6UnCXwSUpSVZiMSy/f
+         tFY4hfutCH4ZCU/dvvHNXxJdhgk1Ti1yvb8WVPlurWwApCeJqvNWy4apz3WwtGa+buWC
+         hKKFAFAuiDNASaA4QwTeSm02zC5LhHtL0d3WPW126LkZTyLldCFGvNzKER8PjTY5K8OI
+         xTEouHlEqwXXtFhNrM80CoFN9ZHGu0U7+HnlCA/GjXU2VDKqfx28yzq9q/VGhc2tbxFe
+         o1Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762933930; x=1763538730;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=baF77Nd6PddrT+NcaQcnWaJHYcsWM5/03L4b2UgZmEs=;
+        b=DUHN9/F05gxK4Xa0c29J2Pd9dYY+khT0INDUap0rwYxNs+1HPxDL48pqY0y7VKxMFe
+         CpELlQ030Q5MLa5UbUHmxk2o1a+IsGwp9Scx3jpok0JbshnvAj5iJuSZPuCiIifNfmEa
+         HmnMMdeXq88151leUvIj7edk2AeAtjCLTwdgWrYkWcECZoNfiqvm3e7NWqDNRH7MPK+C
+         vB0dKs0QOSoRszOLgOC7iIMT5Gx/tLkjCX2Xaqs2nZ45QjYy3HtX8I62daHYjB7jRmR7
+         682jCM+YAlOqgaXUTzZYPTOvuGqJd71rLo42oN38foDRc3JmSnRNaQmrAeBukBM5XIpq
+         ZtGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjZhMOcu5MFQwY2DSIYq6Um3ZGEcOHK8EzfC3di100Ix/Z2U/MdGqXuvy6wp6EWlbHGeGG68hTCWJSzzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI9ezWNmhQtGAw0F/CzwK0tdBxRVKhdVHCzQNnDRFdsRTEAQHY
+	yXf6ZAaFGkSRLyY6S6V94TAsKAbupe/OvMoWLmCE+q7SDW+QHS3VS/clJ+79nM7C+sM=
+X-Gm-Gg: ASbGncuyFWxePo4+3xVimuXJIvIUvpWeul5TRDSv8DRuqiu8JdhfaWbf6+svuycVas2
+	xbc1Vs5RY2d25JLJdA6o9hvNRjg38kvh/vOhUb25SQB40+PqzeYRHU391uM8hgaXmEpf7S/STIJ
+	K75Cuo/7LYuR2LJcHpr7TyaaBtqEENvJsCVJyHxjCFxJU/kDvq/9qmtPaZjL4jiuGVZowXUhwd2
+	1bp9/OBNXJ7HWOs/SVeVYQ0CpXsv4VOa45zSDlG1MVZ9bj4TauJdjRGiNyOXsMmAuH8d1gJQblq
+	VS4TTnMWNRvxYlvLPyar0oajq4fon7krKkmsqnWe4beC6W+Ga76zcFZS9U+P7q3/6RyRd4OfqaV
+	Q8TpogSrBpytPYprylgZxtLegy+NwGgfT8X1D6M1WHvQ35AmhTk6ETwG7dRsdBDPbEMiLZAnI/1
+	vtECw/lJ+4+6Actg==
+X-Google-Smtp-Source: AGHT+IHrUFgBXB0mlhlDx5ulVZ/CWC4rg/lpc+ghJAkmKWSBb8GGXulAMnQrIW2KVp+058faH6NYGw==
+X-Received: by 2002:a05:6402:218c:20b0:640:93b2:fd07 with SMTP id 4fb4d7f45d1cf-6431a579409mr1286553a12.33.1762933930379;
+        Tue, 11 Nov 2025 23:52:10 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6415d91f486sm10653900a12.22.2025.11.11.23.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 23:52:10 -0800 (PST)
+Date: Wed, 12 Nov 2025 08:52:06 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 14/23] mm: allow specifying custom oom constraint for
+ BPF triggers
+Message-ID: <aRQ8pu_57IeA_Jn_@tiehlicka>
+References: <20251027232206.473085-1-roman.gushchin@linux.dev>
+ <20251027232206.473085-4-roman.gushchin@linux.dev>
+ <aRGw6sSyoJiyXb8i@tiehlicka>
+ <871pm4peeb.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6731:EE_|SJ2PR12MB8883:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6e9fc99-f74e-4a72-8e3f-08de21c058ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+2BWFQ3amlIf2qGtKtN8FCXtrpagt+ckKi5Yec4C7fBCpGkdzkyjgTiput0P?=
- =?us-ascii?Q?jhNCs+klTCT4E6KyLVCZOX391QIqfSlfZVuei0ZC5LH/rgDQgJw7+yDBhvj5?=
- =?us-ascii?Q?LK5/YP/O7ncKEzfoPsX486UvhJqUeqiYBpEyjpb9ubtHIoeAKfc83JVWrxaH?=
- =?us-ascii?Q?9+zMrOxYRP7lEDxSPfcazyTwNEq8ClC3kxVpXOCOby8435FPV7iqbiaipqrx?=
- =?us-ascii?Q?kC45EV8qomsEJk0XUVwe/DeVzn8D6rWxLHamrIQQVppWkt/VxYwa7XusAE0f?=
- =?us-ascii?Q?bBJXr9REqJW/S8gZRTfx38lJOpu1KauoBSvITJblyqO5vCqWHbI62nnLb+X1?=
- =?us-ascii?Q?CYWjbIvlExT+zAC9ZYN8cweHAsuwRmoA9A/AgYD5t8W2wvFO/exixxy50gun?=
- =?us-ascii?Q?pPXJOMjYrulrj1E8eeoP6O1Ts7Xs2oNAZrFVZ2bQgfZZ/nGmGkYW8lvRoJvw?=
- =?us-ascii?Q?G3z8/DTnqv8OVD0De3zLme9CVmbYgPRB5E/qCYhk7uhUHiPEs4zMIeh9/j+B?=
- =?us-ascii?Q?IJZcjRk/pmy3GQLwrEdfFq6qSBnf+7Ej7Hm1bqrcvSjQJlrZshRzlrvJ+iJP?=
- =?us-ascii?Q?cP14jiaWt8aSvbUoI94KX7AfI1DTUnTQUqKcArswRmBiNrVTrJc8gTMfFh9z?=
- =?us-ascii?Q?9/viG8XSBbdlbqLCHnkepgKQ1CAEz/pUuHQ1rVtgXPtQD4ZxNpyjdNFRzN0M?=
- =?us-ascii?Q?a0Ket3rwsRNZD0+mXvc7syZbucBcwU1qPgnZRvM/2PcrvDuRalXyZv/kdOn6?=
- =?us-ascii?Q?6rXcIfug3fFmVbN+i1Rrx/rKBWR30MfI06oueCao/uSuvyCbnwhlwbuwJI1a?=
- =?us-ascii?Q?861poWNa0/GzZu0unfmn8AMq+NFZLQ8Tch8B/ky7uEe8in+VddHAyY09Wt0s?=
- =?us-ascii?Q?6JE/bGBpYMoHoHcwwz5VdvH/fiWcngpPxNVIl447Gozf1tsa6o/+WrNmMZ8F?=
- =?us-ascii?Q?NnOcBQQdgIS3khyTki8JojsMBJAuqqo8SNzuYXU5UIH5XbXjq7I27PQIle0m?=
- =?us-ascii?Q?o30K81AovFKcndETnqReAsBWXW1pX5P6cgqZBgZQW57FQ8Qxc4W7mkAb7lBk?=
- =?us-ascii?Q?JkVtpGUH4AfMlh4d34nozm9i9zcq9BHMhtn5zjPVfW8O8sedxItbUGIOhPZJ?=
- =?us-ascii?Q?NPuF3seG55KTJydpRgIQ3BkU4rQzQDZUedboAqbTkqgXYqqV6l81l2/SSA1O?=
- =?us-ascii?Q?SNmV1MIudPuAlIEYQGKaO5PX1nFTlRbN1pkJuemhkdI6+8ErYDCPKI3roGNt?=
- =?us-ascii?Q?cCXk8vK2x36ZrFBV7AM8Jyf0dkNt22Z0ETIJoK3Nz+ms+k6VdBkGUxBaQrmx?=
- =?us-ascii?Q?prNkgFIbyPJpzwhB4gBqfrm8RzECriYcyS7hclbls2q/rtDpiV9GCBeKOQC2?=
- =?us-ascii?Q?5Jd9YFyD0NyBBwuOROVrujabVSF8h/5P4Sja+MbPep5o+Sx3UspGO8k1+30N?=
- =?us-ascii?Q?ntgACi+THnjiPwAXo+r0yImUBvLvYX2Z7K64CNx4YVMIhNVggpSR2J4jbeEt?=
- =?us-ascii?Q?Ke5CnqrTyHnyo7xdydj01rhqlOC78UxE0DbjOJFa+T1sdB7TbE57wke+s0+c?=
- =?us-ascii?Q?dt5i8FjIMm+PgSigfdY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 07:51:53.7125
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6e9fc99-f74e-4a72-8e3f-08de21c058ae
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6731.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8883
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871pm4peeb.fsf@linux.dev>
 
-From: Honglei Huang <Honglei1.Huang@amd.com>
+On Tue 11-11-25 11:17:48, Roman Gushchin wrote:
+> Michal Hocko <mhocko@suse.com> writes:
+> 
+> > On Mon 27-10-25 16:21:57, Roman Gushchin wrote:
+> >> Currently there is a hard-coded list of possible oom constraints:
+> >> NONE, CPUSET, MEMORY_POLICY & MEMCG. Add a new one: CONSTRAINT_BPF.
+> >> Also, add an ability to specify a custom constraint name
+> >> when calling bpf_out_of_memory(). If an empty string is passed
+> >> as an argument, CONSTRAINT_BPF is displayed.
+> >
+> > Constrain is meant to define the scope of the oom handler but to me it
+> > seems like you want to specify the oom handler and (ab)using scope for
+> > that. In other words it still makes sense to distinguesh memcg, global,
+> > mempolicy wide OOMs with global vs. bpf handler, right?
+> 
+> I use the word "constraint" as the "reason" why an OOM was declared (in
+> other words which constraint was violated). And memcg vs global define
+> the scope. Right now the only way to trigger a memcg oom is to exceed
+> the memory.max limit. But with bpf oom there will others, e.g. exceed a
+> certain PSI threshold. So you can have different constraints violated
+> within the same scope.
 
-Hello,
-
-This series adds virtio-gpu userptr support to enable ROCm/OpenCL native
-context for compute workloads. The userptr feature allows the host to
-directly access guest userspace memory without memcpy overhead, which is
-essential for GPU compute performance.
-
-The userptr implementation provides buffer-based zero-copy memory access
-rather than SVM (Shared Virtual Memory). This approach pins guest userspace
-pages and exposes them to the host via scatter-gather tables, enabling
-efficient compute operations while maintaining memory safety.
-
-Key features:
-- Zero-copy memory access between guest userspace and host GPU
-- Read-only and read-write userptr support
-- Runtime feature detection via VIRTGPU_PARAM_RESOURCE_USERPTR
-- HSAKMT context support for ROCm/HSA stack integration
-- Proper page lifecycle management with FOLL_LONGTERM pinning
-
-Patches overview:
-1. Add HSAKMT context capset for compute workloads
-2. Add virtio-gpu API definitions for userptr blob resources
-3. Extend DRM UAPI with comprehensive userptr support
-4. Add feature probing and capability advertisement
-5. Implement core userptr functionality with page management
-6. Integrate userptr into blob resource creation path
-
-V3 improvements over V2:
-- Simplified implementation by removing interval tree management
-- Better patch organization with clear functional separation
-- Improved UAPI documentation with detailed field descriptions
-- Enhanced error handling and resource cleanup
-- Removed complex resource deduplication logic for maintainability
-- Added runtime feature detection parameter
-- Fixed memory management issues and improved code quality
-
-Performance: In popular compute benchmarks, this implementation achieves
-approximately 70% efficiency compared to bare metal OpenCL performance on
-AMD V2000 hardware, achieves 92% efficiency on AMD W7900 hardware.
-
-Testing: Verified with ROCm stack and OpenCL applications in VIRTIO virtualized
-environments.
-- Full OPENCL CTS tests passed on ROCm 5.7.0 in V2000 platform.
-- Near 70% percentage of OPENCL CTS tests passed on ROCm 7.0 W7900 platform.
-- 50% HIP catch tests passed on ROCm 7.0 W7900 platform.
-- Some AI applications enabled on ROCm 7.0 W7900 platform.
-
-
-V3 changes:
-    - Split into focused patches for easier review
-    - Removed complex interval tree userptr management 
-    - Simplified resource creation without deduplication
-    - Added VIRTGPU_PARAM_RESOURCE_USERPTR for feature detection
-    - Improved UAPI documentation and error handling
-    - Enhanced code quality with proper cleanup paths
-    - Removed MMU notifier dependencies for simplicity
-    - Fixed resource lifecycle management issues
-
-Honglei Huang (6):
-  virtio-gpu api: add HSAKMT context
-  virtio-gpu api: add blob userptr resource
-  drm/virtgpu api: add blob userptr resource
-  drm/virtio: implement userptr: probe for the feature
-  drm/virtio: implement userptr support for zero-copy memory access
-  drm/virtio: advertise base userptr feature to userspace
-
- drivers/gpu/drm/virtio/Makefile          |   3 +-
- drivers/gpu/drm/virtio/virtgpu_debugfs.c |   1 +
- drivers/gpu/drm/virtio/virtgpu_drv.c     |   1 +
- drivers/gpu/drm/virtio/virtgpu_drv.h     |  34 ++++
- drivers/gpu/drm/virtio/virtgpu_ioctl.c   |  14 +-
- drivers/gpu/drm/virtio/virtgpu_kms.c     |   8 +-
- drivers/gpu/drm/virtio/virtgpu_object.c  |   7 +-
- drivers/gpu/drm/virtio/virtgpu_userptr.c | 231 +++++++++++++++++++++++
- include/uapi/drm/virtgpu_drm.h           |  10 +
- include/uapi/linux/virtio_gpu.h          |   7 +
- 10 files changed, 310 insertions(+), 6 deletions(-)
- create mode 100644 drivers/gpu/drm/virtio/virtgpu_userptr.c
+Please use a different placeholder for that. Current constrains have a
+well defined semantic. They are not claiming why the OOM happened but
+what is the scope of the oom action (domain if you will). The specific
+handler has a sufficient knowledge to explain why the OOM killing is
+happening and on which domain/scope/constrain.
 
 -- 
-2.34.1
-
+Michal Hocko
+SUSE Labs
 
