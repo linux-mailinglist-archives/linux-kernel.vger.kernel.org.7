@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-896548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942E1C50A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4BCC50A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782863B495C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1302C3B5466
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ADD2DA75C;
-	Wed, 12 Nov 2025 05:53:45 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388DB283FC3;
-	Wed, 12 Nov 2025 05:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649B32DC348;
+	Wed, 12 Nov 2025 05:54:01 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404251B87C9;
+	Wed, 12 Nov 2025 05:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762926825; cv=none; b=YdfMeuav+tOosH/65K3D5EB7l6ACIS0og9HjSrKXkraYAsihNPlTbHgEW7M62zMSI65F1caxtQ/Hnkjn9sqkQlxbbrHqgLRrR71O9IOnj6jNN4ILAxjgpEQsKrBZt1Z8J8O1HmMaTU7g/IZE6Dxc4lftLXpWbIUzwtRFcLhX/yQ=
+	t=1762926840; cv=none; b=l06IgQh6LNEG8sYggVnGmYPCXpUjS5cClbnOZa22boaLmVhPnWC32+hehD+gCnbz9lv/Y0aNDdlURnOaf3r3UF/5w/EqVkxOTXaLW0Q6Qv2uv65lX52rtY9UBoz1bbrFwH/79uUi7GBBgMCWmLkqVEHJPH9+WgCaNxOel+13J2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762926825; c=relaxed/simple;
-	bh=B21G6fkjO6d0w0kUyre4N4ashMoTQh6jMFPdYh4RKLs=;
+	s=arc-20240116; t=1762926840; c=relaxed/simple;
+	bh=mpKfH50UFIITfeGDyX2X7T04uvd5DnCxEV+zyvEHLN4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MZhb4JfE9dXyH7C0/WCHkSADjc30R+PEN0MlAIJwiVZma6VHNCCi0l9nmHYvTX0UBtTsTJxGlFBGyoRmyohtN6wCZDJD/6Epe4sFMi8pB2edqQtTaYABIho9m+zosZyd2D6LACFHX1OFgmDvHJo+HXCL0+qX86sKjloHRjq8xGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+	 MIME-Version; b=sz4UKr+SORtBTIKlUJMm3QjdkwALIFotNE4V+fRYPy91Bs/MrtiC3Vz3yxPLhIvGwNlD6iwD/Xu5C3ccz5J8VpR4ZAZS9bP06/ohYqyCNDb1tn5zHuEcjh/G9YRh1GhWh/qS/tMpYyqOphyevakwlsxLGYiNvDns5ZsVQMvZcws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
 Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
-	by app1 (Coremail) with SMTP id TAJkCgBXUGjTIBRpFOx6AA--.28497S4;
-	Wed, 12 Nov 2025 13:53:25 +0800 (CST)
+	by app1 (Coremail) with SMTP id TAJkCgBHQmrsIBRpGex6AA--.27212S4;
+	Wed, 12 Nov 2025 13:53:50 +0800 (CST)
 From: caohang@eswincomputing.com
 To: gregkh@linuxfoundation.org,
 	robh@kernel.org,
@@ -44,9 +44,9 @@ Cc: ningyu@eswincomputing.com,
 	pinkesh.vaghela@einfochips.com,
 	Hang Cao <caohang@eswincomputing.com>,
 	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v8 1/2] dt-bindings: usb: Add ESWIN EIC7700 USB controller
-Date: Wed, 12 Nov 2025 13:53:21 +0800
-Message-ID: <20251112055321.1638-1-caohang@eswincomputing.com>
+Subject: [PATCH v8 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
+Date: Wed, 12 Nov 2025 13:53:45 +0800
+Message-ID: <20251112055346.1655-1-caohang@eswincomputing.com>
 X-Mailer: git-send-email 2.45.1.windows.1
 In-Reply-To: <20251112055230.1609-1-caohang@eswincomputing.com>
 References: <20251112055230.1609-1-caohang@eswincomputing.com>
@@ -57,138 +57,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgBXUGjTIBRpFOx6AA--.28497S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4UCFW3Ar4rAr4kur17Wrg_yoW5WryDpa
-	97GayDGr4fXr1fWa18KF10kFn3J3Z3CF10krZ7Ja17tr9Yga4Fqw4akFy5Wa4UCr1xZrW5
-	WFWY934Sy3y7ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:TAJkCgBHQmrsIBRpGex6AA--.27212S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFy8Xw1UXFW5Xr1UGw13twb_yoWrtFW8pa
+	1q9a4YkrZ5GFs3Ka9ay3WkAF13KrsrCry5tryxC3Z29r1Dt34UGFyvga4FqF95Gr97XFy5
+	Gw4kKFy8uF47X3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
 	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
 	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
 	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
 	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
 	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
 	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
 	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
 	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXJ5wUUUUU=
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHCJQUUUUU=
 X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
 
 From: Hang Cao <caohang@eswincomputing.com>
 
-Add Device Tree binding documentation for the ESWIN EIC7700
-usb controller module.
+The EIC7700 instantiates two USB 3.0 DWC3 IPs, each of which is backward
+compatible with USB interfaces. It supports Super-speed (5Gb/s), DRD mode,
+and compatible with xHCI 1.1, etc. Each of instances supports 16 endpoints
+in device's mode and max 64 devices in host's mode.
 
+This module needs to interact with the NOC via the AXI master bus, thus
+requiring some HSP configuration operations to achieve this. Ops include
+bus filter, pm signal or status to usb bus and so on.
+
+Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
 Signed-off-by: Hang Cao <caohang@eswincomputing.com>
 ---
- .../bindings/usb/eswin,eic7700-usb.yaml       | 94 +++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
+ drivers/usb/dwc3/dwc3-generic-plat.c | 71 +++++++++++++++++++++++++---
+ 1 file changed, 64 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-new file mode 100644
-index 000000000000..41c3b1b98991
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/eswin,eic7700-usb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
+index e869c7de7bc8..e846844e0023 100644
+--- a/drivers/usb/dwc3/dwc3-generic-plat.c
++++ b/drivers/usb/dwc3/dwc3-generic-plat.c
+@@ -10,8 +10,16 @@
+ #include <linux/clk.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
+ #include "glue.h"
+
++#define EIC7700_HSP_BUS_FILTER_EN	BIT(0)
++#define EIC7700_HSP_BUS_CLKEN_GM	BIT(9)
++#define EIC7700_HSP_BUS_CLKEN_GS	BIT(16)
++#define EIC7700_HSP_AXI_LP_XM_CSYSREQ	BIT(0)
++#define EIC7700_HSP_AXI_LP_XS_CSYSREQ	BIT(16)
 +
-+title: ESWIN EIC7700 SoC Usb Controller
+ struct dwc3_generic {
+ 	struct device		*dev;
+ 	struct dwc3		dwc;
+@@ -20,6 +28,11 @@ struct dwc3_generic {
+ 	struct reset_control	*resets;
+ };
+
++struct dwc3_generic_config {
++	int (*init)(struct dwc3_generic *dwc3g);
++	struct dwc3_properties properties;
++};
 +
-+maintainers:
-+  - Wei Yang <yangwei1@eswincomputing.com>
-+  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-+  - Hang Cao <caohang@eswincomputing.com>
+ #define to_dwc3_generic(d) container_of((d), struct dwc3_generic, dwc)
+
+ static void dwc3_generic_reset_control_assert(void *data)
+@@ -27,9 +40,38 @@ static void dwc3_generic_reset_control_assert(void *data)
+ 	reset_control_assert(data);
+ }
+
++static int dwc3_eic7700_init(struct dwc3_generic *dwc3g)
++{
++	struct device *dev = dwc3g->dev;
++	struct regmap *regmap;
++	u32 hsp_usb_axi_lp;
++	u32 hsp_usb_bus;
++	u32 args[2];
++	u32 val;
 +
-+description:
-+  The Usb controller on EIC7700 SoC.
++	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
++						      "eswin,hsp-sp-csr",
++						      ARRAY_SIZE(args), args);
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "No hsp-sp-csr phandle specified\n");
++		return PTR_ERR(regmap);
++	}
 +
-+allOf:
-+  - $ref: snps,dwc3-common.yaml#
++	hsp_usb_bus       = args[0];
++	hsp_usb_axi_lp    = args[1];
 +
-+properties:
-+  compatible:
-+    const: eswin,eic7700-dwc3
++	regmap_read(regmap, hsp_usb_bus, &val);
++	regmap_write(regmap, hsp_usb_bus, val | EIC7700_HSP_BUS_FILTER_EN |
++		     EIC7700_HSP_BUS_CLKEN_GM | EIC7700_HSP_BUS_CLKEN_GS);
 +
-+  reg:
-+    maxItems: 1
++	regmap_write(regmap, hsp_usb_axi_lp, EIC7700_HSP_AXI_LP_XM_CSYSREQ |
++		     EIC7700_HSP_AXI_LP_XS_CSYSREQ);
++	return 0;
++}
 +
-+  interrupts:
-+    maxItems: 1
+ static int dwc3_generic_probe(struct platform_device *pdev)
+ {
+-	const struct dwc3_properties *properties;
++	const struct dwc3_generic_config *plat_config;
+ 	struct dwc3_probe_data probe_data = {};
+ 	struct device *dev = &pdev->dev;
+ 	struct dwc3_generic *dwc3g;
+@@ -77,12 +119,21 @@ static int dwc3_generic_probe(struct platform_device *pdev)
+ 	probe_data.res = res;
+ 	probe_data.ignore_clocks_and_resets = true;
+
+-	properties = of_device_get_match_data(dev);
+-	if (properties)
+-		probe_data.properties = *properties;
+-	else
++	plat_config = of_device_get_match_data(dev);
++	if (!plat_config) {
+ 		probe_data.properties = DWC3_DEFAULT_PROPERTIES;
++		goto core_probe;
++	}
+
++	probe_data.properties = plat_config->properties;
++	if (plat_config->init) {
++		ret = plat_config->init(dwc3g);
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "failed to init platform\n");
++	}
 +
-+  interrupt-names:
-+    items:
-+      - const: peripheral
++core_probe:
+ 	ret = dwc3_core_probe(&probe_data);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "failed to register DWC3 Core\n");
+@@ -150,13 +201,19 @@ static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
+ 		       dwc3_generic_runtime_idle)
+ };
+
+-static const struct dwc3_properties fsl_ls1028_dwc3 = {
+-	.gsbuscfg0_reqinfo = 0x2222,
++static const struct dwc3_generic_config fsl_ls1028_dwc3 = {
++	.properties.gsbuscfg0_reqinfo = 0x2222,
++};
 +
-+  clocks:
-+    maxItems: 3
-+
-+  clock-names:
-+    items:
-+      - const: aclk
-+      - const: cfg
-+      - const: usb_en
-+
-+  resets:
-+    maxItems: 2
-+
-+  reset-names:
-+    items:
-+      - const: vaux
-+      - const: usb_rst
-+
-+  eswin,hsp-sp-csr:
-+    description:
-+      HSP CSR is to control and get status of different high-speed peripherals
-+      (such as Ethernet, USB, SATA, etc.) via register, which can tune
-+      board-level's parameters of PHY, etc.
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      - items:
-+          - description: phandle to HSP Register Controller hsp_sp_csr node.
-+          - description: USB bus register offset.
-+          - description: AXI low power register offset.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - interrupt-names
-+  - resets
-+  - reset-names
-+  - eswin,hsp-sp-csr
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    usb@50480000 {
-+        compatible = "eswin,eic7700-dwc3";
-+        reg = <0x50480000 0x10000>;
-+        clocks = <&clock 135>,
-+                 <&clock 136>,
-+                 <&hspcrg 18>;
-+        clock-names = "aclk", "cfg", "usb_en";
-+        interrupt-parent = <&plic>;
-+        interrupts = <85>;
-+        interrupt-names = "peripheral";
-+        resets = <&reset 84>, <&hspcrg 2>;
-+        reset-names = "vaux", "usb_rst";
-+        dr_mode = "peripheral";
-+        maximum-speed = "high-speed";
-+        phy_type = "utmi";
-+        eswin,hsp-sp-csr = <&hsp_sp_csr 0x800 0x818>;
-+    };
--- 
++static const struct dwc3_generic_config eic7700_dwc3 =  {
++	.init = dwc3_eic7700_init,
++	.properties = DWC3_DEFAULT_PROPERTIES,
+ };
+
+ static const struct of_device_id dwc3_generic_of_match[] = {
+ 	{ .compatible = "spacemit,k1-dwc3", },
+ 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
++	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, dwc3_generic_of_match);
+--
 2.34.1
 
 
