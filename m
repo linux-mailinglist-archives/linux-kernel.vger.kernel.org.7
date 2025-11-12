@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-896400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A21C50452
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EF0C50458
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057813A973E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5AF3AA0F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C442BEC53;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87CB2BEC31;
 	Wed, 12 Nov 2025 01:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HLILyDSY"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nf6racO2";
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nf6racO2"
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4982BE7DB;
-	Wed, 12 Nov 2025 01:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFB22951B3;
+	Wed, 12 Nov 2025 01:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762912742; cv=none; b=KOi2B9OwqiNTW1h9Pd+4ZqDmqXe6m0eAY8QBKAmGP9u7KT89t1QIxNA37UCaDlFzaCVQGiUfEHRjYpumavPhFKnBULBXZleV9cJIX7iIFWWBov1Wls9c1EyyCibg1cbVgNoWVk7P1NSbXy3kwaaNml5dLwDM9hDiHFhwGDklApQ=
+	t=1762912743; cv=none; b=SMKf0yMC6INthkel04O2tTSrYuG3eXbXWIk+Vuiuqh1I1RNvGaaErlsvsaHtaGMkrxSWBZ9w5pwgS4c0J8oW2/V34QYS25L2XqfdGVMgdzRmEgQprN7V/1nFu02k9S1+zW2OOvHlEptJ5+I8UinivhAE7ehhsrsVsTX8GAFKP7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762912742; c=relaxed/simple;
-	bh=APAKyQvFVIBcKOgb0uEOcq1Ddyo8JI5mya0p3PDa9LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6OJjGlCIHdJ3IftNZjCnTUn1Oz4EJ6Z1TjO2azugVa6ixDOQGjTDnq7TZBsqHASlwMpzIrsXTMlPR/ZXmx5++ef7T1KyMINovYEISTw+OnhuSfJoc3b+ACuplurxbVJvSeIRbcaku/L8sXo/waqxTIDUcLm4hcLJy5xfl6TxCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HLILyDSY; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=APAKyQvFVIBcKOgb0uEOcq1Ddyo8JI5mya0p3PDa9LQ=;
-	b=HLILyDSYnDXEUpkIEhUHcKPLevgW3I2zFhuK/HL7Op8/kgiF1TT70cO9sH9gJ8
-	P4lmLuTlJrjVrgOthd7OJo8MYTLp/XCKjpUOBxGUV/2/k2yB2VV6CKUHbKopoM2x
-	XYuRz4WJ34IO4oXGvWtuL3aHMASNXoZiM5nwMgXPHyVec=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgAnLZPA6RNpuzvPAQ--.5587S3;
-	Wed, 12 Nov 2025 09:58:25 +0800 (CST)
-Date: Wed, 12 Nov 2025 09:58:23 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, frank.li@nxp.com, s.hauer@pengutronix.de,
-	festevam@gmail.com, kernel@pengutronix.de,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/7] Add vpcie3v3aux regulator for i.MX PCIe M.2
- connector
-Message-ID: <aRPpvy2TtCyCCegm@dragon>
-References: <20251024073152.902735-1-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1762912743; c=relaxed/simple;
+	bh=VGlN7vVe2hkC/tx36jnpELpV0RtmhQbUr5kiaBGYMw4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DjA8KNBxA4uCbG3O1T2wWQ2yVJ//THWxpPfJ2OAwj0zIUso1zd8GdqGKffF5ts1Ve5SGyiq3Bl+4MSS93ZKhGnwijjouAxI/6PYsCEkY/ReJcFOUN4OL6MLRQF3eJU7A+c3qEcF57sPNCpd2s2qaZD3fQjrwHuYL+ru9MTLCblU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nf6racO2; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nf6racO2; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=wuX5r28VaexWnYhOLnt7f93j+3rz9YK+PcJBP/DbyyY=;
+	b=nf6racO2ksupU9wnn7MfavGg5x+g9M7INfJAy2o3q9Itvw5SbuaeUa0L2xgDo5LTzma7YBj6a
+	2tOcS8MpWNvVWvo7OTjD4FW4TnG/HXjnAciTL84eHGp7WasyyJ5J8KwQhG85pKW6pHTMaVNMc9N
+	aNat5F8LjTaYTJ9S9WAzOkE=
+Received: from canpmsgout11.his.huawei.com (unknown [172.19.92.148])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4d5mlb08ftz1BFpZ;
+	Wed, 12 Nov 2025 09:58:35 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=wuX5r28VaexWnYhOLnt7f93j+3rz9YK+PcJBP/DbyyY=;
+	b=nf6racO2ksupU9wnn7MfavGg5x+g9M7INfJAy2o3q9Itvw5SbuaeUa0L2xgDo5LTzma7YBj6a
+	2tOcS8MpWNvVWvo7OTjD4FW4TnG/HXjnAciTL84eHGp7WasyyJ5J8KwQhG85pKW6pHTMaVNMc9N
+	aNat5F8LjTaYTJ9S9WAzOkE=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5mjy0VhLzKm7C;
+	Wed, 12 Nov 2025 09:57:10 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 00E0A1A0174;
+	Wed, 12 Nov 2025 09:58:50 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 12 Nov 2025 09:58:48 +0800
+Received: from localhost.huawei.com (10.90.31.46) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 12 Nov 2025 09:58:48 +0800
+From: Chenghai Huang <huangchenghai2@huawei.com>
+To: <arnd@arndb.de>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<akpm@linux-foundation.org>, <anshuman.khandual@arm.com>,
+	<ryan.roberts@arm.com>, <andriy.shevchenko@linux.intel.com>,
+	<herbert@gondor.apana.org.au>, <linux-kernel@vger.kernel.org>,
+	<linux-arch@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-crypto@vger.kernel.org>, <linux-api@vger.kernel.org>
+CC: <fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
+	<qianweili@huawei.com>
+Subject: [PATCH RFC 0/4] Introduce 128-bit IO access
+Date: Wed, 12 Nov 2025 09:58:42 +0800
+Message-ID: <20251112015846.1842207-1-huangchenghai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024073152.902735-1-hongxing.zhu@nxp.com>
-X-CM-TRANSID:M88vCgAnLZPA6RNpuzvPAQ--.5587S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0EfOUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNgLJL2kT6cJyogAA3T
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-On Fri, Oct 24, 2025 at 03:31:45PM +0800, Richard Zhu wrote:
-> [PATCH v1 1/7] arm64: dts: imx8dxl-evk: Add vpcie3v3aux regulator for
-> [PATCH v1 2/7] arm64: dts: imx8mp-evk: Add vpcie3v3aux regulator for
-> [PATCH v1 3/7] arm64: dts: imx8mq-evk: Add vpcie3v3aux regulator for
-> [PATCH v1 4/7] arm64: dts: imx8qm-mek: Add vpcie3v3aux regulator for
-> [PATCH v1 5/7] arm64: dts: imx8qxp-mek: Add vpcie3v3aux regulator for
-> [PATCH v1 6/7] arm64: dts: imx95-15x15-evk: Add vpcie3v3aux regulator
-> [PATCH v1 7/7] arm64: dts: imx95-19x19-evk: Add vpcie3v3aux regulator
+These patches introduce 128-bit IO access functionality. The reason
+is that the current HiSilicon cryptographic devices need to
+maintain atomic operations when accessing 128-bit MMIO across
+physical and virtual functions.
 
-Applied all, thanks!
+Currently, 128-bit atomic writes have already been implemented in
+the device driver, and the driver also depends on a 128-bit atomic
+read access interface. Therefore, we have introduced a generic
+128-bit IO access interface to replace the implementation of
+128-bit read and write IO interfaces using instructions in the
+device driver. When the architecture does not support 128-bit
+atomic operations, non-atomic 128-bit read and write interfaces can
+be used to make the driver functional.
+
+Weili Qian (4):
+  UAPI: Introduce 128-bit types and byteswap operations
+  asm-generic/io.h: add io{read,write}128 accessors
+  io-128-nonatomic: introduce io{read|write}128_{lo_hi|hi_lo}
+  arm64/io: Add {__raw_read|__raw_write}128 support
+
+ arch/arm64/include/asm/io.h                  | 21 +++++++++
+ include/asm-generic/io.h                     | 48 ++++++++++++++++++++
+ include/linux/io-128-nonatomic-hi-lo.h       | 35 ++++++++++++++
+ include/linux/io-128-nonatomic-lo-hi.h       | 34 ++++++++++++++
+ include/uapi/linux/byteorder/big_endian.h    |  6 +++
+ include/uapi/linux/byteorder/little_endian.h |  6 +++
+ include/uapi/linux/swab.h                    | 10 ++++
+ include/uapi/linux/types.h                   |  3 ++
+ 8 files changed, 163 insertions(+)
+ create mode 100644 include/linux/io-128-nonatomic-hi-lo.h
+ create mode 100644 include/linux/io-128-nonatomic-lo-hi.h
+
+-- 
+2.33.0
 
 
