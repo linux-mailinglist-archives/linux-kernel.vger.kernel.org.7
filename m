@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-897919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F092C53EC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 902A2C53ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F153AF035
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:34:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354E83AF812
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340F235580A;
-	Wed, 12 Nov 2025 18:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A03C3559DF;
+	Wed, 12 Nov 2025 18:25:47 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E98355051;
-	Wed, 12 Nov 2025 18:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A8235580E;
+	Wed, 12 Nov 2025 18:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971942; cv=none; b=RlfJN+Qcc3UkYf3YEkihKnGK5zga6ukmJmST/9E3HhkT8mHswoLqE9jHfGcOdgrFeqaXevogrisr3N6VYPhPDdn34jx2nGyFpbhSPUaB2ChGOQq3kegXnxboYQUpOlumWKCv8IDX2u44T0ChVmi/7wDKp6+1y+ZplKaLlTbyA2c=
+	t=1762971946; cv=none; b=ALndLKC6w5hyG8FE/0Mb0Qlz+0ai0rnsuP0sYLBTLMEn/y4RXr38bJWqZaHs5x/FZYcuLB0ARh9DqwbvpZFtuHN4wLJ7gFkpyJgrIsr9j6mLPRyYpCfIO/n64EXCHIc2KO1Tzwd/3J4ndhuA3WEWmUKFUQOizssg8EdDuj8SbZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971942; c=relaxed/simple;
-	bh=LxrG4la+UU2a+kngmi6pw8OHWq6AgFvXmkETg/5yk98=;
+	s=arc-20240116; t=1762971946; c=relaxed/simple;
+	bh=1Vk+T+Hx3u2vOsFODCfgVnGRN0oLOre+czspaI2a/pc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vDdxRtlknAqCBYfKE9WqAaxa2nT7vqeRV10BvuJ9l5KdF1pQZzz4Fev/h7V6nlcYaapJIwz7g9KEPU/sYCjU1McxcJd/wIQ2eLpMA+BdVjZ78qaMnwc5yzhcwjkJ4N6kJY5G6nTpSQsm8HprbknONhjwFU7F2RlMpE5EtL8Vbn8=
+	 In-Reply-To:To:Cc; b=ONfLpJi60jMKgInph71+GJbdR+qzD4feReFlOw9QZ0akd5cm3Z1QG4HbmRqZk2PewKqAfyfruVNHz5aotf3iz20T0SjQlvT2xlAnEZe2WKdjf+iKsjiNoUMIdpOCSh8P/8e480K0KHePleiP6eYk7yoAfCu6wxm608a4fLiCAHg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C4501691;
-	Wed, 12 Nov 2025 10:25:33 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42A7C169C;
+	Wed, 12 Nov 2025 10:25:35 -0800 (PST)
 Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB4283F63F;
-	Wed, 12 Nov 2025 10:25:38 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E9AC3F63F;
+	Wed, 12 Nov 2025 10:25:40 -0800 (PST)
 From: Leo Yan <leo.yan@arm.com>
-Date: Wed, 12 Nov 2025 18:24:48 +0000
-Subject: [PATCH v3 22/25] perf sort: Support sort ASE and SME
+Date: Wed, 12 Nov 2025 18:24:49 +0000
+Subject: [PATCH v3 23/25] perf sort: Sort disabled and full predicated
+ flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +44,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-perf_support_arm_spev1-3-v3-22-e63c9829f9d9@arm.com>
+Message-Id: <20251112-perf_support_arm_spev1-3-v3-23-e63c9829f9d9@arm.com>
 References: <20251112-perf_support_arm_spev1-3-v3-0-e63c9829f9d9@arm.com>
 In-Reply-To: <20251112-perf_support_arm_spev1-3-v3-0-e63c9829f9d9@arm.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -55,66 +56,92 @@ Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
  linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762971891; l=1741;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762971891; l=2803;
  i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=LxrG4la+UU2a+kngmi6pw8OHWq6AgFvXmkETg/5yk98=;
- b=3TNxdgsR0iBsThzYaTBhdiJqn4PfQb5ccKGAfXOwWG1R8thb/K8ZsSarDKxp172ZFoE7uuRvu
- ZoDoXWrzFXvC9Muuet5X8zj2QxvT33z8CtPU4n5pKQlDngD4tC+9e+q
+ bh=1Vk+T+Hx3u2vOsFODCfgVnGRN0oLOre+czspaI2a/pc=;
+ b=yHOvnp+TlhiQ+XZbuz7vOkeRByCAEtMRYle3HTe0l91j1wO+QCgnSTq1E+Os6d+wR/ub458du
+ bR8BE5oix51AokhrJNK71y/q6MCSZXX2filH9HybdvdP5m+ysqi8m3g
 X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
  pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-Support sort Advance SIMD extension (ASE) and SME.
+According to the Arm ARM (ARM DDI 0487, L.a), section D18.2.6
+"Events packet", apart from the empty predicate and partial
+predicates, an SVE or SME operation can be predicate-disabled
+or full predicated.
+
+To provide complete results, introduce two predicate types for
+these cases.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/util/sample.h | 12 +++++++++---
- tools/perf/util/sort.c   |  6 +++++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ tools/perf/util/sample.h | 13 +++++++++----
+ tools/perf/util/sort.c   | 15 ++++++++++-----
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/util/sample.h b/tools/perf/util/sample.h
-index fae834144ef42105d08a59704ee75cd4852bbc5a..3b22cc2f7ad6ba1dc53b5d9ffff2a4e47c89612a 100644
+index 3b22cc2f7ad6ba1dc53b5d9ffff2a4e47c89612a..9477fe9c87402dd9135f25a6eee2e7539e6fdbca 100644
 --- a/tools/perf/util/sample.h
 +++ b/tools/perf/util/sample.h
-@@ -67,12 +67,18 @@ struct aux_sample {
- };
+@@ -68,8 +68,8 @@ struct aux_sample {
  
  struct simd_flags {
--	u8	arch:1,	/* architecture (isa) */
--		pred:2;	/* predication */
-+	u8	arch:  2,	/* architecture (isa) */
-+		pred:  2,	/* predication */
-+		resv:  4;	/* reserved */
+ 	u8	arch:  2,	/* architecture (isa) */
+-		pred:  2,	/* predication */
+-		resv:  4;	/* reserved */
++		pred:  3,	/* predication */
++		resv:  3;	/* reserved */
  };
  
  /* simd architecture flags */
--#define SIMD_OP_FLAGS_ARCH_SVE		0x01	/* ARM SVE */
-+enum simd_op_flags {
-+	SIMD_OP_FLAGS_ARCH_NONE = 0x0,	/* No SIMD operation */
-+	SIMD_OP_FLAGS_ARCH_SVE,		/* Arm SVE */
-+	SIMD_OP_FLAGS_ARCH_SME,		/* Arm SME */
-+	SIMD_OP_FLAGS_ARCH_ASE,		/* Arm Advanced SIMD */
-+};
+@@ -81,8 +81,13 @@ enum simd_op_flags {
+ };
  
  /* simd predicate flags */
- #define SIMD_OP_FLAGS_PRED_PARTIAL	0x01	/* partial predicate */
+-#define SIMD_OP_FLAGS_PRED_PARTIAL	0x01	/* partial predicate */
+-#define SIMD_OP_FLAGS_PRED_EMPTY	0x02	/* empty predicate */
++enum simd_pred_flags {
++	SIMD_OP_FLAGS_PRED_NONE = 0x0,	/* Not available */
++	SIMD_OP_FLAGS_PRED_PARTIAL,	/* partial predicate */
++	SIMD_OP_FLAGS_PRED_EMPTY,	/* empty predicate */
++	SIMD_OP_FLAGS_PRED_FULL,	/* full predicate */
++	SIMD_OP_FLAGS_PRED_DISABLED,	/* disabled predicate */
++};
+ 
+ struct perf_sample {
+ 	u64 ip;
 diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index f3a565b0e2307a8adf159725f803df5fef0dff83..ad98d5b75f34b49cd39e30cba997a614654eebcb 100644
+index ad98d5b75f34b49cd39e30cba997a614654eebcb..fe203458c6ffbc340450f6fffc13d0e256dfe7cf 100644
 --- a/tools/perf/util/sort.c
 +++ b/tools/perf/util/sort.c
-@@ -193,8 +193,12 @@ static const char *hist_entry__get_simd_name(struct simd_flags *simd_flags)
+@@ -207,18 +207,23 @@ static int hist_entry__simd_snprintf(struct hist_entry *he, char *bf,
+ 				     size_t size, unsigned int width __maybe_unused)
  {
- 	u64 arch = simd_flags->arch;
+ 	const char *name;
++	const char *pred_str = ".";
  
--	if (arch & SIMD_OP_FLAGS_ARCH_SVE)
-+	if (arch == SIMD_OP_FLAGS_ARCH_SVE)
- 		return "SVE";
-+	else if (arch == SIMD_OP_FLAGS_ARCH_SME)
-+		return "SME";
-+	else if (arch == SIMD_OP_FLAGS_ARCH_ASE)
-+		return "ASE";
- 	else
- 		return "n/a";
+ 	if (!he->simd_flags.arch)
+ 		return repsep_snprintf(bf, size, "");
+ 
+ 	name = hist_entry__get_simd_name(&he->simd_flags);
+ 
+-	if (he->simd_flags.pred & SIMD_OP_FLAGS_PRED_EMPTY)
+-		return repsep_snprintf(bf, size, "[e] %s", name);
+-	else if (he->simd_flags.pred & SIMD_OP_FLAGS_PRED_PARTIAL)
+-		return repsep_snprintf(bf, size, "[p] %s", name);
++	if (he->simd_flags.pred == SIMD_OP_FLAGS_PRED_EMPTY)
++		pred_str = "e";
++	else if (he->simd_flags.pred == SIMD_OP_FLAGS_PRED_PARTIAL)
++		pred_str = "p";
++	else if (he->simd_flags.pred == SIMD_OP_FLAGS_PRED_DISABLED)
++		pred_str = "d";
++	else if (he->simd_flags.pred == SIMD_OP_FLAGS_PRED_FULL)
++		pred_str = "f";
+ 
+-	return repsep_snprintf(bf, size, "[.] %s", name);
++	return repsep_snprintf(bf, size, "[%s] %s", pred_str, name);
  }
+ 
+ struct sort_entry sort_simd = {
 
 -- 
 2.34.1
