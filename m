@@ -1,502 +1,202 @@
-Return-Path: <linux-kernel+bounces-896844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F35C5158B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:27:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E882C515FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 159453442E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:27:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 007494F8270
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F23A2F9980;
-	Wed, 12 Nov 2025 09:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C965B2DE1E0;
+	Wed, 12 Nov 2025 09:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKuEhHGz"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SOmRUw7K";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Z59uda3n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12742741C6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25632DC76C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939635; cv=none; b=qVTCbzfd1L/5XgYRU34lcIZMfCwL6MiqpGPWrou3F927snJo+zZkQdYYzq+hGU7vy28Rsa2wYzmGfmTCTcGoAj4KX+vP7W8NLFzcI03W64AObALYE7xVSZIB8BGc7pOa5ebMQmEwmPtKXrW0SRbDpc4gpeVT3LFaLOcHqtOJN8c=
+	t=1762939688; cv=none; b=CTHl8o+xgF5IfBRIPfxPm/TNUPAKABG2uxsEP2BcNeXRi4aY2sAUtm+bgaKXEmdWuYfe1jBxgOVTQgF2D6kLcjG8h73BzwbGZo5K9uXYmIZDpaNu7NPfjsqk1/q2oXurih1tGknGwhXo9rgGz75mIVU0DZpu35agb+cI3bsHkNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939635; c=relaxed/simple;
-	bh=HqNPMcGO41VMVWfbXlY485k9jz8TxTTHPVr26oTdcfA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o2bMPxugwWSV2KPgpFui4GKIWA0659rAKw6uS6WczrHiju9kkMvOuLCtI2qDjkgnUDGt5qp8zjsruYzWY2yMPguGkpWxPadjt0AI0IPMYK8KSQZjuH3DG+Da1PtemEXzRlrObNjbKVAEB2j/PbtbXj/o+4UIKS9TSTjyxJdvSbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKuEhHGz; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7acd9a03ba9so523221b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:27:12 -0800 (PST)
+	s=arc-20240116; t=1762939688; c=relaxed/simple;
+	bh=kpajzfk3rDAEjSNP9zfr7jMwHp4VKhF/KzKQTb7TXKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qWd5SgvIYTbtY4M3nil1eKbISpNRnEbItub8E+puWQcrBIZHSnNxSnpC4hwRjVwXzIhuTSNXOfp0CDHFxUAtXBU0LGuludUJghfHqvOizEVChjTXv3jzN6GZ3011DgFaDqPKyLlyfSASfDEj7dhr4yvb9VFUnF5k65iqcDrAY2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SOmRUw7K; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Z59uda3n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC3HCch4052883
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:28:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UQyIyIHzX6mvdwDeO6aUWHKb0Z58Y9WeZ+jXu9rEMRI=; b=SOmRUw7KG6qiNAQQ
+	gDGji5E7TWZ0PrFhQwdF9QHP/DOV4FuQtJ9wOSbtvTTkPTKDeRxGg9LrehXaezdr
+	JpwdCCyzNBDNxspenIr26zPiYzLoyJzXOfwSnYDo70ay3bUyczjQrPY/Q4kG8VxS
+	zVbY9qxapd08nxn4ADc9ULlismg5GRxsYspnhMw9QG3ykfvL8wHKg+VWLflG5kni
+	ejEL+rmCZdXRc3Nfxj4okfXRJ28M9d5Em0pmZ8IaJzVldVdT2oRFPHS8S3orVP3R
+	miU6iUe5nO+zWkdOkEMNCe4FifC1VT8kdDWXDw570unF9+ydUi3hSl6QKPfj+Ew+
+	7kfvVg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acj6v91bs-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:28:05 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ed861df509so1757971cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:28:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762939632; x=1763544432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jWAF+DcIzKVsqUgqpqYnDQaKPe3mFgq/8tqp38w38N0=;
-        b=BKuEhHGzeO5/R22NtFdmHPXKwdGhwhGkr8+BebMg7UMMP+yn+mt9NHQyBqnj3Spgsf
-         xw2jwF+PuvxkBa85/EHDR4jewW21oX/oChXHW1o1ZmU8sqHiFmYzLys7qxytDGkaucoU
-         Nzqoq4AXsPaznYfo5P7nYNK8sDDIjY0O9oWWfYqhpXQyWChMcMvkyD+OfUY7p26BlzeW
-         Jqe+VhcxYUUcyqpobRGhjeC+h6dXXIqMAyQq5vUgcCz0H4S88vB/pelzF2QVWPAsxZ7E
-         Vhwiy83G79oWb8ReNCzYKuRgQ/JKVbLDdeO4Oyj7i115mMeQWyf01VTcfBJdpTw4c9Ls
-         t5gw==
+        d=oss.qualcomm.com; s=google; t=1762939685; x=1763544485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UQyIyIHzX6mvdwDeO6aUWHKb0Z58Y9WeZ+jXu9rEMRI=;
+        b=Z59uda3nOJ8CaTJ+2hGPt0cN5OiHXZYwLoM6zKoMcoOHFDeE8A7DwzK/CDPdRGA++g
+         FC/Ad6peypvePZkPC5NJJeMR40trR2h2m25NNgvd12zVqse+c7k60fFIGqvLxs4CGjCv
+         HLbMpjnU0IAzM2I6YtX1XWZcHMf3JL8fjmesLh6WJZ5MnfrW/T3uJkytzfaRhwrgiOqw
+         Ah143SBIRbwI8vZstgOpXjZ6T0Lx6EcKGk8ApJ93O5rbZSkkkht78mpAYPGJWyAPPx1X
+         CKOJgTuuWFfkwR7q/SMe2EoSLvyDd3AzK+miLIE9m8imOMstXaqWVz3+QjsUH8t6jIrg
+         /3sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762939632; x=1763544432;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jWAF+DcIzKVsqUgqpqYnDQaKPe3mFgq/8tqp38w38N0=;
-        b=uZl28y2x0P16SErb56h1+N56obBx6AxzHaVtp6vGEL0GlnqBWMOB9kN0KT1L0RdvCF
-         i8EpzV23rJqgMiHz/bNu95f0w1iFjQuwA2hFzdNZoerUwrpmK1S1OJ7QebdfD9KtMbdM
-         NsTrF1xBkHP8vxioo7hbSyv/DTDYoy7uCncyrxH5xDZNEXP96LbmtcsmJvuPEwWw3inA
-         RMnpyrY8/rxCBQ6AUoUsmVx7Eyf4nMTTFmEQYUP9/uHzdYzem/tLrkpwjfu25bGqv7ol
-         8+N3KMepbDwwBF1dMg+dnY+kz/4S8+LCvPm/sANTp8QxtnQNyC0DF7HJdFhek12vXCgH
-         5OQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAZPLSSJrdTXjCcTnNu+pKkUEBTcAKZnivXAnw7DgAt1q9K+1+NTToVvdOHWvW+43nzzgIDagXIlJOKgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrOM8pF0/M/5tyzGJaxisv35uH5iteUEyt77UhKBnGBfxUIRmT
-	aLFQO0wPrM+vQXX1Kyjowd8CBTlkPY0sD5wgSj+lsihC49/VFKToHu5x
-X-Gm-Gg: ASbGncuUw2gs63xRzWKtCO9Rc0GdwNfuUa4Ft3OCzmJgo/qY7aVfM/skyJ4JwAdm7eX
-	MdriziIQYFeV3IKs24D4oJHLpON7Eq0HneAOwXFa2eOcJWB5OYRgkKVMnOB2poKjJUShg/eG6Hq
-	/4M8GycCMt5f+fGgr2rogNWtpFXkB/gWBNpLTp827zzVbI22s2uLNMiVd/ti6PFnjtwctX0J+Nh
-	UkvTcgj6cWYzGh+sPbWY+y7FBGXvTejSM4R+TwauZ6mdXk3SXu9t+bsJ3WdrawfmW4iRhrzz1hm
-	xWJNgefxJpwCiX4Mt0uvKmjihPAhXcJC8kPH3Y/m+D1a87pFUmftdYoNe/wCgwzriLKOc+kSh6J
-	k+uXCgHorKBXximUEaJuSD1tJJIu2a+0xZunEyjcMkUlcYQP/+0g/4R8OcX0VgrohGG4Xgzz0XL
-	3YwcKhxSfBRP5lx5yP
-X-Google-Smtp-Source: AGHT+IFxcPyPy6rxGmvjgfbLQgrlYXX5a5VU+olbz9t9p7JEyYDvqx2roqdHDsi2nX9SXHbsAZVq3A==
-X-Received: by 2002:a17:90b:53cf:b0:340:d1a1:af8e with SMTP id 98e67ed59e1d1-343ddef4c14mr3077208a91.37.1762939631861;
-        Wed, 12 Nov 2025 01:27:11 -0800 (PST)
-Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e1ab45e4sm780286a91.0.2025.11.12.01.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 01:27:10 -0800 (PST)
-From: Donglin Peng <dolinux.peng@gmail.com>
-To: rostedt@goodmis.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Donglin Peng <pengdonglin@xiaomi.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v4] function_graph: Enable funcgraph-args and funcgraph-retaddr to work simultaneously
-Date: Wed, 12 Nov 2025 17:27:01 +0800
-Message-Id: <20251112092701.3335601-1-dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1762939685; x=1763544485;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UQyIyIHzX6mvdwDeO6aUWHKb0Z58Y9WeZ+jXu9rEMRI=;
+        b=XuJWhGBPKF5JzSou+4gKWMwjtcGkdORgErHoGcsIH592IKHMCWU5o7o18CIoEoJC6U
+         OipedJsQB4SWKzbanOlqhPvAkDCpIr8x2Jg8akcUpRDCIEIP4XvePr0CMoHIgfNutSjs
+         zdmLld5l98APMMaveelJhackq6PgRhwAwkTOtXm973V9cWeTB8R+Znp+adnNAWHPJrg6
+         D5KehgV/Kki7jujS4vtm6G66sJNlxflQP74BpY1UyQUHpOMlk+pss8XkAF0pZ17550Nd
+         JOQaGZKxk1c5TcqDt8WT+Mm3g5zhFo2t7tCW6c6q29G2cQNWNrEDstgO7HnfVdEJrXvX
+         Iglg==
+X-Forwarded-Encrypted: i=1; AJvYcCV01kXevrhYMYE54sncwD4xaoLg/5jSWTL+pgwfKRRAYxQGJWHRnkPnS4LmqDjoloN8uxVV4HN3LfGO40E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFlNm4nPrRUmHKVCuqpMD+H1k/ctG3V3ShYeA80pf4tYf/K8l7
+	PLKuD2p3zl90sJ7Ob1EnJvvN2HShRa5j9W5RY5Ej0SCesRVdfk7SG70tBFceKHxw8q7gsvjgVFB
+	USrD+PD8wbmWZnXuPJ43ou7IYprORkCnkQFuEq87IxnHqpl1wQ8P65B8xC4Ba6Vzedr4=
+X-Gm-Gg: ASbGncuppURAsf+63P0zjKgOji6cgKCqYsy2Wa3PiumS7wv0YaWOZ0Vss8D0kqAVKD4
+	tryIoNzrR5xAdvsiguqfPKEkPFVw0Jnk2IdZwbhBQEtxUGyis83C+Mm7FiFk/F6PkVEdwME3a+t
+	kDnWSvXPXmDr6ypwoLyUwse15YeaM8y+dBSmUazdwK4eAJckqcLk09QhxOyekabwl3rIKc3aA/1
+	Fp3MVEcGcJSiMNxrabetwDlGzeYJkLgpPQCfE2WouIDUB+uhhjvuKHxwGXhM2ah/pdGDKc1pd8w
+	UJ6HjsqWa/u5LNPagaz7bDcy4Z4zvy5mFG4nrnL7DspaO8IZeVwXZhqJ2vz6w9nD1h1AdwRbUM+
+	cHSYJ4c5rxcpNnsUM39AO5o0170OQAGOTNZsdrbJ2jOYFqYtgPH5Dxbwm
+X-Received: by 2002:a05:622a:180e:b0:4ed:b9ee:3cdc with SMTP id d75a77b69052e-4eddbc3b54emr17962451cf.1.1762939684923;
+        Wed, 12 Nov 2025 01:28:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGR4/W3vDk4YLbccmyiv4XaXdLztuoz1oWe+zLmX65bWXg3EkzpMp4c51bebuFk9GFGSmrF3w==
+X-Received: by 2002:a05:622a:180e:b0:4ed:b9ee:3cdc with SMTP id d75a77b69052e-4eddbc3b54emr17962291cf.1.1762939684402;
+        Wed, 12 Nov 2025 01:28:04 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72dbe7c783sm1295611366b.50.2025.11.12.01.28.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:28:03 -0800 (PST)
+Message-ID: <55eb7543-7b88-42e2-bb11-7c54c4e59801@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:28:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: qcom: hamoa-iot-evk: Enable TPM (ST33) on
+ SPI11
+To: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251112-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v3-1-39b19eb55cc3@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251112-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v3-1-39b19eb55cc3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Vu-bhWoERH_D5_pl9Xnl-JBT09vjEYou
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3NSBTYWx0ZWRfX1V2pMpTp1sFq
+ eCVRWfrvsVyGMsHRGs7qG7GJeT/azmm7FNtQl7ApDhj4aFC6cGNKJE8xXSGGb0Tn9VANogKHzTK
+ +KstsuPGKRFbzmGp/TW1QCc8Odn4FZUKzEJwaKXY7twaG/kNDEbX08qd5enMcEKLBKd0sWc5PB1
+ pCOtfUiXKEG/AHLZIDCU1jNwfNdGvDdhG4CNdQyM8qRFonKrmkdIFvHHdgQtTlSjoYTGAcH5vfX
+ FKn7L6wVGfgK3b+4CQeakI8LyRX91xCfkSGgcNT71cx3E3x9D66ozW8l2EwQ6vTeBBMuc0qYK0F
+ xRE+C9P237UZe5R1ImfYlSx/YyQ0p7/KFGoF1SsV9p+xhm89IwX5rjJG24M6qgNPv5mrnouXDK7
+ mWyMuqEC56DT3tjiLerrwZwMJwJktA==
+X-Authority-Analysis: v=2.4 cv=f8dFxeyM c=1 sm=1 tr=0 ts=69145325 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=7d4G-bKz9gYrzHuYZ2UA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-ORIG-GUID: Vu-bhWoERH_D5_pl9Xnl-JBT09vjEYou
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120075
 
-From: Donglin Peng <pengdonglin@xiaomi.com>
+On 11/12/25 8:42 AM, Khalid Faisal Ansari wrote:
+> Enable ST33HTPM TPM over SPI11 on the Hamoa IoT EVK by adding the
+> required SPI and TPM nodes.
+> 
+> Signed-off-by: Khalid Faisal Ansari <khalid.ansari@oss.qualcomm.com>
+> ---
+> Testing:
+> - TPM detected via tpm_tis_spi
+> - Verified functionality using tpm2-tools (e.g. tpm2_getrandom, tpm2_rsadecrypt)
+> 
+> Depends on:
+> - <20251106102448.3585332-1-xueyao.an@oss.qualcomm.com>
+>   Link: https://lore.kernel.org/linux-arm-msm/20251106102448.3585332-1-xueyao.an@oss.qualcomm.com/
+> ---
+> Changes in v3:
+> - Squashed patches touching the same file into one.
 
-Currently, the funcgraph-args and funcgraph-retaddr features are
-mutually exclusive. This patch resolves this limitation by modifying
-funcgraph-retaddr to adopt the same implementation approach as
-funcgraph-args, specifically by storing the return address in the
-first entry of the args array.
+Doesn't seem to be the case
 
-As a result, both features now coexist seamlessly and function as
-intended.
+Konrad
 
-To verify the change, use perf to trace vfs_write with both options
-enabled:
-
-Before:
- # perf ftrace -G vfs_write --graph-opts args,retaddr
-   ......
-   down_read() { /* <-n_tty_write+0xa3/0x540 */
-     __cond_resched(); /* <-down_read+0x12/0x160 */
-     preempt_count_add(); /* <-down_read+0x3b/0x160 */
-     preempt_count_sub(); /* <-down_read+0x8b/0x160 */
-   }
-
-After:
- # perf ftrace -G vfs_write --graph-opts args,retaddr
-   ......
-   down_read(sem=0xffff8880100bea78) { /* <-n_tty_write+0xa3/0x540 */
-     __cond_resched(); /* <-down_read+0x12/0x160 */
-     preempt_count_add(val=1); /* <-down_read+0x3b/0x160 */
-     preempt_count_sub(val=1); /* <-down_read+0x8b/0x160 */
-   }
-
-Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
----
-v4:
-- Remove redundant TRACE_GRAPH_ARGS flag check
-- Eliminate unnecessary retaddr initialization
-
-v3:
-- Replace min() with min_t() to improve type safety and maintainability
-- Keep only one Signed-off-by for cleaner attribution
-- Code refactoring for improved readability
-
-v2:
-- Preserve retaddr event functionality (suggested by Steven)
-- Store the retaddr in args[0] (suggested by Steven)
-- Refactor implementation logic and commit message clarity
----
- include/linux/ftrace.h               |  11 ---
- kernel/trace/trace.h                 |   4 -
- kernel/trace/trace_entries.h         |   6 +-
- kernel/trace/trace_functions_graph.c | 141 ++++++++++++---------------
- 4 files changed, 65 insertions(+), 97 deletions(-)
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 7ded7df6e9b5..88cb54d73bdb 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
- 	int depth;
- } __packed;
- 
--/*
-- * Structure that defines an entry function trace with retaddr.
-- * It's already packed but the attribute "packed" is needed
-- * to remove extra padding at the end.
-- */
--struct fgraph_retaddr_ent {
--	unsigned long func; /* Current function */
--	int depth;
--	unsigned long retaddr;  /* Return address */
--} __packed;
--
- /*
-  * Structure that defines a return function trace.
-  * It's already packed but the attribute "packed" is needed
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 85eabb454bee..9fac291b913a 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator *iter);
- extern int __trace_graph_entry(struct trace_array *tr,
- 			       struct ftrace_graph_ent *trace,
- 			       unsigned int trace_ctx);
--extern int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr);
- extern void __trace_graph_return(struct trace_array *tr,
- 				 struct ftrace_graph_ret *trace,
- 				 unsigned int trace_ctx,
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index de294ae2c5c5..593a74663c65 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
- 	TRACE_GRAPH_RETADDR_ENT,
- 
- 	F_STRUCT(
--		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
-+		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
- 		__field_packed(	unsigned long,	graph_ent,	func		)
- 		__field_packed(	unsigned int,	graph_ent,	depth		)
--		__field_packed(	unsigned long,	graph_ent,	retaddr		)
-+		__dynamic_array(unsigned long,	args				)
- 	),
- 
- 	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
--		(void *)__entry->retaddr)
-+		(void *)__entry->args[0])
- );
- 
- #else
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index a7f4b9a47a71..8c018886d4d2 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -16,6 +16,15 @@
- #include "trace.h"
- #include "trace_output.h"
- 
-+#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
-+#define HAVE_RETADDR	1
-+#define ARGS_OFFS(args_size) \
-+	((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
-+#else
-+#define HAVE_RETADDR	0
-+#define ARGS_OFFS(args_size)	0
-+#endif
-+
- /* When set, irq functions will be ignored */
- static int ftrace_graph_skip_irqs;
- 
-@@ -27,21 +36,25 @@ struct fgraph_cpu_data {
- 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
- };
- 
-+/*
-+ * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
-+ * member repurposed for storage
-+ */
- struct fgraph_ent_args {
- 	struct ftrace_graph_ent_entry	ent;
--	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
--	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-+	/*
-+	 * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR)
-+	 * entries with the first entry storing the return address for
-+	 * TRACE_GRAPH_RETADDR_ENT.
-+	 */
-+	unsigned long		args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR];
- };
- 
- struct fgraph_data {
- 	struct fgraph_cpu_data __percpu *cpu_data;
- 
- 	/* Place to preserve last processed entry. */
--	union {
--		struct fgraph_ent_args		ent;
--		/* TODO allow retaddr to have args */
--		struct fgraph_retaddr_ent_entry	rent;
--	};
-+	struct fgraph_ent_args		ent;
- 	struct ftrace_graph_ret_entry	ret;
- 	int				failed;
- 	int				cpu;
-@@ -127,22 +140,39 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
- 	struct ring_buffer_event *event;
- 	struct trace_buffer *buffer = tr->array_buffer.buffer;
- 	struct ftrace_graph_ent_entry *entry;
--	int size;
-+	unsigned long retaddr;
-+	int size = sizeof(*entry);
-+	int type = TRACE_GRAPH_ENT;
-+	int nr_args = 0, args_offs = 0;
-+
-+	if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-+		retaddr = ftrace_graph_top_ret_addr(current);
-+		type = TRACE_GRAPH_RETADDR_ENT;
-+		nr_args += 1;
-+	}
- 
- 	/* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words */
--	size = sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long));
-+	if (!!fregs)
-+		nr_args += FTRACE_REGS_MAX_ARGS;
- 
--	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size, trace_ctx);
-+	size += nr_args * sizeof(long);
-+	event = trace_buffer_lock_reserve(buffer, type, size, trace_ctx);
- 	if (!event)
- 		return 0;
- 
- 	entry = ring_buffer_event_data(event);
- 	entry->graph_ent = *trace;
- 
-+	/* Store the retaddr in args[0] */
-+	if (type == TRACE_GRAPH_RETADDR_ENT) {
-+		entry->args[0] = retaddr;
-+		args_offs += 1;
-+	}
-+
- #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
--	if (fregs) {
-+	if (nr_args >= FTRACE_REGS_MAX_ARGS) {
- 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
--			entry->args[i] = ftrace_regs_get_argument(fregs, i);
-+			entry->args[i + args_offs] = ftrace_regs_get_argument(fregs, i);
- 	}
- #endif
- 
-@@ -158,38 +188,6 @@ int __trace_graph_entry(struct trace_array *tr,
- 	return __graph_entry(tr, trace, trace_ctx, NULL);
- }
- 
--#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
--int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr)
--{
--	struct ring_buffer_event *event;
--	struct trace_buffer *buffer = tr->array_buffer.buffer;
--	struct fgraph_retaddr_ent_entry *entry;
--
--	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_ENT,
--					  sizeof(*entry), trace_ctx);
--	if (!event)
--		return 0;
--	entry	= ring_buffer_event_data(event);
--	entry->graph_ent.func = trace->func;
--	entry->graph_ent.depth = trace->depth;
--	entry->graph_ent.retaddr = retaddr;
--	trace_buffer_unlock_commit_nostack(buffer, event);
--
--	return 1;
--}
--#else
--int __trace_graph_retaddr_entry(struct trace_array *tr,
--				struct ftrace_graph_ent *trace,
--				unsigned int trace_ctx,
--				unsigned long retaddr)
--{
--	return 1;
--}
--#endif
--
- static inline int ftrace_graph_ignore_irqs(void)
- {
- 	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
-@@ -211,7 +209,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
- 	struct trace_array *tr = gops->private;
- 	struct fgraph_times *ftimes;
- 	unsigned int trace_ctx;
--	int ret = 0;
- 
- 	if (*task_var & TRACE_GRAPH_NOTRACE)
- 		return 0;
-@@ -262,15 +259,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
- 		return 1;
- 
- 	trace_ctx = tracing_gen_ctx();
--	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
--	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
--		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
--		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
--	} else {
--		ret = __graph_entry(tr, trace, trace_ctx, fregs);
--	}
--
--	return ret;
-+	return __graph_entry(tr, trace, trace_ctx, fregs);
- }
- 
- int trace_graph_entry(struct ftrace_graph_ent *trace,
-@@ -634,13 +623,9 @@ get_return_for_leaf(struct trace_iterator *iter,
- 			 * Save current and next entries for later reference
- 			 * if the output fails.
- 			 */
--			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
--				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
--			} else {
--				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
-+			int size = min_t(int, sizeof(data->ent), iter->ent_size);
- 
--				memcpy(&data->ent, curr, size);
--			}
-+			memcpy(&data->ent, curr, size);
- 			/*
- 			 * If the next event is not a return type, then
- 			 * we only care about what type it is. Otherwise we can
-@@ -811,21 +796,21 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
- 
- #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
- #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
--static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_entry *entry,
--				u32 trace_flags, bool comment)
-+static void print_graph_retaddr(struct trace_seq *s, unsigned long retaddr, u32 trace_flags,
-+				bool comment)
- {
- 	if (comment)
- 		trace_seq_puts(s, " /*");
- 
- 	trace_seq_puts(s, " <-");
--	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
-+	seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
- 
- 	if (comment)
- 		trace_seq_puts(s, " */");
- }
- #else
- #define __TRACE_GRAPH_PRINT_RETADDR 0
--#define print_graph_retaddr(_seq, _entry, _tflags, _comment)		do { } while (0)
-+#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)		do { } while (0)
- #endif
- 
- #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
-@@ -869,10 +854,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 		trace_seq_printf(s, "%ps", func);
- 
- 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
--			print_function_args(s, entry->args, (unsigned long)func);
-+			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-+					    (unsigned long)func);
- 			trace_seq_putc(s, ';');
--		} else
-+		} else {
- 			trace_seq_puts(s, "();");
-+		}
- 
- 		if (print_retval || print_retaddr)
- 			trace_seq_puts(s, " /*");
-@@ -882,8 +869,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 	}
- 
- 	if (print_retaddr)
--		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
--				    trace_flags, false);
-+		print_graph_retaddr(s, entry->args[0], trace_flags, false);
- 
- 	if (print_retval) {
- 		if (hex_format || (err_code == 0))
-@@ -964,10 +950,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 		trace_seq_printf(s, "%ps", (void *)ret_func);
- 
- 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
--			print_function_args(s, entry->args, ret_func);
-+			print_function_args(s, entry->args + ARGS_OFFS(args_size),
-+					    ret_func);
- 			trace_seq_putc(s, ';');
--		} else
-+		} else {
- 			trace_seq_puts(s, "();");
-+		}
- 	}
- 	trace_seq_putc(s, '\n');
- 
-@@ -1016,7 +1004,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
- 	args_size = iter->ent_size - offsetof(struct ftrace_graph_ent_entry, args);
- 
- 	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
--		print_function_args(s, entry->args, func);
-+		print_function_args(s, entry->args + ARGS_OFFS(args_size), func);
- 	else
- 		trace_seq_puts(s, "()");
- 
-@@ -1024,8 +1012,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
- 
- 	if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
- 		entry->ent.type == TRACE_GRAPH_RETADDR_ENT)
--		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
--			tr->trace_flags, true);
-+		print_graph_retaddr(s, entry->args[0], tr->trace_flags, true);
- 	trace_seq_putc(s, '\n');
- 
- 	if (trace_seq_has_overflowed(s))
-@@ -1202,7 +1189,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *field, struct trace_seq *s,
- 	 * it can be safely saved at the stack.
- 	 */
- 	struct ftrace_graph_ent_entry *entry;
--	u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)];
-+	u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR) * sizeof(long)];
- 
- 	/* The ent_size is expected to be as big as the entry */
- 	if (iter->ent_size > sizeof(save_buf))
-@@ -1429,16 +1416,12 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
- 		trace_assign_type(field, entry);
- 		return print_graph_entry(field, s, iter, flags);
- 	}
--#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
- 	case TRACE_GRAPH_RETADDR_ENT: {
--		struct fgraph_retaddr_ent_entry saved;
- 		struct fgraph_retaddr_ent_entry *rfield;
- 
- 		trace_assign_type(rfield, entry);
--		saved = *rfield;
--		return print_graph_entry((struct ftrace_graph_ent_entry *)&saved, s, iter, flags);
-+		return print_graph_entry((typeof(field))rfield, s, iter, flags);
- 	}
--#endif
- 	case TRACE_GRAPH_RET: {
- 		struct ftrace_graph_ret_entry *field;
- 		trace_assign_type(field, entry);
--- 
-2.34.1
-
+> - Link to v2: https://lore.kernel.org/r/20251111-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v2-0-101a801974b6@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Use "tcg,tpm_tis-spi" compatible to satisfy dtbs_check (was vendor-only).
+> - Add dependency change in cover letter.
+> - Link to v1: https://lore.kernel.org/r/20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-v1-1-8ba83b58fca7@oss.qualcomm.com
+> ---
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> index 36dd6599402b..aecaebebcef5 100644
+> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> @@ -917,6 +917,16 @@ &smb2360_2_eusb2_repeater {
+>  	vdd3-supply = <&vreg_l8b_3p0>;
+>  };
+>  
+> +&spi11 {
+> +	status = "okay";
+> +
+> +	tpm@0 {
+> +		compatible = "st,st33htpm-spi", "tcg,tpm_tis-spi";
+> +		reg = <0>;
+> +		spi-max-frequency = <20000000>;
+> +	};
+> +};
+> +
+>  &swr0 {
+>  	status = "okay";
+>  
+> 
+> ---
+> base-commit: 9c0826a5d9aa4d52206dd89976858457a2a8a7ed
+> change-id: 20251107-arm64-dts-qcom-hamoa-iot-evk-enable-st33-tpm-on-spi11-c8353d7fe82e
+> 
+> Best regards,
 
