@@ -1,61 +1,88 @@
-Return-Path: <linux-kernel+bounces-898287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F6AC54C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:59:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5ADC54C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53FAF4E075A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F155F3AA17C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FC62E6CA0;
-	Wed, 12 Nov 2025 22:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4D2E7198;
+	Wed, 12 Nov 2025 22:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="g449YFJy"
-Received: from smtp153-163.sina.com.cn (smtp153-163.sina.com.cn [61.135.153.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeyGCtIp"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770792BF017
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8226F2BF017
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762988377; cv=none; b=dcaDS5WG5rXC86gV0IQSimw3b0BbGbI6ej6EhPZwW9eP7X8D+9CmBZTEOvLsCBsA9NO18OZZEc+fF8LOFBLtO4f7Shlj550NSv7mIC9deQ+NwUpw1Fdh7IKFGB2pkI+ATPiPV4hGwPLJPdIZAnCP3CUn37SduHrUGE90UuU0P0U=
+	t=1762988245; cv=none; b=eprYakr1xesVY0ovV4EVzJvwaqR5Ec1EXxNZjcoVoAqzqzwR3Rb6GDspMiHPKU9D8SEVoqdN9gqLIbhICVUV1YrqaPcF2abHM+5/UXKadMQ2pewTHjAjmbbX0brj2I1kfP6Cos1JNiABzmR9rP5W8k4zEV2Mi+QDFftrgzxVNyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762988377; c=relaxed/simple;
-	bh=boBN4RQ8eNqzYs+xUtkUkIFpTZIANwxYq2NCC8EjZ+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d5drbFjpRa/N7YZsqAB40JD9jZ3FnYrRTeN+UTdA/1hKWgZSiaCNAZ+bBUNh5DSMY9VZ6R/v5yW6pGnS5v9dFP0fH8bH8fAtdDwgrbA+qSG2MmBXoTpGwAZbjP2VMdL4o1Da9Q6NVMOO1XZWkQ07fQVjdBrG3VSFWKox1aGdbuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=g449YFJy; arc=none smtp.client-ip=61.135.153.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1762988369;
-	bh=aVwybilAiQlDrK/nywGafilBgOrovrprY34VpGnZCQE=;
-	h=From:Subject:Date:Message-ID;
-	b=g449YFJyDFCUlXTw6dB53ORPCij0NDpQbVrnsMYkHR8YyODfk3DHyNI8Bj2eEYdYs
-	 sdJh5ky1bLcQdH4cJmC0LcffoR7pKGwlgjFau9drPCG3zeCjqEkmUWT4BDvmscyiJB
-	 L7qKYhzJr42iZxELajhoOwOcVMTfoR9BPRDNSAf4=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.57.85])
-	by sina.com (10.54.253.32) with ESMTP
-	id 691510BC00007752; Wed, 13 Nov 2025 06:57:02 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2422304456687
-X-SMAIL-UIID: 73BD44BFAC7342938648B58B350AAABF-20251113-065702-1
-From: Hillf Danton <hdanton@sina.com>
-To: linux-kernel@vger.kernel.org
-Cc: Hillf Danton <hdanton@sina.com>
-Subject: Re: some works in 2025
-Date: Thu, 13 Nov 2025 06:56:48 +0800
-Message-ID: <20251112225650.9224-1-hdanton@sina.com>
-In-Reply-To: <20250830071021.6131-1-hdanton@sina.com>
-References: 
+	s=arc-20240116; t=1762988245; c=relaxed/simple;
+	bh=vGkHHaiy3MOyxLXpItzTUmCw6cPMAJKBLTMBmp9fJvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kam8z3odVFW6huG/a82KxFoKKNihi07wgMMXf3tAoWdo5DpOwU4Z0E/lvJRMWsincmKv35nOcqaegBDcoaB44XxZVnOa9yw3xTTH+T4ewzNYvWbk5bmrIltoq6mJ8sdQ7saQ2GpNtxUrNsu3lm3CYUVJCxlAMt8by58QIhBRAWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeyGCtIp; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b3720e58eso116132f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:57:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762988242; x=1763593042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4XAHcY8QOlmnRNr0WHp8n4Z1UHEJ+UhQLLpBoP3WxWw=;
+        b=BeyGCtIpgA3XcAhPQz9KGsqYJNAeHzi6h1fefetCMgNeNyOATyWpFrv+fM7QkM348b
+         iYMmaAjIwcRNYNf1Ve9xR6HgQhHkq6DbNSVf4JkKQ3TCWdoX/zS+fVpXkJLnA4nNVrKZ
+         Qux0H4jI6jLjbRuE8ZXolNsXo2FvCFJcUdHt7aE5+mwm1VVMAd+YTrqBt+KS9QGwEj5l
+         enqcuMQvL5zm+sZVTFyAFsqRakmrNMN2zUhHl+ohBGQrs/Whk4u/HmzqdaeQJkUkQXFv
+         Ib0t8FR/HAxCHJzY/j57oKVCY6kDJMMd45x3TO5D8SZ/V+XZAT1wB38bgIVqsBWaW6J2
+         sJbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762988242; x=1763593042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XAHcY8QOlmnRNr0WHp8n4Z1UHEJ+UhQLLpBoP3WxWw=;
+        b=ILvQOikljJQHHcC5wEgWErnJAuP5exf9el3bu0gRAo73AqqzywzfaN/vEvqowxH35o
+         E+yjTYb7iIbe2RCAHwSeBvuJj9MKFOr9RdLu2qH18XJFAlYS1Lk5lx9RRME2hMFQkpGG
+         4/ImJoaM/nFaS1ZESMuRHostZxmq3Vst9WkxRcV+5WtIFmk2PiqrQVSfi9RBbZq8Jxlr
+         KW4i2Ss4sbqqVcel417q+BrfNgfFgMsvsf5D5OG6+8+f3+1dqOqJq6Ok//QglLr4fDZL
+         mzblAAQFvVrZnSgYPC6Nn/rVggX8hyPgbz3dTyDbk5oVj6BLaa3wABGg5fPlM1TwIKpE
+         gzBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGcEgtwTiWhXaTTil7+IPNLHtGAkQYDc8Me5zHgKKvL77rHtd0Zu2zFJ33Ly4Q89wk7JLEJIB48P/a4bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLYB/kpF+Q7s6BU8r5xoD6X1pP4y9I7GYS5+3DnzPC4IfuE1he
+	wDYCwxT2+h9N3FgEop1o3MLFJVZZ/RPgfihG705J9ztOMqs/ddsFWWZg
+X-Gm-Gg: ASbGncvN2gvYu2LZg4Q5XBwAr9E4kixHMI3eVMtNeNFy4szBAm28rtYW6guhiSwEQrk
+	PH08EAfSiyoZntc/FYq9cWnuR9TJhMLbr4UD7grn5M1p4dGsHawmfhtbj5jPg+BBYmXa/yunqRB
+	5eCmx6t7Zxt+5KWp7KEFlQU0E63eomFi063zeGlI1IRx8d2Oz4iFacvnG7D0Mrr3YVlVyjcLFbA
+	bsuRHH/kaOEVxlCRvc7wnm8+9WhERSNIqMG6OnvJXBIjoLFUGl+8VfrQuVSEwOtMIYWHbjlJOmS
+	zr4vtyOje3rjQH2vmKU3DydWNSS2uq2IKwaElslpr7Hz+dzGx7fc/IyDTku1yUjuDqPMnhgA6pf
+	5f2WcfNJwkK6SCOVmQN+S3lIZLBJuZ0NbxnM+1J750koKuSKYAxQ+FbL5f12mFiOHmk8rGOI3
+X-Google-Smtp-Source: AGHT+IFXMDCLxFuuc4wUyJhDEvYIta/DJd7NNDT/1TjJrbWKKGa/j3geMAGKKaRYDGMbM1sA9IzI/Q==
+X-Received: by 2002:a05:6000:459a:b0:42b:2dfd:5350 with SMTP id ffacd0b85a97d-42b4bdd90e1mr3323681f8f.56.1762988241533;
+        Wed, 12 Nov 2025 14:57:21 -0800 (PST)
+Received: from localhost.localdomain ([78.209.131.33])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e85cc0sm236979f8f.17.2025.11.12.14.57.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 14:57:21 -0800 (PST)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Antoni Pokusinski <apokusinski01@gmail.com>
+Subject: [PATCH v4 0/3] iio: mpl3115: support for events
+Date: Wed, 12 Nov 2025 23:56:58 +0100
+Message-Id: <20251112225701.32158-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,102 +91,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-[continued III]
+Hello,
+The mpl3115 device can raise interrupts when a pressure or temperature
+threshold is crossed, this patchset adds support for them using IIO's
+events interface.
 
-> On Sat, 30 Aug 2025 15:10:20 +0800 Hillf Danton wrote:
-> [continued II]
-> 
-> > On Mon,  4 Aug 2025 10:52:23 +0800 Hillf Danton wrote:
-> > [continued I]
-> > 
-> > On Tue, 24 Jun 2025 19:24:29 +0800 Hillf Danton wrote:
-> > > 
-> > > 001 Subject: Re: [syzbot] [fs?] KASAN: slab-out-of-bounds Write in __put_unused_fd
-> > > https://lore.kernel.org/lkml/6774a257.050a0220.25abdd.097a.GAE@google.com/
-> > > ...
-> > > 050 Subject: Re: [syzbot] [trace?] KASAN: slab-use-after-free Read in __free_filter
-> > > https://lore.kernel.org/lkml/685a6606.a00a0220.2e5631.0064.GAE@google.com/
-> > > 
-> > 051 Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_get_neigh
-> > https://lore.kernel.org/lkml/685bc0ab.a00a0220.2e5631.00c2.GAE@google.com/
-> > ...
-> > 100 Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path on PREEMPT_RT
-> > https://lore.kernel.org/lkml/20250803084924.3785-1-hdanton@sina.com/
-> > 
-> 101 Subject: Re: [syzbot] [trace?] [bpf?] possible deadlock in down_trylock (3)
-> https://lore.kernel.org/lkml/20250805031314.3958-1-hdanton@sina.com/
-> ...
-> 121 Subject: Re: [syzbot] [net?] WARNING in est_timer
-> https://lore.kernel.org/lkml/68b2703c.050a0220.3db4df.01a2.GAE@google.com/
-> 
-122 Subject: Re: [syzbot] [kvm?] [net?] [virt?] INFO: task hung in __vhost_worker_flush
-https://lore.kernel.org/lkml/20250901103043.6331-1-hdanton@sina.com/
-123 Subject: Re: [syzbot] [net?] BUG: soft lockup in sys_sendmsg (2)
-https://lore.kernel.org/lkml/20250902064651.6359-1-hdanton@sina.com/
-124 Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
-https://lore.kernel.org/lkml/20250905030430.6482-1-hdanton@sina.com/
-125 Subject: Re: [PATCH v3 2/3] softirq: Provide a handshake for canceling tasklets via polling
-https://lore.kernel.org/lkml/20250905101502.6525-1-hdanton@sina.com/
-126 Subject: Re: [syzbot] [hfs?] INFO: task hung in deactivate_super (3)
-https://lore.kernel.org/lkml/20250907020310.6559-1-hdanton@sina.com/
-127 Subject: Re: [syzbot] [block?] general protection fault in bio_iov_iter_get_pages
-https://lore.kernel.org/lkml/68bd5115.050a0220.192772.01d2.GAE@google.com/
-128 Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-https://lore.kernel.org/lkml/20250908130303.6609-1-hdanton@sina.com/
-129 Subject: Re: [syzbot] [net?] BUG: corrupted list in flow_block_cb_setup_simple
-https://lore.kernel.org/lkml/68c415ce.050a0220.2ff435.035b.GAE@google.com/
-130 Subject: Re: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
-https://lore.kernel.org/lkml/68c4f2d5.050a0220.3c6139.04bc.GAE@google.com/
+In v4 mostly some minor variable rename changes and a comment in
+read_info_raw according to the review in v3.
 
-131 Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-https://lore.kernel.org/lkml/68c525eb.050a0220.2ff435.0371.GAE@google.com/
-132 Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
-https://lore.kernel.org/lkml/68ccc372.050a0220.28a605.0016.GAE@google.com/
-133 Subject: Re: [syzbot] [mm?] [usb?] WARNING in __alloc_skb (4)
-https://lore.kernel.org/lkml/68ce3203.050a0220.13cd81.0010.GAE@google.com/
-134 Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
-https://lore.kernel.org/lkml/68cff83a.050a0220.13cd81.0035.GAE@google.com/
-135 Subject: Re: [syzbot] [block?] general protection fault in blk_mq_free_tags_callback
-https://lore.kernel.org/lkml/68d25f78.a70a0220.1b52b.02a3.GAE@google.com/
-136 Subject: Re: [syzbot] [sound?] [usb?] general protection fault in snd_usbmidi_do_output
-https://lore.kernel.org/lkml/68d26cd3.a70a0220.1b52b.02a7.GAE@google.com/
-137 Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context in hook_sb_delete
-https://lore.kernel.org/lkml/68d341a6.a70a0220.4f78.0015.GAE@google.com/
-138 Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
-https://lore.kernel.org/lkml/20250924224238.7592-1-hdanton@sina.com/
-139 Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in drain_pages_zone
-https://lore.kernel.org/lkml/20250927004617.7667-1-hdanton@sina.com/
-140 Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
-https://lore.kernel.org/lkml/68ddc8f2.a00a0220.102ee.006f.GAE@google.com/
+Kind regards,
+Antoni Pokusinski
 
-141 Subject: Re: [syzbot] [afs?] KASAN: slab-use-after-free Read in afs_dynroot_readdir (2)
-https://lore.kernel.org/lkml/68e2567f.050a0220.2c17c1.0036.GAE@google.com/
-142 Subject: Re: [PATCH] fs: add missing fences to I_NEW handling
-https://lore.kernel.org/lkml/20251006131543.8283-1-hdanton@sina.com/
-143 Subject: Re: [syzbot] [fuse?] possible deadlock in __folio_end_writeback
-https://lore.kernel.org/lkml/68e5bf12.050a0220.256323.0030.GAE@google.com/
-144 Subject: Re: [syzbot] [net?] [virt?] BUG: sleeping function called from invalid context in __set_page_owner
-https://lore.kernel.org/lkml/68e8b494.050a0220.1186a4.0007.GAE@google.com/
-145 Subject: Re: [syzbot] [kvm?] KASAN: slab-use-after-free Write in kvm_gmem_release
-https://lore.kernel.org/lkml/68fc470c.a00a0220.9662e.0012.GAE@google.com/
-146 Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_uring_del_tctx_node (5)
-https://lore.kernel.org/lkml/69000b07.050a0220.32483.00cb.GAE@google.com/
-147 Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
-https://lore.kernel.org/lkml/CAG2Kcto4XPWMqf_ALZht9wivKki7bNKgCwijLruTsj8CDHaCgA@mail.gmail.com/
-148 Subject: Re: [syzbot] [sound?] [usb?] KASAN: slab-out-of-bounds Write in copy_to_urb
-https://lore.kernel.org/lkml/690c08a3.050a0220.3d0d33.00cf.GAE@google.com/
-149 Subject: Re: [syzbot] [sctp?] BUG: corrupted list in sctp_destroy_sock
-https://lore.kernel.org/lkml/690d5536.a70a0220.22f260.0016.GAE@google.com/
-150 Subject: Re: [syzbot] [block?] general protection fault in rtlock_slowlock_locked
-https://lore.kernel.org/lkml/690efb16.a70a0220.22f260.0077.GAE@google.com/
+---
+Changes since v3:
+(patch 1/3 "use get_unaligned_be24() to retrieve pressure data")
+* commit msg: "get_unaligned_be24" -> "get_unaligned_be24()"
+* read_info_raw: renamed "tmp[3]" -> "press_be24[3]"
+* read_info_raw: added comment at pressure val computation
+(patch 2/3 "add threshold support")
+* interrupt_handler: added sizeof() in a i2c_read_i2c_block call
+* read_thresh: renamed "tmp" -> "press_tgt"
+* write_thresh: renamed "tmp" -> "press_tgt"
 
-151 Subject: Re: [syzbot] [hams?] WARNING: ODEBUG bug in handle_softirqs
-https://lore.kernel.org/lkml/69147776.a70a0220.3124cb.0000.GAE@google.com/
+Changes since v2:
+(general)
+* added the patch tidying up the pressure data retrieval (u8[3] used)
+(patch 2/3 "add threshold support")
+* includes: removed unused linux/units.h
+* read_thresh: fixed comment formatting
+* interrupt_handler: val_press is now u8[3] instead of __be32
 
-[1] Subject: some works in 2025
-https://lore.kernel.org/lkml/20250624112437.1639-1-hdanton@sina.com/
-[2] Subject: Re: some works in 2025 (continued I)
-https://lore.kernel.org/lkml/20250804025224.3838-1-hdanton@sina.com/
-[3] Subject: Re: some works in 2025 (continued II)
-https://lore.kernel.org/lkml/20250830071021.6131-1-hdanton@sina.com/
+Changes since v1:
+(general)
+* squashed the cleanup patch
+* added the patch with the documentation update
+(patch 1/2 "add threshold event support")
+* patch description: explained changes in locking
+* read_event_config: replaced switch with ifs
+* read_event_config: return as early as possible, got rid of int_en_mask
+* read/write_thresh: pressure: calculation changes to comply with raw ABI
+* interrupt_handler: reordered the INT_SRC_* bits in if condition
+* read/write_thresh: used sizeof() and values from limits.h
+* write_thresh: replaced `u8 tmp[2]` with `__be16 tmp`
+* dropped the space between casting `(u8 *) &tmp`
+
+
+Antoni Pokusinski (3):
+  iio: mpl3115: use get_unaligned_be24() to retrieve pressure data
+  iio: mpl3115: add threshold events support
+  iio: ABI: document pressure event attributes
+
+ Documentation/ABI/testing/sysfs-bus-iio |   2 +
+ drivers/iio/pressure/mpl3115.c          | 234 ++++++++++++++++++++++--
+ 2 files changed, 223 insertions(+), 13 deletions(-)
+
+
+base-commit: 1d09cf18cc91d29f650ad9811ed4868d9304d6c7
+-- 
+2.25.1
+
 
