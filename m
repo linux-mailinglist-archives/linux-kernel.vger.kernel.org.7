@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-897857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2361C53D09
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:58:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECFDC53CC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886683A89D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:50:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26F98344919
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2A347FCA;
-	Wed, 12 Nov 2025 17:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F44348894;
+	Wed, 12 Nov 2025 17:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OU0Od5ja"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XKEtv3y1"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DA8346E66
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD8023BCEE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762969827; cv=none; b=HtEI5v4TdwRGa5hm2qjmDmdGOwgMbxZXRjnTlb9P5H3tfQuXkCESbk+4A5dBUmUOPiJz6Ym4NZIOcUtCs+TbYNv1FLR059k6x0cOJZB/rDidY48Q49eq8HXIM8rykahSJ8U4e1IWP8PESRGOTAwv2SiE8zdoxSE7hBHcaq6wJ3Q=
+	t=1762969927; cv=none; b=a6jsIZ9QB2lL5YtmhgYSNJ2tkpCVFMwT/qNvzdws6tP0Bxy/ypw/Ua3upzBY6dcVodrmXoMQpkiieql9chA0y1GBoyjobLYLeTaO2U7uHlkD/8Cp/bcDDxadZjpmYUEiivQ8/Q4Hfkv90wAkyJanuZsw7MB336hJRhnCMdRFSwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762969827; c=relaxed/simple;
-	bh=+cAG+ko5uM8TEZvbuwYzPAx3F/UlyZhqlO1nIWyAXms=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GVC/AjR7RAbvbz1sm5aFjOzIj6bvk1v8s0yQNwwupVWSdBbnqc/U6GT+OWgVDwkCF3WW6ffpMVEnGEnYINjaoj4iEWjP2IrhscW/zx9dK0u+gQC+9eoFiZLNzaPRqnAtfuUmgD1vGpklER/nwBDSvUyauQBdzyIhbbdUNMLmbFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OU0Od5ja; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762969825; x=1794505825;
-  h=date:from:to:cc:subject:message-id;
-  bh=+cAG+ko5uM8TEZvbuwYzPAx3F/UlyZhqlO1nIWyAXms=;
-  b=OU0Od5jaNDlqfSCAeEfcVVDlP6nrw3jCfaRkOHEPoiFKOF6gI7MFIL5u
-   kgRH7UUWyfooSBbQ2DHJhYSwd1epoJJO/Ima1YnByMJFc6OSJbRAsS167
-   PgBxNiyGKWmMigAEX19hU56T98OWRycbnjPekRSoytWV2nfakjBKuigBJ
-   3pdKWwV/XSOaGGlA8LKB4loOpdScO+QJy4xBukNfvPrD0ey6gnOdlIRue
-   mO1y0PxeH5zDGLLVfGReX8nNEX1zFnbMFtZwI51PdicU4W9jr5OXhoQHd
-   FMR1WarA9t5kQux5gyJPoqEaAQzxKBAs7XPPhMtRtpKzglK5za4ncSHMG
-   w==;
-X-CSE-ConnectionGUID: btKxEa1yRnSlZ7EinmInKA==
-X-CSE-MsgGUID: Pg4QgEwiRPaXAOTMAxTySw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64946929"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="64946929"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 09:50:24 -0800
-X-CSE-ConnectionGUID: DoTIOdbwSx2CCkmAu9bfQw==
-X-CSE-MsgGUID: xD0xGCeQTHaCXmjwc+GJ1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="194472007"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 12 Nov 2025 09:50:24 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJEz7-0004Uu-2k;
-	Wed, 12 Nov 2025 17:50:21 +0000
-Date: Thu, 13 Nov 2025 01:49:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/sev] BUILD SUCCESS
- b2c1dd6c6f70a5a519532227358c82d4cfda5b36
-Message-ID: <202511130152.hw4QVtXJ-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762969927; c=relaxed/simple;
+	bh=1nPIUcHHQkGuDuEReWgowmjbEJHx+aY1oV5caXaVwD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N74LHzEb0kfI6yfXxv3YzH1096XhZwwKXFURpnofAaOD5MFLE7RSLEAo7RLS/1WubmfiuPeY6oeKSTAM/lNjZaqKo7dH3FRdwjiK3yl5kNjJK6wqiIH7bKArlTelPz6HR7ynHQB7VdiceSryUZYHI+fjGi455cBQhLNYuW+1E6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XKEtv3y1; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5943d1d0656so1494736e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762969924; x=1763574724; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BWA7RPE90uWMLfiUEvRQf9rnUzfEKRuTRKW0waWBvtU=;
+        b=XKEtv3y1lmMBy21nO7bUwZlqqwhAgY3EHrrg2Awcz68fMxOKN5XczXaFGI98PzTCr6
+         gn7Cep0VSXXysm0l9qOa2n9Z+/s6pTpENot4pfWqWc9Rj9fjzeGC4gIRDNmKtz3pftmv
+         aWoklNBjcd92QRC4skOp3ocOJjsUDaJEJSsrROeHJTmJaPnO892x3E4sl4kvYZPsoIG8
+         3R9scMz8B7NmaM37OwZBoF1E5DyOqT0nDRwP2o5Ca7yMycGJAQdhjq4vkqJnt7o3ij87
+         voDzFXSOoj1r4i6nJV51xWKDMrX1hJcUbQMdbRtPCyBdRHjJVN6QlU/2dxeZn5sKGGQ3
+         uihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762969924; x=1763574724;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BWA7RPE90uWMLfiUEvRQf9rnUzfEKRuTRKW0waWBvtU=;
+        b=mLvEqlR0ZDnC7IfZr62A4d2R6dnlPHlWgxEM361CiKONWwm1OYFpLItgCbDrlFQxKl
+         rUqnElFKTeTM56F2pKsxa1Wk8HOMLX1r9JFYdjxdoQERPrF+ZtlmkPk7dm26QUvWF+TF
+         60dgD0epkKFQCaizU+i65KtHo8ai56mqzxSYGkzlEIzLNA05opyWK9AAOsl0UlEJM3MQ
+         wCv0cK9Im13EhQlSjKpdgcWYJirJ0WTtbNBFDsYD4So9YUMZOE2VodoJsWXFfN5Wm80B
+         VmM+Ab3SOezs4u8dq7j+WxASGI5r74p/p9axdDiI9E/fic3eAh5WYpCipBOBaPl6a5Pk
+         aPMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxRXRErKHDeG/WfpFeNO0PZXPlKgbpZ42YdzbIrnq1DY4ZGdzQHaoEUgfj7mhn6LoE5dfvF9omd04cCNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLbnXkGOwaOiyAvdmqa2uwl81LGvGv9Gc7om2ECzCBgiX8Pai4
+	WBPIgXWDTnqb0/r0bnAyXcAEiDn1m5WYDNuLSmCgy3HGTqnKfwYaC0JxmtoczoOe4qqVW5ppenJ
+	nljAom3tttOcpW468x+J/dwW54SghV2x+SSD+FYEm
+X-Gm-Gg: ASbGncvXQ/2tgdPEOItsED4JDWDhDHBpgewJrRmXzgvnIycsStCKF273Ei83BGH3ODI
+	hMJJqsjL6N/0ZXSRuXTH7o37YTUX2oYPbQhignQ0hgxUBeFNKXdxAbx70N70UGd630p6MaDxZL0
+	9+02NS+l2OGcrixPQt69featRr/S0ZpwbLppgKPqJDGHRIJ8lmORjNniO7fHF2o1JjGxA4YcABL
+	OVr2e+ZiqfItZLIVi7fe3O3kxxc1Vdxq8CVwDZb1dvKXJysYiUOLa+8XXZkccr+h6/6m2c=
+X-Google-Smtp-Source: AGHT+IGZlui+q5RWh2nUGIJx37r549PQ7MH8JxhyuFkGiNy9V2zSJZ657BZLVXRVqOqTvVTllHIpqyOu4vKlX8Ljo0M=
+X-Received: by 2002:a05:6512:1318:b0:591:ec0f:fa92 with SMTP id
+ 2adb3069b0e04-59576df34f9mr1398580e87.3.1762969923158; Wed, 12 Nov 2025
+ 09:52:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
+ <CALzav=cmkiFUjENpYk3TT7czAeoh8jzp4WX_+diERu7JhyGCpA@mail.gmail.com> <aRTGbXB6gtkKVnLo@devgpu015.cco6.facebook.com>
+In-Reply-To: <aRTGbXB6gtkKVnLo@devgpu015.cco6.facebook.com>
+From: David Matlack <dmatlack@google.com>
+Date: Wed, 12 Nov 2025 09:51:35 -0800
+X-Gm-Features: AWmQ_bnMhC8vCEPOclLuVLWYsWBnpTFPjnWiWBSvozOncRXWquyM5KNqmbyfacg
+Message-ID: <CALzav=fwE2kPqJUiB2J20pK5bH_-1XvONQXz1DpsMSOCKa=X+g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
+ queried IOVA ranges
+To: Alex Mastro <amastro@fb.com>
+Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
-branch HEAD: b2c1dd6c6f70a5a519532227358c82d4cfda5b36  x86/coco/sev: Convert has_cpuflag() to use cpu_feature_enabled()
+On Wed, Nov 12, 2025 at 9:40=E2=80=AFAM Alex Mastro <amastro@fb.com> wrote:
+>
+> Hey David, is vfio_pci_driver_test known to be in good shape? Both on the=
+ base
+> commit and after my series, I am seeing below, which results in a KSFT_SK=
+IP.
+> Invoking other tests in a similar way actually runs things with expected
+> results (my devices are already bound to vfio-pci before running anything=
+).
+>
+> base commit: 0ed3a30fd996cb0cac872432cf25185fda7e5316
+>
+> $ vfio_pci_driver_test -f 0000:05:00.0
+> No driver found for device 0000:05:00.0
+>
+> Same thing using the run.sh wrapper
+>
+> $ sudo ./run.sh -d 0000:05:00.0 ./vfio_pci_driver_test
+> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
+> + echo "vfio-pci" > /sys/bus/pci/devices/0000:05:00.0/driver_override
+> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
+>
+> No driver found for device 0000:05:00.0
+> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
+> + echo "" > /sys/bus/pci/devices/0000:05:00.0/driver_override
+> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
+>
+> device =3D vfio_pci_device_init(device_bdf, default_iommu_mode);
+> if (!device->driver.ops) {
+>         fprintf(stderr, "No driver found for device %s\n", device_bdf);
+>         return KSFT_SKIP;
+> }
+>
+> Is this meant to be a placeholder for some future testing, or am I holdin=
+g
+> things wrong?
 
-elapsed time: 1541m
+What kind of device are you using?
 
-configs tested: 35
-configs skipped: 135
+This test uses the selftests driver framework, so it requires a driver
+in tools/testing/selftests/vfio/lib/drivers to function. The driver
+framework allows tests to trigger real DMA and MSIs from the device in
+a controlled, generic, way.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+We currently only have drivers for Intel DSA and Intel CBDMA
+devices.So if you're not using one of those devices,
+vfio_pci_driver_test exiting with KSFT_SKIP is entirely expected.
 
-tested configs:
-i386                          allnoconfig    gcc-14
-i386    buildonly-randconfig-001-20251112    clang-20
-i386    buildonly-randconfig-002-20251112    gcc-14
-i386    buildonly-randconfig-003-20251112    clang-20
-i386    buildonly-randconfig-004-20251112    clang-20
-i386    buildonly-randconfig-005-20251112    gcc-13
-i386    buildonly-randconfig-006-20251112    clang-20
-i386              randconfig-001-20251112    gcc-14
-i386              randconfig-002-20251112    gcc-14
-i386              randconfig-003-20251112    gcc-14
-i386              randconfig-004-20251112    clang-20
-i386              randconfig-005-20251112    clang-20
-i386              randconfig-006-20251112    clang-20
-i386              randconfig-007-20251112    gcc-13
-i386              randconfig-011-20251112    gcc-14
-i386              randconfig-012-20251112    gcc-14
-i386              randconfig-013-20251112    clang-20
-i386              randconfig-014-20251112    clang-20
-i386              randconfig-015-20251112    clang-20
-i386              randconfig-016-20251112    gcc-14
-i386              randconfig-017-20251112    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64  buildonly-randconfig-001-20251112    clang-20
-x86_64  buildonly-randconfig-002-20251112    clang-20
-x86_64  buildonly-randconfig-003-20251112    clang-20
-x86_64  buildonly-randconfig-004-20251112    clang-20
-x86_64  buildonly-randconfig-005-20251112    gcc-14
-x86_64  buildonly-randconfig-006-20251112    gcc-14
-x86_64                          defconfig    gcc-14
-x86_64            randconfig-011-20251112    clang-20
-x86_64            randconfig-012-20251112    gcc-14
-x86_64            randconfig-013-20251112    gcc-14
-x86_64            randconfig-014-20251112    clang-20
-x86_64            randconfig-015-20251112    clang-20
-x86_64            randconfig-016-20251112    clang-20
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I would love to add support for more devices. Jason Gunthrope
+suggested supporting a driver for mlx5 class hardware, since it's
+broadly available. I've also had some discussions about adding a
+simple emulated PCIe device to QEMU for running VFIO selftests within
+VMs.
 
