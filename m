@@ -1,213 +1,173 @@
-Return-Path: <linux-kernel+bounces-896650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183C8C50E20
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:16:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BBDC50E4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6998C4F17AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D3F3B9539
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E76C212F98;
-	Wed, 12 Nov 2025 07:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302572882B6;
+	Wed, 12 Nov 2025 07:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GOa1syeY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="igApBArw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GOa1syeY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="igApBArw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gvTDzYVg";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CUzXQJqh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB851514DC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481028642A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762931541; cv=none; b=rGwctKWdPWRRGv7wWcBVa8ev/Lpdhv2q3NDMyeNtAtGFcskIQlEJ1lOdhUMFoVO5ODGl3bw761Vz9oJfilaHQ2MuzmSwg5tNR30Xi7S6PMcFvmxVMo73Uxjg7ncPlqlbFUdOPPcBibJqGyuScq8/6FmnXBsKCVIiEANJpuijldc=
+	t=1762931571; cv=none; b=eJ9v2V6LpH6RdzwOfT4AhsIHGvH6NSsNjRhDxCRD2o6sUJjJaKVbfIpRFWCqkdpUgXdSE+dSNPzpRbipuvercppHTAwYwg74d66HXMOWqxucqP5Xy+//bbNczidXC/onciC/Viyse/ry/F3h49VF79tLeYEhTE8N+QcjtAsSpG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762931541; c=relaxed/simple;
-	bh=IgJWAKaFXJYsTfhhTqaVwrs1C+8TzHVMfFGN72V5GXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RbZT+C24y3+ozlv5sU+qVaa2OqzFI9bZaBXHBdL5yTkMrGIKEiWRPGehiJEn6+nfGvyFyaD0j2gC0WLVw54Ax6A28/i+41z/T3eeKpzfv7WnxYMgZhGM1OxwKVQi0dEPknpJRxGc2XByes7LZ3cq2i5QRwyU1DpYc8fRKXqYXv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GOa1syeY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=igApBArw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GOa1syeY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=igApBArw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 26F7E21841;
-	Wed, 12 Nov 2025 07:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762931538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sr+6U7iD29KWE6me6qmFhjAX6dUIjh3/FKSQYhO4ZC8=;
-	b=GOa1syeYZ/mNrYeNR7C+fnj5dD9BHhJ3ajLOlIj0VAcUOYnpmRwC7lxf8RXqwO+r8/dXze
-	uBvQ+ZOOjkQOBoLO0bedoEM0aI6HxPKlvDc/p/sau8uRIBr3QUYFpFhZMWexChReWgsvYY
-	0SUOOG5HPnArJEIJN/y2dKyENoQnzVc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762931538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sr+6U7iD29KWE6me6qmFhjAX6dUIjh3/FKSQYhO4ZC8=;
-	b=igApBArwZss0PLdWU6EicDKB1VGfz7ZA4q0tb8W1BswjhQxcmc0lnDy+rGWueWRkY+cF0J
-	2e0jZ1nmhi2K4TAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GOa1syeY;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=igApBArw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762931538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sr+6U7iD29KWE6me6qmFhjAX6dUIjh3/FKSQYhO4ZC8=;
-	b=GOa1syeYZ/mNrYeNR7C+fnj5dD9BHhJ3ajLOlIj0VAcUOYnpmRwC7lxf8RXqwO+r8/dXze
-	uBvQ+ZOOjkQOBoLO0bedoEM0aI6HxPKlvDc/p/sau8uRIBr3QUYFpFhZMWexChReWgsvYY
-	0SUOOG5HPnArJEIJN/y2dKyENoQnzVc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762931538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sr+6U7iD29KWE6me6qmFhjAX6dUIjh3/FKSQYhO4ZC8=;
-	b=igApBArwZss0PLdWU6EicDKB1VGfz7ZA4q0tb8W1BswjhQxcmc0lnDy+rGWueWRkY+cF0J
-	2e0jZ1nmhi2K4TAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF88A14DC8;
-	Wed, 12 Nov 2025 07:12:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zqofLFEzFGkbeAAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 12 Nov 2025 07:12:17 +0000
-Message-ID: <ce51e08a-d7a7-4a92-b9c1-0fe13d814721@suse.de>
-Date: Wed, 12 Nov 2025 08:12:17 +0100
+	s=arc-20240116; t=1762931571; c=relaxed/simple;
+	bh=nm2Ff6jo8I+QGuD3PQnqbmzX4vD+x9n9obxne1ccimM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kiw2BHULYxsY2QthihRah6aTW9VOVBMu+me2G7A5z6YsXQ/XnhgkxQpRNnSyKchWcz083+jXtBbucMNDYgtsKHbF+FB3XOcddyyz+8UOc6g5aYvAtTzrcqfwbkGoLNenT8mOYT1LSroUPe1GUooxHFZNeuigMKlhPM9kgeOBNHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gvTDzYVg; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CUzXQJqh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABMwXr82540307
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:12:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=cTUtPl+F/Wsa2a4a3fwMU2pSucYtfz3vonO
+	DrbZBpqI=; b=gvTDzYVgC58SDEn3SJOa90vgLPsdtqItCt5LsSLBFFGE+xxceAK
+	ZaRjUVGVY8ceh0t6ciZG6gORwB/3QTpkOd1mA20AIgAi0Wu/pdWmws+QoUbFOmNT
+	V3j5z6sR46pMtRozoA1nXnQmxku/83fpghn6DnIDrA17ef0bXJNrWUQf5KiSaBdm
+	W+/GMMHgECRQnUdBiYLnl60FUIIzk2N/L83oCHpiE4hCZg/u/Mqw6n/5vDhE1unk
+	mHDNZ25eXZcYgSwxXcaE3kScdjlRW2aFSNv600VQp5Hm3xX6j+J03ZmC8XnkGKna
+	cwYPYRNEPGn63D6Stp/TFY8hkyQdSqfP2Qw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ac5fgjsty-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:12:44 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7b0007167e5so181859b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762931564; x=1763536364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTUtPl+F/Wsa2a4a3fwMU2pSucYtfz3vonODrbZBpqI=;
+        b=CUzXQJqhfH53ZFHB0PLdHMZbrY1ckYdAbEKd+EEWGCiYW+KVH19lSUpRTriUUn8GCE
+         nEx8rc/Vc81K/tKzKSxt1N0P/VHJosuKIfr7JMAhf4HZHKUL+RxijGyt/yp+yckoMNJm
+         n8hVczhdc/bgxjBvWgSZWg4lWbx1mqFsC49K9omrw0nQV9aiYsjjn/vqaWTYxVBBBnSb
+         5YoTuyL4rMKE/C9LYJbbxfeIaJ8LomcZTQhUhQSly0dOGUtlm77CSi2mcU33/729IWpT
+         GT56rK5y4o6W510qzZnenxUhoDGw3CRxplVadGGaZhVnjXMgE7Wt+Z6K5apbI9uiDWk+
+         3S7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762931564; x=1763536364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cTUtPl+F/Wsa2a4a3fwMU2pSucYtfz3vonODrbZBpqI=;
+        b=tkXNJowEE24gK/BaU3knLBeI7WB/yjMVe9rbF+O+/fdYUJOHt7+MyONgwTc+ISb1WD
+         8F4x4aB3XVRBN2Dcxcvr08K6Ri2XW9rw1TP0uKZaIXjj8beBeHKMAjQPxes9Zkskn+yQ
+         okIQxefD2uMasxMpsc+6vvIhpAWyq0ATLNuBHT/V2OhSvKGBgxzUxTJQoKqiu9fynuO7
+         UUrOGhyB6LB1EYCI2xx8xiIHwUfCobKEkySyAqMaxtKBMxWOqyBRmQ9Mo6+Zf7uHt55f
+         2P+n+ueQqww9a2ysuDz8zI4FBO9GSF0iq63taxUjprqGPmzArtDRnvbcp6hoK1Tti/+D
+         JJ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWizNrY+jpwJkpu5tiTFUqyyUDZ6n+mkXn2pyePduNECC1nBzxZVQEq0C1FTL7GiMMw2Wq75/g/+QPMb7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywOy3gKiQtYmos+QX1zt4OxWldTwzHjxeGV6nKnuPWCPXVQ/GY
+	ON2CdgLBhkGxaRv9YHIOH3nwWHMGQFv6y5xEhQLA/0W9gcgGDDYclGj2sKbFjHoKgd4WiAVGK7D
+	CBCD0D03gwaWvVN5xf14CjhWIl+riHHHUQJkC/kPxRJdQhYRMItNCr0mZFucHyJDRZA==
+X-Gm-Gg: ASbGncv8aLZjSmVzcT1sqCumjK/uXRMROmZFsiPSU8BA94K4acMCq0+vRS4LXLJscRa
+	WzCyegY4RwsUP/Snto7b1pQYGl0xavUd5985NZ+4OtvErnLcw3D3V2+s/WYPit7vJ25wQfb7rMI
+	7wwVt8gAMCfN5n9kF8rdm0FYtrScZHnFyVrxNZW0dxb2Dckh5w7/uvJIdS4rWoRT3NwoBTKlY6P
+	7Do7wGTduZ1OF6SrdiR1TUa6aqlh4I8y82VDca8umbKc2qWGbH9CstHMKmnOjx4LZobBE8ZtNgh
+	wtl0oQXzaPaYVtnYPfaRA7UoeKaLCm4EYKS2PPHKY1KMJssf8C4S6JP8Fn1rjqTuzaUl3oZindy
+	U2VGB4VDhrzd5FjNaV5dyEVs9vSk03Q==
+X-Received: by 2002:a05:6a00:3e21:b0:7a2:861d:bfb with SMTP id d2e1a72fcca58-7b7a59978c8mr1337979b3a.7.1762931563653;
+        Tue, 11 Nov 2025 23:12:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE8/WVzXtZC81bsT/lVupwJpWgLlYk4J1uvkWrhn84yol6tDqvbdYjpuCd7yrTjhx/IcgUuVQ==
+X-Received: by 2002:a05:6a00:3e21:b0:7a2:861d:bfb with SMTP id d2e1a72fcca58-7b7a59978c8mr1337946b3a.7.1762931563095;
+        Tue, 11 Nov 2025 23:12:43 -0800 (PST)
+Received: from hu-sartgarg-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c9632e22sm17949037b3a.8.2025.11.11.23.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 23:12:42 -0800 (PST)
+From: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
+        Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+Subject: [PATCH V5 0/3] Add SD Card support for sm8750 SoC and boards
+Date: Wed, 12 Nov 2025 12:42:31 +0530
+Message-Id: <20251112071234.2570251-1-sarthak.garg@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] nvme: Allow reauth from sysfs
-To: alistair23@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
- sagi@grimberg.me, kch@nvidia.com, linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
-References: <20251111234519.3467440-1-alistair.francis@wdc.com>
- <20251111234519.3467440-5-alistair.francis@wdc.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20251111234519.3467440-5-alistair.francis@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 26F7E21841
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org,kernel.dk,lst.de,grimberg.me,nvidia.com,lists.infradead.org];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,wdc.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.51
+X-Proofpoint-ORIG-GUID: No9KnWDyi2mgr1XTih_hU-8_ywDbE8Mt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA1NiBTYWx0ZWRfX4ER9gBJ9mYo8
+ 8RgqyxQhYP4RHjwu2Tb5uMQkarry2k7QbnI0ZXZuDJeEO0+5sgizh0qEh0w+qDIOAysnYTfymd0
+ /SiNVKxMJF9pB/PbdLJkrHYsHxSudUUT4WIYmJNqBSvpnH89Wl2QiW+mHR5oYWfEbxxdOP0UFH1
+ vACg8/z9dPyQI51nyy1kUQxi8VPWa3LTmwLbdEZAOFth6oO1QsRO0iCaTIcqECk/bgPvft3BCaG
+ t6Wl+yjr2Uwaew7bU3mQHe8RPT7mSuStRDr0jBCEbHjhWxc4VokpJgXnEb7AZBsLaxF5JvuuSP1
+ V4KFpv1t33kBwvDMGC+mp+wf0L0zzhyvkDLK/FX0q+PcU60rhHKKkqy+HOo7LXMxh96nktWpPIp
+ vlziilQuXXqQve6aN1zHFxKI5HHv5Q==
+X-Authority-Analysis: v=2.4 cv=B5u0EetM c=1 sm=1 tr=0 ts=6914336c cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=rfq7y1KLf-xer_pzc54A:9 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: No9KnWDyi2mgr1XTih_hU-8_ywDbE8Mt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_02,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 impostorscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511120056
 
-On 11/12/25 00:45, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
-> 
-> Allow userspace to trigger a reauth (REPLACETLSPSK) from sysfs.
-> This can be done by writing to the sysfs file.
-> 
-> echo 0 > /sys/devices/virtual/nvme-fabrics/ctl/nvme0/tls_configured_key
-> 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> ---
-> v2:
->   - Trigger on any value written to `tls_configured_key`
-> 
->   drivers/nvme/host/sysfs.c | 23 ++++++++++++++++++++++-
->   1 file changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
-> index 6d10e12136d0..db1c53e00501 100644
-> --- a/drivers/nvme/host/sysfs.c
-> +++ b/drivers/nvme/host/sysfs.c
-> @@ -806,7 +806,28 @@ static ssize_t tls_configured_key_show(struct device *dev,
->   
->   	return sysfs_emit(buf, "%08x\n", key_serial(key));
->   }
-> -static DEVICE_ATTR_RO(tls_configured_key);
-> +
-> +static ssize_t tls_configured_key_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t count)
-> +{
-> +	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-> +	int error;
-> +
-> +	if (!ctrl->opts || !ctrl->opts->concat)
-> +		return -EOPNOTSUPP;
-> +
-> +	error = nvme_auth_negotiate(ctrl, 0);
-> +	if (error < 0)
-> +		return error;
-> +
-> +	error = nvme_auth_wait(ctrl, 0);
-> +	if (error < 0)
-> +		return error;
-> +
-> +	return count;
-> +}
-> +static DEVICE_ATTR_RW(tls_configured_key);
->   
->   static ssize_t tls_keyring_show(struct device *dev,
->   		struct device_attribute *attr, char *buf)
+Add SD Card support for sm8750 SoC, including MTP and QRD boards.
 
-Errm. Why 'configured_key'?
+- Changed from v4
+    - As suggested by Konrad Dybcio sort nodes with a unit address
+      (numbers after @) by that register address.
 
-The configured_key sysfs attribute is a representation of the --tls-key
-attribute when calling 'nvme connect', which in itself should be used
-for debugging purposes only. And as such it really cannot be modified.
+- Changed from v3
+    - As suggested by Krzysztof Kozlowski refactor the code to follow
+      DTS coding style and use hex everywhere in reg.
 
-Please use the 'tls_key' attribute (which holds the negotiated key,
-and is available always).
+- Changed from v2
+    - As suggested by Abel Vesa move the GPIO configuration for SD card
+      detection (specifically the pin settings for gpio55) from the
+      SoC-level device tree (sm8750.dtsi) to the board-specific device
+      tree files.
 
-Cheers,
+- Changed from v1
+    - As suggested by Konrad Dybcio the patch into separate commits per
+      board and did formatting improvements (e.g. aligning < symbols,
+      placing each item on a new line).
+    - Addressed Konrad Dybcio comment to use SVS_L1 for opp-202000000.
 
-Hannes
+Sarthak Garg (3):
+  arm64: dts: qcom: sm8750: Add SDC2 nodes for sm8750 soc
+  arm64: dts: qcom: sm8750-mtp: Add SDC2 node for sm8750 mtp board
+  arm64: dts: qcom: sm8750-qrd: Add SDC2 node for sm8750 qrd board
+
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 23 +++++++++++
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts | 23 +++++++++++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi    | 54 +++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+)
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.34.1
+
 
