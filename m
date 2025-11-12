@@ -1,279 +1,141 @@
-Return-Path: <linux-kernel+bounces-897179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FDFC52366
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:15:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDCCC52378
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6A974F2827
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:07:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 538ED4F44E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7E1314B8F;
-	Wed, 12 Nov 2025 12:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49520314A75;
+	Wed, 12 Nov 2025 12:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqOm95zB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+MVu7u+"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2323148BE;
-	Wed, 12 Nov 2025 12:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A7B1D5AC0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949209; cv=none; b=YouG2lpe7b7OvesU7Pch4GeAQ2uQX29q8hvQcnHumL23F/Ol7oCUOMzPi7Y1iX+noZcR9DQ24O5QDGA68o3WoIFzdSSm+LjLpoAgjXels886QF1I+4OGHNzx0zBpO4gRFFcS4Jx9XLsXla9ziZ8aBv8etSwZR4xNyNagv19pKyc=
+	t=1762949249; cv=none; b=Ue1VFqp2RQoY65EE5f/TiAPH4uQ2670VIOZbrHJBw6Aa8NeFYfHjpWsr/uXonOt32gUG+f7KMESt3AxCD/VBGXIAurp4MyPV4o90bgdBUe2nEPEm0+KWnb8ZtWMGKPBJRE/T6MqjCuPMUSc1D78n7cLO+A2IgryVWAiiN73OiAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949209; c=relaxed/simple;
-	bh=yVtS8pRP+adgg8sl6Md/aPafQ8QdghQXjnl9n6aUeFI=;
+	s=arc-20240116; t=1762949249; c=relaxed/simple;
+	bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ry7bojGUOKVJt13pQQt+kNNUG1d08TQFL31Sv1CZkiNCjwC9vqfMDB711+/PbBl6Gi7NZ80rjqpGlPEvvbrr3LRRdSmh5NWmd7REnsKHsJJbqFOyrJXROXpVUDQlGlxBJqvFfiE75IaeucFABvVOpeKdb1npxkQAT3F3O/kD77o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqOm95zB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC2BC4CEF5;
-	Wed, 12 Nov 2025 12:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762949209;
-	bh=yVtS8pRP+adgg8sl6Md/aPafQ8QdghQXjnl9n6aUeFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DqOm95zBibddQtdO1bWejRsX26TZ3LUw737DGdw4PPYUxbrwkz+pJrVBnmkUXW7Jt
-	 A6IDEllCpCpAYQJBqRe0ddGfyGeChcV2QFmsImr7GZH1/RZ1cqPHVsnUjsBVTCjVgo
-	 AyFgT4BXP1pbqSfqzvulNIBxACVABxsQyKG/yrrPGg11bM8FAkMJjUU4PkUV2eWo4N
-	 /X8REycVGQhdPU8RLC2Ii9zcQphxLK2C1zxNfoyfjdONTTM4l3pRFlTY9ygOsG7mDq
-	 SG9VKSpPsnmKxKp+fXLySHCtbKoMfgh5w0DCazN7ACpIRiQY3aC7DTcRQVhXvUgKWu
-	 BKmrLG1v2kEcg==
-Date: Wed, 12 Nov 2025 14:06:44 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <20251112120644.GD17382@unreal>
-References: <aRKu5lNV04Sq82IG@kspp>
- <20251111115621.GO15456@unreal>
- <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
- <20251111141945.GQ15456@unreal>
- <d3336e9d-2b84-4698-a799-b49e3845f38f@embeddedor.com>
- <20251112093226.GA17382@unreal>
- <01dde656-f41f-48f1-944c-b69cf1c3543e@embeddedor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=to6P1llTilxekUYkaMz0UvWzAnMFJpv3JxJhbeIs1ncXMiMlLSfhNeGoHVoza09SLCb/2qYSq4lmFgl7sg6KjYp0wpaNSM+FQ6gTSJZny3xyOHuHmBJpQbpvD21QnkGTKjOPr0lMHjBaBwj3nXogf8puMI+SpCNCssHnUUgfimc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+MVu7u+; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8b28f983333so82735385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:07:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762949247; x=1763554047; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
+        b=T+MVu7u+UMAI2WUUFd26WraGC3lDj+PRQi2AtwiJHtXKAwu1kEpZPZSu6z+EUkqOs1
+         qSaAIasPEs+R566KAGP8osjfuHmYYt1bFp/IwTD1kYnqZnTdQEbaByFBTqIwEX4BVCyN
+         fAdbirMizZlUnAPug4aVfKiPvVbCFT2Vwhw/zGe2HruhjLiYyZuFk1em7/O77p8LwrEr
+         rt7Y4Op7k026U3WWlZDyfwx7pq7N/c/Qt6tSRA0RR8TdtblGDTTZBzvmvcq4e2l3Txjc
+         Cu2X7tTxYPXSYkPGbScgGBWsIikHWZtpo0Wd0jjjs3Cc9e2qrNl1yB6GwJjlGgt6hUsU
+         pgVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762949247; x=1763554047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rmaw8uxqe2EYzaqnQYDzGZ3+OW1penkChF7AR/TE5b4=;
+        b=X5wqzRmaOf0wW7AXARMeIfn5l6kDFrgAZR69LXKDnKqR72PB5Y6lV5ka0HYJdcBFa9
+         TDiTUW5LwCtkjpCOCyq1A2q5Tj/j/48lOparg6XBmQC+o1H8XAl1nYZPzDNESCubOJoj
+         yUldm4XZnjm69/xI26j6tAazFfi0bHTTW5N5vlMub7BpsRUU4qu+lNYjyXrfSFveP/uw
+         UAMT6mAyOUHvGo+cWOupOwwGDAeMdxhA7z+6/wra2CxXEwyukBYIlVJAeZ2/RziHsCPn
+         wzeuNqJCiL8piZqXcl5JYo0ih6S3kBBejkicA/hwyb5yBqSw0a3WgHXC7V3tRlGxW/Z4
+         d3Dw==
+X-Gm-Message-State: AOJu0YzY9bH0lgzwL2wqPb0xZHoijrYKoVapRt8/zdKpbgeDfkG+ut8c
+	SOQhwWtF3z9UAsP8L06Y2vYG4gJyDkweG/AFHo7w8boSk3W8b557mleJ
+X-Gm-Gg: ASbGnctbR8xBNBVai/kCoC+Bzm1mBXlU/z6mj+k2/yFhWpx9qvFOHLLHvJOK4ksGppc
+	OaFiVpNWe1+6ve3vG35nkZxtWpHPf+bSNet67XaMaXseRm90JEHHDzrUTPzgjwq/wFSVU3wcez3
+	sGplgb2B1Zfj315vTCjuDt3j23Hz8dbJoFkMkh+scd85b6zfo4co+pxal6BdfspapJLZaQdSl2q
+	L6atWZ3RL1tmHeDhJO8r8QylPY8AUCn2/YS355WO5O1tLplkY/PKx/w9wcfzYaFeYdsD3AALDcl
+	zRNzvcMJYSQGLqnDZflcVJ0MKVXV9GokGhz6SvqHPFUoN8CXEJYFqbhDWq1/s3niBdsWyvNegt1
+	sPGAoWNG9fLhN1nssYKxlwWTnKZdayLIb17HJiRjzkFwQBD5MlURpseSTP0FIRS1oLLOsAYnxUG
+	11
+X-Google-Smtp-Source: AGHT+IHodS+pTxbKK//f1GSMGDWXc+XiJHZj4dNVP6EykXSirX90SEf7NOQJlws/+WQMWWTXQYW47w==
+X-Received: by 2002:a05:622a:19aa:b0:4ec:f403:3019 with SMTP id d75a77b69052e-4eddbc82c32mr34381541cf.21.1762949247017;
+        Wed, 12 Nov 2025 04:07:27 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda7116927sm80703501cf.13.2025.11.12.04.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 04:07:24 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 87BE14209E71; Wed, 12 Nov 2025 19:07:17 +0700 (WIB)
+Date: Wed, 12 Nov 2025 19:07:17 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Security Module <linux-security-module@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Kees Cook <kees@kernel.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] security: sctp: Format type and permission checks tables
+Message-ID: <aRR4daS-XsAFLkfe@archie.me>
+References: <20251103113922.61232-2-bagasdotme@gmail.com>
+ <aRKgyvrTxldlTv9t@archie.me>
+ <CAHC9VhQeghqosexgOQO3==poNwsf_6mNiOqkUTUOdYnzRYzKmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kaEZR4YZ+xgx6+Vu"
 Content-Disposition: inline
-In-Reply-To: <01dde656-f41f-48f1-944c-b69cf1c3543e@embeddedor.com>
+In-Reply-To: <CAHC9VhQeghqosexgOQO3==poNwsf_6mNiOqkUTUOdYnzRYzKmQ@mail.gmail.com>
 
-On Wed, Nov 12, 2025 at 06:50:16PM +0900, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 11/12/25 18:32, Leon Romanovsky wrote:
-> > On Wed, Nov 12, 2025 at 05:49:05PM +0900, Gustavo A. R. Silva wrote:
-> > > 
-> > > 
-> > > On 11/11/25 23:19, Leon Romanovsky wrote:
-> > > > On Tue, Nov 11, 2025 at 09:14:05PM +0900, Gustavo A. R. Silva wrote:
-> > > > > 
-> > > > > 
-> > > > > On 11/11/25 20:56, Leon Romanovsky wrote:
-> > > > > > On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
-> > > > > > > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> > > > > > > getting ready to enable it, globally.
-> > > > > > > 
-> > > > > > > Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> > > > > > > 
-> > > > > > > 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> > > > > > > 
-> > > > > > > This helper creates a union between a flexible-array member (FAM) and a
-> > > > > > > set of MEMBERS that would otherwise follow it.
-> > > > > > > 
-> > > > > > > This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
-> > > > > > > the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
-> > > > > > > start of MEMBER aligned.
-> > > > > > > 
-> > > > > > > The static_assert() ensures this alignment remains, and it's
-> > > > > > > intentionally placed inmediately after the related structure --no
-> > > > > > > blank line in between.
-> > > > > > > 
-> > > > > > > Lastly, move the conflicting declaration struct rxe_resp_info resp;
-> > > > > > > to the end of the corresponding structure.
-> > > > > > > 
-> > > > > > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> > > > > > > ---
-> > > > > > >     drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
-> > > > > > >     1 file changed, 11 insertions(+), 7 deletions(-)
-> > > > > > > 
-> > > > > > > diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > > index fd48075810dd..6498d61e8956 100644
-> > > > > > > --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > > +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > > @@ -219,12 +219,6 @@ struct rxe_resp_info {
-> > > > > > >     	u32			rkey;
-> > > > > > >     	u32			length;
-> > > > > > > -	/* SRQ only */
-> > > > > > > -	struct {
-> > > > > > > -		struct rxe_recv_wqe	wqe;
-> > > > > > > -		struct ib_sge		sge[RXE_MAX_SGE];
-> > > > > > > -	} srq_wqe;
-> > > > > > > -
-> > > > > > >     	/* Responder resources. It's a circular list where the oldest
-> > > > > > >     	 * resource is dropped first.
-> > > > > > >     	 */
-> > > > > > > @@ -232,7 +226,15 @@ struct rxe_resp_info {
-> > > > > > >     	unsigned int		res_head;
-> > > > > > >     	unsigned int		res_tail;
-> > > > > > >     	struct resp_res		*res;
-> > > > > > > +
-> > > > > > > +	/* SRQ only */
-> > > > > > > +	/* Must be last as it ends in a flexible-array member. */
-> > > > > > > +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
-> > > > > > > +		struct ib_sge		sge[RXE_MAX_SGE];
-> > > > > > > +	) srq_wqe;
-> > > > > > 
-> > > > > > Will this change be enough?
-> > > > > > 
-> > > > > > diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > index fd48075810dd..9ab11421a585 100644
-> > > > > > --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> > > > > > @@ -219,12 +219,6 @@ struct rxe_resp_info {
-> > > > > >            u32                     rkey;
-> > > > > >            u32                     length;
-> > > > > > -       /* SRQ only */
-> > > > > > -       struct {
-> > > > > > -               struct rxe_recv_wqe     wqe;
-> > > > > > -               struct ib_sge           sge[RXE_MAX_SGE];
-> > > > > > -       } srq_wqe;
-> > > > > > -
-> > > > > >            /* Responder resources. It's a circular list where the oldest
-> > > > > >             * resource is dropped first.
-> > > > > >             */
-> > > > > > @@ -232,6 +226,12 @@ struct rxe_resp_info {
-> > > > > >            unsigned int            res_head;
-> > > > > >            unsigned int            res_tail;
-> > > > > >            struct resp_res         *res;
-> > > > > > +
-> > > > > > +       /* SRQ only */
-> > > > > > +       struct {
-> > > > > > +               struct ib_sge           sge[RXE_MAX_SGE];
-> > > > > > +               struct rxe_recv_wqe     wqe;
-> > > > > > +       } srq_wqe;
-> > > > > >     };
-> > > > > 
-> > > > > The question is if this is really what you want?
-> > > > > 
-> > > > > sge[RXE_MAX_SGE] is of the following type:
-> > > > > 
-> > > > > struct ib_sge {
-> > > > >           u64     addr;
-> > > > >           u32     length;
-> > > > >           u32     lkey;
-> > > > > };
-> > > > > 
-> > > > > and struct rxe_recv_wqe::dma.sge[] is of type:
-> > > > > 
-> > > > > struct rxe_sge {
-> > > > >           __aligned_u64 addr;
-> > > > >           __u32   length;
-> > > > >           __u32   lkey;
-> > > > > };
-> > > > > 
-> > > > > Both types are basically the same, and the original code looks
-> > > > > pretty much like what people do when they want to pre-allocate
-> > > > > a number of elements (of the same element type as the flex array)
-> > > > > for a flexible-array member.
-> > > > > 
-> > > > > Based on the above, the change you suggest seems a bit suspicious,
-> > > > > and I'm not sure that's actually what you want?
-> > > > 
-> > > > You wrote about this error: "warning: structure containing a flexible array
-> > > > member is not at the end of another structure".
-> > > > 
-> > > > My suggestion was simply to move that flex array to be the last element
-> > > > and save us from the need to have some complex, magic macro in RXE.
-> > > 
-> > > Yep, but as I commented above, that doesn't seem to be the right change.
-> > > 
-> > > Look at the following couple of lines:
-> > > 
-> > > drivers/infiniband/sw/rxe/rxe_resp.c-286-       size = sizeof(*wqe) + wqe->dma.num_sge*sizeof(struct rxe_sge);
-> > > drivers/infiniband/sw/rxe/rxe_resp.c-287-       memcpy(&qp->resp.srq_wqe, wqe, size);
-> > > 
-> > > Notice that line 286 is the open-coded arithmetic (struct_size(wqe,
-> > > dma.sge, wqe->dma.num_sge) is preferred) to get the number of bytes
-> > > to allocate for a flexible structure, in this case struct rxe_recv_wqe,
-> > > and its flexible-array member, in this case struct rxe_recv_wqe::dma.sge[].
-> > > 
-> > > So, `size` bytes are written in qp->resp.srq_wqe, and the reason this works
-> > > seems to be because of the pre-allocation of RXE_MAX_SGE number of elements
-> > > for flex array struct rxe_recv_wqe::dma.sge[] given by:
-> > > 
-> > > struct {
-> > > 	struct rxe_recv_wqe	wqe;
-> > > 	struct ib_sge		sge[RXE_MAX_SGE];
-> > > } srq_wqe;
-> > 
-> > So you are saying that it works because it is written properly, so what
-> > is the problem? Why do we need to fix properly working and written code
-> > to be less readable?
-> 
-> No one said the original code is not working as expected. The issue here is
-> that the FAM is not at the end, and this causes a -Wflex-array-member-not-at-end
-> warning. The change I propose places the FAM at the end, and the functionality
-> remains exactly the same.
-> 
-> You're probably not aware of the work we've been doing to enable
-> -Wflex-array-member-not-at-end in mainline. If you're interested, below you
-> can take a look at other similar changes I (and others) have been doing to
-> complete this work:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=-Wflex-array-member-not-at-end
 
-I'm aware of that work, just trying to find a simplest possible solution
-for this specific driver. RXE is a development driver which won't benefit
-from this hardening work at all.
+--kaEZR4YZ+xgx6+Vu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > 
-> > > 
-> > > So, unless I'm missing something, struct ib_sge sge[RXE_MAX_SGE];
-> > > should be aligned with struct rxe_recv_wqe wqe::dma.sge[].
-> > 
-> > It is and moving to the end of struct will continue to keep it aligned.
-> 
-> I think there is something you are missing here. The following pieces of
-> code are no equivalent:
-> 
-> struct {
-> 	struct rxe_recv_wqe	wqe;
->  	struct ib_sge		sge[RXE_MAX_SGE];
-> } srq_wqe;
-> 
-> struct {
->  	struct ib_sge		sge[RXE_MAX_SGE];
-> 	struct rxe_recv_wqe	wqe;
-> } srq_wqe;
-> 
-> What I'm understanding from your last couple of responses is that you think
-> the above are equivalent. My previous response tried to explain why that is
-> not the case.
+On Tue, Nov 11, 2025 at 07:50:56PM -0500, Paul Moore wrote:
+> On Mon, Nov 10, 2025 at 9:35=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.c=
+om> wrote:
+> >
+> > On Mon, Nov 03, 2025 at 06:39:23PM +0700, Bagas Sanjaya wrote:
+> > > Use reST grid tables for both type and permission checks tables.
+> >
+> > review ping
+>=20
+> You don't need to 'ping' for a review, your patch is in my review
+> queue, but code changes take priority at this point in the dev cycle
+> as I'm okay with merging documentation changes fairly late.
 
-Yes, I already forgot about change in srq_wqe.
+OK, thanks!
 
-Thanks
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> 
-> > 
-> > > 
-> > > The TRAILING_OVERLAP() macro is also designed to ensure alignment in these
-> > > cases (and the static_assert() to preserve it). See this thread:
-> > > 
-> > > https://lore.kernel.org/linux-hardening/aLiYrQGdGmaDTtLF@kspp/
-> > > 
-> 
-> Thanks
-> -Gustavo
+--kaEZR4YZ+xgx6+Vu
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRR4bgAKCRD2uYlJVVFO
+o9V7AQDHOga8MTEGHoVGvfFH7x5J65YayPNmGzE8rkS1swU6tAD+PMbAFNdlVCkb
+PuY83h41Kn/NdSbZDx6xQS5WY2RdmgY=
+=fNJb
+-----END PGP SIGNATURE-----
+
+--kaEZR4YZ+xgx6+Vu--
 
