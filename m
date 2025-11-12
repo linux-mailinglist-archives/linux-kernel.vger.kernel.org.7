@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-897189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C861C523E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:25:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E877EC523A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A014C423962
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DAC1897110
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46500320CAC;
-	Wed, 12 Nov 2025 12:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF533328604;
+	Wed, 12 Nov 2025 12:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prAb0eP4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aa54lqoP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A8031C576;
-	Wed, 12 Nov 2025 12:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8766D328248;
+	Wed, 12 Nov 2025 12:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949714; cv=none; b=T/rfwHDG/PsHTmNXAULlvR3wWSG4DOt/UU/gzIWw387pkcLkoyDpH6N2ShFHMQLUxMRoQjEmFvt+bsYfygZz330YozfxCor6vC+y88E9FL0W6voyynqPYwnJyHGCEOdv+5mnknFVplnMHkdTLHn/b8KM56jYpvsIOus7xdc8/4g=
+	t=1762949770; cv=none; b=mFmjqJVR5OlEbaOjB7H5CIoNDQAle9ZF2yNQTYKJlw2m5DLY2fOtDpWisxhRHutPVAZdryngWe6rtDbOPCedTJIxIj2tMZ5GAVo3ToeiFPYJQ90MwcSoPUcpmz2sENl25uXOvn0Rmz1YXn2+8wYjXvIboTkWRGWi3FI0kfX9CQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949714; c=relaxed/simple;
-	bh=LvobtyzxlyPW6gIKJxQAWAM+dxTFPbpGzV/jL86QCLA=;
+	s=arc-20240116; t=1762949770; c=relaxed/simple;
+	bh=z3pfXsws2Ib9I7QE66cd5SFRXKq2E3h+YcEe/sqNmik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJFsVtxFROKnwgb4aiP5jQ1l/RqeUvSvNxnKdVA7Ufn6xbjdSZVEQcBzAM9snx9fImiulBm1ED1xpXGSXe8nMhZpZP77Lsj6ZDjNLm5bzFP91VvZOjqzp2VksJNNOYK+oI/E8+Aea6DObaEFaTrHlxzLJo9wl28KK6hcLXXYcEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prAb0eP4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48254C4CEF5;
-	Wed, 12 Nov 2025 12:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762949712;
-	bh=LvobtyzxlyPW6gIKJxQAWAM+dxTFPbpGzV/jL86QCLA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/uCRHsnS988WWML633rphcH34OwAn3Dih7anCKiVzoDQlkFASDHf1aJqU89lmCYU7uFlPYeC7uqcSB6thzbNVxwifUzb+dChFgLYbSLtuxb34HUyMoyX4wjTuwGeZsCe1kJNtZgkewSQYVr0mJ/M6EeFZZih3SnzLirH+OA5RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aa54lqoP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D934940E0225;
+	Wed, 12 Nov 2025 12:16:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lvXydyObwiS8; Wed, 12 Nov 2025 12:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762949760; bh=0NzF56AgALMOOTOrc5WVJq9Jcj4PcG8F8jd49jZ76Ro=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=prAb0eP4AcbTYSrYYW+jPicB1nCpcnL7P97XANaRsiFnojz1LNBQGFDSgqL8dHh3B
-	 cx/voQvFyQNak+DarWcaqx6Hwo9IGzFtHbfa9XC2PFj7+seYWykiYXA70itm8zVLKT
-	 SUNZASy6DF0eWSokGheOXaGSkTZa1wPLVLtluBAvN79H8hsDZBjNFIycLB06U+spuD
-	 nxQUETKLzI0akNDsPuJaCt7qdMXuKTNag2cTCm40AeaUHxTlRQ4KBQbFGTEOFxWutE
-	 y9Jpzy78lQfigxl871pKJCCoyuPw/C98pJBbZzqYzwCz1SI2VX9pZnUtgPEICDQp+L
-	 Z/vn5/gj36XMw==
-Date: Wed, 12 Nov 2025 12:15:03 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	b=aa54lqoPTbTHTc+c3KPV9IJ8b8nmZF7+yJZn7MsjsJwl+FX3rDgYtwBe4wJhXg7Lc
+	 gm6i7uoRajC1W6+jD+B27LX5O3QQCHL22BTJHzrY/sp+hazOH+JHKV1QWQQxklx6ps
+	 Mc7wRIGPl3Yh9eYhjmdKdE+03PpzztTH37kyLrIvPFHyL7B0EDlvkfFEOwv0C3vk5L
+	 8/FSIrEDX6yHueEZ13P0aszzNHlOL971swI78lc+gY8S/uWJiyTIYQK4d3fHdfaZQQ
+	 h6n3x/EXbTyUN0XgjkLSNgfVBEkKZw1gsn9c+QGXLWZPEvgMExDog13o9oe10cNP5C
+	 BuzVN7jWCYXf2oaOt28RtMyNEDGFASCoanPe/G9ccAcdek3UWmnIl+fLpu1cbiuc+6
+	 xFLd7089E97Y1B4w9A6Bomlx6FFyCfhLqguJ5an9sc8RM3iZV1e2LCTCGji1ZV1F1y
+	 JMr1Z2lGCWYXOfWFIs9q/cQbLv86dHrtvZPH1Lp/ySfdD5royEGWx+AknGgIce8xYY
+	 vPRSpjd9FvVMSfJ2PHbE1NQNqViviruMUixYLbCZhEVO0SjsT5seEcW2xF474HI7k3
+	 hqOp6rUrkOSnT5o8lQGSgSTKUq3Bz0+ukZDX8J5fnXrFEOmwG6S/b6z8myEDf/evhf
+	 8CXFg9NMRGqg6cylh2oErZOw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5B9C440E0191;
+	Wed, 12 Nov 2025 12:15:51 +0000 (UTC)
+Date: Wed, 12 Nov 2025 13:15:50 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-ID: <af8f3543-4af6-48d7-a55a-bab24b6c7c7a@sirena.org.uk>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
- <175859026716.374439.14852239332989324292.stgit@devnote2>
- <aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
- <20251027224347.4c887cc956df63602f377550@kernel.org>
- <20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
- <20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
- <20251029004219.dc9cda0eb56ae46c55855844@kernel.org>
- <20251029114317.167b7d908533385c1c9e6782@kernel.org>
- <20251029172004.a0aca144735f20a6a59d2aa6@kernel.org>
- <20251030090952.befea7f0cecd5518c7fda02c@kernel.org>
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 2/8] x86/bugs: Decouple ALTERNATIVE usage from VERW
+ macro definition
+Message-ID: <20251112121550.GYaRR6dh590G2TP578@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-3-seanjc@google.com>
+ <20251101041324.k2crtjvwqaxhkasr@desk>
+ <aQjfwARMXlb1GGLJ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cP5LvKoSdHfjRefq"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251030090952.befea7f0cecd5518c7fda02c@kernel.org>
-X-Cookie: "The Computer made me do it."
+In-Reply-To: <aQjfwARMXlb1GGLJ@google.com>
 
+On Mon, Nov 03, 2025 at 09:00:48AM -0800, Sean Christopherson wrote:
+> > Or better yet, can we name the actual instruction define to VERW_SEQ, 
+> 
+> Works for me.
 
---cP5LvKoSdHfjRefq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Just call it VERW. If a separate x86-insn-like macro wants to appear, we can
+disambiguate then.
 
-On Thu, Oct 30, 2025 at 09:09:52AM +0900, Masami Hiramatsu wrote:
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Thx.
 
-> There is a single step execution code but only for default overflow_handlers.
-> This is a bit strange becuase other users can not set it up outside of
-> the arch dependent code. Even if it can, it is simply redundant.
+-- 
+Regards/Gruss,
+    Boris.
 
-> So I made changes below which allow users to set its own custom handler is
-> compatible with perf default overflow handlers.
-> I confirmed this works on both arm and arm64.
-
-I think everyone who knows this code is really snowed under at the
-minute - can I suggest posting this as a fix for now?  This is still
-broken on arm64, we'll need a fix (or to disable the feature on the
-affected arches) one way or another for v6.19.
-
---cP5LvKoSdHfjRefq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkUekcACgkQJNaLcl1U
-h9C16Qf/cGOgECwcc5I4jFkLHhS2AK4mgV7AWZ9YuvlpINTMhR0OvSRr3zbp9xKa
-82Qnc28I4WwMg1h7715oStzw77gTfADaOQWrwXKW277LgR0koUlvmCeCphL4jOLM
-gLOpy8jU0ZjFrlY3Cvepm8xk5eZtGCDnlJWKJ50ZMolCzUs+YYK0l0adx9kfTiqY
-XjBAIJEOD95YAMJgTfp5VeUqwnTqie555SL5mkT9BQzhsNDMqFbUpSlDBpkAzWoQ
-Mz+jgpvcfJO5N9wmB3Jt31d4415sfLtMn2ka1/Gzh8Hqr6jvwAIdXW48wX6LiPMz
-+X5qczEDyGpOlL94BtgksbrjfJ1+9A==
-=RYDB
------END PGP SIGNATURE-----
-
---cP5LvKoSdHfjRefq--
+https://people.kernel.org/tglx/notes-about-netiquette
 
