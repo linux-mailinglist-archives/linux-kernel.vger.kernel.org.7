@@ -1,103 +1,82 @@
-Return-Path: <linux-kernel+bounces-897866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88EEC53D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:06:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D8BC53D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31AF34E4484
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:57:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F38C4ED099
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130C348440;
-	Wed, 12 Nov 2025 17:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcTLMq5X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89233348440;
+	Wed, 12 Nov 2025 17:58:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EAE311C35;
-	Wed, 12 Nov 2025 17:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7E8311C35;
+	Wed, 12 Nov 2025 17:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762970244; cv=none; b=Nv0SvhAJ0WwLgw8hzW5JTc+1zAINpOZ5rvjPZXPWXi7Xr8Wb96Q/q7NECtkifapXL/+UTQTayIYK3Bi310ItL3p5Rmis5vo0KF0qmllr5oTRbwbm6wT5ldsyC1rH64oehk2xud/YjKPwjQA5QZcCljBs4c+GWkrajJYs2bnU4dM=
+	t=1762970336; cv=none; b=o/7mhBq7bYgJNu38TqxuKiEWYC8YCXgvcZbBvGoz5PKl3utyE2SyzfNKjbJFF4NPUIJYfOgJpZ8q90WjwAeen7yywL7Ky3UQsZI0IHnOK07cSuGlA4PuXZYhmZhPoha9uj8lOcvIQW5hd8YtpojaR+9AWmKp3g6wCTzD5kEbKh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762970244; c=relaxed/simple;
-	bh=o1di7OuEst4aEZFZyN3PTmmE+QLUGKEIgtoF4458n9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcNGJLoxZyfvyHvqNBA2U1endzHVlQE5M4ska8dFplndsn80dB0K31MzieZPArFKTffbLY0yLwn4MaLWmLc3q6zsaRxXz4rl97rlDvBQIPXLtRqwi80g3osWsrRDuDfqT/mjr7HZsuwSEYuv+wu3YcEoD49b39KN5X5yb0jd50o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcTLMq5X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4580C16AAE;
-	Wed, 12 Nov 2025 17:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762970243;
-	bh=o1di7OuEst4aEZFZyN3PTmmE+QLUGKEIgtoF4458n9E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IcTLMq5XPKJywdyizwCrAV4/FNhS3SrNIe+ztycE5p5qWrdjHxLJlBpFhxtk0M7Uh
-	 SajUcako1QYD/4V6hoo9kDzH95ckDmXHpbV2cSnLV24swYeadcs7jWXQID2MvhFIFY
-	 5yzGZPTUb4E7DTraXh5LTzgl5VFxGPjLVYVVDdeS88G6170x1FNhfVqr1YD/0lFb7N
-	 1gpQsqtLihvfXPxNUommXOyY6rj4p/VcgjFxkhdIPRx8JqPWj6I3N7+6zOvjVAJ4r8
-	 p6WJKWg4hCjqBiXbk6DYk9+kgn3m6ncrRV2WtZxFmdgpydLnAngODrJ6Z0Po4QvSxW
-	 g98n+lVGvUdSw==
-Date: Wed, 12 Nov 2025 09:57:19 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf stat: Align metric output without events
-Message-ID: <aRTKf6iw0sRuC0ww@google.com>
-References: <20251106072834.1750880-1-namhyung@kernel.org>
+	s=arc-20240116; t=1762970336; c=relaxed/simple;
+	bh=r3Z+UIrdQAMlef30CA9Dy2wMBswk7OVprU8CGEOu36M=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SqW07Ny0UZZuQu+yICKPYjKVcC618F/RoN9xzTP55mrksEp1hFLHCHVztnwpaWUYphkZwJa7kIJvCxVxqKJB87M6CEsztDzf9jqiggUD6xDZb5c+jzQXF4dd9VWw72TU7EV2bhCBPqRjv7mX11dw3c19Zlmbnet4kW9Yn4kKujg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6B2x1lJLzJ46DD;
+	Thu, 13 Nov 2025 01:58:17 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A14B140370;
+	Thu, 13 Nov 2025 01:58:50 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
+ 2025 17:58:49 +0000
+Date: Wed, 12 Nov 2025 17:58:47 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
+ Elisei" <alexandru.elisei@arm.com>
+Subject: Re: [PATCH v4 09/26] perf: arm_spe_pmu: Convert to new IRQ affinity
+ retrieval API
+Message-ID: <20251112175847.00001aa3@huawei.com>
+In-Reply-To: <20251020122944.3074811-10-maz@kernel.org>
+References: <20251020122944.3074811-1-maz@kernel.org>
+	<20251020122944.3074811-10-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251106072834.1750880-1-namhyung@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Nov 05, 2025 at 11:28:34PM -0800, Namhyung Kim wrote:
-> One of my concern in the perf stat output was the alignment in the
-> metrics and shadow stats.  I think it missed to calculate the basic
-> output length using COUNTS_LEN and EVNAME_LEN but missed to add the
-> unit length like "msec" and surround 2 spaces.  I'm not sure why it's
-> not printed below though.
-> 
-> But anyway, now it shows correctly aligned metric output.
-> 
->   $ perf stat true
-> 
->    Performance counter stats for 'true':
-> 
->              859,772      task-clock                       #    0.395 CPUs utilized
->                    0      context-switches                 #    0.000 /sec
->                    0      cpu-migrations                   #    0.000 /sec
->                   56      page-faults                      #   65.134 K/sec
->            1,075,022      instructions                     #    0.86  insn per cycle
->            1,255,911      cycles                           #    1.461 GHz
->              220,573      branches                         #  256.548 M/sec
->                7,381      branch-misses                    #    3.35% of all branches
->                           TopdownL1                        #     19.2 %  tma_retiring
->                                                            #     28.6 %  tma_backend_bound
->                                                            #      9.5 %  tma_bad_speculation
->                                                            #     42.6 %  tma_frontend_bound
-> 
->          0.002174871 seconds time elapsed                  ^
->                                                            |
->          0.002154000 seconds user                          |
->          0.000000000 seconds sys                          here
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On Mon, 20 Oct 2025 13:29:26 +0100
+Marc Zyngier <maz@kernel.org> wrote:
 
-Applied to perf-tools-next, thanks!
-
-Best regards,
-Namhyung
-
+> Now that the relevant interrupt controllers are equipped with
+> a callback returning the affinity of per-CPU interrupts, switch
+> the ARM SPE driver over to this new method.
+> 
+> Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Tested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
