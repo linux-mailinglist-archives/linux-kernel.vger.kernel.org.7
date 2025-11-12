@@ -1,117 +1,88 @@
-Return-Path: <linux-kernel+bounces-896478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D2DC5079F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:04:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2598CC507A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F87A1897543
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7170D1897C68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494582C033C;
-	Wed, 12 Nov 2025 04:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQ0pPAT+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2442C3268;
+	Wed, 12 Nov 2025 04:07:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878F0DDAB;
-	Wed, 12 Nov 2025 04:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421D62594BD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762920263; cv=none; b=QW1QSlSEnz88L27oqGcMxFBth24iRHP3P3Y/QqhkorYf1TvJcIoR/jLOj54+YaCp/r2dA/r8o+bApHP0duNMkOEcA6sWjrjZAAcemW7hmJM68bWXVvNIDsAPrzW840jzRfXxnJjBPMyjU1yc5beZV2vRrDiN7YuMNMtv+5/YK8M=
+	t=1762920424; cv=none; b=gEzB3QELmOoGTQGd2K8jZdBocc/5yLztvu8C5JYJgh3zM4gOatjONFVkZs8aOV2Ra4H9MrHXwQ3qQsdp8WSMcZj7ZNdvdH40GWuiIRSOzxQAYVW769bFLX+gLzPRwf8rgT8sxcOP/AvmfuVGMLAb+VzWtTN3QIpJ/afjUz5ltMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762920263; c=relaxed/simple;
-	bh=QkbySYmFSOFu9qNCeTJ+a2Mok3u8tNjvJEwT2JJzagc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lqn7o4RkJSZZNa3g/OOZo4wV3b0WnizfM4R5NiiPw4Xg7w7/VsAQ/zC3gWH0D+XaPkyoR6bsvFUMRgNM2zncZ5w3MZolbiOdWMQ6lezOiZ7rD0C+uQUeIRkgZMVZkx01jKVkYCRzUx8Cf97rQs64BhBn1q7UP9WbV/6XPXUOzho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQ0pPAT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DD3C116B1;
-	Wed, 12 Nov 2025 04:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762920262;
-	bh=QkbySYmFSOFu9qNCeTJ+a2Mok3u8tNjvJEwT2JJzagc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tQ0pPAT+37otqeqV0CjZ9083wWC4biO96g8LNZ+sof+BT5a+aTm1wSUEsk91M07MO
-	 KouhQDl6rwN6nU+1y3FpnGkxDeuYLqV4kYS8Ujl2xqyjiZBlE46teOFLTvqhLJvNdN
-	 u8lIZpvkEHQT2PIFgWoITuT5NBsXwFbpf9h2vF2K2zYlI9MWNMtioyEHo/tIjt7dx6
-	 Nxi4qETQaVEI1CiORfQIIjFmiwIj4yH+fdik2REd8OiTMz3YI5Tj5q41oDX6SFObEl
-	 QUn1vjunBifFKjT/vh+NOl7EY38Hynm6Ek5nh9ak5irLXRUAx9H53mTR58RoknczsE
-	 1hZGft5vvbsog==
-Date: Tue, 11 Nov 2025 20:04:19 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
-	Joe Lawrence <joe.lawrence@redhat.com>, "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
-	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
-	Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
- per-function checksums
-Message-ID: <yk3ku4ud35rsrfwzvuqnrcnwogwngqlmc3otxrnoqefb47ajm7@orl5gcxuwrme>
-References: <cover.1758067942.git.jpoimboe@kernel.org>
- <1bc263bd69b94314f7377614a76d271e620a4a94.1758067943.git.jpoimboe@kernel.org>
- <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
- <SN6PR02MB41574AD398AD3DE26DB3D23BD4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <6msqczigbcypeclqlgzgtqew7pddmuu6xxrjli2rna22hul5j4@rc6tyxme34rc>
- <SN6PR02MB4157212C49D6A6E2AFE0CAA9D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <SN6PR02MB4157F236604B6780327E6B43D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1762920424; c=relaxed/simple;
+	bh=gWujzDmq797eIGweX0kiDqqhrTMmMFfgbWstpK3QQew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o+tM4sK8mLwIP6uP9AeJf410xB0yb27E3rYpCZhZwZLpyBlqU5D9s02VC5LWwYTgcbUYl88mXgOvDEdmQiuqbGsILrBTq5PCUhJSyvyoqO8EIM2oC8Pn4npH7qzwTsni9hkqpmBN+x/YCbfKLw9P8hOSnWaGAYZl/b2k8Ilb+4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-433692f7479so12390145ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:07:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762920422; x=1763525222;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ZGC6srK0UBsNZVToxudO1JhINuHL7PrwcDUZk54PkY=;
+        b=uop01aeDvftC75Y5DDWyLVn1O1b14TDZHsWe5rFf89LLKHb6stty54KdXtAJ7qZYet
+         hAjQNaSwZtg08zf+Otw8G8yCEawoqZOgv+6KP+3UgffcD4nfWmmyaWBRjeYTArrfvOen
+         lcqZnDUsMnhRaVzKCtXhhWMBoX5cWz+ACJAyzs6jXEnSYWhv/OOYjDXswvivm1d6hiMr
+         uKMb/iP1zDzAUekyzpa9IR06v8X55vg/Du1VXshhvSFOmhqFYzmrSZRr1YwIei2o48wH
+         bTnvpmRRaw+LflCRqEYUFPsrBsVBh/20At/8aJBT13ZeH4FwILXrxp/RT6Jo2/9sAh1J
+         kndA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDuZ9GNd0AHkSW2W2JUbfU9gnTuDVCbcGtMYoezN0x96f0KbagLDf6VHlZ1PKGyOGZrEK6+0eqawI0/7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwinTVw0+RtXqRZWRRBETmYaQjf11RrbrnN5NKJIiJ8W11uOaDO
+	X+RVbv5mgOzfR7kLGFsztzkDskhyOT2cOeD2mn+51dVne0gEzupeE3zmBqjj322IJ1PAzcAI1ZL
+	Cg69nYLRlDi85kkHmYCeiSDfS7tfjjXcVvaIx6OotsrXVAw5isjS3oQCnK8g=
+X-Google-Smtp-Source: AGHT+IE//vwcBRSspew8ysSz1OrPytRuuCdUEkH2X3LmiXWwmf9pdLMY8BcXHD6hDRSHrbZTj8rYNzK12Q8f5xJ/+AUzZrrKj5YQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB4157F236604B6780327E6B43D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Received: by 2002:a05:6e02:1a6e:b0:433:2aac:c540 with SMTP id
+ e9e14a558f8ab-43473d3c496mr23907955ab.14.1762920422464; Tue, 11 Nov 2025
+ 20:07:02 -0800 (PST)
+Date: Tue, 11 Nov 2025 20:07:02 -0800
+In-Reply-To: <CAKYAXd86eFyX5sVi_5exaFJ-wGn2U16n_L1c9ouDBnFGPuH_qg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691407e6.050a0220.417c2.0003.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
+From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 12, 2025 at 02:26:18AM +0000, Michael Kelley wrote:
-> > I've been able to debug this.  Two problems:
-> > 
-> > 1) On Ubuntu (both 20.04 and 24.04), /bin/sh and /usr/bin/sh are symlinks
-> > to "dash" (not "bash"). So the "shell" command in "make" invokes dash. The
-> > man page for dash shows that the built-in echo command accepts only -n as
-> > an option. The -e behavior of processing "\n" and similar sequences is always
-> > enabled. So on my Ubuntu systems, the "-e" is ignored by echo and becomes
-> > part of the C source code sent to gcc, and of course it barfs. Dropping the -e
-> > makes it work for me (and the \n is handled correctly), but that might not work
-> > with other shells. Using "/bin/echo" with the -e solves the problem in a more
-> > compatible way across different shells.
+Hello,
 
-Ah.  I think we can use "printf" here.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> > 2) With make v4.2.1 on my Ubuntu 20.04 system, the "#" character in the
-> > "#include" added to the echo command is problematic. "make" seems to be
-> > treating it as a comment character, though I'm not 100% sure of that
-> > interpretation. Regardless, the "#" causes a syntax error in the "make" shell
-> > command. Adding a backslash before the "#" solves that problem. On an Ubuntu
-> > 24.04 system with make v4.3, the "#" does not cause any problems. (I tried to put
-> > make 4.3 on my Ubuntu 20.04 system, but ran into library compatibility problems
-> > so I wasn’t able to definitively confirm that it is the make version that changes the
-> > handling of the "#"). Unfortunately, adding the backslash before the # does *not*
-> > work with make v4.3. The backslash becomes part of the C source code sent to
-> > gcc, which barfs. I don't immediately have a suggestion on how to resolve this
-> > in a way that is compatible across make versions.
-> 
-> Using "\043" instead of the "#" is a compatible solution that works in make
-> v4.2.1 and v4.3 and presumably all other versions as well.
+Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+Tested-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
 
-Hm... I've seen similar portability issues with "," for which we had to
-change it to "$(comma)" which magically worked for some reason that I am
-forgetting.
+Tested on:
 
-Does "$(pound)" work?  This seems to work here:
+commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c48212580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a8d60a580000
 
-        HAVE_XXHASH = $(shell printf "$(pound)include <xxhash.h>\nXXH3_state_t *state;int main() {}" | \
-
--- 
-Josh
+Note: testing is done by a robot and is best-effort only.
 
