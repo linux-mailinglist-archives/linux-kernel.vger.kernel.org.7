@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-896779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334C8C51350
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:54:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC661C51302
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33364F839D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:50:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 572C034CDF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F401F2FDC27;
-	Wed, 12 Nov 2025 08:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07732FD675;
+	Wed, 12 Nov 2025 08:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m2k+9Yz3"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AYISAMQH"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C6A2FD692
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE502FD677
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937406; cv=none; b=ZxyYGSDNGx2fZJVYGCa+q2hwtY0pbUkf5RCFI86pdsABAD/Kz+Vc4p2ft+I7vqWTtZDtzJjIQbhBTWhP3TSO9RKEQd47G4qDZMPAGcAGJYlHzjdiSjuh0iZyvD71tJHg3VSkhlmrTTY3m9jP7VgthCxcitkplWuTWI3R4ml0di0=
+	t=1762937423; cv=none; b=OdmGPUF5XyGDdqggVth8YHbVQeaLa2OfbHmegBlM9DAAKQNqpraEiKRIhuy9vhriFWRfivH+HvbB4k+xKZSh0/hwgjrD47swsbDgPIpMWktTpv8i0dKtWsowLiYoE9Wfb19v0NLkQ45/FdWC10pbb44y8TknPC4PBeQx4rUZkMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937406; c=relaxed/simple;
-	bh=4acyidLPLtSMWFCpqkHsxXW/yHTGc5VoUrzYk1+PpNo=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=gh9mA+C9u+s7e6bSKLaPaKYfvN+Y4g2MHf/Al4Z3oMAO5dh14+PtyM9pzMP+8nYG20m0R0J1cSwh9gYME9pfZYGAZ5Jkw2opNdTHrBoYAB6FgRH7dOk0JH9JTdjFIADFQw3tplqyRutK3QwBpMJxTOMaOafDECH6aunUIoiXVaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m2k+9Yz3; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251112085001epoutp02bea04d35dbee563c95d9f0e304f89ef8~3NjnhCKyX0338103381epoutp022
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:50:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251112085001epoutp02bea04d35dbee563c95d9f0e304f89ef8~3NjnhCKyX0338103381epoutp022
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762937401;
-	bh=4acyidLPLtSMWFCpqkHsxXW/yHTGc5VoUrzYk1+PpNo=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=m2k+9Yz3lbYw+U2kxlt+9Qc9gCHEBXqwhdf/aVA379K9krG8p8NIjmvGXen7fOHjm
-	 O7ck0CLpkqDFeHHCQ554twABPc7/PNrbmYU6NNs6+8u8SgnGLGWvMi3QZONIQnffAH
-	 dKtmV+hUGwgBdJVbY61dJh5Hh5g2ieetH5YfqUeo=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20251112085000epcas1p24d581f895d84959542ea3f43ad79baa9~3NjnDgBBG1115411154epcas1p2u;
-	Wed, 12 Nov 2025 08:50:00 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.38.193]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4d5xtJ4Vc1z3hhT7; Wed, 12 Nov
-	2025 08:50:00 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251112084959epcas1p1242f2dcd9ac206fe363f4b4c0313a7be~3NjmI9W272104521045epcas1p1n;
-	Wed, 12 Nov 2025 08:49:59 +0000 (GMT)
-Received: from sh043lee04 (unknown [10.253.101.72]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251112084959epsmtip2e4ae3397c1f9470a0ec5be15a3af1082~3NjmEJwAF2336523365epsmtip2Q;
-	Wed, 12 Nov 2025 08:49:59 +0000 (GMT)
-From: "Seunghui Lee" <sh043.lee@samsung.com>
-To: =?utf-8?Q?'Peter_Wang_=28=E7=8E=8B=E4=BF=A1=E5=8F=8B=29'?=
-	<peter.wang@mediatek.com>, <beanhuo@micron.com>, <avri.altman@wdc.com>,
-	<storage.sec@samsung.com>, <linux-scsi@vger.kernel.org>,
-	<bvanassche@acm.org>, <linux-kernel@vger.kernel.org>,
-	<alim.akhtar@samsung.com>, <adrian.hunter@intel.com>,
-	<martin.petersen@oracle.com>
-In-Reply-To: <8d239f26e1011eee49b7c678ba07fd4d9ca81d24.camel@mediatek.com>
-Subject: RE: [PATCH] UFS: Make TM command timeout configurable from host
- side
-Date: Wed, 12 Nov 2025 17:49:59 +0900
-Message-ID: <000001dc53b1$540988a0$fc1c99e0$@samsung.com>
+	s=arc-20240116; t=1762937423; c=relaxed/simple;
+	bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwkx1oosu2tKAEsVuA9buxB4EQzpvW0ADRqr+HWxM7lgFwlmn0WpYlBHCdz0JsRk3z7la+IVacj+oBNcic1Prj7BsNzKFyj1Phm/eOm0uGf0BvyjwES03vYKDlv4g7tuksWQbgUc3SSmiyp+G2D5JAPFZL1AJjh8KJd7e6i7mYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AYISAMQH; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5957d40e02fso28612e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:50:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762937419; x=1763542219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
+        b=AYISAMQHJptwYpNDmLTvQ0d12KHT9puLlFVUSD27jqSrfbp9Jk18LZCnIlbC5y2iID
+         u1fq2X7O3iIp+xkexEvNAsJrfnW0RI59PnJHiLbvbvgdaEClUTkbL7dgWCMJtJDlJeta
+         1JR12Ff5eBMHpStf2uoO068j8EorFjm8uMIVeTbrx/FiAl1m3KJ5HykO/UrmS3y4wsmv
+         vAftNW19IfLeURBrs+4SkNEVfIUPR1JdDRNYWmrBvyGK/zK10ySdybz34CxRGNaZsD3k
+         2JTHkjDiuWW6n3uoYK5sZLNFfRyxeUa1tVCfHVmnc52FdaMt1TL3nE7PEUN80+UrBLs4
+         xuRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762937419; x=1763542219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
+        b=WsHmzcuHnGth2rt9jFQ4GMQ9pnhP095gWR6LgLE9tSq7hIBq2VgFJr1DqzpERdWDms
+         y4KJiD5xPdlW4x+AXZ+EzfImbjdxYmVLR61QzOAVA1EMM1mLDVjup7pEiP5X9G+gMhiF
+         3qyafLYxIAd74tS8xhm9gHagsGDSM/lkNHwYncEsVLuIiHCYSVoyXWEV44cfuC766isF
+         atsrx8Eoirb2dLPCsF78SGPeiFdWNMh7iclWtyWH6yNvulln3tn9tjKmZilnLWMdlIno
+         olmD0Rr/zh0gQLyLO5Bmg6ChyTqYjK3K6T4A4rj5YxWittt1QuybxL8pLFnQqtT/L4pS
+         nZ9w==
+X-Gm-Message-State: AOJu0YzLbuPgTtbAzGryh+nY/IFrA4Y08tVvzyZsjyx6yn6azVcENQiT
+	n+9EioW8j2eh0jyTONFuWGo/agbjrzo6YTEgZiyjggx3TmlhKvsgas5pjfCqYRY/hC8qrmH154s
+	i/eIzx4LUO8iwGCvH6oWU+ANa1tSdW90H+MRgKhDuTQ==
+X-Gm-Gg: ASbGncuKim3xK9jqSKdZQj9NjKUYELz5JnY7LQZO5whdquketIRolVfSYgjk6VGA3EQ
+	ADcUmAVMCEZ/rkibT+X9RZxKYacFISpImyDrIYWlKK1ykHqMzjyaVzyL0cZHtlJq69Z0e3k1Ha6
+	4SbxzqXmxkr3LFNOtAID9pDIpm1CIqUiBOGiCNrOnjvxPkUMqEe/GHEmwhpGG+c0VPWL6JgsBdW
+	rqjcAcrb1nn9rywe0TO5w7awbzAXzp0r5ERhydjI0P0ZI3bG2xP5nc0I5IKFWaQJklaEjrnDUY2
+	50i0oFhxJyiQpSEhqw==
+X-Google-Smtp-Source: AGHT+IEHNK5povoEOlSKstlSmdaONyaokIQjzvKfkQZcWTAT6dqm/dGcMdLDdwfQXgcunxTTDe/Pm+/naHGGXjffp3E=
+X-Received: by 2002:a05:6512:10c2:b0:594:35d5:f837 with SMTP id
+ 2adb3069b0e04-59576df6c92mr609466e87.19.1762937419287; Wed, 12 Nov 2025
+ 00:50:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251107141907.229119-1-marco.crivellari@suse.com> <CAPDyKFqpiWuJs3fZkATnfPejmqL=Ei4x1U9QbuaykuZxca9f4Q@mail.gmail.com>
+In-Reply-To: <CAPDyKFqpiWuJs3fZkATnfPejmqL=Ei4x1U9QbuaykuZxca9f4Q@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 12 Nov 2025 09:50:08 +0100
+X-Gm-Features: AWmQ_bnLU4W1RGKwfC6lAOJz6bOKPsLL4ZN-hxDK-KkR_0_v7NSwMnNMX7Q48II
+Message-ID: <CAAofZF5WTAZJw5FmtTkB_FGNfee8myVksZGhcMQHj906RGOzYw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: omap: add WQ_PERCPU to alloc_workqueue users
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-omap@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKPfZmbwG70PGLKm/pFTS39UPXmNQJO/jelAdbalYUBDqcQiAEtGsS3ASfXEoMCIZ0ypbM7CPAw
-Content-Language: ko
-X-CMS-MailID: 20251112084959epcas1p1242f2dcd9ac206fe363f4b4c0313a7be
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2
-References: <CGME20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2@epcas1p2.samsung.com>
-	<20251106012654.4094-1-sh043.lee@samsung.com>
-	<e98df6a1b10d185358bdadf98cb3a940e5322dcb.camel@mediatek.com>
-	<009401dc52e7$5d042cf0$170c86d0$@samsung.com>
-	<f3b1641b9e611f2e4cac55e20a6410f9a9a88fa3.camel@mediatek.com>
-	<be4dc430-ce62-46a8-bd42-16eb0c23c0a0@acm.org>
-	<8d239f26e1011eee49b7c678ba07fd4d9ca81d24.camel@mediatek.com>
 
-> -----Original Message-----
-> From: Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B)=20<peter.wang=40mediatek.c=
-om>=0D=0A>=20Sent:=20Wednesday,=20November=2012,=202025=2011:58=20AM=0D=0A>=
-=20To:=20beanhuo=40micron.com;=20sh043.lee=40samsung.com;=20avri.altman=40w=
-dc.com;=0D=0A>=20storage.sec=40samsung.com;=20linux-scsi=40vger.kernel.org;=
-=20bvanassche=40acm.org;=0D=0A>=20linux-kernel=40vger.kernel.org;=20alim.ak=
-htar=40samsung.com;=0D=0A>=20adrian.hunter=40intel.com;=20martin.petersen=
-=40oracle.com=0D=0A>=20Subject:=20Re:=20=5BPATCH=5D=20UFS:=20Make=20TM=20co=
-mmand=20timeout=20configurable=20from=20host=0D=0A>=20side=0D=0A>=20=0D=0A>=
-=20On=20Tue,=202025-11-11=20at=2008:37=20-0800,=20Bart=20Van=20Assche=20wro=
-te:=0D=0A>=20>=0D=0A>=20>=20Why=20a=20quirk?=20A=20quirk=20will=20select=20=
-a=20single=20specific=20timeout.=20The=0D=0A>=20>=20approach=20of=20this=20=
-patch=20lets=20the=20host=20driver=20set=20the=20timeout.=20This=0D=0A>=20>=
-=20seems=20more=20flexible=20to=20me=20than=20introducing=20a=20new=20quirk=
-.=20Additionally,=0D=0A>=20>=20I=20think=20this=20is=20a=20better=20solutio=
-n=20than=20a=20new=20kernel=20module=20parameter.=0D=0A>=20>=0D=0A>=20>=20T=
-hanks,=0D=0A>=20>=0D=0A>=20>=20Bart.=0D=0A>=20=0D=0A>=20Hi=20Bart,=0D=0A>=
-=20=0D=0A>=20It=20is=20not=20reasonable=20because=20the=20timeout=20value=
-=20does=20not=20depend=20on=20the=20host,=0D=0A>=20it=20depends=20on=20the=
-=20device.=20It=20could=20set=20a=20large=20timoeut=20value=20for=20those=
-=0D=0A>=20devices.=0D=0A>=20=0D=0A>=20By=20the=20way,=20this=20patch=20also=
-=20doesn't=20change=20any=20host=20timeout=20value=20if=20you=0D=0A>=20insi=
-st=20that=20the=20timeout=20value=20depends=20on=20the=20host.=0D=0A>=20=0D=
-=0A>=20Using=20a=20module=20parameter=20is=20a=20flexible=20method=20if=20t=
-he=20customer=20is=20using=20a=0D=0A>=20device=20that=20may=20require=20an=
-=20extended=20timeout=20value.=0D=0A>=20Moreover,=20this=20approach=20would=
-=20help=20maintain=20consistency.=0D=0A>=20Otherwise,=20with=20so=20many=20=
-different=20timeouts=20(uic/dev/tm),=20it=20would=20be=20quite=0D=0A>=20cha=
-otic=20if=20each=20is=20handled=20in=20a=20different=20way.=0D=0A>=20=0D=0A=
->=20Thanks=0D=0A>=20Peter=0D=0A=0D=0AHi=20Peter,=0D=0A=0D=0ACurrently,=20th=
-e=20modification=20is=20about=20changing=20it=20in=20the=20same=20way=20as=
-=20nop_out_timeout.=0D=0AThe=20tm_cmd_timeout=20value=20is=20not=20read=20f=
-rom=20the=20device.=0D=0AAlso,=20if=20the=20UFS=20can=20read=20the=20tm_cmd=
-_timeout=20value=20and=20requires=20a=20longer=20timeout=20period=20than=20=
-the=20specified=20value,=20dev=20quirks=20would=20also=20be=20acceptable.=
-=0D=0A=0D=0AHowever,=20for=20now,=20it=20seems=20fine=20to=20set=20it=20on=
-=20the=20host.=0D=0AWhen=20we=20checked=20on=20our=20side,=20it=20wasn't=20=
-that=20the=20tm=20timeout=20value=20was=20insufficient=20for=20specific=20d=
-evices,=20but=20rather=20some=20vendors=20needed=20to=20increase=20it.=0D=
-=0AWe=20plan=20to=20appropriately=20increase=20and=20use=20it.=20Also,=20si=
-nce=20the=20current=20modification=20maintains=20the=20default=20value=20an=
-d=20allows=20an=20appropriate=20value=20to=20be=20adjusted=20according=20to=
-=20each=20vendor,=20the=20current=20method=20also=20seems=20acceptable.=0D=
-=0A=0D=0AThank=20you,=0D=0ASeunghui=20Lee.=0D=0A=0D=0A=0D=0A
+On Tue, Nov 11, 2025 at 6:37=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+> [...]
+> Applied for next, thanks!
+
+Many thanks!
+
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
