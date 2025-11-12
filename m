@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-896836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F339C515AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:29:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FC6C515B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703CE3A4183
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:21:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96B284FA5E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EE22FE075;
-	Wed, 12 Nov 2025 09:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072022C0296;
+	Wed, 12 Nov 2025 09:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ny8InQDb"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vUYXxIIo"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E0F2F998D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8571728CF52
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939280; cv=none; b=Y1ENie0LISz1i5AxrsXRybX32G9ibsSP873GEDHHSTWjXQx/Vk8X92JRYOsAbtkltYSUKNzf+d+x8TxQQqmLyBKwow812mZ37568BI2jIivvqfYarFxi2scrvFTqVlD0KTRF/szgNFLQ+ExHhYa9EGpC7DEUVSviOu9bz6cZpRw=
+	t=1762939295; cv=none; b=F7S/QOvMnI9BGRdIadzc3zFDTFlm05wBKZZng3oaVgLCM8kUZiKTH/jQG4i9DYu8EElJKjMl/ReGne1pUqCQS8QvXs1w9SyEVtaj/XmjCMi9kPLvi2hwxEkHDvWY7CLd+D0lDN1xRqdJECvNHm/K/QN75yS3JjP54P822Dnui6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939280; c=relaxed/simple;
-	bh=2Qa5FpPwJauM2+K/bV7Ipmy84+Vvwqx8tkvxHl3fUKI=;
+	s=arc-20240116; t=1762939295; c=relaxed/simple;
+	bh=mHUEJ9dFxjdIsQc2ajIBdyiHVVcQa57HOEjifIA99SM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K25VFEFKFP30MZFjABy306gP3HYhvTQmTaWB40h/WeUP6gw3NajOB+NoD0WlYG6wrtKleL/lfO2+uSCxyAcsyw5yokMZc97PYD3NCbDl9FszK/arbkk8B7xIbF8O6aKwu4PQZ5G5SZsIzXdRmezsWNJykM4KwnoLZd6S3AIN3l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ny8InQDb; arc=none smtp.client-ip=209.85.221.42
+	 In-Reply-To:Content-Type; b=Dqbpt/5xun0mjChCsxPHAnPu3gb6GaLfbHxklrA05Umtdab9lHqXnSYtjVc0Z0NNl0V3x5jTKvhZkJe+J/rKALZXuxJpMdzqYjPCHFiWP4iG1FfF2ALND4EzMjSzmIV3idTB/t2jSDTlK5rblbaErHg4jl/K3C+oOaRBO0uLnFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vUYXxIIo; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b3669ca3dso276138f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:21:18 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47755a7652eso4182885e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:21:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762939277; x=1763544077; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762939292; x=1763544092; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5vExX5lYwjZciNY84xOIPIx1RLXQKLj0IP41hX0dBbo=;
-        b=Ny8InQDbE2p9jZmUMCAXcfejHrghf4qJMjubGPoX3Ltm9mJtXPyEbFlilTtdQw1CXg
-         ooAqJJG20PFaBUyvCHgDP+p/6GR3g4kO++BRBY5/EoIGUQvZLt+WFlqZDV6qKPOq+w9I
-         UkGQOtT3HCTGAXn1A2Yy0dsvbk9eV8ZXJ2IFMqq6nIithDgrLaGwSAVhUXUSvUXmorGP
-         rHUKQmXsuxUjrJECcNUsbRXWD1u6Noj2Xub1BB3bdMtFucvofQ3pEoI2vL1PKdKk8kLb
-         j8uL2FquQ1SZMN5kTxcAcvpdUMQyLk37chtdYuFT+0ppFXJdOH+ykibUt0yRdZHxqKRE
-         mBEQ==
+        bh=isJ1f7GA11vhD0tZY8DcYtbxrZ+tOnHfUKfDqQgIdJc=;
+        b=vUYXxIIowwiO4tmCofem4QeembsmQjG80XV7yc2aMHR1CBEhKwOliP3OfewG8Q5TNl
+         8FTRzYF0iI0qtXu8USmL5V1KUxUWo3RtttTdz0sowfYHKasPWpd4j3ocpvgtmG9l/hk/
+         aVvIadVqWTPNwGtZL0mxtDHoMlQxOpVoy5vgU4p3/6fczeznrv1L5zaiVC5Y+2rPD30j
+         0O59I1mZ2nToxTY3JSipEHV68MzE6UZ1rEJplrw+yqTZOso7oXzaNIkQUYOptLkcdouW
+         hFhHvsWR4rOdrW7xrh6nIgp26B4JroY8GGAxeoeP5fkXqHy8jEtjI+lD2QT7BablVqU1
+         Tdqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762939277; x=1763544077;
+        d=1e100.net; s=20230601; t=1762939292; x=1763544092;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5vExX5lYwjZciNY84xOIPIx1RLXQKLj0IP41hX0dBbo=;
-        b=CGHQIFnfocOgdLRwnrh+a3pUavXG7Iw0hrSpFAteeKxABQeSYDssKzV6fA4D0vPxrb
-         8OVkbqrg9ckUFknr8/Fs0o/yhj+p0yJP9Rfr2PU104issfjAQyYe5OmOpvyX2Y+00B4k
-         J+65McTyMdanjIk6MbbsNq/6CzYJW4JgBYTRYL4KSaouZ9MEJzrVGxnt51UrHl0FBS79
-         z2Ct2WgZIOrmrMzMs8m0Z2/5oLbVR7ka185EndM9hDnj/dw2yLbgjH0kjpGL2DHZhdhF
-         iZq5hJQr97MAmADS3FYaufQ3b5kfFdGsKlcx7GG6FC32PzISTw2c2WlOwFktX9gPh2E6
-         lFpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW1gtk+xE3NBoNiiGuQgVg+LMoZHzDb4S2jS2xJNg6sYGcXZngHmDhonZVGZuC2oPYxysRmOJ7RvHcTPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWj3itwxyzuW9edaaIuIHUbyQ2nes/M2Xr0KyPZL9TeFq5Vunc
-	Gj2BEN5SkEYrVorKt8DPPZMnUft4fSkxFMI8u5U7aNrqIPoIYO68IVGZWdTYqgCApjE=
-X-Gm-Gg: ASbGncvTP/EAgJrDkQel9xOE04KwEIcqfb5V4LKRFyUC2e4BXAntJYY2B8rdbcBmIOZ
-	iIcFqskdSfWEgSkJ6uSLzqEvpuFsNewtiqbqQj0NQwgwiMGiJOxeBAsuaYG1VRV7jLYVnksVMim
-	lJ+6hS14hNYJ5AfOx+zplftT9Os/czyQaLDftvMG/niD6kQPpSd8OayyllLUOPFJk/e/lUlk9G+
-	BkkHBh/S8InZF3lC3CzfPmcNXpfW5MA/+vQbKbEBfwKWGILVuCH8JQyeXcnBKRZoKu2EjlB/3Fu
-	83HxSfgAYs0RE58qOqJaFF0W3c/c07ugYpuMF9E2xmIEQsuoU1X2yn9G6WPI87qAVuu3AMPX59v
-	Mb1LaFu2x9N0U5j4t1TJIEFFeqGeuC737bu1vCgkTk1aGc2aLFODEnTCTtAKGlFHPluEcvtTzkD
-	ngn8UnLiksKWUPVLJ4
-X-Google-Smtp-Source: AGHT+IHoGl5ziEi7Ua+rMKa465Ycd1bn5Q+l1lO6xafRsuDtW0ahp1R+CiWWX89YTNLNjpqEi0+GKA==
-X-Received: by 2002:a05:6000:3107:b0:42b:3366:634b with SMTP id ffacd0b85a97d-42b4bdafecfmr1846042f8f.31.1762939276840;
-        Wed, 12 Nov 2025 01:21:16 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63dfecsm33332368f8f.12.2025.11.12.01.21.15
+        bh=isJ1f7GA11vhD0tZY8DcYtbxrZ+tOnHfUKfDqQgIdJc=;
+        b=Ez7sY/j75hjBmgpZkDefKrTj7rV9JaivIu+ZWsX0XL4/cmCRJCAP12R7wZo1KbrKUj
+         6LI+klQvfZzvjtwBto1D6f4CGu79amUMjQiY9mTkOHvBgwMqdClRSFBSdwAL9BAoLvC8
+         CyloIP66LYXDxwEjlUcqtA6dm1XxwWcAp/845yiKqXvOugrc7xwzTUBqB1VZk1GUkKK7
+         nhneuSaGUasYSPeFk27EYFCh5MJFc/GLqLIaDxGFEiWqV52Wh9+B8dwXvL9O3MF+OslA
+         fAcdRCut+jZW6CYlV/kW5T8puToZguVA184J12Co2hZHA9KRiq+TdNyMc6sRYCxjvow0
+         +Xpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjupvr/GaLVkjoAhdvfkxzSBAktdH3fb/8gs5YuBKorQDteDRySCIyqYoQ5sZo5rQ5J687/LZG01ehWtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhz8jIiHiALqLCVbT3pQtzVlBkiZygvBqi3iPVRuINAGJKkwIH
+	3TVQqHS6ElmFViWFJZapoiYYucE+4IL7r32Y9TH1mMuxGlpWLfeXQ66zztCJXncTaSg=
+X-Gm-Gg: ASbGncsJmaPaDBEILDNYk7i6ekjvR6x3hNh1FSb99H4tnTS7rtVudQEPpmMJmJyNFK1
+	qCSGw8FfIR8xR2CZTdy4QoN2ES3NdFv49Cywt5YXZs/a8ynYKzMv/LAMls3caIuHP1QCeyMz5fj
+	ndq/g2FZxy5Y842ahJbrrycOyHfmj2XR+abQKsaIRbhl0Rbmb2MUHEabGUPVQJtkQgNVUC2Mzh8
+	0CuFPdnQKTyV9Q2pG1KYeUcuEWbtRrJQMPNUxmFAd48LKDt6B18NzttX4EB1O6rTNzya6IZCSXk
+	TDhYad8a0tpVpAeyG6WeTlSVnuSzYgrRjzWZRA/Ci1X+yPjdGrJB2g/AlFIrVQnYXH4m+bcpMHD
+	414pPBNqPChtLY8mff5kuxirRN1dsA4xHZ+s8+fYAh5Ikq7KSAosJU/RdhVioaewZAx2oTeyzUc
+	qPVfGrZw==
+X-Google-Smtp-Source: AGHT+IH19B1p4+2J8cnMXiWHY0YRtV67T+2IEhayNx6bLOI1rTnsrziF09BOz3EDGz+wy3KJavPJ1A==
+X-Received: by 2002:a05:600c:3b90:b0:477:7a1a:4b79 with SMTP id 5b1f17b1804b1-477871e9565mr17896305e9.37.1762939291619;
+        Wed, 12 Nov 2025 01:21:31 -0800 (PST)
+Received: from [192.168.1.3] ([185.48.77.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b330f6899sm21364157f8f.21.2025.11.12.01.21.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:21:16 -0800 (PST)
-Message-ID: <013215bb-3562-484f-868d-485d0da095d8@linaro.org>
-Date: Wed, 12 Nov 2025 11:21:15 +0200
+        Wed, 12 Nov 2025 01:21:31 -0800 (PST)
+Message-ID: <9008f2e6-d2de-4765-b824-cdd6a1175794@linaro.org>
+Date: Wed, 12 Nov 2025 09:21:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,69 +83,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] mtd: spi-nor: micron-st: add comment for
- mt35xu02gcba
-To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-References: <20251112-nor-v3-0-20aaff727c7d@nxp.com>
- <20251112-nor-v3-5-20aaff727c7d@nxp.com>
+Subject: Re: [PATCH v1 0/5] Remove NO_AUXTRACE build option
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Tomas Glozar <tglozar@redhat.com>,
+ Quentin Monnet <qmo@kernel.org>, Yuzhuo Jing <yuzhuo@google.com>,
+ Blake Jones <blakejones@google.com>, Charlie Jenkins <charlie@rivosinc.com>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, Athira Rajeev <atrajeev@linux.ibm.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Collin Funk <collin.funk1@gmail.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Andi Kleen <ak@linux.intel.com>, Howard Chu <howardchu95@gmail.com>,
+ Zecheng Li <zecheng@google.com>, tanze <tanze@kylinos.cn>,
+ Gabriele Monaco <gmonaco@redhat.com>, GuoHan Zhao <zhaoguohan@kylinos.cn>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+ Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20251110013152.3099080-1-irogers@google.com>
+ <aRLV50z1L9A3YRFF@google.com>
+ <CAP-5=fW4XSL_tAD9-BzG9ceUJSr005bWi3Q1-kiJ_xyiHJZggg@mail.gmail.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251112-nor-v3-5-20aaff727c7d@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fW4XSL_tAD9-BzG9ceUJSr005bWi3Q1-kiJ_xyiHJZggg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 11/12/25 8:48 AM, Haibo Chen wrote:
-> mt35xu02gcba is similar with mt35xu01gbba, but with four
-> dies inside. According to datasheet, it contain SFDP and
-> support 8D-8D-8D mode. Add comments here, remider to change
-> the code in future if has a chance to test on this chip.
-
-you'll need to rephrase a bit the above> 
-> Link: https://datasheet.octopart.com/MT35XU02GCBA1G12-0AAT-Micron-datasheet-138896808.pdf
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
->  drivers/mtd/spi-nor/micron-st.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+On 11/11/2025 6:01 pm, Ian Rogers wrote:
+> On Mon, Nov 10, 2025 at 10:21 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>
+>> Hi Ian,
+>>
+>> On Sun, Nov 09, 2025 at 05:31:47PM -0800, Ian Rogers wrote:
+>>> Switch the __get_cpuid feature for intel-pt to use the provided cpuid
+>>> function in perf, this removes the need for NO_AUXTRACE when the
+>>> feature detection fails. Remove the now unnecessary feature
+>>> detection. Remove NO_AUXTRACE as it just builds a more broken version
+>>
+>> Can you please elaborate what the broken part is?
 > 
-> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
-> index 6d081ec176c37249e5ddb724b61bd70f68088163..cc053b4d615ade3f12068618f8355779561dce55 100644
-> --- a/drivers/mtd/spi-nor/micron-st.c
-> +++ b/drivers/mtd/spi-nor/micron-st.c
-> @@ -206,6 +206,12 @@ static const struct flash_info micron_nor_parts[] = {
->  		.fixup_flags = SPI_NOR_IO_MODE_EN_VOLATILE,
->  		.fixups = &mt35xu01gbba_fixups,
->  	}, {
-> +		/*
-> +		 * MT35XU02GCBA contain SFDP, so no need the size
-> +		 * and no_sfdp_flags here, should similar with
-
-this is expected for all the flashes that have SFDP, so no need to
-specify this again here.
-
-> +		 * MT35XU01GBBA, but with 4 dies. If someone can
-> +		 * test on this chip, can change accordingly.
-> +		 */
-
-How about we rephrase this to:
-The MT35XU02GCBA flash device does not support chip erase, according to
-its datasheet. It only supports die erase, which means the current driver
-implementation will likely need to be converted to use die erase.
-Furthermore, similar to the MT35XU01GBBA, the SPI_NOR_IO_MODE_EN_VOLATILE
-flag probably needs to be enabled.
-
-With something along the above lines you can add:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
->  		.id = SNOR_ID(0x2c, 0x5b, 0x1c),
->  		.name = "mt35xu02g",
->  		.sector_size = SZ_128K,
+> Sure. I'll summarize what alters in patch 4. NO_AUXTRACE is
+> controlling 3 main things:
+>   * set up of aux options for PMUs (code in the arch directory)
+>     * ARM: coresight and SPE
+>     * Intel: BTS and PT
+>     * PowerPC: VPA DTL
+>     * S390: cpumsf
+>   * support for decoding aux events (common code that can be
+> cross-compiled assuming other library dependencies are available)
+>     * ARM: coresight
+>     * HiSi: PTT decoder
+>     * Intel: BTS and PT
+>     * PowerPC: VPA DTL
+>     * S390: cpumsf
+>   * Tool support for aux buffers (common shared builtin code):
+>    * perf record: aux options for events, snapshot, aux-sample
+>    * perf inject: aux events will fail the entire perf inject command
 > 
+> So somebody with a NO_AUXTRACE build would generally experience a very
+> sad perf command. Having the option made sense when there were feature
+> tests that could fail, but possibly that should have just controlled
+> not compiling intel-pt. Having the option is extra burden on
+> developers/maintainers, as shown in my comment:
+> 
+>> This was prompted by needing to make a v2 patch set of:
+>> https://lore.kernel.org/lkml/20251107170712.2302714-1-irogers@google.com/
+>> due to a broken NO_AUXTRACE configuration.
+> 
+> Somebody may have been using NO_AUXTRACE as a proxy for not having
+> some library, but I don't see that in the code. If this is the case we
+> should add the appropriate feature test, ..
+> Not having NO_AUXTRACE may have been a bug work around for someone, in
+> which case we should work to fix the bug. Again, I don't know of this
+> case and don't see it in the code.
+> 
+> Thanks,
+> Ian
+> 
+>> Thanks,
+>> Namhyung
+
+Seems like a nice simplification even if nothing was badly broken.
+
+Reviewed-by: James Clark <james.clark@linaro.org>
 
 
