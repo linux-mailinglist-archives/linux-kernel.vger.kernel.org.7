@@ -1,242 +1,155 @@
-Return-Path: <linux-kernel+bounces-897874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4413AC53DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:11:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13962C53DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128A93A2BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:04:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EC1D4FC9D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9173491CD;
-	Wed, 12 Nov 2025 18:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377CC34A3B4;
+	Wed, 12 Nov 2025 18:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1bO5TAF"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="5rZUyUzr"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F63375C2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB8233468A;
+	Wed, 12 Nov 2025 18:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762970677; cv=none; b=uYH/gv9XJ0NqkeH1N38eA0HxpNvEP111xii+REEVE37xPPdazwKVDUzFdivTO/2AIXlfJ1BuDp0Jl0SmxBvzKjjfEZc2So730HUqFi9fjWh/9qfVZCaFO95H1pMb8thjYHlMz+hlbjBSuXwXh/JawG3Nm2jQ2LTsWoBcQ5cWf9c=
+	t=1762970698; cv=none; b=S3r5/ZhVVw8/LLqlUj9wkiZThhG+bYvDMRlpgMPARBim++a/qXqOU96VxVAhKP1KDjBh2f90tQUadbqoEUFA0ASW8zYP6tZ7zFY+znb6BXZ9wjFdHPQ2gflZRWk0INm3UKWpcdOdgQRaDRyl4EkDTOjLKrwtgN6OfUfnBoPDzSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762970677; c=relaxed/simple;
-	bh=35PnpAEJSKZMmmhjKvYkQ215RwpMHnVFMt8P/XdW7lY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wf/ZxC+whnT7nHaJcxkCRqisdGILM/cS49QiAJdxqbw4alcJwM4JWkkm5OGGcU+dTSZpIXI+tVOTfXYo6i0afXDOr7MME3R8HeI41hbf/0A2pC02t+Gyla1Xy30992veFRAcbkh6QJAVwYa+q8ZS1b2VFqnTbILkXfI+pmulkns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1bO5TAF; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b31c610fcso1000327f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762970674; x=1763575474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cjs87PRrJ2JNr9G8+c1Tv8wLpCpPRdNvapIiVHZg5Aw=;
-        b=m1bO5TAForDqWwyl1V9RFjfiFrlWeTvXxSIR5gY7VLAC0xHlzRxWjmHt9cClIPx50Y
-         rC1EX/qXz9tkQGs1THJ5Ir9gGVhGbCGY/OI+IPwhp8N6vBbsrW14WyDJY1KqR9JKElW2
-         f79vAWgNzB7trBK5zghYNUaDIhQzavMep4UF2unjjRUnvAdLvbtdrAahlCX3UWzMeBfi
-         hnB/aXoyk8NuWgbQzT1YyM3ySApxgiLnZMhHlevWfLExlG+ehHaVQ7EfPbA5a1+/uCzJ
-         jvOuB+gT+ZpiALqhlpGN02SvSTh+1lHBA+JwCc9FL8zX3RqWNLqmrLY6bNmbr1BixVGh
-         q65g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762970674; x=1763575474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cjs87PRrJ2JNr9G8+c1Tv8wLpCpPRdNvapIiVHZg5Aw=;
-        b=Zoo83PN73ikWJvSx8LwCyyBOxTgxIq80OLvTF5lEyxBAlwXQzneAvhkhO5MR1KqU6X
-         YI4cStdxEv/b8IOmCM1S9pAf3dAzcsWFayrjMUZK0E1aUVhNe+zIn/0cUCWZZnX3Zqem
-         efRkPvz6R+MnBmLghFxewGs8MyD6UMNIGRZYUfvGwZtHb+jtWyEtwz1eqs3CPbB9lpQO
-         PIUo46Kl2RhJO4DkGPyGc/G/gErZBnMDnE1Db5nAV0tQxlAplqvogVCk5CnXnZ5H3A5h
-         JUStH+phyrjngw4BBZVaPRHvkgZizTz24ytW0SWyEP60+o5oKCTut7Hw118DmjZ3FpSg
-         DmHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2R+X8HHSlciPRpjvxqlmgR5xNXH1BQmnDm8EkrOM1+NqQ+Pw6jAlmROennner08KZm9QVCD8g57MnDIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyliKKnRPBUXkwPiAaJnaFS33Hp2hcSA4k/3zaKYS2tFXWjLaGr
-	CrikVgpWUp2B/pUMLh4wuTuh2P+sNQU23DUJxDAys/OEzAuC1E2H3m5S
-X-Gm-Gg: ASbGnctv1o0kObhI3xjrDP8orDnBqI3ood8ew3Xzf2gcXT5kvD0XS8pRJETnsSmpghR
-	dUN6U1Gk1VDplJPSNqG6kJezzIv6a3+77q5Pv/q4VhBxQrAcNepOLTN7jTeHWZC/vtgGTPE/h6f
-	qt17R/EWVcB0uRKuzYayRO1vnlJOyWfRSWeVRyDgvV+Jyu++Kn9d5Eppxbh5adiq3XP+n9Mu0Oo
-	//nhX3/Rm8akY//51E9WKN4VY/y73L8PEQvxcK7SKNB22lVbwYcU4669ctc3D+swMXn8iZ7JBCX
-	nGt6LDPXxogDYlNGR+JMptqQqhmW23jdzb49Pa6jwWtev5Vgtr6JJE+Wqsh7hT6F//bYHcRnApj
-	KnxR3HLmG7hy6IK32CqOJAOVUZFw+OtuUhUupen2qSnHpR7XfLEQqRRdm07emgvzjHvbK/1MT
-X-Google-Smtp-Source: AGHT+IHeyVjIewk2nxGI2f/Yo9rnAFD++Txt9J+ZHHi3v+ztQpzxrSPqRixtOX/wT6+GIL73xHFCeQ==
-X-Received: by 2002:a05:6000:26c7:b0:42b:3ab7:b8b9 with SMTP id ffacd0b85a97d-42b4bb981f9mr3973943f8f.20.1762970673365;
-        Wed, 12 Nov 2025 10:04:33 -0800 (PST)
-Received: from localhost ([2a03:2880:31ff:3::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm25285170f8f.16.2025.11.12.10.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 10:04:32 -0800 (PST)
-From: Mohsin Bashir <mohsin.bashr@gmail.com>
-To: netdev@vger.kernel.org
-Cc: alexanderduyck@fb.com,
-	almasrymina@google.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kernel-team@meta.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@armlinux.org.uk,
-	mohsin.bashr@gmail.com,
-	pabeni@redhat.com,
-	rmk+kernel@armlinux.org.uk
-Subject: [PATCH net-next] eth: fbnic: Configure RDE settings for pause frame
-Date: Wed, 12 Nov 2025 10:04:27 -0800
-Message-ID: <20251112180427.2904990-1-mohsin.bashr@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762970698; c=relaxed/simple;
+	bh=thaPD+WJ3wmrVp9/rylWOTphTDjNy0S2OUsOypRmUJ4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oj0H0QxL4eNCH6uQuApT6U65NY+PZYM29BG3Zk1NTJeQ+xFrEqLxNEGeJf2q92NnofkSrLgsnunbpMERzXntY222/gjpkTLMEyl3f75e0Bka9l2lPZWCjiIIivAkd5HIleffvoByaend2bNiDAZGTAO15AHX5KbYioQF6hJdr8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=5rZUyUzr; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACCrah91140123;
+	Wed, 12 Nov 2025 10:04:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=5f9Du9Vto8AzV6Fmh5aBZhgsQoxQEjzcPQeDRAHFNWg=; b=5rZUyUzrqiz8
+	1QiVHBAd/AWjgKNsb4bzEYDSIuwG2uMS6u4vtXXLNscWmORGIVTB94yJ7bFMgER9
+	bZ4Eh6ajR0QAuEhNp+ENjKcVs4YGgNO3JeCxrv5fCXGt0q8IA+dJ7JP2MjSKRPQ4
+	XNe7+VFHE2jmzAEDhc6jRue+sWG2tlh5qUWZd4E7nZBJx90m0mHSY6g/6sTOmVFK
+	yXcYp0BRhNY3yfu5USSmL6rV9+Ujq3/WDj7FUoXJQ7EtxDzSs085XeRjxdyc8Iee
+	LqVFwK//7mKbqz/H69J7RJSmgjm06XqDhKzNpwPtqtnjsquNwRs698K7xbbqk61s
+	H7iotA1lIQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4actn3jh3y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 12 Nov 2025 10:04:51 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Wed, 12 Nov 2025 18:04:49 +0000
+Date: Wed, 12 Nov 2025 10:04:43 -0800
+From: Alex Mastro <amastro@fb.com>
+To: David Matlack <dmatlack@google.com>
+CC: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
+ queried IOVA ranges
+Message-ID: <aRTMO7GtBTcxaPj5@devgpu015.cco6.facebook.com>
+References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
+ <CALzav=cmkiFUjENpYk3TT7czAeoh8jzp4WX_+diERu7JhyGCpA@mail.gmail.com>
+ <aRTGbXB6gtkKVnLo@devgpu015.cco6.facebook.com>
+ <CALzav=fwE2kPqJUiB2J20pK5bH_-1XvONQXz1DpsMSOCKa=X+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALzav=fwE2kPqJUiB2J20pK5bH_-1XvONQXz1DpsMSOCKa=X+g@mail.gmail.com>
+X-Proofpoint-ORIG-GUID: gmGOXJurSDtruhadA44ZGG4uiqxlKzIW
+X-Authority-Analysis: v=2.4 cv=PeDyRyhd c=1 sm=1 tr=0 ts=6914cc43 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=jP91L4faPYvz1sexuHQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: gmGOXJurSDtruhadA44ZGG4uiqxlKzIW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0NSBTYWx0ZWRfX7rN/ubatQyMR
+ cAS+m6+9TjvTgRrg5unP29hU1K5axqvnlTEqZlFJNGXLUGhHeRBWSk0o9mk6MFTeM2nPAVgmBiy
+ zgYeNR/DJOkMefiZ0InE+0P3BlmpoDKk8RsYi2SheBVePZg3X0mK9ftc9nbwhjJ/36MBrH0LOks
+ ya3sPoWGACTK+1IOiFf0RqfdvuwYNmUI/vp4IQdZ6tk+JVcotMadppvue3MLCSef6Jxni2IMUxA
+ 1bNH0aP+3txcurtOUGg0BS4MaLHxwu339WbKE239MMDe74nwHtn7J0NZTa8KT1ypOtHyBXbm6mZ
+ pSpT/NwRQCxN6r35pAW2JEBNtlsuTEAAZniPotKfJxDW7pWFtvMAXwgE1ZllKHHJE277wxKEIsF
+ bOV3qL5nnEslcF37DIcpilTYOtVTCA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_06,2025-11-11_03,2025-10-01_01
 
-fbnic supports pause frames. When pause frames are enabled presumably
-user expects lossless operation from the NIC. Make sure we configure
-RDE (Rx DMA Engine) to DROP_NEVER mode to avoid discards due to delays
-in fetching Rx descriptors from the host.
+On Wed, Nov 12, 2025 at 09:51:35AM -0800, David Matlack wrote:
+> On Wed, Nov 12, 2025 at 9:40 AM Alex Mastro <amastro@fb.com> wrote:
+> >
+> > Hey David, is vfio_pci_driver_test known to be in good shape? Both on the base
+> > commit and after my series, I am seeing below, which results in a KSFT_SKIP.
+> > Invoking other tests in a similar way actually runs things with expected
+> > results (my devices are already bound to vfio-pci before running anything).
+> >
+> > base commit: 0ed3a30fd996cb0cac872432cf25185fda7e5316
+> >
+> > $ vfio_pci_driver_test -f 0000:05:00.0
+> > No driver found for device 0000:05:00.0
+> >
+> > Same thing using the run.sh wrapper
+> >
+> > $ sudo ./run.sh -d 0000:05:00.0 ./vfio_pci_driver_test
+> > + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
+> > + echo "vfio-pci" > /sys/bus/pci/devices/0000:05:00.0/driver_override
+> > + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
+> >
+> > No driver found for device 0000:05:00.0
+> > + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
+> > + echo "" > /sys/bus/pci/devices/0000:05:00.0/driver_override
+> > + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
+> >
+> > device = vfio_pci_device_init(device_bdf, default_iommu_mode);
+> > if (!device->driver.ops) {
+> >         fprintf(stderr, "No driver found for device %s\n", device_bdf);
+> >         return KSFT_SKIP;
+> > }
+> >
+> > Is this meant to be a placeholder for some future testing, or am I holding
+> > things wrong?
+> 
+> What kind of device are you using?
+> 
+> This test uses the selftests driver framework, so it requires a driver
+> in tools/testing/selftests/vfio/lib/drivers to function. The driver
+> framework allows tests to trigger real DMA and MSIs from the device in
+> a controlled, generic, way.
 
-While at it enable DROP_NEVER when NIC only has a single queue
-configured. In this case the NIC acts as a FIFO so there's no risk
-of head-of-line blocking other queues by making RDE wait. If pause
-is disabled this just moves the packet loss from the DMA engine to
-the Rx buffer.
+Ah, TIL about that concept. This is with one of our internal compute
+accelerators, so not surprising that I'm seeing a skip then.
 
-Remove redundant call to fbnic_config_drop_mode_rcq(), introduced by
-commit 0cb4c0a13723 ("eth: fbnic: Implement Rx queue
-alloc/start/stop/free"). This call does not add value as
-fbnic_enable_rcq(), which is called immediately afterward, already
-handles this.
+> We currently only have drivers for Intel DSA and Intel CBDMA
+> devices.So if you're not using one of those devices,
+> vfio_pci_driver_test exiting with KSFT_SKIP is entirely expected.
+> 
+> I would love to add support for more devices. Jason Gunthrope
+> suggested supporting a driver for mlx5 class hardware, since it's
+> broadly available. I've also had some discussions about adding a
+> simple emulated PCIe device to QEMU for running VFIO selftests within
+> VMs.
 
-Signed-off-by: Mohsin Bashir <mohsin.bashr@gmail.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
- .../net/ethernet/meta/fbnic/fbnic_netdev.h    |  2 ++
- .../net/ethernet/meta/fbnic/fbnic_phylink.c   |  8 +++++-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.c  | 26 ++++++++++++++++---
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.h  |  1 +
- 4 files changed, 32 insertions(+), 5 deletions(-)
+I do have access to mlx5 hardware FWIW, so that would be cool.
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.h b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.h
-index b0a87c57910f..e6ca23a9957d 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.h
-@@ -73,6 +73,8 @@ struct fbnic_net {
- 
- 	/* Time stamping filter config */
- 	struct kernel_hwtstamp_config hwtstamp_config;
-+
-+	bool tx_pause;
- };
- 
- int __fbnic_open(struct fbnic_net *fbn);
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_phylink.c b/drivers/net/ethernet/meta/fbnic/fbnic_phylink.c
-index 7ce3fdd25282..c9ed13e37d62 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_phylink.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_phylink.c
-@@ -36,8 +36,13 @@ int fbnic_phylink_set_pauseparam(struct net_device *netdev,
- 				 struct ethtool_pauseparam *pause)
- {
- 	struct fbnic_net *fbn = netdev_priv(netdev);
-+	int err;
-+
-+	err = phylink_ethtool_set_pauseparam(fbn->phylink, pause);
-+	if (!err)
-+		fbn->tx_pause = pause->tx_pause ? true : false;
- 
--	return phylink_ethtool_set_pauseparam(fbn->phylink, pause);
-+	return err;
- }
- 
- static void
-@@ -208,6 +213,7 @@ fbnic_phylink_mac_link_up(struct phylink_config *config,
- 	struct fbnic_net *fbn = netdev_priv(netdev);
- 	struct fbnic_dev *fbd = fbn->fbd;
- 
-+	fbnic_config_drop_mode(fbn, tx_pause);
- 	fbd->mac->link_up(fbd, tx_pause, rx_pause);
- }
- 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-index 57e18a68f5d2..c2d7b67fec28 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
-@@ -2574,11 +2574,15 @@ static void fbnic_enable_bdq(struct fbnic_ring *hpq, struct fbnic_ring *ppq)
- }
- 
- static void fbnic_config_drop_mode_rcq(struct fbnic_napi_vector *nv,
--				       struct fbnic_ring *rcq)
-+				       struct fbnic_ring *rcq, bool tx_pause)
- {
-+	struct fbnic_net *fbn = netdev_priv(nv->napi.dev);
- 	u32 drop_mode, rcq_ctl;
- 
--	drop_mode = FBNIC_QUEUE_RDE_CTL0_DROP_IMMEDIATE;
-+	if (!tx_pause && fbn->num_rx_queues > 1)
-+		drop_mode = FBNIC_QUEUE_RDE_CTL0_DROP_IMMEDIATE;
-+	else
-+		drop_mode = FBNIC_QUEUE_RDE_CTL0_DROP_NEVER;
- 
- 	/* Specify packet layout */
- 	rcq_ctl = FIELD_PREP(FBNIC_QUEUE_RDE_CTL0_DROP_MODE_MASK, drop_mode) |
-@@ -2588,6 +2592,21 @@ static void fbnic_config_drop_mode_rcq(struct fbnic_napi_vector *nv,
- 	fbnic_ring_wr32(rcq, FBNIC_QUEUE_RDE_CTL0, rcq_ctl);
- }
- 
-+void fbnic_config_drop_mode(struct fbnic_net *fbn, bool tx_pause)
-+{
-+	int i, t;
-+
-+	for (i = 0; i < fbn->num_napi; i++) {
-+		struct fbnic_napi_vector *nv = fbn->napi[i];
-+
-+		for (t = 0; t < nv->rxt_count; t++) {
-+			struct fbnic_q_triad *qt = &nv->qt[nv->txt_count + t];
-+
-+			fbnic_config_drop_mode_rcq(nv, &qt->cmpl, tx_pause);
-+		}
-+	}
-+}
-+
- static void fbnic_config_rim_threshold(struct fbnic_ring *rcq, u16 nv_idx, u32 rx_desc)
- {
- 	u32 threshold;
-@@ -2637,7 +2656,7 @@ static void fbnic_enable_rcq(struct fbnic_napi_vector *nv,
- 	u32 hds_thresh = fbn->hds_thresh;
- 	u32 rcq_ctl = 0;
- 
--	fbnic_config_drop_mode_rcq(nv, rcq);
-+	fbnic_config_drop_mode_rcq(nv, rcq, fbn->tx_pause);
- 
- 	/* Force lower bound on MAX_HEADER_BYTES. Below this, all frames should
- 	 * be split at L4. It would also result in the frames being split at
-@@ -2700,7 +2719,6 @@ static void __fbnic_nv_enable(struct fbnic_napi_vector *nv)
- 						  &nv->napi);
- 
- 		fbnic_enable_bdq(&qt->sub0, &qt->sub1);
--		fbnic_config_drop_mode_rcq(nv, &qt->cmpl);
- 		fbnic_enable_rcq(nv, &qt->cmpl);
- 	}
- }
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-index ca37da5a0b17..27776e844e29 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.h
-@@ -184,6 +184,7 @@ void fbnic_reset_netif_queues(struct fbnic_net *fbn);
- irqreturn_t fbnic_msix_clean_rings(int irq, void *data);
- void fbnic_napi_enable(struct fbnic_net *fbn);
- void fbnic_napi_disable(struct fbnic_net *fbn);
-+void fbnic_config_drop_mode(struct fbnic_net *fbn, bool tx_pause);
- void fbnic_enable(struct fbnic_net *fbn);
- void fbnic_disable(struct fbnic_net *fbn);
- void fbnic_flush(struct fbnic_net *fbn);
--- 
-2.47.3
+Thanks for the explanation!
 
+Alex
 
