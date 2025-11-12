@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-897963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E7BC54028
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:52:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB249C54046
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 16CB53459C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:51:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20BB03466F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E476934B663;
-	Wed, 12 Nov 2025 18:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E1524BC07;
+	Wed, 12 Nov 2025 18:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2y+mAx5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGMPxhVJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314C934AAFB;
-	Wed, 12 Nov 2025 18:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C842609CC;
+	Wed, 12 Nov 2025 18:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762973497; cv=none; b=HhFkG4IXYfJC+MRg17082Kcg89fHxcAN6utlnOx0IN3O/dtjprX4C4BBfDzXQi1Q/qBCPsVGIuaIJaYZGzkDD7ougihC6X0WHVXmeUcUQPlwYbQ9yQQsBahL7DQpli/Nt+VmRe+PMQn8A5muy0rpjNQamkxS4v2MC27T/fd0s4s=
+	t=1762973603; cv=none; b=t2T2ppQw3zf9fQFB27j6ba/V9YADh0SZGpQrNJAoWaFFbZTCkxecVI/JvpBVvGMjEZ67MVX+1QP98stLSNfYKlwRKgXAwCUNe0Y/+Ap1s0XbIeV8WxVj8Bole0gtZmd40aUbqBzdaJ9rCZsedFFAajuXnaVJK7fIl3zstpqcdf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762973497; c=relaxed/simple;
-	bh=sBTcLveD/UZnNJ/cSBjDDlFv4bZw6V6Ta/fJPIfzI6I=;
+	s=arc-20240116; t=1762973603; c=relaxed/simple;
+	bh=NmwTU8zJvNtYHKTiM88UK4xK63z2LpBj81NDhhAvYBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IBSFR5NRhHAGgz3lkUY93bZZbCHz4gygG3L0cyBBnIV4y9pVco5wcwYngnaOeNJ/GARlSBEeoQW7N5C8vhu4U58xjFqk0ZTrZDUnKNnlwkucHtKlhr2WqVe1bq0Jy+xLKhjjB6TFsJP/C44Nek2RkYR9wf3qgUyBgp4V0p/jRqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2y+mAx5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF00C16AAE;
-	Wed, 12 Nov 2025 18:51:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQKhIjPCau4ymtHj7WzBky5suNe0yWaXT6p/NzvK3wFmX+nxG9McDkfQziHrF8SxytwSmYGg7X9KUvJN9mhUCFEasI51HC0CW5d0rytyE+2yfBj3jf5gTS14xMbFNELCNkgyMvMPn8qapoQi43mRYioERtpDP0XiGHUTiQdwLko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGMPxhVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B0EC4CEF5;
+	Wed, 12 Nov 2025 18:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762973496;
-	bh=sBTcLveD/UZnNJ/cSBjDDlFv4bZw6V6Ta/fJPIfzI6I=;
+	s=k20201202; t=1762973602;
+	bh=NmwTU8zJvNtYHKTiM88UK4xK63z2LpBj81NDhhAvYBg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2y+mAx5JIDbvtkmJ1/3FZnnja4tYEMxRM3xqpvwjrDS+iqh61Pxk0VqahwonfBu9
-	 WPpkuEzO4BH0fjmuJKXY3vZ5UaR9yO1MOK75qb3mcQDCKXTHOc997b1LjWf5HGWbee
-	 yaegsSP7F/OsVrYjuMJC40V0ZQ1Nd17tjHsRtiVAxeq5xwX+TxNeW+/IHgL5uI8GjN
-	 cn36xftHOGmSMlovoYpzWGXOj0l37jktodgtgZ6jRu8XB92eUjkRRVfBQ1c8wo7JFt
-	 Lz+C9XKC6bTbdygzPDxt/ikVA5ujv7WwOn5fG0htQkVjRBJZNCMFJockiSAJfFUcgA
-	 +TOMMA+MLvPag==
-Date: Wed, 12 Nov 2025 18:51:32 +0000
+	b=CGMPxhVJ+TH4Uc4pbHRvNq/u7VnaYZQ2YQxHalx0drTKuMXUlysJunGnVroWJ9wCF
+	 KGck6FPCoSynlUjI90ryJcVoUfjPOyCVcTsPaDhEAApnFvGiJvng4R/D9SSVkAirCR
+	 N+z3+BaYdkHQtMbHCyGllmJ6RrE3KyKHyzG4lzkMHWvKSy74m1Bk7qHUvxEKcbzOWC
+	 2XYUcYO6Vmw0SnCgDBbvtSfr+ghOXdGANJQQIG/9rmS/El5BUw001Gm295Wbdj1CME
+	 hHRDwtPE24MqmMuMOakBXihYKlA+OvcfU9cs18z8A+6vba4ql7tJt0ftLiXVI05FQ2
+	 An0b0ehkDpNsw==
+Date: Wed, 12 Nov 2025 18:53:18 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+To: daniel_peng@pegatron.corp-partner.google.com
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: regulator: pca9540: add debounce timer
- configuration
-Message-ID: <20251112-cultivate-freehand-596455d47ee5@spud>
-References: <20251112121710.2623143-1-martijn.de.gouw@prodrive-technologies.com>
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: input: i2c-hid: Introduce FocalTech
+ FT8112
+Message-ID: <20251112-resume-engorge-3dafdc09c65d@spud>
+References: <20251112195751.v3.1.I894dde5015f4acad94cb5bada61e5811c5142395@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,94 +59,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="COxGVMI2WRe60wMC"
+	protocol="application/pgp-signature"; boundary="GMnzJIigDlxZPrWD"
 Content-Disposition: inline
-In-Reply-To: <20251112121710.2623143-1-martijn.de.gouw@prodrive-technologies.com>
+In-Reply-To: <20251112195751.v3.1.I894dde5015f4acad94cb5bada61e5811c5142395@changeid>
 
 
---COxGVMI2WRe60wMC
+--GMnzJIigDlxZPrWD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 01:17:08PM +0100, Martijn de Gouw wrote:
-> Make the different debounce timers configurable from the devicetree.
-> Depending on the board design, these have to be set different than the
-> default register values.
+On Wed, Nov 12, 2025 at 07:59:04PM +0800, daniel_peng@pegatron.corp-partner=
+=2Egoogle.com wrote:
+> From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
 >=20
-> Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+> The FocalTech FT8112 touch screen chip same as Ilitek ili2901 controller
+> has a reset gpio. The difference is that they have different
+> post_gpio_reset_on_delay_ms.
+> FocalTech FT8112 also uses 3.3V power supply.
+>=20
+> Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
+
+> - Modified the subject description.
+> - Modified maintainers to myself of this binding file.
+> - Fixed the extra '>' on section of "interrupts =3D <15 IRQ_TYPE_LEVEL_LO=
+W>;" and confirm command 'make dt_binding_check' correctly.
+> - Restored MAINTAINERS file.
+
+The patch seems okay me me, other than this which a) should be below the
+--- and also does not appear to even be accurate? The last bullet in
+doesn't match the patch contents.
+Move this out of the commit and then
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: changes-requested
+
+Thanks,
+Conor.
+
+>=20
 > ---
->  .../regulator/nxp,pca9450-regulator.yaml      | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regu=
-lator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regula=
-tor.yaml
-> index a5486c36830f0..e49acadabc4b0 100644
-> --- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.y=
-aml
-> +++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.y=
-aml
-> @@ -124,6 +124,36 @@ properties:
->        When WDOG_B signal is asserted a warm reset will be done instead o=
-f cold
->        reset.
-> =20
-> +  nxp,pmic_on_req-on-debounce-us:
-
-While you're solving the bot complaints, replace the _s with -s.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 120, 20000, 100000, 750000 ]
-> +    description: Debounce time for PMIC_ON_REQ high.
+> (no changes since v1)
+>=20
+>  .../bindings/input/focaltech,ft8112.yaml      | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/focaltech,ft8=
+112.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/focaltech,ft8112.yam=
+l b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+> new file mode 100644
+> index 000000000000..197f30b14d45
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/focaltech,ft8112.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +  nxp,pmic_on_req-off-debounce-us:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 120, 2000 ]
-> +    description: Debounce time for PMIC_ON_REQ is asserted low
-
-These enum values are kinda strange. The only two options are 120 and
-2000 or are those max and min? Not super suspect since there's partial
-matching with the req-on property but weird enough to ask about ;)
-
+> +title: FocalTech FT8112 touchscreen controller
 > +
-> +  nxp,power-on-step-ms:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 1, 2, 4, 8]
-> +    description: Time step configuration during power on sequence
+> +maintainers:
+> +  - Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
 > +
-> +  nxp,power-down-step-ms:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 2, 4, 8, 16 ]
-> +    description: Time step configuration during power down sequence
+> +description:
+> +  Supports the FocalTech FT8112 touchscreen controller.
+> +  This touchscreen controller uses the i2c-hid protocol with a reset GPI=
+O.
 > +
-> +  nxp,restart-ms:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 250, 500 ]
-> +    description: Time to stay off regulators during Cold reset
+> +allOf:
+> +  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
 > +
-> +  npx,pmic_rst_b-debounce-ms:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 10, 50, 100, 500, 1000, 2000, 4000, 8000 ]
-> +    description: PMIC_RST_B debounce time
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - focaltech,ft8112
 > +
->  required:
->    - compatible
->    - reg
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  panel: true
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  vcc33-supply: true
+> +
+> +  vccio-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - vcc33-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      touchscreen@38 {
+> +        compatible =3D "focaltech,ft8112";
+> +        reg =3D <0x38>;
+> +
+> +        interrupt-parent =3D <&pio>;
+> +        interrupts =3D <15 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +        reset-gpios =3D <&pio 126 GPIO_ACTIVE_LOW>;
+> +        vcc33-supply =3D <&pp3300_tchscr_x>;
+> +      };
+> +    };
 > --=20
-> 2.39.2
+> 2.34.1
 >=20
 
---COxGVMI2WRe60wMC
+--GMnzJIigDlxZPrWD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTXNAAKCRB4tDGHoIJi
-0iX1AP0XQN/9RxGV3+VLMqObhhZ2ATmZpbdo/p/UEXby3trUugEA4B105k76+JRc
-SnFbH8fUp+vQikMYpWw4tyhfRwqI+gE=
-=ZiXN
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTXngAKCRB4tDGHoIJi
+0gcwAQCFRvbG2WpiVaqzpCyWTu50NSJQFPBvBj2SVOgBA07QVwD+JLSd+YR+202m
+4TBxcI5dsrM9pj2kx9dPywB/b8aJIw4=
+=faJR
 -----END PGP SIGNATURE-----
 
---COxGVMI2WRe60wMC--
+--GMnzJIigDlxZPrWD--
 
