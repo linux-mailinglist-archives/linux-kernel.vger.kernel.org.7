@@ -1,91 +1,106 @@
-Return-Path: <linux-kernel+bounces-897371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CDFC52D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:55:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D270C52A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508C54A60BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:20:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1CF4F34C87F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50F2882CD;
-	Wed, 12 Nov 2025 14:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851D22777FD;
+	Wed, 12 Nov 2025 14:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xmb+KeaI"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fuw2lKM6"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7637F289811
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C05A265609
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957219; cv=none; b=sR/mBe2i70webqq1kZFISm0jmXGYZd0kYmSX9Pt8CnlQgpwPuLhZPXI6kZv2+OKIi88E5uNziOFQ14irbt8sS25HJBVxmsfe0PfvGQ5UUBc/Qz/4nZpgBuY16mms3Xk8DV9l1dVgGwMiUkCcWtdu+tGUjzj+dpB1BPSeAIVn4ME=
+	t=1762956733; cv=none; b=fPbTbPlmXL8E6/tMlAuXM/TFW1zaj0yPEhiM3XBmmhJFq7965BJ1CNcSetAgDGDGPR4YGkAh1JRJcDLaIbqkIGzwWqg94FDCFcYJEsDIK+3SID7B6hFKS8RmML5Zkh/7Bh+KK6QhViW1TpI6AitZKyEV2p93okxrH497i7P6iYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957219; c=relaxed/simple;
-	bh=PLEsEAFhjPh2pioJvZvoAHlFGMw3+0W/MvVkutfYANE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mIPy8eRnNsOYlQL/tZ/e0nDo2nGNQexL7Cm/blnNg6Qcj2XQkjas42rh50+fZr/2/Ksi6odcrrLn/j23n9tr6K0juLedHP2S2p13WoA3qJn0TtXnV3FVIjm+lgcj6Wmv4MYgKYcbcn1dE1izmdzW5Zm+0xbqDvGQjJItDr3BT+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xmb+KeaI; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1762956733; c=relaxed/simple;
+	bh=4gTu62Cbo/85Ca8gee18I0As80cWfB9FOIdzXKqVpRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hd0EV1iV52Rsc6Pr3tkfLXv9Jj5PuQSB9F5ViSuQ/EqcLtXne1OQSEJ9NKVOJySzzGVEAtZh0wAIWx/5tNlhN/RuGw6ABVOGjJNm/C7FKqAF4eGoN5DbTd8OR5X7m5mWYDOFE137yUuAlc73CxIykqTXHmt7jRzZFHakSOimf+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fuw2lKM6; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-88f239686f2so83615585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:20:17 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477442b1de0so6304155e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:12:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762957216; x=1763562016; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762956730; x=1763561530; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=23Yna8J3d3mh9gPmuO4K36N9DnURcSnrYweW3R/KSeg=;
-        b=Xmb+KeaIata+2GuSfT5pWgt7616+mGmfA9/5lpVvqMk3jftOZ4BXDmisrbRVSY6ffy
-         DGDauS0V6u8p0y7D4CBaSpRoNFPamiYDX9XmELpQJ/QDpsy0R+7LFgkVsPPO+mCk7m2c
-         foldaqKnqI3ygbwTW7OByzQYQAk6WeI7Dm9AYYFE7hYpDxL1zw8q+E4LvLpp0s8Z5GhO
-         zfclY68WLagXpChGp1mUwMgLvoJSV0O+erL4YL9yrqsosY2TwtcRdFYn4EZhv02n5Ivl
-         mbYj+v/hEQ86ItA9lmyrtVDe3qyNbqYsYQE42C/oeS/BX5ziy3bDeZxMZ8sSNPTp077A
-         jNQw==
+        bh=tI75hDbouZIETMFT8ke2RFFEcLU/TsScHe/NrPN9qMM=;
+        b=Fuw2lKM6RluMC7ekY+j1yNwqIqsZ2np8giOXCRNC1d2NfUzW2ugs6MbFO1S8uCWJ7z
+         hMDPbA/Z1dF+Sgj0IljblfCfZDqQjPTggO4WT6NM2PSUkDuOYAht81B0D33tQPCj+kRk
+         Mnn2ZxMHy6s+OwaX61dpg2pznymwtXng6lec74U87QAElled5xvlz3K7uC7k59qKqB1s
+         nOqf1CxX1s4GkSv8JaSlR2hRQk5yjVWtPelorQKA0dl/QXCqs94bI7Fj6tEdYHO6IZs8
+         3sSitYR9V2lAmxWWa2qlBGcRN2TmIxxr6/tMbDIo6CUnnEpDtQUoDYoHaazz+sNDcvpv
+         5eBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762957216; x=1763562016;
+        d=1e100.net; s=20230601; t=1762956730; x=1763561530;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=23Yna8J3d3mh9gPmuO4K36N9DnURcSnrYweW3R/KSeg=;
-        b=dXWBE3RPY1T3BRIcWNfh+GGSjU/D7+facjFIMUVOWT4h+j2+Zt75c9npXGUMsm1CVL
-         NuKNFbLs/uyHBh0zccl1kwMAcgiZ/Lu50g/dCN16nJU/y2QvOswtlB50npwmK/UlOkHU
-         t7+pIjDVhx9EMX1VKWa+1kiM//1yatmVaZLQanCIUa0/OMPkPLvXzR+dFQsCCUy5gTHM
-         QRto4/4KRHvAuVsv84HNJPmSEDkbkYw5CRcmPbCuc402t8uOPL8mKK1px2TVzEX4vu5v
-         frvrRSZc7/Bsq2kRwVff6YgEfZCfgkq+CAUgtXM6QOUoP6wnk01sZPoTUyAs53Af9ljH
-         +MWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRZ4Cdka6s5d9U4OGAE02RvNkt1mDfHlzRfQACsNPz+WBdf87eTbm/ajcOmSqOcu4Mcde7DrtQxHPKWoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5dyVJq9TwKoqXLvZZ0ysovxIgJD0OPa3D4O3yH38Gs/Mfh1ms
-	ghYXMNfD0IIGFCf6pxxYuj7CcVL/eigbd6Q4JNS+HHe3EYDidEiasiJp
-X-Gm-Gg: ASbGncvD+uUcB1MtLxBnOQ9Txa745WJFgAbraUFL5FEnSrZbswokDUpsryp2OIv8ncY
-	QHLYHBx7Tt4BOG6ktUpTrA86KpSu5jwWeQmHQ08fV+Uk+TrXh65m4f7alJghNXlTiX7WrrZG3ZD
-	zF8qeqyXbKrx7IYMIn3E76YjEyJdHRZjs/+3ELckSYSLAAXMJMMfarUfuWRoCrXcoJX+GA8GhNe
-	jy6T7FqFDJw5p+xJ03I/XakL4qmYf2Vo6qS3hxPmR6PVfysJw453h8QaWkb8SokN+lSxLPxC632
-	KD0elbHUXGQmqtplHQfk+s6QG1C+9neuuK9009hET1VCLK6kUbt4+xQZ2WkzouQmsfm5MrJ3Mtr
-	tHi3G6ROAPBtHaiJtKi1d7w6VZo6WBV2t8EMD7XMHoOQ40WtdcEE8YVtBQeb8LZP1fDDZPS3/CF
-	hn5d4jU0dlhrn3UfyM9yat
-X-Google-Smtp-Source: AGHT+IE//gkdyNvrQQM5f0E3fJn6m5YN9A3KpABhw9zY72kYOdyBFwY0fArMYvrWnTVYGlxGj7DiIA==
-X-Received: by 2002:a05:620a:458c:b0:8a1:87f8:6632 with SMTP id af79cd13be357-8b29b77a7fdmr423471885a.32.1762957216282;
-        Wed, 12 Nov 2025 06:20:16 -0800 (PST)
-Received: from rpthibeault-XPS-13-9305.. ([23.233.177.113])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a84ae06sm202417785a.12.2025.11.12.06.20.15
+        bh=tI75hDbouZIETMFT8ke2RFFEcLU/TsScHe/NrPN9qMM=;
+        b=dnphUvcnE/UxKpNbeZyI27y7t+i9ejPS5IawUXVnokYCAZFP7I4crBRhwCEegGXUUX
+         EHYeJdC0SFBO2MZPG7Lo8pSTZzt+JObY/Wr3EEv3Xu4XyAaqITLUiQsJGbJm/L7LlPJl
+         ZkFiF0FsFXnW7Cp9Syt6nsk2kX0cUUHzZqlD3PX5covX8GKxJKDyLijGxWzygUoWQt2y
+         W0oWlx7yV0kiLwhnjxHv4dwjDn719OJD+dcgfenSZR8ZyojjxxbAAw3doBWsg83mnUaH
+         U1uETwygc5qPmFTlk5121caVVRL0rQyhqbBUQwBSPPDGW3NS4OgeZm5FZyv5i5GSEv4u
+         5ZcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUhEkJco7M+owlCcbTEChQua3IH7yPRP2uvH4jIclnEqkzHQ3t6j6Kz745JWQkpoYpT2gbLUGoNxum67w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRfxk0nczmomp4d+PvRcxnXL/veqDVAECdrwxDMYn7Tsn+oP37
+	9b1JaTmu3RFoquXtSPjDPtH5YKdEsXyrjdSFATPvtXYhp7JB8wUOEzE4
+X-Gm-Gg: ASbGncsEOq2yVKRmrZuOV8yjCBfdFt5owGbX1OSvw1qp44W+5vZluOxfd9cd7yfEtbZ
+	Yr3VHQvJHcsFJItQwpPJSzjrtGGi08t4wZ8J+pLzC5ro9Z+HrFTPvj3rFBr5WRxKTW4gB0Q9zgS
+	K1Nswp6QcvLcg7OPuvTeLuyNf4Hb6Re9wUtpV+n9qsyfTtCb2sqDi8M6sPv1RBEd2YoK+TnfUMF
+	yyfu2qpapgbC6id8Hw8n1SAGCWDA9CNEgZ6/Fm8pTQ+1i4D3a7zc4DEkoc1HCY+al7LGpUzR62w
+	uxEY/ZNQ+POcPtlZ7L+aWimlSuR2nudv8IVSAf07duayyop0e5kVkjVv7sFV/aLMuIvTwlfjTK/
+	2mQT7L14sgRSi6yKUwLm+kc3BHWvo7pzvsjlJfPlU2xCSUGJ9x9H36+7xk+0DUegpvZB5WVxxVr
+	bYeUsH4/kLEYvq
+X-Google-Smtp-Source: AGHT+IGyXbTaO+xgr/SsYmGbnGDHZeIma9mt9kzGgq8EkGWGngWs1vXcu5nKfKxkP0snMbzheV5Niw==
+X-Received: by 2002:a05:600c:3511:b0:477:54cd:2021 with SMTP id 5b1f17b1804b1-47787041346mr31763365e9.8.1762956730247;
+        Wed, 12 Nov 2025 06:12:10 -0800 (PST)
+Received: from paul-Precision-5770 ([80.12.41.68])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2b08a91esm28303603f8f.2.2025.11.12.06.12.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:20:15 -0800 (PST)
-From: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-To: cem@kernel.org,
-	djwong@kernel.org,
-	chandanbabu@kernel.org,
-	bfoster@redhat.com
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com,
-	Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-Subject: [PATCH] xfs: ensure log recovery buffer is resized to avoid OOB
-Date: Wed, 12 Nov 2025 09:10:34 -0500
-Message-ID: <20251112141032.2000891-3-rpthibeault@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 12 Nov 2025 06:12:09 -0800 (PST)
+From: Paul Houssel <paulhoussel2@gmail.com>
+X-Google-Original-From: Paul Houssel <paul.houssel@orange.com>
+To: Paul Houssel <paulhoussel2@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Martin Horth <martin.horth@telecom-sudparis.eu>,
+	Ouail Derghal <ouail.derghal@imt-atlantique.fr>,
+	Guilhem Jazeron <guilhem.jazeron@inria.fr>,
+	Ludovic Paillat <ludovic.paillat@inria.fr>,
+	Robin Theveniaut <robin.theveniaut@irit.fr>,
+	Tristan d'Audibert <tristan.daudibert@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Paul Houssel <paul.houssel@orange.com>
+Subject: [PATCH v2 0/2] libbpf: fix BTF dedup to support recursive typedef
+Date: Wed, 12 Nov 2025 15:11:32 +0100
+Message-ID: <cover.1762956564.git.paul.houssel@orange.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,56 +109,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In xlog_do_recovery_pass(),
-commit 45cf976008dd ("xfs: fix log recovery buffer allocation for the legacy h_size fixup")
-added a fix to take the corrected h_size (from the xfsprogs bug
-workaround) into consideration for the log recovery buffer calculation.
-Without it, we would still allocate the buffer based on the incorrect
-on-disk size.
+Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
+Podman) due to recursive type definitions that create reference loops
+not representable in C. These recursive typedefs trigger a failure in
+the BTF deduplication algorithm.
 
-However, in a scenario similar to 45cf976008dd, syzbot creates a fuzzed
-record where xfs_has_logv2() but the xlog_rec_header h_version !=
-XLOG_VERSION_2. Meaning, we skip the log recover buffer calculation
-fix and allocate the buffer based on the incorrect on-disk size. Hence,
-a KASAN: slab-out-of-bounds read in xlog_do_recovery_pass() ->
-xlog_recover_process() -> xlog_cksum().
+This patch extends btf_dedup_struct_types() to properly handle potential
+recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
+handled for BTF_KIND_STRUCT. This allows pahole to successfully
+generate BTF for Go binaries using recursive types without impacting
+existing C-based workflows.
 
-Fix by removing the check for xlog_rec_header h_version, since the code
-is already within the if(xfs_has_logv2) path. The CRC checksum will
-reject the bad record anyway, this fix is to ensure we can read the
-entire buffer without an OOB.
+Changes in v2:
+  1. Patch 1: Refactored code to prevent copying existing logic. Instead of
+  adding a new function () we modify the existing btf_dedup_struct_type()
+  function to handle the BTF_KIND_TYPEDEF case. Calls to btf_hash_struct()
+  and btf_shallow_equal_struct() are replaced with calls to functions that
+  select btf_hash_struct() / btf_hash_typedef() based on the type.
+  2. Patch 2: Added tests
 
-Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
-Tested-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Fixes: 45cf976008dd ("xfs: fix log recovery buffer allocation for the legacy h_size fixup")
-Signed-off-by: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
----
+v1: https://lore.kernel.org/lkml/20251107153408.159342-1-paulhoussel2@gmail.com/
 
-Can xfs_has_logv2() and xlog_rec_header h_version ever disagree?
+Paul Houssel (2):
+  libbpf: fix BTF dedup to support recursive typedef definitions
+  selftests/bpf: add BTF dedup tests for recursive typedef definitions
 
-From my understanding, whenever the h_version is set (e.g. in
-xlog_add_record()), it is set to 2 when xfs_has_logv2(), and 1
-otherwise.
+ tools/lib/bpf/btf.c                          | 59 +++++++++++++++----
+ tools/testing/selftests/bpf/prog_tests/btf.c | 61 ++++++++++++++++++++
+ 2 files changed, 110 insertions(+), 10 deletions(-)
 
- fs/xfs/xfs_log_recover.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
-index e6ed9e09c027..08d7b25c4ab1 100644
---- a/fs/xfs/xfs_log_recover.c
-+++ b/fs/xfs/xfs_log_recover.c
-@@ -3064,8 +3064,7 @@ xlog_do_recovery_pass(
- 		 * still allocate the buffer based on the incorrect on-disk
- 		 * size.
- 		 */
--		if (h_size > XLOG_HEADER_CYCLE_SIZE &&
--		    (rhead->h_version & cpu_to_be32(XLOG_VERSION_2))) {
-+		if (h_size > XLOG_HEADER_CYCLE_SIZE) {
- 			hblks = DIV_ROUND_UP(h_size, XLOG_HEADER_CYCLE_SIZE);
- 			if (hblks > 1) {
- 				kvfree(hbp);
 -- 
-2.43.0
+2.51.0
 
 
