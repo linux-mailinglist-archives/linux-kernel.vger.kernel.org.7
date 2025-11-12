@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-896811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294E4C514BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E88A7C514AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0153B8642
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824C0421D10
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE622FDC5B;
-	Wed, 12 Nov 2025 09:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2CF2FE573;
+	Wed, 12 Nov 2025 09:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WXe4PCci"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdP5jmGf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61C9267B02;
-	Wed, 12 Nov 2025 09:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E302BE02C;
+	Wed, 12 Nov 2025 09:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938160; cv=none; b=JPVFRZuql7u5akL93GdqBdt87f50U8CTkdPcLVHjjsHC+uQDbqwjWyVpdXQSrlQYCTGlwPxLhXj8IIprFnaLHmKq5PDyWCrGehqlEWPssxF0+VtZvYb8FqCrR3P/5ty9S8KnxtBEODcrdxUgyKbXxOqwWogpOhmdVowon93J1yg=
+	t=1762938072; cv=none; b=IbYqAGKwh0FIc+WIaGoSRnsxDMeIwtQR++IM/bFQeC+SVB1Mv0/o1vOkvMTr6w8O6JHhYn3BODfjMQNl+yI2nd7HCQ68FH7uKHg8IiMZRZ8NDovJaaPXg8lL6liQtdl12lKZBs8kg7+LXAycG7qurliYK88PVmny8iaziEBimqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938160; c=relaxed/simple;
-	bh=yRGAE42KEjZlL1h5YThKHpL/X3+qBZ6BVFyZGahF89o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9DEyGH8BOkxnCbpZjzNyv3qghnDNosaHjuPu0uMpqmUjhoAoGbGdUkKW+TIdtvXG4c3hGOQmQscmDH/N+0V/AIFDRBv598tgEAX5gm8nu0qUFDUSrCjpqZ64F2Hi+FCyhawbDm6njBwyq4Sg7dtPGNDtNdmnG8/H11E2ihM4f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WXe4PCci; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762938159; x=1794474159;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yRGAE42KEjZlL1h5YThKHpL/X3+qBZ6BVFyZGahF89o=;
-  b=WXe4PCciJGtv8f1dy4vDprkxqD+BkaKPiUCdflTNPkJqifkeHduikmRx
-   6tFWSmcJSemCgcQ0BRDxwdOI7R7puB7OK6jjOF2DSkbFv3HwZ0Jc1CyHc
-   lVmsugJMTv0h2EGPX5AIKiAE4DyyJTvHDmAxC/dv2nK/sUFEEs28KW2Wl
-   Z4QKIV8xqxMpyPub1UOB0AZz6v6arXNw8oS8gf0ZmrzgapjF3/k0KS/2G
-   NkF8hSwPvE/jR3BOkXS5uBdhlXxdc7cs7veOtoMrQrN/qC73LoI3pDKzD
-   k6TeqN6yJwrm95svwMJjRpCZnzMlJy/49T99KACru8NbM2mHh7cwDCAdz
-   w==;
-X-CSE-ConnectionGUID: 7ZjwzvXzQOWlaCQWTFV1QQ==
-X-CSE-MsgGUID: YyvNPZE/SHyADp/sRawEmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="64878446"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="64878446"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 01:02:38 -0800
-X-CSE-ConnectionGUID: on9WpuZETXmwiDjoDKREvA==
-X-CSE-MsgGUID: R+cXr2rfRMWJPOBPKfbVOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="194145907"
-Received: from baandr0id001.iind.intel.com ([10.66.253.151])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2025 01:02:35 -0800
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-To: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	jolsa@kernel.org,
-	adrian.hunter@intel.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1762938072; c=relaxed/simple;
+	bh=NmxT3e9rVD+Vk0gwGiTwEsfo+VbVQUJ9eVtsypMNXuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kjIRRlg54TReeS1MKEdXqZMJlYz4sTsQ14Evn9NObmG+g9VbSGcYYnj5EgTSrPT7sDHFa8coyGKrkoem+DiMeIT6HR/0UrRv7k/L1mQ9OunOXBG7JqH6rBSM+hkTbxc577N+IxKQRVERNzGp/D/mL7fm7KeRTsxGW8obojUksYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdP5jmGf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6871C4CEF5;
+	Wed, 12 Nov 2025 09:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762938071;
+	bh=NmxT3e9rVD+Vk0gwGiTwEsfo+VbVQUJ9eVtsypMNXuc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sdP5jmGfLM+SqEuBX/RsMGAmFa8GSx+5s3qlPF12YVUgFuFMpcff20Xhp8BQtu318
+	 XA2RUpFBp4/3lodTcuJD9YOxWBHcqQMk3h0u5+ME/+CzWeA+bk0+dKlaisCTBqHd6o
+	 T355kOHQKyPmjbq0GoHZQNmcLvQtYngvT4iiH2Yz4Pxoon6WrwLqGla9zLz5WNvIde
+	 cx9FOyjZdSQNY97ifMj9UKI2ssD71LcFv7Xa9qcxmE1cNFEdtAm9HMRRMZLh6u0A5a
+	 AD1vXlXRa/op+Ax2MTk3mKPyO0SMhntbfLDp2az621cBgWCihv3p++dBVMO0VEQrwn
+	 3SDY/PgaVZE9g==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Subject: [PATCH] x86/events/intel/cstate: Add Pantherlake support
-Date: Wed, 12 Nov 2025 14:30:24 +0530
-Message-Id: <20251112090024.3298186-1-kaushlendra.kumar@intel.com>
-X-Mailer: git-send-email 2.34.1
+	linux-nfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	netfs@lists.linux.dev,
+	ecryptfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v6 00/17] vfs: recall-only directory delegations for knfsd
+Date: Wed, 12 Nov 2025 10:00:47 +0100
+Message-ID: <20251112-allesamt-ursprung-7581bf774318@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251111-dir-deleg-ro-v6-0-52f3feebb2f2@kernel.org>
+References: <20251111-dir-deleg-ro-v6-0-52f3feebb2f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3125; i=brauner@kernel.org; h=from:subject:message-id; bh=NmxT3e9rVD+Vk0gwGiTwEsfo+VbVQUJ9eVtsypMNXuc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSK+Jx86vPs+ErnB/wb72nN1on3KMp9zX7dQSQ82GOlr L4T45e1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5uY/hn/2qqoNLZz+dwN+8 MaJT8c46z87PsQEvsjp28yya0xLDk8bwTylL6cEuZvNOz6YbIjsbtC63ni4K0TY9cPOZxLVsp4t dPAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-It supports the same C-state residency counters as Lunarlake.This
-enables monitoring of C1, C6, C7 core states and C2,C3,C6,C10
-package states residency counters on Pantherlake platforms.
+On Tue, 11 Nov 2025 09:12:41 -0500, Jeff Layton wrote:
+> Behold, another version of the directory delegation patchset. This
+> version contains support for recall-only delegations. Support for
+> CB_NOTIFY will be forthcoming (once the client-side patches have caught
+> up).
+> 
+> The main changes here are in response to Jan's comments. I also changed
+> struct delegation use to fixed-with integer types.
+> 
+> [...]
 
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
----
- arch/x86/events/intel/cstate.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Applied to the vfs-6.19.directory.delegations branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.directory.delegations branch should appear in linux-next soon.
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index ec753e39b007..b3582eeb6c4b 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -41,7 +41,7 @@
-  *	MSR_CORE_C1_RES: CORE C1 Residency Counter
-  *			 perf code: 0x00
-  *			 Available model: SLM,AMT,GLM,CNL,ICX,TNT,ADL,RPL
-- *					  MTL,SRF,GRR,ARL,LNL
-+ *					  MTL,SRF,GRR,ARL,LNL,PTL
-  *			 Scope: Core (each processor core has a MSR)
-  *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
-  *			       perf code: 0x01
-@@ -53,31 +53,32 @@
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-  *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
-  *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
-- *						GRR,ARL,LNL
-+ *						GRR,ARL,LNL,PTL
-  *			       Scope: Core
-  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
-  *			       perf code: 0x03
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
-- *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL
-+ *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL,
-+ *						PTL
-  *			       Scope: Core
-  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
-  *			       perf code: 0x00
-  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
-- *						RPL,SPR,MTL,ARL,LNL,SRF
-+ *						RPL,SPR,MTL,ARL,LNL,SRF,PTL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-  *						GLM,CNL,KBL,CML,ICL,TGL,TNT,RKL,
-- *						ADL,RPL,MTL,ARL,LNL
-+ *						ADL,RPL,MTL,ARL,LNL,PTL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-  *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
-  *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
-- *						ARL,LNL
-+ *						ARL,LNL,PTL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
-  *			       perf code: 0x03
-@@ -96,7 +97,7 @@
-  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
-  *			       perf code: 0x06
-  *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL,
-- *						TNT,RKL,ADL,RPL,MTL,ARL,LNL
-+ *						TNT,RKL,ADL,RPL,MTL,ARL,LNL,PTL
-  *			       Scope: Package (physical package)
-  *	MSR_MODULE_C6_RES_MS:  Module C6 Residency Counter.
-  *			       perf code: 0x00
-@@ -652,6 +653,7 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&adl_cstates),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	&adl_cstates),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_cstates),
-+	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&lnl_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
--- 
-2.34.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.directory.delegations
+
+[01/17] filelock: make lease_alloc() take a flags argument
+        https://git.kernel.org/vfs/vfs/c/6fc5f2b19e75
+[02/17] filelock: rework the __break_lease API to use flags
+        https://git.kernel.org/vfs/vfs/c/4be9f3cc582a
+[03/17] filelock: add struct delegated_inode
+        https://git.kernel.org/vfs/vfs/c/6976ed2dd0d5
+[04/17] filelock: push the S_ISREG check down to ->setlease handlers
+        https://git.kernel.org/vfs/vfs/c/e6d28ebc17eb
+[05/17] vfs: add try_break_deleg calls for parents to vfs_{link,rename,unlink}
+        https://git.kernel.org/vfs/vfs/c/b46ebf9a768d
+[06/17] vfs: allow mkdir to wait for delegation break on parent
+        https://git.kernel.org/vfs/vfs/c/e12d203b8c88
+[07/17] vfs: allow rmdir to wait for delegation break on parent
+        https://git.kernel.org/vfs/vfs/c/4fa76319cd0c
+[08/17] vfs: break parent dir delegations in open(..., O_CREAT) codepath
+        https://git.kernel.org/vfs/vfs/c/134796f43a5e
+[09/17] vfs: clean up argument list for vfs_create()
+        https://git.kernel.org/vfs/vfs/c/85bbffcad730
+[10/17] vfs: make vfs_create break delegations on parent directory
+        https://git.kernel.org/vfs/vfs/c/c826229c6a82
+[11/17] vfs: make vfs_mknod break delegations on parent directory
+        https://git.kernel.org/vfs/vfs/c/e8960c1b2ee9
+[12/17] vfs: make vfs_symlink break delegations on parent dir
+        https://git.kernel.org/vfs/vfs/c/92bf53577f01
+[13/17] filelock: lift the ban on directory leases in generic_setlease
+        https://git.kernel.org/vfs/vfs/c/d0eab9fc1047
+[14/17] nfsd: allow filecache to hold S_IFDIR files
+        https://git.kernel.org/vfs/vfs/c/544a0ee152f0
+[15/17] nfsd: allow DELEGRETURN on directories
+        https://git.kernel.org/vfs/vfs/c/80c8afddc8b1
+[16/17] nfsd: wire up GET_DIR_DELEGATION handling
+        https://git.kernel.org/vfs/vfs/c/8b99f6a8c116
+[17/17] vfs: expose delegation support to userland
+        https://git.kernel.org/vfs/vfs/c/1602bad16d7d
 
