@@ -1,139 +1,189 @@
-Return-Path: <linux-kernel+bounces-896518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF2AC50908
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:52:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DDBC50914
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC5B3B0CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:52:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F0A84EDA1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C707F2D73BE;
-	Wed, 12 Nov 2025 04:52:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B802D77FF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DC32D73BE;
+	Wed, 12 Nov 2025 04:52:30 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5A844C63
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762923129; cv=none; b=YhI6Pz5jSMySRO8AHp9gvsJWAT8Q3cIogad4pSNpK0DLA9b8tlrxVNxoU/PBlV3F9dua7w8xTA109Zma+OsMxqntkHEMV7MY+qH1g/Tk+M8AhNctnUyv6G37SaERWUDCAR6/w01I3jwQ73cFHnNBru2ipuZ1mlJlXyf32CISIO8=
+	t=1762923149; cv=none; b=E0/lFlPiE0/vwG01atRZJY8qzfng942V7sq0zKZ0KhmFBgkZ8ueIkfMwqliTbmZ83PM02NTcMayne8wX6RLSXh/t9UF1wpjf+hCFZu3wv26vNeSDoHRvduyDYQPMHjSaUXxbKHlehDRJAwqFGfBEHRBgLpNbjP0aNzIUQ10Z96A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762923129; c=relaxed/simple;
-	bh=A6Fo8v4HCC+TE1csMVlUzc3yxlfVPzFTHkIm5B1KNEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tQByEb8N2g0YKfwDa+muzr2n1Vg2JkZq0IcDgIyUVAsyJrU7U++ZO4myBI7NhSXENi3czrd/IzSyBfj5LtDruwINp5U+8YnhX46SnOWL9rsEoVvYkOHtkO/ldKuuCYCX6/cgk47TIuPhK2Hh2yQxvZiRAipP1renZ0ZIWxWalUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD9971515;
-	Tue, 11 Nov 2025 20:51:56 -0800 (PST)
-Received: from [10.164.18.56] (unknown [10.164.18.56])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7B2A3F66E;
-	Tue, 11 Nov 2025 20:52:01 -0800 (PST)
-Message-ID: <24887a95-8959-4ae7-a8f3-6d5ce6ad6e41@arm.com>
-Date: Wed, 12 Nov 2025 10:21:58 +0530
+	s=arc-20240116; t=1762923149; c=relaxed/simple;
+	bh=CIvLkOUS047TucL7cgNJmviXjqebQR1vjTOiVoJgcGA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Vmd+UTCjIwz8g3BvfespyG62Pzr8c+onwu0DXVH3PkvhfzPQEHcqb0PDeNsbS4quXT63UDjv9RNDchOUi5m2CznBUPOWpXquAADBbwDHQByIBJHGyeIP61DEKpHzZDyoMIDiBrdgSOldmAv4BbldtXyo/esGSL2FIAD1eWK8koA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-43377268125so6041975ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:52:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762923147; x=1763527947;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xR/S0akTM9IizGbyH/pcTSsfCiAbNA5aO/SzN0S+qc=;
+        b=xJQdCsO67b6NmXNGIgVtudBG0x8uYAIFrkV0ZUpTHXON/1c8UxjxWEoopLWqE6x0ht
+         nm9roYp8KcuJxNAgKu057/0666e5YecMd6V76DPlhfD9NGXodS2Iamqcqe/qBMBON454
+         ylKYKkZw76tIHzJMNhGEADf0jGcR+B75ZinUu8ge5f6t9WAK4jDuJWpY6qdBxm82jB3C
+         OaAUeG4e+NLkoBQDj0yG4vbeDOwi1YaHSx426fB+qsm+3CKVNAAuN1XcVkFGxOAkgUMn
+         pHDhIEG/PESUJNGSe5jHQlOodaoDStAt1zt97IEQfyrXA+Xvw+Efzikd8FbJxLa4MOpW
+         SrnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq/+EQ0RtV7Ayy1NjjzX69kQ+6VuEVEFZs9Jh1MNO0zcztIgNs3O07bYb22VQsJMsY6CxyNx0X49CLZiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8mrT0PzsyHr7mTdnaMsoHxZ0ErkktE95mSOjx7RqgxcYsve17
+	EWXdAimkmeIfUffkNRm9ZmVHsFTQ1pFaNZSlI/gzwX9pqj68a0GQGB937ZS6jIwdhVzS4vTEThg
+	uwhA1plL6rIHtCgZh+eebWSMFaDAW+07eBlkh1HqOsXvYlxMb28XMSfHR/eQ=
+X-Google-Smtp-Source: AGHT+IEalNLm4nKk8fLi4y0xYX+5Nao4o3HK0geVhuKlrQfqUMB7hx94C8r2EruYYup9yM47XvRjz6EN4BkpAlS+Fzf0/eO5s8G7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND] [PATCH v2] arm64/mm: Elide TLB flush in certain pte
- protection transitions
-To: Anshuman Khandual <anshuman.khandual@arm.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: wangkefeng.wang@huawei.com, ryan.roberts@arm.com, baohua@kernel.org,
- pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251017160251.96717-1-dev.jain@arm.com>
- <fcb92f87-063e-4042-8313-0154941404fa@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <fcb92f87-063e-4042-8313-0154941404fa@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1fcc:b0:433:7a2f:a40a with SMTP id
+ e9e14a558f8ab-43473cff396mr21170735ab.4.1762923147120; Tue, 11 Nov 2025
+ 20:52:27 -0800 (PST)
+Date: Tue, 11 Nov 2025 20:52:27 -0800
+In-Reply-To: <68af39ae.a70a0220.3cafd4.002c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6914128b.050a0220.417c2.0004.GAE@google.com>
+Subject: Re: [syzbot] [hams?] WARNING: ODEBUG bug in handle_softirqs
+From: syzbot <syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-hams@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    2666975a8905 Add linux-next specific files for 20251111
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13748212580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e82ba9dc816af74c
+dashboard link: https://syzkaller.appspot.com/bug?extid=60db000b8468baeddbb1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10646b42580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133eec12580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/26ac789d9bdd/disk-2666975a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fabfe7978a23/vmlinux-2666975a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/82f010d50b37/bzImage-2666975a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff888028ee8090 object type: timer_list hint: rose_t0timer_expiry+0x0/0x350 net/rose/rose_link.c:-1
+WARNING: lib/debugobjects.c:615 at debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612, CPU#1: syz.2.1147/9544
+Modules linked in:
+CPU: 1 UID: 0 PID: 9544 Comm: syz.2.1147 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Code: 4c 89 ff e8 d7 19 86 fd 4d 8b 0f 48 c7 c7 80 1b e1 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 0a 38 e2 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 47 22 1e 0b 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc90000a08a00 EFLAGS: 00010296
+RAX: cfc2b002eab41900 RBX: dffffc0000000000 RCX: ffff888031311e80
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1c3a744 R12: ffffffff8a5327d0
+R13: ffffffff8be11d00 R14: ffff888028ee8090 R15: ffffffff8b8cf8e0
+FS:  00007fda22dbb6c0(0000) GS:ffff888125b82000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000000d000 CR3: 0000000078a42000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
+ debug_check_no_obj_freed+0x3a2/0x470 lib/debugobjects.c:1129
+ slab_free_hook mm/slub.c:2470 [inline]
+ slab_free mm/slub.c:6661 [inline]
+ kfree+0x10c/0x6e0 mm/slub.c:6869
+ rose_neigh_put include/net/rose.h:166 [inline]
+ rose_timer_expiry+0x4cb/0x600 net/rose/rose_timer.c:183
+ call_timer_fn+0x16e/0x600 kernel/time/timer.c:1747
+ expire_timers kernel/time/timer.c:1798 [inline]
+ __run_timers kernel/time/timer.c:2372 [inline]
+ __run_timer_base+0x61a/0x860 kernel/time/timer.c:2384
+ run_timer_base kernel/time/timer.c:2393 [inline]
+ run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
+ handle_softirqs+0x27d/0x880 kernel/softirq.c:626
+ __do_softirq kernel/softirq.c:660 [inline]
+ invoke_softirq kernel/softirq.c:496 [inline]
+ __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:727
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:743
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1055 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1055
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
+RIP: 0010:lock_release+0x2ac/0x3d0 kernel/locking/lockdep.c:5893
+Code: 51 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f7 44 24 20 00 02 00 00 75 56 f7 c3 00 02 00 00 74 01 fb 65 48 8b 05 64 98 1b 11 <48> 3b 44 24 28 0f 85 8b 00 00 00 48 83 c4 30 5b 41 5c 41 5d 41 5e
+RSP: 0018:ffffc90004e8f918 EFLAGS: 00000206
+RAX: cfc2b002eab41900 RBX: 0000000000000283 RCX: cfc2b002eab41900
+RDX: 0000000000000000 RSI: ffffffff8dc71e5c RDI: ffffffff8be111e0
+RBP: ffff8880313129b0 R08: 0000000000000000 R09: ffffffff820eec00
+R10: dffffc0000000000 R11: fffffbfff1f7eeef R12: 0000000000000000
+R13: 0000000000000000 R14: ffff888034a18ca0 R15: ffff888031311e80
+ _inline_copy_from_user include/linux/uaccess.h:169 [inline]
+ _copy_from_user+0x28/0xb0 lib/usercopy.c:18
+ copy_from_user include/linux/uaccess.h:219 [inline]
+ snd_rawmidi_kernel_write1+0x3ab/0x650 sound/core/rawmidi.c:1560
+ snd_rawmidi_write+0x5a8/0xbc0 sound/core/rawmidi.c:1629
+ do_loop_readv_writev fs/read_write.c:850 [inline]
+ vfs_writev+0x4b6/0x960 fs/read_write.c:1059
+ do_writev+0x14d/0x2d0 fs/read_write.c:1103
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fda21f8f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fda22dbb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007fda221e5fa0 RCX: 00007fda21f8f6c9
+RDX: 0000000000000002 RSI: 0000200000000840 RDI: 0000000000000004
+RBP: 00007fda22011f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fda221e6038 R14: 00007fda221e5fa0 R15: 00007ffd404da6b8
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	51                   	push   %rcx
+   1:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   8:	00 00
+   a:	9c                   	pushf
+   b:	8f 44 24 20          	pop    0x20(%rsp)
+   f:	f7 44 24 20 00 02 00 	testl  $0x200,0x20(%rsp)
+  16:	00
+  17:	75 56                	jne    0x6f
+  19:	f7 c3 00 02 00 00    	test   $0x200,%ebx
+  1f:	74 01                	je     0x22
+  21:	fb                   	sti
+  22:	65 48 8b 05 64 98 1b 	mov    %gs:0x111b9864(%rip),%rax        # 0x111b988e
+  29:	11
+* 2a:	48 3b 44 24 28       	cmp    0x28(%rsp),%rax <-- trapping instruction
+  2f:	0f 85 8b 00 00 00    	jne    0xc0
+  35:	48 83 c4 30          	add    $0x30,%rsp
+  39:	5b                   	pop    %rbx
+  3a:	41 5c                	pop    %r12
+  3c:	41 5d                	pop    %r13
+  3e:	41 5e                	pop    %r14
 
 
-On 04/11/25 5:45 am, Anshuman Khandual wrote:
->
-> On 17/10/25 9:32 PM, Dev Jain wrote:
->> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
->> required for some cases, for example, when changing from PROT_NONE to
->> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
->> growing into the non-main heaps), and unsetting uffd-wp in a range.
->>
->> Therefore, implement pte_needs_flush() for arm64, which is already
->> implemented by some other arches as well.
->>
->> Running a userspace program changing permissions back and forth between
->> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
->> for the none->rw transition, I get a reduction from 3.2 microseconds to
->> 2.85 microseconds, giving a 12.3% improvement.
->>
->> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->> mm-selftests pass. Based on 6.18-rc1.
->>
->> v1->v2:
->>   - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
->>     pteval_t, return !!diff (Ryan)
->>
->>   arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
->>   1 file changed, 27 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->> index 18a5dc0c9a54..40df783ba09a 100644
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
->>   {
->>   	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->>   }
->> +
->> +static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
->> +{
->> +	ptdesc_t diff = oldval ^ newval;
->> +
->> +	/* invalid to valid transition requires no flush */
->> +	if (!(oldval & PTE_VALID))
-> Using pte_valid() helper would be better.
->
-> 	if (!pte_valid(oldval))
-> 		return false;
-
-Unfortunately, that would need asm/pgtable.h, which already includes asm/tlbflush.h,
-leading to circular include.
-
-If I put all this code into asm/pgtable.h, then pte_valid() needs a pte_t or a pmd_t
-to work on, which forces us to break away from the nice abstraction of directing
-both pte_needs_flush and huge_pmd_needs_flush to __pte_flags_need_flush.
-
-
->> +		return false;
->> +
->> +	/* Transition in the SW bits requires no flush */
->> +	diff &= ~PTE_SWBITS_MASK;
->> +
->> +	return !!diff;
->> +}
->> +
->> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
->> +{
->> +	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
->> +}
->> +#define pte_needs_flush pte_needs_flush
->> +
->> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
->> +{
->> +	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
->> +}
->> +#define huge_pmd_needs_flush huge_pmd_needs_flush
->> +
->>   #endif
->>   
->>   #endif
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
