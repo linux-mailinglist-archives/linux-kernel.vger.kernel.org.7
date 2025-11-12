@@ -1,155 +1,108 @@
-Return-Path: <linux-kernel+bounces-896666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBF5C50EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:29:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F28C50EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46DF18923E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:29:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 942764E10F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E05C2C234C;
-	Wed, 12 Nov 2025 07:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1D32C234F;
+	Wed, 12 Nov 2025 07:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lNYpv4uu"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IklV9Kkm"
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232E285C9F;
-	Wed, 12 Nov 2025 07:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E84C2C21DB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932539; cv=none; b=NYhlnC8ch6QSL6KqexsyqlWytvIy0+aU/6spxlPw8eKWRyup5RBjR59OV8F6RXa9yBbcqsg2p99LE2uMzIj4m0O382GB4FPO4QeOoT4A9AnoK2jYovpNeLRRyu/CFA2ctM4vYpdO+9cEib7uEDFudMcdnubXWU6PMaXGL4C0jmI=
+	t=1762932551; cv=none; b=pLz09nAnv1ifELUyo6Xb1na92kCXB793nk/p1MbX1Ffjd7YE70jJxZvpIF6nsws+UOM439o0Tvugxzx0A+z4k1A5lN08F6jfdSXc0aJuS/xoN1OsiQNrH7yW5FbjqTjXsGq0EzDU2HuFMaR/yKWLxvDdmp1cjdl/+24wXm502vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932539; c=relaxed/simple;
-	bh=V6wi0kcFw0Q8gGUYw1DFlgX+4CHH6igLN6gf7Xs9mfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFUxt8LpG9PBOWfUUnhWnICHWzXerk/YK4rq9rdZ6ZcypsyoiMdnb/UggHaoytsvx/cWZlvRK8Q/YHBliBFRBrDedaH77I9/YJFgHbbL+w/KqCAFN17o6dFlahtKWnxMS1UkvGrc7F4BMXdx1USj8TuP0Cu3py/cNe10mAi6h10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lNYpv4uu; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 8F4CC7A01E4;
-	Wed, 12 Nov 2025 02:28:56 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 12 Nov 2025 02:28:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762932536; x=1763018936; bh=/qRyiDiAt8Ei9aeC9qYnbXqrngQdTyNLTYg
-	+pPQSEdY=; b=lNYpv4uuczW9jJ51COZWxybhWMYHt1jnsMOuTNbBjUCB+c///Pq
-	tZOQFQ2xr+LxsEAatisVecUuM1vjRoODnMXKjkot7p6NRTEVCLVvCCw31R7SmHgU
-	sp2P9SE1HPwWDZHGSGdV82+NbzPe1rFn6W/ptrLzIehk7l3pEFvZ/FWbk45U1IDr
-	VASAK90DM/VFhnM1vaUZ4iTKvDF4pe3Jnx8hry5CeSesbiTYzsSELKqd3HguImHn
-	g8+lxcj+J60ukdeMY8jXk+DvA3mraKeK26VzHeBslAuycCOd5aDCmsUNliwGn6o3
-	3TKhUXWrejyo6zB8GGkj/sCa7revkPnXQlg==
-X-ME-Sender: <xms:NzcUaVCIPFnaxmDOyeBkIvxf1XNW4k3BTajYLbYuVLf2RnYIvAKVpA>
-    <xme:NzcUaZhhAEQHdeIGnpGj1KlsVs90GzZZaRt7FG9LCEzgtdjZ68EVfQXi015-wGtzm
-    MWXGUZNJgsINtk15jM9G6dhGugq_drsxjrzH7Yo1enAA2PcPzL6>
-X-ME-Received: <xmr:NzcUabaGuKdvSTjaGpuf4L5iCyojdXmYbGS5YTiAdsY0vgUrOzo7OGvV>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdefgeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeggefh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguoh
-    hstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehnrghshhhuihhlihgrnhhgsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgrhhgvrh
-    hnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgv
-    rdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:NzcUaSnw0vjSTsRlETzAO-f6e9txzJBTexzov_bkv-ajTlSv1vSCdA>
-    <xmx:NzcUaZjZ2_KIHPkgLVr9rAP7czoqp57UYhS2_XknATW1q3FC2G1VdA>
-    <xmx:NzcUacS7srdZXtMu_XjR68i_0KHfbP7qe2kYO9UOglvF5F0wyVZQcg>
-    <xmx:NzcUaSZOytN-o93XqUe2BNWbppfw5msVwglET4mkIgmcRv_igEFAZw>
-    <xmx:ODcUaeoyGUVhTGJ-9EHCyB9fs9EJf3a3Ewq0jcW2XYpoXsiCXISEZ9qr>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 02:28:55 -0500 (EST)
-Date: Wed, 12 Nov 2025 09:28:53 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Chuang Wang <nashuiliang@gmail.com>
-Cc: stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v1] ipv4: route: Prevent rt_bind_exception() from
- rebinding stale fnhe
-Message-ID: <aRQ3NYERGcHJ4rZP@shredder>
-References: <20251111064328.24440-1-nashuiliang@gmail.com>
+	s=arc-20240116; t=1762932551; c=relaxed/simple;
+	bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7XjrEuOk5lpa3p0wx5z/XF7f23Qf9L0MXtPmiXZqeBT3Yohromm1bg5hbd22QRts0417l/o+qZ/t1nk7T8hCxgEOu7QMEVz6owSlC5feC3rPLq4vJV4C9P15YClOUfNpL2jhCQCgtnQe8FU1TY8mt2QnpRKaAO5GiP+BmJ/28Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IklV9Kkm; arc=none smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63f9beb2730so485271d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:29:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762932548; x=1763537348; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
+        b=IklV9KkmskmVjgaZyDIsCa86GTXhekUFui1i7s1W+UH0c4Vy28po8j991YTkGsdz64
+         VHemWC1/QDr4BBEq4V4Bfp5Uq5GTg7656XM/RaiT0mea9EKCNEclFOZAmrswGbUvoodU
+         nOL8xvyqTJ5GTBCKQTqAr7eT7fvUT7GpoCKJ2eZO02fqQ7aluqLiE8TlD2MzErfUbxLI
+         rNVUK9p/gpm7DxqioWQVqFf6DLkxhgGRRd0KwpZljNeD/SYmsxrdOKYBk4FYVP2w1Ys8
+         CNJ/0gq8YU1N3VKZugFYDRwbFw8DXkN4bsOyEYSqvwfpenA/yyBxVZ4RQ6L1xq0MbXlU
+         kxCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762932548; x=1763537348;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
+        b=jO771f0J8iXzsm8GSHuefcTFeWmVGU6/mQYVBnkfEGRh7uk5MtyEPz94yrP39QOsv3
+         83VLT2/71TFQwfEJUsuYq8InqPAjOeKWAuhey3gXT8KBNc3QgMg4BpUdPP7GEkum/aBz
+         gKCH7FZsP+voHkAYvck3jW/xCedDMGdUSXDm0lqvcoiOA65+bnMBVhisFc55E8ofUQ3i
+         mnNC9tS3EmDepohTzS6NyrrZSLNiiTsMK3/j2qc1jHK1+uxXGyGP0yKiKLEB8ZO0Gu6s
+         3b2HtmMq7L6TVLjh1MqU4aXwPxtrwKR8JXCQ2ooAIQAb/Dk04Ck6otVuJyB0ypz3PW60
+         RGVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL8FY1btfEk2efJNjKcr/aKkWzbLh5aUGriDdTONTXKwl3PkSKTjR9cUG4wen2nS4RlWzI4h27P5jvJao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhIzkqzBbdsCF1AqDs9UW4inPExFKSBPZDm6aCZYcCaDMpF2fC
+	Ma6HNhx51hjXkkKFBVSqSen4xMnt4cBIA4p7/gVpgeJPJfVvVD1cEGxvnSAZ72s/9qiD48K50eh
+	8qhmGWSzaL/vNHFtN4iDLUXR60GQ5lNU=
+X-Gm-Gg: ASbGnculQ+V5K7q9vVIGPSvVfNNtlf5PvaZHcatocsMQndLGn8WVJsl1g0FRu3jkhdm
+	YJw+gP5LGfi5nSDbVu1+V62XC1PH2OXZ9lWlTm4h0BumnwzAHoy5IA0TQVRFhtbP5s57G5By0Yi
+	7tyPzkMDutaB8AxV2SWLQfY2C1GT1Heb8kJf0221zZqTOlgGOiqMq6oJHg8Lyf5VxRS7cmnVkQz
+	k/am+QUumjE3z4I3Jn0G+daGrUw+wfODKQsuMH2vdAeluRZcy7hTCdrY01fTYYp8EZbSTLQ/23y
+	2vz0l2AOvxt4BQ1KuA==
+X-Google-Smtp-Source: AGHT+IH7KULuuRrF2Oly5Rimc+QhsJIxRJ3ajNz39rkRuKHwfzBK/tXJ3NwVa7aPrWyci+T55J/S8XdqtHfeU2E+JxQ=
+X-Received: by 2002:a05:690e:d44:b0:63e:18d6:72c1 with SMTP id
+ 956f58d0204a3-64101b37d64mr1604942d50.46.1762932548401; Tue, 11 Nov 2025
+ 23:29:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111064328.24440-1-nashuiliang@gmail.com>
+References: <20251112031631.2315651-1-kartikey406@gmail.com> <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
+In-Reply-To: <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+Date: Wed, 12 Nov 2025 12:58:57 +0530
+X-Gm-Features: AWmQ_bnwRTMjo11VJ1_SlN2ozfCDVzCWYVVmlr2dEKduOizviC1FKYdbRb3--IE
+Message-ID: <CADhLXY4qMvBTqirNmzgiPszn8vCkCFV6GGeDkNpxVDi32uhzEw@mail.gmail.com>
+Subject: Re: [PATCH] mm/memfd: clear hugetlb pages on allocation
+To: Hugh Dickins <hughd@google.com>
+Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@redhat.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+	baolin.wang@linux.alibaba.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 11, 2025 at 02:43:24PM +0800, Chuang Wang wrote:
-> The sit driver's packet transmission path calls: sit_tunnel_xmit() ->
-> update_or_create_fnhe(), which lead to fnhe_remove_oldest() being called
-> to delete entries exceeding FNHE_RECLAIM_DEPTH+random.
-> 
-> The race window is between fnhe_remove_oldest() selecting fnheX for
-> deletion and the subsequent kfree_rcu(). During this time, the
-> concurrent path's __mkroute_output() -> find_exception() can fetch the
-> soon-to-be-deleted fnheX, and rt_bind_exception() then binds it with a
-> new dst using a dst_hold(). When the original fnheX is freed via RCU,
-> the dst reference remains permanently leaked.
-> 
-> CPU 0                             CPU 1
-> __mkroute_output()
->   find_exception() [fnheX]
->                                   update_or_create_fnhe()
->                                     fnhe_remove_oldest() [fnheX]
->   rt_bind_exception() [bind dst]
->                                   RCU callback [fnheX freed, dst leak]
-> 
-> This issue manifests as a device reference count leak and a warning in
-> dmesg when unregistering the net device:
-> 
->   unregister_netdevice: waiting for sitX to become free. Usage count = N
-> 
-> Ido Schimmel provided the simple test validation method [1].
-> 
-> The fix clears 'oldest->fnhe_daddr' before calling fnhe_flush_routes().
-> Since rt_bind_exception() checks this field, setting it to zero prevents
-> the stale fnhe from being reused and bound to a new dst just before it
-> is freed.
-> 
-> [1]
-> ip netns add ns1
-> ip -n ns1 link set dev lo up
-> ip -n ns1 address add 192.0.2.1/32 dev lo
-> ip -n ns1 link add name dummy1 up type dummy
-> ip -n ns1 route add 192.0.2.2/32 dev dummy1
-> ip -n ns1 link add name gretap1 up arp off type gretap \
->     local 192.0.2.1 remote 192.0.2.2
-> ip -n ns1 route add 198.51.0.0/16 dev gretap1
-> taskset -c 0 ip netns exec ns1 mausezahn gretap1 \
->     -A 198.51.100.1 -B 198.51.0.0/16 -t udp -p 1000 -c 0 -q &
-> taskset -c 2 ip netns exec ns1 mausezahn gretap1 \
->     -A 198.51.100.1 -B 198.51.0.0/16 -t udp -p 1000 -c 0 -q &
-> sleep 10
-> ip netns pids ns1 | xargs kill
-> ip netns del ns1
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 67d6d681e15b ("ipv4: make exception cache less predictible")
-> Signed-off-by: Chuang Wang <nashuiliang@gmail.com>
+Hi Hugh,
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Thank you for the quick review and for looping in the hugetlb maintainers!
+
+You raise good points about the approach. I chose explicit zeroing in
+memfd_alloc_folio() because hugetlb_reserve_pages() can allocate pages
+without seeing the __GFP_ZERO flag, but I'm happy to revise if the
+hugetlb maintainers prefer a different approach.
+
+I'll add the Fixes: 89c1905d9c14 tag and Cc: stable in v2.
+
+Should I send v2 now with just the tag added, or wait for feedback from
+Muchun/Oscar/David on the overall approach first?
+
+Thanks,
+Deepanshu
 
