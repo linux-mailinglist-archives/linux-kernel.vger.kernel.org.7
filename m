@@ -1,173 +1,418 @@
-Return-Path: <linux-kernel+bounces-897252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D90C52673
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:13:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE6FC5267F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7C6C3BB633
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AD43A49CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059B332C921;
-	Wed, 12 Nov 2025 13:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E3A336ECF;
+	Wed, 12 Nov 2025 13:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="Igt6GX04"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhQ/kcOy"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFEF337107
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C05F3161B7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952551; cv=none; b=RZJjZAHu1H8wMA+U4kisJCvJvzPrF1XoLW1+4dkEkqWC6HJm+5WleCLPKwHmaohaiMacOLRmfH27/IeYHqIELWFCOztlwniBRPhNhcXGxUbASGqpvPdf1DfHEM4sLx7FKjgR24J3KGPyqtxtb5eCxvJpprf+GUj6qFn1l7nevG8=
+	t=1762952659; cv=none; b=tLOSK33raWabrRrKkUEBwcDMzhfClULcGTPapID7d+cZC2x5Uy5G+XSuvCvInHw3bLHBu3i/WD67hfSCZEsPyc13jPsPlyXQ3avZc/eMwD61RKzRMCfeln93tEW2L+Kp/zGfd7UlCdS4CCUkTKQEZJqaITZEqvvV9GirZLpYDLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952551; c=relaxed/simple;
-	bh=uTTV7+rhUF2ZOtHrUPfP83PWlSbGey69jgR92QKB/kg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j5dKhwzXTDlHRcSZIiupwyU948nyIVWnO0Sn/Yvu2WsEOTgB78kqMgxeXZ8BPjJwamVp1Fv4EUhJM+PhwOETDaJlr7aEaSphFo/KBY+74PrYk1sMamzGf1ObXkRyymc9044DrQyBRQhE3eRVdiKJLKghJpavP3jcwQ0FVSwmOUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=Igt6GX04; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-880439c5704so6317176d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:02:29 -0800 (PST)
+	s=arc-20240116; t=1762952659; c=relaxed/simple;
+	bh=QYLYXMwpATr+2zUgtmCNYoVknYJ62/cpCdj2LA4xTMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmcQZsQcFT4PIxo1mzLQeDQSJZe0MGPK8XGJbEf5QHSfPbQCxB+UktWF/Ru0jzFukw9OmvZJvAHtBEIuyt2TNw/2n8iKs8+BIV2abpkBLE9pTSc8/NE0C63AecFQyFSgDBn939ndkYQEN2JDvG93mh7wABWutUNqhuk0foAiOgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UhQ/kcOy; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ed82ee9e57so10535551cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:04:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1762952549; x=1763557349; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762952656; x=1763557456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DvsLZmz0LO78fqlpIggjRou3geT1ERNSaNZfluxHnzk=;
-        b=Igt6GX04ALcbyn7CP+bqqJSeTX6QTdinb4w47/rciJC6PP8KhqFsvSwC/f6d5yd4/t
-         UfT4y5KLAu9n1SPe0usQYWneuh1k8vrRqJehkwQQPvUSc2zHAnI/xubKWYSn8pQkvsnM
-         bA9sZgbbs3Ufa3dtRR39fy7RP4gF8ydX6TdWtHeLn+GU6Z8N1ESk75aAcSYv2NaT5gMo
-         mEEDjQFzbep5hXD6669pjscm+4dEhEPH8JFztLyK6xXZOeoZJeWTR5gwI9fNv8Lgmh1D
-         HRNjnvGgZyQw8tOLNuqP2c1rJ3OxlNs6GmPWsK5Zb3lAKGJLYiF9N6uCZItzFngfR00H
-         Of7g==
+        bh=H+v0c1TnYfZJknmmDaaNsL8gKWaP3EjcNEEaSw2pEJc=;
+        b=UhQ/kcOyvH6AtEfW9lhBM9Dqfs4lGj8oqAe5JCH4J/ksWECiAP+7pfCY0yM+UwQ5GR
+         u91IbwiZOf5UNEgCAyr+RNy/GJv5JhXJ3+C3nizXx6lhzLQ4ppi6O7ti8VIIoVOILnDi
+         +kWtcCDvaM2NJaFzv39gz6IdYS+Uvizmt9SIWEAdlCBwEfHeFWku9S9DZMtb+2f78Z8U
+         LJcbsee6yqRgxD/7L1Mui86+diN3PNqXdg80lVapdkNC3JmKAlazQq+w2Bo/KewO5+42
+         bsaGZUbLK+NS4/m74g4ljaqtsV/XilreeIBUV2Ipex6NPB1Lr1SBt9OKxt4TKVXw1E6i
+         pzWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762952549; x=1763557349;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762952656; x=1763557456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=DvsLZmz0LO78fqlpIggjRou3geT1ERNSaNZfluxHnzk=;
-        b=f9paXyIumkfllFqVXLyvJvxqHPSl7kVdpQ+tQbQZ995p1ev+T+PbaNcJxZ9brepNPO
-         xB+sMxRXHWiKrUHbEwP6CFwHLpp+1CoOKTYjKW+Xy8GqKvnfuUX2uyYxmJ1jW0O5B+SF
-         /9Ow1DeA2VsHqKzYbg1Mm/Imy/aocb5kbAF3dDeQRxV8tQy7GxKBhXbxsUc2kZxfi/aR
-         qlQY9czTOeGlFg6/+IcFl/yBLPTeZn5uTRV/xwBW6kPZzdvqx8BwJ0meNlb/qiadKLI+
-         FzTg3LVcbl72QDVB6idBrPhTmOXU1UVSQs/zFevB75qTGRhid+gnWDUkayTZx0s43/8f
-         rVgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlXZ878+0s3YA1XO/wdWrze5uElrY2gSlLHj8WWJkOyvN6Hb+UlGf45XLLFz6oj13gsGBy0phiKTQnBcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOkMGH0+azlOK1R+gt2dtHrkePT49Gn1yq1UIWQNZ36jGauGIP
-	CgWBKqYTRxkwMB+9NRV3qe9IwM6kWwHUZETMQCEWFh+ktFJyCs+6iIPTU4QrGlc+7VE=
-X-Gm-Gg: ASbGncts1EanMDJaPj1hb6WjWONoDxqvhOVgRA3yxGqv8DwphnVzLDo3P5NAN4+nID/
-	W+qkFOIdN+OyU3tSZTjmCrMksvVEh1rMtCPzjxLfUYnF2c6pgkrIgm6zam8NeOCyUYgVpwKG5mk
-	Xxc/Q10RjuK/0yYeaNC161iOtYt7UhA0zriCl1Ue7Cr1gaSrcsxSxMg7+A/DppHQ8bz1Vh732Ip
-	/j5K55RRgUpf+1E3XpD0v60/T2iMhssoAp0XVo15xBb1JWt78Nd06UMAOh8HgQcLKtw1W0COOFN
-	BjutrLywp7q+wb9NqeynM/Au/bybpaYpzoQ0VBLz71rrXkXerwzfofgsglu7FMDO9QK7kKq2G01
-	NyIYgAJUhPLJqMGUHjne6UL+hWM1gAZJ2I+sa/LRt+4C9ze5jBS17bXTNVoUfFtZUsMh1TvnXOR
-	9BQuUSAfjBO8TCus4EOZVsP2tKaxTBqW/IkKYmyLBqeg==
-X-Google-Smtp-Source: AGHT+IFjWeuDwAJVzwRl35SyG8ATem21JqZqKZhpWyLwj7K8kIHZDEA4crXgOAY/XP1AzQwiKS1pKQ==
-X-Received: by 2002:a05:6214:252b:b0:880:501f:5dd with SMTP id 6a1803df08f44-8827192b57dmr42197456d6.14.1762952547098;
-        Wed, 12 Nov 2025 05:02:27 -0800 (PST)
-Received: from fedora (cpezg-94-253-146-68-cbl.xnet.hr. [94.253.146.68])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-88238b7499esm91362126d6.41.2025.11.12.05.02.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 05:02:26 -0800 (PST)
-From: Robert Marko <robert.marko@sartura.hr>
-To: srini@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	horatiu.vultur@microchip.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	daniel.machon@microchip.com
-Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v2 2/2] nvmem: lan9662-otp: add support for LAN969x
-Date: Wed, 12 Nov 2025 14:02:00 +0100
-Message-ID: <20251112130213.842337-2-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251112130213.842337-1-robert.marko@sartura.hr>
-References: <20251112130213.842337-1-robert.marko@sartura.hr>
+        bh=H+v0c1TnYfZJknmmDaaNsL8gKWaP3EjcNEEaSw2pEJc=;
+        b=mYNehzTn3oSz74HFp2/t9O/xhMUYs/BzU34idCkjg1mnKwlqJdBZipXWFpvc7ITEGE
+         Uj7v7sCsHEJE6Trm2pDJoZ1mga4FFutYjDVfY26aUXEJ+YypXs/iHAdZXcJIV+YZbtar
+         ZXRue0fZZ44hJmCeiVo1/YXJyvv/ITIAnOJAHz1GdgILwrCZxX3db3oYpVOOOBXRvEXU
+         tSfQbiQaeW6Xr6AHcomw+DhujxQbzYq+mHtTM7Q7KkPNjOiWfVSKxjgF1Mw5x63wvrW8
+         OV19y9uB02YaSOvShlHEqdCOdzXNhCifYRBuPEkn2f84q0yzgqVud6M0XEkLkmp+ML48
+         bPUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRDmJbwZJTTcKSzcUT8sFOMnI3vTqRG9h+6jLGeM8PxkMBeL4ptgdzc+JG5eWtKaKKgfY/OLUew7yuKJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP5WaaiDWYKNqfndKguKj5gqqsHafJaNRPO7XUxSYslSojzvkQ
+	qkMCSMy7c+5lC+YrDfGfbhT6yV6py8U8vQR2hkEv4GYcnq2a+gsua6FoSbKu9ehUouZMb6Kaabe
+	dEKuxSvPrd8CzvDB8fDs6zNRR3r2v36k=
+X-Gm-Gg: ASbGnctg2YL0zvBGugTfSO0ewc8CBzJPCNco+RGohxChWOHIo9RnFgHnZZ5ODpGkDa+
+	iMUEkxlc1ZCsdHhBqWwEGmJjL1wUCkqKnJmBvYBfxrTtt3nBf4XpanHH2LVZYzDpb0IhRTHF6JL
+	DuIUhscGTuiD7hp3UXQgkyXjUhRqHbtge/YE+0LWl9+9qTNRjiuqrm9xzw2WaglRCcdqOgIJCQd
+	NfFh6N3KaWuRQfOtJXfNVS3dzXGWQOCF5r8QMI1rvwdIZAf9VIyZBOH9cdf
+X-Google-Smtp-Source: AGHT+IFUgKonRQf7BZhuJV4X0teWxeK1vGkKBkWJFx02fxymHCdBf4uLxr7iaciBl31Ta3ZKVx2cXfaPo3/dN+6C+R8=
+X-Received: by 2002:ac8:5741:0:b0:4e8:a0bf:f5b5 with SMTP id
+ d75a77b69052e-4eddbdd8f4amr33650611cf.73.1762952656039; Wed, 12 Nov 2025
+ 05:04:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAAsfc_ry+u771V_dTQMiXpaz2iGbQOPmZfhwnyF56pM+FjXdsw@mail.gmail.com>
+ <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
+In-Reply-To: <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
+From: liequan che <liequanche@gmail.com>
+Date: Wed, 12 Nov 2025 21:04:03 +0800
+X-Gm-Features: AWmQ_bkDYreDIP2bSlZDn8H03n2kLsPL4eaS79Ti3T9H6zZ7ihTQAv77QrG_TaY
+Message-ID: <CAAsfc_pa=AwaaN6Fy2jU6nPwnGET0oZgWZtSc3LtQ9_oJ6supA@mail.gmail.com>
+Subject: Re: [PATCH v1 bcache] bcache: fix UAF in cached_dev_free and safely
+To: Coly Li <colyli@fnnas.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache <linux-bcache@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
+>>Could you please point out exactly which reference is still held?
+Let's analyze the call stack of the vmcore generated by kernel kdump
+using the crash tool.
+crash> dev -d bcache0
+MAJOR GENDISK NAME REQUEST_QUEUE TOTAL ASYNC SYNC
+259 ffff94f74254b800 nvme2n1 ffff94f748d60938 0 0 0
+259 ffff94f741a5f800 nvme3n1 ffff94f749260000 0 0 0
+259 ffff94f74746c000 nvme1n1 ffff94f746ff8938 0 0 0
+8 ffff94d74196f000 sda ffff94cf45bc6568 0 0 0
+8 ffff94f741ac7800 sdb ffff94cf45bc52f8 0 0 0
+8 ffff94f741a1b000 sdc ffff94cf45bc5c30 0 0 0
+8 ffff94f741d5b800 sdd ffff94cf45bc24e0 0 0 0
+8 ffff94cf41a93000 sde ffff94cf45bc1ba8 0 0 0
+8 ffff94cf41a97000 sdf ffff94cf45bc4088 0 0 0
+8 ffff94cf41a93800 sdg ffff94cf4615d2f8 0 0 0
+8 ffff94cf41a91000 sdh ffff94cf4615dc30 0 0 0
+8 ffff94cf41a94800 sdi ffff94cf4615a4e0 0 0 0
+8 ffff94cf41a96800 sdj ffff94cf46159ba8 0 0 0
+8 ffff94cf41a90800 sdk ffff94cf4615e568 0 0 0
+253 ffff94f7553dd800 bcache0 ffff94f51e742e18 0 0 0 259
+ffff94f741d57800 nvme0n1 ffff94fc9fa5dc30 0 0 0
+crash> p /x  $gendisk=3D((struct gendisk *)0xffff94f7553dd800)->private_dat=
+a
+$9 =3D (void *) 0xffff94f51e700010
+crash> p /x  $closure=3D&((struct bcache_device *)$gendisk)->cl
+$10 =3D (struct closure *) 0xffff94f51e700010
+crash>p /x  $cached_set=3D&(struct cache_set *)(((struct bcache_device
+*)$gendisk)->c)
+$11 =3D (struct closure *) 0xffff94f51e7004b8
+crash> p  $fn_name=3D((struct closure *)$closure)->fn
+$12 =3D (closure_fn *) 0xffffffffc0b88440 <cached_dev_free>
+crash> p $wq_name=3D((struct closure *)$closure)->wq
+$13 =3D (struct workqueue_struct *) 0x14c0
+crash> p /x ((struct closure *)$closure)->remaining.counter
+$14 =3D  0x40000001
+crash> p $dc_off=3D&((struct cached_dev *)0)->disk.cl
+$15 =3D (struct closure *) 0x10
+crash > p/x $cached_dev =3D (struct cached_dev *)((unsigned
+long)$closure - (unsigned long)$dc_off)
+$16 =3D 0xffff94f51e700000
+crash> task $writeback_thread
+task: invalid task, pid, or task_struct member: $writeback_thread
+PID: 238405   TASK: ffff94d71fae9c00  CPU: 83   COMMAND: "kworker/83:4"
+struct task_struct {
+  thread_info =3D {
+    flags =3D 16520,
+    status =3D 0,
+    cpu =3D 83,
+    kabi_reserved1 =3D 0,
+    kabi_reserved2 =3D 0
+  },
+  state =3D 0,
+  stack =3D 0xffffb5f9cdd0c000,
+......
+crash> p  $writeback_thread
+$41 =3D (struct task_struct *) 0xffff94cf4d518000
+crash> kmem 0xffff94cf4d518000
+CACHE             OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE  NAME
+ffff94e740006bc0     7168       1575      2904    726    32k  task_struct
+  SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
+  ffffecf502354600  ffff94cf4d518000     2      4          1     3
+  FREE / [ALLOCATED]
+   ffff94cf4d518000  (cpu 12 cache)
+      PAGE         PHYSICAL      MAPPING       INDEX CNT FLAGS
+ffffecf502354600 108d518000 ffff94e740006bc0 ffff94cf4d51b800  1
+97ffffc0010200 slab,head
+  the dc->writeback_thread kmem flag is  FREE / [ALLOCATED].
 
-Microchip LAN969x provides OTP with the same control logic, only the size
-differs as LAN969x has 16KB of OTP instead of 8KB like on LAN966x.
+The outstanding reference is the struct cached_dev lifetime reference
+(dc->count) held by the writeback kthread itself.
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
----
- drivers/nvmem/Kconfig        |  2 +-
- drivers/nvmem/lan9662-otpc.c | 12 +++++++++---
- 2 files changed, 10 insertions(+), 4 deletions(-)
+The writeback thread takes (or is created with) a ref to dc, and it
+only drops it on exit via:
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index bf47a982cf62..f182a7c2ff93 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -138,7 +138,7 @@ config NVMEM_JZ4780_EFUSE
- 
- config NVMEM_LAN9662_OTPC
- 	tristate "Microchip LAN9662 OTP controller support"
--	depends on SOC_LAN966 || COMPILE_TEST
-+	depends on SOC_LAN966 || ARCH_LAN969X || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	help
- 	  This driver enables the OTP controller available on Microchip LAN9662
-diff --git a/drivers/nvmem/lan9662-otpc.c b/drivers/nvmem/lan9662-otpc.c
-index 56fc19f092a7..62d1d6381bf8 100644
---- a/drivers/nvmem/lan9662-otpc.c
-+++ b/drivers/nvmem/lan9662-otpc.c
-@@ -27,7 +27,6 @@
- #define OTP_OTP_STATUS_OTP_CPUMPEN		BIT(1)
- #define OTP_OTP_STATUS_OTP_BUSY			BIT(0)
- 
--#define OTP_MEM_SIZE 8192
- #define OTP_SLEEP_US 10
- #define OTP_TIMEOUT_US 500000
- 
-@@ -176,7 +175,6 @@ static struct nvmem_config otp_config = {
- 	.word_size = 1,
- 	.reg_read = lan9662_otp_read,
- 	.reg_write = lan9662_otp_write,
--	.size = OTP_MEM_SIZE,
- };
- 
- static int lan9662_otp_probe(struct platform_device *pdev)
-@@ -196,6 +194,7 @@ static int lan9662_otp_probe(struct platform_device *pdev)
- 
- 	otp_config.priv = otp;
- 	otp_config.dev = dev;
-+	otp_config.size = (uintptr_t) device_get_match_data(dev);
- 
- 	nvmem = devm_nvmem_register(dev, &otp_config);
- 
-@@ -203,7 +202,14 @@ static int lan9662_otp_probe(struct platform_device *pdev)
+// writeback.c
+...
+if (dc->writeback_write_wq) { flush_workqueue(...); destroy_workqueue(...);=
  }
- 
- static const struct of_device_id lan9662_otp_match[] = {
--	{ .compatible = "microchip,lan9662-otpc", },
-+	{
-+		.compatible = "microchip,lan9662-otpc",
-+		.data = (const void *) SZ_8K,
-+	},
-+	{
-+		.compatible = "microchip,lan9691-otpc",
-+		.data = (const void *) SZ_16K,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, lan9662_otp_match);
--- 
-2.51.1
+cached_dev_put(dc);                 // <-- drops the thread=E2=80=99s ref t=
+o dc
+wait_for_kthread_stop();
 
+Separately, the bcache device=E2=80=99s closure (d->cl) still shows
+CLOSURE_RUNNING | 1 (you saw remaining=3D0x40000001), which is the
+closure=E2=80=99s *self* ref plus one extra reference that continue_at()lat=
+er
+drops before invokingcached_dev_free(). That closure ref is not a
+leak; it=E2=80=99s the normal handoff to cached_dev_free()`.
+
+What actually explodes is that dc->writeback_thread remains a stale
+pointer after the thread has already exited and its task_struct slab
+was freed. A later kthread_stop(dc->writeback_thread) tries to
+get_task_struct() on a freed task, triggering:
+
+Coly Li <colyli@fnnas.com> =E4=BA=8E2025=E5=B9=B411=E6=9C=8811=E6=97=A5=E5=
+=91=A8=E4=BA=8C 21:49=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, Nov 08, 2025 at 05:22:51PM +0800, liequan che wrote:
+> >  We hit a use-after-free when cached_dev_free() is called while the
+> > writeback workqueue/thread may still be running or holding references.
+>
+> Could you please point out exactly which reference is still held?
+>
+> > In addition, writeback_wq was flushed/destroyed in more than one place,
+>
+> Could you please point out all the location where writeback_wq is stopped=
+?
+>
+> > which could lead to double flush/destroy and racy teardown=E3=80=82This=
+ issue
+> > exists in kernels 5.10, 6.6, etc.
+>
+> Yes, if you mean explain how the panic comes in code logic, it will be
+> helpful for me to understand the issue.
+>
+> Thanks.
+>
+> Coly Li
+>
+>
+> >  The error message is as follows.
+>
+> > [18627.310402] ------------[ cut here ]------------
+> > [18627.316446] WARNING: CPU: 83 PID: 238405 at kernel/kthread.c:83
+> > kthread_stop+0x12c/0x160
+> > [18627.326367] Modules linked in: ceph libceph dns_resolver
+> > openvswitch nf_conncount nf_nat nf_conntrack nf_defrag_ipv6
+> > nf_defrag_ipv4 libcrc32c vfat fat dm_multipath dm_mod amd64_edac_mod
+> > edac_mce_amd kvm_amd kvm bcache crc64 i40iw irqbypass ses enclosure
+> > ipmi_si ib_uverbs ipmi_devintf joydev rapl ipmi_msghandler pcspkr
+> > ib_core sg i2c_piix4 k10temp fuse ext4 mbcache jbd2 ast
+> > drm_vram_helper drm_kms_helper syscopyarea sysfillrect sysimgblt
+> > sd_mod fb_sys_fops cec drm_ttm_helper ttm ahci crct10dif_pclmul igb
+> > crc32_pclmul libahci nvme crc32c_intel ghash_clmulni_intel nvme_core
+> > dca smartpqi i40e t10_pi drm i2c_algo_bit libata ngbe
+> > scsi_transport_sas ccp pinctrl_amd
+> > [18627.392415] CPU: 83 PID: 238405 Comm: kworker/83:4 Kdump: loaded
+> > Tainted: G        W         5.10.0-272.0.0.174.ile2312sp1.x86_64 #1
+> > [18627.406601] Hardware name: Inspur CS5280H2/CS5280H2, BIOS 3.03.62 09=
+/15/2025
+> > [18627.415362] Workqueue: events cached_dev_free [bcache]
+> > [18627.421985] RIP: 0010:kthread_stop+0x12c/0x160
+> > [18627.427836] Code: 00 e9 0b ff ff ff 48 89 ef e8 50 69 fd ff e9 73
+> > ff ff ff be 01 00 00 00 4c 89 e7 e8 2e 6a 46 00 f6 45 36 20 0f 85 16
+> > ff ff ff <0f> 0b e9 0f ff ff ff be 03 00 00 00 4c 89 e7 e8 10 6a 46 00
+> > e9 43
+> > [18627.449681] RSP: 0018:ffffb5f9cdd0fe60 EFLAGS: 00010246
+> > [18627.456406] RAX: 0000000000000000 RBX: ffff94f51e700010 RCX: 0000000=
+000000000
+> > [18627.465254] RDX: ffff94d71fbb1320 RSI: ffff94d71fba0710 RDI: ffff94d=
+71fba0710
+> > [18627.474094] RBP: ffff94cf4d518000 R08: 0000000000000000 R09: ffffb5f=
+9cdd0fc90
+> > [18627.482942] R10: ffffb5f9cdd0fc88 R11: ffffffffb69e13a8 R12: ffff94c=
+f4d518030
+> > [18627.491792] R13: 0000000000000000 R14: ffff94d71fbbb700 R15: ffff94d=
+71fbbb705
+> > [18627.500643] FS:  0000000000000000(0000) GS:ffff94d71fb80000(0000)
+> > knlGS:0000000000000000
+> > [18627.510564] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [18627.517861] CR2: 000055d6288098d0 CR3: 0000000594856000 CR4: 0000000=
+0003506e0
+> > [18627.526715] Call Trace:
+> > [18627.530338]  cached_dev_free+0x30/0xd0 [bcache]
+> > [18627.536283]  process_one_work+0x1b5/0x350
+> > [18627.541643]  worker_thread+0x49/0x310
+> > [18627.546618]  ? rescuer_thread+0x380/0x380
+> > [18627.551977]  kthread+0xfe/0x140
+> > [18627.556372]  ? kthread_park+0x90/0x90
+> > [18627.561345]  ret_from_fork+0x22/0x30
+> > [18627.566226] ---[ end trace 461f27b6101e7b4f ]---
+> > [18627.572269] BUG: unable to handle page fault for address: 00007fd3f5=
+b21e10
+> > [18627.580823] #PF: supervisor write access in kernel mode
+> > [18627.587529] #PF: error_code(0x0002) - not-present page
+> > [18627.594131] PGD 6a710f067 P4D 6a710f067 PUD 0
+> > [18627.599968] Oops: 0002 [#1] SMP NOPTI
+> > [18627.604930] CPU: 83 PID: 238405 Comm: kworker/83:4 Kdump: loaded
+> > Tainted: G        W         5.10.0-272.0.0.174.ile2312sp1.x86_64 #1
+> > [18627.619101] Hardware name: Inspur CS5280H2/CS5280H2, BIOS 3.03.62 09=
+/15/2025
+> > [18627.627851] Workqueue: events cached_dev_free [bcache]
+> > [18627.634463] RIP: 0010:kthread_stop+0x49/0x160
+> > [18627.640199] Code: 45 30 85 c0 0f 84 1c 01 00 00 0f 88 e6 00 00 00
+> > 83 c0 01 0f 88 dd 00 00 00 f6 45 36 20 0f 84 ea 00 00 00 48 8b 9d e8
+> > 0a 00 00 <f0> 80 0b 02 48 89 ef e8 3b ff ff ff 48 89 ef e8 43 31 01 00
+> > 48 8d
+> > [18627.662022] RSP: 0018:ffffb5f9cdd0fe60 EFLAGS: 00010246
+> > [18627.668728] RAX: 0000000000000000 RBX: 00007fd3f5b21e10 RCX: 0000000=
+000000000
+> > [18627.677565] RDX: ffff94d71fbb1320 RSI: ffff94d71fba0710 RDI: ffff94d=
+71fba0710
+> > [18627.686404] RBP: ffff94cf4d518000 R08: 0000000000000000 R09: ffffb5f=
+9cdd0fc90
+> > [18627.695232] R10: ffffb5f9cdd0fc88 R11: ffffffffb69e13a8 R12: ffff94c=
+f4d518030
+> > [18627.704070] R13: 0000000000000000 R14: ffff94d71fbbb700 R15: ffff94d=
+71fbbb705
+> > [18627.712910] FS:  0000000000000000(0000) GS:ffff94d71fb80000(0000)
+> > knlGS:0000000000000000
+> > [18627.722816] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [18627.730103] CR2: 00007fd3f5b21e10 CR3: 0000000594856000 CR4: 0000000=
+0003506e0
+> > [18627.738941] Call Trace:
+> > [18627.742553]  cached_dev_free+0x30/0xd0 [bcache]
+> > [18627.748483]  process_one_work+0x1b5/0x350
+> > [18627.753824]  worker_thread+0x49/0x310
+> > [18627.758785]  ? rescuer_thread+0x380/0x380
+> > [18627.764134]  kthread+0xfe/0x140
+> > [18627.768514]  ? kthread_park+0x90/0x90
+> > [18627.773477]  ret_from_fork+0x22/0x30
+> > [18627.778344] Modules linked in: ceph libceph dns_resolver
+> > openvswitch nf_conncount nf_nat nf_conntrack nf_defrag_ipv6
+> > nf_defrag_ipv4 libcrc32c vfat fat dm_multipath dm_mod amd64_edac_mod
+> > edac_mce_amd kvm_amd kvm bcache crc64 i40iw irqbypass ses enclosure
+> > ipmi_si ib_uverbs ipmi_devintf joydev rapl ipmi_msghandler pcspkr
+> > ib_core sg i2c_piix4 k10temp fuse ext4 mbcache jbd2 ast
+> > drm_vram_helper drm_kms_helper syscopyarea sysfillrect sysimgblt
+> > sd_mod fb_sys_fops cec drm_ttm_helper ttm ahci crct10dif_pclmul igb
+> > crc32_pclmul libahci nvme crc32c_intel ghash_clmulni_intel nvme_core
+> > dca smartpqi i40e t10_pi drm i2c_algo_bit libata ngbe
+> > scsi_transport_sas ccp pinctrl_amd
+> > [18627.844370] CR2: 00007fd3f5b21e10
+> > [18627.851414] kexec: Bye!
+> >  The kernel error call stack is as follows:The kernel error call stack
+> > is as follows.
+> > crash> bt
+> > PID: 238405   TASK: ffff94d71fae9c00  CPU: 83   COMMAND: "kworker/83:4"
+> > #0 [ffffb5f9cdd0fca8] crash_kexec at ffffffffb4db67e9
+> > #1 [ffffb5f9cdd0fcb8] oops_end at ffffffffb4c2b1c5
+> > #2 [ffffb5f9cdd0fcd8] no_context at ffffffffb4c7d86c
+> > #3 [ffffb5f9cdd0fd10] __bad_area_nosemaphore at ffffffffb4c7d972
+> > #4 [ffffb5f9cdd0fd58] exc_page_fault at ffffffffb56f7e1c
+> > #5 [ffffb5f9cdd0fdb0] asm_exc_page_fault at ffffffffb5800b4e
+> >    [exception RIP: kthread_stop+73]
+> >    RIP: ffffffffb4d0fee9  RSP: ffffb5f9cdd0fe60  RFLAGS: 00010246
+> >    RAX: 0000000000000000  RBX: 00007fd3f5b21e10  RCX: 0000000000000000
+> >    RDX: ffff94d71fbb1320  RSI: ffff94d71fba0710  RDI: ffff94d71fba0710
+> >    RBP: ffff94cf4d518000   R8: 0000000000000000   R9: ffffb5f9cdd0fc90
+> >    R10: ffffb5f9cdd0fc88  R11: ffffffffb69e13a8  R12: ffff94cf4d518030
+> >    R13: 0000000000000000  R14: ffff94d71fbbb700  R15: ffff94d71fbbb705
+> >    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> > #6 [ffffb5f9cdd0fe80] cached_dev_free at ffffffffc0b88470 [bcache]
+> > #7 [ffffb5f9cdd0fe98] process_one_work at ffffffffb4d099c5
+> > #8 [ffffb5f9cdd0fed8] worker_thread at ffffffffb4d09f29
+> > #9 [ffffb5f9cdd0ff10] kthread at ffffffffb4d0f2be
+> > #10 [ffffb5f9cdd0ff50] ret_from_fork at ffffffffb4c035b2
+> > Signed-off-by: cheliequan <cheliequan@inspur.com>
+> > ---
+> > drivers/md/bcache/bcache.h    |  7 +++++++
+> > drivers/md/bcache/super.c     | 13 +++++++++----
+> > drivers/md/bcache/writeback.c |  9 ++++++---
+> > 3 files changed, 22 insertions(+), 7 deletions(-)
+> > diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> > index 832fb3d80eb0..5eba5c068c9c 100644
+> > --- a/drivers/md/bcache/bcache.h
+> > +++ b/drivers/md/bcache/bcache.h
+> > @@ -963,6 +963,13 @@ static inline void wait_for_kthread_stop(void)
+> >        }
+> > }
+> > +#define STOP_THREAD_ONCE(dc, member)                           \
+> > +       do {                                                           =
+\
+> > +                       struct task_struct *t__ =3D xchg(&(dc)->member,=
+ NULL);   \
+> > +                       if (t__ && !IS_ERR(t__))                       =
+        \
+> > +                               kthread_stop(t__);                     =
+        \
+> > +       } while (0)
+> > +
+> > /* Forward declarations */
+> > void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio=
+);
+> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> > index 6afc718ef202..22a002cca6ab 100644
+> > --- a/drivers/md/bcache/super.c
+> > +++ b/drivers/md/bcache/super.c
+> > @@ -1368,15 +1368,20 @@ void bch_cached_dev_release(struct kobject *kob=
+j)
+> > static void cached_dev_free(struct closure *cl)
+> > {
+> > +       struct workqueue_struct *wq =3D NULL;
+> >        struct cached_dev *dc =3D container_of(cl, struct cached_dev, di=
+sk.cl);
+> >        if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
+> >                cancel_writeback_rate_update_dwork(dc);
+> > -       if (!IS_ERR_OR_NULL(dc->writeback_thread))
+> > -               kthread_stop(dc->writeback_thread);
+> > -       if (!IS_ERR_OR_NULL(dc->status_update_thread))
+> > -               kthread_stop(dc->status_update_thread);
+> > +       STOP_THREAD_ONCE(dc, writeback_thread);
+> > +       STOP_THREAD_ONCE(dc, status_update_thread);
+> > +
+> > +       wq =3D xchg(&dc->writeback_write_wq, NULL);
+> > +       if (wq) {
+> > +           flush_workqueue(wq);
+> > +           destroy_workqueue(wq);
+> > +       }
+> >        mutex_lock(&bch_register_lock);
+> > diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writebac=
+k.c
+> > index 854cdaa84462..3cac64b9d606 100644
+> > --- a/drivers/md/bcache/writeback.c
+> > +++ b/drivers/md/bcache/writeback.c
+> > @@ -741,6 +741,7 @@ static int bch_writeback_thread(void *arg)
+> >        struct cached_dev *dc =3D arg;
+> >        struct cache_set *c =3D dc->disk.c;
+> >        bool searched_full_index;
+> > +       struct workqueue_struct *wq =3D NULL;
+> >        bch_ratelimit_reset(&dc->writeback_rate);
+> > @@ -832,10 +833,12 @@ static int bch_writeback_thread(void *arg)
+> >                }
+> >        }
+> > -       if (dc->writeback_write_wq) {
+> > -               flush_workqueue(dc->writeback_write_wq);
+> > -               destroy_workqueue(dc->writeback_write_wq);
+> > +       wq =3D xchg(&dc->writeback_write_wq, NULL);
+> > +       if (wq) {
+> > +           flush_workqueue(wq);
+> > +           destroy_workqueue(wq);
+> >        }
+> > +
+> >        cached_dev_put(dc);
+> >        wait_for_kthread_stop();
+> > --
+> > 2.43.0
 
