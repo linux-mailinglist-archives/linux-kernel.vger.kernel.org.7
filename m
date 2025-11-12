@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-897117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE22AC5206F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:41:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6E0C521C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0780188A2A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0B63BF0C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6AD3126D0;
-	Wed, 12 Nov 2025 11:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842633161AF;
+	Wed, 12 Nov 2025 11:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEwD8B7g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="kp+76Fc2"
+Received: from www.redadmin.org (bc043154.ppp.asahi-net.or.jp [222.228.43.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205A311592
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947474; cv=none; b=d0zLFBUV5mxzRW6wW1eVq2UtiASiYaVnVTm9IPQnlEExI64dgOd5Een4S4t8TLQ5Tw4AejzCHuS/QazRUhJw/mUtyMNtlrrhbOT+m3CO0vayxQ2vg2getdQ+5fNpZzcfQFfCJtWpNg0PFPhyyy+o7KCVLkzVZ1ueoAKP8RoktVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947474; c=relaxed/simple;
-	bh=9eyje3n8F9JrQInIWg9SjS5SLlOCIS9dvxtClXH/S58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IXrOlp1+1SxFzXhGsh0PYL6E0Jxw0BRNaZ+1oZbuNNNnvrltLjqAhfDNTNW1y674KNgnH6HAL4CqzyIJBx8wBUDvINdUewyGTfjxboZ87l2Sk0Pv3IdiPFa6cD1yX0ATxTySdb++BPphSjFb5EQ4drOQMLoz7Dr1upekM8ZlOYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEwD8B7g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8312C4CEF5;
-	Wed, 12 Nov 2025 11:37:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762947474;
-	bh=9eyje3n8F9JrQInIWg9SjS5SLlOCIS9dvxtClXH/S58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uEwD8B7glVH6j11jaKszi38avvOs2oESpjLRTBSIDErI9HiggDfkmqXocjiUnGIjV
-	 d2W2FQ5cWoocJsjekXCNKL2CgOE9M3IxlHKC9b2UQxRbFX0F9jcWVk7Sy8riPT1j9d
-	 WpQBHfiPHB6Z/gTGkAEhjPuSq5xM1ZE1mtQs/axU+eE+pjjwaMj9sBQUYxg7JLHm8O
-	 1jtHqHxYgfRbAnTIGgEogHwHTQ028SRmGO45rRcK9o+pctC4Xg+PoRaOEGVTPlo0sP
-	 fiMO8CtVZLmDNaGLGaNgJjaizA+Um/q48vsx7226cuJ/EmEWEKQhKf42x5xVyT/ZuM
-	 a6hRoxm1Mz55w==
-Message-ID: <4e6286a6-721d-45cd-a4ea-e79e90e14fc7@kernel.org>
-Date: Wed, 12 Nov 2025 12:37:50 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4093C313E24;
+	Wed, 12 Nov 2025 11:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=222.228.43.154
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762947909; cv=pass; b=Zhtxy9CbrlVlbJUHqYDJxXXbzych3civvhhX40PfJXm98bTcc8IJYivSyf8M+VZe5s1RAamaQlKqIegkTttJOyTi5uLzqwH4uxi/Rt45ISzN1eozs8dUSQ38nhDKZoroANH47bhoZTLyLk/4scPRDUjfZGNM8j3saxEENvBZeKM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762947909; c=relaxed/simple;
+	bh=HDXaiRc1VzTANVt9xw5CI/8qsYIEfLU8f6fpFkFRgiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXQGDGizg0z4EFjetQJSctBv+/3DKxIYu2y0pS5S983QlP+/g2mzs/LanB1XAd8+4MT7juWtGmBE6hPXBgKZ1QN/DKb3HWtXimcvGpSmR1HhwLW55rrONBFupTel0HvMpdI4h7eItvJCUcc+IvpgIOiAeCVqq/oUzsoZ8NS5kB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=kp+76Fc2; arc=pass smtp.client-ip=222.228.43.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id E13791116C841;
+	Wed, 12 Nov 2025 20:38:07 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id h3-AdmoTuXKJ; Wed, 12 Nov 2025 20:38:04 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id B8BDA10B4100B; Wed, 12 Nov 2025 20:38:04 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1762947484;
+	cv=none; b=Exn2CsSCFGKngR5HMvmdGXABoscxs/9JSHjMwrF1FHhv0vcKkZ/Dze93dU2aAIj7Eo3OhXAmLHj/m7Cv7M0Y3pvb/cDz8iZXXt8gBFnQqI+8er3UfFWF1fSR4iZvWxsPA/cfPZ3GF6hjx5dZDQn5CQ/pjKlPOpe2eyy9K4sC38o=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1762947484; c=relaxed/relaxed;
+	bh=Q1hT18l1dO/zqdkjffLbjjbAPImRtW7wCjrLxZl9Y7Q=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=MUH8ZQ9fZ6KZi+MH/BQPGnxO2oA8asJhmuCabiR084QO+6O/OjTcZnUrjZTGfVi2nlIe7Q6i7d46fZfaW0tl5OwX5qagVIs9e2ciUXrFAj0vm1TJfHVe7pjRdjRZbR2Uz5woc3xPfMb1/xR+apoEIKHZaaVFAD755BYkuMDcCf0=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org B8BDA10B4100B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1762947484;
+	bh=Q1hT18l1dO/zqdkjffLbjjbAPImRtW7wCjrLxZl9Y7Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kp+76Fc2kq+wK+7ziBc0C6/Zga+NcYOmPbf6w6ET/82srgTt92gR66USCOQ2BFr1W
+	 Dqh37RBb0wVgnxikbLTPkE8gFt1nGP6jGgIMR4VIKLOLdfusL2NScYn8IBVy9EMX66
+	 Lmxkcz/Vxv88hzKqAzGcIoOFmHCpy+ebykbTRgLM=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] Documentation: ABI: testing: Fix "upto" typo in rtc-cdev
+Date: Wed, 12 Nov 2025 20:37:59 +0900
+Message-ID: <20251112113759.2953758-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: softleaf device private fixes in
- remove_migration_pmd()
-To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>
-References: <20251112044634.963360-1-balbirs@nvidia.com>
- <20251112044634.963360-2-balbirs@nvidia.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251112044634.963360-2-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 12.11.25 05:46, Balbir Singh wrote:
-> commit a6ca2ba46390 ("mm: replace pmd_to_swp_entry() with softleaf_from_pmd()")
+The word "upto" is a common typo for "up to". Correct this.
 
-So should this be squashed into Lorenzo patch, or incorporated in his 
-series in case he has to resend?
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ Documentation/ABI/testing/rtc-cdev | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> does not work with device private THP entries. softleaf_is_migration_young()
-> asserts that the entry be a migration entry, but in the current code, the
-> entry might already be replaced by a device private entry by the time the
-> check is made. The issue exists with commit
-> 7385dbdbf841 ("mm/rmap: extend rmap and migration support device-private entries")
-> 
+diff --git a/Documentation/ABI/testing/rtc-cdev b/Documentation/ABI/testing=
+/rtc-cdev
+index 25910c3c3d7e..cec099a27c6d 100644
+--- a/Documentation/ABI/testing/rtc-cdev
++++ b/Documentation/ABI/testing/rtc-cdev
+@@ -14,7 +14,7 @@ Description:
+ 		  for RTCs that support alarms
+=20
+ 		* RTC_ALM_READ, RTC_ALM_SET: Read or set the alarm time for
+-		  RTCs that support alarms. Can be set upto 24 hours in the
++		  RTCs that support alarms. Can be set up to 24 hours in the
+ 		  future. Requires a separate RTC_AIE_ON call to enable the
+ 		  alarm interrupt. (Prefer to use RTC_WKALM_*)
+=20
+--=20
+2.47.3
 
-Because this confuses me. If it's already a problem in the 
-commit-to-go-upstream-first, it should be fixed in that commit?
-
--- 
-Cheers
-
-David
 
