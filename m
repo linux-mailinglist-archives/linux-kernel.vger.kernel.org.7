@@ -1,184 +1,103 @@
-Return-Path: <linux-kernel+bounces-896434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B9EC505BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:46:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612B3C505C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF853B27E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:46:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA78D4E2146
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1D229B77E;
-	Wed, 12 Nov 2025 02:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206001917FB;
+	Wed, 12 Nov 2025 02:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="rUJ4InbY"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BtY8d5ny"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A381917FB;
-	Wed, 12 Nov 2025 02:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA8E257831;
+	Wed, 12 Nov 2025 02:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762915583; cv=none; b=GWefmLL4X3iIZJT0PZuzt1YZec8jyafeZIVWNFcjFpmDHfZWJ2Am8ienf0uYSDb+OcFIVdE+IPnZopynbL4cnx5CQfEZMn2Da7OcgAinkdZ1SjZ5oXcxwy/Wr5atPOFRIlDCSWr/6Vo87AuSV9msX+pquWqcyhg/sp8Q5U+YfiQ=
+	t=1762915601; cv=none; b=ueR2E4EJyfu+ACx4z9aUuG/Exv+xAZ82r/v0eeabWssWyZlE4fvgyqgx0lBz71fq+nwCqmvTrh2+wU4nLkWwPTSgg5bK2cbSBqroIO2GAzvKHazawGGyOXY2hEXrwu7hF3t4DHzvE6xUsqRhAwFAst/MQqB2u8n29TWdw/X2ME4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762915583; c=relaxed/simple;
-	bh=kRt3n8O6vK4qpLGdEyuBya8570Ku53ZMmaNIrrZb9No=;
-	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=efhNhl8sxq3RCVmDBFyfpECOaRHEzoiggXTCJVSKogbHqgFknEakPPhY1jBKh+hiy+LSomGtvoh4OqjnWKvFyrMRnXxpnTMrr0bUGm71j/+5N00Zs0mUgOw6WtXAk5WmI24OYOUwKq0osztB8+cYnzBeQIHFSaPkHksxHQm+aaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=rUJ4InbY; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=uZxK81uKBVB1ClxVFm/AS/+d85lVTe1IzNUlzYqFDpE=;
-	b=rUJ4InbY0ELXCpPBfyXshCtKAYFhhSno02TcaeKug6nfLVMCtHMo3CO0dy/SuTx1S0Tv9Pu7l
-	LIAuuDoaJl50N9HiicFtAiWfiLjld8iB2d+2Xori9wL5AOCFszt+v0A0D1E45EC8pt/9sKlwE2P
-	Juz4FFUaWGekgXiSz+ASSwo=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d5nn14MYxz1T4Fn;
-	Wed, 12 Nov 2025 10:44:53 +0800 (CST)
-Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
-	by mail.maildlp.com (Postfix) with ESMTPS id 82EB3180495;
-	Wed, 12 Nov 2025 10:46:16 +0800 (CST)
-Received: from [10.67.109.153] (10.67.109.153) by
- kwepemk200016.china.huawei.com (7.202.194.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Nov 2025 10:46:15 +0800
-Subject: Re: [PATCH stable] notifiers: Add oops check in
- blocking_notifier_call_chain()
-From: "yiyang (D)" <yiyang13@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: Alexey Dobriyan <adobriyan@sw.ru>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, <lujialin4@huawei.com>, Simona Vetter
-	<simona@ffwll.ch>
-References: <20251017061740.59843-1-yiyang13@huawei.com>
- <20251017152542.33202c28377ec9b86713ff4a@linux-foundation.org>
- <1b5d3721-469e-5ab7-6ae3-9a9ce2e6579a@huawei.com>
-Message-ID: <f62055f2-777b-8990-5749-b6e8e014601b@huawei.com>
-Date: Wed, 12 Nov 2025 10:46:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1762915601; c=relaxed/simple;
+	bh=aovnEXmhbrzhHC2Q+BjtZJ+vvE+Xl6uuzI5MpUG2/XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aKt9S2LMbclNeqa9sBIRfXnyEyaOjn6BiTaW82JE3BisWShYqBXVK1fzqMNxt9vq6DjkArA+GUm4FJTToFfEKfCyHyZnCbFKkXPbikALlQmZZUYVHpjwHMe7EykAWLEzhl7jPMH5WpGLnNeSLmB+raz/1hJNrWwz/lt5cUbLPqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BtY8d5ny; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762915597;
+	bh=K7ubCjvIti1/IH7LY8O1r9HwAG1KmG7PMS3MzITgJhM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BtY8d5ny+1+g9DVWzq+RLX37qqsgja+W2wNqz78iS/Z6+cQ1uWa5QD077uQe0eQYn
+	 y451RxRNmAsXktRejlTxpzouPJtsRhZ8LA0VEz0T6pDIAHNjFvuNzK7gp4V+2IcK5W
+	 igetiBcwRHoDxliaCSbT+OMRE7tHvZBQrPU0Pbj1Tj/8ciqKp5Lo33EccO7sjsm6h1
+	 A2XhwtVD9T/6aByRoqcdwgxzIDJM4Xbf2XVqq1BAvr+YBlXothAmjjUdPKrwyLEe/U
+	 ayMk68pRwFYJqIJg1Ga7Khg0base0Mfxl8p+ohLq1qBKoomuChERZQAArVR32Grc1N
+	 wcHPy0R49KHJA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d5nq04pGKz4wDR;
+	Wed, 12 Nov 2025 13:46:36 +1100 (AEDT)
+Date: Wed, 12 Nov 2025 13:46:36 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20251112134636.4adc9944@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1b5d3721-469e-5ab7-6ae3-9a9ce2e6579a@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk200016.china.huawei.com (7.202.194.82)
+Content-Type: multipart/signed; boundary="Sig_/dO6v3v24NC2ixw.yJk_MIUU";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/dO6v3v24NC2ixw.yJk_MIUU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/10/22 11:36, yiyang (D) wrote:
-> On 2025/10/18 6:25, Andrew Morton wrote:
->> On Fri, 17 Oct 2025 06:17:40 +0000 Yi Yang <yiyang13@huawei.com> wrote:
->>
->>> In hrtimer_interrupt(), interrupts are disabled when acquiring a 
->>> spinlock,
->>> which subsequently triggers an oops. During the oops call chain,
->>> blocking_notifier_call_chain() invokes _cond_resched, ultimately leading
->>> to a hard lockup.
->>>
->>> Call Stack:
->>> hrtimer_interrupt//raw_spin_lock_irqsave
->>> __hrtimer_run_queues
->>> page_fault
->>> do_page_fault
->>> bad_area_nosemaphore
->>> no_context
->>> oops_end
->>> bust_spinlocks
->>> unblank_screen
->>> do_unblank_screen
->>> fbcon_blank
->>> fb_notifier_call_chain
->>> blocking_notifier_call_chain
->>> down_read
->>> _cond_resched
->>
->> Seems this trace is upside-down relative to what we usually see.
->>
->> Is the unaltered dmesg output available?
->>
-> Below is an excerpt from the original error message:
-> 
->   #0[ffff8a317f6c3ac0] __cond_resched at ffffffffa10d29a6
->   #1[ffff8a317f6c3ad8] _cond_resched at ffffffffa17292cf
->   #2[ffff8a317f6c3ae8] down_read at ffffffffa1728022
->   #3[ffff8a317f6c3b00] __blocking_notifier_call_chain at ffffffffa10c5c37
->   #4[ffff8a317f6c3b40] blocking_notifier_call_chain at ffffffffa10c5c86
->   #5[ffff8a317f6c3b50] fb_notifier_call_chain at ffffffffa13c83eb
->   #6[ffff8a317f6c3b60] fb_blank at ffffffffa13c88eb
->   #7[ffff8a317f6c3ba0] fbcon_blank at ffffffffa13d4a4b
->   #8[ffff8a317f6c3ca0] do_unblank_screen at ffffffffa144cb30
->   #9[ffff8a317f6c3cc0] unblank_screen at ffffffffa144cbf0
-> #10[ffff8a317f6c3ce0] oops_end at ffffffffa172d6d5
-> #11[ffff8a317f6c3d08] no_context at ffffffffa171cebc
-> #12[ffff8a317f6c3d58] __bad_area_nosemaphore at ffffffffa171cf53
-> #13[ffff8a317f6c3da8] bad_area_nosemaphore at ffffffffa171d0c4
-> #14[ffff8a317f6c3db8] __do_page_fault at ffffffffa17306b0
-> #15[ffff8a317f6c3e20] do_page_fault at ffffffffa1730895
-> #16[ffff8a317f6c3e50] page_fault at ffffffffa172c768
-> 
->>> If the system is in an oops state, use down_read_trylock instead of a
->>> blocking lock acquisition. If the trylock fails, skip executing the
->>> notifier callbacks to avoid potential deadlocks or unsafe operations
->>> during the oops handling process.
->>>
->>> ...
->>>
->>> --- a/kernel/notifier.c
->>> +++ b/kernel/notifier.c
->>> @@ -384,9 +384,18 @@ int blocking_notifier_call_chain(struct 
->>> blocking_notifier_head *nh,
->>>        * is, we re-check the list after having taken the lock anyway:
->>>        */
->>>       if (rcu_access_pointer(nh->head)) {
->>> -        down_read(&nh->rwsem);
->>> -        ret = notifier_call_chain(&nh->head, val, v, -1, NULL);
->>> -        up_read(&nh->rwsem);
->>> +        if (!oops_in_progress) {
->>> +            down_read(&nh->rwsem);
->>> +            ret = notifier_call_chain(&nh->head, val, v, -1, NULL);
->>> +            up_read(&nh->rwsem);
->>> +        } else {
->>> +            if (down_read_trylock(&nh->rwsem)) {
->>> +                ret = notifier_call_chain(&nh->head, val, v, -1, NULL);
->>> +                up_read(&nh->rwsem);
->>> +            } else {
->>> +                ret = NOTIFY_BAD;
->>> +            }
->>> +        }
->>>       }
->>>       return ret;
->>
->> Am I correct in believing that fb_notifier_call_chain() is only ever
->> called if defined(CONFIG_GUMSTIX_AM200EPD)?
->>
-> fb_notifier_call_chain() is called in both the fb_blank() and 
-> fb_set_var() functions, and it is not only called when 
-> defined(CONFIG_GUMSTIX_AM200EPD).
->> I wonder what that call is for, and if we can simply remove it.
-> The function called when an issue occurs is 
-> `fb_notifier_call_chain(FB_EVENT_BLANK, &event);`.
-> The purpose of this function is to invoke the notification chain that 
-> has registered for the FB_EVENT_BLANK event.
-> 
-> The FB_EVENT_BLANK event appears to indicate a screen-related state.
->>
->> .
->>
-> 
-Do you think it is necessary to merge this patch into the 6.6 stable 
-branch (or earlier versions)?
-Currently, when an oops occurs, the actual panic stack trace is not 
-being printed because it is being blocked by the notification chain.
+Hi all,
 
+After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+produced this warning:
 
+WARNING: include/linux/pipe_fs_i.h:105 struct member 'pipe_index' not descr=
+ibed in 'pipe_inode_info'
 
+Introduced by commit
+
+  8d1442fdfa3d ("fs/pipe: stop duplicating union pipe_index declaration")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dO6v3v24NC2ixw.yJk_MIUU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkT9QwACgkQAVBC80lX
+0Gwafwf/fi7FGlVrCAkfAYamzL8sBhvz855S5T2xkZPPWmfsd0RkKjB3UV/5L/Qx
+m0S8KB1LMV/WKU9uJu35D0NDrlOdeh6xtQUkYprvNKXEOB24ssDQMJbdhA/ILoQG
+e/gXF7RDdkPlEvaXG8JWNxxqFNIACHsH8snG/ebDISefEVuwxe1VOk2XTjVWuL8i
+9EuBXMgCfXPGICPt1SFGNxYz+OS/NjLugWKVBEC6vnIk3TLcvBq2E1eRaQE2fM1v
+S1ZYUuUNfPPBynMb/HKV1PNCWX4tj2smKF74ddVwIU1JXJ6nKjldIItnx+HWAhbL
+PqHFVsa0lDzCHOWjE02I3zuNMJS39Q==
+=hayu
+-----END PGP SIGNATURE-----
+
+--Sig_/dO6v3v24NC2ixw.yJk_MIUU--
 
