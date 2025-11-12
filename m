@@ -1,99 +1,161 @@
-Return-Path: <linux-kernel+bounces-896736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B8CC51158
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:22:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EA3C5116A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A071894243
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF2E3B4708
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA6B2DEA6F;
-	Wed, 12 Nov 2025 08:22:29 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4802F39CC;
+	Wed, 12 Nov 2025 08:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g3Mg4xdX"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EFC186294
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B938E21ABAA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935749; cv=none; b=iKa4uXCVjx3ecIW0cAlDgmmXQ0xP+WrUqBScmxbA2YuuLPhqr0Kau7u+DzS9KJmxJ7lu+3eMsYEtDhouDXKVJVV7tUE1HZCf1OaNrHSfpluA1I5auL7UP1QufztkI1JNnLK0fhWucTjpZiKj3I+M9HFLbDqrUK7wZIFQQBOF4lw=
+	t=1762935812; cv=none; b=ADzKMI/XPW+M02Zzy/qscI0WWb5zb0rVJM+5MykhgpYg8UQo/215ABvoJJ2hNaStTMs7NIrR+qJH04bWNDWMFlBmhp9EPER8ITllDqgD7MOQ4tF4ycLq2CrdL3yQDaxytVzPhgppXEPQCh3huiE2PTaY1EIseetLKf7Y0mAKZVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935749; c=relaxed/simple;
-	bh=QNumVf59qzQB51ZSyMfW94XWugLFRV2Fh5+/YBr0Jpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XiUwrJEftnqs2vSIMlFq545Cv2tIWi1h1A33Qdx77cRvMzCebURBel57yWDTBP3fdBefleWE3zS+uvtnHAqvQdL6ngk5Y08R5wUxqE2WkdXQux9K7qPHQCPjsl6o6xBgQSYv+yR7hFIoSKrOunMKkLol6draXqR69oH6u8xnk4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowABHm928QxRpxgN2AA--.23911S2;
-	Wed, 12 Nov 2025 16:22:21 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Bob Copeland <me@bobcopeland.com>
-Cc: linux-karma-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] omfs: check sb_set_blocksize return value
-Date: Wed, 12 Nov 2025 16:21:13 +0800
-Message-ID: <20251112082114.1105-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762935812; c=relaxed/simple;
+	bh=leHrsHC3HX5T+UeIMtqLU31BJdR5MqyeYMo8G7lur0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MVXTYgfBaxdBYam9rMbnh2BKxqhs4IrVc74EujgzzHAxE9OqB2SZ4wQxqpFvx4r04xia9XvrRg454PbSV0CzVERlLkOo84wG6irNv8WNsVPSnoFsJ8h5gIOJBYJ2aLwXxV33+sWwixEYl7vtGukK/oyBafIyijU9nUdiAc/yWVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g3Mg4xdX; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 224AD1A1A0B;
+	Wed, 12 Nov 2025 08:23:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E7F976070B;
+	Wed, 12 Nov 2025 08:23:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3728B1037196F;
+	Wed, 12 Nov 2025 09:23:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762935807; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=rTnbgSuE6RgEYpYQF2xhT+pvJdvD6WChCNxRoxD+Pr4=;
+	b=g3Mg4xdXi7Vo0r1FgrG9Rjot6Ej08ydVfBPOwi8fdXDBWr5eT9S6lnTvA26SsxaTHQ9gx4
+	BFaeeJOaIuWS80K+dWG1DJtjToCM74e59oy4iMKORNxT5ehTm7Aw9jIW0q9OjQ9292A7Ki
+	Pl4MUmnLn79fRrj9sFOmIkberIWtNCbPlj/sdUydxvgUsd4/XwUV0H7E6dX/B/6Wo104bM
+	io/Vmu5l+cCK2zU8bMrnt2Dk6RgfCqQLBohwNnbyt4blColBHfqaVsWwmnjjzL1MpUdx3f
+	qyVc/l0tHLVm+gq7dX2oL4rdXTWFHjYKftqfCgZms2gUK2eK9bvvnK5rb734Dg==
+Message-ID: <33bad77f-8468-4e4a-a60d-adf9e1145816@bootlin.com>
+Date: Wed, 12 Nov 2025 09:23:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHm928QxRpxgN2AA--.23911S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF4DAw43uFy8Aw1xJr1kKrg_yoWkXrb_A3
-	W7ZrykGw4Fqr1Fyws8C34YyrZY9rsruw1xWF43tr15uF98KFn8Xw4qgF98GF4DWa48W398
-	u3ykWFW5Jr1Y9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUVMKAUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwoEA2kUGH2txwAAs4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v15 03/15] net: phy: Introduce PHY ports
+ representation
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
+ <20251106094742.2104099-4-maxime.chevallier@bootlin.com>
+ <fc89e17f-c6f5-4a84-8780-737969ed2e22@lunn.ch>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <fc89e17f-c6f5-4a84-8780-737969ed2e22@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The code validates that sbi->s_sys_blocksize does not exceed PAGE_SIZE,
-but fails to verify that the block size is a power of two, which could
-lead to memory corruption or system crashes.
 
-Check the return value of sb_set_blocksize() and return -EINVAL on failure.
 
-Fixes: 555e3775ced1 ("omfs: add inode routines")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- fs/omfs/inode.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On 11/11/2025 04:53, Andrew Lunn wrote:
+>> +/**
+>> + * phy_caps_medium_get_supported() - Returns linkmodes supported on a given medium
+>> + * @supported: After this call, contains all possible linkmodes on a given medium,
+>> + *	       and with the given number of lanes, or less.
+> 
+> lanes -> pairs?
 
-diff --git a/fs/omfs/inode.c b/fs/omfs/inode.c
-index 135c49c5d848..24f58d10a93e 100644
---- a/fs/omfs/inode.c
-+++ b/fs/omfs/inode.c
-@@ -523,7 +523,11 @@ static int omfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	 * Use sys_blocksize as the fs block since it is smaller than a
- 	 * page while the fs blocksize can be larger.
- 	 */
--	sb_set_blocksize(sb, sbi->s_sys_blocksize);
-+	if (!sb_set_blocksize(sb, sbi->s_sys_blocksize)) {
-+		pr_err("omfs: Invalid system block size %d\n",
-+				sbi->s_sys_blocksize);
-+		goto out_brelse_bh;
-+	}
- 
- 	/*
- 	 * ...and the difference goes into a shift.  sys_blocksize is always
--- 
-2.50.1.windows.1
+indeed :(
+
+> 
+>> +	/* The PHY driver might have added, removed or set medium/lanes info,
+>> +	 * so update the port supported accordingly.
+> 
+> lanes -> pairs?
+
+yes true :(
+> 
+>> +struct phy_port *phy_of_parse_port(struct device_node *dn)
+>> +{
+>> +	struct fwnode_handle *fwnode = of_fwnode_handle(dn);
+>> +	enum ethtool_link_medium medium;
+>> +	struct phy_port *port;
+>> +	const char *med_str;
+>> +	u32 pairs = 0, mediums = 0;
+>> +	int ret;
+>> +
+>> +	ret = fwnode_property_read_u32(fwnode, "pairs", &pairs);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+> 
+> I think this needs to come later. It is not critical now, but when we
+> come to add other medium, it will need moving. If we add say -K, and
+> need lanes, we don't want to error out here because pairs is missing.
+
+Ack, I'll relax the check
+
+> 
+>> +	ret = fwnode_property_read_string(fwnode, "media", &med_str);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	medium = ethtool_str_to_medium(med_str);
+>> +	if (medium == ETHTOOL_LINK_MEDIUM_NONE)
+>> +		return ERR_PTR(-EINVAL);
+> 
+>> +	if (pairs && medium != ETHTOOL_LINK_MEDIUM_BASET) {
+>> +		pr_err("pairs property is only compatible with BaseT medium\n");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+> 
+> This i think needs changing, if medium == ETHTOOL_LINK_MEDIUM_BASET
+> then get pairs, and validate it. I would probably also test it is 1,
+> 2, or 4.
+
+That's fine by me :) I'll update the binding as well then, as having 3
+pairs will never be correct.
+
+Thanks a lot for looking at this !
+
+Maxime
+
+> 
+> 	Andrew
 
 
