@@ -1,192 +1,177 @@
-Return-Path: <linux-kernel+bounces-897274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421F2C527E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:34:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD80C5280A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997DE3AFB97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C0D3BA575
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F40337BAE;
-	Wed, 12 Nov 2025 13:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA736338586;
+	Wed, 12 Nov 2025 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="FUj2SeR3"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuXf8Iy+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6765425A640
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6FA32D44F;
+	Wed, 12 Nov 2025 13:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762953835; cv=none; b=PjXJJdzT+4tGa1zyQv0+SsNG5inwVWcjT/WOe2z+8hz1Wt1vKnknr7K1Eahnmbn+bZlrm8Ng+8PKga2LgVBhUe8uciDrPHqjp7L5UgUJ8gSqckwkR5Ema3DHgs497AgvyImF1y3jlQkk1YKjiGKtDe8AojV+0qE3Kn11eIiXVfM=
+	t=1762953929; cv=none; b=ZqvvPlt7FukgaAW20BAZAbkfKcPyXwL/77/mxFXCxsa2OUufuXFYZwjSEW/XRnUwMluCJUgL1PgyIw/B3Wu0kv8f83W3wVT07wK6eXqt008paEH4zVzI7+XsuqMLSmoEs+n78OdV1yRg8BnTPxg5U9eoJg++bAyZon6o6f1yVdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762953835; c=relaxed/simple;
-	bh=ryAI02Zk6l+eJO/YP6ylxtEesQOzInyaFJEqJs0HycI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=uI3oPZ2VGYvGFOMMH5dKeayTd9HTuoPv0hRDVCqKyEkZa6uhTBNn7Kshck7AE8IvU9I2e53e0sTtbMZtBbgTeEUdDFp1aZnJYhRxlsbyokYjmMjpFo/fOL18yFM0fxLTmKp2BhuwBaGaaxMRugNrocfnlGSoyzuuLV+2yc83O0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=FUj2SeR3; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1762953929; c=relaxed/simple;
+	bh=0L4I5YakZvITlyeB7zaJSYGUCZoIKpW33DPBC2WOOhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftgPwbIIG7GgB6oe1Vybvf50eNlCapkhD/6Zy12KJhm+1Rl6U5TmY1vfkph1LIIXjqpcCEuqrHqwz3FPZXvsY41PH8sjKBGNm6SOc5kFL6zeHsmxIGLyWDmMZNZMa8PeeW6+uVa3We3rYubXobtiC43UyJKo0s4Y+8NH+gdtuKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuXf8Iy+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16109C16AAE;
+	Wed, 12 Nov 2025 13:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762953928;
+	bh=0L4I5YakZvITlyeB7zaJSYGUCZoIKpW33DPBC2WOOhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JuXf8Iy+r0eY2kUE7hNwEY3/woXsoN7mLLb0NujdRDnGnxWsUwW61gwcXje3J84z4
+	 B3/yjjUcJLgZz+Z63i2LjQpS2xfQ308sv9sRWCv/JMCr+xz6rxzPHlAb+EIGZDMMcl
+	 +4BJ5OyXy1HSzx36sq+0a/dYIJuQqqf03VW94U30S6eWt3+ZrvU9aDMFk2zcRDN8iX
+	 sLbX+QhHTEbyi6hp2/eWg7aUEYD/KYgV1FvYa5w1MO3SBpUSY2kF0rFvNKOhzSjCjU
+	 MFbxZY4wDY5r7NZTXeppRfA1WRwj4O7n5KTZrdrUJEUF2x466Y0AkWfrUxTDXAc225
+	 gY47Gsfbb3eQQ==
+Date: Wed, 12 Nov 2025 15:25:03 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aRSKrxfAb_GG_2Mw@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
+ <aRHiCxoJnEGmj17q@kernel.org>
+ <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
+ <aROZi043lxtegqWE@kernel.org>
+ <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762953831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FPEMzOztpJUvojsoCi0pzhR593btKmY4mmBboMedZFk=;
-	b=FUj2SeR3Zs+ZRsouks+uTMRzsGS/+tSLpSv253fR3UUjDL+BQ2S3m34Yh0dI7DCEZI7Cfu
-	55dAosTlW4PwMF/bGCNfazJAgDxKDz1/Il8+5JSJ3O0vfxl2CFzZuf2YOTPFJi3GCSeUvX
-	mJy2TTAxM593CxFrMyJbdyuKlCumHyAaHFJqlDw7SXhj54fcFzCcX2zRx6aUDOIwpI6ULo
-	bQ4aYDtlnPjSnv87GRO4e0QfCf8vPmrfw2jNGOEZFuE/syUzmA7B+lfpsIcits0RLGdQM2
-	MtRYv/ZXy837jnNB7kpR78SlcKgjvquiQDGJmXLH0n+2VW1X5ys7euxSSsrBUg==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Nov 2025 14:23:49 +0100
-Message-Id: <DE6QZ4EILEX2.1MQSX07ZMQLCW@cknow-tech.com>
-To: "Andy Yan" <andyshrk@163.com>, <heiko@sntech.de>
-Cc: <hjc@rock-chips.com>, <diederik@cknow-tech.com>,
- <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>, "Andy
- Yan" <andy.yan@rock-chips.com>
-Subject: Re: [PATCH] drm/rockchip: vop2: Use OVL_LAYER_SEL configuration
- instead of use win_mask calculate used layers
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-References: <20251112085024.2480111-1-andyshrk@163.com>
-In-Reply-To: <20251112085024.2480111-1-andyshrk@163.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
 
-Hi Andy,
+Hi Pasha,
 
-On Wed Nov 12, 2025 at 9:50 AM CET, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
->
-> When there are multiple Video Ports, and only one of them is working
-> (for example, VP1 is working while VP0 is not), in this case, the
-> win_mask of VP0 is 0. However, we have already set the port mux for VP0
-> according to vp0->nlayers, and at the same time, in the OVL_LAYER_SEL
-> register, there are windows will also be assigned to layers which will
-> map to the inactive VPs. In this situation, vp0->win_mask is zero as it
-> now working, it is more reliable to calculate the used layers based on
-> the configuration of the OVL_LAYER_SEL register.
+On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
+> Hi Mike,
+> 
+> Thank you for review, my comments below:
+> 
+> > > This is why this call is placed first in reboot(), before any
+> > > irreversible reboot notifiers or shutdown callbacks are performed. If
+> > > an allocation problem occurs in KHO, the error is simply reported back
+> > > to userspace, and the live update update is safely aborted.
 
-Thanks a lot for this patch!
-I've tested it on my PineTab2 and the 'black box under cursor' problem
-is now fixed :-) So feel free to add my
+The call to liveupdate_reboot() is just before kernel_kexec(). Why we don't
+move it there?
 
-Tested-by: Diederik de Haas <diederik@cknow-tech.com>
+And all the liveupdate_reboot() does if kho_finalize() fails it's massaging
+the error value before returning it to userspace. Why kernel_kexec() can't
+do the same?
 
-Cheers,
-  Diederik
+> > This is fine. But what I don't like is that we can't use kho without
+> > liveupdate. We are making debugfs optional, we have a way to call
+> 
+> Yes you can: you can disable liveupdate (i.e. not supply liveupdate=1
+> via kernel parameter) and use KHO the old way: drive it from the
+> userspace. However, if liveupdate is enabled, liveupdate becomes the
+> driver of KHO as unfortunately KHO has these weird states at the
+> moment.
 
-> Note: as the configuration of OVL_LAYER_SEL is take effect when the
-> vsync is come, so we use the value backup in vop2->old_layer_sel instead
-> of read OVL_LAYER_SEL directly.
->
-> Fixes: 3e89a8c68354 ("drm/rockchip: vop2: Fix the update of LAYER/PORT se=
-lect registers when there are multi display output on rk3588/rk3568")
-> Reported-by: Diederik de Haas <diederik@cknow-tech.com>
-> Closes: https://bugs.kde.org/show_bug.cgi?id=3D511274
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> ---
->
->  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 49 +++++++++++++++++---
->  1 file changed, 42 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/d=
-rm/rockchip/rockchip_vop2_reg.c
-> index d22ce11a4235..f3950e8476a7 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-> @@ -1369,6 +1369,25 @@ static const struct vop2_regs_dump rk3588_regs_dum=
-p[] =3D {
->  	},
->  };
-> =20
-> +/*
-> + * phys_id is used to identify a main window(Cluster Win/Smart Win, not
-> + * include the sub win of a cluster or the multi area) that can do overl=
-ay
-> + * in main overlay stage.
-> + */
-> +static struct vop2_win *vop2_find_win_by_phys_id(struct vop2 *vop2, uint=
-8_t phys_id)
-> +{
-> +	struct vop2_win *win;
-> +	int i;
-> +
-> +	for (i =3D 0; i < vop2->data->win_size; i++) {
-> +		win =3D &vop2->win[i];
-> +		if (win->data->phys_id =3D=3D phys_id)
-> +			return win;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static unsigned long rk3568_set_intf_mux(struct vop2_video_port *vp, int=
- id, u32 polflags)
->  {
->  	struct vop2 *vop2 =3D vp->vop2;
-> @@ -1842,15 +1861,31 @@ static void vop2_parse_alpha(struct vop2_alpha_co=
-nfig *alpha_config,
->  	alpha->dst_alpha_ctrl.bits.factor_mode =3D ALPHA_SRC_INVERSE;
->  }
-> =20
-> -static int vop2_find_start_mixer_id_for_vp(struct vop2 *vop2, u8 port_id=
-)
-> +static int vop2_find_start_mixer_id_for_vp(struct vop2_video_port *vp)
->  {
-> -	struct vop2_video_port *vp;
-> -	int used_layer =3D 0;
-> +	struct vop2 *vop2 =3D vp->vop2;
-> +	struct vop2_win *win;
-> +	u32 layer_sel =3D vop2->old_layer_sel;
-> +	u32 used_layer =3D 0;
-> +	unsigned long win_mask =3D vp->win_mask;
-> +	unsigned long phys_id;
-> +	bool match;
->  	int i;
-> =20
-> -	for (i =3D 0; i < port_id; i++) {
-> -		vp =3D &vop2->vps[i];
-> -		used_layer +=3D hweight32(vp->win_mask);
-> +	for (i =3D 0; i < 31; i +=3D 4) {
-> +		match =3D false;
-> +		for_each_set_bit(phys_id, &win_mask, ROCKCHIP_VOP2_ESMART3) {
-> +			win =3D vop2_find_win_by_phys_id(vop2, phys_id);
-> +			if (win->data->layer_sel_id[vp->id] =3D=3D ((layer_sel >> i) & 0xf)) =
-{
-> +				match =3D true;
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (!match)
-> +			used_layer +=3D 1;
-> +		else
-> +			break;
->  	}
-> =20
->  	return used_layer;
-> @@ -1935,7 +1970,7 @@ static void vop2_setup_alpha(struct vop2_video_port=
- *vp)
->  	u32 dst_global_alpha =3D DRM_BLEND_ALPHA_OPAQUE;
-> =20
->  	if (vop2->version <=3D VOP_VERSION_RK3588)
-> -		mixer_id =3D vop2_find_start_mixer_id_for_vp(vop2, vp->id);
-> +		mixer_id =3D vop2_find_start_mixer_id_for_vp(vp);
->  	else
->  		mixer_id =3D 0;
-> =20
+The "weird state" is the point where KHO builds its FDT. Replacing the
+current memory tracker with one that does not require serialization won't
+change it. We still need a way to tell KHO that "there won't be new nodes
+in FDT, pack it".
+ 
+> > kho_finalize() on the reboot path and it does not seem an issue to do it
+> > even without liveupdate. But then we force kho_finalize() into
+> > liveupdate_reboot() allowing weird configurations where kho is there but
+> > it's unusable.
+> 
+> What do you mean KHO is there but unusable, we should not have such a state...
 
+If you compile a kernel with KEXEC_HANDOVER=y, KEXEC_HANDOVER_DEBUGFS=n and
+LIVEUPDATE=n and boot with kho=1 there is nothing to trigger
+kho_finalize().
+ 
+> > What I'd like to see is that we can finalize KHO on kexec reboot path even
+> > when liveupdate is not compiled and until then the patch that makes KHO
+> > debugfs optional should not go further IMO.
+> >
+> > Another thing I didn't check in this series yet is how finalization driven
+> > from debugfs interacts with liveupdate internal handling?
+> 
+> I think what we can do is the following:
+> - Remove "Kconfig: make debugfs optional" from this series, and
+> instead make that change as part of stateless KHO work.
+> - This will ensure that when liveupdate=0 always KHO finalize is fully
+> support the old way.
+> - When liveupdate=1 always disable KHO debugfs "finalize" API, and
+> allow liveupdate to drive it automatically. It would add another
+> liveupdate_enable() check to KHO, and is going to be removed as part
+> of stateless KHO work.
+
+KHO should not call into liveupdate. That's layering violation.
+And "stateless KHO" does not really make it stateless, it only removes the
+memory serialization from kho_finalize(), but it's still required to pack
+the FDT.
+
+I think we should allow kho finalization in some form from kernel_kexec().
+
+When kho=1 and liveupdate=0, it will actually create the FDT if there was
+no previous trigger from debugfs or it will continue with FDT created by
+explicit request via debugfs.
+
+When liveupdate=1, liveupdate_reboot() may call a function that actually
+finalizes the state to allow safe rollback (although in the current patches
+it does not seem necessary). And then kho_finalize() called from
+kernel_kexec() will just continue with the state created by
+liveupdate_reboot().  If we already finalized the kho state via debugfs,
+liveupdate_reboot() can either error out or reset that state.
+
+> Pasha
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
