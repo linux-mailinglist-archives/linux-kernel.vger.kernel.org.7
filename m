@@ -1,161 +1,317 @@
-Return-Path: <linux-kernel+bounces-896909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D29CC51848
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:58:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED1AC51839
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EED024FE79D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:50:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 333B84FC91C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F57303CAF;
-	Wed, 12 Nov 2025 09:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68F13002DE;
+	Wed, 12 Nov 2025 09:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="P2ZNkyqQ"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTz8vIdx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D01301495;
-	Wed, 12 Nov 2025 09:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811862FFFA5;
+	Wed, 12 Nov 2025 09:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940950; cv=none; b=fpOCTfk6Xq/8pUn2eTMca/CbS1eU3A27Wyffl4jHvSunceXPHjPdZu3+BpZohSJb9T6JX8nyHE5gTG+TSPDz9AcKrRVEbqmVx3UCZhdEWrG+ru1mR4ZDXo9m0AA0x69Ibk+MitB1jC9+rgIWryUyM+4uFoVumt8b3+2OZgpoh8Y=
+	t=1762940943; cv=none; b=PgUiXbuD1wiXiZwGzzVecy1giRPBVQqVprWtWCzg2neDBUqrUlRsvqnCVjpkM2Wkqu83lQGLzCfw7y6qHCQDsLyYaLjaqjfSCPMeSKRtlHzPYQGzWssQ730FFRMELd0FnBzAckbPNn/vPpJCPb39V3uxhauNijoREHeb07++2cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940950; c=relaxed/simple;
-	bh=IVSH2xqSx4ZtJ+I/r4yLqScRkrp1DmsNvMIZ63e1GYU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kMpJmO8ovcjT7plTm4NYgicc6A7aovLpX8WTJE/HYjxYcthY+V2miyYm+KwuLR72yY+fRImoV47tkPDyqbVFQeHkqmq7bnAOH4EMnIOS1bW5EC+Oscvs2oOazQ1x6jakuBPB1q7wRlB1iEqy4Ci8TACx+Rjl4fO4Hx2kK+4OQ7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=P2ZNkyqQ; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=u8
-	dQO4QxXLIAZVZsY6tASVlXUa/tVs5IGeJKJ/SQs1o=; b=P2ZNkyqQeKHDagulv5
-	0Ks5vYrXW+GllJ7t1duvx3uhz57jNmXj7EllhcMNJFTrakHZSX2G+XrsZdDBx68L
-	ATM8BwILyVKm/iOYMXblBkwLTYhpFgv4pG8mg8j+4CHSJGdJ2+rzzraWpw9b+c3U
-	/XxsonZ/mDe3HVrseZk1nG6cw=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgA32a_8VxRpCkthDg--.4901S3;
-	Wed, 12 Nov 2025 17:48:48 +0800 (CST)
-From: Gongwei Li <13875017792@163.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gongwei Li <ligongwei@kylinos.cn>
-Subject: [PATCH 2/2] Bluetooth: Process Read Remote Version evt
-Date: Wed, 12 Nov 2025 17:48:43 +0800
-Message-Id: <20251112094843.173238-2-13875017792@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251112094843.173238-1-13875017792@163.com>
-References: <20251112094843.173238-1-13875017792@163.com>
+	s=arc-20240116; t=1762940943; c=relaxed/simple;
+	bh=cv+A0Rv4b6lrzkLMP+XQea/RkP4alO9eM9auJHAeB7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UVdLpPMEfLiyeNP9nh2duVzP/AHdn8AzuK+3lTVmkQ0JwX5CJ+L+bNccG2qBMLV8y1zgn7SmuEqYulB68bjKXY+IEixJqu0WdMDydgamiQw7Dg6WlNdIkL2XJL3zTzPf+kjGEnsUMwbeNxEpvzka6qWJHNAy3eDGaPIKGmFCl8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTz8vIdx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21C8C4CEF8;
+	Wed, 12 Nov 2025 09:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762940943;
+	bh=cv+A0Rv4b6lrzkLMP+XQea/RkP4alO9eM9auJHAeB7k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PTz8vIdxtSj3/VXZCWtGx5HxaUpBY+G/6h1LPqn7seq3v0wAI67GLIMDM967O/6re
+	 ex77pnTeevTT9PlHJwahNhiORDJ6SWtyvatWksBi2jd1TQD+ODzBU6/ILy6dC3sc5Y
+	 oAr/mwwxkt12d3lgDSMOlwMKoY30EqNxtsBS9h48sYdvN9P0XhkNdV2SI/nkBZIzJE
+	 Btp6k4bdwaHSY7AUexNzZS7BxL7KsmB79uETuIefoifN/Dli3p7QOXrcS+PRUGechV
+	 YXyCHuSSAfjlPesSTL9P2wxlSWmdoROX/iwB4myGfPQvLWyn57Ya48PdQvVGmynML0
+	 MLMXq0baf3N1g==
+Message-ID: <312ca473-77a6-4b95-b558-bb121294fbc9@kernel.org>
+Date: Wed, 12 Nov 2025 10:48:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
+ blazer, and mustang
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ Roy Luo <royluo@google.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Julius Werner <jwerner@chromium.org>,
+ William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
+ <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
+ <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgA32a_8VxRpCkthDg--.4901S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF1DurWrCF13Kw4UtFWrZrb_yoW5Ww4rpa
-	y5uasakrW8Jr43Xr1xAay8Zan8Zwn2qFWxK3y2v34fJwsYvrWktF4kCFyjyrW5ArWqvFyj
-	vF1Utr13WFyDGw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jtYFZUUUUU=
-X-CM-SenderInfo: rprtmlyvqrllizs6il2tof0z/1tbiXA8EumkUUXeHwAABsw
 
-From: Gongwei Li <ligongwei@kylinos.cn>
+On 12/11/2025 10:35, Chen-Yu Tsai wrote:
+> On Wed, Nov 12, 2025 at 4:14 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 11/11/2025 20:22, Douglas Anderson wrote:
+>>> Add barebones device trees for frankel (Pixel 10), blazer (Pixel 10
+>>> Pro), and mustang (Pixel 10 Pro XL). These device trees are enough to
+>>> boot to a serial prompt using an initramfs.
+>>>
+>>> Many things can be noted about these device trees:
+>>>
+>>> 1. They are organized as "dts" files for the main SoC and "dtso"
+>>>    overlays for the boards. There is discussion about this in the
+>>>    bindings patch ("dt-bindings: arm: google: Add bindings for
+>>>    frankel/blazer/mustang").
+>>> 2. They won't boot with the currently shipping bootloader. The current
+>>>    bootloader hardcodes several paths to nodes that it wants to update
+>>>    and considers it a fatal error if it can't find these nodes.
+>>>    Interested parties will need to wait for fixes to land and a new
+>>>    bootloader to be rolled out before attempting to use these.
+>>> 3. They only add one revision (MP1) of each of frankel, blazer, and
+>>>    mustang. With this simple barebones device tree, there doesn't
+>>>    appear to be any difference between the revisions. More revisions
+>>>    will be added as needed in the future. The heuristics in the
+>>>    bootloader will pick the MP1 device tree if there are not any
+>>>    better matches.
+>>> 4. They only add the dts for the B0 SoC for now. The A0 SoC support
+>>>    can be added later if we find the need.
+>>> 5. Even newer versions of the bootloader will still error out if they
+>>>    don't find a UFS node to add calibration data to. Until UFS is
+>>>    supported, we provide a bogus UFS node for the bootloader. While
+>>>    the bootloader could be changed, there is no long-term benefit
+>>>    since eventually the device tree will have a UFS node.
+>>> 6. They purposely choose to use the full 64-bit address and size cells
+>>>    for the root node and the `soc@0` node. Although I haven't tested
+>>>    the need for this, I presume the arguments made in commit
+>>>    bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address and size
+>>>    cells for soc") would apply here.
+>>> 7. Though it looks as if the UART is never enabled, the bootloader
+>>>    knows to enable the UART when the console is turned on. Baud rate
+>>>    is configurable in the bootloader so is never hardcoded in the
+>>>    device tree.
+>>>
+>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>> ---
+>>> To avoid fragmenting the discussion, IMO:
+>>> * Let's have the discussion about using the "dts" for SoC and the
+>>>   "dtso" for the boards in response to the bindings (patch #1).
+>>
+>> That's discussion here, bindings are irrelevant to this.
+>>
+>>> * If we want to have a discussion about putting "board-id" and
+>>>   "model-id" at the root of the board overlays, we can have it
+>>>   here. I'll preemptively note that the "board-id" and "model-id"
+>>>   won't show up in the final combined device tree and they are just
+>>>   used by the tool (mkdtimg). We could change mkdtimg to parse the
+>>>   "compatible" strings of the overlays files (since I've put the IDs
+>>>   there too), but official the docs [1] seem to indicate that
+>>>   top-level properties like this are OK.
+>>>
+>>> In order for these device trees to pass validation without warnings,
+>>> it's assumed you have my dtc patches:
+>>> * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromium.org
+>>> * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromium.org
+>>>
+>>> [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt?h=main
+>>>
+>>>  arch/arm64/boot/dts/google/Makefile           |   9 +
+>>>  arch/arm64/boot/dts/google/lga-b0.dts         | 391 ++++++++++++++++++
+>>>  .../arm64/boot/dts/google/lga-blazer-mp1.dtso |  22 +
+>>>  .../boot/dts/google/lga-frankel-mp1.dtso      |  22 +
+>>>  .../boot/dts/google/lga-mustang-mp1.dtso      |  22 +
+>>>  .../boot/dts/google/lga-muzel-common.dtsi     |  17 +
+>>>  6 files changed, 483 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/google/lga-b0.dts
+>>>  create mode 100644 arch/arm64/boot/dts/google/lga-blazer-mp1.dtso
+>>>  create mode 100644 arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+>>>  create mode 100644 arch/arm64/boot/dts/google/lga-mustang-mp1.dtso
+>>>  create mode 100644 arch/arm64/boot/dts/google/lga-muzel-common.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
+>>> index a6b187e2d631..276001e91632 100644
+>>> --- a/arch/arm64/boot/dts/google/Makefile
+>>> +++ b/arch/arm64/boot/dts/google/Makefile
+>>> @@ -1 +1,10 @@
+>>>  # SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>>> +
+>>> +dtb-$(CONFIG_ARCH_GOOGLE) += \
+>>> +     lga-blazer-mp1.dtb \
+>>> +     lga-frankel-mp1.dtb \
+>>> +     lga-mustang-mp1.dtb
+>>> +
+>>> +lga-blazer-mp1-dtbs          := lga-b0.dtb lga-blazer-mp1.dtbo
+>>> +lga-frankel-mp1-dtbs         := lga-b0.dtb lga-frankel-mp1.dtbo
+>>> +lga-mustang-mp1-dtbs         := lga-b0.dtb lga-mustang-mp1.dtbo
+>>> diff --git a/arch/arm64/boot/dts/google/lga-b0.dts b/arch/arm64/boot/dts/google/lga-b0.dts
+>>> new file mode 100644
+>>> index 000000000000..83c2db4f20ef
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/google/lga-b0.dts
+>>> @@ -0,0 +1,391 @@
+>>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+>>> +/*
+>>> + * Google Tensor G5 (laguna) SoC rev B0
+>>> + *
+>>> + * Copyright 2024-2025 Google LLC.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +#include <dt-bindings/interrupt-controller/irq.h>
+>>> +
+>>> +/ {
+>>> +     model = "Google Tensor G5 rev B0";
+>>> +     compatible = "google,soc-id-0005-rev-10", "google,lga";
+>>
+>> So that's SoC, thus must not be a DTS file, but DTSI.
+>>
+>> ...
+>>
+>>
+>> ...
+>>
+>>
+>>> diff --git a/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+>>> new file mode 100644
+>>> index 000000000000..133494de7a9b
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
+>>
+>> And that's a board, so DTS.
+>>
+>>> @@ -0,0 +1,22 @@
+>>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+>>> +/*
+>>> + * Google Pixel 10 (frankel) MP 1
+>>> + *
+>>> + * Copyright 2024-2025 Google LLC.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +/plugin/;
+>>> +
+>>> +#include "lga-muzel-common.dtsi"
+>>> +
+>>> +/ {
+>>> +     board-id = <0x070306>;
+>>> +     board-rev = <0x010000>;
+>>
+>> Undocumented ABI, which you cannot document because these properties are
+>> not allowed. You cannot have them.
+> 
+> This is part of the discussion I want to have at Plumbers. But I suppose
+> we can start here.
 
-Add processing for HCI Process Read Remote Version event.
-Used to query the lmp version of remote devices.
+Then the patch should be called RFC as not yet ready for merging. :)
 
-Signed-off-by: Gongwei Li <ligongwei@kylinos.cn>
----
- include/net/bluetooth/hci_core.h |  1 +
- net/bluetooth/hci_event.c        | 23 +++++++++++++++++++++++
- net/bluetooth/mgmt.c             |  5 +++++
- 3 files changed, 29 insertions(+)
+> 
+> The Android DTB partition format uses six 32-bit integers for matching,
+> as opposed to a compatible string used in FIT images. Two of the integers
+> are the "id" and "rev" numbers in the example above. The remaining four
+> are custom and left up to the (vendor) bootloader implementation.
+> 
+> The values for these fields need to be stored somewhere with the .dts.
+> The compiled DTB is useless if the user cannot build a proper image for
+> the bootloader to consume, and that involves putting in the right numbers
+> in these fields. The android "mkdtimg" tool can either take the values
+> from some known properties within the DTB, or have them fed to it
+> externally.
+> 
+> So if we don't want these numbers in the dts itself, then we should come
+> up with some format to store them beside the dts files.
 
-diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-index 32b1c08c8bba..bdd5e6ef3616 100644
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -749,6 +749,7 @@ struct hci_conn {
- 
- 	__u8		remote_cap;
- 	__u8		remote_auth;
-+	__u8		remote_ver;
- 
- 	unsigned int	sent;
- 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index f20c826509b6..7f8e3f8ec01e 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -3737,6 +3737,26 @@ static void hci_remote_features_evt(struct hci_dev *hdev, void *data,
- 	hci_dev_unlock(hdev);
- }
- 
-+static void hci_remote_version_evt(struct hci_dev *hdev, void *data,
-+				   struct sk_buff *skb)
-+{
-+	struct hci_ev_remote_version *ev = (void *)skb->data;
-+	struct hci_conn *conn;
-+
-+	BT_DBG("%s", hdev->name);
-+
-+	hci_dev_lock(hdev);
-+
-+	conn = hci_conn_hash_lookup_handle(hdev, __le16_to_cpu(ev->handle));
-+	if (!conn)
-+		goto unlock;
-+
-+	conn->remote_ver = ev->lmp_ver;
-+
-+unlock:
-+	hci_dev_unlock(hdev);
-+}
-+
- static inline void handle_cmd_cnt_and_timer(struct hci_dev *hdev, u8 ncmd)
- {
- 	cancel_delayed_work(&hdev->cmd_timer);
-@@ -7448,6 +7468,9 @@ static const struct hci_ev {
- 	/* [0x0b = HCI_EV_REMOTE_FEATURES] */
- 	HCI_EV(HCI_EV_REMOTE_FEATURES, hci_remote_features_evt,
- 	       sizeof(struct hci_ev_remote_features)),
-+	/* [0x0c = HCI_EV_REMOTE_VERSION] */
-+	HCI_EV(HCI_EV_REMOTE_VERSION, hci_remote_version_evt,
-+	       sizeof(struct hci_ev_remote_version)),
- 	/* [0x0e = HCI_EV_CMD_COMPLETE] */
- 	HCI_EV_REQ_VL(HCI_EV_CMD_COMPLETE, hci_cmd_complete_evt,
- 		      sizeof(struct hci_ev_cmd_complete), HCI_MAX_EVENT_SIZE),
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 79762bfaea5f..c0bab45648f3 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -9728,6 +9728,9 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
- {
- 	struct sk_buff *skb;
- 	struct mgmt_ev_device_connected *ev;
-+	struct hci_cp_read_remote_version cp;
-+
-+	memset(&cp, 0, sizeof(cp));
- 	u16 eir_len = 0;
- 	u32 flags = 0;
- 
-@@ -9774,6 +9777,8 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
- 	ev->eir_len = cpu_to_le16(eir_len);
- 
- 	mgmt_event_skb(skb, NULL);
-+
-+	hci_send_cmd(hdev, HCI_OP_READ_REMOTE_VERSION, sizeof(cp), &cp);
- }
- 
- static void unpair_device_rsp(struct mgmt_pending_cmd *cmd, void *data)
--- 
-2.25.1
+Re-iterating comment from Rob long time ago: adding such new properties
+is fine, but they must come for more than one user and be universal
+across these users.
 
+And of course the ABI needs to be documented which did not happen here.
+
+I indeed said incorrectly that "properties are not allowed". The
+properties could be allowed if we document them according to above Rob's
+comment, but that did not happen.
+
+Adding these properties per one SoC vendor is not really allowed, like
+qcom,board-id and qcom,msm-id, but maybe you intend to make it generic.
+
+> 
+> 
+> On a similar note, we would have a similar problem with FIT images and
+> overlays. The FIT image format maps a (series of) compatible string(s)
+> to one DTB and any number of overlays. If overlays are involved, then
+> the compatible string cannot come from the DTB itself, and the mapping
+> must be stored somewhere.
+
+I recall, although cannot find now references to, a email talk on the
+list saying that such overlays should have their own compatible, thus
+solving this mapping problem.
+
+
+Best regards,
+Krzysztof
 
