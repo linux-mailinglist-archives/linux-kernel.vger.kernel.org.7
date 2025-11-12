@@ -1,164 +1,154 @@
-Return-Path: <linux-kernel+bounces-897892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C26C53E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 359D3C53E90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2737343D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:21:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8D1C344E8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF3F307AD4;
-	Wed, 12 Nov 2025 18:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FijbiEZd";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="q3ctEXq0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BEB29AAFD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EF434A77F;
+	Wed, 12 Nov 2025 18:24:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAB82C1581;
+	Wed, 12 Nov 2025 18:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971678; cv=none; b=CSxcHRTg/FC6tHVu/tuFqPVB7MMjf5QP2j6gtU8Jz+GVbPM/1isIUkwvWSQsVK2Vhs8175ea+E/RNCJsIwyyKWDvaAC77uq81t/64hS17MGsg/QqfQsts6DaY30VQoRWTl9KPww1izF3lEOL68wiqVR9KGn1+FZVCZO+PtQ9/qI=
+	t=1762971895; cv=none; b=rVv9kuWx87nccriggX0J4+yxR728n1Dr1L2JWkNdBBo6YpNZWlEsDN1aIpwCcqlyulr3iKNDQCtB2l+vWYX7xtH/6e8RU7WlRVXSU/L7OufSpz2ynKbQXf5t/h8jCm7ftx1hrQceWUY+mpEh/RmtOVwyQJX+GzEbasO0ZYwO3bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971678; c=relaxed/simple;
-	bh=yl+oslX8wXO1RMzv0DqKzC2S5J5LK9Sv9dWD7vhAgAM=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Nds4regE0ruuHjjlidjbVKLD93k0rA3g6v3RTizWYN39Kh3/1BOag0rdvwUbQ6Jr42zRwskzyO6vyt+JtEZAsXFQnfdHzgNmz8ujI2AR+n4nVTxB4maU5LH6cnzAAw71VOtHUiF6cyAN2jpaUKWQyTH4B0p/XlVPCx9YoT1UzLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FijbiEZd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=q3ctEXq0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762971676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+dJpJWnR6W2PauvB5c9FgPR6gGTYegkNj3iOoqqoWtg=;
-	b=FijbiEZd46vSeDwSvYBUxk3wafkUoH+Cv1oAAsVk1KrbmfCySsHlI3zt3VxmCM+zPS8fUy
-	tJtGDmvKTyT8p74VG6fJBnmwQazbLEzuCB4Wdi1C9H0T+f8Q49KjUxKQOmBEaCFghaI0t8
-	DsjiiCACuG1Aa8ySQEUy2WyVQs23xg0=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-WL8JvF3WNASTlj1B4VACBw-1; Wed, 12 Nov 2025 13:21:14 -0500
-X-MC-Unique: WL8JvF3WNASTlj1B4VACBw-1
-X-Mimecast-MFC-AGG-ID: WL8JvF3WNASTlj1B4VACBw_1762971674
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b25cdd6d6bso307259385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:21:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762971674; x=1763576474; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+dJpJWnR6W2PauvB5c9FgPR6gGTYegkNj3iOoqqoWtg=;
-        b=q3ctEXq0ffJ4swuBHHeX0XNAnGJowN6jiL8X3fYDo7vZfFxBdJxCiGVFvTrJ1xKOxj
-         3BsZ45bqdOSjKLzQ8P+gXTnFq6rluEAwmx7ccwuR9hWtAkgqDg3J54rEbqvn4hf9BIC3
-         TWk00a6BXXLekHWc5phULXwY1RAlCLlaF+GxXjy8aXZeNx/CT7GZKs2kpJ0bzmYB87c2
-         aNND3ZDytqAkn4nr+OW2ya3iBlGLIw4UGgL3IoyxM01sVvOmOHzEHr90JmlcWPJqXt1z
-         KVy1Ejoa52qHF8UA19yKmCalFAOzej6H+7PlG1AVFVq04YekvGUzw4JVjh53rLc+bLAG
-         O4vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762971674; x=1763576474;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+dJpJWnR6W2PauvB5c9FgPR6gGTYegkNj3iOoqqoWtg=;
-        b=SxEFwsJf4ACU0qYvLuMegvfNlPNH1d7X/Gc37o4gU9IpKUriU5EpnNoqBMg1bcUyZt
-         7uGlxuLf8DHm82ske1TiowCxGtxKTuEXZcXEFNldZYm4FPEppCmfhioWhroVxAADMDR8
-         NLHImTqYyzlKxc8f/wJK9LDo8iUIfCOKAP83Mtc2gNEqB4JU3d6sHGVfhvTzvTQT6Sbw
-         2z+TpVPHk64c5Brj3NxsYiOcuPWk5DVOlmtOZPWMMuDcnr6ZBND1YwM7Iw8frhMeBrHP
-         siYHca2tcFjsq+rA6TLfkMoeP5bT98c3Kj78RF2QMS2gIXPAiDpQXxIamYjE2kFlU2oR
-         oOIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtIv7n1y9mlmbktiJhr2wKjMogPqF7I1A0cm+Pey7VnfZKfMfimozz9laQPccofYtQTGV2sPzOnor/iP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpsSLEUNJ5nUhc11nSddLOxFc/9dv4w6OrVIZ6bfo5vfQnZyIb
-	cjKZ9+2+KuL05k/xlBxSRIYmqQTQCDNslyDij03M08AgJglCDtTKlb1e39E76ta9vX16r3ulp51
-	a+SLgDuiGq152DGasySaaByrWzxltKET+7dfQeJ8BBevtxpXG/r+56NhUVKu/TrbS+w==
-X-Gm-Gg: ASbGncthiAcqieoueDh+Gjg6OdN2mDJE6iXh3Q+68szQ2exkDkHOODM6xbQaTQH0CJW
-	RX2e8UQAxKhFHbWCN/22fPvOA90rpYI2o0I2o1lF2hEKTGYDJe48jUL9bLpcR9PKn6NWCzSHixH
-	gwrdv7iuNUQFwPHFCKdiIGi9Av6YwHUbJzEcJfPl598UQPBnh0a6b0D5bn4Or4ZrXqBUXsL2L7z
-	ArGQldGbChy14/WtDG+siJUlvEvc3MrPzLsWNKqmquqvB3G1RExyDmjFeSoaa1LyU4WfOTGzQUE
-	Wq3J3mYdX9zVH1/mGc6F4VW5u2Cv3/jPoeKQSBgPQKAgI8xtBgx0h5z9vtx7ZU39NQQTHk26cow
-	8s6w2c7aQKRjCMIetbpUFqNFburAT35qYyJNPFuQ1E/ipyA==
-X-Received: by 2002:a05:620a:3189:b0:891:ae32:d696 with SMTP id af79cd13be357-8b29b82bdaamr491394385a.66.1762971674376;
-        Wed, 12 Nov 2025 10:21:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFmk9lfZ7Dqn8dctjmk3Q6bmGkgKiuUiM1dIje3DZrti/tFNHBsEkMGCydCnh8k8ZsuTO/tAA==
-X-Received: by 2002:a05:620a:3189:b0:891:ae32:d696 with SMTP id af79cd13be357-8b29b82bdaamr491389785a.66.1762971673918;
-        Wed, 12 Nov 2025 10:21:13 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a85e0a9sm238798185a.20.2025.11.12.10.21.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 10:21:13 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <318f1024-ba7a-4d88-aac5-af9040c31021@redhat.com>
-Date: Wed, 12 Nov 2025 13:21:12 -0500
+	s=arc-20240116; t=1762971895; c=relaxed/simple;
+	bh=uK3OTAm25/Es3W4+oaneRzHWBZP3PdoEBFUSAKd0eE4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d9mW+APbu4Hq4EQMsKDWOanOi06epBYKo6X26RtyyNu/GBxmukYR6rflpZ9c9N02K2xKjdDDg8Xe/ppF3y/m9Sfpl7ISJXEWbRxKMMfIoEZHTDKLhDirpVBUCqqp5HuvEz7msJJgcc1e6hSB1Bsag5+smWxeuIOqlrZEB5SEf/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8060F1515;
+	Wed, 12 Nov 2025 10:24:45 -0800 (PST)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BE273F63F;
+	Wed, 12 Nov 2025 10:24:51 -0800 (PST)
+From: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v3 00/25] perf arm_spe: Extend operations
+Date: Wed, 12 Nov 2025 18:24:26 +0000
+Message-Id: <20251112-perf_support_arm_spev1-3-v3-0-e63c9829f9d9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH] cgroup/cpuset: Make callback_lock a
- raw_spinlock_t
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, Chen Ridong <chenridong@huawei.com>,
- Pingfan Liu <piliu@redhat.com>, Juri Lelli <juri.lelli@redhat.com>
-References: <20251112035759.1162541-1-longman@redhat.com>
- <20251112085124.O5dlZ8Og@linutronix.de>
-Content-Language: en-US
-In-Reply-To: <20251112085124.O5dlZ8Og@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANrQFGkC/4WOQQ6CMBBFr2K6tqYzFAquvIcxBOhUukCaFomGc
+ HcLJLpSN5P8mbw3f2KBvKXAjruJeRptsP0thmS/Y01b3a7ErY6ZocBU5Ci4I2/KcHeu90NZ+a4
+ MjkbgCa8zMjozjVI1sog7T8Y+VvX5EnNrw9D75/pphGW7SQuRf5fGIbjSYCopCwDUp3g9NH23f
+ NhwLP7gAKmokyZP8lS98aXRiO8WIED90GDUoJZAUsmMoP5o5nl+AfhPUwlEAQAA
+X-Change-ID: 20250820-perf_support_arm_spev1-3-b6efd6fc77b2
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+ James Clark <james.clark@linaro.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, 
+ linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762971890; l=4088;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=uK3OTAm25/Es3W4+oaneRzHWBZP3PdoEBFUSAKd0eE4=;
+ b=y2ixQtt0MQOdT7sIMM7VD4HKk6uGxtr4Xzs+6r6u722/njjPnwDnXZ3BQuzgL1esC62nECuko
+ Jkh4PpJUBetCajuX3Ig39n4jo8cX3egV7yiPFWcmFdffU5K/pIn9CyD
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-On 11/12/25 3:51 AM, Sebastian Andrzej Siewior wrote:
-> On 2025-11-11 22:57:59 [-0500], Waiman Long wrote:
->> The callback_lock is a spinlock_t which is acquired either to read
->> a stable set of cpu or node masks or to modify those masks when
->> cpuset_mutex is also acquired. Sometime it may need to go up the
->> cgroup hierarchy while holding the lock to find the right set of masks
->> to use. Assuming that the depth of the cgroup hierarch is finite and
->> typically small, the lock hold time should be limited.
-> We can't assume that, can we?
-We can theoretically create a cgroup hierarchy with many levels, but no 
-sane users will actually do that. If this is a concern to you, I can 
-certainly drop this patch.
->> Some externally callable cpuset APIs like cpuset_cpus_allowed() and
-> cpuset_cpus_allowed() has three callers in kernel/sched/ and all use
-> GFP_KERNEL shortly before invoking the function in question.
-The current callers of these APIs are fine. What I am talking is about 
-new callers that may want to call them when holding a raw_spinlock_t.
->
->> cpuset_mems_allowed() acquires callback_lock with irq disabled to ensure
-> This I did not find. But I would ask to rework it somehow that we don't
-> need to use raw_spinlock_t as a hammer that solves it all.
+This series enhances tooling to support new operations:
 
-OK.
+  - Support for MTE tag since Arm SPE v1.3;
+  - Support for Advanced SIMD extension and SVE operations;
+  - Support memcpy, memset and GCS operations;
+  - Support extended operations for atomic, Acquire/Release and
+    Exclusive instructions.
+  - Enhance the data source for associated info, like floating-point,
+    conditional, data processing, etc.
 
-Cheers,
-Longman
+This series is divided into three parts:
 
->> stable cpuset data. These APIs currently have the restriction that they
->> can't be called when a raw spinlock is being held. This is needed to
->> work correctly in a PREEMPT_RT kernel. This requires additional code
->> changes to work around this limitation. See [1] for a discussion of that.
->>
->> Make these external cpuset APIs more useful by changing callback_lock
->> to a raw_spinlock_t to remove this limitation so that they can be called
->> from within other raw spinlock critical sections if needed.
->>
->> [1] https://lore.kernel.org/lkml/20251110014706.8118-1-piliu@redhat.com/
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Sebastian
->
+  Patches 01 ~ 06: Support raw dump for new operations;
+  Patches 07 ~ 17: Export the operation info into records, so that the
+                   information can be later consumed by samples.
+  Patches 18 ~ 25: Set the operation info into sample's data source and
+                   SIMD flag, and updated the document.
+
+This patch series is tested on FVP for native parsing and x86_64 for
+cross parsing.
+
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+Changes in v3:
+- Rebased on the latest perf-tools-next branch.
+- Link to v2: https://lore.kernel.org/r/20251017-perf_support_arm_spev1-3-v2-0-2d41e4746e1b@arm.com
+
+Changes in v2:
+- Refined to use enums for 2nd operation types. (James)
+- Avoided adjustment bit positions for operations. (James)
+- Used enum for extended operation type in uapi header and defined
+  individual bit field for operation details in uaip header. (James)
+- Refined SIMD flag definitions. (James)
+- Extracted a separate commit for updating tool's header. (James/Arnaldo)
+- Minor improvement for printing memory events.
+- Rebased on the latest perf-tools-next branch.
+- Link to v1: https://lore.kernel.org/r/20250929-perf_support_arm_spev1-3-v1-0-1150b3c83857@arm.com
+
+---
+Leo Yan (25):
+      perf arm_spe: Fix memset subclass in operation
+      perf arm_spe: Unify operation naming
+      perf arm_spe: Decode GCS operation
+      perf arm_spe: Rename SPE_OP_PKT_IS_OTHER_SVE_OP macro
+      perf arm_spe: Decode ASE and FP fields in other operation
+      perf arm_spe: Decode SME data processing packet
+      perf arm_spe: Remove unused operation types
+      perf arm_spe: Consolidate operation types
+      perf arm_spe: Introduce data processing macro for SVE operations
+      perf arm_spe: Report register access in record
+      perf arm_spe: Report MTE allocation tag in record
+      perf arm_spe: Report extended memory operations in records
+      perf arm_spe: Report associated info for SVE / SME operations
+      perf arm_spe: Report memset and memcpy in records
+      perf arm_spe: Report GCS in record
+      perf arm_spe: Expose SIMD information in other operations
+      perf arm_spe: Synthesize memory samples for SIMD operations
+      perf/uapi: Extend data source fields
+      tools/include: Sync uapi/linux/perf.h with the kernel sources
+      perf mem: Print extended fields
+      perf arm_spe: Set extended fields in data source
+      perf sort: Support sort ASE and SME
+      perf sort: Sort disabled and full predicated flags
+      perf report: Update document for SIMD flags
+      perf arm_spe: Improve SIMD flags setting
+
+ include/uapi/linux/perf_event.h                    | 32 ++++++++-
+ tools/include/uapi/linux/perf_event.h              | 32 ++++++++-
+ tools/perf/Documentation/perf-report.txt           |  5 +-
+ tools/perf/util/arm-spe-decoder/arm-spe-decoder.c  | 56 ++++++++++++++--
+ tools/perf/util/arm-spe-decoder/arm-spe-decoder.h  | 61 +++++++++--------
+ .../util/arm-spe-decoder/arm-spe-pkt-decoder.c     | 53 ++++++++-------
+ .../util/arm-spe-decoder/arm-spe-pkt-decoder.h     | 40 +++++++----
+ tools/perf/util/arm-spe.c                          | 77 +++++++++++++++++-----
+ tools/perf/util/mem-events.c                       | 66 +++++++++++++++++--
+ tools/perf/util/sample.h                           | 21 ++++--
+ tools/perf/util/sort.c                             | 21 ++++--
+ 11 files changed, 359 insertions(+), 105 deletions(-)
+---
+base-commit: da8fcfba0854dbe0b0eca465d35620c9cf4c89c1
+change-id: 20250820-perf_support_arm_spev1-3-b6efd6fc77b2
+
+Best regards,
+-- 
+Leo Yan <leo.yan@arm.com>
 
 
