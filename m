@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-897365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE19C52B85
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5619C52BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAD74A1A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9FA425D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CD32874F5;
-	Wed, 12 Nov 2025 14:17:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832DB27EFF1;
-	Wed, 12 Nov 2025 14:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC34F2F068F;
+	Wed, 12 Nov 2025 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jDGjGk2V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83252877FA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957078; cv=none; b=mr3C7dhz+1b5scruRqI5mbQzaA6xA2ZKEyV0e5J1Nb/H62/AiiYVbsOXrtqBOn9YISj1ptxTUaQd8RaJqt4EUsmTCqtBn0WvWxJRJINFYXzcvZQ2JUXCcSt2kf1V3B4YV6B6ddy0ma0FJ52rwO8thnTHvkulfiBwQ+9i24KLnzY=
+	t=1762957148; cv=none; b=YW4T8x+GgNhFhBmj0EGPJbmjD+u3IdShXslsnng4vz31w//LWSHlXI0oDG+s4CbEXsfXwzV5h2JzFKZorTxFFT0RemynIQDB9EP5d7dWHCWRQtK5gJSYeWP5vmuTxEusWAKRPDf3V6C1af7W4tFi7c1iC3yRTFVo4KCQ4FPylro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957078; c=relaxed/simple;
-	bh=yHCsSRmzIEcc2+pbJTsDiLYepFiqMay3UJUEkTzqLjQ=;
+	s=arc-20240116; t=1762957148; c=relaxed/simple;
+	bh=t+kYm055Q/4/JVRyEGrqO/ETHMRrbbqvnDg9NCLuJQA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgB2ik75bVbTosm0EGYPWF1+qG6wVz9l6fzurLVoMxulq8hc7w24E8cLmxr7BXzyJLIp4YVh/tQHbGYs/lhq9MmMb6Yz0AkRfNdBKRYv76aCvhekGz8yL0mRg5X7uI0+IARiThgKbMZjoz4FQbZIjYqS8hEyP50nA7QFE35Xh0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38B4D1515;
-	Wed, 12 Nov 2025 06:17:48 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9D563F5A1;
-	Wed, 12 Nov 2025 06:17:52 -0800 (PST)
-Date: Wed, 12 Nov 2025 14:17:49 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Chenghai Huang <huangchenghai2@huawei.com>, arnd@arndb.de,
-	catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
-	anshuman.khandual@arm.com, ryan.roberts@arm.com,
-	andriy.shevchenko@linux.intel.com, herbert@gondor.apana.org.au,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, fanghao11@huawei.com,
-	shenyang39@huawei.com, liulongfang@huawei.com, qianweili@huawei.com
-Subject: Re: [PATCH RFC 4/4] arm64/io: Add {__raw_read|__raw_write}128 support
-Message-ID: <aRSXDTT44_3iutEg@J2N7QTR9R3>
-References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
- <20251112015846.1842207-5-huangchenghai2@huawei.com>
- <aRR9UesvUCFLdVoW@J2N7QTR9R3>
- <20251112140157.24ff4f2e@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsjO0zVhTM3UQCvsNiChkb7eMt37DfjDDpaSZhcw86e4mnGyZgqFLSk1hm2Mw7n26YO1/z0EQgiTlMUtNUs+iYBpBItg7tdX7wSoXxfQ6yyL3ei5TPkapOc1Zd5IdRl0r5DqygZBwwu3AWkZRngNfNfMJ30DNXERWLlaezKsZ10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jDGjGk2V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762957145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=11dzZTZID/e9Yjzv4yjI8lw4KBQwSPfbDNh4cEy8sp8=;
+	b=jDGjGk2VLJxpedzvnGx57he/N71EIxAXtqYCUCBFHpbFBYS7pt8qoBwjkGjr6+Avh/gq5n
+	exjLedoADXOSMi4QtyuncG7QcsHsH4MOUO+1nmJKito57FKpCRLfPQGH0XzMjoyeEcoi9K
+	zohE7GLsg45MgxSgM3XveaRyOcNujJg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-387-XOLzT4QWP0C5oz8QabkWEQ-1; Wed,
+ 12 Nov 2025 09:19:02 -0500
+X-MC-Unique: XOLzT4QWP0C5oz8QabkWEQ-1
+X-Mimecast-MFC-AGG-ID: XOLzT4QWP0C5oz8QabkWEQ_1762957141
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 785BA18002C2;
+	Wed, 12 Nov 2025 14:19:00 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.179])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BECD31800947;
+	Wed, 12 Nov 2025 14:18:52 +0000 (UTC)
+Date: Wed, 12 Nov 2025 22:18:40 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: hch <hch@lst.de>
+Cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	"Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+	Keith Busch <kbusch@kernel.org>, Dave Chinner <david@fromorbit.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Message-ID: <aRSXQKgkV55fFtNG@fedora>
+References: <20251031130050.GA15719@lst.de>
+ <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de>
+ <20251104233824.GO196370@frogsfrogsfrogs>
+ <20251105141130.GB22325@lst.de>
+ <20251105214407.GN196362@frogsfrogsfrogs>
+ <9530fca4-418d-4415-b365-cad04a06449b@wdc.com>
+ <20251106124900.GA6144@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251112140157.24ff4f2e@pumpkin>
+In-Reply-To: <20251106124900.GA6144@lst.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Nov 12, 2025 at 02:01:57PM +0000, David Laight wrote:
-> On Wed, 12 Nov 2025 12:28:01 +0000
-> Mark Rutland <mark.rutland@arm.com> wrote:
+On Thu, Nov 06, 2025 at 01:49:00PM +0100, hch wrote:
+> On Thu, Nov 06, 2025 at 09:50:10AM +0000, Johannes Thumshirn wrote:
+> > On 11/5/25 10:44 PM, Darrick J. Wong wrote:
+> > > Just out of curiosity -- is qemu itself mutating the buffers that it is
+> > > passing down to the lower levels via dio?  Or is it a program in the
+> > > guest that's mutating buffers that are submitted for dio, which then get
+> > > zerocopied all the way down to the hypervisor?
+> > 
+> > If my memory serves me right it is the guest (or at least can be). I 
+> > remember a bug report on btrfs where a Windows guest had messed up 
+> > checksums because of modifying inflight I/O.
 > 
-> > On Wed, Nov 12, 2025 at 09:58:46AM +0800, Chenghai Huang wrote:
-> > > From: Weili Qian <qianweili@huawei.com>
-> > > 
-> > > Starting from ARMv8.4, stp and ldp instructions become atomic.  
-> > 
-> > That's not true for accesses to Device memory types.
-> > 
-> > Per ARM DDI 0487, L.b, section B2.2.1.1 ("Changes to single-copy atomicity in
-> > Armv8.4"):
-> > 
-> >   If FEAT_LSE2 is implemented, LDP, LDNP, and STP instructions that load
-> >   or store two 64-bit registers are single-copy atomic when all of the
-> >   following conditions are true:
-> >   • The overall memory access is aligned to 16 bytes.
-> >   • Accesses are to Inner Write-Back, Outer Write-Back Normal cacheable memory.
-> > 
-> > IIUC when used for Device memory types, those can be split, and a part
-> > of the access could be replayed multiple times (e.g. due to an
-> > intetrupt).
-> 
-> That can't be right.
+> qemu passes I/O through, so yes it is guest controller.  Windows is most
+> famous, but the Linux swap code can trigger it easily too.
 
-For better or worse, the architecture permits this, and I understand
-that there are implementations on which this can happen.
+Looks buffer overwrite is actually done by buggy software in guest side,
+why is qemu's trouble? Or will qemu IO emulator write to the IO buffer
+when guest IO is inflight?
 
-> IO accesses can reference hardware FIFO so must only happen once.
 
-This has nothing to do with the endpoint, and so any FIFO in the
-endpoint is immaterial.
+Thanks,
+Ming
 
-I agree that we want to ensure that the accesses only happen once, which
-is why I have raised that it is unsound to use LDP/LDNP/STP in this way.
-
-> (Or is 'Device memory' something different from 'Device register'?
-
-I specifically said "Device memory type", which is an attribute that the
-MMU associates with a VA, and determines how the MMU (and memory system
-as a whole) treats accesses to that VA.
-
-You can find the architecture documentation I referenced at:
-
-  https://developer.arm.com/documentation/ddi0487/lb/
-
-> I'm also not sure that the bus cycles could get split by an interrupt,
-> that would require a mid-instruction interrupt - very unlikely.
-
-There are various reasons why an implementation might split the accesses
-made by a single instruction, and why an interrupt (or other event)
-might occur between accesses and cause a replay of some of the
-constituent accesses. This has nothing to do with splitting bus cycles.
-
-Mark.
 
