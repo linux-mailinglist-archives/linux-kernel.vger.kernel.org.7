@@ -1,157 +1,205 @@
-Return-Path: <linux-kernel+bounces-897809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D81C53A47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE93C53A68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E780346070
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:18:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E942348294
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B158B347BA9;
-	Wed, 12 Nov 2025 17:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930F5345CDE;
+	Wed, 12 Nov 2025 17:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpRL7Cxr"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YLA/+EdJ"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3876B346E64
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234BD345759
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967816; cv=none; b=fv8ccqOgxbFUmpAw1oPBdkaHjFfk0B5PMDq6mHL5t2UPa9CznF+dDAy0nGoko8wpABCND8FMjwC5CfzdeLaxusVMvpIq2+TSl6q406X7hi2etvTBdgE06n3cBUAnnZX+IqrQWcvlsD9PH1YML+SrNEeID3INp2oDVxxUgcvfBQE=
+	t=1762967912; cv=none; b=dTP2OgFen5oJLBsGkI9HUNj7MD5w03tDsLjhEoukUS9YwqD/bgE3j9mQPrppGGlBEI6hPXVITBTQDfw0awfTZiQH3/StDBXZFEgMz+HOIydsHFTzo1PLivhVVszMo90U3LcrjFwc0iZHaQoVN8ad0CUROFIOYdQmMFxvxapYv5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967816; c=relaxed/simple;
-	bh=iiMESZBmokR5+/LPNrjKbowyRucTsoIMCT4ESK7O004=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=ItqSIdC8xPtQPjOBvgyq4hB3XV++pRsv/9MbVT9xYFfkESmLCUkTK3LCduhxQ1WsuDwJh9aXptdjODcJglhPAbGdoSmist0tWjU0D++9fce02Q6wN5vI8hdUCqvlVXl14Rk3Po/2k/RwKMMvQhbj1A1gWf2mub2MPtN2PbrnfWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GpRL7Cxr; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4775e891b5eso5759775e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:16:54 -0800 (PST)
+	s=arc-20240116; t=1762967912; c=relaxed/simple;
+	bh=ks+sEAj6GQVaXnYu8XaFbXtzxs88Lg0JjUVI5fWnGOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cRIjQG0mA49aAGdvaFc+2bjFIwRLd+aTyO8vCtruq/1N23yTYL43HFQCJK5c3QYzdeEadKIhm2GXDcBpRDlts8/sCaHwg2x0dZTyBPQeLfF+yatzDfrRH8spp7lGP6vuiB9nz1w9yYPZvvSSEqQdW5nhbCZmQPA9ydJ60KrzZKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=YLA/+EdJ; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b713c7096f9so134779266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762967813; x=1763572613; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iiMESZBmokR5+/LPNrjKbowyRucTsoIMCT4ESK7O004=;
-        b=GpRL7CxrRFx5sPYkiKaq/kIXW2ATW/s4UELrw2+KcNS1tux0hR5+SULsz1oK5AKVzb
-         y+6o89hQwQXNnh3XjlmX7zFFtdrymI6+dXRIMENF/FdKv1EaWpXgjav7afrOR0+Cn4wj
-         Kv1y0KEF+JmyUYuIp0a59um1mMV68r5DjwqLQvDFHN7jMIHA1A4cVazTBWD3BAUBswOr
-         0njPJ+8m94dSgcDeCgMzK5s+s6oLaaROCytaVWkolVQb5awzdWdalgBNPnNdHjr1lS0G
-         ad2ygOSlLwTpums6JBsynHkuwH4A99ZqGhUgJ8UwVgsMrnV5uXWDxls+H4fRKLjOz40o
-         +cew==
+        d=amarulasolutions.com; s=google; t=1762967909; x=1763572709; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BwUXFYlbD6N53XtEJgB9mVWjzWl6gDwebbOYaZsPHA=;
+        b=YLA/+EdJVvYgrdtPoXSvu0FA7rDh57Q+Nsdr5LGJ0h16BfAivyzZQw2arCnsIEZ15d
+         qeEcoG28Zvs69rsGA+yIpG4oP8pZ4Ds2mFW4aG8AZ2mgCYaiL1URDRi6N/RxNCXHfHAL
+         o8wvp/MY7D/HfEHF3HKdlhUVT4Sy1hVpjjwEo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762967813; x=1763572613;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iiMESZBmokR5+/LPNrjKbowyRucTsoIMCT4ESK7O004=;
-        b=s9k7aPB3TXw2pBUxRLPEOYggJSWfdnBx/NLNiUAxb23g56Lyj7uKduHIeFbtGZn6LS
-         hAGScQ8oYWzUnKKRQqYohZhe7kpmKA7kaByIm9zbCYLbm4f0f3+Uv5DgYbqwvqYVavE+
-         rMw8wxBFMkElXTN539YBd1+MBvmT/TTUWfH2wV/TN8S4zq52+r+VAAxZXc0LvhdXZuaA
-         uPI2RqrpAiZwG/0WIjc4IoeTaEHu2pxMcuk/aXyhFmgMJcOiQ2sSZfyuVXJXuL6hvSmq
-         pWamMWgsztcLlZVgZOOA25m7AORS46F5v8RCkwWNKFsp+zKH3InGtXQ4cp8uQcNy9v++
-         CMAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Yi+r62kWVxWzjo1MVm+ohPuQlEJPiKKQQxfytkccBlDf6u/9tjVWColoVqxvCS0ZNsuRLvUqy5H/IdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgIs8Th83BydL4LhXj1Xu91IDSciUfLLXJZimRxD9pSv0sCRyL
-	jkfKB/hIUIu+bEVdHlma/Lmt19JfVDV0Ct2wyvCJGnruKt572cTvMTK7ScSxYoSZjlo=
-X-Gm-Gg: ASbGncvexjWcaQU02coJnTDti63sY+q+ezvsL2B6Su+Huf+gsZxjVr9v4duBWMuQrUx
-	nFN7az+Mwfg/TvVRRIczgu3fKpv+f+wM/UTPLxr1h7ofvr7JvG+tJ8WzelXO/EQKgqkteVikK7L
-	pMI8ujNBka/tl5sQkW3F5itT8cLIRk5+4XFa0y4xLbB3PO7eTdZ/Xr3R0GttYGoDR98L2UGf+OJ
-	GspOTxN3ekIk34WN6IhbHlN849cN8410cVyV0HYnXjWJ9OwNfMkl/o9yPkkflZ7Q+Qg3nzf3WyA
-	Bu0/oKLewVxCsEMZ7CuoEwDJYraRQf5Ps+00cmITgXodpcH7tpn49VWXN2YVlZLDHVgv/2+0F3k
-	wuAxHWh5sEXPbo0Gwa9HUqEIL0e5n2Ti9Jtxx9VQGJxzbvcOOAXrCxQFUvDo8zlMaPEJv4jJWsR
-	wxWKn3
-X-Google-Smtp-Source: AGHT+IFK1LEgbdoe82XE3jZoJK10kkTDE6sfjAoioDSlpzb+hbqMgzQ5j6+nhIYvnoRpyBG+UEDLMg==
-X-Received: by 2002:a05:600c:45c4:b0:477:542a:7ed1 with SMTP id 5b1f17b1804b1-477870b9237mr36446515e9.19.1762967812580;
-        Wed, 12 Nov 2025 09:16:52 -0800 (PST)
-Received: from localhost ([2a02:c7c:7259:a00:4fbd:5c9b:d8a2:ee64])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e51f54sm45322705e9.8.2025.11.12.09.16.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 09:16:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762967909; x=1763572709;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5BwUXFYlbD6N53XtEJgB9mVWjzWl6gDwebbOYaZsPHA=;
+        b=cgJUYKHAkAMAKX70ICPYEXGSyt6sYfBEG8BGdg7ZRQpIm3Z0KnudRQEAhfQi+B8zyd
+         c04G5cF7ooFOdB+x2K+s+FWC6Jvs9Zzq6yPuxcj2Ky6H5DKX2inR12pg4toFXoIZ17V+
+         EAPCWK/H+m2pWTGTytYrGslKKdlUQTW8K9D04VDs/opCICyPRqxJP5wNmuoVM68Say1+
+         qCBaQhN4sI0TGa7XFj77Lqbr9mgGYmI0tiOYrmNARMMBEYB0wv1IKkMLQAhb52E/d81t
+         tuhwJVYxoWcC+SD/TemjJdQJmxBjxV0EbDFH1frh9arOinCRZiNO//LzT52SsajhAGP/
+         JSGw==
+X-Gm-Message-State: AOJu0Yw7dW3vs9Sx6B/dP7twh90ONsYsWR/zlY6OcS49z0NlVOp3iqrF
+	wWqfYrwucV8/HWi8vpMKaehzR35PBqrfVndAPWDPaV6cO8J7fp/resN2OuO+eOpx+QAX4SqKCCK
+	5buMg
+X-Gm-Gg: ASbGncuXCuAeo3XEQFwYJMzbQjgHDObgz46AR97zagW4XlD/IXoOCh1DZNCXR9aizkR
+	G5KP2g3DQlrmy2LdWqpU8RNe5+uG9aiAgcxGcdHcThDVujKqreIhiT+KHjqViOOXaxPP7hk7ltK
+	v9nnXgeC8PuI52NLgh/SuB4Fe9c4UW3q1bvWjeZouHPg9IqHy23nAsuVO5ks8tBaGx5HSA/kpeP
+	ZITl9BoLjroe6qd8BT+4+aDRDz3qS1c4jhyl6Z4Fi5NQAOFoWPOQdjPbyXjwCJ47jRwAaNOHJ+i
+	3gpQ8HFPmk+/9sK9xkBdRf+7nhsUc4QJ+DpbuErIzcwVyAO0FUmii3GTXV6BEzSEYBY2aClSTBp
+	bz59l0shBAq/Zm31DxjsOriS3zKPveoDOC64O6pC9/K7GniL1AJ8+A1dSN46BvRnPRwbSrMQ4yC
+	Nd9EnDsSOkIWSHPdhcMNAfTxJ5SZ+TRlOonED/Za63pNikM77QpC6fE8uKOIZoNhADJK6WKJZVQ
+	/CCZMEws2Eoww7Xr8q/xXB8ANI+0aStdhLM/5f1kmBq
+X-Google-Smtp-Source: AGHT+IGY2/902SKJFzIS3Gu24NoIxJSLCSqdXyB/GpWGp3CPdaOhQYc9wwsjQIgb8wLhfnUpqSpx5w==
+X-Received: by 2002:a17:907:6d0d:b0:b70:b5b9:1f82 with SMTP id a640c23a62f3a-b7331a6ef31mr445484266b.31.1762967909196;
+        Wed, 12 Nov 2025 09:18:29 -0800 (PST)
+Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-79-54-71-163.retail.telecomitalia.it. [79.54.71.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b73381dd3besm180731866b.43.2025.11.12.09.18.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 09:18:28 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-amarula@amarulasolutions.com,
+	Frank Li <Frank.Li@nxp.com>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH v2 1/2] ARM: dts: imx28-amarula-rmm: add I2S audio
+Date: Wed, 12 Nov 2025 18:17:12 +0100
+Message-ID: <20251112171820.4046537-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Nov 2025 17:16:51 +0000
-Message-Id: <DE6VXJQPNX0Z.1LE0XW9T5T1LR@linaro.org>
-Subject: Re: [PATCH v3 06/12] ASoC: codecs: add wsa881x-i2c amplifier codec
- driver
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srini.kernel@gmail.com>, "Srinivas Kandagatla"
- <srini@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- <linux-sound@vger.kernel.org>
-Cc: "Mark Brown" <broonie@kernel.org>, <linux-sound@vger.kernel.org>, "Liam
- Girdwood" <lgirdwood@gmail.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Bjorn Andersson" <andersson@kernel.org>, "Dmitry Baryshkov"
- <lumag@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Konrad
- Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Jaroslav Kysela"
- <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
- <20250522-rb2_audio_v3-v3-6-9eeb08cab9dc@linaro.org>
- <1c7d62f5-1816-4ecf-9376-2751ec06830b@gmail.com>
-In-Reply-To: <1c7d62f5-1816-4ecf-9376-2751ec06830b@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hello Srini,
+Add support for I2S audio on Amarula rmm board. Audio codec
+TLV320AIC3X is connected as slave to SAIF0, which provides
+bitclock, frame and MCLK.
 
-On Thu May 29, 2025 at 11:05 AM BST, Srinivas Kandagatla wrote:
->
-> On 5/22/25 6:40 PM, Alexey Klimov wrote:
->> Add support to analog mode of WSA8810/WSA8815 Class-D Smart Speaker
->> family of amplifiers. Such amplifiers are primarily interfaced with
->> SoundWire but they also support analog mode which is configurable by
->> setting one of the pins to high/low. In such case the WSA881X amplifier
->> is configurable only using i2c.
->>=20
->> To have stereo two WSA881X amplifiers are required but mono
->> configurations are also possible.
+Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-[...]
+---
 
->> --- /dev/null
->> +++ b/sound/soc/codecs/wsa881x-i2c.c
+Changes in v2:
+- Rename the codec node to audio-codec@18
+- Drop an unnecessary newline
 
-[..]
+ .../boot/dts/nxp/mxs/imx28-amarula-rmm.dts    | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
->> +struct reg_default wsa881x_ana_reg_defaults[] =3D {
->
-> This does not make sense.
->
-> All the regmaps should be same, it should not change with the change in
-> interface from SWD to I2C.
->
-> Could you calrify this before we start reviewing rest of the driver.
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts b/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
+index af59211842fb..ddb64f3d0471 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
+@@ -112,6 +112,29 @@ reg_usb1_vbus: regulator-usb1-vbus {
+ 		enable-active-high;
+ 		regulator-always-on;
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "imx28-mrmmi-tlv320aic3x-audio";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&cpu_dai>;
++		simple-audio-card,frame-master = <&cpu_dai>;
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPROUT",
++			"Headphone Jack", "HPRCOM";
++		simple-audio-card,mclk-fs = <512>;
++
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&saif0>;
++			clocks = <&saif0>;
++		};
++
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&tlv320aic3x>;
++		};
++	};
+ };
+ 
+ &auart0 {
+@@ -154,6 +177,19 @@ &i2c0 {
+ 	pinctrl-0 = <&i2c0_pins_a>;
+ 	status = "okay";
+ 
++	tlv320aic3x: audio-codec@18 {
++		compatible = "ti,tlv320aic3x";
++		pinctrl-names = "default";
++		pinctrl-0 = <&tlv320aic3x_pins>;
++		reg = <0x18>;
++		reset-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		DVDD-supply = <&reg_1v8>;
++		IOVDD-supply = <&reg_3v3>;
++		AVDD-supply = <&reg_3v3>;
++		DRVDD-supply = <&reg_3v3>;
++	};
++
+ 	touchscreen: touchscreen@38 {
+ 		compatible = "edt,edt-ft5306";
+ 		reg = <0x38>;
+@@ -246,6 +282,14 @@ MX28_PAD_PWM1__GPIO_3_17
+ 		fsl,voltage = <MXS_VOLTAGE_HIGH>;
+ 	};
+ 
++	tlv320aic3x_pins: tlv320aic3x-pins@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <MX28_PAD_SSP0_DATA4__GPIO_2_4>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,pull-up = <MXS_PULL_ENABLE>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++	};
++
+ 	usb0_vbus_enable_pin: usb0-vbus-enable@0 {
+ 		reg = <0>;
+ 		fsl,pinmux-ids = <MX28_PAD_SSP0_DATA5__GPIO_2_5>;
+@@ -269,6 +313,12 @@ &pwm {
+ 	status = "okay";
+ };
+ 
++&saif0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&saif0_pins_a>;
++	status = "okay";
++};
++
+ /* microSD */
+ &ssp0 {
+ 	compatible = "fsl,imx28-mmc";
+-- 
+2.43.0
 
-It was sent initially in nov 2024 I guess and that one was v3. v2 was
-sent in December 2024.
-
-I am currently reimplementing this. I obviously agree that registers
-are the same but why we should be 100% sure that regs defaults
-should be the same if the mode is different?
-
-Or do you suggest/expect that, for instance, analog defaults should be
-kinds applied on top of common (swd) default values?
-
-
-[....]
-(The rest of original email was sent and quoted but I did not
-see any comments there, so I removed it but if I missed smth there
-please let me know)
-
-Thanks,
-Alexey
-
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+branch: imx28-amarula-rmm-audio
 
