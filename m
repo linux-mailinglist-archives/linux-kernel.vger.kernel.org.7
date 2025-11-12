@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-897858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECFDC53CC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:52:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6ABC53D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26F98344919
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C633AFC96
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F44348894;
-	Wed, 12 Nov 2025 17:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C6934A3D3;
+	Wed, 12 Nov 2025 17:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XKEtv3y1"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDnJu9Af"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD8023BCEE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8503234A3B4
 	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762969927; cv=none; b=a6jsIZ9QB2lL5YtmhgYSNJ2tkpCVFMwT/qNvzdws6tP0Bxy/ypw/Ua3upzBY6dcVodrmXoMQpkiieql9chA0y1GBoyjobLYLeTaO2U7uHlkD/8Cp/bcDDxadZjpmYUEiivQ8/Q4Hfkv90wAkyJanuZsw7MB336hJRhnCMdRFSwg=
+	t=1762969930; cv=none; b=PjIT6ibhC+KtJQlmFINrTvvBKQ08ivga+h4GROmRESn/cC+vXWaoZnSLM56kNGFKxIRi/aDn9zmyXx81+MWzNV+dC8H3qFXzjwROVJXTYz9OGlv+MFxKygRFLDumkwGjH6wwD5vnm4WHYVMoT3zXmz4qeVoYKLcRM/T2cliKPXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762969927; c=relaxed/simple;
-	bh=1nPIUcHHQkGuDuEReWgowmjbEJHx+aY1oV5caXaVwD0=;
+	s=arc-20240116; t=1762969930; c=relaxed/simple;
+	bh=IEvwMKkKXtZ0S5o2YnRCpT0QBAI9Zo4ZHkRNv970Q+I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N74LHzEb0kfI6yfXxv3YzH1096XhZwwKXFURpnofAaOD5MFLE7RSLEAo7RLS/1WubmfiuPeY6oeKSTAM/lNjZaqKo7dH3FRdwjiK3yl5kNjJK6wqiIH7bKArlTelPz6HR7ynHQB7VdiceSryUZYHI+fjGi455cBQhLNYuW+1E6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XKEtv3y1; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5943d1d0656so1494736e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762969924; x=1763574724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BWA7RPE90uWMLfiUEvRQf9rnUzfEKRuTRKW0waWBvtU=;
-        b=XKEtv3y1lmMBy21nO7bUwZlqqwhAgY3EHrrg2Awcz68fMxOKN5XczXaFGI98PzTCr6
-         gn7Cep0VSXXysm0l9qOa2n9Z+/s6pTpENot4pfWqWc9Rj9fjzeGC4gIRDNmKtz3pftmv
-         aWoklNBjcd92QRC4skOp3ocOJjsUDaJEJSsrROeHJTmJaPnO892x3E4sl4kvYZPsoIG8
-         3R9scMz8B7NmaM37OwZBoF1E5DyOqT0nDRwP2o5Ca7yMycGJAQdhjq4vkqJnt7o3ij87
-         voDzFXSOoj1r4i6nJV51xWKDMrX1hJcUbQMdbRtPCyBdRHjJVN6QlU/2dxeZn5sKGGQ3
-         uihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762969924; x=1763574724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BWA7RPE90uWMLfiUEvRQf9rnUzfEKRuTRKW0waWBvtU=;
-        b=mLvEqlR0ZDnC7IfZr62A4d2R6dnlPHlWgxEM361CiKONWwm1OYFpLItgCbDrlFQxKl
-         rUqnElFKTeTM56F2pKsxa1Wk8HOMLX1r9JFYdjxdoQERPrF+ZtlmkPk7dm26QUvWF+TF
-         60dgD0epkKFQCaizU+i65KtHo8ai56mqzxSYGkzlEIzLNA05opyWK9AAOsl0UlEJM3MQ
-         wCv0cK9Im13EhQlSjKpdgcWYJirJ0WTtbNBFDsYD4So9YUMZOE2VodoJsWXFfN5Wm80B
-         VmM+Ab3SOezs4u8dq7j+WxASGI5r74p/p9axdDiI9E/fic3eAh5WYpCipBOBaPl6a5Pk
-         aPMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxRXRErKHDeG/WfpFeNO0PZXPlKgbpZ42YdzbIrnq1DY4ZGdzQHaoEUgfj7mhn6LoE5dfvF9omd04cCNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbnXkGOwaOiyAvdmqa2uwl81LGvGv9Gc7om2ECzCBgiX8Pai4
-	WBPIgXWDTnqb0/r0bnAyXcAEiDn1m5WYDNuLSmCgy3HGTqnKfwYaC0JxmtoczoOe4qqVW5ppenJ
-	nljAom3tttOcpW468x+J/dwW54SghV2x+SSD+FYEm
-X-Gm-Gg: ASbGncvXQ/2tgdPEOItsED4JDWDhDHBpgewJrRmXzgvnIycsStCKF273Ei83BGH3ODI
-	hMJJqsjL6N/0ZXSRuXTH7o37YTUX2oYPbQhignQ0hgxUBeFNKXdxAbx70N70UGd630p6MaDxZL0
-	9+02NS+l2OGcrixPQt69featRr/S0ZpwbLppgKPqJDGHRIJ8lmORjNniO7fHF2o1JjGxA4YcABL
-	OVr2e+ZiqfItZLIVi7fe3O3kxxc1Vdxq8CVwDZb1dvKXJysYiUOLa+8XXZkccr+h6/6m2c=
-X-Google-Smtp-Source: AGHT+IGZlui+q5RWh2nUGIJx37r549PQ7MH8JxhyuFkGiNy9V2zSJZ657BZLVXRVqOqTvVTllHIpqyOu4vKlX8Ljo0M=
-X-Received: by 2002:a05:6512:1318:b0:591:ec0f:fa92 with SMTP id
- 2adb3069b0e04-59576df34f9mr1398580e87.3.1762969923158; Wed, 12 Nov 2025
- 09:52:03 -0800 (PST)
+	 To:Cc:Content-Type; b=S0Iq+yQ6Zh3rh4HWtq1Aw/uB9JJavMRl8E1fU89kit2u1wXdOxztT/t0Sc/53w6wIV7OgI43aPv4QilY9ddHq3APCC9vuPZ7b8KniCdqEspeCJDTni2c3vZMHt4TfT3qQgow7gDGv7WWLi3z+Twf0+xLlcgSCwAqQJnkNNnVekQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDnJu9Af; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE9FFC19422
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762969925;
+	bh=IEvwMKkKXtZ0S5o2YnRCpT0QBAI9Zo4ZHkRNv970Q+I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WDnJu9Af99ZYWJ59d75P9C8QPUm+ssH1qPUtYo24Gddqg1PvKGoBOBnOV5FlTPmMv
+	 VY3hyGROQvdYtzMKuAhH10gHwFb5hkLMy1z+MRdVklAc906pYKi4RRblERcPi7aUby
+	 /V9AByUXe2PAeJkqDtBrLn8NcN41SWN1Wp//1LnWtQGAM491cWp3VU6M5ZTXYnLJ7i
+	 WAAwameP2MtBrxoTFkd4Hjm7dVaiUpP6dq8qlkVcRyon6rkm1I/smE7t4lKXRpXNLr
+	 J5sbty6H8ldzaJj6NeODQG+GRCGLluDOH+hCVVH6D2SSFdcxezO3uN32rL54t1YYtQ
+	 zr44zBnjtS62Q==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-656e585587bso304865eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:52:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX6K4ReephPIFEhxXZW7iWh6SR0bLoJcMHm64Namwv4X18TOWjqZAMj2mx1iOr+TM+6zTQ9CEeOJsaYlp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYZ+WD9fPw63dtf0H/H51QyFqX133807k3a7KuHFp4DMux4pDf
+	OmKTOQ6eioRZ9/aEckjZjgyKEvCwgSBCGM8GJIyrPMby/wrZ4uFI797Rz+Q5xjCPCRw1xOBOVwG
+	8EyWyE8pAenjhjfOF4vK/I3+MXWyMqNA=
+X-Google-Smtp-Source: AGHT+IFR3hyHgNt26OFh3wUxHI3FcE3zfaO/9A+tZKXN7bAZKVmFPcjRr/ln/hl75qJgJjehtDvvoMd+IZEGWc3HOrw=
+X-Received: by 2002:a05:6808:2207:b0:44f:eb07:5042 with SMTP id
+ 5614622812f47-450745a8dd0mr1455737b6e.44.1762969924233; Wed, 12 Nov 2025
+ 09:52:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
- <CALzav=cmkiFUjENpYk3TT7czAeoh8jzp4WX_+diERu7JhyGCpA@mail.gmail.com> <aRTGbXB6gtkKVnLo@devgpu015.cco6.facebook.com>
-In-Reply-To: <aRTGbXB6gtkKVnLo@devgpu015.cco6.facebook.com>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 12 Nov 2025 09:51:35 -0800
-X-Gm-Features: AWmQ_bnMhC8vCEPOclLuVLWYsWBnpTFPjnWiWBSvozOncRXWquyM5KNqmbyfacg
-Message-ID: <CALzav=fwE2kPqJUiB2J20pK5bH_-1XvONQXz1DpsMSOCKa=X+g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <4701737.LvFx2qVVIh@rafael.j.wysocki> <3396811.44csPzL39Z@rafael.j.wysocki>
+ <a5de1eca-494e-4624-a86b-bf917e562a08@arm.com>
+In-Reply-To: <a5de1eca-494e-4624-a86b-bf917e562a08@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Nov 2025 18:51:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jcGsFh1ATM-Aw1oxZy-zazm+GaMUC4gwEaCskn9V-amg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmgEEYg_K8uXr1lAtgFDVf8su_16ZHt58HqVct8RHZz6xjsFZ1f5ysnV7Q
+Message-ID: <CAJZ5v0jcGsFh1ATM-Aw1oxZy-zazm+GaMUC4gwEaCskn9V-amg@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] cpuidle: governors: teo: Decay metrics below
+ DECAY_SHIFT threshold
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 9:40=E2=80=AFAM Alex Mastro <amastro@fb.com> wrote:
+On Wed, Nov 12, 2025 at 6:29=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
 >
-> Hey David, is vfio_pci_driver_test known to be in good shape? Both on the=
- base
-> commit and after my series, I am seeing below, which results in a KSFT_SK=
-IP.
-> Invoking other tests in a similar way actually runs things with expected
-> results (my devices are already bound to vfio-pci before running anything=
-).
+> On 11/12/25 16:25, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If a given governor metric falls below a certain value (8 for
+> > DECAY_SHIFT equal to 3), it will not decay any more due to the
+> > simplistic decay implementation.  This may in some cases lead to
+> > subtle inconsistencies in the governor behavior, so change the
+> > decay implementation to take it into account and set the metric
+> > at hand to 0 in that case.
+> >
+> > Suggested-by: Christian Loehle <christian.loehle@arm.com>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/governors/teo.c |   20 +++++++++++++++-----
+> >  1 file changed, 15 insertions(+), 5 deletions(-)
+> >
+> > --- a/drivers/cpuidle/governors/teo.c
+> > +++ b/drivers/cpuidle/governors/teo.c
+> > @@ -148,6 +148,16 @@ struct teo_cpu {
+> >
+> >  static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
+> >
+> > +static void teo_decay(unsigned int *metric)
+> > +{
+> > +     unsigned int delta =3D *metric >> DECAY_SHIFT;
+> > +
+> > +     if (delta)
+> > +             *metric -=3D delta;
+> > +     else
+> > +             *metric =3D 0;
+> > +}
+> > +
+> >  /**
+> >   * teo_update - Update CPU metrics after wakeup.
+> >   * @drv: cpuidle driver containing state data.
+> > @@ -159,7 +169,7 @@ static void teo_update(struct cpuidle_dr
+> >       int i, idx_timer =3D 0, idx_duration =3D 0;
+> >       s64 target_residency_ns, measured_ns;
+> >
+> > -     cpu_data->short_idles -=3D cpu_data->short_idles >> DECAY_SHIFT;
+> > +     teo_decay(&cpu_data->short_idles);
+> >
+> >       if (cpu_data->artificial_wakeup) {
+> >               /*
+> > @@ -195,8 +205,8 @@ static void teo_update(struct cpuidle_dr
+> >       for (i =3D 0; i < drv->state_count; i++) {
+> >               struct teo_bin *bin =3D &cpu_data->state_bins[i];
+> >
+> > -             bin->hits -=3D bin->hits >> DECAY_SHIFT;
+> > -             bin->intercepts -=3D bin->intercepts >> DECAY_SHIFT;
+> > +             teo_decay(&bin->hits);
+> > +             teo_decay(&bin->intercepts);
+> >
+> >               target_residency_ns =3D drv->states[i].target_residency_n=
+s;
+> >
+> > @@ -207,7 +217,7 @@ static void teo_update(struct cpuidle_dr
+> >               }
+> >       }
+> >
+> > -     cpu_data->tick_intercepts -=3D cpu_data->tick_intercepts >> DECAY=
+_SHIFT;
+> > +     teo_decay(&cpu_data->tick_intercepts);
+> >       /*
+> >        * If the measured idle duration falls into the same bin as the s=
+leep
+> >        * length, this is a "hit", so update the "hits" metric for that =
+bin.
+> > @@ -222,7 +232,7 @@ static void teo_update(struct cpuidle_dr
+> >                       cpu_data->tick_intercepts +=3D PULSE;
+> >       }
+> >
+> > -     cpu_data->total -=3D cpu_data->total >> DECAY_SHIFT;
+> > +     teo_decay(&cpu_data->total);
+> >       cpu_data->total +=3D PULSE;
 >
-> base commit: 0ed3a30fd996cb0cac872432cf25185fda7e5316
->
-> $ vfio_pci_driver_test -f 0000:05:00.0
-> No driver found for device 0000:05:00.0
->
-> Same thing using the run.sh wrapper
->
-> $ sudo ./run.sh -d 0000:05:00.0 ./vfio_pci_driver_test
-> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
-> + echo "vfio-pci" > /sys/bus/pci/devices/0000:05:00.0/driver_override
-> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
->
-> No driver found for device 0000:05:00.0
-> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/unbind
-> + echo "" > /sys/bus/pci/devices/0000:05:00.0/driver_override
-> + echo "0000:05:00.0" > /sys/bus/pci/drivers/vfio-pci/bind
->
-> device =3D vfio_pci_device_init(device_bdf, default_iommu_mode);
-> if (!device->driver.ops) {
->         fprintf(stderr, "No driver found for device %s\n", device_bdf);
->         return KSFT_SKIP;
-> }
->
-> Is this meant to be a placeholder for some future testing, or am I holdin=
-g
-> things wrong?
+> This will result in total no longer being a strict sum of the bins.
 
-What kind of device are you using?
+Ah, good point.
 
-This test uses the selftests driver framework, so it requires a driver
-in tools/testing/selftests/vfio/lib/drivers to function. The driver
-framework allows tests to trigger real DMA and MSIs from the device in
-a controlled, generic, way.
+> Any reason not to do something like:
 
-We currently only have drivers for Intel DSA and Intel CBDMA
-devices.So if you're not using one of those devices,
-vfio_pci_driver_test exiting with KSFT_SKIP is entirely expected.
+Well, it would be more straightforward to just compute "total" from
+scratch instead of using total_decay (it would be the same amount of
+computation minus the teo_decay() changes AFAICS).
 
-I would love to add support for more devices. Jason Gunthrope
-suggested supporting a driver for mlx5 class hardware, since it's
-broadly available. I've also had some discussions about adding a
-simple emulated PCIe device to QEMU for running VFIO selftests within
-VMs.
+I'll send an update of this patch.
 
