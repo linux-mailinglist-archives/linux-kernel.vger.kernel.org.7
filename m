@@ -1,499 +1,220 @@
-Return-Path: <linux-kernel+bounces-897453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96ECCC52CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:52:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34670C52D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6317835071B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:50:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C2C635103D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8548033B97B;
-	Wed, 12 Nov 2025 14:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E634B69C;
+	Wed, 12 Nov 2025 14:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8bwPHKz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DD47qKdS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726C2B2DA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5695E340DA1;
+	Wed, 12 Nov 2025 14:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958675; cv=none; b=SXh4PxV1uy4moMIfX3ZHtmrzaci8W1jddTxOPKf3uWv8IfMsC2UaGM46jQz5WX2Q/NOg1GVJTLVKm+hPR8CyWTO4g7HcmphfUkZjus895U3XKBMlasmstuHsye+xMLCaE48YgjOExnCfM900jyUOyunoME2e7ON7ssjt0QD0i9I=
+	t=1762958731; cv=none; b=sAdGrUIut7I21WjmBA31FMP7c1hFZgvU8v6OctXRFepWhRTygjX/bqfR8QKBdyajC8SfESqd9am6maSeAU3f0Bx5zbGmn9g2z0JyYgT5ULWBi6JuSMqQOEIsyfEhOpUwho1ABABHhDt+NRRBORv3dFnnKBm41rJA+71av1MrkE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958675; c=relaxed/simple;
-	bh=PDnwftZCtKItMvQXS6vPJzVdQydGaJntJOyOabcBAHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ftYleQ1xdX8B20ATUsW7sTRFwbu9qDDo1jM3+pkC1KPEsNKRhmQW7OI10LRAp44fe0nQ1pqPwzbf9Oxl0SXmWmMYgitbbiukz+FXdxtS1PbYYAdE+eUIvpyxq9TC484qeme3+P+6BQiaqMDU0UOmhmIepa6o+wN/QnqyYDZNsM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8bwPHKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ED2C2BC86
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:44:34 +0000 (UTC)
+	s=arc-20240116; t=1762958731; c=relaxed/simple;
+	bh=fcOLB6aV+fb9mRzie6Oop52h19x8OdlUrwUv/AKoKFg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JSyWC3Te7D6FADdb7XhMzMxFFhtC2dSiM2WFmtl1DKZF0W7S0tmOA3dyAgbPgOcBKHpAjdYQYF7p329XkTtJqNBupimuDog9qldCWCTSrnOIRmX0M0PyKy0a2bSpWTgr6SCmI4pR1BIL9aUKO4bVJ/WDuIyvclR4f6PUV9sRVVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DD47qKdS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DA33FC4CEF7;
+	Wed, 12 Nov 2025 14:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762958675;
-	bh=PDnwftZCtKItMvQXS6vPJzVdQydGaJntJOyOabcBAHo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=H8bwPHKzfUN/JGbVuzz/f9oALQIK1EG8jgmga7Gfpp8GN7QKqeRQdz2nb5K4L3VRm
-	 FTsh5wlzH5cXeJncoRa+Uz9thGZrOImi59EyQOM/HahHKrPiPssJ7EFiwgM/1AMRUg
-	 tbU3tKT2e/eI2CLvsyAxMMDSJ6sOBCo8YJkEEN51dbRh4V/rIcRn9aW90R1fA5kx0r
-	 n0HNJzKGOdv/tTSl/SlTdzHBBPflTK01Pz1ZkL9q/tqAM5syvCgyvVeSi7XmSQNJ2c
-	 QaF0Uaef/CZ7RvrZ5Upg9W57/QXRNMALTEwH4uzuVomm5jCTzLa2NclB2klTT2NKam
-	 fLmPOm8oQ+0aA==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-786a85a68c6so9242177b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:44:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUy6mdmSrXfCwoNw3TqlJoKkJk8Au5s3sEo8Ly6PGvzSmysLms84zutbekkDvSUkVwh6FPQOBg6fk/7zyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7tJT7vGf/HE4Q4AZSE7TW6r5ZkQBD4VddE/FXYC+MK97KVcPG
-	+kfuW8FspsjYVdK71g5wLQsLUowGpr0FA3cwaN6RMqCwo+OCo3vRYRzaaEn7DjSwxX/xLA1vEIr
-	dOkSioliVQSiPB87XnlWW270liLgAxvm+80q94GjO5w==
-X-Google-Smtp-Source: AGHT+IG5JeTs0/2jzgHnGQg6hAHz8vnJj97AKy982sF7acTacZdbTAFqicgdDUf8Z5OFDVpjMi1dXerlN4/1YJlDLLQ=
-X-Received: by 2002:a05:690c:6805:b0:786:9be4:749c with SMTP id
- 00721157ae682-78813666b4fmr29760027b3.31.1762958674170; Wed, 12 Nov 2025
- 06:44:34 -0800 (PST)
+	s=k20201202; t=1762958730;
+	bh=fcOLB6aV+fb9mRzie6Oop52h19x8OdlUrwUv/AKoKFg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=DD47qKdSYQ2MPF/TkXcFFe0n9leIQo0XfMLbzvkaLamsT0/2HIWyknK4dmpk/dJlR
+	 dX21PGHPhCCkzk8lfNWXAUzVbhlINu8tPnh1KG4uzX7ZabO4ql3vIUzJpBRI25y+I6
+	 SpoeJWQPQT65DqXLpNWqI0q9CtgAbgIz/QWoRL1KZwSyKhNGx76t5EkzxTgd1CttrZ
+	 rCbzwnGZotWelmt1HGXJ4WD+FaQUEUS5d4Li+T1qppL0jd0RH4juRL3c5a8UwZvRpn
+	 WY5CkaMk4qz5iPaPqqImA1GAF260TzRQKqGzGzpHhf7MU9imtKis0bzrDNw/VHwYS/
+	 3dliOTMtOMdhg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7606CCF9E3;
+	Wed, 12 Nov 2025 14:45:30 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
+Subject: [PATCH 0/9] Add support for handling PCIe M.2 Key E connectors in
+ devicetree
+Date: Wed, 12 Nov 2025 20:15:12 +0530
+Message-Id: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109124947.1101520-1-youngjun.park@lge.com> <20251109124947.1101520-4-youngjun.park@lge.com>
-In-Reply-To: <20251109124947.1101520-4-youngjun.park@lge.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 12 Nov 2025 06:44:23 -0800
-X-Gmail-Original-Message-ID: <CACePvbU+NviPmpXQAJUrY4rTqmY_rvYy2JvDBAfT290GmQmfZg@mail.gmail.com>
-X-Gm-Features: AWmQ_bn2uFL5WDija3FNTBnu9eTA0Dq7KEi83tdS-oW7tHAdZkh7qgGbpcQOn8o
-Message-ID: <CACePvbU+NviPmpXQAJUrY4rTqmY_rvYy2JvDBAfT290GmQmfZg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into swap subsystem
-To: Youngjun Park <youngjun.park@lge.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kasong@tencent.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, shikemeng@huaweicloud.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, gunho.lee@lge.com, taejoon.song@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHidFGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQ0Mj3YLkTN1cI91UXUsTM0vTxGTLFDNTcyWg8oKi1LTMCrBR0bG1tQB
+ YQKlsWgAAAA==
+X-Change-ID: 20251112-pci-m2-e-94695ac9d657
+To: Rob Herring <robh@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>, 
+ "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5716;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=fcOLB6aV+fb9mRzie6Oop52h19x8OdlUrwUv/AKoKFg=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBpFJ2G7KlzBgIqqLqxlA+KZvF2LQnt5o2J4sC6m
+ 5T22DpFW/+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaRSdhgAKCRBVnxHm/pHO
+ 9QjrB/9XHscvM2AZEr4cvvGDU7LjMbW+6OH13K8HChauuQQq1sQCyda01k1+C75y7jgDegnxjIn
+ r/fanARmC5BGZzRB7ZqmyhtHbsc6bfXuHVAYY9mf21mbN04Yt15eeIDlBTlrblXStHlXP14Iu7H
+ gjw3GxZ8oMZM/6oaqpcjJjFUNGRC1TWsWnL1V84Ao9qRMJ75TN2fLZyG+4Pd7m803HQEDmIjFZR
+ qvZfU3tT96zNXbmmhFkxKgPsvOk9XV104b84AvbJlgjDhuYnU7Y2j4x7J1Y5kdZGUa6zIHnXUiD
+ OUpq3nlOAZCKUrLvb5zIfglGBLIUYTafIbPLj2me6+pJP+Cg
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Reply-To: manivannan.sadhasivam@oss.qualcomm.com
 
-It seems you should introduce the tiers first. Allow users to define tiers.
-Then the follow up patches use tiers defined here.
+Hi,
 
-The patch order seems reversed to me.
+This series is the continuation of the series [1] that added the initial support
+for the PCIe M.2 connectors. This series extends it by adding support for Key E
+connectors. These connectors are used to connect the Wireless Connectivity
+devices such as WiFi, BT, NFC and GNSS devices to the host machine over
+interfaces such as PCIe/SDIO, USB/UART and NFC. This series adds support for
+connectors that expose PCIe interface for WiFi and UART interface for BT. Other
+interfaces are left for future improvements.
 
-See some feedback below, to be continued.
+Serdev device support for BT
+============================
 
-Chhris
+Adding support for the PCIe interface was mostly straightforward and a lot
+similar to the previous Key M connector. But adding UART interface has proved to
+be tricky. This is mostly because of the fact UART is a non-discoverable bus,
+unlike PCIe which is discoverable. So this series relied on the PCI notifier to
+create the serdev device for UART/BT. This means the PCIe interface will be
+brought up first and after the PCIe device enumeration, the serdev device will
+be created by the pwrseq driver. This logic is necessary since the connector
+driver and DT node don't describe the device, but just the connector. So to make
+the connector interface Plug and Play, the connector driver uses the PCIe device
+ID to identify the card and creates the serdev device. This logic could be
+extended in the future to support more M.2 cards. Even if the M.2 card uses SDIO
+interface for connecting WLAN, a SDIO notifier could be added to create the
+serdev device.
+
+Open questions
+==============
+
+Though this series adds the relevant functionality for handling the M.2 Key M
+connectors, there are still a few open questions exists on the design. 
+
+1. I've used the M.2 card model name as the serdev device name. This is found
+out by comparing the PCIe VID:PID in the notifier. Is this approach acceptable?
+I did not use the PID as the serdev name since it will vary if the SDIO
+interface is used in the future.
+
+2. PCIe client drivers of some M.2 WLAN cards like the Qcom QCA6390, rely on
+the PCIe device DT node to extract properties such as
+'qcom,calibration-variant', 'firmware-name', etc... For those drivers, should we
+add the PCIe DT node in the Root Port in conjunction with the Port node as
+below?
+
+pcie@0 {
+	wifi@0 {
+		compatible = "pci17cb,1103";
+		...
+		qcom,calibration-variant = "LE_X13S";
+	};
+
+	port {
+		pcie4_port0_ep: endpoint {
+			remote-endpoint = <&m2_e_pcie_ep>;
+		};
+	};
+};
+
+This will also require marking the PMU supplies optional in the relevant ath
+bindings for M.2 cards.
+
+3. Some M.2 cards require specific power up sequence like delays between
+regulator/GPIO and such. For instance, the WCN7850 card supported in this series
+requires 50ms delay between powering up an interface and driving it. I've just
+hardcoded the delay in the driver, but it is a pure hack. Since the pwrseq
+driver doesn't know anything about the device it is dealing with before powering
+it ON, how should it handle the device specific power requirements? Should we
+hardcode the device specific property in the connector node? But then, it will
+no longer become a generic M.2 connector and sort of defeats the purpose of the
+connector binding.
+
+I hope to address these questions with the help of the relevant subsystem
+maintainers and the community. Until then, this series is *not* mergeable as a
+whole.
+
+Testing
+=======
+
+This series, together with the devicetree changes [2] was tested on the
+Qualcomm X1e based Lenovo Thinkpad T14s Laptop which has the WCN7850 WLAN/BT M.2
+card connected over PCIe and UART.
+
+[1] https://lore.kernel.org/linux-pci/20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com
+[2] https://github.com/Mani-Sadhasivam/linux/commit/d39b81b3ff1ecfb0d423b4da0771925d41648b5a
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+Manivannan Sadhasivam (9):
+      serdev: Convert to_serdev_device() and to_serdev_controller() helpers to macros
+      serdev: Add serdev device based driver match support
+      serdev: Allow passing the serdev device name to serdev_device_add()
+      serdev: Add an API to find the serdev controller associated with the devicetree node
+      serdev: Add modalias support for serdev client devices
+      serdev: Skip registering serdev devices from DT is external connector is used
+      dt-bindings: connector: Add PCIe M.2 Mechanical Key E connector
+      Bluetooth: hci_qca: Add support for WCN7850 PCIe M.2 card
+      power: sequencing: pcie-m2: Add support for PCIe M.2 Key E connectors
+
+ .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++
+ MAINTAINERS                                        |   1 +
+ drivers/bluetooth/hci_qca.c                        |  20 ++
+ drivers/platform/x86/dell/dell-uart-backlight.c    |   2 +-
+ .../x86/lenovo/yoga-tab2-pro-1380-fastcharger.c    |   2 +-
+ drivers/platform/x86/x86-android-tablets/core.c    |   2 +-
+ drivers/power/sequencing/Kconfig                   |   1 +
+ drivers/power/sequencing/pwrseq-pcie-m2.c          | 218 ++++++++++++++++++++-
+ drivers/tty/serdev/core.c                          |  77 +++++++-
+ include/linux/mod_devicetable.h                    |   8 +
+ include/linux/serdev.h                             |  25 ++-
+ scripts/mod/devicetable-offsets.c                  |   3 +
+ scripts/mod/file2alias.c                           |   8 +
+ 13 files changed, 494 insertions(+), 27 deletions(-)
+---
+base-commit: db81ec30672bb228cd7cd809edeeae661d621f2d
+change-id: 20251112-pci-m2-e-94695ac9d657
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
 
-On Sun, Nov 9, 2025 at 4:50=E2=80=AFAM Youngjun Park <youngjun.park@lge.com=
-> wrote:
->
-> Integrate the swap tier infrastructure into the existing swap subsystem
-> to enable selective swap device usage based on tier configuration.
->
-> Signed-off-by: Youngjun Park <youngjun.park@lge.com>
-> ---
->  mm/memcontrol.c | 69 ++++++++++++++++++++++++++++++++++++
->  mm/page_io.c    | 21 ++++++++++-
->  mm/swap_state.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
->  mm/swapfile.c   | 15 ++++++--
->  4 files changed, 194 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index bfc986da3289..33c7cc069754 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -68,6 +68,7 @@
->  #include <net/ip.h>
->  #include "slab.h"
->  #include "memcontrol-v1.h"
-> +#include "swap_tier.h"
->
->  #include <linux/uaccess.h>
->
-> @@ -3730,6 +3731,7 @@ static void mem_cgroup_free(struct mem_cgroup *memc=
-g)
->  {
->         lru_gen_exit_memcg(memcg);
->         memcg_wb_domain_exit(memcg);
-> +       swap_tiers_put_mask(memcg);
->         __mem_cgroup_free(memcg);
->  }
->
-> @@ -3842,6 +3844,11 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *p=
-arent_css)
->                 page_counter_init(&memcg->kmem, &parent->kmem, false);
->                 page_counter_init(&memcg->tcpmem, &parent->tcpmem, false)=
-;
->  #endif
-> +#ifdef CONFIG_SWAP_TIER
-> +               memcg->tiers_mask =3D 0;
-> +               memcg->tiers_onoff =3D 0;
-> +#endif
-> +
->         } else {
->                 init_memcg_stats();
->                 init_memcg_events();
-> @@ -3850,6 +3857,10 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *p=
-arent_css)
->  #ifdef CONFIG_MEMCG_V1
->                 page_counter_init(&memcg->kmem, NULL, false);
->                 page_counter_init(&memcg->tcpmem, NULL, false);
-> +#endif
-> +#ifdef CONFIG_SWAP_TIER
-Again, don't need this config.
-
-> +               memcg->tiers_mask =3D DEFAULT_FULL_MASK;
-
-Is this  memcg->tiers_mask a cached value after evaluating the
-swap.tiers onoff list by looking up the parent?
-
-I was thinking of starting with always evaluating the tiers_mask. Then
-we don't need to store it here. How do you indicate the tiers_mask is
-out of date?
-
-> +               memcg->tiers_onoff =3D DEFAULT_ON_MASK;
->  #endif
->                 root_mem_cgroup =3D memcg;
->                 return &memcg->css;
-> @@ -5390,6 +5401,56 @@ static int swap_events_show(struct seq_file *m, vo=
-id *v)
->         return 0;
->  }
->
-> +#ifdef CONFIG_SWAP_TIER
-> +static int swap_tier_show(struct seq_file *m, void *v)
-> +{
-> +       struct mem_cgroup *memcg =3D mem_cgroup_from_seq(m);
-> +
-> +       swap_tiers_show_memcg(m, memcg);
-> +       return 0;
-> +}
-> +
-> +static ssize_t swap_tier_write(struct kernfs_open_file *of,
-> +                               char *buf, size_t nbytes, loff_t off)
-> +{
-> +       struct mem_cgroup *memcg =3D mem_cgroup_from_css(of_css(of));
-> +       struct tiers_desc desc[MAX_SWAPTIER] =3D {};
-> +       char *pos =3D buf, *token;
-> +       int nr =3D 0;
-> +       int ret;
-> +
-> +       while ((token =3D strsep(&pos, " \t\n")) !=3D NULL) {
-
-Not allowing plain space " "? Compare pointer !=3D NULL is redundant.
-
-> +               if (!*token)
-> +                       continue;
-> +
-> +               if (nr >=3D MAX_SWAPTIER)
-> +                       return -E2BIG;
-> +
-> +               if (token[0] !=3D '+' && token[0] !=3D '-')
-> +                       return -EINVAL;
-> +
-> +               desc[nr].ops =3D (token[0] =3D=3D '+') ? TIER_ON_MASK : T=
-IER_OFF_MASK;
-> +
-> +               if (strlen(token) <=3D 1) {
-> +                       strscpy(desc[nr].name, DEFAULT_TIER_NAME);
-> +                       nr++;
-> +                       continue;
-> +               }
-> +
-> +               if (strscpy(desc[nr].name, token + 1, MAX_TIERNAME) < 0)
-> +                       return -EINVAL;
-> +
-> +               nr++;
-I don't think you need this nr, you will reach to the end of the
-string any way. What if the user specifies the same tier more than
-once? It is not optimal but the kernel should take it.
-
-OK, I see what is going on now, this whole desc thing can be greatly
-simplified. You shouldn't need to maintain the desc[nr], that desc
-array is the onoff mask in my mind. You just need to keep the tier
-bits in order.
-
-Notice in the memory.swap.tiers. Except for the default tier pattern,
-which always the first one if exists. The rest of the tier + - order
-does not matter. You look up the tier name into the tier mask bit.
-Just set the onoff bits for that tier.
-
-> +       }
-> +
-> +       ret =3D swap_tiers_get_mask(desc, nr, memcg);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return nbytes;
-> +}
-> +#endif
-> +
->  static struct cftype swap_files[] =3D {
->         {
->                 .name =3D "swap.current",
-> @@ -5422,6 +5483,14 @@ static struct cftype swap_files[] =3D {
->                 .file_offset =3D offsetof(struct mem_cgroup, swap_events_=
-file),
->                 .seq_show =3D swap_events_show,
->         },
-> +#ifdef CONFIG_SWAP_TIER
-> +       {
-> +               .name =3D "swap.tiers",
-> +               .flags =3D CFTYPE_NOT_ON_ROOT,
-> +               .seq_show =3D swap_tier_show,
-> +               .write =3D swap_tier_write,
-> +       },
-> +#endif
->         { }     /* terminate */
->  };
->
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 3c342db77ce3..2b3b1154a169 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -26,6 +26,7 @@
->  #include <linux/delayacct.h>
->  #include <linux/zswap.h>
->  #include "swap.h"
-> +#include "swap_tier.h"
->
->  static void __end_swap_bio_write(struct bio *bio)
->  {
-> @@ -233,6 +234,24 @@ static void swap_zeromap_folio_clear(struct folio *f=
-olio)
->         }
->  }
->
-> +#if defined(CONFIG_SWAP_TIER) && defined(CONFIG_ZSWAP)
-> +static bool folio_swap_tier_zswap_test_off(struct folio *folio)
-> +{
-> +       struct mem_cgroup *memcg;
-> +
-> +       memcg =3D folio_memcg(folio);
-> +       if (memcg)
-> +               return swap_tier_test_off(memcg->tiers_mask,
-> +                       TIER_MASK(SWAP_TIER_ZSWAP, TIER_ON_MASK));
-> +
-> +       return false;
-> +}
-> +#else
-> +static bool folio_swap_tier_zswap_test_off(struct folio *folio)
-> +{
-> +       return false;
-> +}
-> +#endif
->  /*
->   * We may have stale swap cache pages in memory: notice
->   * them here and get rid of the unnecessary final write.
-> @@ -272,7 +291,7 @@ int swap_writeout(struct folio *folio, struct swap_io=
-cb **swap_plug)
->          */
->         swap_zeromap_folio_clear(folio);
->
-> -       if (zswap_store(folio)) {
-> +       if (folio_swap_tier_zswap_test_off(folio) || zswap_store(folio)) =
-{
->                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
->                 goto out_unlock;
->         }
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 3f85a1c4cfd9..2e5f65ff2479 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -25,6 +25,7 @@
->  #include "internal.h"
->  #include "swap_table.h"
->  #include "swap.h"
-> +#include "swap_tier.h"
->
->  /*
->   * swapper_space is a fiction, retained to simplify the path through
-> @@ -836,8 +837,100 @@ static ssize_t vma_ra_enabled_store(struct kobject =
-*kobj,
->  }
->  static struct kobj_attribute vma_ra_enabled_attr =3D __ATTR_RW(vma_ra_en=
-abled);
->
-> +#ifdef CONFIG_SWAP_TIER
-> +static ssize_t tiers_show(struct kobject *kobj,
-> +                                    struct kobj_attribute *attr, char *b=
-uf)
-> +{
-> +       return swap_tiers_show_sysfs(buf);
-> +}
-> +
-> +static ssize_t tiers_store(struct kobject *kobj,
-> +                               struct kobj_attribute *attr,
-> +                               const char *buf, size_t count)
-> +{
-> +       struct tiers_desc desc[MAX_SWAPTIER] =3D {};
-> +       int nr =3D 0;
-> +       char *data, *p, *token;
-> +       int ret =3D 0;
-> +       bool is_add =3D true;
-> +
-> +       if (!count)
-> +               return -EINVAL;
-> +
-> +       data =3D kmemdup_nul(buf, count, GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       p =3D data;
-> +
-> +       if (*p =3D=3D '+')
-> +               p++;
-> +       else if (*p =3D=3D '-') {
-> +               is_add =3D false;
-> +               p++;
-> +       } else
-> +               return -EINVAL;
-> +
-> +       while ((token =3D strsep(&p, ", \t\n")) !=3D NULL) {
-> +               if (!*token)
-> +                       continue;
-> +
-> +               if (nr >=3D MAX_SWAPTIER) {
-> +                       ret =3D -E2BIG;
-> +                       goto out;
-> +               }
-> +
-> +               if (is_add) {
-> +                       char *name, *prio_str;
-> +                       int prio;
-> +
-> +                       name =3D strsep(&token, ":");
-> +                       prio_str =3D token;
-> +
-> +                       if (!name || !prio_str || !*name || !*prio_str) {
-> +                               ret =3D -EINVAL;
-> +                               goto out;
-> +                       }
-> +
-> +                       if (strscpy(desc[nr].name, name, MAX_TIERNAME) < =
-0) {
-> +                               ret =3D -EINVAL;
-> +                               goto out;
-> +                       }
-> +
-> +                       if (kstrtoint(prio_str, 10, &prio)) {
-> +                               ret =3D -EINVAL;
-> +                               goto out;
-> +                       }
-> +
-> +                       desc[nr].prio_st =3D prio;
-> +               } else {
-> +                       if (strscpy(desc[nr].name, token, MAX_TIERNAME) <=
- 0) {
-> +                               ret =3D -EINVAL;
-> +                               goto out;
-> +                       }
-> +                       desc[nr].prio_st =3D 0;
-> +               }
-> +               nr++;
-> +       }
-> +
-> +       if (is_add)
-> +               ret =3D swap_tiers_add(desc, nr);
-> +       else
-> +               ret =3D swap_tiers_remove(desc, nr);
-> +
-> +out:
-> +       kfree(data);
-> +       return ret ? ret : count;
-> +}
-> +
-> +static struct kobj_attribute tier_attr =3D __ATTR_RW(tiers);
-> +#endif
-> +
->  static struct attribute *swap_attrs[] =3D {
->         &vma_ra_enabled_attr.attr,
-> +#ifdef CONFIG_SWAP_TIER
-> +       &tier_attr.attr,
-> +#endif
->         NULL,
->  };
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index a5c90e419ff3..8715a2d94140 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -49,6 +49,7 @@
->  #include "swap_table.h"
->  #include "internal.h"
->  #include "swap.h"
-> +#include "swap_tier.h"
->
->  static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
->                                  unsigned char);
-> @@ -1296,7 +1297,8 @@ static bool get_swap_device_info(struct swap_info_s=
-truct *si)
->
->  /* Rotate the device and switch to a new cluster */
->  static void swap_alloc_entry(swp_entry_t *entry,
-> -                           int order)
-> +                           int order,
-> +                           int mask)
->  {
->         unsigned long offset;
->         struct swap_info_struct *si, *next;
-> @@ -1304,6 +1306,8 @@ static void swap_alloc_entry(swp_entry_t *entry,
->         spin_lock(&swap_avail_lock);
->  start_over:
->         plist_for_each_entry_safe(si, next, &swap_avail_head, avail_list)=
- {
-> +               if (swap_tiers_test_off(si->tier_idx, mask))
-> +                       continue;
->                 /* Rotate the device and switch to a new cluster */
->                 plist_requeue(&si->avail_list, &swap_avail_head);
->                 spin_unlock(&swap_avail_lock);
-> @@ -1376,6 +1380,7 @@ int folio_alloc_swap(struct folio *folio)
->  {
->         unsigned int order =3D folio_order(folio);
->         unsigned int size =3D 1 << order;
-> +       int mask;
->         swp_entry_t entry =3D {};
->
->         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-> @@ -1400,8 +1405,8 @@ int folio_alloc_swap(struct folio *folio)
->         }
->
->  again:
-> -       swap_alloc_entry(&entry, order);
-> -
-> +       mask =3D swap_tiers_collect_compare_mask(folio_memcg(folio));
-> +       swap_alloc_entry(&entry, order, mask);
->         if (unlikely(!order && !entry.val)) {
->                 if (swap_sync_discard())
->                         goto again;
-> @@ -2673,6 +2678,8 @@ static void _enable_swap_info(struct swap_info_stru=
-ct *si)
->
->         /* Add back to available list */
->         add_to_avail_list(si, true);
-> +
-> +       swap_tiers_assign(si);
->  }
->
->  static void enable_swap_info(struct swap_info_struct *si, int prio,
-> @@ -2840,6 +2847,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
-alfile)
->         spin_lock(&swap_lock);
->         spin_lock(&p->lock);
->         drain_mmlist();
-> +       swap_tiers_release(p);
->
->         swap_file =3D p->swap_file;
->         p->swap_file =3D NULL;
-> @@ -4004,6 +4012,7 @@ static int __init swapfile_init(void)
->                 swap_migration_ad_supported =3D true;
->  #endif /* CONFIG_MIGRATION */
->
-> +       swap_tiers_init();
->         return 0;
->  }
->  subsys_initcall(swapfile_init);
-> --
-> 2.34.1
->
->
 
