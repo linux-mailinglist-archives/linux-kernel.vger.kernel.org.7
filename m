@@ -1,94 +1,123 @@
-Return-Path: <linux-kernel+bounces-897188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F197C523BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:22:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C861C523E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E62994E5D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A014C423962
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A129F277029;
-	Wed, 12 Nov 2025 12:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46500320CAC;
+	Wed, 12 Nov 2025 12:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="SRs5tryj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prAb0eP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D95C30B51F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949689; cv=pass; b=GtAkx7EaoOEA3EgRkmoz2vZVf7b8IkJIw1pS/PJlY6ZXJ8ebKwNjfjXbWWF5RtI7HIpP3dijveEJ3Er9J1syR1zMVLCIeVCVyhSTb4zgrkUGfpg10MKcSSnpSP5DMwzqOZceCvk+kdZDPYJL5m1ThChsl5UehiP6a31yfruwYx8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949689; c=relaxed/simple;
-	bh=3ZEPn6uNg0r0DPR0L5r0sNLOzUAIwJp0GJubMAxZRTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ihSrGI8jWQ/NF779g5+labu00z1X7ES1b09oSa05MDuAH/XDnppzQEyc8xnT2xM+hY841wQVt+gPG9CEiV2dEQFGBGSP/iNsszQGFfBz4CZzXPd+ddjs9fi5r+QGV1CC8H9Pb++Q92fCjR/YNigkXfGRJdXOaGZfTRDLP3vgpjk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=SRs5tryj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762949666; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Tq41fjFTE3/OKHQwL7fEBdcp85ytUO1rZb9J9zC19p5oD41+fTOzFcII58A4LjcN1GByptyv58IGJRmAFpk1L6FFz6xe9xJlKp+fLWsL7rStjlwto7FGezaIeSSWaqut8WgdU+dtDQKOxh11+Sb5q2/Q/ugY8UCkRmO+CfVtT1Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762949666; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=nmNu0BqiQLMXek9pjsJjeBE69VJ7PBIoc9imrwDBnVg=; 
-	b=YOpuWJFMlrkISfgVrifEWm+2MnwoMq4GSzBK2a0Whe1nZe4nzAG4E9pLfnH8ETGq71kHTCRaLrXZrAbEnl7ZHE0zliQ0qVP2WL80KEglRHm4WxfAB/6KO11pza12VbnnIntm6vrL0Fd5q55PwWUlEoefPd04Jhc8OTQWdrkeEHg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762949666;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=nmNu0BqiQLMXek9pjsJjeBE69VJ7PBIoc9imrwDBnVg=;
-	b=SRs5tryjPucGQ9+xDnpxckIRb8Irfyf6zeo6F2nS3USjvphhDEKpJkbh1VuzX0Aq
-	S8kc9BVBIQYUf2nyhYT6gh85Pt/kC8IvzOpngAwdR6pW1e4I0GGWdbbvq1sfK2thICB
-	Kk+6YZSm1S6CAwB6FgY4zyuWu9S2/qpZuEmL2rQE=
-Received: by mx.zohomail.com with SMTPS id 1762949664552644.4534275519923;
-	Wed, 12 Nov 2025 04:14:24 -0800 (PST)
-Message-ID: <855ebbf1-0b02-45b5-8fa9-b50c05793e19@collabora.com>
-Date: Wed, 12 Nov 2025 15:14:16 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A8031C576;
+	Wed, 12 Nov 2025 12:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762949714; cv=none; b=T/rfwHDG/PsHTmNXAULlvR3wWSG4DOt/UU/gzIWw387pkcLkoyDpH6N2ShFHMQLUxMRoQjEmFvt+bsYfygZz330YozfxCor6vC+y88E9FL0W6voyynqPYwnJyHGCEOdv+5mnknFVplnMHkdTLHn/b8KM56jYpvsIOus7xdc8/4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762949714; c=relaxed/simple;
+	bh=LvobtyzxlyPW6gIKJxQAWAM+dxTFPbpGzV/jL86QCLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJFsVtxFROKnwgb4aiP5jQ1l/RqeUvSvNxnKdVA7Ufn6xbjdSZVEQcBzAM9snx9fImiulBm1ED1xpXGSXe8nMhZpZP77Lsj6ZDjNLm5bzFP91VvZOjqzp2VksJNNOYK+oI/E8+Aea6DObaEFaTrHlxzLJo9wl28KK6hcLXXYcEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prAb0eP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48254C4CEF5;
+	Wed, 12 Nov 2025 12:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762949712;
+	bh=LvobtyzxlyPW6gIKJxQAWAM+dxTFPbpGzV/jL86QCLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=prAb0eP4AcbTYSrYYW+jPicB1nCpcnL7P97XANaRsiFnojz1LNBQGFDSgqL8dHh3B
+	 cx/voQvFyQNak+DarWcaqx6Hwo9IGzFtHbfa9XC2PFj7+seYWykiYXA70itm8zVLKT
+	 SUNZASy6DF0eWSokGheOXaGSkTZa1wPLVLtluBAvN79H8hsDZBjNFIycLB06U+spuD
+	 nxQUETKLzI0akNDsPuJaCt7qdMXuKTNag2cTCm40AeaUHxTlRQ4KBQbFGTEOFxWutE
+	 y9Jpzy78lQfigxl871pKJCCoyuPw/C98pJBbZzqYzwCz1SI2VX9pZnUtgPEICDQp+L
+	 Z/vn5/gj36XMw==
+Date: Wed, 12 Nov 2025 12:15:03 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
+ wprobe
+Message-ID: <af8f3543-4af6-48d7-a55a-bab24b6c7c7a@sirena.org.uk>
+References: <175859019940.374439.7398451124225791618.stgit@devnote2>
+ <175859026716.374439.14852239332989324292.stgit@devnote2>
+ <aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
+ <20251027224347.4c887cc956df63602f377550@kernel.org>
+ <20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
+ <20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
+ <20251029004219.dc9cda0eb56ae46c55855844@kernel.org>
+ <20251029114317.167b7d908533385c1c9e6782@kernel.org>
+ <20251029172004.a0aca144735f20a6a59d2aa6@kernel.org>
+ <20251030090952.befea7f0cecd5518c7fda02c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/virtio: support VIRTIO_GPU_F_BLOB_ALIGNMENT
-To: Sergio Lopez <slp@redhat.com>, David Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251110125213.12633-1-slp@redhat.com>
- <20251110125213.12633-2-slp@redhat.com>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20251110125213.12633-2-slp@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cP5LvKoSdHfjRefq"
+Content-Disposition: inline
+In-Reply-To: <20251030090952.befea7f0cecd5518c7fda02c@kernel.org>
+X-Cookie: "The Computer made me do it."
 
-On 11/10/25 15:52, Sergio Lopez wrote:
-> +	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_BLOB_ALIGNMENT)) {
-> +		vgdev->has_blob_alignment = true;
-> +		virtio_cread_le(vgdev->vdev, struct virtio_gpu_config,
-> +				blob_alignment, &blob_alignment);
-> +		vgdev->blob_alignment = blob_alignment;
 
-Shouldn't blob_alignment be max(guest_alignment, host_alignment)?
+--cP5LvKoSdHfjRefq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Best regards,
-Dmitry
+On Thu, Oct 30, 2025 at 09:09:52AM +0900, Masami Hiramatsu wrote:
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> There is a single step execution code but only for default overflow_handlers.
+> This is a bit strange becuase other users can not set it up outside of
+> the arch dependent code. Even if it can, it is simply redundant.
+
+> So I made changes below which allow users to set its own custom handler is
+> compatible with perf default overflow handlers.
+> I confirmed this works on both arm and arm64.
+
+I think everyone who knows this code is really snowed under at the
+minute - can I suggest posting this as a fix for now?  This is still
+broken on arm64, we'll need a fix (or to disable the feature on the
+affected arches) one way or another for v6.19.
+
+--cP5LvKoSdHfjRefq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkUekcACgkQJNaLcl1U
+h9C16Qf/cGOgECwcc5I4jFkLHhS2AK4mgV7AWZ9YuvlpINTMhR0OvSRr3zbp9xKa
+82Qnc28I4WwMg1h7715oStzw77gTfADaOQWrwXKW277LgR0koUlvmCeCphL4jOLM
+gLOpy8jU0ZjFrlY3Cvepm8xk5eZtGCDnlJWKJ50ZMolCzUs+YYK0l0adx9kfTiqY
+XjBAIJEOD95YAMJgTfp5VeUqwnTqie555SL5mkT9BQzhsNDMqFbUpSlDBpkAzWoQ
+Mz+jgpvcfJO5N9wmB3Jt31d4415sfLtMn2ka1/Gzh8Hqr6jvwAIdXW48wX6LiPMz
++X5qczEDyGpOlL94BtgksbrjfJ1+9A==
+=RYDB
+-----END PGP SIGNATURE-----
+
+--cP5LvKoSdHfjRefq--
 
