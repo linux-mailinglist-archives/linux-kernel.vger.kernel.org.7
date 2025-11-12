@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-897409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C459C52E89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 300CAC52E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6F97501949
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:37:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AF30502175
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF0032C95D;
-	Wed, 12 Nov 2025 14:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC1C3396E9;
+	Wed, 12 Nov 2025 14:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VjOBoLyf"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q3AVVszw"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72642BF3C5;
-	Wed, 12 Nov 2025 14:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2059C2BF3C5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958247; cv=none; b=T/r81w68MLXofGmROnyIevKTp5TCOm8JTG9PdYX4+L/mZPBvcyvGiKxjOoTGkglI8gHa93fc8q4j3gxcAM2aVzctLtFX2RFOth0oGM7KSYwW1u3Mmtgq9994GY88nUvZ/ajTrfVxTx2soNvMe4YOUf861olSEE3ptKfppWDPFmY=
+	t=1762958255; cv=none; b=W83wdjLzVsVEbEBwSBacL5+Hk7cx8o8ZL5GApAzn2o/xcnatbGiJCNAPhQ4K54IUafBFmj8LP9rC2CpIY7jMszv4HQVKkGs/jWIr0Np+6+hyKnsg4OvAcCXiKzcNIIJDCrmkOI7PS6yjTkhgZ4o/E0YGUYDf6/2luxNZrgGap3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958247; c=relaxed/simple;
-	bh=2rN9cVOLQNBOCiMXSgtkSdhDPfGsitN4aJw2gBuh2bY=;
+	s=arc-20240116; t=1762958255; c=relaxed/simple;
+	bh=KUaz13UbB8OLq6l6G6TlNd70ET1Mwc3jEJ9+JWehkF4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r88xCTMH1Ys/BomqSjV31dg51N+lo3aIzPDCy1bHDH+bD3XpiDELD7v7YYTxyictWQMCnRsSkyrlqXksGLP44yS2FBw6QG49AyB3C82E4RfD8Z8BaYrfoEV9LdWvRsoUcwebwMEsndqYDDTu4TNfGup3gk8n97nC2iVyo0Tlf/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VjOBoLyf; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=JqMow8PUzrgNpPJoM8m8AFbRq6PiDSCTDKaY9xoBfhR6dX6mUGEOd3IQJEj1AnA4nvthPdmd5iAzwPAqMkT43GPo5G+eS2HWSNBgSv8OgvHSQAK8JNIXQETm+PZ2fuYlxSaYI/GfNQtaenE+4GVPLK4e6w6hY/zaI3K6n/06tug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q3AVVszw; arc=none smtp.client-ip=91.218.175.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762958241;
+	t=1762958249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ltyZ37LEJwhrSuuGnHe4IRgod3HGjI74kx98i9cMA80=;
-	b=VjOBoLyfYylZG7PBMU03hQSIvcAZQVGfkc5kp0F3Sof37/OS4sFMu/hjb6+SLRxOcchROT
-	FptiCz+YYndoCd+nL7SoPVpY+GeKqaT1nDEnKmREh/s6/9y1S4wcRpao6XLViWrqgR0Ptt
-	lrw/Y2W4XTIAZ1BmYWRjb5VJh4JYMwY=
+	bh=yc0kfV4r2fjRhsZWr3QexNqNjpEEGyKvB/5qZrt2EqI=;
+	b=q3AVVszw+CsNEAzTfDTqAqwC0WCG+jlFDQpeXJ2Iom2XfAflgrIhZLRl/DRCM8q4PPds8V
+	rU18Fr0z/MqW7Z+vltFQtdzFO+hF8CR/MGIa9oA09+tCMcmS1NnOEmgd477v2C2WV6qpJ3
+	65a5MCWu2/Y2LJ6IraSzsPHrUxObojE=
 From: Yuntao Wang <yuntao.wang@linux.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>
@@ -58,9 +58,9 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yuntao Wang <yuntao.wang@linux.dev>
-Subject: [PATCH 01/10] of/fdt: Introduce dt_root_addr_size_cells() and dt_root_addr_size_bytes()
-Date: Wed, 12 Nov 2025 22:35:11 +0800
-Message-ID: <20251112143520.233870-2-yuntao.wang@linux.dev>
+Subject: [PATCH 02/10] of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding it
+Date: Wed, 12 Nov 2025 22:35:12 +0800
+Message-ID: <20251112143520.233870-3-yuntao.wang@linux.dev>
 In-Reply-To: <20251112143520.233870-1-yuntao.wang@linux.dev>
 References: <20251112143520.233870-1-yuntao.wang@linux.dev>
 Precedence: bulk
@@ -72,40 +72,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Currently, many places use the result of the expression
-`(dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32)` for various
-checks.
-
-To improve code maintainability and reduce the chance of errors, extract
-this expression into two helper functions.
+Use dt_root_addr_size_bytes() instead of open-coding it in
+__reserved_mem_reserve_reg() to improve code maintainability.
 
 Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 ---
- include/linux/of_fdt.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/of/of_reserved_mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index b8d6c0c20876..9ce2433865ae 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -30,6 +30,17 @@ extern void *of_fdt_unflatten_tree(const unsigned long *blob,
- /* TBD: Temporary export of fdt globals - remove when code fully merged */
- extern int __initdata dt_root_addr_cells;
- extern int __initdata dt_root_size_cells;
-+
-+static inline int dt_root_addr_size_cells(void)
-+{
-+	return dt_root_addr_cells + dt_root_size_cells;
-+}
-+
-+static inline int dt_root_addr_size_bytes(void)
-+{
-+	return dt_root_addr_size_cells() * sizeof(__be32);
-+}
-+
- extern void *initial_boot_params;
- extern phys_addr_t initial_boot_params_pa;
- 
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index 2e9ea751ed2d..67c0ccd373c2 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -154,7 +154,7 @@ static int __init early_init_dt_reserve_memory(phys_addr_t base,
+ static int __init __reserved_mem_reserve_reg(unsigned long node,
+ 					     const char *uname)
+ {
+-	int t_len = (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
++	int t_len = dt_root_addr_size_bytes();
+ 	phys_addr_t base, size;
+ 	int len;
+ 	const __be32 *prop;
 -- 
 2.51.0
 
