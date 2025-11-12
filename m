@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-897751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54076C5394A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:08:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A26C5397A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A742B503879
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56EAA3BE971
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78020342516;
-	Wed, 12 Nov 2025 16:33:25 +0000 (UTC)
-Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924403446AD;
+	Wed, 12 Nov 2025 16:34:16 +0000 (UTC)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBFC2D130B;
-	Wed, 12 Nov 2025 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7325342521
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965205; cv=none; b=RAwLSZJl3SRihDQ1BAJACahLYYWKC6wkPGaQ2E7srJXd2ygnt/JVJW1TH2hEQszdobnJU512LQIoSrDvhkrmynYXHsbemQthrXcNLwo6Ty+Sngca8Zu19Yfy99w+onBY75HaW4vlKlAPw0vsJR03KWPOQvsekVKjFsGXKXgOV4k=
+	t=1762965256; cv=none; b=JQ4puqeeCUnAFN1JQ7BjFEcAefR7ZPApoSsg/6zjh6amVHpQ+OWed86pDqwC8I9SzvK+M1AwRxZosWf/beUR2D1QUj+RNCH9v8vKShztJOCKts7Ma20cOI9RjRVNNUkLXcUKpnU3/6dGzcOXN0NPWtgn5uT6nrvlE3coPVrw/iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965205; c=relaxed/simple;
-	bh=BJUsSrQgecxuE2COo9Thlqf7uzpMVVm9x6+0uvoOg2w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FKZ+/l2r7m+Ulb1AoB5pWCMEVLvX8Ei+L1rAklVxCeRNIJ+dxUW95E/1w+26xrOgKepA4sWUMNXmFT+ms+86LZS3j3XO4c1fc+8ZZS4jb9oTvRmtlFKhBEumms/vGHfoPl9NrFJpYKt4TTgsRMnVRWOplQ3NasBIci7xkH8Rp1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Nov
- 2025 17:33:20 +0100
-Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
- Wed, 12 Nov 2025 17:33:20 +0100
-From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>
-CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 1/2] dt-bindings: regulator: pca9540: add debounce timer configuration
-Date: Wed, 12 Nov 2025 17:33:08 +0100
-Message-ID: <20251112163311.720331-1-martijn.de.gouw@prodrive-technologies.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1762965256; c=relaxed/simple;
+	bh=Fk0J+zK46wIQApbBjlvq2ChgVdufMM6T9AYTaAjGlc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qr27Q/QlxFoEmm8W3a36NlzxEMyP9jHK/Y8HuCslv/dXEqgNAGCkjQi/WDPpZknWu6EIkd2gRz1qk6ViPfHrxkI9TRmowWBP6m2xm3yNmgB9wqW3jwlxP36Tl8i1KeqRsuOlxAtSPaUWM3YuaNFQkR9y1/C9AycFrvtXqU3vgrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-55ae07cf627so159361e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:34:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762965253; x=1763570053;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IDEEJFh8t7UvWDMq1bo6nlPggBAlwU9GoyBV8Ur7xmw=;
+        b=ErYUn7HkWNj8rcYyd0iF/1hknrIHKTMzVqEWvUojKehcVeMosoUjzBX0zJ/waqrAEQ
+         yzrrkP4IeMskszQVk505zQYJG4IPW8GxhmwnIDz37BgpvUwNPMe9PJUU9pH1PhL9v1Ei
+         s1fK7aA3S6e12/mB/ipsov3P9t1yDISGVPzyVIYJTs7ISlNmvZixcgFnd0eUn957kl3J
+         lvpQp5DoXjIVFGIrUd4ByUE8RmuU0hs9kQqnm3e63++FO76gp7/p67OoVyED+8tEX6BO
+         O7R+dMuvhHwztla6GTnHZvDJNM4qQPy8T7tyb1JxLOsGvbbQS+11LE8ZfZhprwptZs7w
+         BvwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXE15bURK42ijJQGGZirzOxCmuwH484k7UO+cvjsUkg9B/T8B8AtNjE9T7blwWzE5Pp45dN7NFOSkYhHUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrCzOteFyAZMQlvpjLQDdPMRAXhXwLZe/BNPNWB8Pxt+DWFE/D
+	L1YnLfABMDpavYlBZ4WzjwvEg0KmKuEHzoCLfEwFzBArln3XuMNsoqG9wxbLrIzf
+X-Gm-Gg: ASbGncutxb4fRe+kONClerc4QvJ6CMaKP4/390i8PxlS7i3Mh0L0VBZDcubRW22ZOGd
+	Eyt5D/EsQGmYWj1FwROb9wUA/Kkyoa3K9eSlyJxgcaTUF4W3Rb6CcTxGlmG7D/XVunpg0HIyov/
+	Nnt5j9j/tmpK9QCRJnZ7/yAa1OpeaUDDdyIYgXyWzhkoLn0GVPKz6OMUiwIUv+NdrpUCd2nFAKE
+	K5u5JrtuGNs55uwJnwq5ePybzY2kcZXv42oKO2oyRo4cPNetfdAxOyR/JO+KEzoEsIKhvGC6+eM
+	VU8fG2KPjgk6JgvEioBnwvyk8Q31smh768ssfhOnVQvEzjoP8yFuTLwRpB7F6wT0ir3kRJN3Y2C
+	zCTeUED8HCGSH87PtF0nfxjcvMG1eDSlrE+JvYLYCr8iIzqYPoxSeGnXYSjSPCbaQMW2nnXA6gW
+	6phfFFIsMJGfzpmA6/Ccuda1VvpwAYfbJlTuAlLA==
+X-Google-Smtp-Source: AGHT+IHcZCEQKxkMKFc5Y4phvOxpPtTYaF1NSSksHiZUj6aKCH/nTOMeKhkCXFPgdbi6R0c9QgI7UQ==
+X-Received: by 2002:a05:6122:3c91:b0:54a:9927:7ab7 with SMTP id 71dfb90a1353d-559e7c4949cmr1529344e0c.4.1762965253043;
+        Wed, 12 Nov 2025 08:34:13 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559958286c8sm9991351e0c.17.2025.11.12.08.34.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 08:34:12 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-9371f6f2813so333888241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:34:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUK8LOiZqd4n4NhFh2ekyTeo9HiGdW5KAYd3b2Y+px/S8M9A9evhN2Ka5ammXrDg7NOX+K4UazOO2/6eCE=@vger.kernel.org
+X-Received: by 2002:a05:6102:508b:b0:4e6:a338:a421 with SMTP id
+ ada2fe7eead31-5de07d0b089mr1033465137.6.1762965251527; Wed, 12 Nov 2025
+ 08:34:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-9-yuntao.wang@linux.dev>
+In-Reply-To: <20251112143520.233870-9-yuntao.wang@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Nov 2025 17:33:58 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVNXqVXsDuMeExFn7AozDKu9GD99XMk7ux=Zuw4qvL_gA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkkzAqLKDG_QzADFeNR5gEvcuVzXh2HazsgAbVtmvpBS87jteFgQs7jYog
+Message-ID: <CAMuHMdVNXqVXsDuMeExFn7AozDKu9GD99XMk7ux=Zuw4qvL_gA@mail.gmail.com>
+Subject: Re: [PATCH 08/10] of/fdt: Use dt_root_addr_size_bytes() instead of
+ open-coding it
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, James Morse <james.morse@arm.com>, 
+	Baoquan He <bhe@redhat.com>, Zhen Lei <thunder.leizhen@huawei.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Changyuan Lyu <changyuanl@google.com>, 
+	Alexander Graf <graf@amazon.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Make the different debounce timers configurable from the devicetree.
-Depending on the board design, these have to be set different than the
-default register values.
+On Wed, 12 Nov 2025 at 15:38, Yuntao Wang <yuntao.wang@linux.dev> wrote:
+> Use dt_root_addr_size_bytes() instead of open-coding it in
+> early_init_dt_check_kho() to improve code maintainability.
+>
+> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 
-Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
----
- .../regulator/nxp,pca9450-regulator.yaml      | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-index a5486c36830f0..3d47390f13016 100644
---- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-@@ -124,6 +124,30 @@ properties:
-       When WDOG_B signal is asserted a warm reset will be done instead of cold
-       reset.
- 
-+  nxp,pmic_on_req-on-debounce-us:
-+    enum: [ 120, 20000, 100000, 750000 ]
-+    description: Debounce time for PMIC_ON_REQ high.
-+
-+  nxp,pmic_on_req-off-debounce-us:
-+    enum: [ 120, 2000 ]
-+    description: Debounce time for PMIC_ON_REQ is asserted low
-+
-+  nxp,power-on-step-ms:
-+    enum: [ 1, 2, 4, 8]
-+    description: Time step configuration during power on sequence
-+
-+  nxp,power-down-step-ms:
-+    enum: [ 2, 4, 8, 16 ]
-+    description: Time step configuration during power down sequence
-+
-+  nxp,restart-ms:
-+    enum: [ 250, 500 ]
-+    description: Time to stay off regulators during Cold reset
-+
-+  npx,pmic_rst_b-debounce-ms:
-+    enum: [ 10, 50, 100, 500, 1000, 2000, 4000, 8000 ]
-+    description: PMIC_RST_B debounce time
-+
- required:
-   - compatible
-   - reg
+But please combine with the other patch with the same subject.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.39.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
