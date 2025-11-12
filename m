@@ -1,238 +1,634 @@
-Return-Path: <linux-kernel+bounces-896554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90B0C50A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:00:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AC3C50AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68689189B0BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57058189992B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028D82DC788;
-	Wed, 12 Nov 2025 06:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6012DC352;
+	Wed, 12 Nov 2025 06:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bbm6mPuy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdXKv64V"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD472DC78F;
-	Wed, 12 Nov 2025 06:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762927215; cv=fail; b=aGE/DWx/0PPEt0CC4acOUmnCOyci/dSR00LWVWHLTrQBLm9gMv36I7TAR9F/7WFWUi0SG8mRDcWP/yfbH7Un+wDeAE0ZkmKOIGITPVq2kbTJAsfl7uJHBOS7eerIiDkXt7c+1dH6zPt/MAL7q7rfMPMo7/4DVZspY6aZRW4+PI4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762927215; c=relaxed/simple;
-	bh=k3MwpVBL0daMhBLnbHi8++1ZT4JJ1A5mk8zu7CytfqE=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eFXBi8CHMb6yY7DkbTfVM5j4nPPY42GODErTfCl9xBEpI1hUHsH81beLKH3VCk5/WQu7Szw9K5OYF/ejzW1fgFL22Etj44Gd5h5B6e1UJ2WiDb9nnPqXHq2sUKWh5H5gjUSCxHH/dnxOvP7l9i8rfi/rQsfOrwByLZNGh6c0o4c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bbm6mPuy; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762927213; x=1794463213;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=k3MwpVBL0daMhBLnbHi8++1ZT4JJ1A5mk8zu7CytfqE=;
-  b=Bbm6mPuyekyZfyTMSR+5CqAAJFrp2R8nyhRE3Y+q7QTRX1LD/5AYiNxt
-   6iJ1qpOPnpKcaiFyG1//N24Ew/w365EY1XKjRLc7Z+/y/OQGQhqaux/TE
-   nGn/jvehU5TYMzPXEDRmDERjuvnZDahOkrMxeqZPq+9shOgwbVF2+oxNC
-   kiZX6EEFTlE4nOJXe2Fobj/jerNg+aA8+s/e/2Ov8TT984E4GtrjDRx1s
-   UlshsUjuxxEaqy0bpxijWKAMXu7055TrD1fUizuKSgrneIMjOShLFV8Uy
-   MEDsvaSsvW2TxDCFpjEKj6YlWeYYz4OHYGytEJE7jEWI2+09m3ofMzP8c
-   A==;
-X-CSE-ConnectionGUID: vkoOAx/NQXSCP3V4MrCHEQ==
-X-CSE-MsgGUID: a7b3gvCVTWWQzelKJGncAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64919700"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64919700"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:00:08 -0800
-X-CSE-ConnectionGUID: KWWmdLyPR6G0XvzPx6HfIw==
-X-CSE-MsgGUID: 5zK9TzYRTj6cwr1Ve4zIKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="188393706"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:00:04 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 22:00:04 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 22:00:04 -0800
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.33) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 22:00:04 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nroZ7kVNIT1qMBvzGMeCgXUY63FzaGpk/WeOmfETqvu/HmzDVC7sx7ghwc3BT3uQR3aBu5eL/yrnD8t9l23/rRuldqNcRrTGEXNkT8jePxmZXCZJ8AtyRAvfoZopF5szZBo7lHa7OMXWZBZ8cwk/BecQwa52stVPS0BDIgHbtxXsA2+qxrJbxTGesw+k6RmGqYFtmkP5ls/xoNFuWnovEx17gKmXtOveGnh48z52iEy7JHEZa6+Qob476ce337KPSMNB+rLANKoy80cfqB5tj7r/IPx2URW4nJeUWAf9Ld3DXb/vJXUwksb4IyfAaelazZ4KYJYcffXAWImH+/UjxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BFSIsiYMBKo96/Ep69Noz+GKnkM9anDv4rTE9Mp1WRg=;
- b=qEXvXPtbkwcdAOZups0cAv4CKrjjDp3v20CRPrHiGLCKHpV5S9jeokqITekxg4EJ6Cx+FRseuRQgyOt8cStpcVvboqJCkKSpBudxeOymPOCoK/Qnr8c/CR3gahDAQ9OdxmI+gXJFngMafXaGcnkos7IZCG+6x55Wtn+y/uJkSiNV+W3uXo5ndtFOZqvm3SDTRs46byUVkeEqdwbkUpFlZpCCnCo9osJoGaoq9i0JwU6obRTejKRq3gv+J/SCNJO/TeNg/YxSs6Up7UUQa5GfUL2cH17STu979Vmgu9IU35CXDnxxeTbRCZ6ukfkshLOsSPQX2GT+CtIpOf8EjF6bgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by MW4PR11MB6690.namprd11.prod.outlook.com (2603:10b6:303:1e8::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 06:00:02 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 06:00:02 +0000
-Date: Wed, 12 Nov 2025 13:59:49 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <sdf@fomichev.me>,
-	<atenart@kernel.org>, <kuniyu@google.com>, <yajun.deng@linux.dev>,
-	<gregkh@suse.de>, <ebiederm@xmission.com>, <linux-kernel@vger.kernel.org>,
-	<akpm@linux-foundation.org>, Ma Ke <make24@iscas.ac.cn>,
-	<stable@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: Re: [PATCH] net: Fix error handling in netdev_register_kobject
-Message-ID: <202511121347.b3f6c2a3-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251107080117.15099-1-make24@iscas.ac.cn>
-X-ClientProxiedBy: SG2PR02CA0126.apcprd02.prod.outlook.com
- (2603:1096:4:188::11) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75CE20A5EA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762927427; cv=none; b=rNgOgdfaDBlhxiyzmhjo75v7qZ1YFqscFay+859aryAEF5SNEh7G7d+6eM1BJl6mT/C5UXdzfr2CcEOYYvmsqLayP5DBsl99KRKvJWU5+98/cNTKOcOtbieaWp6istpGLljD35iSH8pC6GdRCTPvkQthhzUTOntpwNUHZrnEFeg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762927427; c=relaxed/simple;
+	bh=y6nkNUmEZ/AVV/mjdHesn9kd7C4EqoIrMS9+yEKVQno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qs6OZ3Fbf+1S5RGMP1O5eqCWUzzN0HBq1m55eHymgL2PPTwOoMvUKEsu7H2eGFAx9qneGUKrIm0r9uHMbcTK9s1A0QjF11XgN43ms+7n4iJn1AlmE15AUgKYlc4rjtTPzS+NVUAQNoppfmvONgIHJIU96zVJE084OgaX2N83lW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdXKv64V; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso65589366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:03:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762927423; x=1763532223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PEbKE/w68+CKyUzqPpaRs64jkS2Y533jKnFD34BCDeM=;
+        b=hdXKv64VX3k1Jr6GLqOGnBPuzzbMtImzEEFichUWJQljN/Ti4YGiwxBF8keEzdSVcm
+         85hvT7PVRQob28hj9AqayMn2F8+Ggo41HiRlfCucsz/tFjORjIF9INAhnNG6H2Y9d2fx
+         72Qnp14gFy25RDzgcXhX07OI2GlLel/Sc2su7oqEL1vWVR5RKrAa5DC1FiZT/UYDGILw
+         fu3dO2IOSvwZ6VCRFzYGmVN+yLRyMTGok68+BYbh2+BDTebYPZLDrTvXTHQsXLm7aNkW
+         ErqPG6zB/B66kFeeVFQvkjNzqmmNujeta6At89z6B1gi47bECvqzQHLcDrYRosDrJpG+
+         TTuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762927423; x=1763532223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PEbKE/w68+CKyUzqPpaRs64jkS2Y533jKnFD34BCDeM=;
+        b=AIqII8fzNXBu86oCvvaWM10ipm0T35aOnMXdlIY4NLB72sETjsqxiQ25jsJXVMCh6Q
+         EyWfvjfCpQTjf/nqmDmZ8AH51We7Bj62bp/vPL/7n6FN4otjGZZQlFP78URR+JPU2fJJ
+         EFCrjpjGr8oRpsOlYTL8EwGoNRacLtd84hZZIn1th106yxmAc71ld7rKstTJu5KZpqi0
+         bf0XM/+IPdc0klIiUHGt5nTJhSfyu81vZgNuVDxqSfhuFWDaUyDCRBbXW5LeX51U5iK6
+         E4VDeWh3l2CUYFyzMmCJCOAg6uYUXkFZndPZ3z9O76vO8s38+mgIf6efMQIEqE2aBQYF
+         kTqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXYuR/6Pr3Zze6aqzJ8mfSLePtDJw49JjiC9wanMKR7OGN6A8tQBUL21UegXskrJ1+Gp/+e8F9knX7SJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjeh3OWG9ETzso3vuFEvQX2fDiGI3dv9qM0/W0BN9PkkgNjOfS
+	RYN3DsZslFJvPWGTGgVdIyCzmT2Krev1Hd/ufZ1zjINwCgqbV/Vquc4btPt9lY9Hxg6deu/AG57
+	PlFe/9cJi6FMMS/pDGsFz0mRpP43FPsLVaCCTc4MqRA==
+X-Gm-Gg: ASbGncsvU26ZW40xmWS/im+TanmQW5LtEtbUOC8jScylQ0qJyBhSJWnS+IZLW02dpay
+	yh+Y+GeCFPpyFAEkw0CFkHc4AnQ+PILKkQyynY8r1K63tm6OrATe1flFjA7naB8yQPFzTQxgiXt
+	0sP79FrNp89fi1o11AVZ4ZUL0EgFvjW4Ktn5nBI8X5OHovCKqwUPV2XuhQBLXsJsDLKMvqeS/2D
+	4A6q00haKL2SI2fz2ungK5swtiDY3pDU6zaq26dsYp9g/C2VXdPahdTG3zbjQ==
+X-Google-Smtp-Source: AGHT+IH0bjJk6eNMBSkAw+kMY9WytTdF9VBfBlVMm2Fn5JLPLJPV2kCiNjifYs0LqEJa8b+upRWr+cte+NUF/KmQi9k=
+X-Received: by 2002:a17:906:d554:b0:b1d:285c:e0ef with SMTP id
+ a640c23a62f3a-b733197ee63mr188626866b.26.1762927422954; Tue, 11 Nov 2025
+ 22:03:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW4PR11MB6690:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea82fba9-9312-4ad3-e139-08de21b0b813
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?aPZTAvMJT8mlMmxLKlDRpwqzk+n6cvJKa1ZLoksltIrj0acRamuJzdf2muV5?=
- =?us-ascii?Q?LMyqASdA48CxqdLgcuWRay+6RRVVwkfOsfppxfr6Jple0AIUDSsPBPDe3Syc?=
- =?us-ascii?Q?Ixl3es2VMzvG4D5FrYf6GLORzZWFKTPC5IucmHNVkLiSKLInHd+dt2JzZb2r?=
- =?us-ascii?Q?zaJVWdDrIq03yvfHcBc2tZJ05lKEx4IEpXU9eXxcroyn4DqRnqxRp5nWyjNP?=
- =?us-ascii?Q?inSE8VKtV7t2TKM0xErSPkcOM7N4fSTgk6k/dunMCJlsCJqe1ji929zT5Eb7?=
- =?us-ascii?Q?hoF9/XJxzwKBWVfH/VLiw+DdPOFNjzwhyf/MwNrB9krnLz/JMrziZo0kRqz7?=
- =?us-ascii?Q?gbkuEK7XRSaujxkKQtbIXmFJm+UuE0Wm9cZtuQNZgM+gfuk7S8bIKsBX3UmC?=
- =?us-ascii?Q?9jiSns+QnD38oK3H3O5/5rNfS7LTU7RMHafkeb6wwBPIN3SngpeprXCcUAhO?=
- =?us-ascii?Q?WKZKPROAUbm/FiCTL1wLf6HtuIxPMnjXSgTUZbR6813FBFs+0+eGbyu3GBv1?=
- =?us-ascii?Q?i1qNNJFmcVrtFXts7VZbB3mSBUMO7c21ctisXCrDP0MpY7OqziK5SAe5ez6X?=
- =?us-ascii?Q?1FnVFgZwfDU2KVCJz0Eaf2f3hdkTfck0QC0i8tYTepeSucY+22RKsWqk6Rqb?=
- =?us-ascii?Q?2jDBAGAPt+/kV5sN3mrQlbFkKEUiSSYpznqC3kmfnPxAygTBwC/kb0+669RQ?=
- =?us-ascii?Q?aLkqNWgD5Xl8bMIJOrLyewwlc8WGZJAGb3sJwl/mUTXXDqRXd4YPlds34ztP?=
- =?us-ascii?Q?8A99ZcJEYUUVwb5bQWgaNHBgfzt8+Tdf/fCR/u1tgpPsUtRIZjsqVd2HA4HD?=
- =?us-ascii?Q?PH/YRok5OCCKt+dOBjYe+m/PYcSAYVxMTILDq0CBjqdh5YLudgET1+dMxARo?=
- =?us-ascii?Q?dMZK+sI/19LnyhsoMCl5k2Qz4owRZExelHsODdQjtYvkVFh+ecT0Lbn0/hoX?=
- =?us-ascii?Q?27uhn+ShK6HPJdfdq9kGsItp/5X9UTx+5VlxHqDazP+VpNpLX4Z2Pagrdhbn?=
- =?us-ascii?Q?cQ6J7DUR7TUh4/6sgkP9ExKpodAOKPOPgF9zQp/t27zeQQKx45LgYmf3SYZ1?=
- =?us-ascii?Q?/0LQx2anSglETPl6A0d4CufTOqOQjlyWeJ6pT/0ebx6IbSh/KddMzzUXCsOB?=
- =?us-ascii?Q?inl82LfcEfyrhWyNOyU4Fo1mRMKwXnNfHc1qLFF5r8vH6JaeRArY1bKb4zTT?=
- =?us-ascii?Q?GjICN/+oRpTtqzQVTvi2qpmeVhhLlD6H7zV6dOZsiDzDgCDYR19tvzWS0eWO?=
- =?us-ascii?Q?PXjhTHrSkx3+7lOjBF3zWgKxWc2t/8jiFSIxHIPMT+alAlWeyMKZFpj8KNI3?=
- =?us-ascii?Q?INIX994tnnQ/crytCSFPnaqDqUM0KVBjtBSztLcVyqbVbsaMWBb+jgKaX8fy?=
- =?us-ascii?Q?CgLS+74ocUemkGsIycMndxYp4vgigWhsZRnOAV+pcfw8XXkktw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?G5IrA8JpVmhUFOY1HgqI7eRNJG85kt4BZBwF2bhbF3W0w0g2u2tlIRJ+uJ1X?=
- =?us-ascii?Q?YgJ72CwBgwcr675oaNWzPSiftMSoTn3kdSIB6Dp25+lo6qGcqO74fou94rgT?=
- =?us-ascii?Q?NHjeVaFNEikXf/95OFmSFkBWPxZRT29mrIg6xSnl/BHOsRuLGMPmbUmRrKFx?=
- =?us-ascii?Q?w1z0g5mQcCcQFcikGrESQ96ATKe8vqu/U43UPqD7p9twhQbbDav3VFA8nsaO?=
- =?us-ascii?Q?6rvuJNIrTs2JKov/jotLty/3ScxXLfq9l9A8j2D/q+GYHhn5UjNU+1IuEdCN?=
- =?us-ascii?Q?p+P6XJiP/ssTKidbAPirKlNKrKp0vsFeNm9Tbh7MBq4YBtEJo8aoDvFtwFRm?=
- =?us-ascii?Q?GxDrc5q3U5JI7u/BEf8ICXs+jgXL8wKxkwpDz3lle+RrG05BYK35U4r6uAyt?=
- =?us-ascii?Q?s8zFdG0qbhYUrultyL1p4IHUZnwwUDP+TnLzKYnSq0gmPEWjWSBXqjxuyVVV?=
- =?us-ascii?Q?2L4fwSGMm8U2AxFL5nS/DavFLKiQPirHvUepyWk97uCqRtslInGH11GJPFhY?=
- =?us-ascii?Q?s/0FJskikKiaUhUVHxwfMM7t0EnC8L5m6j3e0HTw5w1A1JFHncQWcTTeORk2?=
- =?us-ascii?Q?O4PjwXqpTcGwcZwZdU51ExPOUFKHIv6TGQiyKg8Rxyhm2kodfE9kMXkUVGjg?=
- =?us-ascii?Q?fAKlBWn2hNpJcv5MZe/VnkH3lzpCUHjvbAqPtJg88WR9lmO1As9YS9ZvvVID?=
- =?us-ascii?Q?xx5pGGmlq0pu7Wlyu81Jf9nw9vH+wVkwnlNUCYDcmd6he8s79gQu+eWOuPjW?=
- =?us-ascii?Q?PbUQV0AvQ6tgTBIngXoXArm4fj1WPwh0jDYPoT8MDIFeyZ1PmemKNshi1J+P?=
- =?us-ascii?Q?q5aiWZel29lRoIaUGdnM18exJmBBPF25qGaqLQtr9P+juB23AeqPSF5p9kv7?=
- =?us-ascii?Q?8DLR6okyjQO4W7p4MjboSfV7v6fVFi6Z1fhBGVjrSK3npycQOrgolLAch89X?=
- =?us-ascii?Q?rWHktBkdlKMhuzYC8qDPERXoC82+wVMe9GbpLj1KUjFPgnrfzQhBSsnXNVBf?=
- =?us-ascii?Q?iy/ODhY4rTIFS3TTv1VodrXj6cKWCMxr82pPsNxZak/qC9Zn8rYKHlo7FqfM?=
- =?us-ascii?Q?xQcwx7gqA57ZFcbpAMyML/h+irAVL8CH+KYz/DtiDLkayfC98Immd0zAcyEe?=
- =?us-ascii?Q?jbjWjrrifqJAx7wOzMdDQiudNVyBIFY/ZHR7cRWmKNR2oFyUMZ4yFgZYq7/M?=
- =?us-ascii?Q?TqiXQELNGnlGspnEj0PwIIQQ1haNskQpuh20TT4/jKqmVrlj7hkLDwkqR97Y?=
- =?us-ascii?Q?Srn2aHBVSNF06oYZbgOpZ73L56S2r6Uywbp47QrVDIxYOquDxEozCvhS8OV5?=
- =?us-ascii?Q?PKkim/dwaRbfYfT/ZNo0NfKADTMmu3FNiP6Vx89ywt5yUoldMyZwjotpVEKP?=
- =?us-ascii?Q?yzsiDEN53K1fA00lIAPFLXAOjtjarbMlaAdxYUxtxgBmH7mVK2vPrBz7RIx1?=
- =?us-ascii?Q?+5oLw7Av3q6GjfOKgGUD/O64HjjoTXdoOtVPznPOnkASs4z9xQ7xQT3XpeHE?=
- =?us-ascii?Q?nE1fE+9ZUGUGkQa7xlygmUaMbOq0W/orfkK5fT+aTxRoA7ZEN4D6wPOILCgy?=
- =?us-ascii?Q?nTe7N1FJhPIBomJ5mJ8zlJPrKvrtx5XnGxhpPRkUPfER3u9ibwml2u1NfdAD?=
- =?us-ascii?Q?jQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea82fba9-9312-4ad3-e139-08de21b0b813
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:00:02.1797
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GoRqYpBGMcZSyXs0mriyLD5EflHVcS30h0sDHERcBtbJ6DxjCnL2i/eleR2iFKWgH3I9YXp+UTevVb+C1TsBxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6690
-X-OriginatorOrg: intel.com
+References: <20251112034333.2901601-1-dolinux.peng@gmail.com> <20251112141705.a7f2f79f6d7b058201307e89@kernel.org>
+In-Reply-To: <20251112141705.a7f2f79f6d7b058201307e89@kernel.org>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 12 Nov 2025 14:03:30 +0800
+X-Gm-Features: AWmQ_blqb1_MPJKmnuWZojHSnkUWb5-DmI2kcKy9ZZjFGm2p5RfAbbf1kLkFNjU
+Message-ID: <CAErzpmsHNRzB2pBFVSAG4ii=VN98NEtehEbnYNQY-4TBWgM3ag@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
+ funcgraph-retaddr to work simultaneously
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: rostedt@goodmis.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Donglin Peng <pengdonglin@xiaomi.com>, 
+	Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 12, 2025 at 1:17=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
+rg> wrote:
+>
+> On Wed, 12 Nov 2025 11:43:33 +0800
+> Donglin Peng <dolinux.peng@gmail.com> wrote:
+>
+> > From: Donglin Peng <pengdonglin@xiaomi.com>
+> >
+> > Currently, the funcgraph-args and funcgraph-retaddr features are mutual=
+ly exclusive.
+> > This patch resolves this limitation by modifying funcgraph-retaddr to a=
+dopt the same
+> > implementation approach as funcgraph-args, specifically by storing the =
+return address
+> > in the first entry of the args array.
+> >
+> > As a result, both features now coexist seamlessly and function as inten=
+ded.
+> >
+> > To verify the change, use perf to trace vfs_write with both options ena=
+bled:
+> >
+> > Before:
+> >  # perf ftrace -G vfs_write --graph-opts args,retaddr
+> >  ......
+> >  0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
+> >  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+> >  0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x160 *=
+/
+> >  0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x160 *=
+/
+> >  0)   0.754 us    |  }
+> >
+> > After:
+> >  # perf ftrace -G vfs_write --graph-opts args,retaddr
+> >  ......
+> >  0)               |  down_read(sem=3D0xffff8880100bea78) { /* <-n_tty_w=
+rite+0xa3/0x540 */
+> >  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+> >  0)   0.079 us    |    preempt_count_add(val=3D1); /* <-down_read+0x3b/=
+0x160 */
+> >  0)   0.077 us    |    preempt_count_sub(val=3D1); /* <-down_read+0x8b/=
+0x160 */
+> >  0)   0.754 us    |  }
+> >
+> > Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Cc: Sven Schnelle <svens@linux.ibm.com>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
+>
+> Looks good to me except for a few nits, but it's a style issue.
+>
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Hello,
+Thank you for ack.
 
-kernel test robot noticed "BUG_kmalloc-#k:Object_corrupt" on:
+>
+> Thank you,
+>
+> > ---
+> > v3:
+> > - Replace min() with min_t() to improve type safety and maintainability
+> > - Keep only one Signed-off-by for cleaner attribution
+> > - Code refactoring for improved readability
+> >
+> > v2:
+> > - Preserve retaddr event functionality (suggested by Steven)
+> > - Store the retaddr in args[0] (suggested by Steven)
+> > - Refactor implementation logic and commit message clarity
+> > ---
+> >  include/linux/ftrace.h               |  11 --
+> >  kernel/trace/trace.h                 |   4 -
+> >  kernel/trace/trace_entries.h         |   6 +-
+> >  kernel/trace/trace_functions_graph.c | 145 ++++++++++++---------------
+> >  4 files changed, 69 insertions(+), 97 deletions(-)
+> >
+> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> > index 7ded7df6e9b5..88cb54d73bdb 100644
+> > --- a/include/linux/ftrace.h
+> > +++ b/include/linux/ftrace.h
+> > @@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
+> >       int depth;
+> >  } __packed;
+> >
+> > -/*
+> > - * Structure that defines an entry function trace with retaddr.
+> > - * It's already packed but the attribute "packed" is needed
+> > - * to remove extra padding at the end.
+> > - */
+> > -struct fgraph_retaddr_ent {
+> > -     unsigned long func; /* Current function */
+> > -     int depth;
+> > -     unsigned long retaddr;  /* Return address */
+> > -} __packed;
+> > -
+> >  /*
+> >   * Structure that defines a return function trace.
+> >   * It's already packed but the attribute "packed" is needed
+> > diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> > index 85eabb454bee..9fac291b913a 100644
+> > --- a/kernel/trace/trace.h
+> > +++ b/kernel/trace/trace.h
+> > @@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterato=
+r *iter);
+> >  extern int __trace_graph_entry(struct trace_array *tr,
+> >                              struct ftrace_graph_ent *trace,
+> >                              unsigned int trace_ctx);
+> > -extern int __trace_graph_retaddr_entry(struct trace_array *tr,
+> > -                             struct ftrace_graph_ent *trace,
+> > -                             unsigned int trace_ctx,
+> > -                             unsigned long retaddr);
+> >  extern void __trace_graph_return(struct trace_array *tr,
+> >                                struct ftrace_graph_ret *trace,
+> >                                unsigned int trace_ctx,
+> > diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.=
+h
+> > index de294ae2c5c5..593a74663c65 100644
+> > --- a/kernel/trace/trace_entries.h
+> > +++ b/kernel/trace/trace_entries.h
+> > @@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_re=
+taddr_ent_entry,
+> >       TRACE_GRAPH_RETADDR_ENT,
+> >
+> >       F_STRUCT(
+> > -             __field_struct( struct fgraph_retaddr_ent,      graph_ent=
+       )
+> > +             __field_struct( struct ftrace_graph_ent,        graph_ent=
+       )
+> >               __field_packed( unsigned long,  graph_ent,      func     =
+       )
+> >               __field_packed( unsigned int,   graph_ent,      depth    =
+       )
+> > -             __field_packed( unsigned long,  graph_ent,      retaddr  =
+       )
+> > +             __dynamic_array(unsigned long,  args                     =
+       )
+> >       ),
+> >
+> >       F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->d=
+epth,
+> > -             (void *)__entry->retaddr)
+> > +             (void *)__entry->args[0])
+> >  );
+> >
+> >  #else
+> > diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_=
+functions_graph.c
+> > index a7f4b9a47a71..f31eeeffbb2d 100644
+> > --- a/kernel/trace/trace_functions_graph.c
+> > +++ b/kernel/trace/trace_functions_graph.c
+> > @@ -16,6 +16,15 @@
+> >  #include "trace.h"
+> >  #include "trace_output.h"
+> >
+> > +#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> > +#define HAVE_RETADDR 1
+> > +#define ARGS_OFFS(args_size) \
+> > +     ((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
+> > +#else
+> > +#define HAVE_RETADDR 0
+> > +#define ARGS_OFFS(args_size) 0
+> > +#endif
+> > +
+> >  /* When set, irq functions will be ignored */
+> >  static int ftrace_graph_skip_irqs;
+> >
+> > @@ -27,21 +36,25 @@ struct fgraph_cpu_data {
+> >       unsigned long   enter_funcs[FTRACE_RETFUNC_DEPTH];
+> >  };
+> >
+> > +/*
+> > + * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, e=
+nt
+> > + * member repurposed for storage
+> > + */
+> >  struct fgraph_ent_args {
+> >       struct ftrace_graph_ent_entry   ent;
+> > -     /* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entrie=
+s */
+> > -     unsigned long                   args[FTRACE_REGS_MAX_ARGS];
+> > +     /*
+> > +      * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAV=
+E_RETADDR)
+> > +      * entries with the first entry storing the return address for
+> > +      * TRACE_GRAPH_RETADDR_ENT.
+> > +      */
+> > +     unsigned long           args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR]=
+;
+> >  };
+> >
+> >  struct fgraph_data {
+> >       struct fgraph_cpu_data __percpu *cpu_data;
+> >
+> >       /* Place to preserve last processed entry. */
+> > -     union {
+> > -             struct fgraph_ent_args          ent;
+> > -             /* TODO allow retaddr to have args */
+> > -             struct fgraph_retaddr_ent_entry rent;
+> > -     };
+> > +     struct fgraph_ent_args          ent;
+> >       struct ftrace_graph_ret_entry   ret;
+> >       int                             failed;
+> >       int                             cpu;
+> > @@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *tr, =
+struct ftrace_graph_ent *trace,
+> >       struct ring_buffer_event *event;
+> >       struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+> >       struct ftrace_graph_ent_entry *entry;
+> > -     int size;
+> > +     unsigned long retaddr =3D 0;
+> > +     int size =3D sizeof(*entry);
+> > +     int type =3D TRACE_GRAPH_ENT;
+> > +     bool store_args =3D false;
+> > +     int nr_args =3D 0, args_offs =3D 0;
+> > +
+> > +     if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+> > +             retaddr =3D ftrace_graph_top_ret_addr(current);
+> > +             type =3D TRACE_GRAPH_RETADDR_ENT;
+> > +             nr_args +=3D 1;
+> > +     }
+> >
+> >       /* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words =
+*/
+> > -     size =3D sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeo=
+f(long));
+> > +     if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
+> > +             store_args =3D !!fregs;
+> > +             if (store_args)
+> > +                     nr_args +=3D FTRACE_REGS_MAX_ARGS;
+> > +     }
+> >
+> > -     event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size=
+, trace_ctx);
+> > +     size +=3D nr_args * sizeof(long);
+> > +     event =3D trace_buffer_lock_reserve(buffer, type, size, trace_ctx=
+);
+> >       if (!event)
+> >               return 0;
+> >
+> >       entry =3D ring_buffer_event_data(event);
+> >       entry->graph_ent =3D *trace;
+> >
+> > +     /* Store the retaddr in args[0] */
+> > +     if (type =3D=3D TRACE_GRAPH_RETADDR_ENT) {
+> > +             entry->args[0] =3D retaddr;
+> > +             args_offs +=3D 1;
+> > +     }
+> > +
+> >  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+> > -     if (fregs) {
+> > +     if (store_args) {
+> >               for (int i =3D 0; i < FTRACE_REGS_MAX_ARGS; i++)
+> > -                     entry->args[i] =3D ftrace_regs_get_argument(fregs=
+, i);
+> > +                     entry->args[i + args_offs] =3D ftrace_regs_get_ar=
+gument(fregs, i);
+> >       }
+> >  #endif
+> >
+> > @@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr,
+> >       return __graph_entry(tr, trace, trace_ctx, NULL);
+> >  }
+> >
+> > -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> > -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> > -                             struct ftrace_graph_ent *trace,
+> > -                             unsigned int trace_ctx,
+> > -                             unsigned long retaddr)
+> > -{
+> > -     struct ring_buffer_event *event;
+> > -     struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+> > -     struct fgraph_retaddr_ent_entry *entry;
+> > -
+> > -     event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_E=
+NT,
+> > -                                       sizeof(*entry), trace_ctx);
+> > -     if (!event)
+> > -             return 0;
+> > -     entry   =3D ring_buffer_event_data(event);
+> > -     entry->graph_ent.func =3D trace->func;
+> > -     entry->graph_ent.depth =3D trace->depth;
+> > -     entry->graph_ent.retaddr =3D retaddr;
+> > -     trace_buffer_unlock_commit_nostack(buffer, event);
+> > -
+> > -     return 1;
+> > -}
+> > -#else
+> > -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> > -                             struct ftrace_graph_ent *trace,
+> > -                             unsigned int trace_ctx,
+> > -                             unsigned long retaddr)
+> > -{
+> > -     return 1;
+> > -}
+> > -#endif
+> > -
+> >  static inline int ftrace_graph_ignore_irqs(void)
+> >  {
+> >       if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT=
+))
+> > @@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent *tra=
+ce,
+> >       struct trace_array *tr =3D gops->private;
+> >       struct fgraph_times *ftimes;
+> >       unsigned int trace_ctx;
+> > -     int ret =3D 0;
+> >
+> >       if (*task_var & TRACE_GRAPH_NOTRACE)
+> >               return 0;
+> > @@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *tr=
+ace,
+> >               return 1;
+> >
+> >       trace_ctx =3D tracing_gen_ctx();
+> > -     if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
+> > -         tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+> > -             unsigned long retaddr =3D ftrace_graph_top_ret_addr(curre=
+nt);
+> > -             ret =3D __trace_graph_retaddr_entry(tr, trace, trace_ctx,=
+ retaddr);
+> > -     } else {
+> > -             ret =3D __graph_entry(tr, trace, trace_ctx, fregs);
+> > -     }
+> > -
+> > -     return ret;
+> > +     return __graph_entry(tr, trace, trace_ctx, fregs);
+> >  }
+> >
+> >  int trace_graph_entry(struct ftrace_graph_ent *trace,
+> > @@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *iter,
+> >                        * Save current and next entries for later refere=
+nce
+> >                        * if the output fails.
+> >                        */
+> > -                     if (unlikely(curr->ent.type =3D=3D TRACE_GRAPH_RE=
+TADDR_ENT)) {
+> > -                             data->rent =3D *(struct fgraph_retaddr_en=
+t_entry *)curr;
+> > -                     } else {
+> > -                             int size =3D min((int)sizeof(data->ent), =
+(int)iter->ent_size);
+> > +                     int size =3D min_t(int, sizeof(data->ent), iter->=
+ent_size);
+> >
+> > -                             memcpy(&data->ent, curr, size);
+> > -                     }
+> > +                     memcpy(&data->ent, curr, size);
+> >                       /*
+> >                        * If the next event is not a return type, then
+> >                        * we only care about what type it is. Otherwise =
+we can
+> > @@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, unsi=
+gned long long duration,
+> >
+> >  #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> >  #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
+> > -static void print_graph_retaddr(struct trace_seq *s, struct fgraph_ret=
+addr_ent_entry *entry,
+> > -                             u32 trace_flags, bool comment)
+> > +static void print_graph_retaddr(struct trace_seq *s, unsigned long ret=
+addr, u32 trace_flags,
+> > +                             bool comment)
+> >  {
+> >       if (comment)
+> >               trace_seq_puts(s, " /*");
+> >
+> >       trace_seq_puts(s, " <-");
+> > -     seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE=
+_ITER_SYM_OFFSET);
+> > +     seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET)=
+;
+> >
+> >       if (comment)
+> >               trace_seq_puts(s, " */");
+> >  }
+> >  #else
+> >  #define __TRACE_GRAPH_PRINT_RETADDR 0
+> > -#define print_graph_retaddr(_seq, _entry, _tflags, _comment)         d=
+o { } while (0)
+> > +#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)        =
+       do { } while (0)
+> >  #endif
+> >
+> >  #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_G=
+RAPH_RETADDR)
+> > @@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *=
+s, struct ftrace_graph_ent_entr
+> >               trace_seq_printf(s, "%ps", func);
+> >
+> >               if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+> > -                     print_function_args(s, entry->args, (unsigned lon=
+g)func);
+> > +                     print_function_args(s, entry->args + ARGS_OFFS(ar=
+gs_size),
+> > +                                         (unsigned long)func);
+> >                       trace_seq_putc(s, ';');
+> > -             } else
+> > +             } else {
+>
+> nit: you don't need to add braces for a single line block.
 
-commit: 6e383382971f4573e29f0e85c6e5667c8f5f46d6 ("[PATCH] net: Fix error handling in netdev_register_kobject")
-url: https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/net-Fix-error-handling-in-netdev_register_kobject/20251107-160348
-base: https://git.kernel.org/cgit/linux/kernel/git/davem/net-next.git 6fc33710cd6c55397e606eeb544bdf56ee87aae5
-patch link: https://lore.kernel.org/all/20251107080117.15099-1-make24@iscas.ac.cn/
-patch subject: [PATCH] net: Fix error handling in netdev_register_kobject
+Thanks. I added the else braces for consistency with the
+multi-statement if branch,
+per coding-style.rst. Happy to remove if you prefer the
+single-statement exception.
 
-in testcase: boot
+https://elixir.bootlin.com/linux/v6.18-rc5/source/Documentation/process/cod=
+ing-style.rst#L213
 
-config: i386-randconfig-014-20251110
-compiler: gcc-14
-test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+Do not unnecessarily use braces where a single statement will do.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+.. code-block:: c
 
+if (condition)
+action();
 
+and
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202511121347.b3f6c2a3-lkp@intel.com
+.. code-block:: c
 
+if (condition)
+do_this();
+else
+do_that();
 
-[  OK  ] Started /etc/rc.local Compatibility.
-LKP: ttyS0: 250: skip deploy intel ucode as no ucode is specified
-[   15.199659] rc.local[250]: LKP: stdout: 250: skip deploy intel ucode as no ucode is specified
-[   15.508990][    T1] [Poison overwritten] 0xf5e12370-0xf5e12370 @offset=9072. First byte 0x6a instead of 0x6b
-[   15.511968][    T1] =============================================================================
-[   15.514232][    T1] BUG kmalloc-2k (Tainted: G S                 ): Object corrupt
-[   15.516308][    T1] -----------------------------------------------------------------------------
-[   15.516308][    T1]
-[   15.519187][    T1] Allocated in alloc_netdev_mqs+0x7d/0x470 age=517 cpu=1 pid=191
-[   15.521218][    T1]  __slab_alloc+0x53/0x80
-[   15.522561][    T1]  __kvmalloc_node_noprof (kbuild/src/consumer/mm/slub.c:4846 kbuild/src/consumer/mm/slub.c:5268 kbuild/src/consumer/mm/slub.c:5641 kbuild/src/consumer/mm/slub.c:7100)
+This does not apply if only one branch of a conditional statement is a sing=
+le
+statement; in the latter case use braces in both branches:
 
+.. code-block:: c
 
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20251112/202511121347.b3f6c2a3-lkp@intel.com
+if (condition) {
+do_this();
+do_that();
+} else {
+otherwise();
+}
 
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+>
+> >                       trace_seq_puts(s, "();");
+> > +             }
+> >
+> >               if (print_retval || print_retaddr)
+> >                       trace_seq_puts(s, " /*");
+> > @@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq *s,=
+ struct ftrace_graph_ent_entr
+> >       }
+> >
+> >       if (print_retaddr)
+> > -             print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *=
+)entry,
+> > -                                 trace_flags, false);
+> > +             print_graph_retaddr(s, entry->args[0], trace_flags, false=
+);
+> >
+> >       if (print_retval) {
+> >               if (hex_format || (err_code =3D=3D 0))
+> > @@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator *ite=
+r,
+> >               trace_seq_printf(s, "%ps", (void *)ret_func);
+> >
+> >               if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+> > -                     print_function_args(s, entry->args, ret_func);
+> > +                     print_function_args(s, entry->args + ARGS_OFFS(ar=
+gs_size),
+> > +                                         ret_func);
+> >                       trace_seq_putc(s, ';');
+> > -             } else
+> > +             } else {
+>
+> Ditto.
+>
+> >                       trace_seq_puts(s, "();");
+> > +             }
+> >       }
+> >       trace_seq_putc(s, '\n');
+> >
+> > @@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterator *i=
+ter,
+> >       args_size =3D iter->ent_size - offsetof(struct ftrace_graph_ent_e=
+ntry, args);
+> >
+> >       if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long))
+> > -             print_function_args(s, entry->args, func);
+> > +             print_function_args(s, entry->args + ARGS_OFFS(args_size)=
+, func);
+> >       else
+> >               trace_seq_puts(s, "()");
+> >
+> > @@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterator *i=
+ter,
+> >
+> >       if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
+> >               entry->ent.type =3D=3D TRACE_GRAPH_RETADDR_ENT)
+> > -             print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *=
+)entry,
+> > -                     tr->trace_flags, true);
+> > +             print_graph_retaddr(s, entry->args[0], tr->trace_flags, t=
+rue);
+> >       trace_seq_putc(s, '\n');
+> >
+> >       if (trace_seq_has_overflowed(s))
+> > @@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *=
+field, struct trace_seq *s,
+> >        * it can be safely saved at the stack.
+> >        */
+> >       struct ftrace_graph_ent_entry *entry;
+> > -     u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)]=
+;
+> > +     u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR=
+) * sizeof(long)];
+> >
+> >       /* The ent_size is expected to be as big as the entry */
+> >       if (iter->ent_size > sizeof(save_buf))
+> > @@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_iterato=
+r *iter, u32 flags)
+> >               trace_assign_type(field, entry);
+> >               return print_graph_entry(field, s, iter, flags);
+> >       }
+> > -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> >       case TRACE_GRAPH_RETADDR_ENT: {
+> > -             struct fgraph_retaddr_ent_entry saved;
+> >               struct fgraph_retaddr_ent_entry *rfield;
+> >
+> >               trace_assign_type(rfield, entry);
+> > -             saved =3D *rfield;
+> > -             return print_graph_entry((struct ftrace_graph_ent_entry *=
+)&saved, s, iter, flags);
+> > +             return print_graph_entry((typeof(field))rfield, s, iter, =
+flags);
+> >       }
+> > -#endif
+> >       case TRACE_GRAPH_RET: {
+> >               struct ftrace_graph_ret_entry *field;
+> >               trace_assign_type(field, entry);
+> > --
+> > 2.34.1
+> >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
