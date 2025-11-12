@@ -1,488 +1,237 @@
-Return-Path: <linux-kernel+bounces-897667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B67C53A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB33C53A35
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:21:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8954C5433DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:04:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E889582B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABABE33D6FB;
-	Wed, 12 Nov 2025 16:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296A7342514;
+	Wed, 12 Nov 2025 16:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RUjXcxWm"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011018.outbound.protection.outlook.com [52.101.62.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gYHJODyi"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C7B29D28F;
-	Wed, 12 Nov 2025 16:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963420; cv=fail; b=ZJ5F03dZShseFY0mIqw6xbsxumSnsvuaxsagL7vMtI0z1MZaklAYUevOfDZzMhzWkQh4mHEPKm+8gBDHcI3vm0M6lxlyGW8aNqGhmX2CH5VSss8XFzjjZyRbVY49ru5OMIZdMmVDms1TEL5BY95F4ZiA6q8nOfkv+EPzp0iAGKk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963420; c=relaxed/simple;
-	bh=AgVJiW1wsjE7zVDx0hg0haO3jXL1EpLsUJnzgqJqDNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G/zi11rHDfzrlg+yB8N8l8H+dY2jlKyQpzHYJK06QRABzZCkpiGcwHb+9cuK0jw4U/dUdMg7Vj1CF0t5WMwqTSLJ5cafcFRmE43Yokjl9WI0JZizY+yMi/LjL45VuyJx2unjPQkC1R1MiHP04ioSbqOINT4mQwRbQfpY9FYFgZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RUjXcxWm; arc=fail smtp.client-ip=52.101.62.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jIIDEH1OP8W3kw0PPkqIhuTrWFUNb+w8/vFrI3O6qnqy/E1ncDzwRwgSyxqVineqMKYlmPoZQ0CpPu6E1bE6RWiFD+Z2PFHPFV+q7OGpKRhV8R3WcV9S/gvZmzT7EttSSg7zFwGaxOnLoRY4xjqscxM/lomr/6u7KCdLWlyvtL3iUMdvS2RUqwSIYWrR4hZKgvaMfioSjLb03G/hms48fEdd6pK+soZ/di/Gy5ua5kgQC9r6Hwy+jYhYpOax0vdLeZNcD5IqKyJ0Kwgpc1RiMYbBXUQ11ZsY85GPDxSwlcJFZEBsUXG7bbEHYWfucIPrjBNTzIWpy2bYXqohqQ2Pyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Sectjm9ynUQYmA+CWCEuq6pUMJlViS7YKlXsPFLkWLY=;
- b=MDMg+xsFiCYG29odf5utnBdWZq/59GmRxP3nuqOG8vpWRUv8jN4PAput3tXqmFDCcGaiuzRIFi0Z3AP1Hbxe0B4/7mgLLGPZnI5xkpOwzqhd/4HkQ1pxXKE5v6b/jhqOWfj4aWv7qS1pom5pm9svu2JiS3k8Q8uOJ5mC2qVc/Gp/RJkNmc7+6VzFk8fat79lAtB33tPdUFexoqxbl3jCJ4g5PSQ+m3i49bcMW9lZ8jbF8R6PpfGrIcGXXYqgyZtr8BzyftvJquWR8scpN4xiqAp0BKBpOX9JgovB4gfIYjsHLUvwRfYq5baFgvsn2wDEsjQS+N0+9scoRll+YDyM2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sectjm9ynUQYmA+CWCEuq6pUMJlViS7YKlXsPFLkWLY=;
- b=RUjXcxWm4OuKy+F/ONFGEA6WeF1PXhZrXcrG8C3I++SAhlXXBGIWM6prnXd1nSE69NyBUekwi3Et9TE/TWuXVCIHwInl8HGYlO57igLQKunItGdyEOzijzAgt/zE41bmU6X2ujC7rXhzlPSoanTr7M3BHSClsFXtEF+7N5PH2jZK4XFqpYux0HQ1MNYOUGjQ998Hs6i7UbqQHv0+kBtyIFQui5+PdNrsCsOCWgN1S7OMVOzZk3J+0ABl8Fs8d/M9pDJNevnMj2THabklOzwS2LJX2Qpfn9/CHah5Jc6iS6XRZ2JRbRai8xRco5EzCR6H9uSrGVZJZyKjgJ6UEmzWbw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS7PR12MB6359.namprd12.prod.outlook.com (2603:10b6:8:94::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.16; Wed, 12 Nov 2025 16:03:30 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 16:03:30 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Arnd Bergmann <arnd@arndb.de>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
- SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v3 03/16] mm: avoid unnecessary uses of is_swap_pte()
-Date: Wed, 12 Nov 2025 11:03:24 -0500
-X-Mailer: MailMate (2.0r6283)
-Message-ID: <D80CF897-63BE-4C11-8363-57ABD5303DA1@nvidia.com>
-In-Reply-To: <c69f57ff-c4b1-4fb9-8954-c5687dc2d904@lucifer.local>
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
- <17fd6d7f46a846517fd455fadd640af47fcd7c55.1762812360.git.lorenzo.stoakes@oracle.com>
- <B114F7B2-8EDA-44DC-8458-79E3FF628558@nvidia.com>
- <c69f57ff-c4b1-4fb9-8954-c5687dc2d904@lucifer.local>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN0PR02CA0022.namprd02.prod.outlook.com
- (2603:10b6:208:530::25) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E82340280
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762963575; cv=none; b=s9b/gqvNgH5BcVolVDZ+w1k1DaQiEYb8zTOoyc+Vflg7QLICX47nS0PBxKP57ShVjjZPxpCtGYEP58ChpRZpfbD58jT3koAdl7+lOwNujnz4sw39GZRbZ5SDU7jXGIgdeW5DV7iCPnz1d94/69whhBQmXE1zMK/G7wHGtvhK8Q0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762963575; c=relaxed/simple;
+	bh=/DmYL+Sj+FG4hqT/OSvBRhos+Di8zc6kpbnkQ+JHZww=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jT+Iz4/T2cw1+khbYpyxtSHOcbRMl97S8nv6r1QI8URaR763FAqXWmMF+AF9OKGtXIAFXSj0hpwT4nF+f12oAUrMuPbYahDQsSt1pCxn9ow/vX4uW1zbBtBMwOxXTUloZqHWiYdv0SoX0As5nRerldJdWM6S0QvcYXI5Nj5UsU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gYHJODyi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so11097685e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:06:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762963572; x=1763568372; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R2s7+BrGGG8vXeljE4273Hpn3eddX5sKox/gHy4ML+U=;
+        b=gYHJODyiglh6A5V8J+CA7HNP5Jdx1v/QujrZ+o2HP7c6W2M9V/si4C9DvMde9+dC1O
+         8PQLj3FW9qBC2W8F8meZ5RD8kC6wJ5YG1wQ3OWElMJwgGdqI1MIpFsMeLnlFXJ5CZERs
+         WbMGK53IGm9cYlgNe95aTP6LPfUR+9rAb/KY6Z6Kvf5oiUzYSe6Sqny+o+px1rxHnSHN
+         JtEzYh+uEWVDdVTBTGuBAvDN6SxNfIfzzCTOg0TavNHDWFJ098NuSnyfxyfOH9cCz3bG
+         kp3GSyOs5AIcNg8BLU1uVTbKmxoqbI2kE1AbyuP8sbEq2lA7dzkk41Tg9LUz2GmM9iCM
+         NCbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762963572; x=1763568372;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R2s7+BrGGG8vXeljE4273Hpn3eddX5sKox/gHy4ML+U=;
+        b=RrYIiuw8PQ0kWUZq/T57a8Pz+GLCg7207xvDc39YWRi78nylSq1B2fujJGBQ67JkKy
+         sGnv9sOJOmK9gSnlvmb8vFFsP4bNrkMBtHLx+kh9X/Vx0krU/neLjw1OHyEfV+tL85kL
+         MPJ/FKKugPFqUE/Dm169BaiBafUrGs2XLJ5xa2DLuyNeHDzV1Ib4E4xA1qswDVZCUIMc
+         qY4u33kBMcdn8u+0tTPF4p3NQxUWdzMPWO1efPelcHAys/gmQ/9Rt/i0sgEp0gjmD33j
+         TPY5WzLlsMb7RgXiDELgMqyUQAzRLWbmY4PWR8DJy+XZTRx2JS1Uw73Xo2YiHh5ylCqY
+         HOuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrO4sGfTtt53IVFlKesciEmZh1/8CYDYpN00sCdNLN15qMJUc7znqULX/XDKTAIO++3OxQVq9jt62XwOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOlOo8VGleOwLMZ7MxmPRTln9DcXQ7s8UH55he9mSgh4FUPpqT
+	5CPwl3USwBZ/CT8dyJ0USNR+OTbLGUcLXQumYdZWsLk4icbBLGEcK8D5fph+8tg6OLQ=
+X-Gm-Gg: ASbGncs61mkgu4DvxMavLT8r1L00/i3GJB0SvT+zn/nYMwayrDPxp70nBOt6kAl1J3a
+	g+sb70LgVVyjk9EBlD+IKLa1VcuI8hmRUyewodkNox5tcnaPDt8w01U0GVsYrQx+2u1j+sz4/Qy
+	R1bSmCP7xmwFvlDVt/0CevxMy3mzq8b9ZfFot56OMzgj5xbvzXkiRxvNoZ8QlU7KiJYTJSbqafr
+	ZlXMfnReuE6rMr2RDIc13YCRBOwvokvVq8gDzWZNHCI6OmMUcMdB6PaU0zbAAYdVl7n3w22nB7m
+	X8oI/jcmy9YEnLnHeQiqxUYMqAZglJoPesj1+Ld/tSo5z7Xj/ufvXM4FbUMQs/Tp51P5+BVT5Df
+	0/sLYs4kS9gwgzmddUv8xm2VO/4ixTomy0zkKdD8G+13myBjif7+5CM1LPS7nSqDRfPTFJzVHn9
+	Qrrd4LJQBE1tPuSQGyhqH0isw7kWhEaTY=
+X-Google-Smtp-Source: AGHT+IHKHrOdUjXjAels/8ReX0ShDMbuZUygUAhmYWOg3ziJ8hrXgoDI7dWK+HfbhxmbPNnO1otz/Q==
+X-Received: by 2002:a05:600c:1391:b0:475:dd89:abc with SMTP id 5b1f17b1804b1-4778707d314mr29493675e9.11.1762963571622;
+        Wed, 12 Nov 2025 08:06:11 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm41226855e9.12.2025.11.12.08.06.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 08:06:11 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 12 Nov 2025 16:05:58 +0000
+Subject: [PATCH v4 1/2] phy: add new phy_notify_state() api
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS7PR12MB6359:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f682b5e-b267-4fe2-870e-08de220505fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gQIRL35Pepwr4w08N5BiBpcbB6sVQJCxB6+2lJ2tYx3I8ZvM90Ur/mIxog6L?=
- =?us-ascii?Q?hCoLbC+OlI6mQZKIayaXvWoDRHtF6QrhFUp/ZvCCjTyj9MQ8a9cOYFR9OzSg?=
- =?us-ascii?Q?4wcefxmOdZcwExGYlG8p57fxm8TxkZgYknK7b5f4LGJwTmQDCMBzsomTkV2h?=
- =?us-ascii?Q?KrV7uyjOHe/vo8q7+eWKjykna6AHkvuZ/i69yICZSIWVhFz3O8atOKkje/du?=
- =?us-ascii?Q?ChlxWhvHoAQZhsZM3evkY9LTSbkI17tusP5PfalQbMNh0Nb7kJlL7VVocF2e?=
- =?us-ascii?Q?qzM/tm8UhLwhrwOZaWfj8axauA+DlR6QGG42KUOFf9e56VRpj7Rpv61Upk2p?=
- =?us-ascii?Q?BzVzMcfYdCYyvXPSPA8WkoJ5Ac+nKZJ54LTv+ct9eJhjVvAzJEZWg+7SEpVv?=
- =?us-ascii?Q?XIZcMZFWfQ+dAYD3HwDxB1v9CHi38AExEX8w2fwSE29B9+r0jjEvlwOvh4Bw?=
- =?us-ascii?Q?OcZup+ORMs6A4u89XPmZ9DnCPcPmNpvoazADkiv2RJz+DxyGb4davtZ6dJtg?=
- =?us-ascii?Q?gU7fvBfHBTG6SoWTbLusHUT/Ye1zBSmOSc7HikOlWwQhkZamBPiheMRRWu8K?=
- =?us-ascii?Q?wa0PmssoqbyW1KIW7nxqpei1t6SHD/+MR/UWzY3vM1Q5JDbU54bt1TYy/+bv?=
- =?us-ascii?Q?eTEDqLIyx3jw/3cSJY9I7PAxHkgDX7FLZjFZ8fhAwmRPiMp8AJXAsKhgMG8F?=
- =?us-ascii?Q?QM2fEg8PMoeYi21t0LSUjiIjGeEHjxqGJcgYXOcFLgIJbAQd3YKjkx30+lOZ?=
- =?us-ascii?Q?6I0CfHpVNtfJbrdbF5/UUhj8d2vA5NAkM9M3XN84Y0rnaHLJ0rmZhg8zDHfr?=
- =?us-ascii?Q?j73o5rH2Xa/lwEGPpcWjBvOdKwY3Nf4/VlzM/sP0r2MayXhFuQU6vdVplxAs?=
- =?us-ascii?Q?6lbv4mpl+AO6aE/IT/dm9pb48u6IWd5K1ohbo4FUlv4Vu2BaWRORdS7FzSZC?=
- =?us-ascii?Q?VULCvGqJD83DfX+M6JPycYBN/jGSMxAOCMakTusx72y0JCfhDlwJhL7OEJH5?=
- =?us-ascii?Q?0gC4/Y/lVDL2zTkm5oKfqn2+NEJv4P1QvGNeWynhqJ7iCL8Ksnm8BEFoaWcY?=
- =?us-ascii?Q?kLlsxqQINQ0fHXoU3zwjP/hOb3CAgOF9FzDGMur5f54r1KGxGHZoL0c6Os6W?=
- =?us-ascii?Q?bm2enr7QGm3TBd6sVbJz3mkeu0lzgjb0c34FAtxJ616ujX0dZXELQnsMfeRk?=
- =?us-ascii?Q?ct9KyaE57AtXkHp7Zfx2EIqGjOZ1pX/JgD2QasSm6J6GK6OJo2efEbYVuxxb?=
- =?us-ascii?Q?sJxbJRyFpRAm3u4EcboRRGzukm73COgZW5luEpjT450guVOYCyxDM3ucSZdF?=
- =?us-ascii?Q?xJhOsG1waFbYdw7nnGRpmIz4UJZNhezkalKeRGRjorG9ukD4N6w+8ofyVfch?=
- =?us-ascii?Q?+ho5mLd2REJFfWJNfhXNHpH87TP/o06TydgkQCiLHNd2WCNRWK6VVrMhXnhN?=
- =?us-ascii?Q?57AmrVaYYT2MbUJkZlBHfEbpGqqAD4Jh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8Ar6TOuG3IS1ZY5NAiTNcsgfeSqYfi6SDohhRRf+rs+0LE/FPVOytUvuPGRv?=
- =?us-ascii?Q?Bf+6UfSLnTOr8RTg0n1K5yJ55MNAEwREz0S5X0OBVL0eYNvmEImTmaPOMXsX?=
- =?us-ascii?Q?SoSUJhnWJ7FXHASSiz7vDO3xJHW3j4dA5/DWaxtNukv+mQ3Ir4NTNshPmMH0?=
- =?us-ascii?Q?fNxY/PX1CzEXMOUllodsrtw+GhxteOOL8JHTVFodD8sHKRQHZnKCfQgjdB9b?=
- =?us-ascii?Q?gzG8erOgNEbrkYqodlXMGNO3dEZvxNuxjTLDquYXMUb7P9WlB1j+6dNZoD17?=
- =?us-ascii?Q?PsmsjzXjfN6YhyFgTr3BDP65kLd41SYGN9iRvyRY1N25ocgt39gE2VasZnoM?=
- =?us-ascii?Q?EfEAgU5a7if4Cjka7QddPHX4hJpQGwU7L2yVkTkc2iDRBmjugdx3S5G4+vcS?=
- =?us-ascii?Q?lZaFyYL0y1MyL05xuVqvhXUOd4VG9LaTxQVcKd0K1R5RLJJj0Ucw297VxPUX?=
- =?us-ascii?Q?qv2epHUsbvadWSW+vVkUmhaOgEUzLwVm2TjbvEQq3t5tmq2OKldWifcUcXQ+?=
- =?us-ascii?Q?0+Ug1XJRrE5w/UK8Qq0JsIi01V6lF2SCmgKmr7C9Q8hhW7V4UFuwKVwxz5hb?=
- =?us-ascii?Q?9UdHcrlWd5Ox0sXRDBm4G3WCNXejN27YXvuRN12U9cbkwHOeh+V/Ms5x5wOT?=
- =?us-ascii?Q?6ItE39rL50jdxjB5ZxwUSCf59aI0h7H7aR+kRHfGYxMufQpuoKzvm4/7gXDo?=
- =?us-ascii?Q?n3jaLzRzP/erfEnYTldKhFmPTNc2QnzBcMBxor42DniXpd3kHcUXocfj91tx?=
- =?us-ascii?Q?gJJpghTUMJSa894HRwOqO/PnRoatSaq7iW85koueIOsDJ/+GbTSLBjaDscuC?=
- =?us-ascii?Q?hz1Cfh75cJ7c/A+fNzbm6tfxuhapjKWvdsxYXyFO4z6bGTm6u+RHz1wJiZQ3?=
- =?us-ascii?Q?rXU7aXsUCQwDmv0z7HmEzHjQvWXOw04tnSVtePufCabbAcHsFQeZN6OIaZnN?=
- =?us-ascii?Q?mNrAr+V1bakWEw87ZcJCui8jG/mhUF42zwtTD2w9/fipv1urGQ4grw0kGeS4?=
- =?us-ascii?Q?vCaMGSMEfmpxiY4gvk0UBgu6SWS0yLGXllvmlH9MUpplSiwyNEYcBKrs+QoH?=
- =?us-ascii?Q?vqLsGwi/3Mabu8pX2EX077hvOSKrAC7qiseFot+WSPYIhMyfTT0vlORHP8D4?=
- =?us-ascii?Q?kQ+TWAmmGEIjxG++UkbITM5o7OgQBBCZUi6k8Esw34KtkrOXanFFpF8hj4CQ?=
- =?us-ascii?Q?n0ORUN8APxvmp0YHxHVygxTh12210JC3/kgYrYWa90T2ZmKJ1qioZINw8RHN?=
- =?us-ascii?Q?BNdzTHVYWhnaiR7aGJTj3G7w6A3KjqmKQ5kQS4tcD3JDZFM47ONGYH4pYXTg?=
- =?us-ascii?Q?kv79AKiAE4CCTmf2x75OgpXb5CPfKf2KRBP1SUXLupIDHFWb9TZCjQRVyrgH?=
- =?us-ascii?Q?ABx+kmFSGm7I8B2+hsKDwBrBFKQGtV89SYsHT+D663cAFxkbxwIONTMpkCoA?=
- =?us-ascii?Q?RqXGSLgRmHlZnXm7Us54VPXI9Wss09GJ8OTHYfbUunAi73W03jUZWImddLdz?=
- =?us-ascii?Q?28VDnljaenB+DRXqcUK9czzA3tGQLunSPPYcFUlOWA2SC0scmalog6Xn+HAl?=
- =?us-ascii?Q?LYO4ziu4UzjTlykl+4QWY/e04YlOAtcNrLQYEAYw?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f682b5e-b267-4fe2-870e-08de220505fd
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 16:03:30.5663
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fdWotTRfQizcDq3G+HAQkUOz4mQZqn4CfoOfum5jRikXSxrd3OW37z3iwHgMp5hW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6359
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-phy-notify-pmstate-v4-1-717d78009d15@linaro.org>
+References: <20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org>
+In-Reply-To: <20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3632;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=/DmYL+Sj+FG4hqT/OSvBRhos+Di8zc6kpbnkQ+JHZww=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFLBwgvMkGPlXQnGj7GfKo4tBFrDS/Q9ImctC2
+ Tm2ORZ0t06JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRSwcAAKCRDO6LjWAjRy
+ uplzD/9HJ7MXRCGkSUZ6+T7w3qXwm7rq5u5AUn7VCR3X0m0loqgOBNiJTmlvB5ct9KPWV1GSgMG
+ 6ecW7FV1pj/lOXI8QjLy7GzSWcFwFdBgfSmBsC/7g+Vq/BSthcVJu+rTu8lwnLA7vNAUQyCZAAD
+ Xr0Zuh/vCm+lUE9mbW8UOC3AUMIHC1IthE8ITWliWfbKfZcil4deKK9mJIYPQTYhzVGfAxqVMae
+ i57tRREepnq0aE8nVL2+gIuaN/qq7VxlpP7AdCCmVtK36dwxDXJe+UpynFUgDT8r8gCOEdDluAv
+ mW1taJA8xWQtPfKqaR9qbtm54sOliXFmnq9ImhHxKlItHueJKXrRZmD+2hbs0yQ9D6UB/ZehSZa
+ l5f04XagJkdEQXcJtQ9kWO/W0t685SDDvSnk3FP/9Zl00BiCM3syKPo42fAuTAu09fT8rVgCszq
+ uyG1IoXKEQotqtBwfe+GsBnC/s8b43IjmOqbAWv3YqjF85hXg65XdUUpOfX2DIhY5uBTcgMzM3W
+ zbiXl1CKeujw9qkjzz2T8k7KKEnKtPKlC2FygnJD/2F8HlAgFjySHANjgQC+msNOFNDjZJFizfD
+ bIbHSFxsyV1A+RmTeNAY5cJbho4VxgPGWIXY4qreNGZ0yfNAlUouqRMrM+DwKTDbpFUqdItEt7i
+ a8aIwMqIhgdpiMA==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On 12 Nov 2025, at 10:59, Lorenzo Stoakes wrote:
+Add a new phy_notify_state() api that notifies and configures a phy for a
+given state transition.
 
-> On Tue, Nov 11, 2025 at 09:58:36PM -0500, Zi Yan wrote:
->> On 10 Nov 2025, at 17:21, Lorenzo Stoakes wrote:
->>
->>> There's an established convention in the kernel that we treat PTEs as=
+This is intended to be used by phy drivers which need to do some runtime
+configuration of parameters that can't be handled by phy_calibrate() or
+phy_power_{on|off}().
 
->>> containing swap entries (and the unfortunately named non-swap swap en=
-tries)
->>> should they be neither empty (i.e. pte_none() evaluating true) nor pr=
-esent
->>> (i.e. pte_present() evaluating true).
->>>
->>> However, there is some inconsistency in how this is applied, as we al=
-so
->>> have the is_swap_pte() helper which explicitly performs this check:
->>>
->>> 	/* check whether a pte points to a swap entry */
->>> 	static inline int is_swap_pte(pte_t pte)
->>> 	{
->>> 		return !pte_none(pte) && !pte_present(pte);
->>> 	}
->>>
->>> As this represents a predicate, and it's logical to assume that in or=
-der to
->>> establish that a PTE entry can correctly be manipulated as a swap/non=
--swap
->>> entry, this predicate seems as if it must first be checked.
->>>
->>> But we instead, we far more often utilise the established convention =
-of
->>> checking pte_none() / pte_present() before operating on entries as if=
- they
->>> were swap/non-swap.
->>>
->>> This patch works towards correcting this inconsistency by removing al=
-l uses
->>> of is_swap_pte() where we are already in a position where we perform
->>> pte_none()/pte_present() checks anyway or otherwise it is clearly log=
-ical
->>> to do so.
->>>
->>> We also take advantage of the fact that pte_swp_uffd_wp() is only set=
- on
->>> swap entries.
->>>
->>> Additionally, update comments referencing to is_swap_pte() and
->>> non_swap_entry().
->>>
->>> No functional change intended.
->>>
->>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> ---
->>>  fs/proc/task_mmu.c            | 49 ++++++++++++++++++++++++---------=
---
->>>  include/linux/userfaultfd_k.h |  3 +--
->>>  mm/hugetlb.c                  |  6 ++---
->>>  mm/internal.h                 |  6 ++---
->>>  mm/khugepaged.c               | 29 +++++++++++----------
->>>  mm/migrate.c                  |  2 +-
->>>  mm/mprotect.c                 | 43 ++++++++++++++----------------
->>>  mm/mremap.c                   |  7 +++--
->>>  mm/page_table_check.c         | 13 ++++++----
->>>  mm/page_vma_mapped.c          | 31 +++++++++++-----------
->>>  10 files changed, 104 insertions(+), 85 deletions(-)
->>>
->>
->> <snip>
->>
->>> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
->>> index be20468fb5a9..a4e23818f37f 100644
->>> --- a/mm/page_vma_mapped.c
->>> +++ b/mm/page_vma_mapped.c
->>> @@ -16,6 +16,7 @@ static inline bool not_found(struct page_vma_mapped=
-_walk *pvmw)
->>>  static bool map_pte(struct page_vma_mapped_walk *pvmw, pmd_t *pmdval=
-p,
->>>  		    spinlock_t **ptlp)
->>>  {
->>> +	bool is_migration;
->>>  	pte_t ptent;
->>>
->>>  	if (pvmw->flags & PVMW_SYNC) {
->>> @@ -26,6 +27,7 @@ static bool map_pte(struct page_vma_mapped_walk *pv=
-mw, pmd_t *pmdvalp,
->>>  		return !!pvmw->pte;
->>>  	}
->>>
->>> +	is_migration =3D pvmw->flags & PVMW_MIGRATION;
->>>  again:
->>>  	/*
->>>  	 * It is important to return the ptl corresponding to pte,
->>> @@ -41,11 +43,14 @@ static bool map_pte(struct page_vma_mapped_walk *=
-pvmw, pmd_t *pmdvalp,
->>>
->>>  	ptent =3D ptep_get(pvmw->pte);
->>>
->>> -	if (pvmw->flags & PVMW_MIGRATION) {
->>> -		if (!is_swap_pte(ptent))
->>
->> Here, is_migration =3D true and either pte_none() or pte_present()
->> would return false, and ...
->>
->>> +	if (pte_none(ptent)) {
->>> +		return false;
->>> +	} else if (pte_present(ptent)) {
->>> +		if (is_migration)
->>>  			return false;
->>> -	} else if (is_swap_pte(ptent)) {
->>> +	} else if (!is_migration) {
->>>  		swp_entry_t entry;
->>> +
->>>  		/*
->>>  		 * Handle un-addressable ZONE_DEVICE memory.
->>>  		 *
->>> @@ -66,8 +71,6 @@ static bool map_pte(struct page_vma_mapped_walk *pv=
-mw, pmd_t *pmdvalp,
->>>  		if (!is_device_private_entry(entry) &&
->>>  		    !is_device_exclusive_entry(entry))
->>>  			return false;
->>> -	} else if (!pte_present(ptent)) {
->>> -		return false;
->>
->> ... is_migration =3D false and !pte_present() is actually pte_none(),
->> because of the is_swap_pte() above the added !is_migration check.
->> So pte_none() should return false regardless of is_migration.
->
-> I guess you were working this through :) well I decided to also just to=
+The first usage of this API is in the Samsung UFS phy that needs to issue
+some register writes when entering and exiting the hibernate link state.
 
-> double-check I got it right, maybe useful for you also :P -
->
-> Previously:
->
-> 	if (is_migration) {
-> 		if (!is_swap_pte(ptent))
-> 			return false;
-> 	} else if (is_swap_pte(ptent)) {
-> 		... ZONE_DEVICE blah ...
-> 	} else if (!pte_present(ptent)) {
-> 		return false;
-> 	}
->
-> But is_swap_pte() is the same as !pte_none() && !pte_present(), so
-> !is_swap_pte() is pte_none() || pte_present() by De Morgan's law:
->
-> 	if (is_migration) {
-> 		if (pte_none(ptent) || pte_present(ptent))
-> 			return false;
-> 	} else if (!pte_none(ptent) && !pte_present(ptent)) {
-> 		... ZONE_DEVICE blah ...
-> 	} else if (!pte_present(ptent)) {
-> 		return false;
-> 	}
->
-> In the last branch, we know (again by De Morgan's law) that either
-> pte_none(ptent) or pte_present(ptent).. But we explicitly check for
-> !pte_present(ptent) so this becomes:
->
-> 	if (is_migration) {
-> 		if (pte_none(ptent) || pte_present(ptent))
-> 			return false;
-> 	} else if (!pte_none(ptent) && !pte_present(ptent)) {
-> 		... ZONE_DEVICE blah ...
-> 	} else if (pte_none(ptent)) {
-> 		return false;
-> 	}
->
-> So we can generalise - regardless of is_migration, pte_none() returns f=
-alse:
->
-> 	if (pte_none(ptent)) {
-> 		return false;
-> 	} else if (is_migration) {
-> 		if (pte_none(ptent) || pte_present(ptent))
-> 			return false;
-> 	} else if (!pte_none(ptent) && !pte_present(ptent)) {
-> 		... ZONE_DEVICE blah ...
-> 	}
->
-> Since we already check for pte_none() ahead of time, we can simplify ag=
-ain:
->
-> 	if (pte_none(ptent)) {
-> 		return false;
-> 	} else if (is_migration) {
-> 		if (pte_present(ptent))
-> 			return false;
-> 	} else if (!pte_present(ptent)) {
-> 		... ZONE_DEVICE blah ...
-> 	}
->
-> We can then put the pte_present() check in the outer branch:
->
-> 	if (pte_none(ptent)) {
-> 		return false;
-> 	} else if (pte_present(ptent)) {
-> 		if (is_migration)
-> 			return false;
-> 	} else if (!is_migration) {
-> 		... ZONE_DEVICE blah ...
-> 	}
->
-> Because previously an is_migration && !pte_present() case would result =
-in no
-> action here.
->
-> Which is the code in this patch :)
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v4
+ - Add missing 'used' word (Vinod)
+---
+ drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
+ include/linux/phy/phy.h | 19 +++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-Thanks again for spelling out the whole process.
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 04a5a34e7a950ae94fae915673c25d476fc071c1..60be8af984bf06649ef00e695d0ed4ced597cdb9 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
+ }
+ EXPORT_SYMBOL_GPL(phy_notify_disconnect);
+ 
++/**
++ * phy_notify_state() - phy state notification
++ * @phy: the PHY returned by phy_get()
++ * @state: the PHY state
++ *
++ * Notify the PHY of a state transition. Used to notify and
++ * configure the PHY accordingly.
++ *
++ * Returns: %0 if successful, a negative error code otherwise
++ */
++int phy_notify_state(struct phy *phy, union phy_notify state)
++{
++	int ret;
++
++	if (!phy || !phy->ops->notify_phystate)
++		return 0;
++
++	mutex_lock(&phy->mutex);
++	ret = phy->ops->notify_phystate(phy, state);
++	mutex_unlock(&phy->mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(phy_notify_state);
++
+ /**
+  * phy_configure() - Changes the phy parameters
+  * @phy: the phy returned by phy_get()
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 13add0c2c40721fe9ca3f0350d13c035cd25af45..664d0864c3a5042949cb121e982368fe0a97827f 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -53,6 +53,15 @@ enum phy_media {
+ 	PHY_MEDIA_DAC,
+ };
+ 
++enum phy_ufs_state {
++	PHY_UFS_HIBERN8_ENTER,
++	PHY_UFS_HIBERN8_EXIT,
++};
++
++union phy_notify {
++	enum phy_ufs_state ufs_state;
++};
++
+ /**
+  * union phy_configure_opts - Opaque generic phy configuration
+  *
+@@ -83,6 +92,7 @@ union phy_configure_opts {
+  * @set_speed: set the speed of the phy (optional)
+  * @reset: resetting the phy
+  * @calibrate: calibrate the phy
++ * @notify_phystate: notify and configure the phy for a particular state
+  * @release: ops to be performed while the consumer relinquishes the PHY
+  * @owner: the module owner containing the ops
+  */
+@@ -132,6 +142,7 @@ struct phy_ops {
+ 	int	(*connect)(struct phy *phy, int port);
+ 	int	(*disconnect)(struct phy *phy, int port);
+ 
++	int	(*notify_phystate)(struct phy *phy, union phy_notify state);
+ 	void	(*release)(struct phy *phy);
+ 	struct module *owner;
+ };
+@@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
+ int phy_calibrate(struct phy *phy);
+ int phy_notify_connect(struct phy *phy, int port);
+ int phy_notify_disconnect(struct phy *phy, int port);
++int phy_notify_state(struct phy *phy, union phy_notify state);
+ static inline int phy_get_bus_width(struct phy *phy)
+ {
+ 	return phy->attrs.bus_width;
+@@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
+ 	return -ENOSYS;
+ }
+ 
++static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
++{
++	if (!phy)
++		return 0;
++	return -ENOSYS;
++}
++
+ static inline int phy_configure(struct phy *phy,
+ 				union phy_configure_opts *opts)
+ {
 
->
->>
->> This is a nice cleanup. Thanks.
->>
->>>  	}
->>>  	spin_lock(*ptlp);
->>>  	if (unlikely(!pmd_same(*pmdvalp, pmdp_get_lockless(pvmw->pmd)))) {
->>> @@ -113,21 +116,17 @@ static bool check_pte(struct page_vma_mapped_wa=
-lk *pvmw, unsigned long pte_nr)
->>>  			return false;
->>>
->>>  		pfn =3D softleaf_to_pfn(entry);
->>> -	} else if (is_swap_pte(ptent)) {
->>> -		swp_entry_t entry;
->>> +	} else if (pte_present(ptent)) {
->>> +		pfn =3D pte_pfn(ptent);
->>> +	} else {
->>> +		const softleaf_t entry =3D softleaf_from_pte(ptent);
->>>
->>>  		/* Handle un-addressable ZONE_DEVICE memory */
->>> -		entry =3D pte_to_swp_entry(ptent);
->>> -		if (!is_device_private_entry(entry) &&
->>> -		    !is_device_exclusive_entry(entry))
->>> -			return false;
->>> -
->>> -		pfn =3D swp_offset_pfn(entry);
->>> -	} else {
->>> -		if (!pte_present(ptent))
->>
->> This !pte_present() is pte_none(). It seems that there should be
->
-> Well this should be fine though as:
->
-> 		const softleaf_t entry =3D softleaf_from_pte(ptent);
->
-> 		/* Handle un-addressable ZONE_DEVICE memory */
-> 		if (!softleaf_is_device_private(entry) &&
-> 		    !softleaf_is_device_exclusive(entry))
-> 			return false;
->
-> Still correctly handles none - as softleaf_from_pte() in case of pte_no=
-ne() will
-> be a none softleaf entry which will fail both of these tests.
->
-> So excluding pte_none() as an explicit test here was part of the rework=
- - we no
-> longer have to do that.
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
-Got it. Now my RB is yours. :)
-
->
->>
->> } else if (pte_none(ptent)) {
->> 	return false;
->> }
->>
->> before the above "} else {".
->>
->>> +		if (!softleaf_is_device_private(entry) &&
->>> +		    !softleaf_is_device_exclusive(entry))
->>>  			return false;
->>>
->>> -		pfn =3D pte_pfn(ptent);
->>> +		pfn =3D softleaf_to_pfn(entry);
->>>  	}
->>>
->>>  	if ((pfn + pte_nr - 1) < pvmw->pfn)
->>> --
->>> 2.51.0
->>
->> Otherwise, LGTM. With the above issue addressed, feel free to
->> add Reviewed-by: Zi Yan <ziy@nvidia.com>
->
-> Thanks!
->
->>
->> --
->> Best Regards,
->> Yan, Zi
->
-> Cheers, Lorenzo
-
-
-Best Regards,
-Yan, Zi
 
