@@ -1,106 +1,175 @@
-Return-Path: <linux-kernel+bounces-896781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC661C51302
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F686C5130E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 572C034CDF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:51:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49F4934D097
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07732FD675;
-	Wed, 12 Nov 2025 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF7C2FD66F;
+	Wed, 12 Nov 2025 08:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AYISAMQH"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="o2ongftM"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE502FD677
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA962FD7DA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937423; cv=none; b=OdmGPUF5XyGDdqggVth8YHbVQeaLa2OfbHmegBlM9DAAKQNqpraEiKRIhuy9vhriFWRfivH+HvbB4k+xKZSh0/hwgjrD47swsbDgPIpMWktTpv8i0dKtWsowLiYoE9Wfb19v0NLkQ45/FdWC10pbb44y8TknPC4PBeQx4rUZkMU=
+	t=1762937496; cv=none; b=H38CR1fqI3BpLg201x+uESjCAIBnnumSD1UIlFK8ex/2TLcnbRzBYAjIB3eGpa+xxUWJEX1gN1omx+x3tiTaY65t+sOeWE+MZaV035boBGVx/YGFFzQsGQwUEjVUisuYyQ/16rEPg3HphvrrUIsitN2BaABuCAeUysigyV6eYUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937423; c=relaxed/simple;
-	bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwkx1oosu2tKAEsVuA9buxB4EQzpvW0ADRqr+HWxM7lgFwlmn0WpYlBHCdz0JsRk3z7la+IVacj+oBNcic1Prj7BsNzKFyj1Phm/eOm0uGf0BvyjwES03vYKDlv4g7tuksWQbgUc3SSmiyp+G2D5JAPFZL1AJjh8KJd7e6i7mYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AYISAMQH; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5957d40e02fso28612e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762937419; x=1763542219; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
-        b=AYISAMQHJptwYpNDmLTvQ0d12KHT9puLlFVUSD27jqSrfbp9Jk18LZCnIlbC5y2iID
-         u1fq2X7O3iIp+xkexEvNAsJrfnW0RI59PnJHiLbvbvgdaEClUTkbL7dgWCMJtJDlJeta
-         1JR12Ff5eBMHpStf2uoO068j8EorFjm8uMIVeTbrx/FiAl1m3KJ5HykO/UrmS3y4wsmv
-         vAftNW19IfLeURBrs+4SkNEVfIUPR1JdDRNYWmrBvyGK/zK10ySdybz34CxRGNaZsD3k
-         2JTHkjDiuWW6n3uoYK5sZLNFfRyxeUa1tVCfHVmnc52FdaMt1TL3nE7PEUN80+UrBLs4
-         xuRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762937419; x=1763542219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cv14ieFpUbwndSxAy7avkwQ2XyYjwC36K/PyUY+um5w=;
-        b=WsHmzcuHnGth2rt9jFQ4GMQ9pnhP095gWR6LgLE9tSq7hIBq2VgFJr1DqzpERdWDms
-         y4KJiD5xPdlW4x+AXZ+EzfImbjdxYmVLR61QzOAVA1EMM1mLDVjup7pEiP5X9G+gMhiF
-         3qyafLYxIAd74tS8xhm9gHagsGDSM/lkNHwYncEsVLuIiHCYSVoyXWEV44cfuC766isF
-         atsrx8Eoirb2dLPCsF78SGPeiFdWNMh7iclWtyWH6yNvulln3tn9tjKmZilnLWMdlIno
-         olmD0Rr/zh0gQLyLO5Bmg6ChyTqYjK3K6T4A4rj5YxWittt1QuybxL8pLFnQqtT/L4pS
-         nZ9w==
-X-Gm-Message-State: AOJu0YzLbuPgTtbAzGryh+nY/IFrA4Y08tVvzyZsjyx6yn6azVcENQiT
-	n+9EioW8j2eh0jyTONFuWGo/agbjrzo6YTEgZiyjggx3TmlhKvsgas5pjfCqYRY/hC8qrmH154s
-	i/eIzx4LUO8iwGCvH6oWU+ANa1tSdW90H+MRgKhDuTQ==
-X-Gm-Gg: ASbGncuKim3xK9jqSKdZQj9NjKUYELz5JnY7LQZO5whdquketIRolVfSYgjk6VGA3EQ
-	ADcUmAVMCEZ/rkibT+X9RZxKYacFISpImyDrIYWlKK1ykHqMzjyaVzyL0cZHtlJq69Z0e3k1Ha6
-	4SbxzqXmxkr3LFNOtAID9pDIpm1CIqUiBOGiCNrOnjvxPkUMqEe/GHEmwhpGG+c0VPWL6JgsBdW
-	rqjcAcrb1nn9rywe0TO5w7awbzAXzp0r5ERhydjI0P0ZI3bG2xP5nc0I5IKFWaQJklaEjrnDUY2
-	50i0oFhxJyiQpSEhqw==
-X-Google-Smtp-Source: AGHT+IEHNK5povoEOlSKstlSmdaONyaokIQjzvKfkQZcWTAT6dqm/dGcMdLDdwfQXgcunxTTDe/Pm+/naHGGXjffp3E=
-X-Received: by 2002:a05:6512:10c2:b0:594:35d5:f837 with SMTP id
- 2adb3069b0e04-59576df6c92mr609466e87.19.1762937419287; Wed, 12 Nov 2025
- 00:50:19 -0800 (PST)
+	s=arc-20240116; t=1762937496; c=relaxed/simple;
+	bh=xDMrjRt96JWca0zSWK2O590zthvrkxwKn7nf1IunxT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RV5+e7qG1I7V2a4lxsmzXI6sh81NMyEg2TetYmcwuuEbUk9THoLFuTIePa6qTmlvJ/SKusO0ehVEJ35b2T2eLe3ErqZtrcfgQ8V+rINohoGbwaAgZ+pmutxRr0rtzmNeenSYQT8Dym+Gb5wa+uf4NFdEfnfzliiPo11NO+Wt7aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=o2ongftM; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=cA
+	QkV4Rn8OyxFd/w7bQq0NVjuvpKHFncgfCz73Iu0H0=; b=o2ongftMKwj7pU/vbU
+	3hBq52DAkNgcOIpyHCe4EY8kSorZwUR3c9MAEjmmNrlNpKMuBpv+ejzZa6t8quH3
+	hkxoJ5MOhBrLJmbW/RmatjuiZNz4BUzW1sDRNhidMEOc5nvsJrPwTPteKheJ38D5
+	WvCmiigBIhLjCXjL1ASANFqw4=
+Received: from ProDesk.. (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3P71SShRpSgG+DQ--.50080S2;
+	Wed, 12 Nov 2025 16:50:30 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	diederik@cknow-tech.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] drm/rockchip: vop2: Use OVL_LAYER_SEL configuration instead of use win_mask calculate used layers
+Date: Wed, 12 Nov 2025 16:50:23 +0800
+Message-ID: <20251112085024.2480111-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107141907.229119-1-marco.crivellari@suse.com> <CAPDyKFqpiWuJs3fZkATnfPejmqL=Ei4x1U9QbuaykuZxca9f4Q@mail.gmail.com>
-In-Reply-To: <CAPDyKFqpiWuJs3fZkATnfPejmqL=Ei4x1U9QbuaykuZxca9f4Q@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Wed, 12 Nov 2025 09:50:08 +0100
-X-Gm-Features: AWmQ_bnLU4W1RGKwfC6lAOJz6bOKPsLL4ZN-hxDK-KkR_0_v7NSwMnNMX7Q48II
-Message-ID: <CAAofZF5WTAZJw5FmtTkB_FGNfee8myVksZGhcMQHj906RGOzYw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: omap: add WQ_PERCPU to alloc_workqueue users
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-omap@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgD3P71SShRpSgG+DQ--.50080S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWF45Wry3WrWDKr13Zw4xZwb_yoW5Kw4fpa
+	y5Zr15Kr4xXFs0qFs7JF48ur1Yyws7Aa17A393K3sFy34FgryqyrnFkrnIyry5CF9rKFy2
+	yrWDK3yDCrsFkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jx_-PUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbCxRcHZWkUSlf8WQAA31
 
-On Tue, Nov 11, 2025 at 6:37=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
-> [...]
-> Applied for next, thanks!
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Many thanks!
+When there are multiple Video Ports, and only one of them is working
+(for example, VP1 is working while VP0 is not), in this case, the
+win_mask of VP0 is 0. However, we have already set the port mux for VP0
+according to vp0->nlayers, and at the same time, in the OVL_LAYER_SEL
+register, there are windows will also be assigned to layers which will
+map to the inactive VPs. In this situation, vp0->win_mask is zero as it
+now working, it is more reliable to calculate the used layers based on
+the configuration of the OVL_LAYER_SEL register.
 
+Note: as the configuration of OVL_LAYER_SEL is take effect when the
+vsync is come, so we use the value backup in vop2->old_layer_sel instead
+of read OVL_LAYER_SEL directly.
 
---=20
+Fixes: 3e89a8c68354 ("drm/rockchip: vop2: Fix the update of LAYER/PORT select registers when there are multi display output on rk3588/rk3568")
+Reported-by: Diederik de Haas <diederik@cknow-tech.com>
+Closes: https://bugs.kde.org/show_bug.cgi?id=511274
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
 
-Marco Crivellari
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 49 +++++++++++++++++---
+ 1 file changed, 42 insertions(+), 7 deletions(-)
 
-L3 Support Engineer, Technology & Product
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+index d22ce11a4235..f3950e8476a7 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+@@ -1369,6 +1369,25 @@ static const struct vop2_regs_dump rk3588_regs_dump[] = {
+ 	},
+ };
+ 
++/*
++ * phys_id is used to identify a main window(Cluster Win/Smart Win, not
++ * include the sub win of a cluster or the multi area) that can do overlay
++ * in main overlay stage.
++ */
++static struct vop2_win *vop2_find_win_by_phys_id(struct vop2 *vop2, uint8_t phys_id)
++{
++	struct vop2_win *win;
++	int i;
++
++	for (i = 0; i < vop2->data->win_size; i++) {
++		win = &vop2->win[i];
++		if (win->data->phys_id == phys_id)
++			return win;
++	}
++
++	return NULL;
++}
++
+ static unsigned long rk3568_set_intf_mux(struct vop2_video_port *vp, int id, u32 polflags)
+ {
+ 	struct vop2 *vop2 = vp->vop2;
+@@ -1842,15 +1861,31 @@ static void vop2_parse_alpha(struct vop2_alpha_config *alpha_config,
+ 	alpha->dst_alpha_ctrl.bits.factor_mode = ALPHA_SRC_INVERSE;
+ }
+ 
+-static int vop2_find_start_mixer_id_for_vp(struct vop2 *vop2, u8 port_id)
++static int vop2_find_start_mixer_id_for_vp(struct vop2_video_port *vp)
+ {
+-	struct vop2_video_port *vp;
+-	int used_layer = 0;
++	struct vop2 *vop2 = vp->vop2;
++	struct vop2_win *win;
++	u32 layer_sel = vop2->old_layer_sel;
++	u32 used_layer = 0;
++	unsigned long win_mask = vp->win_mask;
++	unsigned long phys_id;
++	bool match;
+ 	int i;
+ 
+-	for (i = 0; i < port_id; i++) {
+-		vp = &vop2->vps[i];
+-		used_layer += hweight32(vp->win_mask);
++	for (i = 0; i < 31; i += 4) {
++		match = false;
++		for_each_set_bit(phys_id, &win_mask, ROCKCHIP_VOP2_ESMART3) {
++			win = vop2_find_win_by_phys_id(vop2, phys_id);
++			if (win->data->layer_sel_id[vp->id] == ((layer_sel >> i) & 0xf)) {
++				match = true;
++				break;
++			}
++		}
++
++		if (!match)
++			used_layer += 1;
++		else
++			break;
+ 	}
+ 
+ 	return used_layer;
+@@ -1935,7 +1970,7 @@ static void vop2_setup_alpha(struct vop2_video_port *vp)
+ 	u32 dst_global_alpha = DRM_BLEND_ALPHA_OPAQUE;
+ 
+ 	if (vop2->version <= VOP_VERSION_RK3588)
+-		mixer_id = vop2_find_start_mixer_id_for_vp(vop2, vp->id);
++		mixer_id = vop2_find_start_mixer_id_for_vp(vp);
+ 	else
+ 		mixer_id = 0;
+ 
+-- 
+2.43.0
+
+base-commit: ded94ec6167e84195507237100f6278941e36fdd
+branch: drm-misc-next-2025-1016
+
 
