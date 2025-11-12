@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-897152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610FFC52261
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:03:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF71C522E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D1A18949FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:57:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104104F5D93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76DB3191A0;
-	Wed, 12 Nov 2025 11:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ACD3191CD;
+	Wed, 12 Nov 2025 11:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Mtj9IqT1"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011067.outbound.protection.outlook.com [52.101.52.67])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CqmYfIIO"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010058.outbound.protection.outlook.com [52.101.193.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99247314D3F;
-	Wed, 12 Nov 2025 11:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A7318142;
+	Wed, 12 Nov 2025 11:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948567; cv=fail; b=Cgq1IgkIdzgWlgQK58oSk5b70bDrQaOeyqvuHXd+vkeFKJSlv2b2X6gatZIphcs3/td++L9hitUoTyh73cHhAKH+pmsmhfjvg5h7HstkZLk7pfH6jcBjJLlarsh1kArzI5IAfiFugsR8yWJOSCCGNhQYnV28fqk0BW4B+nh6dLI=
+	t=1762948570; cv=fail; b=F+t7kTyJIZ/hVWNhL1GmB1HHNnuSdv6+gTz829kg2otwUDxYdUpYFhLDXN8ffVI48P9DdU+SZwqUHPnY8TA4zorsO7bfZVwEjPFK5LcWRhRVKUCOeTJ7+4sDZvHi8b67YbIkmflikZDgQQxJblL0HynM3dzELTNxCk1DiIBYA94=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948567; c=relaxed/simple;
-	bh=GaMayB9Q7P+eWjE7u0Jets/oRFIfDP+5W4Lm7CD3Icc=;
+	s=arc-20240116; t=1762948570; c=relaxed/simple;
+	bh=J0aeSCHwA9bsw4Rr7xsRXTdpycpQuszepvKNkKXWvYo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u1kZyjrY6gR6laODs3G1rIANrrS1kS2+JZaJJvZG2ml0/7Gu7aoW6jEiBuV8+egUYErMhQ0RPI6dCwFA1pEUvj8jwMU4fmJ5PKYzT8q8X683NteRZxsMYvRagrvmXXDKFapsrDfIAmV57pXBHN+q+SXNUHX9fxx4LC8oOW942WM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Mtj9IqT1; arc=fail smtp.client-ip=52.101.52.67
+	 MIME-Version:Content-Type; b=G9LNcKdFr4qJt0RMe1l+0/P65+BXKzC0ozDQ5PkkDD4uJVUg4d1/QlnMOGbDGxVN4XIRqlyegPEUL1LaEUSY0C1+9SHyh1qZ2dc953uBKU2Q5Pd8+S97DYZgELvCmHBGEmD/mRkJINgamkKc1AyH7gKkSBmEl8FYdcdJMNStIn0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CqmYfIIO; arc=fail smtp.client-ip=52.101.193.58
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YgDvsvObaHAPtQgCEF68LhpZZmUJORGnrAh/h7pB+hiV61xm+ZyMv2DN0kleS3LHjfKBAMgzqFKcDMPUMP5BkpH6K8YlryFt68ZJgQrgC01nSmPGidRM3hh3GXeI2lYmU/KBpiIkPwTBRNbpDgytmXePSPxVPt2eNtmT6O7Nb6793W1wFaONGXF24uvGnLmFC+YhGOXBz2pzYZiz9J20twNpxUVTXvK8dJmXRQl9+P+E8v1l3butfWmjRuPGJIBNfyuUkxENA6VXmGjBx3pszoFm9NoIiC+k1hQzhxp50ePfN6zilLjBK4vN3bcXoBT6GZSINBlaF+bG166T3i+TKQ==
+ b=Y3uH1ksUu05aa0o7TA61QEjelJhgfxSrcsOF6PbempurXc585wkpDnAB9vRhtKU6J0zy5BAQLuXRG/8K1ifvcz1P0orzsqNTi78ljEjoGWl/V2rXjzGv2hiHuE3tQbogkr4ho91XbaAb2MZQ+BV6H6W7c6/dJQTlyYYB99vIBfqa3P0B5WG6eU6Auegd7Y3JlYz2h/6BUGWkODKcp/2j7bMuZ8NcZU5xJkacGZ047oqWTnWSA1KGtwtwYZQ4bRA3UY8863ZntXbovusbcgB9nicw+j/mV9QLOoRFb3g4hGqkC97vyrYvaRktNV2XvC1BwqH7gvtmBEonKfpa/oJXbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/1b7A9lgPdoFojmvPnEeM2DqW5VVrnLGRw4SBzF5ks4=;
- b=U+7/4dm/qCxoXGpkrS95+Z0wa8B6m2ZlVzSsDY7lfQnrn1XD2uMXDFUYJw7rZxH37dCD9kD+2DKDtxLXpTZB2AFJV0jkBUMuD996ScKrTR0resd+QvzYaahEohyhM8838xtqUm9jSYPkso+oK0dqDfiH7/kAJQ5jvPnuo85SzW8Nrr3frx+yVS5WfvlSADBxs9zDDfoLLJZl8w93GGou34jAiC2z7h0RUJKc9BV3bBoQWJxs0BOlXBgfUPK7KMz6TDnM96a0sF8ppskavorneLxTvdfpksvV7cnusaLUeDw8hAHcaRkcJfAWkrHP1vzYlxqbmsLN89HtOFdq0tMlsw==
+ bh=JqNTVaWZ/p9SlTWrnwupjvaH7BXaLH5kT2yXzh4Npr4=;
+ b=VQAFyIjPKIhqZz9gvILx+qJU0SwVaNXHLfCtRU0y+dkxmPi0WHCWvq5hVXrC0d/c26QLP3s5dq5715ZGVEy32ercaXYey8gA8tURz/dAc8MmK1uoJlfDsFojQp85EC55OdbVZQUgNPZtzmSuPvklIOIkLZNqnNZZaenBOByoYdT7Q8hIYT7FPPztrpMuWaLRh2dwIiGI1aTSEtbjztqgTZ6HGpeq6lMpo0V+SvM6cD6rPwtRe3fp6JcdvNrnfH6yJswW7L0KXIW2oFG0v6e1MMTZi1HEHQThBn0VkGEhcooOiatF63UMVsW/xrsHyvcqlfvNG7/Lhvk+abgkB6xtIA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/1b7A9lgPdoFojmvPnEeM2DqW5VVrnLGRw4SBzF5ks4=;
- b=Mtj9IqT1lPWP6EiQaylKvD1PDIYC4mIf+xufg+xmbFMqPdDCoTwfJZCauGrn+y8eF8fHiVbBIUp2rRbXVPNYrssz+iBOLv9TB6QN1xk4aP0f/tsDtAdGOjuRsjcaN/64u4f8tw81xl02jLAg6MdsNF8cx7Rbo3OOSTsAqfJce20=
-Received: from BYAPR06CA0002.namprd06.prod.outlook.com (2603:10b6:a03:d4::15)
- by DM3PPFA35BF3976.namprd10.prod.outlook.com (2603:10b6:f:fc00::c3c) with
+ bh=JqNTVaWZ/p9SlTWrnwupjvaH7BXaLH5kT2yXzh4Npr4=;
+ b=CqmYfIIOKirVwvr7ytoG1wJhmRfr5OfTgoYHxfolmrYJ67NrTmshPg2CASUOKe1p8oLN8rsN7OIRcsA0eDma66v5Vxwvvz6lHxYWqV4Jw3Rj4HE7f5veKXQMczlVRVlraQrNTaVn79ZEX9i84IlsBtA6J0Z/MUDxy955Q6UI2gg=
+Received: from CH0PR07CA0001.namprd07.prod.outlook.com (2603:10b6:610:32::6)
+ by IA3PR10MB8489.namprd10.prod.outlook.com (2603:10b6:208:583::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 11:56:02 +0000
-Received: from MWH0EPF000971E9.namprd02.prod.outlook.com
- (2603:10b6:a03:d4:cafe::53) by BYAPR06CA0002.outlook.office365.com
- (2603:10b6:a03:d4::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Wed,
- 12 Nov 2025 11:56:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 11:56:03 +0000
+Received: from CH2PEPF0000013E.namprd02.prod.outlook.com
+ (2603:10b6:610:32:cafe::ef) by CH0PR07CA0001.outlook.office365.com
+ (2603:10b6:610:32::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
+ 12 Nov 2025 11:56:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- MWH0EPF000971E9.mail.protection.outlook.com (10.167.243.71) with Microsoft
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ CH2PEPF0000013E.mail.protection.outlook.com (10.167.244.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 11:56:00 +0000
-Received: from DFLE203.ent.ti.com (10.64.6.61) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 11:56:03 +0000
+Received: from DLEE206.ent.ti.com (157.170.170.90) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 05:55:53 -0600
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE203.ent.ti.com
- (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:56:00 -0600
+Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
- 2025 05:55:53 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 05:56:00 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE214.ent.ti.com
+ (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 12 Nov 2025 05:55:53 -0600
+ Transport; Wed, 12 Nov 2025 05:56:00 -0600
 Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACBsxbv2638977;
-	Wed, 12 Nov 2025 05:55:47 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACBsxbw2638977;
+	Wed, 12 Nov 2025 05:55:53 -0600
 From: Rishikesh Donadkar <r-donadkar@ti.com>
 To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
 	<mripard@kernel.org>
@@ -92,9 +92,9 @@ CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
 	<sjoerd@collabora.com>, <dan.carpenter@linaro.org>,
 	<hverkuil+cisco@kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v8 07/18] media: cadence: csi2rx: Move to .enable/disable_streams API
-Date: Wed, 12 Nov 2025 17:24:48 +0530
-Message-ID: <20251112115459.2479225-8-r-donadkar@ti.com>
+Subject: [PATCH v8 08/18] media: ti: j721e-csi2rx: Move to .enable/disable_streams API
+Date: Wed, 12 Nov 2025 17:24:49 +0530
+Message-ID: <20251112115459.2479225-9-r-donadkar@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251112115459.2479225-1-r-donadkar@ti.com>
 References: <20251112115459.2479225-1-r-donadkar@ti.com>
@@ -109,255 +109,177 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E9:EE_|DM3PPFA35BF3976:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95a6aa94-32a0-4421-4dd2-08de21e27293
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013E:EE_|IA3PR10MB8489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b38fcf6-f64b-4fe8-7af2-08de21e27456
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fmG0IFdHsRGNzElosIlZYyrhJ8iz+z49Hv1SyMSs/vBhTc3pkjSOhk6I8WFa?=
- =?us-ascii?Q?NZwvz6cVQlVMIWcDqjk7l34G5ExiEoAnPb9nB1NK0BMsc32L7KZwFcChQ9/I?=
- =?us-ascii?Q?bmCzn9SW7zB8Gty3W5ZKqWpgE1kzgW7kuNNl6G31vHswDWD4TTP/HnZyG27S?=
- =?us-ascii?Q?IjRuwHfWyL3kE0D9ynplHxrAm8pXsBQTQeHPhU/rWzPm4HDcFiXRgYrGpmfs?=
- =?us-ascii?Q?/1F12AiNKY2rqSwOQjwrzhkiTgSHPmLbrczKkaNffVHE5SyxXYRcJdzF1Yfm?=
- =?us-ascii?Q?vnQ+kGbCoV9Ock7LF0UHitmb0tlliTBXNQ2CIPNx2ac9qEFzhr2E9cY2Kebu?=
- =?us-ascii?Q?SJFfcPPruzRnc+GOhGV7i8VLzBv14zD78hxOfRh10WH98S0764N2iu20QwCC?=
- =?us-ascii?Q?u3SwnSAqgD0zlbBZDwX9oJFRLCAgHRKdoJeNOU+vE4AZfwlfsX/n6bYhAdE+?=
- =?us-ascii?Q?Bd0oDzG3Z2zJKpG21iKMTexP2BSXhDsLqei8b5eVe2bX4ZTOSUgvlMsBQzfb?=
- =?us-ascii?Q?mvO1FZXzYNC0Zmy7nbwEgSPgDjumglHDDrIW5KlWyuYuxCVvaBg7chNGBa4m?=
- =?us-ascii?Q?xWYEYYyfyXFUvsrzDsAnvb7HOXtdk9JRdJj5QBIMSPQFB9sIDcUqCSz1NR0C?=
- =?us-ascii?Q?ew1r4O0Hks09/86p/DexEeneQxA+STv/MfHjC7i/B+uw5jz6Od0UipfpcUW0?=
- =?us-ascii?Q?VFTCHiIRYQsHUOkejkMksZZztk2pr0CZvLWXoKkxNFJlg3NJjqLoNLTjT+xB?=
- =?us-ascii?Q?5o0eizJa+S13+APNbV/4ZVwMsErtNOFPiQh7nsNpe95CB5SyNiqliHXZJLJo?=
- =?us-ascii?Q?uO2d5LVT2lG0RRR2p/cESgs0tvjqUc92ccImozb1WFzaWNcnOTdcMTRfItrE?=
- =?us-ascii?Q?sEM5HaSguwmZfRyO+ueiizVv9Ks2h1ol5M+/pJYaTq7ghYs1cDr5jfC7c+LJ?=
- =?us-ascii?Q?0rfJCVte6fTWD5Eq5XyTKgJ2uMXq2LQcg2+mssjCEvw+hRe6rkb1rW38IDWZ?=
- =?us-ascii?Q?YXVpj9hyCiAGhmtF6W0rF0Of+vcys2e+RIb2lSeeWdFpCSj53nrkTVYVg4Gr?=
- =?us-ascii?Q?bnBbvsl2VEqmx0ubjWqa0AMtsNn4JQnO8G+Wk1m/xprBNH4MF9+7aoGEjgE1?=
- =?us-ascii?Q?STO5qdBZGQFY6yaaxCBipxXyWp1fDxMl6hnzL7FS2Vq7ehKzfYuQHdWt0qwz?=
- =?us-ascii?Q?7y4ososm9cf3+sMf95oDGJ3OsPRPbSBmhwkA+Z8dJk9m1sDjwqp3C2cg41Fe?=
- =?us-ascii?Q?g+jU2GVL7lqb2uAoIg2g+0spzMxdQEfmMDti/h52tzesy+rm6lueiNAKUN0i?=
- =?us-ascii?Q?RThjBo7PIT7mKSWhjlR40bjrXIeaSTJ3u1lXibCRGrHUCfx8ZDAYZfO9KzFP?=
- =?us-ascii?Q?4cIA8xxoMx91U6JaehjzHfORjvnpzVDbyLg81O1qEfmg0SJ5HNOGrRdnQNLx?=
- =?us-ascii?Q?ASKhDj6KGNekaFPoDqxB+JtHoYK2DHvF93J3nN3E1PnSTnCne4gUI+2VISsw?=
- =?us-ascii?Q?RalxSryYCw/hAwwHefOqJl+lmW9cogUVmei1UT5gUuXmc42O2Igzux1PnNlP?=
- =?us-ascii?Q?3MBLOcVp6K9vZrrOUPQ=3D?=
+	=?us-ascii?Q?2DB3xyi+qBwvFkQnXNsx9+/zm3nbX5hip6qANc8xCGYRIbOXcoN6pD7Bd6Bn?=
+ =?us-ascii?Q?GuN6NSzA9FsuzWHRfGw/HJ3KKgFlKqfKlPonvTEeHlmWbLP4fQ5KTFYMaQqA?=
+ =?us-ascii?Q?4tgzfp/fLRrmLVuwpQp2wufpGxRmqYi87L8yw8ALN4qP+RmP3HbVVxSk56L9?=
+ =?us-ascii?Q?zOzurGk31HzBb2aXvAZOdcEI9bdDIiF1gXUxx8pWR7zuK3zS3ZsSUl6KZ4GA?=
+ =?us-ascii?Q?P0fliRO2EAjP9OYxh1GBhRvxE32rIYG41zBoIVZLVywv69xC3jKP1BGzCgqZ?=
+ =?us-ascii?Q?cCCWE6MQLqHD0a4Gc6fP0840VLpuvRdbcZYDa6LN+3/t0pOR9L/24Oxe8QYy?=
+ =?us-ascii?Q?b/Og1glMJo8mAS8qj7i9hJ5/4q5nL+pcxjU5YiKa52VyUxQFrMN4eeW2uI+N?=
+ =?us-ascii?Q?wr5p5a7T3nNwCnQiW6BJDvVrdXyDB2pNnS0DZImf8bH8bFBXrhdEXmy0SCd7?=
+ =?us-ascii?Q?38l6YAA1WRpwvmJWlqePqReOrrPRgk5nonfz3MajLCca2Npfjbi75BoEJ7A3?=
+ =?us-ascii?Q?v3G0TnrfFkb4Q0xCHgkJAUF+OP5PhVnJzqYWbM6XjNk3DdQRzK9K4NdrdtUN?=
+ =?us-ascii?Q?8n4NXr2KkI1mjPKdIM7suyYuYDqmXFGHOWtrrT4YLpTuE9hp1pVt6MFC2o+2?=
+ =?us-ascii?Q?2fQHOPSi9IR/cX7kXg+9epcR6tjFALERC3npmaqT6VG2+KtrkJbtyL8rX0in?=
+ =?us-ascii?Q?TGYVecLEx2SNQpRYt0AevAERn4XFwRevyEByrjuJVn530MjSINMzvNxjuYwF?=
+ =?us-ascii?Q?4PIuwZXH3rlKoayWsT4IwEWu/deybuf3nloJMurdjZeKjVfSbvji8ryKc8Os?=
+ =?us-ascii?Q?2J64PAiuDEYv/KkvljYMS9ku573kzTLqebSqTqQ9w5OWkyVTSk5DHbAHlzeQ?=
+ =?us-ascii?Q?tpXzqbMYi8UZlvynLqOKZTUkx6BifatuIIfGSotolekmKk9PsJmEch/ySoa+?=
+ =?us-ascii?Q?TjWoDdNftnMh2oc5xLmqxUcAEIR6QCjJD8dFb4sqwAJbWPwxP6UteEfOktgN?=
+ =?us-ascii?Q?1z27gJblJYWRyBzANM3KnkiaIc3UHYxlORPx+lmjA7FNsaHreO4L7Pp5Gkiy?=
+ =?us-ascii?Q?xYSQxsMpFVdPIbDH2GaV63auHuQlGEYDo4N4UXyMytcwvuvOj1Nh48cns2N6?=
+ =?us-ascii?Q?EGZFZ7E/3XEGCnwQ1D+7Lg+XU4zrmY/8wcNZo0Ob9iDmw/0vpIntCmWHzs1C?=
+ =?us-ascii?Q?T0UbzpMpfQNLHa/Ok89tz1xifNMxT6Y7HCWI3B0Gf8DdjQgmJ1saiwam8IEs?=
+ =?us-ascii?Q?SX6yqfJ3z62BnzW+xNLrCKrbcDRdSJnSvLOz52V8SHlHBME8CFI8zyIxH3/d?=
+ =?us-ascii?Q?rkOe1IbScbdL3HCAJfJgvvrwuTu5uFPDiajTxQdaJbQseasdrxzHBZHfxn9h?=
+ =?us-ascii?Q?qKCXJK0+eOgnEX8bi7yRcHcZf+j8w2p7KNKH6pRjPC6mCsylaIFC/nR13h8/?=
+ =?us-ascii?Q?uzf32Mf8T0seBxtglgUhibUMFLud5599lgTx0wBI15yzoBk+BJZPtMcE7dUs?=
+ =?us-ascii?Q?KJ2HxJtAJPTYMXguC5DGHXuLG7NBr0ytULnkzMY/pXqnBjUNTWJzjmXpWRjD?=
+ =?us-ascii?Q?cLm8a8+kjFy627ZVBK0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 11:56:00.0387
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 11:56:03.0815
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95a6aa94-32a0-4421-4dd2-08de21e27293
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b38fcf6-f64b-4fe8-7af2-08de21e27456
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E9.namprd02.prod.outlook.com
+	CH2PEPF0000013E.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFA35BF3976
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8489
 
-The enable_streams() API in v4l2 supports passing a bitmask to enable
-each pad/stream combination individually on any media subdev. Use this
-API instead of  s_stream() API.
-
-Implement the enable_stream and disable_stream hooks in place of the
-stream-unaware s_stream hook.
-
-Remove the lock that was used to serialize stream starts/stops which
-is not required anymore since the v4l2-core serializes the
-enable/disable_streams() calls for the subdev.
+Support the new enable_stream()/disable_stream() APIs in the subdev
+instead of s_stream() hook.
 
 Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 ---
- drivers/media/platform/cadence/cdns-csi2rx.c | 108 +++++++++----------
- 1 file changed, 54 insertions(+), 54 deletions(-)
+ .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 71 +++++++++++--------
+ 1 file changed, 41 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
-index 8c19f125da3e5..34da81893308b 100644
---- a/drivers/media/platform/cadence/cdns-csi2rx.c
-+++ b/drivers/media/platform/cadence/cdns-csi2rx.c
-@@ -125,12 +125,6 @@ struct csi2rx_priv {
- 	unsigned int			count;
- 	int				error_irq;
+diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+index 327b8e5fb7d5e..372a4035d78a0 100644
+--- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
++++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+@@ -921,7 +921,9 @@ static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	dma->state = TI_CSI2RX_DMA_ACTIVE;
+ 	spin_unlock_irqrestore(&dma->lock, flags);
  
--	/*
--	 * Used to prevent race conditions between multiple,
--	 * concurrent calls to start and stop.
--	 */
--	struct mutex			lock;
--
- 	void __iomem			*base;
- 	struct clk			*sys_clk;
- 	struct clk			*p_clk;
-@@ -268,20 +262,21 @@ static int csi2rx_configure_ext_dphy(struct csi2rx_priv *csi2rx)
- 		&csi2rx->source_subdev->entity.pads[csi2rx->source_pad];
- 	union phy_configure_opts opts = { };
- 	struct phy_configure_opts_mipi_dphy *cfg = &opts.mipi_dphy;
--	struct v4l2_subdev_format sd_fmt = {
--		.which	= V4L2_SUBDEV_FORMAT_ACTIVE,
--		.pad	= CSI2RX_PAD_SINK,
--	};
-+	struct v4l2_subdev_state *state;
-+	struct v4l2_mbus_framefmt *framefmt;
- 	const struct csi2rx_fmt *fmt;
- 	s64 link_freq;
- 	int ret;
+-	ret = v4l2_subdev_call(&csi->subdev, video, s_stream, 1);
++	ret = v4l2_subdev_enable_streams(&csi->subdev,
++					 TI_CSI2RX_PAD_FIRST_SOURCE,
++					 BIT(0));
+ 	if (ret)
+ 		goto err_dma;
  
--	ret = v4l2_subdev_call_state_active(&csi2rx->subdev, pad, get_fmt,
--					    &sd_fmt);
--	if (ret < 0)
--		return ret;
-+	state = v4l2_subdev_get_locked_active_state(&csi2rx->subdev);
+@@ -949,7 +951,9 @@ static void ti_csi2rx_stop_streaming(struct vb2_queue *vq)
+ 	writel(0, csi->shim + SHIM_CNTL);
+ 	writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
  
--	fmt = csi2rx_get_fmt_by_code(sd_fmt.format.code);
-+	framefmt = v4l2_subdev_state_get_format(state, CSI2RX_PAD_SINK, 0);
-+	if (!framefmt) {
-+		dev_err(csi2rx->dev, "Did not find active sink format\n");
-+		return -EINVAL;
-+	}
-+
-+	fmt = csi2rx_get_fmt_by_code(framefmt->code);
+-	ret = v4l2_subdev_call(&csi->subdev, video, s_stream, 0);
++	ret = v4l2_subdev_disable_streams(&csi->subdev,
++					  TI_CSI2RX_PAD_FIRST_SOURCE,
++					  BIT(0));
+ 	if (ret)
+ 		dev_err(csi->dev, "Failed to stop subdev stream\n");
  
- 	link_freq = v4l2_get_link_freq(src_pad,
- 				       fmt->bpp, 2 * csi2rx->num_lanes);
-@@ -401,16 +396,10 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
- 
- 	reset_control_deassert(csi2rx->sys_rst);
- 
--	ret = v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, true);
--	if (ret)
--		goto err_disable_sysclk;
--
- 	clk_disable_unprepare(csi2rx->p_clk);
- 
- 	return 0;
- 
--err_disable_sysclk:
--	clk_disable_unprepare(csi2rx->sys_clk);
- err_disable_pixclk:
- 	for (; i > 0; i--) {
- 		reset_control_assert(csi2rx->pixel_rst[i - 1]);
-@@ -459,9 +448,6 @@ static void csi2rx_stop(struct csi2rx_priv *csi2rx)
- 	reset_control_assert(csi2rx->p_rst);
- 	clk_disable_unprepare(csi2rx->p_clk);
- 
--	if (v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, false))
--		dev_warn(csi2rx->dev, "Couldn't disable our subdev\n");
--
- 	if (csi2rx->dphy) {
- 		writel(0, csi2rx->base + CSI2RX_DPHY_LANE_CTRL_REG);
- 
-@@ -485,38 +471,56 @@ static int csi2rx_log_status(struct v4l2_subdev *sd)
+@@ -1016,53 +1020,60 @@ static int ti_csi2rx_sd_init_state(struct v4l2_subdev *sd,
  	return 0;
  }
  
--static int csi2rx_s_stream(struct v4l2_subdev *subdev, int enable)
-+static int csi2rx_enable_streams(struct v4l2_subdev *subdev,
-+				 struct v4l2_subdev_state *state, u32 pad,
-+				 u64 streams_mask)
+-static int ti_csi2rx_sd_s_stream(struct v4l2_subdev *sd, int enable)
++static int ti_csi2rx_sd_enable_streams(struct v4l2_subdev *sd,
++				       struct v4l2_subdev_state *state,
++				       u32 pad, u64 streams_mask)
  {
- 	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
--	int ret = 0;
--
--	mutex_lock(&csi2rx->lock);
--
+ 	struct ti_csi2rx_dev *csi = to_csi2rx_dev(sd);
++	struct media_pad *remote_pad;
+ 	int ret = 0;
+ 
+-	mutex_lock(&csi->mutex);
++	remote_pad = media_entity_remote_source_pad_unique(&csi->subdev.entity);
++	if (!remote_pad)
++		return -ENODEV;
+ 
 -	if (enable) {
--		/*
--		 * If we're not the first users, there's no need to
--		 * enable the whole controller.
--		 */
--		if (!csi2rx->count) {
--			ret = csi2rx_start(csi2rx);
--			if (ret)
--				goto out;
+-		if (csi->enable_count > 0) {
+-			csi->enable_count++;
+-			goto out;
 -		}
-+	int ret;
- 
--		csi2rx->count++;
--	} else {
--		csi2rx->count--;
-+	/*
-+	 * If we're not the first users, there's no need to
-+	 * enable the whole controller.
-+	 */
-+	if (!csi2rx->count) {
-+		ret = csi2rx_start(csi2rx);
-+		if (ret)
-+			return ret;
-+	}
- 
--		/*
--		 * Let the last user turn off the lights.
--		 */
-+	/* Start streaming on the source */
-+	ret = v4l2_subdev_enable_streams(csi2rx->source_subdev, csi2rx->source_pad,
++	ret = v4l2_subdev_enable_streams(csi->source, remote_pad->index,
 +					 BIT(0));
-+	if (ret) {
-+		dev_err(csi2rx->dev,
-+			"Failed to start streams %d on subdev\n", 0);
- 		if (!csi2rx->count)
- 			csi2rx_stop(csi2rx);
++	if (ret)
 +		return ret;
- 	}
  
--out:
--	mutex_unlock(&csi2rx->lock);
--	return ret;
-+	csi2rx->count++;
+-		ret = v4l2_subdev_call(csi->source, video, s_stream, 1);
+-		if (ret)
+-			goto out;
++	csi->enable_count++;
+ 
+-		csi->enable_count++;
+-	} else {
+-		if (csi->enable_count == 0) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
 +	return 0;
 +}
 +
-+static int csi2rx_disable_streams(struct v4l2_subdev *subdev,
-+				  struct v4l2_subdev_state *state, u32 pad,
-+				  u64 streams_mask)
++static int ti_csi2rx_sd_disable_streams(struct v4l2_subdev *sd,
++					struct v4l2_subdev_state *state,
++					u32 pad, u64 streams_mask)
 +{
-+	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
-+
-+	if (v4l2_subdev_disable_streams(csi2rx->source_subdev,
-+					csi2rx->source_pad, BIT(0))) {
-+		dev_err(csi2rx->dev, "Couldn't disable our subdev\n");
-+	}
-+
-+	csi2rx->count--;
-+
-+	/* Let the last user turn off the lights. */
-+	if (!csi2rx->count)
-+		csi2rx_stop(csi2rx);
++	struct ti_csi2rx_dev *csi = to_csi2rx_dev(sd);
++	struct media_pad *remote_pad;
++	int ret = 0;
+ 
+-		if (--csi->enable_count > 0)
+-			goto out;
++	remote_pad = media_entity_remote_source_pad_unique(&csi->subdev.entity);
++	if (!remote_pad)
++		return -ENODEV;
+ 
+-		ret = v4l2_subdev_call(csi->source, video, s_stream, 0);
+-	}
++	if (csi->enable_count == 0)
++		return -EINVAL;
+ 
+-out:
+-	mutex_unlock(&csi->mutex);
+-	return ret;
++	ret = v4l2_subdev_disable_streams(csi->source, remote_pad->index,
++					  BIT(0));
++	if (!ret)
++		--csi->enable_count;
 +
 +	return 0;
  }
  
- static int csi2rx_enum_mbus_code(struct v4l2_subdev *subdev,
-@@ -611,10 +615,8 @@ static const struct v4l2_subdev_pad_ops csi2rx_pad_ops = {
- 	.enum_mbus_code	= csi2rx_enum_mbus_code,
- 	.get_fmt	= v4l2_subdev_get_fmt,
- 	.set_fmt	= csi2rx_set_fmt,
+ static const struct v4l2_subdev_pad_ops ti_csi2rx_subdev_pad_ops = {
+ 	.enum_mbus_code	= ti_csi2rx_enum_mbus_code,
+ 	.get_fmt = v4l2_subdev_get_fmt,
+ 	.set_fmt = ti_csi2rx_sd_set_fmt,
 -};
 -
--static const struct v4l2_subdev_video_ops csi2rx_video_ops = {
--	.s_stream	= csi2rx_s_stream,
-+	.enable_streams         = csi2rx_enable_streams,
-+	.disable_streams        = csi2rx_disable_streams,
+-static const struct v4l2_subdev_video_ops ti_csi2rx_subdev_video_ops = {
+-	.s_stream = ti_csi2rx_sd_s_stream,
++	.enable_streams = ti_csi2rx_sd_enable_streams,
++	.disable_streams = ti_csi2rx_sd_disable_streams,
  };
  
- static const struct v4l2_subdev_core_ops csi2rx_core_ops = {
-@@ -623,7 +625,6 @@ static const struct v4l2_subdev_core_ops csi2rx_core_ops = {
- 
- static const struct v4l2_subdev_ops csi2rx_subdev_ops = {
- 	.core		= &csi2rx_core_ops,
--	.video		= &csi2rx_video_ops,
- 	.pad		= &csi2rx_pad_ops,
+ static const struct v4l2_subdev_ops ti_csi2rx_subdev_ops = {
+-	.video = &ti_csi2rx_subdev_video_ops,
+ 	.pad = &ti_csi2rx_subdev_pad_ops,
  };
  
-@@ -829,7 +830,6 @@ static int csi2rx_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	platform_set_drvdata(pdev, csi2rx);
- 	csi2rx->dev = &pdev->dev;
--	mutex_init(&csi2rx->lock);
- 
- 	ret = csi2rx_get_resources(csi2rx, pdev);
- 	if (ret)
 -- 
 2.34.1
 
