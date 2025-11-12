@@ -1,215 +1,142 @@
-Return-Path: <linux-kernel+bounces-897522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F14C530A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E47C52F75
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D37F93590DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:14:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 95D1F355A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BCE2C0277;
-	Wed, 12 Nov 2025 15:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9358C33AD96;
+	Wed, 12 Nov 2025 15:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="phfBaia5"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012009.outbound.protection.outlook.com [52.101.66.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y0YALBDM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0292BEC2D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960095; cv=fail; b=rX3FD1OH7qQyRYs9kJIDmxCdwLwIF3p1UUBJnAbj4UusOrJun0a3NHUCgw6h3tHKoeLM0UnGjtZG8c23SM3P0yDwbEyj3fQFCkQqe5T4WmtlMqist8YyY3iwpWZaKW5ussbq0x64mHbgYNz4sodaKeMYsen6Q1UA8D94+XPSEhA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960095; c=relaxed/simple;
-	bh=TDB6D4Pe8EgbXaAwZnv6AO/xZfcfZxw9W4KgGn+AhNY=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UePNGTLJjMADATPVFtBjKXlFQyB7mMyQbmxB36ZY4mhG2b0K38IaW2Te6yslIFLQhnKPtRQI897XzaQNEJaIMZE7hENPud67gvHouZMLMS9Z+KthroLsD5zRNTwAfAdtJpAfuZw57e0MSDzrPe9+Z6nRjVTZCOw0hHzVqbHO2H8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=phfBaia5; arc=fail smtp.client-ip=52.101.66.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IuAkTwIE0z3wnI970vwxZ2gC94GI0RH883u1mlP50eUWkVcYAC4vcQOztIK+DjAHRUECPTTKUpuWKmvWndK2DL1WWoj18c+1w6NIQt4pVDCfB9iKDaJsgscZT9odynmVwcSOxTw/XbWpnPoP5zQtpX0yrI/MCLgw5PcNV8EveNlFzH4A+ko4vaXpxifjK1ANctNDTO+T6wBKKhFeaqL01dSmkZTXy6GRib41vK6a+4vV7KRVPNNXsiJaF72KfPGYRh9gflU1W4rv+Weu9Qw8QMIsmKGAXiucEPkQ6POsv2OLWxBvenPTR9QTWNfhJQvfbYYkU1IH0FbJmrDUXBvPPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TDB6D4Pe8EgbXaAwZnv6AO/xZfcfZxw9W4KgGn+AhNY=;
- b=q/TWNTUCk6momIWiQSBXN8D5et2roSpJ9c3tSzu53QZQJ6Y6WN9s9tcE41Ocn/7ruej66LNIkVhe30PDnnTTwLiieAPzA8fftufOIgtbPFuDSFfHDg6f3WhLwOaZZfRKe0YG7ukNH23yRyQoyAm33acsgppTpjqso+runFb2HwMx6vB2PEtV8jyfXsqLeVBDF+yBe+XoQyLO0teBESTklZX5PIDUewFer0BCxesrx5pylkCAAmM3LcBsiHHs3gVEKULCT8Cc2PmZtkkMpPhdm5NGcTWhyyir+v1xoTJyFGEzwrqAIXDW6m84aBdzTg1IDb2C/L0VL3di2MnoXhVqYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TDB6D4Pe8EgbXaAwZnv6AO/xZfcfZxw9W4KgGn+AhNY=;
- b=phfBaia5WOZ1mrKxnep6shUWo+hZwYa+NqvN+60lfxqyzn6D+jz5cXSoynKIZhD8GHAnePFQtRkdsub14+WF/NHuW9VXVLcTjGxfHPVHdlItI/unBA/UFuhqWyWz1J35762waABkkbZJSSSGrSBduoKBD/rTnwflrftpnra//FY=
-Received: from AS2PR02MB8915.eurprd02.prod.outlook.com (2603:10a6:20b:546::12)
- by GV2PR02MB11420.eurprd02.prod.outlook.com (2603:10a6:150:2a1::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Wed, 12 Nov
- 2025 15:08:08 +0000
-Received: from AS2PR02MB8915.eurprd02.prod.outlook.com
- ([fe80::9e01:907d:ac0a:6a7b]) by AS2PR02MB8915.eurprd02.prod.outlook.com
- ([fe80::9e01:907d:ac0a:6a7b%7]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 15:08:08 +0000
-From: Lars Rask <Lars.Rask@axis.com>
-To: "david@lechnology.com" <david@lechnology.com>,
-	"marcus.folkesson@gmail.com" <marcus.folkesson@gmail.com>,
-	"jagan@amarulasolutions.com" <jagan@amarulasolutions.com>, "agx@sigxcpu.org"
-	<agx@sigxcpu.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kernel
-	<Kernel@axis.com>, Amir Dawd Seid <Amir.Seid@axis.com>, Johan Adolfsson
-	<Johan.Adolfsson@axis.com>, Daniel Larsson Persson
-	<Daniel.Larsson.Persson@axis.com>
-Subject: [RFC] What to base new driver for Raystar RDX0063 display panel using
- Sitronix ST75156 chip on?
-Thread-Topic: [RFC] What to base new driver for Raystar RDX0063 display panel
- using Sitronix ST75156 chip on?
-Thread-Index: AQHcU+UycmIuve61UUec2cz0KJbIXA==
-Date: Wed, 12 Nov 2025 15:08:08 +0000
-Message-ID:
- <AS2PR02MB89157A26C4CFF62811208A739FCCA@AS2PR02MB8915.eurprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS2PR02MB8915:EE_|GV2PR02MB11420:EE_
-x-ms-office365-filtering-correlation-id: dedab4aa-58f1-4bdb-5df5-08de21fd49d1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?9wzt/p9udVz5VONtt0HcjsqkmgL3HrZptgfa5uLJg6mpDHtA+pg+mJ5vkN?=
- =?iso-8859-1?Q?oyMA6LAvG/UiWA/zSY9tjb8Q10nswNT96DUooMXFjFAwgv929UjDAgaoAx?=
- =?iso-8859-1?Q?7FJ/Q+jTvJTD+5DzyT7uA23NAlwUFt5d3UaYGzZAWa1IG3ByrRzEeXq7ot?=
- =?iso-8859-1?Q?WBmxcZTs4jqmEsRzrs53hqxhAWLIWsmmAjVgVNEFQHmMWH+QAoPyxFvAPd?=
- =?iso-8859-1?Q?QyNhFr8jXoKpghJiPIP5FFoxWLOqhalF4WsdBkIXDHhCQH2VV47n2IAWqD?=
- =?iso-8859-1?Q?1iivEw9/wXtnmGGFlDdMI1Kt96iz0eRlTINdUDvPgL957AOfHw+X3H4BrS?=
- =?iso-8859-1?Q?dngPIzKYAcqfQ+9mxapwtuUkBHlhJkpGGZyUwEoauMJrgPWmz28nDXmbcZ?=
- =?iso-8859-1?Q?PTQWS3egT6KETD4OAw83b3c2yok5XiQQUVy2OnKTGUiaV/yqqXDexUahr/?=
- =?iso-8859-1?Q?czSFruwSKbYgBfZoMf7Fkn+UrHsf50lzPDTlC9XNU45zyjxvII4vm8t87a?=
- =?iso-8859-1?Q?zTAsQb1MtanOWOn5cAXuRGyBw0WylPfakW0he3K80JOkoXbEUqZzqQnsqZ?=
- =?iso-8859-1?Q?VqtccYD31TdJH/AY8ovLnR6lF7SmuIXspXgk44U3DuFJQG/NaC48NYcWdg?=
- =?iso-8859-1?Q?c821VPxTgnQOqGX6KClCxKFZz+6AP7WvZDhzNN6nhK3PDp7p3e3MhQLBK8?=
- =?iso-8859-1?Q?ZZhc3OMW/ZjKQYm8EyMJhCOK905eBnLwxfwDONJh1TUpVGXrTBT32WaOC6?=
- =?iso-8859-1?Q?xNvPmP/L+eqqb2uQH4Z2EBFL5/rR020oZYGkD4wsj9ooJ/N6xdM5bGtlpD?=
- =?iso-8859-1?Q?WjULC6JhauHcm6MmO1GA+5ui//rs/1BpOiCfqmcVosLMBW9yZMvKjRRlPP?=
- =?iso-8859-1?Q?qaYrrIsVqownPV5Gg+KaGPEip2VjjQ47TQm17afyBm9ZmFQ5HJFJns8uZe?=
- =?iso-8859-1?Q?NhA9/6JCTyAy1dTOpBjJX1gfHpwBpxQxAJVbgD7VqgedisKyf04RrMEPsA?=
- =?iso-8859-1?Q?7fZwcvmTalbituvZUZ7LI1lizmunllw2/8fVgRzySKntryVCMJLmCEsmPx?=
- =?iso-8859-1?Q?GOvM+1btFR8XFK8b2pgwacWwcWm3u6baAxXEmEZVe41h3VHw9ISx0Ga4Vh?=
- =?iso-8859-1?Q?urtWoIXkXVw6/AEN1EBWmSotPY7yCTIs2p9nGYTl452ShHbgxbKKLwMkHD?=
- =?iso-8859-1?Q?TamF9YduPx69ly3yauL1YjU8HqsR/aqgg1w5cxrgxSTV0i7eoqxuxCZwD1?=
- =?iso-8859-1?Q?PINnQi5hhmZxb2hn8t4MpuYSGtHVB6ysYIS5h7JKEJ3ZBI/7y/HeYqEZzi?=
- =?iso-8859-1?Q?9YkmGVtWYEaqmEJNS6AhIbye9/3z1RAceYIs5qScU3QXS6H83GZ1Ov3Rf6?=
- =?iso-8859-1?Q?aUTav7ZasDIwbI7v9XG457GFpA+GW+2oVyx6fTzbOo3athHNGXBh2Xw746?=
- =?iso-8859-1?Q?HNMtcA1UN0XpcBhfZsJv8H9YyE1DwWlMGV4crh0u/BwRBDZ1V+1+Dc2cT3?=
- =?iso-8859-1?Q?apZcm6d0fK0mHcjJ7YWwwkt5o+3p1QJlAWXnpJRCG0bg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS2PR02MB8915.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?htAKkX6+rB8yDjcb0c8OhmWQYDMG3rvVaIYTl1JdmtPC7cwx7N5TShrqNv?=
- =?iso-8859-1?Q?L4V5WcTFCrdwie/i7TB0fkj/VKX4tl/6yQHeM93b49nU1AwpTq0ixRxvLV?=
- =?iso-8859-1?Q?08GIYonukj3faf0mUd0+RDhshQBW7xvVCDF/nzK5QqgKhi4o9t41r9SheE?=
- =?iso-8859-1?Q?JOe/xwM+4hrAJ/CoMqDcyb7DXGMGirWZH+asSqccpf0RfkovdH44dMwryp?=
- =?iso-8859-1?Q?tS2zSdEADU+aOy5DHDEmVbb4Yts/vMXRb9ijuDMJkdIDnsWHe9bslDvOJW?=
- =?iso-8859-1?Q?sYwG9Mo7ICyplriOvcnzDj3qpXSycJH78VVR9ailTt5FYbnf7yQOC7bEsu?=
- =?iso-8859-1?Q?d0A+wEek+s7S1+CVA/oQ0IODYZi34pguavgbtKMTO2cxODUl4qnU+A3byr?=
- =?iso-8859-1?Q?ISwtG7tjB1a10IytSNt7hfSkYlBmm2voefsPWLQAFkbdV2lfMTuTUbkCzf?=
- =?iso-8859-1?Q?svHRWgd7U8gfUkxElUXYd/rDfDQVdhOxcbTPy4xwVA3yTmhoW+t0UcxUhq?=
- =?iso-8859-1?Q?zmb7pc2jo55CZr3GiFGZXvBg90kZgdnEEFQ8VscgEt1RW5Rag7i7yRfUI6?=
- =?iso-8859-1?Q?oDx254P9e9o4MtWCHxzE3mUpdMUxyRKmhF+LFMe05JCSFam5yRHRUFrJkc?=
- =?iso-8859-1?Q?prFFRqp+k8qmYeMe4AzgWypGAFbiuhHzYGKMgCRTyVPaRSGGi4Gqj9XUuG?=
- =?iso-8859-1?Q?m427ZSqvY4F4sDx05XPsuvCrrX3Y8C2j4VoRT1G2s96qdvRTxxSk355zsY?=
- =?iso-8859-1?Q?FVOu+NNjorU250r3X8SNE/7xgseH6D1qwvLLz8aFj1llMGR8v7KN6OsO+s?=
- =?iso-8859-1?Q?2pJpzdCz7CtFcxzXjzOcaoZw2kO4PeCtLiTIzWDu3aNwkOW7TWnx2+q8YN?=
- =?iso-8859-1?Q?bctKYFYkDxuC+autrO2pNAo2QbBX79kjs5l9zvfoLmQGtChoCVmay0pz2I?=
- =?iso-8859-1?Q?LYnbUGwHWMSddbT4QyAXeYUm24l967HOqEIUTTIazEjnh2jHGgwWlTHk8N?=
- =?iso-8859-1?Q?UXtK/0InDNHH9LTmO7ETuLe9Hlf/EikqJNDBLV2NMnLviV5onkngxUqcZt?=
- =?iso-8859-1?Q?pdw74guJxRBlMUDUul+z8S6U/Q0rZOKYCRqkIY7zkxHwetHLqNfN5r/DVC?=
- =?iso-8859-1?Q?04amvs6pz6Ny7JWbeVcGXcLJZkE+1FDr1twapYwEO2VLXjV5jOL3OZSxCf?=
- =?iso-8859-1?Q?SC+3S7uMtpIzh6dcyX0NbPqTm+O26k61c+R8LbvlyJdOQcKtS+Z0giWWTj?=
- =?iso-8859-1?Q?/mKkJaCRlBQZII/EkMVehB3/D9oSpNpeolLTkriwrBXqy9niSAHLuC4xCq?=
- =?iso-8859-1?Q?oUKtom+wBSOPyJm5x6aUWoU7sZd2GNI6zyc0jS1UyHoWDZNsnDQNYRDi09?=
- =?iso-8859-1?Q?IoRo27ioSQn2y8/+OzVPupYIKtn3Lk3BcJMby7SX9a+cGojBTdddfgCFe5?=
- =?iso-8859-1?Q?t1mTlB5N1RwMRx7aQpDhQi3cJowb83f8qGZtGQcLjTiQrIc5W+dC43j3W3?=
- =?iso-8859-1?Q?1u1egkJjsL2ATt7V8BFxoAlZZvmF7T0GpGXuMWKkjtyqUG+XROFjk0PLDZ?=
- =?iso-8859-1?Q?AeYebZXGVKXyq1xvEyQM+GIbrWrzF5MTvI2xJkmdSMXVhxiOXJoyEmabWw?=
- =?iso-8859-1?Q?0NhCu2gMAcFvY=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE04E339B28
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762960114; cv=none; b=kfVZUL7sJ7jz14bOV3jCA7YnmS/u6turlDFsNb6oUwj8Xq3BSEGEDp73re4GwgeNCGzJKcE5QXLPwXQ/8JBYQ+PH7zAoe3eOYp4P3IRk1TBNtclys8KU6D4cKDS7Pthw4U/+lYK+sEMuO2FzfdL+dc5lyCQ6NKo76AsCYsAGm2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762960114; c=relaxed/simple;
+	bh=c1ZGVy0GBbaZDUUvStNCn9YOzbR/fEqU9mFTBpk1nqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dy4mb0LQkWefyxe1+g41Wo0mWIiuG0HovDIWE1EOTa4ZF3qUsFIKdBsSgwWEdA+aAgLpy66niKXeBImxU4Tf+oekceCUoaWdk9XStgf+dIZEN5Qz9eJ4/UcPA3/Pdad497YeMu/vZKEY2Gn8FWqYYj1niD1QYbTiEtilnCFXdMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y0YALBDM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gQbIhwDGbp7mfNBm+FgA2L4/WUZidm3LS5CMsg5hChc=; b=Y0YALBDMu2p6qNd858XIAocwcn
+	tL0oazLUqxKmXYE8hJNHZoGDLQTEQSlCTteeWXKG5MMv7CIGQVNHfqaL1MCbE9yXOUWGW9ys/a6Q7
+	I2u+BJns3qpBv2pbhH/4ErwscuA/XsZ2VN/uFuz7PNZv3UEdQVCJRJuHGlb/w1DmJPPS/YI6km4/I
+	7I5qoKEVdlQLS3iSLDvxb+ec3WoWZdD4pwFieUdi/q8U3R0rmWD7AWl5pm2nlUl1NOU/h1mvwJ0Ca
+	tifXCiWYLLyZbtwnTx8hYYycI6edTMbeRfnzNKn+ploy3Ba7stpO6d8v5mI/gZ8uUlq90cn82lM//
+	63Z3NAVA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJBad-0000000Ffpw-384Q;
+	Wed, 12 Nov 2025 14:12:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7B35E300265; Wed, 12 Nov 2025 16:08:18 +0100 (CET)
+Date: Wed, 12 Nov 2025 16:08:18 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	Chris Mason <clm@meta.com>,
+	Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Adam Li <adamli@os.amperecomputing.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	Josh Don <joshdon@google.com>
+Subject: Re: [PATCH 2/4] sched/fair: Small cleanup to sched_balance_newidle()
+Message-ID: <20251112150818.GG4068168@noisy.programming.kicks-ass.net>
+References: <20251107160645.929564468@infradead.org>
+ <20251107161739.525916173@infradead.org>
+ <2acd7c1d-e2b4-40a0-85de-55f9b2635dad@linux.ibm.com>
+ <20251112144241.GP278048@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS2PR02MB8915.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dedab4aa-58f1-4bdb-5df5-08de21fd49d1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 15:08:08.1638
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rMN7TjEIjcHmhKtap3bC9KO7hQGbQkz7kU4fyxoiMhXxcVsws6i7FWiAUjpujeuY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB11420
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112144241.GP278048@noisy.programming.kicks-ass.net>
 
-Hi,=0A=
-I'm trying to create a driver for a small lcd display called Raystar RDX006=
-3 that is using the=0A=
-Sitronix ST75156 chip. The display is used in SPI 4 wire mode similar to ma=
-ny other tiny MIPI=0A=
-DBI displays, but the register set and framebuffer format is not MIPI DBI c=
-ompliant, since each=0A=
-byte sent is actually 1 column of 8 rows.=0A=
-=0A=
-The datasheets for the Raystar RDX0063 display and the Sitronix ST75156 chi=
-p are unfortunately=0A=
-not publicly available, but you can find the datasheet for Sitronix ST7567 =
-(which is similar to =0A=
-ST75156) here: https://www.topwaydisplay.com/sites/default/files/2020-05/ST=
-7567.pdf=0A=
-=0A=
-The main difference seems to be that ST75156 supports a higher resolution t=
-han ST7567,=0A=
-as can be seen here: =0A=
-https://www.sitronix.com.tw/en/products/industrial-display-driver-ic/mono-s=
-tn-lcd-driver-ic=0A=
-=0A=
-As a first attempt to create the driver, the panel-mipi-dbi driver was exte=
-nded with "tweaks"=0A=
-to support non MIPI DBI panels. This seems to work. However, after some dis=
-cussion with the=0A=
-maintainer that is no longer active (https://github.com/notro/panel-mipi-db=
-i/discussions/14)=0A=
-the conclusion was that these "tweaks" were not upstreamable, and that I ne=
-ed to create a new=0A=
-driver specifically for the Raystar RDX0063 display panel using the Sitroni=
-x st75156 chip=0A=
-instead.=0A=
-=0A=
-In order to make my driver upstreamable, which driver should I be "inspired=
-" by (i.e copy and modify)=0A=
-and base my work on? The drivers in drivers/gpu/drm/sitronix/ and drivers/g=
-pu/drm/tiny/ usually uses=0A=
-struct mipi_dbi_dev and mipi_db_command() helpers, but drivers/gpu/drm/pane=
-l/panel-sitronix-st7789v.c=0A=
-does not.=0A=
-=0A=
-Should I create my new driver as /gpu/drm/sitronix/st75156.c and use mipi_d=
-bi helpers where applicable?=0A=
-If it is preferable to avoid using the mipi dbi helpers, is there another s=
-et of helper functions that=0A=
-I should use instead?=0A=
-=0A=
-Best regards=0A=
-/Lars Rask=
+On Wed, Nov 12, 2025 at 03:42:41PM +0100, Peter Zijlstra wrote:
+
+> > if sd is null, i think we are skipping these compared to earlier.
+> > 
+> >         t0 = sched_clock_cpu(this_cpu);
+> >         sched_balance_update_blocked_averages(this_cpu);
+> 
+> let me pull that sched_balance_update_blocked_averages() thing up a few
+> lines.
+
+Something like so..
+
+---
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9946,15 +9946,11 @@ static unsigned long task_h_load(struct
+ }
+ #endif /* !CONFIG_FAIR_GROUP_SCHED */
+ 
+-static void sched_balance_update_blocked_averages(int cpu)
++static void __sched_balance_update_blocked_averages(struct rq *rq)
+ {
+ 	bool decayed = false, done = true;
+-	struct rq *rq = cpu_rq(cpu);
+-	struct rq_flags rf;
+ 
+-	rq_lock_irqsave(rq, &rf);
+ 	update_blocked_load_tick(rq);
+-	update_rq_clock(rq);
+ 
+ 	decayed |= __update_blocked_others(rq, &done);
+ 	decayed |= __update_blocked_fair(rq, &done);
+@@ -9962,7 +9958,15 @@ static void sched_balance_update_blocked
+ 	update_blocked_load_status(rq, !done);
+ 	if (decayed)
+ 		cpufreq_update_util(rq, 0);
+-	rq_unlock_irqrestore(rq, &rf);
++}
++
++static void sched_balance_update_blocked_averages(int cpu)
++{
++	struct rq *rq = cpu_rq(cpu);
++
++	guard(rq_lock_irqsave)(rq);
++	update_rq_clock(rq);
++	__sched_balance_update_blocked_averages(rq);
+ }
+ 
+ /********** Helpers for sched_balance_find_src_group ************************/
+@@ -12865,6 +12869,8 @@ static int sched_balance_newidle(struct
+ 	if (!cpu_active(this_cpu))
+ 		return 0;
+ 
++	__sched_balance_update_blocked_averages(this_rq);
++
+ 	/*
+ 	 * This is OK, because current is on_cpu, which avoids it being picked
+ 	 * for load-balance and preemption/IRQs are still disabled avoiding
+@@ -12891,7 +12897,6 @@ static int sched_balance_newidle(struct
+ 	raw_spin_rq_unlock(this_rq);
+ 
+ 	t0 = sched_clock_cpu(this_cpu);
+-	sched_balance_update_blocked_averages(this_cpu);
+ 
+ 	rcu_read_lock();
+ 	for_each_domain(this_cpu, sd) {
 
