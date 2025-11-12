@@ -1,98 +1,161 @@
-Return-Path: <linux-kernel+bounces-897575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FB5C5333E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:55:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4AB3C5324E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:46:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02D86202BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:32:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E940F35195B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA3933FE33;
-	Wed, 12 Nov 2025 15:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1682C0F71;
+	Wed, 12 Nov 2025 15:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="bVHixlYn"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="K7oK3++D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kKiWXRvT"
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E633F8C5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8442C1593;
+	Wed, 12 Nov 2025 15:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961457; cv=none; b=CB+IllkR0B/oHziH2+ecTNoCRCTaLmbEq//Uzzui832KNQ7LLIiB5EDw9u/iVz51/ZVg+ar9mnKKpH7xN2y3eyaNHjc11FoosGdvciJD+S/PnkD5UaeX2ootpcZxD5XfYyyiKvgqr2Q8N89J+VrK/7E125xA5JOesLlw6T/z8e8=
+	t=1762961413; cv=none; b=QksUi8G4sNjoofFhL2M/FzQV1LJ1JkzT1fbywhKXoRwbhyzd5ceZ4mKjqUI2XsKXZNM7ZZqh/VHGEL4AL9yS8NmLCRu57H2GNu4YmDmNyHwef/YkxoSDrexCgeNx1kF/d5uhxAcSgWNsnpNCLwZDYRuOb9DYxYCXNb7ZhjH06Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961457; c=relaxed/simple;
-	bh=jti/WDC1KJeLUCxADdUS9GjNHsV+LzcXVJp+I1E5YvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYI4jNOKSt1KHSeAoF8Vc9uUFO3ePW7bom+GhNBtOZuxAOGpz4DWY9cJKjw5xroW7lQTx9Ds2IZu1UnLOIiNZlwsRDX2ycs8nF71lYxNSgbzJ2E1fLoYUVas2yETuR7iTwaQ626hPzyPe5471xo6eVDR1fGoUShkdhdLNl4/i0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=bVHixlYn; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-200.bstnma.fios.verizon.net [173.48.82.200])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5ACFTXXi022626
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 10:29:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1762961379; bh=fFEV1yEu0f2ULh0OpDxAMyYySFsuiDTjToDP1kfqcxE=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=bVHixlYnoXOntlmD86NN2BdGh+eHnNuVozQh1KtMaDTh8lG0lFAxzabpXEjHhf/Pb
-	 TF5YNFgPA4iGPyQaBJjd4wDdDZXlS4U/pQENXWH7uxKSzC/AJy6LoDKEwwHkA86HgX
-	 4P5Efgltsm5SE9Mze0T8fl3yiePumdgNXjCpDSF/Q49tYHu7vEOvMPRxU8PCBVT3KS
-	 vGKMcEXZMTMCSQnNL1Fzg1cl4LDqkAYOb4ncyoHN65IMJ3DDDV8R9wbSgpL/mE9jWi
-	 7t42GUyZczx5rSeDGCKG50K8Oxiyh9qMdNCbT//KVWm7AnmV2VMwMne43aXlhDsmj5
-	 k5XO7rEC02AWA==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 0A5342E00D9; Wed, 12 Nov 2025 10:29:33 -0500 (EST)
-Date: Wed, 12 Nov 2025 10:29:33 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
-        mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
-        Baokun Li <libaokun@huaweicloud.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
-Message-ID: <20251112152933.GC3131573@mit.edu>
-References: <20251112040220.GO2988753@mit.edu>
- <21efa577-a577-48ce-a82b-bce446539fba@huawei.com>
+	s=arc-20240116; t=1762961413; c=relaxed/simple;
+	bh=001wyCEKrO3mqSIGETLIkf6QND/1jgkqpT40N1/GwCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DaIhvJby/VcUwHl6dN19tNiuw4vOK0+MwTiRVdlQMBoBVXcqd1LZfJe8Keltm488f9rdT7FYieGZng6LAowP7IlGR9M9NdV2VwOzQ24oahUL2h/m3HsVw3/i3Vn2JdMqoM9Jw+RqWVXYQwXvKkFaBCK2OAWQCWsBhURp1tDt8Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=K7oK3++D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kKiWXRvT; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 7391C1300CAD;
+	Wed, 12 Nov 2025 10:30:08 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Wed, 12 Nov 2025 10:30:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762961408;
+	 x=1762968608; bh=uArHWjw+8HGdLtfQCvoLqxfM9tZpffpVJb80hFO/JPY=; b=
+	K7oK3++Diz89tOqK4vLR34LtpL4guiH4VYfUr2+FOAlIXPpXTu52xGjdCMr7+t+U
+	MjiMotHHCBsFTLiMcqOQ9axpjzdodCxKkUWvzggFDy+/89yZQ89V/1wLg3GqHOIr
+	+Jl30tNJ/8f/QjG4nrk2qfE42bimaAzGqOFdbc2FOUNzHuyrqb9o2Tva+vLSbjeB
+	GJcmaK4fEoj7X63vBQoeO//hXZheR9nWToGm6BQRjvK3m76KTqGML6Bd0U50VaN+
+	eRY3RjYcoHE08XPl1TWM8cSeN3AruR+k/1NnMpqlaWGG4Su8jn7ZP3pqrwYbev5L
+	7Mjz0hvxpfOYCegPSYOY1Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762961408; x=
+	1762968608; bh=uArHWjw+8HGdLtfQCvoLqxfM9tZpffpVJb80hFO/JPY=; b=k
+	KiWXRvTXj4iBFjd5BF+dLoJdwhsiiifYfF9IHuIzMZ889HrKN0swoL9BhCHsjCJ3
+	35l2Hy/MoSMrgGVJjNd1h7OrZBMMPXcupz7iA0rFBnrfYpuC9ntI6z6WUA5h7FIj
+	BU2vAcYGZhwmkhevyU0cd9L59bdTHs0oCnqB1knBOmmCKTjREjoR+r8bYx+W76od
+	wNxnVArchTkgkhuIVYYwQP9iauH6ikxAq1N07qG4eGtSa1fEaqhwt0I1uEMbsUUl
+	vJH0GwGC9ZHLs2ZFJ1CkiNEhgSpqd6NqzK9oC5Lq2B4tr5GkEReOmxLQf+OE3aAy
+	cRAevJwc+kw0G64Agk8SQ==
+X-ME-Sender: <xms:_6cUaSWYGo_-gHTbAw8mGrukwNYtHyVRVZ5xhQclMkJdk3YXSU0u1A>
+    <xme:_6cUaYplbX1atmIhLxyVP-uOv4Jd-pY9661ZK9Djaq-M_vYjzAfUwP6weErWEN0SY
+    aTFeI_D60UHNfXqrVnCOfZo1uxmdajjG-TciH36gF3kBUd3OLbA>
+X-ME-Received: <xmr:_6cUaWST4GsfR4lCo6DjP8CUeYiMVLJrIVrDOGqzK7Tb7p1TyTmy37rb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeggeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucfrhhhishhhihhnghdqkffkrfgprhhtucdliedtjedmne
+    cujfgurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgig
+    ucghihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrf
+    grthhtvghrnhephedvtdeuveejudffjeefudfhueefjedvtefgffdtieeiudfhjeejhffh
+    feeuvedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhgvgiesshhhrgiisghothdrohhr
+    ghdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprg
+    hmrghsthhrohesfhgsrdgtohhmpdhrtghpthhtohepughmrghtlhgrtghksehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehjghhgseiiihgvphgvrdgtrgdprhgtphhtthhopehkvhhmsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_6cUaa2Uo9m4B140EgKN0QSmdo1sM7m4pFAbPsmqhUyTjxx4fZ9n6Q>
+    <xmx:_6cUaaB5QksbqJfc8OMTw2VYkHX75peXOe1C73ZYYZO_wkdwJXR1MQ>
+    <xmx:_6cUaeim_BiZZLF29jHdpni83Fj1yloWMIPwDMyKUdE_dUpHCB8reA>
+    <xmx:_6cUaUMPptfUksNmez_0H1PHfG1pFpCvK4nZOGZUdCBDgByJ3BIoOg>
+    <xmx:AKgUaRlJBH8Emgdm1l8wsI3hfP68KV44G-IiKaYLpIuoOZhRV6Jwo7Dl>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Nov 2025 10:30:07 -0500 (EST)
+Date: Wed, 12 Nov 2025 08:30:05 -0700
+From: Alex Williamson <alex@shazbot.org>
+To: Alex Mastro <amastro@fb.com>
+Cc: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
+ queried IOVA ranges
+Message-ID: <20251112083005.542e0b7f.alex@shazbot.org>
+In-Reply-To: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
+References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <21efa577-a577-48ce-a82b-bce446539fba@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 02:27:19PM +0800, Baokun Li wrote:
-> Darrick’s reply in another thread has already made a similar change,
-> so we can apply that patch first for testing.
+On Tue, 11 Nov 2025 10:48:23 -0800
+Alex Mastro <amastro@fb.com> wrote:
 
-I'll give that a try when I have a chance.  For now, here's a test run
-using a version of my test appliance which excludes the way group for
-the config ext4/lbs, and which has a modified e2fsprogs (built from
-the latest e2fsprogs git repo) which suppresses both warnings when
-using large block sizes if the kernel has the blocksize_gt_pagesize
-feature detected.
+> Not all IOMMUs support the same virtual address width as the processor,
+> for instance older Intel consumer platforms only support 39-bits of
+> IOMMU address space. On such platforms, using the virtual address as the
+> IOVA and mappings at the top of the address space both fail.
+> 
+> VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
+> VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
+> respectively. These provide compatible arrays of ranges from which we
+> can construct a simple allocator.
+> 
+> Use this new allocator in place of reusing the virtual address, and
+> incorporate the maximum supported IOVA into the limit testing.  This
+> latter change doesn't test quite the same absolute end-of-address space
+> behavior but still seems to have some value.
+> 
+> This series is based on Alex Williamson's "Incorporate IOVA range info"
+> [1] along with feedback from the discussion in David Matlack's "Skip
+> vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
+> 
+> Given David's plans to split IOMMU concerns from devices as described
+> in [3], this series' home for `struct iova_allocator` and IOVA
+> range helpers are likely to be short lived, since they reside in
+> vfio_pci_device.c. I assume that the rework can move this functionality
+> to a more appropriate location next to other IOMMU-focused code, once
+> such a place exists.
+> 
+> [1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/#t
+> [2] https://lore.kernel.org/all/20251107222058.2009244-1-dmatlack@google.com/
+> [3] https://lore.kernel.org/all/aRIoKJk0uwLD-yGr@google.com/
+> 
+> To: Alex Williamson <alex@shazbot.org>
+> To: David Matlack <dmatlack@google.com>
+> To: Shuah Khan <shuah@kernel.org>
+> To: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Alex Mastro <amastro@fb.com>
+> 
+> Changes in v3:
+> - Update capability chain cycle detection
+> - Clarify the iova=vaddr commit message
+> - Link to v2: https://lore.kernel.org/r/20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com
 
-ext4/lbs: 595 tests, 6 failures, 101 skipped, 6656 seconds
-  Failures: ext4/033 generic/620 generic/759 generic/760
-  Flaky: generic/251: 60% (3/5)   generic/645: 40% (2/5)
-Totals: 619 tests, 101 skipped, 25 failures, 0 errors, 6291s
+Applied to vfio for-linus branch for v6.18.  Thanks for the quick
+resolution on this!
 
-Fixing all of these filures is not a blocker for getting this patchset
-upstream, but it would be nice for us to figure out the root cause for
-them, so we can decide whether it's better to exclude the tests for
-now, or whether there's an easy fix.
-
-Thanks,
-
-					- Ted
+Alex
 
