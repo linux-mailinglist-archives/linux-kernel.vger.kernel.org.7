@@ -1,143 +1,227 @@
-Return-Path: <linux-kernel+bounces-897452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA2EC53156
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:38:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D27C53464
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 954DC4FCC0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E803550771A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5E93054F2;
-	Wed, 12 Nov 2025 14:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC2F33CEA1;
+	Wed, 12 Nov 2025 14:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QE+tYIDk"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="HM9TdXxr"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010048.outbound.protection.outlook.com [52.101.84.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC9D23F431
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958655; cv=none; b=O0VV6god1QAuKgnGkFV6Mf71PR++eeJhE+etiM0gQ4qh/n/D1J4EXHRCjCwGcIJSJZ8F0H1WSG2/BK8uXwC+iDBfOfXyaxDvAvoD0AdDOGG/7hq/ddr1kiDGMNcq2ZrWf2rAB+0JMxN6ARz7nITTUJsFHKf99P3ofqiCxWOfVm8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958655; c=relaxed/simple;
-	bh=uB8d7JtKTTmDsaF5Tr+v7fqtYO6IKYX+h65FpevQW0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=el+F3VJG5lqWFWRtIqqslUNjS5U3bolLoeYq/ox/yqhVRBGXP9R7bTs2J9L15rt6JUJ4qeDi1h3cn7uwpcRX3UWvPoL7yTIfB8Q43cKHsLvcTb5RMovPJ0l0NbVUAxXBZX3sgIp8UMBkJLGfzdSxUAJJ7Brd30azSqlCibnhrZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QE+tYIDk; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b729a941e35so145602166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:44:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762958652; x=1763563452; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLIg4vHVi3UzjZEgn5d3+DJwJQ3Me/YDQDfOXcmSEOw=;
-        b=QE+tYIDkEQoChdRTTeoxNL3ui+lj5s+JnZzHIXO/57Vd/+l1uKukdroqiXdBgy62bX
-         lAcG0KgCIKuKgyTnmRU5YGxuik4tP5gbm3E5SA1cf3xHKtY3wWAw3FSjtDOGYR1d60MA
-         ES7YP8E7Z3hlfRZK1uxRka1+aoGlAjinTqsRLcnqI80R74H1AUYyvL2QxUah2x6dZCIb
-         GdCKlSsU6f56/tjRnK6fJUrCUmlnH/ToS7aJah0x1y4xSnyX7x/Ax5BhIDmBPixB+s/d
-         WM2YTPLKPmganNExvltUdUB4ruv8mJLQL6Gu1e8WKcxVoidNJMxmDdURWKz/tATm9FMa
-         dh1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762958652; x=1763563452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OLIg4vHVi3UzjZEgn5d3+DJwJQ3Me/YDQDfOXcmSEOw=;
-        b=D8jkt7bcvNO11aQEjK7NvUiSu8Qw5NekPHQEzM1CU2IOghFYJmUAMRoso7DQh1H4KQ
-         AERoR1t2lUNdrEM+DXxStxJ9UZM8Mt5pw0R84a2M+q8VOLUAL1xmUfKeAhIXu0Sx5KZL
-         i0MamnHh4heRnNnuqxNQ4nOIZsGw5aiYxR4mR1k3dG99nBBWRsa2GbtKqetTft6kG/Ol
-         njYV7M2aRaxQDGVl7AEU4ybLxvcfCDRtXE1G62+hirqrYa4QypHvh24p5U+1aCnCxFmR
-         zid0z1sZwTuI2ruFbMo8OJz3QPKOd6ldqQcNwLEtbWhyU8iqY8haGM/yq8dCN2KLE043
-         eS+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXSwKbNv6JCgxz1BgVc3aI1E8rf7rP9pp+EHsuOrcF3k9XOlVcNv6OXIZRke536iaApfZ3uVxY669X5Sq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdqlzlVhQ2aXFK6mQvy4p1ZL4nlCZUTnsEPGWUnzIJghj8Q4JJ
-	JScOh7os3CrKWNnuUwEE1SHYLNP5ZleOvTFEyJFyrzRRhhp8TQ+YMaYTLcJ4kPWbCg1lZsxxC4C
-	+kQnDmEA=
-X-Gm-Gg: ASbGnctgMMn772wLJ6IUAQj4Zkpz8Ul37gK4aYh0YH5cL/KQhum6wvfxhmE/8wOUdwU
-	QtTkdxref3+sZssGa1/fPpbwBVYHQGsn+jOWgRXPBml8DCrDI/5YyXaCU2ld3gvDkcl7FlhUHDV
-	tO9LYLw5pQ2jsodWlEZABsPABmMjf6k58rJfLUDt9GzGZJpjxJdrgBS0+QoR/2r/Huvs9rQvcwH
-	OWOr//uzgMgH2g/fSqDa82iilQMEwdjboNY7LZE79Sp8XM0I09QLHfqrskyGQOGAJ5rpUJ29wNR
-	hkScHH38mt4P+qeIEZyP/76tv2d3MNkmlVeSmfbid9IiemnjBAgmshxQ01r6b0UuJA5TZeQAp/L
-	72KxlUky9La8XW6cqFIKHdK3JpfjKmENBuElXqtQ0PfE6NLAcaQwH/lXX0+w4lzl5uhd+rb4yuE
-	Lh1i4=
-X-Google-Smtp-Source: AGHT+IFVBPavB+srd//2HfzL1+TTC9nQ/mWcrqEp7JRXj5iTIb1kQGBJxTMGJNbkKlt1nf6vpk85BQ==
-X-Received: by 2002:a17:906:4794:b0:b73:42df:27a with SMTP id a640c23a62f3a-b7342df0b7emr41109666b.1.1762958651890;
-        Wed, 12 Nov 2025 06:44:11 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be184sm1596553966b.56.2025.11.12.06.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:44:11 -0800 (PST)
-Date: Wed, 12 Nov 2025 15:44:09 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>, paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] hung_task: Add hung_task_sys_info sysctl to dump sys
- info on task-hung
-Message-ID: <aRSdOfA3bgvCzdfH@pathway.suse.cz>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-3-feng.tang@linux.alibaba.com>
- <aRInLdgKCzaVeyG0@pathway.suse.cz>
- <aRRupyzGaP5Z35qE@U-2FWC9VHC-2323.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBA33D6F1;
+	Wed, 12 Nov 2025 14:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762958793; cv=fail; b=gyhqxhRQYYCQXS3DokPHztpS+3bm3aXbgx827VcKVgGx4PJreryBLemZfWCul+51zOoPh3yTs1HZlocCd9TbdrXlyjpVucMv+/Oac9HxV9WOhwn5a2o1qyaPK62oopGw9Djc30M6QgXW6LMlT/pHp7MqEElFS5NACDm6bKjCf+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762958793; c=relaxed/simple;
+	bh=UrdGvvRI86ODIqkmTKiKA8jrpEP89FJ0SJR61grKv9U=;
+	h=To:Cc:Subject:Date:Message-ID:Content-Type:From:MIME-Version; b=NnIZLXAUEcRD51y2b5RZ73Q/tkuO6tevx1elmZrsYGFowHJfguYTMKNE/XKDiFH8aHohMQosbpyCYqUu19tjZ0BU789B7V7oXmFTEm5LVfoh/lpgysivx57UxMwGsbDEE5M+e/fKznzjPBIxTtOvdPCXr+51Tw2hnF7jRk76DMg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=HM9TdXxr; arc=fail smtp.client-ip=52.101.84.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jGjT9aMMnEfQhRU1dB2zY8MBMo/+n2OdKiHa0m7L+XzsyVjIRkDMDB3U1RfwPQHWK5xI0QaM4OOyaHDPzFppaH0sQn3NIJYCwUzl2oOsMTMBrgXWGRAH85r/KhrOvCSfP6MIvEv2blxldjmVm5sj2FZuXnd70qX+perWKsw7r3DvA+9sSu9cVLxAO6H0HXIEwzwZZjNDPbA8LhZl2fJOqdLmPB5u+uJV7jU+rRoXxb3Iz/C/UYa0rZyiUEjfEmBL9AWpyvTPWX++OSEpaRoz5lhJo+rBcIjkket/e2FTbnA/lO6dCQXpNioiOzyIaQy/4nDz/KTOshq92rSIOSY1SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cqMw1g4IHmJj9+geRGjPiNfadru45wEe5ApC5UBImAY=;
+ b=xm84UaMeJLa2kP+FPgqgt0z+TuTvgMvLtcRXkqBnMyJLv/SfUf2GdXuXSNO4DMfJl1kxtv7mItD4XqbcWc8c0b9Hd4Gj200LinCjw9K2YVmqOyQlaT9LnFPniTCEwDhTxqkaLLrqtS+eJ2taDi3aJxGaxrQM7nUl0qZ9wuufeF6R0uhA5uAboh4sB8YZtaYFiI0KUTrTYGYFp+G/2gEplSwBYEH/Fe6h20j7KpW+uuav3BjytVogATO+gRwE0VHyjLOs+C8WHeo67uTjREdi6w3qLC6w+GAPtNX2Jc3bc8jJwcScaUldGnDJIRCfW/bacfL3uojm57ajk271galgcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
+ dkim=pass header.d=prevas.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cqMw1g4IHmJj9+geRGjPiNfadru45wEe5ApC5UBImAY=;
+ b=HM9TdXxrpTTOvPO+oJKicAVK6gTIs2QgJn7Rf2QhbKweB+wdCzmGd2bBCDHyGT1rrLVMZ1ra3ttfAnnLwtKLEo2EtMuUfmc+jDb4265Op+e5vyWhM+DkC62uAbtdkBRusm+RiDKPfcWzfkhRN6SXci16z2CrtiIL8V8O82Wl4/w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prevas.dk;
+Received: from AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:12c::15)
+ by DU0PR10MB5218.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:346::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 14:46:24 +0000
+Received: from AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::cce1:f0a3:698a:f450]) by AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::cce1:f0a3:698a:f450%5]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
+ 14:46:24 +0000
+To: Frank.li@nxp.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
+Subject: [PATCH v2] ARM: dts: imx6qdl: make VAR-SOM SoM SoC-agnostic
+Date: Wed, 12 Nov 2025 15:44:16 +0100
+Message-ID: <20251112144441.1827336-1-stefan.prisacariu@prevas.dk>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+From: <stefan.prisacariu@prevas.dk>
+X-ClientProxiedBy: MM0P280CA0035.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::23) To AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:12c::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRRupyzGaP5Z35qE@U-2FWC9VHC-2323.local>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR10MB2561:EE_|DU0PR10MB5218:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ba30486-50e8-4638-8242-08de21fa40b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|7416014|13003099007|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3KELcon2lTlBUh+DuCninsJL0gOlJWxa143lDHhKlUEpQwPkagtvkB4z90M6?=
+ =?us-ascii?Q?qAlsDBjNTK5Clx4KPtuOh4FinvAsOxIwyNO+l9mtrpQ1Pvf714lyyzLiH7mF?=
+ =?us-ascii?Q?KEZNzDPAEpI+ebHI29MSzGwb7+ToI7UEYqIN2qtx0c9za/dYZtR8rWCR4r1I?=
+ =?us-ascii?Q?NnIbn4ioGP/C1QquIQFXjuU/WOAjoj2toNd65aDi8XJd6APa5TMCX1Oej5NQ?=
+ =?us-ascii?Q?ltafzxFTPxO0cZ51K7XbJzXZHySEiQ1hlKakJGYe/haL0JRrOz2A3kHlxbRF?=
+ =?us-ascii?Q?iJmF8VvyUEWWiJ7yOLKC1OHLmJjNZ97Y7VQgJLJygahdkppLZzha+IXOTj0F?=
+ =?us-ascii?Q?3gGE85Qxw4LMOfNpApRjEFIZBvd07RPw2+Tnin/qS0fO7WU9mu0tGsAMqkB0?=
+ =?us-ascii?Q?mWWtPMZraiSMamgIVfHkaehgXrAee9al6Sp57BeQoDXGXcIJBAcm+ObOUmq8?=
+ =?us-ascii?Q?mbJeVlX9sCULLSHLONOQZAE6TIh/+5aiuKmpU0aZqhwty3WE2dh46YLYMIkQ?=
+ =?us-ascii?Q?Jt0DbRGqVsreWBCnZjEAGCWklVl/BM8f02eTgCnzmj6nps9HE7zslQBVArnx?=
+ =?us-ascii?Q?/d9Cfy8Wb/6vEXTFgk9huuXxi4e/Yq1qAdtIDf079ZoYwR8mcMVz8aX1iYdg?=
+ =?us-ascii?Q?sKN9/ssVC7uA3DfPV4OlxXd3jqJPEYHxomCTe0AVtzG//HX8U3SX39fBH/vu?=
+ =?us-ascii?Q?XOC+hgeJHj+nIZGqec80pdox6TnLswhDa1664HbNHShlIpzVWvCmbmVoE6jp?=
+ =?us-ascii?Q?iR5nrkFNugLWp3c2EpKgcwE1V1ILHQslBBRz16Symf0ttmgaRB6BXKs87/7s?=
+ =?us-ascii?Q?qBXXhWMzhDYEvEumJt7M1b7L/mINbJ+xZsDgw11HHfbWIstBMKgtf10DBL+4?=
+ =?us-ascii?Q?xLRxJMMgEP0UrsF3bBwAJ/0m8Z2R5UbB6IHHtJzdVPvX3kN2QB8XIAHaHpbn?=
+ =?us-ascii?Q?LHp1Z7Dk31pv/nkgiKpacFtTsjZ7IRuZe66fiqLrnj9+E78BEX3jEs7zMt1R?=
+ =?us-ascii?Q?XCCfWwUhSWOgwx4/h2z8jhJgYhk4ka5GW5eYkv/Kw2IKqW+BZvsNyUWQTb3E?=
+ =?us-ascii?Q?sMuTbhZV948pLWm6l6PbsIAv4Zr+RWBRoJTnp5Aix9l3xpsHC44ZrOunL9Ov?=
+ =?us-ascii?Q?79zpBtgWTpwTXE8IyyTnSMq3WhxdIKwEilqki0DSQiB2tqviUsiVwlz4Vdi6?=
+ =?us-ascii?Q?K3LaQJ62a0b1I1v2BCk1gpq1I18BTQlFEd0LIWnGNceR//73XhA6usguAaul?=
+ =?us-ascii?Q?asE9rLKMBqzS1d1wq1hP8m2R80y418y29XdNd9lZ7YcPCrFQrXSLguIzY9b7?=
+ =?us-ascii?Q?AJthWwWWs1609GvQzAoCni5nARjcrDH63BlVKwnkyoKuXw4Po8gMNaHFQ4Ke?=
+ =?us-ascii?Q?lZezajl9b+xqH0py62388N8r1FHIHe9iVRF/JNMeNgzL3QOYIJaQ6LnolfoT?=
+ =?us-ascii?Q?DRj9hsTq0euX1zE9Yf5QPO9Jj7BoKjhOlHfdqjmZRQPN9Xon3KyvmvE2GbZb?=
+ =?us-ascii?Q?BR/AuDo1zeeA9uzolcNbKmVIVa9klslHCtaQtLQYD4fGwz9WFJqgYxWxSA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(7416014)(13003099007)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fULk7b6UVhYaMzy2UvMUZIqg3okW/FpNNovpHsyk8khXAmRv5fD8YrqRwKxQ?=
+ =?us-ascii?Q?KWLGB2jA6YwNZgRv3nUamCs6XFleTWxaDeFXcNax74VJWZn4/CD4YP1AjLuV?=
+ =?us-ascii?Q?8Byg4vYpYbQthQtM/5AfNhUQ3hl3ahMEtrTKjFL76uJMwmFj9a84pKDdXZV/?=
+ =?us-ascii?Q?1yYf80V54Sz8tSz3K0mGF3cgpWyRZoGar0pwVlu74E3pfTCdyQLKdDyQs2SX?=
+ =?us-ascii?Q?sSWKJHvwKQqL3ejWOD96NdxIdhj2PuBpywyyAhbmmxVF02spxOzdXUV9oVzG?=
+ =?us-ascii?Q?mt+fnr+9D7Mke7O++02ZGIeSBn98iJMgPBIdHtou3qpY42LXKMgZT7+tIiWz?=
+ =?us-ascii?Q?TPOFh3D72FJr7MLVYKGwlzm4pvDaJL1PtzdceKDv0zvvc4v2ofzncSw1O/F5?=
+ =?us-ascii?Q?udwF3rQQHA0uOHxbPwoznNzRDZK/t5IawrWuNRkPRa2Gb4YCf0aBOM5vUT6f?=
+ =?us-ascii?Q?hmtJj5wr9l0lbiyTgKFEbnt8HdABDkaCikWfiL11uvVXCiZQdvHt3mkyk///?=
+ =?us-ascii?Q?53Qf3KqvY9tdTeGnY4JRIn2CsCtWapGnkQVczTGlBqegJDFR6BkIRHdSAwwL?=
+ =?us-ascii?Q?RbwguDhXUfXt/qIFgJY2Uns9yEcCLmfj6yp3wvOUvgz2pWYqR53/jAAS914I?=
+ =?us-ascii?Q?OaIp1nONyyYWN754v5gLOXIoJymRLQS2RKQdYtuO92zEYRRHpwCH67oqtu7o?=
+ =?us-ascii?Q?v7CrhFsTKj4WRJpK8HJuYd8lBdbbeUd0VSfb4y57W9ks1zMacSPF9m6Lwzgc?=
+ =?us-ascii?Q?+w6ZyibGeI5OANykkPqNmwQfqRJXLD75BucJCgzkuteLTVAYMYc4YfbA7/9a?=
+ =?us-ascii?Q?HXdWKITBFuT+mFgaRAAI4FqsQvai/I0e2S8Q7xDSuVLPtTaUaiQrkKGHSAu0?=
+ =?us-ascii?Q?vbbmB+2msOEM3h1NgLrqdDVUsyRdGcNIOpnMIiU7HuF1UWeHTcBTNSIPoGKH?=
+ =?us-ascii?Q?DVp0+4BhTF4kJUA6bdsHL81UdZU/KJr8ZrDOU55ZeX15yjs2zyuHhB2jtW7B?=
+ =?us-ascii?Q?of8Zs5OdW9vyPw8e0SGyPAXF8N6LTymKjAe9I18E3T3c5Ds8hMSoG4/Lvqcq?=
+ =?us-ascii?Q?R/2UuwYtjDqthfLwwLuF8ZqHkrFq+qMaednQvt9xcx1T2+1iH31jt3W7d+qv?=
+ =?us-ascii?Q?4W5R1sVseXWLQNQ5tK4vCAoweKHXtzjQKntLv3pvlnKGUTfcZAzZw0kvRZTp?=
+ =?us-ascii?Q?glmGRro13KttjABM9g4rI4Z6E91pgk6+BBXImFSvZiMWeRhgadlh4iIA6GXw?=
+ =?us-ascii?Q?FBP9h5SXBLcRPNGrxHKTFHtwE/Aa1je90MZcRSctVpC1Judz4zC2rLS2taZ8?=
+ =?us-ascii?Q?KyZrWf2dqKO4CuV6CY0b02/BVqS+hKT86XvNKpvyTrTI8U6PDI+Eszu8zuXB?=
+ =?us-ascii?Q?M19pzmnYcb7FKatCJk5XLHKlFp+m4AmhF3T7yuZe7LWHp8NNU9sxG1o4aXf2?=
+ =?us-ascii?Q?hycyu+ycC83iHoH5ZbTwjyykzzUWWKDmk6/ITXouiI8EjiH6u3SWb3qtKbqt?=
+ =?us-ascii?Q?lB5YGv1PiwdAH5TKvLW44YcR78P3tVQEgHadrHUd2CHNOPGy3EPK52OPObp/?=
+ =?us-ascii?Q?FzldZzbNEorxfd5alHJe2e/j2akRALqxDXvl9BAsittiSJGFOk5e06oU6fsQ?=
+ =?us-ascii?Q?Pg=3D=3D?=
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba30486-50e8-4638-8242-08de21fa40b4
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB2561.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 14:46:24.5540
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KNTMSjX2sdGSSYvKu/y2Cvc6FAurrP2rGTu5/qVo5h8aorxSDU/bidHL1mth5QtrbwSkswRASdIe0rLwBgB6Fq50vJUZ15AsUimmiMj36QA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5218
 
-On Wed 2025-11-12 19:25:27, Feng Tang wrote:
-> On Mon, Nov 10, 2025 at 06:55:57PM +0100, Petr Mladek wrote:
-> > On Thu 2025-11-06 10:30:31, Feng Tang wrote:
-> [...]
-> > @@ -315,8 +295,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
-> >  {
-> >  	int max_count = sysctl_hung_task_check_count;
-> >  	unsigned long last_break = jiffies;
-> > +	unsigned long total_hung_task;
-> >  	struct task_struct *g, *t;
-> >  	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
-> > +	unsigned long si_mask;
-> >  
-> >  	/*
-> >  	 * If the system crashed already then all bets are off,
-> > @@ -325,6 +307,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
-> >  	if (test_taint(TAINT_DIE) || did_panic)
-> >  		return;
-> >  
-> > +	si_mask = hung_task_si_mask;
-> > +	if (sysctl_hung_task_warnings || hung_task_call_panic) {
-> > +		si_mask |= SYS_INFO_LOCKS;
-> > +
-> > +		if (sysctl_hung_task_all_cpu_backtrace)
-> > +			si_mask |= SYS_INFO_ALL_BT;
-> > +	}
-> 
-> This probably needs to be moved to after the loop check of
-> check_hung_task(). 
+From: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
 
-I did it on purpose because "sysctl_hung_task_warnings" might get
-decremented down to "0" in the loop below. But IMHO, we need to print
-the information if it was non-zero at the beginning.
+Make SoM .dtsi SoC-agnostic by moving SoC include to board level
 
-It might be worth to add a comment why it has to be done
-before the cycle.
+imx6qdl-var-som.dtsi currently includes imx6q.dtsi, which makes this SoM
+description Quad/Dual specific and prevents reuse from i.MX6DL boards.
 
-> > +
-> >  	rcu_read_lock();
-> >  	for_each_process_thread(g, t) {
-> >  
+Changes:
+ - Move imx6q.dtsi include from imx6qdl-var-som.dtsi to
+imx6q-var-mx6customboard.dts.
+ - Remove /dts-v1/; from imx6qdl-var-som.dtsi (dtsi files should not declare
+version)
 
-Best Regards,
-Petr
+This keeps the SoM .dtsi SoC-agnostic (it already relies on imx6qdl.dtsi for
+family-common parts) and allows boards using the DualLite or Solo to include
+imx6dl.dtsi instead.
+
+Why this is needed:
+To reuse imx6qdl-var-som.dtsi on i.MX6DL board.
+
+No functional changes for imx6q-var-mx6customboard are intended.
+
+Signed-off-by: Stefan Prisacariu <stefan.prisacariu@prevas.dk>
+Link: https://lore.kernel.org/all/20250925104942.4148376-1-stefan.prisacariu@prevas.dk/
+---
+v2: Updated git commit message to better explain the changes
+v1: https://lore.kernel.org/all/20250925104942.4148376-1-stefan.prisacariu@prevas.dk/
+---
+ arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts | 1 +
+ arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi         | 3 ---
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts b/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
+index 18a620832a2a..a55644529c67 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-var-mx6customboard.dts
+@@ -8,6 +8,7 @@
+ 
+ /dts-v1/;
+ 
++#include "imx6q.dtsi"
+ #include "imx6qdl-var-som.dtsi"
+ #include <dt-bindings/pwm/pwm.h>
+ 
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
+index 59833e8d11d8..51bcaf04546b 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
+@@ -9,9 +9,6 @@
+  * Copyright 2022 Bootlin
+  */
+ 
+-/dts-v1/;
+-
+-#include "imx6q.dtsi"
+ #include <dt-bindings/clock/imx6qdl-clock.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/sound/fsl-imx-audmux.h>
+-- 
+2.47.2
+
 
