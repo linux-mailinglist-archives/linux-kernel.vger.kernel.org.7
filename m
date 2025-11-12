@@ -1,168 +1,266 @@
-Return-Path: <linux-kernel+bounces-897139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7513C5220D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A100EC51EC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C043A8470
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7AA3BCAF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DCA314A80;
-	Wed, 12 Nov 2025 11:50:43 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0BF314A67;
-	Wed, 12 Nov 2025 11:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F052DECBD;
+	Wed, 12 Nov 2025 11:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HBh1CGN6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZvdFFM5+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10372727FC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948242; cv=none; b=bXTojtJ9Ark+62/CdnGjH9GZS7c5yeakILwk5wSuUm0hJcWV2W9uY6WURJNkFJfFmUk6IpUTOrDlqEKSmmlzxqdCkZXWbXs7QfkpdWYbMD3mRbfsLQE81hI1KFnuFQ0807m/A1U3CufgyU/bmVjpi6+BmM5i9R6hvSE8yLwplXs=
+	t=1762946156; cv=none; b=c3EVj+mOu+CBumBNrWK2YN47RyZeecm/hgU7SF+oCFl4275flgqFgX/f9qGbcWYsTnQywT9AjyX20xBjgCQZCEJh5ifh+gx495mOU19xrLUnJj2dCymbslUnu/Cb3exPNaCfcE1Zb1tFe8suf3DCTWE7AlNDjYySqgOBep5L0Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948242; c=relaxed/simple;
-	bh=wH9YiYK5vf3a4Yc3A4ClIKZkBIbThYXlZe1vwVAK5SM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pnnL8CdK6O4ciiyezyMT1ZMNaIRO1/cC0QH2w1vIGqC1hYMxaJptZtneRH9Z4ErQ/DWrvxNXjL7X71cLu2hy373e6SXfEMpY4uRd3MAo2EELJdWXdBIPYCbVFmMFViTx3WrkRk6JNbn9gGgw0svKcUBHyd00wsCWVPaNYIYhGZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d616J1lGlz9sSb;
-	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id IDngTuJZ3gRw; Wed, 12 Nov 2025 12:15:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d616J0kqSz9sSZ;
-	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 03A088B76E;
-	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WbBSOMNQv6aS; Wed, 12 Nov 2025 12:15:35 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 69C278B764;
-	Wed, 12 Nov 2025 12:15:35 +0100 (CET)
-Message-ID: <caf091d5-6122-4cd7-bdbd-88b3f9a4029e@csgroup.eu>
-Date: Wed, 12 Nov 2025 12:15:35 +0100
+	s=arc-20240116; t=1762946156; c=relaxed/simple;
+	bh=Ap9O+/7wqWhNAdtJOhlmX/Bb+eHxo4JzJ7cSwHL+I90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCd2z4jHfB+wkii3meHPGQ7Fmj/D76pFXhxfyThE1LkR4Ho14VkqfS1DC2DQSuG4lLBMF3qcKaQG9LEe/F7zlVTzWOXnjf4sz0vN02Q6yU9Z2W6dPvaXqPpdhWOTmfBBZZe6dMbhPdEqo4tUORiO9STyiUSHrLlF4sd8g3NCqds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HBh1CGN6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZvdFFM5+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9CjPe510749
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:15:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Ml+7ACGSsIoRB5tIYgTA6Iwt
+	Q4AbhO2ugzv1mrLcl/A=; b=HBh1CGN61fVZa5A7AWCrPuz5d2M2CiITxKu4Z2dX
+	2JNvbsXNuBum2VyWbXBMalHHirqNQoPAUT4OQ+TooWuvJq9Soss6e4W/fw3osbg3
+	1mvyuFxHTMYBOXiguVJphiVdJg9swMVkQugTu5LQFBEb4p8mtBZ4vq/l+i8qScMy
+	dVJxTwe2cXGJfu3byOTRCGIO1vuZz/CEV8tJkXBEOOV8kJBe+Ib/KXYj2ZpeGKxB
+	PSXv2HTwXhH1Snf1JiZ3Y9yKGPcPhUXqA+TvuEeDtwz1woZ0rfXKrlfqcmU6UyRK
+	UfUgYPUF7wcD/YK3hPTDbFNLvZL/Fxe6qsmMADb729PV9Q==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqdggf09-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:15:53 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29557f43d56so8953925ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:15:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762946153; x=1763550953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ml+7ACGSsIoRB5tIYgTA6IwtQ4AbhO2ugzv1mrLcl/A=;
+        b=ZvdFFM5+KSw2NKqrJGtaLAM9n/miCSYbBI9jmCSonsmpyEogWXEPCLdqrmZhp2CuQk
+         dWLS9lKHPy5xy2tTfeRQVCLJujAX7KD0RELh5+M17cOjFaxN3ItWcOF/iu1ahGmhBVYr
+         Os2uzm8nSHUG90VCbGXkzGe3jVX/7v27egPesT7EtJnDMP6urrCi7LqwS09lKY8R59tF
+         E5Gwg3L5vwHNPyumq+9lvA9EC/rwEId/ATkQJrbV07NdrPOosE++MqkvGOeCbN2EmP2E
+         eeOU0h8Ak3Qf92SLPlctk+TUEZeN2P8mzESrNg1LCiy/sf9OYw3N2+h5Xdohys0eoDvD
+         iAWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762946153; x=1763550953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ml+7ACGSsIoRB5tIYgTA6IwtQ4AbhO2ugzv1mrLcl/A=;
+        b=uoP2R4bLjBxRDHD5upTr0FAX8vZl9lfXOq5kWC3pCdf/XgK3X8LAAwDmwS9amx90k0
+         PzR9CJfTKglwRiIym46IUGO8fN3tLlFvy2WOPmpIPuJ5jCQIXHJNSccD1CJmon2AmKAT
+         ahVA4L8sIWZgM6jRfdslbPcgnkRiTPQe3SJUokhBw/Wwvg7Vgel+OOtPf9Mq18Qdyq3r
+         UYCApAF6xlhnPAT9wk/mFdHEd4V2zqOCEnTSm4U/3TXHIupLB5R8fB1z3Fqg4PleD42V
+         do+gbav2guAHhBy7w0ThznYOygRMaxkc+ZlhcyYt0wMxajjV2IAB2SPFwohbpcoMA3S3
+         fBdw==
+X-Forwarded-Encrypted: i=1; AJvYcCW75qnaPGU/4B9+S6b/3WTITDDFXneyLlVaiug3TbnPPHvgr4G0/UUrNXtqO2dX46UKjcIJ/64z3Vq7ZDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3uquCmyLTN1Z9ijmGCa94fRjOBk+uSFD9+lo1GzoKoq2VLH+Z
+	K0cYNCJwyAzEZllhzw1AKbrTocZdr6cEV2k56mOmWNyTpjdNTof0N5CK6madASFZIfCwlnsM+sp
+	CO79/ChESrDqbOl5JqJNgpjoQc7fnEqJa75w58bLCfLQAj6vEYc52HDq6bW8VNaGkbQU=
+X-Gm-Gg: ASbGncsLwT8hz0AwyFjXG+OL4DC2i8pvDia4xLd0CsKiM2i0IaF2Yzg3k1mdr6DO4RP
+	mVJCxgZFhz8WsvE44MBfGcuer1vqumeU7A5+hj8PNaPnZgmT0qSYevkvpvCrWuiH73BHK4K6lmu
+	lfoeAybaDubrpNU118X2QBVtG4i3aY7OlXdgOE3T61nn6b85KI3NVc4b1YMkGbvMT8jxO5H0/Sd
+	HsuN6nftP1w3FF6eKX3+8ERQVQVkh7d12GD7JMlpkSPUbigWNhBnmLoTdBIzvQ/nl5T5KRycAWr
+	FkInfc0QEFXyRufqSZxiyBHLbyarZnjoV1SPQqWDbjNpKMiFt6YgndcW4gKlxSHNXyoV1DeQyRc
+	7IeRpBIX53x3hsPeSrDJNDogg4Q==
+X-Received: by 2002:a17:903:944:b0:28e:9427:68f6 with SMTP id d9443c01a7336-2984ed82890mr31516745ad.27.1762946153048;
+        Wed, 12 Nov 2025 03:15:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQo4qACRIp+OedhfY/26n73XxSpnD0V+0fp7zIBbHeBesKIBwMdeFL9nZ+Ozf7XBOO8UitOA==
+X-Received: by 2002:a17:903:944:b0:28e:9427:68f6 with SMTP id d9443c01a7336-2984ed82890mr31516185ad.27.1762946152292;
+        Wed, 12 Nov 2025 03:15:52 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbee127sm27439685ad.24.2025.11.12.03.15.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 03:15:51 -0800 (PST)
+Date: Wed, 12 Nov 2025 16:45:40 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Moritz Fischer <moritz.fischer@ettus.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik <andre.draszik@linaro.org>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Xin Liu <xin.liu@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Elliot Berman <elliot.berman@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v17 09/12] arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI
+ SYSTEM_RESET2 types
+Message-ID: <20251112111540.w57ygzrvc6m3qbrs@hu-mojha-hyd.qualcomm.com>
+References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
+ <20251109-arm-psci-system_reset2-vendor-reboots-v17-9-46e085bca4cc@oss.qualcomm.com>
+ <20251110122824.5je5jfoanivl6xrh@hu-mojha-hyd.qualcomm.com>
+ <btvknf3tcqhgxzf7ckyvfwix6hxle2bs4whyayan5haaejo3sm@gnbszdys32lm>
+ <20251110161950.ngs4ihn3asijoqks@hu-mojha-hyd.qualcomm.com>
+ <cvfr4zaceknma6camborq4ro3lwbx3dfps2zjagwhwmvwoxriz@jwybwtzdd46u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc, mm: Fix mprotect on book3s 32-bit
-To: Dave Vasilevsky <dave@vasilevsky.ca>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Nadav Amit <nadav.amit@gmail.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ritesh Harjani <ritesh.list@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-mm@kvack.org
-References: <20251111-vasi-mprotect-g3-v2-1-881c94afbc42@vasilevsky.ca>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20251111-vasi-mprotect-g3-v2-1-881c94afbc42@vasilevsky.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cvfr4zaceknma6camborq4ro3lwbx3dfps2zjagwhwmvwoxriz@jwybwtzdd46u>
+X-Authority-Analysis: v=2.4 cv=dtrWylg4 c=1 sm=1 tr=0 ts=69146c69 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Kkq7PJKcI6aLCMVX8OwA:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: ymusEcI1xBPe3OE3KWVK6dvyms0C0l2B
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA5MCBTYWx0ZWRfX/+YVIp3zeoti
+ gwShNZsdtiKMqNvmJzhGAbvnCDOZG3D463UXbIokGZOVw794oyjdingcoeHCZrRNOrnFe5KEZbC
+ L65VD+rxoPpXjHRrgnAFJnYtmjAQ3Ae7pYkLfpixX0dso5K3epR/9uOWygCkjzzsehymCjOvFyh
+ /x4xhAf3OdCd+03dPg8qFXjWp/80URgIxLYLCNpPzXXB+d9A0YG/Ult2ZxiyAZ+tx8gZ750ktOC
+ yvSGgRyO/T1TAcUlX37Zzs2Ywh1ssNqtqMVSEiYwgDw+U/E0lS29uU0iUHcgXdjM1RwmI6YE8s1
+ A9YX71gRIaQbC/kXi7rMbyaA75lQLiqP5MM6GjS1fgBjH1NszBrizQMbKKYtEdwQXWviQftI2wc
+ EslJKLuiD5L8xeAOG2f+vw79JlKYqg==
+X-Proofpoint-ORIG-GUID: ymusEcI1xBPe3OE3KWVK6dvyms0C0l2B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120090
 
-
-
-Le 11/11/2025 à 22:42, Dave Vasilevsky a écrit :
-> On 32-bit book3s with hash-MMUs, tlb_flush() was a no-op. This was
-> unnoticed because all uses until recently were for unmaps, and thus
-> handled by __tlb_remove_tlb_entry().
+On Tue, Nov 11, 2025 at 10:52:34AM -0600, Bjorn Andersson wrote:
+> On Mon, Nov 10, 2025 at 09:49:50PM +0530, Mukesh Ojha wrote:
+> > On Mon, Nov 10, 2025 at 09:30:26AM -0600, Bjorn Andersson wrote:
+> > > On Mon, Nov 10, 2025 at 05:58:24PM +0530, Mukesh Ojha wrote:
+> > > > On Sun, Nov 09, 2025 at 08:07:22PM +0530, Shivendra Pratap wrote:
+> > > > > From: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> > > > > 
+> > > > > Add support for SYSTEM_RESET2 vendor-specific resets in
+> > > > > qcs6490-rb3gen2 as reboot-modes.  Describe the resets:
+> > > > > "bootloader" will cause device to reboot and stop in the
+> > > > > bootloader's fastboot mode. "edl" will cause device to reboot
+> > > > > into "emergency download mode", which permits loading images via
+> > > > > the Firehose protocol.
+> > > > > 
+> > > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > > > Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> > > > > Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> > > > > ---
+> > > > >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 +++++++
+> > > > >  1 file changed, 7 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > index 721a26d49ccaeb1429e2cc1c3a5c8d9517da3be6..cebdedd5d614b9efb6dfbee91dd67f3c3e322a38 100644
+> > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > @@ -935,6 +935,13 @@ &pon_resin {
+> > > > >  	status = "okay";
+> > > > >  };
+> > > > >  
+> > > > > +&psci {
+> > > > > +	reboot-mode {
+> > > > > +		mode-bootloader = <0x10001 0x2>;
+> > > > > +		mode-edl = <0 0x1>;
+> > > > > +	};
+> > > > > +};
+> > > > > +
+> > > > 
+> > > > Make sense for this as it leverages sc7280 and adding it there would not
+> > > > have made sense.
+> > > > 
+> > > 
+> > > Why wouldn't it make sense?
+> > 
+> > It is better to add for platforms we know their firmware support this
+> > from day1 and not add for something like chrome or any other variant of
+> > sc7280 where this support would never come or not tested.
 > 
-> After commit 4a18419f71cd ("mm/mprotect: use mmu_gather") in kernel 5.19,
-> tlb_gather_mmu() started being used for mprotect as well. This caused
-> mprotect to simply not work on these machines:
+> So SYSTEM_RESET2 only exist in newer firmware versions and hence this
+> isn't (and won't be) broadly available in SC7280 devices.
 > 
->    int *ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE,
->                    MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
->    *ptr = 1; // force HPTE to be created
->    mprotect(ptr, 4096, PROT_READ);
->    *ptr = 2; // should segfault, but succeeds
+> That would be excellent information to put in the commit message, so
+> others writing Kodiak dts doesn't feel the urge to copy this and debug
+> why it doesn't work.
+
+Sure, @shivendra please add this information in commit text.
+
 > 
-> Fixed by making tlb_flush() actually flush TLB pages. This finally
-> agrees with the behaviour of boot3s64's tlb_flush().
+> > > 
+> > > > Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > > > 
+> > > 
+> > > Please read submitting-patches.rst about Acked-by, and use Reviewed-by
+> > > going forward.
+> > 
+> > I was acking the idea of this particular change in platform file compared to
+> > other patches, if above reason looks fine, can be converted to R-by.
+> > 
 > 
-> Fixes: 4a18419f71cd ("mm/mprotect: use mmu_gather")
-> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
-> Cc: stable@vger.kernel.org
+> That's appreciated, but per the documentation, the meaning of acked-by
+> is different.
 
-A small comment below
+Sure..
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
-> Changes in v2:
-> - Flush entire TLB if full mm is requested.
-> - Link to v1: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20251027-vasi-mprotect-g3-v1-1-3c5187085f9a%40vasilevsky.ca&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C7b1beec4921c4c67c95108de216b416f%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638984941704616710%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=mJL3gS4YkTUAWmivSWL5AE9BlhAQ0R%2FI3eBwYwN26nA%3D&reserved=0
-> ---
->   arch/powerpc/include/asm/book3s/32/tlbflush.h | 8 ++++++--
->   arch/powerpc/mm/book3s32/tlb.c                | 9 +++++++++
->   2 files changed, 15 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/book3s/32/tlbflush.h b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-> index e43534da5207aa3b0cb3c07b78e29b833c141f3f..b8c587ad2ea954f179246a57d6e86e45e91dcfdc 100644
-> --- a/arch/powerpc/include/asm/book3s/32/tlbflush.h
-> +++ b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-> @@ -11,6 +11,7 @@
->   void hash__flush_tlb_mm(struct mm_struct *mm);
->   void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
->   void hash__flush_range(struct mm_struct *mm, unsigned long start, unsigned long end);
-> +void hash__flush_gather(struct mmu_gather *tlb);
->   
->   #ifdef CONFIG_SMP
->   void _tlbie(unsigned long address);
-> @@ -28,9 +29,12 @@ void _tlbia(void);
->    */
->   static inline void tlb_flush(struct mmu_gather *tlb)
->   {
-> -	/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
-> -	if (!mmu_has_feature(MMU_FTR_HPTE_TABLE))
-> +	if (mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
-> +		hash__flush_gather(tlb);
-> +	} else {
-> +		/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
->   		_tlbia();
-> +	}
-
-You should keep the comment on 603 outside the if/else and remove the 
-braces, in line with 
-https://docs.kernel.org/process/coding-style.html#placing-braces-and-spaces
-
->   }
->   
->   static inline void flush_range(struct mm_struct *mm, unsigned long start, unsigned long end)
-> diff --git a/arch/powerpc/mm/book3s32/tlb.c b/arch/powerpc/mm/book3s32/tlb.c
-> index 9ad6b56bfec96e989b96f027d075ad5812500854..e54a7b0112322e5818d80facd2e3c7722e6dd520 100644
-> --- a/arch/powerpc/mm/book3s32/tlb.c
-> +++ b/arch/powerpc/mm/book3s32/tlb.c
-> @@ -105,3 +105,12 @@ void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
->   		flush_hash_pages(mm->context.id, vmaddr, pmd_val(*pmd), 1);
->   }
->   EXPORT_SYMBOL(hash__flush_tlb_page);
-> +
-> +void hash__flush_gather(struct mmu_gather *tlb)
-> +{
-> +	if (tlb->fullmm || tlb->need_flush_all)
-> +		hash__flush_tlb_mm(tlb->mm);
-> +	else
-> +		hash__flush_range(tlb->mm, tlb->start, tlb->end);
-> +}
-> +EXPORT_SYMBOL(hash__flush_gather);
+> Regards,
+> Bjorn
 > 
-> ---
-> base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
-> change-id: 20251027-vasi-mprotect-g3-f8f5278d4140
-> 
-> Best regards,
+> > > 
+> > > Regards,
+> > > Bjorn
+> > > 
+> > > > >  &qup_uart7_cts {
+> > > > >  	/*
+> > > > >  	 * Configure a bias-bus-hold on CTS to lower power
+> > > > > 
+> > > > > -- 
+> > > > > 2.34.1
+> > > > > 
+> > > > 
+> > > > -- 
+> > > > -Mukesh Ojha
+> > > > 
+> > 
+> > -- 
+> > -Mukesh Ojha
 
+-- 
+-Mukesh Ojha
 
