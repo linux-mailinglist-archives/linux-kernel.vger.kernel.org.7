@@ -1,211 +1,246 @@
-Return-Path: <linux-kernel+bounces-897241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C94C525BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:01:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C496FC5259D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80BB03A86FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:52:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54F774F559A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37EB335571;
-	Wed, 12 Nov 2025 12:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAEE335081;
+	Wed, 12 Nov 2025 12:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JJCX+6L8"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgbNA+aN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE8330317;
-	Wed, 12 Nov 2025 12:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFDE306482;
+	Wed, 12 Nov 2025 12:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951941; cv=none; b=dOYiDU2rW9FrW+X+yRLBvaO5gLRl28hJYmxEOUS3MkWgSn5YERhQDkJp9uNPsTW8C4jA1FxrnriN7nY/6yih5JDbi4TWL6B+rQQUnWgxJUxJkUWqVn3G44qJGcmzqUA3Oc54p8R/Oz4lLhrPV5gYmafkQ9CZoCXSXTbrUSlQGs0=
+	t=1762951995; cv=none; b=I5QbYiCgJHiJBdoqjanxKRrDRZkgjukdHtZA9NzvN5akXiYWBxp+RkDYu9qu1uPRS8XzVPce8rQ7dUW2NEVqasHWV8oNtglYVAB1LErIsu/zEpm3vQUHIlFxdQYNAsJpnw9YMLJ0FoHom4Uja8Gebi96QgaHX44TIlAsGWRxRek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951941; c=relaxed/simple;
-	bh=XIZi7QICnCQAIPVE0rgrZwfPhgCJFmBbSp9UzfIZVao=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FCyScB4w3s+aw/kVmZm5C45n7uq/6VXmmqTLgolfqLUNYqecO5Ld2U/uIYghzcddD0eiJ539ZfMiF6SJAH2O7pqpjn4pDARe61ku1W0Hyqi4I5dA0I5uYOLZIHFvQ/t+0X7Up/XQA+OkBCRNqEG13rH8WPE6BMN6oUK6YGO0Ce8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JJCX+6L8; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D7C20C0F556;
-	Wed, 12 Nov 2025 12:51:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 53A7A6070B;
-	Wed, 12 Nov 2025 12:52:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12CD2102F16E0;
-	Wed, 12 Nov 2025 13:52:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762951929; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AYZ/cx5fZ6HcCKpGtjExhhhcWre3YYt/qaExsF1NtNw=;
-	b=JJCX+6L8rNUn8S1HwGa0GHynwmndXy5LNh/UFW9QhKmhH7HR/d3ZVm/cevAjqRItHi6QmD
-	QUpjUT29qs/tE1U4NRAvbYjjXRkD/BSQD13wfPTFKrfrEeGFqKdh9WSTFNAisWm339vwMz
-	kQsI13fW3wCISQ9exDKFlW0EwBRZBDlhLrDnDEEPDqISlVSib18CPrnlzxDpOseC1zHqwB
-	rqWxLl4hGCujJIrTOeArSQHQotTxQeCWjaqns0pDWLmgrG5K5j6ZewbFdP0KfJvLIgBCe0
-	zfy8JhWoxXubkA5u0T+md4Ro4C2hq/cVenC6iXKCWB1i0DhPER8+Jv506/Ij7w==
-Date: Wed, 12 Nov 2025 13:52:03 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
- <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, Roger Quadros
- <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Lee Jones
- <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] mfd: tps65219: Implement LOCK register handling
- for TPS65214
-Message-ID: <20251112135203.4a4c4c85@kmaincent-XPS-13-7390>
-In-Reply-To: <20251112-fix_tps65219-v3-1-e49bab4c01ce@bootlin.com>
-References: <20251112-fix_tps65219-v3-0-e49bab4c01ce@bootlin.com>
-	<20251112-fix_tps65219-v3-1-e49bab4c01ce@bootlin.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762951995; c=relaxed/simple;
+	bh=Xq4laesBhXBU8cnsibjlgRX7+Xd6QHEEQNRsfNd8xHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQ4pbjzO97X0KZ1jQhrRH2YoHE8RXksZuKS0auAVNSyLmN7e+36GSwjhztrfCqtQYEzU/VhnWLA86ClRqizzxIZKmSG+Lu3anEXA5Ui4nMQ7bEi6JIwMlgkDn9MHo31suM0+CwpQkvL+9HabNSDsCZHaW6hZvspbf/o/xX8k00c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgbNA+aN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD60C4AF0B;
+	Wed, 12 Nov 2025 12:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762951994;
+	bh=Xq4laesBhXBU8cnsibjlgRX7+Xd6QHEEQNRsfNd8xHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MgbNA+aNi66iHWuzy6LKut7QTLt+D+/WXgdFltYAbxJCNbzgA1InxXNZhXB1n5p0c
+	 vnaW4LMGTXWq3iqK+mCrPfR/wgZ3CmaTYYbgSRIL+gsVedu2ksUj6iZV9eWJ1VDx8L
+	 2t0dYDDlC7uKsojwf3BaUVsp/1kxfrK/qs3b/tQL4PlVsjE6+lxoNCV4z50uPZEu0c
+	 IZ7IeyRYTrjvIwKCeVpl50DpVm5RZpwxhGxt3aVEGIxSEwIzBVQiTRda3iQYX8yVoG
+	 FLcPcsS+iUYDO9jpoGvblj2BtEDt27fgN3g5T5VkFwZycgbBRxR4Axqu2EhuuHABrh
+	 i4BX+X/MEfm9A==
+Date: Wed, 12 Nov 2025 06:53:12 -0600
+From: Rob Herring <robh@kernel.org>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: Re: [PATCH v5 1/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+ subnode support
+Message-ID: <20251112125312.GA1319094-robh@kernel.org>
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <20251104203315.85706-2-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104203315.85706-2-shenwei.wang@nxp.com>
 
-On Wed, 12 Nov 2025 10:45:24 +0100
-"Kory Maincent (TI.com)" <kory.maincent@bootlin.com> wrote:
-
-> The TPS65214 PMIC variant has a LOCK_REG register that prevents writes to
-> nearly all registers.
->=20
-> Implement custom regmap operations that automatically unlock before writes
-> and re-lock afterwards for TPS65214, while leaving other chip variants
-> unaffected.
->=20
-> The implementation follows the regmap-i2c design pattern.
-
-After some thought and internal discussions, I think it is better to unlock=
- the
-registers only one time in the probe instead of adding burden in each regmap
-write. I will rewrite this patch.
-Shree I will remove your reviewed-by due to the change.
-
-pw-bot: cr
-
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 7947219ab1a2d ("mfd: tps65219: Add support for TI TPS65214 PMIC")
-> Reviewed-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-> Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+On Tue, Nov 04, 2025 at 02:33:11PM -0600, Shenwei Wang wrote:
+> Remote processors may announce multiple devices (e.g., I2C, GPIO) over
+> an RPMSG channel. These devices may require corresponding device tree
+> nodes, especially when acting as providers, to supply phandles for their
+> consumers.
+> 
+> Define an RPMSG node to work as a container for a group of RPMSG channels
+> under the imx_rproc node.
+> 
+> Each subnode within "rpmsg" represents an individual RPMSG channel. The
+> name of each subnode corresponds to the channel name as defined by the
+> remote processor.
+> 
+> All remote devices associated with a given channel are defined as child
+> nodes under the corresponding channel node.
+> 
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
 > ---
->=20
-> Changes in v3:
-> - Removed unused variable.
->=20
-> Changes in v2:
-> - Setup a custom regmap_bus only for the TPS65214 instead of checking
->   the chip_id every time reg_write is called.
-> ---
->  drivers/mfd/tps65219.c       | 49
-> +++++++++++++++++++++++++++++++++++++++++++- include/linux/mfd/tps65219.h=
- |
-> 2 ++ 2 files changed, 50 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mfd/tps65219.c b/drivers/mfd/tps65219.c
-> index 65a952555218d..d31e808faab1f 100644
-> --- a/drivers/mfd/tps65219.c
-> +++ b/drivers/mfd/tps65219.c
-> @@ -473,6 +473,48 @@ static const struct tps65219_chip_data chip_info_tab=
-le[]
-> =3D { },
->  };
-> =20
-> +static int tps65214_reg_write(void *context, unsigned int reg, unsigned =
-int
-> val) +{
-> +	struct i2c_client *i2c =3D context;
-> +	int ret;
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 123 ++++++++++++++++++
+>  1 file changed, 123 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index 57d75acb0b5e..897a16c4f7db 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -84,6 +84,92 @@ properties:
+>        This property is to specify the resource id of the remote processor in SoC
+>        which supports SCFW
+>  
+> +  rpmsg:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Present a group of RPMSG channel devices.
 > +
-> +	if (val > 0xff || reg > 0xff)
-> +		return -EINVAL;
+> +    properties:
+> +      rpmsg-io-channel:
+> +        type: object
+> +        additionalProperties: false
+> +        properties:
+> +          '#address-cells':
+> +            const: 1
 > +
-> +	ret =3D i2c_smbus_write_byte_data(i2c, TPS65214_REG_LOCK,
-> +					TPS65214_LOCK_ACCESS_CMD);
-> +	if (ret)
-> +		return ret;
+> +          '#size-cells':
+> +            const: 0
 > +
-> +	ret =3D i2c_smbus_write_byte_data(i2c, reg, val);
-> +	if (ret)
-> +		return ret;
+> +        patternProperties:
+> +          "gpio@[0-9a-f]+$":
+> +            type: object
+> +            unevaluatedProperties: false
+> +            properties:
+> +              compatible:
+> +                enum:
+> +                  - fsl,imx-rpmsg-gpio
 > +
-> +	return i2c_smbus_write_byte_data(i2c, TPS65214_REG_LOCK, 0);
-> +}
-> +
-> +static int tps65214_reg_read(void *context, unsigned int reg, unsigned i=
-nt
-> *val) +{
-> +	struct i2c_client *i2c =3D context;
-> +	int ret;
-> +
-> +	if (reg > 0xff)
-> +		return -EINVAL;
-> +
-> +	ret =3D i2c_smbus_read_byte_data(i2c, reg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*val =3D ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct regmap_bus tps65214_regmap_bus =3D {
-> +	.reg_write =3D tps65214_reg_write,
-> +	.reg_read =3D tps65214_reg_read,
-> +};
-> +
->  static int tps65219_probe(struct i2c_client *client)
->  {
->  	struct tps65219 *tps;
-> @@ -491,7 +533,12 @@ static int tps65219_probe(struct i2c_client *client)
->  	chip_id =3D (uintptr_t)i2c_get_match_data(client);
->  	pmic =3D &chip_info_table[chip_id];
-> =20
-> -	tps->regmap =3D devm_regmap_init_i2c(client, &tps65219_regmap_config);
-> +	if (chip_id =3D=3D TPS65214)
-> +		tps->regmap =3D devm_regmap_init(&client->dev,
-> +					       &tps65214_regmap_bus, client,
-> +					       &tps65219_regmap_config);
-> +	else
-> +		tps->regmap =3D devm_regmap_init_i2c(client,
-> &tps65219_regmap_config); if (IS_ERR(tps->regmap)) {
->  		ret =3D PTR_ERR(tps->regmap);
->  		dev_err(tps->dev, "Failed to allocate register map: %d\n",
-> ret); diff --git a/include/linux/mfd/tps65219.h b/include/linux/mfd/tps65=
-219.h
-> index 55234e771ba73..198ee319dd1db 100644
-> --- a/include/linux/mfd/tps65219.h
-> +++ b/include/linux/mfd/tps65219.h
-> @@ -149,6 +149,8 @@ enum pmic_id {
->  #define TPS65215_ENABLE_LDO2_EN_MASK                    BIT(5)
->  #define TPS65214_ENABLE_LDO1_EN_MASK			BIT(5)
->  #define TPS65219_ENABLE_LDO4_EN_MASK			BIT(6)
-> +/* Register Lock */
-> +#define TPS65214_LOCK_ACCESS_CMD			0x5a
->  /* power ON-OFF sequence slot */
->  #define TPS65219_BUCKS_LDOS_SEQUENCE_OFF_SLOT_MASK	GENMASK(3, 0)
->  #define TPS65219_BUCKS_LDOS_SEQUENCE_ON_SLOT_MASK	GENMASK(7, 4)
->=20
+> +              reg:
+> +                maxItems: 1
 
+I still don't understand what the numbers for 'reg' mean here. You 
+explained it and I still don't understand. In any case, it needs to be 
+explained in the schema.
 
+For example, why do GPIO and I2C each have their own number space?
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> +
+> +              "#gpio-cells":
+> +                const: 2
+> +
+> +              gpio-controller: true
+> +
+> +              interrupt-controller: true
+> +
+> +              "#interrupt-cells":
+> +                const: 2
+> +
+> +            required:
+> +              - compatible
+> +              - reg
+> +              - "#gpio-cells"
+> +              - "#interrupt-cells"
+> +
+> +            allOf:
+> +              - $ref: /schemas/gpio/gpio.yaml#
+> +              - $ref: /schemas/interrupt-controller.yaml#
+> +
+> +        required:
+> +          - '#address-cells'
+> +          - '#size-cells'
+> +
+> +      rpmsg-i2c-channel:
+> +        type: object
+> +        unevaluatedProperties: false
+> +        properties:
+> +          '#address-cells':
+> +            const: 1
+> +
+> +          '#size-cells':
+> +            const: 0
+> +
+> +        patternProperties:
+> +          "i2c@[0-9a-f]+$":
+> +            type: object
+> +            unevaluatedProperties: false
+> +            properties:
+> +              compatible:
+> +                enum:
+> +                  - fsl,imx-rpmsg-i2c
+> +
+> +              reg:
+> +                maxItems: 1
+> +
+> +            required:
+> +              - compatible
+> +              - reg
+> +
+> +            allOf:
+> +              - $ref: /schemas/i2c/i2c-controller.yaml#
+> +
+> +        required:
+> +          - '#address-cells'
+> +          - '#size-cells'
+> +
+>  required:
+>    - compatible
+>  
+> @@ -146,5 +232,42 @@ examples:
+>                  &mu 3 1>;
+>        memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
+>        syscon = <&src>;
+> +
+> +      rpmsg {
+> +        rpmsg-io-channel {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          gpio@0 {
+> +            compatible = "fsl,imx-rpmsg-gpio";
+> +            reg = <0>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            #interrupt-cells = <2>;
+> +            interrupt-controller;
+> +            interrupt-parent = <&rpmsg_gpioa>;
+> +          };
+> +
+> +          gpio@1 {
+> +            compatible = "fsl,imx-rpmsg-gpio";
+> +            reg = <1>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            #interrupt-cells = <2>;
+> +            interrupt-controller;
+> +            interrupt-parent = <&rpmsg_gpiob>;
+> +          };
+> +        };
+> +
+> +        rpmsg-i2c-channel {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          i2c@0 {
+> +            compatible = "fsl,imx-rpmsg-i2c";
+> +            reg = <0>;
+> +          };
+> +        };
+> +      };
+>      };
+>  ...
+> -- 
+> 2.43.0
+> 
 
