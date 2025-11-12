@@ -1,200 +1,141 @@
-Return-Path: <linux-kernel+bounces-897114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E826C52051
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:39:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384F8C520F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBD1188319E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:36:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 028A44F4246
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EED30F942;
-	Wed, 12 Nov 2025 11:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779E7311C33;
+	Wed, 12 Nov 2025 11:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSyaK5z7"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b="X8F6rha8"
+Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6963310785
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBB7299AB5;
+	Wed, 12 Nov 2025 11:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947361; cv=none; b=V0MgZYVUmosD664Sql23l1BV9om+raH8YOeErN5nezlRKZTqsPUdpW3p5d6ZUSiTyhp9ZOVcv4VnO6V73VNrSOhksF7xqTGZYcN/1Pmmw4txv5jp3eIJRec0JwUw/wgBs/4NQeF8wbEm+L+p3aNhbesxokvQ1gy/xQFCmweT+9I=
+	t=1762947473; cv=none; b=KiTpSXLy+jqEy9zdc/9aHAdff3PMc1msO0ZwdQb+ArG690nwzoY0NvaL8iJSgzxggBEuzYCM5XD9ecSoBjfKENwyjWl4oLkwxDd1K8VXbd1+mIYRQqRsqLgMR1QE+8GfxgLijV7sM9JodG45kkAHl+/CUMkQMj2IDsQLoJxWBzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947361; c=relaxed/simple;
-	bh=hNifgGjK9XZ690CF8Irk1+yA6eXY0eoXQPm5dtUihkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxZYw4RDu3pz3w18EB37uxHhvSjuE79eMGJWWrl8v5aS4kOso12RxLwPADr5hR3G84tNpDc9gwl/2jcSyLvzmyOg6cm8Pa0amXtB5EDKyD0dRCB9x9LaT4Km7F8omgC49OtCyfWjfLSLCy7MI5Nf30wzgWKoj4vs6mNg679XHgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSyaK5z7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5942a631c2dso614507e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:35:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762947358; x=1763552158; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=skMVjwCP7LYz5n9pgbxkQMIb1CKWHlcsndeKQCWO/0k=;
-        b=fSyaK5z7BZ6U7I5iB7xEJhuwZY0sIrMcv+5CCohguusTQ+RsQYFg+f/6wPnIqTL59G
-         vk5/WMdO7uMjG4OTQDz2hIzz3LMd9ZxzISIxbgZRi1Za2PDUXJgol5EW4dAgUlifXUOq
-         mnoWYbJk6ZApX5VYCEBJh8OghZIPdOwPN5SyCpk66Xj9Err4CkajBOtW6dVx28JGLHD6
-         kKltxlqDJf5pMrzl+BXor2vae7xqHo0OxfOPdPDTTjKNobykTUhs7SmbhyTvKTl/4RTS
-         yoV8yhvoWqNtOyj21VfWzbfOP86es1rbVKEOV8n9heJAyWoQc3oklywOyfC0G/7er77O
-         IPcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762947358; x=1763552158;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skMVjwCP7LYz5n9pgbxkQMIb1CKWHlcsndeKQCWO/0k=;
-        b=ncidIk03BHhg738UDyWuFwG8j3qE3vT99ZyUF2sHVan1EYjW8xu3lG6Fj5cDb8UA/K
-         +0ZZeSZtJE/IFnMraUmc1o7QDpCCmvv/oafcBfvSsoYRZNaw0wLH+kuk/+USBrf0jf6a
-         0YeCy7n8/KgmeQJ14wVwPbIm534OdfMikZb7Z/DGt1Ll0xnqXlpm9YvaVfCwBFD1JvMW
-         5IJMxkMLO5cyiRmhkwqBsibo2KTOSEwrG9tmoUHHlhNoUMPac0OgbJ5Pap+lGrVFH9yD
-         YPZQMO6nzqJpo6WI9WsF8sbDPu4YU2w7PaF2+jwmW6LlQumHW/X9/XQ+YMPGNMTM9OK+
-         pijw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEafaGnWiQQk2KJJMrT7QMW3Jg86aeX6elT7RYIPyhnxmq+EOAISWiHej6pLf2ycdK2nNzVLJp4p1xgqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziYHfTujfYFm9vHgAGETPOc4Z++rfRAmKonSRQutLb4urTu8aD
-	wL8sXn0H3v6Dbov38NOnLVIJvAMnrNECZuwvrQ/yUJEhX5H7pGWB596dXei80yE7KWyEO6DBJdn
-	HhHO4XnNfxKA3Eeq1Pu7nO574uOv1YF+7bLxyOXDtrw==
-X-Gm-Gg: ASbGncs+K6UOdw34VOtSlOZH56p2K6Qpjs3Hd/me+c+OX6bvPQWR9XFCNca9CD1HqfW
-	kOWhTyckddiriNq+Z9z/khZcBl/+rB5EL1vRlHzstgfyG1F6s2P8qUkDxHAsqABStXTa8tG1ee7
-	RBnwUGpf+Wid92i4fEgEIrkZhYqCBb2qKGXXaQOnmHvM3aUOeMbHJtwYzjvatRTOxtnFkJ6Y+kM
-	wmIWtr3IFXvGi5/1oUK93oxLCVwrKCMXUPHAVt6kQD6uKT4CHdPfsuJQ33se/4cXKAsAd0=
-X-Google-Smtp-Source: AGHT+IHhNExbIj/3W2XhoR0Xuu2aGUHsUvEAOA0150BYe9ylvPiV9Mt3JobnM1Vuu3SAPETl9yEYmgDYccHW+z4gGVk=
-X-Received: by 2002:a05:6512:3f04:b0:55f:4633:7b2 with SMTP id
- 2adb3069b0e04-59576e665a1mr1221208e87.46.1762947357705; Wed, 12 Nov 2025
- 03:35:57 -0800 (PST)
+	s=arc-20240116; t=1762947473; c=relaxed/simple;
+	bh=Nqgas7GiliM6f4hdPxwETZq0KRMgTU9NytxRsquiSrY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rg0re9Yay5vzwFggdaSzMU8XQlRmUA1q1ZtrMKfVVFMWoVH8iajmUFCHbIHOqtBTrm19o3TgAh614laN8/Jcppf4SrrZ60vGibhGkCHw25mjhSY7NVKCILiCA170FoB0MLemArbqCc6tTlTTcqRCV1GwpLzQmLRTC3l1PCvSi7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru; spf=pass smtp.mailfrom=tssltd.ru; dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b=X8F6rha8; arc=none smtp.client-ip=178.154.239.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tssltd.ru
+Received: from mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:8583:0:640:4841:0])
+	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 27261C0197;
+	Wed, 12 Nov 2025 14:37:41 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 8bNmXh1LSmI0-DzCqPhFU;
+	Wed, 12 Nov 2025 14:37:40 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tssltd.ru; s=mail;
+	t=1762947460; bh=SYA/S7aWl0ErpoDeBicsv0aZyCAPuChwqx/jUn5emuw=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=X8F6rha8hVsY1Sp7aX37uungA7fmgpe2WPwJSbeH/b8rx+3znMvaE7lSJIxmMJq66
+	 tGBpnAcIK/NCZkTNsZaJ3PgOTMoNihsaWtraRLHvLsd5dUkZZ0+2g07zJtDEBYhZig
+	 jRstBJHmZ6OnoveL+ns1HxirZw5V4kSgzFf0RSag=
+Authentication-Results: mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net; dkim=pass header.i=@tssltd.ru
+From: Stepan Artuhov <s.artuhov@tssltd.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Olivier Langlois <olivier@trillion01.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Stepan Artuhov <s.artuhov@tssltd.ru>
+Subject: [PATCH 6.12] io_uring/napi: fix io_napi_entry RCU accesses
+Date: Wed, 12 Nov 2025 14:37:06 +0300
+Message-Id: <20251112113706.533309-1-s.artuhov@tssltd.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111093536.3729-1-huangchenghai2@huawei.com>
- <20251111093536.3729-2-huangchenghai2@huawei.com> <CABQgh9GeqxyBPwe-posbstbGy2RBQdfGGBR27tr6+S+5dYzBDQ@mail.gmail.com>
-In-Reply-To: <CABQgh9GeqxyBPwe-posbstbGy2RBQdfGGBR27tr6+S+5dYzBDQ@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Wed, 12 Nov 2025 19:35:46 +0800
-X-Gm-Features: AWmQ_bmIYwRflA4kVrE8oikjaYeyBERXmoePE5_IWRr5w60v7ipWHkRMoK9cYkg
-Message-ID: <CABQgh9F3E7SHC3VvcbL+x6p5kJ-4=UgCMDgno=-EROcSfQT+-w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] uacce: fix cdev handling in register and remove paths
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: gregkh@linuxfoundation.org, wangzhou1@hisilicon.com, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	fanghao11@huawei.com, shenyang39@huawei.com, liulongfang@huawei.com, 
-	qianweili@huawei.com, linwenkai6@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-.
+From: Olivier Langlois <olivier@trillion01.com>
 
-On Wed, 12 Nov 2025 at 17:46, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> On Tue, 11 Nov 2025 at 17:35, Chenghai Huang <huangchenghai2@huawei.com> wrote:
-> >
-> > From: Wenkai Lin <linwenkai6@hisilicon.com>
-> >
-> > This patch addresses a potential issue in the uacce driver where the
-> > cdev was not properly managed during error handling and cleanup paths.
-> Can we clarify that it was caused by cdev_device_add?
->
-> >
-> > Changes made:
-> > 1. In uacce_register(), store the return value of cdev_device_add()
-> >    and clear the cdev owner as a flag if registration fails.
-> > 2. In uacce_remove(), add additional check for cdev owner before
-> >    calling cdev_device_del() to prevent potential issues.
-> >
-> > Fixes: 015d239ac014 ("uacce: add uacce driver")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
-> > Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> > ---
-> >  drivers/misc/uacce/uacce.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-> > index 42e7d2a2a90c..688050c35d88 100644
-> > --- a/drivers/misc/uacce/uacce.c
-> > +++ b/drivers/misc/uacce/uacce.c
-> > @@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
-> >   */
-> >  int uacce_register(struct uacce_device *uacce)
-> >  {
-> > +       int ret;
-> > +
-> >         if (!uacce)
-> >                 return -ENODEV;
-> >
-> > @@ -529,7 +531,11 @@ int uacce_register(struct uacce_device *uacce)
-> >         uacce->cdev->ops = &uacce_fops;
-> >         uacce->cdev->owner = THIS_MODULE;
-> >
-> > -       return cdev_device_add(uacce->cdev, &uacce->dev);
-> > +       ret = cdev_device_add(uacce->cdev, &uacce->dev);
-> > +       if (ret)
-> > +               uacce->cdev->owner = NULL;
-> If uacce is build in, THIS_MODULE = 0.
->
->
-> how about this, handle cdev_device_add fail for no device_add case.
->
-> +       if (ret) {
-> +               if (!device_is_registered(&uacce->dev)) {
-> +                       cdev_del(uacce->cdev);
-> +                       uacce->cdev = NULL;
-> +               }
-> +       }
->
->
->
-> > +
-> > +       return ret;
-> >  }
-> >  EXPORT_SYMBOL_GPL(uacce_register);
-> >
-> > @@ -568,7 +574,7 @@ void uacce_remove(struct uacce_device *uacce)
-> >                 unmap_mapping_range(q->mapping, 0, 0, 1);
-> >         }
-> >
-> > -       if (uacce->cdev)
-> > +       if (uacce->cdev && uacce->cdev->owner)
-> >                 cdev_device_del(uacce->cdev, &uacce->dev);
-> is there an potential issue, uacce->cdev is not freed?
+[Upstream commit 45b3941d09d13b3503309be1f023b83deaf69b4d ]
 
-And cdev_device_add(uacce->cdev, &uacce->dev) will not add refcount to
-&uacce->dev
-as usual when failing beforehand, so uacce_remove:
-put_device(&uacce->dev) will have
-refcount_t: underflow; use-after-free, need check as well.
+correct 3 RCU structures modifications that were not using the RCU
+functions to make their update.
 
-@@ -558,8 +558,12 @@ int uacce_register(struct uacce_device *uacce)
-        uacce->cdev->owner = THIS_MODULE;
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: lvc-project@linuxtesting.org
+Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+Link: https://lore.kernel.org/r/9f53b5169afa8c7bf3665a0b19dc2f7061173530.1728828877.git.olivier@trillion01.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[Stepan Artuhov: cherry-picked a commit]
+Signed-off-by: Stepan Artuhov <s.artuhov@tssltd.ru>
+---
+ io_uring/napi.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-        ret = cdev_device_add(uacce->cdev, &uacce->dev);
--       if (ret)
--               uacce->cdev->owner = NULL;
-+       if (ret) {
-+               if (!device_is_registered(&uacce->dev)) {
-+                       kobject_put(&uacce->cdev->kobj);
-+                       uacce->cdev = NULL;
-+               }
-+       }
-        return ret;
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index d0cf694d0172..fa959fd32042 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -81,19 +81,24 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
+ 	}
+ 
+ 	hlist_add_tail_rcu(&e->node, hash_list);
+-	list_add_tail(&e->list, &ctx->napi_list);
++	list_add_tail_rcu(&e->list, &ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
  }
-
-@@ -610,7 +614,8 @@ void uacce_remove(struct uacce_device *uacce)
-        uacce->ops = NULL;
-        uacce->parent = NULL;
-        mutex_unlock(&uacce->mutex);
--       put_device(&uacce->dev);
-+       if (device_is_registered(&uacce->dev))
-+               put_device(&uacce->dev);
+ 
+ static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
+ {
+ 	struct io_napi_entry *e;
+-	unsigned int i;
+ 
+ 	spin_lock(&ctx->napi_lock);
+-	hash_for_each(ctx->napi_ht, i, e, node) {
+-		if (time_after(jiffies, e->timeout)) {
+-			list_del(&e->list);
++	/*
++	 * list_for_each_entry_safe() is not required as long as:
++	 * 1. list_del_rcu() does not reset the deleted node next pointer
++	 * 2. kfree_rcu() delays the memory freeing until the next quiescent
++	 *    state
++	 */
++	list_for_each_entry(e, &ctx->napi_list, list) {
++		if (time_after(jiffies, READ_ONCE(e->timeout))) {
++			list_del_rcu(&e->list);
+ 			hash_del_rcu(&e->node);
+ 			kfree_rcu(e, rcu);
+ 		}
+@@ -204,13 +209,13 @@ void io_napi_init(struct io_ring_ctx *ctx)
+ void io_napi_free(struct io_ring_ctx *ctx)
+ {
+ 	struct io_napi_entry *e;
+-	unsigned int i;
+ 
+ 	spin_lock(&ctx->napi_lock);
+-	hash_for_each(ctx->napi_ht, i, e, node) {
++	list_for_each_entry(e, &ctx->napi_list, list) {
+ 		hash_del_rcu(&e->node);
+ 		kfree_rcu(e, rcu);
+ 	}
++	INIT_LIST_HEAD_RCU(&ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
  }
+ 
+-- 
+2.39.5
 
-Just one possible solution, FYI.
-
-Thanks
 
