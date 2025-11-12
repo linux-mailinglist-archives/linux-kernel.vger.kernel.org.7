@@ -1,278 +1,518 @@
-Return-Path: <linux-kernel+bounces-897254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C3EC525EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:04:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1F0C525F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295AE1889944
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:05:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3D644F3546
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CA8337113;
-	Wed, 12 Nov 2025 13:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A822F332ED6;
+	Wed, 12 Nov 2025 12:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cnv8MGwT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ci94QM90"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC309336ED8;
-	Wed, 12 Nov 2025 13:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D84A309F03;
+	Wed, 12 Nov 2025 12:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952670; cv=fail; b=TR9B6Td8gQhH5+88UrwOUIKEBYfIz81YKsLjDeX8pj3F5OSMQvHCVMzQTZTk8DYRzTOXu2z8hPbt33/vJAXqbV6sPt4BA7iMFS/0t4WvGnL0OhaQqBpDPLQDFPxcQxCCwjWTr0rxAaK9k95v068S7u/ZRc35iN41a9oCSqkVqVo=
+	t=1762952305; cv=pass; b=Q+FKYPIlo9nyohZ9jSCXbcN+irLGCtBbIgkUqCLNfn3sZmsa4d/4viW0MPe+0Xr2c9O440Ip7IXHnUrLhtCej3+uFXvAuJTaZr8ubCiXCvhgZ7RIr5cjjP2ZtctKEWU7WFMxzDVKkBOOVy8qC3BRZ0obZl7iSkPdm0WmD8uqKyw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952670; c=relaxed/simple;
-	bh=9hTQTgm9lLHaZPVqKPFTTaXE3M5Zlu4exLY8VkcbmQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=njKaTuKwSxW0ux2zYVDpjQqFj7UjW4Qf+mf4//lkNbIWtZLUs672W+vWADPF2PLjPY+LnRERttfxdCLhI5S+NAMIEEit3uylZKcgOkzh7UlTFzIrOsysHKOt9RsBnd9cWkm8ZkfmXRTy2pZ5/JUIpZFYGmbrz+BtpBoxDcCTry0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cnv8MGwT; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762952669; x=1794488669;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9hTQTgm9lLHaZPVqKPFTTaXE3M5Zlu4exLY8VkcbmQ8=;
-  b=cnv8MGwT3EEH83ziBy/MRydi1j0FRnp+NFpWvd+qN2FHqOAQXW1EoF+4
-   El4J4DdWCTs0sdkn0H6sd3DSCJMMuBghKeeN9ebCxNV2djSm5uIutpHLG
-   8tx4ZAU0Y5mT5MYVit1zWpJwA7CX0frTtr9KkjFg4iVJa4sxU9ikWD4My
-   1MZzd3TMEthB8iQMuOXRzj1FqtF84hqrycNlMxWgLbqyVEDbZ04jW0jyk
-   ksk+KZJDlEwWcScUViDW5o8KfJXo4Et6Ox35jj0h9E/6r7xNih80foPHz
-   nhWwO6VzbzYp4Gks+0TPh34tKaYDxUCSHOA79ciQ7ZTidoPN4vX9c4Our
-   g==;
-X-CSE-ConnectionGUID: stOAie/OT6KzwP2dUFWILg==
-X-CSE-MsgGUID: zQ7c6Us3TI+2N1VwxEF9fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64022874"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="64022874"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:04:28 -0800
-X-CSE-ConnectionGUID: OWU12nOVT6OXE0euWeXvxA==
-X-CSE-MsgGUID: dw19hx9iQ5+9zsA+ChI/EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="188505478"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:04:27 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 12 Nov 2025 05:04:27 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 05:04:27 -0800
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.31) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 12 Nov 2025 05:04:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T2HLVbwArCM8hTv72GrYIrxDNCVA37Q3IaaTql9pBpjwrEFdqoy6LNXVzck+Y38V3JawPwSGLDGfEgWK6PAEe4rhebqSkmTV0VlFL7gllUpOUqoa5OF4Z5H4BTOL1RNC/jAgRhYlUr9AOY6HiBML/1L/f3mbVGkekEIbYCd+anHYPj0Kcw0YT+ZMijRH4rqd8+8De0zsMiwP0iBt7Z1YFvJcvsdB5LQVgi8fYmwMZUNBdxkE8EZcEoPyZfmS9s0Ji9bdsqAE8VRhJqWtVYeehMi9+BqS1dNLbFmdKnjHZVHQGwoVYaihYv3P560lPS/jfqKCkhcgpbEWLwneAAUu2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9hTQTgm9lLHaZPVqKPFTTaXE3M5Zlu4exLY8VkcbmQ8=;
- b=Q8FtsEkUm7DtN9or6vOXBEK9Nj7OIPpoiL3Eh3Lg626vJcicoP4+BIX86wFt9t8YDP9T9GJ3Sfz/zmJDFbrix3tFLeTSYoIQT1vFK2v95H0s5TLp2/5FQyzcHLaEAui4ebYTqbaf6YBZdzq3TWnJXx3z5XQjvBd9Lum8W3NiyX2FrYfswoCJQbVxm2BIssKgXh3/NjUY6KV3Xo9l8ozKEhd1stQaXLdLwpK1OANVaXfKK8+OfxlefeBojXMxeFtDtC5K/9SMVyUI83b/trVAWYNkQ7aG8RzupYFugGn3XOCzgTAvDhWDE2kevNNMOmX/iz4w5AzBGIcF4yeZlOjlAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by CH3PR11MB7298.namprd11.prod.outlook.com (2603:10b6:610:14c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 13:04:18 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%3]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 13:04:18 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: Breno Leitao <leitao@debian.org>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: RE: [Intel-wired-lan] [PATCH net-next] net: ixgbe: convert to use
- .get_rx_ring_count
-Thread-Topic: [Intel-wired-lan] [PATCH net-next] net: ixgbe: convert to use
- .get_rx_ring_count
-Thread-Index: AQHcU76CWMTYQ7s9y02679pFrsKoGbTvAh8Q
-Date: Wed, 12 Nov 2025 13:04:18 +0000
-Message-ID: <IA3PR11MB8986B44287480E638CC00A99E5CCA@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20251112-ixgbe_gxrings-v1-1-960e139697fa@debian.org>
-In-Reply-To: <20251112-ixgbe_gxrings-v1-1-960e139697fa@debian.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|CH3PR11MB7298:EE_
-x-ms-office365-filtering-correlation-id: d1ef3ddc-5509-4b67-259b-08de21ebfd86
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?TVpOSWhLZmJlM1REZ3lwTk5JZ0RjWHlGTWsrM3R0QVJEblFicUNhaEJLcU54?=
- =?utf-8?B?RVBJc3Z6ZDJaS3VPdGF6UW43RnhhbkFKQi9BZ012OTdaS2R4ZWhNaHROVldx?=
- =?utf-8?B?WVAweXY5UUlmRVZud3hqSitIbWk4VlNvMjR1YUlZNVhOeldzQkhHYzh2VWZW?=
- =?utf-8?B?bjcvRnJaNkI5dUtYWnBGL3RhaWM5aTc0eU5wMHJHYXZQU2E2OVNFSFV1M0RL?=
- =?utf-8?B?V2p5eDlYT21tN2VpUGtRVGxDNEw2Tnl1NEpEbkZWVXI1R205Vy90THFtblY5?=
- =?utf-8?B?WGVwNnp4WGt2NlN3UVo1ODM1NzVobnBNTFpUVTU4d2JkWDdyeTJkRGRtMHdU?=
- =?utf-8?B?TmdSUHNEN1ovWHN3WS9OSGV6YkhjWHNjd0RXWWF1dmNKVXVFaG9sNnQvMEY4?=
- =?utf-8?B?dEVJR1Y5eUxSa2xCNWtWcFBnU1NvYnFsRWVsU0ExSjFyNkRPZjdSZ2VZbDJr?=
- =?utf-8?B?Z3Z6ZGNaTTBQRXJHTDFxVnFWdzRQWUlVbG10NUFNV0p4VWlnK0hwYnZrZ085?=
- =?utf-8?B?WFBUeW9EQXU3M2JpRUpxZUV0TUE0NFBJd0Q0cXlsZGtyY3JvWnRLVTNic3py?=
- =?utf-8?B?U2hWRzhscWRaT3NvZmlxdUZETDQveTBhaGg3WGdOZkRCdUQrRFh5eElUVnJy?=
- =?utf-8?B?N05ZVXFTdExhTlhZSnNxOHF6Wm1ibUVJWVdFNTF5NmNReE5hRHBBNTZRTTE0?=
- =?utf-8?B?elJCdCtJNEFjWDRVTVlXaytVWm85NTFMTEozYXJkN2ViUGpIVmVEdGpDajNr?=
- =?utf-8?B?Q0V4TFppRnRLQUdCY2htZXRYVXRoU05LT2JVZzdaZ2EyaEJaZEpZaGFNR2M5?=
- =?utf-8?B?andvZTJzaDgyRmpmVDVSL0pkS09HcEZvZXlta1pqYzI4ZDF3c0E3dmRpZExi?=
- =?utf-8?B?Sy9UZGtNcGdRZW42TGhLaGRuYnk1T1hMSGN2cU1BNkVyK2tXT0tRWVlnUm9H?=
- =?utf-8?B?WnRLZzE5V2tMQjZYUmFsOFZvZVF2Z25kUmdxUVNneTFpWmhsYmwzQlpMTzg2?=
- =?utf-8?B?dlpnR1hKWnNpeGRZTVRNRk84eitudGFuZXhXUUY1a1BRVzdtWkpVTHFFS2NJ?=
- =?utf-8?B?clBkc3lSYWJBNjhFbU5oUXRaMEJCbGhjVmZRUXFwLzZFM0R6MDZDcXpXRFFu?=
- =?utf-8?B?UTdrYWFWTmx5Z21HODd6ZGdiRGdaR2lsSEEyS0FGbW5zbVJuZ2l5TlRsSGZv?=
- =?utf-8?B?bHJlZEZzSGh3bmlpNWtnZ3BwbWhBK1BKazRDb3NHbGdaUmhoM05QeW9DdHZs?=
- =?utf-8?B?L0pWOG9xVEl2NTNOb3ZxbDRnRnYrOHVDM25ncVgwVGpMbFhsVkZpa0JubG55?=
- =?utf-8?B?NmRFNTJLT21HREIwY1EzZ2RXeWpMRHV4eFBwOExuSnhyYlFPWFhNbXZXMHI0?=
- =?utf-8?B?TkVjNWMremlPekpxd0pEZzJKUGp4aWhnaEdKUDdkd1lnMXhWazEydXZNZ3RF?=
- =?utf-8?B?b2hPamdyV01RajEyZ21pK1o5eDZURTRFSmxERysvL2x1cjBwd1RrNm1XUHVQ?=
- =?utf-8?B?c3dTYVpuQUxyanFHSGJFYzBsS1IxZTBTTFdUK3kwWkZvY2NlMngyQTd3aUZW?=
- =?utf-8?B?Zk1oalpqTjRhcDY1eWJhV21Yb0xvdG9tQ3d1RDZidC9nYWl1b2JFdVdhZHJ3?=
- =?utf-8?B?MWFpaFdsbmtKWEFjQSsyNkVGN1JETFJjV201cnIxV3Q2SGRLTlo0T1dPZGFG?=
- =?utf-8?B?MnVOZVloQTZZbUtvWVdIWG54ZmMxS0sxK0NQYTU3VnZQRXZTWTBEclg0dXZW?=
- =?utf-8?B?YlZlSll3ZVNaWmRjRlpkS0t4Y1lDdXY4TGhrenZSb2xqbzc5TE95QUIzeXVm?=
- =?utf-8?B?bHlSSFp1aGtsSWlvbkc3a2FSWk1MM05PQ001RWxTMk1hMCtHUGZsVG4zTFVh?=
- =?utf-8?B?WGVuV3EyOUpnNnNUNnNVUWJqU0ZORGxvazhac24yektkOCs4Sm5LcmFmaWdk?=
- =?utf-8?B?aFBaU1RMcFZvc3h0aE9yT0trSXNzOG5kVWpCbGNwRmR4NUhSNGlRVFBkdm9y?=
- =?utf-8?B?VXNiQWQyRFV1Qk9PRmp2aGFmTktkQzZyWmxOMWtCMDQ2anIreXpLRTdLUml2?=
- =?utf-8?B?c2VmUjNVbmRqYWFScjMwRTVhb0czdGRDakRPQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SldLZUtHOWlNQU0rWlE1blY3QUM1akVrWFNsWjl2NmlEdkZZemIvTElpR1Z5?=
- =?utf-8?B?SG11cjVTT292NFpMNmNCZUViQk8zc0lNWno3MHJWRDFHZHJzYmo5bm10R2xl?=
- =?utf-8?B?SUxLZSttMHRMYTdDcDBIdnRTc0RjOENGcEQ4dVZhRkl4a2xvZ0N2YVZ3Zzk5?=
- =?utf-8?B?NVA4ZVgvNFQ0bDVlMzNZc09NSWVlK01BTWJ1R2gvd3BHSklEc0Vqa00wM2R5?=
- =?utf-8?B?NGxHbFE4ZGJWWDREb2ZPNkdlOGdvS1ZNRGFpaEM2ZXZqYkswNzEraUhpQXly?=
- =?utf-8?B?b0ZDNERQdHRLU3N0M0tuYXhSd2pGRjZJaksxTlhJeWRSaDU5b0xSN0l6aXE0?=
- =?utf-8?B?OTRpMGpoRGdtRWtML2s3Y1ZtbDZuV05qakFoRjFrVTlLNGZUS01xWFQ3TndY?=
- =?utf-8?B?NFdSSEMyVzdVRmpoaEZVU083OXdsVlloL3h6MlBWQmtZcWpjRXpZbG9RL1hZ?=
- =?utf-8?B?TDhvVTI3K3RMbFlxamNOZmJWU3lYb3JVeU5uazFhSTFZVUpEYWhKS0x4c2tM?=
- =?utf-8?B?Wkl0TUhqTXA5a3VMa25GMFdCd2NkdW1XS0ZHWjc2bTNnTy9TZ2tuZTF6MVJW?=
- =?utf-8?B?VXBiYitmSEJUOVFUR1BSanF5T2kxaUV0UEcxdU95eTlEM0RpT2ZoVU13WlVw?=
- =?utf-8?B?Vlg2Q245bE1VWTZnQUJrQ1hYWnh4bkRoUzBGMXAwMXRkR1NwRjFkSFU5ZURv?=
- =?utf-8?B?Vnc1SVZBR2laY01SNHFtMDVDT3ZwLzgrNW5IMTQvc2ZsaEQ5aEY4NEhtL0Ro?=
- =?utf-8?B?ZVBDYlB3NW5hbmlxQ2NLZk4va2JMdzNIODhtMDQ1SHB3ZEtOR2lRVTZzWFNR?=
- =?utf-8?B?WEhyVEJYMzN5YXg5UU9aVW1uVTJBd1N3Sm5VeDVzN1ZsbXpaQUtBYjlCdWRj?=
- =?utf-8?B?cFcycUUwZm5xWUkwaDJnODIvWXdjaUR0N0hSLzQvaVVKZG9qOVd5QWVqUmJ3?=
- =?utf-8?B?YjNXaExnaGM0alkrRmhQR2xSVExmampvMkt5THhBc2plYTlVR3pKSWF1Vk9N?=
- =?utf-8?B?SWFsR245MjBGS0JmQ29hTVg5ekdXK3NZblRRWkhZdzZGQ2IvOWM2cko2V0RW?=
- =?utf-8?B?ZVRLUmc2TmpJL0tnSEUzYldXYWpTSmVWSHF3Z3FZQWtFMGFmNUdOMURSdHZE?=
- =?utf-8?B?NHl0TWtLWGZrR0EwMURNTjNNazdKR2xwYlQ1NVR3TkxtcjNGb3VQbHY5U1JQ?=
- =?utf-8?B?VG10bVQ5L25hbHY3YjY3ZnZUOEZtZW8yeWxha2pOQi9IVFZDTy9OeUZRaTN0?=
- =?utf-8?B?c2lTT3dRZG0xWGhnc0NKQ0NJM1Y3bVhzT0RIZ254UFRReU5vb0RHM3Bjdnp2?=
- =?utf-8?B?L2J0Y09sRmkvMVQxK3lkVlhiZ1YyTU1TbXppQWdGK2ZOSGpNbU1rSlg2b3V5?=
- =?utf-8?B?TXZhaUFBOXltTEc5U2FUTGJ6Z25jZlQrai80QytHdlhCNkV1T21YWDFvQmVt?=
- =?utf-8?B?Vjhtb0dTZFd3bkxaOW84blZiL3dtS1pMZXp0a2xJWkppbWZ5NTVPZng5RGVP?=
- =?utf-8?B?OUdVenhDeVpOL0tjUUFFT09nNk1lTXNnMXg1UVdOdTdzY0t0QjlIWFVmb3lR?=
- =?utf-8?B?cVlZeGppMEQyYVVFMEpKa2tGMFNXbDdDcVpWUlNqZmN1bTl5YW9iQjRQTHFn?=
- =?utf-8?B?c2VBemgrWjZJRjNrTWpnTWMrT3pZcmg5UnVyRHdFWENYemkxUlFwYXRsRHFj?=
- =?utf-8?B?T2pwdzJ3djkvbkFLNGpVdEtSRUxxbTZ2OUcyWkVzeVRoRmxpbDVlQ3c1M1ZO?=
- =?utf-8?B?RkM5RDJ5b1A1NEJETDgxUWFWRWNuYUcyRWgySmNuMkpreXVVUE90YkJsbWpJ?=
- =?utf-8?B?MEtQY09teEZQeEpSVnlhUzQyeGMrR0syQkhZQkVUazNlQ0FXMThQYm9TOU11?=
- =?utf-8?B?dEdKc2o5MkVBT0tkQmxDTWFEQ054SHhhcW56Wjl3SVdOK01iMHhRQklxMWFF?=
- =?utf-8?B?N2lSRS9GZmRkTy9WWElnN1VuNzY4UzNRNjdwV2l1enZ6Tkt5MVg5b1ZhQ2Ur?=
- =?utf-8?B?WFhvZ2JFVm9XWmloNEJIV0cxejBzbXVRZWkxN25aNkVJOHg0NzNLMU1uL3pV?=
- =?utf-8?B?K0RubFo5bTJCSE9wR2tybzVJc0RpUDNuUTBVRDlLQUlqd1JUcDRUQnhRd2FT?=
- =?utf-8?B?SXVEbGIzUkE4ODQ0NlVDTXJHZGFFK1hJOUR3N0hOOE5TQ3JLaVJnZlVvMWJB?=
- =?utf-8?B?T3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1762952305; c=relaxed/simple;
+	bh=CK7ywSC2eDQARxdoxDFhbt8fd8seOQIHPp65BpGGpHU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KnczcntK9xtMfRIjzcrQWNxf4L4ffoebzCnUzaOQ7jznUGiZm+S1jClQwPQql3sVwvaluSna9j4K0ISfpSXFBrKFaGa9UC3x2bjUXAFFQjR+24VAv0LYnsSQd8nsaAPcLuK6ah+lmu3RwblwzOy++U1Y7nMSSCzoEQlGY9axblI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ci94QM90; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762952251; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HNxVywEwIxfryAuD5zzBYhvkZC8198SP2RK6ZvKxet5z0bGYTqWkIxOxIQibJ+Ukz1YFM12TUMOjcTcAla3bzEfQJpAfOPRZaD5bG9FkwhvqxsnlGNItSD3lQa28gLV78pwMO0t8Lae2BvqCxgGQMr7dcwvJzwsMfGI8d6EBG7A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762952251; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lasbNH8TFs9tBmW5oYJnfXJbOCbLUtFN2LPxxb7aoxY=; 
+	b=RqvRMYn00Dpqc00LRjIeYBstNocwYYrxaD7eB5TsLmb0rm6MUKzpyb69SMl1yy4J6wNZp0+ztpM27BijDkmBv5/cMy1JU6ahbv2y87PEp4R7d41U04kRtVN/FBOnCmOFdSLsiewKfN6Be3jbi6EHzwOZcV8elByutEn0JHWYm94=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762952251;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=lasbNH8TFs9tBmW5oYJnfXJbOCbLUtFN2LPxxb7aoxY=;
+	b=Ci94QM905kNJ+PitS0LYcmnnz4ycpBfxUXsZkHrpvQLVC8WkX9ft/6VbCL0AuQmZ
+	mFfWyhITrj3SV2yZ4Us49BCDBxG2KjaO3Wu0mI+67fxGo55Fwa0sithHJ7E5q2986Yj
+	8bdlxynaZGtK2IPJD3Pxuae909V1tjQ9lixMFork=
+Received: by mx.zohomail.com with SMTPS id 1762952249485202.59169507502338;
+	Wed, 12 Nov 2025 04:57:29 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1ef3ddc-5509-4b67-259b-08de21ebfd86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 13:04:18.7254
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5S2SFsMgzFpWRBGJrO6QbijktGLObhpsYcZkouMGfI3exZuhtxMT619FkF8issoc6QDAYjiwTtnfswPmAOYS08jWuNKM1DwlLEm7bxYPUmc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7298
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3] io: add io_pgtable abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20251112-io-pgtable-v3-1-b00c2e6b951a@google.com>
+Date: Wed, 12 Nov 2025 09:57:09 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Will Deacon <will@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ iommu@lists.linux.dev,
+ linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8A5C6836-992B-477A-A77C-EE0736166552@collabora.com>
+References: <20251112-io-pgtable-v3-1-b00c2e6b951a@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSW50ZWwtd2lyZWQtbGFu
-IDxpbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnPiBPbiBCZWhhbGYNCj4gT2YgQnJl
-bm8gTGVpdGFvDQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIgMTIsIDIwMjUgMTE6MjMgQU0N
-Cj4gVG86IE5ndXllbiwgQW50aG9ueSBMIDxhbnRob255Lmwubmd1eWVuQGludGVsLmNvbT47IEtp
-dHN6ZWwsDQo+IFByemVteXNsYXcgPHByemVteXNsYXcua2l0c3plbEBpbnRlbC5jb20+OyBBbmRy
-ZXcgTHVubg0KPiA8YW5kcmV3K25ldGRldkBsdW5uLmNoPjsgRGF2aWQgUy4gTWlsbGVyIDxkYXZl
-bUBkYXZlbWxvZnQubmV0PjsgRXJpYw0KPiBEdW1hemV0IDxlZHVtYXpldEBnb29nbGUuY29tPjsg
-SmFrdWIgS2ljaW5za2kgPGt1YmFAa2VybmVsLm9yZz47IFBhb2xvDQo+IEFiZW5pIDxwYWJlbmlA
-cmVkaGF0LmNvbT4NCj4gQ2M6IGludGVsLXdpcmVkLWxhbkBsaXN0cy5vc3Vvc2wub3JnOyBuZXRk
-ZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsga2Vy
-bmVsLXRlYW1AbWV0YS5jb207IEJyZW5vIExlaXRhbw0KPiA8bGVpdGFvQGRlYmlhbi5vcmc+DQo+
-IFN1YmplY3Q6IFtJbnRlbC13aXJlZC1sYW5dIFtQQVRDSCBuZXQtbmV4dF0gbmV0OiBpeGdiZTog
-Y29udmVydCB0byB1c2UNCj4gLmdldF9yeF9yaW5nX2NvdW50DQo+IA0KPiBDb252ZXJ0IHRoZSBp
-eGdiZSBkcml2ZXIgdG8gdXNlIHRoZSBuZXcgLmdldF9yeF9yaW5nX2NvdW50IGV0aHRvb2wNCj4g
-b3BlcmF0aW9uIGZvciBoYW5kbGluZyBFVEhUT09MX0dSWFJJTkdTIGNvbW1hbmQuIFRoaXMgc2lt
-cGxpZmllcyB0aGUNCj4gY29kZSBieSBleHRyYWN0aW5nIHRoZSByaW5nIGNvdW50IGxvZ2ljIGlu
-dG8gYSBkZWRpY2F0ZWQgY2FsbGJhY2suDQo+IA0KPiBUaGUgbmV3IGNhbGxiYWNrIHByb3ZpZGVz
-IHRoZSBzYW1lIGZ1bmN0aW9uYWxpdHkgaW4gYSBtb3JlIGRpcmVjdCB3YXksDQo+IGZvbGxvd2lu
-ZyB0aGUgb25nb2luZyBldGh0b29sIEFQSSBtb2Rlcm5pemF0aW9uLg0KPiANCj4gU2lnbmVkLW9m
-Zi1ieTogQnJlbm8gTGVpdGFvIDxsZWl0YW9AZGViaWFuLm9yZz4NCj4gLS0tDQo+ICBkcml2ZXJz
-L25ldC9ldGhlcm5ldC9pbnRlbC9peGdiZS9peGdiZV9ldGh0b29sLmMgfCAxNSArKysrKysrKysr
-LS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygt
-KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2JlL2l4
-Z2JlX2V0aHRvb2wuYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2JlL2l4Z2Jl
-X2V0aHRvb2wuYw0KPiBpbmRleCAyZDY2MGU5ZWRiODAuLjJhZDgxZjY4N2E4NCAxMDA2NDQNCj4g
-LS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmUvaXhnYmVfZXRodG9vbC5jDQo+
-ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2JlL2l4Z2JlX2V0aHRvb2wuYw0K
-PiBAQCAtMjgwNSw2ICsyODA1LDE0IEBAIHN0YXRpYyBpbnQgaXhnYmVfcnNzX2luZGlyX3RibF9t
-YXgoc3RydWN0DQo+IGl4Z2JlX2FkYXB0ZXIgKmFkYXB0ZXIpDQo+ICAJCXJldHVybiA2NDsNCj4g
-IH0NCj4gDQo+ICtzdGF0aWMgdTMyIGl4Z2JlX2dldF9yeF9yaW5nX2NvdW50KHN0cnVjdCBuZXRf
-ZGV2aWNlICpkZXYpIHsNCj4gKwlzdHJ1Y3QgaXhnYmVfYWRhcHRlciAqYWRhcHRlciA9IGl4Z2Jl
-X2Zyb21fbmV0ZGV2KGRldik7DQo+ICsNCj4gKwlyZXR1cm4gbWluX3QodTMyLCBhZGFwdGVyLT5u
-dW1fcnhfcXVldWVzLA0KPiArCQkgICAgIGl4Z2JlX3Jzc19pbmRpcl90YmxfbWF4KGFkYXB0ZXIp
-KTsNCj4gK30NCj4gKw0KPiAgc3RhdGljIGludCBpeGdiZV9nZXRfcnhuZmMoc3RydWN0IG5ldF9k
-ZXZpY2UgKmRldiwgc3RydWN0DQo+IGV0aHRvb2xfcnhuZmMgKmNtZCwNCj4gIAkJCSAgIHUzMiAq
-cnVsZV9sb2NzKQ0KPiAgew0KPiBAQCAtMjgxMiwxMSArMjgyMCw2IEBAIHN0YXRpYyBpbnQgaXhn
-YmVfZ2V0X3J4bmZjKHN0cnVjdCBuZXRfZGV2aWNlDQo+ICpkZXYsIHN0cnVjdCBldGh0b29sX3J4
-bmZjICpjbWQsDQo+ICAJaW50IHJldCA9IC1FT1BOT1RTVVBQOw0KPiANCj4gIAlzd2l0Y2ggKGNt
-ZC0+Y21kKSB7DQo+IC0JY2FzZSBFVEhUT09MX0dSWFJJTkdTOg0KPiAtCQljbWQtPmRhdGEgPSBt
-aW5fdChpbnQsIGFkYXB0ZXItPm51bV9yeF9xdWV1ZXMsDQo+IC0JCQkJICBpeGdiZV9yc3NfaW5k
-aXJfdGJsX21heChhZGFwdGVyKSk7DQo+IC0JCXJldCA9IDA7DQo+IC0JCWJyZWFrOw0KPiAgCWNh
-c2UgRVRIVE9PTF9HUlhDTFNSTENOVDoNCj4gIAkJY21kLT5ydWxlX2NudCA9IGFkYXB0ZXItPmZk
-aXJfZmlsdGVyX2NvdW50Ow0KPiAgCQlyZXQgPSAwOw0KPiBAQCAtMzc0Myw2ICszNzQ2LDcgQEAg
-c3RhdGljIGNvbnN0IHN0cnVjdCBldGh0b29sX29wcw0KPiBpeGdiZV9ldGh0b29sX29wcyA9IHsN
-Cj4gIAkuZ2V0X2V0aHRvb2xfc3RhdHMgICAgICA9IGl4Z2JlX2dldF9ldGh0b29sX3N0YXRzLA0K
-PiAgCS5nZXRfY29hbGVzY2UgICAgICAgICAgID0gaXhnYmVfZ2V0X2NvYWxlc2NlLA0KPiAgCS5z
-ZXRfY29hbGVzY2UgICAgICAgICAgID0gaXhnYmVfc2V0X2NvYWxlc2NlLA0KPiArCS5nZXRfcnhf
-cmluZ19jb3VudAk9IGl4Z2JlX2dldF9yeF9yaW5nX2NvdW50LA0KPiAgCS5nZXRfcnhuZmMJCT0g
-aXhnYmVfZ2V0X3J4bmZjLA0KPiAgCS5zZXRfcnhuZmMJCT0gaXhnYmVfc2V0X3J4bmZjLA0KPiAg
-CS5nZXRfcnhmaF9pbmRpcl9zaXplCT0gaXhnYmVfcnNzX2luZGlyX3NpemUsDQo+IEBAIC0zNzkx
-LDYgKzM3OTUsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGV0aHRvb2xfb3BzDQo+IGl4Z2JlX2V0
-aHRvb2xfb3BzX2U2MTAgPSB7DQo+ICAJLmdldF9ldGh0b29sX3N0YXRzICAgICAgPSBpeGdiZV9n
-ZXRfZXRodG9vbF9zdGF0cywNCj4gIAkuZ2V0X2NvYWxlc2NlICAgICAgICAgICA9IGl4Z2JlX2dl
-dF9jb2FsZXNjZSwNCj4gIAkuc2V0X2NvYWxlc2NlICAgICAgICAgICA9IGl4Z2JlX3NldF9jb2Fs
-ZXNjZSwNCj4gKwkuZ2V0X3J4X3JpbmdfY291bnQJPSBpeGdiZV9nZXRfcnhfcmluZ19jb3VudCwN
-Cj4gIAkuZ2V0X3J4bmZjCQk9IGl4Z2JlX2dldF9yeG5mYywNCj4gIAkuc2V0X3J4bmZjCQk9IGl4
-Z2JlX3NldF9yeG5mYywNCj4gIAkuZ2V0X3J4ZmhfaW5kaXJfc2l6ZQk9IGl4Z2JlX3Jzc19pbmRp
-cl9zaXplLA0KPiANCj4gLS0tDQo+IGJhc2UtY29tbWl0OiBiZGU5NzRlZjYyNTY5YTdkYTEyYWE3
-MWQxODJhNzYwY2Q2MjIzYzM2DQo+IGNoYW5nZS1pZDogMjAyNTExMTItaXhnYmVfZ3hyaW5ncy02
-MWM2ZjcxZDcxMmINCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gLS0NCj4gQnJlbm8gTGVpdGFvIDxs
-ZWl0YW9AZGViaWFuLm9yZz4NCg0KDQpSZXZpZXdlZC1ieTogQWxla3NhbmRyIExva3Rpb25vdiA8
-YWxla3NhbmRyLmxva3Rpb25vdkBpbnRlbC5jb20+DQo=
+Hi Alice,
+
+> On 12 Nov 2025, at 07:15, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> From: Asahi Lina <lina+kernel@asahilina.net>
+>=20
+> This will be used by the Tyr driver to create and modify the page =
+table
+> of each address space on the GPU. Each time a mapping gets created or
+> removed by userspace, Tyr will call into GPUVM, which will figure out
+> which calls to map_pages and unmap_pages are required to map the data =
+in
+> question in the page table so that the GPU may access those pages when
+> using that address space.
+>=20
+> The Rust type wraps the struct using a raw pointer rather than the =
+usual
+> Opaque+ARef approach because Opaque+ARef requires the target type to =
+be
+> refcounted.
+>=20
+> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
+> Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> This patch is based on [1] but I have rewritten and simplified large
+> parts of it. The Asahi driver no longer uses the io-pgtable =
+abstraction,
+> and Nova never planned to (since NVIDIA has its own separate memory).
+> Therefore, I have simplified these abstractions to fit the needs of =
+the
+> Tyr GPU driver.
+>=20
+> This series depends on the PhysAddr typedef [2].
+>=20
+> [1]: =
+https://lore.kernel.org/all/20250623-io_pgtable-v2-1-fd72daac75f1@collabor=
+a.com/
+> [2]: =
+https://lore.kernel.org/all/20251112-resource-phys-typedefs-v2-0-538307384=
+f82@google.com/
+> ---
+> rust/bindings/bindings_helper.h |   3 +-
+> rust/kernel/io.rs               |   1 +
+> rust/kernel/io/pgtable.rs       | 254 =
+++++++++++++++++++++++++++++++++++++++++
+> 3 files changed, 257 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index =
+2e43c66635a2c9f31bd99b9817bd2d6ab89fbcf2..faab6bc9463321c092a8bbcb6281175e=
+490caccd 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -56,8 +56,9 @@
+> #include <linux/fdtable.h>
+> #include <linux/file.h>
+> #include <linux/firmware.h>
+> -#include <linux/interrupt.h>
+> #include <linux/fs.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io-pgtable.h>
+> #include <linux/ioport.h>
+> #include <linux/jiffies.h>
+> #include <linux/jump_label.h>
+> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+> index =
+56a435eb14e3a1ce72dd58b88cbf296041f1703e..5913e240d5a9814ceed52c6dc1a798e6=
+4158d567 100644
+> --- a/rust/kernel/io.rs
+> +++ b/rust/kernel/io.rs
+> @@ -8,6 +8,7 @@
+> use crate::{bindings, build_assert, ffi::c_void};
+>=20
+> pub mod mem;
+> +pub mod pgtable;
+> pub mod poll;
+> pub mod resource;
+>=20
+> diff --git a/rust/kernel/io/pgtable.rs b/rust/kernel/io/pgtable.rs
+> new file mode 100644
+> index =
+0000000000000000000000000000000000000000..fe05bc1673f9a7741a887a3c9bbad866=
+dd17a2b5
+> --- /dev/null
+> +++ b/rust/kernel/io/pgtable.rs
+> @@ -0,0 +1,254 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! IOMMU page table management.
+> +//!
+> +//! C header: [`include/io-pgtable.h`](srctree/include/io-pgtable.h)
+> +
+> +use core::{
+> +    marker::PhantomData,
+> +    ptr::NonNull, //
+> +};
+> +
+> +use crate::{
+> +    alloc,
+> +    bindings,
+> +    device::{Bound, Device},
+> +    devres::Devres,
+> +    error::to_result,
+> +    io::PhysAddr,
+> +    prelude::*, //
+> +};
+> +
+> +use bindings::io_pgtable_fmt;
+> +
+> +/// Protection flags used with IOMMU mappings.
+> +pub mod prot {
+> +    /// Read access.
+> +    pub const READ: u32 =3D bindings::IOMMU_READ;
+> +    /// Write access.
+> +    pub const WRITE: u32 =3D bindings::IOMMU_WRITE;
+> +    /// Request cache coherency.
+> +    pub const CACHE: u32 =3D bindings::IOMMU_CACHE;
+> +    /// Request no-execute permission.
+> +    pub const NOEXEC: u32 =3D bindings::IOMMU_NOEXEC;
+> +    /// MMIO peripheral mapping.
+> +    pub const MMIO: u32 =3D bindings::IOMMU_MMIO;
+> +    /// Privileged mapping.
+> +    pub const PRIV: u32 =3D bindings::IOMMU_PRIV;
+> +}
+> +
+> +/// Represents a requested `io_pgtable` configuration.
+> +pub struct Config {
+> +    /// Quirk bitmask (type-specific).
+> +    pub quirks: usize,
+> +    /// Valid page sizes, as a bitmask of powers of two.
+> +    pub pgsize_bitmap: usize,
+> +    /// Input address space size in bits.
+> +    pub ias: u32,
+> +    /// Output address space size in bits.
+> +    pub oas: u32,
+> +    /// IOMMU uses coherent accesses for page table walks.
+> +    pub coherent_walk: bool,
+> +}
+> +
+> +/// An io page table using a specific format.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer references a valid io page table.
+> +pub struct IoPageTable<F> {
+> +    ptr: NonNull<bindings::io_pgtable_ops>,
+> +    _marker: PhantomData<F>,
+> +}
+> +
+> +// SAFETY: `struct io_pgtable_ops` is not restricted to a single =
+thread.
+> +unsafe impl<F> Send for IoPageTable<F> {}
+> +// SAFETY: `struct io_pgtable_ops` may be accessed concurrently.
+> +unsafe impl<F> Sync for IoPageTable<F> {}
+> +
+> +/// The format used by this page table.
+> +pub trait IoPageTableFmt: 'static {
+> +    /// The value representing this format.
+> +    const FORMAT: io_pgtable_fmt;
+> +}
+> +
+> +impl<F: IoPageTableFmt> IoPageTable<F> {
+> +    /// Create a new `IoPageTable` as a device resource.
+> +    #[inline]
+> +    pub fn new(
+> +        dev: &Device<Bound>,
+> +        config: Config,
+> +    ) -> impl PinInit<Devres<IoPageTable<F>>, Error> + '_ {
+> +        // SAFETY: Devres ensures that the value is dropped during =
+device unbind.
+> +        Devres::new(dev, unsafe { Self::new_raw(dev, config) })
+> +    }
+> +
+> +    /// Create a new `IoPageTable`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// If successful, then the returned value must be dropped before =
+the device is unbound.
+> +    #[inline]
+> +    pub unsafe fn new_raw(dev: &Device<Bound>, config: Config) -> =
+Result<IoPageTable<F>> {
+> +        let mut raw_cfg =3D bindings::io_pgtable_cfg {
+> +            quirks: config.quirks,
+> +            pgsize_bitmap: config.pgsize_bitmap,
+> +            ias: config.ias,
+> +            oas: config.oas,
+> +            coherent_walk: config.coherent_walk,
+> +            tlb: &raw const NOOP_FLUSH_OPS,
+> +            iommu_dev: dev.as_raw(),
+> +            // SAFETY: All zeroes is a valid value for `struct =
+io_pgtable_cfg`.
+> +            ..unsafe { core::mem::zeroed() }
+> +        };
+> +
+> +        // SAFETY:
+> +        // * The raw_cfg pointer is valid for the duration of this =
+call.
+> +        // * The provided `FLUSH_OPS` contains valid function =
+pointers that accept a null pointer
+> +        //   as cookie.
+> +        // * The caller ensures that the io pgtable does not outlive =
+the device.
+> +        let ops =3D unsafe {
+> +            bindings::alloc_io_pgtable_ops(F::FORMAT, &mut raw_cfg, =
+core::ptr::null_mut())
+> +        };
+> +        // INVARIANT: We successfully created a valid page table.
+> +        Ok(IoPageTable {
+> +            ptr: NonNull::new(ops).ok_or(ENOMEM)?,
+> +            _marker: PhantomData,
+> +        })
+> +    }
+> +
+> +    /// Obtain a raw pointer to the underlying `struct =
+io_pgtable_ops`.
+> +    #[inline]
+> +    pub fn raw_ops(&self) -> *mut bindings::io_pgtable_ops {
+> +        self.ptr.as_ptr()
+> +    }
+> +
+> +    /// Obtain a raw pointer to the underlying `struct io_pgtable`.
+> +    #[inline]
+> +    pub fn raw_pgtable(&self) -> *mut bindings::io_pgtable {
+> +        // SAFETY: The io_pgtable_ops of an io-pgtable is always the =
+ops field of a io_pgtable.
+> +        unsafe { kernel::container_of!(self.raw_ops(), =
+bindings::io_pgtable, ops) }
+> +    }
+> +
+> +    /// Obtain a raw pointer to the underlying `struct =
+io_pgtable_cfg`.
+> +    #[inline]
+> +    pub fn raw_cfg(&self) -> *mut bindings::io_pgtable_cfg {
+> +        // SAFETY: The `raw_pgtable()` method returns a valid =
+pointer.
+> +        unsafe { &raw mut (*self.raw_pgtable()).cfg }
+> +    }
+> +
+
+I don=E2=80=99t think that drivers need these three accessors above to =
+be pub.
+
+> +    /// Map a physically contiguous range of pages of the same size.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * This page table must not contain any mapping that overlaps =
+with the mapping created by
+> +    ///   this call.
+
+I don't think there is a restriction that forbids you from mapping a =
+region that has already been mapped.
+
+If A->B->C are adjacent regions, and you try to map A -> C when B->C is =
+already mapped, I think this
+call will simply return length(A->B).
+
+> +    /// * If this page table is live, then the caller must ensure =
+that it's okay to access the
+> +    ///   physical address being mapped for the duration in which it =
+is mapped.
+> +    #[inline]
+> +    pub unsafe fn map_pages(
+> +        &self,
+> +        iova: usize,
+> +        paddr: PhysAddr,
+> +        pgsize: usize,
+> +        pgcount: usize,
+> +        prot: u32,
+> +        flags: alloc::Flags,
+> +    ) -> Result<usize> {
+> +        let mut mapped: usize =3D 0;
+> +
+> +        // SAFETY: The `map_pages` function in `io_pgtable_ops` is =
+never null.
+> +        let map_pages =3D unsafe { =
+(*self.raw_ops()).map_pages.unwrap_unchecked() };
+> +
+> +        // SAFETY: The safety requirements of this method are =
+sufficient to call `map_pages`.
+> +        to_result(unsafe {
+> +            (map_pages)(
+> +                self.raw_ops(),
+> +                iova,
+> +                paddr,
+> +                pgsize,
+> +                pgcount,
+> +                prot as i32,
+> +                flags.as_raw(),
+> +                &mut mapped,
+> +            )
+> +        })?;
+> +
+> +        Ok(mapped)
+> +    }
+> +
+> +    /// Unmap a range of virtually contiguous pages of the same size.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// This page table must contain a mapping at `iova` that =
+consists of exactly `pgcount` pages
+> +    /// of size `pgsize`.
+
+Same here. I don=E2=80=99t think the above is necessarily a requirement.
+
+> +    #[inline]
+> +    pub unsafe fn unmap_pages(&self, iova: usize, pgsize: usize, =
+pgcount: usize) -> usize {
+> +        // SAFETY: The `unmap_pages` function in `io_pgtable_ops` is =
+never null.
+> +        let unmap_pages =3D unsafe { =
+(*self.raw_ops()).unmap_pages.unwrap_unchecked() };
+> +
+> +        // SAFETY: The safety requirements of this method are =
+sufficient to call `unmap_pages`.
+> +        unsafe { (unmap_pages)(self.raw_ops(), iova, pgsize, pgcount, =
+core::ptr::null_mut()) }
+> +    }
+> +}
+> +
+> +// These bindings are currently designed for use by GPU drivers, =
+which use this page table together
+> +// with GPUVM. When using GPUVM, a single mapping operation may be =
+translated into many operations
+> +// on the page table, and in that case you generally want to flush =
+the TLB only once per GPUVM
+> +// operation. Thus, do not use these callbacks as they would flush =
+more often than needed.
+> +static NOOP_FLUSH_OPS: bindings::iommu_flush_ops =3D =
+bindings::iommu_flush_ops {
+> +    tlb_flush_all: Some(rust_tlb_flush_all_noop),
+> +    tlb_flush_walk: Some(rust_tlb_flush_walk_noop),
+> +    tlb_add_page: None,
+> +};
+> +
+> +#[no_mangle]
+> +extern "C" fn rust_tlb_flush_all_noop(_cookie: *mut =
+core::ffi::c_void) {}
+> +
+> +#[no_mangle]
+> +extern "C" fn rust_tlb_flush_walk_noop(
+> +    _iova: usize,
+> +    _size: usize,
+> +    _granule: usize,
+> +    _cookie: *mut core::ffi::c_void,
+> +) {
+> +}
+> +
+> +impl<F> Drop for IoPageTable<F> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: The caller of `ttbr` promised that the page table =
+is not live when this
+> +        // destructor runs.
+> +        unsafe { bindings::free_io_pgtable_ops(self.0.ops) };
+> +    }
+> +}
+> +
+> +/// The `ARM_64_LPAE_S1` page table format.
+> +pub enum ARM64LPAES1 {}
+> +
+> +impl IoPageTableFmt for ARM64LPAES1 {
+> +    const FORMAT: io_pgtable_fmt =3D =
+bindings::io_pgtable_fmt_ARM_64_LPAE_S1 as io_pgtable_fmt;
+> +}
+> +
+> +impl IoPageTable<ARM64LPAES1> {
+> +    /// Access the `ttbr` field of the configuration.
+> +    ///
+> +    /// This is the physical address of the page table, which may be =
+passed to the device that
+> +    /// needs to use it.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must ensure that the device stops using the page =
+table before dropping it.
+> +    #[inline]
+> +    pub unsafe fn ttbr(&self) -> u64 {
+> +        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for =
+`ARM64LPAES1`.
+> +        unsafe { =
+(*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.ttbr }
+> +    }
+> +
+> +    /// Access the `mair` field of the configuration.
+> +    #[inline]
+> +    pub fn mair(&self) -> u64 {
+> +        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for =
+`ARM64LPAES1`.
+> +        unsafe { =
+(*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.mair }
+> +    }
+
+The two above will indeed be used by drivers, so it makes sense for them =
+to be pub.
+
+> +}
+>=20
+> ---
+> base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
+> change-id: 20251111-io-pgtable-fe0822b4ebdd
+> prerequisite-change-id: =
+20251106-resource-phys-typedefs-6db37927d159:v2
+> prerequisite-patch-id: 350421d8dbaf3db51b1243d82077c5eb88f54db5
+> prerequisite-patch-id: ac0166fb3cd235de76841789173051191a4d2434
+> prerequisite-patch-id: f4bca02c77c40093690b66cdf477f928784bdbf4
+> prerequisite-patch-id: 083d1c22b1a7eb0dcae37052b926362543c68e8a
+>=20
+> Best regards,
+> --=20
+> Alice Ryhl <aliceryhl@google.com>
+>=20
+>=20
+
+This overall looks ok to me, and I quite like how much cleaner it is =
+now.
+
+However, I think a discussion will naturally emerge from making
+map/unmap_pages unsafe functions, and it seems like the safety =
+requirements
+do not apply.
+
+=E2=80=94 Daniel=
 
