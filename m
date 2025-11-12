@@ -1,237 +1,170 @@
-Return-Path: <linux-kernel+bounces-897103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80120C520FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:47:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365C2C520DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:46:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C26064FA41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:27:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 762885065F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878AD30C34E;
-	Wed, 12 Nov 2025 11:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24FD30E0C5;
+	Wed, 12 Nov 2025 11:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JAs6Fmxc";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8DPV1Tw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Agq4Gj7q"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4E2FE06F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC1F30B53F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946842; cv=none; b=TxRS6gxoRr30cnucBMVmn66HKu3YF4iYwJ2y3n2SkedKjIQjKpOd4MoX/6aPWpUWtch07U+7UpXA9UcZVMekWwrrU0R6dAcpUvgxjeygvbhfhSiM9mOcSkFkbVAXjp4jseLCaUGiyZPW0xgAopFeXcdnARQVNf0/EdEKrrXEF2o=
+	t=1762946890; cv=none; b=unNNNDYbELigJfG9Pl80WbW1Ozco0i8InDg8aLJvlOY26NAgInVSbrqkrQM9YNaCNDyfYf5cB0oWUvZOx+Apox0EDDD8v1dbsAn/vbGBKwcfp9Uf5GejpvZ1NE7CXZjroP5LxJlEnWEp4YM1/xPgTz1DJejP8C0l3G9j+un5GGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946842; c=relaxed/simple;
-	bh=4GFpYouVGxOOz3psCxGWSSpIfASjL19wnjG0Y6Ssa1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRI9LlpSIR9nyl7FW1EkrYK0glRItZ+attFmV0ZPH+TnyXzeBYkOF7677UlPYb+5HPzNpKei26b35EjKvFNHIJyhvx5YUBQqZoDCvv+D10oHGN2glhyxSkoiTB7RwhQYVil7+A/UCM965+CmcSggsrxZcrfXO8gGqOjO6P9V46w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JAs6Fmxc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8DPV1Tw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762946840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fVtwZ9kMXMWaALslBegZBLpPlSTJZmxBrzThhFU7zE4=;
-	b=JAs6FmxczLOe9kGN/JS3KoHxZ3f59VGcHRYA6KFvO1zDf9+CXkjL40/1ueaehjmsgjM5Dr
-	owTCm20AhsBDT/XplV5jpoImydfWz8TLceQyoHthjnNgEOLu7FGrdeVuetNxPQuqtlHRtw
-	BVQMByBgrLpDkLeslQ0q7hqCAX8TpVA=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-455-seZ5iKdaPcORo8AuvFewIA-1; Wed, 12 Nov 2025 06:27:19 -0500
-X-MC-Unique: seZ5iKdaPcORo8AuvFewIA-1
-X-Mimecast-MFC-AGG-ID: seZ5iKdaPcORo8AuvFewIA_1762946839
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b23a64f334so217023985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:27:19 -0800 (PST)
+	s=arc-20240116; t=1762946890; c=relaxed/simple;
+	bh=1dYK7f4FkPzoZeJ51K8mDZvHGpP/FeIezNcDD5hERdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pg0Ow9KP1JR5EJ+li/FJhUzMWzNU7Q37ldwSmVOuHkIU3MAUtDVWv8erxMk5Rn9Rl01od+ufTlwIEUGutXu4CWaTD+YyY5eHU37Gkca+fc/fdWPepjjdyM/EGjOvBU/CKLV0QnXqJAeMVSJVHR0jlaiiTdmbejbghj6oznwxtzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Agq4Gj7q; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2957850c63bso6266815ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:28:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762946839; x=1763551639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fVtwZ9kMXMWaALslBegZBLpPlSTJZmxBrzThhFU7zE4=;
-        b=a8DPV1TwbETOlFj8Yc3dn6zgh35lxxw0bxA/TL9apt+2as+kVxGHnjbEKejLfjx0pc
-         jbYrUKujYNJXUZ4snxdXs80almFhIqId3+W5wwY4W7yTejMnAyhGPqw6XLIMTEj3vsAo
-         gIlmf3/4KwZ32hxa6m+fqrOG0I8Ngi0CVRZ4dHA4E3GG9AEBzAlW+a8iCgRpiKsAhsOg
-         jmWN8RNpw72wQnP0WaPOkhgLMq2a0/xryL6X4eteJruqmzT2zIq3tOWt65hzO1j9SybX
-         yvsw4ynAbnxMaMuR6XWbvKPRHXMTJw3XlqJvi5Sswo0dBBdGCr9gxXDYBZr+j5UqlbRa
-         19YA==
+        d=google.com; s=20230601; t=1762946888; x=1763551688; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ig8V7S9rFhIoVLkY+/XWuMwWvPcC3NWWv4ch5Z8G1nk=;
+        b=Agq4Gj7q75twnaldQoOyRwegmMpWfqRiAkSduaLyqfF9b0ngSBXUBtv38zNPxzZpju
+         2LpRH+6BJo6spdCm8zZPmto1MLnrBLRUm0IpN6/mSkVf51HqIIPjhyJgDMSLvcMO1oRM
+         MbjG3IMv5Lnbq8xDWQz1rKjXI92CnRArQ7ya+qWk/+lQyJy1mampYfS07KdJCS0becQa
+         YfWSz7irenPniI+wFEEq7tfeB4zn1FuHmSABqEcIdGoti6+7BD5XeI+HUliFBkUsEeCn
+         Oz+AG21bFX/eRk0++NhYJbsjsX5WIigS64HJwwEwNpZafC97iICeD7vbcHYl9cDYOLpx
+         02Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946839; x=1763551639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fVtwZ9kMXMWaALslBegZBLpPlSTJZmxBrzThhFU7zE4=;
-        b=MoGUIEFibOiY/OeZuEpQibFH9KUUPAN4SHkTZ5GsUwZjosI8jUujeopFyx2vHDTZlG
-         5+mOhjjne4/fpuPkEhIDFsBWVUT7lhRk85Q0S8gHEHOgwQclNH0Faw3zWYhkB5nfus4Z
-         BfQPx/kLEcfdZNMkSxFhWHeuywnu9uKraSCbapgOGf66qaRUcyWhYRQzb8ZGZTWGEdNE
-         Gqw9x4xx4Gud0o5SVoO5ciHFgU6heNRKNf1CowHtalJzCpJ5JIRmrP7ptqS5idziIqmi
-         9nvGAE9+vqHQquhtjlzXul+fC69JBix+9T2zxzoIRN6AvMRY0cnPavdZ8iuJETRPcAmR
-         rjUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWV/aP3MOK3Chv+sdxRjgbTMNd76oPs3smocBye9wBR0GXCd4KzGLvAveH1NHngQl8EI9+lbN1xhmMjgpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ/hZdgOdg/6MMZeRetd96umuats/dT5r6UPwHFhQNkRB73EFu
-	LgaUYX2hY5bMjPPvEAfXOa7lTtsspTz4z7uzzIRZGJMdjIt/JwBWcHwvENyMIGaAYrCw/SUMYRI
-	eYk67/wbgaHwe7oGHClpvI8EVVqK7Crm4s0Z/dQ1bznHrxSrmoq2LGDRTnAG1YYt6Jw==
-X-Gm-Gg: ASbGncsLNmsF8lYGdlZFr2sdpWR7yE+GgbhUnW82nmsCq4LjCyUCvKhtMnBFFgiozot
-	GhmdMrWJ5cMWwIyGAnkVsKEUzPFixmfJu3G5Ok9Y/hBj3RH9XTfya27H9ALytMj1VBkafm4jAY2
-	XgxoRDAKM8/bFSqU6D6A3FP9gDXT5T6O9zNiwBlKmB/kehgoczuIV5y8bOhz3OLBhmCQ3J0ISHg
-	bZHKFpxvin5vAXgZCs1NfsL2iD6x0tOOKFjL8vnIW5ip3a9/YW4bTj7xduJG6Vq6BFvIUo82YaR
-	q1ik0XF8TNxrBR0Ew8MLd8F/T8zUA9579GWDN1JZK63xMSPnU+9a9ibFrTLA903UTIbzqpxTVSR
-	2lzAUQ7xbHBzYCqbBityzbEvwUzuHF341kX3k205/1YpQQ4J4Bs4=
-X-Received: by 2002:a05:620a:7107:b0:8a7:2373:1c75 with SMTP id af79cd13be357-8b29b7cd25amr301639385a.49.1762946838663;
-        Wed, 12 Nov 2025 03:27:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGiq2o9VPSKEA3WnYmptOCbMHYXZ1Xc1tiIgbtvh2JnbBd2gww/tn2z5FSFACTcc8Z6rSWeNw==
-X-Received: by 2002:a05:620a:7107:b0:8a7:2373:1c75 with SMTP id af79cd13be357-8b29b7cd25amr301636985a.49.1762946838217;
-        Wed, 12 Nov 2025 03:27:18 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a84b075sm176497985a.7.2025.11.12.03.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 03:27:17 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:27:10 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 08/12] selftests/vsock: identify and execute
- tests that can re-use VM
-Message-ID: <z2lxg6zlt5l3f2fhx6lwfeiu2tclm4o4et5wykraonyfjlayos@oatpvj3hk6om>
-References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
- <20251108-vsock-selftests-fixes-and-improvements-v4-8-d5e8d6c87289@meta.com>
+        d=1e100.net; s=20230601; t=1762946888; x=1763551688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ig8V7S9rFhIoVLkY+/XWuMwWvPcC3NWWv4ch5Z8G1nk=;
+        b=gHpY+024t8JliX4wg3lAAf035qKvvBBq7v0cmmLVjYz3WcxzeABHyj9Q/W+U66wmuS
+         oTMTUTTt2q7MZ2cKzqXru3qoogib8bQyP4qhg1CgSYAoxRGB9Xpg1+BRtxammMLMCdlK
+         CvsAp3wVS9L/BGmClKr1QcENnJcZKXUcOdQ4FULkZv/YHWdm9kY8Penn4OvYmSRxWxa4
+         IIXaV6xD+SQDoroNqyiFmWIAgbXBVZfWcVPCMm8gRu+ZhBLMmhDvijYh5eTgM80fJpgn
+         uwHxa79JVzjk7RawP7YYM6cO3zRmr+oc5WVNJB7UKjLdkZFoB4uFrf03tzPRp5jkFS/z
+         +qoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQhn0k7Vk9DhoZdN7/t9WJB4YZ5qt7UztTThOQgIXeMSA8srfvaRBxhzR1SJw4H5vyo5SjtHaEtsscE+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsV9czlen9FP+cobj3THSWHHjOV45X1ufj/CNvnxwpACbWUo4f
+	N2Pt+9CiX5KeJjHF31TWNZsbQeOrt7rri/+ZncH8ymtBoDOYWHO3BYo9aONm4P1RCUTAktcby+x
+	FGjnLd3Uv86lu9XTHVz1Q7z5LqDkA3SUbHmGFT5NF
+X-Gm-Gg: ASbGncujTM2aCE5mlv9Wk0+oo8oZCSpEg7+pZ2Rpo7/QKSuohL+IyHtUKBK6XWJ6z6x
+	jAf5xZ6ps4umMaxWY9S2WTV7I9mmfInE2yb+64IDWFMmpzGb1ApR6UivGE726X3VnmW3oi46AZg
+	zUUnmBGsgAKMy1PJsnkGtvAMJ/kOTpFU2g/D0LVJ/3BjzWvTg1AnpbRtwxOvL3f+QxfT/+5JlZ2
+	Hi2Ur7q7RrzHHfy8vriy1DWQi4H1RHqAE5BXdhRpNfjIH4qrVWEYrGh+lCEx8PnNNDV+gJVz2JB
+	kTa3BCuVph3Y/rUuxQzQXmdZbfLvKzzHOtnk
+X-Google-Smtp-Source: AGHT+IEzhYJUJIhP1itpJ8SMj4wfy7Edo9fDUXSWIfM11ytYomEi4CEvHvu/YvWNAK7+sehRmwWVHzbMhPckpBBMF6k=
+X-Received: by 2002:a17:903:234d:b0:296:5ebe:8fa with SMTP id
+ d9443c01a7336-2984094a5bcmr70869985ad.23.1762946887940; Wed, 12 Nov 2025
+ 03:28:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251108-vsock-selftests-fixes-and-improvements-v4-8-d5e8d6c87289@meta.com>
+References: <20251111130624.3069704-1-royluo@google.com> <20251111130624.3069704-2-royluo@google.com>
+ <20251112-logical-grebe-of-modernism-dcf83b@kuoka>
+In-Reply-To: <20251112-logical-grebe-of-modernism-dcf83b@kuoka>
+From: Roy Luo <royluo@google.com>
+Date: Wed, 12 Nov 2025 19:27:30 +0800
+X-Gm-Features: AWmQ_bn2RT6EbgSb3mHFWKckHPwcrvZ-s2OqhjevpH_GhYx3Lcain4Rs18PGkFc
+Message-ID: <CA+zupgxALZjF8m=PfYgb1QUgf0u+-Su0XYQ3VB=fCpM1dt9s_Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
+	Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 08:00:59AM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Wed, Nov 12, 2025 at 4:32=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
->In preparation for future patches that introduce tests that cannot
->re-use the same VM, add functions to identify those that *can* re-use a
->VM.
+> On Tue, Nov 11, 2025 at 01:06:23PM +0000, Roy Luo wrote:
+> > Document the device tree bindings for the DWC3 USB controller found in
+> > Google Tensor SoCs, starting with the G5 generation.
+> >
+> > The Tensor G5 silicon represents a complete architectural departure fro=
+m
+> > previous generations (like gs101), including entirely new clock/reset
+> > schemes, top-level wrapper and register interface. Consequently,
+> > existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitati=
+ng
+> > this new device tree binding.
+> >
+> > The USB controller on Tensor G5 is based on Synopsys DWC3 IP and featur=
+es
+> > Dual-Role Device single port with hibernation support.
+> >
+> > Signed-off-by: Roy Luo <royluo@google.com>
+> > ---
+> >  .../bindings/usb/google,gs5-dwc3.yaml         | 140 ++++++++++++++++++
+> >  1 file changed, 140 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dw=
+c3.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml=
+ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+> > new file mode 100644
+> > index 000000000000..bfaf6cbdfec3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+> > @@ -0,0 +1,140 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +# Copyright (c) 2025, Google LLC
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
+> > +
+> > +maintainers:
+> > +  - Roy Luo <royluo@google.com>
+> > +
+> > +description:
+> > +  Describes the DWC3 USB controller block implemented on Google Tensor=
+ SoCs,
+> > +  starting with the G5 generation. Based on Synopsys DWC3 IP, the cont=
+roller
+> > +  features Dual-Role Device single port with hibernation add-on.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: google,gs5-dwc3
 >
->By continuing to re-use the same VM for these tests we can save time by
->avoiding the delay of booting a VM for every test.
+> Doug just said SoC is lga, not gs5, so you need both to align on that.
+> Actually not only you both, but whoever else is upstreaming from Google.
 >
->Reviewed-by: Simon Horman <horms@kernel.org>
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Changes in v4:
->- fix botched rebase
->---
-> tools/testing/selftests/vsock/vmtest.sh | 63 ++++++++++++++++++++++++++-------
-> 1 file changed, 50 insertions(+), 13 deletions(-)
+> It is not the community who should synchronize and organize way how
+> Google works on their own stuff. Google should organize how Google works
+> on your Google's stuff.
 >
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index 2dd9bbb8c4a9..a1c2969c44b6 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -46,6 +46,8 @@ readonly TEST_DESCS=(
-> 	"Run vsock_test using the loopback transport in the VM."
-> )
->
->+readonly USE_SHARED_VM=(vm_server_host_client vm_client_host_server vm_loopback)
->+
-> VERBOSE=0
->
-> usage() {
->@@ -461,7 +463,44 @@ test_vm_loopback() {
-> 	return "${KSFT_PASS}"
-> }
->
->-run_test() {
->+shared_vm_test() {
->+	local tname
->+
->+	tname="${1}"
->+
->+	for testname in "${USE_SHARED_VM[@]}"; do
->+		if [[ "${tname}" == "${testname}" ]]; then
->+			return 0
->+		fi
->+	done
->+
->+	return 1
->+}
->+
->+shared_vm_tests_requested() {
->+	for arg in "$@"; do
->+		if shared_vm_test "${arg}"; then
->+			return 0
->+		fi
->+	done
->+
->+	return 1
->+}
->+
->+run_shared_vm_tests() {
->+	local arg
->+
->+	for arg in "$@"; do
->+		if ! shared_vm_test "${arg}"; then
->+			continue
->+		fi
->+
->+		run_shared_vm_test "${arg}"
->+		check_result "$?" "${arg}"
->+	done
->+}
->+
->+run_shared_vm_test() {
-> 	local host_oops_cnt_before
-> 	local host_warn_cnt_before
-> 	local vm_oops_cnt_before
->@@ -537,23 +576,21 @@ handle_build
->
-> echo "1..${#ARGS[@]}"
->
->-log_host "Booting up VM"
->-pidfile="$(create_pidfile)"
->-vm_start "${pidfile}"
->-vm_wait_for_ssh
->-log_host "VM booted up"
->-
-> cnt_pass=0
-> cnt_fail=0
-> cnt_skip=0
-> cnt_total=0
->-for arg in "${ARGS[@]}"; do
->-	run_test "${arg}"
->-	rc=$?
->-	check_result "${rc}" "${arg}"
->-done
->
->-terminate_pidfiles "${pidfile}"
->+if shared_vm_tests_requested "${ARGS[@]}"; then
->+	log_host "Booting up VM"
->+	pidfile="$(create_pidfile)"
->+	vm_start "${pidfile}"
->+	vm_wait_for_ssh
->+	log_host "VM booted up"
->+
->+	run_shared_vm_tests "${ARGS[@]}"
->+	terminate_pidfiles "${pidfile}"
->+fi
-
-I was expecting something in case the VM couldn't be shared, but I think 
-we'll add that later. It's fine for now.
-
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
->
-> echo "SUMMARY: PASS=${cnt_pass} SKIP=${cnt_skip} FAIL=${cnt_fail}"
-> echo "Log: ${LOG}"
->
->-- 
->2.47.3
+> Best regards,
+> Krzysztof
 >
 
+Ack, will align on the next patchset.
+
+Thanks,
+Roy Luo
 
