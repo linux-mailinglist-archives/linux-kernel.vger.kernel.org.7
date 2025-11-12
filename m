@@ -1,328 +1,190 @@
-Return-Path: <linux-kernel+bounces-897445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1E6C52E44
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:08:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B342BC52FF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FB23540D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:48:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A73804FDB66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3295B33E346;
-	Wed, 12 Nov 2025 14:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF7A33F372;
+	Wed, 12 Nov 2025 14:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bmUxz52/";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZdMIYlkj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJqh7Tzi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D6833DEF7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719042C0273
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958477; cv=none; b=ORLFHvnGETb/kcVkjAXNjWCtoUMDUlo+CBBxI7XVwACg/7WYt54eAnLlUya4q6OyI78dlUb4oj9+IVUdTI6nZurcIiHh3SLgLEk1o4ck1ny7RYDGpb0fS4Wl4JCNKS1yCJvOd1yy/5ZDnQXvKR8b70MqDuca9LlewX6LOgunCso=
+	t=1762958530; cv=none; b=MHbVyKVM+Q8hbXLleVEvR2eMmUCx4RDsCguTWy9DRdPYmQ0vaKzBnkHSw1McNypEBDuogJpoKvbEc9bBl6QhsO/4T6LeBPCXAQGb0/VXbjT4PeV0dEd9ZJVm0y9InqL3SW559Is/uT+0C3jIfJOJ5MAV/KkntO/bNkh2LdZe2DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958477; c=relaxed/simple;
-	bh=9JqFN+lUh03KH6OhyiZLi7QPccTtindegh7DAZCJnH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rDtrVn0aiURqL9yelRCboaCDm6mQBTOtcPL4q2xabykOPpBxmWk150oS+ivQKADeuxtaxekEOFWBmq4IDgBYpijsj8HbTmVthtGeGZDlyeD8o88/nkZtbSdQ+qhpQ0vbZk2w7fF7vpI75IBRYVkMg9HRXsDQqSZ9RRtjG90+GG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bmUxz52/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZdMIYlkj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9giPH1109175
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:41:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UD4Gbr1H+DyzPCYqHbTvNAKVexCnZ/nezzgxwkeMezY=; b=bmUxz52/Iw9SLV8Q
-	cDUdlkCUELernVB3ZD4vXVxAzAyfyjHPRV4xCAJlngjnNUtOc6Byq2KNxi/tStqf
-	CUjtiJ4fgX8eoTQr8IhP2KGRNEbmNq9E0TB84wQeSeq/XADx+e2QFXlfG84dcuKP
-	S59yKXRaZnAY8alRrsu5X6zO7UPeoknhBNj1DtSAvUVoynzuEYF1Uho/cnPF5fpr
-	8g9KVjP22Xq1igkVAhGzApngqZH3YVbgg743xPFI5G9v4SD0h47Xd6ujpigal5he
-	jsAHEPMCgLDJXPhTBBNZvtId/HyXLidtmdlWv/KeeBvaA2aD2zBv3FQT65VSG2Nz
-	My7pdw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqum0tgq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:41:14 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ede0bd2154so1229731cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:41:14 -0800 (PST)
+	s=arc-20240116; t=1762958530; c=relaxed/simple;
+	bh=82XTjjSHShPDBuv5ewTva+T1nGonEhZqWcuzr/UnA34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=paaNO+iIexo9i9yF6T1LqRjDmuOefr/yTE+hbaCH4Eh80pdR56DIPJqG0BvLP3TkNsvl47n3kyuAtO2gwsjy9wcEpp7GJEAeJzZ1cQ49eOKhMOAotySa5QJqrocQNmz0C16/zm14NzzcXZIUNTJOFp2vn5K6nPshm76zfDs6UmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJqh7Tzi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6418b55f86dso1290886a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:42:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762958473; x=1763563273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UD4Gbr1H+DyzPCYqHbTvNAKVexCnZ/nezzgxwkeMezY=;
-        b=ZdMIYlkjxosvHDoispMYNUUaiIwR2/aovpIyTiMl4u1oPcemCAyT/wA0HSl/kxAulZ
-         u88JUHx/ZSmuJ+StsNxJs4eDtLfDYMPT4+SietAWcehT4FEaD4rL9qo/+0+9xBc2xOw5
-         +IJmDc5llW4xsoDWS87LrI07CAK5XZ3H8Fg6fOBNvMXZ0mgeunfkeL5aViQ0kc86QrtH
-         GGE998O5ctgICLLTyikWwNG26c9qmNMAYKDXYkirRb9ckj5XqHAe9SRpHmHFXpXjnCK0
-         yesglqAl4/oqw56oNMQfFfsIVW7qy8EIK2mPkYVLWkcmNjgXwZhOKoQ/oXKPoXWDmGLB
-         PlpQ==
+        d=gmail.com; s=20230601; t=1762958525; x=1763563325; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6N2LkhR7aeG78fCFoaE5f7J6Vqh6iLlOX4wNPsAzjs=;
+        b=FJqh7Tzi2NZeeQDnKBlIHkUb41vUttUkFkJPrP5EJTRYNECRW0rdR1Ds9sXury7tXF
+         r6rS64n0UuAaO/lUr0HIaieCMS2+nK7OBsg3PiTe+o0xjBbPh+vOC+UlMqLf1g+dzIW6
+         R1kBgjKjQQ8hWL2vRy4LfG9T6O43aM2+WClgdL4dmiOAOvAPdswaiyiW9N+gMnnIHYzo
+         KJGCINJ/eteobm+X6I5tUiZAVfPGGkBieN5AfTyEVC61EP6YqOYhOGFLx/jejQwrs9NS
+         lgVPuim0IAyLR1teR6r99IS4FhXdk5hsmlZTcw+u9/3TI/xeAbE4sEDmWskCRalGlHsf
+         /hYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762958473; x=1763563273;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UD4Gbr1H+DyzPCYqHbTvNAKVexCnZ/nezzgxwkeMezY=;
-        b=wt7NzekadsnO8zgjx1eGp+Wh9ZE0Buhs+243jiauPBTn7H3czMKQPwcaZP62krLoN9
-         xPRwqHmVMFo6gvaEV0aHCKzyNMwKuvONDi5Wz+8aIHA3zn1XcElF0ghnS9ahao/T5EDv
-         icxoOcinHQ0y05oOZqcP3vm3twfdEIqtttvmxcT5I03tC320BaYgzcf3gpUqkSellTDl
-         Z+ugdrncfyh0dpgJmZx4OSdqFLk5crBBXjrP33SHHXnB0UHWyrKdQKAEFaiFCVg9tIjk
-         gbvvlpqaV1ldn4WvI9vb+xP0+vg/rUf8yHT8Fq4c5ztShlTbmT/1/+I8KFjlGB2WJCHM
-         z8cA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+AqVzIcz9f0l1CdKTFcJpO97VjFNaRkVEKWI/xcR23fx51ajz6wRADog1mH7uWSgDO2x6pieRqsHfWDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdLLH9znIyRqgCB9eTIeBCZYk5AYtxlSO00IcDMvvjNZ73b178
-	dryAFKMk2p0I5NM5/15wxGW39ESFkN4euDoYMxvSFElcfsDsCxPCU5BZQqOjABKAXKxPTwXZcOV
-	0/nRVu4tYJILbdCNoq5OW1EpO8xowj1c7fjeYulfccqGMatJg7vaBIirI6XSeqAZw8T0=
-X-Gm-Gg: ASbGnctpjct6gjz+b9QJjXQkqfC+Bzr0AVN8+dlL8J0uBMJ1b8qqF0bT17EVResXpYg
-	XrZ4Qp+hWrSh9yAdVnoNzjpmUfWsgXsQRtUosaPduEioQPQZLqBW6H3zQtvQTr+ofxLotRfMpad
-	WW3eOptxmABgs5HB3ul8tBsocR2A3UpD24ynEJNr8BHLtu/uan0qKbiYfqpZkuPB0z1bQ1qY8o2
-	8fKS9j85j/Q7/S5/wAkwXqo3NmZqY4E9V8VbyKZPRkl7/5uHL66EIko1tC9G6VwqnO87J7QcsTn
-	l8H0b47PSzwagwoML2xEKjLb6JVYcbzs9Hm06agkM5bsVZg+v50cvl2yrSen1fmKUBV8vzs20wR
-	TEaE3LO0/9/KewKYRYrQN0bZfPaS/E+zpuqHO/2gZO9gl3vhNS4rNFusl
-X-Received: by 2002:a05:622a:728c:b0:4ed:e2dc:dae4 with SMTP id d75a77b69052e-4ede2dceb1emr8250711cf.0.1762958473422;
-        Wed, 12 Nov 2025 06:41:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGXNVu4MbvjBQmXxL3FDdcuNjCm2cJCAQ1jZODPaFYu8y34KljTh9u/VDha9brFuHl1b+1Ffg==
-X-Received: by 2002:a05:622a:728c:b0:4ed:e2dc:dae4 with SMTP id d75a77b69052e-4ede2dceb1emr8250331cf.0.1762958472880;
-        Wed, 12 Nov 2025 06:41:12 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64169852018sm9952464a12.16.2025.11.12.06.41.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 06:41:12 -0800 (PST)
-Message-ID: <f9aafd73-fe4a-4399-a0c8-0da1c109283a@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 15:41:08 +0100
+        d=1e100.net; s=20230601; t=1762958525; x=1763563325;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E6N2LkhR7aeG78fCFoaE5f7J6Vqh6iLlOX4wNPsAzjs=;
+        b=XdF/3xZVdRgex8gGrGlWrqh3xkeV2dDKuFbz6ch0OJDaNgxZ3niBM6pZBK6nJQMy6z
+         vldj+lBa/1ZoQIBjt3nf09cnjPYM7GGRFyUBLpfk0SrPLo6F20JZNABKfum/x+EZPADX
+         kUT45zqZGHy5otEEJMhWzv2fbxiQZ6g12r+H/I4OMiVBPe0KDJBrOrI2EnKSQKNl4gud
+         MYQmgTphoGKqAR73PYEa1J9sXvnnJavAsrKxjIURrz57QJ10wvxmZcF7uhmsWOB0bnDp
+         mW/DsmFNHq+mXQ6DfGN/FkydcS46kekl3oRyiSnqJWj2zcsKPN2A8K3hEg1FLsbJTNRJ
+         H4pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnbNZy4uSCZV5NSG+yA5CE6vZ2WvpTpauTG6bdyAFtw3LDtcIbYnfOKL3R8Y+9cBQqmqhaAXe4ChXRoM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8YKp6w9PFJUecB0b0nc6Q6gFDRQZKbJ/AVlhJUbYzIi16HmNn
+	EmidXRa0ntDlzDAxmRxZoc6U6XHaiwtAfetJuQSNimdeEjKC8ygS44B7
+X-Gm-Gg: ASbGnculnCI5QtuCMXwtL/yzAqMxQu9UkxocftokY+V7TBobeyqo7TfoYLCInGK5Owj
+	RASPlpxVvfblm3J4LZhXdBFSqnUSd6dOVLCD5MfwLER7SNKQ13ItkhXH06lQch6HiEa8UqrcZuT
+	1m9P/KQlw8xBp+r6fHFJDAH5EEA3t2jrDyJc1EoE1/aNiML60Q/Sfsga02Nom9wDRT/SMJV0QgA
+	mqwIr7tgZ99VdyhWrSY9QORefH9VfZ+IrPd509ItcLB/X0agkKMd+6BGrRdNQ/wFFs3SU/0x48s
+	FaVKdkkOO2jm91WparAhusCIxCaj+OIPjKDhwIOHVk2LHc0xXgxSDJ+MNfis4Lm+VmL4m6xjmFm
+	6CUE8IINS7ibCbH7KpdvTWSAvbhDddtNl2wGWsTQwOaDujv7/CFXxdSqEM3gZJxZpt42NhX2KZT
+	z/DInxBLuGpALH2FDfLog1fcjS1A0=
+X-Google-Smtp-Source: AGHT+IFTNGoT4aTk5EceAUoALwAHvKb+bdrKgtaYUbE8eWmnwtKSrKlBlBHMiZPM5J2J25G44v5DFQ==
+X-Received: by 2002:a05:6402:13c1:b0:640:528c:7d49 with SMTP id 4fb4d7f45d1cf-6431a57e4d4mr3033556a12.38.1762958524375;
+        Wed, 12 Nov 2025 06:42:04 -0800 (PST)
+Received: from SMW024614.wbi.nxp.com ([128.77.115.158])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64183bc4533sm8411180a12.4.2025.11.12.06.42.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 06:42:04 -0800 (PST)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: SOF: imx9: use SCMI API for LM management
+Date: Wed, 12 Nov 2025 06:41:24 -0800
+Message-ID: <20251112144124.680-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/21] drm/msm/a8xx: Add support for Adreno X2-85 GPU
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse
- <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Connor Abbott <cwabbott0@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        devicetree@vger.kernel.org
-References: <20251110-kaana-gpu-support-v2-0-bef18acd5e94@oss.qualcomm.com>
- <20251110-kaana-gpu-support-v2-17-bef18acd5e94@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251110-kaana-gpu-support-v2-17-bef18acd5e94@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDExOCBTYWx0ZWRfXxzUSE6qxbQlh
- 3EwodWWyziCEESoSzQLx8Hz9+0xeSztALz4IQ47ZAJ0jO7YgR9PRAi4FAmr6mZ8VDS8z9eRMtg3
- zK83P3YeefqNKOfIwbytPswQ1lmed13TnnBI3O+y7JwdsjML1XCitBFhp7fr7bx/jKB7XQ0AHQ5
- XB5LSS7XPyuRtwgaltuut1ZVVUoqUHM+kR23bwRYwi37P8tsjWuF3JkmnwFVvEOs4WzFeXb43pb
- zYA/Y6zviHpRyiCMRBzvzudXQuMVKucMIHlqH2+FDknAzXW5wR8wa13SM1q3ngNwmx8TG0hnjNz
- JKbTS3B+58f4Hyt6KqAv6pWPdUqHoWBZUoByngwixmu/NBtFi0B4hRAtJZFlUMeTlfflFeir+WE
- mkTfnAx8mN4tHfsgqVJd+Q6e/HFj6A==
-X-Proofpoint-GUID: kJbNVPGC0M8hBW_2PJZiNSqPRr8sbWwF
-X-Proofpoint-ORIG-GUID: kJbNVPGC0M8hBW_2PJZiNSqPRr8sbWwF
-X-Authority-Analysis: v=2.4 cv=KeTfcAYD c=1 sm=1 tr=0 ts=69149c8a cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=BrXyDZ9iCYK2Fy0JuVIA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_04,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120118
+Content-Transfer-Encoding: 8bit
 
-On 11/10/25 5:37 PM, Akhil P Oommen wrote:
-> Adreno X2-85 GPU is found in the next generation of Qualcomm's compute
-> series chipset called Snapdragon X2 Elite (a.k.a Glymur). It is based
-> on the new A8x slice architecture and features up to 4 slices. Due to
-> the wider 12 channel DDR support, there is higher DDR bandwidth available
-> than previous generation to improve performance.
-> 
-> Add a new entry in the catalog along with the necessary register
-> configurations to enable support for it.
-> 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-[...]
+Linux supports NXP's LMM SCMI protocol so switch to using the appropriate
+API. The SIPs were intended to act as placeholders until the support for
+said protocol was upstreamed.
 
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 131 ++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a8xx_gpu.c     |   3 +
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   5 ++
->  3 files changed, 139 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index fa3ae725f389..2e5b0573c212 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -1625,6 +1625,108 @@ static const struct adreno_info a7xx_gpus[] = {
->  };
->  DECLARE_ADRENO_GPULIST(a7xx);
->  
-> +static const struct adreno_reglist_pipe x285_nonctxt_regs[] = {
+The underlying CPU protocol command from IMX_SIP_SRC_M_RESET_ADDR_SET is
+replaced by a LMM protocol command with the same effect (i.e. setting the
+boot address) since using the CPU protocol would require additional
+permissions (which TF-A already had). Apart from this, the SIPs are
+replaced by their equivalent Linux LMM commands.
 
-It's certainly not the same silicon, but a830 sets a bunch more regs
-here and has a lot more comments in kgsl. Could you check if any of
-these settings are required/beneficial?
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+---
+ sound/soc/sof/imx/imx9.c | 36 ++++++++----------------------------
+ 1 file changed, 8 insertions(+), 28 deletions(-)
 
+diff --git a/sound/soc/sof/imx/imx9.c b/sound/soc/sof/imx/imx9.c
+index 853155d5990a..e56e8a1c8022 100644
+--- a/sound/soc/sof/imx/imx9.c
++++ b/sound/soc/sof/imx/imx9.c
+@@ -3,19 +3,11 @@
+  * Copyright 2025 NXP
+  */
+ 
+-#include <linux/arm-smccc.h>
++#include <linux/firmware/imx/sm.h>
+ 
+ #include "imx-common.h"
+ 
+-#define IMX_SIP_SRC 0xC2000005
+-#define IMX_SIP_SRC_M_RESET_ADDR_SET 0x03
+-
+-#define IMX95_CPU_VEC_FLAGS_BOOT BIT(29)
+-
+-#define IMX_SIP_LMM 0xC200000F
+-#define IMX_SIP_LMM_BOOT 0x0
+-#define IMX_SIP_LMM_SHUTDOWN 0x1
+-
++#define IMX95_M7_CPU_ID 0x1
+ #define IMX95_M7_LM_ID 0x1
+ 
+ static struct snd_soc_dai_driver imx95_dai[] = {
+@@ -38,7 +30,6 @@ static int imx95_ops_init(struct snd_sof_dev *sdev)
+ 
+ static int imx95_chip_probe(struct snd_sof_dev *sdev)
+ {
+-	struct arm_smccc_res smc_res;
+ 	struct platform_device *pdev;
+ 	struct resource *res;
+ 
+@@ -49,31 +40,20 @@ static int imx95_chip_probe(struct snd_sof_dev *sdev)
+ 		return dev_err_probe(sdev->dev, -ENODEV,
+ 				     "failed to fetch SRAM region\n");
+ 
+-	/* set core boot reset address */
+-	arm_smccc_smc(IMX_SIP_SRC, IMX_SIP_SRC_M_RESET_ADDR_SET, res->start,
+-		      IMX95_CPU_VEC_FLAGS_BOOT, 0, 0, 0, 0, &smc_res);
+-
+-	return smc_res.a0;
++	return scmi_imx_lmm_reset_vector_set(IMX95_M7_LM_ID, IMX95_M7_CPU_ID,
++					     0, res->start);
+ }
+ 
+ static int imx95_core_kick(struct snd_sof_dev *sdev)
+ {
+-	struct arm_smccc_res smc_res;
+-
+-	arm_smccc_smc(IMX_SIP_LMM, IMX_SIP_LMM_BOOT,
+-		      IMX95_M7_LM_ID, 0, 0, 0, 0, 0, &smc_res);
+-
+-	return smc_res.a0;
++	return scmi_imx_lmm_operation(IMX95_M7_LM_ID, SCMI_IMX_LMM_BOOT, 0);
+ }
+ 
+ static int imx95_core_shutdown(struct snd_sof_dev *sdev)
+ {
+-	struct arm_smccc_res smc_res;
+-
+-	arm_smccc_smc(IMX_SIP_LMM, IMX_SIP_LMM_SHUTDOWN,
+-		      IMX95_M7_LM_ID, 0, 0, 0, 0, 0, &smc_res);
+-
+-	return smc_res.a0;
++	return scmi_imx_lmm_operation(IMX95_M7_LM_ID,
++				      SCMI_IMX_LMM_SHUTDOWN,
++				      SCMI_IMX_LMM_OP_FORCEFUL);
+ }
+ 
+ static const struct imx_chip_ops imx95_chip_ops = {
+-- 
+2.43.0
 
-> +static const u32 x285_protect_regs[] = {
-> +	A6XX_PROTECT_RDONLY(0x00008, 0x039b),
-
-In case anyone asks, there are simply no registers before 0x8<<2
-
-> +	A6XX_PROTECT_RDONLY(0x003b4, 0x008b),
-> +	A6XX_PROTECT_NORDWR(0x00440, 0x001f),
-> +	A6XX_PROTECT_RDONLY(0x00580, 0x005f),
-> +	A6XX_PROTECT_NORDWR(0x005e0, 0x011f),
-> +	A6XX_PROTECT_RDONLY(0x0074a, 0x0005),
-> +	A6XX_PROTECT_RDONLY(0x00759, 0x0026),
-> +	A6XX_PROTECT_RDONLY(0x00789, 0x0000),
-> +	A6XX_PROTECT_RDONLY(0x0078c, 0x0013),
-> +	A6XX_PROTECT_NORDWR(0x00800, 0x0029),
-> +	A6XX_PROTECT_NORDWR(0x0082c, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x00837, 0x00af),
-> +	A6XX_PROTECT_RDONLY(0x008e7, 0x00c9),
-> +	A6XX_PROTECT_NORDWR(0x008ec, 0x00c3),
-> +	A6XX_PROTECT_NORDWR(0x009b1, 0x0250),
-> +	A6XX_PROTECT_RDONLY(0x00ce0, 0x0001),
-> +	A6XX_PROTECT_RDONLY(0x00df0, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x00df1, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x00e01, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x00e03, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x03c00, 0x00c5),
-> +	A6XX_PROTECT_RDONLY(0x03cc6, 0x0039),
-
-830 has start=0x03cc6 len=0x1fff but that must be a bug unless a lot of
-registers have shifted from there.. I see there's perf counters so perhaps
-perfetto-proofing?
-
-> +	A6XX_PROTECT_NORDWR(0x03d00, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x08600, 0x01ff),
-> +	A6XX_PROTECT_NORDWR(0x08e00, 0x00ff),
-> +	A6XX_PROTECT_RDONLY(0x08f00, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x08f01, 0x01be),
-> +	A6XX_PROTECT_NORDWR(0x09600, 0x01ff),
-> +	A6XX_PROTECT_RDONLY(0x0981a, 0x02e5),
-> +	A6XX_PROTECT_NORDWR(0x09e00, 0x01ff),
-> +	A6XX_PROTECT_NORDWR(0x0a600, 0x01ff),
-> +	A6XX_PROTECT_NORDWR(0x0a82e, 0x0000),
-> +	A6XX_PROTECT_NORDWR(0x0ae00, 0x0006),
-
-830 has len=4 here, with len=6 you can't write to GEN8_SP_NC_MODE_CNTL_2
-which I think may be useful for UMD
-
-> +	A6XX_PROTECT_NORDWR(0x0ae08, 0x0006),
-> +	A6XX_PROTECT_NORDWR(0x0ae10, 0x00bf),
-> +	A6XX_PROTECT_RDONLY(0x0aed0, 0x002f),
-> +	A6XX_PROTECT_NORDWR(0x0af00, 0x027f),
-> +	A6XX_PROTECT_NORDWR(0x0b600, 0x1fff),
-
-This carveout differs slightly vs 830 but I think that's mandated
-
-> +	A6XX_PROTECT_NORDWR(0x0dc00, 0x1fff),
-> +	A6XX_PROTECT_RDONLY(0x0fc00, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x18400, 0x003f),
-> +	A6XX_PROTECT_RDONLY(0x18440, 0x013f),
-> +	A6XX_PROTECT_NORDWR(0x18580, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x1b400, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x1f400, 0x0477),
-> +	A6XX_PROTECT_RDONLY(0x1f878, 0x0507),
-
-This differs vs a830 but it's kgsl that has a harmless? logic bug:
-
-{ GEN8_CP_PROTECT_REG_GLOBAL + 40, 0x1f400, 0x1f877, 1 },
-{ GEN8_CP_PROTECT_REG_GLOBAL + 41, 0x1f878, 0x1ffff, 0 },
-{ GEN8_CP_PROTECT_REG_GLOBAL + 42, 0x1f930, 0x1fc59, 1 },
-
-(0x1f930 is overwritten)
-
-> +	A6XX_PROTECT_NORDWR(0x1f930, 0x0329),
-> +	A6XX_PROTECT_NORDWR(0x1fd80, 0x1fff),
-> +	A6XX_PROTECT_NORDWR(0x27800, 0x007f),
-> +	A6XX_PROTECT_RDONLY(0x27880, 0x0385),
-> +	A6XX_PROTECT_NORDWR(0x27882, 0x000a),
-
-These 2 seem to have been changed vs 830 for counters (all good)
-
-> +	A6XX_PROTECT_NORDWR(0x27c06, 0x0000),
-> +};
-> +
-> +DECLARE_ADRENO_PROTECT(x285_protect, 64);
-> +
->  static const uint32_t a840_pwrup_reglist_regs[] = {
->  	REG_A7XX_SP_HLSQ_TIMEOUT_THRESHOLD_DP,
->  	REG_A7XX_SP_READ_SEL,
-> @@ -1809,6 +1911,35 @@ static const struct adreno_reglist a840_gbif[] = {
->  
->  static const struct adreno_info a8xx_gpus[] = {
->  	{
-> +		.chip_ids = ADRENO_CHIP_IDS(0x44070041),
-> +		.family = ADRENO_8XX_GEN1,
-> +		.fw = {
-> +			[ADRENO_FW_SQE] = "gen80100_sqe.fw",
-> +			[ADRENO_FW_GMU] = "gen80100_gmu.bin",
-> +		},
-> +		.gmem = 21 * SZ_1M,
-> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-> +			  ADRENO_QUIRK_HAS_HW_APRIV,
-
-No preemption and IFPC - I supopose the smart thing to do before we
-know things are stable
-
-> +		.funcs = &a8xx_gpu_funcs,
-> +		.a6xx = &(const struct a6xx_info) {
-> +			.protect = &x285_protect,
-> +			.nonctxt_reglist = x285_nonctxt_regs,
-> +			.gbif_cx = a840_gbif,
-> +			.gmu_chipid = 0x8010100,
-
-Is this the chip id for the final revision silicon?
-
-[...]
-
-> diff --git a/drivers/gpu/drm/msm/adreno/a8xx_gpu.c b/drivers/gpu/drm/msm/adreno/a8xx_gpu.c
-> index ad140b0d641d..d283d0b55623 100644
-> --- a/drivers/gpu/drm/msm/adreno/a8xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a8xx_gpu.c
-> @@ -175,6 +175,9 @@ static void a8xx_set_hwcg(struct msm_gpu *gpu, bool state)
->  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->  	u32 val;
->  
-> +	if (adreno_is_x285(adreno_gpu))
-> +		gpu_write(gpu, REG_A8XX_RBBM_CGC_0_PC, 0x00000702);
-
-kgsl sets this only when turning on hwcg (bool state in this func) and
-on a830 family - should we turn this into an A8XX_GEN1 check?
-
-Konrad
 
