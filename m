@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-896775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B527CC5132C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4BBC51335
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9233B7111
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87C43BAAF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D23F2FE072;
-	Wed, 12 Nov 2025 08:49:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98052FF167;
+	Wed, 12 Nov 2025 08:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5gy+rox"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532882FDC5B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A952FE59F;
+	Wed, 12 Nov 2025 08:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937365; cv=none; b=JChajekWnM9l+ahILqYuL61Br4zVqeM06119f4pjU/Rr7bHPjyrcIwdU2j4nGUTZi8O6Ahj0q3d3IvgsbXqo/uQjGMAGlMyWbPHdZy8siQ/+tL3odoER6ILjAUAFq92pwiK7eXYaqRS3NnOaMk8AZg8/4y437q+Qb9x0I4UdYdU=
+	t=1762937370; cv=none; b=ugzPs0lcUwFmJJ5TPmi7CUgGb+9hbpudMMLYHJgk9vC5JBq8WSFAxxoh6UjFdkCCdTAhyXCp0Le3qZ31RrZvVGTgk9Oz1GEKqRN1V6KZagIIwx191HFuEgagxnGC/TTK2hbxod3kwkF8eJqaKT12Ne7BnrtAq4Ix0P7zOb7nSP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937365; c=relaxed/simple;
-	bh=7Y0NcEO50k+Lkg2TaAhT6H2aLX/ROBKDfEWsp+yfC9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuf575DeutpNRT1my349vfGeOdOsPNmGCSab1HUG53zq3opnMoh/1n1/LF4Z8e5Zgq5IWUMYoBfbYEvmISlhbFvFfUCrijVNssGbaRTUQece9a6ZqNmZT9oxNXtd0kShNtOe6RghgL1VqfWb9kx3W65IglKzXDUx1yi4byaAxXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6XM-0002Yv-Jz; Wed, 12 Nov 2025 09:49:08 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6XL-0003Ic-24;
-	Wed, 12 Nov 2025 09:49:07 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 60C0B49D932;
-	Wed, 12 Nov 2025 08:49:07 +0000 (UTC)
-Date: Wed, 12 Nov 2025 09:49:07 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Cc: mani@kernel.org, thomas.kopp@microchip.com, mailhol.vincent@wanadoo.fr, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com, 
-	anup.kulkarni@oss.qualcomm.com
-Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
-Message-ID: <20251112-misty-functional-tench-b87da7-mkl@pengutronix.de>
-References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
+	s=arc-20240116; t=1762937370; c=relaxed/simple;
+	bh=2bO5GWa+ksv9jGsVNAnzNxpubiaRSvTea9kOBIEkY9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ELuj7VTFNA4NpFJOvqCJfS/aiqB9Jv5YGkM9+IAIiPumDslQVcg5T2FGfrSgFERQ5ybcaEUkSyWfPtupzLIY2MQdfUw/r+CStPjhAa/YCNCBdXSlrUhnnulGMFEJrHfOK7W8DaUaowSSudZ0l5CPTnZTLVSdNWGje0U+VF6Z8Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5gy+rox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A04C19423;
+	Wed, 12 Nov 2025 08:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762937369;
+	bh=2bO5GWa+ksv9jGsVNAnzNxpubiaRSvTea9kOBIEkY9U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=K5gy+roxD18z3MEqbjnOvxq6B5kD3+i+UwwtlGkDQDdcM4ZHNNvOlmpTtmuxX1jzy
+	 zjBjml3qpPwjw/f4KZkv7XfN8iSfVoMIDmjNJZoTxjMDmd93/3ES9To+jWx70yXAOT
+	 FgheutwT+AvgEnoWpUqyirE6GahkdS9SvYgT5ip0NJvTjmNUAOaaTHOuk1Msx44f8d
+	 kPWanXzUZ1baLPJGKkMRflcfN62C+07EK78hcLoTzSZdCffLT1LngDpu5TNkV1Cfod
+	 29VoGLgLf9ER9jlqfagt+9IXOVkaao3olRdxwVLXHLW/0AnQr5Uwl4O4XZE/nwWOeM
+	 B+qlu2rRUtRHA==
+From: Leon Romanovsky <leon@kernel.org>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Mark Bloch <mbloch@nvidia.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tariq Toukan <tariqt@nvidia.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Gal Pressman <gal@nvidia.com>,
+	Yael Chemla <ychemla@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>
+Subject: Re: [PATCH mlx5-next] net/mlx5: Expose definition for 1600Gbps link mode
+Date: Wed, 12 Nov 2025 10:49:13 +0200
+Message-ID: <176293717267.866356.6687904087070835949.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <1762863888-1092798-1-git-send-email-tariqt@nvidia.com>
+References: <1762863888-1092798-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x44lo3g2fuc72oal"
-Content-Disposition: inline
-In-Reply-To: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Leon Romanovsky <leonro@nvidia.com>
 
 
---x44lo3g2fuc72oal
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
-MIME-Version: 1.0
+On Tue, 11 Nov 2025 14:24:48 +0200, Tariq Toukan wrote:
+> This patch exposes new link mode for 1600Gbps, utilizing 8 lanes at
+> 200Gbps per lane.
+> 
+> 
 
-On 01.10.2025 14:40:00, Viken Dadhaniya wrote:
-> Hi all,
->
-> The mcp251xfd allows two pins to be configured as GPIOs. This series
-> adds support for this feature.
->
-> The GPIO functionality is controlled with the IOCON register which has
-> an erratum.
->
-> Patch 1 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime=
-_pm-v1-3-c26a93a66544@pengutronix.de/
-> Patch 2 refactor of no-crc functions to prepare workaround for non-crc wr=
-ites
-> Patch 3 is the fix/workaround for the aforementioned erratum
-> Patch 4 only configure pin1 for rx-int
-> Patch 5 adds the gpio support
-> Patch 6 updates dt-binding
->
-> As per Marc's comment on below patch, we aim to get this series into
-> linux-next since the functionality is essential for CAN on the RB3 Gen2
-> board. As progress has stalled, Take this series forward with minor code
-> adjustments. Include a Tested-by tag to reflect validation performed on t=
-he
-> target hardware.
->
-> https://lore.kernel.org/all/20240806-industrious-augmented-crane-44239a-m=
-kl@pengutronix.de/
+Applied, thanks!
 
-Applied to linux-can-next.
+[1/1] net/mlx5: Expose definition for 1600Gbps link mode
 
-Thanks,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---x44lo3g2fuc72oal
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSgAACgkQDHRl3/mQ
-kZwz0QgAipcjcGPzwKwxFbq5c4IoWpsPnYAFL+EOEL7hSL3OyHweBpeMW3tl7Lex
-NExeojiPB7ji26RDdMv6ZWeCsSo8z8zjGZSHo881gorLtT/RZXLEM2SR+HV0oCym
-ouEWEgVLMwAaN/EsB3OUiKP7MvrhBGdCWvZvHkwjxLaoB9BPaR9LHX1SgUfad6jb
-1UMT4Tmn9Nl26pZDubdl1ybVG9NOpQOlVXu4ne7p3OioVGWUXlaZhJmGL1pybMR0
-EHS9f7/h851NBzM+IdfF3pejmBU+22wZcFOrN9S8X4/td31HtVR9SLid5Yma/c85
-Ncye9dZMUL577iAde/B8uRWivo479g==
-=mfrj
------END PGP SIGNATURE-----
-
---x44lo3g2fuc72oal--
+Best regards,
+-- 
+Leon Romanovsky <leonro@nvidia.com>
 
