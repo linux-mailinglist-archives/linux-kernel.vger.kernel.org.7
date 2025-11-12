@@ -1,137 +1,136 @@
-Return-Path: <linux-kernel+bounces-897810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F46CC53B1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:32:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC08C53A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB65D503E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:19:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 650803489A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693373446CC;
-	Wed, 12 Nov 2025 17:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwK61djM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DB5345CD9;
+	Wed, 12 Nov 2025 17:20:05 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C3632ABD6;
-	Wed, 12 Nov 2025 17:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E43451A3;
+	Wed, 12 Nov 2025 17:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967887; cv=none; b=F8YLhFfSEzkSMRAsMXArr3qHh06uxQWL/gVoQbUbzMP2TiALD4GNi6OnARXPKBlLG5IsMso3ekGuI9RcMTHYmITXVlYTP39QWrDVtoavhxhDQgALdiZRSZdtLR8mvpWAFxZ31vue66G6gt2lgng8ak9ZaP68rjRr2aOCKcJS6mM=
+	t=1762968005; cv=none; b=g2N2Byj0w5FB72c9MtrzT7lkkP2mnlh0eSi5Kr2tKMuEtKamLnRnsc5laClY24QUakiiCfblBBAcl9IOxOtIBJi+v90OF+H1wm3d+pPUBe3zzWlpAKuWRtweySBd04VlIGDUr/Ve77hGSQm15Ob+soPUEuB2Z87H4EYxoZyTKho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967887; c=relaxed/simple;
-	bh=lywOI3ugT5GWb9bwVFXxkmySZuCeiZT6yvSuaKP0HcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXWTRAO2CedNUgSWMcUgxQsSPPSl9Sq4lY53c5FkQi+NxZn8q9Tb/UZW5FiqcSRtNihhYBVXCrgneN/gaa3fgvGLoKoOO5AaxvwXOmNSsjXrrPcP5LWY1yNetY1LsGPQ+ydrPAux8ICrYgJKaJr9/6V2js7Eatwr3rXgCQ5uPSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwK61djM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1882C4CEF7;
-	Wed, 12 Nov 2025 17:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762967885;
-	bh=lywOI3ugT5GWb9bwVFXxkmySZuCeiZT6yvSuaKP0HcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bwK61djMIzlYVBJc4Z+qj++gbp7r+37xPxbLaPk/yQnLIoBvSOEuXsvHZYOd7uFzw
-	 AazikNH2wSTsfKCKQoT4J7Yj/XOt83DkO+Y6752a3ur8rfvKcQyL3Md9GHy8pzJj39
-	 a+xb2ppjv/PZ2gTEf+8OjgIlhSFPRC/2nMbtXTH7MVDY4S2OpdWnD88oOqp3hdJ/eK
-	 UlUcv0XSDLkriDXp1QKO8YIKuxycCakV/M2WvQfoC9HpoLylVoXc7WuafnKiBDQ7Um
-	 EoscBrZSBliWNOgV0rJh+az/NLMf1Yj6U23fykSjLTWGDNWPI5v+dSF4nECmNMLnsz
-	 IU5A8BD7Dd8PQ==
-Date: Wed, 12 Nov 2025 17:17:57 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1762968005; c=relaxed/simple;
+	bh=DbnY/x2YtJHNcfRvXqXgSvH0s1JmoypXph38fcRbzjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i7n82T821JgGYCr//7LppkjnjxMMVmtqVrfsgOuLljmp+NTeNjxNWsx3ydLwOo+ZwxlK/xu13g60UIwnQpS/ataxzWgQfrIDJ31PHfTfOa1OFEsaahCWRzQv1+bW2pj/uMFmLu/D1kRp+Yljckp+ox+utiFNoAuT9T1QukYSTUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ceb250d6bfeb11f0a38c85956e01ac42-20251113
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP, DN_TRUSTED
+	SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:0bf9be2b-6375-4dc2-9421-be126dd8db82,IP:10,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:5
+X-CID-INFO: VERSION:1.3.6,REQID:0bf9be2b-6375-4dc2-9421-be126dd8db82,IP:10,URL
+	:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:5
+X-CID-META: VersionHash:a9d874c,CLOUDID:394edc65d7854e1d9a3c2af0a673f48f,BulkI
+	D:251113011956PDO1GP7J,BulkQuantity:0,Recheck:0,SF:10|66|78|102|850,TC:nil
+	,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ceb250d6bfeb11f0a38c85956e01ac42-20251113
+X-User: hehuiwen@kylinos.cn
+Received: from localhost.localdomain [(220.202.195.89)] by mailgw.kylinos.cn
+	(envelope-from <hehuiwen@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 434298174; Thu, 13 Nov 2025 01:19:55 +0800
+From: Huiwen He <hehuiwen@kylinos.cn>
+To: robin.clark@oss.qualcomm.com
+Cc: sean@poorly.run,
+	konradybcio@kernel.org,
+	lumag@kernel.org,
+	abhinav.kumar@linux.dev,
+	jesszhan0024@gmail.com,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
-	Inochi Amaoto <inochiama@outlook.com>, sophgo@lists.linux.dev,
-	linux-serial@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 00/13] riscv: Add initial support for Anlogic DR1V90
-Message-ID: <20251112-bazooka-dragster-cf5c508094e3@spud>
-References: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
+	Huiwen He <hehuiwen@kylinos.cn>
+Subject: [PATCH] drm/msm: fix missing NULL check after kcalloc in crashstate_get_bos()
+Date: Thu, 13 Nov 2025 01:19:47 +0800
+Message-Id: <20251112171947.486220-1-hehuiwen@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sV5/agMmM68jKYjx"
-Content-Disposition: inline
-In-Reply-To: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
+Content-Transfer-Encoding: 8bit
 
+The crashstate_get_bos() function allocates memory for `state->bos`
+using kcalloc(), but the vmbind path does not check for allocation
+failure before dereferencing it in the following drm_gpuvm_for_each_va()
+loop. This could lead to a NULL pointer dereference if memory allocation
+fails.
 
---sV5/agMmM68jKYjx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix this by wrapping the drm_gpuvm_for_each_va() loop with a NULL check
+on state->bos, similar to the safety check in the non-vmbind path.
 
-On Tue, Oct 21, 2025 at 05:41:35PM +0800, Junhui Liu wrote:
-> This introduces initial support for the Anlogic DR1V90 SoC [1] and the
-> Milianke MLKPAI-FS01 [2] board.
->=20
-> The DR1V90 is a RISC-V based FPSoC from Anlogic, featuring a Nuclei
-> UX900 [3] core as its processing system (PS) and 94,464 LUTs in the
-> programmable logic (PL) part. The Milianke MLKPAI-FS01 board is one of
-> the first platforms based on this SoC, with UART1 routed to a Type-C
-> interface for console access.
->=20
-> Tested on the Milianke MLKPAI-FS01 board with both the vendor's OpenSBI
-> and the not-yet-upstreamed mainline OpenSBI [4], as well as the vendor=E2=
-=80=99s
-> U-Boot. Because the vendor=E2=80=99s OpenSBI is loaded at 0x1f300000, we =
-have
-> to additionally reserve the DRAM region 0x1fe00000=E2=80=930x1fffffff to =
-prevent
-> overlap if using vendor's OpenSBI.
->=20
-> Link: https://www.anlogic.com/product/fpga/saldragon/dr1 [1]
-> Link: https://www.milianke.com/product-item-104.html [2]
-> Link: https://nucleisys.com/product/900.php [3]
-> Link: https://github.com/pigmoral/opensbi/tree/dr1v90 [4]
+Fixes: af9aa6f316b3d ("drm/msm: Crashdump support for sparse")
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+---
+ drivers/gpu/drm/msm/msm_gpu.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-Thanks for grabbing the irqchip stuff Thomas.
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index 17759abc46d7..a9b5f5106ebc 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -287,16 +287,17 @@ static void crashstate_get_bos(struct msm_gpu_state *state, struct msm_gem_submi
+ 
+ 		state->bos = kcalloc(cnt, sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
+ 
+-		drm_gpuvm_for_each_va (vma, submit->vm) {
+-			bool dump = rd_full || (vma->flags & MSM_VMA_DUMP);
++		if (state->bos)
++			drm_gpuvm_for_each_va(vma, submit->vm) {
++				bool dump = rd_full || (vma->flags & MSM_VMA_DUMP);
+ 
+-			/* Skip MAP_NULL/PRR VMAs: */
+-			if (!vma->gem.obj)
+-				continue;
++				/* Skip MAP_NULL/PRR VMAs: */
++				if (!vma->gem.obj)
++					continue;
+ 
+-			msm_gpu_crashstate_get_bo(state, vma->gem.obj, vma->va.addr,
+-						  dump, vma->gem.offset, vma->va.range);
+-		}
++				msm_gpu_crashstate_get_bo(state, vma->gem.obj, vma->va.addr,
++							  dump, vma->gem.offset, vma->va.range);
++			}
+ 
+ 		drm_exec_fini(&exec);
+ 	} else {
+-- 
+2.25.1
 
-I've applied this, with myself listed as maintainer. I set the status to
-"Odd Fixes" because I will be doing no work on it and only applying
-patches that people send in. I'll happy pass the platform off to someone
-qualified to maintain it, should that person be willing to do so :)
-
-Patches are here:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dan=
-logic-initial
-
-I'll submit as a standalone PR to Arnd et al over in the soc group for
-the next release.
-
-Cheers,
-Conor.
-
---sV5/agMmM68jKYjx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTBRQAKCRB4tDGHoIJi
-0m7BAQD1yYi9jfzMwFoKsn729d+GEAmzldurXKdZYtAcmWmIdAEAxWTgsRJKilvT
-RFkLQvvfFeBChW/ncbEBG5CxBatGEg0=
-=CwfP
------END PGP SIGNATURE-----
-
---sV5/agMmM68jKYjx--
 
