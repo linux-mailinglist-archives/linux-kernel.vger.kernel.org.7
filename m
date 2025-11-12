@@ -1,170 +1,148 @@
-Return-Path: <linux-kernel+bounces-898097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B302EC545D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4053C54615
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7865A4F28E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:03:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 998D64E6CD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C30E1CAA79;
-	Wed, 12 Nov 2025 20:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A9C2D12F1;
+	Wed, 12 Nov 2025 20:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrRAgHrg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/ZMvnzn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55B5279334
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266052D0610;
+	Wed, 12 Nov 2025 20:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762977811; cv=none; b=dqEgmBbMliMoXBYZ+TOhjZF5vjO/s7Az+pBAKPphRymeoCke7+3s9cwjyL1KOZX/puL4P00Fs0eWrocZTczni8VERTiiUiuDv8NQfqncTRQCWEsYa/dYPQ0ThbtHOemO2KxMbEXoTmyZrQJIsVX7nv/GVNRZVr0h1vCzLX2WPQo=
+	t=1762977831; cv=none; b=CWXf95NeFKtesymo4keo/bdB2YxJ5WTLBZ1C3dbC7JhfAIu1NrV9p64PkbDYBznk6q7Yzxg3Am6PDmZu4hC5zNkUEP4AeGJYT7OS/Vg3rn5uqs6OvNQ8tIN/tHyeG6hOtvqIHrCxpxXRm839aPOfFnJmWCWW+eQJROuQwNqi80o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762977811; c=relaxed/simple;
-	bh=2truygGR7fmvsFgLhsjwjiIdPMxhJOWDBjbJln/EW4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQcxjWd9wsxWpETTjfo5JDQ8lz7p7yyK1/mc6wykRIZSMNY30/TDnbcWjhhAdkWVI72MF7+l87BykO9O2TZ001o7PzYhrEIXhfLcR4tq1voeHzYnkvW0L9cQH5ih2O1NZ3W6K3oc9Ipb1Rx5uSyXYwU+tYnSJM5nFsW+fEIiyFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrRAgHrg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D50C2BC86
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:03:31 +0000 (UTC)
+	s=arc-20240116; t=1762977831; c=relaxed/simple;
+	bh=nUO9ROu0gW7/ns/uQ28gcX3yc+GW0w13a9/X2aAT8jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ves+Y/oskLKuhBUbh7SFqv3Q1+FoSCUzhUoaRXbwiFOpxZjl9A0uzHLotbrxpd5AzFAQGqEu9cLKXD1jxJ8+K42uKyUrAeuUrE6FU4jGD9Sf3PZTyvqmDeWlME0iy/0yT47EI3gSJtX87/IEwa/NlcX+L6u6rjzsFBL1F6DvzB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/ZMvnzn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5E0C19422;
+	Wed, 12 Nov 2025 20:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762977811;
-	bh=2truygGR7fmvsFgLhsjwjiIdPMxhJOWDBjbJln/EW4E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HrRAgHrgewQiNS6qPWAgMzhx0EJLVM27DRZ4Tg0nMaz0+LIhxNjRX+zY+EmKQQ4fv
-	 uBna2AoeL7CTxoTYsVs2G0hZU1461VcmYnqSIAWJVWnEbq88CQCBo7hbr6QtY5XJmu
-	 HRzzDwG7vdQxlpfBakCwHj0NfDKSzWywGME4H6CmxMKovs/5ZMWaXnDyLY19OAcDYO
-	 pBG3KHzpyXRjxEJXURoxvDqonp2+LRY1Y/UfCsphnN2+hwJgi0doeurcgIw/i1MO+m
-	 8KYN1HKENsa+oX3dzE1MJUCC98+KrJHNqAFCzti/z/1xeUA9PurO8Gm+UvurOYe2BK
-	 bqHuUWVNtI05g==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-656b32a0cc4so32786eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:03:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUGT3Gi/wWNl8fBcJ89lPNyvmG3KvXJc55BoFJUSzRpBJfYHrjBHmwcUq5ju8Nx2Y+zxQeLEXAIJMpQyhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgEsE3A00UObBR4tNY9cXgVwn6MCPr113fT0JT6CTD8ZxdPfla
-	sz7a9EPFjClM2XUCxF8jx6oduokPJX/G87PpBsZOOwP6RDAwczUr8Lk2QX5yKYMh/D4B0iG6Q7p
-	DkJyZ37zS8PcECQjg2yOWCEEyrY7SGp0=
-X-Google-Smtp-Source: AGHT+IGRBeNRM+HNo5unVf2rRvHcql8w4SILTxjZzsf1VLzE4PQggEmnPM37H5AYrqsAt+y0dGqZWxRQHZsSe99OE6A=
-X-Received: by 2002:a05:6820:81c9:b0:656:735e:9eff with SMTP id
- 006d021491bc7-65716443681mr1926630eaf.7.1762977810471; Wed, 12 Nov 2025
- 12:03:30 -0800 (PST)
+	s=k20201202; t=1762977830;
+	bh=nUO9ROu0gW7/ns/uQ28gcX3yc+GW0w13a9/X2aAT8jY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l/ZMvnzn2CADtOmnEK8oxSBL8h+W0p5Nn5UpsvsKruwJSHxVcUeR4XM3Xql0nKdus
+	 bSqKhs+uMkYIkIZuUXwM0okWDFlbTc1b3GFwaLc0i8MS0mArq4SZjPqyfw0pTxylrb
+	 kDcACs6NyCZrwCjMXmWAun5aPbx2tyCNun6nsiYlfBKzyIIndQtIzMFJnjIFqLp5W7
+	 U7cJIK3dUA8BdBGXaq6srPbi1okyViOeP9mxuL9ACCcf5VmurrX4ECVYI2S9Yt8Co2
+	 wGu2c5Zt7YjzPlTh1Ym0osiGu8n7TbyhwjUGx6vHaiztJkPuyn821csRFMNgYBEt1M
+	 bcQaFk/gjrsng==
+Date: Wed, 12 Nov 2025 21:03:23 +0100
+From: Nicolas Schier <nsc@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+	sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] kbuild: userprogs: introduce
+ architecture-specific CC_CAN_LINK and userprog flags
+Message-ID: <aRToC77bNUy2sKAK@derry.ads.avm.de>
+References: <20251014-kbuild-userprogs-bits-v2-0-faeec46e887a@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110120819.714560-1-christian.loehle@arm.com>
-In-Reply-To: <20251110120819.714560-1-christian.loehle@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Nov 2025 21:03:19 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jjh2cJhfQQBgtqPvNGgzUmyV_tkLQ7WJv6cXhPYBQrcA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkFq_SDqC3LU9Wj50F7rCTNrLgPevAbF4KDpRAyN3MOhb8pM3MPrmyPWOc
-Message-ID: <CAJZ5v0jjh2cJhfQQBgtqPvNGgzUmyV_tkLQ7WJv6cXhPYBQrcA@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: teo: Use this_cpu_ptr where possible
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014-kbuild-userprogs-bits-v2-0-faeec46e887a@linutronix.de>
 
-On Mon, Nov 10, 2025 at 1:08=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> The cpuidle governor callbacks for update, select and reflect
-> are always running on the actual idle entering/exiting CPU, so
-> use the more optimized this_cpu_ptr() to access the internal teo
-> data.
->
-> This brings down the latency-critical teo_reflect() from
-> static void teo_reflect(struct cpuidle_device *dev, int state)
-> {
-> ffffffc080ffcff0:       hint    #0x19
-> ffffffc080ffcff4:       stp     x29, x30, [sp, #-48]!
->         struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> ffffffc080ffcff8:       adrp    x2, ffffffc0848c0000 <gicv5_global_data+0=
-x28>
-> {
-> ffffffc080ffcffc:       add     x29, sp, #0x0
-> ffffffc080ffd000:       stp     x19, x20, [sp, #16]
-> ffffffc080ffd004:       orr     x20, xzr, x0
->         struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> ffffffc080ffd008:       add     x0, x2, #0xc20
-> {
-> ffffffc080ffd00c:       stp     x21, x22, [sp, #32]
->         struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> ffffffc080ffd010:       adrp    x19, ffffffc083eb5000 <cpu_devices+0x78>
-> ffffffc080ffd014:       add     x19, x19, #0xbb0
-> ffffffc080ffd018:       ldr     w3, [x20, #4]
->
->         dev->last_state_idx =3D state;
->
-> to
->
-> static void teo_reflect(struct cpuidle_device *dev, int state)
-> {
-> ffffffc080ffd034:       hint    #0x19
-> ffffffc080ffd038:       stp     x29, x30, [sp, #-48]!
-> ffffffc080ffd03c:       add     x29, sp, #0x0
-> ffffffc080ffd040:       stp     x19, x20, [sp, #16]
-> ffffffc080ffd044:       orr     x20, xzr, x0
->         struct teo_cpu *cpu_data =3D this_cpu_ptr(&teo_cpus);
-> ffffffc080ffd048:       adrp    x19, ffffffc083eb5000 <cpu_devices+0x78>
-> {
-> ffffffc080ffd04c:       stp     x21, x22, [sp, #32]
->         struct teo_cpu *cpu_data =3D this_cpu_ptr(&teo_cpus);
-> ffffffc080ffd050:       add     x19, x19, #0xbb0
->
->         dev->last_state_idx =3D state;
->
-> This saves us:
->         adrp    x2, ffffffc0848c0000 <gicv5_global_data+0x28>
->         add     x0, x2, #0xc20
->         ldr     w3, [x20, #4]
->
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+On Tue, Oct 14, 2025 at 03:05:15PM +0200, Thomas Weiﬂschuh wrote:
+> The current logic to inherit -m32/-m64 from the kernel build only works
+> for a few architectures. It does not handle byte order differences,
+> architectures using different compiler flags or different kinds of ABIs.
+> 
+> Introduce a per-architecture override mechanism to set CC_CAN_LINK and
+> the flags used for userprogs.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 > ---
->  drivers/cpuidle/governors/teo.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/=
-teo.c
-> index bfa55c1eab5b..a3ebc2cda093 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -155,7 +155,7 @@ static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
->   */
->  static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device=
- *dev)
->  {
-> -       struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> +       struct teo_cpu *cpu_data =3D this_cpu_ptr(&teo_cpus);
->         int i, idx_timer =3D 0, idx_duration =3D 0;
->         s64 target_residency_ns;
->         u64 measured_ns;
-> @@ -268,7 +268,7 @@ static int teo_find_shallower_state(struct cpuidle_dr=
-iver *drv,
->  static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device =
-*dev,
->                       bool *stop_tick)
->  {
-> -       struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> +       struct teo_cpu *cpu_data =3D this_cpu_ptr(&teo_cpus);
->         s64 latency_req =3D cpuidle_governor_latency_req(dev->cpu);
->         ktime_t delta_tick =3D TICK_NSEC / 2;
->         unsigned int idx_intercept_sum =3D 0;
-> @@ -504,7 +504,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
-uct cpuidle_device *dev,
->   */
->  static void teo_reflect(struct cpuidle_device *dev, int state)
->  {
-> -       struct teo_cpu *cpu_data =3D per_cpu_ptr(&teo_cpus, dev->cpu);
-> +       struct teo_cpu *cpu_data =3D this_cpu_ptr(&teo_cpus);
->
->         dev->last_state_idx =3D state;
->         if (dev->poll_time_limit ||
-> --
+> Changes in v2:
+> - Rebase and drop already applied patch
+> - Disable CC_CAN_LINK if the test program generates warnings
+> - Move to architecture-specific logic
+> - Link to v1: https://lore.kernel.org/r/20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de
+> 
+> ---
+> Thomas Weiﬂschuh (10):
+>       kbuild: don't enable CC_CAN_LINK if the dummy program generates warnings
+>       init: deduplicate cc-can-link.sh invocations
+>       kbuild: allow architectures to override CC_CAN_LINK
+>       riscv: Implement custom CC_CAN_LINK
+>       s390: Implement custom CC_CAN_LINK
+>       powerpc: Implement custom CC_CAN_LINK
+>       MIPS: Implement custom CC_CAN_LINK
+>       x86/Kconfig: Implement custom CC_CAN_LINK
+>       sparc: Implement custom CC_CAN_LINK
+>       kbuild: simplify CC_CAN_LINK
+> 
+>  Makefile                |  8 ++++++--
+>  arch/mips/Kconfig       | 15 +++++++++++++++
+>  arch/powerpc/Kconfig    | 15 +++++++++++++++
+>  arch/riscv/Kconfig      | 11 +++++++++++
+>  arch/s390/Kconfig       | 11 +++++++++++
+>  arch/sparc/Kconfig      | 11 +++++++++++
+>  arch/x86/Kconfig        | 11 +++++++++++
+>  init/Kconfig            |  7 +++++--
+>  scripts/Kconfig.include |  3 +++
+>  scripts/cc-can-link.sh  |  2 +-
+>  10 files changed, 89 insertions(+), 5 deletions(-)
+> ---
+> base-commit: 10f8210c7a7098897fcee5ca70236167b39eb797
+> change-id: 20250813-kbuild-userprogs-bits-03c117da4d50
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
 
-Applied as 6.19 material, thanks!
+Thanks for the patch set and all the work behind!  I found only one
+issue in patch 3, the rest looks good to me as they are.
+
+I haven't reviewed the compiler flags for the archs, but from the formal
+point of view they look good to me, too.
+
+How shall we proceed with here?  I think, easiest would be if we get
+appropriate acks from the architecture maintainers, so we could take
+this via kbuild.
+
+Other opinions?
+
+Kind regards,
+Nicolas
 
