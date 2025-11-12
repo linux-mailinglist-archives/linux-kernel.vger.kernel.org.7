@@ -1,446 +1,314 @@
-Return-Path: <linux-kernel+bounces-896582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7153BC50B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:33:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DAFC50BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359821896F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:33:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E81734ACB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBB12DEA9D;
-	Wed, 12 Nov 2025 06:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEDC2DF6F4;
+	Wed, 12 Nov 2025 06:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aLZG3Lcs"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012025.outbound.protection.outlook.com [40.107.200.25])
+	dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b="LVZTWTl5";
+	dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b="xgSAa4FE"
+Received: from bkemail.birger-koblitz.de (bkemail.birger-koblitz.de [23.88.97.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9C55477E;
-	Wed, 12 Nov 2025 06:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762929185; cv=fail; b=oFOGEnAI1Wv7lsCuP7nK0zF953+QHmc+omZbR9O8HvfH0l4EpwTJVV3xkPUVJ7248NUeDDHFCv7kDofTiBth9i+ukfJ5iA2l5fKLYWsjMJtO1pnhhfWd/WGrAwnD2NMNtkCxbkZsG9oBno4mxQn1R6+olDl7k3FPFvfM2vJIXsw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762929185; c=relaxed/simple;
-	bh=AYtBRC32Q8VrdAS6DGhVM2jJr+Z+SNUhmnT+jUgJb1s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ucb4VE9a/mvoebXqsLHXvww+3sZQBzh9Jrb+wUDnwCKViuR1A3by9ch5MfGetXQGP7aTpIV4ZOo0/4ZhH35s+COLaUJG/c1Usqk2nWLe6gfNAZC3Q5fvLreYc+mWALIqQerHXdDlPswhIq6IZ/R5ZfsB1DHY/uOGEASgo1ssNps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aLZG3Lcs; arc=fail smtp.client-ip=40.107.200.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yqwoou7yxrRWaf5K86NVotZFs9BS61GfTcIddHtuVlIrF6GYagmQBLVnSZ46zc/xEhmUTj1H+OBnoPKKTxb2jDh3o53W294V7xi7+1yUeYRvstGOOEVHPto65DMqbb9PiyEG1JlUtz88TRvd+x1tKuWbkJtCneaLY1tqa/JXHm4uVT2JCXR9L9/HaqiS6NFvAWUXE2K748HqBp+h8OsfUqOGxwH6uNiJkNwXaWyP8N7tVjXGeXsZZjUa5eqB51gsI1QkmAGCJZLrv3e3eky4hFn/78cBJT0yOsTCEuG2wCt3i2G0zV9DcP8lKc1LzP69euVPGItb3045jzIut3Si9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6mXcNITZ3j0GhHXnUGOGoadop/LnfUn80poU+ITwUfo=;
- b=aoukt5hHBmC29aEySFpCMK+f6as3kl1p/J1bIi6Fnxtxe4qwoa19jpMgOymGSuu2voCAnvefhpULHNRncJYXW/9MoLccU5u6vBrZUiPK7ZwhWTHY8NHoMI7NxWbGtNNUE9iZ4LROj0tjEgrdny8j5VpDoc0IdyB4vnFGDyJb7zfWaYjy5V6dl+Q0L3pVD3zu27M0RzBsYdk4PnIWOr9f8bPY/Ieq/vj5JpszuKFfb28hb4GpLWYeG2HEfjDO61+14UwGx6R1Gjz8C687F7cwDNgXVvZ2OICOCXWUEBmwyHz3BrymVLm9bcM1hLyRMMP4VOQh00GQM4dgTtJF+ltUoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6mXcNITZ3j0GhHXnUGOGoadop/LnfUn80poU+ITwUfo=;
- b=aLZG3LcscE4vzZfDYXB0brGy3s8/VKXEG1pzuIIms7i5Ngdu1mYRCkXYnpicjpXkQ//ysKEjEpyATUIhzL3iaFJl+tIc6Kur7aO1tVewKXNyFLWr0sR8kPpybQcs3NZL1aMRBBIe+AEP/Qvm3AiKJtVfgqOvW6tfcXDRndGs0D8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV9PR12MB9829.namprd12.prod.outlook.com (2603:10b6:408:2eb::9)
- by SJ1PR12MB6075.namprd12.prod.outlook.com (2603:10b6:a03:45e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 06:33:00 +0000
-Received: from LV9PR12MB9829.namprd12.prod.outlook.com
- ([fe80::c47f:251d:7b84:e6b4]) by LV9PR12MB9829.namprd12.prod.outlook.com
- ([fe80::c47f:251d:7b84:e6b4%6]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
- 06:33:00 +0000
-Message-ID: <d9afc6db-fd8a-4069-a8a8-1e2d74c1db3a@amd.com>
-Date: Wed, 12 Nov 2025 14:32:51 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] Add AMD ISP4 driver
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com
-References: <20251024090643.271883-1-Bin.Du@amd.com>
- <aQsYJhbGifdXhjCJ@sultan-box> <aRGjX1pv0y_lVext@sultan-box>
- <c41df0f5-b2b5-49f1-a49e-8750e55975e1@amd.com> <aRL8ZPwXSeKD4Qmn@sultan-box>
- <e09207fd-1879-44c8-a5c1-838a140dcd4b@amd.com> <aRPH1hV7bEfagPtE@sultan-box>
- <aRPhMCwJjpMqAROG@sultan-box>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aRPhMCwJjpMqAROG@sultan-box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TY4PR01CA0018.jpnprd01.prod.outlook.com
- (2603:1096:405:2bf::7) To LV9PR12MB9829.namprd12.prod.outlook.com
- (2603:10b6:408:2eb::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F21990C7;
+	Wed, 12 Nov 2025 06:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.97.239
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762929762; cv=none; b=EZOKlS9lACzvCZKKweXfYfNRiv+dRhbAqK4zV3PRw0x3YPW4NRlbEjhZ5xb8Cu9/QSDpPA0BYqS9qpD9Qylw3I94dloVenS0sO9GNVtJu3R4J49Q3MG/4FmjFgg+N8T/X1N+oGd5biO8ir3K91GVGCmKgSDY6KUV/noG0XdfP3Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762929762; c=relaxed/simple;
+	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r1h7ItSiIjV9CJSIsxe5+odW5yjrb0FhswikF9PBvTHS/4TIszaemloFhvtKmrYkojVxgKD/ujL4exKSwPg914J6G998eFVnzs4zq8C+pR4JY6RgEkVFEve2D+5+f+Ssg8MwHWAZYP3W4zxquBgtcJv0Yxdwd3KfGj4Nq81GURQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de; spf=pass smtp.mailfrom=birger-koblitz.de; dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b=LVZTWTl5; dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b=xgSAa4FE; arc=none smtp.client-ip=23.88.97.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birger-koblitz.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=birger-koblitz.de;
+	s=default; t=1762929279;
+	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=LVZTWTl5GQMzPHyWuQuQ8lLWBzRn+kUjE6TCLvVVnnDgtF95cVBs7EMxVNDO1q4lF
+	 VVztr5LTyvLquikgwugb/+MDisogUhVisiFk6nf2Er9v508sR2ffKHFe17HPOBZ2gr
+	 kCX9XgaGagibcluVe7D3k5gHk+2RZoa003x1/ySIRbWynmGQtCN05Q4bVTmvW6IB5z
+	 WpzGYyBmyF8gv7pyIP2my9vOR119PtMgxOnu1rawpPPhfK/rtaBcRBSod0EeFsqa4J
+	 06pVVvq2ZqidruWBfHLH8Pwd+HEEUq8jejmEonpImArvfBeFibt5AmtiOJ6S4PUs58
+	 kIe/L7Lpj2YIw==
+Received: by bkemail.birger-koblitz.de (Postfix, from userid 109)
+	id 5ED09493D3; Wed, 12 Nov 2025 06:34:39 +0000 (UTC)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=birger-koblitz.de;
+	s=default; t=1762929277;
+	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=xgSAa4FEPceRmV8qXMKWM7zRt7yCtxkCwLu3KO7JEZTlfFjfnN17pZIAoAhLKFsCR
+	 pMOUxLfl8ZQ/rFf+BvIW9A0TR4/06+SCcIhXnBKK+s1MUnPmJ0Jp8KAfM8x22VK/PZ
+	 UEHT7qN/whD5LyXH4Pu+11Ent3oFaaW5hdsrcm66TE3Ih7da0DJWH7cw648lfCbnrB
+	 B9u8X0xOqpM5NJVAEfYnP9SVMcopI+11OYci1kiZjRoHddisGBj5DdtVKTUScPRANw
+	 yUVTI+isFYeofC4QNa72fUcgwxvSHlDS4cop8Sr86QWM9olOZGupvSsIcLb0+3/kDL
+	 YwGrw5/OhcoIQ==
+Received: from AMDDesktop.lan (unknown [IPv6:2a00:6020:47a3:e800:94d3:d213:724a:4e07])
+	by bkemail.birger-koblitz.de (Postfix) with ESMTPSA id 83F5F493BF;
+	Wed, 12 Nov 2025 06:34:37 +0000 (UTC)
+From: Birger Koblitz <mail@birger-koblitz.de>
+Date: Wed, 12 Nov 2025 07:34:34 +0100
+Subject: [PATCH net-next v5] ixgbe: Add 10G-BX support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV9PR12MB9829:EE_|SJ1PR12MB6075:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c4d020f-6ceb-4e39-1f0c-08de21b5535a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q2FUa3RldWJOR3N5WHEvNEJlZWEyendOMEpyZUVXay8rU0dWbFBMSklFb2lu?=
- =?utf-8?B?bDhxWDJnWjVlOEpFbFhFOUlCUG5wdG9aRmZmclJhZlIrSEQzZ3ZMN1FrV3E0?=
- =?utf-8?B?SmNxTyswTkk1bHBMT3AyZmdVMzNoTUZ2R2NGK1A0SnByem5jSTFxUk1QT0Rl?=
- =?utf-8?B?Y0VCVkJYS25ZTElDY2JwY0ZtdDRTN0RSbUVJQlhJdVU0cFhZTXpvUEdXWWJD?=
- =?utf-8?B?M1FUMUlXOS9HdGFjeW1RL2RPNlhyanc0dFF1N0hIbDhlN3BIWUNZRVN3TG1D?=
- =?utf-8?B?T2NuaTFzN0tlOEh2cURHTTkxRXY2dkFXLzhYQ1hCT0pjYUs3d1NYbjF0NEtx?=
- =?utf-8?B?SDQ0K05vM2NLc05oVDRBZGN3d0FWMVpMTGVzWUxpdEoxd0NqU3FwbEpaT1Jq?=
- =?utf-8?B?YWtsTDErWlQwVmJsclN0cmpEd1JFMWVQUUtuY3M5b2Q3L2JrU29vNkduTFF4?=
- =?utf-8?B?K0wyemluSzdIZDBwM3FLTERseVY2R01MYW5oSUVzL1kvYU1nREhKb0tYV0tP?=
- =?utf-8?B?cUgxdDZyS3BCT2NtOXhmaWNtNHBlQXVFSXhsb05GMXJTSjBJVTFDRXZqUFVJ?=
- =?utf-8?B?WEZiYVZ3Z2JtUkxvckpGbmdsdTVORkU5cDhKR2YwWXYvNytLdkdZdDN0S3dB?=
- =?utf-8?B?d3VJUGVuYTZhRk5vekxYRkRjSHN6a0htWjl0eFJ1aU5DR1JjRjVSVzlkczZ6?=
- =?utf-8?B?bmxoMTJEQStEbDRDME9yaVRLcEhPcS9xc2N3QUNLWFkwNGVRUkZ6Ny9OQ1U2?=
- =?utf-8?B?azVHZ203bW1RQlRMYVFJUC9TazF1dlpQSDlIRWdyMlVwNnhZbVZkZEN0aW1w?=
- =?utf-8?B?Tkl3ZWIrRFd6aFZCL1lUZXA1ZkkvSzlzcVpLUmh2VnlqMllmMVdTaVdORTVL?=
- =?utf-8?B?VlJGOXMremxzSWFDRURmME5yenpEd0g5SWlHMVhNelczL1QwVjJjQ21TMDUz?=
- =?utf-8?B?bThWMFhSL0xUb2wybStaRmNyUXJ2L0JVU2JkNVZhNGYzTW1hZHVFSDVma3Q5?=
- =?utf-8?B?VExhb0o3R3dxR085MFlRaFlnK2g4Tmw3ZzROcXE2QTF0S2hkTks0cUswd2Fv?=
- =?utf-8?B?Nm4vL3RrbjRMZ3BjV2liN0JNRHJvcENOaWovUGxIaEdaYVJDZGFNWmIvdXdY?=
- =?utf-8?B?UUxVQmp3Z0FaeUFFbEw5eXlxK3A2T01Oa0hBK1NGdldlaytmcFBMMjVHQ0lJ?=
- =?utf-8?B?dFRPYkpxbk55OEtiNHhhVFZnbDZrTU1tUjhnUDFXVDZ4M0doK2FxVXEzSjI2?=
- =?utf-8?B?QjhDSm92ZURmR2Y3eUNyYllXQ2NteUUwc2RwTGRSTVBxRTFzclBIZWN5ZlFj?=
- =?utf-8?B?MUVoZ2hiaFRHaEx2M3hvS3hZQ0J6OGx3ZVdxbFNOOHV1MGN0U2ZPRjFvbnJm?=
- =?utf-8?B?Rm9lcE14T0k3K1Iwbm4wL05oclkwdnp3dm0rd08vRTNZK3h3U0E1ZlBGeUhJ?=
- =?utf-8?B?eW1EYXVlRXBWSUt2cUEwYjZ6V2ZvbVNvSHRzZnJoV0hhUjJrOFZxdVgxUlpY?=
- =?utf-8?B?RlpUNzRkdXV1Q3RCZ0RETWN1b2ZFdVhPUTRRR2pSZng3dEp0ek92aGNBZ2lo?=
- =?utf-8?B?M29DRzRoWWNBOGRzdDdUajh0aVBKdWorRm9JTDAzU3VxOTYzUDZuM0pIb0xa?=
- =?utf-8?B?Q1B1N2psU3lIY1BEa1o5bWlDVG1TSEtSVlZ5bXI4UFl2WWZubTluam96OGVX?=
- =?utf-8?B?YUZvSHk0UG5pV1FDMzlNQVdnSlhReldCdTBYcmxtampDUmpVdkwxcXpudytV?=
- =?utf-8?B?bHlWSlpHdkxId0lhZW51b0ZrQUp3Q3FCaDBObHRCRkh0U3kyR1VmakpvVVpR?=
- =?utf-8?B?SVNZMDJBTzlSL2UwYTlhTS9zZHF4ME5jbExNMlNsTUNFL1NpUVVZOWh6TzBY?=
- =?utf-8?B?cjBKejBaK0FkYVVlZjdHRDlEWkxLUGJ6SWhzWEFjb0htdUg4T2V1VmRVb3NT?=
- =?utf-8?Q?7lqGCh9DEbA2LmHYmedjcuVQVTF3VxZx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV9PR12MB9829.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z0hsbDBRZERiT3ltU1pPR2gxWldHVUNzQTRBMS9ValdHS3EwTGtSWjA3V1lm?=
- =?utf-8?B?VWFQWm9XR2NtQWdFRXNxb1J0ekI1NlArZUxucUJkVHlOdWExMGphTXlGd2p4?=
- =?utf-8?B?aXE4U1JMZ1hycUM2RDZhdTNlZDFSbm1lZWVvK3RnSTJUdlQ0bkRCZEQ0R3U4?=
- =?utf-8?B?bGtZc1lTVUFsZG5XUzJhdG1yTzNVbk5IejljMmlLbWZPOTV4Z1E2L3pVQlZx?=
- =?utf-8?B?TGd3YjNIOEQ1S2w0cmx2TE1zSFpmNEQyT1lJNG8reXNldjRBSnQ5a2MwRlFD?=
- =?utf-8?B?MUNGRUM5Y2g5Y0F6T0hGV1dkdWYyZE5HL3d6YWpTclg2a21vdWFKSDEycEZ5?=
- =?utf-8?B?blFac29ib2tZMlhFaGEyQ3lWZlBKZGx1a1kxaTd2SWJINzF5UElHamlwd3Jt?=
- =?utf-8?B?cXRWNmMwdmxGbXNUaXF1RXFXdGFRRXQ3NXJnL0luSmY5dG5DL25nUlczMlZF?=
- =?utf-8?B?Vnp2N3BjNExDL3ZpZHd6WWQrVXplWGJuOUtidXNiOGhMeWJaZ1lmQmxRZHl2?=
- =?utf-8?B?MzZUeEJrd1BqWW1DR3d4M2xoK05lU3B6NXA5NVRxMDhMc2kveEVicXowbzl5?=
- =?utf-8?B?bWV1OVk0YnhhTFd1SkE5SDNXeXlaZ1g5MkQxWnFJUFZIcTVNbXFDd3Vqb3lz?=
- =?utf-8?B?aC9MOEkzb0NzQ25qeEJTSFBuTWdhTkxWdHNrdFJUZms1Vlo3bTUxSUhNaTA2?=
- =?utf-8?B?NzYzMnhvUnJKdGxwUFhNd2pPL1lvU3YvbGxoWTRYTUk2WEJOTmpTb0NXS0Zh?=
- =?utf-8?B?dzhWZjR4ZmlGQncxMUc5THF2bVB6cm43VncydnBzeVZ3NEhreXJNbHFIczBn?=
- =?utf-8?B?cmtFSkRHVno4cWlOc3VxS3A1Z21JSkh5RlNXWENKUHpFbGVrZFJVMmFUVVVu?=
- =?utf-8?B?Zjk2cUJKS2RWT1ZiYVFkTzh4S01DekR2dnA0UTFOYWd1bXJTU0tIUjFzMDJB?=
- =?utf-8?B?TTRmVUEzZGtCSVNRSHJ4WUNleGJuSTV4QW1HNS9YTy9kM3djTXhudlJPTUdR?=
- =?utf-8?B?UVM5MGdGZHQzdDBObGVLSVVzc0pQbVlSNkJKMHFNaGVWb3ZKTVVMekxvbmll?=
- =?utf-8?B?RVFmQUZET1dhUmVkdkZCSndhclJ1RUE0T1AwbWYzdWF1aEpWdHRrWVhqdXp1?=
- =?utf-8?B?ZzZMT1FadU5ja0VTY1h2czBDLzJmMGNaWmFKQ0N6WWhuZ04wYk9RS3R3RSsv?=
- =?utf-8?B?Zk5LM2lCMFU1ZVhVUHZsQlRTemN3d0J2OHkrNkdJYVlvNlFMZGFkSXdRWVQ3?=
- =?utf-8?B?bUFhYW8xeWpVYXBkcFpqMTB1U2U0bVBySzZIQXh4QjNyMGFNQnFmVkxocEk4?=
- =?utf-8?B?eThVbGxMZkQ4WXBOVERVbFhFZ2RIbVMybXpYcGxlenJOdERiTGlQSFlBcDB0?=
- =?utf-8?B?QzZUbi83R2ZlVkNNazJRaXNTYzRSakU4ZnBlcUlvNDRCR1luZ2RHTW4rVlcx?=
- =?utf-8?B?cG5iRmJ1SHljT0pDcVdKMFNEM1k0WkJtMVVnUk1ieEpTbk10OXQ2V01pbjhB?=
- =?utf-8?B?TzFHaDJSOHFBNUZudUJMTENONjFiL2svd1I1bDFYM3VaV2YwNHZ1eitEU3Nj?=
- =?utf-8?B?Zk1IZHZROFFweFVWQXRGL2N3K1pqYURTYUNpdFR0UVVTWEdwUzNPUkJ4QVRQ?=
- =?utf-8?B?U1Q3eXMrVHdDZGFOdzBkTk1NR2JYV09vNHFjL1lXeXZvbVR0cit2T1l5NzZN?=
- =?utf-8?B?N3EwZ0MxTlVLUzA5d0FubkpqbzBGS1crQ3I2OEx6YzJXc1Q2Rld6SUZIUlNQ?=
- =?utf-8?B?NVJyY1RsQWdzR1dRakpQOHRGYXRQR2RoWDdrR3Zwb09uY1RiYUNVSDJBaFNL?=
- =?utf-8?B?dlMyUWh4UjRQVzZTTEpxaWVnYmJXcTFnWTBjN1duQ0MrZjRFT1hUZjIrNXp2?=
- =?utf-8?B?TzJhUEFRclFVT1ViUnMwYzNZWTlDK1h4Ynp1Q0NCbWhZTTFZSGUzcHZqQmlw?=
- =?utf-8?B?aThMdUppaGVVVEhZRzc4TFhYNHQxdFlwb1RUMWEvV2k4c1AyK1UxOFo5QXNu?=
- =?utf-8?B?SVBpYWxJTFRjVElIbjRRcWx4b2dLcUE4SGdOck9HVVhvUUtGTWlTRGFOT1hm?=
- =?utf-8?B?SFY1RWF0QmtWajFSUFNDTk95dmMrWDdxK1J0bU9VV29PMThyajdjc05qMnc2?=
- =?utf-8?Q?Bmxg=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c4d020f-6ceb-4e39-1f0c-08de21b5535a
-X-MS-Exchange-CrossTenant-AuthSource: LV9PR12MB9829.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:33:00.7249
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: px6l7w3X9xjP2arwAGNW7y3vSIvhvyNekwqT+dy6jE/Og2nAt0SaQjX2sWcDz/WN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6075
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-10gbx-v5-1-12cab4060bc8@birger-koblitz.de>
+X-B4-Tracking: v=1; b=H4sIAHkqFGkC/3WOyw6CMBBFf8V0bU2ntFhc+R/GRR8DNhoxhRCU8
+ O8ORBIWuLw3c87cgTWYIjbstBtYwi42sX5S0Psd8zf7rJDHQJlJITUIkBxE5XpunTLSa4SgFaP
+ bV8Iy9rPncqV8i01bp/es7WBqF0P2M3TAgTSFKXJbZkGbs4upwsTvtXvE9nMIyCZTJ9e0Wmgaw
+ gsjvJYKAPD4j842aRrBtfDBmlweofj7W63pfKFJw4X1VLtS59Zv0eM4fgHdSVtvXAEAAA==
+X-Change-ID: 20251012-10gbx-ab482c5e1d54
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Birger Koblitz <mail@birger-koblitz.de>, 
+ Andrew Lunn <andrew@lunn.ch>, Paul Menzel <pmenzel@molgen.mpg.de>, 
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
+ Rinitha S <sx.rinitha@intel.com>
+X-Mailer: b4 0.14.2
 
-Thanks Sultan for your information.
+Add support for 10G-BX modules, i.e. 10GBit Ethernet over a single strand
+Single-Mode fiber.
+The initialization of a 10G-BX SFP+ is the same as for a 10G SX/LX module,
+and is identified according to SFF-8472 table 5-3, footnote 3 by the
+10G Ethernet Compliance Codes field being empty, the Nominal Bit
+Rate being compatible with 12.5GBit, and the module being a fiber module
+with a Single Mode fiber link length.
 
-On 11/12/2025 9:21 AM, Sultan Alsawaf wrote:
-> On Tue, Nov 11, 2025 at 03:33:42PM -0800, Sultan Alsawaf wrote:
->> On Tue, Nov 11, 2025 at 05:58:10PM +0800, Du, Bin wrote:
->>>
->>> On 11/11/2025 5:05 PM, Sultan Alsawaf wrote:
->>>
->>>> On Mon, Nov 10, 2025 at 05:46:28PM +0800, Du, Bin wrote:
->>>>> Thank you, Sultan, for your time, big effort, and constant support.
->>>>> Apologies for my delayed reply for being occupied a little with other
->>>>> matters.
->>>>>
->>>>> On 11/10/2025 4:33 PM, Sultan Alsawaf wrote:
->>>>>> Hi Bin,
->>>>>>
->>>>>> On Wed, Nov 05, 2025 at 01:25:58AM -0800, Sultan Alsawaf wrote:
->>>>>>> Hi Bin,
->>>>>>>
->>>>>>> To expedite review, I've attached a patch containing a bunch of fixes I've made
->>>>>>> on top of v5. Most of my changes should be self-explanatory; feel free to ask
->>>>>>> further about specific changes if you have any questions.
->>>>>>>
->>>>>>> I haven't had a chance to review all of the v4 -> v5 changes yet, but I figured
->>>>>>> I should send what I've got so far.
->>>>>>>
->>>>>>> FYI, there is a regression in isp4if_dequeue_buffer() where the bufq lock isn't
->>>>>>> protecting the list_del() anymore. I also checked the compiler output when using
->>>>>>> guard() versus scoped_guard() in that function and there is no difference:
->>>>>>>
->>>>>>>      sha1sum:
->>>>>>>      5652a0306da22ea741d80a9e03a787d0f71758a8  isp4_interface.o // guard()
->>>>>>>      5652a0306da22ea741d80a9e03a787d0f71758a8  isp4_interface.o // scoped_guard()
->>>>>>>
->>>>>>> So guard() should be used there again, which I've done in my patch.
->>>>>>>
->>>>>>> I also have a few questions:
->>>>>>>
->>>>>>> 1. Does ISP FW provide a register interface to disable the IRQ? If so, it is
->>>>>>>       faster to use that than using disable_irq_nosync() to disable the IRQ from
->>>>>>>       the CPU's side.
->>>>>>>
->>>>>>> 2. When the IRQ is re-enabled in isp4sd_fw_resp_func(), is there anything
->>>>>>>       beforehand to mask all pending interrupts from the ISP so that there isn't a
->>>>>>>       bunch of stale interrupts firing as soon the IRQ is re-enabled?
->>>>>>>
->>>>>>> 3. Is there any risk of deadlock due to the stream kthread racing with the ISP
->>>>>>>       when the ISP posts a new response _after_ the kthread determines there are no
->>>>>>>       more new responses but _before_ the enable_irq() in isp4sd_fw_resp_func()?
->>>>>>>
->>>>>>> 4. Why are some lines much longer than before? It seems inconsistent that now
->>>>>>>       there is a mix of several lines wrapped to 80 cols and many lines going
->>>>>>>       beyond 80 cols. And there are multiple places where code is wrapped before
->>>>>>>       reaching 80 cols even with lots of room left, specifically for cases where it
->>>>>>>       wouldn't hurt readability to put more characters onto each line.
->>>>>>
->>>>>> I've attached a new, complete patch of changes to apply on top of v5. You may
->>>>>> ignore the incomplete patch from my previous email and use the new one instead.
->>>>>>
->>>>>> I made many changes and also answered questions 1-3 myself.
->>>>>>
->>>>>> Please apply this on top of v5 and let me know if you have any questions.
->>>>>>
->>>>>
->>>>> Sure, will review, apply and test your patch accordingly. Your contribution
->>>>> is greatly appreciated, will let you know if there is any question or
->>>>> problem.
->>>>>
->>>>>> BTW, I noticed a strange regression in v5 even without any of my changes: every
->>>>>> time you use cheese after using it one time, the video will freeze after 30-60
->>>>>> seconds with this message printed to dmesg:
->>>>>>      [ 2032.716559] amd_isp_capture amd_isp_capture: -><- fail respid unknown respid(0x30002)
->>>>>>
->>>>>> And the video never unfreezes. I haven't found the cause for the regression yet;
->>>>>> can you try to reproduce it?
->>>>>>
->>>>>
->>>>> Really weird, we don't see this issue either in dev or QA test. Is it 100%
->>>>> reproducible and any other fail or err in the log?
->>>>
->>>> Yes, it's 100% reproducible. There's no other message in dmesg, only that one.
->>>>
->>>> Sometimes there is a stop stream error when I close cheese after it froze:
->>>>
->>>>     [  656.540307] amd_isp_capture amd_isp_capture: fail to disable stream
->>>>     [  657.046633] amd_isp_capture amd_isp_capture: fail to stop steam
->>>>     [  657.047224] amd_isp_capture amd_isp_capture: disabling streaming failed (-110)
->>>>
->>>> When I revert to v4 I cannot reproduce it at all. It seems to be something in
->>>> v4 -> v5 that is not fixed by any of my changes.
->>>>
->>>
->>> Hi Sultan, could you please try following modifications on top of v5 to see
->>> if it helps?
->>>
->>> diff --git a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->>> b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->>> index 39c2265121f9..d571b3873edb 100644
->>> --- a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->>> +++ b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->>> @@ -97,7 +97,7 @@
->>>
->>> #define ADDR_SPACE_TYPE_GPU_VA          4
->>>
->>> -#define FW_MEMORY_POOL_SIZE             (200 * 1024 * 1024)
->>> +#define FW_MEMORY_POOL_SIZE             (100 * 1024 * 1024)
->>>
->>> /*
->>>    * standard ISP mipicsi=>isp
->>> diff --git a/drivers/media/platform/amd/isp4/isp4_subdev.c
->>> b/drivers/media/platform/amd/isp4/isp4_subdev.c
->>> index 248d10076ae8..acbc80aa709e 100644
->>> --- a/drivers/media/platform/amd/isp4/isp4_subdev.c
->>> +++ b/drivers/media/platform/amd/isp4/isp4_subdev.c
->>> @@ -697,7 +697,7 @@ static int isp4sd_stop_resp_proc_threads(struct
->>> isp4_subdev *isp_subdev)
->>>          return 0;
->>> }
->>>
->>> -static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
->>> +static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev, bool
->>> irq_enabled)
->>> {
->>>          struct isp4sd_sensor_info *sensor_info = &isp_subdev->sensor_info;
->>>          unsigned int perf_state = ISP4SD_PERFORMANCE_STATE_LOW;
->>> @@ -716,8 +716,9 @@ static int isp4sd_pwroff_and_deinit(struct isp4_subdev
->>> *isp_subdev)
->>>                  return 0;
->>>          }
->>>
->>> -       for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
->>> -               disable_irq(isp_subdev->irq[i]);
->>> +       if (irq_enabled)
->>> +               for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
->>> +                       disable_irq(isp_subdev->irq[i]);
->>>
->>>          isp4sd_stop_resp_proc_threads(isp_subdev);
->>>          dev_dbg(dev, "isp_subdev stop resp proc streads suc");
->>> @@ -813,7 +814,7 @@ static int isp4sd_pwron_and_init(struct isp4_subdev
->>> *isp_subdev)
->>>
->>>          return 0;
->>> err_unlock_and_close:
->>> -       isp4sd_pwroff_and_deinit(isp_subdev);
->>> +       isp4sd_pwroff_and_deinit(isp_subdev, false);
->>>          return -EINVAL;
->>> }
->>>
->>> @@ -985,7 +986,7 @@ static int isp4sd_set_power(struct v4l2_subdev *sd, int
->>> on)
->>>          if (on)
->>>                  return isp4sd_pwron_and_init(isp_subdev);
->>>          else
->>> -               return isp4sd_pwroff_and_deinit(isp_subdev);
->>> +               return isp4sd_pwroff_and_deinit(isp_subdev, true);
->>> }
->>>
->>> static const struct v4l2_subdev_core_ops isp4sd_core_ops = {
->>
->> No difference sadly; same symptoms as before. FYI, your email client broke the
->> patch formatting so I couldn't apply it; it hard wrapped some lines to 80 cols,
->> replaced tabs with spaces, and removed leading spaces on each context line, so I
->> had to apply it manually. To confirm I applied it correctly, here is my diff:
->>
->> diff --git a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->> index 39c2265121f9..d571b3873edb 100644
->> --- a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->> +++ b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->> @@ -97,7 +97,7 @@
->>   
->>   #define ADDR_SPACE_TYPE_GPU_VA          4
->>   
->> -#define FW_MEMORY_POOL_SIZE             (200 * 1024 * 1024)
->> +#define FW_MEMORY_POOL_SIZE             (100 * 1024 * 1024)
->>   
->>   /*
->>    * standard ISP mipicsi=>isp
->> diff --git a/drivers/media/platform/amd/isp4/isp4_subdev.c b/drivers/media/platform/amd/isp4/isp4_subdev.c
->> index 4bd2ebf0f694..500ef0af8a41 100644
->> --- a/drivers/media/platform/amd/isp4/isp4_subdev.c
->> +++ b/drivers/media/platform/amd/isp4/isp4_subdev.c
->> @@ -669,7 +669,7 @@ static int isp4sd_stop_resp_proc_threads(struct isp4_subdev *isp_subdev)
->>   	return 0;
->>   }
->>   
->> -static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
->> +static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev, bool irq_enabled)
->>   {
->>   	struct isp4sd_sensor_info *sensor_info = &isp_subdev->sensor_info;
->>   	unsigned int perf_state = ISP4SD_PERFORMANCE_STATE_LOW;
->> @@ -688,8 +688,9 @@ static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
->>   		return 0;
->>   	}
->>   
->> -	for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
->> -		disable_irq(isp_subdev->irq[i]);
->> +	if (irq_enabled)
->> +		for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
->> +			disable_irq(isp_subdev->irq[i]);
->>   
->>   	isp4sd_stop_resp_proc_threads(isp_subdev);
->>   	dev_dbg(dev, "isp_subdev stop resp proc streads suc");
->> @@ -785,7 +786,7 @@ static int isp4sd_pwron_and_init(struct isp4_subdev *isp_subdev)
->>   
->>   	return 0;
->>   err_unlock_and_close:
->> -	isp4sd_pwroff_and_deinit(isp_subdev);
->> +	isp4sd_pwroff_and_deinit(isp_subdev, false);
->>   	return -EINVAL;
->>   }
->>   
->> @@ -957,7 +958,7 @@ static int isp4sd_set_power(struct v4l2_subdev *sd, int on)
->>   	if (on)
->>   		return isp4sd_pwron_and_init(isp_subdev);
->>   	else
->> -		return isp4sd_pwroff_and_deinit(isp_subdev);
->> +		return isp4sd_pwroff_and_deinit(isp_subdev, true);
->>   }
->>   
->>   static const struct v4l2_subdev_core_ops isp4sd_core_ops = {
->>
->>> On the other hand, please also add the patch in amdgpu which sets *bo to
->>> NULL in isp_kernel_buffer_alloc() which you mentioned in another thread.
->>
->> Yep, I have been doing all v5 testing with that patch applied.
->>
->> BTW, I have verified the IRQ changes are not the cause for the regression; I
->> tested with IRQs kept enabled all the time and the issue still occurs.
->>
->> I did observe that ISP stops sending interrupts when the video stream freezes.
->> And, if I replicate the bug enough times, it seems to permanently break FW until
->> a full machine reboot. Reloading amd_capture with the v4 driver doesn't recover
->> the ISP when this happens.
->>
->> As an improvement to the driver, can we do a hard reset of ISP on driver probe?
->> I am assuming hardware doesn't need too long to settle after hard reset, maybe
->> a few hundred milliseconds? This would ensure ISP FW is always in a working
->> state when the driver is loaded.
->>
+This was tested using a Lightron WSPXG-HS3LC-IEA 1270/1330nm 10km
+transceiver:
+$ sudo ethtool -m enp1s0f1
+   Identifier                          : 0x03 (SFP)
+   Extended identifier                 : 0x04 (GBIC/SFP defined by 2-wire interface ID)
+   Connector                           : 0x07 (LC)
+   Transceiver codes                   : 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+   Encoding                            : 0x01 (8B/10B)
+   BR Nominal                          : 10300MBd
+   Rate identifier                     : 0x00 (unspecified)
+   Length (SMF)                        : 10km
+   Length (OM2)                        : 0m
+   Length (OM1)                        : 0m
+   Length (Copper or Active cable)     : 0m
+   Length (OM3)                        : 0m
+   Laser wavelength                    : 1330nm
+   Vendor name                         : Lightron Inc.
+   Vendor OUI                          : 00:13:c5
+   Vendor PN                           : WSPXG-HS3LC-IEA
+   Vendor rev                          : 0000
+   Option values                       : 0x00 0x1a
+   Option                              : TX_DISABLE implemented
+   BR margin max                       : 0%
+   BR margin min                       : 0%
+   Vendor SN                           : S142228617
+   Date code                           : 140611
+   Optical diagnostics support         : Yes
 
-Actually, each time the camera is activated, the ISP driver powers on 
-the ISP and initiates its firmware from the beginning; when the camera 
-is closed, the ISP is powered off..
+Signed-off-by: Birger Koblitz <mail@birger-koblitz.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Tested-by: Rinitha S <sx.rinitha@intel.com>
+---
+Changes in v5:
+  Added "Tested-by" 
+- Link to v4: https://lore.kernel.org/r/20251016-10gbx-v4-1-0ac202bf56ac@birger-koblitz.de
 
->> Thanks,
->> Sultan
-> 
-> A small update: I reproduced the issue on v4, but it took several more cycles of
-> closing/opening cheese and waiting 30s compared to v5.
-> 
-> Right now my best guess is that this is a timing issue with respect to FW that
-> was exposed by the v5 changes. v5 introduced slight changes in code timing, like
-> with the mutex locks getting replaced by spin locks.
-> 
-> I'll try to insert mdelays to see if I can expose the issue that way on v4.
-> 
+Changes in v4:
+  Added "Reviewed-bys".
+  Slight rewording of commit message.
+- Link to v3: https://lore.kernel.org/r/20251014-10gbx-v3-1-50cda8627198@birger-koblitz.de
 
-Could you kindly provide the FW used?
+Changes in v3:
+  Added "Reviewed-by". There also was a possible mailserver DKIM misconfiguration
+  that may have prevented recipients to recieve the previous mails 
+- Link to v2: https://lore.kernel.org/r/20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de
 
-> Sultan
+Changes in v2:
+  Allow also modules with only Byte 15 (100m SM link length) set to
+  be identified as BX
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c   |  7 ++++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c |  2 ++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c     | 43 +++++++++++++++++++++---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h     |  2 ++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_type.h    |  2 ++
+ 5 files changed, 51 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
+index d5b1b974b4a33e7dd51b7cfe5ea211ff038a36f0..892a73a4bc6b0bb1c976ca95bf874059b987054f 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
+@@ -342,6 +342,13 @@ static int ixgbe_get_link_capabilities_82599(struct ixgbe_hw *hw,
+ 		return 0;
+ 	}
+ 
++	if (hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
++	    hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1) {
++		*speed = IXGBE_LINK_SPEED_10GB_FULL;
++		*autoneg = false;
++		return 0;
++	}
++
+ 	/*
+ 	 * Determine link capabilities based on the stored value of AUTOC,
+ 	 * which represents EEPROM defaults.  If AUTOC value has not been
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+index 2d660e9edb80af8fc834e097703dfd6a82b8c45b..76edf02bc47e5dd24bb0936f730f036181f6dc2a 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+@@ -351,6 +351,8 @@ static int ixgbe_get_link_ksettings(struct net_device *netdev,
+ 		case ixgbe_sfp_type_1g_lx_core1:
+ 		case ixgbe_sfp_type_1g_bx_core0:
+ 		case ixgbe_sfp_type_1g_bx_core1:
++		case ixgbe_sfp_type_10g_bx_core0:
++		case ixgbe_sfp_type_10g_bx_core1:
+ 			ethtool_link_ksettings_add_link_mode(cmd, supported,
+ 							     FIBRE);
+ 			ethtool_link_ksettings_add_link_mode(cmd, advertising,
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
+index 2449e4cf2679ddf3277f4ada7619303eb618d393..ad6a1eae6042bb16e329fb817bcfcb87e9008ce8 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
+@@ -1541,6 +1541,8 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
+ 	u8 identifier = 0;
+ 	u8 cable_tech = 0;
+ 	u8 cable_spec = 0;
++	u8 sm_length_km = 0;
++	u8 sm_length_100m = 0;
+ 	int status;
+ 
+ 	if (hw->mac.ops.get_media_type(hw) != ixgbe_media_type_fiber) {
+@@ -1678,6 +1680,31 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
+ 			else
+ 				hw->phy.sfp_type =
+ 					ixgbe_sfp_type_1g_bx_core1;
++		/* Support Ethernet 10G-BX, checking the Bit Rate
++		 * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
++		 * Single Mode fibre with at least 1km link length
++		 */
++		} else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
++			   (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
++			   (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
++			status = hw->phy.ops.read_i2c_eeprom(hw,
++					    IXGBE_SFF_SM_LENGTH_KM,
++					    &sm_length_km);
++			if (status != 0)
++				goto err_read_i2c_eeprom;
++			status = hw->phy.ops.read_i2c_eeprom(hw,
++					    IXGBE_SFF_SM_LENGTH_100M,
++					    &sm_length_100m);
++			if (status != 0)
++				goto err_read_i2c_eeprom;
++			if (sm_length_km > 0 || sm_length_100m >= 10) {
++				if (hw->bus.lan_id == 0)
++					hw->phy.sfp_type =
++						ixgbe_sfp_type_10g_bx_core0;
++				else
++					hw->phy.sfp_type =
++						ixgbe_sfp_type_10g_bx_core1;
++			}
+ 		} else {
+ 			hw->phy.sfp_type = ixgbe_sfp_type_unknown;
+ 		}
+@@ -1768,7 +1795,9 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
+-	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1)) {
++	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
++	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
++	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1)) {
+ 		hw->phy.type = ixgbe_phy_sfp_unsupported;
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -1786,7 +1815,9 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
+ 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
+-	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1)) {
++	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
++	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
++	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1)) {
+ 		/* Make sure we're a supported PHY type */
+ 		if (hw->phy.type == ixgbe_phy_sfp_intel)
+ 			return 0;
+@@ -2016,20 +2047,22 @@ int ixgbe_get_sfp_init_sequence_offsets(struct ixgbe_hw *hw,
+ 		return -EOPNOTSUPP;
+ 
+ 	/*
+-	 * Limiting active cables and 1G Phys must be initialized as
++	 * Limiting active cables, 10G BX and 1G Phys must be initialized as
+ 	 * SR modules
+ 	 */
+ 	if (sfp_type == ixgbe_sfp_type_da_act_lmt_core0 ||
+ 	    sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
+ 	    sfp_type == ixgbe_sfp_type_1g_cu_core0 ||
+ 	    sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
+-	    sfp_type == ixgbe_sfp_type_1g_bx_core0)
++	    sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
++	    sfp_type == ixgbe_sfp_type_10g_bx_core0)
+ 		sfp_type = ixgbe_sfp_type_srlr_core0;
+ 	else if (sfp_type == ixgbe_sfp_type_da_act_lmt_core1 ||
+ 		 sfp_type == ixgbe_sfp_type_1g_lx_core1 ||
+ 		 sfp_type == ixgbe_sfp_type_1g_cu_core1 ||
+ 		 sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
+-		 sfp_type == ixgbe_sfp_type_1g_bx_core1)
++		 sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
++		 sfp_type == ixgbe_sfp_type_10g_bx_core1)
+ 		sfp_type = ixgbe_sfp_type_srlr_core1;
+ 
+ 	/* Read offset to PHY init contents */
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+index 81179c60af4e0199a8b9d0fcdf34654b02eedfac..039ba4b6c120f3e824c93cb00fdd9483e7cf9cba 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+@@ -32,6 +32,8 @@
+ #define IXGBE_SFF_QSFP_1GBE_COMP	0x86
+ #define IXGBE_SFF_QSFP_CABLE_LENGTH	0x92
+ #define IXGBE_SFF_QSFP_DEVICE_TECH	0x93
++#define IXGBE_SFF_SM_LENGTH_KM		0xE
++#define IXGBE_SFF_SM_LENGTH_100M	0xF
+ 
+ /* Bitmasks */
+ #define IXGBE_SFF_DA_PASSIVE_CABLE		0x4
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
+index b1bfeb21537acc44c31aedcb0584374e8f6ecd45..61f2ef67defddeab9ff4aa83c8f017819594996b 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
+@@ -3286,6 +3286,8 @@ enum ixgbe_sfp_type {
+ 	ixgbe_sfp_type_1g_lx_core1 = 14,
+ 	ixgbe_sfp_type_1g_bx_core0 = 15,
+ 	ixgbe_sfp_type_1g_bx_core1 = 16,
++	ixgbe_sfp_type_10g_bx_core0 = 17,
++	ixgbe_sfp_type_10g_bx_core1 = 18,
+ 
+ 	ixgbe_sfp_type_not_present = 0xFFFE,
+ 	ixgbe_sfp_type_unknown = 0xFFFF
+
+---
+base-commit: 67029a49db6c1f21106a1b5fcdd0ea234a6e0711
+change-id: 20251012-10gbx-ab482c5e1d54
+
+Best regards,
 -- 
-Regards,
-Bin
+Birger Koblitz <mail@birger-koblitz.de>
 
 
