@@ -1,88 +1,103 @@
-Return-Path: <linux-kernel+bounces-896953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FDFC51A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:24:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E27C519E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3CC3A91C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621311885052
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF63016FC;
-	Wed, 12 Nov 2025 10:18:10 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE643019CC;
+	Wed, 12 Nov 2025 10:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnfEQmj1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B971720FAAB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FB22594BD;
+	Wed, 12 Nov 2025 10:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942690; cv=none; b=ntoZcT4poVgyMKlVwZYGH5g7PCKWnmpB7j51/x4LDIrZ4YvwSPjM0ZJnay/U3kwYPY0N5wnn2s/FZuj4FMpyrY7DMFsLbAdQtR7xU4gwGwZzSNrVb4wm/7YFRGtYWP+I1NgB0OAssY6EhpUPuvjabJZ45XEg1VAquHagPOoI+JM=
+	t=1762942857; cv=none; b=DHLUAfR7aMiex+5pwhT8iepr/T7kj4T8HHRNwz8RoaisI7Lvfm+pXgfiKJk4Du0KN5YWxcg8bJHqBJ8qbmzoN9Ce/Tc6WXwBOh3BguW67r7RSuQ/2mYbC7qcsfhVcsNVVBnG9TQ1DWQAPTBby1TgcAr/GWWKnBS6R9APkY7j4Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942690; c=relaxed/simple;
-	bh=j6zU9E8/y0C65fl0xXr+Lxr++CUVJidoLOO92dvmDk8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nX7CxWNkH0xCWjLYGYONzLYw9b4koyJybIdneDpQQsvc/27itiHMBhWO7eQqvU0faAsklt3fzpFOLHbVuHk3rwO7vIq5kseOS1HR3OmA6Fkg5B5kYVRnvT06GqBO8ltNo2GAvi/hhA9UQveoPty3kZEp5XDRwi282jQmOQBOfdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4337853ffbbso6401415ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:18:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762942686; x=1763547486;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ydwsIp/N1SK5PZm+wrWCTPbimcP98aU1H27UJH0frI=;
-        b=hFdUGww7kGvJGS8EG4ANFSRxBJithF5CpAW+3uOcowpwRb5tDxBI2+4zcjk/1Az9p8
-         B74gu/mWhyGOTnz8+SIrP7S6ZjY8WkFRU6Or5gfYmgN5zRRFHMSTLOmWHtHPqUHxmbkF
-         Yk2AKlxsfFF3bDURsHO1m40qxW4GTZokC2FLvyHYguDM1rWohh8y0oZVNz3LqbqbnsJO
-         hvQDCNgqGu2wL32qFMz6EFyYdI7kgfh7MkifpChNRMh6J0n9gGNOFp039bU6EbxW+Etw
-         /E6p1Dbnikn4tELmh8G1Q2yOimGs0U0v1uHxdLhNq0Oxikq0lr2Y2keZ6eqRzEyu0d5w
-         AJMw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0W0Z04xBVQ8aUaKFkukyTR5xWhlilcIHVGLYvxb0as/KDHFh0sXLU2ZGFFyu3IdvMu/rFE5PkUF3Gu1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+1rPOQ3C1ZsFyZ1kRby3xvKIZvqFohzAf77kcUjPoNz5FYgrC
-	upTGbt0PGYaAuMwAIuTFlUHFbBN/rXDGA4FqpLB8DjEItFhhUTHPHdu1xbVzi+hjgJmWa9LC3uL
-	EBN6GSqJPz2LJ0onG6q6XvjhJQ8iZR9G3PVDwdlL6HmPa6yTZTGdyrkvrIBc=
-X-Google-Smtp-Source: AGHT+IEwCOorlomunj5Yu48khKiNlihTq+cCIdqellMLyEdeTyySXda6PUSFEaJFZ+u8spiTznag8gxrG9VrgRzdhpaci7YlA6iC
+	s=arc-20240116; t=1762942857; c=relaxed/simple;
+	bh=BjbMbn6QXuES5GSmGzJYQMBQyUywLDkryqleK8Yl/iA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OnaFPdtK+ZiHWQp7RWvSGKN/F2G5aJahBMu+RGDUPI10pd0NCTZmZH3SJbx7ncmkoi8konEZXqYQl/CglNksX+Cj4KjIc0ykdIN9STYZ2rGojCuGzAq7v9lgeaJ6CO6nG7orwOjhM0Q9tPBwojCvuNB7lRPzg6Qcwb9+LT88KXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnfEQmj1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55556C4CEF5;
+	Wed, 12 Nov 2025 10:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762942856;
+	bh=BjbMbn6QXuES5GSmGzJYQMBQyUywLDkryqleK8Yl/iA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KnfEQmj1uZS0TGaWKSAdADLFlu8oZecWfpLq1rdx4dQ/8lV7AWqVTXLhFTOOfgGHT
+	 uROw5hHAKgy1wnTlRXE29p2DOem+o3fTD8DuxWSXAJQEF7aBjGP0SA7s20cl9dEYjg
+	 xR37clnTdSJ582ojs//Mw/i6t1b4Fgz4lI3APhbTp9v0Mb1goh4mbVH3fwOYvdTZhn
+	 5E2C/E8XrkA41m/eVgxiLnNQ/44X6QfqXwmQ5HvS7AlF9do4VJT5TiNQlDhsec6JN9
+	 bfOPEUH1LH4G8d2BpjjXabyEiDdkof2BuyXY2maoGNZ6G5HOQJe6EgunyVsnHGmoU9
+	 OTS+ZPZTHtO0Q==
+Date: Wed, 12 Nov 2025 11:20:54 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dan.carpenter@linaro.org, kernel-team@android.com, willmcvicker@google.com, arnd@arndb.de
+Subject: Re: [PATCH 1/2] dt-bindings: soc: samsung: exynos-pmu: remove syscon
+ for google,gs101-pmu
+Message-ID: <20251112-airborne-tungsten-chupacabra-1c668c@kuoka>
+References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
+ <20251103-remove-pmu-syscon-compat-v1-1-f2cb7f9ade6f@linaro.org>
+ <20251105-guillemot-of-demonic-courtesy-6127ac@kuoka>
+ <CADrjBPog8u8sRsUjcgKNG87kdcF5HHx94tUXPdTrCUG-PxSXWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3789:b0:433:1b32:2a6a with SMTP id
- e9e14a558f8ab-43473c56168mr33335085ab.0.1762942685755; Wed, 12 Nov 2025
- 02:18:05 -0800 (PST)
-Date: Wed, 12 Nov 2025 02:18:05 -0800
-In-Reply-To: <20251112-ferien-trott-4d99d59d676d@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69145edd.a70a0220.22f260.015b.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
-From: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CADrjBPog8u8sRsUjcgKNG87kdcF5HHx94tUXPdTrCUG-PxSXWg@mail.gmail.com>
 
-Hello,
+On Tue, Nov 11, 2025 at 10:18:47AM +0000, Peter Griffin wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 5 Nov 2025 at 08:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Mon, Nov 03, 2025 at 08:03:10AM +0000, Peter Griffin wrote:
+> > > Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
+> > > "syscon" compatible") it is possible to register a regmap without the
+> > > syscon compatible in the node.
+> > >
+> > > Update the bindings for google,gs101-pmu so that the syscon compatible is
+> >
+> > That's an ABI break...
+> >
+> > > no longer required. As it isn't really correct to claim we are compatible with
+> > > syscon (as a mmio regmap created by syscon will not work on gs101).
+> >
+> > ... with kind of a reason, but then the question I have: was the
+> > standard MMIO regmap exposed via syscon ever working for any part of
+> > this PMU?
+> >
+> > Original posting here:
+> > https://lore.kernel.org/all/20231209233106.147416-2-peter.griffin@linaro.org/
+> > did not change PMU driver and did not express that the syscon is broken.
+> 
+> With the benefit of hindsight, no, PMU write register access was never
+> working for any part of the PMU.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please add it to the last paragraph of your commit msg, that this was
+never working in practice thus changing ABI is justified.
 
-Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-Tested-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Best regards,
+Krzysztof
 
-Tested on:
-
-commit:         53974b87 nsproxy: fix free_nsproxy() and simplify crea..
-git tree:       https://github.com/brauner/linux.git namespace-6.19
-console output: https://syzkaller.appspot.com/x/log.txt?x=143dec12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0a8655a80e189278487e
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
