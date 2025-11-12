@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-897769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3609C53B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:31:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFFDC53B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD324A5390
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248C3621FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1434E33DEE8;
-	Wed, 12 Nov 2025 16:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7DA342175;
+	Wed, 12 Nov 2025 16:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ADgUrUQn";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QJBlpCR0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YVflLx5u"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A452D130B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6552D130B;
+	Wed, 12 Nov 2025 16:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965689; cv=none; b=l/JbPgpK2HbagsTja3/Wz85W0qLkJFQ0XBjaSrqJi+Fx7SpFk2MMAarFHU2GtQb87XpYodIr8NlJP8mCC4M98CpOLE6Hrx8iEnyoBsrOJkrfP23JNI5bht44KxDNP8mOhTF73NvofjagyRhLfFN0akT6rQXNAOPZEaI89j9Bg8c=
+	t=1762965730; cv=none; b=HbnSRM7nTdly5XItZR0+mVnj+FWcS/VP4+kQxBQadn4jc4jCXEzj50Nm60DtSWKC8VUFtkZftwhF/bp+lOzNfuQ4k4NwFKh8m7XsTphQOLvrB3wfaia4ENUwIFXIs1764zsTCo2Xe3NdWt3Hlb30sacgBW+fDX//err61V+fs3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965689; c=relaxed/simple;
-	bh=a8AJGhL1VAPG262ScwQLe7whI1dlfXisT88+QPWVjEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aZvHYfK+OJJ3zoOni3NL9CSEzPWSHyP7fi82nA1A2Ybhwf0+Ci+BWe3H0i3tuFL3/llXCUqn4P/1Wrb6hLqqymV2LckRQrbsvt23t6i7MGDYSira0bjB3fBWl2OR+s347BtJjMaZmCPc5Gn0PgXVEpBwd8VtjJXb8n19IQXNCww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ADgUrUQn; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QJBlpCR0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762965686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ikdXXsrAm3HhwuEKeAkHhU7cBlMn2TwrNGMihSwPVNo=;
-	b=ADgUrUQnQZgb3hF42q543P+CaNRtn7wEvaXClnK/ufLn5mDcUbrpjq5PBzcZ9R/SKGjHWv
-	TfztLGtwl8Vx2jEE4Eqox1oHdRxqpmu+xVLIJgcLUEQyLJSmyTtcbKa4N3eMTX3xwAHIQh
-	JF6rDr8c2lcXZu5qy2PLe+0V5ZfLmBM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-czqB5w0nPg6OE6tMP7LOow-1; Wed, 12 Nov 2025 11:41:24 -0500
-X-MC-Unique: czqB5w0nPg6OE6tMP7LOow-1
-X-Mimecast-MFC-AGG-ID: czqB5w0nPg6OE6tMP7LOow_1762965683
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b7338a441a2so54647166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762965683; x=1763570483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ikdXXsrAm3HhwuEKeAkHhU7cBlMn2TwrNGMihSwPVNo=;
-        b=QJBlpCR0gR7cNhGlY988rUwcTM0OQstUIk9V7TilZR+p8Bw5FipbEgvPMv+KmY1eEm
-         jTo57o3F3nkh4lQikx6PW43Ykq7GiTuSVXD2F/2SnDWRRszXeLLt8QcxMJNE8pJ2P7TD
-         hErp82oltKeFjvymAi6f218NFrbLyswqyckxwzO2Kp1S2EDgmZGl/s0sHXsrgiTY7Vst
-         1t7aFk3jqj34p+ChlyPX5HL/fsxkNpW8CvKV92CR94NM6LdbyWjuSHL40WSPaZqOlkbQ
-         Yb/bm7B3aYE4aOzjxqs/639uv5TGlxshFoEUqWWGHeNMzxTOdxErqtzCz44pB9RUffbz
-         ZA7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762965683; x=1763570483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ikdXXsrAm3HhwuEKeAkHhU7cBlMn2TwrNGMihSwPVNo=;
-        b=R7GjxvQX7iG9KF2uqhHXhUv6jzlBJVLsBsV1vh6j3VVvJn8Dh78MwP6Txg8cRs13UT
-         wyeSUII7SQ1MHBtYOXSEN+5cLTvGu+XxCk2NbSqMhBu0YBrcChcWAnDH96MXuIk3F1Ga
-         OdYui7B3y3hVJCg3s/ADCF+EhAGhBQ+FJuf4XnE6Sf6Q0e5rjDeM1wxIoTE5nhCF0kj+
-         NsTEOUgm7dPS8zQB/lFzZE0wzw/FEGl9p/FYt8Sby8yYDyzAJfytZWZLeumgicA96fYP
-         obpk6GVArZhS7bMbBMZHV34+Y7GUtsXc7oY6JSVlTLcTGbY57Dv1rP7Tf557RxsEs6UU
-         /pCg==
-X-Gm-Message-State: AOJu0YxO7425kpjKlnw0EY+1XGHylJh28GPf6olneEGvKT4aNmf5+ekM
-	ikAN2jwuqb379QDMNWhpR1STyJDJsLtLl7aIXwD8YOJ6+S5HqqDrupbdGqd/02KkCxaxP8wVWmH
-	b6BGK25+ZnvnSKoMjBXdtCiq2Q3slKMrlNnxB1WQ+XDpTOW8iQAtC1vLz0JjTRyRu/fu5qTl8lr
-	kfgpx4Qsb5ltCrzk6yX8oUAOpTMoaQGVP2Ivkr9E9o
-X-Gm-Gg: ASbGncutztqay7YToy0TwdX946/X281c8svFhkOK3SAWUi9QX7tsqehk8iZVBAt2J0G
-	asNk/o+kN1BSVh4FTsO4PK7oP/SAyYplfVziwuertzBAhCkRTCwkZix0f/qtTkf5uvt0lC2KHTl
-	caOtjJc4roxIAneGJYYd4puhqGK4aQyRgS9iiShI8fa/AkXo0kreMM3pulJRJUvjrXgBGMiREX3
-	C/GpYy8J2X2dA==
-X-Received: by 2002:a17:907:3ccb:b0:b3f:b7ca:26c5 with SMTP id a640c23a62f3a-b7331b26dc5mr346896666b.59.1762965683131;
-        Wed, 12 Nov 2025 08:41:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHRc27NqW8+JUpvUh/cragVc2iT9XVTBXRx/J0JvT27BwmP6Bx6hZwHI5ZAmhOEOWRcd6vQa72Z36X+KnpkIc8=
-X-Received: by 2002:a17:907:3ccb:b0:b3f:b7ca:26c5 with SMTP id
- a640c23a62f3a-b7331b26dc5mr346894266b.59.1762965682584; Wed, 12 Nov 2025
- 08:41:22 -0800 (PST)
+	s=arc-20240116; t=1762965730; c=relaxed/simple;
+	bh=brfumpB1KjtZ0tUjUYidieOKFPOMGTQ3pQPql8DRWmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbMhQJsFb8oRVEZe4cuewlnKXBWSddf75/i1SfWWAMLoByd9043s1mDvZheFfUNu2AzSBLpAoqZhfpZBcKqTwNZo7//QF7H2YFhgz4F1V1rFy4CGx2TlCDEo7biY7l6DYxgqigIE0xjC2aKmLrpZEWjmNvvha/JSaaTM1cXbiQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YVflLx5u; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3C0BC40E021A;
+	Wed, 12 Nov 2025 16:42:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mkZIj2Z67Xik; Wed, 12 Nov 2025 16:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762965720; bh=H8fRy6CI1BAGBCKXWP6X0lxiw1OBfzCJ+bndBBtYOlo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YVflLx5uUbPoetXq3ohWhwyFBO14QTqiMcu1aA2NVNerXvN+EztQOA/LmJgWTsaot
+	 tQeOW+4lF1+6hkLMFgVwtAIQ1XHJvCupXPjLo3PWzhKnsb/qbo/qOUJqIqFVpECS2J
+	 1LGgK/GBf7m13rUsjRF9+IyMzCGdYcQiGUFMLiujsQB9G3AgZHpPI56XWcDTWFwLX4
+	 zmgv9oIjf3AE7WsbAPfBaX196OJtwWnTVKTn9iuK7HD5040W5Z+QlybaJIDdrZbL4s
+	 CsEkg6saAHLhwGkRRpdhI0PPDVHG9hRYLbTCzaCyadGuKZ2EE/kxW1FQVYdvYsVFcg
+	 uN4muSsByls/rhP1/X9lDHXRITzg63Hf1oozWUUuaKq/BBEg2mDY7JStj0eepCat6x
+	 lb19XkemtaonygVt/GE02GxWHMHM9Tkr/YmjfJ5+U3hiI6SYkOpEGYfkHJan8PZ2XA
+	 SmJ/Gzy7Ecjn2TEm2uJB9tH8enEx6lwwK1Mp63qoYu6HMjWsf6XZpA3U1Uwxb1Pegh
+	 xQDsHA2S6/Gql5NloFt2ROtKrJHdkJfireVfH1dQKapcRqc4tdWOcDP8g7eu/bhPhh
+	 Eu5ubqJVkyp1/KEYgO1BSmLFBluhgo8ld53ERP/Qkt5/m+WZ6eovucOqz2tKEHS5oU
+	 1d5JHe5AUzY3RsE4ylGaWInI=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2CEBD40E00DA;
+	Wed, 12 Nov 2025 16:41:51 +0000 (UTC)
+Date: Wed, 12 Nov 2025 17:41:44 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
+ assembly via ALTERNATIVES_2
+Message-ID: <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-5-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112113556.47ec9d12@gandalf.local.home>
-In-Reply-To: <20251112113556.47ec9d12@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 12 Nov 2025 17:41:10 +0100
-X-Gm-Features: AWmQ_blxXMedttQ595QdqBFXx9o1e_Sra_b48yscMGVD3xxwKAJfY9BmkO7vLyQ
-Message-ID: <CAP4=nvTMknOzMeUj-bW2sdGNTP-4D1U+L-buwyXZo8et1XyY_Q@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add Tomas Glozar as a maintainer to RTLA tool
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, 
-	John Kacur <jkacur@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031003040.3491385-5-seanjc@google.com>
 
-st 12. 11. 2025 v 17:35 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.org=
-> napsal:
->
-> From: Steven Rostedt <rostedt@goodmis.org>
->
-> Tomas will start taking over managing the changes to the Real-time Linux
-> Analysis (RTLA) tool. Make him officially one of the maintainers.
->
-> Also update the RTLA entry to include the linux-kernel mailing list as
-> well as list the patchwork and git repository that the patches will go
-> through.
->
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  MAINTAINERS | 4 ++++
->  1 file changed, 4 insertions(+)
->
+On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
+> @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>  	/* Load @regs to RAX. */
+>  	mov (%_ASM_SP), %_ASM_AX
+>  
+> +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
 
-Thanks.
+Oh wow. Alternatives interdependence. What can go wrong. :)
 
-Acked-by: Tomas Glozar <tglozar@redhat.com>
+> +	ALTERNATIVE_2 "",								\
+> +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
 
-Tomas
+So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
 
+        if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
+            kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+                flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+
+So how static and/or dynamic is this?
+
+IOW, can you stick this into a simple variable which is unconditionally
+updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
+otherwise it simply remains unused?
+
+Because then you get rid of that yuckiness.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
