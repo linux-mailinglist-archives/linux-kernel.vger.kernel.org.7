@@ -1,256 +1,159 @@
-Return-Path: <linux-kernel+bounces-897536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4035EC53094
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A288CC530B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 86E84359F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:18:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE27E34DF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B053016F1;
-	Wed, 12 Nov 2025 15:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227A267F57;
+	Wed, 12 Nov 2025 15:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GrRV5vnn"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010031.outbound.protection.outlook.com [52.101.85.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiiUja3v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD30D26A0DB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960618; cv=fail; b=jrBWZh18wv0DGj/PChrTULu1Ym7lQnJaXKBG6tNNa7JfKHl/28q555SQxpM5m9oQuoY5K7ibfICRei7VyrBbeCKTI0+IjN2rUAx8cVq34s2KhSLYXhPmq3BQqTM/1LND7qGJNils2fVgLCoqVzA/Q1746TwWW+2q+BWIFsiW9hc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960618; c=relaxed/simple;
-	bh=sfFtcVGT+lKsvLTtNzSVUgOtFUfqRKEbnoY2Gn99jBw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFS94OOMIPzjb74BCYBwpHKiQmHKxT6G+tbRZyhFiRv3e8o/ka+ELpbg78kiAiuT/T1TZK/OJ5S4Si+OVBTAqnThWyZ5xkN6xyyiwhdaySZZiTh2f4eGZPQu/jcTqSA2fQ2/Y/7XEeEYbcOhKDKrvvqVIh0m8BGE73IXzQbxE4Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GrRV5vnn; arc=fail smtp.client-ip=52.101.85.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eHPD9slpP2jDVuRoDmSZ5ueHsYTWwF3S4+omQdjh02/kTn5OAqeBeHc26S6yyJTv44EBiuyTKdXnp5RBAlx/NDDBQ20zen05/q2CGqYer8KKl3sXMjk4QMCqZ2q1ejUhrzWEMvmx3rd0whB4s3prz8QVL/qkhhK9M30dv2z3aQnYol3iwXwGIU3kbIvQ3dhShY1wb9t+vk21Vk9ZNq3sRUYDt0pjEfqHuZ+U50J4YhYTs2MeW7LzjIXbh6HSKwkNgOvg1oWbJcB6EyeOdS+b+zZiNkUIeYPXRyOAnz+zvdJMiRtnW/URJsJ6MKzGqMqEXXMluDBC90RX8kuofZbx0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CRKhUWc7w2iAG9gyJBZyUPz1wkiqOFB3aQ/y72EXfe4=;
- b=S3ZJJ1QLgPodZ5emJOx/ucMPP1G20CPDIzePC8zixD8c6D2kWcdAGYpfuqi0EBuDz0DAB28Q9tzlZ+RyZqcjQOSr8ta2wHxhdj3uoP5qJUYBNsW75IS+FIZ/Yz2oFDtuir7DbGxGN2lHC9kYwuilFbfL6HTeRE4N3D3xKKlOt5Ryg6aMJRwWEJo0p3SdxF6zvyiP+bD6M1vprBlLna/5aLM9pG+B9aFnuCqb7qFsdNzlcNn0VMs1qXuAEejqRaAFr0YjhQ/I0XdJg2lbhJDFrIEufMjHSW2SsLaze9/8gqoTzFONeUdWPWIwh9bTfK7pVLQU4g/UYwU/PXe2uF7N1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CRKhUWc7w2iAG9gyJBZyUPz1wkiqOFB3aQ/y72EXfe4=;
- b=GrRV5vnnvEkprdbZyZiTktaAWrZQUm5ghjoq+aQS9dDPIjVGUKVXI8CQfSG+rrET5nSPD0bBieajC2wXqroUMb42K426jjJpAumT4b7BOS8JzDXN0GNJ8n32/UH5TRLWNId3w/ngSp3uZYAFWsVUjrbFF+HUN5CfclzR367nAow=
-Received: from MN0PR05CA0017.namprd05.prod.outlook.com (2603:10b6:208:52c::21)
- by DS0PR10MB7068.namprd10.prod.outlook.com (2603:10b6:8:144::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 15:16:48 +0000
-Received: from MN1PEPF0000ECD4.namprd02.prod.outlook.com
- (2603:10b6:208:52c:cafe::cd) by MN0PR05CA0017.outlook.office365.com
- (2603:10b6:208:52c::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.6 via Frontend Transport; Wed,
- 12 Nov 2025 15:16:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- MN1PEPF0000ECD4.mail.protection.outlook.com (10.167.242.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 15:16:44 +0000
-Received: from DFLE109.ent.ti.com (10.64.6.30) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Wed, 12 Nov
- 2025 09:16:40 -0600
-Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 12
- Nov 2025 09:16:40 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE206.ent.ti.com
- (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 12 Nov 2025 09:16:40 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACFGe6W2860422;
-	Wed, 12 Nov 2025 09:16:40 -0600
-Date: Wed, 12 Nov 2025 09:16:40 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Md Shofiqul Islam <shofiqtest@gmail.com>
-CC: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] soc: ti: knav_qmss_queue: free resources in remove
- callback (v2)
-Message-ID: <20251112151640.rraufakkykekhmgf@stand>
-References: <20251110212751.Jdztdakpcerpqpr28@gmail.com>
- <20251110224459.49724-1-shofiqtest@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC791339A4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762960728; cv=none; b=jTYHm21JmGBVQRX3CL1JkbsixAVL8MtbCuMQGfK7sAND7WlZ6UKh8k0fxoscvMKB8LGEZGEwcQ0/J8fgebUSrwv5DbA0oTRP8h0+guC8eWDDiBvclmeoHBtilcH9oqJKZWyYh3cex2t48RsdtS3v7033yyOU0cViT5g+rvAmAW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762960728; c=relaxed/simple;
+	bh=iLnxgFyU1QDbMTELG3Fxbzkq6isaDRxHBg0vdYSv7AE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oV6r4fMhbt68RMWN0zoT5FeVQfUXhFe1TOr243VKUo54inTZh98F1lncJF6hxOk7lRqwmOTkLchuat+L6jzwyv+icAw8saym3eYGRlNFGJBBqFA0Dd82qfACIix+K5osZRGaEidHTE/+3w4RZYtttCX71AjNBlXR6nENaGPySWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiiUja3v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C85C4CEF7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762960727;
+	bh=iLnxgFyU1QDbMTELG3Fxbzkq6isaDRxHBg0vdYSv7AE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fiiUja3v+vFcmSw4Q0GFwzo3fqUmohUje6NewY/PGyV8NhiY4wHdlmdNa0Xy2QF9k
+	 YijfBlZAchxESyHE4k1iN/Wdeej5gEemMEqrnPInKMg7XFElHj7DoyMiczr6peW+wx
+	 4izTbgyGFuWgV24hvUwztPJGHbLuyodUhEzAFL7/ZVugSE3Oi0SSY4jpPCMsLt76y1
+	 ZKF3vC8Cp0qHY+ciUhuKZiJuA+HLjMfaR3UmpcN3ZROkgkxL+fBJ1gAggvm53w9lQu
+	 o/CbfCbxJM1AcoHqDGhTCFx/SnwXhd/kVdMjSPqz2eaR2itGzB6lxnYT4S6Bc1qRRI
+	 1iw9HHpHUD4hg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37a3a4d3d53so8802221fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:18:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUJXnGilQRXk+I0yYmQilb3XplUe3mQ116g3NqbKDXnXXCqfdSUH96zAz43bA6cLZwxfiI0owQdz0k56aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDYmOkVfZeasO5IJiyPTHXuUQ+79sQT6eD8wsYZc2C/q7mg/be
+	jXyY+l1hKcLNZu3keVhhfUcPt2JZMySa8TM0PKk+QogvMR6fgSl2V+cKvSd/OE4pp38xa3EE1jN
+	pMOE87fx1LPBhvo4sK4YlkqxfGQtnxmY=
+X-Google-Smtp-Source: AGHT+IEZJNYM8RSAWY7JhY3msblJGctSWnuxWyOr/XKZCDnEvnzTK0CVMbYL+FXUVQmYYZDS5c4FeflgFcwTg/j1yso=
+X-Received: by 2002:a2e:8a90:0:b0:37a:5990:2ba8 with SMTP id
+ 38308e7fff4ca-37b8c39eb6emr7262651fa.23.1762960725360; Wed, 12 Nov 2025
+ 07:18:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251110224459.49724-1-shofiqtest@gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD4:EE_|DS0PR10MB7068:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb302d87-9e65-4b42-d2f2-08de21fe7deb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eixk2q7gzoeucQzEDHThcecB4UqVv6sjfnUmO5y9PGqOPV2vAJK/9JOkSz+R?=
- =?us-ascii?Q?dN6PnrqfKJtHYJiNE8sYG8JqN1W0KiPldlw4qKgXatSsMMnDnHLVDLkz+6yE?=
- =?us-ascii?Q?h3HNKuxOOMJD7K1L/yO5/j8+P8ABF2NSnFD3JKQnt4E8MJ5Shs7gGT2ef6VV?=
- =?us-ascii?Q?XF9ZUUJLr9qwf2BN+B1eIsItBMlw72vRi4f6zDQ7Ls8FrM/QVydSdaIlz6yw?=
- =?us-ascii?Q?7objWetrcvjZg5u3GzHYhOW+H83r0ROQhpx2zUsD+fOKVZpGqZr0zoS9hDtW?=
- =?us-ascii?Q?eluZ8khjFA/ao32aACxWrxEmZF3B1uCo4qCPTlwJHQmjqA106Fc94N0sfwaX?=
- =?us-ascii?Q?wCRIzEH0WuZm8zQD6zhIwdNkn/5vwAw9pdKFC01Usd7sSmzaYINr506rM4XZ?=
- =?us-ascii?Q?J61JQHroeZdyIVMzPyeEDx2NVJL87aKvwPHbyHVJqs1TPAv0mk9V7/tV8meX?=
- =?us-ascii?Q?+gxmyV9OnALLfXypEbTrYxL3yowIlohbfEJDzBsVNwZ8VOd//zf10QN/6wyN?=
- =?us-ascii?Q?Da721YFKr1qZ9sPF9qobi2m8TBTxxfJ8KFqwK1mLIi0tDBS2IUIE9184Jha9?=
- =?us-ascii?Q?48sBu3+tp6S23TC1DDoMA7pD5j8TRGD29OktnPEdZZsxPIWo7rMJj3e+MN2c?=
- =?us-ascii?Q?ZineGCd4GfYmxw1U9R6llT12DVzbjDs+5m93hd+3z5OoOq+b5b+5/z5WQ/D6?=
- =?us-ascii?Q?ulrUCFgPK9rS12g8y4xogWl1LE3ogbE11Ic3xzJ2iDD7dO8MS1lHOrJZxxh9?=
- =?us-ascii?Q?0/JEwA9ZaRSQRtn+gBUJ0xSM69ijHS6JtFAJJ7w1Ck7RBpoz3VWaAQuZGKOQ?=
- =?us-ascii?Q?ujwjuuGUJD12j+mttNqWX9RIaU1c9DP7Xo2FaolU1esgUqwc/ZCANrhUqpyv?=
- =?us-ascii?Q?XDyeRAyqS4Ac0gVEOYmZJ8oKnmZDoSq69UNXoLccSjk0e/6ncclE7hiX+kxr?=
- =?us-ascii?Q?JQKIBfFnqcjL+nIICjRT9PwpNUsFpAcVmydrZkzi43HDM8PP7Rubyhzqhweu?=
- =?us-ascii?Q?O+I22eoz021QC0uW83rg0jBrBBOR6m8yOf/7Ed7Ra6JAtuTzVmktZAOjpjHN?=
- =?us-ascii?Q?uoGZhqyGPK8ZNVfTxYgtx4Pmc+sGVNrkDDfdaiX4LF+O3urMoUrAnVGYd6ZS?=
- =?us-ascii?Q?mpIGscKNVgH4Tc5ttmjD+asmc+BFMRUWP+qFLgxXCCfApB5sESQ/xbPWuidW?=
- =?us-ascii?Q?cGHYvWFo2RQZzQ1Gc9MQ6axH4Siw0gg/OT+YIj/2Ovtc5xy8ccU0/95RrqaO?=
- =?us-ascii?Q?lmsZiSlTpj5pFW4JWoG9gGWvolXYrvBAv3nNDVhgE5KaofQ0lAreAUhOl37h?=
- =?us-ascii?Q?UAcEh9XswcQngxG27pWn6dS4R6oHZrDdmD5BxrkEWSalDtZqmn4c08TpW8GV?=
- =?us-ascii?Q?QJ/Z0+oEp7ibW6SJ+fod6WIWnjfCs9HluX4U0hDhAGP1Kg+E5d8ToGTGvHud?=
- =?us-ascii?Q?RmrvVok5TpbA/Vw0Jsr3WGwOpkK06nLCMEdNe4vDq1yhr242LGTpR9RGf9IT?=
- =?us-ascii?Q?M+2nbnLeaKpsa/bK4iP7xiY7F09DCs/9HXEp+ogvlnzmM8I92H1aMQlA17TJ?=
- =?us-ascii?Q?5Tygp36aeuICmE7PnE3hFL7jG2YCGLxroF4J0mFF?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 15:16:44.9957
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb302d87-9e65-4b42-d2f2-08de21fe7deb
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7068
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com>
+ <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com>
+ <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com> <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
+In-Reply-To: <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 12 Nov 2025 16:18:33 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkATy8eQW1W11WM4a6PnYbNwFNrApQpl2tGvWjez9wDd66g-WVyWrnM5Mw
+Message-ID: <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com>
+Subject: Re: [PATCH v11 4/9] x86/alternatives: Disable LASS when patching
+ kernel code
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Sean Christopherson <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 00:44-20251111, Md Shofiqul Islam wrote:
-> 
-> Hi Nishanth,
-> 
-> Thanks for reviewing!
-> 
-> This is version 2 (v2) of the patch, not the same as before.
-> I have fixed the formatting and indentation issues you pointed out.
-> The patch now passes checkpatch.pl without any warnings or errors.
-> 
-> Changes in v2:
-> - Fixed indentation and alignment issues reported by checkpatch
-> - Wrapped commit message lines to within 75 characters
-> 
-> Thanks again for your feedback!
-> 
-> Regards,
-> Md Shofiqul Islam
-> 
-> Implement the TODO in knav_queue_remove() by stopping PDSPs and
-> freeing queue regions and queue ranges before disabling runtime PM,
-> mirroring the allocations performed in the probe path.
-> 
-> This ensures resources are released on driver unbind and avoids
-> leaking queue/region state.
-> 
-> Signed-off-by: Md Shofiqul Islam <shofiqtest@gmail.com>
+On Wed, 12 Nov 2025 at 15:58, H. Peter Anvin <hpa@zytor.com> wrote:
+>
+> On November 12, 2025 6:51:45 AM PST, Dave Hansen <dave.hansen@intel.com> wrote:
+> >On 11/12/25 05:56, Ard Biesheuvel wrote:
+> >...
+> >>> it looks like we would now need to toggle
+> >>> CR4.LASS every time we switch to efi_mm. The lass_enable()/_disable()
+> >>> naming would be more suitable for those wrappers.
+> >>>
+> >> Note that Linux/x86 uses SetVirtualAddressMap() to remap all EFI
+> >> runtime regions into the upper [kernel] half of the address space.
+> >>
+> >> SetVirtualAddressMap() itself is a terrible idea, but given that we
+> >> are already stuck with it, we should be able to rely on ordinary EFI
+> >> runtime calls to only execute from the upper address range. The only
+> >> exception is the call to SetVirtualAddressMap() itself, which occurs
+> >> only once during early boot.
+> >
+> >Gah, I had it in my head that we needed to use the lower mapping at
+> >runtime. The efi_mm gets used for that SetVirtualAddressMap() and the
+> >efi_mm continues to get used at runtime. So I think I just assumed that
+> >the lower mappings needed to get used too.
+> >
+> >Thanks for the education!
+> >
+> >Let's say we simply delayed CR4.LASS=1 until later in boot. Could we
+> >completely ignore LASS during EFI calls, since the calls only use the
+> >upper address range?
+> >
+> >Also, in practice, are there buggy EFI implementations that use the
+> >lower address range even though they're not supposed to? *If* we just
+> >keep LASS on for these calls is there a chance it will cause a
+> >regression in some buggy EFI implementations?
+>
+> Yes, they are. And there are buggy ones which die if set up with virtual addresses in the low half.
 
-Please fix the commit message. I use b4 to apply patches.
-Documentation/process/submitting-patches.rst
-or https://docs.kernel.org/process/submitting-patches.html
-https://docs.kernel.org/process/email-clients.html
+To elaborate on that, there are systems where
 
-Also you can see how patches are reviewed, the style used
-https://lore.kernel.org/linux-arm-kernel/
+a) not calling SetVirtualAddressMap() crashes the firmware, because,
+in spite of being clearly documented as optional, not calling it
+results in some event hook not being called, causing the firmware to
+misbehave
 
-(hint: don't add (v2) as postfix in $subject)
+b) calling SetVirtualAddressMap() with an 1:1 mapping crashes the
+firmware (and so this is not a possible workaround for a))
 
-> ---
->  drivers/soc/ti/knav_qmss_queue.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-> index 1e5f3e9faa99..7d9f3570ecf3 100644
-> --- a/drivers/soc/ti/knav_qmss_queue.c
-> +++ b/drivers/soc/ti/knav_qmss_queue.c
-> @@ -1,11 +1,11 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> +/**
->   * Keystone Queue Manager subsystem driver
->   *
->   * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com
-> - * Authors:	Sandeep Nair <sandeep_n@ti.com>
-> - *		Cyril Chemparathy <cyril@ti.com>
-> - *		Santosh Shilimkar <santosh.shilimkar@ti.com>
-> + * Authors: Sandeep Nair <sandeep_n@ti.com>
-> + *          Cyril Chemparathy <cyril@ti.com>
-> + *          Santosh Shilimkar <santosh.shilimkar@ti.com>
+c) calling SetVirtualAddressMap() crashes the firmware when not both
+the old 1:1 and the new kernel mapping are already live (which
+violates the UEFI spec)
 
-un-necessary change, drop.
->   */
->  
->  #include <linux/debugfs.h>
-> @@ -1884,14 +1884,13 @@ static int knav_queue_probe(struct platform_device *pdev)
->  
->  static void knav_queue_remove(struct platform_device *pdev)
->  {
-> -    struct knav_device *kdev = platform_get_drvdata(pdev);
-> -
-> -    knav_queue_stop_pdsps(kdev);
-> -    knav_queue_free_regions(kdev);
-> -    knav_free_queue_ranges(kdev);
-> +	struct knav_device *kdev = platform_get_drvdata(pdev);
->  
-> -    pm_runtime_put_sync(&pdev->dev);
-> -    pm_runtime_disable(&pdev->dev);
-> +	knav_queue_stop_pdsps(kdev);
-> +	knav_queue_free_regions(kdev);
-> +	knav_free_queue_ranges(kdev);
-> +	pm_runtime_put_sync(&pdev->dev);
-> +	pm_runtime_disable(&pdev->dev);
+d) calling SetVirtualAddressMap() does not result in all 1:1
+references being converted to the new mapping.
 
-When submitting a patch, please rebase and squash local changes.. and
-make sure the patch applies cleanly.
 
->  }
->  
->  static struct platform_driver keystone_qmss_driver = {
-> -- 
-> 2.51.1
-> 
-> 
+To address d), the x86_64 implementation of efi_map_region() indeed
+maps an 1:1 alias of each remapped runtime regions, so that stray
+accesses don't fault. But the code addresses are all remapped, and so
+the firmware routines are always invoked via their remapped aliases in
+the kernel VA space. Not calling SetVirtualAddressMap() at all, or
+calling it with a 1:1 mapping is not feasible, essentially because
+Windows doesn't do that, and that is the only thing that is tested on
+all x86 PCs by the respective OEMs.
 
-PS: if you are not comfortable with upstream patch flow, I suggest
-online training/in-person training from various sources such as bootlin
-etc..
+Given that remapping the code is dealt with by the firmware's PE/COFF
+loader, whereas remapping [dynamically allocated] data requires effort
+on the part of the programmer, I'd hazard a guess that 99.9% of those
+bugs do not involve attempts to execute via the lower mapping, but
+stray references to data objects that were not remapped properly.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+So we might consider
+a) remapping those 1:1 aliases NX, so we don't have those patches of
+RWX memory around
+b) keeping LASS enabled during ordinary EFI runtime calls, as you suggest.
 
