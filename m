@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-897185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDFCC523E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:25:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F152C523B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4EBC3BEFB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:13:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9CFC4E3A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E1131A81F;
-	Wed, 12 Nov 2025 12:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C4B31B11E;
+	Wed, 12 Nov 2025 12:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N8dKgF+b"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1834231A567;
-	Wed, 12 Nov 2025 12:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Iz3dSmV8"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCC3191A5;
+	Wed, 12 Nov 2025 12:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949588; cv=none; b=HJUCH7NJ8bF7Ec2ploKFUsDIRqaD26H7GOQWJto7EKLDqUMenTILaisYzpFv7gxz6KYBmnVXW1Qvjp516aZtYdOW6/o+/Q1J9VTyA5ZoeLVBuqYQhXW4tbqhu3lU1OARgdJcwU+UhdgDFfP2yJHMkQRAiVreyOpApZlZkJalj+o=
+	t=1762949638; cv=none; b=fjTFH+DLnWFkEGmjoL17admdywvm2NL4rTq9aejctsg8rqZ0YY0FCqJyhMyC3EGN61s0bf9gIq5vFtdv+ZRccWswpWbApgTTTL/w9SqGohOGg61/yEofvCfmrjk2abF7IL5cYdr/wtCmo6ZYnRO8rnR3+7vEIUwRWCyBC3JXbzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949588; c=relaxed/simple;
-	bh=uHeWggc4Y+HBu8JcrFCdpsRNnnvcG7IPVDYv7jeArcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T2Ib2DCwu18u1D7591ULrCDWYUXpg98s7CyZGZ4RgDpwu6DdzihFXQA+oeNDX9zBV0Re8dd5QZUecLYdNZym4ptcbXm8FLkXVMlW/ddTMH+MMuPNVNHtX4l7ng2mQV2zsDI7gpi5xW1AsS5nENr21SVACpvs+51GbUfoXoMFGj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N8dKgF+b; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.18.184.99] (unknown [167.220.238.131])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C49782013350;
-	Wed, 12 Nov 2025 04:13:00 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C49782013350
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762949586;
-	bh=t2jH1NsioqiNKq4LlkFnbTBTGq5SSypFVXS+iRXhH7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N8dKgF+byg3Nyhdhxhp4/xD4c47fuUZVVHvqPcppsuvp6YFHPl/JWOBqCoqXvqFGc
-	 raGhrIQWJsg9Y8ZAnSkRDj0rZnH7RtwYwN2eBslj+FvyxYj3KhNMg6SldfsXdA9Eut
-	 czhPt2jfGz0kDu8F8qH4Y7+NJUn8qzuTWJgCfITM=
-Message-ID: <112034e2-8177-44f1-8bd4-91e44d643ff4@linux.microsoft.com>
-Date: Wed, 12 Nov 2025 17:42:58 +0530
+	s=arc-20240116; t=1762949638; c=relaxed/simple;
+	bh=LeZBMdb0VjGDbBq/p3y0Gg3Hhmbrd7oXXF61lD0zekM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CYpTnZkiL+ETeo7FoGqULMwHNb3WaYr/8fpNrByddW55YVGu1tR3TQz/lHstJRd0/S6wlZivyGWI3ub9cRvvzTA9K3HVu2dY8CmdS90XB4nuIUW+v3ST9xf8InkahHn4D4SCMzpS3Ims47GOD5IjbSF1n4asDh89Bu96wN2fST8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Iz3dSmV8; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=LeZBMdb0VjGDbBq/p3y0Gg3Hhmbrd7oXXF61lD0zekM=;
+	t=1762949635; x=1764159235; b=Iz3dSmV8mfDi8RiKpnFmCHQDyL/TZ0veXY+bVJgdsQCgbBv
+	kA1YoIeLs2BhKzKZAqXsDFZhy6bprVuJCnD8KtBYTBd7gq9U2TIqx8xEL6Sl1Lm8VG19shz3ytQ0r
+	zYVr2tAxJKw+IxvbqiFmJXkHn/ZbaRkbPVQBrO05mVfxDXnLTp15fU2SJmL5cLvcN7DuNQ4vAehT1
+	BG/xDwuw6khtlrUF77zzq67AMRlG1JVkumBwRuEHGwqPJ818V+dU1mOg10J8MaUMH5YFs6uM2zZ0o
+	JSUYWfSuRj1mxpdLnbiIxiI0lKR2XJ5Ao22uVewbL4nfSgW8ZXfvVnj7df2bowAg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vJ9jP-00000001Gma-1CJ3;
+	Wed, 12 Nov 2025 13:13:47 +0100
+Message-ID: <2083602a6dac97bb87b32d8832e8ac7e33506fbc.camel@sipsolutions.net>
+Subject: Re: wifi: mac80211: make n_channels updated absolutely before
+ accessing channels[]
+From: Johannes Berg <johannes@sipsolutions.net>
+To: xu.xin16@zte.com.cn
+Cc: kees@kernel.org, concord@gentoo.org, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, qiu.yutan@zte.com.cn
+Date: Wed, 12 Nov 2025 13:13:46 +0100
+In-Reply-To: <20251112165040828QPfTMyxpU6TF3SvlWuQdq@zte.com.cn>
+References: 
+	20251112163750463kAkOIyBxvHkYWh9Cgdypb@zte.com.cn,494afbf2ca5b18f230b02b03f122c4d427dd08ee.camel@sipsolutions.net <20251112165040828QPfTMyxpU6TF3SvlWuQdq@zte.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 2/2] net: mana: Drop TX skb on
- post_work_request failure and unmap resources
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, longli@microsoft.com,
- kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com,
- ssengar@linux.microsoft.com, ernis@linux.microsoft.com,
- dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com, leon@kernel.org,
- mlevitsk@redhat.com, yury.norov@gmail.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, gargaditya@microsoft.com
-References: <1762848781-357-1-git-send-email-gargaditya@linux.microsoft.com>
- <1762848781-357-3-git-send-email-gargaditya@linux.microsoft.com>
- <20251111170837.602904ee@kernel.org>
-Content-Language: en-US
-From: Aditya Garg <gargaditya@linux.microsoft.com>
-In-Reply-To: <20251111170837.602904ee@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-On 12-11-2025 06:38, Jakub Kicinski wrote:
-> On Tue, 11 Nov 2025 00:13:01 -0800 Aditya Garg wrote:
->> Drop TX packets when posting the work request fails and ensure DMA
->> mappings are always cleaned up.
-> 
-> drivers/net/ethernet/microsoft/mana/gdma_main.c:1303:23: warning: variable 'gc' set but not used [-Wunused-but-set-variable]
->   1303 |         struct gdma_context *gc;
->        |                              ^
+On Wed, 2025-11-12 at 16:50 +0800, xu.xin16@zte.com.cn wrote:
+> > > From: xu xin <xu.xin16@zte.com.cn>
+> > >=20
+> > > The commit 2663d0462eb3 ("wifi: mac80211: Avoid address calculations =
+via out of
+> > > bounds array indexing") said that req->n_channels must be set before
+> > > req->channels[] can be used. But there&apos;s still the case that req=
+.channels
+> > > accessing was prior to n_channels++.
+> > >=20
+> > > This does not fix any visible bug, just making n_channels updated bef=
+ore
+> > > accessing channels[] absolutely, to avoid potential UBSAN out of inde=
+xing
+> > > warning.
+> >=20
+> > I reverted the annotations, so this isn't necessary.
+>=20
+> Excuse me, what is the annotations you reverted ? Maybe I missed somthing=
+.
 
-Thanks for pointing this out. Will fix this in next revision.
+You missed multiple things, for example the fact that your changes do
+nothing.
 
-Regards,
-Aditya
+Please, everyone, don't submit changes when you don't understand _both_
+the original code (at least mostly) and your "own" changes.
+
+Otherwise we'll just think you used an LLM to cause us work and never
+take you seriously again.
+
+johannes
 
