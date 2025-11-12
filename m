@@ -1,99 +1,180 @@
-Return-Path: <linux-kernel+bounces-896730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368C8C5111E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:16:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4ED8C50F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A453B034C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:16:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8DD0034B0F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB95D2D5C7A;
-	Wed, 12 Nov 2025 08:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ABC278161;
+	Wed, 12 Nov 2025 07:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="XJunkJy9"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NYHSuyUR"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49380192B75;
-	Wed, 12 Nov 2025 08:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5211827603F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935362; cv=none; b=W8cuEEW3TsYoU5J6uBA3STJTnAdad3dGx92Z66e4Xz7bs46bGKSvjPgQ9ZqSMAJgSIxgxkL7mom86cY97YsU6NTr5vFq14cLD3ap8/ba9n3QQeG1v0Xt3pdGyR5E4s1QnoHDcxhnDQGv7pMW0uazSFscDMKNe2Ma+QF9i5EqaTI=
+	t=1762932821; cv=none; b=ryRy4GiAUERrIJCq8dyRnvs8Rc/4crOEr8LTonv3vNw9qm+WtbY05a015cZbfcLHThCsjcHrvB6bqbglPV6v3STeAJxv+tXD5wNZYSss8vnwVZfSNj5VrXgJFJM3Qc0+hSQio+0xiSiDcG/PUfMerS6XaNPfQ1XVNDjiGqs1/tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935362; c=relaxed/simple;
-	bh=9lFttpgfwCxR4/Gzin67BEKLTz/k+N1q4qSXGFW78SE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EyRvbgiZ3oqvZTZQYvYHX8iJi2Xo/H4sjPZ0TyBC8mQFVmv1GRTVrb5EFkzRpAzv34IX4Rf/alH8GLj31TdLhC8nYEVfzeKRSzQgLuXObBOIqlWlkCM84V1P+pbhXituC9q69tmGb2VoUp6T94yiqcorNxvazfiQicxhN0Ai9vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=XJunkJy9; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Reply-To; bh=m6Hg0b+Cx/Cb0iRwkxFZolAmLia6/s0EULb1X9hfULQ=; b=XJunkJy9awKsvjlf
-	rqrR1kFrwJ3DlpDrrY200/436zpH7zeTGPItqM5PcBKQrzxCsHu6j7h0vA2wnMKAK9Dk/TW/Fo7lX
-	cgzT4wZP/UkFcnUk363bJ+Kknc+kDyDGnK4+iYfqKVlV4fdFix8rKFnoWFgR5xa32SFa5M32eD2U/
-	mosJ9ZR4egncphjUfpHa57S7oxb8ZKUAuUeWDOUUl6/KLuE4IzQQlCA9sqILcL2W5eeTqhe++x2mz
-	MXVFHeY/9Qa3ENw2/TFIV7wl954b+S6u1Sc1TRLOCxdgjC3obxz/8nC9qRVZcKaCLBUfaffb+JakP
-	RgCW/YSdDdPrsFerfg==;
-Received: from [63.135.74.212] (helo=[192.168.1.241])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1vJ5Ly-003ih7-9S; Wed, 12 Nov 2025 07:33:18 +0000
-Message-ID: <0bdd6ab6-bfdd-400e-99b6-cfb186dfcc3e@codethink.co.uk>
-Date: Wed, 12 Nov 2025 07:33:15 +0000
+	s=arc-20240116; t=1762932821; c=relaxed/simple;
+	bh=rXD3VmAilJLI4TcMWlWUA9bQp0c9F9/4ZDQKml2RB/M=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=aaW7hbLZWLKomyC74WuFH3EPKTV/4N1jbkIVpK8o8LCjaKtMhSIdZ9MkDClfBwnlpMiLYIaBRpaJurdUyFdgmoKOITeFtpoIwspipVzHE7Bn15gPaqZHwDXUCX2Ol8fWgRxcJS3yIpL4BE/D/tSKtzilBYGvr6zcuXnUot1Px2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NYHSuyUR; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762932816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=eekNvxuCeOiOWDI8SsYmLtpX3192vqXtTU8rshEX5LA=;
+	b=NYHSuyURe5T0rm+1P/U0zZ9LydcJEktQ5VnktnDkV3GbcMEZzGLjqx+BZmJCotbj1bsxtX
+	TjjtVVs7E5Ii8exp2O2TW7by2F2HWH/CEwMhhJigijbxvJ/yuufYoxK7voYsTdGtq6NDsg
+	VmhgWQKo2t7RXncYjVAE4882toR6/xM=
+From: Zqiang <qiang.zhang@linux.dev>
+To: tj@kernel.org,
+	void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	qiang.zhang@linux.dev
+Subject: [PATCH] sched_ext: Fix unsafe locking in the scx_dump_state()
+Date: Wed, 12 Nov 2025 15:33:28 +0800
+Message-Id: <20251112073328.14303-1-qiang.zhang@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] pwm: dwc: add of/platform support
-To: dongxuyang@eswincomputing.com
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
- krzysztof.kozlowski+dt@linaro.org, greentime.hu@sifive.com,
- jarkko.nikula@linux.intel.com, u.kleine-koenig@pengutronix.de,
- linmin@eswincomputing.com, Ben Dooks <bjdooks@googlemail.com>
-References: <20230907161242.67190-7-ben.dooks@codethink.co.uk>
- <20251110090508.739-1-dongxuyang@eswincomputing.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <20251110090508.739-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
 
-On 10/11/2025 09:05, dongxuyang@eswincomputing.com wrote:
->> The dwc pwm controller can be used in non-PCI systems, so allow
->> either platform or OF based probing.
->>
-> 
-> Hi Ben,
-> 
-> We're currently working on a platform driver for the DW_apb_timers PWM
-> controller used in our EIC7700 SoC. We noticed that you submitted a patch
-> for a DW PWM platform controller back in 2023, and we would like to kindly
-> ask about its current status. Do you have any plans to get it merged
-> into mainline?
+For built with CONFIG_PREEMPT_RT=y kernels, the dump_lock will be converted
+sleepable spinlock and not disable-irq, so the following scenarios occur:
 
-Hi, I think we got a lot of the code re-ordering in but never finished
-as the project came to an end and our customer decided never to ship any
-actual silicon.
+inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+irq_work/0/27 [HC0[0]:SC0[0]:HE1:SE1] takes:
+(&rq->__lock){?...}-{2:2}, at: raw_spin_rq_lock_nested+0x2b/0x40
+{IN-HARDIRQ-W} state was registered at:
+   lock_acquire+0x1e1/0x510
+   _raw_spin_lock_nested+0x42/0x80
+   raw_spin_rq_lock_nested+0x2b/0x40
+   sched_tick+0xae/0x7b0
+   update_process_times+0x14c/0x1b0
+   tick_periodic+0x62/0x1f0
+   tick_handle_periodic+0x48/0xf0
+   timer_interrupt+0x55/0x80
+   __handle_irq_event_percpu+0x20a/0x5c0
+   handle_irq_event_percpu+0x18/0xc0
+   handle_irq_event+0xb5/0x150
+   handle_level_irq+0x220/0x460
+   __common_interrupt+0xa2/0x1e0
+   common_interrupt+0xb0/0xd0
+   asm_common_interrupt+0x2b/0x40
+   _raw_spin_unlock_irqrestore+0x45/0x80
+   __setup_irq+0xc34/0x1a30
+   request_threaded_irq+0x214/0x2f0
+   hpet_time_init+0x3e/0x60
+   x86_late_time_init+0x5b/0xb0
+   start_kernel+0x308/0x410
+   x86_64_start_reservations+0x1c/0x30
+   x86_64_start_kernel+0x96/0xa0
+   common_startup_64+0x13e/0x148
 
-I am not sure how well our patches will apply now, but could have a
-quick look at this to see how much is left to do.
+ other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-Unfortunately we had to delete everything at the end of the project
-so I do not have any sort of test setup.
+        CPU0
+        ----
+   lock(&rq->__lock);
+   <Interrupt>
+     lock(&rq->__lock);
 
+  *** DEADLOCK ***
+
+ stack backtrace:
+ CPU: 0 UID: 0 PID: 27 Comm: irq_work/0
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x8c/0xd0
+  dump_stack+0x14/0x20
+  print_usage_bug+0x42e/0x690
+  mark_lock.part.44+0x867/0xa70
+  ? __pfx_mark_lock.part.44+0x10/0x10
+  ? string_nocheck+0x19c/0x310
+  ? number+0x739/0x9f0
+  ? __pfx_string_nocheck+0x10/0x10
+  ? __pfx_check_pointer+0x10/0x10
+  ? kvm_sched_clock_read+0x15/0x30
+  ? sched_clock_noinstr+0xd/0x20
+  ? local_clock_noinstr+0x1c/0xe0
+  __lock_acquire+0xc4b/0x62b0
+  ? __pfx_format_decode+0x10/0x10
+  ? __pfx_string+0x10/0x10
+  ? __pfx___lock_acquire+0x10/0x10
+  ? __pfx_vsnprintf+0x10/0x10
+  lock_acquire+0x1e1/0x510
+  ? raw_spin_rq_lock_nested+0x2b/0x40
+  ? __pfx_lock_acquire+0x10/0x10
+  ? dump_line+0x12e/0x270
+  ? raw_spin_rq_lock_nested+0x20/0x40
+  _raw_spin_lock_nested+0x42/0x80
+  ? raw_spin_rq_lock_nested+0x2b/0x40
+  raw_spin_rq_lock_nested+0x2b/0x40
+  scx_dump_state+0x3b3/0x1270
+  ? finish_task_switch+0x27e/0x840
+  scx_ops_error_irq_workfn+0x67/0x80
+  irq_work_single+0x113/0x260
+  irq_work_run_list.part.3+0x44/0x70
+  run_irq_workd+0x6b/0x90
+  ? __pfx_run_irq_workd+0x10/0x10
+  smpboot_thread_fn+0x529/0x870
+  ? __pfx_smpboot_thread_fn+0x10/0x10
+  kthread+0x305/0x3f0
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x40/0x70
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+
+This commit therefore use rq_lock_irqsave/irqrestore() to replace
+rq_lock/unlock() in the scx_dump_state().
+
+Fixes: 07814a9439a3 ("sched_ext: Print debug dump after an error exit")
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+---
+ kernel/sched/ext.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 2b0e88206d07..56aa8e6d335b 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4216,7 +4216,7 @@ static void scx_dump_state(struct scx_exit_info *ei, size_t dump_len)
+ 		size_t avail, used;
+ 		bool idle;
+ 
+-		rq_lock(rq, &rf);
++		rq_lock_irqsave(rq, &rf);
+ 
+ 		idle = list_empty(&rq->scx.runnable_list) &&
+ 			rq->curr->sched_class == &idle_sched_class;
+@@ -4285,7 +4285,7 @@ static void scx_dump_state(struct scx_exit_info *ei, size_t dump_len)
+ 		list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node)
+ 			scx_dump_task(&s, &dctx, p, ' ');
+ 	next:
+-		rq_unlock(rq, &rf);
++		rq_unlock_irqrestore(rq, &rf);
+ 	}
+ 
+ 	dump_newline(&s);
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+2.17.1
 
-https://www.codethink.co.uk/privacy.html
 
