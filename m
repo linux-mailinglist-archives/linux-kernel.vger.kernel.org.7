@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-896785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84555C5131A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8671C5132D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2E32834CE96
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76251892D98
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F492FE06B;
-	Wed, 12 Nov 2025 08:51:46 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070022FD67B;
+	Wed, 12 Nov 2025 08:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RqdeNE9W";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5XX9Dx12"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C522FDC36;
-	Wed, 12 Nov 2025 08:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C032F83A3;
+	Wed, 12 Nov 2025 08:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937506; cv=none; b=Lmfx65dA3cjxzIHftdn4S1tVKbiAu26+yu3TKYFQgrx95jaqAbmD9WNaNh43KzwaTwv4qU2UDRRMKHB6OCYYMmTpQEDZxz/WW9WSeyWxvkGZWtlDc4z7BOM6TnyFc8OQZIPj/jyNFS4dbkitewf9XL4MpkFWHr4/HbI+UFbk8ww=
+	t=1762937490; cv=none; b=sN6g6mJQKMvJEPqwbIf8E+KhQz4v4k6IVXafd+5+PUUcD606hR5vEBGv6v9c3HwQFnRG430xQyUkyWO8PSPuCbWrWKchYpFZs88NUg3BfyuId20T2V+efpm3BqLLm4AADX6rmHlGF9KFKpf27NpRJvt666EVa1E/k1LIVj6I4TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937506; c=relaxed/simple;
-	bh=9Sf+DhOWkxWlV6w51Zjg8J1gB3EGv+YwAqQzAgcPRsU=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=H0VC6woyEgIHjE86WGfb5eH7fPXsYqQ7ETYNVRPDq9IBf7sXjsD3Y0ukVCbvm646CIPRa/R7uKm9MMmQRwpRsGqTUIK0BRST8ASjmReUIptSVLWh7HcsO2HaCaHKGxxxJrdBybIaaJ9yUT9ZzKQHiiV+9i2H9przDpeUAVotNI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4d5xwG2Grsz5PM4C;
-	Wed, 12 Nov 2025 16:51:42 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 5AC8oc6E094908;
-	Wed, 12 Nov 2025 16:50:38 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 12 Nov 2025 16:50:40 +0800 (CST)
-Date: Wed, 12 Nov 2025 16:50:40 +0800 (CST)
-X-Zmail-TransId: 2afb69144a6064e-a9d70
-X-Mailer: Zmail v1.0
-Message-ID: <20251112165040828QPfTMyxpU6TF3SvlWuQdq@zte.com.cn>
-In-Reply-To: <494afbf2ca5b18f230b02b03f122c4d427dd08ee.camel@sipsolutions.net>
-References: 20251112163750463kAkOIyBxvHkYWh9Cgdypb@zte.com.cn,494afbf2ca5b18f230b02b03f122c4d427dd08ee.camel@sipsolutions.net
+	s=arc-20240116; t=1762937490; c=relaxed/simple;
+	bh=kywgyA5FQhs8oTkjYjD9AFdb6TMZcC4VTRRosKwcu6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwu2iKmBunlY+hBc0Q1pBeU3SZuRtd/ObBXKFFwj5nwUyJOMHPaiPvwQ3o6m6oyq5c2n6eFdVSDDgdDdY0gTEeDYTzGYHXAnN+nM06WwtMBqDmch4mUn/BvhmiFBcF5GBUes+4iaNL6DxTMQ0EEYXD1QVo6YryR8mwYMOduSnjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RqdeNE9W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5XX9Dx12; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Nov 2025 09:51:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762937487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mBQp5we3WQzNUr+PZJkPqi9yKHhRHyihXOTm5iJHE5M=;
+	b=RqdeNE9WVxzF6JfkZqhPy54fYG98A573xXX6VDuMmXALlr/i4ZNejefpnEeRPr9tqm7nme
+	QVUMdVDat9o1RnGZBI1tTqahIWNaVw/WUMl56/TOfjwJ8IQa+1L6Ifk27C1R49mxh7MZWq
+	tx1T/8B8YjuzkERYyID647GQUPIuaOGWaW6pccjuJ6nvvsMb7yLhHZY8A241tNEsb+nXg6
+	TYqWq0dMYCYqJvtwe7QIVSO4KH63s6flRkeUWgdVMVNqMxw9CQzaBa3n3LsvVQWGp7ZClU
+	p21B3TmecXzrop7qWgiFziSjt7TdO9lxW7TMxTjZgdt420siwdVWfZQppDeC4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762937487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mBQp5we3WQzNUr+PZJkPqi9yKHhRHyihXOTm5iJHE5M=;
+	b=5XX9Dx124mDAOrpgt9BjA2WxZS5h7LCCkV3H4UL9UAaOnFsLq/wVDI/fQatJiO0WI2WIFG
+	x9b7WEkh7W+YYMDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Chen Ridong <chenridong@huawei.com>, Pingfan Liu <piliu@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [cgroup/for-6.19 PATCH] cgroup/cpuset: Make callback_lock a
+ raw_spinlock_t
+Message-ID: <20251112085124.O5dlZ8Og@linutronix.de>
+References: <20251112035759.1162541-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <johannes@sipsolutions.net>
-Cc: <kees@kernel.org>, <concord@gentoo.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <qiu.yutan@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IHdpZmk6IG1hYzgwMjExOiBtYWtlIG5fY2hhbm5lbHMgdXBkYXRlZCBhYnNvbHV0ZWx5IGJlZm9yZSBhY2Nlc3NpbmcgY2hhbm5lbHNbXQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 5AC8oc6E094908
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Wed, 12 Nov 2025 16:51:42 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 69144A9E.002/4d5xwG2Grsz5PM4C
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251112035759.1162541-1-longman@redhat.com>
 
-> > From: xu xin <xu.xin16@zte.com.cn>
-> > 
-> > The commit 2663d0462eb3 ("wifi: mac80211: Avoid address calculations via out of
-> > bounds array indexing") said that req->n_channels must be set before
-> > req->channels[] can be used. But there&apos;s still the case that req.channels
-> > accessing was prior to n_channels++.
-> > 
-> > This does not fix any visible bug, just making n_channels updated before
-> > accessing channels[] absolutely, to avoid potential UBSAN out of indexing
-> > warning.
+On 2025-11-11 22:57:59 [-0500], Waiman Long wrote:
+> The callback_lock is a spinlock_t which is acquired either to read
+> a stable set of cpu or node masks or to modify those masks when
+> cpuset_mutex is also acquired. Sometime it may need to go up the
+> cgroup hierarchy while holding the lock to find the right set of masks
+> to use. Assuming that the depth of the cgroup hierarch is finite and
+> typically small, the lock hold time should be limited.
+
+We can't assume that, can we?
+
+> Some externally callable cpuset APIs like cpuset_cpus_allowed() and
+
+cpuset_cpus_allowed() has three callers in kernel/sched/ and all use
+GFP_KERNEL shortly before invoking the function in question.
+
+> cpuset_mems_allowed() acquires callback_lock with irq disabled to ensure
+This I did not find. But I would ask to rework it somehow that we don't
+need to use raw_spinlock_t as a hammer that solves it all.
+
+> stable cpuset data. These APIs currently have the restriction that they
+> can't be called when a raw spinlock is being held. This is needed to
+> work correctly in a PREEMPT_RT kernel. This requires additional code
+> changes to work around this limitation. See [1] for a discussion of that.
 > 
-> I reverted the annotations, so this isn't necessary.
+> Make these external cpuset APIs more useful by changing callback_lock
+> to a raw_spinlock_t to remove this limitation so that they can be called
+> from within other raw spinlock critical sections if needed.
+> 
+> [1] https://lore.kernel.org/lkml/20251110014706.8118-1-piliu@redhat.com/
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Excuse me, what is the annotations you reverted ? Maybe I missed somthing.
+Sebastian
 
