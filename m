@@ -1,238 +1,202 @@
-Return-Path: <linux-kernel+bounces-898299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F2BC54D0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:35:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0ADFC54D28
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E4638346B04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:35:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9809F348C23
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2E242D78;
-	Wed, 12 Nov 2025 23:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D902F3601;
+	Wed, 12 Nov 2025 23:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aLJ44Mbi"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Y2oNhTot";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VIbWB84H"
+Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B6826CE02
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 23:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE2B35CBC1;
+	Wed, 12 Nov 2025 23:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762990511; cv=none; b=Kqj+fKoFFX6Q9jKHs6XtIzb5yM8T+p7F20SsluRGePyBb/cHBS1EOb07pzL5oy1PKBIdS334UI62wHgwltbkfdWueLThk34Vok1yUAi8Cy0abxLWFdM+BwhM6QaRPG//PKIFU7g4PkCG21fvliY+zTwq9XhTUY58qv1PFVAXvpo=
+	t=1762990670; cv=none; b=bHRW1+HKBDsbgBLHXflZYi/qfAQpnErh8H28c2q8B4l0TieCtiKZ4MaFxzVioiethKBL1mObQjVS9SBeU/fKa9zoHiWES99nJ2raG+ExuhzTXKzR9uwnf6brX7vVXaL5bHl326bIHX2WTIcpdluimbfNb02CYSYCve8boehLWfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762990511; c=relaxed/simple;
-	bh=4mflXfgXVT24C6CZ4udA49a2AIthJmldwzXgt3XntjI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=amjAihYQ/UF2C4N4cojzhD5SG3pmNDqs5ZlPAg+4/KTcHiwhkhbmO+oWxem6VtT+s4g8CZTns5o6G08s1LOx5FGlH9SY2AJt2v/4Fts62S0s05oeJ6jOMRLxMApdAKbd+6/I94qRN4qsOpY06GAYDK1d01xnkUKXvaLXIbErb1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aLJ44Mbi; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b2b9c7ab6so72586f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:35:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762990508; x=1763595308; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHGIBzZPwCgBjyzoAu2uZEsfUL+sP5QWpRjxugQAeqE=;
-        b=aLJ44MbijMXx9+vDrozQXP4mmnY8heEmWPJ12aj4tvdbKhI6zpI0QBPtAp9BmPqzDK
-         BfoIR5anbDRl5Nevs9lAuiP7cJthAK2AA61WgNZA63RF2jo28/lkYMFYDAHkwCMCfPVV
-         TNf7mcachZTGA4xdNY0D/pNt00UfDIaN6CKvmboMhMW9FC232szqvfgEe1U+fyywfWpw
-         nLjrrxhE+rhTpgqiLdflj7bQV4MbEmQHMQvWX+0yMdwgoYrxumjjKXpbVu7vF8g0OiqR
-         8+vSWXZ82C6n5x9W65gAiegwiMYmWsD3vrV9Ld9OfD2F0yTsW44Iw5/ZMYDpYZbr4MTk
-         KWaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762990508; x=1763595308;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHGIBzZPwCgBjyzoAu2uZEsfUL+sP5QWpRjxugQAeqE=;
-        b=MM7Nahr9kyPIqXEcMD11LNORsJ9wKhuynRFa+npvYZHCIjsAk1UOMSTsWoxGuLK/f8
-         0fQKAFHOppmdspMiuHCMXwh6OeE8q/dkUR5eakSct98eEQGVeRHvQS9WSx3rmyhb1gut
-         St+nigBsWy0QRj3KC5N6bahzWIsX88YjaBz4b/ZKUfdgC1IT8tfpvyzQjEdJJ9TwWGy8
-         W2uoWlymPcXhMU97SGPkunvkLoEYhZ2RIPSGOf5GGSB+Z0dUP7ET9UAKr0lxztoseOek
-         F88ftRc0yU6ssX2lIOU1SWX8BfxmDX5/yRU8L2vVscgnN6kkUS4DsWbg1EQOQDOsWSNU
-         AxDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRQtP06Bs7vGF0WukysrZsvgKPYBpVOqJCdu/Nou+A9pO4UpD8cmmCmZlP5fqtmz9JcI9wenmQK2anYvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI1CItggZoJ+IZHGH6Vnu3nCevYHBxm40iSSkEPsuTd7iH//4N
-	zfrBE/Riefx0xiP8kNFUxa5eXuqxStZJCyIBXp341UuOmN0SYQCOSDekAPX5QH7txi8rkEP1oEu
-	LjPpSbaTbMcGu3X/PJg==
-X-Google-Smtp-Source: AGHT+IEId1v5duu3TRKOpet7fbCZD1zVCY8IAgfk+57gsEvGnUh+PLJNGxA0odr0Hgnj4bvYOByusBh9faYt/tA=
-X-Received: from wrnm1.prod.google.com ([2002:adf:e941:0:b0:42b:3021:cd6a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:440e:b0:42b:530c:d8b6 with SMTP id ffacd0b85a97d-42b530cdae6mr283844f8f.61.1762990507739;
- Wed, 12 Nov 2025 15:35:07 -0800 (PST)
-Date: Wed, 12 Nov 2025 23:35:07 +0000
-In-Reply-To: <aRTbX6RPsFf0NW48@yury>
+	s=arc-20240116; t=1762990670; c=relaxed/simple;
+	bh=JpEf+exjOBHgSs5IO/gAGxeVrStTfxrfOm/1McIoiLY=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=sVc/9VBxincOPlNffh2Hythl/7q8dppyEmT+fOF0u8+rQJyMua+2aztMxz0nqwMPI/P8fxRsW/T3kytt+ojTov1+6YkKLliCFBf5vOYiU7CFsbhIQEBSBoVWxUomT7EijsxexoqXanO32i7NOl8bq4dRfMfWMU/hPJIF8sWVepI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Y2oNhTot; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VIbWB84H; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.phl.internal (Postfix) with ESMTP id 4EA21138069B;
+	Wed, 12 Nov 2025 18:37:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Wed, 12 Nov 2025 18:37:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1762990667; x=1762997867; bh=WK2Wj5Mp0wewghCJ5AnjHrm6rGTjnEVSJpb
+	MoAThh5s=; b=Y2oNhTot0heRMsrBn/PBZVfhS4TkpJjv+vtzFjFVjb8NYiidpgG
+	mq0lhUKteuFPaxDpQ+zPIKjlUf3G1OCJVHayfU+kMlUIpiAbFVT1T74cmT9RKHpz
+	/QpxhVbtaOppciLX0P7KZZ919TmHC38hKkQWZFYBu8xf05o8vu/iDMWrbg0ETk52
+	US+uJj5UkTpEUm7IZkcf7+Yqi9rTgku4jdivO/SixJJZqEyYwr8Ye7ALH0pQJF63
+	F2Vjy7Kz2a+GQ9GUJ5IBcuV2IsOiOAPhMdTZzfJT2zOY4U+4LwdHZI2Lxn6Srvuq
+	H5jFYN/AgDeayZ8UgAZWml08h3+CruF7IZQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762990667; x=
+	1762997867; bh=WK2Wj5Mp0wewghCJ5AnjHrm6rGTjnEVSJpbMoAThh5s=; b=V
+	IbWB84HPHuTafAq0LvTXmjtthqiE+itamaoLGjS+vq2VLeYFjQGZw4G1wSUDM7F/
+	QlavM+T1CeaBsPM6SBSP/gT9yKxAT3gZkyxCNiXAc8/mDZQ+ZwevSn/EhC9/cbqX
+	h5LIGeY5PZ3xdKSZnaQVqCHbhojzQ7CcR69yWIm00TvPLpcFIzVxDpgLUaBs2oQJ
+	Gt6mPHzAcpXQEq2PoUjTEZ5A+wTwP6S9mERCS7BovECpJa3nZ1K8fL/XrA9G1n/t
+	hwPJ8y5Q3ZOD7qN0aA34oPAp52mcRDFyPTKtwL2GaiCVPSYWreTIDEU1VCFOtVCS
+	pSj0Wcn8RMvBacPDWJv/g==
+X-ME-Sender: <xms:SRoVab0kmDiHdxeTTqGp-6bYOWuNIeJph5Xwg3yf1Qj44aGhiqRtkg>
+    <xme:SRoVafJAB3sGMYtQboHEFSJtS42M9_N6TlayXiN5uarV47NyLwEvIrdz6ObmyLOxW
+    Q3JZP11xpbEXtfhBLnRpXBF4lhoLbpWjd_cw4c6yRnUeHtANQ>
+X-ME-Received: <xmr:SRoVaY5Yroz-rbq6snb9qpgZNP4K1w1AyY98dk2Hw6Ba-2NlKHbdwqgWUUVl5NcvpiXvw7BYTWO0IhJnz8dCLuPk7chOjgmEqceKKIZQR7Yi>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdehgeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedtpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:SRoVaejp4cU-nQ_UnAGLy1mkYjWsSd3wn2m_dGEFmzrBOgcT6hkc6w>
+    <xmx:SRoVafmex8a1E73qT1F-vwQqWB-PAnvuL2Ooh8a9BJcVzwdIidUtDw>
+    <xmx:SRoVaXR0O8tpBIvwTaYU_g7CKeWAmnqtfmQ5y4W0dnFF_rY5Ngci1A>
+    <xmx:SRoVaQ_iGcLU2WfZuLz3HWJVcRFy9ZrYfyVdlh88kNOhdrpzClpqhg>
+    <xmx:SxoVaaPFBJ41IuAjGY-rzqHTxQrOTVRzInvMfRj2BPnEmLbhVFJjzvti>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 12 Nov 2025 18:37:35 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
- <20251112-binder-bitmap-v5-6-8b9d7c7eca82@google.com> <aRTbX6RPsFf0NW48@yury>
-Message-ID: <aRUZq0Fo6T1f3lOD@google.com>
-Subject: Re: [PATCH v5 6/6] rust_binder: use bitmap for allocation of handles
-From: Alice Ryhl <aliceryhl@google.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: NeilBrown <neilb@ownmail.net>
+To: "Stephen Smalley" <stephen.smalley.work@gmail.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>,
+ "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
+ "David Howells" <dhowells@redhat.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Ondrej Mosnacek" <omosnace@redhat.com>,
+ "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Stefan Berger" <stefanb@linux.ibm.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v5 11/14] Add start_renaming_two_dentries()
+In-reply-to:
+ <CAEjxPJ528Ou4dvRwHo+kXjWreGicda8BOXkQRvq3vMED6JQKOQ@mail.gmail.com>
+References: <20251106005333.956321-1-neilb@ownmail.net>,
+ <20251106005333.956321-12-neilb@ownmail.net>,
+ <CAEjxPJ528Ou4dvRwHo+kXjWreGicda8BOXkQRvq3vMED6JQKOQ@mail.gmail.com>
+Date: Thu, 13 Nov 2025 10:37:28 +1100
+Message-id: <176299064896.634289.12651549381030888718@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Wed, Nov 12, 2025 at 02:09:19PM -0500, Yury Norov wrote:
-> On Wed, Nov 12, 2025 at 12:47:24PM +0000, Alice Ryhl wrote:
-> > To find an unused Binder handle, Rust Binder currently iterates the
-> > red/black tree from the beginning until it finds a gap in the keys. This
-> > is extremely slow.
-> 
-> Can you share performance numbers? 
+On Tue, 11 Nov 2025, Stephen Smalley wrote:
+> On Wed, Nov 5, 2025 at 7:56=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote:
+> >
+> > From: NeilBrown <neil@brown.name>
+> >
+> > A few callers want to lock for a rename and already have both dentries.
+> > Also debugfs does want to perform a lookup but doesn't want permission
+> > checking, so start_renaming_dentry() cannot be used.
+> >
+> > This patch introduces start_renaming_two_dentries() which is given both
+> > dentries.  debugfs performs one lookup itself.  As it will only continue
+> > with a negative dentry and as those cannot be renamed or unlinked, it is
+> > safe to do the lookup before getting the rename locks.
+> >
+> > overlayfs uses start_renaming_two_dentries() in three places and  selinux
+> > uses it twice in sel_make_policy_nodes().
+> >
+> > In sel_make_policy_nodes() we now lock for rename twice instead of just
+> > once so the combined operation is no longer atomic w.r.t the parent
+> > directory locks.  As selinux_state.policy_mutex is held across the whole
+> > operation this does open up any interesting races.
+> >
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> >
+> > ---
+> > changes since v3:
+> >  added missing assignment to rd.mnt_idmap in ovl_cleanup_and_whiteout
+> > ---
+>=20
+> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> > index 232e087bce3e..a224ef9bb831 100644
+> > --- a/security/selinux/selinuxfs.c
+> > +++ b/security/selinux/selinuxfs.c
+> > @@ -539,22 +540,30 @@ static int sel_make_policy_nodes(struct selinux_fs_=
+info *fsi,
+> >         if (ret)
+> >                 goto out;
+> >
+> > -       lock_rename(tmp_parent, fsi->sb->s_root);
+> > +       rd.old_parent =3D tmp_parent;
+> > +       rd.new_parent =3D fsi->sb->s_root;
+> >
+> >         /* booleans */
+> > -       d_exchange(tmp_bool_dir, fsi->bool_dir);
+> > +       ret =3D start_renaming_two_dentries(&rd, tmp_bool_dir, fsi->bool_=
+dir);
+> > +       if (!ret) {
+> > +               d_exchange(tmp_bool_dir, fsi->bool_dir);
+>=20
+> I would recommend an immediate goto out if ret !=3D 0; we don't want to
+> silently fall through and possibly reset ret on the next
+> start_renaming_two_dentries() call, thereby ultimately returning 0 to
+> the caller and acting as if nothing bad happened.
 
-I have not benchmarked it in the Rust driver, but it replaces
-potentially thousands of calls to rb_next() with a single call to
-find_unused_id(), so I'm feeling good about the performance. And the
-equivalent change in the C driver was done because this particular piece
-of code was causing contention issues by holding the spinlock for a long
-time.
+Yes, that is much cleaner - thanks!
 
-The characteristics of this collection is that there is one per process
-using the driver. Most processes have only a few entries in this bitmap,
-so the inline representation will apply in most cases. However, there
-are a few processes that have a large number of entries in the 4 to
-maybe 5 figures range. Those processes are what caused the contention
-issue mentioned above.
+and I've added the missing "NOT" in the commit message.
 
-> > To improve the performance, add a bitmap that keeps track of which
-> > indices are actually in use. This allows us to quickly find an unused
-> > key in the red/black tree.
-> > 
-> > This logic matches the approach used by C Binder. It was chosen
-> > partially because it's the most memory efficient solution.
-> 
-> That inaccurate. You are adding a new data structure (bitmap), advocating
-> it with an improvement on search side, and that makes sense.
-> 
-> But now you're saying it's also a more memory efficient approach, which
-> doesn't sound trivial because the most memory efficient solution is to
-> bring no new data structures at all.
-> 
-> I guess you meant that bitmap is the most efficient data structure to
-> index used/unused nodes. If so, can you please rephrase the sentence?
-
-Yes I can rephrase.
-
-Adding more data is of course always less memory efficient. What I meant
-is that this is more memory efficient than the competing solution of
-using an augmented rbtree that Carlos mentioned here:
-
-https://lore.kernel.org/p/aC1PQ7tmcqMSmbHc@google.com
-
-> > +            if let Some(res) = refs.handle_is_present.find_unused_id(start) {
-> > +                match refs.by_handle.entry(res.as_u32()) {
-> > +                    rbtree::Entry::Vacant(entry) => break (res, entry),
-> > +                    rbtree::Entry::Occupied(_) => {
-> > +                        pr_err!("Detected mismatch between handle_is_present and by_handle");
-> > +                        res.acquire();
-> > +                        continue;
-> 
-> At this point you've detected mismatch between two linked data
-> structures. It means that one of them or both are corrupted. To
-> me it looks fatal, and your pr_err() confirms it. How could you
-> continue then?
-
-Although we should never hit this codepath in real code, I don't think
-we need to kill the kernel. We can treat the r/b tree as source of truth
-and adjust the bitmap when mismathces are detected.
-
-I could add a kernel warning, though. That shouldn't kill an Android
-device.
-
-> > +                    }
-> > +                }
-> > +            }
-> > +
-> > +            let grow_request = refs.handle_is_present.grow_request().ok_or(ENOMEM)?;
-> > +            drop(refs_lock);
-> > +            let resizer = grow_request.realloc(GFP_KERNEL)?;
-> > +            refs_lock = self.node_refs.lock();
-> > +            refs = &mut *refs_lock;
-> > +            refs.handle_is_present.grow(resizer);
-> 
-> Is it possible to turn this block into a less wordy statement? Maybe a
-> wrapper function for it? Ideally, the grow request should be handled
-> transparently in .find_unused_id().
-
-I can extract this block into a separate function, but I think it would
-be tricky to move the entire logic inside .find_unused_id() because of
-the mutex lock/unlock situation.
-
-> > @@ -905,6 +924,16 @@ pub(crate) fn update_ref(
-> >                  let id = info.node_ref().node.global_id();
-> >                  refs.by_handle.remove(&handle);
-> >                  refs.by_node.remove(&id);
-> > +                refs.handle_is_present.release_id(handle as usize);
-> > +
-> > +                if let Some(shrink) = refs.handle_is_present.shrink_request() {
-> 
-> This is questionable. Shrinking is usually the very slow path, and we
-> don't shrink unless we're really close or even inside the OOM condition.
-> 
-> In this case, shrink_request() on average returns false, but it's
-> O(N), which makes _every_ release_id() O(N), while it should be O(1).
-
-The current implementation of shrink_request() will refuse to shrink the
-pool unless the largest bit is less than 1/4 of the capacity, so it
-should not perform the expensive operation very often.
-
-That said, it does call find_last_bit() each time, which I guess is
-O(N). But my assumption was that find_last_bit() is cheap enough that it
-wouldn't be a problem.
-
-> Consider a very realistic case: you're destroying every object, and thus
-> removing every ID in the associate ID pool, doing it in LIFO order. That
-> way you will need to call shrink_request() about O(log(N)) times, making
-> the whole complexity ~O(N*log(N)); and you'll have to make log(N)
-> realloc()s for nothing. If you release IDs in FIFO order, you don't
-> call realloc(), but your shrink_request() total complexity will be O(N^2). 
-
-Even if we end up making log(N) reallocs, the total complexity of the
-reallocs is O(N) because the amount of data being reallocd halves each
-time. So the total number of bytes copied by reallocs ends up being:
-
-    1 + 2 + 4 + 8 + ... + 2^log(N) <= 2^(1+log(N)) = 2*N
-
-which is O(N).
-
-Of course, deleting the corresponding entry from the red/black tree is
-O(log N), so it's still O(N*log(N)) for the N deletions from the rb
-tree.
-
-> Can you compare performance numbers with and without shrinking under a
-> typical payload? Is there any mechanism to inspect the ID pools at runtime,
-> like expose via procfs?
-
-We expose the contents of the red/black tree via the binder_logs
-mechanism, but that doesn't show the *capacity* of the bitmap. Only the
-index of the largest set bit.
-
-> Can you make your shrinking logic conditional on some reasonable OOM
-> heuristics, maybe OOM event driven?
-> 
-> And even without OOM, you can safely skip shrinking if the number of IDs in
-> use is greater than 1/4 of the capacity, or there's any used ID with
-> the index greater than the 1/2 capacity.
-
-I guess we could register a shrinker, but I don't think it's worth it.
-
-Thanks for the review!
-
-Alice
+Thanks,
+NeilBrown
 
