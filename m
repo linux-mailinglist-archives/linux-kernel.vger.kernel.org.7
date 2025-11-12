@@ -1,853 +1,108 @@
-Return-Path: <linux-kernel+bounces-897615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93062C537D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:46:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA3FC53365
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B47F54023F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:47:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA5C835602B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362D133F8A6;
-	Wed, 12 Nov 2025 15:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LiDoDanv"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2E22BCF6C;
+	Wed, 12 Nov 2025 15:45:08 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C30340280
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B679C35CBBD;
+	Wed, 12 Nov 2025 15:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962202; cv=none; b=DFPc1vYZppAxO3NNimmq1SbwHj7N6CuLt6tW6hrj5iUfEgd7AsYbhqgp9tf5t45o1TcyeDa+6hDQN/bmoJNb3xizhvkkujTuV7U5CvOIY2z88KvQ5b5kJODbIPXuHvo3U8RFEIZzH89a0pgCFNX0dvIEwdZUfzF/Htw8AEI/sXk=
+	t=1762962307; cv=none; b=OmV0TuqXZ6K4fCNeA7Uz+V871X+OLejM56+5PPOxXn85rjslE10xtFv97WGR0MuMsvny7FEUj8UcEeUF3lEo1mmYSOaO5Ulq5cONvCdaed9nzcdwaHOdLC5+jH0ZoRf9SHRW/DRQ3YmfZ93YfJPbHE+3SmDoSVvjY8uRCruNfhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962202; c=relaxed/simple;
-	bh=2bnMMVJX8mtcKkqMrahYN00kr9YbuwQRv/Hw1P7bxT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WA5qQnvT5uhi3AyXc/tweJlZ+Gv3ZU0tX7s58KwQ1VNs8yeRxN1FTN7fRqREAh8uo6s4Rt4goVXPvEVcnb5mYY1pkS0DEEp2imUIP5zXkzj6eTwarQDCTwI5rK9SN6FM3eblgWDS78E2lzg9Qnop/5xFc8BloTu5sIEeGQwQw04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LiDoDanv; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640b0639dabso1660521a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:43:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762962197; x=1763566997; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZPFM1BN8yORucIEedmep1S2Vjt1oJNsh30HQ7N1Os4=;
-        b=LiDoDanvIuW/RJcSUmSuIEe30BkiqH7fqqpCeaGlF4sGlShwzYdxpaF/8PLCvqMW+P
-         1ImGsbGnq6S8kJXupUru82Ztc3eab7xZYDWBWzB0taryqPU5q7X5qR6LnisIsppGrKhi
-         JJ5cXWdhTEL94xr7m/spvkFrNksrkioU/RoX4qitPOM8Oe6WqR8h3ncQwTJfK544bt7+
-         aQExpx0UQK3hAhs8/3U1egsgsCsQoNiHK234uppTjhmwisNPZceH/M3S+ur/9Pmou44j
-         UzE4W7p+znVygWhV4Xehs86z9ciqAmzEreg7lZsGW+vVpQHPEUMW+54ipGfadbNMNZ+o
-         dMxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762962197; x=1763566997;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZPFM1BN8yORucIEedmep1S2Vjt1oJNsh30HQ7N1Os4=;
-        b=oIKSLl9tI3KOK1zkHz7zDIFnQnL0qsSdGiO2BqZKSOti8RHngklWMGLae2jwUGYseb
-         XeANJ+hAdkBxhyjVHab8D6czHVbTWdNdb0mevbLU5krKYYnxT3CpwbW15bEkqy15zbHV
-         Jt4abMRzn1QVX74+Q2TQLgBtj3bkXzI628cyZSrfd+F6chZh3tmqw+PRX4/mZM5+Qj9q
-         HVTkkDvvaGjnBNJqltYQIpr6tCHchD/5wK1SMbmmm/wk9jXWY1leYO5BeN9WhP4zDBZ8
-         aNy22VWiYF2SYGXBbed8SgYrhpiaVqozWtl9xX5ufgjvxgfsXMd+oXiZLAwSv47dLDeA
-         ERSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu1lEkz07TwJA4GxFFZfaKX9D63vKKgeZwgPbjxUERU3tRKxZr2k4TgFnpLgImqxTXrPuufumm+XbDGcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbPHLpsqyQXWfIu1r6CWPotS2EII87yqJyD0ACZ3fpaHMYOu4c
-	veUP0Hy9P8xVJBGJvu6H1jgEKR1cXL159uJ6tTC1IjZnBWUSMK2T7ctEUUVRXrJtI8WkjnUCl/u
-	Q5tr0gW7tEGu26k9AIWQNbFAhwF30az40SCuHFl6fAQ==
-X-Gm-Gg: ASbGncsahi8Vw00vSq76yBICMuSrkCkir32UV5lMBU54yLQwpNQDUSuj3cTckg9Xk4n
-	Y2I3Snl0j1+hDKe0lWS6MvAFFdtk4dAXc+LffNWsFclJB7PbJE1QpH/CpGjMQ6dOYc//ju+VneO
-	ocONJPipYU+qpW69zuQ/QsnrvJZS2xRCGGIoynkYrY6ccPxmu7LgiRmJzlr9NkCn62Hl8GP8Ozb
-	yBm9A9dJJByyRUCNbHPuWjgzW5Hp6x8wBF4IdNI148qnZhio4vsEn0Dsq1Gbx6Lb4y2PNdQaYUP
-	LS00oBJF4OM0NGB9Ey0=
-X-Google-Smtp-Source: AGHT+IFmXbKXkf6OhUpWqfOlr9I0TSophzcvPk9X59w2evm642w+jEg2toFd8OfLBVWw6RhypLlOfUttGEEr3A9kZ/8=
-X-Received: by 2002:a05:6402:13c8:b0:640:ceef:7e44 with SMTP id
- 4fb4d7f45d1cf-6431a568ed1mr3578709a12.28.1762962197246; Wed, 12 Nov 2025
- 07:43:17 -0800 (PST)
+	s=arc-20240116; t=1762962307; c=relaxed/simple;
+	bh=K2NgcdDSsNIpmukvk9ZTuvgP7S9Fzwf2iF4Zv9Lx6wY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=leXAdLaQkqqzZSqNz8R19YiKx2ctsJQ2Czn3ObHL1Lg08cll6DpjA3lE3iiVFnI8P6LA4qcq+noNXa3O1rWVuIpVvBlsl7ZHobeHZbJ077nZyW8ZJdhZUxJI0qBThMI7NXmJH6uuAvItVvbreSJCWCv0GfZGTNgAkwAsuigg3W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id CDD17140573;
+	Wed, 12 Nov 2025 15:45:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id C85DD32;
+	Wed, 12 Nov 2025 15:44:55 +0000 (UTC)
+Date: Wed, 12 Nov 2025 10:45:08 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Harry Yoo
+ <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org,
+ hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
+ ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+ axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+ akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, Muchun Song
+ <songmuchun@bytedance.com>, Qi Zheng <zhengqi.arch@bytedance.com>, Clark
+ Williams <clrkwllms@kernel.org>, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <20251112104508.5500ad9b@gandalf.local.home>
+In-Reply-To: <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+References: <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+	<aQ3yLER4C4jY70BH@harry>
+	<hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+	<aRFKY5VGEujVOqBc@hyeyoo>
+	<2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+	<aRF7eYlBKmG3hEFF@hyeyoo>
+	<aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
+	<8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
+	<aRKqm24Lrg-JnCoh@hyeyoo>
+	<20251111084900.babaOj0w@linutronix.de>
+	<jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031175926.1465360-1-robh@kernel.org> <aRN0fdOAV0B728qo@p14s> <20251111195923.GA3629535-robh@kernel.org>
-In-Reply-To: <20251111195923.GA3629535-robh@kernel.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 12 Nov 2025 08:43:06 -0700
-X-Gm-Features: AWmQ_bkicIzabJ1JSP-STvk9NxMHbUukpNQ5nxzNBdZD2-VRjIS8QH1UBeH3uKw
-Message-ID: <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
-Subject: Re: [PATCH v6] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 8i46fu3i1uexab3gcai9n6jo5zxtnjew
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: C85DD32
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/zzJBKVnQjnF7+vD3iE7NPwFKeizQlGh4=
+X-HE-Tag: 1762962295-724363
+X-HE-Meta: U2FsdGVkX18sZXyIcTgAaFZzEaJim5B3AdsBNcnSuhkN2xVPR14V+jN/a1c5qbKBwiNNEDsYnm/64J4ywfekI1ESXBN6UJspS6OQJv2pFY4ePIxPhNzVl9Rm+8vU67m3SqAyq9LTVgOoNLhlzs0tmR4GFlK36oZ2M//1r6/uqVtRYmW841FrUMVYjYit8fHlXYKbBGeroJSS3BFYTvoXIMH5Z70gftOSU00Kt1bZvIjYFPdOyzv8A9vwq3mX3ifD5SZC3t2J5qSG6sJo6DrZkw5hpFnMuHHE12uSwei8c4W8RtEV9QEVyxIuOx7wSpSY
 
-On Tue, 11 Nov 2025 at 12:59, Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Nov 11, 2025 at 10:38:05AM -0700, Mathieu Poirier wrote:
-> > Hi Rob,
-> >
-> > Please see may comment for st_remoteproc.c
-> >
-> > On Fri, Oct 31, 2025 at 12:59:22PM -0500, Rob Herring (Arm) wrote:
-> > > Use the newly added of_reserved_mem_region_to_resource() and
-> > > of_reserved_mem_region_count() functions to handle "memory-region"
-> > > properties.
-> > >
-> > > The error handling is a bit different in some cases. Often
-> > > "memory-region" is optional, so failed lookup is not an error. But then
-> > > an error in of_reserved_mem_lookup() is treated as an error. However,
-> > > that distinction is not really important. Either the region is available
-> > > and usable or it is not. So now, it is just
-> > > of_reserved_mem_region_to_resource() which is checked for an error.
-> > >
-> > > Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> > > Tested-by: Peng Fan <peng.fan@nxp.com> # i.MX93-11x11-EVK for imx_rproc.c
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # rcar
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > ---
-> > > v6:
-> > >  - Rebase on v6.18-rc1
-> > >  - The error in v5 was fixed in v6.17 commit aea70964b5a7
-> > >    ("of: reserved_mem: Add missing IORESOURCE_MEM flag on resources")
-> > >
-> > > v5:
-> > >  - Drop some inadvertent whitespace changes in qcom_q6v5_pas.c and ti_k3.
-> > >  - Fix error handling in adsp_alloc_memory_region()
-> > >  - Drop unreachable returns after 'while (1)' loops
-> > >
-> > > v4:
-> > >  - Rebase on v6.17-rc1. qcom_q6v5_pas.c conflicted needing s/adsp/pas/
-> > >
-> > > v3:
-> > >  - Rebase on v6.16-rc1. Move TI K3 changes to new common file.
-> > >  - Fix double increment of "i" in xlnx_r5
-> > >
-> > > v2:
-> > >  - Use strstarts instead of strcmp for resource names as they include
-> > >    the unit-address.
-> > >  - Drop the unit-address from resource name for imx and st drivers
-> > > ---
-> > >  drivers/remoteproc/imx_dsp_rproc.c      | 47 +++++++----------
-> > >  drivers/remoteproc/imx_rproc.c          | 70 ++++++++++---------------
-> > >  drivers/remoteproc/qcom_q6v5_adsp.c     | 24 ++++-----
-> > >  drivers/remoteproc/qcom_q6v5_mss.c      | 60 +++++++--------------
-> > >  drivers/remoteproc/qcom_q6v5_pas.c      | 69 +++++++++---------------
-> > >  drivers/remoteproc/qcom_q6v5_wcss.c     | 25 ++++-----
-> > >  drivers/remoteproc/qcom_wcnss.c         | 23 ++++----
-> > >  drivers/remoteproc/rcar_rproc.c         | 38 +++++---------
-> > >  drivers/remoteproc/st_remoteproc.c      | 41 +++++++--------
-> > >  drivers/remoteproc/stm32_rproc.c        | 46 +++++++---------
-> > >  drivers/remoteproc/ti_k3_common.c       | 28 ++++------
-> > >  drivers/remoteproc/xlnx_r5_remoteproc.c | 53 +++++++------------
-> > >  12 files changed, 199 insertions(+), 325 deletions(-)
-> > >
-> > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> > > index 6e78a01755c7..477e4245a426 100644
-> > > --- a/drivers/remoteproc/imx_dsp_rproc.c
-> > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> > > @@ -689,11 +689,9 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
-> > >     struct rproc *rproc = priv->rproc;
-> > >     struct device *dev = rproc->dev.parent;
-> > >     struct device_node *np = dev->of_node;
-> > > -   struct of_phandle_iterator it;
-> > >     struct rproc_mem_entry *mem;
-> > > -   struct reserved_mem *rmem;
-> > >     void __iomem *cpu_addr;
-> > > -   int a;
-> > > +   int a, i = 0;
-> > >     u64 da;
-> > >
-> > >     /* Remap required addresses */
-> > > @@ -724,49 +722,40 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
-> > >             rproc_add_carveout(rproc, mem);
-> > >     }
-> > >
-> > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > -   while (of_phandle_iterator_next(&it) == 0) {
-> > > +   while (1) {
-> > > +           int err;
-> > > +           struct resource res;
-> > > +
-> > > +           err = of_reserved_mem_region_to_resource(np, i++, &res);
-> > > +           if (err)
-> > > +                   return 0;
-> > > +
-> > >             /*
-> > >              * Ignore the first memory region which will be used vdev buffer.
-> > >              * No need to do extra handlings, rproc_add_virtio_dev will handle it.
-> > >              */
-> > > -           if (!strcmp(it.node->name, "vdev0buffer"))
-> > > +           if (strstarts(res.name, "vdev0buffer"))
-> > >                     continue;
-> > >
-> > > -           rmem = of_reserved_mem_lookup(it.node);
-> > > -           if (!rmem) {
-> > > -                   of_node_put(it.node);
-> > > -                   dev_err(dev, "unable to acquire memory-region\n");
-> > > +           if (imx_dsp_rproc_sys_to_da(priv, res.start, resource_size(&res), &da))
-> > >                     return -EINVAL;
-> > > -           }
-> > >
-> > > -           if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size, &da)) {
-> > > -                   of_node_put(it.node);
-> > > -                   return -EINVAL;
-> > > -           }
-> > > -
-> > > -           cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
-> > > +           cpu_addr = devm_ioremap_resource_wc(dev, &res);
-> > >             if (!cpu_addr) {
-> > > -                   of_node_put(it.node);
-> > > -                   dev_err(dev, "failed to map memory %p\n", &rmem->base);
-> > > +                   dev_err(dev, "failed to map memory %pR\n", &res);
-> > >                     return -ENOMEM;
-> > >             }
-> > >
-> > >             /* Register memory region */
-> > > -           mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)rmem->base,
-> > > -                                      rmem->size, da, NULL, NULL, it.node->name);
-> > > -
-> > > -           if (mem) {
-> > > -                   rproc_coredump_add_segment(rproc, da, rmem->size);
-> > > -           } else {
-> > > -                   of_node_put(it.node);
-> > > +           mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)res.start,
-> > > +                                      resource_size(&res), da, NULL, NULL,
-> > > +                                      "%.*s", strchrnul(res.name, '@') - res.name, res.name);
-> > > +           if (!mem)
-> > >                     return -ENOMEM;
-> > > -           }
-> > >
-> > > +           rproc_coredump_add_segment(rproc, da, resource_size(&res));
-> > >             rproc_add_carveout(rproc, mem);
-> > >     }
-> > > -
-> > > -   return 0;
-> > >  }
-> > >
-> > >  /* Prepare function for rproc_ops */
-> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > index bb25221a4a89..eb133a6622bc 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -490,50 +490,44 @@ static int imx_rproc_prepare(struct rproc *rproc)
-> > >  {
-> > >     struct imx_rproc *priv = rproc->priv;
-> > >     struct device_node *np = priv->dev->of_node;
-> > > -   struct of_phandle_iterator it;
-> > >     struct rproc_mem_entry *mem;
-> > > -   struct reserved_mem *rmem;
-> > > +   int i = 0;
-> > >     u32 da;
-> > >
-> > >     /* Register associated reserved memory regions */
-> > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > -   while (of_phandle_iterator_next(&it) == 0) {
-> > > +   while (1) {
-> > > +           int err;
-> > > +           struct resource res;
-> > > +
-> > > +           err = of_reserved_mem_region_to_resource(np, i++, &res);
-> > > +           if (err)
-> > > +                   return 0;
-> > > +
-> > >             /*
-> > >              * Ignore the first memory region which will be used vdev buffer.
-> > >              * No need to do extra handlings, rproc_add_virtio_dev will handle it.
-> > >              */
-> > > -           if (!strcmp(it.node->name, "vdev0buffer"))
-> > > +           if (strstarts(res.name, "vdev0buffer"))
-> > >                     continue;
-> > >
-> > > -           if (!strcmp(it.node->name, "rsc-table"))
-> > > +           if (strstarts(res.name, "rsc-table"))
-> > >                     continue;
-> > >
-> > > -           rmem = of_reserved_mem_lookup(it.node);
-> > > -           if (!rmem) {
-> > > -                   of_node_put(it.node);
-> > > -                   dev_err(priv->dev, "unable to acquire memory-region\n");
-> > > -                   return -EINVAL;
-> > > -           }
-> > > -
-> > >             /* No need to translate pa to da, i.MX use same map */
-> > > -           da = rmem->base;
-> > > +           da = res.start;
-> > >
-> > >             /* Register memory region */
-> > > -           mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)rmem->base, rmem->size, da,
-> > > +           mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
-> > > +                                      resource_size(&res), da,
-> > >                                        imx_rproc_mem_alloc, imx_rproc_mem_release,
-> > > -                                      it.node->name);
-> > > -
-> > > -           if (mem) {
-> > > -                   rproc_coredump_add_segment(rproc, da, rmem->size);
-> > > -           } else {
-> > > -                   of_node_put(it.node);
-> > > +                                      "%.*s", strchrnul(res.name, '@') - res.name,
-> > > +                                      res.name);
-> > > +           if (!mem)
-> > >                     return -ENOMEM;
-> > > -           }
-> > >
-> > > +           rproc_coredump_add_segment(rproc, da, resource_size(&res));
-> > >             rproc_add_carveout(rproc, mem);
-> > >     }
-> > > -
-> > > -   return  0;
-> > >  }
-> > >
-> > >  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > > @@ -664,47 +658,37 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
-> > >     }
-> > >
-> > >     /* memory-region is optional property */
-> > > -   nph = of_count_phandle_with_args(np, "memory-region", NULL);
-> > > +   nph = of_reserved_mem_region_count(np);
-> > >     if (nph <= 0)
-> > >             return 0;
-> > >
-> > >     /* remap optional addresses */
-> > >     for (a = 0; a < nph; a++) {
-> > > -           struct device_node *node;
-> > >             struct resource res;
-> > >
-> > > -           node = of_parse_phandle(np, "memory-region", a);
-> > > -           if (!node)
-> > > -                   continue;
-> > > -           /* Not map vdevbuffer, vdevring region */
-> > > -           if (!strncmp(node->name, "vdev", strlen("vdev"))) {
-> > > -                   of_node_put(node);
-> > > -                   continue;
-> > > -           }
-> > > -           err = of_address_to_resource(node, 0, &res);
-> > > +           err = of_reserved_mem_region_to_resource(np, a, &res);
-> > >             if (err) {
-> > >                     dev_err(dev, "unable to resolve memory region\n");
-> > > -                   of_node_put(node);
-> > >                     return err;
-> > >             }
-> > >
-> > > -           if (b >= IMX_RPROC_MEM_MAX) {
-> > > -                   of_node_put(node);
-> > > +           /* Not map vdevbuffer, vdevring region */
-> > > +           if (strstarts(res.name, "vdev"))
-> > > +                   continue;
-> > > +
-> > > +           if (b >= IMX_RPROC_MEM_MAX)
-> > >                     break;
-> > > -           }
-> > >
-> > >             /* Not use resource version, because we might share region */
-> > > -           priv->mem[b].cpu_addr = devm_ioremap_wc(&pdev->dev, res.start, resource_size(&res));
-> > > +           priv->mem[b].cpu_addr = devm_ioremap_resource_wc(&pdev->dev, &res);
-> > >             if (!priv->mem[b].cpu_addr) {
-> > >                     dev_err(dev, "failed to remap %pr\n", &res);
-> > > -                   of_node_put(node);
-> > >                     return -ENOMEM;
-> > >             }
-> > >             priv->mem[b].sys_addr = res.start;
-> > >             priv->mem[b].size = resource_size(&res);
-> > > -           if (!strcmp(node->name, "rsc-table"))
-> > > +           if (!strcmp(res.name, "rsc-table"))
-> > >                     priv->rsc_table = priv->mem[b].cpu_addr;
-> > > -           of_node_put(node);
-> > >             b++;
-> > >     }
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > > index e98b7e03162c..d3933a66ed3d 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > > @@ -625,26 +625,20 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
-> > >
-> > >  static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
-> > >  {
-> > > -   struct reserved_mem *rmem = NULL;
-> > > -   struct device_node *node;
-> > > -
-> > > -   node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
-> > > -   if (node)
-> > > -           rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > +   int ret;
-> > > +   struct resource res;
-> > >
-> > > -   if (!rmem) {
-> > > +   ret = of_reserved_mem_region_to_resource(adsp->dev->of_node, 0, &res);
-> > > +   if (ret) {
-> > >             dev_err(adsp->dev, "unable to resolve memory-region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   adsp->mem_phys = adsp->mem_reloc = rmem->base;
-> > > -   adsp->mem_size = rmem->size;
-> > > -   adsp->mem_region = devm_ioremap_wc(adsp->dev,
-> > > -                           adsp->mem_phys, adsp->mem_size);
-> > > +   adsp->mem_phys = adsp->mem_reloc = res.start;
-> > > +   adsp->mem_size = resource_size(&res);
-> > > +   adsp->mem_region = devm_ioremap_resource_wc(adsp->dev, &res);
-> > >     if (!adsp->mem_region) {
-> > > -           dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
-> > > -                   &rmem->base, adsp->mem_size);
-> > > +           dev_err(adsp->dev, "unable to map memory region: %pR\n", &res);
-> > >             return -EBUSY;
-> > >     }
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > > index 3087d895b87f..91940977ca89 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > > @@ -1970,8 +1970,8 @@ static int q6v5_init_reset(struct q6v5 *qproc)
-> > >  static int q6v5_alloc_memory_region(struct q6v5 *qproc)
-> > >  {
-> > >     struct device_node *child;
-> > > -   struct reserved_mem *rmem;
-> > > -   struct device_node *node;
-> > > +   struct resource res;
-> > > +   int ret;
-> > >
-> > >     /*
-> > >      * In the absence of mba/mpss sub-child, extract the mba and mpss
-> > > @@ -1979,71 +1979,49 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
-> > >      */
-> > >     child = of_get_child_by_name(qproc->dev->of_node, "mba");
-> > >     if (!child) {
-> > > -           node = of_parse_phandle(qproc->dev->of_node,
-> > > -                                   "memory-region", 0);
-> > > +           ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 0, &res);
-> > >     } else {
-> > > -           node = of_parse_phandle(child, "memory-region", 0);
-> > > +           ret = of_reserved_mem_region_to_resource(child, 0, &res);
-> > >             of_node_put(child);
-> > >     }
-> > >
-> > > -   if (!node) {
-> > > -           dev_err(qproc->dev, "no mba memory-region specified\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > -
-> > > -   rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > -   if (!rmem) {
-> > > +   if (ret) {
-> > >             dev_err(qproc->dev, "unable to resolve mba region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   qproc->mba_phys = rmem->base;
-> > > -   qproc->mba_size = rmem->size;
-> > > +   qproc->mba_phys = res.start;
-> > > +   qproc->mba_size = resource_size(&res);
-> > >
-> > >     if (!child) {
-> > > -           node = of_parse_phandle(qproc->dev->of_node,
-> > > -                                   "memory-region", 1);
-> > > +           ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 1, &res);
-> > >     } else {
-> > >             child = of_get_child_by_name(qproc->dev->of_node, "mpss");
-> > > -           node = of_parse_phandle(child, "memory-region", 0);
-> > > +           ret = of_reserved_mem_region_to_resource(child, 0, &res);
-> > >             of_node_put(child);
-> > >     }
-> > >
-> > > -   if (!node) {
-> > > -           dev_err(qproc->dev, "no mpss memory-region specified\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > -
-> > > -   rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > -   if (!rmem) {
-> > > +   if (ret) {
-> > >             dev_err(qproc->dev, "unable to resolve mpss region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   qproc->mpss_phys = qproc->mpss_reloc = rmem->base;
-> > > -   qproc->mpss_size = rmem->size;
-> > > +   qproc->mpss_phys = qproc->mpss_reloc = res.start;
-> > > +   qproc->mpss_size = resource_size(&res);
-> > >
-> > >     if (!child) {
-> > > -           node = of_parse_phandle(qproc->dev->of_node, "memory-region", 2);
-> > > +           ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 2, &res);
-> > >     } else {
-> > >             child = of_get_child_by_name(qproc->dev->of_node, "metadata");
-> > > -           node = of_parse_phandle(child, "memory-region", 0);
-> > > +           ret = of_reserved_mem_region_to_resource(child, 0, &res);
-> > >             of_node_put(child);
-> > >     }
-> > >
-> > > -   if (!node)
-> > > +   if (ret)
-> > >             return 0;
-> > >
-> > > -   rmem = of_reserved_mem_lookup(node);
-> > > -   if (!rmem) {
-> > > -           dev_err(qproc->dev, "unable to resolve metadata region\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > -
-> > > -   qproc->mdata_phys = rmem->base;
-> > > -   qproc->mdata_size = rmem->size;
-> > > +   qproc->mdata_phys = res.start;
-> > > +   qproc->mdata_size = resource_size(&res);
-> > >
-> > >     return 0;
-> > >  }
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > index 158bcd6cc85c..7bac843ce406 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > @@ -547,53 +547,37 @@ static void qcom_pas_pds_detach(struct qcom_pas *pas, struct device **pds, size_
-> > >
-> > >  static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
-> > >  {
-> > > -   struct reserved_mem *rmem;
-> > > -   struct device_node *node;
-> > > -
-> > > -   node = of_parse_phandle(pas->dev->of_node, "memory-region", 0);
-> > > -   if (!node) {
-> > > -           dev_err(pas->dev, "no memory-region specified\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > +   struct resource res;
-> > > +   int ret;
-> > >
-> > > -   rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > -   if (!rmem) {
-> > > +   ret = of_reserved_mem_region_to_resource(pas->dev->of_node, 0, &res);
-> > > +   if (ret) {
-> > >             dev_err(pas->dev, "unable to resolve memory-region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   pas->mem_phys = pas->mem_reloc = rmem->base;
-> > > -   pas->mem_size = rmem->size;
-> > > -   pas->mem_region = devm_ioremap_wc(pas->dev, pas->mem_phys, pas->mem_size);
-> > > +   pas->mem_phys = pas->mem_reloc = res.start;
-> > > +   pas->mem_size = resource_size(&res);
-> > > +   pas->mem_region = devm_ioremap_resource_wc(pas->dev, &res);
-> > >     if (!pas->mem_region) {
-> > > -           dev_err(pas->dev, "unable to map memory region: %pa+%zx\n",
-> > > -                   &rmem->base, pas->mem_size);
-> > > +           dev_err(pas->dev, "unable to map memory region: %pR\n", &res);
-> > >             return -EBUSY;
-> > >     }
-> > >
-> > >     if (!pas->dtb_pas_id)
-> > >             return 0;
-> > >
-> > > -   node = of_parse_phandle(pas->dev->of_node, "memory-region", 1);
-> > > -   if (!node) {
-> > > -           dev_err(pas->dev, "no dtb memory-region specified\n");
-> > > -           return -EINVAL;
-> > > -   }
-> > > -
-> > > -   rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > -   if (!rmem) {
-> > > +   ret = of_reserved_mem_region_to_resource(pas->dev->of_node, 1, &res);
-> > > +   if (ret) {
-> > >             dev_err(pas->dev, "unable to resolve dtb memory-region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   pas->dtb_mem_phys = pas->dtb_mem_reloc = rmem->base;
-> > > -   pas->dtb_mem_size = rmem->size;
-> > > -   pas->dtb_mem_region = devm_ioremap_wc(pas->dev, pas->dtb_mem_phys, pas->dtb_mem_size);
-> > > +   pas->dtb_mem_phys = pas->dtb_mem_reloc = res.start;
-> > > +   pas->dtb_mem_size = resource_size(&res);
-> > > +   pas->dtb_mem_region = devm_ioremap_resource_wc(pas->dev, &res);
-> > >     if (!pas->dtb_mem_region) {
-> > > -           dev_err(pas->dev, "unable to map dtb memory region: %pa+%zx\n",
-> > > -                   &rmem->base, pas->dtb_mem_size);
-> > > +           dev_err(pas->dev, "unable to map dtb memory region: %pR\n", &res);
-> > >             return -EBUSY;
-> > >     }
-> > >
-> > > @@ -603,7 +587,6 @@ static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
-> > >  static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
-> > >  {
-> > >     struct qcom_scm_vmperm perm[MAX_ASSIGN_COUNT];
-> > > -   struct device_node *node;
-> > >     unsigned int perm_size;
-> > >     int offset;
-> > >     int ret;
-> > > @@ -612,17 +595,15 @@ static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
-> > >             return 0;
-> > >
-> > >     for (offset = 0; offset < pas->region_assign_count; ++offset) {
-> > > -           struct reserved_mem *rmem = NULL;
-> > > -
-> > > -           node = of_parse_phandle(pas->dev->of_node, "memory-region",
-> > > -                                   pas->region_assign_idx + offset);
-> > > -           if (node)
-> > > -                   rmem = of_reserved_mem_lookup(node);
-> > > -           of_node_put(node);
-> > > -           if (!rmem) {
-> > > +           struct resource res;
-> > > +
-> > > +           ret = of_reserved_mem_region_to_resource(pas->dev->of_node,
-> > > +                                                    pas->region_assign_idx + offset,
-> > > +                                                    &res);
-> > > +           if (ret) {
-> > >                     dev_err(pas->dev, "unable to resolve shareable memory-region index %d\n",
-> > >                             offset);
-> > > -                   return -EINVAL;
-> > > +                   return ret;
-> > >             }
-> > >
-> > >             if (pas->region_assign_shared)  {
-> > > @@ -637,8 +618,8 @@ static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
-> > >                     perm_size = 1;
-> > >             }
-> > >
-> > > -           pas->region_assign_phys[offset] = rmem->base;
-> > > -           pas->region_assign_size[offset] = rmem->size;
-> > > +           pas->region_assign_phys[offset] = res.start;
-> > > +           pas->region_assign_size[offset] = resource_size(&res);
-> > >             pas->region_assign_owners[offset] = BIT(QCOM_SCM_VMID_HLOS);
-> > >
-> > >             ret = qcom_scm_assign_mem(pas->region_assign_phys[offset],
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> > > index 07c88623f597..ca748e3bcc7f 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> > > @@ -873,27 +873,22 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
-> > >
-> > >  static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
-> > >  {
-> > > -   struct reserved_mem *rmem = NULL;
-> > > -   struct device_node *node;
-> > >     struct device *dev = wcss->dev;
-> > > +   struct resource res;
-> > > +   int ret;
-> > >
-> > > -   node = of_parse_phandle(dev->of_node, "memory-region", 0);
-> > > -   if (node)
-> > > -           rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > -
-> > > -   if (!rmem) {
-> > > +   ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
-> > > +   if (ret) {
-> > >             dev_err(dev, "unable to acquire memory-region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   wcss->mem_phys = rmem->base;
-> > > -   wcss->mem_reloc = rmem->base;
-> > > -   wcss->mem_size = rmem->size;
-> > > -   wcss->mem_region = devm_ioremap_wc(dev, wcss->mem_phys, wcss->mem_size);
-> > > +   wcss->mem_phys = res.start;
-> > > +   wcss->mem_reloc = res.start;
-> > > +   wcss->mem_size = resource_size(&res);
-> > > +   wcss->mem_region = devm_ioremap_resource_wc(dev, &res);
-> > >     if (!wcss->mem_region) {
-> > > -           dev_err(dev, "unable to map memory region: %pa+%pa\n",
-> > > -                   &rmem->base, &rmem->size);
-> > > +           dev_err(dev, "unable to map memory region: %pR\n", &res);
-> > >             return -EBUSY;
-> > >     }
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-> > > index 2c7e519a2254..14005fb049a2 100644
-> > > --- a/drivers/remoteproc/qcom_wcnss.c
-> > > +++ b/drivers/remoteproc/qcom_wcnss.c
-> > > @@ -526,25 +526,20 @@ static int wcnss_request_irq(struct qcom_wcnss *wcnss,
-> > >
-> > >  static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
-> > >  {
-> > > -   struct reserved_mem *rmem = NULL;
-> > > -   struct device_node *node;
-> > > -
-> > > -   node = of_parse_phandle(wcnss->dev->of_node, "memory-region", 0);
-> > > -   if (node)
-> > > -           rmem = of_reserved_mem_lookup(node);
-> > > -   of_node_put(node);
-> > > +   struct resource res;
-> > > +   int ret;
-> > >
-> > > -   if (!rmem) {
-> > > +   ret = of_reserved_mem_region_to_resource(wcnss->dev->of_node, 0, &res);
-> > > +   if (ret) {
-> > >             dev_err(wcnss->dev, "unable to resolve memory-region\n");
-> > > -           return -EINVAL;
-> > > +           return ret;
-> > >     }
-> > >
-> > > -   wcnss->mem_phys = wcnss->mem_reloc = rmem->base;
-> > > -   wcnss->mem_size = rmem->size;
-> > > -   wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
-> > > +   wcnss->mem_phys = wcnss->mem_reloc = res.start;
-> > > +   wcnss->mem_size = resource_size(&res);
-> > > +   wcnss->mem_region = devm_ioremap_resource_wc(wcnss->dev, &res);
-> > >     if (!wcnss->mem_region) {
-> > > -           dev_err(wcnss->dev, "unable to map memory region: %pa+%zx\n",
-> > > -                   &rmem->base, wcnss->mem_size);
-> > > +           dev_err(wcnss->dev, "unable to map memory region: %pR\n", &res);
-> > >             return -EBUSY;
-> > >     }
-> > >
-> > > diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-> > > index 921d853594f4..3c25625f966d 100644
-> > > --- a/drivers/remoteproc/rcar_rproc.c
-> > > +++ b/drivers/remoteproc/rcar_rproc.c
-> > > @@ -52,46 +52,36 @@ static int rcar_rproc_prepare(struct rproc *rproc)
-> > >  {
-> > >     struct device *dev = rproc->dev.parent;
-> > >     struct device_node *np = dev->of_node;
-> > > -   struct of_phandle_iterator it;
-> > >     struct rproc_mem_entry *mem;
-> > > -   struct reserved_mem *rmem;
-> > > +   int i = 0;
-> > >     u32 da;
-> > >
-> > >     /* Register associated reserved memory regions */
-> > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > -   while (of_phandle_iterator_next(&it) == 0) {
-> > > -
-> > > -           rmem = of_reserved_mem_lookup(it.node);
-> > > -           if (!rmem) {
-> > > -                   of_node_put(it.node);
-> > > -                   dev_err(&rproc->dev,
-> > > -                           "unable to acquire memory-region\n");
-> > > -                   return -EINVAL;
-> > > -           }
-> > > +   while (1) {
-> > > +           struct resource res;
-> > > +           int ret;
-> > > +
-> > > +           ret = of_reserved_mem_region_to_resource(np, i++, &res);
-> > > +           if (ret)
-> > > +                   return 0;
-> > >
-> > > -           if (rmem->base > U32_MAX) {
-> > > -                   of_node_put(it.node);
-> > > +           if (res.start > U32_MAX)
-> > >                     return -EINVAL;
-> > > -           }
-> > >
-> > >             /* No need to translate pa to da, R-Car use same map */
-> > > -           da = rmem->base;
-> > > +           da = res.start;
-> > >             mem = rproc_mem_entry_init(dev, NULL,
-> > > -                                      rmem->base,
-> > > -                                      rmem->size, da,
-> > > +                                      res.start,
-> > > +                                      resource_size(&res), da,
-> > >                                        rcar_rproc_mem_alloc,
-> > >                                        rcar_rproc_mem_release,
-> > > -                                      it.node->name);
-> > > +                                      res.name);
-> > >
-> > > -           if (!mem) {
-> > > -                   of_node_put(it.node);
-> > > +           if (!mem)
-> > >                     return -ENOMEM;
-> > > -           }
-> > >
-> > >             rproc_add_carveout(rproc, mem);
-> > >     }
-> > > -
-> > > -   return 0;
-> > >  }
-> > >
-> > >  static int rcar_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> > > index e6566a9839dc..043348366926 100644
-> > > --- a/drivers/remoteproc/st_remoteproc.c
-> > > +++ b/drivers/remoteproc/st_remoteproc.c
-> > > @@ -120,40 +120,37 @@ static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> > >     struct device *dev = rproc->dev.parent;
-> > >     struct device_node *np = dev->of_node;
-> > >     struct rproc_mem_entry *mem;
-> > > -   struct reserved_mem *rmem;
-> > > -   struct of_phandle_iterator it;
-> > > -   int index = 0;
-> > > -
-> > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > -   while (of_phandle_iterator_next(&it) == 0) {
-> > > -           rmem = of_reserved_mem_lookup(it.node);
-> > > -           if (!rmem) {
-> > > -                   of_node_put(it.node);
-> > > -                   dev_err(dev, "unable to acquire memory-region\n");
-> > > -                   return -EINVAL;
-> > > -           }
-> > > +   int index = 0, mr = 0;
-> > > +
-> > > +   while (1) {
-> > > +           struct resource res;
-> > > +           int ret;
-> > > +
-> > > +           ret = of_reserved_mem_region_to_resource(np, mr++, &res);
-> > > +           if (ret)
-> > > +                   return 0;
-> >
-> > The original code calls rproc_elf_load_rsc_table() [1] after iterating through
-> > the memory region, something that won't happen with the above.
->
-> Indeed. it needs the following incremental change. It is slightly
-> different in that rproc_elf_load_rsc_table() is not called if
-> 'memory-region' is missing, but the binding says that's required.
->
-> 8<--------------------------------------------------
->
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index 043348366926..cb09c244fdb5 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -120,15 +120,19 @@ static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->         struct device *dev = rproc->dev.parent;
->         struct device_node *np = dev->of_node;
->         struct rproc_mem_entry *mem;
-> -       int index = 0, mr = 0;
-> +       int index = 0;
->
->         while (1) {
->                 struct resource res;
->                 int ret;
->
-> -               ret = of_reserved_mem_region_to_resource(np, mr++, &res);
-> -               if (ret)
-> -                       return 0;
-> +               ret = of_reserved_mem_region_to_resource(np, index, &res);
-> +               if (ret) {
-> +                       if (index)
-> +                               break;
-> +                       else
-> +                               return ret;
-> +               }
+On Tue, 11 Nov 2025 08:44:14 -0800
+Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-This looks brittle and I'm not sure it would work.
+> Harry is talking about mod_node_page_state() on
+> !CONFIG_HAVE_CMPXCHG_LOCAL which is disabling irqs.
+> 
+> void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
+> 					long delta)
+> {
+> 	unsigned long flags;
+> 
+> 	local_irq_save(flags);
+> 	__mod_node_page_state(pgdat, item, delta);
+> 	local_irq_restore(flags);
+> }
+> 
+> Is PREEMPT_RT fine with this?
 
-Going back to the original implementation, the only time we want to
-"break" is when @index is equal to the amount of memory regions _and_
-ret is -EINVAL.  Any other condition should return.
+But should be:
 
->
->                 /*  No need to map vdev buffer */
->                 if (!strstarts(res.name, "vdev0buffer")) {
+void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
+					long delta)
+{
+	guard(irqsave)();
+	__mod_node_page_state(pgdat, item, delta);
+}
+
+-- Steve
 
