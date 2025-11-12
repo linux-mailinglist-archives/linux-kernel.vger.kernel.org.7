@@ -1,137 +1,168 @@
-Return-Path: <linux-kernel+bounces-896918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B69C517FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F0C51860
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B61881CE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCBF1882259
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE821C194;
-	Wed, 12 Nov 2025 09:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VR1sSncF"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DD03009D3;
+	Wed, 12 Nov 2025 09:56:27 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970042FF15A;
-	Wed, 12 Nov 2025 09:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586F82FF663;
+	Wed, 12 Nov 2025 09:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941321; cv=none; b=f/OAerXxwq/pboA8USMOOUKGMiw6szCC/A+QsUuefeLgRIfCkQTUMpH0OYRbJbhEifJO/33Nwzzu48WUdhjkjtOfnNaxvpxlo798Pp5QWQ+Z3GlJ6BG9s/hOzu6tKqwSLg7h2aO5RVSFUbsuNe4zxj4UJ53/aEb+BBmoiJjvWVc=
+	t=1762941386; cv=none; b=BvMDMgLem2ZfztCZfVRa5xwPEKgEVrVGGAUHKNzlVlwQT7a/tkwGQ301i3lzbW9vvIezYhr+BSZgpYWjmyPIO0fAE9Ws8QspxHdj/15NEMnZK8G4/GTthhq26gtUOKxNq8Y1l73gSYqTXohuFZftRK6rtQaX1VDgAEOSgPdUdn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941321; c=relaxed/simple;
-	bh=SFI9MM3tuC+Bivwx7QPVbtLlk+ybwULToKZLNrhJT38=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rly784UDLHEabmbabTkfaNZNy1QWaVJj+2l9PvSsBi1D91qFuw7emLdPUnG/SjHwZ+pcf0GCXhd5lSsZpqx8dGt/JhxQM39djUFDjiFKSoNtSTH5+fsh+FWQtUPt6S8dcAHsbrfpw6xCQTvKv45ev32ijrq1NvLZd4Se/7AHpas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VR1sSncF; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC8cWMe025757;
-	Wed, 12 Nov 2025 09:54:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=dmkHiVLSvORdYgKy
-	1/Um6NDsCxamLB7VRZ94gczACkY=; b=VR1sSncF/Dfu2KPGNwCsEvp190ta9FpI
-	zz5TlnRH8vPBUs6VJiDEOGqEZOM5aexxdYQ2BC/h2pc9J4HW+ZewBmJIErXz59kK
-	eNhoHdleaDCEKyId6GaGpdP7n8mTBR7+rmzrEcToVa2CezwHYs75FpR4jJdxkhJX
-	CW2NvIT5nx8EuHG0jCno9MTSM1x6gk+LhJp/7Ss1oYTiXWOGfJlCYp5ky9uq9O/e
-	Ctx4HEcfY7TTwYLBHjxlTvSERiho5OC0u87DveUI+2JLn1rnfVWpqGEK283nL4fs
-	In50tcvllS69GJUzh4TW2eymptQ/FxoaKMuzZ6gz2qVoeQjiABTYtA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acpg686e8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 09:54:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC7ml82021018;
-	Wed, 12 Nov 2025 09:54:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaagc8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 09:54:45 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AC9siwH015703;
-	Wed, 12 Nov 2025 09:54:44 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaagc7r-1;
-	Wed, 12 Nov 2025 09:54:44 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Sinan Kaya <okaya@codeaurora.org>
-Cc: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: Do not attempt to set ExtTag for VFs
-Date: Wed, 12 Nov 2025 10:54:40 +0100
-Message-ID: <20251112095442.1913258-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1762941386; c=relaxed/simple;
+	bh=cslFZpQ7jV9CKrGaEhC7YVXSe928JWEpLIJ3j4lGY2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cx/Bw8NFM+erSD2i/VF35ln603SeprQtNFiw0fV7HloljSeJ2Bm6bWBNDw0wJjjPnGZA8soMgTi3SatZ4gxwCgrxBM5LQUU7uPTzmTdZNWAlhEOtr6WntDp56eYX8ROdsK3q5U/hRfTnKZ6buKhxFtMGLO4YM6xY1mfxJzleXCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.215] (p57bd98fa.dip0.t-ipconnect.de [87.189.152.250])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 854F561CC3FD1;
+	Wed, 12 Nov 2025 10:56:02 +0100 (CET)
+Message-ID: <472c08c3-046a-4f16-ae88-c101ff6b7262@molgen.mpg.de>
+Date: Wed, 12 Nov 2025 10:55:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Bluetooth: Process Read Remote Version evt
+To: Gongwei Li <13875017792@163.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gongwei Li <ligongwei@kylinos.cn>
+References: <20251112094843.173238-1-13875017792@163.com>
+ <20251112094843.173238-2-13875017792@163.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251112094843.173238-2-13875017792@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511120079
-X-Authority-Analysis: v=2.4 cv=FK8WBuos c=1 sm=1 tr=0 ts=69145966 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=M51BFTxLslgA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=mnBHqYny2I4Dg18uI9AA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: L1_0lufocTbI3epD7E9WtsQPQKPhC-CN
-X-Proofpoint-ORIG-GUID: L1_0lufocTbI3epD7E9WtsQPQKPhC-CN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA2NCBTYWx0ZWRfXymYuhkNsVWbg
- VsJwo+Mhg+9EBcSgHO14/inP4aE0Q7LVoPBfP/+/0cMn+vMsrViJB3iyZrSJ9NB23uS29mTnbJT
- bD5g2Ls+RatisXbx2H/p520zLP4qVcg1HdXNRyCJlwu6lhRHQaIAbcnS7ES7BmNsxHYw3OiL0OT
- PrFYLR8phOC1cSgZFMO/cNpux4caipIvyAQKWhqB+A1RxE7V1QNgRMXe3RNvt6/shkN6JPXNIPP
- Lg4H0v5jqiUjXvMKdDoRwHhwxZgbkRbEEXsZfTCeg4SIFeZHuc91XG90FMK3kCThv3/3C5d81RJ
- 5hnWHBum5bpRQedlmecYN2yopx3X666yaid0giFtka4WsDoXt+/guRVTbST1dkWdeR8Of5jmEgC
- UpW81Lfn4+tD4eHhzoliznByvBVWFw==
 
-The bit for enabling extended tags is Reserved and Preserved (RsvdP)
-for VFs, according to PCIe r7.0 section 7.5.3.4 table 7.21.  Hence,
-bail out early from pci_configure_extended_tags() if the device is a
-VF.
+Dear Gongwei,
 
-Otherwise, we may see incorrect log messages such as:
 
-	   kernel: pci 0000:af:00.2: enabling Extended Tags
+Thank you for your patch. I’d spell out event in the commit message 
+summary/title.
 
-(af:00.2 is a VF)
+Am 12.11.25 um 10:48 schrieb Gongwei Li:
+> From: Gongwei Li <ligongwei@kylinos.cn>
+> 
+> Add processing for HCI Process Read Remote Version event.
+> Used to query the lmp version of remote devices.
 
-Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+How did you test it?
 
----
+> Signed-off-by: Gongwei Li <ligongwei@kylinos.cn>
+> ---
+>   include/net/bluetooth/hci_core.h |  1 +
+>   net/bluetooth/hci_event.c        | 23 +++++++++++++++++++++++
+>   net/bluetooth/mgmt.c             |  5 +++++
+>   3 files changed, 29 insertions(+)
+> 
+> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+> index 32b1c08c8bba..bdd5e6ef3616 100644
+> --- a/include/net/bluetooth/hci_core.h
+> +++ b/include/net/bluetooth/hci_core.h
+> @@ -749,6 +749,7 @@ struct hci_conn {
+>   
+>   	__u8		remote_cap;
+>   	__u8		remote_auth;
+> +	__u8		remote_ver;
+>   
+>   	unsigned int	sent;
+>   
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index f20c826509b6..7f8e3f8ec01e 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -3737,6 +3737,26 @@ static void hci_remote_features_evt(struct hci_dev *hdev, void *data,
+>   	hci_dev_unlock(hdev);
+>   }
+>   
+> +static void hci_remote_version_evt(struct hci_dev *hdev, void *data,
+> +				   struct sk_buff *skb)
+> +{
+> +	struct hci_ev_remote_version *ev = (void *)skb->data;
+> +	struct hci_conn *conn;
+> +
+> +	BT_DBG("%s", hdev->name);
+> +
+> +	hci_dev_lock(hdev);
+> +
+> +	conn = hci_conn_hash_lookup_handle(hdev, __le16_to_cpu(ev->handle));
+> +	if (!conn)
+> +		goto unlock;
+> +
+> +	conn->remote_ver = ev->lmp_ver;
+> +
+> +unlock:
+> +	hci_dev_unlock(hdev);
+> +}
+> +
+>   static inline void handle_cmd_cnt_and_timer(struct hci_dev *hdev, u8 ncmd)
+>   {
+>   	cancel_delayed_work(&hdev->cmd_timer);
+> @@ -7448,6 +7468,9 @@ static const struct hci_ev {
+>   	/* [0x0b = HCI_EV_REMOTE_FEATURES] */
+>   	HCI_EV(HCI_EV_REMOTE_FEATURES, hci_remote_features_evt,
+>   	       sizeof(struct hci_ev_remote_features)),
+> +	/* [0x0c = HCI_EV_REMOTE_VERSION] */
+> +	HCI_EV(HCI_EV_REMOTE_VERSION, hci_remote_version_evt,
+> +	       sizeof(struct hci_ev_remote_version)),
+>   	/* [0x0e = HCI_EV_CMD_COMPLETE] */
+>   	HCI_EV_REQ_VL(HCI_EV_CMD_COMPLETE, hci_cmd_complete_evt,
+>   		      sizeof(struct hci_ev_cmd_complete), HCI_MAX_EVENT_SIZE),
+> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+> index 79762bfaea5f..c0bab45648f3 100644
+> --- a/net/bluetooth/mgmt.c
+> +++ b/net/bluetooth/mgmt.c
+> @@ -9728,6 +9728,9 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
+>   {
+>   	struct sk_buff *skb;
+>   	struct mgmt_ev_device_connected *ev;
+> +	struct hci_cp_read_remote_version cp;
+> +
+> +	memset(&cp, 0, sizeof(cp));
+>   	u16 eir_len = 0;
+>   	u32 flags = 0;
+>   
+> @@ -9774,6 +9777,8 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
+>   	ev->eir_len = cpu_to_le16(eir_len);
+>   
+>   	mgmt_event_skb(skb, NULL);
+> +
+> +	hci_send_cmd(hdev, HCI_OP_READ_REMOTE_VERSION, sizeof(cp), &cp);
+>   }
+>   
+>   static void unpair_device_rsp(struct mgmt_pending_cmd *cmd, void *data)
 
-v1 -> v2: Added ref to PCIe spec
----
- drivers/pci/probe.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The diff looks good. Please feel free to add:
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 0ce98e18b5a87..014017e15bcc8 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2244,7 +2244,8 @@ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
- 	u16 ctl;
- 	int ret;
- 
--	if (!pci_is_pcie(dev))
-+	/* PCI_EXP_DEVCTL_EXT_TAG is RsvdP in VFs */
-+	if (!pci_is_pcie(dev) || dev->is_virtfn)
- 		return 0;
- 
- 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
--- 
-2.43.5
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
+
+Kind regards,
+
+Paul
 
