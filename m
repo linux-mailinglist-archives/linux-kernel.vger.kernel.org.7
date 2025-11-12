@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-896728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20288C5113A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:18:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF1CC51109
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD22C4EB002
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:14:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 829E034D05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EF32F3C32;
-	Wed, 12 Nov 2025 08:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2A12F531F;
+	Wed, 12 Nov 2025 08:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXI4NbVg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzzDQuwY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFDA2C08C2;
-	Wed, 12 Nov 2025 08:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D502F39A0;
+	Wed, 12 Nov 2025 08:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935258; cv=none; b=WW2naF+CbJcbjk6xGTPOYGZsTyatlFdscV5YbULZ7LNi1vI3OTXqAp0qUddBTT/brlBlJoYDgG89Gw0TJKO0SPJEI2JQIroAMjOYD+0GWRp4Y+EagvRpV/kYchSW/7SicmTfEecM5Mx/tRkRUrAO0OgOmKnxuFkbQcjgh9PKZEI=
+	t=1762935286; cv=none; b=aDIoEjGEJBKZDWlwzmk0+YluN3O+YX+XayW5rQo2cu+Nl4EUozSAytI3tgXG/8mXvVCUkRD5HRJEulpfrHm/O6rXxbCFjGSzhLr6COwUCpSHXxoz9JvF8pZXM+rMAcer8BzSR+NzGfr5ZXV6/HskdsSmUP2hHcI7Aw5DDJIwWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935258; c=relaxed/simple;
-	bh=ZLUHJ3nXQoAGNsQe7fgeAz8Dvgy6taFR/cCsG/Xfe5U=;
+	s=arc-20240116; t=1762935286; c=relaxed/simple;
+	bh=WYgX0FKG9Guv3WlwIL03GDkaWzHmiAYxyETrB2n5AZA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0LnO2nM5Hfnjy8vykEuFu3LY8oVr9260BqkGzSo2GPVQEjKB1EqpKcg0xg4xAWZgLqQ0DaoGxFPGZTx3eC2imAyr1eysfSs6FrIbnr267fH2p4yk9jG7xXCESskmF3Oi7WL3QMe7cQcH13+DwN9SODt/lqXSIRDQti/364OK+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXI4NbVg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755F4C4CEF5;
-	Wed, 12 Nov 2025 08:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762935257;
-	bh=ZLUHJ3nXQoAGNsQe7fgeAz8Dvgy6taFR/cCsG/Xfe5U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JXI4NbVgLixO0GOgeRVClcNs8W1nh0RJcDMkuYRSiUwgx2FPy4L/BjH5k/OqHZjA/
-	 67PrSg2ug51TbcbbTfzas5QPw9Vda1B6HPhOvxOP47+aG6NozWJs4J2t3+LXBulvC5
-	 nLrKB11ju8V1BDMNgNzSMUXmtAKKIZTs/k2/dwVTJN8Fqyxr/4VyerE8ng5Kf1HU2P
-	 5wc5e7OMsjPxtrwayEG2x1oYIV/rZaVJjoD/za30PYZMaS2FegvPT7qUY2cZ52ZObP
-	 wSsnUn2gU4BPEIYsaK/G+jx/tN/4u6EXxfGOL9ePJY9gcgk5LTB+khqmqXoIjbR3uK
-	 ptKL5XRz7zbAA==
-Message-ID: <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
-Date: Wed, 12 Nov 2025 09:14:12 +0100
+	 In-Reply-To:Content-Type; b=qhWrmh3G/T1r/Ng6QBOzGsc3JRpT+M6B6it5TkNuRwcVw5jou/4HDRV9JorsHPLc6hBxluY6R7j3K2OKOurAKzH/d7dGSF6q/7vNPkAIXgdLUWmd4kX8oNnL3tDK3XnVnHxT+uuuNQjRmHX5x21qboJ1dNrFnLg0/N3AYWcYnnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzzDQuwY; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762935284; x=1794471284;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WYgX0FKG9Guv3WlwIL03GDkaWzHmiAYxyETrB2n5AZA=;
+  b=SzzDQuwYdhAqFt6IgQxTqQkESzOxzBg/6z13fSZ+gFz+nm/lbkpTC3Gn
+   UB/sYCxiRXsLmwojRboopbXP1duPVAadkuwQWXYpgACeO1b3uIXFw/8rG
+   yrQQrE5jL9GJi9VqXqUcf7xWTT45rotDCBTKvlo/zAbWx2xJE9NRQ0BzJ
+   DAJ7JQCrNLdgz3Zivq+MQE3B8dILQJnggWO2miG6w+aIq1dIcmkS4tbyh
+   KkDZPIdzm0d2Bqp5BOxa+ATPCI/7GwWOcTg7MDxech+tVCR+GKYjqgI13
+   49uGneAAihftYt1WWSaBYiHZcG7R3YB6eFnHxcnHSHAq6FTyqr1FPhZqV
+   A==;
+X-CSE-ConnectionGUID: zxIAFsXGTuWuK/kiCypk/A==
+X-CSE-MsgGUID: 2gy5xm7lQFalbq9SqABD3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76342298"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="76342298"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 00:14:42 -0800
+X-CSE-ConnectionGUID: Lcoj95hMRROPE7w5T72K9w==
+X-CSE-MsgGUID: YDmGRiLeTpWXBRS6WNPxYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="194135220"
+Received: from unknown (HELO [10.238.3.175]) ([10.238.3.175])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 00:14:37 -0800
+Message-ID: <cc52364a-6b8b-4967-bde0-315294b9ab2d@linux.intel.com>
+Date: Wed, 12 Nov 2025 16:14:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,217 +66,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
- blazer, and mustang
-To: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
- William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 01/18] perf metricgroup: Add care to picking the evsel
+ for displaying a metric
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+ Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ Collin Funk <collin.funk1@gmail.com>, Thomas Falcon
+ <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>,
+ Levi Yun <yeoreum.yun@arm.com>, Yang Li <yang.lee@linux.alibaba.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
+References: <20251111040417.270945-1-irogers@google.com>
+ <20251111040417.270945-2-irogers@google.com>
+ <e0d29714-df04-48f9-8168-770bf05a0f7f@linux.intel.com>
+ <CAP-5=fWWxbRS4D1GsPvSgr32cfCGaT68qV0Q6-FLQ90R-bhH3w@mail.gmail.com>
+ <aROJF9GjJUv-w5Wg@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aROJF9GjJUv-w5Wg@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/11/2025 20:22, Douglas Anderson wrote:
-> Add barebones device trees for frankel (Pixel 10), blazer (Pixel 10
-> Pro), and mustang (Pixel 10 Pro XL). These device trees are enough to
-> boot to a serial prompt using an initramfs.
-> 
-> Many things can be noted about these device trees:
-> 
-> 1. They are organized as "dts" files for the main SoC and "dtso"
->    overlays for the boards. There is discussion about this in the
->    bindings patch ("dt-bindings: arm: google: Add bindings for
->    frankel/blazer/mustang").
-> 2. They won't boot with the currently shipping bootloader. The current
->    bootloader hardcodes several paths to nodes that it wants to update
->    and considers it a fatal error if it can't find these nodes.
->    Interested parties will need to wait for fixes to land and a new
->    bootloader to be rolled out before attempting to use these.
-> 3. They only add one revision (MP1) of each of frankel, blazer, and
->    mustang. With this simple barebones device tree, there doesn't
->    appear to be any difference between the revisions. More revisions
->    will be added as needed in the future. The heuristics in the
->    bootloader will pick the MP1 device tree if there are not any
->    better matches.
-> 4. They only add the dts for the B0 SoC for now. The A0 SoC support
->    can be added later if we find the need.
-> 5. Even newer versions of the bootloader will still error out if they
->    don't find a UFS node to add calibration data to. Until UFS is
->    supported, we provide a bogus UFS node for the bootloader. While
->    the bootloader could be changed, there is no long-term benefit
->    since eventually the device tree will have a UFS node.
-> 6. They purposely choose to use the full 64-bit address and size cells
->    for the root node and the `soc@0` node. Although I haven't tested
->    the need for this, I presume the arguments made in commit
->    bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address and size
->    cells for soc") would apply here.
-> 7. Though it looks as if the UART is never enabled, the bootloader
->    knows to enable the UART when the console is turned on. Baud rate
->    is configurable in the bootloader so is never hardcoded in the
->    device tree.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> To avoid fragmenting the discussion, IMO:
-> * Let's have the discussion about using the "dts" for SoC and the
->   "dtso" for the boards in response to the bindings (patch #1).
-
-That's discussion here, bindings are irrelevant to this.
-
-> * If we want to have a discussion about putting "board-id" and
->   "model-id" at the root of the board overlays, we can have it
->   here. I'll preemptively note that the "board-id" and "model-id"
->   won't show up in the final combined device tree and they are just
->   used by the tool (mkdtimg). We could change mkdtimg to parse the
->   "compatible" strings of the overlays files (since I've put the IDs
->   there too), but official the docs [1] seem to indicate that
->   top-level properties like this are OK.
-> 
-> In order for these device trees to pass validation without warnings,
-> it's assumed you have my dtc patches:
-> * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromium.org
-> * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromium.org
-> 
-> [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt?h=main
-> 
->  arch/arm64/boot/dts/google/Makefile           |   9 +
->  arch/arm64/boot/dts/google/lga-b0.dts         | 391 ++++++++++++++++++
->  .../arm64/boot/dts/google/lga-blazer-mp1.dtso |  22 +
->  .../boot/dts/google/lga-frankel-mp1.dtso      |  22 +
->  .../boot/dts/google/lga-mustang-mp1.dtso      |  22 +
->  .../boot/dts/google/lga-muzel-common.dtsi     |  17 +
->  6 files changed, 483 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/lga-b0.dts
->  create mode 100644 arch/arm64/boot/dts/google/lga-blazer-mp1.dtso
->  create mode 100644 arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
->  create mode 100644 arch/arm64/boot/dts/google/lga-mustang-mp1.dtso
->  create mode 100644 arch/arm64/boot/dts/google/lga-muzel-common.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> index a6b187e2d631..276001e91632 100644
-> --- a/arch/arm64/boot/dts/google/Makefile
-> +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -1 +1,10 @@
->  # SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +
-> +dtb-$(CONFIG_ARCH_GOOGLE) += \
-> +	lga-blazer-mp1.dtb \
-> +	lga-frankel-mp1.dtb \
-> +	lga-mustang-mp1.dtb
-> +
-> +lga-blazer-mp1-dtbs		:= lga-b0.dtb lga-blazer-mp1.dtbo
-> +lga-frankel-mp1-dtbs		:= lga-b0.dtb lga-frankel-mp1.dtbo
-> +lga-mustang-mp1-dtbs		:= lga-b0.dtb lga-mustang-mp1.dtbo
-> diff --git a/arch/arm64/boot/dts/google/lga-b0.dts b/arch/arm64/boot/dts/google/lga-b0.dts
-> new file mode 100644
-> index 000000000000..83c2db4f20ef
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/lga-b0.dts
-> @@ -0,0 +1,391 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Google Tensor G5 (laguna) SoC rev B0
-> + *
-> + * Copyright 2024-2025 Google LLC.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +/ {
-> +	model = "Google Tensor G5 rev B0";
-> +	compatible = "google,soc-id-0005-rev-10", "google,lga";
-
-So that's SoC, thus must not be a DTS file, but DTSI.
-
-...
+Content-Transfer-Encoding: 8bit
 
 
-...
+On 11/12/2025 3:05 AM, Namhyung Kim wrote:
+> On Tue, Nov 11, 2025 at 09:20:30AM -0800, Ian Rogers wrote:
+>> On Tue, Nov 11, 2025 at 12:15 AM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
+>>>
+>>> On 11/11/2025 12:04 PM, Ian Rogers wrote:
+>>>> Rather than using the first evsel in the matched events, try to find
+>>>> the least shared non-tool evsel. The aim is to pick the first evsel
+>>>> that typifies the metric within the list of metrics.
+>>>>
+>>>> This addresses an issue where Default metric group metrics may lose
+>>>> their counter value due to how the stat displaying hides counters for
+>>>> default event/metric output.
+>>>>
+>>>> For a metricgroup like TopdownL1 on an Intel Alderlake the change is,
+>>>> before there are 4 events with metrics:
+>>>> ```
+>>>> $ perf stat -M topdownL1 -a sleep 1
+>>>>
+>>>>  Performance counter stats for 'system wide':
+>>>>
+>>>>      7,782,334,296      cpu_core/TOPDOWN.SLOTS/          #     10.4 %  tma_bad_speculation
+>>>>                                                   #     19.7 %  tma_frontend_bound
+>>>>      2,668,927,977      cpu_core/topdown-retiring/       #     35.7 %  tma_backend_bound
+>>>>                                                   #     34.1 %  tma_retiring
+>>>>        803,623,987      cpu_core/topdown-bad-spec/
+>>>>        167,514,386      cpu_core/topdown-heavy-ops/
+>>>>      1,555,265,776      cpu_core/topdown-fe-bound/
+>>>>      2,792,733,013      cpu_core/topdown-be-bound/
+>>>>        279,769,310      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.2 %  tma_retiring
+>>>>                                                   #     15.1 %  tma_bad_speculation
+>>>>        457,917,232      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     38.4 %  tma_backend_bound
+>>>>                                                   #     34.2 %  tma_frontend_bound
+>>>>        783,519,226      cpu_atom/TOPDOWN_FE_BOUND.ALL/
+>>>>         10,790,192      cpu_core/INT_MISC.UOP_DROPPING/
+>>>>        879,845,633      cpu_atom/TOPDOWN_BE_BOUND.ALL/
+>>>> ```
+>>>>
+>>>> After there are 6 events with metrics:
+>>>> ```
+>>>> $ perf stat -M topdownL1 -a sleep 1
+>>>>
+>>>>  Performance counter stats for 'system wide':
+>>>>
+>>>>      2,377,551,258      cpu_core/TOPDOWN.SLOTS/          #      7.9 %  tma_bad_speculation
+>>>>                                                   #     36.4 %  tma_frontend_bound
+>>>>        480,791,142      cpu_core/topdown-retiring/       #     35.5 %  tma_backend_bound
+>>>>        186,323,991      cpu_core/topdown-bad-spec/
+>>>>         65,070,590      cpu_core/topdown-heavy-ops/      #     20.1 %  tma_retiring
+>>>>        871,733,444      cpu_core/topdown-fe-bound/
+>>>>        848,286,598      cpu_core/topdown-be-bound/
+>>>>        260,936,456      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.4 %  tma_retiring
+>>>>                                                   #     17.6 %  tma_bad_speculation
+>>>>        419,576,513      cpu_atom/CPU_CLK_UNHALTED.CORE/
+>>>>        797,132,597      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     38.0 %  tma_frontend_bound
+>>>>          3,055,447      cpu_core/INT_MISC.UOP_DROPPING/
+>>>>        671,014,164      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     32.0 %  tma_backend_bound
+>>>> ```
+>>> It looks the output of cpu_core and cpu_atom events are mixed together,
+>>> like the "cpu_core/INT_MISC.UOP_DROPPING/". Could we resort the events and
+>>> separate the cpu_core and cpu_atom events output? It would make the output
+>>> more read-friendly. Thanks.
+>> So the metrics are tagged as to not group the events:
+>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/arch/x86/alderlake/adl-metrics.json?h=perf-tools-next#n117
+>> Running with each metric causes the output to be:
+>> ```
+>> $ perf stat -M tma_bad_speculation,tma_backend_bound,tma_frontend_bound,tma_retiring
+>> -a sleep 1
+>>
+>>  Performance counter stats for 'system wide':
+>>
+>>      1,615,145,897      cpu_core/TOPDOWN.SLOTS/          #      8.1 %
+>> tma_bad_speculation
+>>                                                   #     42.5 %
+>> tma_frontend_bound       (49.89%)
+>>        243,037,087      cpu_core/topdown-retiring/       #     34.5 %
+>> tma_backend_bound        (49.89%)
+>>        129,341,306      cpu_core/topdown-bad-spec/
+>>                          (49.89%)
+>>          2,679,894      cpu_core/INT_MISC.UOP_DROPPING/
+>>                          (49.89%)
+>>        696,940,348      cpu_core/topdown-fe-bound/
+>>                          (49.89%)
+>>        563,319,011      cpu_core/topdown-be-bound/
+>>                          (49.89%)
+>>      1,795,034,847      cpu_core/slots/
+>>                          (50.11%)
+>>        262,140,961      cpu_core/topdown-retiring/
+>>                          (50.11%)
+>>         44,589,349      cpu_core/topdown-heavy-ops/      #     14.4 %
+>> tma_retiring             (50.11%)
+>>        160,987,341      cpu_core/topdown-bad-spec/
+>>                          (50.11%)
+>>        778,250,364      cpu_core/topdown-fe-bound/
+>>                          (50.11%)
+>>        622,499,674      cpu_core/topdown-be-bound/
+>>                          (50.11%)
+>>         90,849,750      cpu_atom/TOPDOWN_RETIRING.ALL/   #      8.1 %
+>> tma_retiring
+>>                                                   #     17.2 %
+>> tma_bad_speculation
+>>        223,878,243      cpu_atom/CPU_CLK_UNHALTED.CORE/
+>>        423,068,733      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     37.8 %
+>> tma_frontend_bound
+>>        413,413,499      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     36.9 %
+>> tma_backend_bound
+>> ```
+>> so you can see that it is the effect of not grouping the events that
+>> leads to the cpu_core and cpu_atom split.
+>>
+>> The code that does sorting/fixing/adding of events, primarily to fix
+>> topdown, is parse_events__sort_events_and_fix_groups:
+>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2030
+>> but I've tried to make that code respect the incoming evsel list order
+>> because if a user specifies an order then they generally expect it to
+>> be respected (unless invalid or because of topdown events). For
+>> --metric-only the event order doesn't really matter.
+>>
+>> Anyway, I think trying to fix this is out of scope for this patch
+>> series, although I agree with you about the readability. The behavior
+>> here matches old behavior such as:
+>> ```
+>> $ perf --version
+>> perf version 6.16.12
+>> $ perf stat -M TopdownL1 -a sleep 1
+>>
+>>  Performance counter stats for 'system wide':
+>>
+>>     11,086,754,658      cpu_core/TOPDOWN.SLOTS/          #     27.1 %
+>> tma_backend_bound
+>>                                                   #      7.5 %
+>> tma_bad_speculation
+>>                                                   #     36.5 %
+>> tma_frontend_bound
+>>                                                   #     28.9 %
+>> tma_retiring
+>>      3,219,475,010      cpu_core/topdown-retiring/
+>>        820,655,931      cpu_core/topdown-bad-spec/
+>>        418,883,912      cpu_core/topdown-heavy-ops/
+>>      4,082,884,459      cpu_core/topdown-fe-bound/
+>>      3,012,532,414      cpu_core/topdown-be-bound/
+>>      1,030,171,196      cpu_atom/TOPDOWN_RETIRING.ALL/   #     17.4 %
+>> tma_retiring
+>>                                                   #     16.5 %
+>> tma_bad_speculation
+>>      1,185,093,601      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     29.8 %
+>> tma_backend_bound
+>>                                                   #     36.4 %
+>> tma_frontend_bound
+>>      2,154,914,153      cpu_atom/TOPDOWN_FE_BOUND.ALL/
+>>         14,988,684      cpu_core/INT_MISC.UOP_DROPPING/
+>>      1,763,486,868      cpu_atom/TOPDOWN_BE_BOUND.ALL/
+>>
+>>        1.004103365 seconds time elapsed
+>> ```
+>> ie the cpu_core and cpu_atom mixing of events isn't a regression
+>> introduced here. There isn't a simple fix for the ordering, as we
+>> don't want to mess up the non-metric cases. I'm happy if you think
+>> things can be otherwise to make a change.
+> Agreed and it should be handled in a separate patch (series).  Let's fix
+> problems one at a time.
+
+It makes sense. Thanks.
 
 
-> diff --git a/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
-> new file mode 100644
-> index 000000000000..133494de7a9b
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
-
-And that's a board, so DTS.
-
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Google Pixel 10 (frankel) MP 1
-> + *
-> + * Copyright 2024-2025 Google LLC.
-> + */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include "lga-muzel-common.dtsi"
-> +
-> +/ {
-> +	board-id = <0x070306>;
-> +	board-rev = <0x010000>;
-
-Undocumented ABI, which you cannot document because these properties are
-not allowed. You cannot have them.
-
-Best regards,
-Krzysztof
+>
+> Thanks,
+> Namhyung
+>
+>
 
