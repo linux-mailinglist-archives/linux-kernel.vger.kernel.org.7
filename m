@@ -1,132 +1,214 @@
-Return-Path: <linux-kernel+bounces-898117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BA3C54682
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:17:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41047C5468B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3C33A9CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A5D3AB45F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1443285045;
-	Wed, 12 Nov 2025 20:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FCA28468E;
+	Wed, 12 Nov 2025 20:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzx/yHAo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ihVriTSa";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f9BsP4Qe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4540E258ECC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1002258ECC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762978568; cv=none; b=W5guc6skatrG23jOkRRY6XydI8i8Udij6vA9TQg9DhwOeNDSH8LCPLQp4LffKyeJJsAcoSR71lN22OrnpILJ0Q6mjz80tFSbPfVvPMIns/e4jMF8B+rNmgIy+BkTBnpzs8M4vF5lj3SW+yh363oXUdH+2EykUbOJHGPKyamkMFM=
+	t=1762978594; cv=none; b=P4q2OwMMtpvRqz+54qaWHhMAmWvNUvPPgVCm2YJa8HfdsWYMKpKXGo4aM5Qd1nFeo45iFx59qZnGd8PsxmbBkyVa4pnw5EfbCCz4BFMFAE5tD5eHXn+afosm338/WZ9X+UiORW39f6SfkiXJDCLGgbRMevvQt7lvOgNqTy7hKeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762978568; c=relaxed/simple;
-	bh=IrgGiKdz/eRc1ywD+lUpcTT31wcHFzyrOIqkgiwBhks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d9EyKZu12FAoNnSIixtXLKv6zDSBz3qSw57d/KWDYHpNkRp224ZLNLnjsJdLWZEakg3leqBywqRnL/fJZLTkZDeK9qmM7EoAtbFUlHAHrIOOEafhtnDopXJaCAvgE9N3YIezrFk8NJA9FUezIKIRBnFQ0vI1a0as7FHCo12OHrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzx/yHAo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE859C19425
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762978567;
-	bh=IrgGiKdz/eRc1ywD+lUpcTT31wcHFzyrOIqkgiwBhks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dzx/yHAoBqangSFSmOu0fJSfBxCG5g3P1XUqb7goUXjb2rbhN4axCwKBdWfJ1EBrq
-	 QYB1S7gUMoejiC5/2A9ouDZnSvt/6D41YdaxpfETdqAEVrFNRbI95YIvFNZyKk/BUo
-	 j6C83BkmPkYKIp7Mtnnc1uJyE7kp7L8Sqnv2vhfC2Qe1eg5mm7iovE7zSp01ucGuYt
-	 NS/IrhOTFA8NvfTP2iSC82kP3wMwKufFeOIPeW/qrS6JC20FqI2qUJulHBsGUlsA9x
-	 pDy0/Z1W1LliRf7aM+HnHSOg4BQ94xv+uWqsQAwBpQkRUc5oz5ob++cIL4d3sx1wIZ
-	 oYWk3rdtjkjpg==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-44fff490b19so6961b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:16:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUVXSwva4tLLRfxeAWL3vHzMNg8EYITGqK4x7LVnqBjxN8ZSDkIkDoukhQePdsX6iUwfq0rm8laDnSploM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYSWhyP9OxMCOd7zGNLWiQSZPZy8fFh9+nMgsjNUPS4qAa7Qgr
-	VOu5noLHc79sQHSGAcOXaDo5dyGZjGlPuFZ0lGF1pRqf1wVSxoCiAVgOJf//toUogQ8t7blotUj
-	+EUw9tERVOu+YfqsflW76jCO9kezacy0=
-X-Google-Smtp-Source: AGHT+IEFvUFRVaGaBOk5c72HA5TmrlZAybE40O8EhMjKEkGxPxshy1e934sF+DX5SVkP5RnAJXWMnI0uIXuARsfLBdo=
-X-Received: by 2002:a05:6808:30a2:b0:43f:3c7a:954e with SMTP id
- 5614622812f47-4507444791amr1916425b6e.8.1762978566983; Wed, 12 Nov 2025
- 12:16:06 -0800 (PST)
+	s=arc-20240116; t=1762978594; c=relaxed/simple;
+	bh=NJls4GyFWCvk7Kv2DJYPUreZYvie+xSOehSfPD+ZPa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIEpKCne8ZT/rEXp78VCw8Mwkj/xEUWzum3miU2E3XrqgoMNFqBc1KzTod2Oe9M3pmDDqlBJPvBaYgOVN/AWr6Okh6Nc0yr3xMX9W2yNrh2QAKH/G56Le+0ba2ZLayMuXWgMJ1osc4qIF7Sn+ZEJKGuKRNOOeOV3VycPDAveH70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ihVriTSa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f9BsP4Qe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACH4Cdg1002065
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=SEIsm1QuXuVAqb/gdqCKCH2F
+	djtpCPc2G+DMhs9vNSo=; b=ihVriTSaRSwwCPDbC/zk2ud7F8z2n4NFTFqaLpJb
+	GL1AjYV7Bq630v7UKgS/KBtqoAlkyMPNDOtI2kSHmy4c37mG68+4d41dze/O792K
+	mRQ5VRqHW2gTQpqztXbPfFg7v7jOe5guYoNIuZPwsaT+tIRaZPfeFOnTc8N4jpaw
+	jsJziZl+o0l/dRs4L1qqJtJEfCrty0qvIMxOafGVD9dN1NEpFnVB2IIRmZfds746
+	6ZsUWEhZx4YzPaQ5R8klkeJBsLsn6c3ODsRAEeuBMX33ljZwewUSksRw9HWDIiDh
+	D9NKGceX4gnUvQNCC/IHptzEXz87zeLQ4sAsy42ayZcxyA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqq220ba-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:16:31 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ed74e6c468so408811cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762978590; x=1763583390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEIsm1QuXuVAqb/gdqCKCH2FdjtpCPc2G+DMhs9vNSo=;
+        b=f9BsP4Qez1Xx0cplJV+yp/NenOADLE5X5Itg27/ZdUlHQE6fvvqub8G5gP6ni5YyYX
+         k9YVjBlf5/V5usIBBBKQahO8wVWDkkSuwaPmtK0vaLNLcHPeXv4D/tS/AkiNRS+HCkH1
+         3mP01QYyWAYiaE8jd4rew9eiPuQSsedlO2zd1O7fnucV5rdG11yavw20hnKkRbfdroKw
+         7Z+izJM+EtTDoHEvFfWI/GVbI0qbNdYAwPSFOYJkp8TVm6QvrFyHamrlpvzcfG5ks94C
+         leKjM9cKQXdYvW/QKGSlb67Ojg6jzXoeZCnuqy1J7qYglrEwBCT+aDHlYaLtSOo9SdzL
+         KHcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762978590; x=1763583390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SEIsm1QuXuVAqb/gdqCKCH2FdjtpCPc2G+DMhs9vNSo=;
+        b=iaDrbJV3a0Lji/IqpZoT9Qr5gaq6EuELrKauY6BOfDmJ+Lal1BkZM4Ca/2BAFsBCHo
+         Tg/9+uq606qw+bgmEebOOp2RkMAE7vYpJILO9+Na6osWnIDBoOsE7MPbejfJBJMcnajN
+         rTkaGWbxrjIV49BLEScIrVxAWi99S3pEtElFmlUVKZKqPgdous6nR3eC45qMKLJwCdLK
+         aLMdMhYO3QYpEYpF//LbcXHDT1MS4p3dLrug2cTVUYUULWGRjRbHHlK8BiSLM9LSkwtp
+         iWu6r3VkI2Ru6R3Ohs6zVWKCw+TFbDNLYfoFOHnQ5jauQ3cb7uyCcUGbco9CxDxVGjED
+         Gk9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6/OHpVexfZW80yYVJvoJw3zrN/Ex1fjvzEovgSF8MdqSL3pJxETqvSMOEXpnrlI/Pg6p+O1MuGVxZfUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLlJ8efh4/xzlrDsrgrxQtbCWJve4gOV/gVYEqddLpH55T9eqf
+	Fs0aXb0km2Mm85k+oPoPp1ri/Z/KQknxrzEItmJGECB0oj6tK3DUzdi8ps2/VQAsulrqWFsU59X
+	J5vvj6kLdqMtKwuKjWbGVB55Rlujf7FFJGD0zgQw8B3nqySKYX8b0zzpYtqlCIYOG9VhuoVVhOE
+	M=
+X-Gm-Gg: ASbGnctIieT1p4IZmuYp9f5hYKAolbRHzYz8mbXlkiZLxc12W7KGcNttaR0VFvBhnRq
+	ePvYEqT0FQkfo8WzL/GWS0tWT+aDCh0LKCVpN+XJ/3Do6FrXyTnM4qS3itSu7TIgYlWkGL/Z0MC
+	9tuF/sPcy9qhJeEQAD/dQXmZMgAiDUr4WdS/G2yNvRKDodMWDpRSYCGXHUZpM5WTbf+hvWSkFga
+	kQ8tpsS0CxzLV+RJgyKhPHl7V/rS+iSFwfqDXXgbp2+UR9r8MNgjSp5RbRgjwAaqQQubZc5tyx8
+	qEl89FoxZfe0K4Tb6sFDAuXIlCV0gCiv1SzgPDzWIMQ07AMH9A2LiP3dxWONbCNFuGJjEOP2bwN
+	8uy8UnYj3D/5nXwJiLCecV85gEYQsjE3kep8ja9MQ1IHS2yw9AZ1eXfCBukzGMYfYGR66T+5O4p
+	BbEWu9P4vhHf+T
+X-Received: by 2002:ac8:58c1:0:b0:4ed:b1fa:ae22 with SMTP id d75a77b69052e-4eddbdda755mr50502501cf.72.1762978590125;
+        Wed, 12 Nov 2025 12:16:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFFsLk33Oy565qDfTn4b0pivb1XviqK+/o97w/mSbFKDBRqbgTJYqrGARQYDUzrgSVuBOWUfA==
+X-Received: by 2002:ac8:58c1:0:b0:4ed:b1fa:ae22 with SMTP id d75a77b69052e-4eddbdda755mr50501881cf.72.1762978589575;
+        Wed, 12 Nov 2025 12:16:29 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0318cdsm6141910e87.44.2025.11.12.12.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 12:16:28 -0800 (PST)
+Date: Wed, 12 Nov 2025 22:16:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com,
+        Yi Zhang <zhanyi@qti.qualcomm.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: Enable lvds panel-DV215FHM-R01 for
+ rb3gen2 industrial mezzanine
+Message-ID: <vz7u2jsb677imufu6aillcqnnaybed3occniyx3fgniwtxzij5@uplpfhhyjk5k>
+References: <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-0-6eab844ec3ac@oss.qualcomm.com>
+ <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-1-6eab844ec3ac@oss.qualcomm.com>
+ <kosvayxmpbngn56v7t734f4qqrc2rptkjdd7q5q23brg22dvov@cxs7kzzuapim>
+ <qps5fkbgdqqvoqa3m5l4naksyc4aoq4xqnciyrpkrbs5qcno7c@aa6ync6sk4ju>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111004552.137984-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20251111004552.137984-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Nov 2025 21:15:55 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hcziWByZ1vgT5GLqXTAh5fS3eSCpTY0PQaaDbZUoAOMw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnoRsW7hAeO_d7hFAflUhEX6bVR-17T4aUVi57iBnBk3oQgF-T11aW7PVI
-Message-ID: <CAJZ5v0hcziWByZ1vgT5GLqXTAh5fS3eSCpTY0PQaaDbZUoAOMw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] thermal: int340x: processor_thermal: Add Nova Lake
- processor thermal device
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lukasz.luba@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qps5fkbgdqqvoqa3m5l4naksyc4aoq4xqnciyrpkrbs5qcno7c@aa6ync6sk4ju>
+X-Authority-Analysis: v=2.4 cv=EbHFgfmC c=1 sm=1 tr=0 ts=6914eb1f cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=EjFe0Bf2cYtm2qUX5RUA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: 7165HLEiFrxZvX0Rtk-L9a91SL1WEWNh
+X-Proofpoint-GUID: 7165HLEiFrxZvX0Rtk-L9a91SL1WEWNh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE2NCBTYWx0ZWRfXyfpbPekoIvhk
+ Pz0slgh/mZbvzipDT8Db87pwa2K6Vq8DywmS5bls8BErucKJpy9QeK895FdbGch9E+IAISZmzBz
+ 4JhGL8leu3mzMC/WM5G8Iy3zl5AktnaGc4shn93N3zWAwL8Dw13JosrZDUZiL/Ks7riQc1AaDTd
+ ap0FMAcjgr46mK1y7zPYPyyuQdCpl2NB8ZGcIGqoZSLkaUBQPzQzlsLjARx43Oo0es8FzmBmJx+
+ uw3hQaH8pnkIlpherIyc0NJWzTro3bd/CEfIVK1KZ1pz+hQcDsFOCynCfnwYJwuunkILovMyhNa
+ RvVUv6W7n44YLf+TNJ17JnqLDoT04aX/VAqfn0FzH8t/J8wrPefybGQheaARrSi6dNq7y57lQcU
+ PjaBryN3DISeaG88nQrskVk5cJCPTA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 suspectscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120164
 
-On Tue, Nov 11, 2025 at 1:45=E2=80=AFAM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> Add PCI IDs for Nova Lake processor thermal device.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  .../intel/int340x_thermal/processor_thermal_device.h   |  2 ++
->  .../int340x_thermal/processor_thermal_device_pci.c     | 10 ++++++++++
->  2 files changed, 12 insertions(+)
->
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce.h b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> index 30760475102f..b79937a386ec 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-> @@ -27,6 +27,8 @@
->  #define PCI_DEVICE_ID_INTEL_JSL_THERMAL        0x4E03
->  #define PCI_DEVICE_ID_INTEL_LNLM_THERMAL       0x641D
->  #define PCI_DEVICE_ID_INTEL_MTLP_THERMAL       0x7D03
-> +#define PCI_DEVICE_ID_INTEL_NVL_H_THERMAL      0xD703
-> +#define PCI_DEVICE_ID_INTEL_NVL_S_THERMAL      0xAD03
->  #define PCI_DEVICE_ID_INTEL_RPL_THERMAL        0xA71D
->  #define PCI_DEVICE_ID_INTEL_SKL_THERMAL        0x1903
->  #define PCI_DEVICE_ID_INTEL_TGL_THERMAL        0x9A03
-> diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_devi=
-ce_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_p=
-ci.c
-> index e2471768d355..0d4dcc66e097 100644
-> --- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.=
-c
-> +++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.=
-c
-> @@ -504,6 +504,16 @@ static const struct pci_device_id proc_thermal_pci_i=
-ds[] =3D {
->           PROC_THERMAL_FEATURE_RAPL | PROC_THERMAL_FEATURE_DLVR |
->           PROC_THERMAL_FEATURE_DVFS | PROC_THERMAL_FEATURE_WT_HINT |
->           PROC_THERMAL_FEATURE_POWER_FLOOR | PROC_THERMAL_FEATURE_PTC) },
-> +       { PCI_DEVICE_DATA(INTEL, NVL_H_THERMAL, PROC_THERMAL_FEATURE_RAPL=
- |
-> +         PROC_THERMAL_FEATURE_DLVR | PROC_THERMAL_FEATURE_DVFS |
-> +         PROC_THERMAL_FEATURE_MSI_SUPPORT | PROC_THERMAL_FEATURE_WT_HINT=
- |
-> +         PROC_THERMAL_FEATURE_POWER_FLOOR | PROC_THERMAL_FEATURE_PTC |
-> +         PROC_THERMAL_FEATURE_SOC_POWER_SLIDER) },
-> +       { PCI_DEVICE_DATA(INTEL, NVL_S_THERMAL, PROC_THERMAL_FEATURE_RAPL=
- |
-> +         PROC_THERMAL_FEATURE_DLVR | PROC_THERMAL_FEATURE_DVFS |
-> +         PROC_THERMAL_FEATURE_MSI_SUPPORT | PROC_THERMAL_FEATURE_WT_HINT=
- |
-> +         PROC_THERMAL_FEATURE_POWER_FLOOR | PROC_THERMAL_FEATURE_PTC |
-> +         PROC_THERMAL_FEATURE_SOC_POWER_SLIDER) },
->         { },
->  };
->
-> --
+On Wed, Nov 12, 2025 at 10:53:36AM -0600, Bjorn Andersson wrote:
+> On Wed, Nov 12, 2025 at 05:02:20PM +0200, Dmitry Baryshkov wrote:
+> > On Wed, Nov 12, 2025 at 08:18:11PM +0530, Gopi Botlagunta wrote:
+> > > Below is the routing diagram of dsi lanes from qcs6490 soc to
+> > > mezzanine.
+> > > 
+> > > DSI0 --> SW1403.4 --> LT9611uxc --> hdmi port
+> > >                  |
+> > >                   --> SW2700.1 --> dsi connector
+> > >                               |
+> > >                                --> LT9211c --> LVDS connector
+> > > 
+> > > Disable hdmi connector for industrial mezzanine and enable
+> > > LT9211c bridge and lvds panel node.
+> > > LT9211c is powered by default with reset gpio connected to 117.
+> > > 
+> > > Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
+> > > Signed-off-by: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
+> > > ---
+> > >  .../qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso | 106 +++++++++++++++++++++
+> > >  1 file changed, 106 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > index 619a42b5ef48..cc8ee1643167 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > @@ -8,6 +8,112 @@
+> > >  #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> > >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> > >  
+> > > +/ {
+> > > +
+> > > +	hdmi-connector {
+> > > +		status = "disabled";
+> > > +	};
+> > > +
+> > > +	panel_lvds: panel-lvds@0 {
+> > > +		compatible = "panel-lvds";
+> > 
+> > Please describe the actual panel using compatible, etc. It's not that
+> > this is some generic uknown LVDS panel.
+> > 
+> 
+> I presume the mezzanine doesn't have a panel, so how do we provide the
+> description of the mezzanine such that a developer can quickly get up to
+> speed with their specific panel connected to it?
+> 
+> Do we leave this node disabled, just for reference, or do we specify a
+> specific panel and then have the developer copy and adopt this to their
+> panel?
+> 
+> The benefit of doing it like that is that we provide a complete example
+> and something we can test. But at the same time, If I presume we might
+> have users of the mezzanine without an attached LVDS panel?
+> 
+> > > +		data-mapping = "vesa-24";
+> > > +		width-mm = <476>;
+> > > +		height-mm = <268>;
+> 
+> The way this patch is written we certainly have some specific panel in
+> mind...
 
-Applied along with the rest of the series as 6.19 material, thanks!
+It's even mentioned in the subject: BOE DV215FHM-R01. Having a proper
+panel compatible is demanded by the panel-lvds bindings.
+
+
+-- 
+With best wishes
+Dmitry
 
