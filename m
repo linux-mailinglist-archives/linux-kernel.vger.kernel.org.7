@@ -1,227 +1,92 @@
-Return-Path: <linux-kernel+bounces-897797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F858C53A5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EA6C53C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 428E7504019
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:04:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81903505C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4C434029C;
-	Wed, 12 Nov 2025 17:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B33343D76;
+	Wed, 12 Nov 2025 17:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tD69oBnI"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="jSImEvu1"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB9032AAA7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49D32ABDB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967078; cv=none; b=ToTIPG0s7P5nARQYiao79kOz7TO8vo56s85tFlRzRhu3+w9+27o/31YY/Ok7Gn6ykxvgOkhtDo6Sm8H0vCqsMS0gXRJTXh0DVnCR1YMWb3hej1+D5q3iBmcvr89SpubkbeWnNq8LXHSiuZ/OOdEQNoeh50f+f4pJxTyFVkHKiqo=
+	t=1762967951; cv=none; b=DYS518GO9qIfD+QeayoeYKcKW28uVYgda5yx5lWk7iu+l9q/3FdYM42FSOxt4n6zJlVMj+EbNuyRO7k1baYOI/Q9NvDwSvbF//yzWfJLiz5CiPaPB61dExBBcpKS4nifrZiwnXBLv5/FhkssDfSXxBL1J4+HZi9zKOxY618PZYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967078; c=relaxed/simple;
-	bh=fJ2UpAn9dwzJY1Yc747IUbNViB6Q4h6iljBno2rlX2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=riJjkRe7MhngglZR/yb7DjwfVgcVd2bIpaCRpvtXkw/MKN8veW6CaNzb9oPqNzclcSG2FpNLxM/LssGZlZd9uMgFekSOwpGc74FONQVZD57UvCItNj7aAgPTrLyLEb/wtRdiqhJdel6wLLLe7RGG9yb3O9sb7EAKoZ3uDp0dna4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tD69oBnI; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2980343d9d1so200965ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:04:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762967076; x=1763571876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kTmAoxf6PxaYgcSEvKFeK7hyUGw5oXTHUHETAvMAchc=;
-        b=tD69oBnI+oJOUxlWiSrz96IifgE3pVOUvLrSLQMwV3udqeYMUQYyfiA/Tks7aYUmDw
-         U9dqhpovnS3f6y8ms7rYgTbLOCXcrfT2Lnt45bQN0uKkZWeG2dFMt5Yks1apnu3M2Bc2
-         vz+fobRaQ0lY985CWi2NMY0zRNiemqCHY3qHtfjYmUDU/nj2f3F/trkkjrA9N2er1kzq
-         VNr7LXbndB5Y4R6Nsuowpxq1RlOYFVC7w29AeQ11Pu7zWZ7F6Secp3knDJtS50YXfNLg
-         TOPKpiAfn20ynJYGaol5qsihOBZNWnCGXx0iFcZeQQKBpaQM2JVbfLP+dIHCkAdmkFoY
-         wyog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762967076; x=1763571876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kTmAoxf6PxaYgcSEvKFeK7hyUGw5oXTHUHETAvMAchc=;
-        b=Chf6xvqn9ef0KWN5uqSv/aRJN/oLVCizx9QvlvXODRCnLNsWkHsPT4g2sjRHpoWye/
-         f3Hr5zk7cnzmaT4EBdsTeU3iHEJ+fJIPTEDRmDm0rmqwYofeV3Ne+L5sTXl9hgYLQDiZ
-         fJ5ojNEq2J+DUeo6oGsoYh/4Hi/c4xGOkDlyMVoWCYe1hRjxKYs+stNXAz+rZudrKPvD
-         SYP7ZjeUuMfrLFhDSsgwh1L36b62LWzeHeFTYd1iJo7qCRyzuvXDJ6Y6j9nx4FxqJ7VK
-         7UsLJZvGq7pVI1LGbIXmZDTQ2SgI81j9lpT9IUyH/89tUFQ8wbVpFdzunVzbBDq0zGey
-         9uSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXQHuFj+hdBy4oR3CMsArqwGJQEkABvwhV8nSCfJhYvRRA7xPPDRbUtyGPcm1oGdnZq06eJEyT+GJHxf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJgvZEGFd4vXuvU3VemlG7HdrOPH2V1/ZBBUv23E6Xw3bb6+G+
-	BOAXW0TiiFrzuhtJwl5sFLQQTlKXadj9viR3PWZKZ9tAUE19qfxsmUC30GwOccjZxyhTvpAW8rI
-	pZ6FvH408cpro0AsbazScAD/COKAiwiYbTYEjhD1h
-X-Gm-Gg: ASbGnctGL+M2Ftc0Dub+T4gXvyp7mmNhO4ftu51Z2W9Gc5OsLyRHRgQ+7WqX092D/k0
-	h5kfd/MrIAa0+ajgZOBS8tKJQiUaZCFcVu54Y/791233Mq8OOvBXRSTjwrdOsFJbYeiDa8lA7F3
-	mkZ/Q4uqhAtnrAILRX47haOLAvTilMoofqCksbxqCwAFAT0PnJ6UyYB5Ws+5Etb1vO+ol00h65t
-	capT/PBtQOzRmQ1ahjVdWBll4vA/Kl2wGF/xEGynqUUF+SE1oWVcoG1b7zxxBJXSKOk7vsVINJ6
-	/fRhbfjYlTiL+lPg6ayeDPnqDQ==
-X-Google-Smtp-Source: AGHT+IFXzM7Jyq/bZmLxDHJHOzz00TDAilxoWOVvrPTZb7+provUty+VWoLRgHERXxVpYKhELUVxNKe2owKDR8Bihek=
-X-Received: by 2002:a17:903:41d1:b0:290:d7fd:6297 with SMTP id
- d9443c01a7336-2984f7a2f70mr5997435ad.2.1762967075871; Wed, 12 Nov 2025
- 09:04:35 -0800 (PST)
+	s=arc-20240116; t=1762967951; c=relaxed/simple;
+	bh=UH00cLBOgn6XmQGO+qGldoVEAxQ8CjDrPyUc2vYa1vE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VzV/oUIx1exX1xELHBowHCgEpJQtoKrtFFOkF/4HcpoG1lTCbD5niNnsI7q0l+BujLS6zq4oXGOY7PkBCB+yrVcXQ+GQrtguHcunn5u3R7QfFBzx+ZWHPQf2MkztySwCNTTnzV4P3aI7on4swaxVoTtKnWPKtWZvQ7NWssmN0qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=jSImEvu1; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1762967462;
+	bh=UH00cLBOgn6XmQGO+qGldoVEAxQ8CjDrPyUc2vYa1vE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=jSImEvu1baT55TI/QIpvgq9TDLhb8ObaPYxF3D8AhV7cvnEKHAXjo6QZHuPknsZPz
+	 UKZkydOyvmgakn6c9K7uIF3VxhsIpWRB+QT60jSgps2zyzCCX9q1GQ2mb3LjLNFkXM
+	 cMOWOAGpJojODwN5tSKzpwkDjXw3OtyKBKsqEA/s=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 5E65C40251; Wed, 12 Nov 2025 09:11:02 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 5BF874010D;
+	Wed, 12 Nov 2025 09:11:02 -0800 (PST)
+Date: Wed, 12 Nov 2025 09:11:02 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+cc: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com, 
+    will@kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] arm64: mm: show direct mapping use in /proc/meminfo
+In-Reply-To: <3af5d651-5363-47f7-b828-702d9a0c881c@arm.com>
+Message-ID: <a6eec165-9c48-56aa-8b05-6bf73411e4bf@gentwo.org>
+References: <20251023215210.501168-1-yang@os.amperecomputing.com> <3af5d651-5363-47f7-b828-702d9a0c881c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112164823.80168-1-zide.chen@intel.com>
-In-Reply-To: <20251112164823.80168-1-zide.chen@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Nov 2025 09:04:20 -0800
-X-Gm-Features: AWmQ_bkU64JSOZPD_LuedZUIfutBVM1nGmzxJZGEqecl7PeaJ94ZuGni1zqCCTw
-Message-ID: <CAP-5=fXWe7TJy_28gEyzJdFnE0USAMD6jDbgkG_W2+EtO_evSg@mail.gmail.com>
-Subject: Re: [PATCH V2] perf test: Add a perf event fallback test
-To: Zide Chen <zide.chen@intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, thomas.falcon@intel.com, 
-	dapeng1.mi@linux.intel.com, xudong.hao@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Nov 12, 2025 at 8:55=E2=80=AFAM Zide Chen <zide.chen@intel.com> wro=
-te:
->
-> This adds test cases to verify the precise ip fallback logic:
->
-> - If the system supports precise ip, for an event given with the maximum
->   precision level, it should be able to decrease precise_ip to find a
->   supported level.
-> - The same fallback behavior should also work in more complex scenarios,
->   such as event groups or when PEBS is involved
->
-> Additional fallback tests, such as those covering missing feature cases,
-> can be added in the future.
->
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Signed-off-by: Zide Chen <zide.chen@intel.com>
-> ---
-> v2:
-> - Incorporated Namhyung's suggestion to change cycles:ppp to cycles:P
->
->  .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
->
-> diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/p=
-erf/tests/shell/test_event_open_fallback.sh
-> new file mode 100755
-> index 000000000000..9c411153c01b
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/test_event_open_fallback.sh
-> @@ -0,0 +1,86 @@
-> +#!/bin/bash
-> +# Perf event open fallback test
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +skip_cnt=3D0
-> +ok_cnt=3D0
-> +err_cnt=3D0
-> +
-> +cleanup()
-> +{
-> +       rm -f perf.data
-> +       rm -f perf.data.old
-> +       trap - EXIT TERM INT
-> +}
-> +
-> +trap_cleanup()
-> +{
-> +       cleanup
-> +       exit 1
-> +}
-> +
-> +trap trap_cleanup EXIT TERM INT
-> +
-> +perf_record()
-> +{
-> +       perf record "$@" -- true 1>/dev/null 2>&1
-> +}
-> +
-> +test_decrease_precise_ip()
-> +{
-> +       echo "Decrease precise ip test"
-> +
-> +       perf list pmu | grep -q 'cycles' || return 2
+On Wed, 12 Nov 2025, Ryan Roberts wrote:
 
-nit: I don't think this test can ever fail.
+> I have a long-term aspiration to enable "per-process page size", where each user
+> space process can use a different page size. The first step is to be able to
+> emulate a page size to the process which is larger than the kernel's. For that
+> reason, I really dislike introducing new ABI that exposes the geometry of the
+> kernel page tables to user space. I'd really like to be clear on what use case
+> benefits from this sort of information before we add it.
 
-Reviewed-by: Ian Rogers <irogers!@google.com>
+One is user space where you want to "emulate" other page sizes and the
+other is kernel space.
 
-Thanks,
-Ian
+The per process page size is likely going to end up
+being a per VMA page size since these address spaces can be shared and the
+VMA is already containing information about huge pages, memory policies
+and other stuff relatd to memory layout. And yes it would be great to have
+an accounting of the page sizes used in a VMA.
 
-> +
-> +       if ! perf_record -e cycles; then
-> +               return 2
-> +       fi
-> +
-> +       # It should reduce precision level down to 0 if needed.
-> +       if ! perf_record -e cycles:P; then
-> +               return 1
-> +       fi
-> +       return 0
-> +}
-> +
-> +test_decrease_precise_ip_complicated()
-> +{
-> +       echo "Decrease precise ip test (complicated case)"
-> +
-> +       perf list pmu | grep -q 'mem-loads-aux' || return 2
-> +
-> +       if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; the=
-n
-> +               return 1
-> +       fi
-> +       return 0
-> +}
-> +
-> +count_result()
-> +{
-> +       if [ "$1" -eq 2 ] ; then
-> +               skip_cnt=3D$((skip_cnt + 1))
-> +               return
-> +       fi
-> +       if [ "$1" -eq 0 ] ; then
-> +               ok_cnt=3D$((ok_cnt + 1))
-> +               return
-> +       fi
-> +       err_cnt=3D$((err_cnt + 1))
-> +}
-> +
-> +ret=3D0
-> +test_decrease_precise_ip               || ret=3D$? ; count_result $ret ;=
- ret=3D0
-> +test_decrease_precise_ip_complicated   || ret=3D$? ; count_result $ret ;=
- ret=3D0
-> +
-> +cleanup
-> +
-> +if [ ${err_cnt} -gt 0 ] ; then
-> +       exit 1
-> +fi
-> +
-> +if [ ${ok_cnt} -gt 0 ] ; then
-> +       exit 0
-> +fi
-> +
-> +# Skip
-> +exit 2
-> --
-> 2.51.1
->
+
+> nit: arm64 tends to use the term "linear map" not "direct map". I'm not sure why
+> or what the history is. Given this is arch-specific should we be aligning on the
+> architecture's terminology here? I don't know...
+
+Other architectures are already exposing this data via the terminology
+used here. The information is useful for seeing if there is an issue with
+small pages that could be impacting kernel performance. It is surprising
+coming from oter architectures that this information is not readily
+available.
+
 
