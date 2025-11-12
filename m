@@ -1,157 +1,200 @@
-Return-Path: <linux-kernel+bounces-896637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF4AC50DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF4AC50E0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDDD3B9986
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534EF3AD90A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107692C08BD;
-	Wed, 12 Nov 2025 07:01:55 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45B8285C96;
+	Wed, 12 Nov 2025 07:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="FLextWC9"
+Received: from mail-m32105.qiye.163.com (mail-m32105.qiye.163.com [220.197.32.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF59229A9CD;
-	Wed, 12 Nov 2025 07:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432A277C9E;
+	Wed, 12 Nov 2025 07:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762930914; cv=none; b=snlm3jOVgm76/85cU/IR4fae0LzdiE3WmkfuhE+sOFJlwPCgcKplrlJyeEhKxtFuT/GRq14/6biTB6zZdZROSJjffmsdzOkGWis4DVQTpDffIczHuX0S/5+gv55K5etFSY85KOwOveyCam0EgsCAr0uWgKZtPCdAa7+pIKCXj/U=
+	t=1762931227; cv=none; b=FnpanfH3hgOhs17kchjHNFN74zbQRNEr4SR0ZjIBCCZQZR7Qnc99qh8/4hEtqLGONbKcUBceYgMS5uB+IzwEZfbjzgCfTlo6xdpFGa+al18n3GP5d3yx689+k//tjAZBGjqDT6xwCsh/AV0eHinuLd12iz7x5+lphH1ZlrYvJro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762930914; c=relaxed/simple;
-	bh=1Ec91SlkGrNDvEFQrEabla4raYuzemV79aiA4BykeIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtPlPNm46bkv5qpx7dAwcs7gMIZXxShc/nMrv+O1V8DZjvAf0WOhzhFVy0yhFlSGM1XEDB1+rynM2CV2CEHITcZC8YJ2GqYSO2QUrDAmhsbF5sqsNP0B7KE+hrlVcReSVtEFc/VoZiFIDcSNW1V5r/hUu6oD9LvHMQI/0bUBv28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C9036227AB7; Wed, 12 Nov 2025 08:01:40 +0100 (CET)
-Date: Wed, 12 Nov 2025 08:01:38 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: alistair23@gmail.com
-Cc: chuck.lever@oracle.com, hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
-	kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	kch@nvidia.com, hare@suse.de,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v5 6/6] nvmet-tcp: Support KeyUpdate
-Message-ID: <20251112070138.GG4873@lst.de>
-References: <20251112042720.3695972-1-alistair.francis@wdc.com> <20251112042720.3695972-7-alistair.francis@wdc.com>
+	s=arc-20240116; t=1762931227; c=relaxed/simple;
+	bh=vXoYnW5kAEQsgEAjDCcNMhuW4BTR4GRhq6/CSa+bmLo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NF576JQ/9xZ75gC3SpnJTg2h5CcgyQ7RfvbeOFvCQLEJIo9LjKRdteBjOZiyBXpyzey9M2DwV6Ign00tSysLiRwQ5nUvf7scSlOEkP7Nknl0GfxNdAALHL+tDTeppIKsl1XSKSDfu1+V1/4QIaEEu5lLPXxNMZKeRUCBQaoI1nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=FLextWC9; arc=none smtp.client-ip=220.197.32.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 294c7eb70;
+	Wed, 12 Nov 2025 15:01:44 +0800 (GMT+08:00)
+Message-ID: <25d5ba5f-3f07-411a-a4d2-ae4a06a44a94@rock-chips.com>
+Date: Wed, 12 Nov 2025 15:01:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112042720.3695972-7-alistair.francis@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Promote the th1520 reset handling
+ to ip level
+To: Jisheng Zhang <jszhang@kernel.org>
+References: <20251112001426.17252-1-jszhang@kernel.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20251112001426.17252-1-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a76decbbf09cckunm30210e6f117fe9
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ08dGFZNH08ZGhpKHk9PTB5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=FLextWC9JwMGkpISGFRL31MoCLj3+XrjG4T8P956+1r1ClJrlQe/Jld8zTNEzW5rqToWA4twyBugFRVTGFdvaB29f1wZOTKP/rm9yFGtr2kV89+bPO1lL20UrnCN9DdH/A8DvzpKmxA+G+OeOgWTEye6QuaT1mF4c/vB6FBbmGg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=gFNeZqI2Arrt6qqSwpmNv/ta0t/y5WTDn+owTa8wy6w=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Nov 12, 2025 at 02:27:20PM +1000, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
+Hi Jisheng,
+
+在 2025/11/12 星期三 8:14, Jisheng Zhang 写道:
+> Commit 27e8fe0da3b7 ("mmc: sdhci-of-dwcmshc: Prevent stale command
+> interrupt handling") clears pending interrupts when resetting
+> host->pending_reset to ensure no pending stale interrupts after
+> sdhci_threaded_irq restores interrupts. But this fix is only added for
+> th1520 platforms, in fact per my test, this issue exists on all
+> dwcmshc users, such as cv1800b, sg2002, and synaptics platforms.
 > 
-> If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
-> a KeyUpdate handshake type then the underlying TLS keys need to be
-> updated.
-> 
-> If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
-> allow the NVMe layer to process the KeyUpdate request and forward the
-> request to userspace. Userspace must then update the key to keep the
-> connection alive.
-> 
-> This patch allows us to handle the NVMe host sending a KeyUpdate
-> request without aborting the connection. At this time we don't support
-> initiating a KeyUpdate.
-> 
-> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> So promote the above reset handling from th1520 to ip level.
+ > > Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo 
+CV1800B and SG2002")
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 > ---
-> v5:
->  - No change
-> v4:
->  - Restructure code to avoid #ifdefs and forward declarations
->  - Use a helper function for checking -EKEYEXPIRED
->  - Remove all support for initiating KeyUpdate
->  - Use helper function for restoring callbacks
-> v3:
->  - Use a write lock for sk_user_data
->  - Fix build with CONFIG_NVME_TARGET_TCP_TLS disabled
->  - Remove unused variable
-> v2:
->  - Use a helper function for KeyUpdates
->  - Ensure keep alive timer is stopped
->  - Wait for TLS KeyUpdate to complete
+>   drivers/mmc/host/sdhci-of-dwcmshc.c | 35 ++++++++++++++++-------------
+>   1 file changed, 20 insertions(+), 15 deletions(-)
 > 
->  drivers/nvme/target/tcp.c | 203 ++++++++++++++++++++++++++------------
->  1 file changed, 142 insertions(+), 61 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> index 818efdeccef1..486ea7bb0056 100644
-> --- a/drivers/nvme/target/tcp.c
-> +++ b/drivers/nvme/target/tcp.c
-> @@ -175,6 +175,7 @@ struct nvmet_tcp_queue {
->  
->  	/* TLS state */
->  	key_serial_t		tls_pskid;
-> +	key_serial_t		handshake_session_id;
->  	struct delayed_work	tls_handshake_tmo_work;
->  
->  	unsigned long           poll_end;
-> @@ -186,6 +187,8 @@ struct nvmet_tcp_queue {
->  	struct sockaddr_storage	sockaddr_peer;
->  	struct work_struct	release_work;
->  
-> +	struct completion       tls_complete;
-> +
->  	int			idx;
->  	struct list_head	queue_list;
->  
-> @@ -214,6 +217,10 @@ static struct workqueue_struct *nvmet_tcp_wq;
->  static const struct nvmet_fabrics_ops nvmet_tcp_ops;
->  static void nvmet_tcp_free_cmd(struct nvmet_tcp_cmd *c);
->  static void nvmet_tcp_free_cmd_buffers(struct nvmet_tcp_cmd *cmd);
-> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
-> +static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
-> +				   enum handshake_key_update_type keyupdate);
-> +#endif
->  
->  static inline u16 nvmet_tcp_cmd_tag(struct nvmet_tcp_queue *queue,
->  		struct nvmet_tcp_cmd *cmd)
-> @@ -832,6 +839,23 @@ static int nvmet_tcp_try_send_one(struct nvmet_tcp_queue *queue,
->  	return 1;
->  }
->  
-> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
-> +static bool nvmet_tls_key_expired(struct nvmet_tcp_queue *queue, int ret)
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index eebd45389956..c17168edc9fd 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -289,6 +289,19 @@ static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
+>   	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+>   }
+>   
+> +static void dwcmshc_reset(struct sdhci_host *host, u8 mask)
 > +{
-> +	if (ret == -EKEYEXPIRED &&
-> +	    queue->state != NVMET_TCP_Q_DISCONNECTING &&
-> +	    queue->state != NVMET_TCP_Q_TLS_HANDSHAKE)
-> +					return true;
+> +	sdhci_reset(host, mask);
 > +
-> +	return false;
+> +	/* The dwcmshc does not comply with the SDHCI specification
+> +	 * regarding the "Software Reset for CMD line should clear 'Command
+> +	 * Complete' in the Normal Interrupt Status Register." Clear the bit
+> +	 * here to compensate for this quirk.
+> +	 */
+> +	if (mask & SDHCI_RESET_CMD)
+> +		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
+> +}
+> +
+>   static unsigned int dwcmshc_get_max_clock(struct sdhci_host *host)
+>   {
+>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -686,7 +699,7 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+>   		reset_control_deassert(priv->reset);
+>   	}
+>   
+> -	sdhci_reset(host, mask);
+> +	dwcmshc_reset(host, mask);
 
-Extra indentation before the return true.  This could also be simplified
-down to
+Thanks for the patch. However, I'm afraid it's overkill for the IP used
+by Rockchip at least. From the databook v1.70a released by synopsys, it
+clearly says:
 
-	return ret == -EKEYEXPIRED &&
-		queue->state != NVMET_TCP_Q_DISCONNECTING &&
-		queue->state != NVMET_TCP_Q_TLS_HANDSHAKE;
+"The following registers and bits are cleared by this bit:
+- Present State register - Command Inhibit (CMD) bit
+- Normal Interrupt Status register - Command Complete bit
+- Error Interrupt Status - Response error statuses related
+to Command Inhibit (CMD) bit "
 
-or if you want to do away with the ifdef entirely:
+To be more rigorous, I askeed my IC team performed a simulation this
+morning. The results confirmed that the IP's behavior complies with the 
+description in the databook.
 
-	return IS_ENABLED(CONFIG_NVME_TARGET_TCP_TLS) &&
-		ret == -EKEYEXPIRED &&
-		queue->state != NVMET_TCP_Q_DISCONNECTING &&
-		queue->state != NVMET_TCP_Q_TLS_HANDSHAKE;
+Is this a problem with an early version of the dwc IP? If so, I think it
+should cc all users of this driver to have a check if making it a IP
+level change.
 
-Othwise looks good.
+>   }
+>   
+>   static int dwcmshc_rk35xx_init(struct device *dev, struct sdhci_host *host,
+> @@ -832,15 +845,7 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
+>   	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>   	u16 ctrl_2;
+>   
+> -	sdhci_reset(host, mask);
+> -
+> -	/* The T-Head 1520 SoC does not comply with the SDHCI specification
+> -	 * regarding the "Software Reset for CMD line should clear 'Command
+> -	 * Complete' in the Normal Interrupt Status Register." Clear the bit
+> -	 * here to compensate for this quirk.
+> -	 */
+> -	if (mask & SDHCI_RESET_CMD)
+> -		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
+> +	dwcmshc_reset(host, mask);
+>   
+>   	if (priv->flags & FLAG_IO_FIXED_1V8) {
+>   		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> @@ -886,7 +891,7 @@ static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+>   	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>   	u32 val, emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
+>   
+> -	sdhci_reset(host, mask);
+> +	dwcmshc_reset(host, mask);
+>   
+>   	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
+>   		val = sdhci_readl(host, priv->vendor_specific_area1 + CV18XX_SDHCI_MSHC_CTRL);
+> @@ -958,7 +963,7 @@ static void cv18xx_sdhci_post_tuning(struct sdhci_host *host)
+>   	val |= SDHCI_INT_DATA_AVAIL;
+>   	sdhci_writel(host, val, SDHCI_INT_STATUS);
+>   
+> -	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+> +	dwcmshc_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+>   }
+>   
+>   static int cv18xx_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+> @@ -1080,7 +1085,7 @@ static inline void sg2042_sdhci_phy_init(struct sdhci_host *host)
+>   
+>   static void sg2042_sdhci_reset(struct sdhci_host *host, u8 mask)
+>   {
+> -	sdhci_reset(host, mask);
+> +	dwcmshc_reset(host, mask);
+>   
+>   	if (mask & SDHCI_RESET_ALL)
+>   		sg2042_sdhci_phy_init(host);
+> @@ -1100,7 +1105,7 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
+>   	.set_bus_width		= sdhci_set_bus_width,
+>   	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+>   	.get_max_clock		= dwcmshc_get_max_clock,
+> -	.reset			= sdhci_reset,
+> +	.reset			= dwcmshc_reset,
+>   	.adma_write_desc	= dwcmshc_adma_write_desc,
+>   	.irq			= dwcmshc_cqe_irq_handler,
+>   };
+> @@ -1121,7 +1126,7 @@ static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
+>   	.set_bus_width		= sdhci_set_bus_width,
+>   	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+>   	.get_max_clock		= dwcmshc_get_max_clock,
+> -	.reset			= sdhci_reset,
+> +	.reset			= dwcmshc_reset,
+>   	.adma_write_desc	= dwcmshc_adma_write_desc,
+>   	.irq			= dwcmshc_cqe_irq_handler,
+>   	.hw_reset		= dwcmshc_bf3_hw_reset,
+
 
