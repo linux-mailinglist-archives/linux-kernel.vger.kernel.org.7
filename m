@@ -1,129 +1,74 @@
-Return-Path: <linux-kernel+bounces-896755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E716C51245
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:37:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22ED8C5121B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 379D74E2FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C47C3ADA33
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2262F83CB;
-	Wed, 12 Nov 2025 08:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="OQrlNibC"
-Received: from mail-m15573.qiye.163.com (mail-m15573.qiye.163.com [101.71.155.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F05B2F6176;
+	Wed, 12 Nov 2025 08:32:12 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664AA2F12CA;
-	Wed, 12 Nov 2025 08:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732932F25FB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762936614; cv=none; b=eNYU5M2nrPwl91ITd+PQF8VvKK1lKq8mYNBiO7e0vtFLJdFvTRZJ45Dc+YNADEr9uXgN6iMLln2aaHx7Uo9p4aDEXwj4WlQJkt4G0/mlVLG0qVDWhHk1G8NZ4jKYArAuza4qm3RnaT/IEntzXrFZI9rcZef+a3eouBdvgYC+iwI=
+	t=1762936332; cv=none; b=fbdlAQn+FACLbG/jDZo3bJxlwfeb6W+hqX4BUMZw9/861UZXmqf/3GnZ+qQJky86+37FlD6TN7kYtm30OcJhaFyxl8zTrOS6ntCV+fnWNAET5T1iYDGJK7ZThJ704KcVh6+eKsUCdZbyMC6W4wSqv9vwdDTz14drFQkBrT+3fzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762936614; c=relaxed/simple;
-	bh=Sipvm/6HeiwNQ0RENEV6ehQdZ0dLq6Ls92vfVOazIAs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZdeAMlp8ZGUeoG1NlkEfesqxyoUMuo0e4gYljOk3eq4qpr0TrwmrP5ee5k5llhVysNxiCMmwx1F/REgg4N0GYem9hbXDV4P+VTuEhaZIgccGFN4rnfWZW2WkJ8YO/FfCDo9g6poH4PmLrXbdsnqCuh66HNrhFCUrOc9hog5jzQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=OQrlNibC; arc=none smtp.client-ip=101.71.155.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 29503293b;
-	Wed, 12 Nov 2025 16:31:32 +0800 (GMT+08:00)
-Message-ID: <ef433574-3e81-4636-82c8-9bc3552addca@rock-chips.com>
-Date: Wed, 12 Nov 2025 16:31:30 +0800
+	s=arc-20240116; t=1762936332; c=relaxed/simple;
+	bh=BRgudIymazOk2utu/3m2CJjnAQ90SxLXkszEmWDO6wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiPBkXWsRb8K+ul0zXxhbIWfyQGymnDmX8AKVwtQFFrp4FvAlXLQfuKhvqK6jrxINTew5V+p26k1jARuF3HMaUoo9qSeKJqnLHlgf4GdkD1KXWJ+jThKX7JUPRhAPpZTVRqUGpHAG1mOTyqrH0B5osoFkk8X0NyzOTW5MqcWHDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id BF2F1227A88; Wed, 12 Nov 2025 09:32:03 +0100 (CET)
+Date: Wed, 12 Nov 2025 09:32:03 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>, Alistair Francis <alistair23@gmail.com>,
+	kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me,
+	kch@nvidia.com, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH 3/3] nvme: Allow reauth from sysfs
+Message-ID: <20251112083203.GA7838@lst.de>
+References: <20251030035114.16840-1-alistair.francis@wdc.com> <20251030035114.16840-4-alistair.francis@wdc.com> <8a236ca6-3675-461a-9166-4d4df3b5de08@suse.de> <CAKmqyKO=W2+5ZBudWhN_L1choupte9vzJBEoxVeZ-vNHykeR0Q@mail.gmail.com> <20251112070256.GA5276@lst.de> <c7679208-c963-4fdd-a038-a91ccda0a075@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, pali@kernel.org, neil.armstrong@linaro.org,
- robh@kernel.org, jingoohan1@gmail.com, khilman@baylibre.com,
- jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, cassel@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 1/2] PCI: Configure Root Port MPS during host probing
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
- kwilczynski@kernel.org, bhelgaas@google.com, helgaas@kernel.org,
- heiko@sntech.de, mani@kernel.org, yue.wang@Amlogic.com
-References: <20251104165125.174168-1-18255117159@163.com>
- <20251104165125.174168-2-18255117159@163.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20251104165125.174168-2-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a7731027109cckunm3695c205155bc1
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQklNSVZKGBkfHhlCQklCSRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=OQrlNibCvuZayM7wDbAagcEJdfH7X7Q3cM6x97+7LQYx7k4r/CgTIBxxCMJ3Y3fvGNo5K6I52NbBbMcdb5R2ELbdSxTmrl+IoMlKzkcVNDrZPs9R8U4AlvAAIOr+HA4C22Kud5mpViQKRjgDZtrex+JDHEueUhSBWnW/n+bRq3E=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=qaMbRURJhLkvG/AVZ92aTWNCGETrMCxlf9HvH6rX52w=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7679208-c963-4fdd-a038-a91ccda0a075@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-在 2025/11/05 星期三 0:51, Hans Zhang 写道:
-> Current PCIe initialization logic may leave Root Ports (root bridges)
-> operating with non-optimal Maximum Payload Size (MPS) settings. Existing
-> code in pci_configure_mps() returns early for devices without an upstream
-> bridge (!bridge) which includes Root Ports, so their MPS values remain
-> at firmware/hardware defaults. This fails to utilize the controller's full
-> capabilities, leading to suboptimal data transfer efficiency across the
-> PCIe hierarchy.
-> 
-> With this patch, during the host controller probing phase:
-> - When PCIe bus tuning is enabled (not PCIE_BUS_TUNE_OFF), and
-> - The device is a Root Port without an upstream bridge (!bridge),
-> The Root Port's MPS is set to its hardware-supported maximum value
-> (128 << dev->pcie_mpss).
-> 
-> Note that this initial maximum MPS setting may be reduced later, during
-> downstream device enumeration, if any downstream device does not suppor
-> the Root Port's maximum MPS.
-> 
-> This change ensures Root Ports are properly initialized before downstream
-> devices negotiate MPS, while maintaining backward compatibility via the
-> PCIE_BUS_TUNE_OFF check.
-> 
+On Wed, Nov 12, 2025 at 08:21:41AM +0100, Hannes Reinecke wrote:
+>
+> 'tls_configured_key' prints out the value of
+> ctrl->opts->tls_key, ie the key passed in from the 'connect'
+> string. Normally this value will be empty,
+> as the 'connect' command will pick up the TLS key from
+> the keyring automatically.
+>
+> 'tls_key' prints out the value of
+> ctrl->tls_pskid, ie the value of the _negotiated_ key.
+>
+> So why is 'tls_configured_key' key the better option?
+> Personally I think that 'tls_key' is more 'natural',
+> as we want to replace the negotiated key, not the
+> configured key ...
 
-Tested-by: Shawn Lin <shawn.lin@rock-chips.com>
-
-> Suggested-by: Niklas Cassel <cassel@kernel.org>
-> Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->   drivers/pci/probe.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 0ce98e18b5a8..2459def3af9b 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2196,6 +2196,18 @@ static void pci_configure_mps(struct pci_dev *dev)
->   		return;
->   	}
->   
-> +	/*
-> +	 * Unless MPS strategy is PCIE_BUS_TUNE_OFF (don't touch MPS at all),
-> +	 * start off by setting Root Ports' MPS to MPSS. This only applies to
-> +	 * Root Ports without an upstream bridge (root bridges), as other Root
-> +	 * Ports will have downstream bridges. Depending on the MPS strategy
-> +	 * and MPSS of downstream devices, the Root Port's MPS may be
-> +	 * overridden later.
-> +	 */
-> +	if (!bridge && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
-> +	    pcie_bus_config != PCIE_BUS_TUNE_OFF)
-> +		pcie_set_mps(dev, 128 << dev->pcie_mpss);
-> +
->   	if (!bridge || !pci_is_pcie(bridge))
->   		return;
->   
+I've not even looked into what is better, but accepting anything
+without validity checking tends to always bite us later.
 
 
