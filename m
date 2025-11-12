@@ -1,76 +1,119 @@
-Return-Path: <linux-kernel+bounces-897364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F81DC52BCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE19C52B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125F7427577
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAD74A1A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9582868BD;
-	Wed, 12 Nov 2025 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1ZpGPG6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F32D285C84;
-	Wed, 12 Nov 2025 14:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CD32874F5;
+	Wed, 12 Nov 2025 14:17:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832DB27EFF1;
+	Wed, 12 Nov 2025 14:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957016; cv=none; b=l+gmHbdadULfwAn+uphglF5gHZFbm5fu+8zVnPb9XD0KqNAPlRK9RUEwnQhL8TnlrhAIBQDWESFFVhDDMm0Zbxsva6vS5M1y4jU4+kaDy+G1I+LB+5WoD7MtFMOUYpIqFjcCsaVnIoa7UqKhDv54/9SRUUsNvxz5ZrAkLECZdPg=
+	t=1762957078; cv=none; b=mr3C7dhz+1b5scruRqI5mbQzaA6xA2ZKEyV0e5J1Nb/H62/AiiYVbsOXrtqBOn9YISj1ptxTUaQd8RaJqt4EUsmTCqtBn0WvWxJRJINFYXzcvZQ2JUXCcSt2kf1V3B4YV6B6ddy0ma0FJ52rwO8thnTHvkulfiBwQ+9i24KLnzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957016; c=relaxed/simple;
-	bh=AntEDYQVMQK3hGkf/1USVKSJdPizgJjdmaxygMO5baU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kF8DG3bC81vx8RLYKVsXyMoISET3EY4IC29i3SAJ7IyCXtWvBQMbA8wkbYbXgY1iSEd/P7MfLKj2MY0WIke7sPAE96vYMxxUxMfZa23YD/9L5rCY1kSvd2dGqIYi+m7WB91nD6k2VrW/mWVWcB/ZYYtaLnARXwhdb06PQ4/9XIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1ZpGPG6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681C2C113D0;
-	Wed, 12 Nov 2025 14:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762957015;
-	bh=AntEDYQVMQK3hGkf/1USVKSJdPizgJjdmaxygMO5baU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l1ZpGPG6Nsys7aydptxdmw86qulWGuTQJTxZvpenymTfLcNCxTdExeJhvdYz8Cbwj
-	 iyGCVF/sUFPxwubsxKQaN4TM/lzkpYCqqZWxXQKa4W7WE/KbQUaVfk99V+CWF5f9Va
-	 UnK//0yV7bcboG3HsYb3mrLAcasC1WoxNwPtK0QBi9WNS6H9t1i0XFz9jWq8k7Kahh
-	 MEOCLPRdb+wWXKbgBZU+fe00yaS5VuU9MxXrDKZffZ/kTvI8eEerpZLdZKoaJg+stW
-	 P8dwNxLCrMP7DqmbBHUzxEFeDovvkNQHIyGfwcGZKNgNj3FYAkHQFB9gbp3MGPkxZZ
-	 jp0OjlahksV3A==
-Date: Wed, 12 Nov 2025 06:16:54 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: Ivan Vecera <ivecera@redhat.com>, Prathosh Satish
- <Prathosh.Satish@microchip.com>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Arkadiusz Kubalewski
- <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dpll: zl3073x: fix kernel-doc name and missing
- parameter in fw.c
-Message-ID: <20251112061654.2b70e74a@kernel.org>
-In-Reply-To: <CAL4kbRPWAfH6AXjsXtwugtpGaH-Omc3uNmtzacFOt1CUqNNWbg@mail.gmail.com>
-References: <20251110195030.2248235-1-kriish.sharma2006@gmail.com>
-	<20251111174234.53be1a97@kernel.org>
-	<CAL4kbRPWAfH6AXjsXtwugtpGaH-Omc3uNmtzacFOt1CUqNNWbg@mail.gmail.com>
+	s=arc-20240116; t=1762957078; c=relaxed/simple;
+	bh=yHCsSRmzIEcc2+pbJTsDiLYepFiqMay3UJUEkTzqLjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgB2ik75bVbTosm0EGYPWF1+qG6wVz9l6fzurLVoMxulq8hc7w24E8cLmxr7BXzyJLIp4YVh/tQHbGYs/lhq9MmMb6Yz0AkRfNdBKRYv76aCvhekGz8yL0mRg5X7uI0+IARiThgKbMZjoz4FQbZIjYqS8hEyP50nA7QFE35Xh0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38B4D1515;
+	Wed, 12 Nov 2025 06:17:48 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9D563F5A1;
+	Wed, 12 Nov 2025 06:17:52 -0800 (PST)
+Date: Wed, 12 Nov 2025 14:17:49 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Chenghai Huang <huangchenghai2@huawei.com>, arnd@arndb.de,
+	catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+	anshuman.khandual@arm.com, ryan.roberts@arm.com,
+	andriy.shevchenko@linux.intel.com, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, fanghao11@huawei.com,
+	shenyang39@huawei.com, liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH RFC 4/4] arm64/io: Add {__raw_read|__raw_write}128 support
+Message-ID: <aRSXDTT44_3iutEg@J2N7QTR9R3>
+References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
+ <20251112015846.1842207-5-huangchenghai2@huawei.com>
+ <aRR9UesvUCFLdVoW@J2N7QTR9R3>
+ <20251112140157.24ff4f2e@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251112140157.24ff4f2e@pumpkin>
 
-On Wed, 12 Nov 2025 09:54:32 +0530 Kriish Sharma wrote:
-> On Wed, Nov 12, 2025 at 7:12=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> =
-wrote:
-> > What do you mean by "documentation build"? make htmldocs? =20
->=20
-> Yes, I ran make htmldocs , which triggered the kernel-doc warnings.
+On Wed, Nov 12, 2025 at 02:01:57PM +0000, David Laight wrote:
+> On Wed, 12 Nov 2025 12:28:01 +0000
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > On Wed, Nov 12, 2025 at 09:58:46AM +0800, Chenghai Huang wrote:
+> > > From: Weili Qian <qianweili@huawei.com>
+> > > 
+> > > Starting from ARMv8.4, stp and ldp instructions become atomic.  
+> > 
+> > That's not true for accesses to Device memory types.
+> > 
+> > Per ARM DDI 0487, L.b, section B2.2.1.1 ("Changes to single-copy atomicity in
+> > Armv8.4"):
+> > 
+> >   If FEAT_LSE2 is implemented, LDP, LDNP, and STP instructions that load
+> >   or store two 64-bit registers are single-copy atomic when all of the
+> >   following conditions are true:
+> >   • The overall memory access is aligned to 16 bytes.
+> >   • Accesses are to Inner Write-Back, Outer Write-Back Normal cacheable memory.
+> > 
+> > IIUC when used for Device memory types, those can be split, and a part
+> > of the access could be replayed multiple times (e.g. due to an
+> > intetrupt).
+> 
+> That can't be right.
 
-Strange, I thought make htmldocs only complains when file in question
-is rendered as part of some page. Maybe something changed...
+For better or worse, the architecture permits this, and I understand
+that there are implementations on which this can happen.
+
+> IO accesses can reference hardware FIFO so must only happen once.
+
+This has nothing to do with the endpoint, and so any FIFO in the
+endpoint is immaterial.
+
+I agree that we want to ensure that the accesses only happen once, which
+is why I have raised that it is unsound to use LDP/LDNP/STP in this way.
+
+> (Or is 'Device memory' something different from 'Device register'?
+
+I specifically said "Device memory type", which is an attribute that the
+MMU associates with a VA, and determines how the MMU (and memory system
+as a whole) treats accesses to that VA.
+
+You can find the architecture documentation I referenced at:
+
+  https://developer.arm.com/documentation/ddi0487/lb/
+
+> I'm also not sure that the bus cycles could get split by an interrupt,
+> that would require a mid-instruction interrupt - very unlikely.
+
+There are various reasons why an implementation might split the accesses
+made by a single instruction, and why an interrupt (or other event)
+might occur between accesses and cause a replay of some of the
+constituent accesses. This has nothing to do with splitting bus cycles.
+
+Mark.
 
