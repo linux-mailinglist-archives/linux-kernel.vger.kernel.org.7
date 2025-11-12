@@ -1,217 +1,252 @@
-Return-Path: <linux-kernel+bounces-898195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA36C548AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:07:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A0CC548C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE4B3A8350
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:07:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10B90347ABF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134FA29BDAC;
-	Wed, 12 Nov 2025 21:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F8B2DEA80;
+	Wed, 12 Nov 2025 21:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YDani8Q4"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013020.outbound.protection.outlook.com [40.107.201.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OpapdDNA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF4A1482E8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981633; cv=fail; b=YtULaxsWXoOZMl9ClS74SG/7gmtoiPYTlqUI7hyOu0yjJf09lQF3l1df2B3HSC0XIRs5mrnk9nYO6UlSMsvVxreiZOcx0AnDSyJq2pYfwx5ttQJXfu1CwxK+h2o5bT0odQ48Q2iUT60qT2QmeIseJfrz4kv7XaD9kt8rgAv+xZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981633; c=relaxed/simple;
-	bh=get/XDBnpHz0hUOxInDtqItt/glPe/N5AQp/uhHyPvw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UtaE43kkUs5EtlpX27+6xKM+G62I8NQe5UR4kRth4TQSXqvU3JXRpkKnQKWnI6Vob9x4qHPW3c95z/iMxcg2qpmiKRDjqLhigTnvbQWO7fa1ZTjcErzA/9Vjs1vati3tUcUf5CxNZR/x6nAFGX3oO9Y+mPeYyA9k8MGsyhmc2/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YDani8Q4; arc=fail smtp.client-ip=40.107.201.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aQ2oyhHnZY9xIwetzD/7USdoWzMYc0rGK8vMnY2COpT1ZQ+OJP34atAIsW8AnRrDlbQW6dTjGq09VZkXCJXIkAcYIMRuddfmkkyZx4n08CrpeYJzQ4+q8p8dt61GhpDQoCfF5taarRf2q2u0YLcK2JFBgcXuVdUVyfCJgsUQHhXNwH+KN5u8NaFNw+xn1sMAle8LY1Q5nvqeH125uEkxuyV0OZu4U92bw69sqBh9gHGbDV3qX2ScfjOEGQqLLREfZWQtYxRtCo3xCE0MKR2DADj7BWaYfhap22pClNTj3k/qCyH0TVSpgjSPu0ywN7Rt9PZCevKrIcBRX7ci//Fn2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sa3N97XtPsFGet16mD6gFTeUek+gC2POKEaf4P/tyQU=;
- b=H3nPbwXEDSUPVMXBbbf9MlfkQ3l1x+dKLOAR1uU2DNj/cUA5lIx1D2fMtggh9JHuoqZlLuzF6qwk6Duu6OfmCcXqEOdSl+Y+SBmxrS8R9KYmsgw5Lu1k73ixHvTVLNmGe3EVYJkIruyHbpXp1jl2p4XTy+OvB+BroXV4aqjY0IJa+nu7KeJdLxBmT6eMwbJBk1qAltvExm/iKKcXTEdtZIASYMbU6Ndye9EHXlWBlFFS6ifQsS3pNm2Hbu//FQ9Rn8AaANoawAUVtn9wyaek2XE0x//HIxcKtZOroUZrsy1jHtk6MHOWlKrWKbXhRiVMDjn1N6HLEKqNjfR4q8T8LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sa3N97XtPsFGet16mD6gFTeUek+gC2POKEaf4P/tyQU=;
- b=YDani8Q4GmeRbebzpjPnjD1HzIkTZ/R7MweHVsaeUxKSCO0WsUty3lGh8lSvrwmJsLu7WIrF7rYvWxnOAZ3qZQCSYWZtp7a1b/20RGGbMG913Iq4JyeQEy2UnSiMZMIIGRAr6uPgwXxiY48x6qEsCDZDZBk4beLZ5m7rg3AERe75ROOBfeO8OsY/RRyhfWEJgMzb6zG/I5/LmCuRbj0abUuT7a6HEUb9Eb2pEf/rMaeCYiD1wbTeVKiwC3rl2DPbW+1ZQ0hSWpJw4BS3rltP426RsajsQWBjzSzuKzUphMECsOXT/cHCpFwWxWS7Vy7gj4EINltIYiCsY4+i3dePew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by SJ2PR12MB8876.namprd12.prod.outlook.com (2603:10b6:a03:539::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 21:07:08 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 21:07:07 +0000
-Message-ID: <096d8a22-3ff7-4ced-b58f-458f9826c7da@nvidia.com>
-Date: Thu, 13 Nov 2025 08:07:02 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: softleaf device private fixes in
- remove_migration_pmd()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, David Hildenbrand <david@kernel.org>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>
-References: <20251112044634.963360-1-balbirs@nvidia.com>
- <20251112044634.963360-2-balbirs@nvidia.com>
- <c5ebefad-2b1c-45c1-9a82-17a024d52d1c@lucifer.local>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <c5ebefad-2b1c-45c1-9a82-17a024d52d1c@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR05CA0054.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::29) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A92DBF40
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762981663; cv=none; b=EAtlrmD7V4bo4gulzWXS8XokU4zw6nRLc+7KBsQXJpn92zrvgrynjIZYiqCKKvOIwdFqYgq+qpKa5bWHxiz/0EA94LlHYaJ+ss3lEjGqB4104qNbRslh9tDRmdcYpJQM5/ABjCm6furbAc+6yncWQxrl4pamsDQi6SICRVHG42Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762981663; c=relaxed/simple;
+	bh=u8q2TZF20ibeYFuY8h4yCLkgQDj7Xrhx2gKQ62/nSkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dppwb/zwk80tr58MbWKqJQGeBRpYkyQxLHuh1DBMKWIUXAotSo+AMNiQT9/h6+QeulMuQeI+JpwDzcMZKlaGmmpo90nAqgtSiuhzTFxhhoy2f2pG5ss4cRFcMN1zV2/f9Oy3X9CO6pk4TzeF/GFH7bWJvWI/v+xOgsMhsl+YE8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OpapdDNA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25F5C4CEF7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762981663;
+	bh=u8q2TZF20ibeYFuY8h4yCLkgQDj7Xrhx2gKQ62/nSkk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OpapdDNACSR267OhJbCyOl0GSq+kEctnyi539mp5A4flj8Ce7BO61hi/+/0SJpSUM
+	 uVXtO38jP7N/CfC2ZCzyJB5mebDwIfaWtEBUyYmlym08Qtwb1yOzbaa9nHSVkXYPIY
+	 sQ83RtymazNV4l6Zu7K9C97kbdPYBAwkrbqJZVzJDUqSw0wHsJP8/MB5KCotDKpl5V
+	 7e6l4aMpnMO1PuUhdldqzMOTgmU+xS/sH68Dh355JbLnZjoOb+fcyiq4xLp97EOaB5
+	 dMuwj1YiVxJ0AruPNEd0bwOhZTZCtiGoeS0BZhu4z2BG+jClzJDtNfBgMr+H91qFgl
+	 lZLhx5z41+Dow==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so148498a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:07:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUqkokGFLFrHzVuQcpTUIqKTBhg4NceL6XG5EpRbE1pJM2xI02YMH4971M9bTPj54cJSdR7NvwTB3izb4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6ixqO5Zed4yZZoqPDTZBbjUriu3Dsu7hNZKabw0zO4nNy3gSW
+	qXzvvUdNJN4AD+Y53FqkuRNwJxDqoKAtnVb49Tv7DxgDx5hoE9oLENuo6+pp4qFquiTlo13mhZc
+	9PUe9xVbnKA4H3kyeTo+E0KD61+HpGg==
+X-Google-Smtp-Source: AGHT+IEIy21Sb3B7FBrgAI8SVidk1uSmlkEpW+/mXMU6zQinRFFusx79rk2YkYD+SPkgL7pLFxsxRVnlBhzaVvKVnfk=
+X-Received: by 2002:a05:6402:2106:b0:641:27d8:ec72 with SMTP id
+ 4fb4d7f45d1cf-6431a39656dmr3803888a12.4.1762981660959; Wed, 12 Nov 2025
+ 13:07:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SJ2PR12MB8876:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e01a908-4d47-41b3-a4a7-08de222f7055
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UFBsYndXYSs3ejExRnZOS25MSmFucFpMMzFKbGpzRGlpaksvbWdkZFVzdStY?=
- =?utf-8?B?NHlYNWo4VWJEckZkSGIzSXM3c0Y4dk8yT2xINy9pMWJaVXJXSGlKWXhmYVRS?=
- =?utf-8?B?QVRaQkpUWU52NncxblVFN291R0ZPNGFZNFdPVlgzMngrSnB5L2dGY3ZVM3ZI?=
- =?utf-8?B?MUY0QllMWkZZVnBIQ1QxKzRSQ3NiYzVMMTV6Sk4zRm14bm9Ea20zclRyeTI0?=
- =?utf-8?B?Y1FqS3NqbE1CdDh5VUtPQW53cEZRdkJDcCtSeHlrNzF0bHd6RmF4a3llUkRF?=
- =?utf-8?B?bzM0K2wyZzh0Y1diNXFtWFZ0dUlXVEVuQWUzdDMzVW9KU0R5dHA1aG1BRzI4?=
- =?utf-8?B?N2VaSXNPa1Rnajc2YmRvNzkvaWlGUW9QZS9lWXpFZmdBaGNmSnUyVmQ4a0tJ?=
- =?utf-8?B?SFV3R05GQnNDZk9PMlBwQ0xiME50MUtLL0szdkVMUHRab2hCUUx0SnMzS3Mz?=
- =?utf-8?B?U000RlUxMzgzVUlCZFl6cUNUQysrUGNod3dHLytqbkl0OVkvRzliL3pBakNj?=
- =?utf-8?B?aXJ0YTB3bFJtQ1R2TGxyNElPc1hDc2NRR3k0MVE2OEIyYnhlR1RhZGRXNWUr?=
- =?utf-8?B?R2xLQzhzbDlvK29WVDRVMEVUcGVnaHRRdzdSR3hFME1Ua0Z1eFowUTM0VFZN?=
- =?utf-8?B?V093ZytzQ0U5ZDUrZW1FZnFOalg0TTMvYkdOTnpiUXE4eGlCTXpUK3h3aVRF?=
- =?utf-8?B?MFFIVHhJb2hWRFYzMWxBRkhQUGJ0VVY0L2Q2TVlrNDZFMnYyQVpOOTBqcE5N?=
- =?utf-8?B?dzNyR1ZxdFJ1cy96L1FqT3hDT1o4MFFuZ1QzMFhYSU1iS1pmamh2d0lXL3Rq?=
- =?utf-8?B?V3htQXNVSXIwc0tGOTBYS0dJclQvd2d0b0NRZXpTbS93bUs3TGxjYzFnT29p?=
- =?utf-8?B?S0JJMGdLQWpqQ3Q0YXdIb2NNdEZEMUczK29SMXNjRHc5VVBIQ3RrMjY5cVV6?=
- =?utf-8?B?Q2FJNlZ6TTRLeDhtSE95c3VZaG0rSncwN1ppckdWUzNrR2tpWUMwNTRGaElQ?=
- =?utf-8?B?L3ZBVnE3T2taQlkza3cwVEM0WGMwdGJuUitPRmoyeFN5eS91MmpiMytDSkhr?=
- =?utf-8?B?UDMvaFQwS0ZpdFlPSUVPN0tDcGlUZFhIcHA2YWpieU0wMGJ5eC9aOXB6TzJi?=
- =?utf-8?B?YXpLQlBiMXB6VWdjdGIzMm9XVG5pdkJ3S1phS3llOHJSM1dETkJ1WE4vc2xX?=
- =?utf-8?B?Y3UxVVpjNWx3MUR2VEVMaVZ5Z1hPVHJtOTFONk8rZjc5TWRFSmNsYlkzYVhv?=
- =?utf-8?B?bnd5a3VHQU5VN1JES0VxTzVkLzQ4aCtUQVd1TlBVdTdGTjY0SVlWbDZNTTNO?=
- =?utf-8?B?YWdZcnNDNExEYUFUVUFoSmZhaDFjcWlDM3Rpak1aTW5QOW9neEw1dDJLemps?=
- =?utf-8?B?R2l5V0psWkZqcDRNOWl5dEpJL2JUU25kODI2NlhlOUp1R0xtcG5LcWd2UGgv?=
- =?utf-8?B?SE8wVDdYZ1l5RmRWT2NuK0J3ZHU5bkUzRDMrc2FOZTA4VktFVGRCS3RLcE1D?=
- =?utf-8?B?UUhmMVRsSHpUbURjVXl2UkMwWi81OWN2dDRPNWEvWUxmTjhFNWlMNk9pQnE4?=
- =?utf-8?B?bithZnJQWUNVRjYxN2owZ2VjZVE1SjJOR0IvNUd4dVhaeEp0K0p5a3lwcXV4?=
- =?utf-8?B?Vm5UTVEvZDhkY05Ebi85cEdJelV5ZlBRdURLOFVub2xCYzErRjZwUVFLZ25R?=
- =?utf-8?B?MkpKOEoxeVE0OTJZSUhyR2RnWHl5c1RaYnV3ZTNDU1BWRWdUUzdLVkxxZ09J?=
- =?utf-8?B?d1VXN3lDc2p6dzloN2N5VWhaTWJsV3dTaVNGVzZwbWlTVGQvUEVQWU43OUNo?=
- =?utf-8?B?TTY2R1VKZTMzaFBEYXk0eUR5YlpuZjViYXlueHQ0bElRb3FLZFNJdUtxN1FU?=
- =?utf-8?B?dEM2UHVLcWhHYzlYOHBDQytUSlMvSEdZRW9LZWYxbElOT3VScExIcnZQekJX?=
- =?utf-8?Q?rLzA07vRuJJ9Ie0IICOfkGPsgiKsWVad?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzZ1N0JoUi9rRzQyblB1azd3TmhCSWVKcU5KK2cwYnVLd0dEdzBka2VkM1hu?=
- =?utf-8?B?UmZvczZONkdVdU8wQnptd0FsenNhR2VOTFI2STBCTUk2RGFCakFOMW5VSHdz?=
- =?utf-8?B?QWdvSmV4SEpKalV3aE9tZm9ncXltZllScjYzcVd1ekgrQWttNUJHYnlVbEdw?=
- =?utf-8?B?YVp5U3VDbjJWSUJLWlQxcllIZ3pTRWt4OHlFcnFDcTNOSWpmRFF2NzVLdndU?=
- =?utf-8?B?bitwUmw2a09obkd1dEpjSDBDV096U0MyQjlZSDdjWTRWeWd6bG53WlFjWHgy?=
- =?utf-8?B?K3htSURNRExDRlhFUjQxR2dZbkV2V3dMSzhYZkdDeE9QTjFYSDFyNWN0TUN2?=
- =?utf-8?B?clo2aFFoSUkzK2xjcUFNRVVJdzZQM3ZQT2JCSVhuSWQ4NGxWaHVMdE1Yb25n?=
- =?utf-8?B?OHg1WWVEM1JuNEk4NWRjVXdlTW5MS0ZyZE5EOTZUWVE2VVlqZ2JTQnVkczJY?=
- =?utf-8?B?TS92YnlSdDRHOFdoTmViRmxRYzV0QWM3UUtNT0l2ZzBYY2Rlem9rYzYxUlRo?=
- =?utf-8?B?S3F1OHdNWHRndWFXbTllRTA0M2d5TXB3SXZRZStVWjJQcjRlci9rLzllUG1r?=
- =?utf-8?B?RHlZOGZvWUVHNHBnVk1JVURJK2FiaDQ4NkJSQyt6dnFsWW1qWklTdTBrMzNL?=
- =?utf-8?B?dlZQbDR3VWYvYytQV3VqcUZRa3U2T2dhQ2FXMjIyZG52a2hNK2Z0M0l6S09p?=
- =?utf-8?B?ampZOGxtL1c0Q2NqdGEvUmt1QnYyUHhyaHNNUTA0S1Z6VWhlM0p6bTBoRm9j?=
- =?utf-8?B?SDBGYzkrTnRCbTlxcndZK2ljbENXVHlpWWdKTTk1TkVqZVIwSGNpOW40TU1v?=
- =?utf-8?B?M242WFpyY0RUWFJWeU4zb3RIa3VoK1pmd21uT2pYOXMwUWMrdXhkV2FRWmJQ?=
- =?utf-8?B?cjE5Tmdkd09VYll5c3hVSEs5UElBeUhLcFBmc2pQU1B0bTh6QkcyZUpTMHo0?=
- =?utf-8?B?cWcxc0xhMldtMjMzZ1lkUi9MbTkxSTVGQ2JUN0o4bFZnb0pQRUFodkN5UkZX?=
- =?utf-8?B?aW84YXZld2RnUTZTdlRwdlBabkZEb1U4UHlXdTdwamlBNHkxcy9LZk9HM3d1?=
- =?utf-8?B?bWpLVVFmcFJPSER0VENXQk80bW0yWnZvS0FjOXRIU2dqYnhWQWNkSUlHd1V5?=
- =?utf-8?B?dkhwQzNtZ2tsbVArZ09Ed3pDMStzbWEvTzFlT1BUQnUxN1R2b3Fjelg2Y0Nl?=
- =?utf-8?B?TEkzaEZyWmFVVFQ3SHBvM2I3S0dQNEdaRHdDcHlkRC9LSWZtckVVWCtmTVFE?=
- =?utf-8?B?ekZIUno1c0NLVGtaQm0yMDlsN3JuRU5SbVA2OUxvcFJ0TThuamoyRGkwZ3lY?=
- =?utf-8?B?Z2tVMDRGWmZHdkpVQXdzMGZLWlpEeVhVWXZqRFBMcFQzN09UdG1YMmIzQ3g5?=
- =?utf-8?B?OXZ4VFlBbCs1QllCTGxia0RFa3FGcEVCTzZMZjE4cGcvYjl5VWo0NmxiaThH?=
- =?utf-8?B?ZFloTGNjZzdNNXgzdS9RaTYwN1ppYkVzcHcxM0VQTzhPZDQzcW9USXFnMWtj?=
- =?utf-8?B?dE45YldrZDVRY1hHdExaY1VBTVYwNHp1RmN2bm9xV0FtWjRQd1NwSVdrbDh2?=
- =?utf-8?B?SkZjQmFqMVNjWG1zekFIU1VrVVJ2dk5qM1EyQ3NCUVorUWVwYjdWVTFmSHRp?=
- =?utf-8?B?eXEyODQ0bzhmOWtDeGNaeEl1WlJlZFRjQW0wcmp1cWt2UUFiUFgxMW4zelpy?=
- =?utf-8?B?aHV0cUtPU0JUS3ozYVI3aVY4NjBHVU5MdFBkelJSZDRKdDIxSHhaQ082akZZ?=
- =?utf-8?B?UXExaUpPUkpySmlXYVEvbWh4WUxIQ2wvWmFPbzFtY0ZzTmUzYXE4aFE2dzdQ?=
- =?utf-8?B?b0NYWTVWYjduSkExSGNQTG1MeVB4RlJWSjAzN1VSd2s3SHlRdklYSmN2enVJ?=
- =?utf-8?B?L2lIc3BPdUpNWXJoQUpsRWRucXBUSExPTFZRcmVidTVIZGs0YkF6SjVoUW50?=
- =?utf-8?B?c29rZG5pOTFsSkRIMWVCczNacEFyTG5ydGs2N0NVQTZycmpjamFQMFl4MjRq?=
- =?utf-8?B?b1ZvRmExRlY5UFIvOXF3NGl1R1N1ellxc1BtQzRaWkJiY0NoZXZFNzhzc2RL?=
- =?utf-8?B?ckNPbEJpQmpBSFBNVXZpeFRvK0hxS1k4MXZHaFFPZXBKaUZjNFFaQU5LRFBJ?=
- =?utf-8?B?dDh6c1lYMUpSaUxVMTV0M0lIS2ZaeFRRTlBIdDNIOGRTZHd1RXdjdjdFZnNi?=
- =?utf-8?Q?SMwkf90Q/TryGTFwiAarFWj8dzz8dDgeriQ+1nqQM8vH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e01a908-4d47-41b3-a4a7-08de222f7055
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 21:07:07.8296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dtVkpQT7KMLswT/fqgJdlOsqYEyJ7i+FTBfndqCBF5SgdD/PtuRX+sFhEPXmom1DpaH8HGrXFEd8RR0rymsKRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8876
+References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
+In-Reply-To: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 12 Nov 2025 15:07:29 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkhxcdj-NsfzZ0QRxOltuG2xQHMKmcPZ2R7l6HHsGWU07rxfsx54qGm66Y
+Message-ID: <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Add support for handling PCIe M.2 Key E connectors in devicetree
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/13/25 00:43, Lorenzo Stoakes wrote:
-> On Wed, Nov 12, 2025 at 03:46:34PM +1100, Balbir Singh wrote:
->> commit a6ca2ba46390 ("mm: replace pmd_to_swp_entry() with softleaf_from_pmd()")
->> does not work with device private THP entries. softleaf_is_migration_young()
->> asserts that the entry be a migration entry, but in the current code, the
->> entry might already be replaced by a device private entry by the time the
->> check is made. The issue exists with commit
->> 7385dbdbf841 ("mm/rmap: extend rmap and migration support device-private entries")
-> 
-> OK this is _hugely_ confusing.
-> 
-> Is the bug in my patch or in yours?
-> 
+On Wed, Nov 12, 2025 at 8:45=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
+>
+> Hi,
+>
+> This series is the continuation of the series [1] that added the initial =
+support
+> for the PCIe M.2 connectors. This series extends it by adding support for=
+ Key E
+> connectors. These connectors are used to connect the Wireless Connectivit=
+y
+> devices such as WiFi, BT, NFC and GNSS devices to the host machine over
+> interfaces such as PCIe/SDIO, USB/UART and NFC. This series adds support =
+for
+> connectors that expose PCIe interface for WiFi and UART interface for BT.=
+ Other
+> interfaces are left for future improvements.
+>
+> Serdev device support for BT
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+> Adding support for the PCIe interface was mostly straightforward and a lo=
+t
+> similar to the previous Key M connector. But adding UART interface has pr=
+oved to
+> be tricky. This is mostly because of the fact UART is a non-discoverable =
+bus,
+> unlike PCIe which is discoverable. So this series relied on the PCI notif=
+ier to
+> create the serdev device for UART/BT. This means the PCIe interface will =
+be
+> brought up first and after the PCIe device enumeration, the serdev device=
+ will
+> be created by the pwrseq driver. This logic is necessary since the connec=
+tor
+> driver and DT node don't describe the device, but just the connector. So =
+to make
+> the connector interface Plug and Play, the connector driver uses the PCIe=
+ device
+> ID to identify the card and creates the serdev device. This logic could b=
+e
+> extended in the future to support more M.2 cards. Even if the M.2 card us=
+es SDIO
+> interface for connecting WLAN, a SDIO notifier could be added to create t=
+he
+> serdev device.
+>
+> Open questions
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Though this series adds the relevant functionality for handling the M.2 K=
+ey M
+> connectors, there are still a few open questions exists on the design.
+>
+> 1. I've used the M.2 card model name as the serdev device name. This is f=
+ound
+> out by comparing the PCIe VID:PID in the notifier. Is this approach accep=
+table?
+> I did not use the PID as the serdev name since it will vary if the SDIO
+> interface is used in the future.
+>
+> 2. PCIe client drivers of some M.2 WLAN cards like the Qcom QCA6390, rely=
+ on
+> the PCIe device DT node to extract properties such as
+> 'qcom,calibration-variant', 'firmware-name', etc... For those drivers, sh=
+ould we
+> add the PCIe DT node in the Root Port in conjunction with the Port node a=
+s
+> below?
+>
+> pcie@0 {
+>         wifi@0 {
+>                 compatible =3D "pci17cb,1103";
+>                 ...
+>                 qcom,calibration-variant =3D "LE_X13S";
+>         };
+>
+>         port {
+>                 pcie4_port0_ep: endpoint {
+>                         remote-endpoint =3D <&m2_e_pcie_ep>;
+>                 };
+>         };
+> };
+>
+> This will also require marking the PMU supplies optional in the relevant =
+ath
+> bindings for M.2 cards.
+>
+> 3. Some M.2 cards require specific power up sequence like delays between
+> regulator/GPIO and such. For instance, the WCN7850 card supported in this=
+ series
+> requires 50ms delay between powering up an interface and driving it. I've=
+ just
+> hardcoded the delay in the driver, but it is a pure hack. Since the pwrse=
+q
+> driver doesn't know anything about the device it is dealing with before p=
+owering
+> it ON, how should it handle the device specific power requirements? Shoul=
+d we
+> hardcode the device specific property in the connector node? But then, it=
+ will
+> no longer become a generic M.2 connector and sort of defeats the purpose =
+of the
+> connector binding.
+>
+> I hope to address these questions with the help of the relevant subsystem
+> maintainers and the community. Until then, this series is *not* mergeable=
+ as a
+> whole.
+>
+> Testing
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> This series, together with the devicetree changes [2] was tested on the
+> Qualcomm X1e based Lenovo Thinkpad T14s Laptop which has the WCN7850 WLAN=
+/BT M.2
+> card connected over PCIe and UART.
+>
+> [1] https://lore.kernel.org/linux-pci/20251108-pci-m2-v2-0-e8bc4d7bf42d@o=
+ss.qualcomm.com
+> [2] https://github.com/Mani-Sadhasivam/linux/commit/d39b81b3ff1ecfb0d423b=
+4da0771925d41648b5a
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
+com>
+> ---
+> Manivannan Sadhasivam (9):
+>       serdev: Convert to_serdev_device() and to_serdev_controller() helpe=
+rs to macros
+>       serdev: Add serdev device based driver match support
+>       serdev: Allow passing the serdev device name to serdev_device_add()
+>       serdev: Add an API to find the serdev controller associated with th=
+e devicetree node
+>       serdev: Add modalias support for serdev client devices
+>       serdev: Skip registering serdev devices from DT is external connect=
+or is used
+>       dt-bindings: connector: Add PCIe M.2 Mechanical Key E connector
+>       Bluetooth: hci_qca: Add support for WCN7850 PCIe M.2 card
+>       power: sequencing: pcie-m2: Add support for PCIe M.2 Key E connecto=
+rs
+>
+>  .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  drivers/bluetooth/hci_qca.c                        |  20 ++
+>  drivers/platform/x86/dell/dell-uart-backlight.c    |   2 +-
+>  .../x86/lenovo/yoga-tab2-pro-1380-fastcharger.c    |   2 +-
+>  drivers/platform/x86/x86-android-tablets/core.c    |   2 +-
+>  drivers/power/sequencing/Kconfig                   |   1 +
+>  drivers/power/sequencing/pwrseq-pcie-m2.c          | 218 +++++++++++++++=
++++++-
+>  drivers/tty/serdev/core.c                          |  77 +++++++-
+>  include/linux/mod_devicetable.h                    |   8 +
+>  include/linux/serdev.h                             |  25 ++-
+>  scripts/mod/devicetable-offsets.c                  |   3 +
+>  scripts/mod/file2alias.c                           |   8 +
+>  13 files changed, 494 insertions(+), 27 deletions(-)
+> ---
+> base-commit: db81ec30672bb228cd7cd809edeeae661d621f2d
 
-The bug exists in my series (as pointed out in the the issue exists with), 
-but it is exposed by your changes with the VM_WARN_ON in your changes.
+git show db81ec30672bb228cd7cd80
+fatal: ambiguous argument 'db81ec30672bb228cd7cd80': unknown revision
+or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
 
-> Why are you replying to your own series with this patch?
-> 
-> You shouldn't reference non-upstream commit messages in general.
-> 
-> If the bug is in 7385dbdbf841, fix it in your series, then perhaps send a
-> suggested fix-patch to the appropriate patch in my series to make life easier
-> for Andrew.
-> 
+This series doesn't apply.
 
-OK, let me split it up then
-
-> As mine I think in this case was purely a mechanical replacement of function
-> calls I'm guessing it's a bug in yours? So I think this is probably the best
-> way.
-> 
-
-[...]
-Balbir
+Rob
 
