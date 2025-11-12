@@ -1,177 +1,125 @@
-Return-Path: <linux-kernel+bounces-896716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE0BC510B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DDAC510C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDB6D4F3182
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:02:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3897E4EB287
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AC32C08C2;
-	Wed, 12 Nov 2025 08:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C652F2603;
+	Wed, 12 Nov 2025 08:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rOoRZCkN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XCCBJQli"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5ED1E492A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34B329B793;
+	Wed, 12 Nov 2025 08:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762934562; cv=none; b=XfN2cwiUzIPTepy/K7eEeGSQ/1YDg+gqdScENx+uupHzqvSkpolsNOu+NyJaqtbYsInNsHyB4tqfE8lhPWCzYwmecpN7DMyOaDJchHyKgmeh2ssD3Ra0R5y29LF9860i7zz1JNnmtFaeBD/BAoiNGRhNhWM8DiTDyEyDvv6KMuI=
+	t=1762934706; cv=none; b=tdUBuK7IHf6LSgRRMmxr4iEx72ZN0IxWdnrmjRZsit42YjmGsO0m0PRiWo1wgedfjZQ9/WFPRhEKRcJVqTZdbTsy3rWHekuGdixq1CCHc5DhXHQNR36ulp+0+iSNIA7rvcOrAKDNEQPaRT7Wkdbkwh4PPWmhyGxIEWuHtZAiHa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762934562; c=relaxed/simple;
-	bh=Qq7OKFKaOUBXh6xDTU5tCQ+8K8lsX5ZboEN8OLYbUis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S63SZtyNyoU9O1E6igQS4egVsiYxBSrGh39WNp9PWfLaY1rLka1od93NP5HuI9otsRFCkb6+HIxBI6F4Nx+CNWY35uJMm2DzuLKyImSuNqwBWyKF2gk5JTK9X4l9oeUk3T7LzygkhV0+iyu7arFutNKTXmD9p+V2iwaExw8kmto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rOoRZCkN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC1hAHP026220;
-	Wed, 12 Nov 2025 08:02:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:to; s=pp1; bh=X9AiU2Tb5Ik89/jhJYNzh
-	Ooo0OyiNeU7lVH79d+OXhY=; b=rOoRZCkNPfnhIfSpARqg/D81QZXjhDWtVmISZ
-	i9YSFAyvEpvYevkKL17VHwxhe6ldy6sUd1Smatw8aqAybqgIq/s977DuV4gXhWPy
-	258fTQNzk5UvDTx429SnDPe2QbJhYNstEhOUmtDN5uw4jVuPOhDKPM9cjT4ubbLM
-	dNfCQ2DuQ5uRw25UNn7IbLyeJuqQPBdHAzjVmQJse2wb9I1ywlQSskO+k7zPzS20
-	SC/m26TamcoVBJ6zADfT6h4ojXZuajEzH8GeiiaAcWBdS8v9kN2kPPQR+fixc1Wk
-	B/tmBl+GOkf8f2CeidMFOOmGob3HMNqrWSFbIxyHYX3Xy8nYA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk899gc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 08:02:32 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC637lQ004735;
-	Wed, 12 Nov 2025 08:02:30 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aagjxy4fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 08:02:30 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AC82QaN43516216
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 08:02:27 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D41EA2004B;
-	Wed, 12 Nov 2025 08:02:26 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B521F20040;
-	Wed, 12 Nov 2025 08:02:24 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.126.150.29])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 12 Nov 2025 08:02:24 +0000 (GMT)
-Date: Wed, 12 Nov 2025 13:32:23 +0530
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Chen Yu <yu.c.chen@intel.com>, Doug Nelson <doug.nelson@intel.com>,
-        Mohini Narkhede <mohini.narkhede@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Shrikanth Hegde <sshegde@linux.ibm.com>,
-        K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v4] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-Message-ID: <aRQ_D1vyNfGVo-xK@linux.ibm.com>
-Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
-References: <6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
+	s=arc-20240116; t=1762934706; c=relaxed/simple;
+	bh=7fgngQWE5JqhzDwfazakRBCRmnVFrLFlRIkASUf9MlU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJhLTMS/YA09yzUNsvPgV8fzo1GbX6NZBUxvme2I50U1jpCE1Ya1r6YC3Yx2iFGfXzYrIKZg36ZbFuKDG+1JEyO8Pom3X/YON2Xui8tiI9jUvZOJ8AVRWj3rrH1Lj8h+O1NbtYDBDgZ2SpxCpB3n1GsOyfTKqZCrBv/Zqe37mQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XCCBJQli; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762934705; x=1794470705;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7fgngQWE5JqhzDwfazakRBCRmnVFrLFlRIkASUf9MlU=;
+  b=XCCBJQlicHH/Xo0eeuUcdT2stoJ2arQZpOwtU33uH6NKOLfomNjZHx+1
+   zLP8EQzUK3Z5fnJ9xJN1ZkcsRy3hTCwtrK46MAjNvcZlVaImyLIvDza6Y
+   /q8KpEsArBbVU4KmkZQ9g72ngIWfLQ2/VFYBISiVZ3pwDlU57me961/9S
+   Cx7uxgF2aO6klUn7qmTyLhfaa9h09z8jlM6oSpVSggTpNavaWSGUbGAql
+   Uj+p+yfa/ftUr0TCjusdT9qhU0Wu7WKEm9+TPxBPSheSwwSS6wZU5rBqt
+   +ItPAtxA1ZpRsU6bu3r6lxVUZ8opVXyGRxHyWig5gbmb9M4odtwFYsGbq
+   g==;
+X-CSE-ConnectionGUID: O+7tn57RR6yiVzrz+41PbQ==
+X-CSE-MsgGUID: /JM4zLgETfazU5PP2MMZiA==
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="49497723"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Nov 2025 01:05:02 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 12 Nov 2025 01:04:07 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 12 Nov 2025 01:04:07 -0700
+Date: Wed, 12 Nov 2025 09:02:35 +0100
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: phy: lan966x: Add optional
+ microchip,sx-tx/rx-inverted
+Message-ID: <20251112080235.c5iinfnketsunefy@DEN-DL-M31836.microchip.com>
+References: <20251110110536.2596490-1-horatiu.vultur@microchip.com>
+ <20251110110536.2596490-3-horatiu.vultur@microchip.com>
+ <20251110-unwound-award-a11d69b9da4f@spud>
+ <20251111095831.lp4kvdfcahtwgrqc@DEN-DL-M31836.microchip.com>
+ <58b0d712-48a4-4490-a63f-404716844557@kernel.org>
+ <20251111-ploy-dispersal-164ae403df4d@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfXx2y1LeaFrpVF
- aRAtQ2DH1ERbJjZZSaMzMp+SJlTmHOiMKQpiR+Ty3fah7x4/K5+xRXQttqDdDMk0xFypT1atgTA
- Z9yerqNGiyNdH1VSkTnzWPEAkneCHJEkEOmIygMcjTFD4stdAf0ymur0aXayBpqbY/k3fsfQzOQ
- c63fkWO+CvW9gGamJT0FWHSc6ChkKk+qAD7A6uJhmL4VFrmPkuZ821SXssuBCgN94wo9wRAeUai
- 2pozwT0s0yRnRNZfrNNsQ/qGOTIGMZ9baZT72njpHafOIjV+0kCbAitWHQCoLLOEd6HB7jcraFz
- kzzNxiLSnfeGCETdkBugoTvlva1Ehnzv5BsZXQu8aBJxDYXA2tp/Rtlv9mwMwYY2l4DalvDJ20p
- jlUrM3CrsiJT/BjJ5bc/RBETARM9og==
-X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=69143f18 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=8nJEP1OIZ-IA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=QyXUC8HyAAAA:8 a=VnNF1IyMAAAA:8 a=jY-qJ0Ov87OzJuVr7I4A:9 a=wPNLvfGTeEIA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: X9_X7_9LL_0-Bk0O5VVs50yWk0AKfmFW
-X-Proofpoint-GUID: X9_X7_9LL_0-Bk0O5VVs50yWk0AKfmFW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_02,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+In-Reply-To: <20251111-ploy-dispersal-164ae403df4d@spud>
 
-* Tim Chen <tim.c.chen@linux.intel.com> [2025-11-10 10:47:35]:
-
-> The NUMA sched domain sets the SD_SERIALIZE flag by default, allowing
-> only one NUMA load balancing operation to run system-wide at a time.
+The 11/11/2025 17:39, Conor Dooley wrote:
+> On Tue, Nov 11, 2025 at 11:06:02AM +0100, Krzysztof Kozlowski wrote:
+> > On 11/11/2025 10:58, Horatiu Vultur wrote:
+> > > The 11/10/2025 18:43, Conor Dooley wrote:
+> > > 
+> > > Hi Conor,
+> > > 
+> > >> On Mon, Nov 10, 2025 at 12:05:36PM +0100, Horatiu Vultur wrote:
+> > >>> This allows to invert the N and P signals of the RX and TX Serdes
+> > >>> signals. This option allows the board designer to trace their signals
+> > >>> easier on the boards.
+> > >>
+> > >> Why can't this just be done in software, debugfs or something like that?
+> > >> Maybe it's just your description is poor, but sounds like the intention
+> > >> here is to just switch things around for debug purposes.
+> > > 
+> > > I don't think it should be done through debugfs. As this describes the
+> > > board layout and I don't think someone will want to change it at
+> > > runtime to see how things behave. So maybe the description is poor.
+> > 
+> > You said it is purely for hardware designer to trace signals, so sorry,
+> > but that's not DTs purpose.
 > 
-> @@ -11757,17 +11772,26 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
->  		.fbq_type	= all,
->  		.tasks		= LIST_HEAD_INIT(env.tasks),
->  	};
-> +	bool need_unlock;
->  
->  	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
->  
->  	schedstat_inc(sd->lb_count[idle]);
->  
->  redo:
-> +	need_unlock = false;
->  	if (!should_we_balance(&env)) {
->  		*continue_balancing = 0;
->  		goto out_balanced;
->  	}
->  
-> +	if (sd->flags & SD_SERIALIZE) {
-> +		if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1)) {
-> +			goto out_balanced;
-> +		}
-> +		need_unlock = true;
-> +	}
-> +
+> If it is not purely some sort of debug helper, then please explain
+> better in your commit message.
 
-Moving the serialize check to sched_balance_rq is better since we only take
-when its really needed. Previously we could have skipped the balancing for
-the appropriate CPU.
+Yes, I will do so because I don't see how this is a debug helper
+functionality. I see it as changing the polarity of some pins and there
+are few examples in the devicetree bindings where pins change the
+polarity. Why I see it as changing the polarity is because the
+N(negative) will become P(positive) and the P(positive) will become the
+N(negative), so we just invert the signals.
 
->  	group = sched_balance_find_src_group(&env);
->  	if (!group) {
->  		schedstat_inc(sd->lb_nobusyg[idle]);
-> @@ -11892,6 +11916,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
->  			if (!cpumask_subset(cpus, env.dst_grpmask)) {
->  				env.loop = 0;
->  				env.loop_break = SCHED_NR_MIGRATE_BREAK;
-> +				if (need_unlock)
-> +					atomic_set_release(&sched_balance_running, 0);
-> +
+> pw-bot: changes-requested
 
-One nit:
-While the current code is good, would conditionally resetting the
-need_unlock just after resetting the atomic variable better than
-unconditional reset that we do now?
 
->  				goto redo;
-
-Otherwise looks good to me.
-
-Reviewed-by: Srikar Dronamraju <srikar@linux.ibm.com>
 
 -- 
-Thanks and Regards
-Srikar Dronamraju
+/Horatiu
 
