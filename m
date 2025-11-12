@@ -1,92 +1,273 @@
-Return-Path: <linux-kernel+bounces-898193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A390EC54896
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:01:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C051C54899
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DA9C349AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:01:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB2214E01CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C52D8393;
-	Wed, 12 Nov 2025 21:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA2C29BD94;
+	Wed, 12 Nov 2025 21:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5+xIqgv9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fSzHPXHh"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0BA274FE3;
-	Wed, 12 Nov 2025 21:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF56274FE3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981264; cv=none; b=j256s2HrWpwXH+CyfCkxiZyMUzHUQt9hR40un9rvKkRr5vKhGKYoTqT3XKeD7MKJljdKfh7VmuCYaNYduXZOiq3OLjstqixWQPIjjt2GnNEbp6h4e5iAVaPz2iXm31SOteBrjxKwR65QpBwj1IwJTMjYVdzX8aVhJAsSFkhWR9w=
+	t=1762981379; cv=none; b=jFudInFhV7jDNchP9TCUhdgMnRvDQDF+kf9dFvAAKQhrMEedjq2mhvSj3f0ql5LuZHeiFSmvbzpJVBOPftSrkxZV0M/xFvSxOJAFqKsUn+MDOQLEpUEBxIIpccWtnCB5G/mPisLnzeRePua7AP//fq0xRbccTsVxVb0PM7vrJbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981264; c=relaxed/simple;
-	bh=EsOwvL4Thqhjhc0+Ra5s4vQ2wmDA8xgL4cIEKhwJBqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiEkK5xniLazhWvUIMJ8kgGV6ClKaw6bjJUquzNn/Q38OWIf9Dg/Ca/lMTFGj04O06Nro82UXQxxUom/kkLX91qaDBOp2xnQ+GQ5PBwfId/hh+zfgHPgYULVYCf6Jn8Qp+nJSk9MV6FHaaX3dIJrJxed4b1sM4OGEmNV44ETBmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5+xIqgv9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=98pe/V5DMvJsxOpsKIQ5YwqunEzOsM5MU9xGKZX2zjM=; b=5+xIqgv9wPuJGa6U7WSrqf6gWr
-	r8OuKDUIdsAQKh3PEVOFiUGHx+9P3I7C02S4OKd6BmE1D4avUGzXa1kwFztegzbLRdIfItXmYRyoL
-	z+GMu30esK3PThRvrk0S3oKFCyysoGX53Wrlvi56Li9Dzc3ndGPe8iHXr1DRTc+MF5vw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vJHxS-00DmvF-Ss; Wed, 12 Nov 2025 22:00:50 +0100
-Date: Wed, 12 Nov 2025 22:00:50 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next 2/2] net: pcs: rzn1-miic: Add support for PHY
- link active-level configuration
-Message-ID: <686d84c6-c2ea-4055-897a-6377eec1fca0@lunn.ch>
-References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251112201937.1336854-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1762981379; c=relaxed/simple;
+	bh=S008Lw4+tWKvCnFaAtOZwn+7R8lZIQdLThlgQTZ6uQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOKjRFc23HHS2ZLvz2GAHJpknw5LXnuXObPKwTufVy8pmU2vTV7bqteOMgPAgYFkG3w+eloV2nSpGmMd2QJBhG6oEAAVjlIskSAB2RMiZJi7ZnXq39/K4N2uTB1B15CPjZNlIRqFB9Qnt1PDZWiUZ/SQWo2hCHn6c/me28dWkTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fSzHPXHh; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429c82bf86bso70488f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:02:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762981375; x=1763586175; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aBIabz0Db6BveiYXDEg+cZSjgtIsKw5jRCZOR+iEsKI=;
+        b=fSzHPXHh5Gi3ImVueSmI73rIH/7xmxsJdDUK2IosgGdaz7dxy3c0ZmTwGLFLPcLOK1
+         4qPP0V3xWQBT4V3KTprWOpquWsim5jgglKN2LzAKRtaijYpb3GZMVbxfV4qq2MqgJTPd
+         MPrxCxLO/dyFzG4zIQ9rxyON36wzNvUy3HhN4EodsnSWU6uuGqB8WpHUsFSGusDO3Jhs
+         pb0/qUdmvjx+5MW6hJnz9LkDuZDK2+kbKW8Fi9U5FXs204oFh47gXvasZ2D4iesiloHO
+         VjfwtwYE+8mdIFX87ySTH+EsHsxgi3rAjmizN4OSSoEmVKVFMKyVxop6rl9i45z6hVEw
+         m/BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762981375; x=1763586175;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aBIabz0Db6BveiYXDEg+cZSjgtIsKw5jRCZOR+iEsKI=;
+        b=S6X2w4sn/7UzBHGLA1wtTRkaOZNehBxCFWm2HqraiWjRXoeNoFgk9x4JxOWZk+W2OA
+         XvZbCGDryLt4vZoVZIH0ZKvS78/YbAt2bbNHDiKUCxU/EXXGtnCoX1kETLwZhrLrytLP
+         zarLc8FrYptCY/ggD1C7Kd0Ph8S2FVjhxelMK6+AddmKRpV9GDSE9urbyqb51G3E5L88
+         9KDVz4cuJWHR0y27DVqGUcCyBpS+RCM8hmjLfJzcMArG9RVTr1f9ZeCyIp1iivccLJNm
+         kT+Jin+N0RxFsnY8t/RGj6SyBY1qCsOjdEb5xWfirHWUIoIvZZLsYwsas926s83KR7qA
+         sqOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxQDGf0wNvJXQHIM+hOnqKojrTzu5MrlPo4kVZ8A+7XIlRemgVtB8b29RKjs5InBeKmFAzZrwgFkkxoLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIdZBFk5DWiT3li7XziJtsy/Ug8l9UjxlUCd7n70nvUE1ETJrI
+	TmxUfK6AoASVFCytKy8I8ggPn+aWj9ZijGEmkj22Khy5sxooRVVbvMOF5A7uKwetEko=
+X-Gm-Gg: ASbGncssqPhXAM4vngdhU0yfnOPLgGB3BVsau9ozJYX3kuQBDQY/MCxUsiv0N3F3/SV
+	49002GhxuZIIphVVXzSbyM8aQ5jnoqS220bNZMsOoxF+ScFYDNKwHbRo4pW0zi9YQ9hVPfAB4/H
+	h9i2f5vlTCoPA/V1dtqFTggKdcTh8xkE3NF3xghJv6aNo98x9UdOEv/4/0Nil42xDZ6qeZz9tNi
+	36sR6bPsuy036zOgwyadIqkCHekR7J2F8w8uy+4oSl4Ct837EQ/mjFtQNfQUmjqx0QSLRCQdqyV
+	N7iXWV5fToFg0P0QsU3C5gXNdCRjSpy799cyX7MQmrySX+74AVQ2tANUoUJLjIMhIUhIAROLuLA
+	MN1r0Rug8nFsTu+m/iPIsBv31tk0ACJFyCnfEGdK5yjSPQF4f6dGI4o494SjEbfffpY0yrM1jk1
+	lZR/hjKGvj99Llh4JlvkHLOK9ckU/q
+X-Google-Smtp-Source: AGHT+IHm22Yvc2GqP11XLe1NvY4BraBr9btTJwcbhvLq4uR8Z7mY89xMnx39BVD4TNkfmZc1R4drnA==
+X-Received: by 2002:a05:6000:4008:b0:42b:4219:269 with SMTP id ffacd0b85a97d-42b4bdb0029mr4394852f8f.41.1762981375052;
+        Wed, 12 Nov 2025 13:02:55 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2b10c8sm733025ad.64.2025.11.12.13.02.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 13:02:54 -0800 (PST)
+Message-ID: <7de34b24-f189-402a-98f9-83e595b53244@suse.com>
+Date: Thu, 13 Nov 2025 07:32:48 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112201937.1336854-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/8] btrfs: add a bio argument to btrfs_csum_one_bio
+To: Daniel Vacek <neelx@suse.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251112193611.2536093-1-neelx@suse.com>
+ <20251112193611.2536093-4-neelx@suse.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20251112193611.2536093-4-neelx@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 08:19:37PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+
+在 2025/11/13 06:06, Daniel Vacek 写道:
+> From: Josef Bacik <josef@toxicpanda.com>
 > 
-> Add support to configure the PHY link signal active level per converter
-> using the DT property "renesas,miic-phylink-active-low".
+> We only ever needed the bbio in btrfs_csum_one_bio, since that has the
+> bio embedded in it.  However with encryption we'll have a different bio
+> with the encrypted data in it, and the original bbio.  Update
+> btrfs_csum_one_bio to take the bio we're going to csum as an argument,
+> which will allow us to csum the encrypted bio and stuff the csums into
+> the corresponding bbio to be used later when the IO completes.
+
+I'm wondering why we can not do it in a layered bio way.
+
+E.g. on device-mapper based solutions, the upper layer send out the bio 
+containing the plaintext data.
+Then the dm-crypto send out a new bio, containing the encrypted data.
+
+The storage layer doesn't need to bother the plaintext bio at all, they 
+just write the encrypted one to disk.
+
+And it's the dm-crypto tracking the plaintext bio <-> encrypted bio mapping.
+
+
+So why we can not just create a new bio for the final csum caculation, 
+just like compression?
+
+Thanks,
+Qu
+
 > 
-> Introduce the MIIC_PHYLINK register definition and extend the MIIC driver
-> with a new `phylink`
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Daniel Vacek <neelx@suse.com>
+> ---
+> Compared to v5 this needed to adapt to recent async csum changes.
+> ---
+>   fs/btrfs/bio.c       |  4 ++--
+>   fs/btrfs/bio.h       |  1 +
+>   fs/btrfs/file-item.c | 17 ++++++++---------
+>   fs/btrfs/file-item.h |  2 +-
+>   4 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+> index a73652b8724a..a69174b2b6b6 100644
+> --- a/fs/btrfs/bio.c
+> +++ b/fs/btrfs/bio.c
+> @@ -542,9 +542,9 @@ static int btrfs_bio_csum(struct btrfs_bio *bbio)
+>   	if (bbio->bio.bi_opf & REQ_META)
+>   		return btree_csum_one_bio(bbio);
+>   #ifdef CONFIG_BTRFS_EXPERIMENTAL
+> -	return btrfs_csum_one_bio(bbio, true);
+> +	return btrfs_csum_one_bio(bbio, &bbio->bio, true);
+>   #else
+> -	return btrfs_csum_one_bio(bbio, false);
+> +	return btrfs_csum_one_bio(bbio, &bbio->bio, false);
+>   #endif
+>   }
+>   
+> diff --git a/fs/btrfs/bio.h b/fs/btrfs/bio.h
+> index deaeea3becf4..c5a6c66d51a0 100644
+> --- a/fs/btrfs/bio.h
+> +++ b/fs/btrfs/bio.h
+> @@ -58,6 +58,7 @@ struct btrfs_bio {
+>   			struct btrfs_ordered_sum *sums;
+>   			struct work_struct csum_work;
+>   			struct completion csum_done;
+> +			struct bio *csum_bio;
+>   			struct bvec_iter csum_saved_iter;
+>   			u64 orig_physical;
+>   		};
+> diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
+> index 72be3ede0edf..474949074da8 100644
+> --- a/fs/btrfs/file-item.c
+> +++ b/fs/btrfs/file-item.c
+> @@ -765,21 +765,19 @@ int btrfs_lookup_csums_bitmap(struct btrfs_root *root, struct btrfs_path *path,
+>   	return ret;
+>   }
+>   
+> -static void csum_one_bio(struct btrfs_bio *bbio, struct bvec_iter *src)
+> +static void csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, struct bvec_iter *iter)
+>   {
+>   	struct btrfs_inode *inode = bbio->inode;
+>   	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+>   	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
+> -	struct bio *bio = &bbio->bio;
+>   	struct btrfs_ordered_sum *sums = bbio->sums;
+> -	struct bvec_iter iter = *src;
+>   	phys_addr_t paddr;
+>   	const u32 blocksize = fs_info->sectorsize;
+>   	int index = 0;
+>   
+>   	shash->tfm = fs_info->csum_shash;
+>   
+> -	btrfs_bio_for_each_block(paddr, bio, &iter, blocksize) {
+> +	btrfs_bio_for_each_block(paddr, bio, iter, blocksize) {
+>   		btrfs_calculate_block_csum(fs_info, paddr, sums->sums + index);
+>   		index += fs_info->csum_size;
+>   	}
+> @@ -791,19 +789,18 @@ static void csum_one_bio_work(struct work_struct *work)
+>   
+>   	ASSERT(btrfs_op(&bbio->bio) == BTRFS_MAP_WRITE);
+>   	ASSERT(bbio->async_csum == true);
+> -	csum_one_bio(bbio, &bbio->csum_saved_iter);
+> +	csum_one_bio(bbio, bbio->csum_bio, &bbio->csum_saved_iter);
+>   	complete(&bbio->csum_done);
+>   }
+>   
+>   /*
+>    * Calculate checksums of the data contained inside a bio.
+>    */
+> -int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
+> +int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async)
+>   {
+>   	struct btrfs_ordered_extent *ordered = bbio->ordered;
+>   	struct btrfs_inode *inode = bbio->inode;
+>   	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+> -	struct bio *bio = &bbio->bio;
+>   	struct btrfs_ordered_sum *sums;
+>   	unsigned nofs_flag;
+>   
+> @@ -822,12 +819,14 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
+>   	btrfs_add_ordered_sum(ordered, sums);
+>   
+>   	if (!async) {
+> -		csum_one_bio(bbio, &bbio->bio.bi_iter);
+> +		struct bvec_iter iter = bio->bi_iter;
+> +		csum_one_bio(bbio, bio, &iter);
+>   		return 0;
+>   	}
+>   	init_completion(&bbio->csum_done);
+>   	bbio->async_csum = true;
+> -	bbio->csum_saved_iter = bbio->bio.bi_iter;
+> +	bbio->csum_bio = bio;
+> +	bbio->csum_saved_iter = bio->bi_iter;
+>   	INIT_WORK(&bbio->csum_work, csum_one_bio_work);
+>   	schedule_work(&bbio->csum_work);
+>   	return 0;
+> diff --git a/fs/btrfs/file-item.h b/fs/btrfs/file-item.h
+> index 5645c5e3abdb..d16fd2144552 100644
+> --- a/fs/btrfs/file-item.h
+> +++ b/fs/btrfs/file-item.h
+> @@ -64,7 +64,7 @@ int btrfs_lookup_file_extent(struct btrfs_trans_handle *trans,
+>   int btrfs_csum_file_blocks(struct btrfs_trans_handle *trans,
+>   			   struct btrfs_root *root,
+>   			   struct btrfs_ordered_sum *sums);
+> -int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async);
+> +int btrfs_csum_one_bio(struct btrfs_bio *bbio, struct bio *bio, bool async);
+>   int btrfs_alloc_dummy_sum(struct btrfs_bio *bbio);
+>   int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
+>   			     struct list_head *list, int search_commit,
 
-You probably want to avoid the name phylink. It is well know that is
-all about PHYs , SPFs, PCS, etc.
-
-	Andrew
 
