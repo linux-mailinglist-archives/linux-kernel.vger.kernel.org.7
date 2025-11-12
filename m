@@ -1,86 +1,111 @@
-Return-Path: <linux-kernel+bounces-897883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B269C53DDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 630CDC53DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C5C4342E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:13:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B2343935
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38442347FCA;
-	Wed, 12 Nov 2025 18:13:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F12C34A3DC;
+	Wed, 12 Nov 2025 18:13:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5238F3446D7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D0E34575A;
+	Wed, 12 Nov 2025 18:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971187; cv=none; b=e8ltypDNrF/Mu9ZnjgBKLHP4SOCY8mGaSTiXv/6RetHNoNSx148jzFP7CP+v684Kx/aouNifOwRD8Fbef27G+NNSODfNXhmEsGK5HcWOgnN1SsKyWHCw7tpX1PkgyP52zunEQ+F5Zl2c9CNoPXwFd33nVdp7HhSoG4CWpbMp79Q=
+	t=1762971205; cv=none; b=kSSK+j2yyoYcwqr5UNqmPy99GGfjtm9kwWTw/mq0A4mNiN5hnw8chefilLLuEJ7YORIl4acNJuw37JYbj1NSrAxaSmOm5m+IJIBUQ47sQ1zvDhiD2eI5Sz8BQ/8OFS44RcizROr7RIY1v7j0sJQpLReefZL8dM/NzcwjtraJp/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971187; c=relaxed/simple;
-	bh=dmTa8DgMalTHSPG6uQDMMuVrD6hoo0vZszOjPtTKdrw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iSwXFkmKYbDwFGabNqdd7DTnTWXpj+KRAitTelrqvep1Ylpfz7DYUWobjWC/dU5BdfXedxsFrwR34TmgulyKiZb3cK7sadvzq6uT2rzNIRf3ZHOa0n+959sLasVOLW45jvbKxBxs/DA8mfGyIC1k2yz6KWhrKzOPjbn0CZbethE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-433770ba913so12118345ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:13:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762971182; x=1763575982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6cI5tAKSczZf9g3HvdUl77xAsXhseO22zbPgWSzokiU=;
-        b=ljq7bWeU+xe+f7AF52UFHz0ajIsHHA8DN1ZeW45KbcaXAPZrqnN4urz87l7exreNun
-         P0YhpqapXlp4TDw8NFrgaxAxiE/oLFwqxmNYG5eHKRG+XzqddfMWh98o/WFlllvyL+ap
-         0zGmum9Ko+rbWdKnqWfpzoe2vLslsine+1R/HIbeeYsr/q3kLrI1th+suvpIWhwjRAEo
-         BrbTy4to0Y5RVLmvGa4QVCKeMHp1/v6ufEyhfljSzjc5HC7vLlQRhOihansqm/Hj/3w5
-         E1w3wQ/By8eBbLcYYYq9JaKcpJ/aAXJHvLKNyCTTqlMNOYDy7y8dYRzoWEvWGdVoTdxn
-         Z9iA==
-X-Gm-Message-State: AOJu0YxAl/txr+wldRZ5awFuWpby5rwPwd6kPqjb6WfYZJ+jZG0EIasT
-	lAHta5FX9eVx4L8ZCMYpiHPsLUUgYsjSodKJF+aaO2SzfVSZWFinakFJUlJ/1BftUocwuKK2F4A
-	LMYjIQzeQj1Nuj/b1LNETMh9SSsgtAY/TbFAMhTUBRJvXlw0twS37FeyjgeI=
-X-Google-Smtp-Source: AGHT+IGJ/DfiJcLtU9uiK1wNUU/LskefIA0yur3zKMAr0+H9F175WVQv15RqW9eDgWl7wV2OuVDttnHkD/39h9WnALYmWHtBYXPj
+	s=arc-20240116; t=1762971205; c=relaxed/simple;
+	bh=/1PJ1i8JUkAb12Mt1GVCayhNAx3IxRmlR4TZVdJPJEE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TE90o3pj2qFuoWDcZ9sI2hfVTEPKnZul+ThG/kO3i4ji4jEQIplsR5oyOVONtsYHfO5J0oN5/CQr7GUAIr/HSd3swczAbWsW8L6YtJSW8MrRkFysxmDB8nS5ZpJ1i3xlqIw/+ohGTr/bwauwPsSfeZHEdy+9rcByZ3xx79ZzegU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6BMg65WmzJ46bC;
+	Thu, 13 Nov 2025 02:12:47 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id ADCDA1400D9;
+	Thu, 13 Nov 2025 02:13:20 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
+ 2025 18:13:19 +0000
+Date: Wed, 12 Nov 2025 18:13:18 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
+ Elisei" <alexandru.elisei@arm.com>
+Subject: Re: [PATCH v4 14/26] genirq: Add affinity to percpu_devid interrupt
+ requests
+Message-ID: <20251112181318.000064be@huawei.com>
+In-Reply-To: <20251020122944.3074811-15-maz@kernel.org>
+References: <20251020122944.3074811-1-maz@kernel.org>
+	<20251020122944.3074811-15-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1489:b0:433:258e:5a92 with SMTP id
- e9e14a558f8ab-43473dddf19mr52959885ab.32.1762971182432; Wed, 12 Nov 2025
- 10:13:02 -0800 (PST)
-Date: Wed, 12 Nov 2025 10:13:02 -0800
-In-Reply-To: <aRTDbeqyL7YhIyKf@rpthibeault-XPS-13-9305>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6914ce2e.a70a0220.3124cb.000c.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xlog_cksum
-From: syzbot <syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Mon, 20 Oct 2025 13:29:31 +0100
+Marc Zyngier <maz@kernel.org> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> Add an affinity field to both the irqaction structure and the interrupt
+> request primitives. Nothing is making use of it yet, and the only value
+> used it NULL, which is used as a shorthand for cpu_possible_mask.
 
-Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Tested-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
+used is NULL
 
-Tested on:
+> 
+> This will shortly get used with actual affinities.
+> 
+> Tested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
-commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e81c12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0fd60646ed018d
-dashboard link: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13482884580000
+With trivial bit of documentation added
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  include/linux/interrupt.h |  5 +++--
+>  kernel/irq/manage.c       | 14 ++++++++++----
+>  2 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 0ec1a71ab4e84..52147d5f432b3 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -125,6 +125,7 @@ struct irqaction {
+>  		void		*dev_id;
+>  		void __percpu	*percpu_dev_id;
+>  	};
+> +	const struct cpumask	*affinity;
+
+This structure has kernel-doc that needs an update.
+
+>  	struct irqaction	*next;
+>  	irq_handler_t		thread_fn;
+>  	struct task_struct	*thread;
+
+
 
