@@ -1,197 +1,193 @@
-Return-Path: <linux-kernel+bounces-896338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F4BC5023E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:45:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8622AC50241
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 178764E4507
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91313AB39A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196B81F09AD;
-	Wed, 12 Nov 2025 00:45:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291F1EB5DB;
+	Wed, 12 Nov 2025 00:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K9DgNGF2"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011028.outbound.protection.outlook.com [40.107.208.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDF033F3;
-	Wed, 12 Nov 2025 00:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762908302; cv=none; b=PkN7aLwAhMMDVe8uCSPpoEyTAw5W9XZKCzs8G3iwwmw8GKmgpEZx+Sy16RIq7l0fuUCPJUWWGW+W0vJS/BlvTTd9BTzOiz2ddQMCge1t9CUBk5nRL57D57WyeIgq26D1Ltp58rDOHuVV4n19DJTpVklAS/eAOvkKygbbIOWhGcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762908302; c=relaxed/simple;
-	bh=a1BOEu2pejaHCZiL5XfB9WFufKW13R6QgWRNxhGxDXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sdSippNTYnK5MXOdR0rWGGhsbw5FjiWZxYAComDjrCYHOdxqhXmX50Q8mImAifsA75wn5J+DEic9Zclisa0Bha008rrKxQmChZLWzTSppUFjlz9pI9xhyt6TzHbLdROsqEdNxFGKgmuaGltlB9MIZSFMkA/ad6Ei+AV4qFLXjFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5l6516SfzYQtfT;
-	Wed, 12 Nov 2025 08:44:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id B836C1A0BB3;
-	Wed, 12 Nov 2025 08:44:56 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP3 (Coremail) with SMTP id _Ch0CgAX4BGH2BNpdqizAQ--.9685S2;
-	Wed, 12 Nov 2025 08:44:56 +0800 (CST)
-Message-ID: <b94504d5-0a2b-48f4-a445-f2c83898e8d0@huaweicloud.com>
-Date: Wed, 12 Nov 2025 08:44:55 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15361339B1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762908311; cv=fail; b=GP46lQSFl8oWQbCz4XLpCUuu8Px0CXyF0Rtb/v/JUFLBnrRqnikWR/eXzdqk8nHgOJ0ek3NZ2b/yq4jL7Z4kcoBRJuHQSpm1/Lj/UYua6WcKuM7Fqw3ntlFbvtVxjLrNk82p5fIhbAtluylT7TYqhFIwKBbmKv6wyXRVLMwnxJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762908311; c=relaxed/simple;
+	bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=n+Fwvpxlk/uJobh4brt3aGpZaBuuB9zdvMACT+msIm40TDzoFeFh4080gw+8yLZm0z2rmlB3ofs2B9sroR7mI0WFh2pnPRqvgp9MiSu342w4s2spa68+3iazo/W2J+YQt5vUOT2e4nPGHOaNENO57JW3ZTxRE/vHGAJHKWJS1Yo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K9DgNGF2; arc=fail smtp.client-ip=40.107.208.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q1Xoj56241jdY1oFsOvcE2ut3sn/fDKfff9JtaGyGQ9Unp6cxy/j3U0GfTei2ZKKW1Yuf/FdCnlMZ+mCQy55rzmkixOh6IDWMiW1Fct4TYfqM1f4bHlYFbxEI7aKM3UpueZAETdnZgGqbXWAu4SrCzyWtTZR2YPOsu7OhaA6z98cduiKj9meyDdCQgqnAM3u+ZuQI1+GcfbZ73J7JKKAlqZxvQjjdd3M+Tr5lR+UzNpdhQpMrQrK2u+vAjnfU7eX3SldJqLX9FmTKytIX8lxbu3lEYO5iP//npzqfphyNclWEad/rzXOWUMAgYVycm+CzUfAtaONG6q79YY7uKJwXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
+ b=gJF9Dk/VVvRS3UwdrN/0uecq/OMx9r2uABQWRbvjedBCfcwHZKmA3PTvK/NcNp2y0s+Cxgc0n6n5+ZQePHyzIm+NS7H3aLoxS5wAxuyWraMDWfI2Ed3M4kGdUoQ2sqyfXM28tZ4ETQ+PanD6qObY0b4Nef70XGya2283TRWlkfgqpy4Lm1wMRnz1OLLURQvTrs3wriOwGQNmDkLnDYb/dV/3zOdO3t1oylKQDjrNKrN3H68r6d1b3/VvF1OSx3oaB4YotpSowP5mlJV4mut2/VMCZpoOq219Z5kxqG36d5wPkHsKmKAMJfz0ojL59Q7dQZpp1xsTi8eKPxUq4RD9fA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
+ b=K9DgNGF2esiWmywNQrHUjLPba1B6+Lr9o9sNu2MBsiHH2MdJe94ps97hyDPmcmq9yvHZlaOlIk1YhuzndZQjxlP9yI/lHLLs/K06kEYWIrQibgxpoFvuhM2g+wNEKLq++Hkq1NPcKeiOvqnG2BF38lNwaBWleibwJQnvyIeyfAvxmuEi6k1BVUZJNH+edAelHZpMUpN7su+e/BCVRBEtaTp8ir0sqMRXGEZ4KbdLyKM9TuY+/Elg5E90GSGe0bATPcEySpyoqI7PRm1aUMOCPtimEi5ekKsvUqkLk+1VPOP6CqE+IurZmepkEJF8TVQ47bPco6TIsf/me8cWa/1mgg==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by IA1PR12MB9030.namprd12.prod.outlook.com (2603:10b6:208:3f2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 00:45:04 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
+ 00:45:04 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: "alistair23@gmail.com" <alistair23@gmail.com>, "kbusch@kernel.org"
+	<kbusch@kernel.org>, "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de"
+	<hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>, "hare@suse.de"
+	<hare@suse.de>, Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alistair
+ Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v2 4/4] nvme: Allow reauth from sysfs
+Thread-Topic: [PATCH v2 4/4] nvme: Allow reauth from sysfs
+Thread-Index: AQHcU2VTAf4mi6UwdUGzcgokUO+MjbTuNF+A
+Date: Wed, 12 Nov 2025 00:45:03 +0000
+Message-ID: <69f44147-3c9e-41b5-9b26-5e235a418f6c@nvidia.com>
+References: <20251111234519.3467440-1-alistair.francis@wdc.com>
+ <20251111234519.3467440-5-alistair.francis@wdc.com>
+In-Reply-To: <20251111234519.3467440-5-alistair.francis@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|IA1PR12MB9030:EE_
+x-ms-office365-filtering-correlation-id: 444829be-2677-4bb0-a6c7-08de2184b809
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|10070799003|38070700021|7053199007;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?M1lGMU9YMXcyakU1dTBoUVFmVFdPZzZPWnNPRm5VODhaQkU5b1R4NlVYaGk1?=
+ =?utf-8?B?Z0RGdnpWd1VWMjBNVXlGOGs2c1hVN3E0U3pKOVdrUXRMUXBPWFpCa1FXMFRR?=
+ =?utf-8?B?ajMyRFBpYzgwTHlUTllVYk5neVhwN2gzeXFFeVZISXExbnhYVHEwb0U1bndw?=
+ =?utf-8?B?Y2prUmRGaEhjYk1KbGt2U09PUHVpbktIYzZYUStMdUdxaHphYml0K1cxSlhN?=
+ =?utf-8?B?aTB3dy9Jc3pzMEd1U1o1RVRCQmRGSlJENGFLbzNKeVA0QmZHYnJZWThZOFJk?=
+ =?utf-8?B?bCtqU1NsK1I2aFNad2d0ZzQ3ekVkMFhLK29QV3JEazJDMENSQVJab29CUTJu?=
+ =?utf-8?B?TWY3N09BS2xsbW9HVmova3ROajJIQUNvZnExOE1VUDY3M1YxSld0c2ZpSEFC?=
+ =?utf-8?B?NWVGL0lLdDN2bTdvaEZDY2xRK3gyK0NsRGMvQkhrbUFpNFg2ZWNVYTlDZWdi?=
+ =?utf-8?B?WHRBRi9mRk1qakwxc0E3SGw2WjZjdEFUNjRrdXdEZnkwUEdmQVdQZmdxZDBE?=
+ =?utf-8?B?eHVzTUk3QkpRdWVsS3o0QS94OEpYMkk2Z2trOC9WNWFlTWdnK1p0Nk9HV2Jn?=
+ =?utf-8?B?VTVTaFlvcEFVYVo3YnlEYW56QnNLN2Y3K0xobk9lUEZtRGZSQnFRTnFyVTlk?=
+ =?utf-8?B?Nk95eGtCQWhpSE1qNkl1eTlVa2VUZDEybXBWV01yR3Vlb3M0MiswZWxCWWoy?=
+ =?utf-8?B?ZGdjTDJvd1FFUFJqdWd5YklmdUFNbG8xMzFKLzlJWkFwb2huT1gvVkxkVENQ?=
+ =?utf-8?B?VkVNMURHNXE3WS9xKzJyOWYxUytTTVhCT0h2UlBoSVlTdER2M1RPblhBUmhm?=
+ =?utf-8?B?NUZhMDY5ZU9GNWgzVUc2ejllbnNpMDFyVkE1QW4xUnhoblpUSFdtelRZczdO?=
+ =?utf-8?B?NDV4a05NdWFVYmlaZ2cwZGdxMXVHSXdoT0xBdzdnMElDbE5vZlEvc1VsSEdl?=
+ =?utf-8?B?M0pud3FCUXRNd3ZCQ3k3WXFYK3ovUkNTMzhndVYxYnZwK25KMXVjTzc0Undn?=
+ =?utf-8?B?c0UvOTlSWEh5VDJqcXFHdlhkakxKZVBPK202cE5KR0d4dExIMWVENEc4Rmsx?=
+ =?utf-8?B?dFIyZElHZEFORmhJVm8vU05sUG9WVEdRb0NTS2txY2NUMkJGdkd2am1taGxr?=
+ =?utf-8?B?c2Fad0EzS0VtaHJkdEVDYnc2V09zUTIxNFlreVpoRFRuUGZ6L0JkbXlOY051?=
+ =?utf-8?B?ZG83bkhMQ0dsd0wzWG9ud3d0ckFoZ2VTTURzTGJydlNCUm15WTZZeUs1WmxH?=
+ =?utf-8?B?QlJRdzBiWERrVjFKelJlMS9iTG40OEtZUm1TaVhVVkNzcW9sOXJvQ2xUeUF2?=
+ =?utf-8?B?bWc1UVBPWGxsRlJlWEVIWGhGNnFXT0ZoTkhibzJ0MDh0RnpDOXAyU00yUFBk?=
+ =?utf-8?B?NGJrUG5LNnNseGYyQktCcVEzVm9KY0ljZ0hWV1Y3TnlTanRqWkZUZkQvcHJj?=
+ =?utf-8?B?MWVPNHhtNVZEcTcyYWdSV2hzU0VRK0J3U3lKY1kxUFhBWkFIbFFBRklvd2Js?=
+ =?utf-8?B?b0NsekJGVGhhTVQ0dFcreE44Z0RVdnNpUGZRbHY4Q3Z3L2x3VE1QZTc3WGlt?=
+ =?utf-8?B?OGNQU1NIdzlrVUpVbnRuUkJBVGpLbHc4bFFyditERUJVQzFQcW9GQ0lrZUpj?=
+ =?utf-8?B?aEh0WTgzLytFNCtZRGtvWXZreWdvVVMvWHVLbzZUcnVYZHgyTDNRQmwrYXdt?=
+ =?utf-8?B?ejNPNmJDeDdLZ0k3WmhpMzVQcFA4TXk5UFI2b1F4M0FRUXpwaUJPNWI1aWw2?=
+ =?utf-8?B?dkFIK0xrYlIyN3JTQTRUOENZNHdpd1hhM2VBS1NDczlLV0NmRVFiTlZpSmQ2?=
+ =?utf-8?B?dzI0YVJVYWoxOWM3Vm8zT3dpSTlMTzFLOXJ5UzU3MFBKOWxlMGZtenhHZUs0?=
+ =?utf-8?B?RnZGRnRvWkFYL1NVbHdWenFSc1Y4RURGc3JIOHZaVUFROTIxTjE3NERXWmNx?=
+ =?utf-8?B?ZG5MSTFQUk4yRGlYL3k0cmJRbEw0aUI3QjdQcXpmS25BNC81UkFicmxMWTcy?=
+ =?utf-8?B?aFBxank3RnZtays1ZGEwRHB5b3ZZSVBLTmt2N3RXT0YzZ2E3TWF1Z01ySEVQ?=
+ =?utf-8?Q?HYwgDT?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003)(38070700021)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NEZBSDcxZ1A0U3FCYndxdjRlcmh4TzB0NjRGeHJ2RFFjMmQrdWh6MXZiYytD?=
+ =?utf-8?B?TlFobW5Zbk5zd2tndG9lbS9LNWJ5MDFwSHptNUt5VWFDZ2RXVWJYUjBpQkRp?=
+ =?utf-8?B?dFQxeml6MGdCNXNVWVA3V2E0RGpGUGRwYTg2ZWExYzNGTUhJNXJEMEd0dHh4?=
+ =?utf-8?B?WHZ5bVNLOXBiYmJWNDRMbnZzZDYyZUIvZVQ2UUd6aCt4Z2M4YWpXbmVFUFVp?=
+ =?utf-8?B?TjVjTTlacUdMYXcxdUhwYTBzc3czZlYySTljU2swUlI3VmtlM3RqWVFNOGtz?=
+ =?utf-8?B?T2kwTFcyd0pQaXEwWlBHQXV4YzZEZkl5K2JOZWVMUDhqRHgvT0VvSjg4WjYr?=
+ =?utf-8?B?NlpzcUJLNHl4V0kwZFR6ZjVGMytkMGJuUkRoSy81QzIrcVpnTFNEM1FWcG1q?=
+ =?utf-8?B?aGtxM3Y1SWR3S2VaZmlZSC9qOGxnNFRSQjVHZXdKM00rV1I3cHh6NExWcnVE?=
+ =?utf-8?B?dERuQ1R2a1RnaVI2U0lYM3l2TkJ3YWJDbWN1eXowanZvSjVvZGMyT3ZPZUxB?=
+ =?utf-8?B?Rm1xb1VQY0pvNmFPM3c0Mlh0NEczRTRVOUl3YVU3SzdsWmwyTlY1OWw0L3pa?=
+ =?utf-8?B?a0c5Y0FnT0FSamkrdE81QmRQV1V3QjdaelYrQk5YbnU4T2ZvVWkvVmMvR3Jr?=
+ =?utf-8?B?ZWw1WGNiU1JqOUVaNFJET0Iwekt3T2dmNDBjcjZXL1dJVmZkczE0ODZpeWMv?=
+ =?utf-8?B?NVpnTFNoVmN0YmlzaUhteFhGOTI4Wk1vWGtqclpISjNqODVWV2thWVdrVmtV?=
+ =?utf-8?B?V2V4Sys4dzFJTHdvSEZyM3BEU1RkVUhTVExKYjBwTHJyRkRrUElCbnFrd21v?=
+ =?utf-8?B?M2w5Qyt2Z2RSRkFIMEdlYzBuR0dvZjFXS2kwY1d1OUUzSTNzR2VCU0pCZVpV?=
+ =?utf-8?B?SWRwMlB0WW5UOE1vOVEvN2I1R0xzeldML2tGUkxuSE03c0hSU1RXeERvUi9Q?=
+ =?utf-8?B?cm1nM0FVU0RldjJzOTFNbWp0Szh2SitqWlNPbFo1QldsZm5JRmsyZFh3QS9T?=
+ =?utf-8?B?ZGFidHp2NWNhRFBSY29ldmxuSVJ4aW9MNFJGVVphbFlmeHZuc0pnVzN3bFJk?=
+ =?utf-8?B?WGFVMjhwWmd4ZFFpQk5XZVRuU0IwbXhQblh0ZUl4Y2dOZWQvMnAxZTEvc2hF?=
+ =?utf-8?B?aHdld1JBWFNLd3BMRmRnMnUyRHBhQTFRM0NHczA4YStUWjhMS2kvZ0gvdGlD?=
+ =?utf-8?B?QjliSHVGK3RFTHVmelZxLzY1T0lCSzVYd0FSeFBRa3BCVFh6Mlc2VjcwajBl?=
+ =?utf-8?B?d3ZHbTFieE1Ubjg5M09Ha1dFSldabytQVE03ODdidEhhNHhja1AwVXN2K3ZD?=
+ =?utf-8?B?SE9VNG5Ccyt0K0xmUlcvd1RXSDdtMUx4UVpRWU83c0dKUlFSMit4UzdJVmhM?=
+ =?utf-8?B?VTNtQzFlaGpCSTUyc2FXZ3FpdDdzNkxmVjBaZy90elZ0ZC9JbDA3UWNGeXVL?=
+ =?utf-8?B?QnhBcG9ISlVrWU9hUzZBZ0dHcWVSY1JySFU0RGt3YnQ0TGsyWVp5Zkh3T05S?=
+ =?utf-8?B?ME5nM1I1VTI5WUY0RkVHRHpadDc3M0R1THRaMDNMWjN0UCtwVHFkWnpPQ0xI?=
+ =?utf-8?B?ZkhqZm1SS0dvQ2hnU0RFckZqNWltSXpSRTY4M3N6aHV0OEs0c2diUmp6dDRM?=
+ =?utf-8?B?Q0NjTnlPRS8wU3dzZHVvWlhTU2FmSzNSekxuQ3ZQWFZkeGtGcGh1bEFPWU81?=
+ =?utf-8?B?NDdkYnF1WWNpdGpKbHhUWWIrUDVCWnZCclI0MkNYd09WcGF3ZlUxY1Nsdjdm?=
+ =?utf-8?B?Z3JSU0t3aWpqdzBsT1RWeDllcnRFMW9XN2NZelRLamZhbFlpZW5DZk9WamVH?=
+ =?utf-8?B?Yno3NHhFNVVKMnFmQ2RCbFE1b3d0bklWZ1l6VTRMODAwVnJKWld0UGYyeGY3?=
+ =?utf-8?B?Vy9OZWNoZFc4Wm1rdHhMblpoT2I4bHpBT1dGbHNybllnZ0x6WkZEUlowUWVz?=
+ =?utf-8?B?TWpRL1BtdXN2QXhsNHFXQkg2YXZaNFpDUmpuKzdlWVhtbnhLUHdCTUo2ODlU?=
+ =?utf-8?B?d3hhZHhLb25vRE9JeG81RE5YSTNpOEFUM0tCcnJPWnZVWjhGc0dCWlFrNStT?=
+ =?utf-8?B?TXhkdkR0eStwZzlqUW1jS2UyT1FLcnZtakR0c29rODhKakhJRDdhdzY4WXhi?=
+ =?utf-8?B?THZ3OU1KTy9TTGh2clFFdDhGUjYyQUxQMWVSMGNGYmtYc3JxNjNFdTVFcnVC?=
+ =?utf-8?Q?0yGMrMTUnqKATeGP+DMm3mj2joB9pMQ6oqbSVs9Btpu/?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0A941315CA5817428A3F8CE32C69401F@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2 2/3] cpuset: remove global remote_children list
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251111132429.950343-1-chenridong@huaweicloud.com>
- <20251111132429.950343-3-chenridong@huaweicloud.com>
- <307e7687-4320-4b2b-a552-5d8409522cfe@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <307e7687-4320-4b2b-a552-5d8409522cfe@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAX4BGH2BNpdqizAQ--.9685S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JrWDZr4fZr4xGrWktr47Arb_yoW7Cr4UpF
-	1kGFWrJFW5Krn5C347JF1Uu3sxtw1DJ3WDtw1fXa4rJF43ZF1j9Fyj934q934UZ3ykGry5
-	ZFn8ZrZ7ZF17AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 444829be-2677-4bb0-a6c7-08de2184b809
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 00:45:04.0163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Kh/3roZ74jBmg+8ROS4f07WoNW25VBGgDFXZIDpnhsiWoP99pCY+e9hHB3y+PDzzP0Z5GnKzrAKX4/OmbfvmuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9030
 
-
-
-On 2025/11/11 22:56, Waiman Long wrote:
-> On 11/11/25 8:24 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> The remote_children list is used to track all remote partitions attached
->> to a cpuset. However, it serves no other purpose. Using a boolean flag to
->> indicate whether a cpuset is a remote partition is a more direct approach,
->> making remote_children unnecessary.
->>
->> This patch replaces the list with a remote_partition flag in the cpuset
->> structure and removes remote_children entirely.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset-internal.h | 10 +++++++---
->>   kernel/cgroup/cpuset.c          | 13 ++++---------
->>   2 files changed, 11 insertions(+), 12 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
->> index 5cac42c5fd97..01976c8e7d49 100644
->> --- a/kernel/cgroup/cpuset-internal.h
->> +++ b/kernel/cgroup/cpuset-internal.h
->> @@ -158,6 +158,13 @@ struct cpuset {
->>       /* partition root state */
->>       int partition_root_state;
->>   +    /*
->> +     * Whether cpuset is a remote partition.
->> +     * It used to be a list anchoring all remote partitions — we can switch back
->> +     * to a list if we need to iterate over the remote partitions.
->> +     */
->> +    bool remote_partition;
->> +
->>       /*
->>        * number of SCHED_DEADLINE tasks attached to this cpuset, so that we
->>        * know when to rebuild associated root domain bandwidth information.
->> @@ -172,9 +179,6 @@ struct cpuset {
->>       /* Handle for cpuset.cpus.partition */
->>       struct cgroup_file partition_file;
->>   -    /* Remote partition silbling list anchored at remote_children */
->> -    struct list_head remote_sibling;
->> -
->>       /* Used to merge intersecting subsets for generate_sched_domains */
->>       struct uf_node node;
->>   };
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index c90476d52f09..aff3ddc67393 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -94,9 +94,6 @@ static bool isolated_cpus_updating;
->>   static cpumask_var_t    boot_hk_cpus;
->>   static bool        have_boot_isolcpus;
->>   -/* List of remote partition root children */
->> -static struct list_head remote_children;
->> -
->>   /*
->>    * A flag to force sched domain rebuild at the end of an operation.
->>    * It can be set in
->> @@ -219,7 +216,7 @@ static struct cpuset top_cpuset = {
->>            BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
->>       .partition_root_state = PRS_ROOT,
->>       .relax_domain_level = -1,
->> -    .remote_sibling = LIST_HEAD_INIT(top_cpuset.remote_sibling),
->> +    .remote_partition = false,
-> I forgot to notify you that this init is also not needed. Anyway, this is a minor issue.
-
-Hmm, I should have noticed that. This could be fixed if we send a related patch in the future, but I
-don't think it's worth submitting a standalone patch.
-
->>   };
->>     /*
->> @@ -1572,7 +1569,7 @@ static int compute_trialcs_excpus(struct cpuset *trialcs, struct cpuset *cs)
->>     static inline bool is_remote_partition(struct cpuset *cs)
->>   {
->> -    return !list_empty(&cs->remote_sibling);
->> +    return cs->remote_partition;
->>   }
->>     static inline bool is_local_partition(struct cpuset *cs)
->> @@ -1621,7 +1618,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->>         spin_lock_irq(&callback_lock);
->>       partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->> -    list_add(&cs->remote_sibling, &remote_children);
->> +    cs->remote_partition = true;
->>       cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
->>       spin_unlock_irq(&callback_lock);
->>       update_isolation_cpumasks();
->> @@ -1651,7 +1648,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
->>       WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
->>         spin_lock_irq(&callback_lock);
->> -    list_del_init(&cs->remote_sibling);
->> +    cs->remote_partition = false;
->>       partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
->>       if (cs->prs_err)
->>           cs->partition_root_state = -cs->partition_root_state;
->> @@ -3603,7 +3600,6 @@ cpuset_css_alloc(struct cgroup_subsys_state *parent_css)
->>       __set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
->>       fmeter_init(&cs->fmeter);
->>       cs->relax_domain_level = -1;
->> -    INIT_LIST_HEAD(&cs->remote_sibling);
->>         /* Set CS_MEMORY_MIGRATE for default hierarchy */
->>       if (cpuset_v2())
->> @@ -3874,7 +3870,6 @@ int __init cpuset_init(void)
->>       nodes_setall(top_cpuset.effective_mems);
->>         fmeter_init(&top_cpuset.fmeter);
->> -    INIT_LIST_HEAD(&remote_children);
->>         BUG_ON(!alloc_cpumask_var(&cpus_attach, GFP_KERNEL));
->>   
-> Reviewed-by: Waiman Long <longman@redhat.com>
-> 
-
-Thanks.
-
--- 
-Best regards,
-Ridong
-
+T24gMTEvMTEvMjUgMzo0NSBQTSwgYWxpc3RhaXIyM0BnbWFpbC5jb20gd3JvdGU6DQo+IEZyb206
+IEFsaXN0YWlyIEZyYW5jaXM8YWxpc3RhaXIuZnJhbmNpc0B3ZGMuY29tPg0KPg0KPiBBbGxvdyB1
+c2Vyc3BhY2UgdG8gdHJpZ2dlciBhIHJlYXV0aCAoUkVQTEFDRVRMU1BTSykgZnJvbSBzeXNmcy4N
+Cj4gVGhpcyBjYW4gYmUgZG9uZSBieSB3cml0aW5nIHRvIHRoZSBzeXNmcyBmaWxlLg0KPg0KPiBl
+Y2hvIDAgPiAvc3lzL2RldmljZXMvdmlydHVhbC9udm1lLWZhYnJpY3MvY3RsL252bWUwL3Rsc19j
+b25maWd1cmVkX2tleQ0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbGlzdGFpciBGcmFuY2lzPGFsaXN0
+YWlyLmZyYW5jaXNAd2RjLmNvbT4NCg0KDQpMR1RNLA0KDQpSZXZpZXdlZC1ieTogQ2hhaXRhbnlh
+IEt1bGthcm5pIDxrY2hAbnZpZGlhLmNvbT4gLWNrDQoNCg==
 
