@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-897356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEBFC52C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:45:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978C4C52B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0643B3BFBCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:12:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBC224F9621
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1579274B2E;
-	Wed, 12 Nov 2025 14:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09924283CB1;
+	Wed, 12 Nov 2025 14:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NBAPIM7N"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3z1kXNq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C9D2777FD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97D2765F8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762956747; cv=none; b=PJCnv7ZFB+wdeAQFUYtEguDFlaSd+tgVVi4p0QLQfv98wjEUdlwbCe76nCKIheUppesvbDpgX3FuiHjIRSvIDqS0Ivkj2GOhJtiero5LxJMNDtYrSWNxfce/Yt1hkwCngQ0qhOk0WnjemE0IwHMhARU2nzK3lK+oofrA94Ffgdk=
+	t=1762956783; cv=none; b=ZSFaCRwpR5Kwbd5AqAMCQEpyOmXWXal6refi2eTWQJ/qDn0moXr7nGwRBy5XgFsIFL7WKsalT25fBfDdMF4AIHSIaS4qQtDkjV+esMWnq1Jwhk07J4T3oydrbnxOQujdnpzygyuv2GFTLbgQX9fDWqbfId7Gp1m9U/Pesvlf8YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762956747; c=relaxed/simple;
-	bh=F5X9qOXsyM1mUEK+0vABJYOFK47Bb8X+n/aMsCtriIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A56a3dG+EdGl0JO5ShUNKiMC9qjGQaHwMzGx9JMwVlQ/pkY3EkaBiSPxzI6/XIQm0VhuKI/a9adONGQkjj4ysxI6JB+kV7DxNK9NN+o6nfmyBHyT+Jr2FX6RLfUtFDbXKDi2rlzZzq0aBEaC1/60zgU9kX1toIOeEGnbf6FQa7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NBAPIM7N; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <886723c3-ff9e-43cf-a1da-021f1ff088ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762956732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2tHlJLaEX8wPWCv+MNAdT//lMOMThqQ+egSg5dpPwhM=;
-	b=NBAPIM7NTnL6Oke3uHuDtlpxqnMu3Xz3yGytuxOV7DgudvQDwuTGz6mOaoPfoK0PQTvnh/
-	suji2xrIIIlzJHOqVIZkz8QDsnDs7XISZj2IAr97irI8JQ5Xr3fc1brGHTpBAhQa3qqSz/
-	dmcuHLs5Ee1M4dhKetJ/zRuxKpUcN38=
-Date: Wed, 12 Nov 2025 14:12:05 +0000
+	s=arc-20240116; t=1762956783; c=relaxed/simple;
+	bh=Ixbv4BGamCo33/1GEVBV1PEy7SjtNIjzoYC1a27dUmE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=XJdDGNueqx1r2qb5a8ULl7xgJPRFGy2id9d4nU7bz/s/219etq2Qn+P/DsvZEbzTQR3WRtUgrF6KLZgKU09zRfzHGS/39d/QhxXnzgQrIw8zmw0mC6seIcSNwOp/xTCF9h48MD6EQgmlLnSAzOK8up6QC+VkwIuSnSf9L06r+K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3z1kXNq; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762956781; x=1794492781;
+  h=date:from:to:cc:subject:message-id;
+  bh=Ixbv4BGamCo33/1GEVBV1PEy7SjtNIjzoYC1a27dUmE=;
+  b=a3z1kXNq5ElVXZJd4TV8Y4/Zd8ZNXTDtD5mp1CSyoZDn/mhW8hwiRB7E
+   Kvavb4t38pUf5xukJNVUX9robOaWFRsxkF6A16k2XyKCtm3oLKShiEUYc
+   GO0yafTQYFMN3dTfIft3G535JumOGTg1M66iWDuBtLcI2kVfMLbmjMIXO
+   yXiaSof8O6kIzkaKvO2y6EnFoL1dzlsnpP6ulf+jS6mXpkj6Y80SBV9Zt
+   5EDmCVVtsJljgDoj2tKfD64AfxP/H9JdZBEBmCBUBTbqS2LVZ9rRE6r4k
+   AEMwUcTKJ3ISzvHCJyV4Lrq2sJevmFlZOga9SGlSpJ7iBZVKN6/NMN68d
+   A==;
+X-CSE-ConnectionGUID: dSEJRso9SfmkelLjjYWtyw==
+X-CSE-MsgGUID: eGqik7r8RMCfaDUJCjSyBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64724897"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="64724897"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:13:01 -0800
+X-CSE-ConnectionGUID: z0UV6wutR5myibXRcWWhfQ==
+X-CSE-MsgGUID: ljR0OhMKRKSLJHC/KC1rfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="212622073"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 12 Nov 2025 06:13:00 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJBak-0004Gv-0H;
+	Wed, 12 Nov 2025 14:12:58 +0000
+Date: Wed, 12 Nov 2025 22:12:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
+ 7f8fcc6f09fb732745b3252f481def76b18fb99c
+Message-ID: <202511122252.qLX91w3F-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 1/6] dpll: zl3073x: Store raw register values
- instead of parsed state
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Petr Oros <poros@redhat.com>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Michal Schmidt <mschmidt@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20251111181243.4570-1-ivecera@redhat.com>
- <20251111181243.4570-2-ivecera@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20251111181243.4570-2-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 11/11/2025 18:12, Ivan Vecera wrote:
-> The zl3073x_ref, zl3073x_out and zl3073x_synth structures
-> previously stored state that was parsed from register reads. This
-> included values like boolean 'enabled' flags, synthesizer selections,
-> and pre-calculated frequencies.
-> 
-> This commit refactors the state management to store the raw register
-> values directly in these structures. The various inline helper functions
-> are updated to parse these raw values on-demand using FIELD_GET.
-> 
-> Reviewed-by: Petr Oros <poros@redhat.com>
-> Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-> ---
->   drivers/dpll/zl3073x/core.c | 81 ++++++++++++-------------------------
->   drivers/dpll/zl3073x/core.h | 61 ++++++++++++++++------------
->   2 files changed, 60 insertions(+), 82 deletions(-)
-> 
-> diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
-> index e42e527813cf8..50c1fe59bc7f0 100644
-> --- a/drivers/dpll/zl3073x/core.c
-> +++ b/drivers/dpll/zl3073x/core.c
-> @@ -598,25 +598,22 @@ int zl3073x_write_hwreg_seq(struct zl3073x_dev *zldev,
->    * @zldev: pointer to zl3073x_dev structure
->    * @index: input reference index to fetch state for
->    *
-> - * Function fetches information for the given input reference that are
-> - * invariant and stores them for later use.
-> + * Function fetches state for the given input reference and stores it for
-> + * later user.
->    *
->    * Return: 0 on success, <0 on error
->    */
->   static int
->   zl3073x_ref_state_fetch(struct zl3073x_dev *zldev, u8 index)
->   {
-> -	struct zl3073x_ref *input = &zldev->ref[index];
-> -	u8 ref_config;
-> +	struct zl3073x_ref *ref = &zldev->ref[index];
->   	int rc;
->   
->   	/* If the input is differential then the configuration for N-pin
->   	 * reference is ignored and P-pin config is used for both.
->   	 */
-> -	if (zl3073x_is_n_pin(index) &&
-> -	    zl3073x_ref_is_diff(zldev, index - 1)) {
-> -		input->enabled = zl3073x_ref_is_enabled(zldev, index - 1);
-> -		input->diff = true;
-> +	if (zl3073x_is_n_pin(index) && zl3073x_ref_is_diff(zldev, index - 1)) {
-> +		memcpy(ref, &zldev->ref[index - 1], sizeof(*ref));
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
+branch HEAD: 7f8fcc6f09fb732745b3252f481def76b18fb99c  memory-barriers.txt: Sort wait_event* and wait_on_bit* list alphabetically
 
-Oh, it's not obvious from the code that it's actually safe, unless
-reviewer remembers that N-pins have only even indexes.
-Have you thought of adding an abstraction for differential pair pins?
+elapsed time: 4941m
 
->   
->   		return 0;
->   	}
+configs tested: 61
+configs skipped: 1
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                   allnoconfig    gcc-15.1.0
+alpha                  allyesconfig    gcc-15.1.0
+arc                     allnoconfig    gcc-15.1.0
+arm                     allnoconfig    clang-22
+arm64                   allnoconfig    gcc-15.1.0
+csky                    allnoconfig    gcc-15.1.0
+hexagon                allmodconfig    clang-17
+hexagon                 allnoconfig    clang-22
+hexagon                allyesconfig    clang-22
+hexagon     randconfig-001-20251109    clang-22
+hexagon     randconfig-002-20251109    clang-22
+i386                   allmodconfig    gcc-14
+i386                    allnoconfig    gcc-14
+i386                   allyesconfig    gcc-14
+loongarch              allmodconfig    clang-19
+loongarch               allnoconfig    clang-22
+loongarch   randconfig-001-20251109    clang-22
+loongarch   randconfig-002-20251109    gcc-15.1.0
+m68k                   allmodconfig    gcc-15.1.0
+m68k                    allnoconfig    gcc-15.1.0
+m68k                   allyesconfig    gcc-15.1.0
+microblaze             allmodconfig    gcc-15.1.0
+microblaze              allnoconfig    gcc-15.1.0
+microblaze             allyesconfig    gcc-15.1.0
+mips                    allnoconfig    gcc-15.1.0
+nios2                   allnoconfig    gcc-11.5.0
+nios2       randconfig-001-20251109    gcc-11.5.0
+nios2       randconfig-002-20251109    gcc-8.5.0
+openrisc                allnoconfig    gcc-15.1.0
+parisc                  allnoconfig    gcc-15.1.0
+powerpc                 allnoconfig    gcc-15.1.0
+riscv                   allnoconfig    gcc-15.1.0
+riscv       randconfig-001-20251109    gcc-9.5.0
+riscv       randconfig-002-20251109    gcc-8.5.0
+s390                   allmodconfig    clang-18
+s390                    allnoconfig    clang-22
+s390                   allyesconfig    gcc-15.1.0
+s390        randconfig-001-20251109    gcc-14.3.0
+s390        randconfig-002-20251109    gcc-8.5.0
+sh                     allmodconfig    gcc-15.1.0
+sh                      allnoconfig    gcc-15.1.0
+sh                     allyesconfig    gcc-15.1.0
+sh          randconfig-001-20251109    gcc-11.5.0
+sh          randconfig-002-20251109    gcc-15.1.0
+sparc                  allmodconfig    gcc-15.1.0
+sparc                   allnoconfig    gcc-15.1.0
+um                     allmodconfig    clang-19
+um                      allnoconfig    clang-22
+um                     allyesconfig    gcc-14
+x86_64                 allmodconfig    clang-20
+x86_64                  allnoconfig    clang-20
+x86_64                 allyesconfig    clang-20
+x86_64                        kexec    clang-20
+x86_64                     rhel-9.4    clang-20
+x86_64                 rhel-9.4-bpf    gcc-14
+x86_64                rhel-9.4-func    clang-20
+x86_64          rhel-9.4-kselftests    clang-20
+x86_64               rhel-9.4-kunit    gcc-14
+x86_64                 rhel-9.4-ltp    gcc-14
+x86_64                rhel-9.4-rust    clang-20
+xtensa                  allnoconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
