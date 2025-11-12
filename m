@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-896678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A9DC50F5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:36:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368C8C5111E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA653AB93F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A453B034C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF42C21E7;
-	Wed, 12 Nov 2025 07:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB95D2D5C7A;
+	Wed, 12 Nov 2025 08:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+Uy7WT2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="XJunkJy9"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C8927603F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49380192B75;
+	Wed, 12 Nov 2025 08:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932713; cv=none; b=tJxc3g2pHuJ6fm+ez/dpbfmUU8sRj6e3k+uiPWJjzf89VCQCp4h9qytdgyCAhiGOAkUNiTWTGyy98Wz4qHvi6AbRFurhVg1z0Vm9Wuw4J+oIZES8zLxZEIE5E+yNTemJrDQRTR1us8XK5j3TvWbu97yPVBNxInFJpofQ5PqyhuQ=
+	t=1762935362; cv=none; b=W8cuEEW3TsYoU5J6uBA3STJTnAdad3dGx92Z66e4Xz7bs46bGKSvjPgQ9ZqSMAJgSIxgxkL7mom86cY97YsU6NTr5vFq14cLD3ap8/ba9n3QQeG1v0Xt3pdGyR5E4s1QnoHDcxhnDQGv7pMW0uazSFscDMKNe2Ma+QF9i5EqaTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932713; c=relaxed/simple;
-	bh=mukyEYZU61HPqq/3z4Of9cSo849HTj7DUQobL9BMk4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h8Kb/woM3kXxW0uQWMj/s0eAgfvlhzXwcw+Kz+on2cYw9kswZqsdd4iir23+PdJGF1wHTQrKyD5X3mIsbvm/+h/HJZpqifzIp+9pb8XvxMqxiixudXYf+5gaXRLO+WRgBh32Xjuy/Y3aeiedQFsb8OWaZVgCQr/6hkywSRzrvHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+Uy7WT2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07D9EC116B1;
-	Wed, 12 Nov 2025 07:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762932712;
-	bh=mukyEYZU61HPqq/3z4Of9cSo849HTj7DUQobL9BMk4g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t+Uy7WT2gYSfhVWGNM8ovrPlC07Dndkkgj4V5Du4KyJq/FQ+1aHq7jEJBBSklk1hs
-	 uwxvniCj+ekwRrNOyEQ2CfhJ+q23NjTi2AooXxGSAXnCuSj4UwkaqqO/KkhqWxzl4e
-	 dZJYI5eaMIIylUUjumS2mt5gCIXUEaK91A2WY2go9XURMKfvmR1NHN/4A5DmQVN+bO
-	 8y+XqI95NAtaaqDN9D6n+IwaEjHEXY1D1LZS6MCSfay0HQvOLDVpPqMOG2BeyukAZ4
-	 pb30at2kxnSqpXakHja4Vyfh+17DKs9+WdJdJMJVqxScOEj4xN8eP36Ob+TTkZTQdb
-	 O05ud4uuReC8Q==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	tursulin@ursulin.net
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/sched: Document racy behavior of drm_sched_entity_push_job()
-Date: Wed, 12 Nov 2025 08:31:39 +0100
-Message-ID: <20251112073138.93355-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1762935362; c=relaxed/simple;
+	bh=9lFttpgfwCxR4/Gzin67BEKLTz/k+N1q4qSXGFW78SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EyRvbgiZ3oqvZTZQYvYHX8iJi2Xo/H4sjPZ0TyBC8mQFVmv1GRTVrb5EFkzRpAzv34IX4Rf/alH8GLj31TdLhC8nYEVfzeKRSzQgLuXObBOIqlWlkCM84V1P+pbhXituC9q69tmGb2VoUp6T94yiqcorNxvazfiQicxhN0Ai9vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=XJunkJy9; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Reply-To; bh=m6Hg0b+Cx/Cb0iRwkxFZolAmLia6/s0EULb1X9hfULQ=; b=XJunkJy9awKsvjlf
+	rqrR1kFrwJ3DlpDrrY200/436zpH7zeTGPItqM5PcBKQrzxCsHu6j7h0vA2wnMKAK9Dk/TW/Fo7lX
+	cgzT4wZP/UkFcnUk363bJ+Kknc+kDyDGnK4+iYfqKVlV4fdFix8rKFnoWFgR5xa32SFa5M32eD2U/
+	mosJ9ZR4egncphjUfpHa57S7oxb8ZKUAuUeWDOUUl6/KLuE4IzQQlCA9sqILcL2W5eeTqhe++x2mz
+	MXVFHeY/9Qa3ENw2/TFIV7wl954b+S6u1Sc1TRLOCxdgjC3obxz/8nC9qRVZcKaCLBUfaffb+JakP
+	RgCW/YSdDdPrsFerfg==;
+Received: from [63.135.74.212] (helo=[192.168.1.241])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1vJ5Ly-003ih7-9S; Wed, 12 Nov 2025 07:33:18 +0000
+Message-ID: <0bdd6ab6-bfdd-400e-99b6-cfb186dfcc3e@codethink.co.uk>
+Date: Wed, 12 Nov 2025 07:33:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] pwm: dwc: add of/platform support
+To: dongxuyang@eswincomputing.com
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+ krzysztof.kozlowski+dt@linaro.org, greentime.hu@sifive.com,
+ jarkko.nikula@linux.intel.com, u.kleine-koenig@pengutronix.de,
+ linmin@eswincomputing.com, Ben Dooks <bjdooks@googlemail.com>
+References: <20230907161242.67190-7-ben.dooks@codethink.co.uk>
+ <20251110090508.739-1-dongxuyang@eswincomputing.com>
+Content-Language: en-GB
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <20251110090508.739-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: ben.dooks@codethink.co.uk
 
-drm_sched_entity_push_job() uses the unlocked spsc_queue. It takes a
-reference to that queue's tip at the start, and some time later removes
-that entry from that list, without locking or protection against
-preemption.
+On 10/11/2025 09:05, dongxuyang@eswincomputing.com wrote:
+>> The dwc pwm controller can be used in non-PCI systems, so allow
+>> either platform or OF based probing.
+>>
+> 
+> Hi Ben,
+> 
+> We're currently working on a platform driver for the DW_apb_timers PWM
+> controller used in our EIC7700 SoC. We noticed that you submitted a patch
+> for a DW PWM platform controller back in 2023, and we would like to kindly
+> ask about its current status. Do you have any plans to get it merged
+> into mainline?
 
-This is by design, since the spsc_queue demands single producer and
-single consumer. It was, however, never documented.
+Hi, I think we got a lot of the code re-ordering in but never finished
+as the project came to an end and our customer decided never to ship any
+actual silicon.
 
-Document that you must not call drm_sched_entity_push_job() in parallel
-for the same entity.
+I am not sure how well our patches will apply now, but could have a
+quick look at this to see how much is left to do.
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/gpu/drm/scheduler/sched_entity.c | 3 +++
- 1 file changed, 3 insertions(+)
+Unfortunately we had to delete everything at the end of the project
+so I do not have any sort of test setup.
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index 5a4697f636f2..b31e8d14aa20 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -562,6 +562,9 @@ void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
-  * drm_sched_entity_push_job - Submit a job to the entity's job queue
-  * @sched_job: job to submit
-  *
-+ * It is illegal to call this function in parallel, at least for jobs belonging
-+ * to the same entity. Doing so leads to undefined behavior.
-+ *
-  * Note: To guarantee that the order of insertion to queue matches the job's
-  * fence sequence number this function should be called with drm_sched_job_arm()
-  * under common lock for the struct drm_sched_entity that was set up for
 -- 
-2.49.0
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
+https://www.codethink.co.uk/privacy.html
 
