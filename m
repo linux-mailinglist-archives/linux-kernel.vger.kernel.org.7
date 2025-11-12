@@ -1,192 +1,213 @@
-Return-Path: <linux-kernel+bounces-896416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391E9C50504
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:14:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AC2C50582
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91AF54E6115
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B326918956F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC300230270;
-	Wed, 12 Nov 2025 02:14:16 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEA299AAC;
-	Wed, 12 Nov 2025 02:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C712224245;
+	Wed, 12 Nov 2025 02:27:40 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DBD946A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762913654; cv=none; b=qwcjtcr9o0pHNEpVfXR1ZT8R+U1IMJV5Jh63r8McYpUZPYz4wkHjZ/ujnDE3Pf/inra7m4qu1MFFj22NLf31trSM//r62cKgmWToKzLWEWyrgcKpQ9xoZAEbn+G+6NRGeEjQG4hPs7w919Sr2tpLiGphwdRK1vkHvzngjDcyuUk=
+	t=1762914459; cv=none; b=nzXLxiN+mC8EgvkhDff6iKHouindkJe2Ja4iExgNR6mdarhxmdAsyvFrMwp/DEHt5q+X1SkNMQFuzUH8MyIKXk9EQkKGHtwhuva/pPWOJEAX+13COMf+pYGNp/1MUuc2b6LBBElz5oUBUGuCk6GLFcEoCzOF/GgiuFtqeOOvp3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762913654; c=relaxed/simple;
-	bh=+EVal716qGzAn0CzKjGD5B5F08wc4sjxGE0eoLp4SE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KV8U8Nq6f8WODjIy4cS/l3A1eiNzuBeQU5kjO7VOWwV7qn1G+2I9DCRNHdfN9tM2FequBTpkCN4whzpUSc/jLtIGuDToZOGeYFA8YPHrMi9eZggrx+MRbOLlECXYLvf3WBPv5QsgzWduCra4Awm/INesgioVt5fX+RGrgL5R8YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3ce0d764bf6d11f0a38c85956e01ac42-20251112
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED
-	SA_UNFAMILIAR, SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:1d481d92-dc9e-4306-8a81-f16ef82f1896,IP:10,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-INFO: VERSION:1.3.6,REQID:1d481d92-dc9e-4306-8a81-f16ef82f1896,IP:10,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:re
-	lease,TS:15
-X-CID-META: VersionHash:a9d874c,CLOUDID:60b87a7d78fa585f0569a02cddf450d5,BulkI
-	D:251112100717OSVPKDLB,BulkQuantity:1,Recheck:0,SF:19|66|72|78|102|850,TC:
-	nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 3ce0d764bf6d11f0a38c85956e01ac42-20251112
-X-User: sunshaojie@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <sunshaojie@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 907620271; Wed, 12 Nov 2025 10:13:54 +0800
-From: Sun Shaojie <sunshaojie@kylinos.cn>
-To: longman@redhat.com
-Cc: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	shuah@kernel.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Sun Shaojie <sunshaojie@kylinos.cn>
-Subject: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
-Date: Wed, 12 Nov 2025 10:11:20 +0800
-Message-Id: <20251112021120.248778-1-sunshaojie@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762914459; c=relaxed/simple;
+	bh=itxUb1eFMAvrLgpK89fwpB44rWb+15T2pEMWpDArxTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJRg0jdV3i3pOmqlQbzrLAHZ3q+dHTZRYgezCZnJ/mC0JNxbQO8x0WvbtuKpG31viBHzplgkCHFxiZH7b8bkXF72xJVWAPMghqfoM6K/4cBO89+Zc1/flNkLo2U0dCgeCZwDp+78FdbJUz/nxCFBIh0evVQyiBWLpcez0I/C/CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-03-6913ed06a8b5
+Date: Wed, 12 Nov 2025 11:12:17 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: "Garg, Shivank" <shivankg@amd.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
+	willy@infradead.org, matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, gourry@gourry.net,
+	ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	vkoul@kernel.org, lucas.demarchi@intel.com, rdunlap@infradead.org,
+	jgg@ziepe.ca, kuba@kernel.org, justonli@chromium.org,
+	ivecera@redhat.com, dave.jiang@intel.com,
+	Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
+	rientjes@google.com, Raghavendra.KodsaraThimmappa@amd.com,
+	bharata@amd.com, alirad.malek@zptcorp.com, yiannis@zptcorp.com,
+	weixugc@google.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com
+Subject: Re: [RFC V3 6/9] mtcopy: introduce multi-threaded page copy routine
+Message-ID: <20251112021217.GA45963@system.software.com>
+References: <20250923174752.35701-1-shivankg@amd.com>
+ <20250923174752.35701-7-shivankg@amd.com>
+ <20251020082800.GA28427@system.software.com>
+ <88ae0dfb-b10f-4829-8aa7-a681612704fa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88ae0dfb-b10f-4829-8aa7-a681612704fa@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUURSAuTOzM+Pi1m21uuqPYKICISspOFGGIdYEQkFFmERNOeaQbrKa
+	uUGwYomutZpl6vpI8VH5zh6u9kDNcq0ws6wtHymmpLBahr20h6tE/vu457sf58fhae05lSev
+	6GJkvU6KEFg1o3a4Fq5mHW7KWmseQG51BQtviodoaLDvgZILYzRkZnQgsL2NZ2Gy+icNP3pb
+	ObidZYDsLBuCssLXLLTezufg02gYdNwxq6DO2M/By4ZcFvoq/qigzXKdgaHBUha+mr3gvdkf
+	MkwjNDh6MhlILL5BQUt1HQXtFV84uNhZwEJOvBlBfY+NhvHXnzmY+j4TmuwxU1BeEQ45j/o4
+	f0E82/mLFXOMLxix3tLLiQW1J8SUxJeceKbFoRJvXvMWi+6NUGJtWTIr1k6kc6Ita2pGHdgo
+	nk8YY8XPQ+8YcfxBFytW3+pidrnvV28OlSOUWFm/ZsshdfjTpC9MVI0Q15nWwBhRNjEhF57g
+	9STRdJ/5x0WXJ2aZwSvIaM431sksXkXs9h+0k93xSpLSWEqZkJqncQlLSp+kzn5ww0Ek5UqV
+	yoR4XoOB9FvDnI4WNyFyvuO5yulo8CLSlv1h1qexN7H/HqGcPo29yNXfvPPZBW8ixskkysmL
+	8XLSeKeVmtutkic18fQce5Cma3YmDWHLvKplXtXyv1qA6DKkVXSxkZISsd4n3KBT4nyOHI+s
+	RTM3Unp6OsSKJjp2NyPMI8FVQwbdFK1Kio02RDYjwtOCu2b6MFa0mlDJcErWHz+oPxEhRzcj
+	L54Rlmp8v54M1eKjUox8TJajZP2/KcW7eBoRve7SjncHXrklPGZ2hrp2Lds7rHqWVq63Zi5s
+	M6UP+m3w1bHyAfTxYdrdYXerTfPIHxUkL+HvVxlcQgINZ4P6PZnukmXp9/blbX+8tZuTAoSs
+	qaMJnN/AqMVzk0bQBQTHLJgI7vFw9BJLd3CXwhdmbPu0MTBMqhn3b0+tzE8VmOhwaZ03rY+W
+	/gKDnI9jHwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUyMcRzA/Z6X3/N03PZzJb/pD7m8bI3DxL4tI3/1zGt/GJvZ6vDkjrsr
+	d5Uy7LyOWufyVl2lTCUV5Ux0MyWsi40UiYqiZtd24VLeEp3N9N9n3+/n8/3rK7KqIW6GqDcl
+	y2aT1qDGCk6xPurIAuwN1C+y+cKgoLoKw8uSfhZcHRuhNHuQhZxzLQjcrw5hGK7+wcL37iYB
+	buamQ16uG0HFxXYMTTcvCPBpIAHuFzbz0FJr4+GWtUeANlcBhjdVv3lodlzhoP99GYYRWwi8
+	tUXDuQwPC43tH3jwduVwcLzkOgMPqm8x8KRqSIAzrcUY8g/ZENR1uVn42P5ZgJ/fxq8Nd9kY
+	qKzSQf7DN0L0bOlY6y8s5VufcVKdo1uQip0pUubxNkE6+sDLSzfKw6VLdzyM5Kw4iSWn77Qg
+	uXN/jqu9kVLWkUEsfe5/zUkf777A0kinFBu8RbF8h2zQp8rmhSviFbrHJ4a4pBp1WqvdxVlR
+	Hs1AASIlEfTSeR/nZ47MoQP5X7GfMZlHOzq+s34OInNpZkMZk4EUIktKMS17dOpvEEjW0syi
+	a3wGEkUlAdpzO8HvqMg9RLNanvJ+R0mm0ua8vr8+S8Jpx5iH8fssCaGXx0T/OIBEUevwCcbP
+	00gYbahtYuxI6ZhQOybUjv91MWIrUJDelGrU6g1LNZbdunSTPk2zPdHoROOvUHZgNPs2+tIW
+	04iIiNRTlNFzAvUqXptqSTc2Iiqy6iDl6DaiVyl3aNP3yebEOHOKQbY0ohCRU09Xrt4sx6vI
+	Tm2yvFuWk2Tzvy0jBsywIoh8PCu7r33lJOP+me988+XOmXdWtSWpKkOPJlf+3hq7+kxOVuzB
+	4MSx/r1OY4GdjG0qMlkLT9fuCb2Ky3fFLNdEeus9l5cUrnvOeJbxk3FfqLtELFwIS0JLNxTZ
+	Z6V6B1sP19dwrqma3jVhujiDffHrh3e5DcvI2eoI6tOl9Kg5i067OJw1W7R/AOplAnwGAwAA
+X-CFilter-Loop: Reflected
 
-Currently, when a non-exclusive cpuset's "cpuset.cpus" overlaps with a
-partitioned sibling, the sibling's partition state becomes invalid.
-However, this invalidation is often unnecessary.
+On Thu, Nov 06, 2025 at 11:57:54AM +0530, Garg, Shivank wrote:
+> On 10/20/2025 1:58 PM, Byungchul Park wrote:
+> > Thanks for the great work.
+> >
+> > By the way, is it okay to use work queue?  When the system is idle, this
+> > patch will improve the migration performance, but when there are a lot
+> > of other runnable tasks in the system, it might be worse than the
+> > current one.  That's gonna be even worse if there are some other tasks
+> > that wait for the migration to end.  It's worth noting that
+> > padata_do_multithreaded() also uses work queue internally.
+> >
+> > I think, at worst, the performance should be same as is.  Or am I
+> > missing something?
+> >
+> >       Byungchul
+> 
+> Hi Byungchul,
+> 
+> This was addressed by Zi in the mail:
+> https://lore.kernel.org/linux-mm/61F6152C-A91E-453B-9521-34B7497AE532@nvidia.com
+> 
+> So, there are some specific use cases that can benefit significantly when CPU cores are idle
 
-This can be observed in specific configuration sequences:
+Sure.  I think so.  I meant the mechanism using multi-threads would
+better be performed for faster migration when a system is idle, but it'd
+better avoid the aggressiveness when the system is busy.
 
-Case 1: Partition created first, then non-exclusive cpuset overlaps
- #1> mkdir -p /sys/fs/cgroup/A1
- #2> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
- #3> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
- #4> mkdir -p /sys/fs/cgroup/B1
- #5> echo "0-3" > /sys/fs/cgroup/B1/cpuset.cpus
- // A1's partition becomes "root invalid" - this is unnecessary
+Or we might observe a performance degradation due to this work.
 
-Case 2: Non-exclusive cpuset exists first, then partition created
- #1> mkdir -p /sys/fs/cgroup/B1
- #2> echo "0-1" > /sys/fs/cgroup/B1/cpuset.cpus
- #3> mkdir -p /sys/fs/cgroup/A1
- #4> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
- #5> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
- // A1's partition becomes "root invalid" - this is unnecessary
+	Byungchul
 
-In Case 1, the effective CPU mask of B1 can differ from its requested
-mask. B1 can use CPUs 2-3 which don't overlap with A1's exclusive
-CPUs (0-1), thus not violating A1's exclusivity requirement.
-
-In Case 2, B1 can inherit the effective CPUs from its parent, so there
-is no need to invalidate A1's partition state.
-
-This patch relaxes the overlap check to only consider conflicts between
-partitioned siblings, not between a partitioned cpuset and a regular
-non-exclusive one.
-
-Signed-off-by: Sun Shaojie <sunshaojie@kylinos.cn>
----
- kernel/cgroup/cpuset.c                            |  8 ++++----
- tools/testing/selftests/cgroup/test_cpuset_prs.sh | 10 +++++-----
- 2 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 52468d2c178a..e0d27c9a101a 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -586,14 +586,14 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
-  * Returns: true if CPU exclusivity conflict exists, false otherwise
-  *
-  * Conflict detection rules:
-- * 1. If either cpuset is CPU exclusive, they must be mutually exclusive
-+ * 1. If both cpusets are exclusive, they must be mutually exclusive
-  * 2. exclusive_cpus masks cannot intersect between cpusets
-  * 3. The allowed CPUs of one cpuset cannot be a subset of another's exclusive CPUs
-  */
- static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
- {
--	/* If either cpuset is exclusive, check if they are mutually exclusive */
--	if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
-+	/* If both cpusets are exclusive, check if they are mutually exclusive */
-+	if (is_cpu_exclusive(cs1) && is_cpu_exclusive(cs2))
- 		return !cpusets_are_exclusive(cs1, cs2);
- 
- 	/* Exclusive_cpus cannot intersect */
-@@ -695,7 +695,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
- 		goto out;
- 
- 	/*
--	 * If either I or some sibling (!= me) is exclusive, we can't
-+	 * If both I and some sibling (!= me) are exclusive, we can't
- 	 * overlap. exclusive_cpus cannot overlap with each other if set.
- 	 */
- 	ret = -EINVAL;
-diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-index a17256d9f88a..903dddfe88d7 100755
---- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-+++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-@@ -269,7 +269,7 @@ TEST_MATRIX=(
- 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X3:P2    .      .     0 A1:0-2|A2:3|A3:3 A1:P0|A2:P2 3"
- 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3  X2-3:P2   .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
- 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:C3 .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
--	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-3|A2:1-3|A3:2-3|B1:2-3 A1:P0|A3:P0|B1:P-2"
-+	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-1|A2:1|A3:1|B1:2-3 A1:P0|A3:P0|B1:P2 2-3"
- 	" C0-3:S+ C1-3:S+ C2-3   C4-5     .      .      .      P2    0 B1:4-5 B1:P2 4-5"
- 	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3  X2-3:P2   P2    0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
- 	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3 X2-3:P2:C1-3 P2  0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
-@@ -318,7 +318,7 @@ TEST_MATRIX=(
- 	# Invalid to valid local partition direct transition tests
- 	" C1-3:S+:P2 X4:P2  .      .      .      .      .      .     0 A1:1-3|XA1:1-3|A2:1-3:XA2: A1:P2|A2:P-2 1-3"
- 	" C1-3:S+:P2 X4:P2  .      .      .    X3:P2    .      .     0 A1:1-2|XA1:1-3|A2:3:XA2:3 A1:P2|A2:P2 1-3"
--	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:4-6 A1:P-2|B1:P0"
-+	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:5-6 A1:P2|B1:P0 0-4"
- 	"  C0-3:P2   .      .    C4-6 C0-4:C0-3  .      .      .     0 A1:0-3|B1:4-6 A1:P2|B1:P0 0-3"
- 
- 	# Local partition invalidation tests
-@@ -388,10 +388,10 @@ TEST_MATRIX=(
- 	"  C0-1:S+  C1      .    C2-3     .      P2     .      .     0 A1:0-1|A2:1 A1:P0|A2:P-2"
- 	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2 0-1|1"
- 
--	# A non-exclusive cpuset.cpus change will invalidate partition and its siblings
--	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P0"
-+	# A non-exclusive cpuset.cpus change will not invalidate partition and its siblings
-+	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:3 A1:P1|B1:P0"
- 	"  C0-1:P1   .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P-1"
--	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P0|B1:P-1"
-+	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-1|B1:2-3 A1:P0|B1:P1"
- 
- 	# cpuset.cpus can overlap with sibling cpuset.cpus.exclusive but not subsumed by it
- 	"   C0-3     .      .    C4-5     X5     .      .      .     0 A1:0-3|B1:4-5"
--- 
-2.25.1
-
+> while GPUs or accelerators handle most of the workload.
+> In such scenarios, migrating pages to and from device memory (GPU or AI accelerator) quickly
+> is critical and ensure hot data is always available for accelerators.
+> 
+> Thanks,
+> Shivank
+> 
+> >
+> >> +                               per_cpu_item_idx = 0;
+> >> +                               cpu++;
+> >> +                       }
+> >> +               }
+> >> +               if (item_idx != nr_items)
+> >> +                       pr_warn("%s: only %d out of %d pages are transferred\n",
+> >> +                               __func__, item_idx - 1, nr_items);
+> >> +       }
+> >> +
+> >> +       /* Wait until it finishes  */
+> >> +       for (i = 0; i < total_mt_num; ++i) {
+> >> +               flush_work((struct work_struct *)work_items[i]);
+> >> +               /* retry if any copy fails */
+> >> +               if (work_items[i]->ret)
+> >> +                       err = -EAGAIN;
+> >> +       }
+> >> +
+> >> +free_work_items:
+> >> +       for (cpu = 0; cpu < total_mt_num; ++cpu)
+> >> +               kfree(work_items[cpu]);
+> >> +
+> >> +       return err;
+> >> +}
+> >> +
+> >> +static struct kobject *mt_kobj_ref;
+> >> +static struct kobj_attribute mt_offloading_attribute = __ATTR(offloading, 0664,
+> >> +               mt_offloading_show, mt_offloading_set);
+> >> +static struct kobj_attribute mt_threads_attribute = __ATTR(threads, 0664,
+> >> +               mt_threads_show, mt_threads_set);
+> >> +
+> >> +static int __init cpu_mt_module_init(void)
+> >> +{
+> >> +       int ret = 0;
+> >> +
+> >> +       mt_kobj_ref = kobject_create_and_add("cpu_mt", kernel_kobj);
+> >> +       if (!mt_kobj_ref)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       ret = sysfs_create_file(mt_kobj_ref, &mt_offloading_attribute.attr);
+> >> +       if (ret)
+> >> +               goto out_offloading;
+> >> +
+> >> +       ret = sysfs_create_file(mt_kobj_ref, &mt_threads_attribute.attr);
+> >> +       if (ret)
+> >> +               goto out_threads;
+> >> +
+> >> +       is_dispatching = 0;
+> >> +
+> >> +       return 0;
+> >> +
+> >> +out_threads:
+> >> +       sysfs_remove_file(mt_kobj_ref, &mt_offloading_attribute.attr);
+> >> +out_offloading:
+> >> +       kobject_put(mt_kobj_ref);
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static void __exit cpu_mt_module_exit(void)
+> >> +{
+> >> +       /* Stop the MT offloading to unload the module */
+> >> +       mutex_lock(&migratecfg_mutex);
+> >> +       if (is_dispatching == 1) {
+> >> +               stop_offloading();
+> >> +               is_dispatching = 0;
+> >> +       }
+> >> +       mutex_unlock(&migratecfg_mutex);
+> >> +
+> >> +       sysfs_remove_file(mt_kobj_ref, &mt_threads_attribute.attr);
+> >> +       sysfs_remove_file(mt_kobj_ref, &mt_offloading_attribute.attr);
+> >> +       kobject_put(mt_kobj_ref);
+> >> +}
+> >> +
+> >> +module_init(cpu_mt_module_init);
+> >> +module_exit(cpu_mt_module_exit);
+> >> +
+> >> +MODULE_LICENSE("GPL");
+> >> +MODULE_AUTHOR("Zi Yan");
+> >> +MODULE_DESCRIPTION("CPU_MT_COPY"); /* CPU Multithreaded Batch Migrator */
+> >> --
+> >> 2.43.0
 
