@@ -1,91 +1,123 @@
-Return-Path: <linux-kernel+bounces-897489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2C3C52EF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:16:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5B1C53410
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:03:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C360D3538AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2447C565CFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630593469E4;
-	Wed, 12 Nov 2025 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB95634A3BF;
+	Wed, 12 Nov 2025 14:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NATvYEnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Co/1ww/T"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B544933BBA4;
-	Wed, 12 Nov 2025 14:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101D53375A4;
+	Wed, 12 Nov 2025 14:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959442; cv=none; b=s/vYBAKCPQd4vd3oXL03IStH/A6NiVr3mIWIlGaZpnhn3gZQh6zQT0MeYGtpKcB0O3q6n2Gts5/tYtn35AsYcIaONeG5GUOsxEkvSFyP1x7z4p7IqA1ynBzWShGNjv8vbgrybccOdzyVjvU7QhGeAadhhewm6Y5uRdo9/rKbqqo=
+	t=1762959516; cv=none; b=EtJh6zzPILjv3FpOIa7SYcs9eCQ6GccSj27kyeOJcIzpKzqEicGn/ghzJu/qxyt0+Uj3nHfhi9g91CmtbeXW4WWJybCP4qvm5zO7nmr3KxWcwUoy0FI6pF0SdSvxNgfzAuZW9YSAqAIbMpOuL/43Hgyn20WowN9iNDr6hcnTlaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959442; c=relaxed/simple;
-	bh=5xBz4HsC6lNkPpfpPsm7ohmMixPyiH3CxITYUK1Do08=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N474olH4baySBzSZf/9GMKNCIucAeiHQBBUXrgI78jilB5AJAbXInnIDwd+3Q4T68HLAUNKk+5HhQax28Q1tSLN4pCBh67vRVCoGLjZe0gYaV50Rpnkm67HroyUfAWP1ESAbhmNZH6+pdoz2fXn3OVOzjYHPNCy8jDqKFMaW8BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NATvYEnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC66DC19421;
-	Wed, 12 Nov 2025 14:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762959442;
-	bh=5xBz4HsC6lNkPpfpPsm7ohmMixPyiH3CxITYUK1Do08=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NATvYEnDqpBXuxiSQBGqf7jsc0R7JWOZmMQcmRHdjZUnMICciuBiEOqIqeQ21/abT
-	 G3r21SoZ+Jy6VUOQs2xU6OdnM8nM+wVCP7f26ggFL60i8bUjAqfgwVPFfiYu5zDT6o
-	 ukPrQ5jDJ7+n0TTlLmv1/7qLrGmqgPRNKZDfnb6Yryy3D7z8rQTCltzHgwYHtgDmZR
-	 nya41DN0KieLgENo1Zk70cgpXhwHscCUGLxAVtpze+Hf+FVSEXpAbdQym1MxVfcxl6
-	 i+QyVv6OG0S00f/fmgUEE1BABsOlKGytSf23Sp9NkVvSZJAeT61bXB/fuHNuEuH1sm
-	 /oZAtkDarT/Zw==
-Date: Wed, 12 Nov 2025 06:57:20 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Yanteng Si <si.yanteng@linux.dev>, Huacai Chen
- <chenhuacai@kernel.org>, "Russell King (Oracle)"
- <rmk+kernel@armlinux.org.uk>, Philipp Stanner <phasta@kernel.org>, Tiezhu
- Yang <yangtiezhu@loongson.cn>, Qunqin Zhao <zhaoqunqin@loongson.cn>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Jacob Keller
- <jacob.e.keller@intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 1/3] net: stmmac: Add generic suspend/resume
- helper for PCI-based controllers
-Message-ID: <20251112065720.017c4d07@kernel.org>
-In-Reply-To: <20251111100727.15560-3-ziyao@disroot.org>
-References: <20251111100727.15560-2-ziyao@disroot.org>
-	<20251111100727.15560-3-ziyao@disroot.org>
+	s=arc-20240116; t=1762959516; c=relaxed/simple;
+	bh=iaqn6o1aj5TZseje8nhSMU7wox1uBx34PG/FfEn4ATc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=hK8oKM0AkeBM4DHm4+PUSRdhEVYCK2tIy3re64Svn0zUNogN8Po8a96jk1CQ6GPqOWrDO+27ITYaEps2lBf4iSeSoH0/rliCrTRsUKO3D3Yup7aIGvQBSW8htc2F+1vue6SyPBp4ATW7dgI31j3W4HAC9KhfSckoaB8VxQHbhAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Co/1ww/T; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACEvgP1819880
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 06:57:42 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACEvgP1819880
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762959464;
+	bh=iaqn6o1aj5TZseje8nhSMU7wox1uBx34PG/FfEn4ATc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Co/1ww/TpkmHgs8/lIQoL2DgJe7NYavKgjqIdkRsL3U5QOfDZIGT8C1ThipluORfH
+	 Ggbnw9LZf5lqF0FCzU8b3vKz1aFJf3tQSkPet9rnWpsBIF22Yy97I1FoL/kNWt8qCN
+	 cNDRk/2imanrbXUGZSGDXMiokFCve+KMIuV7ijry6Ms84Dl+is7nqCWtw22eZE3299
+	 GW27okgXrG9ZTWFCZl07qg2H/AVfmNNnSrxLJsubzr7R5yjPy0lstKVVGnfFexNPFM
+	 Snl9K+VKyqvFFKgZI4NZXEw0akGY+bPIHIAqvTmrMDGe+mC1MRbJbuG00QlD2pC83o
+	 ESIYQptY33FSg==
+Date: Wed, 12 Nov 2025 06:57:40 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Dave Hansen <dave.hansen@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Sohil Mehta <sohil.mehta@intel.com>
+CC: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Sean Christopherson <seanjc@google.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-efi@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_4/9=5D_x86/alternatives=3A_?=
+ =?US-ASCII?Q?Disable_LASS_when_patching_kernel_code?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com>
+References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com> <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com> <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com>
+Message-ID: <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Nov 2025 10:07:26 +0000 Yao Zi wrote:
-> +config STMMAC_LIBPCI
-> +	tristate "STMMAC PCI helper library"
-> +	depends on PCI
-> +	default y
-> +	help
-> +	  This selects the PCI bus helpers for the stmmac driver. If you
-> +	  have a controller with PCI interface, say Y or M here.
+On November 12, 2025 6:51:45 AM PST, Dave Hansen <dave=2Ehansen@intel=2Ecom=
+> wrote:
+>On 11/12/25 05:56, Ard Biesheuvel wrote:
+>=2E=2E=2E
+>>> it looks like we would now need to toggle
+>>> CR4=2ELASS every time we switch to efi_mm=2E The lass_enable()/_disabl=
+e()
+>>> naming would be more suitable for those wrappers=2E
+>>>
+>> Note that Linux/x86 uses SetVirtualAddressMap() to remap all EFI
+>> runtime regions into the upper [kernel] half of the address space=2E
+>>=20
+>> SetVirtualAddressMap() itself is a terrible idea, but given that we
+>> are already stuck with it, we should be able to rely on ordinary EFI
+>> runtime calls to only execute from the upper address range=2E The only
+>> exception is the call to SetVirtualAddressMap() itself, which occurs
+>> only once during early boot=2E
+>
+>Gah, I had it in my head that we needed to use the lower mapping at
+>runtime=2E The efi_mm gets used for that SetVirtualAddressMap() and the
+>efi_mm continues to get used at runtime=2E So I think I just assumed that
+>the lower mappings needed to get used too=2E
+>
+>Thanks for the education!
+>
+>Let's say we simply delayed CR4=2ELASS=3D1 until later in boot=2E Could w=
+e
+>completely ignore LASS during EFI calls, since the calls only use the
+>upper address range?
+>
+>Also, in practice, are there buggy EFI implementations that use the
+>lower address range even though they're not supposed to? *If* we just
+>keep LASS on for these calls is there a chance it will cause a
+>regression in some buggy EFI implementations?
 
-I didn't pay enough attention to the discussion on v2, sorry.
-I understand that there's precedent for a library symbol hiding
-real symbols in this driver but it really makes for a poor user
-experience.
-
-The symbol should be hidden, and select'ed by what needs it.
-With the PCI dependency on the real symbol, not here.
-
-The "default y" may draw the attention of the Superior Penguin.
-He may have quite a lot to criticize in this area, so let's
-not risk it..
+Yes, they are=2E And there are buggy ones which die if set up with virtual=
+ addresses in the low half=2E
 
