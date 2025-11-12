@@ -1,74 +1,40 @@
-Return-Path: <linux-kernel+bounces-896929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0949C5196E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:13:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3BCC5197A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B113A41EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9FB188B4BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E0C2FF662;
-	Wed, 12 Nov 2025 10:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAF52FF641;
+	Wed, 12 Nov 2025 10:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EP9mZzAw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CUikGddO"
+Received: from mail-m3269.qiye.163.com (mail-m3269.qiye.163.com [220.197.32.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DAD2FD1D5;
-	Wed, 12 Nov 2025 10:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFADB2FE579;
+	Wed, 12 Nov 2025 10:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942020; cv=none; b=KrKg6jTbOlPl+n2H2Nqw4nrpqxyoljFZjGuyKgt/gsbcEI6mVpWC0g5iMClw2yNIeaKHTbbJHAJPOTqaWygCX7J0OF0x9Puj1zOqVguNI2fLYyFmJp+jRbKYLmvVfpCkNVMCBCui/exftxO7A0/HMR5w6/7OGVGbiPc7qplBQvs=
+	t=1762942304; cv=none; b=UVCSUbP7pdmU1XnsREA7Qyg+dc7IO0qzwqMYdc9P37RJF0y06YVRb0hQDq0z0RJ57wHXQ5hwgCKyXGpjgI3GZ4qHt/dEbQUgeZOjELpM9vcE5VTGYI1qekGZ0eWFRApt/H93oq8LgNeG4JfZF8BgpfMjsfhVfha0aN+kMry9APM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942020; c=relaxed/simple;
-	bh=hTysW8ldnhzhr1+7+t+schbzT3i7HS0zbqEdHYIEosg=;
+	s=arc-20240116; t=1762942304; c=relaxed/simple;
+	bh=8Zg3/sAelgEsfuI8Ay2dOVaGCjjKJg7Cb8Yt2m9i36A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uq26eWTBGkPaY61F6XyctzArByFELThLcH1Poi4px+Ea68BbaC4wWuzT5Pg+f3GUHtGIsrz1JPQg9pLlXs/OV/MrrujKS2XmA25zrOp4umjWX5z4fZKci1tmRMFiVVD9YpZW2S+DCcK1I6+/kluaNdfxiHBkQCAGtisLhfMURCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EP9mZzAw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC3V5lS007136;
-	Wed, 12 Nov 2025 10:06:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=TfObaI
-	bP9JQo5NnryYlf8giRFUtoQnidA+p6jOSi7ME=; b=EP9mZzAw73DpsHbsLG++k/
-	xXfWO4ScFdBcq5TQPrUeFfE/+gRILlrK5tbMQhTE/IpYXzCNIcpbeWPMDryjoVzC
-	jeMH5Nm0ufUz7Nhpm0S7PDb8eSNcdSZXGMLvGss1bOET6NcOxaZVXyDUUKduMGBO
-	xoz2236w1LtOlpyrDse9LkFlSQMHL9Hfpm3ay7zO2YGbytauaEcGAYzATT9Ytpsj
-	XxKc9KgYQc5N5a/2oE9YE6XJGURT9DcZMvJ08I6byeNUAFHeXqnlf4I1uaFVwNnM
-	Evx3UkqlXVmx27lAqBcaAyOv7V7jZpfU/pjYo+laDo4rlUweQ/NqAdAUa9O+EN6w
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgx0fhu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 10:06:03 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC6LvA6014755;
-	Wed, 12 Nov 2025 10:06:02 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpk7ged-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 10:06:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACA605039125464
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 10:06:00 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B178B20076;
-	Wed, 12 Nov 2025 10:06:00 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1550220074;
-	Wed, 12 Nov 2025 10:06:00 +0000 (GMT)
-Received: from [9.155.200.37] (unknown [9.155.200.37])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Nov 2025 10:06:00 +0000 (GMT)
-Message-ID: <f543231e-a71c-4600-9cf3-f999ca104d86@linux.ibm.com>
-Date: Wed, 12 Nov 2025 11:05:59 +0100
+	 In-Reply-To:Content-Type; b=UHmKZyHpQwaWioePP+4YJTBgTngyPvEkYiYMNJePq0RQeHzAzuLZ2VtoqT0nXhLpsaZLWxFdtgcwVsw+LaoFbZetop0Qp+8NfuSpSFYhVTPuGXqRJ67AuoXID3noMop2ApyNB8YuAev3m83DLeMgkC3djoZLrPIxbAe23G+/KiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CUikGddO; arc=none smtp.client-ip=220.197.32.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.30] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 295429862;
+	Wed, 12 Nov 2025 18:06:27 +0800 (GMT+08:00)
+Message-ID: <65ff0185-e471-40ba-8991-43b1a42b1d30@rock-chips.com>
+Date: Wed, 12 Nov 2025 18:06:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,152 +42,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 4/4] perf tools: Merge deferred user callchains
-To: Namhyung Kim <namhyung@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-        Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20250908175319.841517121@kernel.org>
- <20250908175430.639412649@kernel.org>
- <20251002134938.756db4ef@gandalf.local.home>
- <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [RESEND PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add
+ rk3576 CAN controller
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com,
+ linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20251112015940.3695638-1-zhangqing@rock-chips.com>
+ <20251112015940.3695638-2-zhangqing@rock-chips.com>
+ <20251112-faithful-olive-orangutan-0dd207-mkl@pengutronix.de>
+From: zhangqing <zhangqing@rock-chips.com>
+In-Reply-To: <20251112-faithful-olive-orangutan-0dd207-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: L_7sfh61mwnig6fGCcLLmEZrHnaQHDuI
-X-Proofpoint-ORIG-GUID: L_7sfh61mwnig6fGCcLLmEZrHnaQHDuI
-X-Authority-Analysis: v=2.4 cv=VMPQXtPX c=1 sm=1 tr=0 ts=69145c0b cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=Vs_kanKWfxrV1IkLjT4A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX9yuxxvyN78Og
- 69SPfChu8C26Ui7EH/rN9p/nPA8ApOGKgjl3fx4SMJtdZ0NkHEHvL573DxDpej4bUkc6Vw25+pC
- xFy74vg0QORXjXqQekG6shZ5IPcDavRtDxY/8MtXSt4ph69AFwTGBPpqT6yzyfdRmFR01xD2Gtv
- bk0il8sBGlxnJURQW0pvPa4JYOnzSlYKi4e+WVOxwIPof/1+ziwe4hQvuofMRrwzPdyglHF3H02
- IchSUpkPcjvPuZbbO3veyqynNcwRL0bm3Wu5qtA3YPJdvmMdQvF/je4LMDkPbF3wDpGNVt1fWrZ
- sbc6etbnf9FULaU1o/N91tHnSOrqVYnzRNOuF4b3hG4lU8ye/hYDRu+qvgNNY8Oefwg8OiQEFjA
- Y60tXmEVofdQJHIkppKmjPZhQv8f5w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- clxscore=1015 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+X-HM-Tid: 0a9a7787ea7c03a3kunmc052c1ea2aa6e8
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkMYTVZPSRhDT0IeSU0eQktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=CUikGddO+ZN7whhA7uNkqz4Av3a3h3ecRTM839aDoNwjuOT1rwIvlBvuulvGqith6x6wghvs//J4PEegTy0+yeZjxi8SwbDF5kIi21lFqzQibcnJjjIhx3cu0PbBFOG9OjhGdhUCKwYl/KKZQSOJBth+Om6cVQWjzRsmv01d2KI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=9n0Y+NoH+kvwHdRXyYxizd4Ni80WNG4fVyyRdV90H6M=;
+	h=date:mime-version:subject:message-id:from;
 
-Hello Namhyung,
 
-could you please adapt your patches from this series to Peter's latest
-changes to unwind user and related perf support, especially his new
-version c69993ecdd4d ("perf: Support deferred user unwind") available
-at:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
-On 10/24/2025 3:02 PM, Peter Zijlstra wrote:
-> On Thu, Oct 02, 2025 at 01:49:38PM -0400, Steven Rostedt wrote:
->> On Mon, 08 Sep 2025 13:53:23 -0400
->> Steven Rostedt <rostedt@kernel.org> wrote:
+在 2025/11/12 16:53, Marc Kleine-Budde 写道:
+> On 12.11.2025 09:59:37, Elaine Zhang wrote:
+>> Add documentation for the rockchip rk3576 CAN controller.
 >>
->>> +static int evlist__deliver_deferred_samples(struct evlist *evlist,
->>> +					    const struct perf_tool *tool,
->>> +					    union  perf_event *event,
->>> +					    struct perf_sample *sample,
->>> +					    struct machine *machine)
->>> +{
->>> +	struct deferred_event *de, *tmp;
->>> +	struct evsel *evsel;
->>> +	int ret = 0;
->>> +
->>> +	if (!tool->merge_deferred_callchains) {
->>> +		evsel = evlist__id2evsel(evlist, sample->id);
->>> +		return tool->callchain_deferred(tool, event, sample,
->>> +						evsel, machine);
->>> +	}
->>> +
->>> +	list_for_each_entry_safe(de, tmp, &evlist->deferred_samples, list) {
->>> +		struct perf_sample orig_sample;
+>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>> ---
+>>   .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  | 14 ++++++++++----
+>>   1 file changed, 10 insertions(+), 4 deletions(-)
 >>
->> orig_sample is not initialized and can then contain junk.
+>> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+>> index a077c0330013..22e10494e7d1 100644
+>> --- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+>> +++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+>> @@ -10,13 +10,12 @@ title:
+>>   maintainers:
+>>     - Marc Kleine-Budde <mkl@pengutronix.de>
 >>
->>> +
->>> +		ret = evlist__parse_sample(evlist, de->event, &orig_sample);
->>> +		if (ret < 0) {
->>> +			pr_err("failed to parse original sample\n");
->>> +			break;
->>> +		}
->>> +
->>> +		if (sample->tid != orig_sample.tid)
->>> +			continue;
->>> +
->>> +		if (event->callchain_deferred.cookie == orig_sample.deferred_cookie)
->>> +			sample__merge_deferred_callchain(&orig_sample, sample);
+>> -allOf:
+>> -  - $ref: can-controller.yaml#
+>> -
+> What happened to the allOf?
+This is a misoperation and will be corrected in version V9.
+To speed up the review of the current version, V9 will also remove dma.
+>
+>>   properties:
+>>     compatible:
+>>       oneOf:
+>> -      - const: rockchip,rk3568v2-canfd
+>> +      - enum:
+>> +          - rockchip,rk3568v2-canfd
+>> +          - rockchip,rk3576-can
+>>         - items:
+>>             - const: rockchip,rk3568v3-canfd
+>>             - const: rockchip,rk3568v2-canfd
+>> @@ -43,6 +42,13 @@ properties:
+>>         - const: core
+>>         - const: apb
 >>
->> The sample__merge_deferred_callchain() initializes both
->> orig_sample.deferred_callchain and the callchain. But now that it's not
->> being called, it can cause the below free to happen with junk as the
->> callchain. This needs:
->>
->> 		else
->> 			orig_sample.deferred_callchain = false;
-> 
-> Ah, so I saw crashes from here and just deleted both free()s and got on
-> with things ;-)
-
-This needs to be properly resolved.  In the meantime I am using Steven's
-suggestion above to continue my work on unwind user sframe (s390).
-
-> 
->>> +
->>> +		evsel = evlist__id2evsel(evlist, orig_sample.id);
->>> +		ret = evlist__deliver_sample(evlist, tool, de->event,
->>> +					     &orig_sample, evsel,> machine); +
->>> +		if (orig_sample.deferred_callchain)
->>> +			free(orig_sample.callchain);
->>> +
->>> +		list_del(&de->list);
->>> +		free(de);
->>> +
->>> +		if (ret)
->>> +			break;
->>> +	}
->>> +	return ret;
->>> +}
->>
->> -- Steve
-
-Thanks and regards,
-Jens
+>> +  dmas:
+>> +    maxItems: 1
+>> +
+>> +  dma-names:
+>> +    items:
+>> +      - const: rx
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+> regards,
+> Marc
+>
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
+张晴
+瑞芯微电子股份有限公司
+Rockchip Electronics Co.,Ltd
+地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
+Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
+Tel:+86-0591-83991906-8601
+邮编：350003
+E-mail:elaine.zhang@rock-chips.com
+****************************************************************************
+保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
 
-IBM
+IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
 
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+****************************************************************************
 
 
