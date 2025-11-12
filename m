@@ -1,189 +1,350 @@
-Return-Path: <linux-kernel+bounces-896519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DDBC50914
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:54:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26E4C5091D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F0A84EDA1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9533B083A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DC32D73BE;
-	Wed, 12 Nov 2025 04:52:30 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5CB2D73BB;
+	Wed, 12 Nov 2025 04:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNVsMenv"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5A844C63
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E04F218AAB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762923149; cv=none; b=E0/lFlPiE0/vwG01atRZJY8qzfng942V7sq0zKZ0KhmFBgkZ8ueIkfMwqliTbmZ83PM02NTcMayne8wX6RLSXh/t9UF1wpjf+hCFZu3wv26vNeSDoHRvduyDYQPMHjSaUXxbKHlehDRJAwqFGfBEHRBgLpNbjP0aNzIUQ10Z96A=
+	t=1762923309; cv=none; b=BSWZwsh/VctKQYEyC9xxoYw7P2japdwWiZiAmU3x183+nk409ugtaXioIQ7MyOyRFkLdeDOzfdQH5TYhdiUR3oq1542FJe1TwVGRPvHTB4cbKPMCq3X0VsO0sFSCEdNJGWoqiwXIwexDxRoKlQ0bEwT4GJgsPYsE3FaS9LxEyKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762923149; c=relaxed/simple;
-	bh=CIvLkOUS047TucL7cgNJmviXjqebQR1vjTOiVoJgcGA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Vmd+UTCjIwz8g3BvfespyG62Pzr8c+onwu0DXVH3PkvhfzPQEHcqb0PDeNsbS4quXT63UDjv9RNDchOUi5m2CznBUPOWpXquAADBbwDHQByIBJHGyeIP61DEKpHzZDyoMIDiBrdgSOldmAv4BbldtXyo/esGSL2FIAD1eWK8koA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-43377268125so6041975ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:52:27 -0800 (PST)
+	s=arc-20240116; t=1762923309; c=relaxed/simple;
+	bh=l5LGlODZ4xD/2Y15vU5UzbitjXKwIH/KoNWDjovVBvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IJvB3D2QB21AI5e39I8AuIPNpjfiFrsCqp/6iKPfXuMoVtf7c/9a4jEyEVrLktWBaknc9qecio+egtL1JcigursJgiZfN+bd+qoiHW6lZlz50A1hkcwGztWuQToShzkFi3eQJixr8mGB71Ih/ZYdUNlwUjWHNteH4IOdhhHNJlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNVsMenv; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3438231df5fso511105a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:55:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762923307; x=1763528107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x+ZEKdeS8OnccJT/18IWvvdObkq3Vpl4Fxqk4ywgHOU=;
+        b=KNVsMenv/qRTUVSZ1OVie4wucMWhgBGkUVSpNOkTQVj0ytHC+OPTrjO/7FZzra6GGp
+         Ol2iQ4ZDbxxkrm5Z7OoeK0JLvoqfGgxIW+ubgcuH78t4O99B3wLyhDiDrHEMWHHZef6Q
+         2JRbaUjGYlMwBfdzG5uLVfEaWdc84s2piKGyzXKLP36/I4u86pjAsd+v5OoFbqyGqXFv
+         g6omI/PbFohskfWyuygIzINxxqT1jX2Mzv25XiLbFL9wI7+Df6svnYpl/VTXWgrOE+5f
+         qHIHFE6vfseUe1H61OqfZx9fzHwirP/HdTfdSegFOgAFOWj6+FZzZBZKI5sn7xz4vWqx
+         P4QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762923147; x=1763527947;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/xR/S0akTM9IizGbyH/pcTSsfCiAbNA5aO/SzN0S+qc=;
-        b=xJQdCsO67b6NmXNGIgVtudBG0x8uYAIFrkV0ZUpTHXON/1c8UxjxWEoopLWqE6x0ht
-         nm9roYp8KcuJxNAgKu057/0666e5YecMd6V76DPlhfD9NGXodS2Iamqcqe/qBMBON454
-         ylKYKkZw76tIHzJMNhGEADf0jGcR+B75ZinUu8ge5f6t9WAK4jDuJWpY6qdBxm82jB3C
-         OaAUeG4e+NLkoBQDj0yG4vbeDOwi1YaHSx426fB+qsm+3CKVNAAuN1XcVkFGxOAkgUMn
-         pHDhIEG/PESUJNGSe5jHQlOodaoDStAt1zt97IEQfyrXA+Xvw+Efzikd8FbJxLa4MOpW
-         SrnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq/+EQ0RtV7Ayy1NjjzX69kQ+6VuEVEFZs9Jh1MNO0zcztIgNs3O07bYb22VQsJMsY6CxyNx0X49CLZiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8mrT0PzsyHr7mTdnaMsoHxZ0ErkktE95mSOjx7RqgxcYsve17
-	EWXdAimkmeIfUffkNRm9ZmVHsFTQ1pFaNZSlI/gzwX9pqj68a0GQGB937ZS6jIwdhVzS4vTEThg
-	uwhA1plL6rIHtCgZh+eebWSMFaDAW+07eBlkh1HqOsXvYlxMb28XMSfHR/eQ=
-X-Google-Smtp-Source: AGHT+IEalNLm4nKk8fLi4y0xYX+5Nao4o3HK0geVhuKlrQfqUMB7hx94C8r2EruYYup9yM47XvRjz6EN4BkpAlS+Fzf0/eO5s8G7
+        d=1e100.net; s=20230601; t=1762923307; x=1763528107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=x+ZEKdeS8OnccJT/18IWvvdObkq3Vpl4Fxqk4ywgHOU=;
+        b=ZKCLrk6pR6ovRTmBeNXuF7Y6hrGquccS9RsP9BcEYif+QXIHhcr75LLMv3nlVuSuOQ
+         fv43QxE4qJgqD7uGiMb/65+F7yxD68KwNryKGrUrPnUA6YvtbtN3gZv9/dEQil3/Pz0M
+         PGy07KV4HkIZLfHpXHcmj51oH8S1JzfyLWibgwaTDee+AW2FkIRFj7jFEjTzOWwRPRXG
+         PJs236gpyQ6f0VoMhVK01pBTRS89ymlRGUt07zL+OxzOCPmhQRM6k2D7Yrck6hOzDlVP
+         Gsr1Nwaz2wJ1zv41QMC24vuwGLk4mglV+fDpL0/kgvP09pMITfb/YbSZD4I/V943Lv1c
+         cx+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUS4zF/UXEt1FelFi3+00gUOxd6d3IXztFpwRcau6K1o2gxIekCiN5EW90r+4ZJTBirAP1tMgg723+2FT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymzj7vGf1nXEk/RuUFgJOGSz71VH1X1qnyUgaui7ZfMJmD0wpV
+	wbCAg9ciohxl91yhMCAM9wmEkkETaShJ4RWDdWPPazyjznFa2Ehm0R7ZaZaZUtYYnPLoNrdapKv
+	lSulpPqNHDjGg3PzqxDw1YYQUmvJoVcE=
+X-Gm-Gg: ASbGncuPzwHcSr5bsxfBP+fxtpm41Et9tBxYuSPzuNVrGU3ZvyNwvRQiONner2pOysm
+	jy2J2BkOW/QYHmfFohn2Yf8HqI8+IStOB50Qk13VOBEmOqj6HMry358//ItmJ/w0wq6rxyAAwht
+	kJpQO+xxGHH/wEgUjzWwSqux6I8DE3H6gP+TPzGw65F82ymkBIuD0gIBV3Jc+bUykRGajhCGe7a
+	ArvqzTD4088iOMvEP0NvWp08K0SPmu5chNGzLJx4/oXwUHG9wTyI69tjN4/
+X-Google-Smtp-Source: AGHT+IGezlfWHsutFc7rVUn5xqIPdMjVgQZhCmkOAuauj8q4oRr7GNK9VuedAhMp2Mp+LopXY/EbfZGg46CMy+swljo=
+X-Received: by 2002:a17:90b:510b:b0:32d:a0f7:fa19 with SMTP id
+ 98e67ed59e1d1-343ddeadc69mr2528906a91.17.1762923307226; Tue, 11 Nov 2025
+ 20:55:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fcc:b0:433:7a2f:a40a with SMTP id
- e9e14a558f8ab-43473cff396mr21170735ab.4.1762923147120; Tue, 11 Nov 2025
- 20:52:27 -0800 (PST)
-Date: Tue, 11 Nov 2025 20:52:27 -0800
-In-Reply-To: <68af39ae.a70a0220.3cafd4.002c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6914128b.050a0220.417c2.0004.GAE@google.com>
-Subject: Re: [syzbot] [hams?] WARNING: ODEBUG bug in handle_softirqs
-From: syzbot <syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+References: <20251110033232.12538-1-kernellwp@gmail.com> <7bc4b0b7-42ea-42fc-ae96-3084f44bdc81@amd.com>
+In-Reply-To: <7bc4b0b7-42ea-42fc-ae96-3084f44bdc81@amd.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Wed, 12 Nov 2025 12:54:56 +0800
+X-Gm-Features: AWmQ_bn1qDk9i98u17BRaRFYgjDjEnolIymTBUUZqbFC072gwUWymGKR4ygmP8w
+Message-ID: <CANRm+CxZfFVk=dX3Koi_RUH6ppr_zc6fs3HHPaYkRGwV7h9L7w@mail.gmail.com>
+Subject: Re: [PATCH 00/10] sched/kvm: Semantics-aware vCPU scheduling for
+ oversubscribed KVM
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Wanpeng Li <wanpengli@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+Hi Prateek,
 
-HEAD commit:    2666975a8905 Add linux-next specific files for 20251111
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13748212580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e82ba9dc816af74c
-dashboard link: https://syzkaller.appspot.com/bug?extid=60db000b8468baeddbb1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10646b42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133eec12580000
+On Tue, 11 Nov 2025 at 14:28, K Prateek Nayak <kprateek.nayak@amd.com> wrot=
+e:
+>
+> Hello Wanpeng,
+>
+> I haven't looked at the entire series and the penalty calculation math
+> but I've a few questions looking at the cover-letter.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/26ac789d9bdd/disk-2666975a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fabfe7978a23/vmlinux-2666975a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/82f010d50b37/bzImage-2666975a.xz
+Thanks for the review and the thoughtful questions.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com
+>
+> On 11/10/2025 9:02 AM, Wanpeng Li wrote:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > This series addresses long-standing yield_to() inefficiencies in
+> > virtualized environments through two complementary mechanisms: a vCPU
+> > debooster in the scheduler and IPI-aware directed yield in KVM.
+> >
+> > Problem Statement
+> > -----------------
+> >
+> > In overcommitted virtualization scenarios, vCPUs frequently spin on loc=
+ks
+> > held by other vCPUs that are not currently running. The kernel's
+> > paravirtual spinlock support detects these situations and calls yield_t=
+o()
+> > to boost the lock holder, allowing it to run and release the lock.
+> >
+> > However, the current implementation has two critical limitations:
+> >
+> > 1. Scheduler-side limitation:
+> >
+> >    yield_to_task_fair() relies solely on set_next_buddy() to provide
+> >    preference to the target vCPU. This buddy mechanism only offers
+> >    immediate, transient preference. Once the buddy hint expires (typica=
+lly
+> >    after one scheduling decision), the yielding vCPU may preempt the ta=
+rget
+> >    again, especially in nested cgroup hierarchies where vruntime domain=
+s
+> >    differ.
+>
+> So what you are saying is there are configurations out there where vCPUs
+> of same guest are put in different cgroups? Why? Does the use case
+> warrant enabling the cpu controller for the subtree? Are you running
 
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object: ffff888028ee8090 object type: timer_list hint: rose_t0timer_expiry+0x0/0x350 net/rose/rose_link.c:-1
-WARNING: lib/debugobjects.c:615 at debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612, CPU#1: syz.2.1147/9544
-Modules linked in:
-CPU: 1 UID: 0 PID: 9544 Comm: syz.2.1147 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
-Code: 4c 89 ff e8 d7 19 86 fd 4d 8b 0f 48 c7 c7 80 1b e1 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 0a 38 e2 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 47 22 1e 0b 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc90000a08a00 EFLAGS: 00010296
-RAX: cfc2b002eab41900 RBX: dffffc0000000000 RCX: ffff888031311e80
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1c3a744 R12: ffffffff8a5327d0
-R13: ffffffff8be11d00 R14: ffff888028ee8090 R15: ffffffff8b8cf8e0
-FS:  00007fda22dbb6c0(0000) GS:ffff888125b82000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000020000000d000 CR3: 0000000078a42000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
- debug_check_no_obj_freed+0x3a2/0x470 lib/debugobjects.c:1129
- slab_free_hook mm/slub.c:2470 [inline]
- slab_free mm/slub.c:6661 [inline]
- kfree+0x10c/0x6e0 mm/slub.c:6869
- rose_neigh_put include/net/rose.h:166 [inline]
- rose_timer_expiry+0x4cb/0x600 net/rose/rose_timer.c:183
- call_timer_fn+0x16e/0x600 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1798 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x61a/0x860 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
- handle_softirqs+0x27d/0x880 kernel/softirq.c:626
- __do_softirq kernel/softirq.c:660 [inline]
- invoke_softirq kernel/softirq.c:496 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:727
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:743
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1055 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1055
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:lock_release+0x2ac/0x3d0 kernel/locking/lockdep.c:5893
-Code: 51 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f7 44 24 20 00 02 00 00 75 56 f7 c3 00 02 00 00 74 01 fb 65 48 8b 05 64 98 1b 11 <48> 3b 44 24 28 0f 85 8b 00 00 00 48 83 c4 30 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90004e8f918 EFLAGS: 00000206
-RAX: cfc2b002eab41900 RBX: 0000000000000283 RCX: cfc2b002eab41900
-RDX: 0000000000000000 RSI: ffffffff8dc71e5c RDI: ffffffff8be111e0
-RBP: ffff8880313129b0 R08: 0000000000000000 R09: ffffffff820eec00
-R10: dffffc0000000000 R11: fffffbfff1f7eeef R12: 0000000000000000
-R13: 0000000000000000 R14: ffff888034a18ca0 R15: ffff888031311e80
- _inline_copy_from_user include/linux/uaccess.h:169 [inline]
- _copy_from_user+0x28/0xb0 lib/usercopy.c:18
- copy_from_user include/linux/uaccess.h:219 [inline]
- snd_rawmidi_kernel_write1+0x3ab/0x650 sound/core/rawmidi.c:1560
- snd_rawmidi_write+0x5a8/0xbc0 sound/core/rawmidi.c:1629
- do_loop_readv_writev fs/read_write.c:850 [inline]
- vfs_writev+0x4b6/0x960 fs/read_write.c:1059
- do_writev+0x14d/0x2d0 fs/read_write.c:1103
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fda21f8f6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fda22dbb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00007fda221e5fa0 RCX: 00007fda21f8f6c9
-RDX: 0000000000000002 RSI: 0000200000000840 RDI: 0000000000000004
-RBP: 00007fda22011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fda221e6038 R14: 00007fda221e5fa0 R15: 00007ffd404da6b8
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	51                   	push   %rcx
-   1:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
-   8:	00 00
-   a:	9c                   	pushf
-   b:	8f 44 24 20          	pop    0x20(%rsp)
-   f:	f7 44 24 20 00 02 00 	testl  $0x200,0x20(%rsp)
-  16:	00
-  17:	75 56                	jne    0x6f
-  19:	f7 c3 00 02 00 00    	test   $0x200,%ebx
-  1f:	74 01                	je     0x22
-  21:	fb                   	sti
-  22:	65 48 8b 05 64 98 1b 	mov    %gs:0x111b9864(%rip),%rax        # 0x111b988e
-  29:	11
-* 2a:	48 3b 44 24 28       	cmp    0x28(%rsp),%rax <-- trapping instruction
-  2f:	0f 85 8b 00 00 00    	jne    0xc0
-  35:	48 83 c4 30          	add    $0x30,%rsp
-  39:	5b                   	pop    %rbx
-  3a:	41 5c                	pop    %r12
-  3c:	41 5d                	pop    %r13
-  3e:	41 5e                	pop    %r14
+You're right to question this. The problematic scenario occurs with
+nested cgroup hierarchies, which is common when VMs are deployed with
+cgroup-based resource management. Even when all vCPUs of a single
+guest are in the same leaf cgroup, that leaf sits under parent cgroups
+with their own vruntime domains.
 
+The issue manifests when:
+   - set_next_buddy() provides preference at the leaf level
+   - But vruntime competition happens at parent levels
+   - The buddy hint gets "diluted" when pick_task_fair() walks up the hiera=
+rchy
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+The cpu controller is typically enabled in these deployments for quota
+enforcement and weight-based sharing. That said, the debooster
+mechanism is designed to be general-purpose: it handles any scenario
+where yield_to() crosses cgroup boundaries, whether due to nested
+hierarchies or sibling cgroups.
+
+> with the "NEXT_BUDDY" sched feat enabled?
+
+Yes, NEXT_BUDDY is enabled. The problem is that set_next_buddy()
+provides only immediate, transient preference. Once the buddy hint is
+consumed (typically after one pick_next_task_fair() call), the
+yielding vCPU can preempt the target again if their vruntime values
+haven't diverged sufficiently.
+
+>
+> If they are in the same cgroup, the recent optimizations/fixes to
+> yield_task_fair() in queue:sched/core should help remedy some of the
+> problems you might be seeing.
+
+Agreed - the recent yield_task_fair() improvements in queue:sched/core
+(EEVDF-based vruntime =3D deadline with hierarchical walk) are valuable.
+However, our patchset focuses on yield_to() rather than yield(), which
+has different semantics:
+   - yield_task_fair(): "I voluntarily give up CPU, pick someone else"
+=E2=86=92 Recent improvements handle this well with hierarchical walk
+   - yield_to_task_fair(): "I want *this specific task* to run
+instead" =E2=86=92 Requires finding the LCA of yielder and target, then
+applying penalties at that level to influence their relative
+competition
+
+The debooster extends yield_to() to handle cross-cgroup scenarios
+where the yielder and target may be in different subtrees.
+
+>
+> For multiple cgroups, perhaps you can extend yield_task_fair() to do:
+
+Thanks for the suggestion. Your hierarchical walk approach shares
+similarities with our implementation. A few questions on the details:
+
+>
+> ( Only build and boot tested on top of
+>     git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
+>   at commit f82a0f91493f "sched/deadline: Minor cleanup in
+>   select_task_rq_dl()" )
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b4617d631549..87560f5a18b3 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8962,10 +8962,28 @@ static void yield_task_fair(struct rq *rq)
+>          * which yields immediately again; without the condition the vrun=
+time
+>          * ends up quickly running away.
+>          */
+> -       if (entity_eligible(cfs_rq, se)) {
+> +       do {
+> +               cfs_rq =3D cfs_rq_of(se);
+> +
+> +               /*
+> +                * Another entity will be selected at next pick.
+> +                * Single entity on cfs_rq can never be ineligible.
+> +                */
+> +               if (!entity_eligible(cfs_rq, se))
+> +                       break;
+> +
+>                 se->vruntime =3D se->deadline;
+
+Setting vruntime =3D deadline zeros out lag. Does this cause fairness
+drift with repeated yields? We explicitly recalculate vlag after
+adjustment to preserve EEVDF invariants.
+
+>                 se->deadline +=3D calc_delta_fair(se->slice, se);
+> -       }
+> +
+> +               /*
+> +                * If we have more than one runnable task queued below
+> +                * this cfs_rq, the next pick will likely go for a
+> +                * different entity now that we have advanced the
+> +                * vruntime and the deadline of the running entity.
+> +                */
+> +               if (cfs_rq->h_nr_runnable > 1)
+
+Stopping at h_nr_runnable > 1 may not handle cross-cgroup yield_to()
+correctly. Shouldn't the penalty apply at the LCA of yielder and
+target? Otherwise the vruntime adjustment might not affect the level
+where they actually compete.
+
+> +                       break;
+> +       } while ((se =3D parent_entity(se)));
+>  }
+>
+>  static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
+> ---
+
+Fixed one-slice penalties underperformed in our testing (dbench:
++14.4%/+9.8%/+6.7% for 2/3/4 VMs). We found adaptive scaling (6.0=C3=97
+down to 1.0=C3=97 based on queue size) necessary to balance effectiveness
+against starvation.
+
+>
+> With that, I'm pretty sure there is a good chance we'll not select the
+> hierarchy that did a yield_to() unless there is a large discrepancy in
+> their weights and just advancing se->vruntime to se->deadline once isn't
+> enough to make it ineligible and you'll have to do it multiple time (at
+> which point that cgroup hierarchy needs to be studied).
+>
+> As for the problem that NEXT_BUDDY hint is used only once, you can
+> perhaps reintroduce LAST_BUDDY which sets does a set_next_buddy() for
+> the "prev" task during schedule?
+
+That's an interesting idea. However, LAST_BUDDY was removed from the
+scheduler due to concerns about fairness and latency regressions in
+general workloads. Reintroducing it globally might regress non-vCPU
+workloads.
+
+Our approach is more targeted: apply vruntime penalties specifically
+in the yield_to() path (controlled by debugfs flag), avoiding impact
+on general scheduling. The debooster is inert unless explicitly
+enabled and rate-limited to prevent pathological overhead.
+
+>
+> >
+> >    This creates a ping-pong effect: the lock holder runs briefly, gets
+> >    preempted before completing critical sections, and the yielding vCPU
+> >    spins again, triggering another futile yield_to() cycle. The overhea=
+d
+> >    accumulates rapidly in workloads with high lock contention.
+> >
+> > 2. KVM-side limitation:
+> >
+> >    kvm_vcpu_on_spin() attempts to identify which vCPU to yield to throu=
+gh
+> >    directed yield candidate selection. However, it lacks awareness of I=
+PI
+> >    communication patterns. When a vCPU sends an IPI and spins waiting f=
+or
+> >    a response (common in inter-processor synchronization), the current
+> >    heuristics often fail to identify the IPI receiver as the yield targ=
+et.
+>
+> Can't that be solved on the KVM end?
+
+Yes, the IPI tracking is entirely KVM-side (patches 6-10). The
+scheduler-side debooster (patches 1-5) and KVM-side IPI tracking are
+orthogonal mechanisms:
+   - Debooster: sustains yield_to() preference regardless of *who* is
+yielding to whom
+   - IPI tracking: improves *which* target is selected when a vCPU spins
+
+Both showed independent gains in our testing, and combined effects
+were approximately additive.
+
+> Also shouldn't Patch 6 be on top with a "Fixes:" tag.
+
+You're right. Patch 6 (last_boosted_vcpu bug fix) is a standalone
+bugfix and should be at the top with a Fixes tag. I'll reorder it in
+v2 with:
+Fixes: 7e513617da71 ("KVM: Rework core loop of kvm_vcpu_on_spin() to
+use a single for-loop")
+
+>
+> >
+> >    Instead, the code may boost an unrelated vCPU based on coarse-graine=
+d
+> >    preemption state, missing opportunities to accelerate actual IPI
+> >    response handling. This is particularly problematic when the IPI rec=
+eiver
+> >    is runnable but not scheduled, as lock-holder-detection logic doesn'=
+t
+> >    capture the IPI dependency relationship.
+>
+> Are you saying the yield_to() is called with an incorrect target vCPU?
+
+Yes - more precisely, the issue is in kvm_vcpu_on_spin()'s target
+selection logic before yield_to() is called. Without IPI tracking, it
+relies on preemption state, which doesn't capture "vCPU waiting for
+IPI response from specific other vCPU."
+
+The IPI tracking records sender=E2=86=92receiver relationships at interrupt
+delivery time (patch 8), enabling kvm_vcpu_on_spin() to directly boost
+the IPI receiver when the sender spins (patch 9). This addresses
+scenarios where the spinning vCPU is waiting for IPI acknowledgment
+rather than lock release.
+
+Performance (16 pCPU host, 16 vCPUs/VM, PARSEC workloads):
+   - Dedup: +47.1%/+28.1%/+1.7% for 2/3/4 VMs
+   - VIPS: +26.2%/+12.7%/+6.0% for 2/3/4 VMs
+
+Gains are most pronounced at moderate overcommit where the IPI
+receiver is often runnable but not scheduled.
+
+Thanks again for the review and suggestions.
+
+Best regards,
+Wanpeng
 
