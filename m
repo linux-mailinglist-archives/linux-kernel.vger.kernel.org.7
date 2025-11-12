@@ -1,463 +1,274 @@
-Return-Path: <linux-kernel+bounces-898183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C58C54841
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32943C547AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A2DA34945A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:53:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 503EA34C939
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8142D8372;
-	Wed, 12 Nov 2025 20:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E7E27F163;
+	Wed, 12 Nov 2025 20:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RHcBjt1h"
-Received: from sonic314-20.consmr.mail.gq1.yahoo.com (sonic314-20.consmr.mail.gq1.yahoo.com [98.137.69.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pRkh/wJ6"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012018.outbound.protection.outlook.com [52.101.53.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CA6A55
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.83
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762980807; cv=none; b=OYsCZ03E4ll6qL8n1tF2ODYbal1gldp+LrM3wC5zhy22fey0VDnI2NIlWuwQKW/fHvxg9yPMjokX9H7Ipq/m6bpaOPq//p/jUMbHaKVh0yCSPwQvnKAxDmnUgOFA4tplKo9oY4qwemZM2MJy0ai9XszyPiVlAnEpfJeArUZoH7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762980807; c=relaxed/simple;
-	bh=vbjveGnYMXTuJI584eq5Mmx1IGg/Oz6qYfjKt7XJDC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TY4EWQ0CzFVDaZ5McGtudfcp/5useVZk70UhSN5Zuaa75L4xmmM6v6zZQJE7/bH/h4TwVZb97UIrRfEVZqUuq/CJ8TLNRpPFpykffdOpQ8sAblidkKlnx9TKRPLmhaiSeowLylkH6QQy4ayp+DnOCxni5rBI3TUEfjIOUIl/0NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=RHcBjt1h; arc=none smtp.client-ip=98.137.69.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762980804; bh=P+mgKgRVnjTCMkTyxs/dwOiEN3OTY5NOVUCeAub0SnQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=RHcBjt1huTJcRHxgFwoj5HSWdcuwPvWW7rvnxlMGy4IDx56vYVmAUh9BbNWSJKt5hGvXpwyYpe+ASKvFWids//Kw6E5zP0pt+7od2cM4QErSIvh4fBA0Id87+GJBISrqlM3gOH9dN7oD6lGk/ax75VVhkL2nQPPi3bZF1D2FdgHlteK5GP33zdHobHGc1mtI/WP7ohq5rJKycYVxTwQgaKOcPghPVYZwl6w2TpIpbBCSYk5A7KLmNnXl68qtbXtzc3ZbzgCxIMp8hlZc1PtOFK8p8webxchXCqFOTpbCAL6fG/aGPZQ71i5ikNSf4uK4pS+LqPLvBTxL1tEbEl/72A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762980804; bh=alrWSDGdp4EzuBLcozt2CxW0q1+geWUFfmne48JxdFN=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=b+GFOPrjfdV2fXZRevRzC5MGybN9lah4nOjnxrHJcxtcmQ2JHeKhj6FKVW11+VHO1s5iTnxvj2AeYQM3u4lRJ3tGF3ryZqaY/SIl98ZwsHx8OBIZWOzkN3dAjBqK5E/5aQ6Q2aG9mphAPoHclWcGP0h0ae8ssbAc6pMLi8wiHRU3sJOur9sWuoZdn8wF7rSOsERTXR4E3dph5Jh9IzpAiWXksHxN7AVzqx1F3ZmeGXirO8ZwX8kVECr0PK1FYY2L8XfA1gQT9VBfmYidHrSDfto/aTpFv4P95AlGk0+EIlG/sPwyFBF4nuldSI1jxB6ylYBciL8Kwa4+ZbyrvvlmEg==
-X-YMail-OSG: gNpfY9wVM1ktoJK2qIt5Qzu8GFZ81CYhAtDKCJLIL08zenC.EK6Y7c.b8pfoWuu
- zSgaiRBX_.._XAiWhbhFu6_SJee7.ZdvYB6kcHjhwqtNsChW4B8SiXsV9mhRvJzlKSldPZqCr05G
- _pNs7sVyva7IiBxQiemvTad6iIG87.wqI8dNEj45rtRY8YiIm9DStJ9tZmfMI2mBlV9AwvdST1Bv
- YwBcLX4Xj0_2N4.Mze2GhguOa.a5OdJurQIAAXOelP.AMfNZmkait84SovZj.CzCc7ws0ykIa4EI
- SAxuYnXdD7kPdF83A0GVzKmhVKGp7jE0gF5ZR7S6xcNSSQHbAPmWjBPsvYylWr00rp4rsBwAONv8
- 3QYzk1IfX_dAfPO__VfG6hT_gDd6EIk8RCZb8JCswpsXkGbfgYzC2RG45VWEzFItX6zzTv_X4U_R
- kuKGU5fLXH281b7_fx87CLJZrL2.k2TTfqLutEQ4Gjc0MLaD1EzeZKLk8YHNrnYxrc1iW3llHB1h
- JlaYT9EoHAXMTLF120iNFx5mMt84peXSWExT5EtWnjJRHfa.oIVHVp5aFN6YCJtSXg_i3hns5gT3
- RlXo_jJRYcV1kFoWtDR0s_XJPwYIfMBEqS82k1ed83WPoBcVndkEB6Ev1EK.uiQIE0j1qaFYnHBr
- 6lfn9GvcNTtUX5tmr.hYXBeNRQHgwqJg2z8YQS.FKWnQ0SfxAiw7z3IJZPAGMyJJFZogNGOkGV8b
- iGfx3m2aSZHh86SebLSoN8rhaHoiTt_GCPmqla27oPQZyvzm8WxU.x2loHDb0XoP3hpQETTtmbpX
- 4oRqNhoYZYs0uyXwIz1toar7PtZF15Ha7JvSKaIvqgWZwNA.Z9JTScXI_JqYa7R9ZB3NDb8GXD_M
- 0CdjJxwKuhqHvL7zK.6Tsn0TMifHUE9r9OxCVgI8sUTbx_PEC0XfrsuGrrDO0f99.3wQc5PTXRlO
- 69SiN25AgNO1k4PkDZ0vhG_6n4w7cAjOgkbegA60BcbpGYq6D9MqfGjQv.gEMZz2WSNFQrPpGUpD
- _0Eq3cTeLO2Yt0eIUc2dCXBwLVeIO.hDBJ_OIBTpheQmCVT61ffJAfkMub0qiRvoR.K7BFa8nIKB
- 3ZP8xelqhhp2TVRM3UeYYh3YF6KggvebmKZ_JzOnvbCxWyGA75e84QXbv_qSnmoh1w2352b3ZYMI
- OdwYqhzwxvpCkk8yuuOQfqP7DtF2GSRuzIXaiAEyzs6X75Gof7DfqY_3Dgc_TUAypArktilThyRb
- O8Yh3GRxhJYVouQmKzBPiCJ1s1eV7qEmc_Gh62kGmNx9sl9DEzgc1PhP_4vP6S404H8h4fbuy8bj
- bmJ99aX_2XjlwlW7EDiaTRm_otAGQDsEn0q9qDqWzE_C.lYzcHp6.CyDzrc_Mw7cNQUpFh9Rv4kM
- lLjoRrgoyPg_6SZX5WUYdK6Tg5DMv9BrnM1v3NcoWTFB1FZT.kQ73gUCAg1Bya8FylKJQwo0CFrt
- .weOURsgMUEtVTuJFN5iB1_GDpwUB1vXJ2FaC2.l_9lPORJEUpexdnVDA2YOHRA4cPHnTxQeTOCD
- SantbgoZ.5TvAzkagM8v8xxo4jBAknCVv2HI60o7zAp0E5BikprNYIYWXS2N.cAR4W8B2nRKyWa1
- XS4.cZ.EfiSFhA.4SVTOSrQ_Ix1mW6IcNQ9HlJJVFFC7sqkEnusZzu8nIJDIJNzMSVJkKM0CRQWj
- Rt4Exu0r72INZtSd1_Mm7pWloNfEbz92YEukQQ45oqjghi2Xb2O3.6VlvuzdwcUQLVEZyfhJrxj7
- q1C0JQ8C3A2HaY7I7cqqGUJcbjPqM.XGP7u8ge5GmPMgetv0W4kH2XwhKnc_ngjEnWpJWaFtwwX6
- tXeWvOk_GXGU5zBwvX7BXhbxhAs75BAEtk2WH5ukpPHxbvnSMVXQK2deWfU9VMJ4uYTpSey4txUg
- J80nlWFKL_c3fTV8cYGX5mxd7Md6U7bfxCDwA9uaBjbQpQYIxbVbgHXZhmsyL_aiSNq6I.VpWPVZ
- .vFMNP4jBOFWY5UV7PKZzo_rR6pwgvtaAro2EjOY4JBKaQGxym5cMDy8i2pPttOVURwEoXqRrpmP
- pbZajRJTGNc5Ta4TTYe9YI5XseGcuECYvw5sdbBhR11pCk1HP_.E0Q1C4zoMDK.lhI4FD2xqksNU
- x7myG8l41boNifkPeU3ViRdPFd8pu.qQyda28v9Hejw0S2.hD78cC2BmxKNWkT1FiWcJxRxdUDE8
- TLom09YpFoT1y8Qcr6MBuZFlESdhQlqeE5HuJS.qe.2eH_Or8DrXy3RYK.TApp14.avbPfpUnDRq
- 1hYgQxV88k5Mj0Q--
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: c87ebaf7-7d76-477a-a4b8-3d93967514a8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.gq1.yahoo.com with HTTP; Wed, 12 Nov 2025 20:53:24 +0000
-Received: by hermes--production-bf1-58477f5468-mv22l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa11b75316de3424f98b7bca4e22d9d5;
-          Wed, 12 Nov 2025 20:33:07 +0000 (UTC)
-Message-ID: <3c01e222-8e58-46ce-9ce7-b536bfb11028@yahoo.com>
-Date: Wed, 12 Nov 2025 21:32:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667AC2BEC21;
+	Wed, 12 Nov 2025 20:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762979725; cv=fail; b=AIESxKVIzGpzg5WMrMV3TWgIrTklyjPuOUQmTzrfrOkoruaEOFd5Qr1p+b302ZwRLvfxCAFPbTjByBoEOHKsrjOMpfDZfdXB8BfT9era89JrXYDBtkdU7brB1CaaaMI19l1ERgiTP/I0j2GSj976NJMACqb1XnG0yRjvcZu2Psc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762979725; c=relaxed/simple;
+	bh=FOAsKKj2u0yInurDXQhVWTtoMCTUJalFFAVYBA8C+3w=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OwV30PMg1ZEgbsMkbXW6y1dvseHNqnlqpppeag8kStGKq9WISphUw8ZJF4fR+X0HapE512k42/SamsJW5ktm2GAa70giDrnyaXbYrvmchhxIpZjMgq6NkdL5o2lKRmB5LZl76sWjIjPwLmy4IHXpWHzG6kJVu2OzdpzJd+HizF8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pRkh/wJ6; arc=fail smtp.client-ip=52.101.53.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Eco607NMGgTkw05UFnYqTSKtW9XHAOq7gUBH1YK8cJtR//xRNZ1tT33CZYYM15x8DUAKcSsEBROJSIs+rpdJD9Xoa3gholFWPXs4o2GvLYuwQOzRC9omYbkEohjBfTkFqoyQzBamwgSFJJsN3xAmP4CFlV5AApG2uKpl+AXk9WQW5CEtaJEVGzXQHO8G95c1uFoLf/7jdxv+ueRHOgAeJGwEOz2qQlgcMASkDsWfwoyuiAm+JFiZtb908/hMwLBN0VycM7Zs6ngO3VjfslbhSAuKS3G3rJXzv3gV8j6oYjHHT/Us5arHFhBeJePIDEJmvfb7iT2RJYq3xoOk5/8gXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7nVM5Zn5jxm6M4t8dPE8rgbH0wl1VTOhLWMEm3gyPT4=;
+ b=SOKXwMmRpCRLxmhwXy1VSkcIC3OVpNtkNoIFsPrxmy1u/ilcsg05mliTr5v1mTxukHn0u55FcgxrmrgqU2iYliCx0fm4eQrEVKioxCsLv2dLprihm+b4w356Jsbolkc/E9p15snDzwy0FYbLDkZiObdUA9kh9UjT6jRCdt5wBWlK4SsgaES3EC4B3MHXlSNsZ/WXLgUY7Sw0dmbTt961fI6ZffRS+BsXL+UWd+/eSodjIIF/cz1lt4KoBaX5U81JMNj1YDRciwos3b40FoVqO3nYc3TaaIxwe6zNrXg+bIJ7TiyQVSZMGScMY6j5lOGhI3S4JRYOgGd2WOsnnhJBiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7nVM5Zn5jxm6M4t8dPE8rgbH0wl1VTOhLWMEm3gyPT4=;
+ b=pRkh/wJ6+gGo+VOOj0zmd0Su3YvJYQagwW6gQNZggLarpgYlSgOc2GoCJj2woAbnLg9nS251jUDySitWul5Wp2zEhbkRVp54RVuch7ljfu9jxasKuMqc+tdQ7j8mkIbT9mbjw7DFv8wv9HGeJrP9k1aqFl0X42Dhb+k8P381pnP57qD/lFH+Kns/nmSaQ3B/ZE3cxW6KldGFwd86Ho55BmV5RmmJsxIf1Sd/mFpr1L3h0AiHrpSIDLeBmQuUvLwA55RuUURqv2tLRxgCmOnAP0WJFf15Nh3bAMeXLoWvawUB+trNSJDW8V6OSZhfrErBfFHWgU1oj8g2fW4F9TQJyg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
+ by DS7PR12MB6261.namprd12.prod.outlook.com (2603:10b6:8:97::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 20:35:18 +0000
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6]) by PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 20:35:17 +0000
+Message-ID: <fab924f0-dbbc-453f-bd8e-0abe8d0bbc3e@nvidia.com>
+Date: Wed, 12 Nov 2025 15:35:14 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 14/14] gpu: nova-core: gsp: Retrieve GSP static info to
+ gather GPU information
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Daniel Almeida <daniel.almeida@collabora.com>,
+ nouveau@lists.freedesktop.org
+References: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
+ <20251106231153.2925637-1-joelagnelf@nvidia.com>
+ <20251106231153.2925637-15-joelagnelf@nvidia.com>
+ <970fd472a5284fd5b8416bed6a24e722f9a96a74.camel@redhat.com>
+ <f36dc492-507b-489c-8609-6a760526a371@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <f36dc492-507b-489c-8609-6a760526a371@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR05CA0006.namprd05.prod.outlook.com
+ (2603:10b6:208:36e::9) To PH7PR12MB8056.namprd12.prod.outlook.com
+ (2603:10b6:510:269::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] selftests: af_unix: Add tests for ECONNRESET and EOF
- semantics
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: davem@davemloft.net, david.hunter.linux@gmail.com, edumazet@google.com,
- horms@kernel.org, kuba@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, shuah@kernel.org,
- skhan@linuxfoundation.org
-References: <26835ada-4e3a-4f78-8705-4ed2e3d44bd8@yahoo.com>
- <20251107070711.2369272-1-kuniyu@google.com>
-Content-Language: en-US
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-In-Reply-To: <20251107070711.2369272-1-kuniyu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB8056:EE_|DS7PR12MB6261:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ffc9ed3-774c-44b2-6635-08de222afdac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGVoYUNtRklkSlJ1cjVVV1hRL3U2OW91b0RvTnVzcUJiZmhmcFJkSzFmQ29T?=
+ =?utf-8?B?TXp0YndHb3daWEZxc3hkU2pGb0ZpTGxzR0xuWXlKNFdvcHRRVWpMeGZKMDlZ?=
+ =?utf-8?B?M1B1YktNMVNNcXI4b3dadThHQmtFTkJmcFM1YWlML29mVGU1UUljMHRtMEtT?=
+ =?utf-8?B?UEM4TzZoTmpjU3NvYmJHSTNXbnM3WnB2b0pwK0JPdTVlMGlwbXZEUVFEQ2pK?=
+ =?utf-8?B?cDR2eWFFVHNLVGZORDIrbmF2STU0NVdVdE4vdUwzZEJrYjVCNTUzSXZqZFd0?=
+ =?utf-8?B?dUFXTWRXcVlzVXFtOGo3eHYyN1ZTWXRhQTBiTzg4My95aDRWQTBKeE1aUVR3?=
+ =?utf-8?B?WGV4OVh6ZEo1MGdETG9JUDRIYTkxdjZZVVkxdVp3bTJ0LzdPZkxwSkxsNVl1?=
+ =?utf-8?B?U1BtVlhjWjRyTS9abVMya0hrMGszOWFGbVNFc2ZsaHBiVUg2WkVmSVJrLzJZ?=
+ =?utf-8?B?WitLU3Rlb2tZVXBZM2lzRDdEMFFSRXIyS1YxVWoxMm9YNHNLSDBrcGZtdVUz?=
+ =?utf-8?B?RDBkY1VhV1M5WjVOb0JhaFNMZGwvRzhnSDE1S3JmaDJTK25mTVo2QmtHYm83?=
+ =?utf-8?B?R0gwaTljNVY2VFlybmRmMUgveTNtNEFpYVAxT0FCUnZ1SHljMlJBSFEwODNL?=
+ =?utf-8?B?NFBrQ1l5Q09TcitJVHRmbEE0ZGRMRVVTYVlvS3AyTGRjRTg4Y2RZUjl1MlBo?=
+ =?utf-8?B?NFh6bmVZLzZFQ2M4N3hxbm9VK1FkYXp1Qi92RXpDWXJRSjFiandlb1poYWY3?=
+ =?utf-8?B?VE1WOFBKbEg1dXNuSnpkVUFpbWNaV09SSEo0bnVneGFlS1ptVDgxUThYQUtP?=
+ =?utf-8?B?bG9iWUdVNWhKUERYNUcxVlBPd3c0VjV6aHQ2Tk9VK2Z1bGJVb2V4UEpBT3pu?=
+ =?utf-8?B?WENXN0VhbGVva1FBRXRmQ3Nqck9MRTdjSElsN2VkbE1QRzRhQTVqcGNUQ1pO?=
+ =?utf-8?B?bEV5NHFqZkVGRjZSZm9LQ0dTamJkbmhxSU15MnhBV1I1eDFZUlYxMktocnpG?=
+ =?utf-8?B?a09kaEJuRkNNRmZSRzlvUjUzblRad3hONHpPNVljbml5clcvejE1Y09DNTJ2?=
+ =?utf-8?B?TDFlL0FnVlZWSE9kVTU3QTA2Ykl2WXoxZW5JUGtTRitUOVRaWVBpeFA0VHJJ?=
+ =?utf-8?B?a1ZsT0I1K3k4dUsrSlZJOGlab1loZXZVcXoveUFveW9ZRDl0dEtldmx5eUtJ?=
+ =?utf-8?B?ZWxQeVJVM3dFaFl5VzZQbGp2elZEVmFNNUpyZ3VudVVUdWtJc2ljQ3pLYlg0?=
+ =?utf-8?B?U0loa1F2UHBRaHNUa21GUENMM0RPcXczYk84MndIZ2g1TzFIdkNuNFBvMjE4?=
+ =?utf-8?B?MTlPc2ZSZThtbXdKdVBkRjFVRXVodmFxY2VJNm1WNzduZHQzZndtdEtZc21J?=
+ =?utf-8?B?b0dVNm51Q0ZLOU8wN3p1UmtTS3l6b1FSOE0rZEpEZFE0OUJvTW15RzZ1Nlls?=
+ =?utf-8?B?d0twd1ZqVXNKS1pEUXYxUGJ1clFoclBrOGtGYzFNcHIwVjFjVkF4N2lzb1M1?=
+ =?utf-8?B?S21IUndqeGFpbzc2b09CUk9peVEvZTFGa2JUdDlkMUZ0d05xcFkzVE9LdjRW?=
+ =?utf-8?B?MUJ6amZ1Z1hkOE42NmtZcURRT09wQWRpZ1o4bEs1YXFUcjRzNDd2N1FDRHMv?=
+ =?utf-8?B?SWZOYzJUQTcyam1hc3UwWWVvNy9BNWRaY051K2gvVDJKOE11YnUxNEtGeEI4?=
+ =?utf-8?B?TEgzSHBVOEVIV2hVVExWNWc3eDRDR0FPNll5UzZoYkZueUhvdWowNm9Jb3Aw?=
+ =?utf-8?B?TUlTaGVYQTdzZ0NubDVudFJZaUpnZjh0cnBpalJ3WW1uZXZUM3ZYdk9rNG1T?=
+ =?utf-8?B?aTgwVDJRQXNXZE5FRk5QeUgzSFlENG5oSDNzcDV6WlFwc3FCMnhzc1h6Mmpv?=
+ =?utf-8?B?a2lFZnNXT3FycmFWWk1PRDMxTEhLNjgvUDRTQk9NcEJCQ3Uwek5zT2tPaHdv?=
+ =?utf-8?Q?unWP+Y7Ttg1Sjtmv+R5xD3aeA/Qg2jRX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RGZSNnZrMmMrVmcyQ3NCOXFQTnRvNE1wMkdmd09kNUpzSFVxa1lvYU5xNGZL?=
+ =?utf-8?B?b1F4VWZ0dU1xSHpBK3JXVlREVjFadTNYMXNsbjRqdGM3UnNQR2g4VUIvWURZ?=
+ =?utf-8?B?Z0c2QTBGa3NodC9hamhGSW9TQUNGNnRYRFZLdXBlY1FXUitlRHo2aEp2UEhE?=
+ =?utf-8?B?WDNHTGJoZXBpbzV2QzZRODlEMTJDNTdJWmJ6SnpBVHFPZFZIQmEwTGo1bHZZ?=
+ =?utf-8?B?cDQrS0I0ZTJ6MG9QcU50N2laV0k1YWhWeklISzkvTTdteVdWT05tcHE0eVNn?=
+ =?utf-8?B?ZFhUN0Q2Y0w1Z1E2S2xwQU5ZQ3dudWFaNFBkM0tWOHRrSEtlNEZ1dkVHdlY5?=
+ =?utf-8?B?bDhsd25JMHRuendXbmFJMnphSTNXbVVoZ2VSUDRoQnArVDYvVjlPSU9GTk4w?=
+ =?utf-8?B?TUtjVHBKUi9VWkY3VEVaeXBXNERnRDZwZUxiOGJwbU9ZdkgzVDFCQkFzN013?=
+ =?utf-8?B?dzhVTmMvbGJYY2dTcjNuNTZzeHdBNmY5QWVEdVhTcmhIanpGd1NrcjRNUU1a?=
+ =?utf-8?B?REdYU0lPQ1NybllkZndEZ0ltaTFRT3hHN2VMbnJSY3IyTE5rMmpJem5sTUpD?=
+ =?utf-8?B?Q3lGVVJhVWo1clNHNmJoSzZDMGsyRGg1UkkyRTI0eGlJeWJWTTc5MXp3K1Ns?=
+ =?utf-8?B?RmZJRlVFaHZhbVA0UE1jZWlYZGg0M256UXpmTCs0a1JxMTg3NlhYQzdDcDla?=
+ =?utf-8?B?WXFWUXNUc3hYa3NkdlVNOXlTMi85R1lmY3U1T1ZGTGxYTXg5eFMyM29JSDcv?=
+ =?utf-8?B?ejdhc0ZhS25TRWN3ZmlMM1NmZHAvb3VLVTl6T2xZSDM5aEFWcTBqZkdzWXFx?=
+ =?utf-8?B?bHZ6K0E3V1crc0FYREc4blZ3WUwxVTNGZFlJNVdNQjQzeEE5Q2RNbmVFOE9J?=
+ =?utf-8?B?SmFERWdtUTdReklTRmxJeUl4eEhQaUcwTm84aVI0cW8vdmc4RnE2THY1emlX?=
+ =?utf-8?B?S3BDN2VwRmh2ZWdNODc5ckRkNzFBMERoREYxbEVRaXZ4MER3a3FkZDZad2JG?=
+ =?utf-8?B?SzFnY2xqR29jSk1PdG9FR2FzZmhBNTZGZ1FWdzkrM2RaWVl0MklpUk9pZXZK?=
+ =?utf-8?B?VC9vdE9ia1pQN0V0YUJNQTJ1TkdJV1VUeEN1ZW5QQUZkTU5Fekx5ZW0vWXpN?=
+ =?utf-8?B?V2hsTThEenJ2V0grWUowbmdKMHVpR2xIdFF6Rzl2QUdpVzJ2Z0YzOWY4aEZs?=
+ =?utf-8?B?QmVuSk5HUWlqZDRLaWEyZnlENzlXaERyUWczWkdtdlRGb0xoK2VNVmJ4NnVU?=
+ =?utf-8?B?M1ZVdnRvdDFGYmo4TGRYWGZIQXloWnNFbnIxbTFjZXNWaExMbE43WVFYYUg2?=
+ =?utf-8?B?QVNnZlZhSVZVbUhlRFIrRUp5OHl3Y2ZhbEYvS3VCKzJDR3dTRU1LekUvdFBY?=
+ =?utf-8?B?VGg2RXhZMVFWRmhraVFMVVhZYk41akF4ZG1XQTRxWFp1dEZxdndLeWJxRU5B?=
+ =?utf-8?B?YktZbkdhaFoyRDNVaUk1ZE5Ub0FiMEZ5WDZVU1ZjdDlWdGFrOGRvYnlOeDhi?=
+ =?utf-8?B?SVdkcUlCNHY5N1pEWVE2UE9RaWJnSGtyZEl0dnZlcjIrRXRCMngyVFAxN2kx?=
+ =?utf-8?B?VXovMUptM3k0NitHK0h6Vk9tRGFpTE9SbE0vaGtNSnpia0RqYzR1UmxzajN1?=
+ =?utf-8?B?b205eFJaWjliYVRqUjMrMVpvQmUrRG82NmZLQlBSQzk4ck85V2MwczdmUHJt?=
+ =?utf-8?B?Lyt4Um9UVzREOG1IWU01TE1oRVl2QkhsWHVqdGlhYk1tRXJqZDZBK2g2Y2g2?=
+ =?utf-8?B?eDE5VmJLMjdBN3NmK0U3NW9LME9rMldHMEdHS2cxNklsaXFOTTZkdUUyamIw?=
+ =?utf-8?B?d1U5ZlBkdHl6R0JSMHVoWE96ZjdRb0dsRUFKTXdGTzRaVHVVSkpqdFFZRThO?=
+ =?utf-8?B?NHExeDVxSURTb2JmNXNMZitmUEVwMWVzZERIRzI3bUpkaG1tM0VMUmw3RjN1?=
+ =?utf-8?B?YkIrYVRKeDZNY0RYQ2xpeUNBYnZaRlFOUy95Tk5tdE5uS3V6QnNBU0ZGVzhi?=
+ =?utf-8?B?cGlHRGRRNU84Z2VvVkoxL05vY2VkOGpNTjkzZllyRlU3RHhKcnVSdlJ3UEhP?=
+ =?utf-8?B?YlRBTUl3Z3UybFFEZHVNUm9iQU1RQSttaFRmcXduZHhaT01TWVpaN0hReGtW?=
+ =?utf-8?B?VUphR2Fpc2RGemdML0Q5eUFJd1pXYnJEQmtjMTRkR1JpNDAwYTEwcWdwdHEr?=
+ =?utf-8?B?dWc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ffc9ed3-774c-44b2-6635-08de222afdac
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8056.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 20:35:17.5636
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9gE+KFGWgQ1BtD2ZDARwlMX8rq3GS/QXJ4unLGxrneSdW+Cpo8oefGN5CyM05djylrqL75996UHwe8rPw0zUgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6261
 
-On 11/7/25 08:05, Kuniyuki Iwashima wrote:
-> From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-> Date: Tue, 4 Nov 2025 11:42:47 +0100
->> On 11/4/25 01:30, Kuniyuki Iwashima wrote:
->>> On Mon, Nov 3, 2025 at 4:08 PM Sunday Adelodun
->>> <adelodunolaoluwa@yahoo.com> wrote:
->>>> On 11/2/25 08:32, Kuniyuki Iwashima wrote:
->>>>> On Sat, Nov 1, 2025 at 10:23 AM Sunday Adelodun
->>>>> <adelodunolaoluwa@yahoo.com> wrote:
->>>>>> Add selftests to verify and document Linux’s intended behaviour for
->>>>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
->>>>>> The tests verify that:
->>>>>>
->>>>>>     1. SOCK_STREAM returns EOF when the peer closes normally.
->>>>>>     2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
->>>>>>     3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->>>>>>     4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->>>>>>     5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->>>>>>
->>>>>> This follows up on review feedback suggesting a selftest to clarify
->>>>>> Linux’s semantics.
->>>>>>
->>>>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
->>>>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
->>>>>> ---
->>>>>>     tools/testing/selftests/net/af_unix/Makefile  |   1 +
->>>>>>     .../selftests/net/af_unix/unix_connreset.c    | 179 ++++++++++++++++++
->>>>>>     2 files changed, 180 insertions(+)
->>>>>>     create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>>
->>>>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
->>>>>> index de805cbbdf69..5826a8372451 100644
->>>>>> --- a/tools/testing/selftests/net/af_unix/Makefile
->>>>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
->>>>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
->>>>>>            scm_pidfd \
->>>>>>            scm_rights \
->>>>>>            unix_connect \
->>>>>> +       unix_connreset \
->>>>> patchwork caught this test is not added to .gitignore.
->>>>> https://patchwork.kernel.org/project/netdevbpf/patch/20251101172230.10179-1-adelodunolaoluwa@yahoo.com/
->>>>>
->>>>> Could you add it to this file ?
->>>>>
->>>>> tools/testing/selftests/net/.gitignore
->>>> Oh, thank you for this. will add it
->>>>>>     # end of TEST_GEN_PROGS
->>>>>>
->>>>>>     include ../../lib.mk
->>>>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>> new file mode 100644
->>>>>> index 000000000000..6f43435d96e2
->>>>>> --- /dev/null
->>>>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>> @@ -0,0 +1,179 @@
->>>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>>> +/*
->>>>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
->>>>>> + *
->>>>>> + * This test verifies:
->>>>>> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
->>>>>> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
->>>>>> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->>>>>> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->>>>>> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->>>>>> + *
->>>>>> + * These tests document the intended Linux behaviour.
->>>>>> + *
->>>>>> + */
->>>>>> +
->>>>>> +#define _GNU_SOURCE
->>>>>> +#include <stdlib.h>
->>>>>> +#include <string.h>
->>>>>> +#include <fcntl.h>
->>>>>> +#include <unistd.h>
->>>>>> +#include <errno.h>
->>>>>> +#include <sys/socket.h>
->>>>>> +#include <sys/un.h>
->>>>>> +#include "../../kselftest_harness.h"
->>>>>> +
->>>>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
->>>>>> +
->>>>>> +static void remove_socket_file(void)
->>>>>> +{
->>>>>> +       unlink(SOCK_PATH);
->>>>>> +}
->>>>>> +
->>>>>> +FIXTURE(unix_sock)
->>>>>> +{
->>>>>> +       int server;
->>>>>> +       int client;
->>>>>> +       int child;
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT(unix_sock)
->>>>>> +{
->>>>>> +       int socket_type;
->>>>>> +       const char *name;
->>>>>> +};
->>>>>> +
->>>>>> +/* Define variants: stream and datagram */
->>>>> nit: outdated, maybe simply remove ?
->>>> oh..skipped me.
->>>> will do so.
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
->>>>>> +       .socket_type = SOCK_STREAM,
->>>>>> +       .name = "SOCK_STREAM",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
->>>>>> +       .socket_type = SOCK_DGRAM,
->>>>>> +       .name = "SOCK_DGRAM",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
->>>>>> +       .socket_type = SOCK_SEQPACKET,
->>>>>> +       .name = "SOCK_SEQPACKET",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_SETUP(unix_sock)
->>>>>> +{
->>>>>> +       struct sockaddr_un addr = {};
->>>>>> +       int err;
->>>>>> +
->>>>>> +       addr.sun_family = AF_UNIX;
->>>>>> +       strcpy(addr.sun_path, SOCK_PATH);
->>>>>> +       remove_socket_file();
->>>>>> +
->>>>>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
->>>>>> +       ASSERT_LT(-1, self->server);
->>>>>> +
->>>>>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
->>>>>> +       ASSERT_EQ(0, err);
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +               variant->socket_type == SOCK_SEQPACKET) {
->>>>> patchwork caught mis-alignment here and other places.
->>>>>
->>>>> I'm using this for emacs, and other editors will have a similar config.
->>>>>
->>>>> (setq-default c-default-style "linux")
->>>>>
->>>>> You can check if lines are aligned properly by
->>>>>
->>>>> $ git show --format=email | ./scripts/checkpatch.pl
->>>>>
->>>>>
->>>>>> +               err = listen(self->server, 1);
->>>>>> +               ASSERT_EQ(0, err);
->>>>>> +
->>>>>> +               self->client = socket(AF_UNIX, variant->socket_type, 0);
->>>>> Could you add SOCK_NONBLOCK here too ?
->>>> This is noted
->>>>>> +               ASSERT_LT(-1, self->client);
->>>>>> +
->>>>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->>>>>> +               ASSERT_EQ(0, err);
->>>>>> +
->>>>>> +               self->child = accept(self->server, NULL, NULL);
->>>>>> +               ASSERT_LT(-1, self->child);
->>>>>> +       } else {
->>>>>> +               /* Datagram: bind and connect only */
->>>>>> +               self->client = socket(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0);
->>>>>> +               ASSERT_LT(-1, self->client);
->>>>>> +
->>>>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->>>>>> +               ASSERT_EQ(0, err);
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +FIXTURE_TEARDOWN(unix_sock)
->>>>>> +{
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +               variant->socket_type == SOCK_SEQPACKET)
->>>>>> +               close(self->child);
->>>>>> +
->>>>>> +       close(self->client);
->>>>>> +       close(self->server);
->>>>>> +       remove_socket_file();
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 1: peer closes normally */
->>>>>> +TEST_F(unix_sock, eof)
->>>>>> +{
->>>>>> +       char buf[16] = {};
->>>>>> +       ssize_t n;
->>>>>> +
->>>>>> +       /* Peer closes normally */
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +               variant->socket_type == SOCK_SEQPACKET)
->>>>>> +               close(self->child);
->>>>>> +       else
->>>>>> +               close(self->server);
->>>>>> +
->>>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>>>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
->>>>> errno is undefined if not set, and same for strerror(errno).
->>>>>
->>>>> Also, if ASSERT_XXX() below fails, the same information
->>>>> (test case, errno) is logged.  So, TH_LOG() seems unnecessary.
->>>>>
->>>>> Maybe try modifying the condition below and see how the
->>>>> assertion is logged.
->>>> Oh..thank you. Didn't it through that way.
->>>> I understand.
->>>> I will remove the TH_LOG()'s
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +               variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               ASSERT_EQ(0, n);
->>>>>> +       } else {
->>>>>> +               ASSERT_EQ(-1, n);
->>>>>> +               ASSERT_EQ(EAGAIN, errno);
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 2: peer closes with unread data */
->>>>>> +TEST_F(unix_sock, reset_unread)
->>>>>> +{
->>>>>> +       char buf[16] = {};
->>>>>> +       ssize_t n;
->>>>>> +
->>>>>> +       /* Send data that will remain unread by client */
->>>>>> +       send(self->client, "hello", 5, 0);
->>>>>> +       close(self->child);
->>>>>> +
->>>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>>>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +               variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               ASSERT_EQ(-1, n);
->>>>>> +               ASSERT_EQ(ECONNRESET, errno);
->>>>>> +       } else {
->>>>>> +               ASSERT_EQ(-1, n);
->>>>>> +               ASSERT_EQ(EAGAIN, errno);
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 3: SOCK_DGRAM peer close */
->>>>>> Now Test 2 and Test 3 look identical ;)
->>>> seems so, but the only difference is:
->>>>
->>>> close(self->child); is used in Test 2, while
->>>> close(self->server); is used in Test 3.
->>>> Maybe I should find a way to collapse Tests 2 and 3 (if statement might
->>>> work)
->>>>
->>>> I am just afraid the tests to run will reduce to 6 from 9 and we will have 6
->>>> cases passed as against 7 as before.
->>>>
->>>> What do you think?
->>> The name of Test 2 is a bit confusing, which is not true
->>> for SOCK_DGRAM.  So, I'd use "if" to change which fd
->>> to close() depending on the socket type.
->>>
->>> Also, close(self->server) does nothing for SOCK_STREAM
->>> and SOCK_SEQPACKET after accept().  Rather, that close()
->>> should have the same effect if self->child is not accept()ed.
->>> (In this case, Skip() for SOCK_DGRAM makes sense)
->>>
->>> I think covering that scenario would be nicer.
->>>
->>> If interested, you can check the test coverage with this patch.
->>> https://lore.kernel.org/linux-kselftest/20251028024339.2028774-1-kuniyu@google.com/
->>>
->>> Thanks!
->> Thank you!
+
+
+On 11/12/2025 3:22 PM, Joel Fernandes wrote:
+> On 11/11/2025 5:02 PM, Lyude Paul wrote:
+> [...]
+> 
+>>> +#[repr(C)]
+>>> +#[derive(Debug, Copy, Clone)]
+>>> +pub struct GspStaticConfigInfo_t {
+>>> +    pub grCapsBits: [u8_; 23usize],
+>>> +    pub gidInfo: NV2080_CTRL_GPU_GET_GID_INFO_PARAMS,
+>>> +    pub SKUInfo: NV2080_CTRL_BIOS_GET_SKU_INFO_PARAMS,
+>>> +    pub fbRegionInfoParams: NV2080_CTRL_CMD_FB_GET_FB_REGION_INFO_PARAMS,
+>>> +    pub sriovCaps: NV0080_CTRL_GPU_GET_SRIOV_CAPS_PARAMS,
+>>> +    pub sriovMaxGfid: u32_,
+>>> +    pub engineCaps: [u32_; 3usize],
+>>> +    pub poisonFuseEnabled: u8_,
+>>> +    pub fb_length: u64_,
+>>> +    pub fbio_mask: u64_,
+>>> +    pub fb_bus_width: u32_,
+>>> +    pub fb_ram_type: u32_,
+>>> +    pub fbp_mask: u64_,
+>>> +    pub l2_cache_size: u32_,
+>>> +    pub gpuNameString: [u8_; 64usize],
+>>> +    pub gpuShortNameString: [u8_; 64usize],
+> 
+> [...]
+> 
+>>> +mod util;
+>>>  mod vbios;
+>>>  
+>>>  pub(crate) const MODULE_NAME: &kernel::str::CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
+>>> diff --git a/drivers/gpu/nova-core/util.rs b/drivers/gpu/nova-core/util.rs
+>>> new file mode 100644
+>>> index 000000000000..f1a4dea44c10
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/nova-core/util.rs
+>>> @@ -0,0 +1,16 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +/// Converts a null-terminated byte array to a string slice.
+>>> +///
+>>> +/// Returns "invalid" if the bytes are not valid UTF-8 or not null-terminated.
+>>> +pub(crate) fn str_from_null_terminated(bytes: &[u8]) -> &str {
+>>> +    use kernel::str::CStr;
+>>> +
+>>> +    // Find the first null byte, then create a slice that includes it.
+>>> +    bytes
+>>> +        .iter()
+>>> +        .position(|&b| b == 0)
+>>> +        .and_then(|null_pos| CStr::from_bytes_with_nul(&bytes[..=null_pos]).ok())
+>>> +        .and_then(|cstr| cstr.to_str().ok())
+>>> +        .unwrap_or("invalid")
 >>
->> kindly check these if any conforms to what it should be:
->>
->> TEST_F(unix_sock, reset_unread_behavior)
->> {
->>           char buf[16] = {};
->>           ssize_t n;
->>
->>           /* Send data that will remain unread by client */
->>           send(self->client, "hello", 5, 0);
->>
->>           if (variant->socket_type == SOCK_DGRAM) {
->>                   close(self->server);
->>           }
->>           else {
->>                   if (!self->child)
->>                           SKIP(return);
->>
->>                   close(self->child);
->>           }
->>
->>           n = recv(self->client, buf, sizeof(buf), 0);
->>
->>           ASSERT_EQ(-1, n);
->>
->>           if (variant->socket_type == SOCK_STREAM ||
->>                   variant->socket_type == SOCK_SEQPACKET)
->>                   do { ASSERT_EQ(ECONNRESET, errno); } while (0);
->>           else
->>                   ASSERT_EQ(EAGAIN, errno);
->> }
->>
->> OR
->>
->> TEST_F(unix_sock, reset_unread_behavior)
->> {
->>           char buf[16] = {};
->>           ssize_t n;
->>
->>           /* Send data that will remain unread by client */
->>           send(self->client, "hello", 5, 0);
->>
->>           if (variant->socket_type == SOCK_DGRAM) {
->>                   close(self->server);
->>           }
->>           else {
->>                   if (self->child)
->>                       close(self->child);
->>                   else
->>                       close(self->server);
->>           }
->>
->>           n = recv(self->client, buf, sizeof(buf), 0);
->>
->>           ASSERT_EQ(-1, n);
->>
->>           if (variant->socket_type == SOCK_STREAM ||
->>                   variant->socket_type == SOCK_SEQPACKET)
->>                   do { ASSERT_EQ(ECONNRESET, errno); } while (0);
->>           else
->>                   ASSERT_EQ(EAGAIN, errno);
->> }
->>
->> OR
->>
->> is there a better way to handle this?
-> Sorry for late!
->
-> What I had in mind is to move accept() in FIXTURE_SETUP() to
-> Test 1 & 2 (then, only listen() is conditional in FIXTURE_SETUP())
-> and rewrite Test 3 to cover the last ECONNRESET case caused by
-> close()ing un-accept()ed sockets:
->
-> TEST_F(unix_sock, reset_closed_embryo)
-> {
-> 	if (variant->socket_type == SOCK_DGRAM)
-> 		SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
->
-> 	close(self->server);
->
-> 	n = recv(self->client, ...);
-> 	ASSERT_EQ(-1, n);
-> 	ASSERT_EQ(ECONNRESET, errno);
-> }
->
->
->> I ran the KCOV_OUTPUT command using the first *TEST_F above* as the Test
->> 2 and got the output below:
->> *$ KCOV_OUTPUT=kcov KCOV_SLOTS=8192
->> ./tools/testing/selftests/net/af_unix/unix_connreset*
-> You should be able to see line-by-line coverage by decoding
-> files under kcov with addr2line or vock/report.py.
->
-> Thanks!
->
-So sorry for the late reply.
-I have noted all and I will send v4 shortly
-Thanks once again
+>> I feel like I'm missing something obvious here so excuse me if I am. But if
+>> CStr::from_bytes_with_nul is already scanning the string for a NULL byte, why
+>> do we need to do iter().position(|&b| b == 0)?
+> 
+> It is because the .get() above could potentially return an entire buffer with
+> no-null termintaor, as unlikely as that might be. In this case the
+> `.unwrap_or(msg.gpuNameString.len() - 1),` bit will execute returning 63 as the
+> length of the buffer space is 64 bytes. `CStr::from_bytes_with_nul()` will then
+> separately look for the NULL and fail into returning "invalid" as the string.
+> 
+> So mainly, the redundant `.position()` call is it is to handle the failure case.
+
+Sorry clarifying my answer as I was referring to the other snippet. The real
+reason is from_bytes_with_nul(bytes: &[u8]) requires the slice to be exactly the
+length of the string plus one byte for NULL. You can't pass it a long slice and
+have interior NULLs.
+
+This is also mentioned here:
+
+    /// The provided slice must be `NUL`-terminated, does not contain any
+    /// interior `NUL` bytes.
+    pub const fn from_bytes_with_nul(bytes: &[u8]) -> Result<&Self..
+
+It is possible that callers pass buffers with interior NULLs, these come from
+the firmware. So str_from_null_terminated has to find the NULL position first.
+
+Does that answer your question?
+
+Thanks.
+
 
