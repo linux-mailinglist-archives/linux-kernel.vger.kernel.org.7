@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-896912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3143C51887
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:01:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D543C51782
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0339E4FF204
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 099D23436CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B63F2FFF98;
-	Wed, 12 Nov 2025 09:50:29 +0000 (UTC)
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25109302140;
+	Wed, 12 Nov 2025 09:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBMVowPt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B192FE581
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770E3280025;
+	Wed, 12 Nov 2025 09:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941028; cv=none; b=ewTXEo+s4oAbgOCgomhuGYNW6hA1yiU8nKhR30xn68cKExst8Xc9fkx62f/LQR71MumUQPkk5N/x/lQlnCDAD6wVuAWRdFFpVX4BORnp6dm7If4V9+xWtLNrqcTc0Cw0esyHgAYh2WcWE1/TFwqTGO1vTTiQcmFUWeL6t6HEwe4=
+	t=1762941064; cv=none; b=JdrLcYZf5uy/cIoYoFWVeUQOdhYmK2Qfq92z8FpPPRifVmK6bJv0twzczG0xk0CURTu60KDLo3P09b8uPZ97ZGsb46ezXccECTmyLUsqrUj982z12E2tdsNnW/N1zMP/OZG2DoduTT3pz8igLr3vrdut1K/Y7W4r/w8kSrFg9IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941028; c=relaxed/simple;
-	bh=beH0aNDGKuJ+32YpmQmMT5gL32xJIZYbDXbe936SAvg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nCgeR8+70OmsTXk+y2nPdJfRMSJawBcqy0kfvve8Y+fWocFBXae0Cr5TTPyNqE0PbpVhfRhFVGT1B1GN1m20Kg520ykbmFRsUgZzr5k8+76RTbRANRY5PPUcS6ZS65tPoo56Zcd4jlxyHbj2Cp2cH9ly1y5G7ZJ2lehb0BV4nO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7c70eae77d7so149864a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:50:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762941026; x=1763545826;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DpXwwzHOaxXlBoIFLoYYIaNOb3AgpnrR/uWR9cK9DAI=;
-        b=q+nJQWjDQNt3HSPyXEYWD/jemcPIpvf83oNFT2EpX0XwL5A5ndLNi0lwPCaCqEWz1u
-         G+a5Ee6XCrJ7ZQpMhC536yF4p2SgnBG2kh0TJzCEvjQBkzfweuoLo4mDP3ZJkh43rPuy
-         Ah5A4MQxkbq0GIJXjLxPAglJJif+2hBqPCdL8k/kxbWV/QSlFyexIRQPrMjMmweCUXiV
-         6uUa/OOSxxJU7/DOFkJRQ9DkQx/qMaqo195Gb4Jiq4RUiesuMA1R2CZXgc0WhzhgZ8HC
-         A1lCw7+yPMziJSZMudKsUUSAKSUGcJZwagOXyRfmDgmtrR8CzRcj623Ed6f/fF5fFNm9
-         ukWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcO6CrnFIf7lPUyF0YpvH2WB367/qSwa4YPAUm7SjREVE76jBF7D2VZXF5L/ML2D55DUM9Hebx5BsP/WM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv0RxJ/VE3Y7m0sNX11RDFDj4NgVwDKpCxrT6fB4FqKXUEU1L0
-	ADA0LbN2idxkAR4Ee0LEXWelJ+nXgDCNEnTY66RQ8sMJgCpb/fPxX4VW
-X-Gm-Gg: ASbGncu9sGDfiVy1Gf4BdFiEYB6OQ+ucgv9knxlJOBckq0magxd/W+8zEbqCd+pA1NA
-	kHuR0i6V/fnC+BUN61ScPGMxK7rsts6bPX7GQFcL5I1HtoEJs71jt2LE7/DQsgcNLSxZT0gEulB
-	KTBXdjhTFSZSmScc75vzDrSx8R7MkpNQJQBNqnFOv50UhmZdjAioFy6Cg6NIdT6h17KqHmey4uM
-	NHUww9K9S0k6Ul/X+cH+v41Uq9RQ2aT9x9bq+c9hmmp7QKMMUjnjF4HZQTRdg2+Z6nknA797V3D
-	gAhPi2E4CAKkFiThIgUKIVQNwAzdfIZ/xukBfFwJKRucyLP4a1OAwQ5PnTTdajCn0FWH411Sw4N
-	KKCNExAKQURVaiB7g43hItYef+ssAppWIcDyKRjVQZ7XkciQ0CZoogtsC+qcbSxW7VogkCA3Y2g
-	4egG0=
-X-Google-Smtp-Source: AGHT+IHtHCFbCH8j0aKNtBOwFbMViba6SRutkgYrQJRH1tU0LDhiR1WN8lt5sDOpUMv6IklQY4noQw==
-X-Received: by 2002:a05:6808:22a6:b0:44d:af21:bf34 with SMTP id 5614622812f47-4507444e54fmr991030b6e.2.1762941025668;
-        Wed, 12 Nov 2025 01:50:25 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:49::])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4500280856fsm8065047b6e.24.2025.11.12.01.50.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 01:50:25 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 12 Nov 2025 01:50:23 -0800
-Subject: [PATCH net-next] net: bnx2x: convert to use get_rx_ring_count
+	s=arc-20240116; t=1762941064; c=relaxed/simple;
+	bh=qI1ZCOjECs89IEuODLO9Awg0CVwjT8XOpU9kA8tvTyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIjmOaOYkaJRVOwaLnOWN/V9H0jwx5uWX1mvVcZvyn0NOFXwc3BOeBeJj3XpyFOJpeivx/8wJiXrJvH6I8EU+bJFMiRj0vbCmJoYPnidFuy3IXNhpHCNL4sDLCseSXxdzG5T9+L2nVUkme2sN2C9xBnmZwMzfIEyjG4lVJ4iBsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBMVowPt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED75C4CEF8;
+	Wed, 12 Nov 2025 09:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762941064;
+	bh=qI1ZCOjECs89IEuODLO9Awg0CVwjT8XOpU9kA8tvTyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YBMVowPtBB19uVe53JssvPV+3K6JElRFgrm76O1qFGyi4PBlJ/jWYRHdQ8RrOJRoF
+	 v79bgkmIHXMaUdApjR+vTJZ+Oe2DW4OMmCZc/T+7XQ0e88oV/VeSerX9u1rbgcOMUJ
+	 zxtTu+LiWR+SVrR5/UMDE34csitd7m+iYceJVKCD6sW5gLt1JaEtOTekFKbSsy0zMQ
+	 RSGzgRqOrMXAvhUghyJG+x/YLQ10YsSr2z8MUEyTpqqCR9m9Hm5D7if1M9D1geia5e
+	 LUPcBlEll5NBq0e3QlsrhVPRisutOhiZgSl4S2EkPH0mGb2lfhsppKs/VBattKm4Pk
+	 fhOiuNTqtkjHQ==
+Date: Wed, 12 Nov 2025 10:51:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 02/20] regulator: dt-bindings: add s2mpg10-pmic
+ regulators
+Message-ID: <20251112-gainful-flashy-seal-f2c5dc@kuoka>
+References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
+ <20251110-s2mpg1x-regulators-v4-2-94c9e726d4ba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-bnx_grxrings-v1-1-1c2cb73979e2@debian.org>
-X-B4-Tracking: v=1; b=H4sIAF5YFGkC/x3MUQrCMAwG4KuE/3mFNTqQXkVE1jareYmSDimM3
- V3wO8B3oIurdCQ64PLVrm9DojgRymu1JkErEoFnXmKMHLKNZ/Phaq2HOZdSr5zrjS+YCB+XTce
- /u8NkDyZjx+M8fx7dJm9oAAAA
-X-Change-ID: 20251112-bnx_grxrings-0bccd42bd823
-To: Sudarsana Kalluru <skalluru@marvell.com>, 
- Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2471; i=leitao@debian.org;
- h=from:subject:message-id; bh=beH0aNDGKuJ+32YpmQmMT5gL32xJIZYbDXbe936SAvg=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFFhgjgMAx8QI7DUEZko2QkT4Y3jl+kfC2Jz2u
- e04QWGWqwqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRRYYAAKCRA1o5Of/Hh3
- bT3dD/0b4Mgi2kgPBK1La5cXRsiG7Nx78A+Bgs05IeE6ZcjjqvPEVpBLQD/yPu4p0Q7oT01yu1z
- riiUlyQdOTWf6AR3uOY+ggqqCfPH2wkbG3OoJL2FGSQ4GXNP7Tux7BIST2APfgTvvZcx0g7VfA4
- i2DeZr9s3GDUoQdyG5FWTj6uyQZT7W4Fbe+ejoJ7OClrXmSGu9fJ3W4aIvdS2tIBSf/BWTkjwyk
- eqfl4DMNZ1gvcNyDN6f1zDGphzp51lJp1hkXsXGAFNnFrp7KzCCUOW7Lm3cmDTqWYXaSKkylBbr
- VkIGJWD/tbrk+3XxnEJZmhWOAFcjXP/VXl8JAz4UfIBQkQRA3OeC3bSXeIVKppnkeIHlwovn037
- AT6PhYDx+ATjnaOqGIdbzbvh0XUDyxymJgdg3B2JzMTZLOlCDvmTxaQ+SGFbplHikUAwrUnErT6
- Zxn3ojkdt66fkHHg4uggDnXu1yCdFUvH/DXBzd9EgIadjLueNOmGzdqO7Hupn+fzcYceQkdLwyF
- UzITPv61FC43K+Q6fsnbLhHCYe02/SsRem8zSbg/YXvLw5q6SNuAuDBCIdJH5/wl64SkahEzleV
- YTFnWT2WD3uSGHkrWG8prq78P0s8tENIm9Fioehm33Dak2DwpFSx1Lb5k/TbY6oqRE60Orxgv+L
- CnOGj43T6BdmXsw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251110-s2mpg1x-regulators-v4-2-94c9e726d4ba@linaro.org>
 
-Convert the bnx2x driver to use the new .get_rx_ring_count ethtool
-operation instead of implementing .get_rxnfc solely for handling
-ETHTOOL_GRXRINGS command. This simplifies the code by replacing the
-switch statement with a direct return of the queue count.
+On Mon, Nov 10, 2025 at 07:28:45PM +0000, Andr=C3=A9 Draszik wrote:
+> The S2MPG10 PMIC is a Power Management IC for mobile applications with
+> buck converters, various LDOs, power meters, RTC, clock outputs, and
+> additional GPIO interfaces.
+>=20
+> It has 10 buck and 31 LDO rails. Several of these can either be
+> controlled via software (register writes) or via external signals, in
+> particular by:
+>     * one out of several input pins connected to a main processor's:
+>         *  GPIO pins
+>         * other pins that are e.g. firmware- or power-domain-controlled
+>           without explicit driver intervention
+>     * a combination of input pins and register writes.
+>=20
+> Control via input pins allows PMIC rails to be controlled by firmware,
+> e.g. during standby/suspend, or as part of power domain handling where
+> otherwise that would not be possible. Additionally toggling a pin is
+> faster than register writes, and it also allows the PMIC to ensure that
+> any necessary timing requirements between rails are respected
+> automatically if multiple rails are to be enabled or disabled quasi
+> simultaneously.
+>=20
+> While external control via input pins appears to exist on other
+> versions of this PMIC, there is more flexibility in this version, in
+> particular there is a selection of input pins to choose from for each
+> rail (which must therefore be configured accordingly if in use),
+> whereas other versions don't have this flexibility.
+>=20
+> Add documentation related to the regulator (buck & ldo) parts like
+> devicetree definitions, regulator naming patterns, and additional
+> properties.
+>=20
+> S2MPG10 is typically used as the main-PMIC together with an S2MPG11
+> PMIC in a main/sub configuration, hence the datasheet and the binding
+> both suffix the rails with an 'm'.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>=20
+> ---
 
-The new callback provides the same functionality in a more direct way,
-following the ongoing ethtool API modernization.
+What is the base of this? base-commit from cover letter:
+fatal: bad object ab40c92c74c6b0c611c89516794502b3a3173966
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
+I am asking because `b4 diff` fails:
+
+b4 diff '20251110-s2mpg1x-regulators-v4-2-94c9e726d4ba@linaro.org'
+Grabbing thread from lore.kernel.org/all/20251110-s2mpg1x-regulators-v4-2-9=
+4c9e726d4ba@linaro.org/t.mbox.gz
+Checking for older revisions
+Grabbing search results from lore.kernel.org
+  Added from v3: 21 patches
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index fc8dec37a9e4..3d853eeb976f 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -3355,19 +3355,11 @@ static int bnx2x_get_rxfh_fields(struct net_device *dev,
- 	return 0;
- }
- 
--static int bnx2x_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info,
--			   u32 *rules __always_unused)
-+static u32 bnx2x_get_rx_ring_count(struct net_device *dev)
- {
- 	struct bnx2x *bp = netdev_priv(dev);
- 
--	switch (info->cmd) {
--	case ETHTOOL_GRXRINGS:
--		info->data = BNX2X_NUM_ETH_QUEUES(bp);
--		return 0;
--	default:
--		DP(BNX2X_MSG_ETHTOOL, "Command parameters not supported\n");
--		return -EOPNOTSUPP;
--	}
-+	return BNX2X_NUM_ETH_QUEUES(bp);
- }
- 
- static int bnx2x_set_rxfh_fields(struct net_device *dev,
-@@ -3674,7 +3666,7 @@ static const struct ethtool_ops bnx2x_ethtool_ops = {
- 	.get_strings		= bnx2x_get_strings,
- 	.set_phys_id		= bnx2x_set_phys_id,
- 	.get_ethtool_stats	= bnx2x_get_ethtool_stats,
--	.get_rxnfc		= bnx2x_get_rxnfc,
-+	.get_rx_ring_count	= bnx2x_get_rx_ring_count,
- 	.get_rxfh_indir_size	= bnx2x_get_rxfh_indir_size,
- 	.get_rxfh		= bnx2x_get_rxfh,
- 	.set_rxfh		= bnx2x_set_rxfh,
-@@ -3702,7 +3694,7 @@ static const struct ethtool_ops bnx2x_vf_ethtool_ops = {
- 	.get_sset_count		= bnx2x_get_sset_count,
- 	.get_strings		= bnx2x_get_strings,
- 	.get_ethtool_stats	= bnx2x_get_ethtool_stats,
--	.get_rxnfc		= bnx2x_get_rxnfc,
-+	.get_rx_ring_count	= bnx2x_get_rx_ring_count,
- 	.get_rxfh_indir_size	= bnx2x_get_rxfh_indir_size,
- 	.get_rxfh		= bnx2x_get_rxfh,
- 	.set_rxfh		= bnx2x_set_rxfh,
-
+Analyzing 83 messages in the thread
+Preparing fake-am for v3: dt-bindings: firmware: google,gs101-acpm-ipc: con=
+vert regulators to lowercase
+ERROR: Could not write fake-am tree
 ---
-base-commit: 37eb4c8985f12ea1c5b62defc673346ac4a113cd
-change-id: 20251112-bnx_grxrings-0bccd42bd823
+Could not create fake-am range for lower series v3
+
 
 Best regards,
---  
-Breno Leitao <leitao@debian.org>
+Krzysztof
 
 
