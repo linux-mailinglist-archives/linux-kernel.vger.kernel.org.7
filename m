@@ -1,247 +1,193 @@
-Return-Path: <linux-kernel+bounces-896822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9403BC514D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:15:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071E5C51501
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419DA3B38D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406473A434F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2642FDC3C;
-	Wed, 12 Nov 2025 09:09:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A832FDC5B;
+	Wed, 12 Nov 2025 09:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xTn4hJmo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h4g1xlLI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xTn4hJmo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h4g1xlLI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC5D2F3C32
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B00C2FD692
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938547; cv=none; b=scoIqo6lLNZmwrx642ynXsexpfvJT7CO2MVn6quotPlcy4BPLDKgFX1tPQBDmnwYG5fp4DXvljDqaS/GxoXeLHooSNEPse0GcJwfPGDtKlnbid+8xmwo+YWuzgXiiJoyFwhK55v9oTHmqJEv/3OGurmxJZqAcCAEwFLACSs0t6Q=
+	t=1762938820; cv=none; b=EgSFzsGlg6n3OXW+xN9rARlxc8PIIvB17VJVeDxZp4B60sl8Lq8KEPv3BkMgUbfGfjeWTSt5o/ETmcjiUzMqeWA0t0g0DCA3l8DlN2YsolnSSGoLqVsa3LfVgrYMQ99gdR1POPG7UlKQ8Y9hhq/XnKqdciJKzf8Q0z0obMjv1Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938547; c=relaxed/simple;
-	bh=k8PUUUoON4ioUKVyzZHebFbj55jWd2G4MlMWSybPofQ=;
+	s=arc-20240116; t=1762938820; c=relaxed/simple;
+	bh=zM5TRUCmMmraWW0t8JZQRhV6yxwUUTHiXmGBDI6fs0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DpAIE9W0BalJJ9Ehy2jRyKxMRhkdgHPiZ8wzZGCS2Nw6dyOsbt/qR25uVFh+loToUUmx+nBYQuu0sQkykCHP2JXEMFEZW2qTdyeernd04AgQiHhBSc80SZZ38UHILkqVQYEiYLamrkhDPue2B3pynTx5IIBGt5BCrvZthlfynR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6qa-0006Po-QN; Wed, 12 Nov 2025 10:09:00 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6qa-0003av-1l;
-	Wed, 12 Nov 2025 10:09:00 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	 Content-Type:Content-Disposition:In-Reply-To; b=q40cnI8S44x4P/wNRqUctCakWY40DSKlvHw5JO4s8n5Kt2b+fvE/x7kGxnZhapfvj93EFsQEmga2sfAwD9NJW54q2Xt2Yr2ZT2yhLC0Do3ZPmMkFyVeQo5rjgoN6yH/+zpLg89ZwcpmXBfagndaVs/cszfxXKEC15CdU0MM6RvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xTn4hJmo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h4g1xlLI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xTn4hJmo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h4g1xlLI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 3E52749D98A;
-	Wed, 12 Nov 2025 09:09:00 +0000 (UTC)
-Date: Wed, 12 Nov 2025 10:08:56 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] can: calc_bittiming: get rid of the incorrect
- "nominal" word
-Message-ID: <20251112-remarkable-puzzling-fox-3b3202-mkl@pengutronix.de>
-References: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
- <20251102-pwm_sample_point-v1-1-3bbea180f59e@kernel.org>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4DB7A1F45E;
+	Wed, 12 Nov 2025 09:13:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762938816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lOkexIAv3v1duPJ1ViOi5rMNa1miLiwCtXPhdmXLxp0=;
+	b=xTn4hJmoP9BdmIdEZZL+ENruH10vR6IjNXoBgVIDacRFj0dj9+C8I+wpFgqvnhh9wrEQVF
+	ZP49g6jiBAZDvAcZqw9j1LyhpW7do6s6zpgFmmvWUeeN7vL8N55WbgCJtSw4cir1JX9p+8
+	7pAB5Xuyz+ZMEMCorsjRX954lI5LmU8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762938816;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lOkexIAv3v1duPJ1ViOi5rMNa1miLiwCtXPhdmXLxp0=;
+	b=h4g1xlLIKRO8zI6qtfxagw+bHr+RCvDq3wwpTdTCPXXC4sq84KVWoWCwmxmLn98Pkns8Mi
+	8IGK4AexbxaINtDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762938816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lOkexIAv3v1duPJ1ViOi5rMNa1miLiwCtXPhdmXLxp0=;
+	b=xTn4hJmoP9BdmIdEZZL+ENruH10vR6IjNXoBgVIDacRFj0dj9+C8I+wpFgqvnhh9wrEQVF
+	ZP49g6jiBAZDvAcZqw9j1LyhpW7do6s6zpgFmmvWUeeN7vL8N55WbgCJtSw4cir1JX9p+8
+	7pAB5Xuyz+ZMEMCorsjRX954lI5LmU8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762938816;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lOkexIAv3v1duPJ1ViOi5rMNa1miLiwCtXPhdmXLxp0=;
+	b=h4g1xlLIKRO8zI6qtfxagw+bHr+RCvDq3wwpTdTCPXXC4sq84KVWoWCwmxmLn98Pkns8Mi
+	8IGK4AexbxaINtDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A12E23EA61;
+	Wed, 12 Nov 2025 09:13:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5gSIJL9PFGk2cAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 12 Nov 2025 09:13:35 +0000
+Date: Wed, 12 Nov 2025 10:13:34 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Hugh Dickins <hughd@google.com>
+Cc: Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	baolin.wang@linux.alibaba.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm/memfd: clear hugetlb pages on allocation
+Message-ID: <aRRPvn4DYAhuGtq3@localhost.localdomain>
+References: <20251112031631.2315651-1-kartikey406@gmail.com>
+ <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iscfgqwfaar6nfd2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251102-pwm_sample_point-v1-1-3bbea180f59e@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_CC(0.00)[linux.dev,redhat.com,gmail.com,intel.com,linux.alibaba.com,linux-foundation.org,kvack.org,vger.kernel.org,syzkaller.appspotmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[f64019ba229e3a5c411b];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
+
+On Tue, Nov 11, 2025 at 10:55:03PM -0800, Hugh Dickins wrote:
+> Thanks a lot, Deepanshu and syzbot: this sounds horrid, and important
+> to fix very soon; and wlll need a Fixes tag (with stable Cc'ed when
+> the fix goes into mm.git), I presume it's
+> 
+> Fixes: 89c1905d9c14 ("mm/gup: introduce memfd_pin_folios() for pinning memfd folios")
+> 
+> But although my name appears against mm/memfd.c, the truth is I know
+> little of hugetlb (maintainers now addressed), and when its folios
+> are supposed to get zeroed (would a __GFP_ZERO somewhere be better?).
+> 
+> I was puzzled by how udmabuf came into the picture, since hugetlbfs
+> has always supported the read (not write) system call: but see now
+> that there is this surprising backdoor into the hugetlb subsystem,
+> via memfd and GUP pinning.
+> 
+> And where does that folio get marked uptodate, or is "uptodate"
+> irrelevant on hugetlbfs?  Are the right locks taken, or could
+> there be races when adding to hugetlbfs cache in this way?
+
+Thanks Hugh for raising this up.
+
+memfd_alloc_folio() seems to try to recreate what hugetlb_no_page()
+would do (slightly different though).
+
+The thing is that as far as I know, we should grab hugetlb mutex before
+trying to add a new page in the pagecache, per comment in
+hugetlb_fault():
+
+ "
+   /*
+    * Serialize hugepage allocation and instantiation, so that we don't
+    * get spurious allocation failures if two CPUs race to instantiate
+    * the same page in the page cache.
+    */
+ "
+
+and at least that is what all callers of hugetlb_add_to_page_cache() do
+at this moment, all except memfd_alloc_folio(), so I guess this one
+needs fixing.
+
+Regarding the uptodate question, I do not see what is special about this situation
+that we would not need it.
+We seem to be marking the folio uptodate every time we do allocate a folio __and__
+before adding it into the pagecache (which is expected, right?).
+
+Now, for the GFP_ZERO question.
+This one is nasty.
+hugetlb_reserve_pages() will allocate surplus folios without zeroing, but those
+will be zeroed in the faulting path before mapping them into userspace pagetables
+(see folio_zero_user() in hugetlb_no_page()).
+So unless I am missing something we need to zero them in this case as well.
 
 
---iscfgqwfaar6nfd2
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 1/3] can: calc_bittiming: get rid of the incorrect
- "nominal" word
-MIME-Version: 1.0
-
-On 02.11.2025 23:01:22, Vincent Mailhol wrote:
-> The functions can_update_sample_point() and can_calc_bittiming() are
-> generic and meant to be used for both the nominal and the data
-> bittiming calculation.
-
-""There are 2 hard problems in computer science: cache invalidation,
-  naming things, and off-by-1 errors.""
-
-Here it's naming things. Back in the days, in commit 7da29f97d6c8 ("can:
-dev: can-calc-bit-timing(): better sample point calculation"), I wanted
-to distinguish between the sample point the user requested and the
-current sample point.
-
-I was thinking about the signal that goes into a control loops, but at
-university the lecture was in German, so I picked the wrong term. I
-think "set point" or "reference value" are better terms.
-
-> However, those functions use terminologies such as "bitrate nominal"
-> or "sample point nominal". This is a leftover from when only Classical
-> CAN was supported and now became incorrect.
->
-> Remove or replace any occurrences of the word "nominal" with something
-> more accurate.
-
-What about replacing "nominal" with "reference"
-
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> ---
->  drivers/net/can/dev/calc_bittiming.c | 30 ++++++++++++++----------------
->  1 file changed, 14 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/net/can/dev/calc_bittiming.c b/drivers/net/can/dev/c=
-alc_bittiming.c
-> index 268ec6fa7c49..222117596704 100644
-> --- a/drivers/net/can/dev/calc_bittiming.c
-> +++ b/drivers/net/can/dev/calc_bittiming.c
-> @@ -24,7 +24,7 @@
->   */
->  static int
->  can_update_sample_point(const struct can_bittiming_const *btc,
-> -			const unsigned int sample_point_nominal, const unsigned int tseg,
-> +			unsigned int sp_origin, unsigned int tseg,
-
-Please don't remove the "const".
-
->  			unsigned int *tseg1_ptr, unsigned int *tseg2_ptr,
->  			unsigned int *sample_point_error_ptr)
->  {
-> @@ -35,8 +35,7 @@ can_update_sample_point(const struct can_bittiming_cons=
-t *btc,
->
->  	for (i =3D 0; i <=3D 1; i++) {
->  		tseg2 =3D tseg + CAN_SYNC_SEG -
-> -			(sample_point_nominal * (tseg + CAN_SYNC_SEG)) /
-> -			1000 - i;
-> +			(sp_origin * (tseg + CAN_SYNC_SEG)) / 1000 - i;
->  		tseg2 =3D clamp(tseg2, btc->tseg2_min, btc->tseg2_max);
->  		tseg1 =3D tseg - tseg2;
->  		if (tseg1 > btc->tseg1_max) {
-> @@ -46,9 +45,9 @@ can_update_sample_point(const struct can_bittiming_cons=
-t *btc,
->
->  		sample_point =3D 1000 * (tseg + CAN_SYNC_SEG - tseg2) /
->  			(tseg + CAN_SYNC_SEG);
-> -		sample_point_error =3D abs(sample_point_nominal - sample_point);
-> +		sample_point_error =3D abs(sp_origin - sample_point);
->
-> -		if (sample_point <=3D sample_point_nominal &&
-> +		if (sample_point <=3D sp_origin &&
->  		    sample_point_error < best_sample_point_error) {
->  			best_sample_point =3D sample_point;
->  			best_sample_point_error =3D sample_point_error;
-> @@ -68,11 +67,11 @@ int can_calc_bittiming(const struct net_device *dev, =
-struct can_bittiming *bt,
->  {
->  	struct can_priv *priv =3D netdev_priv(dev);
->  	unsigned int bitrate;			/* current bitrate */
-> -	unsigned int bitrate_error;		/* difference between current and nominal =
-value */
-> +	unsigned int bitrate_error;		/* difference between current and calculat=
-ed value */
-
-What about: "difference between reference and calculated value"
-
->  	unsigned int best_bitrate_error =3D UINT_MAX;
-> -	unsigned int sample_point_error;	/* difference between current and nomi=
-nal value */
-> +	unsigned int sample_point_error;	/* difference between current and calc=
-ulated value */
->  	unsigned int best_sample_point_error =3D UINT_MAX;
-> -	unsigned int sample_point_nominal;	/* nominal sample point */
-> +	unsigned int sample_point;
->  	unsigned int best_tseg =3D 0;		/* current best value for tseg */
->  	unsigned int best_brp =3D 0;		/* current best value for brp */
->  	unsigned int brp, tsegall, tseg, tseg1 =3D 0, tseg2 =3D 0;
-> @@ -81,14 +80,14 @@ int can_calc_bittiming(const struct net_device *dev, =
-struct can_bittiming *bt,
->
->  	/* Use CiA recommended sample points */
->  	if (bt->sample_point) {
-> -		sample_point_nominal =3D bt->sample_point;
-> +		sample_point =3D bt->sample_point;
->  	} else {
->  		if (bt->bitrate > 800 * KILO /* BPS */)
-> -			sample_point_nominal =3D 750;
-> +			sample_point =3D 750;
->  		else if (bt->bitrate > 500 * KILO /* BPS */)
-> -			sample_point_nominal =3D 800;
-> +			sample_point =3D 800;
->  		else
-> -			sample_point_nominal =3D 875;
-> +			sample_point =3D 875;
->  	}
->
->  	/* tseg even =3D round down, odd =3D round up */
-> @@ -115,7 +114,7 @@ int can_calc_bittiming(const struct net_device *dev, =
-struct can_bittiming *bt,
->  		if (bitrate_error < best_bitrate_error)
->  			best_sample_point_error =3D UINT_MAX;
->
-> -		can_update_sample_point(btc, sample_point_nominal, tseg / 2,
-> +		can_update_sample_point(btc, sample_point, tseg / 2,
->  					&tseg1, &tseg2, &sample_point_error);
->  		if (sample_point_error >=3D best_sample_point_error)
->  			continue;
-> @@ -146,9 +145,8 @@ int can_calc_bittiming(const struct net_device *dev, =
-struct can_bittiming *bt,
->  	}
->
->  	/* real sample point */
-> -	bt->sample_point =3D can_update_sample_point(btc, sample_point_nominal,
-> -						   best_tseg, &tseg1, &tseg2,
-> -						   NULL);
-> +	bt->sample_point =3D can_update_sample_point(btc, sample_point, best_ts=
-eg,
-> +						   &tseg1, &tseg2, NULL);
->
->  	v64 =3D (u64)best_brp * 1000 * 1000 * 1000;
->  	do_div(v64, priv->clock.freq);
-
-Marc
-
---
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---iscfgqwfaar6nfd2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUTqUACgkQDHRl3/mQ
-kZzVaggAqp3ZD1N3MTv3r+gEIZmlx2Pz8d53BUC/QWS2FpdBcAVi4Rn+ZKPzroPi
-9Z3Pht8hUg26R7Nq0dtmsvmiywbus6FI7/lJS6yfYyoZswCmYHMDhNRElquFKdN5
-5RPCXpK3wl64VMLQL52M86O8VGxV3zAiV7WYjEkf5cjA1Bl3I6lDTX/7yfTjpfv/
-CQ9Fkl3bonyrkdRRxV8aaHjFHleO1rgxmJIOikxHvS7sR5OWsQ2BK0oQOayKC9ea
-pc/0/w+UKLoCe+RIaABNsAF6XTsi++AYc64yh98z9gJk3Mt9yR8XkdS9rhk7IvwC
-Keuae6a9A/YkR3z0a8he5Gc65a0JVA==
-=Yhch
------END PGP SIGNATURE-----
-
---iscfgqwfaar6nfd2--
+-- 
+Oscar Salvador
+SUSE Labs
 
