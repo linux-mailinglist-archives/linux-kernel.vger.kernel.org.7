@@ -1,91 +1,230 @@
-Return-Path: <linux-kernel+bounces-897559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BB0C53434
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:04:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549A7C53720
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29D64A80F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:27:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 108CA4F8A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1E03016F1;
-	Wed, 12 Nov 2025 15:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AD333B6E8;
+	Wed, 12 Nov 2025 15:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXvh2aY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nyOIr48c";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aPg9RSi1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB151277CB8;
-	Wed, 12 Nov 2025 15:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB533B6D1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961003; cv=none; b=MlZO8SJk0Qi6DtEfdiMo3ij87mKX2zj7tfq1CuwJ7+8w/P327QzUEDBmhySp1glFkeFO7VtvaYl6WsXti9htK/04VL79sOx56WsZgGOeew1PDvILBmyR1yGyvjNEM8NfHaSF1jp3hUCaD3HdrZb0PP5zsubKi7TUoXDOwfawgW4=
+	t=1762961053; cv=none; b=djXooyL3ufwvfUC+Xzhfn1rrGWE7zrme7632/EdgYD+0zOQ2PzZlbCx+JtPPf3nXGB6HyKkmaoP6E2VjCi/dsslHYPFEh1Nud3oDkMgbM+p7NkoSm2EBJ8nlyqW/FMb4CJi0KuZBqpKeP1lCrq9kSFbcOh/N9es2nUEtmriejXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961003; c=relaxed/simple;
-	bh=R68lyaKZuVdiD0o54Fj+yYa5Ky9uRQ3jNdQoHZ6wcYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSH5nKqsJ5qXoIAzeQXrKDxxE2sbYRUtx4Z/oEmM9i18nTgdUPh5ySU/z7i278NFDDdwj8K5NuVwFYH6pTCDnOTrgghqXz/Razk0gD9dLve4UvZBt4rpJcX05Y5cZ+ZODi8Wy0RNKYGAHQXJD1T+1MHeDjTuk5aKnKqRIy6CPa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXvh2aY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E66FC4CEF5;
-	Wed, 12 Nov 2025 15:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762961002;
-	bh=R68lyaKZuVdiD0o54Fj+yYa5Ky9uRQ3jNdQoHZ6wcYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oXvh2aY/29WbplAxXgCKqpBoHSFrIZsLF14u/GH2RNc2nvmjhsNFyHhoDKqu8SjKt
-	 7SLpjGixVVKsWks/qOXJEIa6jFmdeq2Fg5FxkjWZQMCSmWAkPta6dcYn6EtuaYiROT
-	 oxCx8HLP4TURdJLrTsZfYlFISg1dhgxGtiXrSgaj4Jplf6Pyxwpe0MDeLWqhWT3oC2
-	 A8i5L1MDaYazR35NjIwgzWj7Y8ys7/C67wK+mfQpnVZ2DYHKksAV6bvRVbJVpN6aD0
-	 8kG7hlQpqbbT7Ht2ju9vtDV/zFnVK9cMsRrOMltCezhNDJDq/QtMHoISbkWisYWX0v
-	 9EhQVaE3OuWbw==
-Date: Wed, 12 Nov 2025 10:23:19 -0500
-From: Keith Busch <kbusch@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 2/2] block-dma: properly take MMIO path
-Message-ID: <aRSmZ6IisXDmI9Yg@kbusch-mbp>
-References: <20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com>
- <20251027-block-with-mmio-v3-2-ac3370e1f7b7@nvidia.com>
- <aRSbzwpS2AuP92_n@kbusch-mbp>
- <20251112151604.GF17382@unreal>
+	s=arc-20240116; t=1762961053; c=relaxed/simple;
+	bh=usTnuHJtz1Fz0mFW9SJRLD/bL8QQaZ1NZaYRGimhwQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=naRqzwnqTGu2HMjaRsr9jyKEI8pyQ1F/HpSt43sjkNMdmeRuuFMzJj2z+1XHIlnFS49RUT4QldC+pvjzFre8qUdRqbHitR7MzthdikzZvjytt//S3tPTBUtCXVvyAt81zm3nHEkjyCxKp1bUK5BZtTpCbmnxZUz2ozYaw+ic9/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nyOIr48c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aPg9RSi1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACDsKQK1314316
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=; b=nyOIr48co+h+o1Cz
+	HygO/wJc8ZHCMfgKx0gjfjMvZHul+p0ZowGi/MoH24Y2jHUDNPCI67gh2tBExAuF
+	zCt45lyCHifL6newdSlmVb5C6hHIZx9XRuDwdYpXzAwKclPyQ6SQK6SuMQaz5AOj
+	9RWl78903N2EQZgofPPAQ+BHMQAG812EqO0GAtxRZ2NhNmmwSJHmBkxEWHRiJQhA
+	dK5/ThsHRIoL5lpUDve1VSYPl8ErEP5SHa44dvI1DFVAnU1GEMg78u5veAneg3ij
+	1/XsmUe/Lo/OHwk/SiHRuT3gv2JrcfCAWYDLzkoVLEpICMIXxQxArJ4LloMBjFl7
+	4KdzLQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acuhg09m0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:24:10 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3436d81a532so2039662a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:24:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762961050; x=1763565850; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=;
+        b=aPg9RSi1P+6JJMt4Bha4hOnqc2YhxrhkDdada9z/AIaIu/0ZS10DxY8OocJfqTw/im
+         F0D12pqNdyAHcrtuKxytcfvUs5sXI/Pd2XlxQElC5i48Vlb7KHHHyiCMjYqM+k8CCBMs
+         KmktJ9lEbDUkZTR3Guywiz3sOaUaCPFRI3LuL8J2P1FzmxvHqkDOAM3MoxyP82TRn+T/
+         /NpHLvOt34rS9/qxL+DZkO/IVpw2U9CLx5YJJOX231XZbtKzz/gHWyfj35OKP8W3etrJ
+         hmfg/OjX6PLhP0j/ikEuDZzVeTwmWFadkbhc7XklRqNTlfE+AIuDUgD2q2lVinnb/P/s
+         QMwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762961050; x=1763565850;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qdkh9q01QZj84qM0SwA04CDi0gVaDSq5D6Z188vfTpI=;
+        b=uL6kHhCbwabsj1PK49gxPMqt2pEL/v0vBQrut3R8SjVFg5W6HsUHsJQOnjm+nJs1WE
+         6Q9OuIOo5gWEq1Q5DED6sw+V9MfeNrrIU6b+62ncf3S8Go+fbhKh0pSNYBbxWSG4dFOa
+         IafqArwHYkbJRwxUY9W9etZNt2F75NsmqKDurGHxMAEFgM+A6e6Y7IoGwJpZ+/xSfgB4
+         CVPFlPhhR8A5e3r3nWM4iv1Dwj/Cin4R7AL0O0tiW4602+uLd/bv9Xj5oRxs5jvT2MBA
+         J83QRaEKuOzBLa1MnRskEFoHV4L8+wrTvVvBcDTS0LS9QIQyo4xZR1HF5HqCOEKnLGYb
+         S4dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Vz8WS5zHeLsZVMB1TNRmcUirnvN5oJdRDqIVtczmVGAsx09QQ9bXyCIRHLa41iQvKovvM+9uwRv1SpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx820Xl8A4R/txoOCRhIsvk0NMd2Z3h0OEphaSUUSUw20j8QkrV
+	j58NYef7Md931gYo6qKtvxsFFNE4GybHpXjd+CHpvCq2IYzjAp0NZKz0THOefpHLaa9HhOFYBlE
+	9iEE4oywK/gkGZoZv6+4K8gGbdttKWDoQLfZVsDt6qcIONjGaAz1lMPTfzcjPnYrSsFA=
+X-Gm-Gg: ASbGncvO5uZBC/92tSYHtgTXrekiNrQaiUBTjRgeCiG7OslyjTkBb6fFq7FjMWqzvXi
+	au1NIS1/h9G5iSDWGxr2nSYT58C7HC0umDVbeD+YdBADIl9rTJp73ijBU5sTQDk7HES6k0Vu0ar
+	NuzIRBbEgOB2fWWaQgYSRWCIt2+7qrkhSueBQVZKDNmKvPcYV2iaXUfGBktptbRotsYOfkusA06
+	rmWBDpSktukwDxGIUMTCpo+vc3ADg1Z+XZKZ3Xb200qTT8+32UWhRmxbEDfA+Pk0zcvzsbdirXG
+	NP9PlTDMQhxMy/bfBdw8K/Y4LHzU10qGRsuRfGYBs6yNhPLVcIvNEXODndcttSVsLAotp3TUQcs
+	dS4sqJVBGRQlbWjge3rSTEDzOWOk4Mb3D
+X-Received: by 2002:a17:90b:2dca:b0:340:b152:65c0 with SMTP id 98e67ed59e1d1-343dde8b78amr4377268a91.26.1762961049666;
+        Wed, 12 Nov 2025 07:24:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH8mVyyxybDIpgRW0JbU3tFRvdQFBdXI1yZP7qme4Gqt+0BL84cd+jtP2J4tTiW28FMBPTCrQ==
+X-Received: by 2002:a17:90b:2dca:b0:340:b152:65c0 with SMTP id 98e67ed59e1d1-343dde8b78amr4377207a91.26.1762961049087;
+        Wed, 12 Nov 2025 07:24:09 -0800 (PST)
+Received: from [10.219.49.108] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e07d2e4asm2944260a91.18.2025.11.12.07.24.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 07:24:08 -0800 (PST)
+Message-ID: <49fbb3f6-706d-40dc-a242-c3d6a57898eb@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 20:54:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112151604.GF17382@unreal>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: soundwire: qcom: Add SoundWire v2.2.0
+ compatible
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
+Content-Language: en-US
+From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+In-Reply-To: <20251105-knp-audio-v2-v4-1-ae0953f02b44@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=NbnrFmD4 c=1 sm=1 tr=0 ts=6914a69a cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=x8bQnJUcN0kwi81saDsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: JxRpG3s0WwXNNf-ADm_kQJWf0IvplWx5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEyNCBTYWx0ZWRfXwGIBDNz6yUeh
+ uThjRM0z58TrQQK37A3c6AyJgBew9tSCZzTX6kFBDsffx+Y8aFchh2VUOp5RREfFkv/l7rudq2R
+ oVgTGiqHorM0caQyhKFQfccoL2q9/bXagsYBdMUrQ3K1JtPoPMxrgT6+mJzA6hpSe2NzCxuCcKD
+ DT+zJ6DKIK/sAwLSr2Wikg6xgc1lFZlgDpNspX/rXTv48TiQcIQZ9dZjOuSoE0JVVn4vuMWsCto
+ jXuX/uEisShyLwGfEb4gX4I0h3CE7OUcGOgwFyKMcsKqmhS6DYY+DSq4aLm/id0azzDnFTV/+MP
+ 1lUrno7XwWcP741k1i3eVN3dPZPpTdqfE2CFqbeQLHAgsc/Yjm1QA6MQQh39rCcXxJer42v4zfI
+ u7hcQdk7CzuDMAWfsshFoK4lVU7vzA==
+X-Proofpoint-ORIG-GUID: JxRpG3s0WwXNNf-ADm_kQJWf0IvplWx5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_05,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 spamscore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511120124
 
-On Wed, Nov 12, 2025 at 05:16:04PM +0200, Leon Romanovsky wrote:
-> On Wed, Nov 12, 2025 at 09:38:07AM -0500, Keith Busch wrote:
-> > On Mon, Oct 27, 2025 at 09:30:21AM +0200, Leon Romanovsky wrote:
-> > > @@ -732,13 +746,20 @@ static void nvme_unmap_metadata(struct request *req)
-> > >  		return;
-> > >  	}
-> > >  
-> > > -	if (!blk_rq_integrity_dma_unmap(req, dma_dev, &iod->meta_dma_state,
-> > > -					iod->meta_total_len)) {
-> > > +	if (iod->flags & IOD_META_P2P)
-> > > +		map = PCI_P2PDMA_MAP_BUS_ADDR;
-> > > +	if (iod->flags & IOD_META_MMIO) {
-> > > +		map = PCI_P2PDMA_MAP_THRU_HOST_BRIDGE;
-> > > +		attrs |= DMA_ATTR_MMIO;
-> > > +	}
-> > 
-> > This should be an 'else if' no?
-> 
-> We can't have both IOD_META_P2P and IOD_META_MMIO. It can be only one or
-> IOD_META_P2P or IOD_META_MMIO. In this case "else if' is not necessary.
+++ @Vinod,
 
-I get that and I'm not saying this is a bug, but it just looks odd.
-You're checking the conditions as if they're independent of each other
-when they're not. If the first 'if' is true, there's no need to test the
-second one as we know it's false, but this code flow will test it
-anyway.
+Hi Vinod,
+
+I missed including you in this change because,  some how your name 
+didn't auto add to the list when i tried with "b4 prep --auto-to-cc".
+
+As this is single change left over in this series and having reviewed 
+tag, Could you please help to pick it in the next merge cycle?
+
+Thanks,
+Prasad
+
+On 11/5/2025 5:49 PM, Prasad Kumpatla via B4 Relay wrote:
+> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+>
+> Add qcom,soundwire-v2.2.0 to the list of supported Qualcomm
+> SoundWire controller versions. This version falls back to
+> qcom,soundwire-v2.0.0 if not explicitly handled by the driver.
+>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+> ---
+> Add audio support for Kaanapali MTP boards. Introduces supporting
+> dependencies required to enable audio functionality on MTP platforms.
+> These changes have been validated on Kaanapali MTP hardware.
+>
+> Changes in [v4]:
+> 	- Dropped merged patches.
+> 	- Link to v3: https://lore.kernel.org/linux-arm-msm/20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com/
+>
+> Changes in [v3]:
+> 	- Correct SoB chain, comments from Krzysztof.
+> 	- Link to v2: https://lore.kernel.org/linux-arm-msm/20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com/
+>
+> Changes in [v2]:
+> 	- Addressed compilation issue for lpass version check patch.
+> 	- Sorted compatible string in machine driver.
+> 	- Link to v1: https://lore.kernel.org/linux-arm-msm/20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com/
+>
+> Konrad Dybcio (1):
+>    ASoC: codecs: va-macro: Rework version checking
+>
+> Prasad Kumpatla (4):
+>    ASoC: dt-bindings: qcom,sm8250: Add kaanapali sound card
+>    ASoC: qcom: sc8280xp: Add support for Kaanapali
+>    dt-bindings: soundwire: qcom: Add SoundWire v2.2.0 compatible
+>    ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro codecs
+>
+>   .../bindings/sound/qcom,lpass-rx-macro.yaml   |  1 +
+>   .../bindings/sound/qcom,lpass-tx-macro.yaml   |  1 +
+>   .../bindings/sound/qcom,lpass-va-macro.yaml   |  1 +
+>   .../bindings/sound/qcom,lpass-wsa-macro.yaml  |  1 +
+>   .../bindings/sound/qcom,sm8250.yaml           |  1 +
+>   .../bindings/soundwire/qcom,soundwire.yaml    |  1 +
+>   sound/soc/codecs/lpass-va-macro.c             | 90 +++++++++++++------
+>   sound/soc/qcom/sc8280xp.c                     |  1 +
+>   8 files changed, 70 insertions(+), 27 deletions(-)
+>
+> --
+> 2.34.1
+> ---
+>   Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
+> index 95d947fda6a7..1c4b0bdbb044 100644
+> --- a/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
+> +++ b/Documentation/devicetree/bindings/soundwire/qcom,soundwire.yaml
+> @@ -26,6 +26,7 @@ properties:
+>         - items:
+>             - enum:
+>                 - qcom,soundwire-v2.1.0
+> +              - qcom,soundwire-v2.2.0
+>             - const: qcom,soundwire-v2.0.0
+>   
+>     reg:
+>
+> ---
+> base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
+> change-id: 20251014-knp-audio-v2-9a37752cdc15
+>
+> Best regards,
 
