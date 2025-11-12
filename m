@@ -1,193 +1,247 @@
-Return-Path: <linux-kernel+bounces-896821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324AEC5148F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:10:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9403BC514D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3691B1888BC6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419DA3B38D2
 	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1352FDC3C;
-	Wed, 12 Nov 2025 09:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Map12MD8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2642FDC3C;
+	Wed, 12 Nov 2025 09:09:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C766E29AB1D;
-	Wed, 12 Nov 2025 09:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC5D2F3C32
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938516; cv=none; b=eQ2u9WPgr69MZUDu7eJKyfcDl4ofsEpiasM0G34aiO0Gidxxj4a4x6abgCC/viM/Y/i3V1YX0s++KsJiURxcgTHyImXRkqa39hP5nJZe4nMR2+F7i5CWLIKye3/WtGE1YrI9fM5pGUJnhJFdzauC1MDnoJ9xtqHIwXEPrOo/QU8=
+	t=1762938547; cv=none; b=scoIqo6lLNZmwrx642ynXsexpfvJT7CO2MVn6quotPlcy4BPLDKgFX1tPQBDmnwYG5fp4DXvljDqaS/GxoXeLHooSNEPse0GcJwfPGDtKlnbid+8xmwo+YWuzgXiiJoyFwhK55v9oTHmqJEv/3OGurmxJZqAcCAEwFLACSs0t6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938516; c=relaxed/simple;
-	bh=fPlfJInIkVVGN9ej8lr8KJJv7if0Cdwdc3VVXzlPNA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G3AX7YXQhbyKgh8+Fz63F4xCMZZxkjLOthWkInMh9gzYZQtkKuzvCEJG26MJJ/W7bhP9ZuM83UI7YzTuCCEod+OoJYjb+hoXJJ9lk7al/61n55uqOIhfvH1KawJNuDmvP00BeBWeg4BRJTlPP0tPvcErknyhjzQNEZvytOT9foY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Map12MD8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2F1C19423;
-	Wed, 12 Nov 2025 09:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762938516;
-	bh=fPlfJInIkVVGN9ej8lr8KJJv7if0Cdwdc3VVXzlPNA0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Map12MD8WPoa9Dz+/7u2ptaxxzhd1cu95gd3hN+9JtTBl0RBiIUeDDeczX6WXvzL7
-	 AZ4dkcyaQn2Z+teNrTklPEL9FS63PDMDSb+5PO9v1gWi8NsTYQBCkuKlVtOoTa3Il/
-	 W86nxkqMEVsAA7dMvXPRIVpa6TJdipwuOwT7DY+ToQgiKIAaAtKpHXxiSkNbeP+NXA
-	 th8j6OtxalqY6timU/HGVwIII5yG+aIxp/8A79BAw2PbziJa0+m6om6wq+1sGZLXo1
-	 uLgKGb4xfA83gq7fp1mE9i8I+y80BAmsRTTN7sWELib6GQZ0dtCzrf3o6MyHMLoNjh
-	 Q0P1ySTznnypQ==
-Message-ID: <baafb460-fb65-4cd2-9911-89d828199d9b@kernel.org>
-Date: Wed, 12 Nov 2025 10:08:29 +0100
+	s=arc-20240116; t=1762938547; c=relaxed/simple;
+	bh=k8PUUUoON4ioUKVyzZHebFbj55jWd2G4MlMWSybPofQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpAIE9W0BalJJ9Ehy2jRyKxMRhkdgHPiZ8wzZGCS2Nw6dyOsbt/qR25uVFh+loToUUmx+nBYQuu0sQkykCHP2JXEMFEZW2qTdyeernd04AgQiHhBSc80SZZ38UHILkqVQYEiYLamrkhDPue2B3pynTx5IIBGt5BCrvZthlfynR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6qa-0006Po-QN; Wed, 12 Nov 2025 10:09:00 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6qa-0003av-1l;
+	Wed, 12 Nov 2025 10:09:00 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 3E52749D98A;
+	Wed, 12 Nov 2025 09:09:00 +0000 (UTC)
+Date: Wed, 12 Nov 2025 10:08:56 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] can: calc_bittiming: get rid of the incorrect
+ "nominal" word
+Message-ID: <20251112-remarkable-puzzling-fox-3b3202-mkl@pengutronix.de>
+References: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
+ <20251102-pwm_sample_point-v1-1-3bbea180f59e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Daniel Baluta <daniel.baluta@gmail.com>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Rogerio Pimentel <rpimentel.silva@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de,
- alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com,
- marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de,
- joao.goncalves@toradex.com, frieder.schrempf@kontron.de,
- josua@solid-run.com, francesco.dolcini@toradex.com, primoz.fiser@norik.com,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xiaofeng Wei <xiaofeng.wei@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- Joseph Guo <qijian.guo@nxp.com>
-References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
- <20251109214515.121742-2-rpimentel.silva@gmail.com>
- <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
- <CAEnQRZCvpXzGt=7NGv7-s+y0gvOg7Jx4OqbfbW3uv8jDp-jroQ@mail.gmail.com>
- <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com>
- <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
- <CAEnQRZBBJ4PGDOk7hBP_qsk7bBiec8pHb0DYKs2mhOAahNyKww@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAEnQRZBBJ4PGDOk7hBP_qsk7bBiec8pHb0DYKs2mhOAahNyKww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 12/11/2025 09:15, Daniel Baluta wrote:
-> On Tue, Nov 11, 2025 at 2:49 PM Daniel Baluta <daniel.baluta@gmail.com> wrote:
->>
->> On Tue, Nov 11, 2025 at 1:50 PM Fabio Estevam <festevam@gmail.com> wrote:
->>>
->>> Hi Daniel,
->>>
->>> On Tue, Nov 11, 2025 at 5:45 AM Daniel Baluta <daniel.baluta@gmail.com> wrote:
->>>
->>>> In addition to that, Rogerio please read:
->>>>
->>>> https://docs.kernel.org/process/submitting-patches.html
->>>>
->>>> At this moment I think you should keep the original author of the
->>>> patch.
->>>
->>> Right, but NXP makes a total mess with authorship.
->>
->> I cannot disagree with you on this, let me clarify it internally with
->> NXP colleagues
->> and sort everything out.
-> 
-> Hi Fabio & Rogerio,
-> 
-> Checked internally and to track the correct authorship and development work
-> here is how NXP would prefer to get credit.
-
-Sorry, but individual contributors do not need to give any credits to
-NXP. If NXP wanted to sent the patches to have credit, they would do it.
-
-Did sending happened?
-
-If not, then any contributor is rightful to take the patches from
-downstream and send them only, ONLY with their authorship. That's what
-DCO allows and that's what established practice as well.
-
-NXP had a chance to upstream. When they decided not to, they forfeit any
-rights to claim they want any authorship.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iscfgqwfaar6nfd2"
+Content-Disposition: inline
+In-Reply-To: <20251102-pwm_sample_point-v1-1-3bbea180f59e@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-> 
-> #Use git commit --amend --author="Xiaofeng Wei <xiaofeng.wei@nxp.com>"
+--iscfgqwfaar6nfd2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 1/3] can: calc_bittiming: get rid of the incorrect
+ "nominal" word
+MIME-Version: 1.0
 
-NAK, there is no single patch like that from above author:
+On 02.11.2025 23:01:22, Vincent Mailhol wrote:
+> The functions can_update_sample_point() and can_calc_bittiming() are
+> generic and meant to be used for both the nominal and the data
+> bittiming calculation.
 
-https://lore.kernel.org/all/?q=f%3Axiaofeng.wei%40nxp.com
+""There are 2 hard problems in computer science: cache invalidation,
+  naming things, and off-by-1 errors.""
 
-Remember, downstream code does not matter. Does not exist.
+Here it's naming things. Back in the days, in commit 7da29f97d6c8 ("can:
+dev: can-calc-bit-timing(): better sample point calculation"), I wanted
+to distinguish between the sample point the user requested and the
+current sample point.
 
+I was thinking about the signal that goes into a control loops, but at
+university the lecture was in German, so I picked the wrong term. I
+think "set point" or "reference value" are better terms.
 
-> Author: Xiaofeng Wei <xiaofeng.wei@nxp.com>
-> 
-> Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
-> 
-> Co-developed-by: Joseph Guo <qijian.guo@nxp.com>
-> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
-> 
-> Co-developed-by: Steven Yang <steven.yang@nxp.com>
-> Signed-off-by: Steven Yang <steven.yang@nxp.com>
-> 
-> Co-developed-by: Lei Xu <lei.xu@nxp.com>
-> Signed-off-by: Lei Xu <lei.xu@nxp.com>
-> 
-> Then you can add your own C-d-b and S-o-b.
-> 
-> Thanks,
-> Daniel.
+> However, those functions use terminologies such as "bitrate nominal"
+> or "sample point nominal". This is a leftover from when only Classical
+> CAN was supported and now became incorrect.
+>
+> Remove or replace any occurrences of the word "nominal" with something
+> more accurate.
 
+What about replacing "nominal" with "reference"
 
-Best regards,
-Krzysztof
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+> ---
+>  drivers/net/can/dev/calc_bittiming.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/net/can/dev/calc_bittiming.c b/drivers/net/can/dev/c=
+alc_bittiming.c
+> index 268ec6fa7c49..222117596704 100644
+> --- a/drivers/net/can/dev/calc_bittiming.c
+> +++ b/drivers/net/can/dev/calc_bittiming.c
+> @@ -24,7 +24,7 @@
+>   */
+>  static int
+>  can_update_sample_point(const struct can_bittiming_const *btc,
+> -			const unsigned int sample_point_nominal, const unsigned int tseg,
+> +			unsigned int sp_origin, unsigned int tseg,
+
+Please don't remove the "const".
+
+>  			unsigned int *tseg1_ptr, unsigned int *tseg2_ptr,
+>  			unsigned int *sample_point_error_ptr)
+>  {
+> @@ -35,8 +35,7 @@ can_update_sample_point(const struct can_bittiming_cons=
+t *btc,
+>
+>  	for (i =3D 0; i <=3D 1; i++) {
+>  		tseg2 =3D tseg + CAN_SYNC_SEG -
+> -			(sample_point_nominal * (tseg + CAN_SYNC_SEG)) /
+> -			1000 - i;
+> +			(sp_origin * (tseg + CAN_SYNC_SEG)) / 1000 - i;
+>  		tseg2 =3D clamp(tseg2, btc->tseg2_min, btc->tseg2_max);
+>  		tseg1 =3D tseg - tseg2;
+>  		if (tseg1 > btc->tseg1_max) {
+> @@ -46,9 +45,9 @@ can_update_sample_point(const struct can_bittiming_cons=
+t *btc,
+>
+>  		sample_point =3D 1000 * (tseg + CAN_SYNC_SEG - tseg2) /
+>  			(tseg + CAN_SYNC_SEG);
+> -		sample_point_error =3D abs(sample_point_nominal - sample_point);
+> +		sample_point_error =3D abs(sp_origin - sample_point);
+>
+> -		if (sample_point <=3D sample_point_nominal &&
+> +		if (sample_point <=3D sp_origin &&
+>  		    sample_point_error < best_sample_point_error) {
+>  			best_sample_point =3D sample_point;
+>  			best_sample_point_error =3D sample_point_error;
+> @@ -68,11 +67,11 @@ int can_calc_bittiming(const struct net_device *dev, =
+struct can_bittiming *bt,
+>  {
+>  	struct can_priv *priv =3D netdev_priv(dev);
+>  	unsigned int bitrate;			/* current bitrate */
+> -	unsigned int bitrate_error;		/* difference between current and nominal =
+value */
+> +	unsigned int bitrate_error;		/* difference between current and calculat=
+ed value */
+
+What about: "difference between reference and calculated value"
+
+>  	unsigned int best_bitrate_error =3D UINT_MAX;
+> -	unsigned int sample_point_error;	/* difference between current and nomi=
+nal value */
+> +	unsigned int sample_point_error;	/* difference between current and calc=
+ulated value */
+>  	unsigned int best_sample_point_error =3D UINT_MAX;
+> -	unsigned int sample_point_nominal;	/* nominal sample point */
+> +	unsigned int sample_point;
+>  	unsigned int best_tseg =3D 0;		/* current best value for tseg */
+>  	unsigned int best_brp =3D 0;		/* current best value for brp */
+>  	unsigned int brp, tsegall, tseg, tseg1 =3D 0, tseg2 =3D 0;
+> @@ -81,14 +80,14 @@ int can_calc_bittiming(const struct net_device *dev, =
+struct can_bittiming *bt,
+>
+>  	/* Use CiA recommended sample points */
+>  	if (bt->sample_point) {
+> -		sample_point_nominal =3D bt->sample_point;
+> +		sample_point =3D bt->sample_point;
+>  	} else {
+>  		if (bt->bitrate > 800 * KILO /* BPS */)
+> -			sample_point_nominal =3D 750;
+> +			sample_point =3D 750;
+>  		else if (bt->bitrate > 500 * KILO /* BPS */)
+> -			sample_point_nominal =3D 800;
+> +			sample_point =3D 800;
+>  		else
+> -			sample_point_nominal =3D 875;
+> +			sample_point =3D 875;
+>  	}
+>
+>  	/* tseg even =3D round down, odd =3D round up */
+> @@ -115,7 +114,7 @@ int can_calc_bittiming(const struct net_device *dev, =
+struct can_bittiming *bt,
+>  		if (bitrate_error < best_bitrate_error)
+>  			best_sample_point_error =3D UINT_MAX;
+>
+> -		can_update_sample_point(btc, sample_point_nominal, tseg / 2,
+> +		can_update_sample_point(btc, sample_point, tseg / 2,
+>  					&tseg1, &tseg2, &sample_point_error);
+>  		if (sample_point_error >=3D best_sample_point_error)
+>  			continue;
+> @@ -146,9 +145,8 @@ int can_calc_bittiming(const struct net_device *dev, =
+struct can_bittiming *bt,
+>  	}
+>
+>  	/* real sample point */
+> -	bt->sample_point =3D can_update_sample_point(btc, sample_point_nominal,
+> -						   best_tseg, &tseg1, &tseg2,
+> -						   NULL);
+> +	bt->sample_point =3D can_update_sample_point(btc, sample_point, best_ts=
+eg,
+> +						   &tseg1, &tseg2, NULL);
+>
+>  	v64 =3D (u64)best_brp * 1000 * 1000 * 1000;
+>  	do_div(v64, priv->clock.freq);
+
+Marc
+
+--
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--iscfgqwfaar6nfd2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUTqUACgkQDHRl3/mQ
+kZzVaggAqp3ZD1N3MTv3r+gEIZmlx2Pz8d53BUC/QWS2FpdBcAVi4Rn+ZKPzroPi
+9Z3Pht8hUg26R7Nq0dtmsvmiywbus6FI7/lJS6yfYyoZswCmYHMDhNRElquFKdN5
+5RPCXpK3wl64VMLQL52M86O8VGxV3zAiV7WYjEkf5cjA1Bl3I6lDTX/7yfTjpfv/
+CQ9Fkl3bonyrkdRRxV8aaHjFHleO1rgxmJIOikxHvS7sR5OWsQ2BK0oQOayKC9ea
+pc/0/w+UKLoCe+RIaABNsAF6XTsi++AYc64yh98z9gJk3Mt9yR8XkdS9rhk7IvwC
+Keuae6a9A/YkR3z0a8he5Gc65a0JVA==
+=Yhch
+-----END PGP SIGNATURE-----
+
+--iscfgqwfaar6nfd2--
 
