@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-896458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63895C506BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4ACC506A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEB594E4B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:36:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBAE04E3172
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31B729D297;
-	Wed, 12 Nov 2025 03:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98D625A64C;
+	Wed, 12 Nov 2025 03:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="t7R/EWsG"
-Received: from sonic313-21.consmr.mail.sg3.yahoo.com (sonic313-21.consmr.mail.sg3.yahoo.com [106.10.240.80])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2oD0YrC"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAC627B348
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D441D5160
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762918612; cv=none; b=PWZk2VdhGKZU+OS5ekeL6lMl3fVE8BBIxJtmUkK056wAaVdeKKXiY7n+lkBcCBMOXsN/GqypWm2sDVCZhGa6Fmyh4mbYMAhQ69mc7JnbEd39gHRBJjjyQvYimxaI6TVFnV+ogW1yufXlpx171mAQdtznzRQrFSp2UGsCgAVZ8h4=
+	t=1762917405; cv=none; b=ghdqyoz09/1LkLKcM7ft5wtPb8JZnWq53KG/L42nocUOWom3AQiAStYkUh3ieu2OexsTtJfY7x18NOlBlrc6LUF7ITVvhYWarx57kd8lWf9dMsbH0cpdyuy32wXPcy/C6zm9kx29iSM8koMg2RdmlWzZiHUoGuUfjIXP7XCAmRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762918612; c=relaxed/simple;
-	bh=Bqc5MWVXAYPapWswck3KTvUFUUcE64qQzbuAoQzW7Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EiijNKACxLB6oqwhAiG11vIhEkGeToHLLyxQPiBMWjhybZVG5fm4EDJAyYjX1PoC7p6ywa7Z6JtfbcoOGjUXPzgI5fAeSEXF3atyM0oME7MaJ655yFOGPuDPF0UD2W/lLvbYMCoZ9l1+y6TUt1zNfpeQA9536PitS475yn5u1X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=t7R/EWsG; arc=none smtp.client-ip=106.10.240.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762918608; bh=DfqdO3iXrWbO4uBssqKRQ276sSUPpFPYITqgJr3Z2C8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=t7R/EWsGqHQZWh5J1R3fwcgQ7rPcVPK2m6VRRQzQ/G2koXETAjqxayqCeYzZbKAlcI+CcN6EKbvQSYTr9Eea3X6LhCbkFgRx9hsWHadDWhB1mFs6ynEyqd7ZFiv+BYjskab+g1WU9wAtg0TVDerwjrUTNQ76VVYjG2SB/oqLUkE1cP+jNpyQoESKpYrMfTKx02g6cfgT1z/IiftT0R/3zzFmcEFnkac5Lz/fUeHxXiLJRdi4eYinCck4lMHefLbeHkW6X6+nxkAdfIPWQSLTbPA/SrH+oxe3w8SdfBw1eFao/sjYPKRCf9nmBKS6i4lIJBGNviEvQsskVMqqq+0GTw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762918608; bh=tgtxacK39xBx4RJedH0CFNEUPz122MUx+07kBK99mgF=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=LSehDbqQW8HVqoxYEnO4aDfuw8KwV9oMFbisxZgGsnX87QByPubkirQtR6w/DJP3nrFOlASiyKeZZyiroK9qkq9ViEJ0DPgmyAPlgBeLB16KfkuqEJ335VZNGckxLJigg1kk9i97yyb8m2f6wNMhAtnv1HPBEMII10tT9Jc+/vPnr/LVrFvDjbmXCiVxWXidw5uaBkfGKHencl3vgxjJ8JII3AWuGlSqHNSGZ/fq/INIiTHFlIuo6VybAqY2NVaPheftFbVms2fKYxADonsl87fetiNgqLiLMmesdOzGCtC+AkRZJhQyStjSKKpdwePqMEKM/40Xj/IGTyW+JZT77A==
-X-YMail-OSG: lzMZSl4VM1niLCJYY3BgUt_8IEKYN5oBRWuDUf7w1ZnLO43pw5Q138hlPsnIj.r
- RB5NEfOiVsDVFEUMIyF51dRkYRBzY6sulmfu5ZyefMNOKBTlt6S3iiFR5VsECRTVTDugiRzzv6UW
- m6mNjf3QYPMTxgy.UrIXm7INscsAJvGxMGuhV1mDtkCIsyrhnnbfZwUV.LbLW2Yj4tAPycIX_IjP
- pzg9hCy9Q08lBVk6018P0vSxDWlCRecreEMum9alhvDv_cHqcpcmzELBKEluxgSHIZw0o3Sg0ZDG
- Mpo2o1uHZSPnVhVZGeQFDPv2xcw8.9HozE9OcaPfpV6rypOJuvtvjWyfKXI3ZWIzRd2W5mhNJ7o0
- 0TGqkvSwiaHXftlXKUumV.eWErhqhYSzdA7ceT0iQJbBhOicxBteAdKtwrNjA3_iJLr29ssva5aF
- WnFAcb5KSjoxvNLI.h_rtW1IzcG4_yBTmXUWfIr0YuSkovtMM7wErvijQJAfvg3Y4lL4tWeh.G2C
- SUrEueNjqPZjZpGith6OI_eM4JcMe.I9xjwTKIcX57lVv73.H8SLBQ3FdyreQQ7TJGUmoEoo6Bxi
- w8k3ZnRCOYmr5hptHnMK94wYE0mPTxbpSG1WHgkocpsF..1bFP12Dy1rCf.fmpZUZww78KUxQw.m
- 5tKYB7HTglI7ARCzCLsWE0GerRK5vRFJz.mWlvJ1vVkJ.TGJBTD2ZWmvONvuTIitQYNOFuTorzPB
- otsTEf02mrnwq93Yil9Jad0Ac55gwmo2gFyg0eS9RDcyPXZhTt_mDRbg0ojx0.22y1YeBPdY468N
- 9At9Dw7s8DEX21z149SEtu.vnKLkPrB0yXgSdoPZ2DQE6cqA2ELy.6F4WglLLWYqFJ_RScXDhg..
- LbMMD9jvXxQCv0sc9B5JJSm3V9UkiRZL6z_sYP5wfTclvXncpB5NfQm0oFUiuw4R2hqtFOXh_IEJ
- Q7pkoiOgA.b2Ze3QoF7P2qDxKHGF3wmW_bvL59bOMvkkeVA9l66YS5lV6hJvS3tiKX4DEwkJN6NC
- qrOsIo.ev6V2hrHBwFtP1F5jf_5k9XJNFDz.Sx1urEuhlaxaR9nll6.Jf0GuoCZenvjf2kciot2C
- HQMmjLWd0WrKU_xrk2aLrr2EDjPIYabaRco.9T.dcSYn9EII1MnWkqQ6A1kUBpl_.hCJHqroKrhq
- UmX9GVrOzHYUbBo9NzuQi20BmznYqRz8zyeMFLJ1il0U3o5CsLycI4k2pi55QxmQ2dXDDDJUitwG
- g12fbtxM6R5f2TEV9Bu0soTlw.nlmjqE0TaxUgHLQC70HQa.gdaLmAUbg211jOMQS.FC0_K25tu1
- EvUAaNuLQTrbhJLD5VvGc9NGqsJjFAgroVyItsxRJEFXlePZa_bKS3ItlP4i8sc6wZvgU7HNTS0X
- .vceOdfpkNDIeVkjQd9KOl7p1c2isEHSQ2Rr72M5NqDm4610roOsqNau.uZ6q8WRQmn88QONhvxb
- f5Eb_cEn3nLq1VBm4oBclRuN3OcCsIqZrk4Pgjo_O83Tv7EqTfjbuFTkaDe.jJmeqNV9UvUZKkVq
- sxih8dcCx_KZDDfQqZMQ4z89lEBTgfc5fHgztlCD_7spoC2SIr_u6ID_kgr2Lknm5pkxsamTThmq
- ZQHxEnrVfoDYGErv_Dx3ppSaTirqeCpUi3TJXTEo.i4K8sgNBpQ2U76XQf9M0t2xGvQ0Vfpcm6vD
- g5S97u0Sb9UkCAsDOsGIO..6hSalVolsadmHI3XmeCVKamwf_Dh5xJ5mfZEmrcA_Ec.993GUwq4P
- CqqdSw5_IlIQEHErPe7qvUJDT437tdxkAEPqvc_V5bW1or8iHq2MMGouwDgc0bX9SAzO7RCank_u
- 3GuCDbyq1fmfPD3CDNjAUa.wSLx4rv0GYHMi1zCw.x2NEPzdAh6IQOMqDiuYQDl.uC1tgRCJ0SaU
- S9HQIVHbfoUXjew3Dp4m63cQaLgKljZLpqFXzzi4UraCDOjgc0BIDb2jrMBgTlnTpV4.BolboaY.
- cN8z5D9D0zNVDwxuhfn.hks9gM0OWF1syu3YuK0xMfWbT4SSxWW2uD6MZ6QhnnE2K4L2740JQwx2
- yWy_UJZR1_FZTu7B9QSrtcEdPp26v4aXitAgDE0qoc.8yG09HPKZub46.1tpnmx1AchO9iz5FkKe
- faO_4iNrrKXBHFnRH_HeRkmaJ0Aa9_PIvf01cjhVz5bcnNKkhOBiwhNI8ubDgxrPt4oM_L3o6war
- UovwWm5FxvDWY2m.xbwwCqNswM9880olIO2TgxSzf03AxfpcxvXP.rUiEwyx2OS5Y48tkeXf4MQp
- dlqEKhyW4sSLrJ0ZsdzRiNJrPfn1Hn6iRT0Us
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: 597644d1-cd42-43a9-bfc7-eb4b5b6dfa75
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.sg3.yahoo.com with HTTP; Wed, 12 Nov 2025 03:36:48 +0000
-Received: by hermes--production-ne1-55f4cd58bd-xpw5m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e4690b395d94bf0002e45a0b77724bf8;
-          Wed, 12 Nov 2025 03:16:28 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: jstultz@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	sumanth.gavini@yahoo.com,
-	tglx@linutronix.de,
-	clingutla@codeaurora.org,
-	mingo@kernel.org,
-	sashal@kernel.org,
-	boqun.feng@gmail.com,
-	gregkh@linuxfoundation.org,
-	ryotkkr98@gmail.com,
-	kprateek.nayak@amd.com
-Cc: elavila@google.com,
+	s=arc-20240116; t=1762917405; c=relaxed/simple;
+	bh=iEpTZFmWsno+Tm566n/qPZio3fhXh+bZM/ZhMWIsEWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OrGjGYGtnGxkvbwBJrNVNB3Vuyp7RhLuWUIlxfOfxJY8wTAQB7LjnjRYq4JtaErp5Dzd1hkSbo8FrBIKIxxy0CHm8jNIDJ4KtnQUESXc8PSbvM2SEQwQEaNh+H3EAqvs42HGqILMCsHQ4Y7zUcoSNTCFbYHUI2y9tBkjLvRqtz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2oD0YrC; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7b0246b27b2so492293b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762917403; x=1763522203; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=54geGydfN2rDn2LihShjRD3xq+QXkZulAFyru1X2fZY=;
+        b=b2oD0YrCWTdzpmCdSZ5+Kpy5VTCW0FF8sKxpUTULAjWEUYioVPWXBU8Yqnc/+hFA6/
+         UVmO91MVCSc9RmvW8nSgkYqynZIYt67VbW9Y16cFi6XD/4Su/NDruLNcAmKGHbB6fmKk
+         FBDs8Bhcycs451B2XSIVN5Q0StIS92mbIYN1mNYmXAyFTyPOdvzo0nxToTCwpAsf8qfL
+         y/+R7KhSXASK1RqgQVEUO5IqenS1smiunpD7tYw+MzoFPfvFL4QLjWZ4WqWW3ciDEPZn
+         KvpR6yr/1xaNV1jaoKQs9dDqzwubBES023ZZ8sCGdE76utNpL853fmDsTSWndQ/ZZTYV
+         Vdzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762917403; x=1763522203;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=54geGydfN2rDn2LihShjRD3xq+QXkZulAFyru1X2fZY=;
+        b=Lx+wIo3l8xPBxr3MIzrqbNVzsMRA9VvEmSph8sQaTedVdKKRfiPe9HnAKFmw2stntE
+         ATqXWctWJ1porEVhaC+lpi5vRSRtf/qdKFfDUmvapOwm2tQPqqWKjBXf4e/y3hiF6jqc
+         NL65LtFoN8RrO2VjC9lD4pK+ulxJjF4/63dGqV6Z0ZE5/M6N0GA4oUoZQvrHxWIu5JBo
+         iQ+JxhcFQ2c/gjcbTzJPcQd8G807LSx68ghuENa71+Cxm8SgXyyE8k1Vt8wSOY+zzXpv
+         RXw4s2iXKvfztqez65OmNa/0lMyyB/+9t4BJ1qieMWzQ1sdWjalfbyYRrXeTEuu5bWfp
+         S/vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzTXxelIYVZqhB0yrQrBf4JPeFQ+WqnZodnAeg1x+gNNyxDR6iWuvXNlAwqqH9wp/+/Rallb9dLPK9O/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybqRCiNCC2YM4alZArz1yN3s7kkaHdSVXyX1DsD2CQk+yxk4eT
+	Xocw08xEphg4XVuTjCCsxxFIY+OSkfCcl4pSYW4ivYtIkFuMcncU5HgS
+X-Gm-Gg: ASbGncu3hPUv9Iz4Ud0JEqtiMCWmysUi2Yml1IgGaThbbEIu+UHA7AGPTmFesoa4Egt
+	aKvzDFbB+J8QpiJnRcY8pqkBBm4FhWBm0mFZ4hcCksAQ9c1k6I4xBdA5KugZungFgaxsIJYTM9s
+	rfJTF1fv1BFq1UZxujzty1vfoQbyaj3jw73M6fwq9191o1J+LHrcX95bBsM5KeBB2+J4aioF16S
+	ASwiTohJ2yHBXkh9yhUv3Do4yErUozxy4k7sjbA8YC/6W9AMcANr06t50a2KT+TYNs+XOjNMfTi
+	p0/SgUd3Cv778+azNN+tg/dQwCLOX7/dPbob9ztlDnF/XEWhA3jvUG9dzoWU30SNw1qYjmIUZIB
+	m0gB8QhAzsGdSmPr3swkanxNssqpU9MRkyYuDmCHx4VEGbSEv6pqTMv2DmHbZBJqqMVAGgQbSuA
+	i3GPCwFqswVV4y5nIdsm88hnaf
+X-Google-Smtp-Source: AGHT+IEkMliJ7qBKQYrIHSvOIWpab75LmuQu3zIzehn3oSgIEMLML+jJyMlJs4LMkYWAbU+iGIXGbA==
+X-Received: by 2002:a05:6a00:b8e:b0:7aa:93d5:822c with SMTP id d2e1a72fcca58-7b7a55b7542mr1319175b3a.23.1762917402869;
+        Tue, 11 Nov 2025 19:16:42 -0800 (PST)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:1574:2bdf:5190:94ba])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17b0c4sm16967241b3a.48.2025.11.11.19.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 19:16:42 -0800 (PST)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: hughd@google.com,
+	baolin.wang@linux.alibaba.com,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH V2 6.1] softirq: Add trace points for tasklet entry/exit
-Date: Tue, 11 Nov 2025 21:16:20 -0600
-Message-ID: <20251112031620.121107-1-sumanth.gavini@yahoo.com>
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+Subject: [PATCH] mm/memfd: clear hugetlb pages on allocation
+Date: Wed, 12 Nov 2025 08:46:31 +0530
+Message-ID: <20251112031631.2315651-1-kartikey406@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CANDhNCq_11zO4SNWsYzxOeDuwN5Ogrq9s4B9PVJ=mkx_v8RT9Q@mail.gmail.com>
-References: <CANDhNCq_11zO4SNWsYzxOeDuwN5Ogrq9s4B9PVJ=mkx_v8RT9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,145 +91,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-commit f4bf3ca2e5cba655824b6e0893a98dfb33ed24e5 upstream.
+When allocating hugetlb pages for memfd, the pages are not zeroed,
+which leads to uninitialized kernel memory being exposed to userspace
+through read() or mmap() operations.
 
-Tasklets are supposed to finish their work quickly and should not block the
-current running process, but it is not guaranteed that they do so.
+The issue arises because hugetlb_reserve_pages() can allocate pages
+through the surplus allocation path without the __GFP_ZERO flag. These
+pages are added to the reservation pool and later returned by
+alloc_hugetlb_folio_reserve() without being cleared, resulting in
+uninitialized memory being accessible to userspace.
 
-Currently softirq_entry/exit can be used to analyse the total tasklets
-execution time, but that's not helpful to track individual tasklets
-execution time. That makes it hard to identify tasklet functions, which
-take more time than expected.
+This is a security vulnerability as it allows information disclosure of
+potentially sensitive kernel data. Fix it by explicitly zeroing the
+folio after allocation using folio_zero_range().
 
-Add tasklet_entry/exit trace point support to track individual tasklet
-execution.
+This is particularly important for udmabuf use cases where these pages
+are pinned and directly accessed by userspace via DMA buffers.
 
-Trivial usage example:
-   # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_entry/enable
-   # echo 1 > /sys/kernel/debug/tracing/events/irq/tasklet_exit/enable
-   # cat /sys/kernel/debug/tracing/trace
- # tracer: nop
- #
- # entries-in-buffer/entries-written: 4/4   #P:4
- #
- #                                _-----=> irqs-off/BH-disabled
- #                               / _----=> need-resched
- #                              | / _---=> hardirq/softirq
- #                              || / _--=> preempt-depth
- #                              ||| / _-=> migrate-disable
- #                              |||| /     delay
- #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
- #              | |         |   |||||     |         |
-           <idle>-0       [003] ..s1.   314.011428: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
-           <idle>-0       [003] ..s1.   314.011432: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
-           <idle>-0       [003] ..s1.   314.017369: tasklet_entry: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
-           <idle>-0       [003] ..s1.   314.017371: tasklet_exit: tasklet=0xffffa01ef8db2740 function=tcp_tasklet_func
+Reproducer:
+ - Create memfd with MFD_HUGETLB flag
+ - Use UDMABUF_CREATE ioctl to pin the hugetlb pages
+ - Read from the memfd using preadv()
+ - KMSAN detects uninitialized memory being copied to userspace
 
-Signed-off-by: Lingutla Chandrasekhar <clingutla@codeaurora.org>
-Signed-off-by: J. Avila <elavila@google.com>
-Signed-off-by: John Stultz <jstultz@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Link: https://lore.kernel.org/r/20230407230526.1685443-1-jstultz@google.com
-
-[elavila: Port to android-mainline]
-[jstultz: Rebased to upstream, cut unused trace points, added
- comments for the tracepoints, reworded commit]
-
-The intention is to keep the stable branch in sync with upstream fixes
-and improve observability without introducing new functionality.
-
-Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
-
-Changes in V2:
-- No code changes
-- Link to V1: https://lore.kernel.org/all/20250812161755.609600-1-sumanth.gavini@yahoo.com/
-- Updated the comment msg before the signed-off-by
+Reported-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f64019ba229e3a5c411b
+Tested-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- include/trace/events/irq.h | 47 ++++++++++++++++++++++++++++++++++++++
- kernel/softirq.c           |  9 ++++++--
- 2 files changed, 54 insertions(+), 2 deletions(-)
+ mm/memfd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/trace/events/irq.h b/include/trace/events/irq.h
-index eeceafaaea4c..a07b4607b663 100644
---- a/include/trace/events/irq.h
-+++ b/include/trace/events/irq.h
-@@ -160,6 +160,53 @@ DEFINE_EVENT(softirq, softirq_raise,
- 	TP_ARGS(vec_nr)
- );
- 
-+DECLARE_EVENT_CLASS(tasklet,
-+
-+	TP_PROTO(struct tasklet_struct *t, void *func),
-+
-+	TP_ARGS(t, func),
-+
-+	TP_STRUCT__entry(
-+		__field(	void *,	tasklet)
-+		__field(	void *,	func)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tasklet = t;
-+		__entry->func = func;
-+	),
-+
-+	TP_printk("tasklet=%ps function=%ps", __entry->tasklet, __entry->func)
-+);
-+
-+/**
-+ * tasklet_entry - called immediately before the tasklet is run
-+ * @t: tasklet pointer
-+ * @func: tasklet callback or function being run
-+ *
-+ * Used to find individual tasklet execution time
-+ */
-+DEFINE_EVENT(tasklet, tasklet_entry,
-+
-+	TP_PROTO(struct tasklet_struct *t, void *func),
-+
-+	TP_ARGS(t, func)
-+);
-+
-+/**
-+ * tasklet_exit - called immediately after the tasklet is run
-+ * @t: tasklet pointer
-+ * @func: tasklet callback or function being run
-+ *
-+ * Used to find individual tasklet execution time
-+ */
-+DEFINE_EVENT(tasklet, tasklet_exit,
-+
-+	TP_PROTO(struct tasklet_struct *t, void *func),
-+
-+	TP_ARGS(t, func)
-+);
-+
- #endif /*  _TRACE_IRQ_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 9ab5ca399a99..fadc6bbda27b 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -822,10 +822,15 @@ static void tasklet_action_common(struct softirq_action *a,
- 		if (tasklet_trylock(t)) {
- 			if (!atomic_read(&t->count)) {
- 				if (tasklet_clear_sched(t)) {
--					if (t->use_callback)
-+					if (t->use_callback) {
-+						trace_tasklet_entry(t, t->callback);
- 						t->callback(t);
--					else
-+						trace_tasklet_exit(t, t->callback);
-+					} else {
-+						trace_tasklet_entry(t, t->func);
- 						t->func(t->data);
-+						trace_tasklet_exit(t, t->func);
-+					}
- 				}
- 				tasklet_unlock(t);
- 				continue;
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 1d109c1acf21..f8cfc2909507 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -96,6 +96,12 @@ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx)
+ 						    NULL,
+ 						    gfp_mask);
+ 		if (folio) {
++			/*
++			 * Zero the folio to prevent information leaks to userspace.
++			 * The folio may have been allocated during hugetlb_reserve_pages()
++			 * without __GFP_ZERO, so explicitly clear it here.
++			 */
++			folio_zero_range(folio, 0, folio_size(folio));
+ 			err = hugetlb_add_to_page_cache(folio,
+ 							memfd->f_mapping,
+ 							idx);
 -- 
 2.43.0
 
