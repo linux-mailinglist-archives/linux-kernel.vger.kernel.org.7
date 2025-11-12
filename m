@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-896474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38ECC5077E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:00:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EB3C50799
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99F304E8A96
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F721896D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16B22D592A;
-	Wed, 12 Nov 2025 03:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DC72C11E3;
+	Wed, 12 Nov 2025 04:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NbWJLtfI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="UUoLRRKn"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF9F207A20;
-	Wed, 12 Nov 2025 03:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1462594BD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762919978; cv=none; b=jsVyeHQaBHARHJxa+sxFn4dixqHHmx63eyy3I97ow2chLSIAQzxzZ7HkuDAf5Yo1/sNoNlhB9NKT2Rg9S1QZ/6n15oepkuLtqehMEoR/XOA2TXAvw0JEtdoF7N8lwE/JYUkVigIBCDZjlkmZQTkQnqc1Bfc2gWzmj7gj9u3ghGY=
+	t=1762920211; cv=none; b=RkCGDq4f8JLzDLTZncx3cJa0v9o2owicgZ8F2AotuEcpG3wGnNK+cML2hCXXyc6xbkwipEycYK09smjsQRjARxZYNKVeLuC5450RXowZ93WyhluJFYwqnAdA7cxwIUMVMKQO6DHe/ntTJbxLjmaDUA9v30xJzArXc02u3yX4QXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762919978; c=relaxed/simple;
-	bh=bIAGdTcC7bpTcOl7PjaMaeS9W7RV/cb5sccRrrTqMhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuj1NL8fqxsLEjjRqk+Xx13zctH4LcQDXHqNb7A8jATJk2mhP/xb5TeVv/0hpHo+5eCfMWE5W6794+AAloF/Nf/+m2gbG08VDTQ2GAF1J0ABi7IVCx7AQnayvxa7rUOyqLwGzZqIOx1Fzf1l2G2CSxdbkKIbCyz64yUmSP/hRq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=NbWJLtfI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31972C19421;
-	Wed, 12 Nov 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NbWJLtfI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1762919974;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SxXWxdAurGNlts2UI7BG2pMBJD/v4/R/0QSS/5mHhO8=;
-	b=NbWJLtfIl5vOr7JIVEepRq7aXMOaTK2EU09MeOEXJf1MFZoZu5+LygsMZ47pHYy1s9DLch
-	EoT71SxziJ+GYmCpfS2wlyS58S68bUsS/e8iSLoyX7HtXJLTVL61R8dCcNPKnjXamarzYa
-	kQQAnJZkq33/afjw+d6mn3ajwmA/fqk=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 148d9f60 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 12 Nov 2025 03:59:33 +0000 (UTC)
-Date: Wed, 12 Nov 2025 04:59:30 +0100
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jordan Rife <jordan@jrife.io>
-Subject: Re: [PATCH net-next v3 00/11] wireguard: netlink: ynl conversion
-Message-ID: <aRQGIhazVqTdS2R_@zx2c4.com>
-References: <20251105183223.89913-1-ast@fiberby.net>
- <20251110180746.4074a9ca@kernel.org>
+	s=arc-20240116; t=1762920211; c=relaxed/simple;
+	bh=3mixZ/Eqs2zCRIMcT+JDA/EdfO0L47B9K9/552r1Hzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qYudSrCjtTD8eIxzKUTBIlAjT/IvpLTtofufaKy+rJhYnjCki5gKRZnCOGVIP6qYKCH1Y24tbqFTP0i1mOGU6bv6vmU4LjgcIdI8qBS7HtUM/AxroqPsyNFmZm/TZWj4IpGKq5SvaEUD8LBzHtuQnBkp7v+F8hZuHfW7YAxQBxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=UUoLRRKn; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AC42Kkm012001
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 23:02:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762920145; bh=MdYQaNBF5C+0T4NeR/HbUMr089NM0EeyD/zyuQ7i8JU=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=UUoLRRKnClDx1ZBzjNUzSbEg7pqzX05LithF2OpHNktq82FP6W0qukQ7FCk/yo0Rr
+	 4eG0C7oPpIT10po/U7fYdQaNXY35U1ie/aS7doISN7lzuFsjg2UMP+8shD1N8q52bK
+	 q+WcZnIu1cj/WZIXgwwOFe9OJCrs511SETipWGeT67rcmhm5da2keryZxvLEqMK9PP
+	 dEagI2AL0xXiSAt+zIt8csmUsDd42cNxR4c4AfcXx7pKQxG6DQ0UYo7w6s92j92A2+
+	 U9c4R2bwQFlI+Km/hCnkIxoxRKJ0lKT4Mu5B4+7j5yV6aFApRgNPl6WptbFCgo/nZB
+	 BgpntJCONxI8w==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 10AF52E00D9; Tue, 11 Nov 2025 23:02:20 -0500 (EST)
+Date: Tue, 11 Nov 2025 23:02:20 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
+        mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
+        Baokun Li <libaokun@huaweicloud.com>
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+Message-ID: <20251112040220.GO2988753@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251110180746.4074a9ca@kernel.org>
+In-Reply-To: <cd2201c9-ff7f-4cfd-acfc-2bba265b3a29@huawei.com>
+ <44d3fbd7-1c53-4f94-a4c8-586873a47146@huawei.com>
 
-On Mon, Nov 10, 2025 at 06:07:46PM -0800, Jakub Kicinski wrote:
-> On Wed,  5 Nov 2025 18:32:09 +0000 Asbjørn Sloth Tønnesen wrote:
-> > This series completes the implementation of YNL for wireguard,
-> > as previously announced[1].
-> > 
-> > This series consist of 5 parts:
-> > 1) Patch 01-03 - Misc. changes
-> > 2) Patch    04 - Add YNL specification for wireguard
-> > 3) Patch 05-07 - Transition to a generated UAPI header
-> > 4) Patch    08 - Adds a sample program for the generated C library
-> > 5) Patch 09-11 - Transition to generated netlink policy code
-> > 
-> > The main benefit of having a YNL specification is unlocked after the
-> > first 2 parts, the RFC version seems to already have spawned a new
-> > Rust netlink binding[2] using wireguard as it's main example.
-> > 
-> > Part 3 and 5 validates that the specification is complete and aligned,
-> > the generated code might have a few warts, but they don't matter too
-> > much, and are mostly a transitional problem[3].
-> > 
-> > Part 4 is possible after part 2, but is ordered after part 3,
-> > as it needs to duplicate the UAPI header in tools/include.
-> 
-> These LGTM, now.
-> 
-> Jason what's your feeling here? AFAICT the changes to the wg code
-> are quite minor now. 
+On Wed, Nov 12, 2025 at 10:19:06AM +0800, Baokun Li wrote:
+> I am using a slightly older version of xfstests, and when running the
+> 64k tests I also encountered similar failures. The cover letter stated
+> "no Oops" for the 64k tests rather than "no new failures," meaning that
+> some cases did fail, but no severe issues such as BUG_ON or softlock
+> were observed.
 
-Reviewing it this week. Thanks for bumping this in my queue.
+Sorry, I misread your cover letter.  It's good you are seeing similar
+failures.
 
-Jason
+
+On Wed, Nov 12, 2025 at 10:49:19AM +0800, Baokun Li wrote:
+> I checked the code of the swapon syscall in mm/swapfile.c, and currently
+> the swapfile does not support LBS. Therefore, some failing test cases can
+> be filtered out based on this.
+
+Ah, OK. What's happening is with XFS the swap tests are being skipped
+automatically if the swapon fails.  From _require_scratch_swapfils:
+
+	*)
+		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+			_scratch_unmount
+			_notrun "swapfiles are not supported"
+		fi
+		;;
+
+
+But ext4 has different logic:
+
+	# ext* has supported all variants of swap files since their
+	# introduction, so swapon should not fail.
+
+<< famous last words >>
+
+	case "$FSTYP" in
+	ext2|ext3|ext4)
+		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+			if _check_s_dax "$SCRATCH_MNT/swap" 1 >/dev/null; then
+				_scratch_unmount
+				_notrun "swapfiles are not supported"
+			else
+				_scratch_unmount
+				_fail "swapon failed for $FSTYP"
+			fi
+		fi
+		;;
+
+
+I guess we could add logic to _require_scratch_swapfile in common/rc
+to also _notrun if swapon fails and block size is greater that page
+size.  Or I might just add an exclusion in my test appliance runner
+for now for all tests in group swap.
+
+						- Ted
 
