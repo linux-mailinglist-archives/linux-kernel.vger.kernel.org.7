@@ -1,96 +1,161 @@
-Return-Path: <linux-kernel+bounces-896720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D569C510D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:08:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EAFC510D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D437F4EEE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C53AE6F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDFF2DC34B;
-	Wed, 12 Nov 2025 08:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A642F361A;
+	Wed, 12 Nov 2025 08:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdQrzR3v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKJeU+gb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EA5257824
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B452405E7;
+	Wed, 12 Nov 2025 08:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762934711; cv=none; b=PYI5z1WDvDWSqb2S6s4lJ5Gwv7/9NOzcZsL6yisw1thF2OwTgRC8T5nzYsPjWtnDc0ELM8LcvSdN/uPsLEsoePtyv+B7b4C69ybDM++QU1AIshCQBvRmkUd8YcAoS0WWAqeDhxhvxdai/muX0NZsPcpF6iXQFXf1FP32RtGZtC0=
+	t=1762934874; cv=none; b=F6eGH7jV2iZF8YcbYt7DVQ5x2ZYf8JwO1ypEOqwWz12j38pMZNUhUyNJI8Ig67N8HhYsjoN/FsjN6nHKG/TuDwxqaAAcPxfEHv8BNtLCU3caGRuAMnR/0gGxnX3VsAC15eLqb4MEGI2F5ooeed2sm9N/sScA1FLN/KMAwEYU2LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762934711; c=relaxed/simple;
-	bh=SA7i33ysWzPDlrhtd68Z/egkmmkPzs0rHOKGyx4PbTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLsD3qSZy6e6FIa0dIj8UeC1U7JKhAVLRp9Wi+ttWEw1MYJiHLURCXtdi4tysRWAl2k8r6PFbhfx+7NFySAxLQ35oWe4pMjuv6ySLdG4ZqUOq37WIvqMyaujFNssd7oIzoByxMzG+m2kuAWdJt0DUInDXLoej3EqqMvXGe7K7BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdQrzR3v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89486C16AAE;
-	Wed, 12 Nov 2025 08:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762934711;
-	bh=SA7i33ysWzPDlrhtd68Z/egkmmkPzs0rHOKGyx4PbTY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KdQrzR3vf+z1dXt8moVE4lWL0xR6YvwRPceeAI609o8bZcg0tfarInopUZdeROePM
-	 MzbHN7CuSrgHjf2d6E3N34UssO7AdaZLpXc8x8qV6la0CuoHkV7BzW0wYqy9vWsEnN
-	 zqrejZxeQWsmg03EZUrEmhytog3MWalbPNdPhzfB1sCQxBENXv1srgxqZQCWyq+gGd
-	 r/pL0Dvss93HZcQ0j/doy+dMk09NmRk76+wCr1wofTRm5EPDthGgzViu61q2QtSpms
-	 cbCmjww2cTrehhj0y7cvy1PYaAD88KbMJc1mMg61gXLcdtgzfpTs9XXtytuFksal/V
-	 U26qPyjAo2dzQ==
-Message-ID: <7b78c1d8-9efc-4570-8f4c-244af665a159@kernel.org>
-Date: Wed, 12 Nov 2025 09:05:07 +0100
+	s=arc-20240116; t=1762934874; c=relaxed/simple;
+	bh=lj+/IkVPrg7NuG/0HeZYwgpbjcPITe74BCRaYFOk6Ss=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RFrCdlXGQIehB/gFlk5y8GyR3jBLGrw5XlwW4BjurBored6cZWqDqJAD8GmpLZuwKpENoc1NgzfHA0HY9K4O02dfs277Tv6/v27eOoEWjLumnhRUepqwdJoC/xbewwPYVCvFKfh4u2mTr+1bnKTbDAThyM1n8pADhM5L2e2CLt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKJeU+gb; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762934872; x=1794470872;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lj+/IkVPrg7NuG/0HeZYwgpbjcPITe74BCRaYFOk6Ss=;
+  b=mKJeU+gbcpqDb2a4xTDSbo2ocL0ehcdfE5XQCsKF/HrdZIcO/8VBwenT
+   wGL95kR3XIV/GuzGfGd3oQnlc9EhMDT6gNIhsB27R61QEs8rqpNF69IVL
+   WYBM0o5zGEK03B7KVQFgZ03x7EikFCKRkmJVELy3RXkzW7du2RJsp+l8r
+   Jfyy173E7QbOI/CfdIulnfmFFDPdn6MIAexAC66coOJ2B3cyhIQM4YF69
+   PwOxtrzdRd3jHbXvnE5kbNxQNF7KQD7dlIKSLvMHATJxo/zw5drENf0BD
+   wbh9NZ8LgUmZLWfDnXdw4EgKTncSb5bnDp0pIJbkm/P+mVoD1bTDhjxTI
+   A==;
+X-CSE-ConnectionGUID: fp8KAIcXQ2GRNlXKClHPJQ==
+X-CSE-MsgGUID: XlcGBBFuSTm9+aGjCEl92w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76452320"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="76452320"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 00:07:50 -0800
+X-CSE-ConnectionGUID: PlpY92azT8Sj8+cTphu8JQ==
+X-CSE-MsgGUID: Yl0XE7nLSXW2g+lV9s1exA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="188926087"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by orviesa009.jf.intel.com with ESMTP; 12 Nov 2025 00:07:47 -0800
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Falcon Thomas <thomas.falcon@intel.com>,
+	Xudong Hao <xudong.hao@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH] perf: Fix 0 count issue of cpu-clock
+Date: Wed, 12 Nov 2025 16:05:26 +0800
+Message-Id: <20251112080526.3971392-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: fix handling of zero page in follow_page_pte()
-To: peng8420.li@gmail.com, linux-mm@kvack.org, akpm@linux-foundation.org
-Cc: osalvador@suse.de, jgg@ziepe.ca, jhubbard@nvidia.com, peterx@redhat.com,
- linux-kernel@vger.kernel.org, dan.j.williams@intel.com
-References: <20251112072424.125514-1-peng8420.li@gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251112072424.125514-1-peng8420.li@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12.11.25 08:24, peng8420.li@gmail.com wrote:
-> From: "peng8420.li" <peng8420.li@gmail.com>
-> 
-> In some scenarios, `__vm_normal_page` might return NULL.
-> In this case, if `is_zero_pfn(pte_pfn(pte))` is true, simply return `page = pte_page(pte)`;
-> no further folio processing is needed.
-> 
-> Signed-off-by: peng8420.li <peng8420.li@gmail.com>
-> ---
->   mm/gup.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 95d948c8e86c..60ae5f0c20e0 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -838,6 +838,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->   
->   		if (is_zero_pfn(pte_pfn(pte))) {
->   			page = pte_page(pte);
-> +			goto out;
->   		} else {
->   			ret = follow_pfn_pte(vma, address, ptep, flags);
->   			page = ERR_PTR(ret);
+Currently cpu-clock event always returns 0 count, e.g.,
 
-I'm sorry, but that's just wrong. Observe how me might run into the 
-gup_must_unshare() branch and how try_grab_folio() would grab references 
-on the FOLL_GET path.
+perf stat -e cpu-clock -- sleep 1
 
+ Performance counter stats for 'sleep 1':
+                 0      cpu-clock                        #    0.000 CPUs utilized
+       1.002308394 seconds time elapsed
+
+The root cause is the commit 'bc4394e5e79c ("perf: Fix the throttle
+ error of some clock events")' adds PERF_EF_UPDATE flag check before
+calling cpu_clock_event_update() to update the count, however the
+PERF_EF_UPDATE flag is never set when the cpu-clock event is stopped in
+counting mode (pmu->dev() -> cpu_clock_event_del() ->
+cpu_clock_event_stop()). This leads to the cpu-clock event count is
+never updated.
+
+To fix this issue, force to set PERF_EF_UPDATE flag for cpu-clock event
+just like what task-clock does. Besides, or flags with PERF_EF_UPDATE
+for task-clock although currently the flags argument would always be 0.
+
+Fixes: bc4394e5e79c ("perf: Fix the throttle error of some clock events")
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+
+With this change, both cpu-clock and task-clock can do counting and
+samping correctly.
+
+1. perf stat -e cpu-clock,task-clock -- true
+
+ Performance counter stats for 'true':
+           240,636      cpu-clock                        #    0.358 CPUs utilized
+           243,319      task-clock                       #    0.362 CPUs utilized
+
+2. perf record -e cpu-clock -c 10000 -Iax,bx -- sleep 1
+[ perf record: Woken up 2 times to write data ]
+[ perf record: Captured and wrote 0.028 MB perf.data (36 samples) ]
+
+3. perf record -e task-clock -c 10000 -Iax,bx -- sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.029 MB perf.data (41 samples) ]
+
+ kernel/events/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f6a08c73f783..77d3af5959c1 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11964,7 +11964,7 @@ static int cpu_clock_event_add(struct perf_event *event, int flags)
+ 
+ static void cpu_clock_event_del(struct perf_event *event, int flags)
+ {
+-	cpu_clock_event_stop(event, flags);
++	cpu_clock_event_stop(event, flags | PERF_EF_UPDATE);
+ }
+ 
+ static void cpu_clock_event_read(struct perf_event *event)
+@@ -12043,7 +12043,7 @@ static int task_clock_event_add(struct perf_event *event, int flags)
+ 
+ static void task_clock_event_del(struct perf_event *event, int flags)
+ {
+-	task_clock_event_stop(event, PERF_EF_UPDATE);
++	task_clock_event_stop(event, flags | PERF_EF_UPDATE);
+ }
+ 
+ static void task_clock_event_read(struct perf_event *event)
+
+base-commit: 2093d8cf80fa5552d1025a78a8f3a10bf3b6466e
+prerequisite-patch-id: a15bcd62a8dcd219d17489eef88b66ea5488a2a0
+prerequisite-patch-id: 2a0eefce67b21d1f30c272fd8115b0dc1aca3897
 -- 
-Cheers
+2.34.1
 
-David
 
