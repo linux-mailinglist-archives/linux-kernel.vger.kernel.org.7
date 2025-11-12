@@ -1,138 +1,157 @@
-Return-Path: <linux-kernel+bounces-897467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D12FC532B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:49:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA224C52EB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE443B8B52
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:56:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1721D3517FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCBF33D6E3;
-	Wed, 12 Nov 2025 14:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3833396E0;
+	Wed, 12 Nov 2025 14:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kVKNKr/Q"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="hRtoCmSh"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D883451BF;
-	Wed, 12 Nov 2025 14:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6172BE037;
+	Wed, 12 Nov 2025 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958839; cv=none; b=Y3StawkXijKLZah5IGZild+c2xIxnzkEhSiHvr/0hBJoHzpMms6S+h4piS8gjTT7caanPEfoDL8HpYBq0B7XenJ9VbLKOeCWqS75VZFCZ+dFxUM0mRt++Hp7H0XaviNO3XcBAQRGuRGR+I12E7uXklpcVBGFsnVUf3a9XCLRrPg=
+	t=1762958929; cv=none; b=ms6R5sARJQoh4w55C583584TRW1SN/oRhwyS/2Mu2ef8wChFPyUZ0ZBghXfNigiW04Id2CjbmMbt16o5D5ReBXV3bYfkRNza5DZhyJfEvQBoVL8++8wYRPiTkzrmefo7ZpgDKiNFDHPraFOmgl2pt6O7AKKnJzLiwgXxqeUbx+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958839; c=relaxed/simple;
-	bh=bwaRCpeS2yq0SX8A03YWm7Qiu0T4KcudSNiRWid9EqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6NkIStxPbgm4rd6FaS16qAkuIoPRQ+hzFSBdr7UgkbHC74Ch/Y696ccewEEY+/GYL20q4Euztt80jUdi5hIKoBWp4yJCYhFJ3pcm1rfSv74U5XaiOXw2mhBQ9tTVFCbva66ysxQ1+JyPsDw0BfDw3IbSAO94bFNks41CZTSJQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kVKNKr/Q; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CEEE040E01CD;
-	Wed, 12 Nov 2025 14:47:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dlz27SUN9iJd; Wed, 12 Nov 2025 14:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762958831; bh=qomM3QjE2XBe/IADVdUhX22UYlwaiV0sa0EWCUqdtGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kVKNKr/QMWyJ/zAJwgEi9oXv2YNpNJtggBhsVqu1CYeqwOmpdo7cyaUaLrt1MeWQf
-	 NKlb0ygTnS+4qRNYiBLfH5D3J3vD//B2T2BWXYXI9C6sitQtIVQGQCLmuxgbcSaJ2O
-	 SEmpfRkY3S/lMJP7cLtjxQnDBoDvR3EiMluUCMRActwjuIdaSRCEITiOVFOFKwosqM
-	 1l0a8Ak3Yel8R2lO6/+yNyBIj5/STY9jvLjdxf10nJXfs5KVvMFfQ7lqiM3VrC7MJm
-	 C8wKY5fx/RqNAPd9570nL+QrdXqefGlS96Y6N2F7F2jmsXXPjIw5DFWlhasVw/f2Ni
-	 0caEn4UYHz1JopB4MJDJHbtsG9kRpJ59QLGLtiGSXACer2DktF+qXGlpR8LyiLsDYX
-	 KojY/LZmLKcKgDKB2ELRYvWkQCl8Scy1bTeE74253/3grQgRZB1859QxccYBd6FcU6
-	 CQ5/pvbZ9clv2DJVa6/tgleeerDBZK1Y1wADIZQLMnLbiwzUA1plP2BQD4TcPQBzTp
-	 59w57yf0p2byDEhWRXmWnHW0OCHztPoOUfrcm7rREM8Ue5cfYfcwogq+oyZa1wlImH
-	 62ouNb2k2Z8vLtc2510c/P8dMk5lw+QuwX9r07NMpJLgsH+LmO/X0yQXMEVUOrrD8n
-	 yD5NCsDwPQ9DCPdiDRkzgeQ4=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id F055840E021B;
-	Wed, 12 Nov 2025 14:47:01 +0000 (UTC)
-Date: Wed, 12 Nov 2025 15:46:55 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the
- MMIO Stale Data mitigation
-Message-ID: <20251112144655.GZaRSd32GC0lZdDOWg@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-4-seanjc@google.com>
+	s=arc-20240116; t=1762958929; c=relaxed/simple;
+	bh=IT/Dnq0ccS70As0I4G0WtOpEjeCHhwrJsgYebPbDfXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEuGt9Ab9u4EVGGVswmXyUdwp+I9H+UwOiMGFDmlxq0lDXSjTIDnHzxk8DZ8AllVWw1uW8ItIUTrUFvUmskQIvqAGszWVtidQe4oVVBcIrsJfIz295qSzbpKP93V9HIR76nNNpILaAUGgmHrhcFvCYLRdfs1Fqov3nC1TVGcMFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=hRtoCmSh; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (p5de4574e.dip0.t-ipconnect.de [93.228.87.78])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 69D2A2FC0061;
+	Wed, 12 Nov 2025 15:48:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1762958923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KWZeRBD8f4/ogvJmkKfieACwVHo4T9P1x5/ma/Xj7UU=;
+	b=hRtoCmShWcFggkK16llxoH1BPNus45N89sIi8qt+1WESoJ8ikginpx3apPv+mZ/tyeEAME
+	AqKvcKiwwWCMnRLJS2mBaNgCYwgT4FI/J+u+vkY/Rkq+HVYqCU3eu7X7KRtbhhIZTF8cPC
+	8S2eZH2ijONgAUDbTinMMZ94Z/2g0Oc=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] hid/hid-multitouch: Keep latency normal on deactivate for reactivation gesture
+Date: Wed, 12 Nov 2025 15:47:04 +0100
+Message-ID: <20251112144837.499782-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-4-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 05:30:35PM -0700, Sean Christopherson wrote:
-> Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the MMIO Stale Data mitigation
+Uniwill devices have a built in gesture in the touchpad to de- and
+reactivate it by double taping the upper left corner. This gesture stops
+working when latency is set to high, so this patch keeps the latency on
+normal.
 
-I'm guessing that "xxx" would turn into the proper name after we're done
-bikeshedding.
+Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+Cc: stable@vger.kernel.org
+---
+V1->V2: Use a quirk to narrow down the devices this is applied to.
+V2->V3: Fix this patch breaking touchpads on some devices.
+        Add another device ID.
 
-> Convert the MMIO Stale Data mitigation flag from a static branch into an
-> X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h   |  1 +
->  arch/x86/include/asm/nospec-branch.h |  2 --
->  arch/x86/kernel/cpu/bugs.c           | 11 +----------
->  arch/x86/kvm/mmu/spte.c              |  2 +-
->  arch/x86/kvm/vmx/vmx.c               |  4 ++--
->  5 files changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 7129eb44adad..d1d7b5ec6425 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -501,6 +501,7 @@
->  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
->  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
->  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
-> +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
-							   ^^^^^^^
+I have three Uniwill devices at hand right now that have at least two
+physically different touchpads, but same Vendor + Product ID combination.
+Maybe the vendor uses this product ID for all i2c connected touchpads, or
+it is used as some kind of subvendor ID to indicate Uniwill?
 
-Yes, you can break the line and format it properly. :-)
+To be able to really narrow it down to Uniwill only devices I would need to
+check DMI strings, but then I will probably narrow it down to much as I
+only know what we at TUXEDO use there.
 
-Also, this should be called then
+ drivers/hid/hid-multitouch.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO
-
-as it is a VM-thing too.
-
-Also, in my tree pile I have for bit 17
-
-#define X86_FEATURE_SGX_EUPDATESVN      (21*32+17) /* Support for ENCLS[EUPDATESVN] instruction */
-
-I see you have X86_FEATURE_X2AVIC_EXT there so we need to pay attention during
-the merge window.
-
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 179dc316b4b51..ed9eb4e0d5038 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
+ #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
+ #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
+ #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
++#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
+ 
+ #define MT_INPUTMODE_TOUCHSCREEN	0x02
+ #define MT_INPUTMODE_TOUCHPAD		0x03
+@@ -211,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
+ #define MT_CLS_WIN_8_DISABLE_WAKEUP		0x0016
+ #define MT_CLS_WIN_8_NO_STICKY_FINGERS		0x0017
+ #define MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU	0x0018
++#define MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE	0x0019
+ 
+ /* vendor specific classes */
+ #define MT_CLS_3M				0x0101
+@@ -330,6 +332,15 @@ static const struct mt_class mt_classes[] = {
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE |
+ 			MT_QUIRK_WIN8_PTP_BUTTONS,
+ 		.export_all_inputs = true },
++	{ .name = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
++		.quirks = MT_QUIRK_ALWAYS_VALID |
++			MT_QUIRK_IGNORE_DUPLICATES |
++			MT_QUIRK_HOVERING |
++			MT_QUIRK_CONTACT_CNT_ACCURATE |
++			MT_QUIRK_STICKY_FINGERS |
++			MT_QUIRK_WIN8_PTP_BUTTONS |
++			MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
++		.export_all_inputs = true },
+ 
+ 	/*
+ 	 * vendor specific classes
+@@ -1998,7 +2009,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
+ 
+ static void mt_on_hid_hw_close(struct hid_device *hdev)
+ {
+-	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
++	struct mt_device *td = hid_get_drvdata(hdev);
++
++	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
++		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
++	else
++		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+ }
+ 
+ /*
+@@ -2375,6 +2391,14 @@ static const struct hid_device_id mt_devices[] = {
+ 		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
+ 			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
+ 
++	/* Uniwill touchpads */
++	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_PIXART, 0x0255) },
++	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_PIXART, 0x0274) },
++
+ 	/* VTL panels */
+ 	{ .driver_data = MT_CLS_VTL,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
