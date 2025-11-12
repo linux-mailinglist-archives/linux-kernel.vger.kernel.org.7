@@ -1,69 +1,112 @@
-Return-Path: <linux-kernel+bounces-897976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B672C540EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:05:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D730C540EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C50D347456
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8443B050E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1764B2E0412;
-	Wed, 12 Nov 2025 19:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4599934B18B;
+	Wed, 12 Nov 2025 19:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PWj4QDuH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EN1ilMGg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6F033A026
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C333AD8D;
+	Wed, 12 Nov 2025 19:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762974260; cv=none; b=M/m1C6oL8FU+k8N6PtHLCzXOXkA0RgLCpfOVRJMX7dAIEHCt7GNnk8+8tcFi/2cQXO6qe1u1qC3WqeB1ZdVvXl/piEp0sueArBDFBn8eNNwtH8RQb55VfvsqNezM8BaAJDRBgrkNvM9BIun7PAXc/b5mdsB3KXgGUo0F/BYdElA=
+	t=1762974271; cv=none; b=Su0Ul/qygIffRsdEL3vsmjkKKD2Tv/qHoxXBmAGoHxdnz3904uLousCUSLxiz3aplWtdJYjZQWQaGvTkcZQL1loHNcocZ85ccLwdqKUI61ppLISO9ynReNc1WegDs0e/mk4rN8VrvANscMuRnqnayZZDS3/Raf/bU4I2UI2/a1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762974260; c=relaxed/simple;
-	bh=846hT+dGW211Y97I4IbWEBRKXNXlQZwQ9OpEY18U14Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=tT2LCgZIvLRt6zg1O5N6hk0YJNOEMeEr1XXJFaig9+GhD6BzZYZw3+dntNV8lW8uRy8xrSCtlhhfsmNxx6OkuFs1R2p+lgbg788xspYOlXzbx8H8MHJryuMbj3b97wKsYWGbPiJAhvUm2pyRaRZ075uGWxwmWNJvWES2TW/VQ30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PWj4QDuH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE58EC4CEF7;
-	Wed, 12 Nov 2025 19:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762974260;
-	bh=846hT+dGW211Y97I4IbWEBRKXNXlQZwQ9OpEY18U14Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PWj4QDuHQQgsViPtOYCFo6E5vmELiJv9x6n+wYyYbfFHlfQJFhG+EYSrNdsMG2GDi
-	 Qhx5UbFl+KSJoyIW6OdH9919yhJngw2TGV2yUviea2XAyi6L9Nydo+/cW73Cddgtbe
-	 lcOMh87/sbxZRNdGl+m9hdzq3xJlgs5shY2+R1No=
-Date: Wed, 12 Nov 2025 11:04:19 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Gustavo Padovan <gfpadovan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, gustavo@padovan.org,
- dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org
-Subject: Re: [PATCH] MAINTAINERS: remove myself from sync framework
-Message-Id: <20251112110419.59be3dbb1bb297ef18ed9739@linux-foundation.org>
-In-Reply-To: <20251112134330.64130-1-gustavo.padovan@collabora.com>
-References: <20251112134330.64130-1-gustavo.padovan@collabora.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762974271; c=relaxed/simple;
+	bh=OsZBDvzHWBseg3Knx1k9apRw+CVUYMUDRIxIjk6M13w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpcDZTcqFnqqubhZms0dWa1sp31v3UyD3eBagNvBK4P/SZZ0WXkD/FUVi1l06C05UdaP8lhSixy6xo2iIQCXRN2MDOts4U+DwPo6aeNI2ULkDC1bIXNY80sSmPyE9Idzbgw1swaC0Uo6T6lCf+fYvalCaDwaH7p07zP6Eu4anrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EN1ilMGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDD9C4CEF5;
+	Wed, 12 Nov 2025 19:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762974271;
+	bh=OsZBDvzHWBseg3Knx1k9apRw+CVUYMUDRIxIjk6M13w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EN1ilMGgWW8T6uXzRy1PpJ6wHDNYjkIgRF8C2S09QM6Pp9dTc64ppdgUJytGHFD9f
+	 c18leiGKUMZKJ6nA+8vHY5Ux8zQ45jfQRox2kXQo9HqKLBBfqVLTYI26r3GR6a4sFV
+	 rYtq0SqLkeF9ihQdQJycAlh16u09SIbV7B9cRgo4HINTUnsnUNzm2oe2ftrT+mJ3TH
+	 xaia2aPceqtEnq/hZryp5jnqH+9Gcr4IWlACvomiq48jDKc1xGXkkqHvv/PAgJI5kR
+	 Ys4Hk0KGfofvnbp9rP5+1Qqq+UfsNw8M4ABS7k6okOZPJduSN3NEyJp1qmnpPj0qr5
+	 cn7FxoPbcD0og==
+Date: Wed, 12 Nov 2025 19:04:26 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mkl@pengutronix.de, kernel@pengutronix.de, mailhol.vincent@wanadoo.fr,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, cl@rock-chips.com, linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add
+ rk3576 CAN controller
+Message-ID: <20251112-surely-enroll-02a3a3646084@spud>
+References: <20251112015940.3695638-1-zhangqing@rock-chips.com>
+ <20251112015940.3695638-2-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EQbl/SQeCGRxcKF0"
+Content-Disposition: inline
+In-Reply-To: <20251112015940.3695638-2-zhangqing@rock-chips.com>
 
-On Wed, 12 Nov 2025 10:43:30 -0300 Gustavo Padovan <gfpadovan@gmail.com> wrote:
 
-> From: Gustavo Padovan <gustavo@padovan.org>
-> 
-> I haven't been involved in the work anymore for some time.
-> It is only fair that I remove myself from it and let other
-> continue to take care of it.
-> 
+--EQbl/SQeCGRxcKF0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.  You could add an entry in CREDITS, if so inclined.
+On Wed, Nov 12, 2025 at 09:59:37AM +0800, Elaine Zhang wrote:
+> Add documentation for the rockchip rk3576 CAN controller.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/net/can/rockchip,rk3568v2-canfd.yaml  | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-=
+canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-ca=
+nfd.yaml
+> index a077c0330013..22e10494e7d1 100644
+> --- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
+aml
+> +++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
+aml
+> @@ -10,13 +10,12 @@ title:
+>  maintainers:
+>    - Marc Kleine-Budde <mkl@pengutronix.de>
+> =20
+> -allOf:
+> -  - $ref: can-controller.yaml#
+
+Since in the other mail it was stated that this was removed in error
+pw-bot: changes-requested
+
+--EQbl/SQeCGRxcKF0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTaOgAKCRB4tDGHoIJi
+0qoVAP4ySdGjjDkARJ7pR6fmuWavLo9sUrf8lfFCP/JEOD1eUgEApqQ3+nwlh4ab
+e8WwfeqUajB1sRAcrjGqY5QGC287OQY=
+=K1Vm
+-----END PGP SIGNATURE-----
+
+--EQbl/SQeCGRxcKF0--
 
