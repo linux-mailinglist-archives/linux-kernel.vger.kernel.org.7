@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-897271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BA5C52791
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:28:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F86C52797
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:29:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B511F4E5C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:20:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF0294F1648
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753C1328248;
-	Wed, 12 Nov 2025 13:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0EA3375DF;
+	Wed, 12 Nov 2025 13:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0uvMUYbc"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tKjdv4xa"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55A0307AD1;
-	Wed, 12 Nov 2025 13:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF9E307AD1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762953611; cv=none; b=UN7V1IxntZbHzjhPka80WX2MmiUpFTkfIiWoFyU+d0YlV4P1lb/2YQ4zgh3Cx5jHW8T75Yy76LMcUGA9JfYuZFvAoeWkzIQELKoRp+7sBX+MjKf1TUNFAjEHcdFyFyaZcOcWZuS2MMc5U+52BRJcfQwcrPgI5EBFY4Cve7eK5mI=
+	t=1762953627; cv=none; b=gynUhgn2cw6XfbOzHBToyM9+zo3LNx1Bds+KeXm0ttIDClZcomWwRvv+Ex7PmgpzOTozzX4jdO0+9oyl7OkKLkczpLeoPpYMeeQH1kLkpsgIyjLQgV+BkwW9+yUQ78+F1euNg4ExNe672DZsLHiev6/ngBu31Qf0/6/pdGtuIc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762953611; c=relaxed/simple;
-	bh=BZpnM5upHTZ7qUgZkigoHN2kYvZMnoyTTsUw6eJIxdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5qFc2C1dxmIsS8jNkADpnsXPd1pbaIHNKGo0/R/3r2HSedGRtAQd2EA8B425qrimqM7h6HH++IXHJxg4oHF0X72JUY6KMIBjEzk0E9ssDOhzWuEg/x+3FvzqSLbY7FFcMInCg/MJ3cErB7IRZ4N+LefHNu1brSMI5079cSp3fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0uvMUYbc; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xu5J2YUVmO+KaIFCwe3YTQ+9UN97u6v/RSU7wP6bNI8=; b=0uvMUYbckaKxc9ZGTp6DGbg3YN
-	LALnRa7NcqVeGPt4nB5iXP1V4HqFy8LBFW7/xewuahRQ+6gPCw2f4WaEhI9ijAyzq6xNrwf7/E+M8
-	UvW05os7ZPsFzkNKwfIlPDFicG82Pb+eeBdJi4Lf92Ogx+Yp8YwTCJ6bJaypmP2LJ6A0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vJAl1-00DkSt-Dv; Wed, 12 Nov 2025 14:19:31 +0100
-Date: Wed, 12 Nov 2025 14:19:31 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Po-Yu Chuang <ratbert@faraday-tech.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"taoren@meta.com" <taoren@meta.com>
-Subject: Re: [PATCH net-next v4 4/4] net: ftgmac100: Add RGMII delay support
- for AST2600
-Message-ID: <3af52caa-88a7-4b88-bd92-fd47421cc81a@lunn.ch>
-References: <20251110-rgmii_delay_2600-v4-0-5cad32c766f7@aspeedtech.com>
- <20251110-rgmii_delay_2600-v4-4-5cad32c766f7@aspeedtech.com>
- <68f10ee1-d4c8-4498-88b0-90c26d606466@lunn.ch>
- <SEYPR06MB5134EBA2235B3D4BE39B19359DCCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1762953627; c=relaxed/simple;
+	bh=kRvzfLSghU97RsZ9VRn57pOnmWGulGRlWRhPle43nrE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MfsLiRE3oi7LcC6INylbAT0e9KNg70D/c2S7nO7KOHiGD9C+SPBhBCLbfVIiNEa777liI9ImmSvNk4ON67e8czmSnRjvJf1Xg5XCmPFxOQqP9I9/IlLjDs0DHGqyZ5pXYeZkejfOyoiNJdHceo6TAQMQtW8EzIYw+z3kA1HXz0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tKjdv4xa; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 7F497C0F556;
+	Wed, 12 Nov 2025 13:20:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 022906070B;
+	Wed, 12 Nov 2025 13:20:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 533E2102F17ED;
+	Wed, 12 Nov 2025 14:20:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762953622; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=J3GPCyka1JrH8xTfmJa7EWc+LLH2H9CUm6CgICF/k0Y=;
+	b=tKjdv4xa+/xNCd9tfVthaZ4rJSsc8mIjhW/2SSt7MHd8w/R2sCLLL3YRhm50gLxkKzI2FX
+	1rU6LA8Z/l6GpofcGTlyRcUlUQMBtAghoD1uOk40pWZ/dFtF9CjUgBGZZbnoLy13+8+KHv
+	xKYm/L2LP8h5GAP/FrIPRcUuwA6RokE1+FKkjN6NGEgMGqBYs5QVkii6LBtUtPPE85e5FQ
+	MX2ksmC2dpoYez0F935LGdKKFGUSAB3H+/gnHPU026iDtFwzRjXWvoCDrp1wzQhs/7jIQn
+	OKoO2oJGFabYh4YrMeCbd5r5BQ2UBUL8ziafg8A7eNlLNDnE4ZQ2+jUqQU7oaA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
+  linux-kernel@vger.kernel.org,  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
+In-Reply-To: <871pm3iegf.fsf@bootlin.com> (Miquel Raynal's message of "Wed, 12
+	Nov 2025 14:10:40 +0100")
+References: <20251006223409.3475001-1-sean.anderson@linux.dev>
+	<mafs0ecreontu.fsf@kernel.org>
+	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
+	<mafs05xcpo9sz.fsf@kernel.org>
+	<26a795ac-e6ff-4363-a8b9-38793a9be794@linux.dev>
+	<mafs0ikgnn07u.fsf@kernel.org>
+	<d00d42ce-4262-4736-8c73-5d2544e86d33@linux.dev>
+	<33cbbac1-c247-4644-b555-998eea6e8305@linaro.org>
+	<92e99a96-5582-48a5-a4f9-e9b33fcff171@linux.dev>
+	<871pm3iegf.fsf@bootlin.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 12 Nov 2025 14:20:19 +0100
+Message-ID: <87v7jfgzfw.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB5134EBA2235B3D4BE39B19359DCCA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-> > This is an optional property. If it does not exist, you have an old DT blob. It is
-> > not an error. So you need to do different things depending on what the error
-> > code is. If it does not exist, just return 0 and leave the hardware alone. If it is
-> > some other error report it, and abort the probe.
-> > 
-> 
-> Based on this for next version, I want to move the "aspeed,scu" from dtsi to dts.
-> Change it to optional and accord it whether existed to decide it is old or new DT 
-> blob.
+> When you run "# flash_lock -i /dev/mtd/by-name/spi0.1", you privide no
+> start/length values to the command. Hence, the defaults are picked: the
+> entire device is considered for the check. The tool asks the kernel
+> whether the range 0-0x7ffffff is *fully* locked. Answer is no, it is not
+> fully locked.
+>
+> In the kernel there are two helpers for that, and they won't give you
+> opposite results all the time:
+> - is locked:
+>     - returns true if the given range is fully locked
+>     - returns false otherwise
+> - is unlocked:
+>     - returns yes if the given range is fully unlocked
+>     - returns false otherwise
+>
+> So if you want the tool to tell you "yes", you should instead use the
+> exact range you locked (1024-2047) or any subset of it.
 
-I think that is the easy way out, not necessarily the correct way.
+I forgot to mention: I don't like this interface because it is not very
+user friendly, but this is uAPI, so set in stone. As part of my journey
+in the SPI NOR swp.c file, I wrote a debugfs interface to help
+visualizing what is actually locked. It is absolutely trivial to do and
+helps a lot. We might want to use that for writing some kind of testing
+procedure =E2=80=94 I will share it soon.
 
-All systems have the aspeed,scu, so it should really be in the .dtsi
-file.
-
-What are you really trying to solve? That the DT blob says "rgmii",
-but the bootloader has configured the MAC to add delays? You should be
-able to test for that condition. If it is found, issue as warning, and
-treat phy-mode as 'rgmii-id'. If the DT blob says 'rgmii-id' and the
-MAC is configured to add the delays, the system is at least
-consistent, no need for a warning, disable the MAC delays and pass
-_RGMII_ID to the PHY. And if the blob says 'rgmii-id' and the MAC is
-not adding delays, no need to touch the MAC delay, and pass _RGMII_ID
-to the PHY.
-
-Are there any mainline DT .dts files which say rgmii-txid, or
-rgmii-rxid? They would be rather odd, but occasionally you see them.
-Assuming there are not lots of them, i would probably just leave
-everything as is.
-
-	Andrew
+Thanks,
+Miqu=C3=A8l
 
