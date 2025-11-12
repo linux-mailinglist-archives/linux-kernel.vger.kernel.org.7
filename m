@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-898205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FBEC54984
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57952C54990
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6F23A7B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79BA3AC8A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CCB2D97BD;
-	Wed, 12 Nov 2025 21:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724BA2D97BD;
+	Wed, 12 Nov 2025 21:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzF0QpP5"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FstuIoJk"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAC62D5944
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688762D879F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981974; cv=none; b=FJS1X6V3wksMBBe9vL0MblhVr5slIXfYlXIw1LOjgUUFX7PEXYoHujLXBbkZp/S6q3cBnIG/tsHpDu9iSkueTk1UWIH/VWpHH/C4Fxr9HtsxRpWK2gPyXPVS2ukAcuQFhWFVlZQ+JHWC6ZebaZ1p78Q8LCEOBJNwiGiEH7S9vFk=
+	t=1762981979; cv=none; b=hZ/wRbTs/DxaWEteheB+7weFJ5yV7O5eki37Eh887AXEnUg9hEbAvx/09FLTdAJIW8isADPDoI+UvoxLUbN5mP4eqdd2ySkTiflB1CO8eFlTZR8ZyN0DZFA0JBGHDLoDOtSgsmeHo9Rm8MO8G6fzeR/REot2nskyaf2+7kl5SL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981974; c=relaxed/simple;
-	bh=RZJdhn1bhOKDxWDWTYIA7jJWtzp2FszzhJrftJY1t94=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqadMbxXtr3KQCMaY5cWPF9DyXjL36y5uopRek0PPy5bc25V5uoIv9emTllcqbfrZiY3CJ8ZuSLpfCM4K6lwcBYCjvnYEcvf+4OxcgK12su55GaEe+sALf9Id6r1jKhYWZJXNR4J9QFJ6+Wx2JelpDqpYuCCH020svmQdlmPtcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CzF0QpP5; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1762981979; c=relaxed/simple;
+	bh=CbgLR+LR4tT+7lEikMxwinz+7xt2UO1RFMUh/9q4YVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cnEYCKaU2J/bsUc3ay2DV15A5yI3CqXmvSgSunCbE3hWnpT9SmP4ecGXL4KuJTFvuCAPLbvTmdA30JzaXWjCFAGHeiYMNxJYo1rPy743Tr9uDMrFu1B7cAOR6izyQYo6CAHJk9EiYZZAfeZjrSBThveCO195TxC2EYiE92bruro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FstuIoJk; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-bc29d64b39dso59100a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:12:53 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29586626fbeso883435ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:12:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762981973; x=1763586773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZJdhn1bhOKDxWDWTYIA7jJWtzp2FszzhJrftJY1t94=;
-        b=CzF0QpP5y82GGttXhB7Mx1lSOlSSIPXBG6Gx3cP6ZuLuByUg6xNeJzD9m8G2yVmXDP
-         0ioSC3P9DEbRYBXa9ZchtthmGJ0BIFVYD1oo5L4hmHzstHzgxV6zUOouV1DFdX3EYXOo
-         Ogvu9eBzDg9yBhBNhCRTzjAwXcze9N9IQG2/5lViE8SPn3DBQFCFxMLdOh/LbqJLMTdc
-         YRcn4mZXL4WJY/pbyIm5Vj7mSi2UTqv+rlAuwOXQbOipJUoD8ve7ojgAR8ckveHH4hIv
-         cBJwwqlUIrJV31LL72IX/xyts75SG6vZZzyTgJq+8PO8r3hbIa8/Bu93Za8g6er4DuFy
-         OFdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762981973; x=1763586773;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762981978; x=1763586778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RZJdhn1bhOKDxWDWTYIA7jJWtzp2FszzhJrftJY1t94=;
-        b=XqfP/biBKztHYnqwIq34VHGmrmW8rbtZfFKkFbbN9WrfRoEeDtpHM10LbdxyFSGWdL
-         MSUvFvwX6X+EFJngsOirb/197lBOazk6mrhixWjnqR7naY1dbaSv9gYBc6ZX7thFR6Ug
-         lpUklIVLIbIe8Ax0uo6tEUMkK2Z5J3ZpHkiNpLs6lkgBHfhuqWMYv4//Hxp2JTLDtha0
-         USOnBsGFHPttYGMMWYrHdTSpMlVDih1Ogct3HmXrk2zqXWUUy1u42xa4/b09esjcJRLt
-         SSkhz3BthLRKo3BfSgYQaY7+mcCm615hFml/aFZWQHETDnb6bf3QK1Zvn0Ec9+ByoR/k
-         7Nuw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ZlaUqlU4pOqiv7jjqpnJXbKEdnFnQzoYheZVLXkW5BGJ0dBUcC99PzTSOB5xJCOo3fxI96eobrHvruQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0+8vZuevrnwQbON1/AiVW4c+tUn7w++38ms8FAQppbbM8IOyB
-	LmPgvzYqhL4WF1BLpHNiy9R3ZObD3Dw3ySb5gZxL/TPG8GHIWpEfD8+WFkAR3MSXmV0=
-X-Gm-Gg: ASbGncuJlkvg2FzeHMbtiaHGcegKzVewA+yz0hcEu6LRkiddQKMUFiYk+3auv1GoOdg
-	j4xFskGqN7o36vzFpcujj97qKbS/ov8xZvR/MSHsgO3SjH6AsekS4GMbjLfgm9fkaloXmHEiXhw
-	hgsU169xC3ludv0xTTEKMqz9cybsIWvkd2/tUAWbPGRGYiJ6gwzCBWvZzhUHvdntzBzvGvTj3aS
-	4Eb9+XmE91ll8I/qA0e+4lpAHyc39inE/yHBSGm5o1QMWc+EFkJmk9FBLH2c88coj3nycPrgplY
-	HKEBqSN2rzwO8HOfG+D9bxYF89EfwyxJb5caIwvtu3WQjgCQKXwefRLM4dDc+1lGqSxDDis8mfk
-	m65tCom1DZONt9O+aTVVdTYQliep99cOJ/vr+Q729S5qB+46NDTClAYLnxe2Rg8KdXpU=
-X-Google-Smtp-Source: AGHT+IFeIihBkU77ETtw+XHaa6KFXIJgpjHeG0dAkdR6b1vkSG3JvHMNOQ74vp6k+nYvvBf1xBPKlg==
-X-Received: by 2002:a17:903:2f88:b0:295:557e:746a with SMTP id d9443c01a7336-2984ed34126mr48888625ad.13.1762981972686;
-        Wed, 12 Nov 2025 13:12:52 -0800 (PST)
+        bh=IjuDF77Nvin9wqVFgToN8rViAxLn6q03uh/wAmweEAk=;
+        b=FstuIoJk3NFaVJTyNOmmb3FtzXdEMTS0JzvO98sNNyb2+sAuvkF0aJAVX1dSp36v2q
+         FrtKtyufB6/5YhBCLuTdd+ScT8iwbCf/SNbnk2h1m+zL9K81ZANfo447rYZX7aMolRi4
+         XmyCDflLTuTWSWfqkJCrnPJOznhfXa4lVYgKcM9IixoZ07MhBnUnyIJAbNHDAjP35ySI
+         8cNvqbXVMZJWJpohd3zoq6R19ZTJCw+UUvDoFQJL/4nmMOh9vhTZsCj03xZxBCL5aqIL
+         C78m6OjwVDFnr/QVXfE2P1qRPHQKdikE7Gyv3OuO3cT+xHH+vZ4NbIX/F/PtH8utjHUy
+         sP7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762981978; x=1763586778;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IjuDF77Nvin9wqVFgToN8rViAxLn6q03uh/wAmweEAk=;
+        b=s4GdGk0PYJJCkM+NnSEH9jv35r9wxbTmj/pg8pb8FBQwxbL/PZnTLQfK+yyXKl/mf+
+         yb7HIwcIPeV29TgF0RA4aXtUyOOaEc3iI0l70u+i40Hs8LCFQMDBnASzPDrhXIGrKpGP
+         WwLScGm637VUY+Znn1Jxql6narVeDCmGJBh0UcfEa5j9hwx5s6unQqfD4Q0agMMvDX2G
+         +Ru8YKHrSYwQRRekFdTuz8j0oQNxsr9emKOSE9ffyFczYqO/3aNPy/AgMtvOzWvQwqBk
+         q54xIQ9Z1R1WRxf12ff54popF2dnvP00We1eDBuGK2XKLDACpONffem8fK59MnqJInit
+         E0Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzbMlpqQpAmYsKwJMnL0Klzp1HOUHed1PjatC4967Qz+AUjS3yIfZ2+qvaIL0tbO612d8ewq8wq5EA97s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsw9AJN3pyWSJSo0EqYWLCLXB2FPCH4/r1OsZ+mQrEitZTvKQT
+	eIRFKvxccT6E/59YMsaxc6LBhYY5B6ji9UuXxOeEZwFdqOyyhGIz4eN8
+X-Gm-Gg: ASbGnct9RRloNtMW9P8z7h4M6lpKLqiJ8MZz6LPtRWAJtJKXxOiI7OO0g22onuoISIZ
+	g6DDnMpHBWAMWPo3TLa9pQKg+hnrwdJX12QKfscAAh5nASjSdssg/MteXz0k6jJ6iINNP/JflUq
+	vpnON3/qEi5ArzvObDejxdFh+TXn6lgJgvMrDzzyiwRGXF94wIlH1KuFpdlOugc861pZCsbu4HX
+	zv3FgGCQvFDtRUv8RAkfFOy+y6qjpje9fTmTg5K0FomV9mYcR4+ng0AJFegq8+EKk1ojOVqXQN/
+	eFcu0uinquYdCg6VMjPGwbRftc/lclswM59sYwuF7xelsTqV+MUyx6qjsEdvbPHqrJUCqxrtvnG
+	7BOY+ncwrwmsC4mmSZnI97T+Zi32eD7J9M7Jk3Bkbvli9WfVSq7e0VCqVHeWE62Mi3Ho=
+X-Google-Smtp-Source: AGHT+IG+mV9xg3XsxHHZk9IEjI2mp5r4vWAmColXzizBEHkP0uzY8AdSktbXnLxB4bTq6cCi6YDFug==
+X-Received: by 2002:a17:902:d551:b0:295:6a9:cb62 with SMTP id d9443c01a7336-2984edaa8a2mr55489145ad.35.1762981977752;
+        Wed, 12 Nov 2025 13:12:57 -0800 (PST)
 Received: from gmail.com ([218.32.81.133])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245ecdsm1011525ad.32.2025.11.12.13.12.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245ecdsm1011525ad.32.2025.11.12.13.12.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 13:12:51 -0800 (PST)
+        Wed, 12 Nov 2025 13:12:57 -0800 (PST)
 From: Peter Shen <sjg168@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
@@ -81,11 +83,14 @@ Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
-	peter.shen@amd.com
-Subject: [PATCH v6 0/2] ARM: dts: aspeed: Add Device Tree for Facebook Anacapa BMC
-Date: Thu, 13 Nov 2025 05:12:46 +0800
-Message-Id: <20251112211248.3711889-1-sjg168@gmail.com>
+	peter.shen@amd.com,
+	Peter Shen <sjg168@gmail.com>
+Subject: [PATCH v6 1/2] dt-bindings: arm: aspeed: Add compatible for Facebook Anacapa BMC
+Date: Thu, 13 Nov 2025 05:12:47 +0800
+Message-Id: <20251112211248.3711889-2-sjg168@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251112211248.3711889-1-sjg168@gmail.com>
+References: <20251112211248.3711889-1-sjg168@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,17 +99,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series adds the device tree binding and the initial device tree
-source file for the Facebook Anacapa BMC, which utilizes the Aspeed AST2600
-SoC.
+This patch adds the compatible string for the Facebook Anacapa BMC
+which uses an Aspeed AST2600 SoC. This is required before adding
+the board's device tree source file.
 
-The patches configure the necessary platform peripherals and aliases for
-OpenBMC usage.
-
+Signed-off-by: Peter Shen <sjg168@gmail.com>
 ---
-Changes in v6:
-- Rebased onto the latest upstream kernel (v6.18-rc5+) to minimize potential merge conflicts.
-- Restarted the patch series submission as a **NEW THREAD** to fix the incorrect threading/In-Reply-To usage in v5, as advised by the maintainer.
-- The email sender address (From:) is now corrected to fully match the Signed-off-by: and Author: address (sjg168@gmail.com), fixing the DCO mismatch issue reported against v3/v4.
-- Corrected all previous style issues: fixed block comment styles, line length issues, and removed un-documented/unused device tree nodes (amd,helios_cpld and eeprom@53).
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+index aedefca7cf4a..bcb874ebd9d2 100644
+--- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
++++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+@@ -80,6 +80,7 @@ properties:
+               - aspeed,ast2600-evb
+               - aspeed,ast2600-evb-a1
+               - asus,x4tf-bmc
++              - facebook,anacapa-bmc
+               - facebook,bletchley-bmc
+               - facebook,catalina-bmc
+               - facebook,clemente-bmc
+
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+-- 
+2.34.1
+
 
