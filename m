@@ -1,107 +1,229 @@
-Return-Path: <linux-kernel+bounces-897014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3123C51D14
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:02:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FE9C51C8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0353A3BC5A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A5189AAA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9A4305058;
-	Wed, 12 Nov 2025 10:53:19 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1FE304BDF;
+	Wed, 12 Nov 2025 10:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SnuugUs6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3IQ7Cr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SnuugUs6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3IQ7Cr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B8D2FE580
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743412741C6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762944798; cv=none; b=UVD6SxMNfn8d3cNsxwEmHEJQTHJCZjXH95VlqXCuzi7bG2qgd7dRCIW7Eul+Wte2eDTVLyMW5o12Vkn4sfC+l4uWpjcBFGr7vQfgoxqWopIFnWnsS4kM0quVpP1jzNs39s/c+k6lmDP2zAxWH+fRf9jkM4W46k+w/QW0ZYFkPvE=
+	t=1762944829; cv=none; b=nYYi2fRLucML54ht0OXBKABkr2WvVxU4MZPYuXkaqtCpcJntlzwJTh/afkSWryu24rx4L+TmOUAxifccfqY+bBDTCGYTb1pRrKnqh3NHth0/TUeiFhmK+eJ4cDTJCr4z4uXUkgiq7a3WhHsJGtaJVuQ0C4n6pM2qbvy6Vx0v4yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762944798; c=relaxed/simple;
-	bh=MBkcIHaoTtJht9V7eELfMMFBFS/GZwbB162qFIHhEkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SaxURnGzDnv8xz3gNj37do4yA0673iwQOWAojh6rARM6azcKNsVtfr9L/wmrYgWq6VGFcoeS11QjVCGfI31aM1eCO7wNGMyvvg3uOky+t/dtuUXdVP3l9aUxNL8W6b8c2ycl9n1IKgwObcqq7QHdSSCaJyamMZo7bgKYHZexk6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5dd6fbe5091so308959137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:53:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762944795; x=1763549595;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22nv2YHVY20paw4fGOnUiWK+fXNHbu6IXKzWGD3lqAg=;
-        b=WXlHd/qdPP/aggM8X/dgQmtkLvp83CVqDx4J32PaSBDuBN31UCDXTZpk6o04Wyw/tJ
-         LtBnP/x/Z+MFUdYqMQepgGKxEE7hfOPPPvRlc9+SrrcVXSvLgPYbxot3LDoygDJKq7Y8
-         NDOsSs9YPveyyl9s1U/8bMMQOfwtBirVL2uBZdhCHBUNDJve5tNws76X0oHoKZEiyTYJ
-         IZNDgkT60OzCO0g8SQ1GTcYgmgq9/rQyPQaijdf99xMCR1EKVkEe8G0AYMswegVY91V4
-         DcVnx9truqdituiedjg4kSnfG+vWRZjG+7lNMTXpZ3eNn/F6gN3+tn7yeb7RYjLnT8o+
-         5D1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkn6/Yqa4AvHiwgmBzE964qtY+tT9u5O40AjxSUvMgqgHnWc1dK5dVjXaFM3JhWwGFthbhn+EksNA5+Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyy2kvahkJBUFLrvcV/5EafWgJXTq/wq0vPK/3mAY3iUMAFDRg
-	6ev4YJYka7nJcw+maiGG3SImzGbqk4sKM+P6VXHH+k12klyCKrH56sO6E49yEPf0
-X-Gm-Gg: ASbGncvT4/Bt/0qlxCEX2GLG8DFOLokLb4GNspKhHBWr3hI5m0uBRId3DRPeajN8hyL
-	yG8kkm71/fLj6mpkta9gkRSkgTpcKjPgUltes5OrYq6szFu6Q/OXc1a5B7fUnwiZrQDl8aVFhev
-	QfsrVqqFWsjHdNg/TX6NEczBeejP26dJ12NNGZy+FBdGHftMKp1bdEnW9IA/89R/OGyYSSYblPI
-	RUH2MB4x33zDAlGB3AqOD8CGSxEXfGYreb6R5zWjmkmncAh22gJV+OsLNfMziIu2zyyMKZiPjDy
-	JSc8273Pau9FX0/ptDfM9M2jv+Dbadod8lK/eE36lMIJLEBaT+mKmNKXQz1lTcjIrDr0F0id04m
-	4NnGoAJeJ5p3EbvkTyK0wmMEb5ykV/s7R5X4mLEHRGXO8CrCG+23ZFnRZ7oVbppLlBlTDafBtii
-	uKoJaiBYiXI2azuEnbXQN+YKPavED3svTua93wKVMiAw==
-X-Google-Smtp-Source: AGHT+IHxRyhIhAgpsqz3kiOk9Aj6rDHAEWZ6h85O6mJvVDxLLkWIEG19TU6HXgm7p/yhFXWhBhsPfA==
-X-Received: by 2002:a05:6102:c86:b0:5db:fe0d:7fd5 with SMTP id ada2fe7eead31-5de07d2faedmr472045137.10.1762944795281;
-        Wed, 12 Nov 2025 02:53:15 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9370898d9d1sm7871511241.12.2025.11.12.02.53.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 02:53:15 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-93720fd0723so226879241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:53:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV+fg+W0h75E8dhDRACAloX05hJGz0/BJK4wUclUePFOc0e7ykQwKy2+tOiCTngr4jkL2eij3GUS8iBo1o=@vger.kernel.org
-X-Received: by 2002:a05:6102:161e:b0:522:86ea:42c with SMTP id
- ada2fe7eead31-5de07d2fa38mr570610137.11.1762944794864; Wed, 12 Nov 2025
- 02:53:14 -0800 (PST)
+	s=arc-20240116; t=1762944829; c=relaxed/simple;
+	bh=D4vP1+X5jfInvmEj5aulxh+/5jnNxk9KacU2UJzVkuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rNLu6RB4x8dz/ro2oK62yihfc4VwaEYUmr0Bd3/iL877SOVlqWGvxywgLjDYJPrCC2s4rRjk3Dk+WGa7gw1XDZRMsldTk3UtYNR7tnHwVWsoRjuM8krHtpDhdGTp6WX51ilizJeJz+/oB6KJZbPxI1ZMsMGx6k5aPM37PmCzve8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SnuugUs6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3IQ7Cr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SnuugUs6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3IQ7Cr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D4F51F45E;
+	Wed, 12 Nov 2025 10:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762944820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
+	b=SnuugUs6s1i1G+ha+hOQ/OmhxQf1kpNet502wtDhpCQIM046YZQm/kYEr2XO7CmNuNHOSz
+	SvWC03cxUvmrbX09Ka9nD06/IQbvmtBaVrGVwwSftI+YJ9LSrW0dk+eaAJzabm5VGcUTz0
+	lLqEz1dcNViXOO7Fqc2Kk/SrWgD8GiM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762944820;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
+	b=2g3IQ7CrieoVjAWYQ8/aQ/uUl3/ZY61tFT/tLgOfjhUUXCtuznNcjwTCxJuhL5IYeAcXwX
+	Xk1BQuKZ6Kg0tFBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762944820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
+	b=SnuugUs6s1i1G+ha+hOQ/OmhxQf1kpNet502wtDhpCQIM046YZQm/kYEr2XO7CmNuNHOSz
+	SvWC03cxUvmrbX09Ka9nD06/IQbvmtBaVrGVwwSftI+YJ9LSrW0dk+eaAJzabm5VGcUTz0
+	lLqEz1dcNViXOO7Fqc2Kk/SrWgD8GiM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762944820;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
+	b=2g3IQ7CrieoVjAWYQ8/aQ/uUl3/ZY61tFT/tLgOfjhUUXCtuznNcjwTCxJuhL5IYeAcXwX
+	Xk1BQuKZ6Kg0tFBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A4853EA61;
+	Wed, 12 Nov 2025 10:53:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id crmgCTRnFGn5VAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 12 Nov 2025 10:53:40 +0000
+Message-ID: <dec19492-bc23-49a0-a2b0-1cd8b5c7726e@suse.cz>
+Date: Wed, 12 Nov 2025 11:53:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112160553.171643d1@canb.auug.org.au>
-In-Reply-To: <20251112160553.171643d1@canb.auug.org.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Nov 2025 11:53:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVaz7T=n64YJrv4QEa0dM9pMt+es6fFYxP-czZxhRpsPQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bn1q2yZFAdSThfGUme1Ea7R56WVwUCp_oiRj4_PbxJicN2lvoGKqu8c5F4
-Message-ID: <CAMuHMdVaz7T=n64YJrv4QEa0dM9pMt+es6fFYxP-czZxhRpsPQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Nov 12
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] mempool: fix a wakeup race when sleeping for elements
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Eric Biggers <ebiggers@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251111135300.752962-1-hch@lst.de>
+ <20251111135300.752962-7-hch@lst.de>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251111135300.752962-7-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Hi Stephen,
+On 11/11/25 14:52, Christoph Hellwig wrote:
+> Waiters always need to re-check their condition after adding themselves
+> to the waitqueue, as otherwise they might miss a wakeup.  Check
+> for elements in the pool and use them before going to sleep.
+> 
+> The workaround mentioned was probably due to this, but seems genuinely
+> useful for other reasons, so keep it and update the comment describing
+> it.
 
-On Wed, 12 Nov 2025 at 06:06, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Merging drm/drm-next (2a084f4ad727 Merge tag 'amd-drm-next-6.19-2025-11-07' of https://gitlab.freedesktop.org/agd5f/linux into drm-next)
-> CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h
+Thanks for looking into that historic comment :)
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  mm/mempool.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/mempool.c b/mm/mempool.c
+> index 850362f4ca7a..8cf3b5705b7f 100644
+> --- a/mm/mempool.c
+> +++ b/mm/mempool.c
+> @@ -388,6 +388,7 @@ static void *mempool_alloc_from_pool(struct mempool *pool, gfp_t gfp_mask)
+>  	spin_lock_irqsave(&pool->lock, flags);
+>  	if (unlikely(!pool->curr_nr))
+>  		goto fail;
+> +alloc:
+>  	element = remove_element(pool);
+>  	spin_unlock_irqrestore(&pool->lock, flags);
+>  
+> @@ -406,13 +407,17 @@ static void *mempool_alloc_from_pool(struct mempool *pool, gfp_t gfp_mask)
+>  		DEFINE_WAIT(wait);
+>  
+>  		prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
+> +		if (pool->curr_nr) {
+> +			finish_wait(&pool->wait, &wait);
+> +			goto alloc;
+> +		}
+>  		spin_unlock_irqrestore(&pool->lock, flags);
+I think the race already cannot exist, thanks to the pool->lock being
+unlocked after prepare_to_wait()?
+The freeing path can't bump pool->curr_nr without the lock, so the condition
+you added can't even be true, no?
 
-This file contains a duplicate definition of MAX_DIG_LINK_ENCODERS.
-Please drop the second, cfr. the resolution in drm-tip.
+>  
+>  		/*
+> -		 * Wait for someone else to return an element to @pool.
+> -		 *
+> -		 * FIXME: this should be io_schedule().  The timeout is there as
+> -		 * a workaround for some DM problems in 2.6.18.
+> +		 * Wait for someone else to return an element to @pool, but wake
+> +		 * up occasionally as memory pressure might have reduced even
+> +		 * and the normal allocation in alloc_fn could succeed even if
+> +		 * no element was returned.
+>  		 */
+>  		io_schedule_timeout(5 * HZ);
+>  		finish_wait(&pool->wait, &wait);
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
