@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-896810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02099C51486
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:09:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0A9C514B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0B83BA836
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:02:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277A63B94BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E142FD7D8;
-	Wed, 12 Nov 2025 09:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D622FFDDA;
+	Wed, 12 Nov 2025 09:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hzQ10Xgw"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PplWNV0P"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428F12FD7A7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6902FDC5B;
+	Wed, 12 Nov 2025 09:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938122; cv=none; b=YgC5Ppih9A45g3nsMy0h6wecq17jvvI4ks5jq/4l/z0WE3qgGSX6kz9CHUwRQ8xNYHyf44N7nRiryW3h0W2iAlWjSPMHsSSUQoxAHMWiqZvZyQA8UZeUdUNY/ZnjwmBR9CM3/tYh74038pB/uszEB2nIcBb2XE4HVEywCMGvff0=
+	t=1762938217; cv=none; b=Xc4D2AldCeK3Vtfl+jFCidCxa+TqT4a/RFJddQIxcdvzbf1tNmnqMVrq+8LKqyUWuk+7sJv/+H5DU2M+MywzXBpEI0lRpaKDjTBcEQcVI4T4jiesgcE8NcoCUeDCSCnxvRXelFwfMufBU4PePS0hpPbs1NNTNvsP6CLgibxbNq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938122; c=relaxed/simple;
-	bh=5zFi3prT/tb4/ZOKQXyzm6NJkVjt+9gP5ezapBHafdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=juU7GUcjYJE1vWORon32bvaExW/9348xyN0W0RKHpXG6HOOdHLRW8kfBfYw9OXpgkNp/wUCAR4wo8IFkDotTpjYxRQO2zPpSFzS9sV++NzoZt2qV6EJIfp6/FqLfNavAumBBUGIxZxz8SpOOKcPtb+vStqPBMNlWNL37V9droPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hzQ10Xgw; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477632d9326so3617045e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762938115; x=1763542915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=66JkoVBXRt3KXq4mIKfXgWIsRIseUDoE8lmCrVzLyy4=;
-        b=hzQ10Xgw52eC8WkD3lapBPNn1UIDBCd62s596/euBcNJFUkNCyH6ezkAclNJZRAU4w
-         0a6i5TOVuwa76CnEa4NBru8WepjhYui3aMTADDPqV5VzxAjqjNuF1acpI9w+gJFGSiko
-         35qLmYrLBmQhqOtY6f6A6dHeIUh2m62rCLYWEWAXSEriTH2jj9UZlQOHfM5doRid0e7g
-         wil/pAa5mkD7J5/HR5oEagK6CAE4tVYtWb5+C1otjx1oHT9SQCP+LhHkc6fWq/c9pTio
-         biJTuc6h7GQp3mnTPLMTCwkzx0K0Zsa3KM8P1alISsC8c8w/hjIzHsOfnhXt/yl693J9
-         SK6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762938115; x=1763542915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=66JkoVBXRt3KXq4mIKfXgWIsRIseUDoE8lmCrVzLyy4=;
-        b=Q5v5TOmIILLNI82rKqyWz+QhDmsAwjbKMhr4IUy90q9qbb5+3uOMEdKQWul+8tmBag
-         bHeoDkCDkwD/54fdEiap1u73dpa9CqZGvRp5y3VLfld/jzmqCYLikhwnrlMifjCmqiiz
-         p33nlM5n+CYNggF93tAXiYZ1LXSRHnSeb1bzl/0GQOaGydy23Bqjz/yquOJiSC0Tbgax
-         vuSqNWeW0P82z65pC7/hlkIjz86XLlDKgriQFpzjcU14SbwtSFg3erS0aagcTPbZ8N/+
-         U//Vt+cFX49i7leONXXIk83L5nMSTYgtPFjyM/WDwxpYIuMkprS4N+sBQyZbsOB0kztv
-         Gexg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGqNeN7GDLsTdflbdtr+NE0bjCg8zzvOicKqNJXQWJxw+53pifPizMQiXecsqlM9Pmp0OqTCMv9GEgY0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmREKUAtghMwY4zLlSu2eoPQwyZJ596okhY8/5DWfV9BVWCRfV
-	12Syn1tMSC5WTU836HuteKUITlWB5EA7s6Tlqw+fkma1hZ20Ibn+MUdURniTEfbHwqk=
-X-Gm-Gg: ASbGnctBAKbFI0FL1X8hE/GTNWj0QcBY6CmO5RlqyjPm5r0u+jPFhLWLax2ST/1+XLs
-	ash0cT+RwxXWna0F9oqh2TEPF8hn0WZqxf5AmtPTULxPFgUA2XSFmY1ILebOUuIrIR67j/pXFVI
-	Pj47smvu36WQm/mybQ7ohcWb4kU6h28g9J7RR3vhXlFDK3ElGkNwrji1B6KnVWo/KY1sOuz6vz7
-	e8prNlbc7plJBUhlGRNa3te9kPzB7wFfD1IVx5/8tp5N5WefarGr4egs/yKG+6H15wR16Kf2uzG
-	jl+cLTu6Uym162IR8gOO1S5RScj1qNeSIkDnk1XfMGoV3u7QAthgxZwe4j0OJx44vqViBsRTHA5
-	JwffgAz7AASR3qf8XjS9wG39b6VBu+cA7lgtCrkMp9Glywzdm1xgiTeKGs6gyEizmKqI42jdBn4
-	39bSV/OA==
-X-Google-Smtp-Source: AGHT+IEl9hg1Kv37coDTdY5hfywj5TzhKzDMoQuXuH/tP7xQz/4t5TIbX/bOlblMbh1MgqEKT4WInw==
-X-Received: by 2002:a05:600c:35ca:b0:477:7d94:9d05 with SMTP id 5b1f17b1804b1-477870b4610mr22199385e9.35.1762938115446;
-        Wed, 12 Nov 2025 01:01:55 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e442c2sm25971505e9.7.2025.11.12.01.01.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:01:55 -0800 (PST)
-Message-ID: <60625b83-aef6-442b-8b38-558c3751c4a6@linaro.org>
-Date: Wed, 12 Nov 2025 11:01:53 +0200
+	s=arc-20240116; t=1762938217; c=relaxed/simple;
+	bh=7tURlJM86yJH4vMqghem7Jsbv4a+GRg87gUdHWRlhqU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CQAG/3s6ni78d8Yioq8F4h2h3ZGut157AWIBy7HKgcBcLGu6yTJZlJ0hZth7NQz+zPZaCQ6YS8l4Xk7WLPkSKQqTSPEg1WymdpKo/yq7ukgSV3XvXpfXLbRjsPcXqdOrCpiu9U8KKOHribViJegyTbJsNGTDhu7vsHbKhQg+yNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PplWNV0P; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC8ndr14006241;
+	Wed, 12 Nov 2025 09:03:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=kmp/UD49T+mMXHBhn6G//elyFU+oJ4daqAG
+	JIwEP9CM=; b=PplWNV0P7iwhJ6RzivUM35cViADNGkgEsrNI5sQMenUqGWrzFXc
+	8kg2rkg4iUNmXJiRDheeTSQWQv13scIEeWFWAvhL8mQOmUd0vHKDu4ACZY7H40VF
+	e9xS1iiROiHm4JgcFfn5tHT/YCCjGihoIOr8Oqy4qdbCRPtamd5qvHm6clb8xQPv
+	qN4vvNfdyR6Zo/PR1j0CvapqdFA1KrOvCzEgMWc66FKf8+xu0E/BU7QbZMKCf98s
+	i7iIDN8V4mYGPxIIcasKKvBQKvLviZkSv2ZpCrd2t+jtKdwCowuV/y8IHerP3uc2
+	6ucnweTIsEd7u7dwaZuKj97JF8x7g6XXgEQ==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acg5bh870-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 09:03:24 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC93LG9012295;
+	Wed, 12 Nov 2025 09:03:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4a9xxmq754-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 09:03:21 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AC93LQ5012283;
+	Wed, 12 Nov 2025 09:03:21 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5AC93KOW012280
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 09:03:21 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 716EB77B; Wed, 12 Nov 2025 17:03:19 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Subject: [PATCH v3 0/2] Add PCIe3 and PCIe5 support for HAMOA-IOT-EVK board
+Date: Wed, 12 Nov 2025 17:03:14 +0800
+Message-Id: <20251112090316.936187-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] mtd: spi-nor: micron-st: move set_octal_dtr to
- late_init()
-To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-References: <20251112-nor-v3-0-20aaff727c7d@nxp.com>
- <20251112-nor-v3-2-20aaff727c7d@nxp.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251112-nor-v3-2-20aaff727c7d@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TrRre4cN3kxxGOAdTY9Db1hr6cDmKmIY
+X-Proofpoint-GUID: TrRre4cN3kxxGOAdTY9Db1hr6cDmKmIY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3MCBTYWx0ZWRfX5vM68VZECLi6
+ fGMuSV2S1Gxp6zmGivhzENv0KKxNWz3+AGPJRvRgNadpnWfV8QSbM+hPpnZzQrSqo9LN7NjhtoN
+ ybnwwabPjBup0w1luyKfskRXXjp9QT6r38ZI2AlIPObyeSsXkB6xmqmy6AsjTpzch0E6/b3lSAI
+ 88ZoUkN+L8Lh+wg+e0DOpAwGyyfAkLTHbD7+TJsoKnbCoIhL+yFmAbw1qz8cWW9rExmFaAqmLOA
+ 9xpRUjXv0WZ2Hc5w+c0pKwLOV1dsh0Bi6drziXPEqKth4ldCArEWwmR8d3nU1nW7VLo7hNrI/+l
+ 7XYGLg+u6p2D7Twmln10hsqlNeu3liWAg4WsScRiQp0SrvoULciQkBqqnzYh3Olk0Y3iTwA/dU4
+ EH7L2XuwX0GpPdYKso0H3YJ0PHrDKA==
+X-Authority-Analysis: v=2.4 cv=YYawJgRf c=1 sm=1 tr=0 ts=69144d5c cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=QeMu0tCiC60fgC08giYA:9 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120070
 
+This patch series adds support for PCIe3 and PCIe5 on the HAMOA-IOT-EVK
+board.
 
+PCIe3 is a Gen4 x8 slot intended for sata controller.
+PCIe5 is a Gen3 x2 slot designed for external modem connectivity.
 
-On 11/12/25 8:48 AM, Haibo Chen wrote:
-> Move params->set_octal_dtr from flash_info->fixups->default_init()
-> to spi_nor_manufacturer-> fixups-> late_init(), this can cover
-> all Micorn and ST chips without repeat in each chip's flash_info.
-> 
-> With this, we can also remove flash_info->size if chip has SFDP.
+To enable these interfaces, the series introduces the necessary device
+tree nodes and associated regulator definitions to ensure proper power
+sequencing and functionality.
 
-you could remove flash_info->size when chip has SFDP even before
-your patch, as params->size is first initialized with
-flash_info->size and then overwritten with the flash size read
-from SFDP.
+---
+Changes in v3:
+- Update commit message and DT format (Bjron)
+- Merge PCIe3 and PCIe5 changes into one patch
+- Link to v2: https://lore.kernel.org/all/20251030084804.1682744-1-ziyue.zhang@oss.qualcomm.com/
 
-So this comment is misleading and has to be dropped. With that:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Changes in v2:
+- Move PMIC gpio pins to patch set 4 (Krishna)
+- Link to v1: https://lore.kernel.org/all/20250922075509.3288419-1-ziyue.zhang@oss.qualcomm.com/
+
+Ziyue Zhang (2):
+  arm64: dts: qcom: Add PCIe3 and PCIe5 support for HAMOA-IOT-SOM
+    platform
+  arm64: dts: qcom: Add PCIe3 and PCIe5 regulators for HAMAO-IOT-EVK
+    board
+
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts  | 83 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 79 ++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
+
+-- 
+2.34.1
+
 
