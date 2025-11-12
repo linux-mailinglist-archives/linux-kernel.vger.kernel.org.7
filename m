@@ -1,215 +1,86 @@
-Return-Path: <linux-kernel+bounces-896373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458A2C50383
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC94C5037D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89C734E60CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7854018986E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E488C2727E5;
-	Wed, 12 Nov 2025 01:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSoUN6En"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65662765ED;
+	Wed, 12 Nov 2025 01:39:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238E271A7B;
-	Wed, 12 Nov 2025 01:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30FC23A994
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762911544; cv=none; b=Y6frkJ5Ts3fe+5DgT9j/hiZ1q1LzzlJdSU+1vAUh+0zzTlLgBQdqDrOvNXSwaYq8pEBbYHZ/g6lrdS/34lanymhfu25HbfnxrizfW6CQ4D62rLptQuJh0YFYipNvuqEZ746ZekxFDl8tmw4iE60z9okV4Y4XHG5mB7l6UV6o0J4=
+	t=1762911546; cv=none; b=kiufniHTW+w1Y7Jj4Tchj6vqqD0+8HZHP5PRupZGmAKYbs/mHxsip1zMZX3gMdjBIEmsA5sBlo/Ia+Cz+ZYB8kkUR2GzP1rmPv57uQ7yHmwhWyhvrW2piAUtk2FsYlxaWbrkWynmlom/c0tdx6vEjKTfo7WjZPqtWV29mVrIg4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762911544; c=relaxed/simple;
-	bh=dC5aByELFmakgvk0wqr11T7toMH8Eh9BJChORDfYCKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmZrmp5GhMK4NxtxS+OPBaAsdrdmpjJUgcX0bSz2nvZpNDQqFwGdyAYfLVNhrp3fJeEVcJOAON60d9bm2fS5c9s90WhKGA3M+Vq+//APRwXdUyl08RZJmZSvBE+Mks29pJQHYw2xt5RZ9TF1JSVVBLx5ca+J+hl+rnQqDoTjHZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSoUN6En; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762911542; x=1794447542;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dC5aByELFmakgvk0wqr11T7toMH8Eh9BJChORDfYCKM=;
-  b=BSoUN6EnAeY+eqoJ1ONkr2LOzR7m83ZIiNggAFJoakYfS78skFFHac8z
-   UFlqBSZ3pPblq/3LhwXSekKF9tQklsBQNqUXlm3YKI3arKSJ1T55Kyw3c
-   cA632UEe2Ek08DiomYg7a8LUUeEJx4BddaZ9FeefrdP0CUNmqQQL3ucdk
-   n10VZwVa3FiFbjFBa68vlMZw0reb0VqJ8aPj3/QblLT8ubzG2oJ8XQKHB
-   awyRdhFZm+cdpUBTr9gkRVLBP4EpiQZPDoFTnfEo03Xf31I3Bz6Z/doa3
-   YWv0MAreKPykar7a+O0psjG17GeKttZufRCIyw8WlM+EzWgtpgDH5xQa9
-   A==;
-X-CSE-ConnectionGUID: u4r0Hiq5Qfi1Z3IhV3nkwA==
-X-CSE-MsgGUID: fsSUfhVtSsqwCgFd5A+c1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="75652808"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="75652808"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 17:39:02 -0800
-X-CSE-ConnectionGUID: DkEeFC4/RZiI0XjFcN+m2A==
-X-CSE-MsgGUID: 0+wKW6W9RGico2I0c3OxGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="189345608"
-Received: from jbunyan-mobl1.amr.corp.intel.com (HELO [10.125.164.106]) ([10.125.164.106])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 17:39:01 -0800
-Message-ID: <48f84128-bd74-4d82-8095-4b21e386bd81@intel.com>
-Date: Tue, 11 Nov 2025 17:39:00 -0800
+	s=arc-20240116; t=1762911546; c=relaxed/simple;
+	bh=iOFFy8TlFMvzUBeDLkDc0XuAbg1Bvbc8SLCN9vTAcBo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m8/WMXQ1EnSmDr3pKBZQbxwl5tAROOI23DDHg+JvMT5mVYOttjS5d6Rzqnd0AdWpdiwsEmcY7+wzd8QH0AEMjL1sjXYs3/YDJnW8xDelvln3PqWM/My7V79bj0NhfGnXBBIEIVnGOIZwifu8L9P02Uo1Edvt4Xgc5ciLiwWzY/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43376637642so3811975ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:39:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762911542; x=1763516342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wyjgJ60h/mV3PA/EgcqOZeLqsAfi1oRjkzLzhwsIcks=;
+        b=EFYw8WP/DNhUOn57hNs7+Mx6MnuFlzaJ2LT0zwcqnuM53VE36gs4j3uzoquz6SqS5p
+         Yo6URZ92VIYhjO/cmOb35lPx37o7BQczziIjWd8t1tOX45DOu6Hy39SjcfmIT7VdKdJH
+         lE2K4tnGkGlcdvdQaAnVo/raUU3lmmxTL7NtlmDW6ZvXe7xJ8BmGJWZErnV9K7FoiRA6
+         ubXYsjCoytmlcFUcSh0eNWlBfCPYTK+PMZ2/CVWpu6g1KuLxHxCDg1zcO4zYwp7rCAvG
+         RXjpTODMyF2Tlbamo6Bng4QZOK/ioHCJkvo5R+o3WUXflgv1NOKkgAA+zyVyDf2KdHjt
+         F63A==
+X-Gm-Message-State: AOJu0YxbfN2H/QTX3R/v2iV7ytKVJI/Cb7uiH/yH+OICmvuBzwmWRiSN
+	jVCrmjPpQ55sFJKi4toDVGeZYel1z+pCuid9Cgg/R/oaBRTDWQNV0uliFJ+fK4U7laq2XbpirkF
+	o3we+JssIrBN/7VHdTFCxMXXFWWvnKtNJVEYbSha/B/mjV3rccq3e/9tAPbw=
+X-Google-Smtp-Source: AGHT+IEQDH7Bl7OsXkJQlfcRCsI88SVE31oggSAMCc1qibvINnmmd9IPcrjQymPOXgdImY0CNM+ruoz1SN5AtM2rD60akxxsXdzK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf test: Add a perf event fallback test
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>,
- Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- thomas.falcon@intel.com, dapeng1.mi@linux.intel.com, xudong.hao@intel.com
-References: <20251111224246.73673-1-zide.chen@intel.com>
- <aRPdmoNdUWIlWhJU@google.com>
-Content-Language: en-US
-From: "Chen, Zide" <zide.chen@intel.com>
-In-Reply-To: <aRPdmoNdUWIlWhJU@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1909:b0:42e:72ee:cde6 with SMTP id
+ e9e14a558f8ab-43473d11968mr20009555ab.12.1762911542131; Tue, 11 Nov 2025
+ 17:39:02 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:39:02 -0800
+In-Reply-To: <aRPePxH1_OtOKcM3@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6913e536.a70a0220.22f260.0154.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xlog_cksum
+From: syzbot <syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 11/11/2025 5:06 PM, Namhyung Kim wrote:
-> On Tue, Nov 11, 2025 at 02:42:46PM -0800, Zide Chen wrote:
->> This adds test cases to verify the precise ip fallback logic:
->>
->> - If the system supports precise ip, for an event given with the maximum
->>   precision level, it should be able to decrease precise_ip to find a
->>   supported level.
->> - The same fallback behavior should also work in more complex scenarios,
->>   such as event groups or when PEBS is involved
->>
->> Additional fallback tests, such as those covering missing feature cases,
->> can be added in the future.
->>
->> Suggested-by: Ian Rogers <irogers@google.com>
->> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Signed-off-by: Zide Chen <zide.chen@intel.com>
->> ---
->>  .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
->>  1 file changed, 86 insertions(+)
->>  create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
->>
->> diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/perf/tests/shell/test_event_open_fallback.sh
->> new file mode 100755
->> index 000000000000..72c1ac32c785
->> --- /dev/null
->> +++ b/tools/perf/tests/shell/test_event_open_fallback.sh
->> @@ -0,0 +1,86 @@
->> +#!/bin/bash
->> +# Perf event open fallback test
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +skip_cnt=0
->> +ok_cnt=0
->> +err_cnt=0
->> +
->> +cleanup()
->> +{
->> +	rm -f perf.data
->> +	rm -f perf.data.old
->> +	trap - EXIT TERM INT
->> +}
->> +
->> +trap_cleanup()
->> +{
->> +	cleanup
->> +	exit 1
->> +}
->> +
->> +trap trap_cleanup EXIT TERM INT
->> +
->> +perf_record()
->> +{
->> +	perf record "$@" -- true 1>/dev/null 2>&1
->> +}
->> +
->> +test_decrease_precise_ip()
->> +{
->> +	echo "Decrease precise ip test"
->> +
->> +	perf list pmu | grep -q 'cycles' || return 2
->> +
->> +	if ! perf_record -e cycles; then
->> +		return 2
->> +	fi
->> +
->> +	# It should reduce precision level down to 0 if needed.
->> +	if ! perf_record -e cycles:ppp; then
-> 
-> I think you need 'P' instead of 'ppp' for automatic precision.
+Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
+Tested-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
 
-Yes, it's better with "-e cycles:P" to explicitly set evsel.precise_max
-to 1.
+Tested on:
 
-> Thanks,
-> Namhyung
-> 
-> 
->> +		return 1
->> +	fi
->> +	return 0
->> +}
->> +
->> +test_decrease_precise_ip_complicated()
->> +{
->> +	echo "Decrease precise ip test (complicated case)"
->> +
->> +	perf list pmu | grep -q 'mem-loads-aux' || return 2
->> +
->> +	if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; then
->> +		return 1
->> +	fi
->> +	return 0
->> +}
->> +
->> +count_result()
->> +{
->> +	if [ "$1" -eq 2 ] ; then
->> +		skip_cnt=$((skip_cnt + 1))
->> +		return
->> +	fi
->> +	if [ "$1" -eq 0 ] ; then
->> +		ok_cnt=$((ok_cnt + 1))
->> +		return
->> +	fi
->> +	err_cnt=$((err_cnt + 1))
->> +}
->> +
->> +ret=0
->> +test_decrease_precise_ip		|| ret=$? ; count_result $ret ; ret=0
->> +test_decrease_precise_ip_complicated	|| ret=$? ; count_result $ret ; ret=0
->> +
->> +cleanup
->> +
->> +if [ ${err_cnt} -gt 0 ] ; then
->> +	exit 1
->> +fi
->> +
->> +if [ ${ok_cnt} -gt 0 ] ; then
->> +	exit 0
->> +fi
->> +
->> +# Skip
->> +exit 2
->> -- 
->> 2.51.1
->>
+commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15208212580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f0fd60646ed018d
+dashboard link: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17308692580000
 
+Note: testing is done by a robot and is best-effort only.
 
