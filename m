@@ -1,250 +1,161 @@
-Return-Path: <linux-kernel+bounces-897370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2B4C52DA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:58:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D650AC52AC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDFE4A5BF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:20:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 80F7034E75F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8591E302165;
-	Wed, 12 Nov 2025 14:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C7D2F0699;
+	Wed, 12 Nov 2025 14:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WZ/uAoZp";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mgx8VefC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lES8bcEp";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lES8bcEp"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59C2877DC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8612877E9
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957202; cv=none; b=WrONylCfgbbR9z2+DdKFxBF8Pzw9dQXtChDPodpDYtY3GoqLfwWQE3v16qcgU/dUoIP/jm5bxhf7sRX54T1DfBmXSBPEiDNEpma08+5KoE8B2oyCMkjDMjIdXPzbiD68H0u1vHjPFgVms79QeBP20w5Ajwpwrhl1J2IWCXRCUq4=
+	t=1762957233; cv=none; b=acfFsTospGGtkql0jtoXeJpFI1HeBXSAp02O8kUiUk9T1aqs/swJNELRYcDOgiFW7EYRsd75hj9sZsAGwjK00oTYYcTLMepc2SUU+0QK43d1WRQIdmH8WqPDpDJp8hQ34+zKKqqFkfctAjloJAY7w71Mwc5inevtN9LOfCUSicg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957202; c=relaxed/simple;
-	bh=PVntb2BSTfgxGvHXA7fBKjxKBk524fvSPNiMDc3Jeaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=go7WxsKUXJk3Fe3gUbfLZ517U2awxzY43fiTQYu7ZX1ZOjXHNET1Au/a+PoO1OyAR9GdrabDZ1BdkbxDDPqpXc1lFzSuY8kXJ3jI2FbvNXH6yVSgvo0zg15nymbqvxrHzTtPAf2UuyFoy9KXPt0tgQtvML5NEOKnikpZCF4I6I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WZ/uAoZp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mgx8VefC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762957199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3fvJ8DI8yzWgvipfLG1PvQUojZWITC98CP9M0AZNibU=;
-	b=WZ/uAoZpHQ6Y2QCH3bV+MKmFwVJIgmaNd8qRa2Y4CKLbxJWqu9R9Jv2XRz+GdEnMRmc5F1
-	uROEYoG1vEGWi8UmoRt3EnytqvyP3/Gc0t+YuV6l1fvnsXBgXsTP+fWOt48+Le596p4A5B
-	to1lBbQrBCONulrnLhDy6tW3fdUJIXg=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-296-f2QpfL5FOsyX7GqVRwxDtg-1; Wed, 12 Nov 2025 09:19:58 -0500
-X-MC-Unique: f2QpfL5FOsyX7GqVRwxDtg-1
-X-Mimecast-MFC-AGG-ID: f2QpfL5FOsyX7GqVRwxDtg_1762957198
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8904a9e94ebso223893685a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762957198; x=1763561998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fvJ8DI8yzWgvipfLG1PvQUojZWITC98CP9M0AZNibU=;
-        b=Mgx8VefCFzKHvorVwWDthZTNGP7V14+atg60tx54t51pT5430arCn1CUSrWa5Tu4Dp
-         Lok5iExfuSkwQh739dEaY/fEd8g8Lq4vbbrprmzrVtQGFUPM+v3On398AkyCU8TwqnaK
-         S4hsR1xxjVoX4LVa4elEw4gchtx27bR82/xac2rdO0OVxQj5Uz5l7rH9+rb2ixeWrhMs
-         Pv4T9GeYZDgrmIvWWxPzuS1LVEdgrrsu92NzK9PyGyEpFfR08b9xVoDSa0OvSR72zbbJ
-         yj3oN7xrhRa57FHyXCdxIE8HrnHvOEgchDEe1SpgyDwOADo70v62S+tEzDh1pEWuyRPY
-         5BkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762957198; x=1763561998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3fvJ8DI8yzWgvipfLG1PvQUojZWITC98CP9M0AZNibU=;
-        b=USOZS9j1gutjhXzInX3/kCcgBkvIND3CaqRCwaENxMpwBReNP8h5L7btas8mVqXs2t
-         yrtHR03+Ud865+lo3obexpI4EkkpW2lKho6rfZCpO4lpuOU0QZilOoTo722udCsbZeM7
-         MnY8Q7QSrkYPmqmHbcqR80iStCaPxlb4VvaHJyGFToNcuxqA6qPWZrJFHCAT18IkopqC
-         i6tdQFFoyXcSUgF4Qd5rC+rb2MXX7aFNqkYhvUr4LcmfegJQLtReUyXawisL+Hxydxlm
-         2nj6fYY6xuID6AAnB+YXJ8/zGchFPp/bwtWEARBiRhkaiXPGkLDk25nDGoZXrlg+jsuV
-         mGbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTShnkqmM3t3Bi8RUPyaU6I+8Xeu9S14m0iqIvbwnznGxRtwVyoB2ZnRxEFrf5X6dP/WbqPQWExHTfbW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbsb8P0ykNH3+DUE5TrOkJuukSq1d2rLZ01sLL3Si91rOAMhc
-	l9Q15RnhXsAI4R09TtZC4PIbMA8sjhlYdmglEa3Aot7xHlUOCoEYZksnHiwJusSerj9rXrnfhB0
-	wHZmv62IEVuh73OGlvT0Nr6CcUe2GZ5eJ/+pPqn9fVAtKCMxtQM5LCzCpfXi+LnCHoQ==
-X-Gm-Gg: ASbGncsfvXLnYNiyX/YCvPHmY7w6riM/2bltzXrxhBXeyDp2AImV7/YZa/vBoyXx2wG
-	BzgB+GNyBJQ/xSfH0MXINpDW7Ampwh7ru6INCBxYLxefhK9MzdLe4C5aUarj4g0TXuSDwNLbWRs
-	O3E0ZhO1sRpI3R/EncI0FCw9D1VsrkTyHSCuIf6WrjbpCNWDUOxFFDDeCjnHdlhs2gJ8Af0vh+N
-	o4muxFDOZII78JzAjucHki1VZZZGckh3NF1Lgohn+CpZ2PB/fiVnb/J9K8VhpKCb3z1MYpm3DcE
-	evGrMtFpQDnAwVC2XOLxFTq9ojdYdAqH8DeaPloYu0or858tDv7OlhAm6aE7KwkD3LmGO5KNEJ3
-	OG4Xb16dGET+D4WV2I+vblNlbZbdgUUDdbjzNPBv79g5ijWeU9BU=
-X-Received: by 2002:a05:620a:2908:b0:7fd:50bd:193b with SMTP id af79cd13be357-8b29b7995e5mr359220685a.14.1762957198049;
-        Wed, 12 Nov 2025 06:19:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGipP1i85s1TBBlHy52i8ksqPLt/jyXQBgKffbZLvZKkESyO508uVIZ0idiP4Cg09y9La+WwQ==
-X-Received: by 2002:a05:620a:2908:b0:7fd:50bd:193b with SMTP id af79cd13be357-8b29b7995e5mr359214185a.14.1762957197396;
-        Wed, 12 Nov 2025 06:19:57 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a9e6c95sm199495685a.29.2025.11.12.06.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:19:56 -0800 (PST)
-Date: Wed, 12 Nov 2025 15:19:47 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, berrange@redhat.com, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v9 06/14] vsock/loopback: add netns support
-Message-ID: <g6bxp6hketbjrddzni2ln37gsezqvxbu2orheorzh7fs66roll@hhcrgsos3ui3>
-References: <20251111-vsock-vmtest-v9-0-852787a37bed@meta.com>
- <20251111-vsock-vmtest-v9-6-852787a37bed@meta.com>
+	s=arc-20240116; t=1762957233; c=relaxed/simple;
+	bh=1qqDyrTlpYDcAvnMx/FE29JJGMAv3JNQmxC22TOy6+0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NVV3SoLiSCQ+AZhlCzMGQj0uGDMJxBkB/de/jIFg9OsAlnFaGMzE7r7H1jYyM2KIqWi12UUeNpwiWFgDJ0eZYfmap32flYEn5hpdR+Uy3hzXPq1Q/P2PRuxnrBomwssGWhQwLpoVF14Q08pfDks3K/7lt9M7sA+oRZjjbTDofxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lES8bcEp; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lES8bcEp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from pathway.suse.cz (unknown [10.100.208.146])
+	by smtp-out2.suse.de (Postfix) with ESMTP id BA3BA1F7FA;
+	Wed, 12 Nov 2025 14:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762957229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=r4Iq2LGXG2cpf5OLzUafa6cxsLKtW2O0HZc3exA1+gI=;
+	b=lES8bcEpgEegzUzPK3ih+zfC5mqj2Uf58X1Vs9JMNE3zs3j+xG62iz3EmQmpuQw8Zrd2ha
+	zUJlDYsScOxGzbIBGl06vLNnTwglheCzOB9S9zhVR8ICi0PLFgBvjNq+J5x6XqojxAxje4
+	BnjqktgcrG/YWGj6Fe/R7FenvRnYrSA=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1762957229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=r4Iq2LGXG2cpf5OLzUafa6cxsLKtW2O0HZc3exA1+gI=;
+	b=lES8bcEpgEegzUzPK3ih+zfC5mqj2Uf58X1Vs9JMNE3zs3j+xG62iz3EmQmpuQw8Zrd2ha
+	zUJlDYsScOxGzbIBGl06vLNnTwglheCzOB9S9zhVR8ICi0PLFgBvjNq+J5x6XqojxAxje4
+	BnjqktgcrG/YWGj6Fe/R7FenvRnYrSA=
+From: Petr Mladek <pmladek@suse.com>
+To: Petr Pavlu <petr.pavlu@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v2 0/7] kallsyms: Prevent invalid access when showing module buildid
+Date: Wed, 12 Nov 2025 15:19:56 +0100
+Message-ID: <20251112142003.182062-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251111-vsock-vmtest-v9-6-852787a37bed@meta.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[atomlin.com,iogearbox.net,gmail.com,kernel.org,arm.com,google.com,vger.kernel.org,suse.com];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-On Tue, Nov 11, 2025 at 10:54:48PM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Add NS support to vsock loopback. Sockets in a global mode netns
->communicate with each other, regardless of namespace. Sockets in a local
->mode netns may only communicate with other sockets within the same
->namespace.
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Changes in v9:
->- remove per-netns vsock_loopback and workqueues, just re-using
->  the net and net_mode in skb->cb achieved the same result in a simpler
->  way. Also removed need for pernet_subsys.
->- properly track net references
->
->Changes in v7:
->- drop for_each_net() init/exit, drop net_rwsem, the pernet registration
->  handles this automatically and race-free
->- flush workqueue before destruction, purge pkt list
->- remember net_mode instead of current net mode
->- keep space after INIT_WORK()
->- change vsock_loopback in netns_vsock to ->priv void ptr
->- rename `orig_net_mode` to `net_mode`
->- remove useless comment
->- protect `register_pernet_subsys()` with `net_rwsem`
->- do cleanup before releasing `net_rwsem` when failure happens
->- call `unregister_pernet_subsys()` in `vsock_loopback_exit()`
->- call `vsock_loopback_deinit_vsock()` in `vsock_loopback_exit()`
->
->Changes in v6:
->- init pernet ops for vsock_loopback module
->- vsock_loopback: add space in struct to clarify lock protection
->- do proper cleanup/unregister on vsock_loopback_exit()
->- vsock_loopback: use virtio_vsock_skb_net()
->
->Changes in v5:
->- add callbacks code to avoid reverse dependency
->- add logic for handling vsock_loopback setup for already existing
->  namespaces
->---
-> net/vmw_vsock/vsock_loopback.c | 41 ++++++++++++++++++++++++++++++++++++++++-
-> 1 file changed, 40 insertions(+), 1 deletion(-)
->
->diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
->index d3ac056663ea..e62f6c516992 100644
->--- a/net/vmw_vsock/vsock_loopback.c
->+++ b/net/vmw_vsock/vsock_loopback.c
->@@ -32,6 +32,9 @@ static int vsock_loopback_send_pkt(struct sk_buff *skb, struct net *net,
-> 	struct vsock_loopback *vsock = &the_vsock_loopback;
-> 	int len = skb->len;
->
->+	virtio_vsock_skb_set_net(skb, net);
->+	virtio_vsock_skb_set_net_mode(skb, net_mode);
->+
-> 	virtio_vsock_skb_queue_tail(&vsock->pkt_queue, skb);
-> 	queue_work(vsock->workqueue, &vsock->pkt_work);
->
->@@ -116,8 +119,10 @@ static void vsock_loopback_work(struct work_struct *work)
-> {
-> 	struct vsock_loopback *vsock =
-> 		container_of(work, struct vsock_loopback, pkt_work);
->+	enum vsock_net_mode net_mode;
-> 	struct sk_buff_head pkts;
-> 	struct sk_buff *skb;
->+	struct net *net;
->
-> 	skb_queue_head_init(&pkts);
->
->@@ -131,7 +136,41 @@ static void vsock_loopback_work(struct work_struct *work)
-> 		 */
-> 		virtio_transport_consume_skb_sent(skb, false);
-> 		virtio_transport_deliver_tap_pkt(skb);
->-		virtio_transport_recv_pkt(&loopback_transport, skb, NULL, 0);
->+
->+		/* In the case of virtio_transport_reset_no_sock(), the skb
->+		 * does not hold a reference on the socket, and so does not
->+		 * transitively hold a reference on the net.
->+		 *
->+		 * There is an ABA race condition in this sequence:
->+		 * 1. the sender sends a packet
->+		 * 2. worker calls virtio_transport_recv_pkt(), using the
->+		 *    sender's net
->+		 * 3. virtio_transport_recv_pkt() uses t->send_pkt() passing the
->+		 *    sender's net
->+		 * 4. virtio_transport_recv_pkt() free's the skb, dropping the
->+		 *    reference to the socket
->+		 * 5. the socket closes, frees its reference to the net
->+		 * 6. Finally, the worker for the second t->send_pkt() call
->+		 *    processes the skb, and uses the now stale net pointer for
->+		 *    socket lookups.
->+		 *
->+		 * To prevent this, we acquire a net reference in vsock_loopback_send_pkt()
->+		 * and hold it until virtio_transport_recv_pkt() completes.
->+		 *
->+		 * Additionally, we must grab a reference on the skb before
->+		 * calling virtio_transport_recv_pkt() to prevent it from
->+		 * freeing the skb before we have a chance to release the net.
->+		 */
->+		net_mode = virtio_vsock_skb_net_mode(skb);
->+		net = virtio_vsock_skb_net(skb);
+This patchset is cleaning up kallsyms code related to module buildid.
+It is fixing an invalid access when printing backtraces, see [v1] for
+more details:
 
-Wait, we are adding those just for loopback (in theory used only for
-testing/debugging)? And only to support virtio_transport_reset_no_sock() 
-use case?
+  + 1st..4th patches are preparatory.
 
-Honestly I don't like this, do we have any alternative?
+  + 5th and 6th patches are fixing bpf and ftrace related APIs.
 
-I'll also try to think something else.
+  + 7th patch prevents a potential race.
 
-Stefano
 
->+
->+		skb_get(skb);
->+
->+		virtio_transport_recv_pkt(&loopback_transport, skb, net,
->+					  net_mode);
->+
->+		virtio_vsock_skb_clear_net(skb);
->+		kfree_skb(skb);
-> 	}
-> }
->
->
->-- 
->2.47.3
->
+Changes against [v1]:
+
+  + Added existing Reviewed-by tags.
+
+  + Shuffled patches to update the kallsyms_lookup_buildid() initialization
+    code 1st.
+
+  + Initialized also *modname and *modbuildid in kallsyms_lookup_buildid().
+
+  + Renamed __bpf_address_lookup() to bpf_address_lookup() and used it
+    in kallsyms_lookup_buildid(). Did this instead of passing @modbuildid
+    parameter just to clear it.
+
+
+[v1] https://lore.kernel.org/r/20251105142319.1139183-1-pmladek@suse.com
+
+
+Petr Mladek (7):
+  kallsyms: Clean up @namebuf initialization in
+    kallsyms_lookup_buildid()
+  kallsyms: Clean up modname and modbuildid initialization in
+    kallsyms_lookup_buildid()
+  module: Add helper function for reading module_buildid()
+  kallsyms: Cleanup code for appending the module buildid
+  kallsyms/bpf: Rename __bpf_address_lookup() to bpf_address_lookup()
+  kallsyms/ftrace: Set module buildid in ftrace_mod_address_lookup()
+  kallsyms: Prevent module removal when printing module name and buildid
+
+ arch/arm64/net/bpf_jit_comp.c   |  2 +-
+ arch/powerpc/net/bpf_jit_comp.c |  2 +-
+ include/linux/filter.h          | 26 ++----------
+ include/linux/ftrace.h          |  6 ++-
+ include/linux/module.h          |  9 ++++
+ kernel/bpf/core.c               |  4 +-
+ kernel/kallsyms.c               | 73 ++++++++++++++++++++++++---------
+ kernel/module/kallsyms.c        |  9 +---
+ kernel/trace/ftrace.c           |  5 ++-
+ 9 files changed, 81 insertions(+), 55 deletions(-)
+
+-- 
+2.51.1
 
 
