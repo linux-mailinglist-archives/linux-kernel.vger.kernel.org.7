@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-896760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBCCC512A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48407C512B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 494DC4ED340
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:45:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D042F4F11BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454542FD682;
-	Wed, 12 Nov 2025 08:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZRLcyJVA"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F842FE07B;
+	Wed, 12 Nov 2025 08:45:57 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACB42FC000
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CB32FE052
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937150; cv=none; b=h6x9zOOZRTcsoSTEt2BLCF0alaa/WqQz17Xtv52nCy8iPataPW9v4G83viXx+9Z1Dp6KARDsukAeiFrBY4ZVPSABcfgI+D6mDlJP71HhUuV2pZxytQ58i3nv7MAxbiUxGcunOmOEhvBDJAa5h6BmgObezlXk640gI7nL0DNZAIc=
+	t=1762937156; cv=none; b=Qp6p44qh6XGfeSXLr4eDz8WXhW4K4ru0hCdWLq7wv2MYsVahlweKhjviS3BM6CzVWHi4qeVAexwn8cSPP8v7LulPe5ZhE40ATpzyU0l5bs1xhYufIWy5rKbOLFAkZ5b7gxl/RorcoI1H84mRw2yzF+9paMS8vwpq+k1bME+mkIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937150; c=relaxed/simple;
-	bh=bMd/5ZCa9EMaSTREEd7iLAxqgvRmN67nkKKHJJi+jz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uf23hKTX5DF2GwXQDrSg2CDUe6c/qxTt4cOnSeCZxVnVtxbbAQtDXuurgrkG4ezAUpeVlKsQ4QpqT8qjwRiBkz/YhxIRyIhmYGvAG4YdBeoVGam8vaq+xNJV4CLe6DntBAK5XEy3O53BTdDALJfsKsfdAW0lHYpshR6zSfOBen8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZRLcyJVA; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 418C04E41668;
-	Wed, 12 Nov 2025 08:45:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 035936070B;
-	Wed, 12 Nov 2025 08:45:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4FC4310371975;
-	Wed, 12 Nov 2025 09:45:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762937145; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Xx9lma/uNuwe8Ol8EXR6l6X/Zl29lmcXdESupmUg7+Q=;
-	b=ZRLcyJVAlZkwnw6blito1gQWc+V4oy/WEyWjCCj1oyLX148EAorok0b/07wznJzWidgnFC
-	INrMwtcr/yaYDC9fz5b9wmfwUdpNRkBjQKxUPym7IcC0htcpSBkMmG3ec3qlFsUKvXtZBX
-	u3an52FI6Tshcl5W40vZK56JwarrkQn166rhPlYBlHihAXuHpa5+sN3QiyTBu3pr7VsAYq
-	f/MYu12egS5LgK05i0LIIbi54QtVtIV2Iv2Lb+SSWExFDudr9NoQU1Yc0rR81/t9EIvCZo
-	+ULzMQdeeqi41pVjZvGD8Zb0NvCz7G8bLtVaiEG27bwRZ2zgsLCH1qua+9LFZQ==
-Date: Wed, 12 Nov 2025 09:45:41 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jiaming Zhang <r772577952@gmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- horms@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me,
- syzkaller@googlegroups.com, vladimir.oltean@nxp.com
-Subject: Re: [PATCH v4 1/1] net: core: prevent NULL deref in
- generic_hwtstamp_ioctl_lower()
-Message-ID: <20251112094541.5510346b@kmaincent-XPS-13-7390>
-In-Reply-To: <20251111173652.749159-2-r772577952@gmail.com>
-References: <20251103171557.3c5123cc@kernel.org>
-	<20251111173652.749159-1-r772577952@gmail.com>
-	<20251111173652.749159-2-r772577952@gmail.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762937156; c=relaxed/simple;
+	bh=XmdKTnnyHUqNeiEg8lR8cDQAudHSJCs3xM8SfYCQvGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aoO171bOXl+pxfZC2oZR+n18ttiQyG49GiDgCQZ1Un5WzE+nhuHxn9jfZ76lewbr3+pRgjl1b0Duob+npc9mXZuyDfB8NevUAhGw9Y0Mkl9oPRBskofIS+arAXwjlVP3Kp2nj5f8cTCXM9PXrnFpzrX7e1Gsfi8TYLHy4jXAoXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=markoturk.info; spf=pass smtp.mailfrom=markoturk.info; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=markoturk.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=markoturk.info
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64165cd689eso757402a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:45:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762937153; x=1763541953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P1x6mI9uM3ReqDgxtDW/pYEZ50tke1MXkEHtEWx3A+g=;
+        b=Cg0ns1/Zt2UpIrSLg9Zlj08FLA6weHyuTiPjeBwYbbu8lji3J1UzPXMtmtwBgn+at7
+         V8SJEOU4PLMu3TNLqZe+FYwh+RwJtiR+Y67tEvrff0NTFIN53qYjJzbs/gclviMwbwl9
+         XRjjlWtlatp8zcGf/p5dDPh6s3ij7l/ZIQCR7NLTKaU4ZR0j/7L4jJJ0Yw8lljxdg1ba
+         F7s/2ubeX/ncHWuNmTi3aw49mSslibFStdqsAuvD4Ke8FNbci29A36WU1C6n4gdYoKsf
+         QxayYqcxxCDKw86nd247rrOkE1kQef7b6nQsPH6Nx6THMVhaw+XhEhSb5B24Lgh6zm9h
+         0amA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSIl8jfyuSQtm0TpuWYZtrywf3MQ8UMWMLe2OjoToFTuPL8O/m0Evpu+cs9CxsJ1+fz0wJgjJM1MdcBOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD6aBdO82xFWsfcI+dmygtdPPfqntVeIx/wi0z8INc1yf0o/6Q
+	s7U9adEuTlA8smpkQwpjJdsqVYfJ+mWAnVqrryk+cgw9LfuuupyO/5qJXc9v7tdqkTg=
+X-Gm-Gg: ASbGnctOuQzcUS2WKHytcg/Mj+VVzNT294jM7MZXQw/Mk+FmvQ95ztt5bhuS4MH5siH
+	LMBVpM+ZO87hH5NdSZeHIX5d7stSuvlNU8nhTDE7qpNE8QHBeGr3kxFlyBnMjnGKthWXAH9Oee/
+	rc/Xp3UX+Il0fa82m9A4ikrVp3lwc1L+9noNP8p+7UYRlIcNWbpkAl1otOICoZa3bYBXQLmdWRc
+	XIXmnHsI9HD0xdpEvaCIcESSF6hdZ6qZ7eCFjGYWLvYFhfGjuou0Q/PhIm9TU1rg/XUXURCnvGj
+	d/FPUtVkiuv5XWAI/HzrkLKgoJntrtQLmhj2eRfPi5gHBK4cWS+WC5/Ej0w0uIyVfhBu2JB4il+
+	g8/+749rnvDdG4JvEtJHdqfq2ImiPQEphtL7Za8Zj0qYFm0lmFlShjkehBDK1nCPy6xwN1E0C6l
+	2L
+X-Google-Smtp-Source: AGHT+IFD8PZ00Y2eGZhZEudwtgTVJiohD/6vz79m6IyJ9+oDUE+6/ViIhC08fEaP0ZqmwfcQGt4tJQ==
+X-Received: by 2002:a17:906:eb4a:b0:b73:28da:9ddf with SMTP id a640c23a62f3a-b7328da9ea3mr335461666b.25.1762937152743;
+        Wed, 12 Nov 2025 00:45:52 -0800 (PST)
+Received: from vps.markoturk.info ([109.60.6.168])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf4fbf3csm1544409066b.26.2025.11.12.00.45.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 00:45:51 -0800 (PST)
+Date: Wed, 12 Nov 2025 09:45:49 +0100
+From: Marko Turk <mt@markoturk.info>
+To: dakr@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] samples: rust: fix endianness issue in rust_driver_pci
+Message-ID: <aRRJPZVkCv2i7kt2@vps.markoturk.info>
+References: <20251101214629.10718-1-mt@markoturk.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101214629.10718-1-mt@markoturk.info>
 
-On Wed, 12 Nov 2025 01:36:52 +0800
-Jiaming Zhang <r772577952@gmail.com> wrote:
+On Sat, Nov 01, 2025 at 10:46:54PM +0100, Marko Turk wrote:
+> QEMU PCI test device specifies all registers as little endian. OFFSET
+> register is converted properly, but the COUNT register is not.
+> 
+> Apply the same conversion to the COUNT register also.
+> 
+> Signed-off-by: Marko Turk <mt@markoturk.info>
+> Fixes: 685376d18e9a ("samples: rust: add Rust PCI sample driver")
 
-> The ethtool tsconfig Netlink path can trigger a null pointer
-> dereference. A call chain such as:
->=20
->   tsconfig_prepare_data() ->
->   dev_get_hwtstamp_phylib() ->
->   vlan_hwtstamp_get() ->
->   generic_hwtstamp_get_lower() ->
->   generic_hwtstamp_ioctl_lower()
->=20
-> results in generic_hwtstamp_ioctl_lower() being called with
-> kernel_cfg->ifr as NULL.
->=20
-> The generic_hwtstamp_ioctl_lower() function does not expect a
-> NULL ifr and dereferences it, leading to a system crash.
->=20
-> Fix this by adding a NULL check for kernel_cfg->ifr in
-> generic_hwtstamp_ioctl_lower(). If ifr is NULL, return -EINVAL.
->=20
-> Fixes: 6e9e2eed4f39 ("net: ethtool: Add support for tsconfig command to
-> get/set hwtstamp config") Closes:
-> https://lore.kernel.org/lkml/cd6a7056-fa6d-43f8-b78a-f5e811247ba8@linux.d=
-ev/T/#mf5df538e21753e3045de98f25aa18d948be07df3
->=20
-> Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+Hi,
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Can someone take a look?
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Thanks.
+
+Marko
 
