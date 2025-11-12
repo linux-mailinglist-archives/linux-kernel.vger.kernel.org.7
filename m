@@ -1,126 +1,298 @@
-Return-Path: <linux-kernel+bounces-897678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4F9C53741
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:40:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64460C53762
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18594A7A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:06:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47A66566BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65673446A9;
-	Wed, 12 Nov 2025 16:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JI/kqDtv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E9E343D79
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73F340290;
+	Wed, 12 Nov 2025 16:05:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B65527E7EC;
+	Wed, 12 Nov 2025 16:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963453; cv=none; b=AkT5FHlaOnO7jSXTXMai36KE4yb8QoP0ofcqlA6kdVj60mNxjlKsnW3ItLDX5NVn92sqAuWYo70ouDhsQK8YCCcekWCF86Pk/nBJRPqFrhVklJxMeH/Lt6LzDvIOInoYumXLD9JMx4Cypwm2P86s6viDWTfzH9IAhNIP+XYvY14=
+	t=1762963549; cv=none; b=TmL8zmRQ/gJ+3bGqjiBZK0dROnEHs/bqHNXDF0HzRTnh7Tk+1A26y6Sjao58V9WgRYc5BC+gcBTnOa+4ST58fk/hlS0ZclLOaDIehdy2y5mTF8/1QfpwnbSGcQwiAhWnzpXCn0E/wEO4j6vn0CHrWjKvuDrgZMAPFGV9gH+XgCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963453; c=relaxed/simple;
-	bh=8B2q/pY4HluVQKjHZ0UEBhmF/zuqAWxUAaw3utN01NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoQ5C5MWK9d5fI0TItSRhxXVIZaZo0/phJs+MrD/8Pax8wZ5BdUGcOAKlMzEl5JItm+3BTarQtQkENJdTQRHqeYVZ6qtteK0ne63iStJIrll1YFGa6pF6kMxM1Fx84RbJ7EcZVgm0KiGHuLdlKqtJjyh/p+mSBMdIji1ZLNyiAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JI/kqDtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA81AC113D0;
-	Wed, 12 Nov 2025 16:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762963453;
-	bh=8B2q/pY4HluVQKjHZ0UEBhmF/zuqAWxUAaw3utN01NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JI/kqDtvo3BIJJZ5l+Facq31lnTff6k20uUGP+Kayv65bFGydw67hgjkGIHo81fIN
-	 os5l5HDKJG6bGuz6XfihwRgroKyQ7PPLJ0q8LR1yRkVyy71Muy12jqv9M3xEVZr30j
-	 5znntvzmzxrxdvurwflPbKjCsibYxtF3o6R6S6Gs6u8fPQHhncO91LU/l6JBlfrJOJ
-	 mmkMJ8WqYgiXtyu6aNYWbRCtRa40nohNXQjwk9+vJcy2MtdNV/UOSKjbdX8PdrxbnF
-	 4hN9MZ1bjQHMWXo31ibv6rHHmnROLUxPLTd8am3UZxUqEi4AgvasXK/TISdkqFWXXS
-	 Gw+Qx1mj6UbIA==
-Date: Wed, 12 Nov 2025 17:04:10 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <llong@redhat.com>,
-	"John B . Wyatt IV" <jwyatt@redhat.com>,
-	"John B . Wyatt IV" <sageofredondo@gmail.com>
-Subject: Re: [PATCH v14 7/7] timers: Exclude isolated cpus from timer
- migration
-Message-ID: <aRSv-kcSj5kc6CJ9@localhost.localdomain>
-References: <20251104104740.70512-1-gmonaco@redhat.com>
- <20251104104740.70512-8-gmonaco@redhat.com>
+	s=arc-20240116; t=1762963549; c=relaxed/simple;
+	bh=K+/c8uCgTek1O3oZ8H4m0tzhea9uEHk0lzxGvXnkchM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZbJg+faPr87AdCrwr3qSRhxO6ChTK0JukquJUotqBX1TAXSYIqj1MBDLM+q1em/bCltfE7SHkbhp8lrIBLrE8fjaCktG+IUmf99015/a3KkBg+V1+PS4EsOB8/OyXNl1IRj5CIEtmSJlNN38zhJgjj58DkIQd78TEMlmvANIGrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84D762B;
+	Wed, 12 Nov 2025 08:05:38 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 647CF3F63F;
+	Wed, 12 Nov 2025 08:05:41 -0800 (PST)
+Message-ID: <2189df41-ca50-4e10-a65c-4c297f9dc63b@arm.com>
+Date: Wed, 12 Nov 2025 16:05:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251104104740.70512-8-gmonaco@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
+ guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-11-ben.horgan@arm.com>
+ <20251110165841.00005a74@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251110165841.00005a74@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le Tue, Nov 04, 2025 at 11:47:39AM +0100, Gabriele Monaco a écrit :
-> +static int __init tmigr_init_isolation(void)
-> +{
-> +	struct work_struct __percpu *works __free(free_percpu) =
-> +		alloc_percpu(struct work_struct);
-> +	cpumask_var_t cpumask __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-> +	int cpu;
-> +
-> +	static_branch_enable(&tmigr_exclude_isolated);
-> +	if (!housekeeping_enabled(HK_TYPE_DOMAIN))
-> +		return 0;
-> +	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +	if (!works)
-> +		return -ENOMEM;
-> +	cpumask_andnot(cpumask, tmigr_available_cpumask,
-> +		       housekeeping_cpumask(HK_TYPE_DOMAIN));
-> +	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-> +	/* Never disable the tick CPU, see tmigr_is_isolated for details */
-> +	for_each_cpu(cpu, cpumask) {
-> +		if (!tick_nohz_cpu_hotpluggable(cpu)) {
-> +			cpumask_clear_cpu(cpu, cpumask);
-> +			break;
-> +		}
-> +	}
-> +	for_each_cpu(cpu, cpumask) {
-> +		struct work_struct *work = per_cpu_ptr(works, cpu);
-> +
-> +		INIT_WORK(work, tmigr_cpu_isolate);
-> +		schedule_work_on(cpu, work);
-> +	}
-> +	for_each_cpu(cpu, cpumask)
-> +		flush_work(per_cpu_ptr(works, cpu));
-> +
->  	return 0;
+Hi Jonathan,
 
-This duplicates a lot tmigr_isolated_exclude_cpumask().
-Would this work?
-
-static int __init tmigr_init_isolation(void)
-{
-	cpumask_var_t cpumask __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-
-	static_branch_enable(&tmigr_exclude_isolated);
-
-	if (!housekeeping_enabled(HK_TYPE_DOMAIN))
-		return 0;
-	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-		return -ENOMEM;
-
-	cpumask_andnot(cpumask, cpu_possible_mask, housekeeping_cpumask(HK_TYPE_DOMAIN));
-
-	return tmigr_isolated_exclude_cpumask(cpumask);
-}
-
-If so please add my Reviewed-by to the next version.
+On 11/10/25 16:58, Jonathan Cameron wrote:
+> On Fri, 7 Nov 2025 12:34:27 +0000
+> Ben Horgan <ben.horgan@arm.com> wrote:
+> 
+>> From: James Morse <james.morse@arm.com>
+>>
+>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+>> only be accessible from those CPUs, and they may not be online.
+>> Touching the hardware early is pointless as MPAM can't be used until
+>> the system-wide common values for num_partid and num_pmg have been
+>> discovered.
+>>
+>> Start with driver probe/remove and mapping the MSC.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>> Tested-by: Peter Newman <peternewman@google.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> 
+> Hi Ben,
+> 
+> A few minor things from a fresh read.
+> Nothing to prevent a tag though.
+> 
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
 Thanks!
+
+> 
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> new file mode 100644
+>> index 000000000000..6c6be133d73a
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_devices.c
+> 
+> 
+>> +
+>> +static void mpam_msc_drv_remove(struct platform_device *pdev)
+>> +{
+>> +	struct mpam_msc *msc = platform_get_drvdata(pdev);
+>> +
+>> +	if (!msc)
+>> +		return;
+> 
+> Agree with Gavin on this. If there is a reason this might be NULL
+> then a comment would avoid the question being raised again. If not
+> drop the check.
+
+Dropped.
+
+> 
+>> +
+>> +	mutex_lock(&mpam_list_lock);
+>> +	mpam_msc_destroy(msc);
+>> +	mutex_unlock(&mpam_list_lock);
+>> +
+>> +	synchronize_srcu(&mpam_srcu);
+> 
+> Trivial but perhaps a comment on why. I assume this is because the
+> devm_ cleanup isn't safe until after an RCU grace period?
+
+This becomes clearer in the next patch where it is moved into
+mpam_free_garbage() so I'll leave this bare.
+
+> 
+>> +}
+>> +
+>> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device *pdev)
+>> +{
+>> +	int err;
+>> +	u32 tmp;
+>> +	struct mpam_msc *msc;
+>> +	struct resource *msc_res;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +	msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+>> +	if (!msc)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	err = devm_mutex_init(dev, &msc->probe_lock);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+> 
+> Trivial but I'd add a blank line here.
+
+done
+
+> 
+>> +	err = devm_mutex_init(dev, &msc->part_sel_lock);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+> 
+> Trivial but I'd add a blank line here.
+
+done
+
+> 
+>> +	msc->id = pdev->id;
+>> +	msc->pdev = pdev;
+>> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
+>> +	INIT_LIST_HEAD_RCU(&msc->ris);
+>> +
+>> +	err = update_msc_accessibility(msc);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+>> +	if (cpumask_empty(&msc->accessibility)) {
+>> +		dev_err_once(dev, "MSC is not accessible from any CPU!");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	if (device_property_read_u32(&pdev->dev, "pcc-channel", &tmp))
+>> +		msc->iface = MPAM_IFACE_MMIO;
+>> +	else
+>> +		msc->iface = MPAM_IFACE_PCC;
+>> +
+>> +	if (msc->iface == MPAM_IFACE_MMIO) {
+>> +		void __iomem *io;
+>> +
+>> +		io = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +							    &msc_res);
+>> +		if (IS_ERR(io)) {
+>> +			dev_err_once(dev, "Failed to map MSC base address\n");
+>> +			return ERR_CAST(io);
+>> +		}
+>> +		msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
+>> +		msc->mapped_hwpage = io;
+>> +	} else {
+>> +		return ERR_PTR(-ENOENT);
+>> +	}
+>> +
+>> +	list_add_rcu(&msc->all_msc_list, &mpam_all_msc);
+>> +	platform_set_drvdata(pdev, msc);
+>> +
+>> +	return msc;
+>> +}
+>> +
+>> +static int mpam_msc_drv_probe(struct platform_device *pdev)
+>> +{
+>> +	int err;
+>> +	struct mpam_msc *msc = NULL;
+>> +	void *plat_data = pdev->dev.platform_data;
+>> +
+>> +	mutex_lock(&mpam_list_lock);
+>> +	msc = do_mpam_msc_drv_probe(pdev);
+>> +	mutex_unlock(&mpam_list_lock);
+>> +	if (!IS_ERR(msc)) {
+>> +		/* Create RIS entries described by firmware */
+>> +		err = acpi_mpam_parse_resources(msc, plat_data);
+>> +		if (err)
+>> +			mpam_msc_drv_remove(pdev);
+>> +	} else {
+>> +		err = PTR_ERR(msc);
+>> +	}
+> 
+> Seems convoluted. Not obvious to me why you can't do early exits on err and
+> having simpler flow. Maybe something more messy happens in patches after this
+> series to justify the complex approach.
+> 
+> 	if (IS_ERR(msc))
+> 		return PTR_ERR(msc);
+> 
+> 	/* Create RIS entries described by firmware */
+> 	err = acpi_mpam_parse_resources(msc, plat_data);
+> 	if (err) {
+> 		mpam_msc_drv_remove(pdev);
+> 		return err;
+> 	}
+> 
+> 	if (atomic_add_return(1, &mpam_num_msc) == fw_num_msc)
+> 		pr_info("Discovered all MSC\n");
+> 
+> 	return 0;
+
+It's still like this at the end of the current mpam snapshot branch so
+I'll simplify based on your suggestion.
+
+> 
+>> +
+>> +	if (!err && atomic_add_return(1, &mpam_num_msc) == fw_num_msc)
+>> +		pr_info("Discovered all MSC\n");
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static struct platform_driver mpam_msc_driver = {
+>> +	.driver = {
+>> +		.name = "mpam_msc",
+>> +	},
+>> +	.probe = mpam_msc_drv_probe,
+>> +	.remove = mpam_msc_drv_remove,
+>> +};
+>> +
+>> +static int __init mpam_msc_driver_init(void)
+>> +{
+>> +	if (!system_supports_mpam())
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	init_srcu_struct(&mpam_srcu);
+>> +
+>> +	fw_num_msc = acpi_mpam_count_msc();
+>> +
+> 
+> Trivial but I'd drop this blank line to keep the call closely
+> associated with the error check.
+
+done
+
+> 
+>> +	if (fw_num_msc <= 0) {
+>> +		pr_err("No MSC devices found in firmware\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return platform_driver_register(&mpam_msc_driver);
+>> +}
+>> +subsys_initcall(mpam_msc_driver_init);
+> 
+> 
+
+Thanks,
+
+Ben
+
 
