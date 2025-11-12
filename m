@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-896809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D57C514B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02099C51486
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F959422136
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0B83BA836
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFA32FE042;
-	Wed, 12 Nov 2025 09:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E142FD7D8;
+	Wed, 12 Nov 2025 09:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sA+Do/CI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hzQ10Xgw"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B7F2FD7B9;
-	Wed, 12 Nov 2025 09:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428F12FD7A7
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938084; cv=none; b=ADJiY1oTlrdHmn2EfNRCpF8cL3Y6q1xtBuinYN9sK2BwPcsDZojyZTY85viCk4v8shjRTZutU9afRRPZrqre4pDIAMzU0otkjQIs0Rxhlr9dOUu3umxbk/mvU5iCjjEfsrON9q20aSMV92RzH9ikNpj3c7k9hSi86NNiuZGo0MQ=
+	t=1762938122; cv=none; b=YgC5Ppih9A45g3nsMy0h6wecq17jvvI4ks5jq/4l/z0WE3qgGSX6kz9CHUwRQ8xNYHyf44N7nRiryW3h0W2iAlWjSPMHsSSUQoxAHMWiqZvZyQA8UZeUdUNY/ZnjwmBR9CM3/tYh74038pB/uszEB2nIcBb2XE4HVEywCMGvff0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938084; c=relaxed/simple;
-	bh=SYKAUEMpWmFnGT4gIQZx0ei3ZRWX61yUgs/quaWsVwA=;
+	s=arc-20240116; t=1762938122; c=relaxed/simple;
+	bh=5zFi3prT/tb4/ZOKQXyzm6NJkVjt+9gP5ezapBHafdI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCbOM6J7wokLiSJHshZe44j1SsUMlo7Guzvtdnvo6xUi5xgAoaAIFrBPnx/9XbcUuxocrNdKSMCOBOBMP6lbDjX8eytMsRJk/t5r3l50rYjXQ3g7QBBQh5J44UJK9oTDvhywos7p9/+JSS6z9weAGclzPA7UHjVzUGHAfL5W0RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sA+Do/CI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D83C4CEF5;
-	Wed, 12 Nov 2025 09:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762938084;
-	bh=SYKAUEMpWmFnGT4gIQZx0ei3ZRWX61yUgs/quaWsVwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sA+Do/CId3iKaUPBJqjbGQJVxRtDvozxF6MRb37goRwrmhHPkZmTX+w1BD/vh6u0l
-	 8wdBEwpJ8maGkFgP1webv7QG9uphCf6fVBFn9MENxMYj1t/cqt4GRWeHN3+a5ULjJC
-	 iSXcxJnEdgctJh1kWfG+ys9OTUTISIp5bNIsuL06F1jEzVLHQUD7Z4w13NVFkV9OpD
-	 7n/N3lnk3MbejNOibCgu8Rn4NYo93yQTzn6cJirbPkm4BJ+PbZwifesZK5UIGiU4VI
-	 ozeiNZlsgXXHZp98Zdi4Y050KFXdwBn9+f62tXOzXdVj7tBL7SyHaJRsiUfLngFolT
-	 4UdZR3xTBfI1w==
-Message-ID: <deb416cf-30e1-4080-9e40-cf1808b95d7f@kernel.org>
-Date: Wed, 12 Nov 2025 10:01:19 +0100
+	 In-Reply-To:Content-Type; b=juU7GUcjYJE1vWORon32bvaExW/9348xyN0W0RKHpXG6HOOdHLRW8kfBfYw9OXpgkNp/wUCAR4wo8IFkDotTpjYxRQO2zPpSFzS9sV++NzoZt2qV6EJIfp6/FqLfNavAumBBUGIxZxz8SpOOKcPtb+vStqPBMNlWNL37V9droPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hzQ10Xgw; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477632d9326so3617045e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:01:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762938115; x=1763542915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=66JkoVBXRt3KXq4mIKfXgWIsRIseUDoE8lmCrVzLyy4=;
+        b=hzQ10Xgw52eC8WkD3lapBPNn1UIDBCd62s596/euBcNJFUkNCyH6ezkAclNJZRAU4w
+         0a6i5TOVuwa76CnEa4NBru8WepjhYui3aMTADDPqV5VzxAjqjNuF1acpI9w+gJFGSiko
+         35qLmYrLBmQhqOtY6f6A6dHeIUh2m62rCLYWEWAXSEriTH2jj9UZlQOHfM5doRid0e7g
+         wil/pAa5mkD7J5/HR5oEagK6CAE4tVYtWb5+C1otjx1oHT9SQCP+LhHkc6fWq/c9pTio
+         biJTuc6h7GQp3mnTPLMTCwkzx0K0Zsa3KM8P1alISsC8c8w/hjIzHsOfnhXt/yl693J9
+         SK6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762938115; x=1763542915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=66JkoVBXRt3KXq4mIKfXgWIsRIseUDoE8lmCrVzLyy4=;
+        b=Q5v5TOmIILLNI82rKqyWz+QhDmsAwjbKMhr4IUy90q9qbb5+3uOMEdKQWul+8tmBag
+         bHeoDkCDkwD/54fdEiap1u73dpa9CqZGvRp5y3VLfld/jzmqCYLikhwnrlMifjCmqiiz
+         p33nlM5n+CYNggF93tAXiYZ1LXSRHnSeb1bzl/0GQOaGydy23Bqjz/yquOJiSC0Tbgax
+         vuSqNWeW0P82z65pC7/hlkIjz86XLlDKgriQFpzjcU14SbwtSFg3erS0aagcTPbZ8N/+
+         U//Vt+cFX49i7leONXXIk83L5nMSTYgtPFjyM/WDwxpYIuMkprS4N+sBQyZbsOB0kztv
+         Gexg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGqNeN7GDLsTdflbdtr+NE0bjCg8zzvOicKqNJXQWJxw+53pifPizMQiXecsqlM9Pmp0OqTCMv9GEgY0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmREKUAtghMwY4zLlSu2eoPQwyZJ596okhY8/5DWfV9BVWCRfV
+	12Syn1tMSC5WTU836HuteKUITlWB5EA7s6Tlqw+fkma1hZ20Ibn+MUdURniTEfbHwqk=
+X-Gm-Gg: ASbGnctBAKbFI0FL1X8hE/GTNWj0QcBY6CmO5RlqyjPm5r0u+jPFhLWLax2ST/1+XLs
+	ash0cT+RwxXWna0F9oqh2TEPF8hn0WZqxf5AmtPTULxPFgUA2XSFmY1ILebOUuIrIR67j/pXFVI
+	Pj47smvu36WQm/mybQ7ohcWb4kU6h28g9J7RR3vhXlFDK3ElGkNwrji1B6KnVWo/KY1sOuz6vz7
+	e8prNlbc7plJBUhlGRNa3te9kPzB7wFfD1IVx5/8tp5N5WefarGr4egs/yKG+6H15wR16Kf2uzG
+	jl+cLTu6Uym162IR8gOO1S5RScj1qNeSIkDnk1XfMGoV3u7QAthgxZwe4j0OJx44vqViBsRTHA5
+	JwffgAz7AASR3qf8XjS9wG39b6VBu+cA7lgtCrkMp9Glywzdm1xgiTeKGs6gyEizmKqI42jdBn4
+	39bSV/OA==
+X-Google-Smtp-Source: AGHT+IEl9hg1Kv37coDTdY5hfywj5TzhKzDMoQuXuH/tP7xQz/4t5TIbX/bOlblMbh1MgqEKT4WInw==
+X-Received: by 2002:a05:600c:35ca:b0:477:7d94:9d05 with SMTP id 5b1f17b1804b1-477870b4610mr22199385e9.35.1762938115446;
+        Wed, 12 Nov 2025 01:01:55 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e442c2sm25971505e9.7.2025.11.12.01.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:01:55 -0800 (PST)
+Message-ID: <60625b83-aef6-442b-8b38-558c3751c4a6@linaro.org>
+Date: Wed, 12 Nov 2025 11:01:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,95 +83,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: keystone: add missing items to
- mboxes
-To: Anshul Dalal <anshuld@ti.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20251112-k3_syscon_add_boot_mailboxes-v2-0-aebc1e47b391@ti.com>
- <20251112-k3_syscon_add_boot_mailboxes-v2-1-aebc1e47b391@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/5] mtd: spi-nor: micron-st: move set_octal_dtr to
+ late_init()
+To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20251112-nor-v3-0-20aaff727c7d@nxp.com>
+ <20251112-nor-v3-2-20aaff727c7d@nxp.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251112-k3_syscon_add_boot_mailboxes-v2-1-aebc1e47b391@ti.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251112-nor-v3-2-20aaff727c7d@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/11/2025 09:30, Anshul Dalal wrote:
-> The mailboxes for the ti,sci node were not documented, this patch adds
-> the description for the two channel entries as per TI-SCI spec[1].
+
+
+On 11/12/25 8:48 AM, Haibo Chen wrote:
+> Move params->set_octal_dtr from flash_info->fixups->default_init()
+> to spi_nor_manufacturer-> fixups-> late_init(), this can cover
+> all Micorn and ST chips without repeat in each chip's flash_info.
 > 
-> [1]:
-> https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am65x/sec_proxy.html
-> 
-> Signed-off-by: Anshul Dalal <anshuld@ti.com>
-> ---
->  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> index 25a2b42105e541cb3c8ad12a0dfec1af038fa907..182915c34fc1429fb627ac44c99c0c76fdf28e0f 100644
-> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> @@ -60,6 +60,12 @@ properties:
->  
->    mboxes:
->      minItems: 2
+> With this, we can also remove flash_info->size if chip has SFDP.
 
-That's wrong now.
+you could remove flash_info->size when chip has SFDP even before
+your patch, as params->size is first initialized with
+flash_info->size and then overwritten with the flash size read
+from SFDP.
 
-> +    description: |
-> +      List of phandles to mailbox channels used for receiving and transmitting
-
-Drop, completely redundant. I don't understand why you added it.
-
-> +      data from and to the TI-SCI Controller.
-
-Best regards,
-Krzysztof
+So this comment is misleading and has to be dropped. With that:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
