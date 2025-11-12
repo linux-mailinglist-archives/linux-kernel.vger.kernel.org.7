@@ -1,113 +1,143 @@
-Return-Path: <linux-kernel+bounces-896802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5C2C513FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:02:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03BCC5141A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B754D4E754A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:59:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0FBC4F18B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730792C026D;
-	Wed, 12 Nov 2025 08:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6652FE072;
+	Wed, 12 Nov 2025 08:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9n5zMRs"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="yKwyZYl4"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106622F5302
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E14C2FDC58;
+	Wed, 12 Nov 2025 08:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937935; cv=none; b=tK1rgsTW0BAhb6lbOu0MjEW+1l3rV29fBg9UcGynlc81q2ceJPoLG7N3IB9bf9dYRKQ8BDpnULYV7UoCZuG6dFvdEbfRzzGhAgs7ObcQoKFsC+3bvYDuufnQVjGFUx4Qs063gSxu/X2tkj1cVOB9AnvB4QN84uv+Nh/Zuawa2do=
+	t=1762937984; cv=none; b=EJ5MLfn4HQ58Z4rc8h0vo43hsBOJc2Zke/t3PpmzSl8IjeVnXL/bH+ZCes7A5C2r6SDJ//nYwJSCMbacGy/uKUTCKSCp2uDnT/VqR1QwolKtdXGNUxFfFnazdR1moTVBxrKlFrP3HmX1P8P+zvxLG5e++jtjXgBPlFZ9qxhRnCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937935; c=relaxed/simple;
-	bh=BvJ9QOK1WudzEqe/mVP9Qch6KeES8Cz5wJTG2FvjEcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6oRaro/1tny3k/iD3xIF+tUze+nq2bqBzzFta5f465XVjaoit92X9AT0uDFPpIj04FkNERjFHO6F6LtZVhxv4MM5DLqlyM4vq/8pcPOG6JvdXRIUym393nBJBmC+0Yicd/ENNOgJrwkfOB15IDpkRXmaRmDydEduwxcQo+KOig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L9n5zMRs; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47777000dadso3648635e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762937932; x=1763542732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PM3V5SUOmIRwUEw+SelsziXLyJorncDb0vBfck6mjc=;
-        b=L9n5zMRs+o+zZfxlG77C4v/E7UOyD2TnHRPNuFe0C4f9WeJGTI8wP75Qs+Tnry2TaC
-         uKpy3WsT6pPvvTdMbfScfHNj6BWQdl6svZ4gnDBl6HBQ7TBbVnnMm1Yuu+FxEoZvltwO
-         J6BVRFp2jKAKKaqSq0nCBjFxP+psQhJ7hVCPb6s8gYcK3oYQ6WGtyCBUnW4pjaykbwyC
-         DrCRsA8s85f/i08GV5vp7FoKsg0uU4YsO9CzX8GYSRfOygifXkiPGJmgOeWwkN8H3HKU
-         abQnoXZbrwVGXsgiZ9QkEtU50RzoxQiYEMDPWJz75CzJp/2FjERA9xelnNQ7uN291e3e
-         a9hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762937932; x=1763542732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2PM3V5SUOmIRwUEw+SelsziXLyJorncDb0vBfck6mjc=;
-        b=SGnccI0YXpNGkvngY3RjMHdWp6SEOq3xUV32ln+vzZnwig8V3YwpIBY7Di/Dj8xTVC
-         3sNup9uDC7d1zRbtH1Joe4elNijd1jR2adVt11qTX4coavLzunwuhC/1zdCVF7CmqWiM
-         xyODKJiZ6Nk8ZiIcozCJnI8lvR9SawItWQeWdR9gnI5cs0Yfr0Oa2tnRcY8KGkEd3hBu
-         LgtQ9E/1HZK5E5S2DxsT+6LtQVJCzy9OCQZ0H7LnI+MZpvXEkhCD0AAREK2cfW41uT3O
-         TASfOGB8sB+JFtqOe0stdpONHQzJLzPMR25fkWhJFw6CFmj4Hx91qxMnZRz1jhHrHVR6
-         TGew==
-X-Forwarded-Encrypted: i=1; AJvYcCWEl9WXNtUXsfDIMv4BTD5ETW5h3a4AsOwyOYXPwvDCSbTDFseVxZdoOCiz7yoJlmLTl4Fyid9q3fRTE50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6+OH6S7R3TqAu4kBJaIcfeuDulrogYKliEu5Q9HJ3P5ifXQWM
-	8FZXJgspWtMe3xlpOdtth6zoV96TNYB3f24BjRM2I04srBP9eSf07bXHovVzC/TIY4c=
-X-Gm-Gg: ASbGncus5qLO/oeRUd6QFpyYvTg0VMAO3rhzYfJSLXPBwK4rslc0ujPeuAbnoRUySf/
-	Nu70ghW036zVKtCaOTEkLRQ/pzF7n579t1zBKq/GOQOvAZbQBN+NeArJjvu4e55Ju9uStEv9t+S
-	a/+dCOeVu5HjyhjuZwG+Xs8PUiNqxZu2KKZ0CHPvrlO5tAvjuPmTWG6BC15j/zuhcYkOE69VkNO
-	wJyZHUbbgAHpPaRxEQoHp23UFKws0dr41xFt9yIZrWwRC4JTdj6ZhKIV+KnN7otYhPQcHKmHZbg
-	BufJNe8VoNrSTudVzRihJwHmyk2kLsm6iG7wF1k4kVxohDxebK8ua0UWJFDz4KLF/wl3gJrvBRP
-	zWkn99gwo1nyzK7YjI/mHYuMs7NfIVbG8/YQKttyvC+nj3JJ6OgiPuSvdajBuB1sJIz1sErar
-X-Google-Smtp-Source: AGHT+IGGVYvDUcqcUiPZLSUtoqDWfq0dWOAgjoDY5T7sj0q34JOuNXmckY/tBFbuwEb7ShY09sMSJg==
-X-Received: by 2002:a05:600c:4703:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-47787086800mr14036335e9.26.1762937932076;
-        Wed, 12 Nov 2025 00:58:52 -0800 (PST)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e48853sm23640245e9.6.2025.11.12.00.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 00:58:51 -0800 (PST)
-Date: Wed, 12 Nov 2025 10:58:49 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, peng.fan@nxp.com, kernel@pengutronix.de, 
-	festevam@gmail.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: imx: imx95-blk-ctl: Fix clock leak in error paths
-Message-ID: <y6ospgarjnretdsankhgtudttqqjfhltjyt2u6hnejgeufbkcb@yhk7ejuexvr5>
-References: <20251111114123.2075-1-vulab@iscas.ac.cn>
- <20251112023025.793-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1762937984; c=relaxed/simple;
+	bh=fw6xRRSrEe6IvmtlKZd1GHXRPKMnz65H243RiUIEEfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tLBlAyeMSAgNmcjJLi/4Y+cd1eytRMkWj8bLsk+lPzr3dlzBrAmrGYQwE6oxQxz/QXXfXL+D2BC9bczUpuer8lkyBIp4v88nWJHhBEcrjh3X/vhqowJ5HjBAImrEnnhLqN/v0NP+JhEepyqCVKs3nv5MG4UYh9bBLl1a52mjzsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=yKwyZYl4; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 45981C0F559;
+	Wed, 12 Nov 2025 08:59:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C2BBE6070B;
+	Wed, 12 Nov 2025 08:59:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9C7D31037170F;
+	Wed, 12 Nov 2025 09:59:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762937979; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=XgvHorkYlljZc4LneQOwVFrbrAMtL/782gZQ0/mOGIY=;
+	b=yKwyZYl4dynT48ezsUgkoxmvzYd+FSQ9cbqH5KYFiCa/jACajVD8n/vtnbxf3pdaFiqpCu
+	E2AwTCbX7yIYoGlv0rBSyKkRjEOjcdnxbIj7v+4Tu/I5u1eC/gRvlp/EZPWlFg7bG6wA+G
+	L2Ef2HHXzqoRCBSY4ZeJy9DgCMgtVhsKasN9/zGySRsVBod4xGugR0X0a/3ZKQcBBZoX6/
+	+HLfBuH7ym7aYM9IUM+aFIhxNdxPEymjckh53zcJkIC0qJyIZTEbl/Ojh48hoFGKp/lPOp
+	LgUGLzWnOxPEhEEqqERuqQCqglx4gjEp9ajBSXdkiIm2wdXl3qRMV4L6z5DUwQ==
+Date: Wed, 12 Nov 2025 09:59:34 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Lee Jones <lee@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+ <tony@atomide.com>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, oe-kbuild-all@lists.linux.dev, Andrew Davis
+ <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mfd: tps65219: Implement LOCK register handling
+ for TPS65214
+Message-ID: <20251112095934.41dfe0a3@kmaincent-XPS-13-7390>
+In-Reply-To: <20251110134221.GD1949330@google.com>
+References: <20251106-fix_tps65219-v2-1-a7d608c4272f@bootlin.com>
+	<202511070607.Il9q9meO-lkp@intel.com>
+	<20251110134221.GD1949330@google.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112023025.793-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 25-11-12 10:30:25, Haotian Zhang wrote:
-> The probe function enables bc->clk_apb early but fails to disable it
-> when bc_data is NULL or clk_hw_data allocation fails. The cleanup
-> path also misses pm_runtime_put_sync() when rpm is enabled.
-> 
-> Switch to devm_clk_get_enabled() to automatically manage the clock
-> resource. Add pm_runtime_put_sync() in cleanup path when rpm
-> is enabled.
-> 
-> Fixes: 5224b189462f ("clk: imx: add i.MX95 BLK CTL clk driver")
-> Suggested-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+On Mon, 10 Nov 2025 13:42:21 +0000
+Lee Jones <lee@kernel.org> wrote:
 
-Next time, please do not send the new version as a reply to the old one.
+> On Fri, 07 Nov 2025, kernel test robot wrote:
+>=20
+> > Hi Kory,
+> >=20
+> > kernel test robot noticed the following build warnings:
+> >=20
+> > [auto build test WARNING on 1c353dc8d962de652bc7ad2ba2e63f553331391c]
+> >=20
+> > url:
+> > https://github.com/intel-lab-lkp/linux/commits/Kory-Maincent-TI-com/mfd=
+-tps65219-Implement-LOCK-register-handling-for-TPS65214/20251106-185551
+> > base:   1c353dc8d962de652bc7ad2ba2e63f553331391c patch link:
+> > https://lore.kernel.org/r/20251106-fix_tps65219-v2-1-a7d608c4272f%40boo=
+tlin.com
+> > patch subject: [PATCH v2 1/2] mfd: tps65219: Implement LOCK register
+> > handling for TPS65214 config: i386-buildonly-randconfig-003-20251107
+> > (https://download.01.org/0day-ci/archive/20251107/202511070607.Il9q9meO=
+-lkp@intel.com/config)
+> > compiler: gcc-13 (Debian 13.3.0-16) 13.3.0 reproduce (this is a W=3D1 b=
+uild):
+> > (https://download.01.org/0day-ci/archive/20251107/202511070607.Il9q9meO=
+-lkp@intel.com/reproduce)
+> >=20
+> > If you fix the issue in a separate patch/commit (i.e. not just a new
+> > version of the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes:
+> > https://lore.kernel.org/oe-kbuild-all/202511070607.Il9q9meO-lkp@intel.c=
+om/
+> >=20
+> > All warnings (new ones prefixed by >>):
+> >=20
+> >    drivers/mfd/tps65219.c: In function 'tps65214_reg_write': =20
+> > >> drivers/mfd/tps65219.c:479:26: warning: variable 'tps' set but not u=
+sed
+> > >> [-Wunused-but-set-variable] =20
+> >      479 |         struct tps65219 *tps;
+> >          |                          ^~~
+> >=20
+> >=20
+> > vim +/tps +479 drivers/mfd/tps65219.c
+> >=20
+> >    475=09
+> >    476	static int tps65214_reg_write(void *context, unsigned int
+> > reg, unsigned int val) 477	{
+> >    478		struct i2c_client *i2c =3D context; =20
+> >  > 479		struct tps65219 *tps; =20
+>=20
+> Please fix.
 
-Everything else LGTM:
+Yes, I will do it this week, I was waiting for few days in case of more
+reviews.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
