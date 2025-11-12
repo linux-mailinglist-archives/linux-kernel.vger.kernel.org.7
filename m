@@ -1,174 +1,159 @@
-Return-Path: <linux-kernel+bounces-897286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2176DC527C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:31:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9431C5285A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B91818822A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:32:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 403184EF2E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC2E337B9D;
-	Wed, 12 Nov 2025 13:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA53385BE;
+	Wed, 12 Nov 2025 13:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mYYssi56"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrJfWier"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8EA219A8E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FA932D44F;
+	Wed, 12 Nov 2025 13:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762954289; cv=none; b=YWz7XnfeZriaM/ZIJStcNGGHTDEMs40XV6QlzwmOEU+syrwJiQ2OzbwS7HOvnKkPFHloksx6JQD+0gqnSFvC6lIQaWnCjj6i7tMpqiBhFKLmfmtvU1wwu2BZENU2/KM6ptjcMcAQjOSOv0TWtb1oNl8WD/d1nexYjn0rpSc2LmU=
+	t=1762954446; cv=none; b=jUz0nkMwJaO+OaWHAoRvJkKHl8YpK4gwehxG67OlYa2sM74lt+H5tGHqpo8eAmm5t6eWfWTiAIDBCzka7docfUZ4lWEviELqxWRvFiat/XHGSmtuG905/01wFX2zqHUU0dVp8v/6oiwYA753kPItr2YT4+ESkaSwC47X6ViWT8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762954289; c=relaxed/simple;
-	bh=qU96Uk29tMCvl+xNqOQ5rqiKaI0GWmBHNuklgI3ecKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H/qIMyTBP/kzWroh8a4U/U+5x7f13G3KYCdzKAljpKbVc1Cdy+CcTACctm5rKmFwGstiiiG0pCmLmHrBwxuAJ6h1K0Sn6WSov8ZW+alWZBaEQCLoNDcNX0eketFznw8bCNGG7N5Vvrzwrm86ZEz6vlsZZfzx+t9rduh3QsWgQeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mYYssi56; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d646z3CjBz9tkC;
-	Wed, 12 Nov 2025 14:31:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762954283; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qU96Uk29tMCvl+xNqOQ5rqiKaI0GWmBHNuklgI3ecKk=;
-	b=mYYssi56jZyd7Bh6anocChcfEw9AjUJY7XGwzKhRLm/GIN2UpHUmYWuuhU5UaW7Z3I0dpU
-	ZuVQFFclbZIWD8niUd001bOxQIeBtKb2nEtBIlCspHfMA2fToo1gZfDIlZm7+0qWlhuPeT
-	VU8IiM83YNRTq7zA77PmISWnLd0woBBdPPQurztPYYp2HArIhLuRRdRGNdQWtw0tHGT+y5
-	28Mze1LNAgoFYfWHW/A6NafGUV2q/oZfghOCWDCQlm5C5qRMfPUnDn6WA5u7hRJVgAu6l9
-	d4sNsCi9to4DDRIWDq9QwAoKL4DnD+IUAB60TswZgKKZlb44gewsWCL68lFYtw==
-Message-ID: <cd7f6684f1d8bfca606c4a6ba75c130d07e3a7fe.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: Document racy behavior of
- drm_sched_entity_push_job()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tursulin@ursulin.net>, phasta@kernel.org, Matthew Brost
-	 <matthew.brost@intel.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
-	 <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
-	 <maarten.lankhorst@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Wed, 12 Nov 2025 14:31:19 +0100
-In-Reply-To: <babc3eae-42c2-4927-95db-7c529a282d6d@ursulin.net>
-References: <20251112073138.93355-2-phasta@kernel.org>
-	 <e9c02871-fa80-46c7-8b96-bad3a6a2c5b9@ursulin.net>
-	 <38bce31a7cdea31738c161bb06af272d5f68af1a.camel@mailbox.org>
-	 <babc3eae-42c2-4927-95db-7c529a282d6d@ursulin.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762954446; c=relaxed/simple;
+	bh=qbSj2P7cauAyPGofpRuk2eH237ghZw6hFXEaJ7Ed/gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqiCi7rtc//VzqOofAOUEXXm6t4vQf3tx5Ufws+NjYOVNesoM+aQlmBPg7qX+Sny1fU7Pmnupyhhom5OGNjRBQnyBP/OTC4GbzBkeDrAd5dU5cmOfC/RSDgUSPTvIwwAvwg4cRJPzXC/rld39OJFChDNjwg3x1obhbazBcx1yGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrJfWier; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41D9C16AAE;
+	Wed, 12 Nov 2025 13:33:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762954445;
+	bh=qbSj2P7cauAyPGofpRuk2eH237ghZw6hFXEaJ7Ed/gc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZrJfWierYi07WtFcEryrFiK6Au3xJI//n+EazQJsB4b0URzBvOjJ2BPBvBPoM7FvZ
+	 XWPWQhLqrXXbk6Los7kqf3Hu8uafXdEsjQxORzsfBLgMdTU6sehs9FlWa9STelJO6B
+	 OWz3HlWFH/uCzNh2VZL47Gng+Ch9YiD7yBzskEndLdC70aFjLKWUcBaq0XFoDHp60t
+	 0wx+iCnlCp9J1RZS79PtlT4DNB84z8R8sl+GyTqFXcqT3qGXpr8ALU3f1PIB1jKeK2
+	 8K/l0BTJHUIz6SWhepPCUMWA1Uk5bb1RAQCRj5RdZtH28whozTzBEJKm7YoNIweTse
+	 RnTOFGNsvHEfQ==
+Date: Wed, 12 Nov 2025 15:33:39 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aRSMsz4zy8QBbsIH@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
+ <aRObz4bQzRHH5hJb@kernel.org>
+ <CA+CK2bDnaLJS9GdO_7Anhwah2uQrYYk_RhQMSiRL-YB=8ZZZWQ@mail.gmail.com>
+ <CA+CK2bD3hps+atqUZ2LKyuoOSRRUWpTPE+frd5g13js4EAFK8g@mail.gmail.com>
+ <aRRflLTejNQXWa1Z@kernel.org>
+ <CA+CK2bB8731z-EKv2K8-x5SH8rjOTTuWkfkrc4Qj6skW+Kr7-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: 6yztzec7q8snpddwiqn1twg5jkcioe6t
-X-MBO-RS-ID: 9e51a9854326efa0a78
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bB8731z-EKv2K8-x5SH8rjOTTuWkfkrc4Qj6skW+Kr7-g@mail.gmail.com>
 
-On Wed, 2025-11-12 at 13:13 +0000, Tvrtko Ursulin wrote:
->=20
-> On 12/11/2025 12:15, Philipp Stanner wrote:
-> > On Wed, 2025-11-12 at 09:42 +0000, Tvrtko Ursulin wrote:
-> > >=20
-> > > On 12/11/2025 07:31, Philipp Stanner wrote:
-> > > > drm_sched_entity_push_job() uses the unlocked spsc_queue. It takes =
-a
-> > > > reference to that queue's tip at the start, and some time later rem=
-oves
-> > > > that entry from that list, without locking or protection against
-> > > > preemption.
-> > >=20
-> > > I couldn't figure out what you refer to by tip reference at the start=
-,
-> > > and later removes it. Are you talking about the top level view from
-> > > drm_sched_entity_push_job() or where exactly?
-> > > > This is by design, since the spsc_queue demands single producer and
-> > > > single consumer. It was, however, never documented.
-> > > >=20
-> > > > Document that you must not call drm_sched_entity_push_job() in para=
-llel
-> > > > for the same entity.
-> > > >=20
-> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > > > ---
-> > > > =C2=A0=C2=A0 drivers/gpu/drm/scheduler/sched_entity.c | 3 +++
-> > > > =C2=A0=C2=A0 1 file changed, 3 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu=
-/drm/scheduler/sched_entity.c
-> > > > index 5a4697f636f2..b31e8d14aa20 100644
-> > > > --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> > > > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> > > > @@ -562,6 +562,9 @@ void drm_sched_entity_select_rq(struct drm_sche=
-d_entity *entity)
-> > > > =C2=A0=C2=A0=C2=A0 * drm_sched_entity_push_job - Submit a job to th=
-e entity's job queue
-> > > > =C2=A0=C2=A0=C2=A0 * @sched_job: job to submit
-> > > > =C2=A0=C2=A0=C2=A0 *
-> > > > + * It is illegal to call this function in parallel, at least for j=
-obs belonging
-> > > > + * to the same entity. Doing so leads to undefined behavior.
-> > >=20
-> > > One thing that is documented in the very next paragraph is that the
-> > > design implies a lock held between arm and push. At least to ensure
-> > > seqno order matches the queue order.
-> > >=20
-> > > I did not get what other breakage you found, but I also previously di=
-d
-> > > find something other than that. Hm.. if I could only remember what it
-> > > was. Probably mine was something involving drm_sched_entity_select_rq=
-(),
-> > > drm_sched_entity_modify_sched() and (theoretical) multi-threaded
-> > > userspace submit on the same entity. Luckily it seems no one does tha=
-t.
-> > >=20
-> > > The issue you found is separate and not theoretically fixed by this
-> > > hypothetical common lock held over arm and push?
-> >=20
-> > Well, if 2 CPUs should ever run in parallel in
-> > drm_sched_entity_push_job() the spsc_queue will just explode. Most
-> > notably, one CPU could get the job at the tip (the oldest job), then be
-> > preempted, and then another CPU takes the same job and pops it.
->=20
-> Ah, you are talking about the dequeue/pop side. First paragraph of the=
-=20
-> commit message can be clarified in that case.
->=20
-> Pop is serialised by the worker so I don't think two simultaneous=20
-> dequeues on the same scheduler are possible. How did you trigger it?
-> > The API contract should be that the user doesn't have to know whether
-> > there's a linked list or the magic spsc_queue.Luckily we moved the peek=
-/pop helpers to sched_internal.h.
->=20
-> Btw I thought you gave up on the scheduler and are working on the simple=
-=20
-> rust queue for firmware schedulers so how come you are finding subtle
-> bugs in this code?
+On Wed, Nov 12, 2025 at 07:46:23AM -0500, Pasha Tatashin wrote:
+> On Wed, Nov 12, 2025 at 5:21 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Tue, Nov 11, 2025 at 03:42:24PM -0500, Pasha Tatashin wrote:
+> > > On Tue, Nov 11, 2025 at 3:39 PM Pasha Tatashin
+> > > <pasha.tatashin@soleen.com> wrote:
+> > > >
+> > > > > >       kho_memory_init();
+> > > > > >
+> > > > > > +     /* Live Update should follow right after KHO is initialized */
+> > > > > > +     liveupdate_init();
+> > > > > > +
+> > > > >
+> > > > > Why do you think it should be immediately after kho_memory_init()?
+> > > > > Any reason this can't be called from start_kernel() or even later as an
+> > > > > early_initcall() or core_initall()?
+> > > >
+> > > > Unfortunately, no, even here it is too late, and we might need to find
+> > > > a way to move the kho_init/liveupdate_init earlier. We must be able to
+> > > > preserve HugeTLB pages, and those are reserved earlier in boot.
+> > >
+> > > Just to clarify: liveupdate_init() is needed to start using:
+> > > liveupdate_flb_incoming_* API, and FLB data is needed during HugeTLB
+> > > reservation.
+> >
+> > Since flb is "file-lifecycle-bound", it implies *file*. Early memory
+> > reservations in hugetlb are not bound to files, they end up in file objects
+> > way later.
+> 
+> FLB global objects act similarly to subsystem-wide data, except their
+> data has a clear creation and destruction time tied to preserved
+> files. When the first file of a particular type is added to LUO, this
+> global data is created; when the last file of that type is removed
+> (unpreserved or finished), this global data is destroyed, this is why
+> its life is bound to file lifecycle. Crucially, this global data is
+> accessible at any time while LUO owns the associated files spanning
+> the early boot update boundary.
 
-I'm a maintainer still, for a variety of reasons. That we work on
-something for FW with a clean locking design doesn't mean we don't care
-about existing infrastructure anymore. And I firmly believe in
-documentation. People should know the rules from the API documentation,
-not from looking into the implementation.
+But there are no files at mm_core_init(). I'm really confused here.
+ 
+> > So I think for now we can move liveupdate_init() later in boot and we will
+> > solve the problem of hugetlb reservations when we add support for hugetlb.
+> 
+> HugeTLB reserves memory early in boot. If we already have preserved
+> HugeTLB pages via LUO/KHO, we must ensure they are counted against the
+> boot-time reservation. For example, if hugetlb_cma_reserve() needs to
+> reserve ten 1G pages, but LUO has already preserved seven, we only
+> need to reserve three new pages and the rest are going to be restored
+> with the files.
+> 
+> Since this count is contained in the FLB global object, that data
+> needs to be available during the early reservation phase. (Pratyush is
+> working on HugeTLB preservation and can explain further).
 
-It's kind of a crucial design info that you must only push into
-entities sequentially, no?
+Not sure I really follow the design here, but in my understanding the gist
+here is that hugetlb reservations need to be aware of the preserved state.
+If that's the case, we definitely can move liveupdate_init() to an initcall
+and revisit this when hugetlb support for luo comes along.
+ 
+> Pasha
+> 
 
-This doesn't fix a bug, obviously, since it's just a line of docu.
-Regardless, pushing into the spsc queue in parallel would explode.
-Emphasizing that costs as nothing.
-
-
-
-P.
+-- 
+Sincerely yours,
+Mike.
 
