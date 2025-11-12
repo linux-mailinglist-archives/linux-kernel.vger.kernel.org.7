@@ -1,355 +1,202 @@
-Return-Path: <linux-kernel+bounces-896360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCE4C50326
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:22:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AF9C5032F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F773B1A47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:22:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 656514E9F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCF2DF72;
-	Wed, 12 Nov 2025 01:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E0D2253A1;
+	Wed, 12 Nov 2025 01:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="Ji6Fv/EE"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dfrgTvvR"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A62C2528FD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09E5157A5A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762910524; cv=none; b=fVwRWY02tSmJw1Sx3X9Idpuz+Bi7T0iwFH3NAs/rkp37WT66hueSL3ENAvnGV3OWPLNnRwVEhlgONiz5clgoE/rZSgkxL90YUu5D6Wn3+KlehkrVjmDty/cB+KK1rAy9ZMEf/79ByYVmuC0pUOIu2YYlBtoh9LJSrg6bR6hjCek=
+	t=1762910543; cv=none; b=YHgSg+Gvvifp+S+d95c5KeOwNB9TutcVjWcsGcXqjrz74o6Etst/M87Yqs1Og9se0uynspqDA1td/s9amIB6z4XzUMKw8h3OzhBlm2iWuNoDM0KPwx0+4WFR+huVjkKYzQXgmSF6BTn8AE1TT77vTACcKfs20dvC+8gUv/TKZN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762910524; c=relaxed/simple;
-	bh=m69KpRHg7EGDDjePZus9Qh88LM0hyT3PJdRCEEgBrXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BEyuda/8XFa0YPd5pL+SLR1u35vsv0eBrOXyKMu2WSt3c0n6NchZMqaccgFkWIqeHcrWDZh9LXQWPDkkQVqLZTxuBPcRivKSNfxReIkWdBNlBlwJ+5XdxAumcjMp89uup4+iOlU0o2XPFOIc8exQR85gUHkFcQiE1HHL8evnLkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=Ji6Fv/EE; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3436d6ca17bso321836a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:21:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1762910517; x=1763515317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WBIezAnMYZJY6x8PwDwTS4xVsAS3iTRwUPdVRsb0Orw=;
-        b=Ji6Fv/EEHJWSfomNjcoKibd7Y7sNxifqvIXfKU/+ffIZul+SSLcG7Kq6KdUZnF851c
-         Q7LWoY7wzntPOWrsBK/X01qarMZcuPX//VmOcfx0AUpKGUNJ7gMuLsImOUCtaqGPMfzJ
-         mlU8JvCvu2lr4LHxC5N2TRVTrZ1TDUA6cSWTjzLNLEj/R2X1Qa7Mu9FYqaHT6oS//PiC
-         y9Tn25fn1kG8Ym54GI3QI3wZpXyu3Th33KNKv/5wc1oj2J2RJprevTQ9+dvJNimMPzQU
-         wtNkv8sp23SFz+CLzGEqPXJc1398KLkUOfMXujsaXBRyVgVeZPrr0Vc9N9E59VcbIbfg
-         NzXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762910517; x=1763515317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WBIezAnMYZJY6x8PwDwTS4xVsAS3iTRwUPdVRsb0Orw=;
-        b=ZOEErMR70I2hinyAUzhFmriLL5DdD7SsEOjgSK5u9g1lTyldK5cTAZEhpDH+U28V3m
-         0DDOkU9cO/nyflm0E3mc/4G7WYWjzasmvDTFt5gDLH+yEDXt8RGxMTJFpYIoLVW590LA
-         7mzqyMfYssabnLS8AGRxi6a1/23ok3bc3S7xztRS3m2G9gvi58i3YW95D1/eAosbVYRS
-         7Lkc1jC4hiZOTCD9egDyU27LdPBNfPc1Ok8KAlanbhhXuusq+iNX6WCOJ7Wl8A7ZSrA0
-         a4WQCf1qcxGF+Qzd9kHi7JMDkcM//1/zwaz7bwVQMKuTaTwgJy0YSdcxZoUF6KBmRZpY
-         vMSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQNxbAOnKRWTE90PX0sosUbPYId/bh7R0Esp90gy/Lh7jCbgqp0aLphYpUl02lA+A/JJpZYdO15JZkw0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr3h/LinrVCbNrCD+DpNQlgGckKoOUGoSPllza4Qj/jtuhYki+
-	0Y2DhV52CElunE0eF+OTbZOU8JelGbBrcaaYYduWJd7YqUmL3veHp14tjDi0byOejJz+
-X-Gm-Gg: ASbGnctQKLI/3BfTU+anOQsGqpK7HOOovWfCfI/dZ1isLhEAfd/qH2E/n2j70zHy9WV
-	Rm+Ocgvu8BOxDdz26OiM9MBC7cktz9DUr1VyY8PYuOFpwtgIqN9sZwldW72NAz9WGw/dsYUkdlX
-	h/q1bJw3Rv6F+n+W0pJbGowcVvAaf6DSX44TIgOFs0tgRHM33tcr0cg22lIWRB+yC/0RH6ilcpo
-	/TZzjZMfcLj24dvftimMhLRQ61lAIcDBNs8+hVhVp3XK1DlMb0zpV9P8yW1nVZXxrrggeBlukSm
-	H1HmGk+y6q+IawisNJLF8jnxRzIQTuqkZ3R18J2kQTzw7YJnzgX1GXYYbo43x6i//0d4WARLoLi
-	OXM1RVtBe02WUKzYXlU3Wus0iGUDI0iqFOPXHihlU7TuAht0V8Mdl7MQgKWRdWAppzhUe4bwTKk
-	ufbhWNdg==
-X-Google-Smtp-Source: AGHT+IGdcDvlJaVGeLfNWDsqkyZqDdJdvWz+LEi8s0P+SzACbOMHNGOxNwknmbXn9UKrt+la78LLiA==
-X-Received: by 2002:a17:90b:274a:b0:341:b5a2:3e7b with SMTP id 98e67ed59e1d1-343dddee994mr1508034a91.4.1762910517425;
-        Tue, 11 Nov 2025 17:21:57 -0800 (PST)
-Received: from sultan-box ([2607:fb91:1dc2:893f:7bed:ad66:737b:260b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e072580dsm456620a91.8.2025.11.11.17.21.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 17:21:56 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:21:52 -0800
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, mario.limonciello@amd.com,
-	richard.gong@amd.com, anson.tsao@amd.com
-Subject: Re: [PATCH v5 0/7] Add AMD ISP4 driver
-Message-ID: <aRPhMCwJjpMqAROG@sultan-box>
-References: <20251024090643.271883-1-Bin.Du@amd.com>
- <aQsYJhbGifdXhjCJ@sultan-box>
- <aRGjX1pv0y_lVext@sultan-box>
- <c41df0f5-b2b5-49f1-a49e-8750e55975e1@amd.com>
- <aRL8ZPwXSeKD4Qmn@sultan-box>
- <e09207fd-1879-44c8-a5c1-838a140dcd4b@amd.com>
- <aRPH1hV7bEfagPtE@sultan-box>
+	s=arc-20240116; t=1762910543; c=relaxed/simple;
+	bh=kCRpsi8j24JMROr7s1tRoS7zEirV1rZ8/rn9NBbAm4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ns608hi/h6o/PDOAeyw1+4yw4APXvUnC23chwy7JSIxQht7hK13KcXwAS5Q6A0qbAVnAj5fTH+/D4axatviUxwlWasl+ZuwU9KYb2AwbBGQZcDUA9CxD5Q2nwlO/NJoHhBWV/W+055Gb+I5yUT4LGtIXZtj6ydHf1VyZI7E/im0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dfrgTvvR; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bac94701-273d-4ffe-b9ec-fcfcad1dfbfd@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762910537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zStd5AYwnc4sPkWw7QlEk4tbKQuPxwa9eyWhov8zFAw=;
+	b=dfrgTvvRWQBO3Uy7W9wj9K8KXXACcvqFfsjbrQpRSjvUXUGqXpOBofCTs0RXH1D+RfAW3w
+	fcg5XikPox9UprR0XeHgrWIsFnEGILAKd/cB4fPfU7d0EAYwyZZjmnMLehhF8WGjxsSBRS
+	I1kZnzhYOCix6AbO2EUehtXXBQpQqbc=
+Date: Wed, 12 Nov 2025 09:22:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRPH1hV7bEfagPtE@sultan-box>
+Subject: Re: [PATCH net-next v4 1/3] net: stmmac: Add generic suspend/resume
+ helper for PCI-based controllers
+To: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Philipp Stanner <phasta@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>,
+ Qunqin Zhao <zhaoqunqin@loongson.cn>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251111100727.15560-2-ziyao@disroot.org>
+ <20251111100727.15560-3-ziyao@disroot.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20251111100727.15560-3-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 11, 2025 at 03:33:42PM -0800, Sultan Alsawaf wrote:
-> On Tue, Nov 11, 2025 at 05:58:10PM +0800, Du, Bin wrote:
-> > 
-> > On 11/11/2025 5:05 PM, Sultan Alsawaf wrote:
-> > 
-> > > On Mon, Nov 10, 2025 at 05:46:28PM +0800, Du, Bin wrote:
-> > > > Thank you, Sultan, for your time, big effort, and constant support.
-> > > > Apologies for my delayed reply for being occupied a little with other
-> > > > matters.
-> > > > 
-> > > > On 11/10/2025 4:33 PM, Sultan Alsawaf wrote:
-> > > > > Hi Bin,
-> > > > > 
-> > > > > On Wed, Nov 05, 2025 at 01:25:58AM -0800, Sultan Alsawaf wrote:
-> > > > > > Hi Bin,
-> > > > > > 
-> > > > > > To expedite review, I've attached a patch containing a bunch of fixes I've made
-> > > > > > on top of v5. Most of my changes should be self-explanatory; feel free to ask
-> > > > > > further about specific changes if you have any questions.
-> > > > > > 
-> > > > > > I haven't had a chance to review all of the v4 -> v5 changes yet, but I figured
-> > > > > > I should send what I've got so far.
-> > > > > > 
-> > > > > > FYI, there is a regression in isp4if_dequeue_buffer() where the bufq lock isn't
-> > > > > > protecting the list_del() anymore. I also checked the compiler output when using
-> > > > > > guard() versus scoped_guard() in that function and there is no difference:
-> > > > > > 
-> > > > > >     sha1sum:
-> > > > > >     5652a0306da22ea741d80a9e03a787d0f71758a8  isp4_interface.o // guard()
-> > > > > >     5652a0306da22ea741d80a9e03a787d0f71758a8  isp4_interface.o // scoped_guard()
-> > > > > > 
-> > > > > > So guard() should be used there again, which I've done in my patch.
-> > > > > > 
-> > > > > > I also have a few questions:
-> > > > > > 
-> > > > > > 1. Does ISP FW provide a register interface to disable the IRQ? If so, it is
-> > > > > >      faster to use that than using disable_irq_nosync() to disable the IRQ from
-> > > > > >      the CPU's side.
-> > > > > > 
-> > > > > > 2. When the IRQ is re-enabled in isp4sd_fw_resp_func(), is there anything
-> > > > > >      beforehand to mask all pending interrupts from the ISP so that there isn't a
-> > > > > >      bunch of stale interrupts firing as soon the IRQ is re-enabled?
-> > > > > > 
-> > > > > > 3. Is there any risk of deadlock due to the stream kthread racing with the ISP
-> > > > > >      when the ISP posts a new response _after_ the kthread determines there are no
-> > > > > >      more new responses but _before_ the enable_irq() in isp4sd_fw_resp_func()?
-> > > > > > 
-> > > > > > 4. Why are some lines much longer than before? It seems inconsistent that now
-> > > > > >      there is a mix of several lines wrapped to 80 cols and many lines going
-> > > > > >      beyond 80 cols. And there are multiple places where code is wrapped before
-> > > > > >      reaching 80 cols even with lots of room left, specifically for cases where it
-> > > > > >      wouldn't hurt readability to put more characters onto each line.
-> > > > > 
-> > > > > I've attached a new, complete patch of changes to apply on top of v5. You may
-> > > > > ignore the incomplete patch from my previous email and use the new one instead.
-> > > > > 
-> > > > > I made many changes and also answered questions 1-3 myself.
-> > > > > 
-> > > > > Please apply this on top of v5 and let me know if you have any questions.
-> > > > > 
-> > > > 
-> > > > Sure, will review, apply and test your patch accordingly. Your contribution
-> > > > is greatly appreciated, will let you know if there is any question or
-> > > > problem.
-> > > > 
-> > > > > BTW, I noticed a strange regression in v5 even without any of my changes: every
-> > > > > time you use cheese after using it one time, the video will freeze after 30-60
-> > > > > seconds with this message printed to dmesg:
-> > > > >     [ 2032.716559] amd_isp_capture amd_isp_capture: -><- fail respid unknown respid(0x30002)
-> > > > > 
-> > > > > And the video never unfreezes. I haven't found the cause for the regression yet;
-> > > > > can you try to reproduce it?
-> > > > > 
-> > > > 
-> > > > Really weird, we don't see this issue either in dev or QA test. Is it 100%
-> > > > reproducible and any other fail or err in the log?
-> > > 
-> > > Yes, it's 100% reproducible. There's no other message in dmesg, only that one.
-> > > 
-> > > Sometimes there is a stop stream error when I close cheese after it froze:
-> > > 
-> > >    [  656.540307] amd_isp_capture amd_isp_capture: fail to disable stream
-> > >    [  657.046633] amd_isp_capture amd_isp_capture: fail to stop steam
-> > >    [  657.047224] amd_isp_capture amd_isp_capture: disabling streaming failed (-110)
-> > > 
-> > > When I revert to v4 I cannot reproduce it at all. It seems to be something in
-> > > v4 -> v5 that is not fixed by any of my changes.
-> > > 
-> > 
-> > Hi Sultan, could you please try following modifications on top of v5 to see
-> > if it helps?
-> > 
-> > diff --git a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> > b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> > index 39c2265121f9..d571b3873edb 100644
-> > --- a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> > +++ b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> > @@ -97,7 +97,7 @@
-> > 
-> > #define ADDR_SPACE_TYPE_GPU_VA          4
-> > 
-> > -#define FW_MEMORY_POOL_SIZE             (200 * 1024 * 1024)
-> > +#define FW_MEMORY_POOL_SIZE             (100 * 1024 * 1024)
-> > 
-> > /*
-> >   * standard ISP mipicsi=>isp
-> > diff --git a/drivers/media/platform/amd/isp4/isp4_subdev.c
-> > b/drivers/media/platform/amd/isp4/isp4_subdev.c
-> > index 248d10076ae8..acbc80aa709e 100644
-> > --- a/drivers/media/platform/amd/isp4/isp4_subdev.c
-> > +++ b/drivers/media/platform/amd/isp4/isp4_subdev.c
-> > @@ -697,7 +697,7 @@ static int isp4sd_stop_resp_proc_threads(struct
-> > isp4_subdev *isp_subdev)
-> >         return 0;
-> > }
-> > 
-> > -static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
-> > +static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev, bool
-> > irq_enabled)
-> > {
-> >         struct isp4sd_sensor_info *sensor_info = &isp_subdev->sensor_info;
-> >         unsigned int perf_state = ISP4SD_PERFORMANCE_STATE_LOW;
-> > @@ -716,8 +716,9 @@ static int isp4sd_pwroff_and_deinit(struct isp4_subdev
-> > *isp_subdev)
-> >                 return 0;
-> >         }
-> > 
-> > -       for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
-> > -               disable_irq(isp_subdev->irq[i]);
-> > +       if (irq_enabled)
-> > +               for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
-> > +                       disable_irq(isp_subdev->irq[i]);
-> > 
-> >         isp4sd_stop_resp_proc_threads(isp_subdev);
-> >         dev_dbg(dev, "isp_subdev stop resp proc streads suc");
-> > @@ -813,7 +814,7 @@ static int isp4sd_pwron_and_init(struct isp4_subdev
-> > *isp_subdev)
-> > 
-> >         return 0;
-> > err_unlock_and_close:
-> > -       isp4sd_pwroff_and_deinit(isp_subdev);
-> > +       isp4sd_pwroff_and_deinit(isp_subdev, false);
-> >         return -EINVAL;
-> > }
-> > 
-> > @@ -985,7 +986,7 @@ static int isp4sd_set_power(struct v4l2_subdev *sd, int
-> > on)
-> >         if (on)
-> >                 return isp4sd_pwron_and_init(isp_subdev);
-> >         else
-> > -               return isp4sd_pwroff_and_deinit(isp_subdev);
-> > +               return isp4sd_pwroff_and_deinit(isp_subdev, true);
-> > }
-> > 
-> > static const struct v4l2_subdev_core_ops isp4sd_core_ops = {
-> 
-> No difference sadly; same symptoms as before. FYI, your email client broke the
-> patch formatting so I couldn't apply it; it hard wrapped some lines to 80 cols,
-> replaced tabs with spaces, and removed leading spaces on each context line, so I
-> had to apply it manually. To confirm I applied it correctly, here is my diff:
-> 
-> diff --git a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> index 39c2265121f9..d571b3873edb 100644
-> --- a/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> +++ b/drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> @@ -97,7 +97,7 @@
->  
->  #define ADDR_SPACE_TYPE_GPU_VA          4
->  
-> -#define FW_MEMORY_POOL_SIZE             (200 * 1024 * 1024)
-> +#define FW_MEMORY_POOL_SIZE             (100 * 1024 * 1024)
->  
->  /*
->   * standard ISP mipicsi=>isp
-> diff --git a/drivers/media/platform/amd/isp4/isp4_subdev.c b/drivers/media/platform/amd/isp4/isp4_subdev.c
-> index 4bd2ebf0f694..500ef0af8a41 100644
-> --- a/drivers/media/platform/amd/isp4/isp4_subdev.c
-> +++ b/drivers/media/platform/amd/isp4/isp4_subdev.c
-> @@ -669,7 +669,7 @@ static int isp4sd_stop_resp_proc_threads(struct isp4_subdev *isp_subdev)
->  	return 0;
->  }
->  
-> -static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
-> +static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev, bool irq_enabled)
->  {
->  	struct isp4sd_sensor_info *sensor_info = &isp_subdev->sensor_info;
->  	unsigned int perf_state = ISP4SD_PERFORMANCE_STATE_LOW;
-> @@ -688,8 +688,9 @@ static int isp4sd_pwroff_and_deinit(struct isp4_subdev *isp_subdev)
->  		return 0;
->  	}
->  
-> -	for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
-> -		disable_irq(isp_subdev->irq[i]);
-> +	if (irq_enabled)
-> +		for (int i = 0; i < ISP4SD_MAX_FW_RESP_STREAM_NUM; i++)
-> +			disable_irq(isp_subdev->irq[i]);
->  
->  	isp4sd_stop_resp_proc_threads(isp_subdev);
->  	dev_dbg(dev, "isp_subdev stop resp proc streads suc");
-> @@ -785,7 +786,7 @@ static int isp4sd_pwron_and_init(struct isp4_subdev *isp_subdev)
->  
->  	return 0;
->  err_unlock_and_close:
-> -	isp4sd_pwroff_and_deinit(isp_subdev);
-> +	isp4sd_pwroff_and_deinit(isp_subdev, false);
->  	return -EINVAL;
->  }
->  
-> @@ -957,7 +958,7 @@ static int isp4sd_set_power(struct v4l2_subdev *sd, int on)
->  	if (on)
->  		return isp4sd_pwron_and_init(isp_subdev);
->  	else
-> -		return isp4sd_pwroff_and_deinit(isp_subdev);
-> +		return isp4sd_pwroff_and_deinit(isp_subdev, true);
->  }
->  
->  static const struct v4l2_subdev_core_ops isp4sd_core_ops = {
-> 
-> > On the other hand, please also add the patch in amdgpu which sets *bo to
-> > NULL in isp_kernel_buffer_alloc() which you mentioned in another thread.
-> 
-> Yep, I have been doing all v5 testing with that patch applied. 
-> 
-> BTW, I have verified the IRQ changes are not the cause for the regression; I
-> tested with IRQs kept enabled all the time and the issue still occurs.
-> 
-> I did observe that ISP stops sending interrupts when the video stream freezes.
-> And, if I replicate the bug enough times, it seems to permanently break FW until
-> a full machine reboot. Reloading amd_capture with the v4 driver doesn't recover
-> the ISP when this happens.
-> 
-> As an improvement to the driver, can we do a hard reset of ISP on driver probe?
-> I am assuming hardware doesn't need too long to settle after hard reset, maybe
-> a few hundred milliseconds? This would ensure ISP FW is always in a working
-> state when the driver is loaded.
-> 
-> Thanks,
-> Sultan
 
-A small update: I reproduced the issue on v4, but it took several more cycles of
-closing/opening cheese and waiting 30s compared to v5.
+在 2025/11/11 18:07, Yao Zi 写道:
+> Most glue driver for PCI-based DWMAC controllers utilize similar
+> platform suspend/resume routines. Add a generic implementation to reduce
+> duplicated code.
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-Right now my best guess is that this is a timing issue with respect to FW that
-was exposed by the v5 changes. v5 introduced slight changes in code timing, like
-with the mutex locks getting replaced by spin locks.
+Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn
 
-I'll try to insert mdelays to see if I can expose the issue that way on v4.
 
-Sultan
+Thanks,
+
+Yanteng
+
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/Kconfig   |  8 ++++
+>   drivers/net/ethernet/stmicro/stmmac/Makefile  |  1 +
+>   .../ethernet/stmicro/stmmac/stmmac_libpci.c   | 48 +++++++++++++++++++
+>   .../ethernet/stmicro/stmmac/stmmac_libpci.h   | 12 +++++
+>   4 files changed, 69 insertions(+)
+>   create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.c
+>   create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.h
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 87c5bea6c2a2..1350f16f7138 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -349,6 +349,14 @@ config DWMAC_VISCONTI
+>   
+>   endif
+>   
+> +config STMMAC_LIBPCI
+> +	tristate "STMMAC PCI helper library"
+> +	depends on PCI
+> +	default y
+> +	help
+> +	  This selects the PCI bus helpers for the stmmac driver. If you
+> +	  have a controller with PCI interface, say Y or M here.
+> +
+>   config DWMAC_INTEL
+>   	tristate "Intel GMAC support"
+>   	default X86
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> index 1681a8a28313..7bf528731034 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> @@ -44,6 +44,7 @@ obj-$(CONFIG_DWMAC_VISCONTI)	+= dwmac-visconti.o
+>   stmmac-platform-objs:= stmmac_platform.o
+>   dwmac-altr-socfpga-objs := dwmac-socfpga.o
+>   
+> +obj-$(CONFIG_STMMAC_LIBPCI)	+= stmmac_libpci.o
+>   obj-$(CONFIG_STMMAC_PCI)	+= stmmac-pci.o
+>   obj-$(CONFIG_DWMAC_INTEL)	+= dwmac-intel.o
+>   obj-$(CONFIG_DWMAC_LOONGSON)	+= dwmac-loongson.o
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.c
+> new file mode 100644
+> index 000000000000..5c5dd502f79a
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.c
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * PCI bus helpers for STMMAC driver
+> + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/pci.h>
+> +
+> +#include "stmmac_libpci.h"
+> +
+> +int stmmac_pci_plat_suspend(struct device *dev, void *bsp_priv)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +	int ret;
+> +
+> +	ret = pci_save_state(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pci_disable_device(pdev);
+> +	pci_wake_from_d3(pdev, true);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(stmmac_pci_plat_suspend);
+> +
+> +int stmmac_pci_plat_resume(struct device *dev, void *bsp_priv)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +	int ret;
+> +
+> +	pci_restore_state(pdev);
+> +	pci_set_power_state(pdev, PCI_D0);
+> +
+> +	ret = pci_enable_device(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pci_set_master(pdev);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(stmmac_pci_plat_resume);
+> +
+> +MODULE_DESCRIPTION("STMMAC PCI helper library");
+> +MODULE_AUTHOR("Yao Zi <ziyao@disroot.org>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.h
+> new file mode 100644
+> index 000000000000..71553184f982
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> + */
+> +
+> +#ifndef __STMMAC_LIBPCI_H__
+> +#define __STMMAC_LIBPCI_H__
+> +
+> +int stmmac_pci_plat_suspend(struct device *dev, void *bsp_priv);
+> +int stmmac_pci_plat_resume(struct device *dev, void *bsp_priv);
+> +
+> +#endif /* __STMMAC_LIBPCI_H__ */
 
