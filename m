@@ -1,70 +1,146 @@
-Return-Path: <linux-kernel+bounces-897825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1261FC53C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:44:13 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BB2C53AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB1A4A3288
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:25:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0BE83450C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F372346E4A;
-	Wed, 12 Nov 2025 17:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DA03451DB;
+	Wed, 12 Nov 2025 17:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqsyl7HV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObtBZcaQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B169E346789;
-	Wed, 12 Nov 2025 17:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C1345CC6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968279; cv=none; b=MPWeX0QHrl8mqDm9xyMhBS6DBmqeg0/PITjVyYgy68Li5kERLPw65dkPNAeO0XNPsW6lfwDyB4bZNuLi8zXmL/BnXM6MOGgdcdXImfRU45TifgK02MhBphhX6EgxKHfxHRDsfO3aU/tKeVL9DZD74osNU43nOOdInKsx8/J3HPM=
+	t=1762968290; cv=none; b=GbkmiFUeoBGHAlIVyAlTs//FFYAVouvLlbJmDynOw2okuv6zUQ2Zk2AlVYqvEbTPnTnp4FgEpzNAW3J1jrhD44OdeGO9qguLMNRR4Gm7VQxxrHKzMXzsWwLNsdRz3PKu2279qop7lMJpqL+lDn4CS1iNVV1aGzp+vOYjtK/SCD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968279; c=relaxed/simple;
-	bh=QzbG9Zmf8V5mGCi08mrp59QmAT9mLrHn5LXHCXH1Cs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lgjc7WWov+udvgNvaIkg19eJzrlUX0pAnz1P0kjtYJcaKF0Wb0fcaFbJmK/qzaHD1uVbezQTznJQ1v+PjK1j3orZfjE3BqaZjRm8MxnsjZMFvrZV/+LbvL0Xk17kuAGOZnxVoXlwOPrV+j9RsyBPCpR+1KchzU7rIS8obVTeVx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqsyl7HV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C23DC4CEF8;
-	Wed, 12 Nov 2025 17:24:38 +0000 (UTC)
+	s=arc-20240116; t=1762968290; c=relaxed/simple;
+	bh=+ZWZxR7pSJKFOK/mgFwXb/5E+Q693R5Pm6iIBYg809g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uN6BbrIpBlbjng7E9I6h5brmQmzNGJZ4MJO9licdzaQMeKGTwQ/1Si3sLWqFFAC3tkuTrYxKCL5RFwfzrdc4a6jIO0479cZK7bnktyaSBKvtTRcGg4YYaZbCayxpuv3QHg4vcScvsau9TUym1/1OmuMiFJYmPkzKxpO4tdmKJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObtBZcaQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0EDC19423
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762968279;
-	bh=QzbG9Zmf8V5mGCi08mrp59QmAT9mLrHn5LXHCXH1Cs4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cqsyl7HVJTxYC4dJx3oZLQXWspIuXMbp+3M/TEfkxGItR+56Aobw5UF5j5Z3wQwXG
-	 4XZ3lUbgRzKzlM1KJiTrHMVk0tKa3WhbmBTuMsQ5vYTUpUQMgNUboe7cN6t/HZGekS
-	 2HT94E8BjeS/eFwslgk63t8/1lvNfPDpg7wR79x3yx3vxDsbDxfH/fguI/jErGqPCu
-	 GcZmEndX2qwuRaSP6UdSlCBljtVUM3O0t6G1iNAcJl3w581oLabPXlIxe3z9R9imwi
-	 Zu4ybNBoKIKwsiOeyteXgHVNpX29L4Gxyib0BTmn54JeATXBXe3DoU00rtYz2a9Ip0
-	 S83/FkExWnRmQ==
-Date: Wed, 12 Nov 2025 09:24:37 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
- pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
- vikas.gupta@broadcom.com, Rajashekar Hudumula
- <rajashekar.hudumula@broadcom.com>
-Subject: Re: [net-next 05/12] bng_en: Add TX support
-Message-ID: <20251112092437.34161640@kernel.org>
-In-Reply-To: <20251111205829.97579-6-bhargava.marreddy@broadcom.com>
-References: <20251111205829.97579-1-bhargava.marreddy@broadcom.com>
-	<20251111205829.97579-6-bhargava.marreddy@broadcom.com>
+	s=k20201202; t=1762968290;
+	bh=+ZWZxR7pSJKFOK/mgFwXb/5E+Q693R5Pm6iIBYg809g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ObtBZcaQI+tOy3KxsiVC45n3SBnrBdSpPrkbQRmGJWVkzsr2qMyRteKmNgsJQxgBM
+	 ycKXjw9qys6aGBm2jz7b8G4tVJ+3LRbR2AOIKkKPQfsipZ57wuIYZN3weLgkpinayw
+	 G2WbX815TAHmxOreQ1SxV+YrHQyzESI/tIqSupl3XMX3Vml4Z6k5b3XQ4QNsQFescu
+	 iYCFf1C+rczu2Y7UPPGAoIfCx1Mi20E4RypoaDmlEIbe5D99k4FdEyzr4siyKlUDNh
+	 EMO5ay5+a7BwS8qG4D03Vp6awt3tvnXzq2IM0zGj1F6T5A7srIZXICNwAH86vkiRsS
+	 LNsPqnkWnv0nw==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-4506534149eso399603b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:24:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV0V1//pYLNsSQp94su/MBCfYloOUCsYYweIVg1XBHk5I+E4o9nR7ZF9qMrrYBqf684f6fc9KKcZlgIV2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqobyJZnMBjLvfPBiqdtCZcJuiqfH992AxqWSiu2MhdCqw+bkW
+	DvjpJjfEDWLe8BWUuQ3wyaEAZGN4YBWNMJ2FvuO59RvAlSmLEnxqsArgl8fZkVGyr+tYBQxo7la
+	beB89xanjwt29yBi28h7Jq4ad/49Bv0o=
+X-Google-Smtp-Source: AGHT+IHQN/cNRXxiYI84ASfst1WTHuD16wrvpTvnZlzd80o34bvnw/iSEdavityt+MzhevgnvSQplGiSWq5XAXyySQQ=
+X-Received: by 2002:a05:6808:318f:b0:450:7378:60ee with SMTP id
+ 5614622812f47-450866f98e9mr87648b6e.23.1762968289746; Wed, 12 Nov 2025
+ 09:24:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251111010840.141490-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20251111010840.141490-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 12 Nov 2025 18:24:38 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g4FWk3w3Kby5p0ZgMfoTjt0XA=6g=x1UKQhaAUGashMg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmIzl5sBAZ12EKfROrLITBm3cKId7qL8xt6qx8B5JOgXx-oy5dPR6y-7qg
+Message-ID: <CAJZ5v0g4FWk3w3Kby5p0ZgMfoTjt0XA=6g=x1UKQhaAUGashMg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Check IDA feature only during MSR
+ 0x199 write
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	trenn@suse.de, Aaron Rainbolt <arainbolt@kfocus.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 12 Nov 2025 02:27:55 +0530 Bhargava Marreddy wrote:
-> +const u16 bnge_lhint_arr[] = {
+On Tue, Nov 11, 2025 at 2:09=E2=80=AFAM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> Commit ac4e04d9e378 ("cpufreq: intel_pstate: Unchecked MSR aceess in
+> legacy mode") introduced a check for feature X86_FEATURE_IDA to verify
+> turbo mode support. Although this is the correct way to check for turbo
+> mode, it causes issues on some platforms that disable turbo during OS
+> boot but enable it later. Without this feature check, users were able to
+> write 0 to /sys/devices/system/cpu/intel_pstate/no_turbo post-boot to
+> get turbo mode frequencies.
+>
+> To restore the old behavior while still addressing the unchecked MSR
+> issue on some Skylake-X systems, limit the X86_FEATURE_IDA check to only
+> when setting MSR 0x199 Turbo Engage Bit (bit 32).
+>
+> Fixes: ac4e04d9e378 ("cpufreq: intel_pstate: Unchecked MSR aceess in lega=
+cy mode")
+> Reported-by: Aaron Rainbolt <arainbolt@kfocus.org>
+> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2122531
+> Tested-by: Aaron Rainbolt <arainbolt@kfocus.org>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  drivers/cpufreq/intel_pstate.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 38897bb14a2c..492a10f1bdbf 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -603,9 +603,6 @@ static bool turbo_is_disabled(void)
+>  {
+>         u64 misc_en;
+>
+> -       if (!cpu_feature_enabled(X86_FEATURE_IDA))
+> -               return true;
+> -
+>         rdmsrq(MSR_IA32_MISC_ENABLE, misc_en);
+>
+>         return !!(misc_en & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
+> @@ -2106,7 +2103,8 @@ static u64 atom_get_val(struct cpudata *cpudata, in=
+t pstate)
+>         u32 vid;
+>
+>         val =3D (u64)pstate << 8;
+> -       if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disable=
+d))
+> +       if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disable=
+d) &&
+> +           cpu_feature_enabled(X86_FEATURE_IDA))
+>                 val |=3D (u64)1 << 32;
+>
+>         vid_fp =3D cpudata->vid.min + mul_fp(
+> @@ -2271,7 +2269,8 @@ static u64 core_get_val(struct cpudata *cpudata, in=
+t pstate)
+>         u64 val;
+>
+>         val =3D (u64)pstate << 8;
+> -       if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disable=
+d))
+> +       if (READ_ONCE(global.no_turbo) && !READ_ONCE(global.turbo_disable=
+d) &&
+> +           cpu_feature_enabled(X86_FEATURE_IDA))
+>                 val |=3D (u64)1 << 32;
+>
+>         return val;
+> --
 
-drivers/net/ethernet/broadcom/bnge/bnge_txrx.c:717:11: warning: symbol 'bnge_lhint_arr' was not declared. Should it be static?
+Applied as 6.18-rc material, with some adjustments in the subject and chang=
+elog.
+
+Thanks!
 
