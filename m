@@ -1,99 +1,63 @@
-Return-Path: <linux-kernel+bounces-897598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9732CC538A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:58:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D54C53521
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F7605028A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:42:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C53B54514E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE6B34029E;
-	Wed, 12 Nov 2025 15:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391B43446C9;
+	Wed, 12 Nov 2025 15:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJXpY/Sz"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R37Sx87/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7AE33A033
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A1633D6EE;
+	Wed, 12 Nov 2025 15:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962091; cv=none; b=Th2lbKbYkDovUKWyQLPz4x7tadcL8maMpiZ2g8kLybVZhyEu5INKxi5Hkce1ecmLsrD/IpMQwpxmrF1rGyedHHzQbZ5HtkPHjZ2aT+5+Pd16b7DkCvuyzntg/uPpA0zM13tf2COPOzordjg6bV7CuuF5AtbFlTm2WMtYU8cS7do=
+	t=1762962127; cv=none; b=gfeHgTDUbJC3NYree0ZkB13a+2ivTrZIUY7apql60nvR2aAwlcDbbYcbjzeZsFsI1cH2AkToHcw/EtdUfmpKkYc5JCRZYKtLV1NLPx48bOKMsTwjbh13Mwq6mGDLzNfigWMT3Vxoo4k3YkInEgZ5aWizFlWL++CJrg7GGIkDCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962091; c=relaxed/simple;
-	bh=In7dKHJWjfOxEtrVeI6kTSfrjwoLbH8IOv8sdxgIDL8=;
+	s=arc-20240116; t=1762962127; c=relaxed/simple;
+	bh=NiZ7ea35pME1fM3maEI5aXEnDEDvdt1SSghBc/AiFyk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J06AYqv5aOBr+YlffEUKFTPe6hElXaQcib7sEszzMOz6kXa1hiQdGtUZq5pr1wlwmvAJcH6fFelEZPBVNDDALJZj8iefkUzcfHCrj7zy+BaFfbEmCWyqD/K99qHARljTC6zXDJ9MYui5ljjrsZ8U7WZ6fyfNvEPnRmGVseKQWD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJXpY/Sz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1506201a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:41:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762962087; x=1763566887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqAC+UNeM+Yv6vfhs9gI86/DadbeV+G5Du2hkzLEz3I=;
-        b=bJXpY/SzO/yjQwhlVEQ+6s+5Zu0tiAcxx68C8nt0Z/E97ksjQQFIGndZaVevtI6q+3
-         W5IM0/xM99/IOzwq/DWfK+359Ny8m5krsq6Hl1pDT0iuT44Fv7G5Gcoti6sMv6X8qeu5
-         A8iQTdpgVUmIQahAPcvad7JYGdTDCSCXVG4R3R8vfUidblfEnLVwOVfAlDOqo4aiCyhc
-         NLCXtLdf0a1jjo8tz6qeNbPzyeZqTdCWT0fXj8uV+By4YnOhgVKMaeepQwMuOFVf7cv8
-         5JRNHjs5PE1FZwXToIEnU3ZxJ2Y5doV5oLzaUQgkPcf0AjV3cza0bqOke9Ys7rgbDgbV
-         5keQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762962087; x=1763566887;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vqAC+UNeM+Yv6vfhs9gI86/DadbeV+G5Du2hkzLEz3I=;
-        b=xEzY9VEJ/zqHToTcAf7gx+tiibnL/5C0IdacYhnC+UNsPPEvbMMmnm49GkFmu1EYrH
-         5QUpzu1vzrc6dxSSoQw4EbjhgEZp/0z97jcELEBe0GvFoDRgugQEUMfosgK+PtxaGF5I
-         /kchTCM8VdJNLDQ/CuaLrBg734IZJm+iLM/641lcVcxFVGLhDxRFjLD87+Z4EYewYSP6
-         US/Ehgpuy6VP08cmad4Mp+K6YfMlpAx7qrBJ3tCaLydl0Hj2S4R9g1/us2a14NGBlOE4
-         l2/Xj8dQ4D2g2Nddr1M3HR2w8dU6YgcmrOIo9ySGGNjC+G5TSdEu6BeZ7F4u94ux1196
-         bv2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXqZKEUfzFTFXHBTS3bOCoAuPRFtONrj6wppfKHmwCqbFB7XhkKU2QvOJ2X5MXdSNNh1S1jyN6fBPOQRHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl/pd4fUfg/RykFCnnA8WGXEan8vSF5vy5Cg7iLCl5lMe1+hgE
-	6YZRPYsU5euQTUtnoaIzLotc1Aet5ipkU+d529DUG7GaqaP6hiVp1sF7
-X-Gm-Gg: ASbGnctDVvCtpfy0J/hTXvdvE029ZPmhq/O5WffVU8Q1Ys0UKj17vj/+3rp0jGsQ2O7
-	BaPWtAubBtdHLeH5lAUOCeLxitaA0ZRavjXzhX1eV58xx7w/ug/r40nYKH2aHz7tvRt2jaunp5d
-	KgDK0eMeVOSawYnqKeCElTm5JMxk/rkKu3nHrtLjuCgJ8He4tWGq5SN+hC/unML4fOhQkcBuOXR
-	Ya6FMbrflCBikXC8QUNwaJwV4fOBDC96jJQ6W+IQF3KBGhzQoIFJxvwQT5IyhbHA24rBISbdm7Y
-	cfO57Lf0nKbBsiwfEWJSgSgk+Tvem3flvIHEHumcqO2BgP1oMPIuDtQ4RnxLTmegDZJLWTpdQAx
-	lmwc1WVrDPtsqk3CyF4fRk2L7g4ibE9gnsrqEXQ9uTYCmzeTthl/628B2dEx7gXYdEJWO6Q8oVJ
-	e8nUb0GMVyw80ytIi2ZbmIfH1bZ0oMLE5YBicu8kojJozGZeolwDKwxrd+Mn7eQGSKNmp3EQeMO
-	nuvyWIKmNiLsB0J
-X-Google-Smtp-Source: AGHT+IGQIG5IrOJDrZArdz6BGwNr4MHfKQAdEicjI7rp98rPdh1zbdlEJ7bGm3OfdRkb+f6C5SQ3tw==
-X-Received: by 2002:a17:906:d554:b0:b4f:e12e:aa24 with SMTP id a640c23a62f3a-b7331993fc8mr373774466b.22.1762962086629;
-        Wed, 12 Nov 2025 07:41:26 -0800 (PST)
-Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 07:41:26 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	 MIME-Version; b=sYydFLrRPEI8kxH9/em+b2S9b7o18kH/wRbrmcXsLb41UbTPdLrrjKcGIFr94rZQgC1pK2SUhTwYcSDWHK4WS0D1p7l75tiav5s/o36SFPeaqX5qvUqyAXOp0GHXspUyU3k5MsInLg4IjHD5s2L/NY6HqI6YohtZbNb9OrZczKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R37Sx87/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B4EC19423;
+	Wed, 12 Nov 2025 15:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762962127;
+	bh=NiZ7ea35pME1fM3maEI5aXEnDEDvdt1SSghBc/AiFyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R37Sx87/i8ZHQBhoTFE3dFsIlhXKSfafQa9RFcrnozAwKjGlQ6I43Gj+nu9r3YpI1
+	 wZJuXfNsCUjC5eZyWKbnO5syAAPhPOKJabI09QgxpnHGorsMMlgnyOKVbdwhnUS63I
+	 ONJdbjKKxW3SWgYr6p9SSeI/5zfJWBN355f90Acup8ovlYRmnS3yayYk1LT5pXP8Br
+	 Ewgc0WKL3TTUXbHtqcJb+uioWEM+TVWg4aBVN9oCiR4ovVv3IWjz/JkFd/EUnK9hTp
+	 P0UCtkGfo2OiALXDr5eMNuDw4caLVt5Mn+NZCCPvg8I5x+7XgkLkOQWt2Q8Nt25VSP
+	 mc6lX1AxKFFuw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	damon@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.au@gmail.com>,
-	stable@kernel.org
-Subject: [PATCH 2/7] ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
-Date: Wed, 12 Nov 2025 15:41:03 +0000
-Message-ID: <20251112154115.1048298-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
-References: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+	linux-mm@kvack.org,
+	llvm@lists.linux.dev
+Subject: [PATCH 1/9] mm/damon: rename damos core filter helpers to have word core
+Date: Wed, 12 Nov 2025 07:41:04 -0800
+Message-ID: <20251112154114.66053-2-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251112154114.66053-1-sj@kernel.org>
+References: <20251112154114.66053-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,83 +66,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+DAMOS filters handled by the core layer are called core filters, while
+those handled by the ops layer are called ops filters.  They share the
+same type but are managed in different places since core filters are
+evaluated before the ops filters.  They also have different helper
+functions that depend on their managed places.
 
-The strm->sample_width is not filled during rz_ssi_dai_hw_params(). This
-wrong value is used for caching sample_width in struct hw_params_cache.
-Fix this issue by replacing 'strm->sample_width'->'params_width(params)'
-in rz_ssi_dai_hw_params(). After this drop the variable sample_width
-from struct rz_ssi_stream as it is unused.
+The helper functions for ops filters have '_ops_' keyword on their name,
+so it is easy to know they are for ops filters.  Meanwhile, the helper
+functions for core filters are not having the 'core' keyword on their
+name.  This makes it easy to be mistakenly used for ops filters.
+Actually there was such a bug.
 
-Cc: stable@kernel.org
-Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+To avoid future mistakes from similar confusions, rename DAMOS core
+filters helper functions to have a keyword 'core' on their names.
+
+Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- sound/soc/renesas/rz-ssi.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ .clang-format         |  4 ++--
+ include/linux/damon.h |  4 ++--
+ mm/damon/core.c       | 14 +++++++-------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index f21b332b3656..039bec32cb5e 100644
---- a/sound/soc/renesas/rz-ssi.c
-+++ b/sound/soc/renesas/rz-ssi.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-+#include <sound/pcm_params.h>
- #include <sound/soc.h>
+diff --git a/.clang-format b/.clang-format
+index f371a13b4d19..748efbe791ad 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -140,8 +140,8 @@ ForEachMacros:
+   - 'damon_for_each_scheme_safe'
+   - 'damon_for_each_target'
+   - 'damon_for_each_target_safe'
+-  - 'damos_for_each_filter'
+-  - 'damos_for_each_filter_safe'
++  - 'damos_for_each_core_filter'
++  - 'damos_for_each_core_filter_safe'
+   - 'damos_for_each_ops_filter'
+   - 'damos_for_each_ops_filter_safe'
+   - 'damos_for_each_quota_goal'
+diff --git a/include/linux/damon.h b/include/linux/damon.h
+index f3566b978cdf..6e3db165fe60 100644
+--- a/include/linux/damon.h
++++ b/include/linux/damon.h
+@@ -871,10 +871,10 @@ static inline unsigned long damon_sz_region(struct damon_region *r)
+ #define damos_for_each_quota_goal_safe(goal, next, quota) \
+ 	list_for_each_entry_safe(goal, next, &(quota)->goals, list)
  
- /* REGISTER OFFSET */
-@@ -87,7 +88,6 @@ struct rz_ssi_stream {
- 	int dma_buffer_pos;	/* The address for the next DMA descriptor */
- 	int completed_dma_buf_pos; /* The address of the last completed DMA descriptor. */
- 	int period_counter;	/* for keeping track of periods transferred */
--	int sample_width;
- 	int buffer_pos;		/* current frame position in the buffer */
- 	int running;		/* 0=stopped, 1=running */
+-#define damos_for_each_filter(f, scheme) \
++#define damos_for_each_core_filter(f, scheme) \
+ 	list_for_each_entry(f, &(scheme)->filters, list)
  
-@@ -217,10 +217,7 @@ static inline bool rz_ssi_is_stream_running(struct rz_ssi_stream *strm)
- static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
- 			       struct snd_pcm_substream *substream)
+-#define damos_for_each_filter_safe(f, next, scheme) \
++#define damos_for_each_core_filter_safe(f, next, scheme) \
+ 	list_for_each_entry_safe(f, next, &(scheme)->filters, list)
+ 
+ #define damos_for_each_ops_filter(f, scheme) \
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index a14cc73c2cab..d4cb11ced13f 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -450,7 +450,7 @@ void damon_destroy_scheme(struct damos *s)
+ 	damos_for_each_quota_goal_safe(g, g_next, &s->quota)
+ 		damos_destroy_quota_goal(g);
+ 
+-	damos_for_each_filter_safe(f, next, s)
++	damos_for_each_core_filter_safe(f, next, s)
+ 		damos_destroy_filter(f);
+ 
+ 	damos_for_each_ops_filter_safe(f, next, s)
+@@ -864,12 +864,12 @@ static int damos_commit_quota(struct damos_quota *dst, struct damos_quota *src)
+ 	return 0;
+ }
+ 
+-static struct damos_filter *damos_nth_filter(int n, struct damos *s)
++static struct damos_filter *damos_nth_core_filter(int n, struct damos *s)
  {
--	struct snd_pcm_runtime *runtime = substream->runtime;
--
- 	rz_ssi_set_substream(strm, substream);
--	strm->sample_width = samples_to_bytes(runtime, 1);
- 	strm->dma_buffer_pos = 0;
- 	strm->completed_dma_buf_pos = 0;
- 	strm->period_counter = 0;
-@@ -982,9 +979,9 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
- {
- 	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
--	struct rz_ssi_stream *strm = rz_ssi_stream_get(ssi, substream);
- 	unsigned int sample_bits = hw_param_interval(params,
- 					SNDRV_PCM_HW_PARAM_SAMPLE_BITS)->min;
-+	unsigned int sample_width = params_width(params);
- 	unsigned int channels = params_channels(params);
- 	unsigned int rate = params_rate(params);
- 	int ret;
-@@ -1003,16 +1000,14 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
+ 	struct damos_filter *filter;
+ 	int i = 0;
  
- 	if (rz_ssi_is_stream_running(&ssi->playback) ||
- 	    rz_ssi_is_stream_running(&ssi->capture)) {
--		if (rz_ssi_is_valid_hw_params(ssi, rate, channels,
--					      strm->sample_width, sample_bits))
-+		if (rz_ssi_is_valid_hw_params(ssi, rate, channels, sample_width, sample_bits))
- 			return 0;
+-	damos_for_each_filter(filter, s) {
++	damos_for_each_core_filter(filter, s) {
+ 		if (i++ == n)
+ 			return filter;
+ 	}
+@@ -923,15 +923,15 @@ static int damos_commit_core_filters(struct damos *dst, struct damos *src)
+ 	struct damos_filter *dst_filter, *next, *src_filter, *new_filter;
+ 	int i = 0, j = 0;
  
- 		dev_err(ssi->dev, "Full duplex needs same HW params\n");
- 		return -EINVAL;
+-	damos_for_each_filter_safe(dst_filter, next, dst) {
+-		src_filter = damos_nth_filter(i++, src);
++	damos_for_each_core_filter_safe(dst_filter, next, dst) {
++		src_filter = damos_nth_core_filter(i++, src);
+ 		if (src_filter)
+ 			damos_commit_filter(dst_filter, src_filter);
+ 		else
+ 			damos_destroy_filter(dst_filter);
  	}
  
--	rz_ssi_cache_hw_params(ssi, rate, channels, strm->sample_width,
--			       sample_bits);
-+	rz_ssi_cache_hw_params(ssi, rate, channels, sample_width, sample_bits);
+-	damos_for_each_filter_safe(src_filter, next, src) {
++	damos_for_each_core_filter_safe(src_filter, next, src) {
+ 		if (j++ < i)
+ 			continue;
  
- 	ret = rz_ssi_swreset(ssi);
- 	if (ret)
+@@ -1767,7 +1767,7 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
+ 	struct damos_filter *filter;
+ 
+ 	s->core_filters_allowed = false;
+-	damos_for_each_filter(filter, s) {
++	damos_for_each_core_filter(filter, s) {
+ 		if (damos_filter_match(ctx, t, r, filter, ctx->min_sz_region)) {
+ 			if (filter->allow)
+ 				s->core_filters_allowed = true;
 -- 
-2.43.0
-
+2.47.3
 
