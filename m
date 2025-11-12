@@ -1,298 +1,172 @@
-Return-Path: <linux-kernel+bounces-897699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64460C53762
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:41:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD040C535F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47A66566BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:12:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D387135502E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73F340290;
-	Wed, 12 Nov 2025 16:05:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B65527E7EC;
-	Wed, 12 Nov 2025 16:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F69342525;
+	Wed, 12 Nov 2025 16:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P/+OniD4"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED2527E7EC
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963549; cv=none; b=TmL8zmRQ/gJ+3bGqjiBZK0dROnEHs/bqHNXDF0HzRTnh7Tk+1A26y6Sjao58V9WgRYc5BC+gcBTnOa+4ST58fk/hlS0ZclLOaDIehdy2y5mTF8/1QfpwnbSGcQwiAhWnzpXCn0E/wEO4j6vn0CHrWjKvuDrgZMAPFGV9gH+XgCQ=
+	t=1762963576; cv=none; b=uL00sVBv8zRIcbrhRMkoMzfIMlXkc0pn2Y9x0F/idug7EKg1/329WFY52fW9eG+T7Agt5t9IPKt9JX9UNbpeXDt72K4h4j/HJv0kgl1/uDWHiZdxVwlcwhTMFQGLjJZfDhCWsIPhWUBJlHniSnwqM8Pz+v0BNIVRlX7JMLcM8wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963549; c=relaxed/simple;
-	bh=K+/c8uCgTek1O3oZ8H4m0tzhea9uEHk0lzxGvXnkchM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZbJg+faPr87AdCrwr3qSRhxO6ChTK0JukquJUotqBX1TAXSYIqj1MBDLM+q1em/bCltfE7SHkbhp8lrIBLrE8fjaCktG+IUmf99015/a3KkBg+V1+PS4EsOB8/OyXNl1IRj5CIEtmSJlNN38zhJgjj58DkIQd78TEMlmvANIGrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84D762B;
-	Wed, 12 Nov 2025 08:05:38 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 647CF3F63F;
-	Wed, 12 Nov 2025 08:05:41 -0800 (PST)
-Message-ID: <2189df41-ca50-4e10-a65c-4c297f9dc63b@arm.com>
-Date: Wed, 12 Nov 2025 16:05:40 +0000
+	s=arc-20240116; t=1762963576; c=relaxed/simple;
+	bh=Tb8QWBachEzK293/rkkaGX5QoR2WIIDvyetwzLPF/dU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KlAjJtoXEqnyM6h5IOI0cLV0EW+rghFW3jTcIBqW5U97JE0xDiQyINV1NP9In3nBkpztFQidFDx8NNa9h2YmneJZKCipdvgX07kVWdkrXyqIRzP+CeqOt7IBlZTHmBXt/Hr6DZAkAldxxFp75JcbqtvrVBAHAEv6zD9ay8Z7VYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P/+OniD4; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4777707a7c2so8125735e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:06:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762963570; x=1763568370; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eSaK7KjpsRpJPsoshb/MU55TLjeahDB1ks0unKYBn4A=;
+        b=P/+OniD4oFPwK95EkkNwCjQ1gQLRbks1cLJYHWlMk+/oQamHe9jUPc+58MMhaS56gt
+         XtymMPz1wdweGsTUS3w2+YzyPgjyBH8K0sZGFIe36AeFCMJOUL+GySQfs4Kd/S21A7uo
+         UrzPBnKHilAqnsDb4lbNduIGrcMGxfncGplQGAiDsN6AuwC9UNxgcI31KzzmvFhd/EyS
+         /VUQNU69S8zmM7yXIF9zkEXlXdOpzOr7Qoexf4osZN7UPznXuWf6y1vHKy1LAUaLBhLK
+         henFRXpVN5BVFcwJ1ALl3qVoCGegF1Lk2IxaumIZJqNStSoZmahTIA9yonas/5N8bzK2
+         LW6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762963570; x=1763568370;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eSaK7KjpsRpJPsoshb/MU55TLjeahDB1ks0unKYBn4A=;
+        b=aPSPByVxJN7HYbDi7pZmlmg0AsmwZvnEsvIKzlGTU1xZQHM7Bqp1swH+kmsd6wVyQe
+         q1TQekS6y/8KJEb5naUjBIt8rxdvjUlpaTww00BVQWLTdZnSfDjCUBfsBtXGJMcO49Un
+         I23+uROVYlqu9IH+oCImW25jhkfVslhsCg7TQjrbOy33VAJURQhrgiOV11GP7nqj0mwV
+         2VmLIc9i6K5udidaChXtRrrhpD9ahYqXtpMOv/sTRgz7ziFNAolYEVaEy/SuzadKjWtS
+         IbyeKnBsvzaE2tT4OQp1ZHnKhcKurJw5lCC5En+uvPC7sjs6n2nhULCMJlW5ecm1pdTT
+         8+Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg6yFQONVrcxbS1W8lAOOqOY0q5MXy6rtHBsD1nYkXPIo4YTV7MU0qpslrzU2LUqQeB6EX+mvWDLiHO0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAkWHBY0Aa48XibYWxzECMSdMP9Pg9g4w/xMlAwrEvhJNwex9D
+	IFFIN5N6BnP2h76BX/OOSSpzuuNrxXEpo6ZYkU5KkiWxCGTT3awuQlJ4dAiNGSomQIc=
+X-Gm-Gg: ASbGncucLM74iDxuNxK8Blrew6BUbFH1HznR9jTZTPYA4osJupgj+nw49ZNXWo+5lYk
+	3Iljv8x8kCvK4JfyIUSSuHto6DUgvj4hrCuvtZndVCIY/ws8ITxOEySuPHciZHnnLkBdXfekonW
+	sMVKe0FmRz+PNvYa2vBbkaqIinBNolTE3JwdCgE8PxlaO4jCuMEX+VSB4Gi2Cp+di0C1mwtb3uy
+	37AEXJxEe76obQn+Ef5G458pL9YFDxHU2xkBtNZ1zmTzHh+37gbTzZ5n25jzXXudzGLiUvpzBkP
+	AVb0QlxWA5yMtEANtWeO9aEIze2IClgdHaAoz9vth3N+Xoc1YpDvLz7dnHQ2fT3naotVxd9Tpd0
+	svenWae1JxYU9Cg9dV5tVpg63je7QQ283Za5UT+QZog0r83nnJo5bsqlu3gbC/5CoFMR4vFdaCe
+	UHdH6sCY9NsZDBwEUV7THZc6ChjUlEoKs=
+X-Google-Smtp-Source: AGHT+IG6rFzEcxKdldL8ZJSA90DQKBh2V/CJToGQI/q5NdQAalijEOc2BYKjbz+pmbmuHRK+JHR6rQ==
+X-Received: by 2002:a05:600c:5247:b0:477:7f4a:44bd with SMTP id 5b1f17b1804b1-47787224955mr29777585e9.0.1762963570392;
+        Wed, 12 Nov 2025 08:06:10 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm41226855e9.12.2025.11.12.08.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 08:06:09 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 0/2] Add new phy_notify_state() api
+Date: Wed, 12 Nov 2025 16:05:57 +0000
+Message-Id: <20251112-phy-notify-pmstate-v4-0-717d78009d15@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
- kbuild boiler plate
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-11-ben.horgan@arm.com>
- <20251110165841.00005a74@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251110165841.00005a74@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGWwFGkC/3XOQWrDMBAF0KsErSszmvEkdla9R8lCiSV7oJWMJ
+ ExM8N0rB0opbZd/4L8/D5VdEpfV+fBQyS2SJYYa2peDuk02jE7LULNCQIYTkJ6nVYdYxK96/sj
+ FFqc94NUyd+iPrGpxTs7L/Ym+XWqeJJeY1ufGYvbrzrUGABEMMzdEhIY6jXp2xaVmTOK9hNd3C
+ TbFJqZR7dCCX+V/f1lQg/Y3c+yhpd6Y0y+Dvo3O/G1QNeg6WO6BeRjoh7Ft2ydU4cJ1NgEAAA=
+ =
+X-Change-ID: 20250703-phy-notify-pmstate-f02ba5582f65
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1976;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=Tb8QWBachEzK293/rkkaGX5QoR2WIIDvyetwzLPF/dU=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFLBvBMKx+UST6zAYRGgV+Ns9aJTxOwnsxasX4
+ V/1V6CwXvyJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRSwbwAKCRDO6LjWAjRy
+ uqy0D/9yeYWXP6i5RIKwe6GIAI0BWoqhXoXkNenwExXcitTNpZk414r9TMsa1jqI0fj3A1TSesq
+ KQSB+5+FFomF7mRj4i1z4ToYS8GlrBPBwm9JufqwjzQ7MTcN71JzReyMtUSEj9EkVFto7Pz891G
+ YWK6nTx+MqgDJcSZt2+DnKYJheWutFMpQVD4R5jHWncVFYj6Qpvlh9BOq5upOiWrIuvmzX5rV5f
+ ISp9AMu2FnLKjQhM+S7qEO5pPVD5zVPiRcAm6kcNTeX04ZFrm4fXiAouRy2YL01IbQx+NDtj+zE
+ RjELefMhdU9ZCALKPu7TAA2AFGq+N/0jamQ2epi8DV2vXIB5hHtZ0ie166LLLjAwScov+pSQs14
+ nmRel0AunzcRbXG0lCkKaMDKIptSLVygvTa2RpycBbGMuil7h1FSRO97whzFuM1d4h+pvArvwJr
+ Bcg2TqI8pzc9pHTKv2TJbcoe0PzR4J8V5h1GOzkkFd9N2EbVvLi/TjZZmCNaoejmCnstvGYcCmy
+ XjmZjy3wf7f+g3i2Zvdz/V4wY2R4C1p0u27OvTi97lSSMe7Tdx7Mmnwc0R7kCiVtm+nEjVcEeUj
+ /pjAW2PupbeOjVQ80H+NZJ+snaJN+X6fmmhqg3wuTwUne/3+7LEeEOEBe/OI3/lFidz3Ep710z4
+ dRvM7VGm26TWWMw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi Jonathan,
+This series adds a new phy_notify_state() API to the phy subsystem. It is
+designed to be used when some specific runtime configuration parameters
+need to be changed when transitioning to the desired state which can't be
+handled by phy_calibrate()or phy_power_{on|off}().
 
-On 11/10/25 16:58, Jonathan Cameron wrote:
-> On Fri, 7 Nov 2025 12:34:27 +0000
-> Ben Horgan <ben.horgan@arm.com> wrote:
-> 
->> From: James Morse <james.morse@arm.com>
->>
->> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
->> only be accessible from those CPUs, and they may not be online.
->> Touching the hardware early is pointless as MPAM can't be used until
->> the system-wide common values for num_partid and num_pmg have been
->> discovered.
->>
->> Start with driver probe/remove and mapping the MSC.
->>
->> CC: Carl Worth <carl@os.amperecomputing.com>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> 
-> Hi Ben,
-> 
-> A few minor things from a fresh read.
-> Nothing to prevent a tag though.
-> 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
+need to issue some register writes when entering and exiting the hibern8
+link state.
 
-Thanks!
+A separate patch will be sent for ufs-exynos driver to make use of this new
+API in the hibern8 callbacks.
 
-> 
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> new file mode 100644
->> index 000000000000..6c6be133d73a
->> --- /dev/null
->> +++ b/drivers/resctrl/mpam_devices.c
-> 
-> 
->> +
->> +static void mpam_msc_drv_remove(struct platform_device *pdev)
->> +{
->> +	struct mpam_msc *msc = platform_get_drvdata(pdev);
->> +
->> +	if (!msc)
->> +		return;
-> 
-> Agree with Gavin on this. If there is a reason this might be NULL
-> then a comment would avoid the question being raised again. If not
-> drop the check.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v4:
+- Add missing 'used' word in commit description (Vinod)
+- Fix 0-day compiler warning
+- Link to v3: https://lore.kernel.org/r/20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org
 
-Dropped.
+Changes in v3:
+- Rename API to phy_notify_state(). (Mani/Neil)
+- Remove inline kerneldoc comment (Mani)
+- s/phy/PHY (Mani)
+- peripheral specific enums in phy.h (Vinod)
 
-> 
->> +
->> +	mutex_lock(&mpam_list_lock);
->> +	mpam_msc_destroy(msc);
->> +	mutex_unlock(&mpam_list_lock);
->> +
->> +	synchronize_srcu(&mpam_srcu);
-> 
-> Trivial but perhaps a comment on why. I assume this is because the
-> devm_ cleanup isn't safe until after an RCU grace period?
+- Link to v2: https://lore.kernel.org/r/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org
 
-This becomes clearer in the next patch where it is moved into
-mpam_free_garbage() so I'll leave this bare.
+Changes in v2:
+- Add new phy_notify_pmstate API() instead of using phy_set_mode() (Vinod)
+- Link to v1: https://lore.kernel.org/r/20241002201555.3332138-1-peter.griffin@linaro.org
 
-> 
->> +}
->> +
->> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device *pdev)
->> +{
->> +	int err;
->> +	u32 tmp;
->> +	struct mpam_msc *msc;
->> +	struct resource *msc_res;
->> +	struct device *dev = &pdev->dev;
->> +
->> +	lockdep_assert_held(&mpam_list_lock);
->> +
->> +	msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
->> +	if (!msc)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	err = devm_mutex_init(dev, &msc->probe_lock);
->> +	if (err)
->> +		return ERR_PTR(err);
-> 
-> Trivial but I'd add a blank line here.
+---
+Peter Griffin (2):
+      phy: add new phy_notify_state() api
+      phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
 
-done
+ drivers/phy/phy-core.c                | 25 ++++++++++++++++++++++
+ drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c | 40 +++++++++++++++++++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.h |  7 ++++++
+ include/linux/phy/phy.h               | 19 +++++++++++++++++
+ 5 files changed, 119 insertions(+)
+---
+base-commit: b179ce312bafcb8c68dc718e015aee79b7939ff0
+change-id: 20250703-phy-notify-pmstate-f02ba5582f65
 
-> 
->> +	err = devm_mutex_init(dev, &msc->part_sel_lock);
->> +	if (err)
->> +		return ERR_PTR(err);
-> 
-> Trivial but I'd add a blank line here.
-
-done
-
-> 
->> +	msc->id = pdev->id;
->> +	msc->pdev = pdev;
->> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
->> +	INIT_LIST_HEAD_RCU(&msc->ris);
->> +
->> +	err = update_msc_accessibility(msc);
->> +	if (err)
->> +		return ERR_PTR(err);
->> +	if (cpumask_empty(&msc->accessibility)) {
->> +		dev_err_once(dev, "MSC is not accessible from any CPU!");
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	if (device_property_read_u32(&pdev->dev, "pcc-channel", &tmp))
->> +		msc->iface = MPAM_IFACE_MMIO;
->> +	else
->> +		msc->iface = MPAM_IFACE_PCC;
->> +
->> +	if (msc->iface == MPAM_IFACE_MMIO) {
->> +		void __iomem *io;
->> +
->> +		io = devm_platform_get_and_ioremap_resource(pdev, 0,
->> +							    &msc_res);
->> +		if (IS_ERR(io)) {
->> +			dev_err_once(dev, "Failed to map MSC base address\n");
->> +			return ERR_CAST(io);
->> +		}
->> +		msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
->> +		msc->mapped_hwpage = io;
->> +	} else {
->> +		return ERR_PTR(-ENOENT);
->> +	}
->> +
->> +	list_add_rcu(&msc->all_msc_list, &mpam_all_msc);
->> +	platform_set_drvdata(pdev, msc);
->> +
->> +	return msc;
->> +}
->> +
->> +static int mpam_msc_drv_probe(struct platform_device *pdev)
->> +{
->> +	int err;
->> +	struct mpam_msc *msc = NULL;
->> +	void *plat_data = pdev->dev.platform_data;
->> +
->> +	mutex_lock(&mpam_list_lock);
->> +	msc = do_mpam_msc_drv_probe(pdev);
->> +	mutex_unlock(&mpam_list_lock);
->> +	if (!IS_ERR(msc)) {
->> +		/* Create RIS entries described by firmware */
->> +		err = acpi_mpam_parse_resources(msc, plat_data);
->> +		if (err)
->> +			mpam_msc_drv_remove(pdev);
->> +	} else {
->> +		err = PTR_ERR(msc);
->> +	}
-> 
-> Seems convoluted. Not obvious to me why you can't do early exits on err and
-> having simpler flow. Maybe something more messy happens in patches after this
-> series to justify the complex approach.
-> 
-> 	if (IS_ERR(msc))
-> 		return PTR_ERR(msc);
-> 
-> 	/* Create RIS entries described by firmware */
-> 	err = acpi_mpam_parse_resources(msc, plat_data);
-> 	if (err) {
-> 		mpam_msc_drv_remove(pdev);
-> 		return err;
-> 	}
-> 
-> 	if (atomic_add_return(1, &mpam_num_msc) == fw_num_msc)
-> 		pr_info("Discovered all MSC\n");
-> 
-> 	return 0;
-
-It's still like this at the end of the current mpam snapshot branch so
-I'll simplify based on your suggestion.
-
-> 
->> +
->> +	if (!err && atomic_add_return(1, &mpam_num_msc) == fw_num_msc)
->> +		pr_info("Discovered all MSC\n");
->> +
->> +	return err;
->> +}
->> +
->> +static struct platform_driver mpam_msc_driver = {
->> +	.driver = {
->> +		.name = "mpam_msc",
->> +	},
->> +	.probe = mpam_msc_drv_probe,
->> +	.remove = mpam_msc_drv_remove,
->> +};
->> +
->> +static int __init mpam_msc_driver_init(void)
->> +{
->> +	if (!system_supports_mpam())
->> +		return -EOPNOTSUPP;
->> +
->> +	init_srcu_struct(&mpam_srcu);
->> +
->> +	fw_num_msc = acpi_mpam_count_msc();
->> +
-> 
-> Trivial but I'd drop this blank line to keep the call closely
-> associated with the error check.
-
-done
-
-> 
->> +	if (fw_num_msc <= 0) {
->> +		pr_err("No MSC devices found in firmware\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	return platform_driver_register(&mpam_msc_driver);
->> +}
->> +subsys_initcall(mpam_msc_driver_init);
-> 
-> 
-
-Thanks,
-
-Ben
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
 
