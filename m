@@ -1,216 +1,573 @@
-Return-Path: <linux-kernel+bounces-896592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E79C50BBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:38:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16E8C50BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA29188F881
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:37:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ADCE4345AC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3074D2E7182;
-	Wed, 12 Nov 2025 06:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01922DECCC;
+	Wed, 12 Nov 2025 06:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GUcNrX+e"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010049.outbound.protection.outlook.com [52.101.69.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nuwg5yJP"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CFA2E06EA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762929387; cv=fail; b=ZpYylWsm+wLQBYZntfjsPVCyeRy4Wh2AScsTZDaYt7bOgZe/adKN0pGcYOqc6aLyGbVgI1+q4qC8oYlI468BBU2MGkC4if8O9bNFUzgtcKCwpskNzyt+ERFa7uPkpc9CFP16EYnV1zfQ+rWWOc4wzFGcM0RwIjW3hcbQJ5XUA2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762929387; c=relaxed/simple;
-	bh=cKir5GY9MDPVxXpDKgg0UgEtFcz2CrFU9GyO/yNUjDE=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=iLzygSsGt6KlUC6WD/EFfMdpQ/Niy/kMst3BH+wO0sWm8uTqqN3q9uVakWPFL0zpS89tlUEsGXk0dGkc2v7Ifm6JtiZGhyrpQagYlQz5XQMgtEitiD+W4FedbOCI1X8ZQwov/IoHuqB6Bttm0G0Ht5AMyL2Tppp7QSLrHC2KMZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GUcNrX+e; arc=fail smtp.client-ip=52.101.69.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R1vTHNFyCTiz4VloRYNW5LXdYZIl16sC4+H3HEL8spMdela9FrbSsd5tGq7LF/O6qXAD1g5T50Sre1f12hHxpIJ7iUlKa3blusWTNF29JvshNmFmkjDLhRAMOwdCeq57TEgLEBXeYMQ/rK0vbxkXiazBKfMU7PKucpRTlw8QD037LF0u6fMYFskkqV+HmPj6hprF7kj0FBKu25MRLlzTwhJi8Jck250QxE+35J3vymwHVu8TwQhC0KEaYEoWA2SJX6OteIvYmGviZ0n7YxP2BnUUDgyyNhqWJYMNqNXZBU2RoqzWGZkmDzOgE143TUGoizXK+E/OAu7ZWs95JWHO6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a2wHNjMJIeExzSbRi+BrgexIPrcHFzYxr7myJ9CjTyU=;
- b=xEXlpCAJPp8e9BvMVRuxH4mgaqAfbjbjZBOTSL+3Bifh/sXtWTErYx+l7kIeboi14AlrOMXKIzG/9DUF55wUa85zVbMFvDdY/O4Ni8xpv/faZBHnhXZ/oUTPPKcvyCxSbB63StjfsxONMDC3o+H6//xvVfEWQtN16je6pR1h5ku8U/uZX8mmA7qCgihhe5Nb74uVHfpX1zhom2KkPHCBCmU0LzZIN/UEc8ms9lIyOqmEvftMSlkToebUqP5tsWnttoNo9RG+A8NxgnQHgQ6x9RDRkWlv2POrqPV+3cEwFzrxrXakaj+8v0T6D9eDlsbIPqvgzpNGscqIhKvafiWrXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a2wHNjMJIeExzSbRi+BrgexIPrcHFzYxr7myJ9CjTyU=;
- b=GUcNrX+eCVT+6i6cYAzyahFRSSIHBb0e3Qc+Cp0bQSyJI5oVDxJdJ7tMjMkP0xXgt3vIDbZrukUCMvivPxK2szpt7Y9txZsAo2JJr6sviKgPXmbfElfOzFIV9C+SQ7t3w9YgQarGlMY0GVLqtL0W0bQEuLdLP6aiKTHkSGdmn01QPVsv26m9fiLz45asUkYGGhaeoHgdl2qx4sEAeUTy2w0mOxOcmAuNmh0/HjYsH34N48V9xKvDTriX6Rwk/zPRt1KI0enAwdnySOMAOMv64XfvecXdjtTLNy+1Xz70FfX5QKNDbQ8WQ+O8SO8E5t7mQPzOUUl/HhdfHEoVe0HHZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by DB9PR04MB8187.eurprd04.prod.outlook.com (2603:10a6:10:24a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 06:36:22 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::868b:3935:5e0f:6a33]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::868b:3935:5e0f:6a33%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 06:36:22 +0000
-From: Haibo Chen <haibo.chen@nxp.com>
-Date: Wed, 12 Nov 2025 14:36:23 +0800
-Subject: [PATCH v2 5/5] mtd: spi-nor: micron-st: add comment for
- mt35xu02gcba
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-nor-v2-5-8699383714b9@nxp.com>
-References: <20251112-nor-v2-0-8699383714b9@nxp.com>
-In-Reply-To: <20251112-nor-v2-0-8699383714b9@nxp.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Haibo Chen <haibo.chen@nxp.com>, imx@lists.linux.dev
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762929419; l=1213;
- i=haibo.chen@nxp.com; s=20250421; h=from:subject:message-id;
- bh=cKir5GY9MDPVxXpDKgg0UgEtFcz2CrFU9GyO/yNUjDE=;
- b=L4kCKnU/2O6e/kHQbMqsrHXfWq2n/pGlbh0+fg/Of/x0O88hppd3if63gnI7QMMAb5uRlb1Ue
- PMb5NL2bjQMAjhY4mmqM81ZuBShaIoJgc/Qnto5ZZLbE4uELQVJcP1f
-X-Developer-Key: i=haibo.chen@nxp.com; a=ed25519;
- pk=HR9LLTuVOg3BUNeAf4/FNOIkMaZvuwVJdNrGpvKDKaI=
-X-ClientProxiedBy: SG2PR02CA0075.apcprd02.prod.outlook.com
- (2603:1096:4:90::15) To DU0PR04MB9496.eurprd04.prod.outlook.com
- (2603:10a6:10:32d::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329C42DC34F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762929411; cv=none; b=rk6uZObcpChLa5UYPRwkGoYqlBXyJfqzCuwyeSLa5okLLoFQ5KIny1ZZrBvcAv4ZEXJsc0cLA0Z/RjwenCyttLR+18TUe09+2ch1m7iDVONBht5r0ljIqYmR39UiRUKoV8Oo2NvEF35d4EKwMJyBdRmPXPkUttl0rhFqDG4Exek=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762929411; c=relaxed/simple;
+	bh=szxB9jRmUAby4WW7DVSAtb3bP6yrtBqm/jtsTU+xILM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TUujlSTTQQ2dtimuVm6j4thTbK4RGQOMTZO3CsVenHHRBXL1Qv5Av/b9vcm52yyaTl2cmV5JrFnrvl3ZUUcwCOvwbbTXyAZNvozleUVF4tEuGqLqpsqKf6qXiGjiZxBpPES48QIp8Y2HHTBFfe+coVPytSn0Q5J+Xrr8PH1/K0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nuwg5yJP; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so689111a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:36:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762929407; x=1763534207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tHexdMXg8MVVV0SV6KbAuZM5CQsqHGsr4VbouH3I49Q=;
+        b=Nuwg5yJPgLm8H7UST7pqXRSP7uy+DHFI5RGeATZ5zsV6edwR1jWwhv183nFjjcCbnl
+         m3e5Vl33Ue6wzlWBs1Daftj3wbUJz9hSgVq8pVjDGNmqXtCiZ4dYxW7rcs8BRw2eu1+G
+         rJFKellWqOlIvp4iOm4T7NJ5yNef7puWjsWpZ8CojiQejTJ3/r8necKzCNOb0wYdUyjE
+         neDSCmTvXdM7dVKB9uCTxhUoGP0kZkSJ/qFX/fmObm4GjvjXAtQjtx88n+FCEfBMopjV
+         hdHA1glohVNjk/A8AVL6p38C0vasZC8p126A/WRE0f9H8gohuUEZF9S5QTOrjHXgZPk5
+         Dqeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762929407; x=1763534207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tHexdMXg8MVVV0SV6KbAuZM5CQsqHGsr4VbouH3I49Q=;
+        b=TBzn2Zdr14s0rcy5BfrpGU4seurColeVkyyI/aXp/mk8Fe36jdB/PbNsAOKxnGQmE7
+         FAJ6hmH1+8RCTEwJTsLvb2YTweGDdnn2hn1RZdRRksu2w+xX5CpCEA3OE+su/VkyqAEG
+         Acn4fXCRfuxTcMdvfU1+aoagUGDWgPcvVKueUxdMOGS6u6afS12Qkp+ZByvVLEIwREoJ
+         0Yeun5CKj8VJgwX1VsavZlQCJWclVX1UjlIJ+9AqStrxerLIxooOERcI1PnURaeAT6ag
+         4hUatK5ZE9xRppG48UThw6Yl8XpyN7JLoEcjoHcalr5bdsuuvh7+Mw5ZMArUWcWgqZkL
+         DuQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxa5CgdWVDW4UdEgIymausNovab1AzajSsdhseHUY8/x3dSpMQMAq4CbcgD0wIuxaTocdrbNEgUIx4y5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7m5d6WkA0u9BcH1qbtIhA0FiG7oW0B9Y+Ivxa/o+S7nCtx+8X
+	grT7sJXuzJKQg8HQbl4qc0P1N+8e/UCZqWuJOnPshVe/O5tsIBvp/Gsxu5GTu337xFESvvWbl9Z
+	McjsaaLebDj2fQShx3rb853gCQbFqtpc=
+X-Gm-Gg: ASbGncuk432wl9QBGULUt6/YApCv555aKKI+RxSVYQBfv7VBQxqL9DROSq7O9vYnAmJ
+	TRH3ixXYtYjjGezUvqRe4LdVcg7IrfE+T7qjpOxvMYvNB3K9xtVLs3SWVtgVYaoL06UcLPPXDe4
+	Ijizlm7J42x1oUMAKmNw8A+MWmxSUnCP6b2GxRqWB2l5Ec2N+ZliYmyA+UkJbWaz9/4tXQsVlnK
+	mNsrDMDiOeY8a/1sqlU28YPkr6D6+ZVMgkFtvtU+x95F7x+umq5SWXTeCM5Iw==
+X-Google-Smtp-Source: AGHT+IGp09yX8xK0lhEC08OjOzOeqsg+0JfuMr5ylfPRbk9q+ScBW6sNSkJUXmDVLzUv9zbFcKx9AcEtjf7b9E5flh0=
+X-Received: by 2002:a17:907:7b8f:b0:b4a:d60d:fb68 with SMTP id
+ a640c23a62f3a-b7331970cd4mr155241566b.6.1762929407059; Tue, 11 Nov 2025
+ 22:36:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|DB9PR04MB8187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66e84fa5-8026-48e1-162f-08de21b5cba7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGRFcXNydVlkSnBORDQ5ZXp6dCt6QVZlZlQ5cnpHcUtyTWJaREl0TWhEL1dX?=
- =?utf-8?B?QW90bXZ4dm1pZEk5WG5NTmd5cm1OTmVlR0V1VDFpWDFGbnNuYURIU3QwK0Rt?=
- =?utf-8?B?dWhwZU93K2JzZkJjTTZXdklWdlRtZUdJbkNBTlQ0UnUyKytwNWJwTmtKSXFk?=
- =?utf-8?B?ekFyOFRqa0pJUmdRZ3BnbG4zNk9JYk9oRVRSbUx0ZkFGUzBjOFFLMENDYXBE?=
- =?utf-8?B?MTJaV1NkTmpMRC9EN055LzlrVjJLUWp4dzI2RGFqQnB4NjFXdDlUUlQ1bGxu?=
- =?utf-8?B?MWRxZ01jNGxDb0Z0WkFvdUNPZlhzV0NRMXpsWVFMOE90VjRiZG9MTTdnR010?=
- =?utf-8?B?NGJjdW5laTRaNDlMRW85Rkp6NTZBUFJKZTBBOGZtek5weEEwVUJMSFRxZkpM?=
- =?utf-8?B?eG5KblY0V2dSSi9WTGRKRXg5UDYzVGdDbWpZdFlhdWdDclhVOWRDc0NxN0Rv?=
- =?utf-8?B?VUo4Zm1NMTBkREV0WEdxTnBXd1JVYzh3V2ZRV0JiUGpXVXlOZTRnYThMSW1M?=
- =?utf-8?B?R2Q5aTZDZDI2NFl3eWk1eUFGc3Y1dElmREhNVXA4amxNYlQvcm1qS3RFRTM0?=
- =?utf-8?B?OTlSSXR5cVQ0bDVFWU9PaCttVTFEbEd0ZkJIb2UrVjBTd3VPeGRjNFlieCto?=
- =?utf-8?B?blA3dHNYZ0pvMXRWazBCOG9CenFIcUlSR0tTbnhTVnd1Tmp4cDFLODB0ak45?=
- =?utf-8?B?ZUZwcW9hQnhiVFdsWkg3eXJVbGdHRHl5VGx2QktsSTZDMnUwaUplUWd2aEVT?=
- =?utf-8?B?VVpCdm1NSVZnSnVlZUFwS1pVMUdlemxReUUvSFRsUGp4REMyTk42RjFseFV2?=
- =?utf-8?B?bkc5bktLMDV1ZTBQWVNKTjhFSzQ0T0RYM01IWVpyWmNtNjNoUS93NVNLZk50?=
- =?utf-8?B?NVhucUQvWjJEOG1PbllBQTZTa0wwOG90aWZDSmVKTng5bU5sRlVSNnVUUHEy?=
- =?utf-8?B?ZE1xVmhQVmZ3SmVrRllLcVJzbEo5RDBKL24wemNRckxuTkoyWFMyUlJMMGdV?=
- =?utf-8?B?dGc3WUNjMDYyRjNVVlFJbGw1cVNQV1JuQnZreE5PelZiSndzbDNRN2hWZ3dB?=
- =?utf-8?B?Q2hYUGlnU0x2RzllZUMyazUxL2lVdlJXeHJzVVB6UXp0RDFydHVVYzNxSE5q?=
- =?utf-8?B?bXkwWUdmUGVOeFJ4cWRnWUhma2lvUlF5c3c1bHRWbGpJYmdURXJPWjNsWEdw?=
- =?utf-8?B?dUU2SGxsZzFuRGgwNkI3NXYrTmVIZmRxVktPT0x1anVMdUJxT3Y1VWdhd1N4?=
- =?utf-8?B?cHhPQmVUc3RuMlNrRTJOeGNLYmVyMGZKc0g3NVRkUjk5K1o4RnZpRnhEcW9h?=
- =?utf-8?B?eG1VTTBXa1Y1RWd5MjZRcWVrVnBWdkhRRkVzcGtOYlp0dmM2aTk0V2lDM2pO?=
- =?utf-8?B?aitnOGdQTXMrV3RPOC9BNnJHc0wvWk9xaEJKQS9FN3BiTENSSXczYzAyd3dn?=
- =?utf-8?B?dlJXZk0xM3lKMFNLamt0aUIrRDY4NHg4QUFwWVlTOW1Rd2NEWlBTZjAreFhn?=
- =?utf-8?B?dlBvWU1xVEtESDh5TklDVk5mWE5tbXljalA1Y2YyaWhENG5wSkpIaFUrM0Uz?=
- =?utf-8?B?Q2ZWYUtsL3lPMGZmSHhvTFd2c1NCZ0FSc2M5bTVWV2YweUl1NjMzZ1JVb3Z3?=
- =?utf-8?B?ekFCSTFaRnhXSUlKMWVEQlNVanBaQUpOcXNmOER0VkxQVUxWak1Eckc1MlpH?=
- =?utf-8?B?ZlF3RitGWGR0WXhTNk9xczVZekR0TjNsd1J5a3hIWXhQK0NvWjd6YkR6Vjdh?=
- =?utf-8?B?dnB1WlRLTld5eWRUZFVWTE13ZmpRM05KYzNSeUJWWk9qK201aHBxVkwyaExm?=
- =?utf-8?B?YW9ReE9HVGRGOS9ranB6Z0tMVGl5WGtkNlEvRHk1Njl2aDdpTEM4d3dlYTRV?=
- =?utf-8?B?OEJnVnNacDZPamJiaFZCMUIrMTBZcTArQnhXK3pKQ1drUDVrZ3ZXRUtDaDli?=
- =?utf-8?B?QjVsVm91UnJYWVdFWVB2eW9oUTBMRnhoUzE1QlovSnN2aURuN08zUDRxQTJt?=
- =?utf-8?B?WU9LUFZrQ1ZRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RW1abE12YTJYdytiNmxiWGlibkJVdFRPc1NIeE5OYyt1SVcyaFRCVU5IYk1v?=
- =?utf-8?B?SCtHaU9MUUZPNk9ZTGZacm9EZWJQQUE4M1pQQm5HbWpHUFRneDBVV3E1QUR4?=
- =?utf-8?B?MzRJUHc4MWRaR0ZUeENCVWRuSDJyZjFvWUUycHFkZjRaOC9EcExVRi9PMDhZ?=
- =?utf-8?B?QVdRSWMrVUQrMTlCTHcraUJQNVJseXlXOC9jbm9tVWk2OGZzYlRyb0lYc1Js?=
- =?utf-8?B?R2hsd3gyd2pTVmJySnIvWEFXMGVYYUFMSFV6N1JMenFzd3JyYUJ4NklJWUp0?=
- =?utf-8?B?V3BpbVZVZk51L1RSRzhkNUF6MVJ1TG1sQmU1Z3diMXh3OEF0TXV2bitiSFk5?=
- =?utf-8?B?VTQrTGdjTVdKLzRaOVQ2RlVaZkdkOU5TR2dqTitmUmI3NGt5bThkTmJQNzht?=
- =?utf-8?B?cHJPYUhpbXlqc2pPNDJ1cTZQTG5kK1NLZWh4MTR3VERvZk0yNDY0VUhhRVRU?=
- =?utf-8?B?N3JQYWp3bUtLS0RyblNCcmJDUk5rVW1EZEhRNjNSamJMb2ZpZWUwRWJSdm1G?=
- =?utf-8?B?WWFxYXoyL0twZmJsTXVSWFErSEdtLzkrQXJIOERNTnlveEgxS0NDMUZJNEt0?=
- =?utf-8?B?UmlIMTZrem14T29MMWZoSEpldmlJcTJJV2w1eWdxeVRSY1FZTWhPVmpvdG03?=
- =?utf-8?B?VVpzSzEzNGNVRm1UeVdHMFdNZlhUTm5BKzdLZVZDV3hpQzVqSC9ISHRQNHFn?=
- =?utf-8?B?MTZ5TGFSL21Bc0lSWGhLSitTZUR6U3pjdTBiQWxBYStiaklReTdqQVRQbDJR?=
- =?utf-8?B?UDBRWGg2M2JoZDkzWG5qbmorbm93b29RTUJrZ0lhYXJyYURSN25pUXpRR3Yz?=
- =?utf-8?B?aTBySVVJTUIvSlFhT2hNRGxiOVlBeU1yd3EzUnlQYlcvejhVMm9HOTl3WkJD?=
- =?utf-8?B?WDg4dWY0SWtqVlZTdXNNQUdIcFpYZUZubDRCV3UyVERKR2lhK2s4TUlidEN6?=
- =?utf-8?B?cXk5bXl0T2FzUlpXU3BIbzV3ZjlrdUdpT1BzQVRpRmo1VU5ldWxFaWtFaHV0?=
- =?utf-8?B?OVB5K3hjamRmckhZSGlGeXpQQWZNSVpBQmNpdGMrY3dGK215UTM2M0NWa1Mz?=
- =?utf-8?B?cElqU3l1QlU2bSsrVWRMNzhLYXlNWEpPWktYYTcrcEh0WXZDRTA3VWN3Tlh1?=
- =?utf-8?B?NjV5cThoSnhaUWQzbllaTS9pRkVid3Q2RUpXWVB2aDN5TlVodVJXMkMwUDl0?=
- =?utf-8?B?Smo3NVhRdklWOHM5cmZOcnBFcmsvS1owV2tqTGNYQUZFYUxDcFpNT0FRaGFZ?=
- =?utf-8?B?NEU5eXVvL1hjOERXZVNaMXRFbGIwRUVBbGVIaXVDSkhSZjFGWWszQ05ibndH?=
- =?utf-8?B?WHNTTlBDUndnbHZsbjRiY3gxRUtwclhBUkdlYlRZSzBqT1dQcitkcHN5ZFM1?=
- =?utf-8?B?c0drRUlhbUtISG1aTGVrMWZ0NzZ1QVd1dlFFUXhVSzFkVGRBUldacmZ4elZu?=
- =?utf-8?B?V05pQnBacTdWektkN25UbUw4Y0pNd1JySHJuY1drQ0tHaEI0enFjVUEwK0NN?=
- =?utf-8?B?T09iMG1mUEVpeGF2LzRiNXRDM0NSUGIyaHQxZHlmeHZtL1BNcHYwOXJkbjRo?=
- =?utf-8?B?cTNVYVNqSWg4TW9zenBqNFhlZmwzUXdJZ3VWcFpQQ0E4MUgxQ3llUWszczRv?=
- =?utf-8?B?T1l6Q0NxN0s1dk5YUnRMWi9CQnBvSVZ6V1AzUS85NnFkdE5DcFhqNjY3U09X?=
- =?utf-8?B?YzhEcXBiMnVhUzU5Sk9UeXZyc2VXQWt3amIwUThBdVRkbjB5YmNXSnVPQWlM?=
- =?utf-8?B?K1RraGdiblRiY25TdGRuNDFSdWg4ck0vY2pqdkFUQkJIR21PV05mZU8veGFH?=
- =?utf-8?B?cG5pZktUeEtxVlZUU0lYSzBoNWIxRkxBVkpjY3d5TWkxNC84U0xqak5tSVRU?=
- =?utf-8?B?Q1BEdlB6ZzNqazJzaTJQelBwOGJiVHg4aXpoUnBXc1dBaW9BT2MyME9yNFNO?=
- =?utf-8?B?ZkhlSHE0NlZvb0ZpZnlHMGhCb0FESkxrRjVvK2JOUEFGUEtRa1FPWFZoQlBx?=
- =?utf-8?B?YXZkeFpKb09QSWRQVHkwc2RnL0R4cHRmR3NiR0ZMK29TL3NrT29TYUVRMTAy?=
- =?utf-8?B?cjZqdjMreFhQWExaZU5talZUTHFqVzMvRjZDZVN6Zis3OHB0NTZoeTJvVEdk?=
- =?utf-8?Q?t4JgZECH13PkyBa+M2hmbNLAB?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66e84fa5-8026-48e1-162f-08de21b5cba7
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:36:22.5753
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QtvGdD2TVkiK1qdicddT78Deoyd7PzQFmF6Eaumdv23MIL9SHMiy6pmkXMenJprcCXd0cIOIAi1zWIKNsJCjMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8187
+References: <20251112034333.2901601-1-dolinux.peng@gmail.com>
+In-Reply-To: <20251112034333.2901601-1-dolinux.peng@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 12 Nov 2025 14:36:33 +0800
+X-Gm-Features: AWmQ_bkOHw56BB79qgwKCf8b2DwuFkZAfAw01XLAy7WNoRn5ttcxvhbW8l32ZNQ
+Message-ID: <CAErzpmtkoK8BOXENF-GS6FHmLn+of3WVF9JTdiAuUDtua73_=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] function_graph: Enable funcgraph-args and
+ funcgraph-retaddr to work simultaneously
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Donglin Peng <pengdonglin@xiaomi.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-mt35xu02gcba is similar with mt35xu01gbba, but with four
-dies inside. According to datasheet, it contain SFDP and
-support 8D-8D-8D mode. Add comments here, remider to change
-the code in future if has a chance to test on this chip.
+On Wed, Nov 12, 2025 at 11:46=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.c=
+om> wrote:
+>
+> From: Donglin Peng <pengdonglin@xiaomi.com>
+>
+> Currently, the funcgraph-args and funcgraph-retaddr features are mutually=
+ exclusive.
+> This patch resolves this limitation by modifying funcgraph-retaddr to ado=
+pt the same
+> implementation approach as funcgraph-args, specifically by storing the re=
+turn address
+> in the first entry of the args array.
+>
+> As a result, both features now coexist seamlessly and function as intende=
+d.
+>
+> To verify the change, use perf to trace vfs_write with both options enabl=
+ed:
+>
+> Before:
+>  # perf ftrace -G vfs_write --graph-opts args,retaddr
+>  ......
+>  0)               |  down_read() { /* <-n_tty_write+0xa3/0x540 */
+>  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+>  0)   0.079 us    |    preempt_count_add(); /* <-down_read+0x3b/0x160 */
+>  0)   0.077 us    |    preempt_count_sub(); /* <-down_read+0x8b/0x160 */
+>  0)   0.754 us    |  }
+>
+> After:
+>  # perf ftrace -G vfs_write --graph-opts args,retaddr
+>  ......
+>  0)               |  down_read(sem=3D0xffff8880100bea78) { /* <-n_tty_wri=
+te+0xa3/0x540 */
+>  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+>  0)   0.079 us    |    preempt_count_add(val=3D1); /* <-down_read+0x3b/0x=
+160 */
+>  0)   0.077 us    |    preempt_count_sub(val=3D1); /* <-down_read+0x8b/0x=
+160 */
+>  0)   0.754 us    |  }
+>
+> Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
+> ---
+> v3:
+> - Replace min() with min_t() to improve type safety and maintainability
+> - Keep only one Signed-off-by for cleaner attribution
+> - Code refactoring for improved readability
+>
+> v2:
+> - Preserve retaddr event functionality (suggested by Steven)
+> - Store the retaddr in args[0] (suggested by Steven)
+> - Refactor implementation logic and commit message clarity
+> ---
+>  include/linux/ftrace.h               |  11 --
+>  kernel/trace/trace.h                 |   4 -
+>  kernel/trace/trace_entries.h         |   6 +-
+>  kernel/trace/trace_functions_graph.c | 145 ++++++++++++---------------
+>  4 files changed, 69 insertions(+), 97 deletions(-)
+>
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 7ded7df6e9b5..88cb54d73bdb 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
+>         int depth;
+>  } __packed;
+>
+> -/*
+> - * Structure that defines an entry function trace with retaddr.
+> - * It's already packed but the attribute "packed" is needed
+> - * to remove extra padding at the end.
+> - */
+> -struct fgraph_retaddr_ent {
+> -       unsigned long func; /* Current function */
+> -       int depth;
+> -       unsigned long retaddr;  /* Return address */
+> -} __packed;
+> -
+>  /*
+>   * Structure that defines a return function trace.
+>   * It's already packed but the attribute "packed" is needed
+> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+> index 85eabb454bee..9fac291b913a 100644
+> --- a/kernel/trace/trace.h
+> +++ b/kernel/trace/trace.h
+> @@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator =
+*iter);
+>  extern int __trace_graph_entry(struct trace_array *tr,
+>                                struct ftrace_graph_ent *trace,
+>                                unsigned int trace_ctx);
+> -extern int __trace_graph_retaddr_entry(struct trace_array *tr,
+> -                               struct ftrace_graph_ent *trace,
+> -                               unsigned int trace_ctx,
+> -                               unsigned long retaddr);
+>  extern void __trace_graph_return(struct trace_array *tr,
+>                                  struct ftrace_graph_ret *trace,
+>                                  unsigned int trace_ctx,
+> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+> index de294ae2c5c5..593a74663c65 100644
+> --- a/kernel/trace/trace_entries.h
+> +++ b/kernel/trace/trace_entries.h
+> @@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_reta=
+ddr_ent_entry,
+>         TRACE_GRAPH_RETADDR_ENT,
+>
+>         F_STRUCT(
+> -               __field_struct( struct fgraph_retaddr_ent,      graph_ent=
+       )
+> +               __field_struct( struct ftrace_graph_ent,        graph_ent=
+       )
+>                 __field_packed( unsigned long,  graph_ent,      func     =
+       )
+>                 __field_packed( unsigned int,   graph_ent,      depth    =
+       )
+> -               __field_packed( unsigned long,  graph_ent,      retaddr  =
+       )
+> +               __dynamic_array(unsigned long,  args                     =
+       )
+>         ),
+>
+>         F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->d=
+epth,
+> -               (void *)__entry->retaddr)
+> +               (void *)__entry->args[0])
+>  );
+>
+>  #else
+> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
+nctions_graph.c
+> index a7f4b9a47a71..f31eeeffbb2d 100644
+> --- a/kernel/trace/trace_functions_graph.c
+> +++ b/kernel/trace/trace_functions_graph.c
+> @@ -16,6 +16,15 @@
+>  #include "trace.h"
+>  #include "trace_output.h"
+>
+> +#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> +#define HAVE_RETADDR   1
+> +#define ARGS_OFFS(args_size) \
+> +       ((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
+> +#else
+> +#define HAVE_RETADDR   0
+> +#define ARGS_OFFS(args_size)   0
+> +#endif
+> +
+>  /* When set, irq functions will be ignored */
+>  static int ftrace_graph_skip_irqs;
+>
+> @@ -27,21 +36,25 @@ struct fgraph_cpu_data {
+>         unsigned long   enter_funcs[FTRACE_RETFUNC_DEPTH];
+>  };
+>
+> +/*
+> + * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
+> + * member repurposed for storage
+> + */
+>  struct fgraph_ent_args {
+>         struct ftrace_graph_ent_entry   ent;
+> -       /* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entrie=
+s */
+> -       unsigned long                   args[FTRACE_REGS_MAX_ARGS];
+> +       /*
+> +        * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAV=
+E_RETADDR)
+> +        * entries with the first entry storing the return address for
+> +        * TRACE_GRAPH_RETADDR_ENT.
+> +        */
+> +       unsigned long           args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR]=
+;
+>  };
+>
+>  struct fgraph_data {
+>         struct fgraph_cpu_data __percpu *cpu_data;
+>
+>         /* Place to preserve last processed entry. */
+> -       union {
+> -               struct fgraph_ent_args          ent;
+> -               /* TODO allow retaddr to have args */
+> -               struct fgraph_retaddr_ent_entry rent;
+> -       };
+> +       struct fgraph_ent_args          ent;
+>         struct ftrace_graph_ret_entry   ret;
+>         int                             failed;
+>         int                             cpu;
+> @@ -127,22 +140,43 @@ static int __graph_entry(struct trace_array *tr, st=
+ruct ftrace_graph_ent *trace,
+>         struct ring_buffer_event *event;
+>         struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+>         struct ftrace_graph_ent_entry *entry;
+> -       int size;
+> +       unsigned long retaddr =3D 0;
 
-Link: https://datasheet.octopart.com/MT35XU02GCBA1G12-0AAT-Micron-datasheet-138896808.pdf
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
----
- drivers/mtd/spi-nor/micron-st.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Remove the unnecessary initialization of retaddr. It will be assigned a pro=
+per
+value before use. Will fix it in the next version.
 
-diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
-index 6d081ec176c37249e5ddb724b61bd70f68088163..cc053b4d615ade3f12068618f8355779561dce55 100644
---- a/drivers/mtd/spi-nor/micron-st.c
-+++ b/drivers/mtd/spi-nor/micron-st.c
-@@ -206,6 +206,12 @@ static const struct flash_info micron_nor_parts[] = {
- 		.fixup_flags = SPI_NOR_IO_MODE_EN_VOLATILE,
- 		.fixups = &mt35xu01gbba_fixups,
- 	}, {
-+		/*
-+		 * MT35XU02GCBA contain SFDP, so no need the size
-+		 * and no_sfdp_flags here, should similar with
-+		 * MT35XU01GBBA, but with 4 dies. If someone can
-+		 * test on this chip, can change accordingly.
-+		 */
- 		.id = SNOR_ID(0x2c, 0x5b, 0x1c),
- 		.name = "mt35xu02g",
- 		.sector_size = SZ_128K,
-
--- 
-2.34.1
-
+> +       int size =3D sizeof(*entry);
+> +       int type =3D TRACE_GRAPH_ENT;
+> +       bool store_args =3D false;
+> +       int nr_args =3D 0, args_offs =3D 0;
+> +
+> +       if (tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+> +               retaddr =3D ftrace_graph_top_ret_addr(current);
+> +               type =3D TRACE_GRAPH_RETADDR_ENT;
+> +               nr_args +=3D 1;
+> +       }
+>
+>         /* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words =
+*/
+> -       size =3D sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeo=
+f(long));
+> +       if (tracer_flags_is_set(TRACE_GRAPH_ARGS)) {
+> +               store_args =3D !!fregs;
+> +               if (store_args)
+> +                       nr_args +=3D FTRACE_REGS_MAX_ARGS;
+> +       }
+>
+> -       event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size=
+, trace_ctx);
+> +       size +=3D nr_args * sizeof(long);
+> +       event =3D trace_buffer_lock_reserve(buffer, type, size, trace_ctx=
+);
+>         if (!event)
+>                 return 0;
+>
+>         entry =3D ring_buffer_event_data(event);
+>         entry->graph_ent =3D *trace;
+>
+> +       /* Store the retaddr in args[0] */
+> +       if (type =3D=3D TRACE_GRAPH_RETADDR_ENT) {
+> +               entry->args[0] =3D retaddr;
+> +               args_offs +=3D 1;
+> +       }
+> +
+>  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+> -       if (fregs) {
+> +       if (store_args) {
+>                 for (int i =3D 0; i < FTRACE_REGS_MAX_ARGS; i++)
+> -                       entry->args[i] =3D ftrace_regs_get_argument(fregs=
+, i);
+> +                       entry->args[i + args_offs] =3D ftrace_regs_get_ar=
+gument(fregs, i);
+>         }
+>  #endif
+>
+> @@ -158,38 +192,6 @@ int __trace_graph_entry(struct trace_array *tr,
+>         return __graph_entry(tr, trace, trace_ctx, NULL);
+>  }
+>
+> -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> -                               struct ftrace_graph_ent *trace,
+> -                               unsigned int trace_ctx,
+> -                               unsigned long retaddr)
+> -{
+> -       struct ring_buffer_event *event;
+> -       struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+> -       struct fgraph_retaddr_ent_entry *entry;
+> -
+> -       event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_E=
+NT,
+> -                                         sizeof(*entry), trace_ctx);
+> -       if (!event)
+> -               return 0;
+> -       entry   =3D ring_buffer_event_data(event);
+> -       entry->graph_ent.func =3D trace->func;
+> -       entry->graph_ent.depth =3D trace->depth;
+> -       entry->graph_ent.retaddr =3D retaddr;
+> -       trace_buffer_unlock_commit_nostack(buffer, event);
+> -
+> -       return 1;
+> -}
+> -#else
+> -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> -                               struct ftrace_graph_ent *trace,
+> -                               unsigned int trace_ctx,
+> -                               unsigned long retaddr)
+> -{
+> -       return 1;
+> -}
+> -#endif
+> -
+>  static inline int ftrace_graph_ignore_irqs(void)
+>  {
+>         if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT=
+))
+> @@ -211,7 +213,6 @@ static int graph_entry(struct ftrace_graph_ent *trace=
+,
+>         struct trace_array *tr =3D gops->private;
+>         struct fgraph_times *ftimes;
+>         unsigned int trace_ctx;
+> -       int ret =3D 0;
+>
+>         if (*task_var & TRACE_GRAPH_NOTRACE)
+>                 return 0;
+> @@ -262,15 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *trac=
+e,
+>                 return 1;
+>
+>         trace_ctx =3D tracing_gen_ctx();
+> -       if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
+> -           tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+> -               unsigned long retaddr =3D ftrace_graph_top_ret_addr(curre=
+nt);
+> -               ret =3D __trace_graph_retaddr_entry(tr, trace, trace_ctx,=
+ retaddr);
+> -       } else {
+> -               ret =3D __graph_entry(tr, trace, trace_ctx, fregs);
+> -       }
+> -
+> -       return ret;
+> +       return __graph_entry(tr, trace, trace_ctx, fregs);
+>  }
+>
+>  int trace_graph_entry(struct ftrace_graph_ent *trace,
+> @@ -634,13 +627,9 @@ get_return_for_leaf(struct trace_iterator *iter,
+>                          * Save current and next entries for later refere=
+nce
+>                          * if the output fails.
+>                          */
+> -                       if (unlikely(curr->ent.type =3D=3D TRACE_GRAPH_RE=
+TADDR_ENT)) {
+> -                               data->rent =3D *(struct fgraph_retaddr_en=
+t_entry *)curr;
+> -                       } else {
+> -                               int size =3D min((int)sizeof(data->ent), =
+(int)iter->ent_size);
+> +                       int size =3D min_t(int, sizeof(data->ent), iter->=
+ent_size);
+>
+> -                               memcpy(&data->ent, curr, size);
+> -                       }
+> +                       memcpy(&data->ent, curr, size);
+>                         /*
+>                          * If the next event is not a return type, then
+>                          * we only care about what type it is. Otherwise =
+we can
+> @@ -811,21 +800,21 @@ print_graph_duration(struct trace_array *tr, unsign=
+ed long long duration,
+>
+>  #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+>  #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
+> -static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retad=
+dr_ent_entry *entry,
+> -                               u32 trace_flags, bool comment)
+> +static void print_graph_retaddr(struct trace_seq *s, unsigned long retad=
+dr, u32 trace_flags,
+> +                               bool comment)
+>  {
+>         if (comment)
+>                 trace_seq_puts(s, " /*");
+>
+>         trace_seq_puts(s, " <-");
+> -       seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE=
+_ITER_SYM_OFFSET);
+> +       seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET)=
+;
+>
+>         if (comment)
+>                 trace_seq_puts(s, " */");
+>  }
+>  #else
+>  #define __TRACE_GRAPH_PRINT_RETADDR 0
+> -#define print_graph_retaddr(_seq, _entry, _tflags, _comment)           d=
+o { } while (0)
+> +#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)         d=
+o { } while (0)
+>  #endif
+>
+>  #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRA=
+PH_RETADDR)
+> @@ -869,10 +858,12 @@ static void print_graph_retval(struct trace_seq *s,=
+ struct ftrace_graph_ent_entr
+>                 trace_seq_printf(s, "%ps", func);
+>
+>                 if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+> -                       print_function_args(s, entry->args, (unsigned lon=
+g)func);
+> +                       print_function_args(s, entry->args + ARGS_OFFS(ar=
+gs_size),
+> +                                           (unsigned long)func);
+>                         trace_seq_putc(s, ';');
+> -               } else
+> +               } else {
+>                         trace_seq_puts(s, "();");
+> +               }
+>
+>                 if (print_retval || print_retaddr)
+>                         trace_seq_puts(s, " /*");
+> @@ -882,8 +873,7 @@ static void print_graph_retval(struct trace_seq *s, s=
+truct ftrace_graph_ent_entr
+>         }
+>
+>         if (print_retaddr)
+> -               print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *=
+)entry,
+> -                                   trace_flags, false);
+> +               print_graph_retaddr(s, entry->args[0], trace_flags, false=
+);
+>
+>         if (print_retval) {
+>                 if (hex_format || (err_code =3D=3D 0))
+> @@ -964,10 +954,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+>                 trace_seq_printf(s, "%ps", (void *)ret_func);
+>
+>                 if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+> -                       print_function_args(s, entry->args, ret_func);
+> +                       print_function_args(s, entry->args + ARGS_OFFS(ar=
+gs_size),
+> +                                           ret_func);
+>                         trace_seq_putc(s, ';');
+> -               } else
+> +               } else {
+>                         trace_seq_puts(s, "();");
+> +               }
+>         }
+>         trace_seq_putc(s, '\n');
+>
+> @@ -1016,7 +1008,7 @@ print_graph_entry_nested(struct trace_iterator *ite=
+r,
+>         args_size =3D iter->ent_size - offsetof(struct ftrace_graph_ent_e=
+ntry, args);
+>
+>         if (args_size >=3D FTRACE_REGS_MAX_ARGS * sizeof(long))
+> -               print_function_args(s, entry->args, func);
+> +               print_function_args(s, entry->args + ARGS_OFFS(args_size)=
+, func);
+>         else
+>                 trace_seq_puts(s, "()");
+>
+> @@ -1024,8 +1016,7 @@ print_graph_entry_nested(struct trace_iterator *ite=
+r,
+>
+>         if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
+>                 entry->ent.type =3D=3D TRACE_GRAPH_RETADDR_ENT)
+> -               print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *=
+)entry,
+> -                       tr->trace_flags, true);
+> +               print_graph_retaddr(s, entry->args[0], tr->trace_flags, t=
+rue);
+>         trace_seq_putc(s, '\n');
+>
+>         if (trace_seq_has_overflowed(s))
+> @@ -1202,7 +1193,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *fi=
+eld, struct trace_seq *s,
+>          * it can be safely saved at the stack.
+>          */
+>         struct ftrace_graph_ent_entry *entry;
+> -       u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)]=
+;
+> +       u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR=
+) * sizeof(long)];
+>
+>         /* The ent_size is expected to be as big as the entry */
+>         if (iter->ent_size > sizeof(save_buf))
+> @@ -1429,16 +1420,12 @@ print_graph_function_flags(struct trace_iterator =
+*iter, u32 flags)
+>                 trace_assign_type(field, entry);
+>                 return print_graph_entry(field, s, iter, flags);
+>         }
+> -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+>         case TRACE_GRAPH_RETADDR_ENT: {
+> -               struct fgraph_retaddr_ent_entry saved;
+>                 struct fgraph_retaddr_ent_entry *rfield;
+>
+>                 trace_assign_type(rfield, entry);
+> -               saved =3D *rfield;
+> -               return print_graph_entry((struct ftrace_graph_ent_entry *=
+)&saved, s, iter, flags);
+> +               return print_graph_entry((typeof(field))rfield, s, iter, =
+flags);
+>         }
+> -#endif
+>         case TRACE_GRAPH_RET: {
+>                 struct ftrace_graph_ret_entry *field;
+>                 trace_assign_type(field, entry);
+> --
+> 2.34.1
+>
 
