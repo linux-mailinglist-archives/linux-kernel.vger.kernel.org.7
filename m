@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-898090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F15FC5456D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:06:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD303C54487
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97AA4FD068
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:54:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E04A344DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A582D7DE4;
-	Wed, 12 Nov 2025 19:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2FC2BE7B6;
+	Wed, 12 Nov 2025 19:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G3dzzOCN"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JGIHrqir"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285402D6E74
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99382A1AA;
+	Wed, 12 Nov 2025 19:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762977207; cv=none; b=e0VUSYbu2pUfbYTtU0WqHGo/Gm6VSvSgPy5fTytJs8REd7vop3tGKBz+BTXdMAwEf+VC4DUwGSHb7oRGXQq4G4dqLluBDoiYQ50TaViujG5DumNALLDejaf196OTpYBk/cGwHOPuiidA2CUqg1pmM9wjhnHiAaa+7oXEPS1BJb8=
+	t=1762977325; cv=none; b=aPAT/B56r83Fb6YxF74KT6X2HH1PnNQgQyYXov3FXE8q1QoajVHJQfWph5bKKpfczJGoPMRWyBbWK7uY2/PKBJW6nn5QfULiI44zrKRF3h27jt5RT7Ue3uLVxry3bpm5zrk5qEv+X4B8TNeWnX/NEajcdkhMj7o8YleDH0COqqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762977207; c=relaxed/simple;
-	bh=V0KWJkkWP57M69eZSbl6MF20thMIqRQTy5N0N9OK3YU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=IKuT+LEfZCOaP0cKQQlnJMUayzjRaO6hCJRhtC2oOroNUekFvaKpjsfryhyMEhSANGjy/0TVaYr1nzLlZKrWoNJ94M+MKtCkXlkKQYx0rYGSsPIC4fzik1vK/Wqq9lDztDQUQGTBIOxr4Ojrut1np8dKAB+OqkNeIe8bX0Ik6wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G3dzzOCN; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b99763210e5so18989a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:53:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762977205; x=1763582005; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sf0aJeaxTeWu5QV0R458NriwUUamTc+0q0vKrwxanVw=;
-        b=G3dzzOCNfVSjLAjaxHPQDMaIenDAXbSoiKsuT1BIA+LstY1Hmgv4eoO3/WmiLUZCXC
-         MBYDCRVPJV7q1UIIh8UqIlXYXJ5dY0nGe3KYBkAQIfbagXSAVVLEBAidNPXibvPtgnuf
-         iTULhyf4LK4IitNqxs+GHxX6KgASyNAf94/JRuTPUXoZCVK0ePJy5NDlhmbqgknXrbXc
-         jhXwKQZ27E/vXISP/GltMo6hMpEmj6xUX0M51KvmC4SlHGqwV9PPi1XlrOYE0oCag/9L
-         TgBQ7Opuw43wq7a6EnQJkR/GdzvPc62eVZ3IehcgKmpSn38EnEMuB4kjF/WwKA5K7Qc5
-         cZNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762977205; x=1763582005;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sf0aJeaxTeWu5QV0R458NriwUUamTc+0q0vKrwxanVw=;
-        b=DHYhsoqmELcKCqSvQqfFzRP8NNNZMXR1kUHAmzoUdgoE1OLLfwzlY6hq45CqiuK089
-         YH7a2BvnlsiEHYcBz/KPtVNP2zdrwn8zNsdnhkTB7OPE0U7wA2317qP6biwYAlD1IR/D
-         DY+vjIdLV/yDKqU7vPJah1TG/G1Kxj2hrWYH2xQi8l0zkb32jEiBV2z5+yvzX+RwbsyD
-         JPaXRCXLGISE5v9Cn2Yt+4QKA4a8r0Ceg6v2Js6WsY1nZptvpaBKfNkIsWfXflSLGVgL
-         E9HXPsknUiQfUG/0rdLPQjRiYkYZ6f/dgdp5SyPrAhZ+ipMliT/DOsyUFcH0BUvCQvwJ
-         SCvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFgUTJnCQv++QbtlqKmgYlh2+Imc/i/LGP3LGLUMVNcBiyck9Tk9frj71aTBhIM0hMJh/OZBQUTZYrjr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSuTgiWtAon50CCP8I/xNDEWJQIz/zbDjLblGSaQ5anA3Ntp08
-	Ucg43vjLIdWRTbwOtzVWmLWBzo/4ncTBccp8dl3ngxhxb683OHHL9lcg3M0HteYyarpFVqWbS6T
-	U8ljlGkj42Q==
-X-Google-Smtp-Source: AGHT+IEawx7w00JKKScje92At3LUybXF4Jn0RR4rsvxGaZj5ql5/vEbJL4i+EbvSQME0ybNylUkue5E5gq8k
-X-Received: from dyx20.prod.google.com ([2002:a05:693c:8214:b0:2a4:6312:d053])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22c8:b0:295:59ef:809e
- with SMTP id d9443c01a7336-2984ed41fd6mr48593805ad.24.1762977205409; Wed, 12
- Nov 2025 11:53:25 -0800 (PST)
-Date: Wed, 12 Nov 2025 11:53:11 -0800
-In-Reply-To: <20251112195311.1673981-1-irogers@google.com>
+	s=arc-20240116; t=1762977325; c=relaxed/simple;
+	bh=S0S6i5la1txqFrXrKK4JmK43nKCDjYUpJt9MsOa+5vM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ldFsksARM+wAGXFmlOa/9ONDYT0iwXQEbjhQeOpyd1cwfw4nGuUkU6mr4NOIHFW7aUXRXS/QiK/48QXDa5YCbe2s1F/8bDVOmmJXS6Hf21Vaa57KjTD+S2lQ3zt0OIx7BJCatD8Cd4CcqWa2HcM4/n5+5vaFUAVbouHJOg1fXQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JGIHrqir reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACJtF0H967651
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 11:55:16 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACJtF0H967651
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762977316;
+	bh=O5eOHZHTSCCuTP+x7r5i/ost9DTOa3/7C1KRs5Wuqds=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JGIHrqiru7v0UOgMp6ume4jEzr8qZSnGT/SsYaq7pCSziEO8C0zuFi6YRbSpMmOl1
+	 1Rp1Ltw1TmOj6q4v6Bf1go5AZ9woSC60TMUiSLTMar32w4iaJzB2dkYUYFXzF6SbCn
+	 t02vRK/IshtfBWkSz8iGbSvenByuwoJA8xgFUiyjFeIep06dVeNIs0mpi/0+97DjAx
+	 J4i1Rj2bOTh23IATS3eOrIhc1+PMEWHxtgPPD5JjHOQ3Y9xaI5RPXBqqAtCXiZYnNO
+	 qyrlFB7llCjqzZYuTy6X8VKusecxpaZyeMWO2IEMRAVRK8vYlWBMoPWwazu8qm58Qn
+	 8rGoyjv4j83OQ==
+Message-ID: <dcf3c388-0927-4859-92c6-e52a281224cf@zytor.com>
+Date: Wed, 12 Nov 2025 11:55:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112195311.1673981-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112195311.1673981-5-irogers@google.com>
-Subject: [PATCH v2 4/4] perf stat: Display metric-only for 0 counters
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
+ <2025111214-doily-anyway-b24b@gregkh>
+ <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
+ <2025111241-domestic-moonstone-f75f@gregkh>
+ <DD67C0CF-D330-4D40-B610-FD3EB7AA0218@zytor.com>
+ <2025111227-equipment-magnetism-1443@gregkh>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <2025111227-equipment-magnetism-1443@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-0 counters may occur in hypervisor settings but metric-only output is
-always expected. This resolves an issue in the "perf stat STD output
-linter" test.
+On 2025-11-12 11:39, Greg KH wrote:
+> Trimming out stuff to get to the real questions:
+> 
+> On Wed, Nov 12, 2025 at 11:12:22AM -0800, H. Peter Anvin wrote:
+>> Things that I have identified, at least in my opinion:
+>>
+>> 1. Opening a device for configuration as opposed to data streaming; in the tty case that doesn't just improve the DTR# and RTS# issue but allows setserial, configuring line disciplines and so on.
+>>
+>> As I have said, this is application-specific intent, which is why I strongly believe that it needs to be part of the open system call. I furthermore believe that it would have use cases beyond ttys and serial ports, which is why I'm proposing a new open flag as opposed to a sysfs attribute, which actually was my initial approach (yes, I have already prototyped some of this, and as referenced before there is an existing patchset that was never merged.)
+> 
+> I think this is going to be the most difficult.  I don't remember why I
+> rejected the old submission, but maybe it would have modified the
+> existing behaviour?  A new open flag "O_DO_NOT_TOUCH_ANYTHING" might be
+> the simplest?
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/stat-display.c | 3 +++
- 1 file changed, 3 insertions(+)
+That was exactly my proposal - see the header of this thread :)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 5ac9854f8c58..6d02f84c5691 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -913,6 +913,9 @@ static bool should_skip_zero_counter(struct perf_stat_config *config,
- 	if (verbose == 0 && counter->skippable && !counter->supported)
- 		return true;
- 
-+	/* Metric only counts won't be displayed but the metric wants to be computed. */
-+	if (config->metric_only)
-+		return false;
- 	/*
- 	 * Skip value 0 when enabling --per-thread globally,
- 	 * otherwise it will have too many 0 output.
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+>> 3. The only way to determine the type of a tty driver is reading and parsing /proc/tty/drivers; that information is exported neither through ioctl nor sysfs. Exporting *that* through sysfs is probably the easiest of all the improvements.
+> 
+> The "type" is interesting.  We keep adding new "types" of serial ports
+> to the uapi list, and they don't really show up very well to userspace,
+> as you say.  Adding this export to sysfs is fine with me, but we should
+> make it a string somehow, and not just a random number like the current
+> types are listed as, to give people a chance to keep track of this.
+> 
+> So yes, this too should be done.
+
+I meant to add this to the previous email -- the obvious choice (and what is
+in my prototype) is to use the same string as is currently exposed in
+/proc/tty/drivers.
+
+	-hpa
 
 
