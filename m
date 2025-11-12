@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-896397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AD8C5043A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:59:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C673C5046D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A15B3AA0BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:59:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37B33B39D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9704729AB1D;
-	Wed, 12 Nov 2025 01:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FB1299AAA;
+	Wed, 12 Nov 2025 01:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nsgAEFK7"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dDEMgj8B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB66E21ADCB;
-	Wed, 12 Nov 2025 01:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C69296BB6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762912736; cv=none; b=PrT93BX7PPDNvSU1mgZZIeLHseCmcUQmjPPV3AacTA1SShKUIkHUI6FW2bLnlAVi2b/yR4R00HTHTcbYNxdVwzblNXE39qvX0Y6cbZ6IGKtqYJawr38HnuhASZPY1vNcB9cFRQ6VxB/ICvEb8QAuKRa+HHYj2O/mTy95YTchcME=
+	t=1762912792; cv=none; b=j333QYEqUMgpSzUdo8PkBu1EPs6b1037/DBgfoxRMA7HeGekKFFr1WvU+mtz6Zpld01uGPcDMKEmLwFGvuV346dV9gnORqWp07cf9dRnabJnmGbte2/HbWY+AoaYpPt2Np1k9K0MN0nKektYPsxGf6jsk5C+55NyRNMwFAh5qNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762912736; c=relaxed/simple;
-	bh=Wri0oARE9fYYweuln30312GKw9s15M6V/6eoGk212C8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=isGmKe67qFG5FVyg+LuW/bBP2/BtkmJqCQxwJZ4ySGPJ+1z64gqBMyFOk8lCZTfwH0+g51db47p88eBfEVmrFRxnZBxpHx2TOHMCwVSHdsQeCbvnYQaSAdGgSqEqNRnX/b8kOWrZHSiuwhVMvzWWJYN9jbHRfowJhctFQxKOzEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nsgAEFK7; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=4NGVOMoFoiYK8NHpr6+aDzLHn4o8fKsUT+YnbH38cQc=;
-	b=nsgAEFK7w6R/ueKq5W+USJKU8iwoWNGUVqjvqa+ZGS+/mNxMTC2XtkOItgPGdbPyBZzreEtBP
-	BigFrBS/NqJn1NH88gXlWhN3vXq/Axg5ukB+OJhCaJ2G+ArBtgrVNqfwWf02s4OU9tqm863zloE
-	PNofJq0NuN8VJc6iyu1k1hg=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d5mjz1D9Bz1prM1;
-	Wed, 12 Nov 2025 09:57:11 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D5011400D9;
-	Wed, 12 Nov 2025 09:58:51 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Nov 2025 09:58:50 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 12 Nov 2025 09:58:50 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <arnd@arndb.de>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<akpm@linux-foundation.org>, <anshuman.khandual@arm.com>,
-	<ryan.roberts@arm.com>, <andriy.shevchenko@linux.intel.com>,
-	<herbert@gondor.apana.org.au>, <linux-kernel@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-crypto@vger.kernel.org>, <linux-api@vger.kernel.org>
-CC: <fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
-	<qianweili@huawei.com>
-Subject: [PATCH RFC 4/4] arm64/io: Add {__raw_read|__raw_write}128 support
-Date: Wed, 12 Nov 2025 09:58:46 +0800
-Message-ID: <20251112015846.1842207-5-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20251112015846.1842207-1-huangchenghai2@huawei.com>
-References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1762912792; c=relaxed/simple;
+	bh=Wfr3708VkOzQuU9pmmB7aToKJOPuRgH/eukxjbY9KU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEegDF4HH/q/dzicBKau2YP7akCOKBkypV7azB63QocLE7A9A+D+s0VOtlj/i3QjBBRw7OorVF1/6mSD83MvRjog9qB49T9EyHWp/2SUaMdiKvZ0NPPXJLvWD0+61tywPvY8ijgU91rZyQQuVULe2Ba6hanQm4zdKxTUf1pGUhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dDEMgj8B; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762912787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wngBwJkqZcDDqt4ItO4kcRZbl92Nxn6rjpRy3iP5nl0=;
+	b=dDEMgj8BcWzCgUBB5abIQHl10Pas6yrpF82tpOqJekbDX5wK4b9ZAxDeNZaNq/eAFMzF64
+	gl7V4QzyJ7KZl2OIOB6Y++SL2xQa1F80gFg3lVOEkM3TIgqzcIKQDmU2qTpEN/M0NlWA+f
+	l0InVqbDHnQgeDSOq9KiJ9bCsfAY3z0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-AcWe2vnTNfGQGEaV41nhWQ-1; Tue,
+ 11 Nov 2025 20:59:44 -0500
+X-MC-Unique: AcWe2vnTNfGQGEaV41nhWQ-1
+X-Mimecast-MFC-AGG-ID: AcWe2vnTNfGQGEaV41nhWQ_1762912782
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F243219560B2;
+	Wed, 12 Nov 2025 01:59:41 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.179])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D790D18004D8;
+	Wed, 12 Nov 2025 01:59:36 +0000 (UTC)
+Date: Wed, 12 Nov 2025 09:59:31 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Keith Busch <kbusch@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as
+ number of bvecs
+Message-ID: <aRPqA1XGWnY4YpIm@fedora>
+References: <20251111191530.1268875-1-csander@purestorage.com>
+ <aRPcdmpZoet2fwbu@fedora>
+ <CADUfDZovn5fPh_E6GGvGkPYbW12L2z6BS4jPkpQjuEjNd=bRGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+In-Reply-To: <CADUfDZovn5fPh_E6GGvGkPYbW12L2z6BS4jPkpQjuEjNd=bRGA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-From: Weili Qian <qianweili@huawei.com>
+On Tue, Nov 11, 2025 at 05:44:18PM -0800, Caleb Sander Mateos wrote:
+> On Tue, Nov 11, 2025 at 5:01 PM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > On Tue, Nov 11, 2025 at 12:15:29PM -0700, Caleb Sander Mateos wrote:
+> > > io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
+> > > the number of bvecs in the request. However, bvecs may be split into
+> > > multiple segments depending on the queue limits. Thus, the number of
+> > > segments may overestimate the number of bvecs. For ublk devices, the
+> > > only current users of io_buffer_register_bvec(), virt_boundary_mask,
+> > > seg_boundary_mask, max_segments, and max_segment_size can all be set
+> > > arbitrarily by the ublk server process.
+> > > Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
+> > > loop actually yields. However, continue using blk_rq_nr_phys_segments()
+> > > as an upper bound on the number of bvecs when allocating imu to avoid
+> > > needing to iterate the bvecs a second time.
+> > >
+> > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > > Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
+> >
+> > Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> >
+> > BTW, this issue may not be a problem because ->nr_bvecs is only used in
+> > iov_iter_bvec(), in which 'offset' and 'len' can control how far the
+> > iterator can reach, so the uninitialized bvecs won't be touched basically.
+> 
+> I see your point, but what about iov_iter_extract_bvec_pages()? That
+> looks like it only uses i->nr_segs to bound the iteration, not
+> i->count. Hopefully there aren't any other helpers relying on nr_segs.
 
-Starting from ARMv8.4, stp and ldp instructions become atomic.
-Currently, device drivers depend on 128-bit atomic memory IO access,
-but these are implemented within the drivers. Therefore, this introduces
-generic {__raw_read|__raw_write}128 function for 128-bit memory access.
+iov_iter_extract_bvec_pages() is only called from iov_iter_extract_pages(),
+in which 'maxsize' is capped by i->count. 
 
-Signed-off-by: Weili Qian <qianweili@huawei.com>
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
----
- arch/arm64/include/asm/io.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> If you really don't think it's a problem, I'm fine deferring the patch
+> to 6.19. We haven't encountered any problems caused by this bug, but
+> we haven't tested with any non-default virt_boundary_mask,
+> seg_boundary_mask, max_segments, or max_segment_size on the ublk
+> device.
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 83e03abbb2ca..80430750a28c 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -50,6 +50,17 @@ static __always_inline void __raw_writeq(u64 val, volatile void __iomem *addr)
- 	asm volatile("str %x0, %1" : : "rZ" (val), "Qo" (*ptr));
- }
- 
-+#define __raw_write128 __raw_write128
-+static __always_inline void __raw_write128(u128 val, volatile void __iomem *addr)
-+{
-+	u64 low, high;
-+
-+	low = val;
-+	high = (u64)(val >> 64);
-+
-+	asm volatile ("stp %x0, %x1, [%2]\n" :: "rZ"(low), "rZ"(high), "r"(addr));
-+}
-+
- #define __raw_readb __raw_readb
- static __always_inline u8 __raw_readb(const volatile void __iomem *addr)
- {
-@@ -95,6 +106,16 @@ static __always_inline u64 __raw_readq(const volatile void __iomem *addr)
- 	return val;
- }
- 
-+#define __raw_read128 __raw_read128
-+static __always_inline u128 __raw_read128(const volatile void __iomem *addr)
-+{
-+	u64 high, low;
-+
-+	asm volatile("ldp %0, %1, [%2]" : "=r" (low), "=r" (high) : "r" (addr));
-+
-+	return (((u128)high << 64) | (u128)low);
-+}
-+
- /* IO barriers */
- #define __io_ar(v)							\
- ({									\
--- 
-2.33.0
+IMO it should belong to v6.18: your fix not only makes code more robust, but
+also it is correct thing to do.
+
+I am just thinking why the issue wasn't triggered because we have lots of
+test cases(rw verify, mkfs & mount ...) 
+
+> 
+> >
+> > Otherwise, the issue should have been triggered somewhere.
+> >
+> > Also the bvec allocation may be avoided in case of single-bio request,
+> > which can be one future optimization.
+> 
+> I'm not sure what you're suggesting. The bio_vec array is a flexible
+> array member of io_mapped_ubuf, so unless we add another pointer
+> indirection, I don't see how to reuse the bio's bi_io_vec array.
+> io_mapped_ubuf is also used for user registered buffers, where this
+> optimization isn't possible, so it may not be a clear win.
+
+io_mapped_ubuf->acct_pages can be one field reused for the indirect
+pointer, please see lo_rw_aio() about how to reuse the bvec array.
+
+Thanks,
+Ming
 
 
