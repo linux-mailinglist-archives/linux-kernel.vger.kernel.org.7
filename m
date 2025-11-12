@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-896782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8671C5132D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F449C5138F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76251892D98
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0533B9BDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070022FD67B;
-	Wed, 12 Nov 2025 08:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RqdeNE9W";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5XX9Dx12"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B92FD7B4;
+	Wed, 12 Nov 2025 08:51:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C032F83A3;
-	Wed, 12 Nov 2025 08:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7862F616C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937490; cv=none; b=sN6g6mJQKMvJEPqwbIf8E+KhQz4v4k6IVXafd+5+PUUcD606hR5vEBGv6v9c3HwQFnRG430xQyUkyWO8PSPuCbWrWKchYpFZs88NUg3BfyuId20T2V+efpm3BqLLm4AADX6rmHlGF9KFKpf27NpRJvt666EVa1E/k1LIVj6I4TY=
+	t=1762937503; cv=none; b=Wkh2wuV0i2QqFjqx67R7r4MugFEJMiWEbv3z3ADM2bWjbpzBpS1daDiidRIoJPVPs7eyw07HT5lTvyZW+H26s0dtI5lXx4zKZjsVxBAzYtlSs+3pLdT92fzFeXPOuTHdRFYwv8xjsmdiokJxHu68vbIKR9pGSyOTLvSsU5O+0vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937490; c=relaxed/simple;
-	bh=kywgyA5FQhs8oTkjYjD9AFdb6TMZcC4VTRRosKwcu6o=;
+	s=arc-20240116; t=1762937503; c=relaxed/simple;
+	bh=ofDGwQnGMQnzPFS/07xi7dEXMK7njim+0IicHZYUAoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwu2iKmBunlY+hBc0Q1pBeU3SZuRtd/ObBXKFFwj5nwUyJOMHPaiPvwQ3o6m6oyq5c2n6eFdVSDDgdDdY0gTEeDYTzGYHXAnN+nM06WwtMBqDmch4mUn/BvhmiFBcF5GBUes+4iaNL6DxTMQ0EEYXD1QVo6YryR8mwYMOduSnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RqdeNE9W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5XX9Dx12; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 12 Nov 2025 09:51:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762937487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mBQp5we3WQzNUr+PZJkPqi9yKHhRHyihXOTm5iJHE5M=;
-	b=RqdeNE9WVxzF6JfkZqhPy54fYG98A573xXX6VDuMmXALlr/i4ZNejefpnEeRPr9tqm7nme
-	QVUMdVDat9o1RnGZBI1tTqahIWNaVw/WUMl56/TOfjwJ8IQa+1L6Ifk27C1R49mxh7MZWq
-	tx1T/8B8YjuzkERYyID647GQUPIuaOGWaW6pccjuJ6nvvsMb7yLhHZY8A241tNEsb+nXg6
-	TYqWq0dMYCYqJvtwe7QIVSO4KH63s6flRkeUWgdVMVNqMxw9CQzaBa3n3LsvVQWGp7ZClU
-	p21B3TmecXzrop7qWgiFziSjt7TdO9lxW7TMxTjZgdt420siwdVWfZQppDeC4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762937487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mBQp5we3WQzNUr+PZJkPqi9yKHhRHyihXOTm5iJHE5M=;
-	b=5XX9Dx124mDAOrpgt9BjA2WxZS5h7LCCkV3H4UL9UAaOnFsLq/wVDI/fQatJiO0WI2WIFG
-	x9b7WEkh7W+YYMDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Chen Ridong <chenridong@huawei.com>, Pingfan Liu <piliu@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [cgroup/for-6.19 PATCH] cgroup/cpuset: Make callback_lock a
- raw_spinlock_t
-Message-ID: <20251112085124.O5dlZ8Og@linutronix.de>
-References: <20251112035759.1162541-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=izRMWjHou0cCKiNiSzV0nQSBAkmGWmZ7Log1zlS9nf4lhs3Hs/VBuFLP92x13s6t8z3cLut6dYNE5WtN8zk7b08doSgszZaUw/zEBWtUARiukSDgaN0pJy2U5gzwe7DtLx/GColcNsu6SAPAKcOQ3+c1PmFq/H+XDQn/nf2cReg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6Zh-0002vV-QM; Wed, 12 Nov 2025 09:51:33 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6Zh-0003Iq-1s;
+	Wed, 12 Nov 2025 09:51:33 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 3F80B49D940;
+	Wed, 12 Nov 2025 08:51:33 +0000 (UTC)
+Date: Wed, 12 Nov 2025 09:51:32 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: mailhol@kernel.org, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: janz-ican3: Fix a typo error for DESC_INVALID
+Message-ID: <20251112-interesting-loutish-booby-aaf75f-mkl@pengutronix.de>
+References: <20251103064934.4611-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gf27c4y5fcurbnai"
 Content-Disposition: inline
-In-Reply-To: <20251112035759.1162541-1-longman@redhat.com>
+In-Reply-To: <20251103064934.4611-1-chuguangqing@inspur.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2025-11-11 22:57:59 [-0500], Waiman Long wrote:
-> The callback_lock is a spinlock_t which is acquired either to read
-> a stable set of cpu or node masks or to modify those masks when
-> cpuset_mutex is also acquired. Sometime it may need to go up the
-> cgroup hierarchy while holding the lock to find the right set of masks
-> to use. Assuming that the depth of the cgroup hierarch is finite and
-> typically small, the lock hold time should be limited.
 
-We can't assume that, can we?
+--gf27c4y5fcurbnai
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: janz-ican3: Fix a typo error for DESC_INVALID
+MIME-Version: 1.0
 
-> Some externally callable cpuset APIs like cpuset_cpus_allowed() and
+On 03.11.2025 14:49:34, Chu Guangqing wrote:
+> The macro definition DESC_IVALID should be DESC_INVALID, as there is a
+> spelling error here.
 
-cpuset_cpus_allowed() has three callers in kernel/sched/ and all use
-GFP_KERNEL shortly before invoking the function in question.
+Have you taken a look at the manual? Does it talk about IVALID or
+INVALID?
 
-> cpuset_mems_allowed() acquires callback_lock with irq disabled to ensure
-This I did not find. But I would ask to rework it somehow that we don't
-need to use raw_spinlock_t as a hammer that solves it all.
+regards,
+Marc
 
-> stable cpuset data. These APIs currently have the restriction that they
-> can't be called when a raw spinlock is being held. This is needed to
-> work correctly in a PREEMPT_RT kernel. This requires additional code
-> changes to work around this limitation. See [1] for a discussion of that.
-> 
-> Make these external cpuset APIs more useful by changing callback_lock
-> to a raw_spinlock_t to remove this limitation so that they can be called
-> from within other raw spinlock critical sections if needed.
-> 
-> [1] https://lore.kernel.org/lkml/20251110014706.8118-1-piliu@redhat.com/
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>  drivers/net/can/janz-ican3.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/can/janz-ican3.c b/drivers/net/can/janz-ican3.c
+> index 1efdd1fd8caa..7ae1f4ba4627 100644
+> --- a/drivers/net/can/janz-ican3.c
+> +++ b/drivers/net/can/janz-ican3.c
+> @@ -62,7 +62,7 @@
+>  #define DESC_VALID		0x80
+>  #define DESC_WRAP		0x40
+>  #define DESC_INTERRUPT		0x20
+> -#define DESC_IVALID		0x10
+> +#define DESC_INVALID		0x10
+>  #define DESC_LEN(len)		(len)
+>
+>  /* Janz ICAN3 Firmware Messages */
+> @@ -1723,11 +1723,11 @@ static netdev_tx_t ican3_xmit(struct sk_buff *skb=
+, struct net_device *ndev)
+>  	ican3_put_echo_skb(mod, skb);
+>
+>  	/*
+> -	 * the programming manual says that you must set the IVALID bit, then
+> +	 * the programming manual says that you must set the INVALID bit, then
+>  	 * interrupt, then set the valid bit. Quite weird, but it seems to be
+>  	 * required for this to work
+>  	 */
+> -	desc.control |=3D DESC_IVALID;
+> +	desc.control |=3D DESC_INVALID;
+>  	memcpy_toio(desc_addr, &desc, sizeof(desc));
+>
+>  	/* generate a MODULbus interrupt to the microcontroller */
+> --
+> 2.43.7
+>
+>
+>
 
-Sebastian
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--gf27c4y5fcurbnai
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSpEACgkQDHRl3/mQ
+kZykbQf/Uy5O2fZcbDo8YvVPBploWYszh6LQ2z7lJJoBub5ZiiT8bVNti53+sDVn
+OqjBLpV37FKdcaVB8Csstx6Nv3iLA0XDQdHI22oEFEpz/R+y9nhxkSFcwDscFcLU
+zM7f/Jz9MUqaJ5nYkGOF5ZOwl+y0MEphifDVACj3cM/U++lkVfJlnH9+Q7qItBy3
+cH3qkek3OQqoI8qwuREjbzLKEa3gHh492bss2M+9tyA7vAITupRfYa7Dzxv0XnPz
+gclyAOR5JQJdJrHt90Rpl7yCPSsZA8ZhaLmDdkw/orJJiqWYCEdCNL8L6n+dTMZk
+S30oeH4DWAwSNW21+iuPVGhvmRCtlQ==
+=4f0+
+-----END PGP SIGNATURE-----
+
+--gf27c4y5fcurbnai--
 
