@@ -1,195 +1,338 @@
-Return-Path: <linux-kernel+bounces-896878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D86C51764
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:51:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DD6C51770
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D7204FA8C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:40:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C17D9503082
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F272FF668;
-	Wed, 12 Nov 2025 09:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1829F2FFDF8;
+	Wed, 12 Nov 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZRG+Ddoq"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Zx/X6FB/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43502FDC5C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3843F2FFDCB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940389; cv=none; b=kk0apXUje89bs9n0EEGZ0GKrDf1gH2MVt/QrtkgpKAOKKqEdZSde2gqRdr+tEy1dDUeSE59+Wfh14SKRKefYyFDhnOFgBS0NP4TYN1CaOkyLpo3kmlSkSTATrlM1UHHcxQPvmmo/MAcL4FHOm0lVEqFyTJLDv8FZNtFdWbeS2kc=
+	t=1762940422; cv=none; b=LmoNzJwdZYiX7vK/ZR7t1hPOrVBNcZ8VC5n4UNR/3qODOk0oaCb+XiVb40Ijg77jAhFS9fiJ4xWGaJWVIVPUGVJC8tZIDrySh4wwXUwWarUq8I3HKguK3DtOThKIZXsvpuTO6Q1IyWpTKJD2HftKYZGZAkklPzHJFAmfg2EpH0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940389; c=relaxed/simple;
-	bh=XP3zVEDuJXzXClQ0do6m+eEmqEvNrjIuZbPC/rg0ds0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoHYMHbYHOfamBp8/6CpG948xM7ln3kLu4NwU+Q/HNdUEPB5g19Ja3SGBH2DrtIBTsaXqk8kQm2r2e2/8KK4zyotIs0UBy6s2/LqYZWzyiJcXT+FjJ76sbeniuMZN/oW9lshGXa+AiBuJl/AfIRZ1EbW42IsbkO+LNlNSOZfSr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZRG+Ddoq; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6418b55f86dso801136a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762940386; x=1763545186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMF8ALsV864vheQzgDcfGk5BNkQop27BuXXH8eM/nR4=;
-        b=ZRG+Ddoqz/frIVZQVpDLof3VggCyZD5cXhoM1Vb1XxUWtYIbdg42+Da++jCiMxgloP
-         Gu2I2ESmXOm3UNoDfgR97cTtr85HeWH9h17q/qesQQ7LVh03wKO+w+iVcG6SUNE/YS5Q
-         hfe6qtgUG8Y77lzd9Hp87oAwjpKGYr/cFMNl8QQx63Foopc8MRd9+n+WcEIk96pCAZRk
-         u2DVGN92fKXC9o6pAQaFq5pyhI+D3K3nkfum4ZPnjoO50UTcYYU83anTMcRZbDNyv1xv
-         BvVrzbXVrYjv2+m3uTKnj06wdJnVFzYBLOvbWubSRval9zucwWvvki/r3m8AYyBGf5jr
-         qRFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762940386; x=1763545186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMF8ALsV864vheQzgDcfGk5BNkQop27BuXXH8eM/nR4=;
-        b=ZLuHJhb0nFsxLu8pbd/gsXEkrwOI7LO5DgicPuHbxd57PVPmK1aEf9xCRMAK4KqLWF
-         pdGb9CCTLHzqYblDOtwfN/Xf0Db9NFoUsDhyxohKwz0aXIInwiu4KOtHUAeOKgicDcUW
-         wOvGd7gHL8QgpQD2WcUMi8vroVAhaNl53ESCaG2ZRPQ5QvxSaEAbQhSOpL6sXPS6E/rv
-         +ghedQ8a83DQX3kN/uO9RedBr/4avAvaZ8DQgcG/2GMUcpjs05zAcY7/+uQJfwT62uXU
-         q4sZQcBwBKb3wafZVNuxOEp/krFWlv7KgBF7AEsgsv7/MZu47yC8942rzEr0owmy/jFu
-         3Aqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEHdSNjgq/E7H5Us6EWN4syEZGzR16H9Oi7BqA/rAA4xlyTkzQ5KS1IqYHhHuSUN3ZEs4XuULybALomZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJI3cO2z2/0olivaI+I6Om/rBmH+lun38jt1cpROtyAGUS/6Am
-	SW/X8dDkD8V/ESBeLZ91lQyWqo27obySVW1akv3lVwV6wnsfZaO1KFqJQ7gDrX+Ks/4=
-X-Gm-Gg: ASbGnctgd5cKKaD6+9sAeQa9O6ZPu2DNguuAQFXPo3CagUjbIr7wdFu5SiaNTsghOPK
-	O3vn6FJrPMwpyxjiGNnJeSgswph9gm4zV8c6SPxOrsDsUmFrpMX3AKtpcEgOpHtwFeQr0uSFs+t
-	g5KLnqvkP+oaG7xlX1mOpZo6dKc83NJ52ax2l2VJApnbdnjIInxK834C2U/+Hp0nlUvakcd0fz2
-	mbj4x5lOPlr4bf1XpiH2+DwGaYWVfkfYfgpGTcER2cbHpn6ue7IujGws1ftwCasIWfqBeUQ13hq
-	nUGanBSV6N3URsLz5ENSpPXj9vg/tIsRrH1Bn0LKkzQBygb5MkCCrpB6CH2zR/w3Pl3n+HQ4g2J
-	lCdPX1AI8BTazoJrJDRloNowdYr8CNVUQFA/FTd684n6k3w2g8DzZEm2TMZkzf5p+f2Ym6yIgDR
-	H54Pw=
-X-Google-Smtp-Source: AGHT+IHqkOBG3QT37sypafGY0arEyaeulcMIFbw4A7vB4hFyHSAIml6v9aGckPIeEnDDTFYftumN3A==
-X-Received: by 2002:a05:6402:2706:b0:640:b978:efdb with SMTP id 4fb4d7f45d1cf-6431a55e1e8mr1943716a12.25.1762940386139;
-        Wed, 12 Nov 2025 01:39:46 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64166d06531sm9914810a12.27.2025.11.12.01.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 01:39:45 -0800 (PST)
-Date: Wed, 12 Nov 2025 10:39:43 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Junrui Luo <moonafterrain@outlook.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"tiwai@suse.com" <tiwai@suse.com>,
-	"perex@perex.cz" <perex@perex.cz>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"awalls@md.metrocast.net" <awalls@md.metrocast.net>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/4] lib/sprintf: add scnprintf_append() helper function
-Message-ID: <aRRV3yo9KHZV7sBM@pathway.suse.cz>
-References: <20251107051616.21606-1-moonafterrain@outlook.com>
- <SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
- <20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
- <20251107091246.4e5900f4@pumpkin>
- <aQ29Zzajef81E2DZ@smile.fi.intel.com>
- <aQ3riwUO_3v3UOvj@pathway.suse.cz>
- <20251107175123.70ded89e@pumpkin>
- <aRHzJIFkgfHIilTl@pathway.suse.cz>
- <SYBPR01MB788101676D637353D4E27F64AFCFA@SYBPR01MB7881.ausprd01.prod.outlook.com>
+	s=arc-20240116; t=1762940422; c=relaxed/simple;
+	bh=9LemPI6dEBdIsuc+KqTiCA+ZnJqK+WHO49VQMdC44Ik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pcR4OGiu3yZiRvvsVySBVhM19Vg43PWpJzy1ClWD3E3xyow2+NEJ8wSSWLRNcCtlEl4wCLbeVHnib/gOWQqUnjEEsw2MtFbieNhKAR+8ZZxXdIXFIEmSl9bAzOwLyR4kOQJxWczee/+5OZZZogEUzg7vQDiWG2Lcc42pm1GGKN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Zx/X6FB/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E9FDE82E;
+	Wed, 12 Nov 2025 10:38:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762940296;
+	bh=9LemPI6dEBdIsuc+KqTiCA+ZnJqK+WHO49VQMdC44Ik=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zx/X6FB/r2e6LOIW+RoFnufxJAesn1qsZEDLHxmzUE55uzbVJNwJrHbs5p3bKY0w+
+	 wijsLRhCuw30J/m+4oUCTN1vBfAEmixEgy7EVYVxDp40al6aLIegpKjYkp07dsDVY0
+	 +OTOBBkzCAijTRHPLVZI0/SEuV3PMh4XIlu2KXXE=
+Message-ID: <5fc8eb00-9ecc-494b-8bf3-6239d2a7e1ab@ideasonboard.com>
+Date: Wed, 12 Nov 2025 11:40:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SYBPR01MB788101676D637353D4E27F64AFCFA@SYBPR01MB7881.ausprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] drm/tidss: Remove max_pclk_khz and min_pclk_khz
+ from tidss display features
+To: Swamil Jain <s-jain1@ti.com>, aradhya.bhatia@linux.dev, devarsht@ti.com,
+ mripard@kernel.org, jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com,
+ simona@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, h-shenoy@ti.com
+Cc: praneeth@ti.com, u-kumar1@ti.com, vigneshr@ti.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251104151422.307162-1-s-jain1@ti.com>
+ <20251104151422.307162-2-s-jain1@ti.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20251104151422.307162-2-s-jain1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 2025-11-11 13:31:00, Junrui Luo wrote:
-> On Mon, Nov 10, 2025 at 03:13:56PM +0100, Petr Mladek wrote:
-> > On Fri 2025-11-07 17:51:23, David Laight wrote:
-> > > On Fri, 7 Nov 2025 13:52:27 +0100
-> > > Petr Mladek <pmladek@suse.com> wrote:
-> > > 
-> > > > On Fri 2025-11-07 11:35:35, Andy Shevchenko wrote:
-> > > > > On Fri, Nov 07, 2025 at 09:12:46AM +0000, David Laight wrote:  
-> > > > > > On Thu, 6 Nov 2025 21:38:33 -0800
-> > > > > > Andrew Morton <akpm@linux-foundation.org> wrote:  
-> > > > > > > On Fri,  7 Nov 2025 13:16:13 +0800 Junrui Luo <moonafterrain@outlook.com> wrote:  
-> > > > > 
-> > > > > ...
-> > > > >   
-> > > > > > That is true for all the snprintf() functions.
-> > > > > >   
-> > > > > > > I wonder if we should instead implement a kasprintf() version of this
-> > > > > > > which reallocs each time and then switch all the callers over to that.  
-> > > > > > 
-> > > > > > That adds the cost of a malloc, and I, like kasprintf() probably ends up
-> > > > > > doing all the work of snprintf twice.
-> > > > > > 
-> > > > > > I'd be tempted to avoid the strlen() by passing in the offset.
-> > > > > > So (say):
-> > > > > > #define scnprintf_at(buf, len, off, ...) \
-> > > > > > 	scnprintf((buf) + off, (len) - off, __VA_ARGS__)  
-> > > > 
-> > > > It does not handle correctly the situation when len < off.
-> > > > Othersise, it looks good.
-> > > 
-> > > That shouldn't happen unless the calling code is really buggy.
-> > > There is also a WARN_ON_ONCE() at the top of snprintf().
-> > 
-> > Fair enough.
-> > 
-> > BTW: I have found there exists a userspace library which implements
-> > this idea, the funtion is called vsnoprintf(), see
-> > https://arpa2.gitlab.io/arpa2common/group__snoprintf.html
-> > 
-> > I know that it is cryptic. But I like the name. The letters "no"
-> > match the ordering of the parameters "size, offset".
-> > 
-> > In our case, it would be scnoprintf() ...
-> > 
+Hi,
+
+On 04/11/2025 17:14, Swamil Jain wrote:
+> From: Jayesh Choudhary <j-choudhary@ti.com>
 > 
-> Thanks for the feedback. Based on the discussion above, I plan to prepare a v2 patch.
-> int scnprintf_append(char *buf, size_t size, const char *fmt, ...)
-> {
-> 	va_list args;
-> 	size_t len;
+> The TIDSS hardware does not have independent maximum or minimum pixel
+> clock limits for each video port. Instead, these limits are determined
+> by the SoC's clock architecture. Previously, this constraint was
+> modeled using the 'max_pclk_khz' and 'min_pclk_khz' fields in
+> 'dispc_features', but this approach is static and does not account for
+> the dynamic behavior of PLLs.
 > 
-> 	len = strnlen(buf, size);
-> 	if (len == size)
-> 		return len;
-> 	va_start(args, fmt);
-> 	len += vscnprintf(buf + len, size - len, fmt, args);
-> 	va_end(args);
-> 	return len;
-> }
-> EXPORT_SYMBOL(scnprintf_append);
-
-I am fine with this. Just please add a comment that that it can be
-inefficient when using massively because it does strlen().
-I see similar comment in "CAVEATS" section in man 3 strcat.
-
-> I agree that using a macro like David suggested, with an explicit offset, is a reasonable and efficient approach.
-> The `scnprintf_append()` function, however, does not require such a variable; though if used improperly, it could introduce an extra `strlen()` overhead.
+> This patch removes the 'max_pclk_khz' and 'min_pclk_khz' fields from
+> 'dispc_features'. The correct way to check if a requested mode's pixel
+> clock is supported is by using 'clk_round_rate()' in the 'mode_valid()'
+> hook. If the best frequency match for the mode clock falls within the
+> supported tolerance, it is approved. TIDSS supports a 5% pixel clock
+> tolerance, which is now reflected in the validation logic.
 > 
-> However, if the consensus is to prefer the macro approach, I can rework the series to use `scnoprintf()`, as suggested by Petr instead.
+> This change allows existing DSS-compatible drivers to be reused across
+> SoCs that only differ in their pixel clock characteristics. The
+> validation uses 'clk_round_rate()' for each mode, which may introduce
+> additional delay (about 3.5 ms for 30 modes), but this is generally
+> negligible. Users desiring faster validation may bypass these calls
+> selectively, for example, checking only the highest resolution mode,
+> as shown here[1].
 > 
-> That said, I believe `scnprintf_append()` also has its merits:
-> it simplifies one-off string constructions and provides built-in bound checking for safety.
-> Some existing code that appends strings in the kernel lacks proper bound checks, and this function could serve as a graceful replacement.
-> The benefits were also demonstrated in other patches.
+> [1]: https://lore.kernel.org/all/20250704094851.182131-3-j-choudhary@ti.com/
+> 
+> Tested-by: Michael Walle <mwalle@kernel.org>
+> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 86 +++++++++++------------------
+>  drivers/gpu/drm/tidss/tidss_dispc.h |  3 -
+>  2 files changed, 31 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index d0b191c470ca..b11880178cba 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -57,12 +57,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  };
+>  
+>  const struct dispc_features dispc_k2g_feats = {
+> -	.min_pclk_khz = 4375,
+> -
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 150000,
+> -	},
+> -
+>  	/*
+>  	 * XXX According TRM the RGB input buffer width up to 2560 should
+>  	 *     work on 3 taps, but in practice it only works up to 1280.
+> @@ -145,11 +139,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  };
+>  
+>  const struct dispc_features dispc_am65x_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_OLDI_AM65X] = 165000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -245,11 +234,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  };
+>  
+>  const struct dispc_features dispc_j721e_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 170000,
+> -		[DISPC_VP_INTERNAL] = 600000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 2048,
+>  		.in_width_max_3tap_rgb = 4096,
+> @@ -316,11 +300,6 @@ const struct dispc_features dispc_j721e_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am625_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_INTERNAL] = 170000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -377,15 +356,6 @@ const struct dispc_features dispc_am625_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am62a7_feats = {
+> -	/*
+> -	 * if the code reaches dispc_mode_valid with VP1,
+> -	 * it should return MODE_BAD.
+> -	 */
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_TIED_OFF] = 0,
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -442,10 +412,6 @@ const struct dispc_features dispc_am62a7_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am62l_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>  	.subrev = DISPC_AM62L,
+>  
+>  	.common = "common",
+> @@ -1333,33 +1299,54 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+>  			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+>  }
+>  
+> +/*
+> + * Calculate the percentage difference between the requested pixel clock rate
+> + * and the effective rate resulting from calculating the clock divider value.
+> + */
+> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> +{
+> +	int r = rate / 100, rr = real_rate / 100;
+> +
+> +	return (unsigned int)(abs(((rr - r) * 100) / r));
+> +}
+> +
+> +static inline int check_pixel_clock(struct dispc_device *dispc,
+> +			     u32 hw_videoport, unsigned long clock)
+> +{
 
-I think that both functions might have their users. You might consider
-adding the other variant when doing the conversions.
+Ah... Sorry, I was quite unclear in my comment to v7. I did not mean
+mark it as inline. I meant "move it inline", i.e. move this code into
+the dispc_vp_mode_valid function. This is just a few lines, and having
+it in a separate function makes it a bit more difficult to understand
+what are all the checks done in dispc_vp_mode_valid().
 
-Best Regards,
-Petr
+I can do that change when applying the patches, if that's ok for you.
+
+ Tomi
+
+> +	unsigned long round_clock;
+> +
+> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+> +	/*
+> +	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
+> +	 * use the same 5% check here.
+> +	 */
+> +	if (dispc_pclk_diff(clock, round_clock) > 5)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+>  enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>  					 u32 hw_videoport,
+>  					 const struct drm_display_mode *mode)
+>  {
+>  	u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>  	enum dispc_vp_bus_type bus_type;
+> -	int max_pclk;
+>  
+>  	bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>  
+> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
+> -
+> -	if (WARN_ON(max_pclk == 0))
+> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
+>  		return MODE_BAD;
+>  
+> -	if (mode->clock < dispc->feat->min_pclk_khz)
+> -		return MODE_CLOCK_LOW;
+> -
+> -	if (mode->clock > max_pclk)
+> -		return MODE_CLOCK_HIGH;
+> -
+>  	if (mode->hdisplay > 4096)
+>  		return MODE_BAD;
+>  
+>  	if (mode->vdisplay > 4096)
+>  		return MODE_BAD;
+>  
+> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
+> +		return MODE_CLOCK_RANGE;
+> +
+>  	/* TODO: add interlace support */
+>  	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+>  		return MODE_NO_INTERLACE;
+> @@ -1423,17 +1410,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
+>  	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
+>  }
+>  
+> -/*
+> - * Calculate the percentage difference between the requested pixel clock rate
+> - * and the effective rate resulting from calculating the clock divider value.
+> - */
+> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> -{
+> -	int r = rate / 100, rr = real_rate / 100;
+> -
+> -	return (unsigned int)(abs(((rr - r) * 100) / r));
+> -}
+> -
+>  int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
+>  			  unsigned long rate)
+>  {
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+> index 60c1b400eb89..42279312dcc1 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+> @@ -77,9 +77,6 @@ enum dispc_dss_subrevision {
+>  };
+>  
+>  struct dispc_features {
+> -	int min_pclk_khz;
+> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
+> -
+>  	struct dispc_features_scaling scaling;
+>  
+>  	enum dispc_dss_subrevision subrev;
+
 
