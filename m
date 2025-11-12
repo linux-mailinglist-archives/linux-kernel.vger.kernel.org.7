@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-897192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DECC523DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:24:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7159DC523E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32EF84F18A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:16:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7C8F4F3B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E8632825D;
-	Wed, 12 Nov 2025 12:16:40 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFCC327217;
-	Wed, 12 Nov 2025 12:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B04328269;
+	Wed, 12 Nov 2025 12:17:21 +0000 (UTC)
+Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369A328257;
+	Wed, 12 Nov 2025 12:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949799; cv=none; b=JoNIUKvjo5gmxsvPHkpcy7Bc9UqCeEg1pL7RCOIiyLeb8RHJ5ZWNalxVKCGE9YF1rKDodRMW5gvhlZZfRTy95FcM9L36PWuei1R3asZc43GLAjFafIQqIf8ixX/FvpYCyQB+KqJJGnvv1xZimr2jSCzuneHMbVDcnrLPo8LTI88=
+	t=1762949841; cv=none; b=eAOkEXs9zj8AC54vrNKIHk/b9DGUXLw4l74AK/cqUnnmPBALWnnxTtaWPsm9ZBPV3nadCa7krDINMGShNx1q9KNVipxiUbNqQoCFVsAFynTTuwuCtMDVN5pSX4BmLu0nKu+VXhwcIDUslbYdXUMLiXjj/pYMw5K4IASwtS35T7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949799; c=relaxed/simple;
-	bh=vU1wr0tRxqgLdrwPfflTOnIKU6LiQ8IF96XCZSZkYq4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Jb3uDJWWwN6pQvTse5gPGeuQQJaUrtss+aylWjkd2sTTpEf0I+2GFSuGNfvAZxT+2nhqUEtuukQP+xRdMmmntJSnXQiCijivUkbf5Rd/UEjN5vznFE5oGAFjTGRpKIgT+lt5+LaV7eSdLJOGWFv4Ef6+cuYl1M8sHvmMYx0u7V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id C45D292009C; Wed, 12 Nov 2025 13:16:28 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id BD36392009B;
-	Wed, 12 Nov 2025 12:16:28 +0000 (GMT)
-Date: Wed, 12 Nov 2025 12:16:28 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
- uniquification
-In-Reply-To: <aRRZtbBdCfEEhad9@alpha.franken.de>
-Message-ID: <alpine.DEB.2.21.2511121046350.25436@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk> <aRMrmjJcLJYR8QO-@alpha.franken.de> <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk> <aRRZtbBdCfEEhad9@alpha.franken.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1762949841; c=relaxed/simple;
+	bh=Ym3I3+Acp91XkbWfvtiE07pcAMbyeWUaxcrRK2vBq58=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CW6VcWflwdxJZcbyfa71B8WkJViFxzyHgKdZonw3hkzLbKgbcuChvx5G+bIGe8OXKeW97CwN4yxr3udNqf6vNvOuER59v/04+gZkbL/+FLwuEGehRAFGBV/B4kpqIzyLpkQ1gXMzQA43B66Jv4IkekYY5JhfbrjwYhlimQQqp1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Nov
+ 2025 13:17:15 +0100
+Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
+ Wed, 12 Nov 2025 13:17:15 +0100
+From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>
+CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 1/2] dt-bindings: regulator: pca9540: add debounce timer configuration
+Date: Wed, 12 Nov 2025 13:17:08 +0100
+Message-ID: <20251112121710.2623143-1-martijn.de.gouw@prodrive-technologies.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 12 Nov 2025, Thomas Bogendoerfer wrote:
+Make the different debounce timers configurable from the devicetree.
+Depending on the board design, these have to be set different than the
+default register values.
 
-> >  Can you try the diagnostic patch below, which is what I used to verify 
-> > this change, and report the entries produced?  Otherwise I wonder whether 
-> > I haven't missed a barrier somewhere.
-> 
-> Update on the issue: Your patch is good and the segmentation faults,
-> I'm seeing, have IMHO a different reason. Instead of removing the call
-> to r4k_tlb_uniquify() I've replaced the jal in the binary with a nop.
-> And the issue is still there with this patched kernel. I've seen
-> something similair on a R12k Octanes, which comes and goes probably
-> depeding on code layout. So far I wasn't able to nail this down :-(
+Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+---
+ .../regulator/nxp,pca9450-regulator.yaml      | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- Oh dear!  Something to do with the cache?  Or code alignment perhaps?
+diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+index a5486c36830f0..e49acadabc4b0 100644
+--- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
+@@ -124,6 +124,36 @@ properties:
+       When WDOG_B signal is asserted a warm reset will be done instead of cold
+       reset.
+ 
++  nxp,pmic_on_req-on-debounce-us:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 120, 20000, 100000, 750000 ]
++    description: Debounce time for PMIC_ON_REQ high.
++
++  nxp,pmic_on_req-off-debounce-us:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 120, 2000 ]
++    description: Debounce time for PMIC_ON_REQ is asserted low
++
++  nxp,power-on-step-ms:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 1, 2, 4, 8]
++    description: Time step configuration during power on sequence
++
++  nxp,power-down-step-ms:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 2, 4, 8, 16 ]
++    description: Time step configuration during power down sequence
++
++  nxp,restart-ms:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 250, 500 ]
++    description: Time to stay off regulators during Cold reset
++
++  npx,pmic_rst_b-debounce-ms:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 10, 50, 100, 500, 1000, 2000, 4000, 8000 ]
++    description: PMIC_RST_B debounce time
++
+ required:
+   - compatible
+   - reg
+-- 
+2.39.2
 
- It reminds me of this stuff: 
-<https://lore.kernel.org/r/Pine.GSO.3.96.1010625125007.20469D-100000@delta.ds2.pg.gda.pl/>.  
-
- Building a particular version of binutils freezed the machine solid ~11h 
-into the build -- a power cycle was required (there's no hardware reset 
-button).  At least it was fully reproducible and always at the same place 
-in a `configure' script and changing the shell script in a trivial way, 
-such as adding a new-line character, ahead of the place of the lock-up 
-made the freeze go away.
-
- I used the machine's 8-position diagnostic LED display to debug this, by
-making it show the syscall and hardware interrupt numbers as the exception 
-handlers were entered, so as to narrow the origin down (only to realise 
-later on I could have used a 1MiB NVRAM module the system has to store 
-more data across a power cycle and retrieve it afterwards, a persistent 
-kernel log of sorts).  IIRC it triggered in the exit(2) path.
-
- The most painful was the need to wait said ~11h for the next piece of 
-data in debugging this.
-
- NB the machine in question is still alive in my lab.  Throwing memory SBE 
-ECC errors again recently, but coping regardless, so more memory connector 
-cleaning required upon next visit.
-
-> Do you want to send a v2 of the patch ? I'm fine with the current version
-> for applying...
-
- I'll send v2 with an update for the Wired register as we talked.  It may 
-take a day or two.
-
-  Maciej
 
