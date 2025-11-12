@@ -1,83 +1,117 @@
-Return-Path: <linux-kernel+bounces-896939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B013C51965
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C00C5196B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66ED189BE04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D391881EBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17002FFF94;
-	Wed, 12 Nov 2025 10:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsFw02eZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234D52FE579;
+	Wed, 12 Nov 2025 10:11:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EF229A326;
-	Wed, 12 Nov 2025 10:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D8829A326
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942269; cv=none; b=FXjfH2ZIPgV/ZNqvqNgNYsdUrfExNtGKRIC4+xykiHcalLCadkVBhmYGjKMwoV3An/NKOdzuRrzwyuRazzE5f17+rb/ebQfuu7c3m3NJtZPDyKCv1VxE1r4sqfyMK9Auli9RRTInlVkgowHhhnTX7udTfVWLsR8BesO6Eb3ZbrE=
+	t=1762942294; cv=none; b=modoVN20QuMXckanAhYyhGCa6SpemRFJJmre2bvVI39KQ1apQxRXLNjDe6kIvVxNTqO2AdkcNbQeJedKRa/ylXpk2oXHKYSqH6Yyw/I33ncUbEMAVVgL599k8Yl5VlTw/TjlcJp1cqfMw8qUrpdDM9qd/nNU5eCjI3nN8u4YEAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942269; c=relaxed/simple;
-	bh=67K+zUYP/aX07sPx28wY3sUmjVIxiApKZNs5WbP/U/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lf/yJQwgE+HXmUST41i5+GqO9FlAVWgXAdpo/Gx2+Err4Re40rO/DXEhTvab0FCUxAn778wxgjGq0itMr9ElsG+ELJbKMZZ2gBDw3hcD5EFm9vd6wmC5OQiBmV58QE9MbPuB4ASkafUYyO0DSmkUn7StaBmfr+iRO+5huOVv3As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsFw02eZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24445C16AAE;
-	Wed, 12 Nov 2025 10:11:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762942268;
-	bh=67K+zUYP/aX07sPx28wY3sUmjVIxiApKZNs5WbP/U/E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dsFw02eZhsIPw+FfG11keYy8dCIECtSNGvyD+WPxdkQesFL6xRcwuaZ4wghA5HKT6
-	 LaSlvWi4cRWWWLMmgzqwOlqzVRzO7lZLLwofPFRej3C2JevpIiRqg3kPmc8UoX8vOJ
-	 XOJBPp4Bf42kezFpeQDGQYrGWjFnhAt/P9wReRuWGotHHidZASLq2m6ymwwAU2NaAW
-	 A8gzJ1aS5FNm+yMpaS1C95OCNLJkfrIdAetAvdGsv4rDTleZiOuZ4i2973aRiXPNTu
-	 WB0xggNCqMw+R6Y0P4VGJnUOwowBLdSGzCFJhUjQhr0npfC5qFTTR+8Aumke1zSV+s
-	 wZK3WwYSM2d9A==
-Date: Wed, 12 Nov 2025 11:11:06 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: michael.opdenacker@rootcommit.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: riscv: spacemit: Add OrangePi R2S
- board
-Message-ID: <20251112-devious-devout-urchin-86634a@kuoka>
-References: <20251112044426.2351999-1-michael.opdenacker@rootcommit.com>
- <20251112044426.2351999-2-michael.opdenacker@rootcommit.com>
+	s=arc-20240116; t=1762942294; c=relaxed/simple;
+	bh=NCNXZ7EMg7YV6XHRPLwpZKUABPyf2sZYb/CbdpQER1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fsejo9+4RAmG/8BhCOc3Wk974mWWLvsJaN8exZdEUSAbGzSBaEmfeFR0A0km0p0ghez5qRNVJi8/0D/i6h7doU/3yKkxx4csWiYDN22cMH48bqJ2sQ2yteqzNrm6S+TzRDgv3zn/XTlb3dHdJMle/7uuK3atkzOH3WFJT/Ic/Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vJ7ov-0007eK-6d; Wed, 12 Nov 2025 11:11:21 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vJ7ou-0003ub-0c;
+	Wed, 12 Nov 2025 11:11:20 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1vJ7ou-0000000F580-0TN0;
+	Wed, 12 Nov 2025 11:11:20 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	stable@vger.kernel.org
+Subject: [PATCH net v1 1/1] net: dsa: microchip: lan937x: Fix RGMII delay tuning
+Date: Wed, 12 Nov 2025 11:11:19 +0100
+Message-ID: <20251112101119.3594611-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251112044426.2351999-2-michael.opdenacker@rootcommit.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Nov 12, 2025 at 04:44:40AM +0000, michael.opdenacker@rootcommit.com wrote:
-> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
-> 
-> Document the compatible string for the OrangePi R2S board [1], which
-> is marketed as using the Ky X1 SoC but is in fact identical in die
-> and package to the SpacemiT K1 SoC [2].
-> 
-> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-R2S.html [1]
-> Link: https://www.spacemit.com/en/key-stone-k1 [2]
-> Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+Correct RGMII delay application logic in lan937x_set_tune_adj().
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The function was missing `data16 &= ~PORT_TUNE_ADJ` before setting the
+new delay value. This caused the new value to be bitwise-OR'd with the
+existing PORT_TUNE_ADJ field instead of replacing it.
 
-Best regards,
-Krzysztof
+For example, when setting the RGMII 2 TX delay on port 4, the
+intended TUNE_ADJUST value of 0 (RGMII_2_TX_DELAY_2NS) was
+incorrectly OR'd with the default 0x1B (from register value 0xDA3),
+leaving the delay at the wrong setting.
+
+This patch adds the missing mask to clear the field, ensuring the
+correct delay value is written. Physical measurements on the RGMII TX
+lines confirm the fix, showing the delay changing from ~1ns (before
+change) to ~2ns.
+
+While testing on i.MX 8MP showed this was within the platform's timing
+tolerance, it did not match the intended hardware-characterized value.
+
+Fixes: b19ac41faa3f ("net: dsa: microchip: apply rgmii tx and rx delay in phylink mac config")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/dsa/microchip/lan937x_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/dsa/microchip/lan937x_main.c b/drivers/net/dsa/microchip/lan937x_main.c
+index b1ae3b9de3d1..5a1496fff445 100644
+--- a/drivers/net/dsa/microchip/lan937x_main.c
++++ b/drivers/net/dsa/microchip/lan937x_main.c
+@@ -540,6 +540,7 @@ static void lan937x_set_tune_adj(struct ksz_device *dev, int port,
+ 	ksz_pread16(dev, port, reg, &data16);
+ 
+ 	/* Update tune Adjust */
++	data16 &= ~PORT_TUNE_ADJ;
+ 	data16 |= FIELD_PREP(PORT_TUNE_ADJ, val);
+ 	ksz_pwrite16(dev, port, reg, data16);
+ 
+-- 
+2.47.3
 
 
