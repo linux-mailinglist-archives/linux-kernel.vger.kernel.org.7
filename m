@@ -1,215 +1,203 @@
-Return-Path: <linux-kernel+bounces-897524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D0EC53007
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67080C530B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D89D34F415
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:14:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A012353E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A509133ADB7;
-	Wed, 12 Nov 2025 15:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F9133F8A4;
+	Wed, 12 Nov 2025 15:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZM5o36Lo"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3z4y3Gt"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011029.outbound.protection.outlook.com [52.101.62.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDFD2459E7;
-	Wed, 12 Nov 2025 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960159; cv=none; b=VGbFIeXJoeJgI5Y52PiyG0h88l7wfwJ6gnz4wPdvIy5NmUaq2EBlWgdWLrNCzjElLtJtj8WVTTZ2GvDRRHmd4/E6nrViD7McEUwwJ6buPU33jAHlpvR0XZ1GYGLxW2tSZi/Y/bsH3Tkk1qFdlEvkxfVXbSTyu5wwlFV1YJkhbts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960159; c=relaxed/simple;
-	bh=EOsYLM4jkVuCd6Ab8SiFkYlb/lREZ5MG+YmePBrNKiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zt6/qVr5ugpIPLhGKAx/QEpv5+Mi+SKSwSwsffZ0hH7N2LuAYgE6K5b4CHSUGMedqaLqK+HFrRM0cdJF9j0MwJntbWPiDYjNh/Ax2PwWx7QkireDl1gxOKwQyPbhgFGiqufpbqIobRdHYtckXbnVOQFjynOA1dfuMVZ+860jFw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZM5o36Lo; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACCt26S018118;
-	Wed, 12 Nov 2025 15:08:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=szPLnR
-	rWfUJugkl7thDyzM1czIHr4xo3z6y/Aijgk+M=; b=ZM5o36LodgJhj0uedvGUeZ
-	v/L8VyjUBc6BngG89kfi4XYzB8fDDygW15s4Jo7gyd5fVUf4AVmsN+kuIHHXGERM
-	Ej/4/VIEotEHFPcloBr/Cun4HqhmKYKCftD1w7rUfchDNn80MkaEbRH9Zox4eB2J
-	KdaZGO3z6/KeiKAMhKibPO186Q5NssTeDqRriMRBSV8BXzgkFUhOOB40BQ1M/umD
-	4TwP6LevUWFssJeiUNCwMtySooCUNwk+xd3CuLvBQGLK5p16KZxg0JPzrK7+MarZ
-	gV5MicbHqf+ZuVinbgTMdMHjqbUUU+JTcEZbsRJv0bxhB/8RFUKHK3UYwbepK7xw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5cj9xuh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 15:08:48 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ACF8AIn014228;
-	Wed, 12 Nov 2025 15:08:47 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5cj9xub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 15:08:47 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACDMSpl014779;
-	Wed, 12 Nov 2025 15:08:46 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpk8t33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 15:08:46 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACF8glV31195614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 15:08:42 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4931F20043;
-	Wed, 12 Nov 2025 15:08:42 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F3F9B20040;
-	Wed, 12 Nov 2025 15:08:32 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.96.111])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 12 Nov 2025 15:08:32 +0000 (GMT)
-Date: Wed, 12 Nov 2025 20:38:28 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hari Bathini <hbathini@linux.ibm.com>, sachinpb@linux.ibm.com,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH bpf-next] selftests/bpf: Fix htab_update/reenter_update
- selftest failure
-Message-ID: <aRSi7MADBZBoLLEP@linux.ibm.com>
-References: <20251106052628.349117-1-skb99@linux.ibm.com>
- <CAADnVQL3njbb3ANFkDWYRC-EHqAqWSwYs4OSUeKiw4XOYa+UNQ@mail.gmail.com>
- <aRNJE5GRUxdlJbZB@linux.ibm.com>
- <CAADnVQLbMZdMO1zM2OhLsX+w22wQnNQWf60fazctCeEzPUfr0g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0DA33F382;
+	Wed, 12 Nov 2025 15:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762960204; cv=fail; b=F+YRyshEMlCRiZd2xoI5x3OvV13fF5ICfh2efWKoVrXVDPQBzd12T/A64CvPGe0HIi50oW30C58P99I3B9gDhT7BS1UwDWCHx42OPA70qzRQhRkmDgu4b5m3WFoARcDF5/cZPf5TbQkHkXSh5pJG9dirki2MeA75MDXusZIjQLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762960204; c=relaxed/simple;
+	bh=e12uivKGRpekv8Ao5IpbavjxINnDBmqHkpxKyMTKhEs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHayI1BPir6VNNLAVwXethU+KYjzJQy4SZlVkNIYUiEelJVTGaTj6cryUR10nLAVGoPF9jEcWxlXwAikVhz85VY899YvKwH/CSwGmRe4A9irvzFZmRpGldkqSQNWiBu2WcFAFYkoBIuN/2n1LNH0nqCCCxNs2mxtXzXyDk/XAI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a3z4y3Gt; arc=fail smtp.client-ip=52.101.62.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UNct5qNt5lGICe+fQLWJ4I6+c/tULq8HFDmS5zBxknlAk8uIwjxZOUmocSjKy5yDAzNrQxpiypmk6+t5YY47PjJq1+YovX2vtDaxxhPN7IrHQwnZuInJZfe14K/7fro72PABdC7vf7D5oLtALUBdH++c6+dscLsd9q1g/3Eqar/aUAg+o+yL2oaMMllOXH5nrG6xSw8ZSB2fb92U95idcLmUeWqNtpp4Rnqk+W2zKPU1dnUfbt6Z7krYiH9G8fHHzAxui0UKtarhCWCJvDC1Poagmq/LBNomdj/oEAR6BWebT6n6JDjwSCiew9e8WR9p4MxjbdRyrvw/AExxfN3JVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TCB58Vy8ZtmmN+K2Jz2+forEBp/DSlYXrIiRl/Y2Ehs=;
+ b=ueS4iPMBhCE8hGrrFboc8h+iNQ7dwVKqnXrnX8KCTB3lInuH94tuYG3fZ0nHSo6uET4T2jnwx1G7o9rGFokt5MkfoZixZbQrk+/CG46BTmcUw+kyHJlXvsc6TOCAl1DkN7U9Y+vHBcEdSF8KN5UzLAzNB1dDy0inGtF3caaF87gIs2Eipo+VqCIuDquym3qqxHltytvGpcN4v/qFv3s9q9jnqK1zsjGGXq9Qhq3tqec8I9QBcjqhe9ALBde19VE/IlWmWpR7o4zaIbGeADA9k7XHhAR4uYhVLh2APB6mjhVaqszEw96FwAvpardYxBppW1JvDARmvE5D7/vuj6UCBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TCB58Vy8ZtmmN+K2Jz2+forEBp/DSlYXrIiRl/Y2Ehs=;
+ b=a3z4y3GtX8nSuI6aRREQZxGI9ipYA61PW5UGNOVZiPH7hjQKornE4iEGzBTXbzM15R1gmvFZcitq1PUiBLsBStFUKSGTUU9ksM8ZIE/En7jWmasNFCu4LQ0TI+qeI32DVaGyvFVH0weuIwqd61PNTP9phftePtdhTtTe4gtm6Us=
+Received: from CY5PR17CA0013.namprd17.prod.outlook.com (2603:10b6:930:17::34)
+ by CH0PR10MB5178.namprd10.prod.outlook.com (2603:10b6:610:dd::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Wed, 12 Nov
+ 2025 15:09:57 +0000
+Received: from CY4PEPF0000E9D0.namprd03.prod.outlook.com
+ (2603:10b6:930:17:cafe::94) by CY5PR17CA0013.outlook.office365.com
+ (2603:10b6:930:17::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Wed,
+ 12 Nov 2025 15:09:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ CY4PEPF0000E9D0.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 15:09:55 +0000
+Received: from DFLE109.ent.ti.com (10.64.6.30) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Wed, 12 Nov
+ 2025 09:09:47 -0600
+Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 12
+ Nov 2025 09:09:47 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 12 Nov 2025 09:09:47 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACF9l2O2845097;
+	Wed, 12 Nov 2025 09:09:47 -0600
+Date: Wed, 12 Nov 2025 09:09:47 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: keystone: Fix discarded const qualifiers
+Message-ID: <20251112150947.i6iionea3cqrpkxe@pacemaker>
+References: <20251028161643.1727046-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLbMZdMO1zM2OhLsX+w22wQnNQWf60fazctCeEzPUfr0g@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Ss+dKfO0 c=1 sm=1 tr=0 ts=6914a300 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=RZxBdpj2Tgkvij4P3TgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5NSBTYWx0ZWRfX3g5Sr4ZsYzUj
- ZyTCt7di7cajeN5HFnRqCjdx43/tzCICbMtH1CaFA33mx+XABTNvNvOk/CAbnQhe2aK43fQX7OO
- A8dkMpYq1oJFdWtj6COf5Tga8hKH0n4v46F7WrgZlpAEO+XbQlykaUcAPdRjZeGqonnUg9nSFQ+
- CWflEtBM9MKxw+0kU2agFez6mNNGH6SB4ul1G+Xy3zWOZYOl2yCFybGQJcoMbVQGXEs+jD7Va76
- 5uykdrsByqUy4b7aLvg/HOaQRArjKOGKMQSmgqj/MrZ7YfF42ajb4ZN517ap7CQ4byWXSUKjKSk
- 1bQoLwWL5bSB7e7nBROwjVkbmvLee3ZasN0KZ9hClPphhdEUZquthR2+8niZEiglRoJ34jRBRV/
- 7Gwyjy9e/BZLCn3hyINONVESz1opzg==
-X-Proofpoint-GUID: pZ9jvzfCCL6Y7RuU6Udfz9eWqzX-CQpG
-X-Proofpoint-ORIG-GUID: OuBY010cDRfZuPi7CvidCOtA-w3JWnVD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_04,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080095
+In-Reply-To: <20251028161643.1727046-1-abarnas@google.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D0:EE_|CH0PR10MB5178:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e1406c2-c47b-4265-d807-08de21fd89e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TWVEanFpZEhzOVkvcm9RYkFYenJwQzczSGVXNTNreEdtWHJQb3lNY21WOE4z?=
+ =?utf-8?B?dVRCNWl3dEN0elVVNmU3cXZjKzc2dE1NaVpNZEJOaG1OVHVFQUxob011Tktu?=
+ =?utf-8?B?UWdRR3pPSmlXUWhlTEc5TkI3SnN5T0dkMUFscUNKZEI3YXZPOVZxVlpzWUxO?=
+ =?utf-8?B?d1RuRVM1VUdydUVPWkdFdmNxVTFWT2wxbmlNZ0VST081NVNVenFhS2NuMlVG?=
+ =?utf-8?B?NFNDRlRFWkFoS29vMW5wTkIya3hhajc0aFY4d2Nya3NmM1RHck51MEM0dUZT?=
+ =?utf-8?B?SW5zLzVEL2VVYTVudXVIbUVXWGxUcWZwSjJ1UkczV1BiaVg0a2lFeklqMC9X?=
+ =?utf-8?B?VDFFK1FySko0SWYrNnBPT1dTbGo1TlFaZ2lLUnlUelNKNXNIKzh1SDNDUGZi?=
+ =?utf-8?B?aEo3TlprbGU2eFJhUGVuVkRjaFJGSzJmbFpqYXN5MDBPUHZ4Y0hjanJPSmRq?=
+ =?utf-8?B?YStaRW1zdWNRekNOelM4MDZEeEVEaFRZWm1jeG02aFBacEtTdHE2V1FSbkJK?=
+ =?utf-8?B?ekpGWHVwY2VrV2lUSDE5SzlFTFZKRnd0YndPdjJhZUtJVWNWR1VhTTNHcFRT?=
+ =?utf-8?B?UndDbTZZUXVzZ1VlWkd5Qk5VMkFBZFNNR1lxWUpqV2p2L0s2ZjFyZlJMNStC?=
+ =?utf-8?B?VndFMEpabkZCNGZrUlF3MTZSRFRZbzh4ckdwak9KZzliU3lQL09tKzNVVERJ?=
+ =?utf-8?B?T29RV01JY0g0MUttZTJSZlY1MFlsOW5yVENMRFVPWEhjZHRtaWpZdnRnaEgz?=
+ =?utf-8?B?dm95QjZsOGYwVzlqMW1iVEJzZ3diMVpORVVkNkowbHU1U1E3b3M1azNXenVE?=
+ =?utf-8?B?OW1EZXhIOEVFSkFxMEQyaGhvMUxMNzhqYTB4UjY1eEczZDNybWpzKy9OYzFZ?=
+ =?utf-8?B?blRwQmFKeWZnQytVTHlhbHpxaTlkeXc2TzJlVFllcGhPQWt0Mzhtczg3b3hh?=
+ =?utf-8?B?OUJZeUZDZVV0NS9aaW1BK3kySTk4eC8wRVdwRHZQUWxQNVVFbi94VTQ5UUxn?=
+ =?utf-8?B?eW1SZVo5aEd2anh4NFpzeEZtcDRjZnhMSnN2Q2ttVjRGTjduM3IvTXVRT3BG?=
+ =?utf-8?B?YkhUSklPU1RtcDlFZjEwSWhNMmwxazQ4OEhNdGYzVC8wWjhCR0JwL0o3b211?=
+ =?utf-8?B?UHpQc1YwdmNxYXdKeFpIQ3RGMVlkdExHNS9oVjJJVWNka0o4Y0lJN3A0MzBv?=
+ =?utf-8?B?Yy9lQ2dlNG5tYjl1Nis2MjJVcElCYUlIOUxUNytubUZmUEd0Nll4T2VZeW5p?=
+ =?utf-8?B?cUpSWE01OGkwOHdZUXlRM1U4VFl5T0k1SUduUnRvL3R4MmpzSTNTdWh0dWtT?=
+ =?utf-8?B?U21iZU56TjlDd25oSmdYTHJBbWJHcThmN25oREZzcm5OZGgvS3lEZUM0ZEMw?=
+ =?utf-8?B?QWRKVXozdXU0emhRZThJeDA2UTVTdVpjU0Z6OW45Sks0OGFCdVh6VWV0a1hk?=
+ =?utf-8?B?NzAya1RNNW9OclRuRTJQQVB6ZWJkMUpMN29mNVBPN0xtWktSa3p2a3JHSEZw?=
+ =?utf-8?B?eTlCd1RKR0szZ0NxdHFtNHZJc3FjWjZzeHI0SE1YLyt0bmNuUm9LVTlycTBT?=
+ =?utf-8?B?bjNLM3RyQWdhRWpnKyt3aCtZVVNOanF3Tk9jV3BsR2pOcDBmZWtqS0I0eW5O?=
+ =?utf-8?B?aGlva0pHZ1RxTlM2ZVZzWEVkaGpKZnpXM2hQL2NnNDNON0h5SHV4UzgxWWx5?=
+ =?utf-8?B?U20zRC8wLzVMZ0pCMVg4SVF6UDFGVE9FUy9EV0lvSkozOUtKNkRWeHZlY0Z3?=
+ =?utf-8?B?dkE3blZFZ0swdEgwUkpMcVdud1hoNmJTQnpMRzhJdHdDYm0xM0xOMGFwQlZW?=
+ =?utf-8?B?N3hPQmV0eTZpeW0xQmg4OXlwU0ZoRXQ2WjMxWWJLaGRqclFpK2t0STJieFNV?=
+ =?utf-8?B?SXBGOG1GSkdwQlg4T2xYeHhDZSszSm50Q0c3NnZZeCtSR3ArbTdTaEFjSUk5?=
+ =?utf-8?B?aVZ3L1VQclUwckM2d0NvNVEyd0lQWHpRSnU2WFAvakw5VUY2OUNOMVlkZGZG?=
+ =?utf-8?B?MjlvbzE1aEtEcGg0a01NV3ZyOFhxTm1HTVAxU2g2NDNGMENoRVhmUjZQSVY5?=
+ =?utf-8?B?eldHSlBzakZNaW9iZWN4V3JiQnh0bFZZNjVFVWpockZLYzBRK3Q3R3o2aXdo?=
+ =?utf-8?Q?ncIY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 15:09:55.6200
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e1406c2-c47b-4265-d807-08de21fd89e4
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5178
 
-On Tue, Nov 11, 2025 at 10:35:39AM -0800, Alexei Starovoitov wrote:
-> On Tue, Nov 11, 2025 at 6:33 AM Saket Kumar Bhaskar <skb99@linux.ibm.com> wrote:
-> >
-> > On Thu, Nov 06, 2025 at 09:15:39AM -0800, Alexei Starovoitov wrote:
-> > > On Wed, Nov 5, 2025 at 9:26 PM Saket Kumar Bhaskar <skb99@linux.ibm.com> wrote:
-> > > >
-> > > > Since commit 31158ad02ddb ("rqspinlock: Add deadlock detection and recovery")
-> > > > the updated path on re-entrancy now reports deadlock via
-> > > > -EDEADLK instead of the previous -EBUSY.
-> > > >
-> > > > The selftest is updated to align with expected errno
-> > > > with the kernel’s current behavior.
-> > > >
-> > > > Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> > > > ---
-> > > >  tools/testing/selftests/bpf/prog_tests/htab_update.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/tools/testing/selftests/bpf/prog_tests/htab_update.c b/tools/testing/selftests/bpf/prog_tests/htab_update.c
-> > > > index 2bc85f4814f4..98d52bb1446f 100644
-> > > > --- a/tools/testing/selftests/bpf/prog_tests/htab_update.c
-> > > > +++ b/tools/testing/selftests/bpf/prog_tests/htab_update.c
-> > > > @@ -40,7 +40,7 @@ static void test_reenter_update(void)
-> > > >         if (!ASSERT_OK(err, "add element"))
-> > > >                 goto out;
-> > > >
-> > > > -       ASSERT_EQ(skel->bss->update_err, -EBUSY, "no reentrancy");
-> > > > +       ASSERT_EQ(skel->bss->update_err, -EDEADLK, "no reentrancy");
-> > >
-> > > Makes sense, but looks like the test was broken for quite some time.
-> > > It fails with
-> > >         /* lookup_elem_raw() may be inlined and find_kernel_btf_id()
-> > > will return -ESRCH */
-> > >         bpf_program__set_autoload(skel->progs.lookup_elem_raw, true);
-> > >         err = htab_update__load(skel);
-> > >         if (!ASSERT_TRUE(!err || err == -ESRCH, "htab_update__load") || err)
-> > >
-> > > before reaching deadlk check.
-> > > Pls make it more robust.
-> > > __pcpu_freelist_pop() might be better alternative then lookup_elem_raw().
-> > >
-> > > pw-bot: cr
-> >
-> > Hi Alexei,
-> >
-> > I tried for __pcpu_freelist_pop, looks like it is not good candidate to
-> > attach fentry for, as it is non traceable:
-> >
-> > trace_kprobe: Could not probe notrace function __pcpu_freelist_pop
-> >
-> > I wasn't able to find any other function for this.
+On 16:16-20251028, Adrian Barnaś wrote:
+> Add const qualifiers to the pointers returned from 'container_of' macro
+> to prevent breaking the const promise on const struct pointers from
+> parameters.
 > 
-> alloc_htab_elem() is not inlined for me.
-> bpf_obj_free_fields() would be another option.
-Since alloc_htab_elem() is a static function, wouldn’t its
-inlining behavior be compiler-dependent?
+> Once you have a mutable container structure pointer, you can change
+> structure fields through it, which violates the const guarantee.
+> 
+> Signed-off-by: Adrian Barnaś <abarnas@google.com>
+> ---
+>  drivers/clk/keystone/sci-clk.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index a4b42811de55..9d5071223f4c 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -496,8 +496,8 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
+>  static int _cmp_sci_clk_list(void *priv, const struct list_head *a,
+>  			     const struct list_head *b)
+>  {
+> -	struct sci_clk *ca = container_of(a, struct sci_clk, node);
+> -	struct sci_clk *cb = container_of(b, struct sci_clk, node);
+> +	const struct sci_clk *ca = container_of(a, struct sci_clk, node);
+> +	const struct sci_clk *cb = container_of(b, struct sci_clk, node);
+>  
+>  	return _cmp_sci_clk(ca, &cb);
+>  }
+> -- 
+> 2.51.1.851.g4ebd6896fd-goog
+> 
+> 
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-static struct htab_elem *alloc_htab_elem(struct bpf_htab *htab, void *key,
-                                         void *value, u32 key_size, u32 hash,
-                                         bool percpu, bool onallcpus,
-                                         struct htab_elem *old_elem)
-
-When the fentry program is instead attached to bpf_obj_free_fields(),
-the bpf_map_update_elem() call returns 0 rather than -EDEADLK, 
-because bpf_obj_free_fields() is not invoked in the bpf_map_update_elem() 
-re-entrancy path:
-
-./test_progs -t htab_update/reenter_update -v
-bpf_testmod.ko is already unloaded.
-Loading bpf_testmod.ko...
-Successfully loaded bpf_testmod.ko.
-test_reenter_update:PASS:htab_update__open 0 nsec
-test_reenter_update:PASS:htab_update__load 0 nsec
-test_reenter_update:PASS:htab_update__attach 0 nsec
-test_reenter_update:PASS:add element 0 nsec
-test_reenter_update:FAIL:no reentrancy unexpected no reentrancy: actual 0 != expected -35
-#143/1   htab_update/reenter_update:FAIL
-#143     htab_update:FAIL
-Summary: 0/0 PASSED, 0 SKIPPED, 1 FAILED
-Successfully unloaded bpf_testmod.ko.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
