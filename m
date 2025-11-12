@@ -1,73 +1,99 @@
-Return-Path: <linux-kernel+bounces-897565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E175AC5383D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC9BC53714
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17BA563E04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:29:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776D33B95B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD61D340280;
-	Wed, 12 Nov 2025 15:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jhYIWBml"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFC933E37B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8912C0297;
+	Wed, 12 Nov 2025 15:27:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780EC26A0DB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961251; cv=none; b=eT5jkOxf7eWUibyLf8OBsPbowi7XZy6CufW15HI1TwYRVW3h8raZrTun2EGdSFXLCRwMjeaqb+41CE3IucxIqULgWacNoZ9bKTqLog9N3LvhaLmn4Vff1kO/UNAJDO9ywo4/c4QsmZv73Wn8X+N1X1Fw3LwAk/MOOSEN+F7pLVE=
+	t=1762961277; cv=none; b=D2hahL1I9LB8WUh3iJV6wF+j7IGhTuPK14lLDFMuUbGsoF7l0S1idGLbaNpLGkG4jBgNGHuvN2YgxSs1xIX0YHrJ/GZLzHawEczEmfCzUmyr7WZu1uSpyMC7uFJfbJ3HQ3EAyn9zA3YSP4cqoq/et9OyeaESsxSWly+ZDBLfzZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961251; c=relaxed/simple;
-	bh=k8Xbh93K326Q294BpfNudl6MAbWI+uk6DZXLupxhhRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aUXWz1nlGu5lbZcXtg8ZsEbUhFMJ5TWDLbvDg3iRCpc+hiJIT4bHtcFaeTgvIxaBKFyy9jtvpLLk6F6T9v/sj65A621KeicP7nNZFuO4w8llX1dctrQkvWULWiI/tLAT3+3w0aG4FNcQBgs4/aMLvJkt3wspo5AVNepNQZnH99c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jhYIWBml; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f6bc8f48-9cfd-4d46-b105-6ef274c8f842@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762961237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rs57aKC+dzCFz9S0pk+SxlPQNFMFAlzZlXYGwekxgog=;
-	b=jhYIWBml0eWeuCpIzNoi5z9eDYktk558M4Lgh51ySKl3Tef7vGaQ/Nd+MU/Ge6dFGp3LDh
-	hql/Ar9QyhUKzroMs8wjlNcpnKIyL8B8AnISMdHGYtOd8c0QdZq5H/dV9r/+UqXZ7v2yrq
-	QV7umttP6dw/a2d26c8rpOS6gCYoQDs=
-Date: Wed, 12 Nov 2025 15:27:14 +0000
+	s=arc-20240116; t=1762961277; c=relaxed/simple;
+	bh=MvTdJvA4E7d+6wvnxoj1oNlBoGaYrVav+B+T7S5H/PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HW+zHECy0QlrniZrRAedaAcp0u3UTFQOeGzfP+psO3Y7Ga+Ll6NpcXD01tQt+8NQCjHw4CodoI7R8uskv/p5G6ELuivQOv9V8aloaZR8S7aI/PStURdueSfo9MKI8cYGwyFkow4x8e5thMZIf/ejE/Nzd4TSyX1+EFDPjz24FUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4744B1515;
+	Wed, 12 Nov 2025 07:27:47 -0800 (PST)
+Received: from arm.com (arrakis.cambridge.arm.com [10.1.197.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5D5E3F66E;
+	Wed, 12 Nov 2025 07:27:53 -0800 (PST)
+Date: Wed, 12 Nov 2025 15:27:51 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH v2] arm64: Fix typos and spelling errors in comments
+Message-ID: <aRSnd6cyAdeBtEF4@arm.com>
+References: <aQoF3pu8CjO3tAl6@willie-the-truck>
+ <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 0/7] ptp: ocp: A fix and refactoring
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Richard Cochran <richardcochran@gmail.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-References: <20251111165232.1198222-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20251111165232.1198222-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
 
-On 11/11/2025 16:52, Andy Shevchenko wrote:
+On Thu, Nov 06, 2025 at 07:26:55PM +0530, mrigendrachaubey wrote:
+> This patch corrects several minor typographical and spelling errors
+> in comments across multiple arm64 source files.
+> 
+> No functional changes.
+> 
+> Signed-off-by: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+> ---
+>  arch/arm64/include/asm/assembler.h  | 4 ++--
+>  arch/arm64/include/asm/cpufeature.h | 4 ++--
+>  arch/arm64/include/asm/el2_setup.h  | 2 +-
+>  arch/arm64/include/asm/pgtable.h    | 4 ++--
+>  arch/arm64/include/asm/suspend.h    | 2 +-
+>  arch/arm64/kernel/acpi.c            | 2 +-
+>  arch/arm64/kernel/cpufeature.c      | 2 +-
+>  arch/arm64/kernel/ftrace.c          | 2 +-
+>  arch/arm64/kernel/machine_kexec.c   | 2 +-
+>  arch/arm64/kernel/probes/uprobes.c  | 2 +-
+>  arch/arm64/kernel/sdei.c            | 2 +-
+>  arch/arm64/kernel/smp.c             | 4 ++--
+>  arch/arm64/kernel/traps.c           | 2 +-
+>  arch/arm64/kvm/arch_timer.c         | 2 +-
+>  arch/arm64/kvm/hyp/nvhe/ffa.c       | 2 +-
+>  arch/arm64/kvm/mmu.c                | 2 +-
+>  arch/arm64/kvm/nested.c             | 2 +-
 
->    ptp: ocp: Sort headers alphabetically
->    ptp: ocp: don't use "proxy" headers
-I don't see benefits of these 2 patches, what's the reason?
+Marc, Oliver, do you care about these kvm typos and are you happy for
+them to go in via the arm64 tree?
+
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 5ed401ff79e3..5c673778e28f 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1002,7 +1002,7 @@ static void __init sort_ftr_regs(void)
+>  
+>  /*
+>   * Initialise the CPU feature register from Boot CPU values.
+> - * Also initiliases the strict_mask for the register.
+> + * Also initialises, the strict_mask for the register.
+
+This comma is wrong (I can drop it when applying).
+
+-- 
+Catalin
 
