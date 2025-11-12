@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-896865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3619C516D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:45:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2025EC5170A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FB6421274
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:36:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AEDE4FF5EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE342264B8;
-	Wed, 12 Nov 2025 09:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21F42FF149;
+	Wed, 12 Nov 2025 09:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f8yHfq0J";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/g/2+Eum";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f8yHfq0J";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/g/2+Eum"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4hiLWPd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE092274B55
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF03C2FE050;
+	Wed, 12 Nov 2025 09:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940106; cv=none; b=hj8w6j+I12+CPXisGtIOsd6bLydaLXIdmvZmLi4gVXAjzT4YhhD3QJh0tPZbGx+68LRBhpt9yYuGtjQ8wXyd6InJYJsMnKXayEla9k6bwDlZ7yekZChGCals5FGKZIZIYqo1GMDodOUS5qGrNOQ7h28HwwlmMclEweCvimQJByE=
+	t=1762940114; cv=none; b=b8xiorRnCwTc5P0gK86xZulAtwAhT76jq3nSJg5QLuXBOyxH3T4tgKenFNSWodXX1nnxMH9dMMWkPhaC8YMOgYyvPYP7DSMmzzYK6Us0p3mQ6d9Am5x0WDpfF2mYRBRYmRZYCOx344JoCuTWp4teLdiGvrT4/dKosUzZfB9jQ9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940106; c=relaxed/simple;
-	bh=tMP3K24WKi3enSnKfjQUg+Ty83Oo/ke+ztiILFsoJug=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ekI48M/KeVZcfD14L8dshrQMrhjunUW66Zhs7LymQ3AsNR0MTwMMb46Y1Bhl35cp0UWSKU++HRoa23s2Fp2pQ883xCgyXuwZbF8yuakAu+UJrg4yrMUz1BizjkYMzwwo7nSvZgFOmh6870DmHJbxy3muP0Hn/YNphe/Y+dFBYlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f8yHfq0J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/g/2+Eum; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f8yHfq0J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/g/2+Eum; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1AF341F45E;
-	Wed, 12 Nov 2025 09:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762940103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRz7yHeIJLTEpAjNXPmhe7j3wA+843y/brep2u7GA4A=;
-	b=f8yHfq0J04x87KTeJ7cIy4T8NPFCdaZhMnbdHqrLlWwvgpNZdy0WWBQXVaYDUPlDJG1Tk4
-	OsSCKlq/zbd4LmzRjyVAX/zPkrOd5POpMiY9SDKZheRNcm/sD/Hbo0HVD/oTVRFAjOcz8c
-	0Cy9Lmklus2JeIYBzCGGwBhMZ3SJVg8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762940103;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRz7yHeIJLTEpAjNXPmhe7j3wA+843y/brep2u7GA4A=;
-	b=/g/2+EumBqH/tgtCXMTAQpOnl/ewRNIhuvVbdf5arqwHbAAExUB9uvy7imbBOVzfwQkRtT
-	AcRKenlFGQmPrsCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=f8yHfq0J;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/g/2+Eum"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762940103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRz7yHeIJLTEpAjNXPmhe7j3wA+843y/brep2u7GA4A=;
-	b=f8yHfq0J04x87KTeJ7cIy4T8NPFCdaZhMnbdHqrLlWwvgpNZdy0WWBQXVaYDUPlDJG1Tk4
-	OsSCKlq/zbd4LmzRjyVAX/zPkrOd5POpMiY9SDKZheRNcm/sD/Hbo0HVD/oTVRFAjOcz8c
-	0Cy9Lmklus2JeIYBzCGGwBhMZ3SJVg8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762940103;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRz7yHeIJLTEpAjNXPmhe7j3wA+843y/brep2u7GA4A=;
-	b=/g/2+EumBqH/tgtCXMTAQpOnl/ewRNIhuvVbdf5arqwHbAAExUB9uvy7imbBOVzfwQkRtT
-	AcRKenlFGQmPrsCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1E963EA61;
-	Wed, 12 Nov 2025 09:35:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mSDwNcZUFGk2BwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 12 Nov 2025 09:35:02 +0000
-Date: Wed, 12 Nov 2025 10:35:02 +0100
-Message-ID: <87y0obioft.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: <perex@perex.cz>,
-	<tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] ALSA: gus: Remove unused declarations
-In-Reply-To: <20251112092007.3546539-1-yuehaibing@huawei.com>
-References: <20251112092007.3546539-1-yuehaibing@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.1 Mule/6.0
+	s=arc-20240116; t=1762940114; c=relaxed/simple;
+	bh=IOdEi/7nm6gSBW15F/BMgBUX9SN7wqTjO+nYOESPGFQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=h7ilUPtY2o6OzIkq7bPo9M4fZfqs1FB8Nrj3f5c8Qdb+iMS5eRNf9HtmBo99OWq84yNxe3Oi57VKyiGFp0ohqr4ZMRCQiHFb2vqZ/3wmImi63j/peSP4k/oGOx5vruYM+rgACM9QdOH/z6PcEIiHEfJTdJHEs81UtDigpH4Hg68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4hiLWPd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BBD8C16AAE;
+	Wed, 12 Nov 2025 09:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762940113;
+	bh=IOdEi/7nm6gSBW15F/BMgBUX9SN7wqTjO+nYOESPGFQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=B4hiLWPdZ/fueJdOAr9IS/urlVJh7yN5P0kCLtBPV9aDAvSeV/XJeWkQB46RNUP2G
+	 Pw/fPY5UyXbRDrb8qvfGG/b4EUiuugOKpmfPFPEJ/NYVE6gnsJj7zYeDENJFx2y33X
+	 R1DpIfXpL6asKQAQyEL+oDd1N7u0I/C3dJ7/TOnEqhjaGOVPyp60ZzepvU00kQiXpE
+	 DGsUQxTiAAOpspJtsnmTA6sHpzO6XsM+hmPLzVY8tTU4jBHYCCUQWbscl0oBvHYcOg
+	 gdshp+3bFlgkmNtKYox2uuUVVbKjn7MP17FCTKLrrH9W4eLK6c/D3MD5pKqzTvGMvb
+	 GaFFZOJlUuc1w==
+Date: Wed, 12 Nov 2025 03:35:11 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 1AF341F45E
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.51
-X-Spam-Level: 
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org, 
+ Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+To: Anshul Dalal <anshuld@ti.com>
+In-Reply-To: <20251112-k3_syscon_add_boot_mailboxes-v2-1-aebc1e47b391@ti.com>
+References: <20251112-k3_syscon_add_boot_mailboxes-v2-0-aebc1e47b391@ti.com>
+ <20251112-k3_syscon_add_boot_mailboxes-v2-1-aebc1e47b391@ti.com>
+Message-Id: <176294011177.754689.174685485920424984.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: keystone: add missing items
+ to mboxes
 
-On Wed, 12 Nov 2025 10:20:07 +0100,
-Yue Haibing wrote:
+
+On Wed, 12 Nov 2025 14:00:53 +0530, Anshul Dalal wrote:
+> The mailboxes for the ti,sci node were not documented, this patch adds
+> the description for the two channel entries as per TI-SCI spec[1].
 > 
-> snd_gf1_synth_init() and snd_gf1_synth_done() were declared but never
-> implenmented and used since the beginning of kernel git history.
+> [1]:
+> https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/am65x/sec_proxy.html
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Signed-off-by: Anshul Dalal <anshuld@ti.com>
+> ---
+>  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-Thanks, applied now to for-next branch.
+My bot found errors running 'make dt_binding_check' on your patch:
 
+yamllint warnings/errors:
 
-Takashi
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml: properties:mboxes: 'oneOf' conditional failed, one must be fixed:
+	False schema does not allow 2
+	[{'description': 'RX thread'}, {'description': 'TX thread'}] is too long
+	[{'description': 'RX thread'}, {'description': 'TX thread'}] is too short
+	1 was expected
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251112-k3_syscon_add_boot_mailboxes-v2-1-aebc1e47b391@ti.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
