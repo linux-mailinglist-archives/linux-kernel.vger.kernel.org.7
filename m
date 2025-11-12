@@ -1,163 +1,247 @@
-Return-Path: <linux-kernel+bounces-897648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E719C534AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:09:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F057BC538EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D67D351805
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F405606A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1673451B4;
-	Wed, 12 Nov 2025 15:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44466345CCE;
+	Wed, 12 Nov 2025 15:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="lLxLzmjm"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gsXGwGZP"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED422345721;
-	Wed, 12 Nov 2025 15:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C08346795
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962716; cv=none; b=qESQHRASZQ4VF5vQEs78fVV79Q+HgRG58gm8/h6/uZMMKmz4yFhnYOZzpfT81fa/DzkOwVdpVuNFyeqHcU85JViEkVDaJ2NJOvJfP0UilXrmXfz1fNkLi22KlJjRVap8RysM6lKCppAaPDoSGwPLLou40MoAThE/PspxQTxKumo=
+	t=1762962765; cv=none; b=Rr8aHtPGbZq0w2SPpdVEjbwkPprI+Ep3ca9nhm+vmzUw3yg2fEmVpOysij/JblJVBopLEQGSMEiOXr7rM2wL6zikKI0HUXC7R5cNS/LmEVbpnqYDmuTeRfIr2zanjDQZZHDEUmOtx9wPjHsOA3haUTb4L90+Ke8ztgLtsfmzel4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962716; c=relaxed/simple;
-	bh=XVJg2nVd4r3tM/7VXoGhscaG9rd8eM2TqSjjk7vRcoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y6LAzN7YfuuqDEGHPvbAwqdLSuacagKfl+yw3xlh2Gh9LhIMdlcmFH1e4B2KBz+ayabVYTITKFhqxGhsJrWsBSfTOn95Q8BnupGhr7ab6mWKVd1VO3BlDYy/js7GBssroDcivBnTI4/7tV445K6Bqv7iPyB1XSyi3yFOSDrRAyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=lLxLzmjm; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de4574e.dip0.t-ipconnect.de [93.228.87.78])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id DCC4C2FC0061;
-	Wed, 12 Nov 2025 16:51:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762962710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DDhhaEf5IZaUj+JRHazg5tIseXYULODwGRF5L2wNrvM=;
-	b=lLxLzmjmvYFvsGXe5fpSn7Ks5N+7FciUIpc3kSKCMBfkOofuZePoT9/ixnds04NDn2kPBo
-	ZC0N4e2+qmoeymWZUXs1cC9NMiJSxj8eT6+LlQ6llw2dQE1aibxVVL3eWUE9zm49e+ll4N
-	iGbzWqpxV/waeb1jK4LajILdzE0uVyo=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <ae75b604-9bdb-430a-bd4d-8e1e669cf4d8@tuxedocomputers.com>
-Date: Wed, 12 Nov 2025 16:51:48 +0100
+	s=arc-20240116; t=1762962765; c=relaxed/simple;
+	bh=eBNTN7kVD8if4ldOeG2kBLND2Z2wLJNhkZwt7yOUkG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pTTfyLHbv67DE3iY2upsD+h/jw99ihbcKuT5JBHtlel1K0DdL736cH8goCIJ5tOSrbS5sR7MVLRvgbn71GIIQEnc5C8RaGCLUzAh1aI9FVZOKIrvS7OSm3w9CXoJ8c6YWd92pFIlEXW4SQAPhfU+TtJJI/4XgoXPZHg1g4v4CHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gsXGwGZP; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso1712021a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:52:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762962762; x=1763567562; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zkQpldxnQt7o9NuQOm3l4R5lL4sGYJLefaN7EhOn7M8=;
+        b=gsXGwGZPJgoWlZpWGB8EjpeM0a1fm901YU9Om5gIs1o3yulP7KLx1zmvWR8c8NM30d
+         FGlO+FStnBjMkPqt8Pxg3vp0GHih41BuJASwE5spmrmH8mj+2vOQTjs3VwHfXUt1w6pg
+         Rfeuav5Hw6cdrMTLjk8OyXAxLLefWRW8eIPjjPOBPuXUcuxn7nnn0sPjtg6sxOsBYMn5
+         20nUbKnJtOiei3W+4UZMnJdsMgteSzu0wT3bN6iIvMLY6DBLE+p1obT/BI7Cmcnj8Ct7
+         qXTu4fzLe4YTOXBKOk3mrTwtc92VboISWhm33VWzVkt8LHazW0aSz1yxxc2vSvbG2SPZ
+         Kd3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962762; x=1763567562;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zkQpldxnQt7o9NuQOm3l4R5lL4sGYJLefaN7EhOn7M8=;
+        b=ODJpV8Ax1t0Biwk5Y0cEOhrDpQuwj8O4FEFDICBnmGU2l8FW8WpT7rnPjUTvQccos8
+         rPK0+npCdvyBmFN2TOvd1iDip4XVZSpQV91JQ9iOJ9qdSPq2G+GV/Rs7ovcOMiI4ijU7
+         SqFn1SX6m7IFyuQDPcISwN3Ms7vqKPUQ1Uf2LsPzi/YSf4r/mw5rtNoVolyuGLnG30zH
+         hNgCnehcC6CAFwQ1qYSGwkzO9jmrtNp5a2TdfGggLPyDSPATJ90NLAICfL6RaHE3RZOb
+         qcCq3FbfbFc6un9ZpX8ByapuRy4o99pjqnPJcCtzzGxg9V9mei27ZQlF7hlvS0Lms0ge
+         +8aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWw/S92/+T+iDtqEejSDorc+TT+C4gmkxSifALMFUO6Abn7jHB+kYsuYVVQVYsF21MikJm0UaH3YoqPChU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRjBAwneoi4GEWHrZp1vBI0hiK4kDnjDF6CrvO+6MS9Gib1qqE
+	iwe8+0GcRtBR8NU+c/xSRI7aJPoZBNWKjGt10zdoSQHyTYY8DUkChEiJkrmw8Cl9ZyncI4tDHvt
+	i7crAGeNTTDan43jnorAd/amSh2uGHlkCF5NbqncW6A==
+X-Gm-Gg: ASbGncuYVJ80eFIdv+ZH5n4/rbIWndRLdSHYcyykwTSC/+Z/V6OhwFKr+WsPddUb+ak
+	IIhhXQlzw+X5sDwhChF6egDb6BaPJjcyl9yboidEKSNJsYe2I0aH8b2LmgQeIi1IVyXiIh2dOTn
+	qrOio34P9IK4bvPhUnTcLJZbAuF1OlVCfZSjUCH5exigJHdQ1vLoDMkvaVT/XE7T0+9KE5QBQA8
+	gnzZmtkrWD1Kec943vvh0f00QLFgADUE+R/wu9VZVZga452v+lhpzIuVLVkosketDZmasU0xnPG
+	Eu7cmDQVRDQ9UbdNJdE=
+X-Google-Smtp-Source: AGHT+IH7HJeViQ7kIBpaLTTgqp5Ytv3ncug+09D0vgvjthq8GQE0yiNgo5FDY8yMILoHnsk/S0XOMguiI4hDseW9TUI=
+X-Received: by 2002:a05:6402:2707:b0:641:9aac:e4a9 with SMTP id
+ 4fb4d7f45d1cf-6431a4b7687mr3123191a12.15.1762962761633; Wed, 12 Nov 2025
+ 07:52:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hid/hid-multitouch: Keep latency normal on deactivate
- for reactivation gesture
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251112144837.499782-1-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20251112144837.499782-1-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251112150108.49017-1-dawei.li@linux.dev>
+In-Reply-To: <20251112150108.49017-1-dawei.li@linux.dev>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 12 Nov 2025 08:52:30 -0700
+X-Gm-Features: AWmQ_bm9aDl1pQBX-LxpU4Y9ovVVtqN-LgWlcWYuge4gqh557J97f-E3xwBbHhk
+Message-ID: <CANLsYkwfthuOQTCdgU2r6wXjYMeM1fGjvgr1TB1-TFpUXFBLOQ@mail.gmail.com>
+Subject: Re: [PATCH v2] rpmsg: char: Fix UAF and memory leak
+To: Dawei Li <dawei.li@linux.dev>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-Am 12.11.25 um 15:47 schrieb Werner Sembach:
-> Uniwill devices have a built in gesture in the touchpad to de- and
-> reactivate it by double taping the upper left corner. This gesture stops
-> working when latency is set to high, so this patch keeps the latency on
-> normal.
+On Wed, 12 Nov 2025 at 08:01, Dawei Li <dawei.li@linux.dev> wrote:
 >
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> Cc: stable@vger.kernel.org
+> Potential UAF and memory leak exsit in exception handling paths for
+> rpmsg_anonymous_eptdev_create(), fix them.
+>
+> While at it, rework the error handling of rpmsg_eptdev_add() and its
+> callers, following rule of "release resource where it's allocated".
+>
+
+Please split this patch in two parts.
+
+Thanks,
+Mathieu
+
+> Fixes: 2410558f5f11 ("rpmsg: char: Implement eptdev based on anonymous inode")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aPi6gPZE2_ztOjIW@stanley.mountain/
+>
+> Signed-off-by: Dawei Li <dawei.li@linux.dev>
 > ---
-> V1->V2: Use a quirk to narrow down the devices this is applied to.
-> V2->V3: Fix this patch breaking touchpads on some devices.
->          Add another device ID.
+> Change for v2:
+> - Add put_device() when __rpmsg_eptdev_open() failed.
 >
-> I have three Uniwill devices at hand right now that have at least two
-> physically different touchpads, but same Vendor + Product ID combination.
-> Maybe the vendor uses this product ID for all i2c connected touchpads, or
-> it is used as some kind of subvendor ID to indicate Uniwill?
+> Link to v1:
+> https://lore.kernel.org/all/20251112142813.33708-1-dawei.li@linux.dev/
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 61 +++++++++++++++++++++-----------------
+>  1 file changed, 34 insertions(+), 27 deletions(-)
 >
-> To be able to really narrow it down to Uniwill only devices I would need to
-> check DMI strings, but then I will probably narrow it down to much as I
-> only know what we at TUXEDO use there.
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 34b35ea74aab..92c176e9b0e4 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -460,44 +460,34 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
 >
->   drivers/hid/hid-multitouch.c | 26 +++++++++++++++++++++++++-
->   1 file changed, 25 insertions(+), 1 deletion(-)
+>         eptdev->chinfo = chinfo;
 >
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 179dc316b4b51..ed9eb4e0d5038 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
->   #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
->   #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
->   #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
-> +#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
->   
->   #define MT_INPUTMODE_TOUCHSCREEN	0x02
->   #define MT_INPUTMODE_TOUCHPAD		0x03
-> @@ -211,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
->   #define MT_CLS_WIN_8_DISABLE_WAKEUP		0x0016
->   #define MT_CLS_WIN_8_NO_STICKY_FINGERS		0x0017
->   #define MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU	0x0018
-> +#define MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE	0x0019
-A college realized that at some points in the code some, but not all, of the 
-MT_CLS_WIN_8* classes are checked for directly. Should I add my new class there 
-too?
->   
->   /* vendor specific classes */
->   #define MT_CLS_3M				0x0101
-> @@ -330,6 +332,15 @@ static const struct mt_class mt_classes[] = {
->   			MT_QUIRK_CONTACT_CNT_ACCURATE |
->   			MT_QUIRK_WIN8_PTP_BUTTONS,
->   		.export_all_inputs = true },
-> +	{ .name = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-> +		.quirks = MT_QUIRK_ALWAYS_VALID |
-> +			MT_QUIRK_IGNORE_DUPLICATES |
-> +			MT_QUIRK_HOVERING |
-> +			MT_QUIRK_CONTACT_CNT_ACCURATE |
-> +			MT_QUIRK_STICKY_FINGERS |
-> +			MT_QUIRK_WIN8_PTP_BUTTONS |
-> +			MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
-> +		.export_all_inputs = true },
->   
->   	/*
->   	 * vendor specific classes
-> @@ -1998,7 +2009,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
->   
->   static void mt_on_hid_hw_close(struct hid_device *hdev)
->   {
-> -	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
-> +	struct mt_device *td = hid_get_drvdata(hdev);
+> -       if (cdev) {
+> -               ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+> -               if (ret < 0)
+> -                       goto free_eptdev;
+> -
+> -               dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+> -       }
+> -
+>         /* Anonymous inode device still need device name for dev_err() and friends */
+>         ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+>         if (ret < 0)
+> -               goto free_minor_ida;
+> +               return ret;
+>         dev->id = ret;
+>         dev_set_name(dev, "rpmsg%d", ret);
+>
+> -       ret = 0;
+> -
+>         if (cdev) {
+> +               ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+> +               if (ret < 0) {
+> +                       ida_free(&rpmsg_ept_ida, dev->id);
+> +                       return ret;
+> +               }
 > +
-> +	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
-> +		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
-> +	else
-> +		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
->   }
->   
->   /*
-> @@ -2375,6 +2391,14 @@ static const struct hid_device_id mt_devices[] = {
->   		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
->   			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
->   
-> +	/* Uniwill touchpads */
-> +	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-> +			USB_VENDOR_ID_PIXART, 0x0255) },
-> +	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-> +			USB_VENDOR_ID_PIXART, 0x0274) },
+> +               dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
 > +
->   	/* VTL panels */
->   	{ .driver_data = MT_CLS_VTL,
->   		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
+>                 ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+> -               if (ret)
+> -                       goto free_ept_ida;
+> +               if (ret) {
+> +                       ida_free(&rpmsg_ept_ida, dev->id);
+> +                       ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+> +                       return ret;
+> +               }
+>         }
+>
+>         /* We can now rely on the release function for cleanup */
+>         dev->release = rpmsg_eptdev_release_device;
+>
+> -       return ret;
+> -
+> -free_ept_ida:
+> -       ida_free(&rpmsg_ept_ida, dev->id);
+> -free_minor_ida:
+> -       if (cdev)
+> -               ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+> -free_eptdev:
+> -       put_device(dev);
+> -       kfree(eptdev);
+> -
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
+> @@ -509,12 +499,17 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+>                                struct rpmsg_channel_info chinfo)
+>  {
+>         struct rpmsg_eptdev *eptdev;
+> +       int ret;
+>
+>         eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
+>         if (IS_ERR(eptdev))
+>                 return PTR_ERR(eptdev);
+>
+> -       return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +       ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +       if (ret)
+> +               kfree(eptdev);
+> +
+> +       return ret;
+>  }
+>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>
+> @@ -546,6 +541,11 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+>         ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
+>         if (ret) {
+>                 dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+> +               /*
+> +                * Avoid put_device() or WARN() will be triggered due to absence of
+> +                * device::release(), refer to device_release().
+> +                */
+> +               kfree(eptdev);
+>                 return ret;
+>         }
+>
+> @@ -561,6 +561,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+>
+>         if (!ret)
+>                 *pfd = fd;
+> +       else
+> +               put_device(&eptdev->dev);
+>
+>         return ret;
+>  }
+> @@ -571,6 +573,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>         struct rpmsg_channel_info chinfo;
+>         struct rpmsg_eptdev *eptdev;
+>         struct device *dev = &rpdev->dev;
+> +       int ret;
+>
+>         memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+>         chinfo.src = rpdev->src;
+> @@ -589,7 +592,11 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>          */
+>         eptdev->default_ept->priv = eptdev;
+>
+> -       return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +       ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +       if (ret)
+> +               kfree(eptdev);
+> +
+> +       return ret;
+>  }
+>
+>  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> --
+> 2.25.1
+>
 
