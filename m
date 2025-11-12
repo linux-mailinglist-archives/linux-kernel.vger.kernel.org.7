@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-898105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55621C545CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:10:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1D5C54618
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:12:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 93A2134A982
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A242B3AD1F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28932848B4;
-	Wed, 12 Nov 2025 20:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47683288C34;
+	Wed, 12 Nov 2025 20:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2bzmwpu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6qGln/p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448A9A55;
-	Wed, 12 Nov 2025 20:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F837A55;
+	Wed, 12 Nov 2025 20:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762978077; cv=none; b=WaodOjRUdyqX/MWYCRihW+8eXiXIBNpGZUIw7uDwyoYb1jnEkax1B/oNN8MJBNj7zjc40eOfSanH4Rrd8Eiq2Xah/aaYAl51HBfcwK37g/2CM+aZiluK8BPGeWawz/frYPRepEVbQXTRz8zjolT17c2XSOieZjZ4bobqg93bfjc=
+	t=1762978110; cv=none; b=cswWRL3aputYEYJlvi2tFvQYmQwpBYFQ7saW7s2EiHe/5Ls7AXzZX8WoDrE7/LNDO9N4MoHu1BaOSy/PJ+FyzhK3fP69G68qFRUJcGRj9C18f/5DggW0SYq89iJY5XvOeAsMJthVEDu+ZY1ZBr4WqlaG5+LzjMUH6k8X/ACzUgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762978077; c=relaxed/simple;
-	bh=OdEJh6jMrxplRcO6WXw0GHADFcWNOvCQr3BWQP8HOgo=;
+	s=arc-20240116; t=1762978110; c=relaxed/simple;
+	bh=IBaCdq28fwapjp7V/4XKS8Fmm2gV6YM9nEce1KcEJ4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADUt9qvsOOJ/IBeVnjdjSalvY3aZDwRAE49LmXp240Hgn4ncw+0srnHqxrja3MXaNaoNpUXIp3tgfQxIq6D6lumusrqZVo34UUEcWvBQiJO7C8FS1+zmAnqk39qtR5KhI7K47BQDjOc2vaoi0baryvpzIqoC1FN3P8VUPtwCoF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2bzmwpu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE90AC4CEF8;
-	Wed, 12 Nov 2025 20:07:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBVpV86Ww+EjTULDTJVCdLlepd3BLD+WfXzdFRNN4w8qy0vIRaFmJbYCld+nC2HQZYBBTMU0oVejEswOdLUD40tnbmzWk6uJK34i2lZ4lTeyl86ZJ99T9Na71opPDJ0zRzinoU7cx4vyIK9l7yY6qMrM6Sqp3w7NIY8PwRej0tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a6qGln/p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9548C4CEF5;
+	Wed, 12 Nov 2025 20:08:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762978076;
-	bh=OdEJh6jMrxplRcO6WXw0GHADFcWNOvCQr3BWQP8HOgo=;
+	s=k20201202; t=1762978110;
+	bh=IBaCdq28fwapjp7V/4XKS8Fmm2gV6YM9nEce1KcEJ4A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i2bzmwpuTCZrsQvG3nXjr1MzE7LiJE4mtJXDLMawS/s8je6J8yqjXnd12SzIzFpF7
-	 FCAeNmQXArfLUVcc9AMqDAbm1goT0ZnA7zv2xj3riwfH+G+3wxRxEPcWvuBxC57oDe
-	 UVslzKDPRWAOMpvQc8EHMmUiJB3dUcA3yt9k8Gu21nCmQIFvkKbZg3mJLSNTjKkeeE
-	 bgr1YtwUgCE4lx+pVA/eM8e4awyXPQ9blRAC3GQ84z897lJ+mnbnYUbCS+4Fk2uJpB
-	 PRWbv60bgR7P6cKfb18QtI/472QshOi9Ai8fNOJcGK/GWrgovRxNY76FEeFzP40r+W
-	 U6Qoyzr7P5FQg==
-Date: Wed, 12 Nov 2025 14:07:55 -0600
+	b=a6qGln/pKustJdC7wLKSeHJvUVnF6U9X+SQueOf89gVbk20eCsxgpGPvdElCwA/T1
+	 4DNEyn/34DOgnvGHlmDBq3YGsPT7AbMvRh8ZMY3anK/mnv/w1vnZhJw20DNsU1NSjX
+	 a3GTtWAehaLQUpF7dOyNGU6PipdlOKT9uhBzm36oLn0CtlHTLMTvnCeFRRMqVz2/cX
+	 xl+uqRByN9KOU/jAFBNMiFujZvmUrujwwSObb/VKbgGNVW/u8H0SYdTKpbp0NKTHIk
+	 JYUwqdylkYpDl+HMwq5GvhZiFgew5iLvReQrHvoo5anB7ZDmsR6Pqj3nwEV1h8sP2y
+	 fUXH6g3RLjZ2w==
+Date: Wed, 12 Nov 2025 14:08:28 -0600
 From: Rob Herring <robh@kernel.org>
 To: Yuntao Wang <yuntao.wang@linux.dev>
 Cc: Saravana Kannan <saravanak@google.com>,
@@ -57,7 +57,7 @@ Cc: Saravana Kannan <saravanak@google.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 10/10] of/address: Remove the incorrect and misleading
  comment
-Message-ID: <20251112200755.GA2155854-robh@kernel.org>
+Message-ID: <20251112200828.GB2155854-robh@kernel.org>
 References: <20251112143520.233870-1-yuntao.wang@linux.dev>
  <20251112143520.233870-11-yuntao.wang@linux.dev>
 Precedence: bulk
@@ -76,32 +76,11 @@ On Wed, Nov 12, 2025 at 10:35:20PM +0800, Yuntao Wang wrote:
 > 
 > However, the comment was left unchanged and still describes the behavior
 > of of_bus_default_flags_match(), it is incorrect and misleading, remove it.
-
-There is no reason to put this patch in this series. It is completely 
-unrelated.
-
 > 
 > Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 > ---
 >  drivers/of/address.c | 4 ----
 >  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index f0f8f0dd191c..4034d798c55a 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -328,10 +328,6 @@ static int of_bus_default_flags_match(struct device_node *np)
->  
->  static int of_bus_default_match(struct device_node *np)
->  {
-> -	/*
-> -	 * Check for presence first since of_bus_n_addr_cells() will warn when
-> -	 * walking parent nodes.
-> -	 */
->  	return of_property_present(np, "#address-cells");
->  }
->  
-> -- 
-> 2.51.0
-> 
+
+Applied, thanks!
 
