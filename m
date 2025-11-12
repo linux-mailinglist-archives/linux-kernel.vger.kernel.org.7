@@ -1,185 +1,113 @@
-Return-Path: <linux-kernel+bounces-898273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA1FC54B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:38:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528A3C54BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7EE96342A04
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:38:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 809404E3F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFD12EC55A;
-	Wed, 12 Nov 2025 22:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D322E3AF1;
+	Wed, 12 Nov 2025 22:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTY/Rh8K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gFuUU9NL"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4214C2EA755;
-	Wed, 12 Nov 2025 22:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE92A2E229F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762987119; cv=none; b=uqiH2podZwTa/mQEtktnFKy5In7hoYUzEHOMuYO48jlIMTufyr+6LBHdQVgfZ1YrEWCDIzAnoFoCjX+LoAayyoDOhna7nlMp2pED8pInoWL+ztHOg86Q9kIdssjfNd6i4J9VzFABTpbSU4Zk0JNN7OoIjAD7HhvzxEPgJ7XgY2g=
+	t=1762987250; cv=none; b=JVDN27hSd532H6d676zIpKkWhKIe8Tu8UqKZzJkKsHZiMjXsOkym0jnOIEPJaYvzGu952gXzl2Sokd4/pfAuTFHgFlqigv09bouukpuyO64Oy3wxK/7QLiN1sDe9H+g1VDCA9qSCgLlpvXccFiz1PT9iQ9/rLL7u+79zzsIuibg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762987119; c=relaxed/simple;
-	bh=o2EQqaZZAsWkT6r39TusYsLK6a8IzHKn3703XsIxWpg=;
+	s=arc-20240116; t=1762987250; c=relaxed/simple;
+	bh=P8wB0FO0yByvcvYYoigc7wENN3w1QKW/CVSgfU3dczk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8qOjSJlXdNv452/O3+c7Ov8j2LcEYPQi41xPI2NsnxNTaRpMe1mu9C74GfutDvO4BrWCVFgC48/ot5nZdfTWXyIiyKgtAeraaUiqJVKI/eSmMaWJgQ8ccEKIuy6Vz95COQAHb5Bxtb0iBhZEFyZqyGf1oeYKld/BEUDrn5+yQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTY/Rh8K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A849C4CEF1;
-	Wed, 12 Nov 2025 22:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762987118;
-	bh=o2EQqaZZAsWkT6r39TusYsLK6a8IzHKn3703XsIxWpg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YTY/Rh8KpY36C75hev3BjCBZb7EDXufixbscLxlLsHG9ueTWZLz9RvIRjIs0W7sMY
-	 CfW4QMJD3/t1m2IoJqkP9lMlYBdXMyjuMG4ONpEyfwvAg9RTH1udFhHm6hX9zDM52b
-	 vyZBzLupt+h9QBFd+9D21T9dNPjCMiznKczjhzE36fxVjLg0yQwW1nPVvuh3SjoudI
-	 7DNDpWX5/3NswF/LWKpj9UmCf4uwHFNATj7b71XaZ3QezG/6heLgzBJL+mWWsLEHke
-	 sT1/5knwSEb13gskvno39Yvhv7QeU8WrgOKbIWDD+UC+xAcKTfpJO5Yrv6JNZiq7qJ
-	 qOAdTkPnBbyZA==
-Date: Wed, 12 Nov 2025 14:38:34 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v16 4/4] perf tools: Merge deferred user callchains
-Message-ID: <aRUMauhbs_jJ6-3P@google.com>
-References: <20250908175319.841517121@kernel.org>
- <20250908175430.639412649@kernel.org>
- <20251002134938.756db4ef@gandalf.local.home>
- <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
- <f543231e-a71c-4600-9cf3-f999ca104d86@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9Z6T8Vv5E+F0xuc+GCqB6UqPn+zGf0XEV66i18KC07cDLRLRrAHn2r/ryfV63EDRl8H/0yvbY2LYe8U3T/45EOdjnvrWYDdhCCisRZtf4rJBqbtZ8H3q0SYGzhQW1kQWiZ0XFixTFb+KnhYCVGMNg2Ck+VLSBH/1i87LKNFPHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gFuUU9NL; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8b272a4ca78so27671785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:40:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1762987247; x=1763592047; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F17wxxxXjWtCXfhR3CI+FvZY7BooVKr92Re6tDYp9Fw=;
+        b=gFuUU9NLnPq0pZltIS7VfSRVBI9hAcVHRRKJ9jUfTXh4j/PYZz0aXktUxkZLvcSfp1
+         c/T2qLIVUjVgwvlm/T9qvbQOMG9DQnYApp/n3ZkuNUIngmsF9+V3bR9iZQzYnOGPsaqe
+         8FRJXOYxh8yKmxRqa6kJAGmVjutpalAZr+uuKWNkKOEDPM8f701eQ9wLu+EVC3Y9lmXF
+         bmJVI78QzSCqkdKZTA9vhq0GA3fdZNIXt6hewOe/8wGY2rFa25WFZME7G4lWynAoU5Jd
+         MktZ527Rw80xRWTW6pvVn1FkowIjeo660niVLgj5XfimGTKGzj2YYOpP4ondsd27ydr2
+         Y9gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762987247; x=1763592047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F17wxxxXjWtCXfhR3CI+FvZY7BooVKr92Re6tDYp9Fw=;
+        b=JWi+XgBie6HtynsRpDLj3GZnDV0awXR+/UjEalnTIy4e3r3dOCL6lqNAKZThZBwrPG
+         5fsLa+Nz80aShy19NS3tCyq5KAo33CNyL3yLmBTWrYrP/qeiZfdJlpkm6Ht6NLhwYA/r
+         /IXKI6xpWMRqyhxhmrYP9ExCJ2UMZwCOKTMhVgO5MHT5dqWZwXx2uPFqOLLV5h3p+bDt
+         I4bdzI3JpG4Pnjlyu5kiWBXsrF2zP8B+8L02++mw5JrEefWdEzI2sXPVz/tCD6gtYwKr
+         F0Z6BEZnqCButsp2rT7GrsBLUZPFCFydm+Ex/gGlAZymK6/87MH+OVV3oIR5K2gur5oc
+         33+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWI3EtBhoyP4DWxW2UKTyRN/7QG+XOsy0HQ5svNnGiuvtuZQHRhTmy9aZRgMN9lmm1Czrn6JuS6avqxNaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBbhv4VAUVBuZveXLVKKmYyCasYxshe2ZS2OseRv7l22ZpgiqJ
+	n1zPw/2s5GJLgwwV2R/0hRtqlfABK8zm3HZ8KiBniJfpdDPF/OfQU0Qxw3t3Sy91BC0=
+X-Gm-Gg: ASbGncvVvPUtWh06HfFQReOG86vxGKDPeMjQm+xm2SrzmxiahH68mUgiWXDbEqtS/Xh
+	4umSVOefEsB0rqMmgmhtCW+Vx7cKY2H1kYqNc1gb9sv0m8dHqO4yxCXT5JXt9oIRgNIv0sgWJn+
+	CVQ6H2GtRJyBR8pGDoqsZhSk6JVwadYBPdXa6J905pNZakMGHL5r5kDQL8vl6s3c7Goc1vLmyls
+	KwXufkkyAn8Rjrz8rV0/xYs0tp23D5NyZLRKIIzrtzB7STEW5Tnvm67DD4iQ5PRvhkxFw5XNwC0
+	WbVBKHaya6dF47yzsofY64tuAzXPIiANC23eSnQz25fIKd9aG73Y7p1rMMKlZR/7aWoHoAaBwnw
+	qka3c3zBMEscEvx3obHeDK+6OEwURHJ9bpRIpj44zhXuIoVGQizimnGetj9ClRa4UsFaUSA5myQ
+	hK3ZdxTa7H3YsOOrNbOAOtJRsvV7nyA570kwC0D006NSUseExouFTllSKT+mI=
+X-Google-Smtp-Source: AGHT+IHsrZxr2i8YDSF/b/oh9D32f8B4GcLii5rT3OW7CqVC+9w6JNHV8qPW/fd6ArMwiMM3EC3jWQ==
+X-Received: by 2002:a05:620a:4112:b0:8b2:1f8d:f115 with SMTP id af79cd13be357-8b29b7df2f6mr678375485a.65.1762987247480;
+        Wed, 12 Nov 2025 14:40:47 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2aee9eeb1sm12252285a.8.2025.11.12.14.40.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 14:40:47 -0800 (PST)
+Date: Wed, 12 Nov 2025 17:40:45 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH 3/3] cxl/region: Remove local variable @inc in
+ cxl_port_setup_targets()
+Message-ID: <aRUM7bij1XY6sInV@gourry-fedora-PF4VCD3F>
+References: <20251112205105.1271726-1-rrichter@amd.com>
+ <20251112205105.1271726-4-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f543231e-a71c-4600-9cf3-f999ca104d86@linux.ibm.com>
+In-Reply-To: <20251112205105.1271726-4-rrichter@amd.com>
 
-Hello,
+On Wed, Nov 12, 2025 at 09:51:04PM +0100, Robert Richter wrote:
+> Simplify the code by removing local variable @inc. The variable is not
+> used elsewhere, remove it and directly increment the target number.
+> 
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-On Wed, Nov 12, 2025 at 11:05:59AM +0100, Jens Remus wrote:
-> Hello Namhyung,
-> 
-> could you please adapt your patches from this series to Peter's latest
-> changes to unwind user and related perf support, especially his new
-> version c69993ecdd4d ("perf: Support deferred user unwind") available
-> at:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
-Sure, will take a look.
-
-Thanks,
-Namhyung
-
-> 
-> On 10/24/2025 3:02 PM, Peter Zijlstra wrote:
-> > On Thu, Oct 02, 2025 at 01:49:38PM -0400, Steven Rostedt wrote:
-> >> On Mon, 08 Sep 2025 13:53:23 -0400
-> >> Steven Rostedt <rostedt@kernel.org> wrote:
-> >>
-> >>> +static int evlist__deliver_deferred_samples(struct evlist *evlist,
-> >>> +					    const struct perf_tool *tool,
-> >>> +					    union  perf_event *event,
-> >>> +					    struct perf_sample *sample,
-> >>> +					    struct machine *machine)
-> >>> +{
-> >>> +	struct deferred_event *de, *tmp;
-> >>> +	struct evsel *evsel;
-> >>> +	int ret = 0;
-> >>> +
-> >>> +	if (!tool->merge_deferred_callchains) {
-> >>> +		evsel = evlist__id2evsel(evlist, sample->id);
-> >>> +		return tool->callchain_deferred(tool, event, sample,
-> >>> +						evsel, machine);
-> >>> +	}
-> >>> +
-> >>> +	list_for_each_entry_safe(de, tmp, &evlist->deferred_samples, list) {
-> >>> +		struct perf_sample orig_sample;
-> >>
-> >> orig_sample is not initialized and can then contain junk.
-> >>
-> >>> +
-> >>> +		ret = evlist__parse_sample(evlist, de->event, &orig_sample);
-> >>> +		if (ret < 0) {
-> >>> +			pr_err("failed to parse original sample\n");
-> >>> +			break;
-> >>> +		}
-> >>> +
-> >>> +		if (sample->tid != orig_sample.tid)
-> >>> +			continue;
-> >>> +
-> >>> +		if (event->callchain_deferred.cookie == orig_sample.deferred_cookie)
-> >>> +			sample__merge_deferred_callchain(&orig_sample, sample);
-> >>
-> >> The sample__merge_deferred_callchain() initializes both
-> >> orig_sample.deferred_callchain and the callchain. But now that it's not
-> >> being called, it can cause the below free to happen with junk as the
-> >> callchain. This needs:
-> >>
-> >> 		else
-> >> 			orig_sample.deferred_callchain = false;
-> > 
-> > Ah, so I saw crashes from here and just deleted both free()s and got on
-> > with things ;-)
-> 
-> This needs to be properly resolved.  In the meantime I am using Steven's
-> suggestion above to continue my work on unwind user sframe (s390).
-> 
-> > 
-> >>> +
-> >>> +		evsel = evlist__id2evsel(evlist, orig_sample.id);
-> >>> +		ret = evlist__deliver_sample(evlist, tool, de->event,
-> >>> +					     &orig_sample, evsel,> machine); +
-> >>> +		if (orig_sample.deferred_callchain)
-> >>> +			free(orig_sample.callchain);
-> >>> +
-> >>> +		list_del(&de->list);
-> >>> +		free(de);
-> >>> +
-> >>> +		if (ret)
-> >>> +			break;
-> >>> +	}
-> >>> +	return ret;
-> >>> +}
-> >>
-> >> -- Steve
-> 
-> Thanks and regards,
-> Jens
-> -- 
-> Jens Remus
-> Linux on Z Development (D3303)
-> +49-7031-16-1128 Office
-> jremus@de.ibm.com
-> 
-> IBM
-> 
-> IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-> IBM Data Privacy Statement: https://www.ibm.com/privacy/
-> 
 
