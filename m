@@ -1,651 +1,195 @@
-Return-Path: <linux-kernel+bounces-896424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD61C5054D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:21:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F14C50555
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68703B2613
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:21:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 216FF4EA9E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB9C248F6A;
-	Wed, 12 Nov 2025 02:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465E7229B36;
+	Wed, 12 Nov 2025 02:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZdHrdibq"
-Received: from mail-m15578.qiye.163.com (mail-m15578.qiye.163.com [101.71.155.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KyY836lu";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0ZFFCUs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89DD433A6;
-	Wed, 12 Nov 2025 02:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343835CBA1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762914082; cv=none; b=LzhtH1+3U5jENLK79ZnT2ZW2C1On1ve7kONB+2jqg2uIm0xWbSC1qq+UZWzRrfda+BSfwTUsnqJn03kco91PomV72+4L2EgboWfdWlhdJ5aTKBw9T68Ox1qonIOEhpukg1dMd8g94PoMnBGP63RPKqZoLItKnwyBsmo8PYBAtGw=
+	t=1762914081; cv=none; b=NEi3WxXglF3LJr8hZbXF9fvibElvme7TbY1jogFTpxNDG4aC3MBBiu5+Xg4/JCbX9GGdX8B/cTnamUHLY5D2qvpIUN4uHY+a9hVYoPURiy3ius43Gukoo60b7oscDPGHf4D5wEL6dxFQNZSyNwVNlenu+F42GNcntTuox3vRxv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762914082; c=relaxed/simple;
-	bh=n7cDsfuC15YmoPakm4dI7C/pu4Xe2LruR6Alglpc5Cw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FH5tMcpnPsxz70VNTnSzZLD8BAev8K4KODkZwC2W7clAc+plTtjka8yTegt7+dBBm4DJMYmgich/c66yBf4/wjczkxUJgDuMxJUfH5uBaxFZUYWS97XI/3xMhsOv3F/pONi5rb3MDu2aMO4Kn/OerIPE8pZG/MZc7oHIRN8y11w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZdHrdibq; arc=none smtp.client-ip=101.71.155.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 294288867;
-	Wed, 12 Nov 2025 10:21:13 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	p.zabel@pengutronix.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	finley.xiao@rock-chips.com,
-	sugar.zhang@rock-chips.com
-Subject: [RESEND PATCH v7 4/5] dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
-Date: Wed, 12 Nov 2025 10:21:11 +0800
-Message-Id: <20251112022111.3828521-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762914081; c=relaxed/simple;
+	bh=YWcG+oJgowB0QXzh7lW0ev+o8dH9TeV1xvVci1EqKF4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jKTvbus/CQTarMHSpeGfGhFfqGR6KRkj62Wk4ZyIEVtB8ZKJtlXZ8hmSoDleUayQEvLNUaVt4/0Fh/SeOMJqptNXTTXIOsyx6eVSsTLI5N2Libm99csD1H4OBxBMZciUWNaY8IcFC9gzhht3rmcFc0wtItHp7GZWcqZjcTeIssQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KyY836lu; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0ZFFCUs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762914078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oog1zA4MhgknnCzL4jWJTJK5hM/UQ2vfKQRg1iPWC2A=;
+	b=KyY836luTYSMX6y0p7sj/iUb8aeBvTDJNaD0QJwC5oiAUI2O18FhL+mpopULP8UGo0SeAE
+	tjbP3aokRe9lsThu/WXVJlU2jF4f5q02ccpnwwvTNDaqP0d3tq0gyvlJDC+DaRocbp5KWj
+	AYJo9YIuVTdrF+NHEcLHamOXlULXf/Y=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-81-cAjDdLlXPyG0KtUcOKIwjA-1; Tue, 11 Nov 2025 21:21:17 -0500
+X-MC-Unique: cAjDdLlXPyG0KtUcOKIwjA-1
+X-Mimecast-MFC-AGG-ID: cAjDdLlXPyG0KtUcOKIwjA_1762914077
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b24b811fb1so78347985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:21:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762914077; x=1763518877; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oog1zA4MhgknnCzL4jWJTJK5hM/UQ2vfKQRg1iPWC2A=;
+        b=G0ZFFCUs+0cvPY9NgOaAAjEsK6G5i7G6/YJKapffhnqJ+JWUz5ugYUtxijAHsYcehH
+         8wtCInJURGYpoDAxEOCzNobZH46PQqXkIjMV2Oj6PlBvczUNX96QFGgZid16qfOMAiwU
+         y2kDZwY/08Qq7ilk71F8CiuPSCr/rpWvkoJjaVuc56I23G3sZzi+EszppBjnYY0WG9Ny
+         qCWznO/bmg772ueVk48H0YXpPrrAYs4uUVz206PZFw3x0PGFO/JCuBU9Sl6Loi7D4ktX
+         WuHHe2ojjht6kDnfWXPLmwq7LKTabIF9ibu783mMKxsmmZLSdYbVuibFS4GVcMBuesci
+         Nc+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762914077; x=1763518877;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oog1zA4MhgknnCzL4jWJTJK5hM/UQ2vfKQRg1iPWC2A=;
+        b=B4jJxV6LoFuXlEEXpM65X8Ijl5rgPoRwFTA5qag2jK7eieapTEHcSjiMsIN26SYsBg
+         sco/UEIdI5ZzXeg/9+fLyI+8kLqbTtOFrQYiWSkaktpMrmlC211sjJA5c+KMJusGnZMo
+         +403VrhM+S8KAKUwfj6GZvknm0OFnyAATzJXWJ4XiwnKyi0bOFyNii30hjGyv0YmWJuU
+         DBLD4x3d5y+Vwbjjp/nfSMuwux+nIP5wY0j1u4GzXiCx4DvYhFHFRD8Um2HBzaSF5M1z
+         52SUbfnIqHW70qyu9ceqandnlUYbtNLFqYSk0KR8CjqGOauImSGV2TSUvO9s0vT9b8a5
+         Z04w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLMImvt8de/Chrh6d4szMcCzRbRM5suR1XmS09hD8ZapFMEg9StSrCVJPDS2UHiYNDdY22EK4DFKa30DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3IY+0meyVDK8Q49o+OvFyV5L+/f/MSpzlrUd4ZFmN7s2gLMR8
+	xV9Jspcgj/sjMPojoSzyS32uO1/ldq6tSRyNLQyPqI/RNDU2f1i5a4zAvYsr1wzG7T8Ucd+YOCw
+	BkcOP1Ce5mDfAl9sXFCHZFyOLcvsSqemvxPMgBtSy/3ebvIiUOpfDXNwa86y+t/A2xw==
+X-Gm-Gg: ASbGnctCWzIois+ItJLc13yhr2+8JE7be9vWt8K/i9IYISbHnsW6RStJm9th30lQt9q
+	Wd329se0Atitj46mrisixuzwrAeVDtfWAY8J6AqASKUGAR894QKPpyoozGANE3RfzzzYH5tQhxE
+	KPaljjFCIjd+sFVuaGImuolj5EIjNY3Z5u65fpxAHONhUM3+8cbDzfz8yQDu+NpXOeW+JXp8kKj
+	/z+w+VtflZmVvAJyxvawgiLZkyEmRrzQ9jdZLLqqdtge1IfzM5LbkO58cA/vovEVDOEgWF861Ht
+	oeIirafsTnQVPBz1aeFppmGSiwj7iEC5cKPkS6ULRD3LapWOOIdPi7DAKol+CDaDnUtTqJ4CZTd
+	azEGacRBKYBXomDa6/VleOCzFa/huT1KA4rOacHMB8200DQ==
+X-Received: by 2002:a05:620a:284b:b0:89f:3fa9:d2ea with SMTP id af79cd13be357-8b28898e198mr700389285a.15.1762914076702;
+        Tue, 11 Nov 2025 18:21:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEPW+KSEaCRt0t8ci2KGRMI1HcV7Zd4Kh8enTmgeyrHrBzYBM0y3gS0k7fRKyFqts+K3XsvYw==
+X-Received: by 2002:a05:620a:284b:b0:89f:3fa9:d2ea with SMTP id af79cd13be357-8b28898e198mr700386985a.15.1762914076304;
+        Tue, 11 Nov 2025 18:21:16 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a9e6c95sm100332085a.29.2025.11.11.18.21.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 18:21:15 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <3019dd82-5388-427f-8618-30b5d8b06fd8@redhat.com>
+Date: Tue, 11 Nov 2025 21:21:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
+ populated
+To: Chen Ridong <chenridong@huaweicloud.com>, Waiman Long <llong@redhat.com>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20251111132632.950430-1-chenridong@huaweicloud.com>
+ <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
+ <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
+ <sebxxc2px767l447xr7cmkvlsewvdiazp7ksee3u2hlqaka522@egghgtj4oowf>
+ <a4e61aa0-5c1f-490e-9cae-5e478ba809ee@redhat.com>
+ <86361412-7de0-46bc-9188-a32b634e43a3@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <86361412-7de0-46bc-9188-a32b634e43a3@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a75ddfa9503a3kunm6830aa801fa358
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU5KHVZLQ01CHh1CSBpPGU9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=ZdHrdibq9Hfn8FHkfVVHS1Xsus5dspe6zuQvqMMzCPuGpqpLu+yYs+mFAI7aNfh0LXmpUTvDMk9lSEgEroPaYqfNrv0HH8BlWPfVpi2vBEpXsfnI0xYrc1tdmSWQJ6cJPKscBQsCa8nZ3vq9UXugorhJN64YdKJit4MGeSFHuIs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=GNQ9loUKL6hh4i87QnwH29KaluitF11Bzb3qoAoQNbw=;
-	h=date:mime-version:subject:message-id:from;
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+On 11/11/25 8:58 PM, Chen Ridong wrote:
+>
+> On 2025/11/12 4:35, Waiman Long wrote:
+>> On 11/11/25 2:25 PM, Michal Koutný wrote:
+>>> On Tue, Nov 11, 2025 at 10:16:33AM -0500, Waiman Long <llong@redhat.com> wrote:
+>>>> For internal helper like this one, we may not really need that as
+>>>> almost all the code in cpuset.c are within either a cpuset_mutex or
+>>>> callback_lock critical sections. So I am fine with or without it.
+>>> OK, cpuset_mutex and callback_lock are close but cgroup_is_populated()
+>>> that caught my eye would also need cgroup_mutex otherwise "the result
+>>> can only be used as a hint" (quote from cgroup.h).
+>>>
+>>> Or is it safe to assume that cpuset_mutex inside cpuset_attach() is
+>>> sufficient to always (incl. exits) ensure stability of
+>>> cgroup_is_populated() result?
+>>>
+>>> Anyway, I'd find some clarifications in the commit message or the
+>>> surrounding code about this helpful. (Judgment call, whether with a
+>>> lockdep macro. My opinion is -- why not.)
+>> For attach_in_progress, it is protected by the cpuset_mutex. So it may make sense to add a
+>> lockdep_assert_held() for that.
+>>
+> Will add.
+>
+>> You are right that there are problems WRT the stability of cgroup_is_populated() value.
+>>
+>> I think "cgrp->nr_populated_csets + cs->attach_in_progress" should be almost stable for the cgroup
+>> itself with cpuset_mutex, but there can be a small timing window after cpuset_attach(), but before
+>> the stat is updated where the sum is 0, but there are actually tasks in the cgroup.
+>>
+> Do you mean there’s a small window after ss->attach (i.e., cpuset_attach) where
+> cgrp->nr_populated_csets + cs->attach_in_progress could be 0?
+>
+> If I understand correctly:
+>
+> ss->can_attach: cs->attach_in_progress++, sum > 0
+> css_set_move_task->css_set_update_populated: cgrp->nr_populated_csets++, sum > 0
+> ss->attach->cpuset_attach: cs->attach_in_progress--, sum > 0
+>
+> What exactly is the small window you’re referring to where the sum equals 0?
+Yes, the nr_populated_csets is incremented before calling 
+cpuset_attach(). I think I had mixed up the ordering. Thanks for the 
+clarification.
+>
+>> For "cgrp->nr_populated_domain_children + cgrp->nr_populated_threaded_children", it also has the
+>> problem that the sum can be 0 but there are attach_in_progress set in one or more of the child
+>> cgroups. So even with this patch, we can't guarantee 100% that there can be no task in the partition
+>> even if it has empty effective_cpus. It is only a problem for nested local partitions though as
+>> remote partitions are not allowed to exhaust all the CPUs from root cgroup.
+>>
+>> We should probably document that limitation to warn users if they try to create nested local
+>> partitions where the parent partition root of the child partitions has empty effective_cpus.
+>>
+> Hmm, but it was what the commit e2d59900d936 ("cgroup/cpuset: Allow no-task partition to have empty
+> cpuset.cpus.effective") allowed, and it makes sense.
 
-Add device tree bindings for clock and reset unit on RK3506 SoC.
-Add clock and reset IDs for RK3506 SoC.
+This commit will allow user to not waste a CPU if users want to set up a 
+nested local partitions where there is no task in some intermediate 
+levels. One way to address this gap is to iterate down the cpuset 
+hierarchy to check if any of its attach_in_progress count is set. So it 
+is a solvable problem.
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- .../bindings/clock/rockchip,rk3506-cru.yaml   |  45 +++
- .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
- .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
- 3 files changed, 541 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
- create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
- create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+There is also a flip side where cgroup_is_populated() returns a non-zero 
+value, but the tasks are actively being moved away. This false positive 
+is less a problem even though it can cause a failure in distributing out 
+all the CPUs to child partitions. The users can retry and it should work 
+the second time.
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-new file mode 100644
-index 000000000000..6b4234ee91ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3506 Clock and Reset Unit (CRU)
-+
-+maintainers:
-+  - Finley Xiao <finley.xiao@rock-chips.com>
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description:
-+  The RK3506 CRU generates the clock and also implements reset for SoC
-+  peripherals.
-+
-+properties:
-+  compatible:
-+    const: rockchip,rk3506-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@ff9a0000 {
-+      compatible = "rockchip,rk3506-cru";
-+      reg = <0xff9a0000 0x20000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-new file mode 100644
-index 000000000000..71d7dda23cc9
---- /dev/null
-+++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-@@ -0,0 +1,285 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-+#define _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-+
-+/* cru plls */
-+#define PLL_GPLL			0
-+#define PLL_V0PLL			1
-+#define PLL_V1PLL			2
-+
-+/* cru-clocks indices */
-+#define ARMCLK				3
-+#define CLK_DDR				4
-+#define XIN24M_GATE			5
-+#define CLK_GPLL_GATE			6
-+#define CLK_V0PLL_GATE			7
-+#define CLK_V1PLL_GATE			8
-+#define CLK_GPLL_DIV			9
-+#define CLK_GPLL_DIV_100M		10
-+#define CLK_V0PLL_DIV			11
-+#define CLK_V1PLL_DIV			12
-+#define CLK_INT_VOICE_MATRIX0		13
-+#define CLK_INT_VOICE_MATRIX1		14
-+#define CLK_INT_VOICE_MATRIX2		15
-+#define CLK_FRAC_UART_MATRIX0_MUX	16
-+#define CLK_FRAC_UART_MATRIX1_MUX	17
-+#define CLK_FRAC_VOICE_MATRIX0_MUX	18
-+#define CLK_FRAC_VOICE_MATRIX1_MUX	19
-+#define CLK_FRAC_COMMON_MATRIX0_MUX	20
-+#define CLK_FRAC_COMMON_MATRIX1_MUX	21
-+#define CLK_FRAC_COMMON_MATRIX2_MUX	22
-+#define CLK_FRAC_UART_MATRIX0		23
-+#define CLK_FRAC_UART_MATRIX1		24
-+#define CLK_FRAC_VOICE_MATRIX0		25
-+#define CLK_FRAC_VOICE_MATRIX1		26
-+#define CLK_FRAC_COMMON_MATRIX0		27
-+#define CLK_FRAC_COMMON_MATRIX1		28
-+#define CLK_FRAC_COMMON_MATRIX2		29
-+#define CLK_REF_USBPHY_TOP		30
-+#define CLK_REF_DPHY_TOP		31
-+#define ACLK_CORE_ROOT			32
-+#define PCLK_CORE_ROOT			33
-+#define PCLK_DBG			34
-+#define PCLK_CORE_GRF			35
-+#define PCLK_CORE_CRU			36
-+#define CLK_CORE_EMA_DETECT		37
-+#define CLK_REF_PVTPLL_CORE		38
-+#define PCLK_GPIO1			39
-+#define DBCLK_GPIO1			40
-+#define ACLK_CORE_PERI_ROOT		41
-+#define HCLK_CORE_PERI_ROOT		42
-+#define PCLK_CORE_PERI_ROOT		43
-+#define CLK_DSMC			44
-+#define ACLK_DSMC			45
-+#define PCLK_DSMC			46
-+#define CLK_FLEXBUS_TX			47
-+#define CLK_FLEXBUS_RX			48
-+#define ACLK_FLEXBUS			49
-+#define HCLK_FLEXBUS			50
-+#define ACLK_DSMC_SLV			51
-+#define HCLK_DSMC_SLV			52
-+#define ACLK_BUS_ROOT			53
-+#define HCLK_BUS_ROOT			54
-+#define PCLK_BUS_ROOT			55
-+#define ACLK_SYSRAM			56
-+#define HCLK_SYSRAM			57
-+#define ACLK_DMAC0			58
-+#define ACLK_DMAC1			59
-+#define HCLK_M0				60
-+#define PCLK_BUS_GRF			61
-+#define PCLK_TIMER			62
-+#define CLK_TIMER0_CH0			63
-+#define CLK_TIMER0_CH1			64
-+#define CLK_TIMER0_CH2			65
-+#define CLK_TIMER0_CH3			66
-+#define CLK_TIMER0_CH4			67
-+#define CLK_TIMER0_CH5			68
-+#define PCLK_WDT0			69
-+#define TCLK_WDT0			70
-+#define PCLK_WDT1			71
-+#define TCLK_WDT1			72
-+#define PCLK_MAILBOX			73
-+#define PCLK_INTMUX			74
-+#define PCLK_SPINLOCK			75
-+#define PCLK_DDRC			76
-+#define HCLK_DDRPHY			77
-+#define PCLK_DDRMON			78
-+#define CLK_DDRMON_OSC			79
-+#define PCLK_STDBY			80
-+#define HCLK_USBOTG0			81
-+#define HCLK_USBOTG0_PMU		82
-+#define CLK_USBOTG0_ADP			83
-+#define HCLK_USBOTG1			84
-+#define HCLK_USBOTG1_PMU		85
-+#define CLK_USBOTG1_ADP			86
-+#define PCLK_USBPHY			87
-+#define ACLK_DMA2DDR			88
-+#define PCLK_DMA2DDR			89
-+#define STCLK_M0			90
-+#define CLK_DDRPHY			91
-+#define CLK_DDRC_SRC			92
-+#define ACLK_DDRC_0			93
-+#define ACLK_DDRC_1			94
-+#define CLK_DDRC			95
-+#define CLK_DDRMON			96
-+#define HCLK_LSPERI_ROOT		97
-+#define PCLK_LSPERI_ROOT		98
-+#define PCLK_UART0			99
-+#define PCLK_UART1			100
-+#define PCLK_UART2			101
-+#define PCLK_UART3			102
-+#define PCLK_UART4			103
-+#define SCLK_UART0			104
-+#define SCLK_UART1			105
-+#define SCLK_UART2			106
-+#define SCLK_UART3			107
-+#define SCLK_UART4			108
-+#define PCLK_I2C0			109
-+#define CLK_I2C0			110
-+#define PCLK_I2C1			111
-+#define CLK_I2C1			112
-+#define PCLK_I2C2			113
-+#define CLK_I2C2			114
-+#define PCLK_PWM1			115
-+#define CLK_PWM1			116
-+#define CLK_OSC_PWM1			117
-+#define CLK_RC_PWM1			118
-+#define CLK_FREQ_PWM1			119
-+#define CLK_COUNTER_PWM1		120
-+#define PCLK_SPI0			121
-+#define CLK_SPI0			122
-+#define PCLK_SPI1			123
-+#define CLK_SPI1			124
-+#define PCLK_GPIO2			125
-+#define DBCLK_GPIO2			126
-+#define PCLK_GPIO3			127
-+#define DBCLK_GPIO3			128
-+#define PCLK_GPIO4			129
-+#define DBCLK_GPIO4			130
-+#define HCLK_CAN0			131
-+#define CLK_CAN0			132
-+#define HCLK_CAN1			133
-+#define CLK_CAN1			134
-+#define HCLK_PDM			135
-+#define MCLK_PDM			136
-+#define CLKOUT_PDM			137
-+#define MCLK_SPDIFTX			138
-+#define HCLK_SPDIFTX			139
-+#define HCLK_SPDIFRX			140
-+#define MCLK_SPDIFRX			141
-+#define MCLK_SAI0			142
-+#define HCLK_SAI0			143
-+#define MCLK_OUT_SAI0			144
-+#define MCLK_SAI1			145
-+#define HCLK_SAI1			146
-+#define MCLK_OUT_SAI1			147
-+#define HCLK_ASRC0			148
-+#define CLK_ASRC0			149
-+#define HCLK_ASRC1			150
-+#define CLK_ASRC1			151
-+#define PCLK_CRU			152
-+#define PCLK_PMU_ROOT			153
-+#define MCLK_ASRC0			154
-+#define MCLK_ASRC1			155
-+#define MCLK_ASRC2			156
-+#define MCLK_ASRC3			157
-+#define LRCK_ASRC0_SRC			158
-+#define LRCK_ASRC0_DST			159
-+#define LRCK_ASRC1_SRC			160
-+#define LRCK_ASRC1_DST			161
-+#define ACLK_HSPERI_ROOT		162
-+#define HCLK_HSPERI_ROOT		163
-+#define PCLK_HSPERI_ROOT		164
-+#define CCLK_SRC_SDMMC			165
-+#define HCLK_SDMMC			166
-+#define HCLK_FSPI			167
-+#define SCLK_FSPI			168
-+#define PCLK_SPI2			169
-+#define ACLK_MAC0			170
-+#define ACLK_MAC1			171
-+#define PCLK_MAC0			172
-+#define PCLK_MAC1			173
-+#define CLK_MAC_ROOT			174
-+#define CLK_MAC0			175
-+#define CLK_MAC1			176
-+#define MCLK_SAI2			177
-+#define HCLK_SAI2			178
-+#define MCLK_OUT_SAI2			179
-+#define MCLK_SAI3_SRC			180
-+#define HCLK_SAI3			181
-+#define MCLK_SAI3			182
-+#define MCLK_OUT_SAI3			183
-+#define MCLK_SAI4_SRC			184
-+#define HCLK_SAI4			185
-+#define MCLK_SAI4			186
-+#define HCLK_DSM			187
-+#define MCLK_DSM			188
-+#define PCLK_AUDIO_ADC			189
-+#define MCLK_AUDIO_ADC			190
-+#define MCLK_AUDIO_ADC_DIV4		191
-+#define PCLK_SARADC			192
-+#define CLK_SARADC			193
-+#define PCLK_OTPC_NS			194
-+#define CLK_SBPI_OTPC_NS		195
-+#define CLK_USER_OTPC_NS		196
-+#define PCLK_UART5			197
-+#define SCLK_UART5			198
-+#define PCLK_GPIO234_IOC		199
-+#define CLK_MAC_PTP_ROOT		200
-+#define CLK_MAC0_PTP			201
-+#define CLK_MAC1_PTP			202
-+#define CLK_SPI2			203
-+#define ACLK_VIO_ROOT			204
-+#define HCLK_VIO_ROOT			205
-+#define PCLK_VIO_ROOT			206
-+#define HCLK_RGA			207
-+#define ACLK_RGA			208
-+#define CLK_CORE_RGA			209
-+#define ACLK_VOP			210
-+#define HCLK_VOP			211
-+#define DCLK_VOP			212
-+#define PCLK_DPHY			213
-+#define PCLK_DSI_HOST			214
-+#define PCLK_TSADC			215
-+#define CLK_TSADC			216
-+#define CLK_TSADC_TSEN			217
-+#define PCLK_GPIO1_IOC			218
-+#define PCLK_OTPC_S			219
-+#define CLK_SBPI_OTPC_S			220
-+#define CLK_USER_OTPC_S			221
-+#define PCLK_OTP_MASK			222
-+#define PCLK_KEYREADER			223
-+#define HCLK_BOOTROM			224
-+#define PCLK_DDR_SERVICE		225
-+#define HCLK_CRYPTO_S			226
-+#define HCLK_KEYLAD			227
-+#define CLK_CORE_CRYPTO			228
-+#define CLK_PKA_CRYPTO			229
-+#define CLK_CORE_CRYPTO_S		230
-+#define CLK_PKA_CRYPTO_S		231
-+#define ACLK_CRYPTO_S			232
-+#define HCLK_RNG_S			233
-+#define CLK_CORE_CRYPTO_NS		234
-+#define CLK_PKA_CRYPTO_NS		235
-+#define ACLK_CRYPTO_NS			236
-+#define HCLK_CRYPTO_NS			237
-+#define HCLK_RNG			238
-+#define CLK_PMU				239
-+#define PCLK_PMU			240
-+#define CLK_PMU_32K			241
-+#define PCLK_PMU_CRU			242
-+#define PCLK_PMU_GRF			243
-+#define PCLK_GPIO0_IOC			244
-+#define PCLK_GPIO0			245
-+#define DBCLK_GPIO0			246
-+#define PCLK_GPIO1_SHADOW		247
-+#define DBCLK_GPIO1_SHADOW		248
-+#define PCLK_PMU_HP_TIMER		249
-+#define CLK_PMU_HP_TIMER		250
-+#define CLK_PMU_HP_TIMER_32K		251
-+#define PCLK_PWM0			252
-+#define CLK_PWM0			253
-+#define CLK_OSC_PWM0			254
-+#define CLK_RC_PWM0			255
-+#define CLK_MAC_OUT			256
-+#define CLK_REF_OUT0			257
-+#define CLK_REF_OUT1			258
-+#define CLK_32K_FRAC			259
-+#define CLK_32K_RC			260
-+#define CLK_32K				261
-+#define CLK_32K_PMU			262
-+#define PCLK_TOUCH_KEY			263
-+#define CLK_TOUCH_KEY			264
-+#define CLK_REF_PHY_PLL			265
-+#define CLK_REF_PHY_PMU_MUX		266
-+#define CLK_WIFI_OUT			267
-+#define CLK_V0PLL_REF			268
-+#define CLK_V1PLL_REF			269
-+#define CLK_32K_FRAC_MUX		270
-+
-+#endif
-diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-new file mode 100644
-index 000000000000..31c0d4aa410f
---- /dev/null
-+++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-@@ -0,0 +1,211 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-+#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-+
-+/* CRU-->SOFTRST_CON00 */
-+#define SRST_NCOREPORESET0_AC	0
-+#define SRST_NCOREPORESET1_AC	1
-+#define SRST_NCOREPORESET2_AC	2
-+#define SRST_NCORESET0_AC	3
-+#define SRST_NCORESET1_AC	4
-+#define SRST_NCORESET2_AC	5
-+#define SRST_NL2RESET_AC	6
-+#define SRST_A_CORE_BIU_AC	7
-+#define SRST_H_M0_AC		8
-+
-+/* CRU-->SOFTRST_CON02 */
-+#define SRST_NDBGRESET		9
-+#define SRST_P_CORE_BIU		10
-+#define SRST_PMU		11
-+
-+/* CRU-->SOFTRST_CON03 */
-+#define SRST_P_DBG		12
-+#define SRST_POT_DBG		13
-+#define SRST_P_CORE_GRF		14
-+#define SRST_CORE_EMA_DETECT	15
-+#define SRST_REF_PVTPLL_CORE	16
-+#define SRST_P_GPIO1		17
-+#define SRST_DB_GPIO1		18
-+
-+/* CRU-->SOFTRST_CON04 */
-+#define SRST_A_CORE_PERI_BIU	19
-+#define SRST_A_DSMC		20
-+#define SRST_P_DSMC		21
-+#define SRST_FLEXBUS		22
-+#define SRST_A_FLEXBUS		23
-+#define SRST_H_FLEXBUS		24
-+#define SRST_A_DSMC_SLV		25
-+#define SRST_H_DSMC_SLV		26
-+#define SRST_DSMC_SLV		27
-+
-+/* CRU-->SOFTRST_CON05 */
-+#define SRST_A_BUS_BIU		28
-+#define SRST_H_BUS_BIU		29
-+#define SRST_P_BUS_BIU		30
-+#define SRST_A_SYSRAM		31
-+#define SRST_H_SYSRAM		32
-+#define SRST_A_DMAC0		33
-+#define SRST_A_DMAC1		34
-+#define SRST_H_M0		35
-+#define SRST_M0_JTAG		36
-+#define SRST_H_CRYPTO		37
-+
-+/* CRU-->SOFTRST_CON06 */
-+#define SRST_H_RNG		38
-+#define SRST_P_BUS_GRF		39
-+#define SRST_P_TIMER0		40
-+#define SRST_TIMER0_CH0		41
-+#define SRST_TIMER0_CH1		42
-+#define SRST_TIMER0_CH2		43
-+#define SRST_TIMER0_CH3		44
-+#define SRST_TIMER0_CH4		45
-+#define SRST_TIMER0_CH5		46
-+#define SRST_P_WDT0		47
-+#define SRST_T_WDT0		48
-+#define SRST_P_WDT1		49
-+#define SRST_T_WDT1		50
-+#define SRST_P_MAILBOX		51
-+#define SRST_P_INTMUX		52
-+#define SRST_P_SPINLOCK		53
-+
-+/* CRU-->SOFTRST_CON07 */
-+#define SRST_P_DDRC		54
-+#define SRST_H_DDRPHY		55
-+#define SRST_P_DDRMON		56
-+#define SRST_DDRMON_OSC		57
-+#define SRST_P_DDR_LPC		58
-+#define SRST_H_USBOTG0		59
-+#define SRST_USBOTG0_ADP	60
-+#define SRST_H_USBOTG1		61
-+#define SRST_USBOTG1_ADP	62
-+#define SRST_P_USBPHY		63
-+#define SRST_USBPHY_POR		64
-+#define SRST_USBPHY_OTG0	65
-+#define SRST_USBPHY_OTG1	66
-+
-+/* CRU-->SOFTRST_CON08 */
-+#define SRST_A_DMA2DDR		67
-+#define SRST_P_DMA2DDR		68
-+
-+/* CRU-->SOFTRST_CON09 */
-+#define SRST_USBOTG0_UTMI	69
-+#define SRST_USBOTG1_UTMI	70
-+
-+/* CRU-->SOFTRST_CON10 */
-+#define SRST_A_DDRC_0		71
-+#define SRST_A_DDRC_1		72
-+#define SRST_A_DDR_BIU		73
-+#define SRST_DDRC		74
-+#define SRST_DDRMON		75
-+
-+/* CRU-->SOFTRST_CON11 */
-+#define SRST_H_LSPERI_BIU	76
-+#define SRST_P_UART0		77
-+#define SRST_P_UART1		78
-+#define SRST_P_UART2		79
-+#define SRST_P_UART3		80
-+#define SRST_P_UART4		81
-+#define SRST_UART0		82
-+#define SRST_UART1		83
-+#define SRST_UART2		84
-+#define SRST_UART3		85
-+#define SRST_UART4		86
-+#define SRST_P_I2C0		87
-+#define SRST_I2C0		88
-+
-+/* CRU-->SOFTRST_CON12 */
-+#define SRST_P_I2C1		89
-+#define SRST_I2C1		90
-+#define SRST_P_I2C2		91
-+#define SRST_I2C2		92
-+#define SRST_P_PWM1		93
-+#define SRST_PWM1		94
-+#define SRST_P_SPI0		95
-+#define SRST_SPI0		96
-+#define SRST_P_SPI1		97
-+#define SRST_SPI1		98
-+#define SRST_P_GPIO2		99
-+#define SRST_DB_GPIO2		100
-+
-+/* CRU-->SOFTRST_CON13 */
-+#define SRST_P_GPIO3		101
-+#define SRST_DB_GPIO3		102
-+#define SRST_P_GPIO4		103
-+#define SRST_DB_GPIO4		104
-+#define SRST_H_CAN0		105
-+#define SRST_CAN0		106
-+#define SRST_H_CAN1		107
-+#define SRST_CAN1		108
-+#define SRST_H_PDM		109
-+#define SRST_M_PDM		110
-+#define SRST_PDM		111
-+#define SRST_SPDIFTX		112
-+#define SRST_H_SPDIFTX		113
-+#define SRST_H_SPDIFRX		114
-+#define SRST_SPDIFRX		115
-+#define SRST_M_SAI0		116
-+
-+/* CRU-->SOFTRST_CON14 */
-+#define SRST_H_SAI0		117
-+#define SRST_M_SAI1		118
-+#define SRST_H_SAI1		119
-+#define SRST_H_ASRC0		120
-+#define SRST_ASRC0		121
-+#define SRST_H_ASRC1		122
-+#define SRST_ASRC1		123
-+
-+/* CRU-->SOFTRST_CON17 */
-+#define SRST_H_HSPERI_BIU	124
-+#define SRST_H_SDMMC		125
-+#define SRST_H_FSPI		126
-+#define SRST_S_FSPI		127
-+#define SRST_P_SPI2		128
-+#define SRST_A_MAC0		129
-+#define SRST_A_MAC1		130
-+
-+/* CRU-->SOFTRST_CON18 */
-+#define SRST_M_SAI2		131
-+#define SRST_H_SAI2		132
-+#define SRST_H_SAI3		133
-+#define SRST_M_SAI3		134
-+#define SRST_H_SAI4		135
-+#define SRST_M_SAI4		136
-+#define SRST_H_DSM		137
-+#define SRST_M_DSM		138
-+#define SRST_P_AUDIO_ADC	139
-+#define SRST_M_AUDIO_ADC	140
-+
-+/* CRU-->SOFTRST_CON19 */
-+#define SRST_P_SARADC		141
-+#define SRST_SARADC		142
-+#define SRST_SARADC_PHY		143
-+#define SRST_P_OTPC_NS		144
-+#define SRST_SBPI_OTPC_NS	145
-+#define SRST_USER_OTPC_NS	146
-+#define SRST_P_UART5		147
-+#define SRST_UART5		148
-+#define SRST_P_GPIO234_IOC	149
-+
-+/* CRU-->SOFTRST_CON21 */
-+#define SRST_A_VIO_BIU		150
-+#define SRST_H_VIO_BIU		151
-+#define SRST_H_RGA		152
-+#define SRST_A_RGA		153
-+#define SRST_CORE_RGA		154
-+#define SRST_A_VOP		155
-+#define SRST_H_VOP		156
-+#define SRST_VOP		157
-+#define SRST_P_DPHY		158
-+#define SRST_P_DSI_HOST		159
-+#define SRST_P_TSADC		160
-+#define SRST_TSADC		161
-+
-+/* CRU-->SOFTRST_CON22 */
-+#define SRST_P_GPIO1_IOC	162
-+
-+#endif
--- 
-2.34.1
+Cheers,
+Longman
+
 
 
