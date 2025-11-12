@@ -1,136 +1,103 @@
-Return-Path: <linux-kernel+bounces-896534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AF7C509A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:21:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E82FC509AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCFD64E9E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:21:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 530944EAFF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57572D73BB;
-	Wed, 12 Nov 2025 05:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723AD2D8360;
+	Wed, 12 Nov 2025 05:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cghgf9Jg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="NNCY4PvK"
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A9C10942;
-	Wed, 12 Nov 2025 05:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E53E10942;
+	Wed, 12 Nov 2025 05:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762924857; cv=none; b=sG+v9yA7Qnbh9zpOg3Y/LdIPcebQuoszqEMAuwIcYMSVocbKHHWTNl6qwR9r8KoeOHRPBmDZk5K2oYY+IX8EzJ9nm7lOQ+lZyFyXQ/HlbrLGE0NHVbzcRGdEAphK00JW1IZNaDrJBLMYrsCHxbrOKzYVUsZ24LiqbNT+rACcxfo=
+	t=1762924890; cv=none; b=raICKSkvqSkZo4hGe9EpQlZVQ37VBqDeONHaJDYTHsonXo0B2SBs8FLJW5Me+Ow7/RW8nhC1xU2P/jlvBD4rTXJyh0RkUoFCdUWwZqNrY9AK5CEtJ1Er0ytxTzAj2fQYEHeLpmt2VxuZcoNWS+hkpq6rYHtLn6roolmqq+YG2aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762924857; c=relaxed/simple;
-	bh=hrO0ewnqqzCFawUB64Btsqfz1Tkqa/+Z0vCIkt7E0lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BEN9J6B8h/BNWABgK67UrbsfSSidMVrvKoUaIXxQT/EN2AfiO4J2kK1+fyMEzfWjLqY8+Mu7/YJzcwy1tPdCKfzjWAx+wfM9Pdu7GHkLDzl0x6i81txHNY8DtXWeDRvf54xfPdEMjbM80n5v95dpdweblQ0d2JJlpMgsHlLJnW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cghgf9Jg; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762924855; x=1794460855;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hrO0ewnqqzCFawUB64Btsqfz1Tkqa/+Z0vCIkt7E0lY=;
-  b=Cghgf9Jgt7lzQfYI8CjIzcL1Bg5RGpgQZD4UaIzMxFjxfE1JYSlGCO5L
-   XcfmB5Z5GddPWKL0ZnXMMjKiAaYzVkibSeRNAEaR5oLMYpyxLV7pj4F9F
-   wyTBZp4exTx6Q8pEA4rMtEspRcHkkvjdD9425zqwDfjiW4hCN9RAjN3Wk
-   hJtCwmJmYsPqMt7vcgrzbKZReXI1TGpAETpeFv4urhyYa3KckQhnkpVMU
-   YGZfaG+fGXlXQWONZ7GqYKGVQE/VCGkA7BWm6dav0mpod0zGeaUPCDl8b
-   nf35Ky9lXTNs0PqfIjMMFQ9jUcx1I6TbOVIwKy/G9E8Dh8wcqhhKXwvq1
-   g==;
-X-CSE-ConnectionGUID: d+cieDNIQxmBgTC2Md2Igg==
-X-CSE-MsgGUID: VrltV6T6QcaWf3IEEL9jIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="63988251"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="63988251"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:20:54 -0800
-X-CSE-ConnectionGUID: VjJkPS8QQMmObjQj1fEL4A==
-X-CSE-MsgGUID: Ccc46b0vROmNwkgdlrVN9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="188389334"
-Received: from unknown (HELO [10.238.3.175]) ([10.238.3.175])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:20:52 -0800
-Message-ID: <cb49c1be-99a5-4aba-b3da-f902058a4996@linux.intel.com>
-Date: Wed, 12 Nov 2025 13:20:50 +0800
+	s=arc-20240116; t=1762924890; c=relaxed/simple;
+	bh=mI8T5qp75RMZvOo14g5Udf1hFjg7nPChgpTmabXEfjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e+LwiOn5YJxZr3JkQkovyM8D55sKMjAkECd+vXjp1g1BpAcmKudAvdfxl/xe94+Sa/t9Q2LX5n4Hqf5X5ILlW7TjY46+cRlFXWaKCNUTsVjnyw9mG3Y+rp0+4SGxPSNqNjv5sjYPst/vUVWF5FFHvia1goj5mb7zMOMZjg4KIsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=NNCY4PvK; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 29483f4ca;
+	Wed, 12 Nov 2025 13:21:17 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: idosch@nvidia.com
+Cc: petrm@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] mlxsw: spectrum: Fix memory leak in mlxsw_sp_flower_stats()
+Date: Wed, 12 Nov 2025 05:21:14 +0000
+Message-Id: <20251112052114.1591695-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the tip tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20251112154200.4d3671f9@canb.auug.org.au>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251112154200.4d3671f9@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a7682d66903a1kunme2d3ae7bb6ce8e
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSUtKVk9KTh4YSh4ZHx4aQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
+	++
+DKIM-Signature: a=rsa-sha256;
+	b=NNCY4PvKv3/tuAgShApIXnMbMFdwt630jeZiEC6UocbFgRT2xdEjLISatyUWMAdf6ZF0Cpi7poNmyt7uhaLp3+j2NRhczXqhBPftkIByu1EibM32XJSaJ1/wep1e8nEpSPhaYtobypZ13x3wumVa7FbeOOE42KFvkLo0tGvEDaE=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=ctO8x7yP9+riKFZtMGesTZv10tCnO11ZkNJa5/sXgFM=;
+	h=date:mime-version:subject:message-id:from;
 
+The function mlxsw_sp_flower_stats() calls mlxsw_sp_acl_ruleset_get() to
+obtain a ruleset reference. If the subsequent call to
+mlxsw_sp_acl_rule_lookup() fails to find a rule, the function returns
+an error without releasing the ruleset reference, causing a memory leak.
 
-On 11/12/2025 12:42 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the tip tree, today's linux-next build (i386 defconfig)
-> failed like this:
->
-> arch/x86/events/intel/ds.c: In function 'intel_pmu_drain_arch_pebs':
-> arch/x86/events/intel/ds.c:2983:24: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
->  2983 |         top = (void *)((u64)cpuc->pebs_vaddr +
->       |                        ^
-> arch/x86/events/intel/ds.c:2983:15: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->  2983 |         top = (void *)((u64)cpuc->pebs_vaddr +
->       |               ^
-> cc1: all warnings being treated as errors
+Fix this by using a goto to the existing error handling label, which
+calls mlxsw_sp_acl_ruleset_put() to properly release the reference.
 
-Thanks for reporting the issue. I suppose the below patch would fix the
-building error. I would post it as an independent patch later.
+Fixes: 7c1b8eb175b69 ("mlxsw: spectrum: Add support for TC flower offload statistics")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index c93bf971d97b..f695de9f7049 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -2979,7 +2979,7 @@ static void intel_pmu_drain_arch_pebs(struct pt_regs
-*iregs,
-        }
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
+index 6a4a81c63451..353fd9ca89a6 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
+@@ -830,8 +830,10 @@ int mlxsw_sp_flower_stats(struct mlxsw_sp *mlxsw_sp,
+ 		return -EINVAL;
+ 
+ 	rule = mlxsw_sp_acl_rule_lookup(mlxsw_sp, ruleset, f->cookie);
+-	if (!rule)
+-		return -EINVAL;
++	if (!rule) {
++		err = -EINVAL;
++		goto err_rule_get_stats;
++	}
+ 
+ 	err = mlxsw_sp_acl_rule_get_stats(mlxsw_sp, rule, &packets, &bytes,
+ 					  &drops, &lastuse, &used_hw_stats);
+-- 
+2.34.1
 
-        base = cpuc->pebs_vaddr;
--       top = (void *)((u64)cpuc->pebs_vaddr +
-+       top = (void *)((unsigned long)cpuc->pebs_vaddr +
-                       (index.wr << ARCH_PEBS_INDEX_WR_SHIFT));
-
-        index.wr = 0;
-
-
->
-> Caused by commit
->
->   d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragments")
->
-> I have reverted commits
->
->   2093d8cf80fa ("perf/x86/intel: Optimize PEBS extended config")
->   02da693f6658 ("perf/x86/intel: Check PEBS dyn_constraints")
->   bd24f9beed59 ("perf/x86/intel: Add a check for dynamic constraints")
->   bb5f13df3c45 ("perf/x86/intel: Add counter group support for arch-PEBS")
->   52448a0a7390 ("perf/x86/intel: Setup PEBS data configuration and enable legacy groups")
->   e89c5d1f290e ("perf/x86/intel: Update dyn_constraint base on PEBS event precise level")
->   2721e8da2de7 ("perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR")
->   d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragments")
->
-> for today.
->
 
