@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-897721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0D6C53B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 315AAC53C25
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 553405A0AE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:20:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 299BE5A12FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2F533557B;
-	Wed, 12 Nov 2025 16:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CC033F39C;
+	Wed, 12 Nov 2025 16:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B25wvQ9+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwbKob8z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E2933B6C7;
-	Wed, 12 Nov 2025 16:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE3D32B985;
+	Wed, 12 Nov 2025 16:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964223; cv=none; b=ik0zZwQLRW4RAV37+MzZqjGtBlCvAKtMcrSEX4uGm1f0V6c+golKc1RqWwQicUg/uCO5uGWmmQ+fVdQoslDe0fpQXkTNOgvE407g4Q/E+8TuMha1mO8D3a1tHVNCoLAa3KjOEYKbgFPPwdUyZmrb//hLwjoD73lXqI1MnNji9gI=
+	t=1762964447; cv=none; b=cQendyDnE1idi+SjqjuzuCSGmXo3m39TIsp0GX5MuFtaBbneA0/klUozWo2M/cEu9WqSGDnhqrSLiifhnw2IvKbFNmbNQ0Htkf0QiZm+nUqNxmZPyrhyzUW/He79YnMbZ3haVtNChhGVtL8OTB1WA+9BSDTiuwh/V7DCsOmsRyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964223; c=relaxed/simple;
-	bh=W2l3+H8ymy0NT/G1IzznrxCb71B9p0Ps4vJJz4dz0Rs=;
+	s=arc-20240116; t=1762964447; c=relaxed/simple;
+	bh=rHIrbwjlYH/gBkXgGCh/M7lUpBCIVsmiYtKm0JkgxPo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HXeUNTS5C/o1vOs7FVF4IzlJ4B3XMqDaMb2Wq5Gt/UG/FOTqOsOCES8vO9zcVwUNoMprldYGZ6VMukjQzGESJOzuT+o7KlWPv0irQEd9v4P0aYQJcUl3nhYHrGgQJNM4RP59pCZKL9X4gp8oLdb2qrcDaiZu4qB1QZkhVR8iCvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B25wvQ9+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25FE1C113D0;
-	Wed, 12 Nov 2025 16:17:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6Q1pEeXqptPGaThfpIY4dXgw0sQ/MG12ltAvhLkscu0OeQSsb+uG6tQh+i8KCqSMb4gfprxhkwS/Zi93lIItlQuy/0Wby8zRmtdI441r6AmaYkpFwp+Q90tjQ6eNxeejITOsJsvbkiTkk7WlXzNkQOQvuZKVLOwcwAa9SLbJzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwbKob8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13026C4CEF5;
+	Wed, 12 Nov 2025 16:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762964222;
-	bh=W2l3+H8ymy0NT/G1IzznrxCb71B9p0Ps4vJJz4dz0Rs=;
+	s=k20201202; t=1762964447;
+	bh=rHIrbwjlYH/gBkXgGCh/M7lUpBCIVsmiYtKm0JkgxPo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B25wvQ9+eBDQyWi5SXAGM+wvlXclFB28uSNzMXnw2EcjlnSbgfU/bTRUCsIzptFjb
-	 KHi6EM6xBAJ4U4u/HvE/GyZnqBwFyjm4NOhPo0K1hqlzP1xqG/hVpzyRtUkkhn0MNo
-	 UH78gpQ4ZdSPRn9JJU1CHL9nAyjG6YjZInqO+HBRDKpC9Qt/I9zE5UOedqHksZyFLD
-	 dtFSZOMAEBGgB4Kg1NZlJ4+UAapAk7B/Gzao0WLnsQbI0ovwhrz3+iFEUKP2Ighqn0
-	 yEI4lp/VYvYr/r/Nb0drQVpotWM+aCfbULHrBOrE02O0iiuEiwbcKtIJoZj8fZ31Ir
-	 et9+XdjOAxd/A==
-Date: Wed, 12 Nov 2025 08:16:59 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Michael Kelley <mhklinux@outlook.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
-	Joe Lawrence <joe.lawrence@redhat.com>, "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
-	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
-	Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
- per-function checksums
-Message-ID: <tujcypul6y3kmgwbrljozyce7lromotvgaoql26c6tdjnqk4r6@yycdxcvj2knz>
-References: <1bc263bd69b94314f7377614a76d271e620a4a94.1758067943.git.jpoimboe@kernel.org>
- <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
- <SN6PR02MB41574AD398AD3DE26DB3D23BD4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <6msqczigbcypeclqlgzgtqew7pddmuu6xxrjli2rna22hul5j4@rc6tyxme34rc>
- <SN6PR02MB4157212C49D6A6E2AFE0CAA9D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <SN6PR02MB4157F236604B6780327E6B43D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <yk3ku4ud35rsrfwzvuqnrcnwogwngqlmc3otxrnoqefb47ajm7@orl5gcxuwrme>
- <BN7PR02MB414887B3CA73281177406A5BD4CCA@BN7PR02MB4148.namprd02.prod.outlook.com>
- <20251112132557.6928f799@pumpkin>
+	b=CwbKob8zPfvEsJwbsrZY0piMuxlW03+AXKU/9/+zihz4TvIleDu/JeviNaHOGroWY
+	 DzOjMJ6G4YkRDhlPMBuGrHiKXCxx4VfBDWJCAh07/wk/Atwmpt+ZZPqI+jxO90lFUT
+	 zdoDcuNxppBEqVBDzte6v2Cv0d3RyDJpg7ak6qCbrq4JaPrj129FIn+0Q6UtM7acNv
+	 XNNXve0WdlNKzr3rAePDWe6oINOCAXo2aKAUbfyYq0UF1lsuRAHdy5sqfSDM0NfrE/
+	 BRkLd/Q84Rmgr+6v5OiR0492m8RuyJzj85kYkj3ofOEuA8fStSLTFOXhgrBoesWMkp
+	 /jy5GOPytQeMA==
+Date: Wed, 12 Nov 2025 10:20:45 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Josua Mayer <josua@solid-run.com>
+Subject: Re: [PATCH v4 phy 01/16] dt-bindings: phy: lynx-28g: permit lane OF
+ PHY providers
+Message-ID: <176296444496.1846369.12547968881654162757.robh@kernel.org>
+References: <20251110092241.1306838-1-vladimir.oltean@nxp.com>
+ <20251110092241.1306838-2-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251112132557.6928f799@pumpkin>
+In-Reply-To: <20251110092241.1306838-2-vladimir.oltean@nxp.com>
 
-On Wed, Nov 12, 2025 at 01:25:57PM +0000, David Laight wrote:
-> On Wed, 12 Nov 2025 04:32:02 +0000 Michael Kelley <mhklinux@outlook.com> wrote:
-> > From: Josh Poimboeuf <jpoimboe@kernel.org> Sent: Tuesday, November 11, 2025 8:04 PM
-> > > On Wed, Nov 12, 2025 at 02:26:18AM +0000, Michael Kelley wrote:  
-> > > > > 2) With make v4.2.1 on my Ubuntu 20.04 system, the "#" character in the
-> > > > > "#include" added to the echo command is problematic. "make" seems to be
-> > > > > treating it as a comment character, though I'm not 100% sure of that
-> > > > > interpretation. Regardless, the "#" causes a syntax error in the "make" shell
-> > > > > command. Adding a backslash before the "#" solves that problem. On an Ubuntu
-> > > > > 24.04 system with make v4.3, the "#" does not cause any problems. (I tried to put
-> > > > > make 4.3 on my Ubuntu 20.04 system, but ran into library compatibility problems
-> > > > > so I wasn’t able to definitively confirm that it is the make version that changes the
-> > > > > handling of the "#"). Unfortunately, adding the backslash before the # does *not*
-> > > > > work with make v4.3. The backslash becomes part of the C source code sent to
-> > > > > gcc, which barfs. I don't immediately have a suggestion on how to resolve this
-> > > > > in a way that is compatible across make versions.  
-> > > >
-> > > > Using "\043" instead of the "#" is a compatible solution that works in make
-> > > > v4.2.1 and v4.3 and presumably all other versions as well.  
-> > > 
-> > > Hm... I've seen similar portability issues with "," for which we had to
-> > > change it to "$(comma)" which magically worked for some reason that I am
-> > > forgetting.
-> > > 
-> > > Does "$(pound)" work?  This seems to work here:
+
+On Mon, 10 Nov 2025 11:22:26 +0200, Vladimir Oltean wrote:
+> Josua Mayer requested to have OF nodes for each lane, so that he
+> (and other board developers) can further describe electrical parameters
+> individually.
 > 
-> Please not 'pound' - that is the uk currency symbol (not what US greengrocers
-> scrawl for lb).
+> For this use case, we need a container node to apply the already
+> existing Documentation/devicetree/bindings/phy/transmit-amplitude.yaml,
+> plus whatever other schemas might get standardized for TX equalization
+> parameters, polarity inversion etc.
+> 
+> When lane OF nodes exist, these are also PHY providers ("phys" phandles
+> can point directly to them). Compare that to the existing binding, where
+> the PHY provider is the top-level SerDes node, and the second cell in
+> the "phys" phandle specifies the lane index.
+> 
+> The new binding format overlaps over the old one without interfering,
+> but there is a caveat:
+> 
+> Existing device trees, which already have "phys = <&serdes1 0>" cannot
+> be converted to "phys = <&serdes_1_lane_a>", because in doing so, we
+> would break compatibility with old kernels which don't understand how to
+> translate the latter phandle to a PHY.
+> 
+> The transition to the new phandle format can be performed only after a
+> reasonable amount of time has elapsed after this schema change and the
+> corresponding driver change have been backported to stable kernels.
+> 
+> However, the aforementioned transition is not strictly necessary, and
+> the "hybrid" description (where individual lanes have their own OF node,
+> but are not pointed to by the "phys" phandle) can remain for an
+> indefinite amount of time, even if a little inelegant.
+> 
+> For newly introduced device trees, where there are no compatibility
+> concerns with old kernels to speak of, it is strongly recommended to use
+> the "phys = <&serdes_1_lane_a>" format. The same holds for phandles
+> towards lanes of LX2160A SerDes #3, which at the time of writing is not
+> yet described in fsl-lx2160a.dtsi, so there is no legacy to maintain.
+> 
+> To avoid the strange situation where we have a "phy" (SerDes node) ->
+> "phy" (lane node) hierarchy, let's rename the expected name of the
+> top-level node to "serdes", and update the example too. This has a
+> theoretical chance of causing regressions if bootloaders search for
+> hardcoded paths rather than using aliases, but to the best of my
+> knowledge, for LX2160A/LX2162A this is not the case.
+> 
+> Link: https://lore.kernel.org/lkml/02270f62-9334-400c-b7b9-7e6a44dbbfc9@solid-run.com/
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> v3-v4: patch is new (broken out from previous "[PATCH v3 phy 12/17]
+>        dt-bindings: phy: lynx-28g: add compatible strings per SerDes
+>        and instantiation") to deal just with the lane OF nodes, in a
+>        backportable way
+> 
+>  .../devicetree/bindings/phy/fsl,lynx-28g.yaml | 71 ++++++++++++++++++-
+>  1 file changed, 70 insertions(+), 1 deletion(-)
+> 
 
-While I do call it the "pound sign", I can't take the credit/blame for
-that name it as the variable already exists.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-It's better than "hashtag" which is what my kids call it :-/
-
--- 
-Josh
 
