@@ -1,94 +1,101 @@
-Return-Path: <linux-kernel+bounces-897910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56784C53ED5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:35:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E71C53F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB07F346876
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:31:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A98554EE6D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33956352F9E;
-	Wed, 12 Nov 2025 18:25:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805AF34029C;
+	Wed, 12 Nov 2025 18:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QNrYYnTN"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8025F35293A;
-	Wed, 12 Nov 2025 18:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A5C33A016
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971929; cv=none; b=Mw1HxeREJGFC/dbt2WiNkn/LQrMFzE/tWs+EJRD4SLB+R5OjIqtpA3PeqhgC8d8ZCyfWovdzN+bYw3dkIrJI9B9LBrVlcKQpfCpq9xvgoQBi4YwwmmNh0dChj7wLCioJ4IIUvtHfIPA58G2WaUfVZvzV1cs17k0/6EM/vuxAh3M=
+	t=1762971962; cv=none; b=EzuVUuGfLNIjOJBCaeZdtWYbj7Uzf2Uf7catQ+cmYUL9MaydUyR5UMx1ULq48+r57vh1Aq79gHWQ+XEmcEibCmkRAy0ClzZXuvNzbHjLd4CO1LKBm9AawB9FnnTv/i5yVdwdtGQlBO7xy4RGx7LcyizB87TqBVyjBihXkABBzC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971929; c=relaxed/simple;
-	bh=lizdUnDeduoQiKv5+ThT5MsgZaSyS7YSf7d07ugaIXY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OBjiCLxwniSQuyevLc7AIyJZJSH5tjLo0K2wgNZX7IJRw17T+pgjSAd24C1eQCE47GfwOcyvOYkpvIg/DR2ZS8WOrsFJdqR4C8okBo8gJzABeQSoyPLqDKifqgccLG3uncsS6WmANIiZ6gDW4InZox5KW8JOCag1bj634bcv4iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6BdZ5JZczJ46DR;
-	Thu, 13 Nov 2025 02:24:50 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C3491402F1;
-	Thu, 13 Nov 2025 02:25:23 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
- 2025 18:25:22 +0000
-Date: Wed, 12 Nov 2025 18:25:21 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
- Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
-	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
-	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
- Elisei" <alexandru.elisei@arm.com>
-Subject: Re: [PATCH v4 16/26] genirq: Allow per-cpu interrupt sharing for
- non-overlapping affinities
-Message-ID: <20251112182521.000027ad@huawei.com>
-In-Reply-To: <20251020122944.3074811-17-maz@kernel.org>
-References: <20251020122944.3074811-1-maz@kernel.org>
-	<20251020122944.3074811-17-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762971962; c=relaxed/simple;
+	bh=tYuOj6XvOOt1wnGqPr9xnVloDTQOoFLVLAZhCLnAkEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d01r2cnJgCu+Ogf559aVit/LrK5SOuzXASxH6c326OBr3iPh8L+HBPYiCbgN7S0SRtOGaRPYt+WQKtYB4hPiQO/9fNWWPZKCj8fjSt3YExSp6XxKyKxRxJKn1NwWVhpcMXWuJGEd6TDy81AoFheiOZsspMUa1MhNlWyv3J78sA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QNrYYnTN; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=tYuO
+	j6XvOOt1wnGqPr9xnVloDTQOoFLVLAZhCLnAkEs=; b=QNrYYnTN/2NMvuhNT3CX
+	KwVw4FQBNwxblZ4zEFxp4qkeTAUhN8ZYZoTZbfy81+UJqtHsv+46Or2bLD1eetBl
+	POthH6wm+AuuYX1QeYCztX095Smz2i8nmOwek2dIM0pVYfmNTKsQ4fm9ghLFlEy/
+	OCG0eXXKfOJUJs4KHmzWcwbt0iJJwjvuid5MW0Yt/uu7965Y9GyYRMe5EKEspUI1
+	iieOznUt/cWJdkNYy/hvBmuVMfxHIG4tG/DNO1jmOeqND5bJBZjPvST+9ir8DJzR
+	V1LKmtGpJfV4xcpFru+jjZXCgql9LMjojfs+hp/vjvA+TcRHnpF7+0bxzeaBYkP9
+	EA==
+Received: (qmail 1598130 invoked from network); 12 Nov 2025 19:25:50 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Nov 2025 19:25:50 +0100
+X-UD-Smtp-Session: l3s3148p1@iNPS5GlDE3JtKPOv
+Date: Wed, 12 Nov 2025 19:25:49 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: ulf.hansson@linaro.org, p.zabel@pengutronix.de,
+	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 0/3] mmc: renesas_sdhi: Handle resets
+Message-ID: <aRTRLW4bCoZMtCaB@shikoro>
+References: <20251008042526.3312597-1-claudiu.beznea.uj@bp.renesas.com>
+ <8c654a1f-2513-4afb-b33b-fabbafbbe845@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ehbEPmv1UY7PdI5c"
+Content-Disposition: inline
+In-Reply-To: <8c654a1f-2513-4afb-b33b-fabbafbbe845@tuxon.dev>
 
-On Mon, 20 Oct 2025 13:29:33 +0100
-Marc Zyngier <maz@kernel.org> wrote:
 
-> Interrupt sharing for percpu-devid interrupts is forbidden, and
-> for good reasons. These are interrupts generated *from* a CPU and
-> handled by itself (timer, for example). Nobody in their right mind
-> would put two devices on the same pin (and if they have, they get to
-> keep the pieces...).
-> 
-> But this also prevents more benign cases, where devices are connected
-> to groups of CPUs, and for which the affinities are not overlapping.
-> Effectively, the only thing they share is the interrupt number, and
-> nothing else.
-> 
-> Let's tweak the definition of IRQF_SHARED applied to percpu_devid
-> interrupts to allow this particular case. This results in extra
-> validation at the point of the interrupt being setup and freed,
-> as well as a tiny bit of extra complexity for interrupts at handling
-> time (to pick the correct irqaction).
-> 
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+--ehbEPmv1UY7PdI5c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+> Gentle ping on this series.
+
+I had a look already but want to test this series on R-Car SoCs. Which
+tests did you apply?
+
+
+--ehbEPmv1UY7PdI5c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkU0SkACgkQFA3kzBSg
+KbbDgg//UjGUMzjNbAC6S9T183uTV/+MBPBzR5AVluhhBmzd0aSOaX37olRdkPzt
+Oebz7JVzKpcWh1MaIgBDrWRb92YCLz8Dip+F7dVoqW+iRdl9zQ4jZC7Ogy12gIPe
+KrAegneMSVYAx7anoSfFj5JMmUh/YwQrzjOVevXcaVDtQmFvtRb+QIl6p4yJXIGB
+ZIxlnvJHw8MX/m/lmlr0wpOyslE7Ms5bnne+Joo5Elt3hdN6CvnvjaF6opDs/GSP
+vQFI8YwHH8qZjHE9x+narYlkx8idJd3BGVl0qb4wfN0pyyApUk2qbu/LptpIbPPo
+Yb5m69FWqshDz1vIs5u1ZW22LTNV5mrkhIOUi7wytVLnSpGbTgTSKKqI1EZerrXk
+F/iroK1JgeWcXafIxKqA6T8GRXaeKrd27kCtV/yhpmK/GqhWPsa56c7iKdSFJm1Y
+Q9NYeCLnrhX7OYPIDtMnGUQ79jm+3XeLz3eWjsvBmxhSzxyR2egW8opuFaM8PYIG
+THOCtQ/0veRDt27pAGEcWwpMLR3y1SLFbZvtRuqJrT0BTL89Gh2teB2SQcqYKo33
+jca6Q3zFvZxnM4H7G8Y6JhsnMuLEAx6FdFTU9pIMYtMoPmxJhBhdnCAchHxMNeae
+JgWVVBiPUG9KPbcNQNKjy7l0/mHapI6X5xXySRlnvgzs/QsvNgM=
+=42X/
+-----END PGP SIGNATURE-----
+
+--ehbEPmv1UY7PdI5c--
 
