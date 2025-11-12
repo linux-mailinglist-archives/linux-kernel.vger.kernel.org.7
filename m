@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-896689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27783C50FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:44:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F59C51010
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C75EA34CFE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050043A74E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981ED2DECC2;
-	Wed, 12 Nov 2025 07:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F112DCF46;
+	Wed, 12 Nov 2025 07:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJ+stqNB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXp5TLh8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBCB2C21CC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A3C2DCBE6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933462; cv=none; b=tlRac3AkNm5rZdr91TKWph5F7o+Vw71sW0Hc10UwsK/wHtntix1yh1LeZBSiY6q9SISqyTcTTptBGqUanhKa5ttySPTQIT2Sv9dKjSH/DRtComoVtkd7yUfqCjEzln8ijRKXvhvUEOrpQrkyxEXdHr0WpIIdwo35SyIuH4mCuCc=
+	t=1762933495; cv=none; b=l332E9piaJX1rTxO1f6H0hJxAEtgwgZJ4mkhXTytbv5bPMK9nhMRQUzjIcGGdsk5axB0iNdW+8bxIKfVE82CIgywzxbIAohOfdJmrK15FOcKNKtMBZS1ZofhFWimVUxrtD68Z3ociYfaaM3lIdPGV3u4zTanWnP4Gd18Nf5BeBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933462; c=relaxed/simple;
-	bh=1cds1vUcQ+x7UvR0C4ZBk3GfO3aVwwmqaf0hnYXt3dw=;
+	s=arc-20240116; t=1762933495; c=relaxed/simple;
+	bh=FkCQqhngN6a+g2gt3O0zu2cMFvMuaQiidy1yMT75evU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=toJ1LIZkSCTSRlvrSnPdRHh7ATrYRerESiYvSI48W0e6Vu1kn4m0rWTsnJBtmcIu4P96Hhy8pq8aspKD2EpOzKExND3lZG+feih/KEv1aop4LwrXBM474cA6IrwOZvlvJ8xal9yINl0QgvLKeUbnTUCGEBP1839wXdlq2xTwcSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJ+stqNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BCBBC116B1;
-	Wed, 12 Nov 2025 07:44:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bJsuhoaYRPkhRZvICRj8015qNmawwFQtpbA8xNO6t2lIUsM+r3oCRZ8o+DaJAJkHh5xjqIi9AiEJ4vhcqak5ls8uzzvPzeR0IIytQ6pZgyUz4sa3tE6IN/1kKn2bJ06mJG4ABl6Q3FSCs77f5plqqD18O0GzhPQ3IE+NI7TCl/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXp5TLh8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645D9C113D0;
+	Wed, 12 Nov 2025 07:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762933461;
-	bh=1cds1vUcQ+x7UvR0C4ZBk3GfO3aVwwmqaf0hnYXt3dw=;
+	s=k20201202; t=1762933494;
+	bh=FkCQqhngN6a+g2gt3O0zu2cMFvMuaQiidy1yMT75evU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nJ+stqNB0tFjbeTn2k5D2OdC6zx2qZ1G0MX2slZ01dClqgQTaeAaQSHfDyKjM17FK
-	 xLrbyo3NxUCWIcNUufEBheow8ubjdm9EMNWrvAaKtsZM2eHmrM/5P2OQZz/BWYBQHR
-	 tgxIpj/bpEBPxjxErwzg5VlymStSg8DkhHI5CCA7zJPFu/w5146BNEd0hiv5QpaC+k
-	 jNOTpkmoERmuMn1vFq2vhXcwBWs02xeoN4t63Ropa1fDdQXTBK/LbAAb+jeBv1SGnH
-	 8+tQCmgL9nOGEi+wvnITmYST55YB7A5NWxFoke61qUsgf1Y8O1QfhfQBMq03KEbVdZ
-	 VuFuBKZxhdmsA==
-Message-ID: <9aafbbd2-ef49-4b6e-aefb-99b03d83b7e6@kernel.org>
-Date: Wed, 12 Nov 2025 08:44:18 +0100
+	b=EXp5TLh8SDqcdlLI/Pr2HPgBKMGWi5ib9HECZUXvM7YMpkC+SvyQznZzQbEFmRa0Y
+	 /x4Gl2usZemiEkNZO7wiK7KPc3TNOO4tS5Gr8zOsps2biKTIBBE1ytePcmCRS/g679
+	 uWDCPK7ZAByXwhKdY2VZwMojOYg63OomQCISLPmzDHq7+Ff7+37jeyTBiic+k8/Z5g
+	 JCc4L9np2Rzou82rGtzqqgrefAUWAf5Ck/9TwpAZ/7FlNRzYiVp/ZsvjNNaNo6oIjV
+	 EIB5syZvxWZT9xtMti1hvljK6J3m06XuK0lAUEiAz87ToJxZe4NM+YW7gfM7jlytTu
+	 lBB5DqumVGkXQ==
+Message-ID: <e781eee4-e1fc-4aec-a855-6693a5d798d2@kernel.org>
+Date: Wed, 12 Nov 2025 08:44:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] regulator: Add Waveshare panel regulator driver
-To: Sudarshan Shetty <tessolveupstream@gmail.com>, lgirdwood@gmail.com,
- broonie@kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20251111104320.3425143-1-tessolveupstream@gmail.com>
+Subject: Re: [PATCH v1] drm: panel: Add Waveshare MIPI-DSI panel driver
+To: Sudarshan Shetty <tessolveupstream@gmail.com>, neil.armstrong@linaro.org,
+ jessica.zhang@oss.qualcomm.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251111104309.3424018-1-tessolveupstream@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,37 +101,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251111104320.3425143-1-tessolveupstream@gmail.com>
+In-Reply-To: <20251111104309.3424018-1-tessolveupstream@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 11/11/2025 11:43, Sudarshan Shetty wrote:
-> This patch adds a regulator driver for Waveshare panels.
-> The regulator provides controlled power sequencing and is also used
-> to enable or disable the display backlight.
+> This patch adds a DRM panel driver for Waveshare MIPI-DSI panels
+> of various sizes (5.0", 5.5", 7.0", 8.0", and 10.1") with integrated
+> touch functionality.
 > 
-> Features:
->  - I2C interface to control panel-specific regulator registers
->  - GPIO-based enable/disable support
->  - Integration with the Linux regulator framework
+> The driver provides:
+>  - Initialization and reset sequencing
+>  - MIPI-DSI command transfer for panel setup
+>  - Backlight integration through the backlight class device
+>  - Support for multiple panel variants via compatible strings
 > 
-> This driver is required for proper initialization of Waveshare
-> MIPI-DSI panels supported by the companion DRM panel driver.
+> These panels are commonly used with Waveshare development kits
+> and require proper power sequencing and regulator support.
 > 
 > Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
 > ---
->  arch/arm64/configs/defconfig                  |   1 +
+>  arch/arm64/configs/defconfig                  |    1 +
 
-That is not regulator subsystem, don't mix.
-
->  drivers/regulator/Kconfig                     |  11 +
->  drivers/regulator/Makefile                    |   1 +
->  drivers/regulator/waveshare-panel-regulator.c | 294 ++++++++++++++++++
->  4 files changed, 307 insertions(+)
-You did not implement feedback from your internal review. Please go back
-to that first, so you will not ask maintainers to review obvious issues
-which were already pointed out.
-
+NAK, don't mix subsystems.
 
 Best regards,
 Krzysztof
