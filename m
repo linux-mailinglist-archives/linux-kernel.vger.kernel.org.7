@@ -1,217 +1,276 @@
-Return-Path: <linux-kernel+bounces-896484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591AFC507FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:20:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A3DC50800
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154F7189A15E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A0B3B2861
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090562C11E3;
-	Wed, 12 Nov 2025 04:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5783E2D3731;
+	Wed, 12 Nov 2025 04:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GsQqfgCm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNuIGV/b"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jy29sIOS";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jwomfKGZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75076225415
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0914C262FF6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762921202; cv=none; b=r2QOXQvHNIgd3WdID9eD7gAh/+EKTDEz6LTf1VX/Ej83hxb2ftWZm8wjusQOkJtgK7qG4lUIM06iD8LIv5h8oZqeOtkzPhlxrezvqHHzXUxCW55vBdUBqMmssWa1WZwP9vsfZZVn8ddm9oCrFubuH+rvlLtzWPUfIHP+BezqY1E=
+	t=1762921297; cv=none; b=VHyMSoJwFrfo7SC3dgXAdE9JH2pAgJL0rEgN95kJPLiddIMcP7W6EnXltm1jhMbQaEW3OQHIu5e/5QKkfXcmbq0IRkfZGnH1o2AmEFHtLWCmjiYz+1cZIkjhzdAQ+9ztIxl9gijruDn67zx49i180pTDJRL88ZxDRl9/nXRQ3Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762921202; c=relaxed/simple;
-	bh=99ZkEBdOVrlrgRWH5y+oIYLqPCwO/Ovyudmk2p0QKNg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SROhGvt9R9m/6qYtAdb63NXet6UQVgeQi5RfMnPwtkmC2/LDno06Sm1Cn5VEe0PVWNL7K0p507usNPytZyba73PiPwhRYdnU1Yj9s6JGiOerTwD+1XWhYR1ta6iyCEDVTb+MzyXBv9HWE1FLYlR/IP0gXip+uLzRz/BcMregB2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GsQqfgCm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNuIGV/b; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762921199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AclnRmvTYc5uBIch2ljEKodBb0PluAr47F+xl2MP6pE=;
-	b=GsQqfgCmTuK9PidBUYN9ms/GwQukcA0f0bqYjJM/eLOxixve2VD9G1MtceKs8CV4GTQY1O
-	JmeGbIMGpBWq2nTI0+lfKcTeB30Jx4MMYS8v31QwmtMBD5aiSgH8GStgD7ar7NKDDyudPB
-	EDT9J2LLa2A9Cr22Vc85lXU5+gULsV4=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-394-SLNxP--BN7KgUhjkEb2_dg-1; Tue, 11 Nov 2025 23:19:58 -0500
-X-MC-Unique: SLNxP--BN7KgUhjkEb2_dg-1
-X-Mimecast-MFC-AGG-ID: SLNxP--BN7KgUhjkEb2_dg_1762921197
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-88236bcdfc4so10489016d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:19:58 -0800 (PST)
+	s=arc-20240116; t=1762921297; c=relaxed/simple;
+	bh=ZxNm//b5hfNxwUZg8+VCBHFtlDwMpgGW0LDC0HCi4SU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DyW+VnV8mRCBbMyAiyv7YCgxjw6MZ+CEb8DHfa7rKgzKmp3tY5y9weJrnXIdMfbHX1XzWCsR6eedFsg3dx4naLn3iCEyLTiu6m7Uc5QPqk+xXlgziuloxfFRyb0zhhupV7m25kNKIBW6QiD1JJgG6Xhd7XdXtuAeHBpUIwCt2hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jy29sIOS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jwomfKGZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC3oSJE2809786
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:21:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hAl2A02JXsl7owYX9eMxdo
+	JVFo0PhLT84hEevmOwh2o=; b=Jy29sIOSPU5XbeiNbyLvWY5tXWWK0jVf5TmFW6
+	CuCYrKcp7QPt4AVVCNZCT+ebbQINlObUZcBhjHpIgTzWIx7WROZLQuCrNfRvkGxL
+	AFVe/BSENODiJLYl6zP0G3Uq9xW/Dw2YQMacqtfBGunTRVKf6cLnzGOTgENqgm1n
+	y6ytkEXbvXDHI5mXRGiCQReN5ehPgVjKXpx7MewHVBchUFNPjiXM0hltFnD993Yw
+	W0sF1TQBcoG2fk1iFMkzY5syuH1kcjLyhj5yyUGYA0zsw8B/fdLTWVfNK9WWmAYD
+	0hhqgzoQZ4T4sYh3pTey9gRpYGEBCLTsXG3ZWN0Rp/fBNozg==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ac11x36m3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:21:34 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-88041f9e686so11544666d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:21:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762921197; x=1763525997; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AclnRmvTYc5uBIch2ljEKodBb0PluAr47F+xl2MP6pE=;
-        b=VNuIGV/buMaLJzbOF4e5TLW5xVsk342kWLdLAPbe23f6UgxtLF6RPG0Y35vkdmPGJU
-         C4Nl5VEYVEJhnXxirodXkWz07ufcnlPwpaZ/Z6sDNNgytCjGpMkttiYfaRRvc/J2Frlf
-         HDD2edNPKSy4bJpz1awfEoCSzQ2AMw+fjtmPMi+F90P3oxjMsDWwwM1uY89Moh/oAr/w
-         +wqQpf2Nn9ipZRliR1SWA+dklNYSY6OiMloYSUbcXS3/T0lXb2QfHGQpy3nockVBP4FV
-         7drHORPRyl5kWu9yMmraF+M5tZyJCNvlGPkSW8+anmmQKTzCiWGDozLB8R4szirrRAh3
-         gP+Q==
+        d=oss.qualcomm.com; s=google; t=1762921294; x=1763526094; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAl2A02JXsl7owYX9eMxdoJVFo0PhLT84hEevmOwh2o=;
+        b=jwomfKGZMVFbpqBgfYCTC412v5JAUuqcRYUeTuCWulkcHH177I31N0TrhDnT/cTDQT
+         texAxhfCqqE198QAkm0uPU4DOdxnH+Osb42bEc3New/56irLwSDlb6KBxo88rOdtXxbn
+         X2JiCAfmv3tVunyTT4Yyq8c3OMOdO7EmN5WGxBKgJbySpoVQZP9Y3EuSV+WljO57kRGW
+         9IUimQJ/8mqlBikMe0TLbGd1e1h2K+b9FSkQo16jNCKqvPrdMRWs6uVWYGVXzbDnT1j1
+         HX76wSZBhNSmVgcon4BPmTSskrY+lt1is4eL5nlV4YE9v0fl9YqknoYoaCNd/Tz6yMlb
+         r3Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762921197; x=1763525997;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AclnRmvTYc5uBIch2ljEKodBb0PluAr47F+xl2MP6pE=;
-        b=tOwkUszB2vogcO8f4YJIWSe+vW6Nbsca4bIYE5oGF7LpmErZCSd1tD5hOrAG8JpVqt
-         6mMHiCzrYCKAveJ+D97BHThAdidz5KuSRKmelpFBQU4qVlueIdzzTj9k9tCMl22TMtxH
-         4AT3jfJPMuFQ1OI3Q2qpOZqwyQIB/yLZ1MLEcQlgWbfS4mcGD8qqdhNFPI3wXp8txHGL
-         +j2FDAUP1mB8ZV6bGY1PR7RMD5wTEkHF5CSd32Kn5PXwao+ibGC870rZTg5b9HEVkqYR
-         BNvvQ5wAGzcHFg7NmO6HWjQVEBTClEmjMwVcH6cGhzg9YS+2SIipWajS33a/GE/9Rlbe
-         D+EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa8U3bcvvOKeaZSbuQCuZws8MKKIDokevhWRXt5cN0HirTA7B7Er/cTHtf8Vy+CpdwCakECclPMI4yqik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfcOdcDmTDQWQuzHExOR6GVq6U4HjBkeCcPV6GrBPATTm9bYJx
-	zc/DMSQ8jSe7Tbhc0V0K0dGIB5ZKYUwxrGFUbWYp+RqqE1OMfIHnesJXHYQ2cgIfT0KIVJwsCIj
-	w4LoM65bJsMjK1RKouT1wpQ/HVUMJbKmaXzNb3DvW2jjj361vldg8/ZfpHw//Dpqxxw==
-X-Gm-Gg: ASbGncsaDq5JFncCwiyGA23aHyYQ7P/+ChPmnuN18tSp5xH25GaQS4Hz3Qx5bb1s6Gx
-	aL1C6yrw7+8iVR/l7NY3rziaJOn84DAcOJyPaQvdSme8mTmcoHwcq0LoEC33u1Em6lAS33FW1Ou
-	GcXV5JbY7bR//6UrhiEf593A6OolusnoGbMkO1XhgV3IpGZ2740dQtl+viWAKYcS7l7qHWSclRR
-	9y8xqirZiKbnsl3xtKoKcN7CMYz06412q3FZ6XF92UOaEClKQGpRTYh9RG1hnw5hJYViSAoXXNI
-	OudZpg0Q/1CPEv1ua+RaYUPMdfFssq+AC9Ayv68iu1Hxn9ImXI4ROiifCS5qFahozpulhAi1Man
-	qLGNCbDVt4+sn6dX+zm1QXJtGtVJulPM8HWuU2lCExPDt5A==
-X-Received: by 2002:a05:6214:4107:b0:880:54ac:79f8 with SMTP id 6a1803df08f44-88271a5b788mr22274186d6.48.1762921197563;
-        Tue, 11 Nov 2025 20:19:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHbMi8UVm64iXlaFa6Bci1MOgHNeZ6t6/Lf2J2rdZ6Af7CSNMp6WRlYJamjOLJvlFJXARjjXg==
-X-Received: by 2002:a05:6214:4107:b0:880:54ac:79f8 with SMTP id 6a1803df08f44-88271a5b788mr22274086d6.48.1762921197146;
-        Tue, 11 Nov 2025 20:19:57 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238b293a6sm84556446d6.37.2025.11.11.20.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 20:19:56 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <01a859a8-c678-4fd3-8d01-f45759c61c72@redhat.com>
-Date: Tue, 11 Nov 2025 23:19:55 -0500
+        d=1e100.net; s=20230601; t=1762921294; x=1763526094;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hAl2A02JXsl7owYX9eMxdoJVFo0PhLT84hEevmOwh2o=;
+        b=cABolil37nkLYxy0T2qVSJbjBnEpAG9dNzIRFGEI23y9gOJcV9Js6J28eqgKFA8vIk
+         FDVSjyWvFHfJ98t9Y7e/X1pQtf8ZGb0r7Ig/8xRWoQRKTEFpH3FW1A7oJap3CVScECAI
+         ggu0WauHa+FwcIMuvtblz37Wnsq9lX9HytXXw6JX5RXlX/v3yaHtF8Ok1IbSa0AvuDIe
+         0hpmCMN20m+tv2jZ1OiRoIPydW67fSCWrkAsyikkKkhv2hD4IlB3XrPY/P6/0V/BHI0j
+         TJGrI4N4Vqtqs5Yk5YoUg6AuTJduvnITovAjTd9eJ2KDAPg5KCUco035hEoPBhoYRwW3
+         vjPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYab5LEQozKiquGawGNfhN9Tmdl5RZaY4PRQcGLJfWrfiGea2vPV0y0gKYSLuDJ30kX0nj7PUFQmIIG3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7hKb+T8E1wGIj89WzPS1rtJjyRnftf+I+udBr//rrIBgFn6WD
+	W+BlSQGbC2O00XbKdv56dVpzan+4UlMMzU8c0U6s73FN+90aM1G8nsEpqJ9AalOZqqZUChhrf60
+	rSYF+igcPiJOkcz9fOM1sglrHRzt4wDGLgR0evwphFyNcTUfOkVQuiKsLmzWuxFuudmQ=
+X-Gm-Gg: ASbGnct2nSTy5QU9rLbUO95qQUN7aVspY7A/eKAl9NXWjFzJSzcXxYrOnk/tBq0KFTm
+	g/I/Clh2x9/0q9tV8ar8kFU+oSxCjxSmw9E9RgkV9zyYDAqnkvJDyKFGKf6Zp1HLn2f1YX3+U72
+	XQjjC5dmPduqHR5rVu6vIz8j3RhmA7PmuuDrRRju/B+hchr+IGtMZD0+R1IjiLrBpZYoFCligd4
+	9xufJ/llPoS6ldxiGMBMWSZylmktw71uGckktM5zh0B3pUw5QUaKaP5D9hkm4BwJuNgrOheEdm2
+	08hlZSPfVqe7vDERnguOaUlYJYEeLlyMENFNFWiWjpvRrAvia5nTsBxfjTaVv4OYBUAzCx/vo2Y
+	nhM2w0744VKpam0E4/dutOoXD
+X-Received: by 2002:a05:622a:588:b0:4eb:a27b:b47c with SMTP id d75a77b69052e-4eddbe205b5mr18183281cf.80.1762921293864;
+        Tue, 11 Nov 2025 20:21:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH26bwsOC7wIHsrxJbi7gvaTFcyEyyDYi5MHqIhiXbod9dK5IpjomhG3t9KgDSoBmfYg9Bs+g==
+X-Received: by 2002:a05:622a:588:b0:4eb:a27b:b47c with SMTP id d75a77b69052e-4eddbe205b5mr18183141cf.80.1762921293416;
+        Tue, 11 Nov 2025 20:21:33 -0800 (PST)
+Received: from yongmou2.ap.qualcomm.com ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823892bb91sm86467746d6.2.2025.11.11.20.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 20:21:32 -0800 (PST)
+From: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 12:21:23 +0800
+Subject: [PATCH v3] arm64: dts: qcom: hamoa-iot-evk: Add backlight support
+ for eDP panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/22] cpuset: rework local partition logic
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
- <31b58b15-0b46-4eba-bd50-afc99203695a@huaweicloud.com>
- <c5c4e977-9194-42c8-9045-0ed0ff16f5a5@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <c5c4e977-9194-42c8-9045-0ed0ff16f5a5@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-hamoa_dvt_backlight-v3-1-f35b44af7fc4@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAEILFGkC/33OzW7DIAwH8FeJOI+Kz0B62ntMVUXANGhNaYGiT
+ lXefSQ97FLtYulv2T/7iTKkABntuydKUEMO8dIC/+iQnczlBDi4lhEjTFLCNJ7MHM3R1XIcjf0
+ +h9NUMFdcMj0qCwpQ27wm8OGxqV+HV05wuze8vJpoNBmwjfMcyr7zyjGuNQBYJoa+91Y4aT1nT
+ pHeE0mFZ4OxEq3WFHKJ6Wd7uNIN+/e3SjHFgwI7akeMI/Qz5ry73c15Pb9rZWMr+6Mo6d9TbKW
+ 8FsJqr9vYG2pZll9Qb6MBVAEAAA==
+X-Change-ID: 20251028-hamoa_dvt_backlight-373528b7ce7e
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+        Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762921289; l=3258;
+ i=yongxing.mou@oss.qualcomm.com; s=20250910; h=from:subject:message-id;
+ bh=ZxNm//b5hfNxwUZg8+VCBHFtlDwMpgGW0LDC0HCi4SU=;
+ b=r9LJv8PzKGDjymGv1ky6QzeqN1P2shueL/+ADxLL7Cb+C+OnUqx8f0mQFKxvN55djGYYAft4g
+ /OH9/bqBSDFAA2q+MjZYJjh5uLl0acFU2V+a1YUyayzX8W+o3ss4gsM
+X-Developer-Key: i=yongxing.mou@oss.qualcomm.com; a=ed25519;
+ pk=rAy5J1eP+V7OXqH5FJ7ngMCtUrnHhut30ZTldOj52UM=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDAzMSBTYWx0ZWRfX/gdD5qZ+Yk2/
+ Lo392LWfTdYpypb3vwaNKFip0lhF5q0Ir5KA3girNwnovOV1S6kmkpi5PXuBvbP7d8tbU7EPlcw
+ s29YIzoWh1LNO/+H6RWtbUVoelPf8Gp7S0H8nAw/UTspFmNyzt4/F3LoMrJlY22nJh7Bbhw3Khq
+ xqCvK4SzfaEU37O/aSBy2MNd77Q1qDZxvB30Zyd3Xny1SlXJNzvfQTGw4g6Km8F/vsieFxbSC8A
+ EPDLIEfDrLJTzZrrM14kkqZ9/1u3gVtsZvhgoesJ31LCCIMBRRCAsnEdOsqneJKzXJVEZPEirO6
+ NUs7EK8GVD3ayQ4VVuyki2jZziMNFP6v17875wtVlIIBc4WCGAqT+2RtmO+zqVmmPo53mEt5Qhf
+ xHzLc3dDdBuq85ALRTE/0b9fVatbgA==
+X-Proofpoint-ORIG-GUID: p6p6DvgCqFDLPK-Ytn0dzzewPW9eo2yC
+X-Authority-Analysis: v=2.4 cv=L94QguT8 c=1 sm=1 tr=0 ts=69140b4f cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=-MRO8OXtnwBBe0WvxIgA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: p6p6DvgCqFDLPK-Ytn0dzzewPW9eo2yC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_01,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120031
 
+The backlight on the Hamoa IoT EVK is controlled through a PWM signal.
+Aligned with other x1e80100-based platforms: the PWM signal is controlled
+by PMK8550, and the backlight enable signal is handled by PMC8380.
 
-On 11/11/25 11:11 PM, Chen Ridong wrote:
->
-> On 2025/11/3 19:18, Chen Ridong wrote:
->>
->> On 2025/10/25 14:48, Chen Ridong wrote:
->>> From: Chen Ridong <chenridong@huawei.com>
->>>
->>> The current local partition implementation consolidates all operations
->>> (enable, disable, invalidate, and update) within the large
->>> update_parent_effective_cpumask() function, which exceeds 300 lines.
->>> This monolithic approach has become increasingly difficult to understand
->>> and maintain. Additionally, partition-related fields are updated in
->>> multiple locations, leading to redundant code and potential corner case
->>> oversights.
->>>
->>> This patch series refactors the local partition logic by separating
->>> operations into dedicated functions: local_partition_enable(),
->>> local_partition_disable(), and local_partition_update(), creating
->>> symmetry with the existing remote partition infrastructure.
->>>
->>> The series is organized as follows:
->>>
->>> 1. Fix a bug that isolcpus stat in root partition.
->>>
->>> 2. Infrastructure Preparation (Patches 2-3):
->>>     - Code cleanup and preparation for the refactoring work
->>>
->>> 3. Introduce partition operation helpers (Patches 4-6):
->>>     - Intoduce out partition_enable(), partition_disable(), and
->>>       partition_update() functions.
->>>
->>> 4. Use new helpers for remote partition (Patches 7-9)
->>>
->>> 5. Local Partition Implementation (Patches 10-13):
->>>     - Separate update_parent_effective_cpumask() into dedicated functions:
->>>       * local_partition_enable()
->>>       * local_partition_disable()
->>>       * local_partition_invalidate()
->>>       * local_partition_update()
->>>
->>> 6. Optimization and Cleanup (Patches 14-22):
->>>     - Remove redundant partition-related operations
->>>     - Additional optimizations based on the new architecture
->>>
->>> ---
->>>
->>> Changes in v2:
->>> - Added bugfix for root partition isolcpus at series start.
->>> - Completed helper function implementations when first introduced.
->>> - Split larger patches into smaller, more reviewable units.
->>> - Incorporated feedback from Longman.
->>>
->>> Chen Ridong (22):
->>>    cpuset: fix isolcpus stay in root when isolated partition changes to
->>>      root
->>>    cpuset: add early empty cpumask check in partition_xcpus_add/del
->>>    cpuset: generalize validate_partition() interface
->>>    cpuset: introduce partition_enable()
->>>    cpuset: introduce partition_disable()
->>>    cpuset: introduce partition_update()
->>>    cpuset: use partition_enable() for remote partition enablement
->>>    cpuset: use partition_disable() for remote partition disablement
->>>    cpuset: use partition_update() for remote partition update
->>>    cpuset: introduce local_partition_enable()
->>>    cpuset: introduce local_partition_disable()
->>>    cpuset: introduce local_partition_invalidate()
->>>    cpuset: introduce local_partition_update()
->>>    cpuset: remove update_parent_effective_cpumask
->>>    cpuset: remove redundant partition field updates
->>>    cpuset: simplify partition update logic for hotplug tasks
->>>    cpuset: unify local partition disable and invalidate
->>>    cpuset: use partition_disable for compute_partition_effective_cpumask
->>>    cpuset: use validate_local_partition in local_partition_enable
->>>    cpuset: introduce validate_remote_partition
->>>    cpuset: simplify update_prstate() function
->>>    cpuset: remove prs_err clear when notify_partition_change
->>>
->>>   kernel/cgroup/cpuset.c | 1000 +++++++++++++++++++---------------------
->>>   1 file changed, 463 insertions(+), 537 deletions(-)
->>>
->> Hi Longman,
->>
->> I'd appreciate it if you could have a look at this series when you have a moment.
->>
-> Hi Longman,
->
-> Could you kindly take a look at this series when you have a moment?
-> I'd appreciate any feedback you might have, and I’ll update the series accordingly.
+Describe the backlight device and connect it to the eDP panel to allow
+for brightness control.
 
-I will take a look at this series tomorrow, though it has to be updated 
-again anyway.
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+---
+Changes in v3:
+- Optimize the description of the commit message. [Konrad]
+- Drop empty line. [Abel]
+- Link to v2: https://lore.kernel.org/r/20251106-hamoa_dvt_backlight-v2-1-9f844c8f8110@oss.qualcomm.com
 
-Cheers,
-Longman
+Changes in v2:
+- Add hamoa-iot-evk to the commit subject. [Konrad]
+- Correct the property order in the vreg_edp_bl node. [Konrad]
+- Link to v1: https://lore.kernel.org/r/20251028-hamoa_dvt_backlight-v1-1-97ecb8d0ad01@oss.qualcomm.com
+---
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 54 ++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
->
+diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+index 36dd6599402b..499db4d67583 100644
+--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
++++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+@@ -17,6 +17,16 @@ aliases {
+ 		serial1 = &uart14;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pmk8550_pwm 0 5000000>;
++		enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
++		power-supply = <&vreg_edp_bl>;
++
++		pinctrl-0 = <&edp_bl_en>, <&edp_bl_pwm>;
++		pinctrl-names = "default";
++	};
++
+ 	wcd938x: audio-codec {
+ 		compatible = "qcom,wcd9385-codec";
+ 
+@@ -183,6 +193,22 @@ vreg_edp_3p3: regulator-edp-3p3 {
+ 		regulator-boot-on;
+ 	};
+ 
++	vreg_edp_bl: regulator-edp-bl {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VBL9";
++		regulator-min-microvolt = <3600000>;
++		regulator-max-microvolt = <3600000>;
++
++		gpio = <&pmc8380_3_gpios 10 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-0 = <&edp_bl_reg_en>;
++		pinctrl-names = "default";
++
++		regulator-boot-on;
++	};
++
+ 	vreg_nvme: regulator-nvme {
+ 		compatible = "regulator-fixed";
+ 
+@@ -819,6 +845,8 @@ &mdss_dp3 {
+ 	aux-bus {
+ 		panel {
+ 			compatible = "edp-panel";
++
++			backlight = <&backlight>;
+ 			power-supply = <&vreg_edp_3p3>;
+ 
+ 			port {
+@@ -879,6 +907,21 @@ usb0_1p8_reg_en: usb0-1p8-reg-en-state {
+ 	};
+ };
+ 
++&pmc8380_3_gpios {
++	edp_bl_en: edp-bl-en-state {
++		pins = "gpio4";
++		function = "normal";
++		power-source = <1>;
++		input-disable;
++		output-enable;
++	};
++
++	edp_bl_reg_en: edp-bl-reg-en-state {
++		pins = "gpio10";
++		function = "normal";
++	};
++};
++
+ &pmc8380_5_gpios {
+ 	usb0_pwr_1p15_reg_en: usb0-pwr-1p15-reg-en-state {
+ 		pins = "gpio8";
+@@ -890,6 +933,17 @@ usb0_pwr_1p15_reg_en: usb0-pwr-1p15-reg-en-state {
+ 	};
+ };
+ 
++&pmk8550_gpios {
++	edp_bl_pwm: edp-bl-pwm-state {
++		pins = "gpio5";
++		function = "func3";
++	};
++};
++
++&pmk8550_pwm {
++	status = "okay";
++};
++
+ &smb2360_0 {
+ 	status = "okay";
+ };
+
+---
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
+change-id: 20251028-hamoa_dvt_backlight-373528b7ce7e
+
+Best regards,
+-- 
+Yongxing Mou <yongxing.mou@oss.qualcomm.com>
 
 
