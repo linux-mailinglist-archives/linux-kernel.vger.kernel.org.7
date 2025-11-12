@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-897949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1056BC53F98
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:47:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA815C53F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB6CB4E3AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:40:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6B856347BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663BE352FAC;
-	Wed, 12 Nov 2025 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0504C34AAE0;
+	Wed, 12 Nov 2025 18:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoXrSCZS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjFgimRW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E7343D6A;
-	Wed, 12 Nov 2025 18:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620943538A0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972396; cv=none; b=QcefIoM5Ov+rDPTethK/u5Rg8hccmiiBKMAzXoJfwOg55PW+e47X/+MJBpuMQe1UWpxxIYZvszdue718Gla2Xt3LJ+j8Bxe4OCsO9QD5aNjYt1W+KDM04gtelRaZMXYnfqMuJB5Pmz62ChdY2qUrd7OpiA+Zul1xrx1VjsGvEJQ=
+	t=1762972415; cv=none; b=PU+5Jmw8mddLfjTzeQ9eu70LaTUjGISOuijMUzWxKjeSuJdFWp8tKiBZ8jM27/eByMzdqmbWr2ZxB+je+9XNJWBPT1UP7NENO2C+T1Ct3gRzgIuY8S4VwSrH1prgStG/XsKRQHmJC+nfevdwFmCGVXWd95CMTIonltXGGiUqKBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972396; c=relaxed/simple;
-	bh=YaM4MitBaEoWYE2OAO4lEQ4UZhqNzLI+jlRBaovkzmg=;
+	s=arc-20240116; t=1762972415; c=relaxed/simple;
+	bh=svyquVfOlmQCnTwOTU1HeKk9AcKWK15SpFPxSVLYHSM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qdmQJKfLn6ywYxsVzJF6no6t037ZaJXki4pMdKrMFmEwXx+9pKAN2Nc/TgfKwM5SkW5GiYsoTVH50R83R3ZbRbwrItZ9AA67pdjII562qf26Rr3fwqgq1/vmKWl3QV6rxHlDGfWLC8792G40i09UOfM4yhLIkilns4jb7skIJiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoXrSCZS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05000C4AF09;
-	Wed, 12 Nov 2025 18:33:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WymloWkudJm0lqmCzZtTgE3kDdrXfd/DFNcYgJZ+QVWTEDhakcDyBMyKxk4BknPpTZMhNRAtKY2eBh3M/0olRnboTt+NmZ99GLHvv3alP1Kl/Q4DTxgz+R1qjp61IOCPg5VeeYmzFVSMXsSkG18r9yNAwvdnWI4CPCA4LjOjTN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjFgimRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E622C4CEF8;
+	Wed, 12 Nov 2025 18:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762972396;
-	bh=YaM4MitBaEoWYE2OAO4lEQ4UZhqNzLI+jlRBaovkzmg=;
+	s=k20201202; t=1762972414;
+	bh=svyquVfOlmQCnTwOTU1HeKk9AcKWK15SpFPxSVLYHSM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hoXrSCZS9Xf3fBk2X+DXNK8EP3lPIENztViVu3zCYEb/92xGlmw1je8RnrgQHKPut
-	 f2/vW474pdSQZbkzFol/e0IrvRm2QZOlbxlQ72NQZyOJCrHwErPjOb1y6ARFmgdBM9
-	 HVRo5UDuOEZT2Mju3v+TcGJqHJEx/j2zTu7Ad14+wormbA5LhfTG5jRka7PO2Wg9OA
-	 o6L3Vy4ZPldDQldQXxcj1D4dX0EP1hP8tUHh/D5g3IJsJkzwTIXxlo87rqBBbkHcRC
-	 b/aNs2Ha02pL14WnO8vO92lPNgR5pAkwrpDcF8E1E94ZqGoyKF/jHgybtZCS7bV0ea
-	 /evGeUraqX40g==
+	b=JjFgimRWTU36hJVBFroyCYIqSjvCu6FSRPmiSQ8EO2W/1YQmYrCkSKZqMvFkd0mQC
+	 R7Fha6K277a2BFlpbm4aryDiiiHDxd6bVRPlcJ/1+IjMpO1Yh5eFcr8uBHdlIRoGrC
+	 DBJ8kG3cQH9m2Jt0J1PgD/x2nJN4lqb92PEp3Zk5TuUPfLCU/oVqF10P0t5G8RxK7p
+	 M53rX0hR3abi0SzDpMLn3OMMctBYlq3PU5RPoNq5rKpP2f1C9BW1n56KAh098L8n4H
+	 K9KmPjdQx7DO0bHSsazzyV62JMuJrCzLnoRNt0nIX+C7KJ49mOQQJ+lXlpEGfF627l
+	 YSaILRSb5DrlQ==
 From: Catalin Marinas <cmarinas@kernel.org>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	will@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	Bo Liu <liubo03@inspur.com>
+To: will@kernel.org,
+	mrigendrachaubey <mrigendra.chaubey@gmail.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH] arm64: Fix double word in comments
-Date: Wed, 12 Nov 2025 18:33:00 +0000
-Message-ID: <176297238094.2053466.1065029098279843692.b4-ty@arm.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: Fix typos and spelling errors in comments
+Date: Wed, 12 Nov 2025 18:33:19 +0000
+Message-ID: <176297238094.2053466.16803014781753422009.b4-ty@arm.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251029071742.17732-1-liubo03@inspur.com>
-References: <20251029071742.17732-1-liubo03@inspur.com>
+In-Reply-To: <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
+References: <aQoF3pu8CjO3tAl6@willie-the-truck> <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,13 +63,16 @@ Content-Transfer-Encoding: 8bit
 
 From: Catalin Marinas <catalin.marinas@arm.com>
 
-On Wed, 29 Oct 2025 15:17:42 +0800, Bo Liu wrote:
-> Remove the repeated word "the" in comments.
+On Thu, 06 Nov 2025 19:26:55 +0530, mrigendrachaubey wrote:
+> This patch corrects several minor typographical and spelling errors
+> in comments across multiple arm64 source files.
+> 
+> No functional changes.
 
 Applied to arm64 (for-next/typos), thanks!
 
-[1/1] arm64: Fix double word in comments
-      https://git.kernel.org/arm64/c/337f7e3a4b4d
+[1/1] arm64: Fix typos and spelling errors in comments
+      https://git.kernel.org/arm64/c/96ac403ea2b4
 
 -- 
 Catalin
