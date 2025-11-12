@@ -1,264 +1,164 @@
-Return-Path: <linux-kernel+bounces-896336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F57C5022F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 862C3C50232
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86F2E4E5B76
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:42:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53D3B4E57F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31F41DE2B4;
-	Wed, 12 Nov 2025 00:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CC41DC198;
+	Wed, 12 Nov 2025 00:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h3AZDxGe"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011062.outbound.protection.outlook.com [52.101.52.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azgas3dy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1C01CAA92;
-	Wed, 12 Nov 2025 00:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762908138; cv=fail; b=gTMIb7q7KmycNRMj0+iEvFa6P6WDe10yv/j1hVxV8ZfaokhSy5CqngXfLxe42R8L4IkDZfWusv8puDapymxpT3tXT5iNaMSAsw4WegK6RPDCxnjr3SerJ6IhglFcJwDW6qx/RN40N7u7DyYmrrmEAu7fpLRAvIzaQoDnGyhNNJ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762908138; c=relaxed/simple;
-	bh=NXTYjLq9raRhhEDa8sVNpL0v2KRD6l1xt/gy5lnhkG4=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=ZRGOT7wt/BR/NseGXoLNHGVGxBLPb4KluyhsPuUi3mtEL5YjXQC+Gvp+ThjJIpyyklm7n4YwTB7AONg33YW8Twt6gesN5sDwpDLKioJk74d64gPSe3F38wxHOjN4r2OKKWQ8my9wzwyzO6mZ+FdyTNFLNC8K7Nya0OwkzWQVbIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h3AZDxGe; arc=fail smtp.client-ip=52.101.52.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HakcGihsdZ4cDBuQ+nTm+rH4ExmXc/N/ghJ2nxVXK3TglxFhpSemV5VElEksb1HQ/mdpnZ1rcZDtVmp64vLJJNnwV9o/5NG3MCfPex39Bql4Dp9XCF9BTTb3cbr2yXSKDiwbKC4xCyNecvL19wkDpNo6bB4FmH2OREIUe+uycuc3QpQpq9revYmsisDIfk6+WGLuUz31ucAQB66gH7nDzEKF6mCucAJTcA7gzTlAqH2+ya08bXdte5sGC3QV6Tuj5H89XuXVPSARp6ie//Ysdqv/3zYwrqxxkSgrV/nav9FjAor7RQaZBF0kfhVaaNBtlUpgHPzCzvZJidatvyxWnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9K4z/YxK/0bF/+Hh9j1ZlGkKbIHdcreFQMKV71nNvaI=;
- b=g+D6ChzebF2g89pVfyGYU0RZAOdMAjOZ38bQwCSCljB1U3afNwS14/mXGqR3J4c/UoiUI/L+stvovkY1Ju6fCMIg6BzuqA9J59uLo2d2TWAHDESpFcIBbCurR0lMvPfxX06Es76XNh17PlQ8w0330/yg6HLJJdoIyV2BxyNTZsKO2DLdroSsipXz25trEHuVL9HpZZ7wXKvY7tU21HtR5869vmPQCyR5zzz8Gx2ztEHTAqvktImGsCZCez/hSVkyzFGl+e7WbSw/v2Z6Zrhwvo5e3AqHmNjz/3/WK04GciELh6E+agfdZf4SeWrEqjeA23N032WEJ4bvm/3BDo4nDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9K4z/YxK/0bF/+Hh9j1ZlGkKbIHdcreFQMKV71nNvaI=;
- b=h3AZDxGexfECyGCBowGfAOVnP3cHMxjrno96Zwfabsbmyrd272c+nh63GzHpIQoqMXdsW3P46EVVSKLChvJOW3dAw/+cgP21fZiuYA0Kd8LdfPqbD5J2kautTjhIBM7X3cNZOCPTlL9MDp/BbmFFd3lXjxYKvx6W6aBGK9ssmBmJ32gwa5sm10aA/yUc7mHZ/SXrU58EKdxPCxlCxRSlZi5m/KhlP3CjxB5epdviK+MYVInIcN4Xn7V6czMNHrqnCvDr3eFRMEHq0WE++BRSj/rDpnRz2P0l/A3fx8Pu3oj8jmuwqjOHxxZfQXHBnaxiTkQJ9cmxKsvyvFm436WQ7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB6069.namprd12.prod.outlook.com (2603:10b6:8:9f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 00:42:12 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
- 00:42:12 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Nov 2025 09:42:07 +0900
-Message-Id: <DE6ARX705WO3.1MLSW7OWUCX7S@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <dakr@kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
- <20251102235920.3784592-8-joelagnelf@nvidia.com>
- <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
- <0181a17f-5773-4cf0-9473-7d4ee9122105@nvidia.com>
-In-Reply-To: <0181a17f-5773-4cf0-9473-7d4ee9122105@nvidia.com>
-X-ClientProxiedBy: TYWP286CA0019.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:262::6) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7DE33F3;
+	Wed, 12 Nov 2025 00:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762908197; cv=none; b=Pg4DOlKoUhPxBMkIR/WyRiswtyRSeNuSJJWwEJmWU8nilaoH/eRojBF/3cLYMHpemWbxVYilLJrny9qxDeNVuoA1t6qxoEcoUF3CQvJdDzlzuzmok4p4TRLWRgvvf5Jb7PEjptZWTL16y317gfPJXYOXUAzCeqr5c1o61X0Fk0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762908197; c=relaxed/simple;
+	bh=atpFUL7pJYRuvuflts9DoB2NTZpWxZJSKckn+I2ruEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1mF8FAKYQ7zBXk6htCVL8bjf7sasGhLb+ViZ/lUgJdkVpw1RcHc3AVmib25osVRDQZJ/SOP97vYc0g4TMaMgcFg+OyBI4HjXZX/ahMRCprEiaCzz53WdGuesZ5iiQaNK4Z14EGuxCKFowxcf5jqF5DWPX0dm4ihrXhteHBPw84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azgas3dy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99DE2C116D0;
+	Wed, 12 Nov 2025 00:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762908196;
+	bh=atpFUL7pJYRuvuflts9DoB2NTZpWxZJSKckn+I2ruEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=azgas3dy3XFARqqEvidJa0zDJCCN7XnLwbpkIQFjp6vDAvrACAJaLkMLIHlYDAevM
+	 5qOm3TBzkj+RieWN/Dy5D7LLJF3nKDdvz3bWveIYxl2W1DFI3zbNO9o1wZVaDSWyhC
+	 mcebqrnLATC0AgtqvMHdolQt3p++6aL4WisX1NPbZRvej6HV6+fQBIUBcjagTlXly0
+	 ham7uuRIpfi6YVap8OBvO+fPt0YvNoqpMeyG7OdtjlDoMwY38pq32tfAx5sSWtZBag
+	 YtNUe+2WRCNNE3TOw893hcCA1TmEaUNvBkhQGq1jilSUWKoNCbERS1ODymBfaU0VsH
+	 lKl36mF/+Ne8Q==
+Date: Tue, 11 Nov 2025 16:43:13 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Chen, Zide" <zide.chen@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix missing feature check for inherit +
+ SAMPLE_READ
+Message-ID: <aRPYITVx_MHKEeFd@google.com>
+References: <20251111075944.2328021-1-namhyung@kernel.org>
+ <ac137eff-674c-4fa4-b870-80878af032a0@intel.com>
+ <aRORSxu22OSf-v0X@google.com>
+ <7ea7c72d-7570-4eca-8a8a-d8f93363691e@intel.com>
+ <aRO5Tuz_-m5PX9Pz@google.com>
+ <3f2e834b-36d1-4227-b1bd-843e824ac353@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB6069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 999d3f66-5b9a-45c5-b703-08de21845112
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UmMwY3AycXFON2FVaFRCYlZNYjlSZnBDL0ZqMWQvUFg1ZWV2QkxKM1poNjg1?=
- =?utf-8?B?UGkxODc1Ylg3eDBnMDk5NlY0ZExMRTcwbUY2RDVDMmlCMVBlU0JsMldaNWhq?=
- =?utf-8?B?VVh4enFiM2ZOdDltelJSY3AwSVJsRXJnekpBNlVnbHBPRTdaSjNWaFFOZ3dk?=
- =?utf-8?B?Vmo5Ykt2RkRkSGduYUlhV0dUZDllVUdmWnhzL3JZMFhHeFFxN2FndHUxMTBv?=
- =?utf-8?B?WVkvYzdCQlhkUXdEblVVVHVXWUhpWlpxdDRibkwvSGQ1Y0FwNWRBcDdGemUy?=
- =?utf-8?B?L1FReisvUkw1RUx2TDRMcVgyZVZaTElHeGpOZVY5UW1SVmlsazY0NFRlcDVX?=
- =?utf-8?B?U3JsWHpBaWxmcTdyRjBMM25wWEYxaVN2c0tRRnhCUDkxUy8weXBzbGZJKzRL?=
- =?utf-8?B?cFh6ckRiMlMvaG9FQmM0Zm1sVTljejBZaVQvVDdhQks4Z2JURnU4L2FzYkQx?=
- =?utf-8?B?RVNPT1lCcVZJT2dINVVhYzVnaUNXV1MyNzVGNnQwRDZJOUVwUzRBQjhEWGFJ?=
- =?utf-8?B?dENlaUpHNURDYWhhTENCZmZWWm44eS9ON1l3NWlqMGFHS21JTS9HUjc4TXR3?=
- =?utf-8?B?dHVKRW04K3ZUbmlmbmV5UGxQbExGeFg1Vk9WMHFpcEl1NUJTM0J6Q2Ewc2o4?=
- =?utf-8?B?SzBEbVhvMGhDWnBUZ0JaeHordkdMR2dpbW0zRk1vNVNQWStLYmxVOG94VXZv?=
- =?utf-8?B?NFFhTHUrc2MzWS9BM0t6YytTbk5raXNaZTU2UW1tV3drU0lvVElydklwN0lB?=
- =?utf-8?B?NmtaM1RvMGxLek9WanZrUjF2MmZKYjN0eUpQQVdIdllWWEN4QTdneXl1eDJw?=
- =?utf-8?B?Ym9wR3V3RHd0bFF3Q2ltM0gzck44a0xNbDRZS29TbE9YMDdHU3JFaVYyNHBC?=
- =?utf-8?B?QkRKemd3bWdRZ1VycU9rRkFJa0UwT0UyOFQrdEtLTzB1MWNkbjR2YTR0b3Ey?=
- =?utf-8?B?QVNlWFhsK0MrVzRGenF4b2tpWHhoRDVDY2VlNkI0WEVvMjR6Y09tRTVaM0Vu?=
- =?utf-8?B?dHo5cHc0V2czNjM0anJWUjVCeWVvYVIyaGY1blFkb3VEMEtaN3I4YThaS2E0?=
- =?utf-8?B?U3Z0MmMydUFVSkcrekdjaGVqNG1kVXBpUWd2N0pVYy81cmFjdEtBNUoySVA3?=
- =?utf-8?B?cXJxSS9TaWM1MUpZbGRBeUxHbEptTEVENmUyMytBR2pwTzNaRGg5STJSYmRr?=
- =?utf-8?B?UEdhQS9obzJBOHVLQU1ySVhnaGd4Ynl4RWNGdkVuSE1ZOVpuM3VldzlmbXNo?=
- =?utf-8?B?a2YvcHVpTlhuQlBOMXppZGJxWUJETGhPbDMwdXdJbmR2TytWOGFhMWdnamdG?=
- =?utf-8?B?K21UMTRKdU5uOHF0ZCtscDhkNk8rRjBiYmZlUTZGNzA2bWdHOHNCeDhtaHpP?=
- =?utf-8?B?ejRKelFzZ2ZiQzkwYVZqbXdETm9HR25ZUW51NnFlQVh5SzVrZG9mTzQ4L21D?=
- =?utf-8?B?R1Z4U056MjdUNVRPVEVuY1JwWDFjeTdCVVBqdVJ4QXZURGlYZkg2ZlBjY0Jl?=
- =?utf-8?B?MnJnek5RSy9pQ0NYNjFoWEtlRXE4a3VmV2JTSUJ6bGI1b0cxYyt4U1hIeTVR?=
- =?utf-8?B?NWpFYms0elNhcTFuc01Cc2gwOHJaMm16NnJ6NUtCWEVyWXJIdCtQWGVvcUNF?=
- =?utf-8?B?SWRLUmFLSnJmZ3h1MjJqK2l3d3pOUlV3ZWlGS2VwZ3IzTnkwUGRDampnY1BE?=
- =?utf-8?B?Z1NYMjhVcVZtdzNiYmdKalc3NXg3TkF0aHVXbnR2ZytNNXhLeWhmN2xuZE16?=
- =?utf-8?B?NmlQc2N0bHdYbGNWL080dXYreGZSMXVTWUZWd0IwT1ZGTzFuZWkrZVhIVVdR?=
- =?utf-8?B?L3J3YTU0RFpNbDdUVDEyVk5WTVhiVWljSStvZUI2b1NqdnlsOGc5YnQvTTRx?=
- =?utf-8?B?c09xdzJyM3NETDZicnZaR3pWcGw4SEpNSTRvVDYxRGlZRFk4OExtck1LYVNT?=
- =?utf-8?Q?MzUuwYNh2vScoItTPcS5AG39gOXVRx9O?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dFlqUTZ4dTU5NnNScndJbUV4WHpWZGN3Wmp2T2tHeUpMMHRKODFYWW5nMzBs?=
- =?utf-8?B?OHpEZWJ4VHhVSFgrUEpIemlpQkdwWENwbFdWNWZEZDRhWGtXSFl0NkpSOXlI?=
- =?utf-8?B?VFAzak9YWldXS3NqK1I3d1M1UzN3K01lWTh1R3kvbmhEYSt1MTZ6NDJKRDg3?=
- =?utf-8?B?OG5IWm9rQ2lEZVJyTE5MeDlrSHZHU3V1UWxsRFphZ2Yxck5RblhhaUFMV1Bn?=
- =?utf-8?B?RmNVeW9uSFNjVVNiaEY4VjdRazZhQ2k0N2tqQUgxUVlTK203WWRtajREYndN?=
- =?utf-8?B?bWRORUdvcXk1b3JLTDlESWJrUE8rOTFlTE9yNklwWTAwVUVzUTB3bkUzd0NF?=
- =?utf-8?B?Rjl3TytVVEE1MHBXN1F5R3plY3UrNDBGS2RtWnRiM2ZVZWh5THZIbmZQb2tV?=
- =?utf-8?B?Y0lQMWlxN1ZIVE9yZXRSUTRUQVh1MGFOSnFpWnNsc2dXNnJSKzFyVzFKYllS?=
- =?utf-8?B?QXNXQkV0SW9WVk80VmtBQUczME5mNjVqSVNZWktPdnhOUWlCSjNzZ2RTRXBU?=
- =?utf-8?B?RVh2VFAxRmhib0g1UTNEN0M0VkJDdWJIWFhjcXo0ekI0NmYwaGVzdUNWalg5?=
- =?utf-8?B?cTNsaHJZL0Q0aW9pZVFPK2tuSWZnTE95dzJzRmtjamU2c0V4dmhUVkFYL2JC?=
- =?utf-8?B?MHpsS3B1NndYSmQ1V3ZBWGFFY0ZXZEpNTFowRC9uM1BtaTdFSERZY3RBK1A5?=
- =?utf-8?B?YUFzRlVwdGxFUTBUK2VWVXcrbnlJd3BqQ3dmREh1aTdnU2cvakpzeGRMc3pW?=
- =?utf-8?B?RllqUElxZWxFVnpIYldXS3o2OGIvdExHbmxNNklXWGlRTkdiN0t0eDZ0UWdh?=
- =?utf-8?B?MEdTaWxDSHZGRERaWXlhKzlGa01Tb005N1h6YnhxaUR1eFd1Wlg5TVZFZHlO?=
- =?utf-8?B?VTJVQkRidnh4ZjVaUlRaanE5b2lqOWgrOVI4a2NkdlN4cHQ5OU9wU2JkTDZ1?=
- =?utf-8?B?MitlOWk1V2RyM3gxaE9YWXdpaHNHdkpDbWhHWkZ2YXpMYWZib0IyUzludG1z?=
- =?utf-8?B?V1F3ZVlQbUtuckNTUzM1cnRvYkEvWjFNbnZDcG1iOGRhcS9QTnd2MlZHU3Z0?=
- =?utf-8?B?K3JvZ2ZRbnNhWXRKRk9IU25ha21DSVg0MGs3ekNoemhwanJIQm16Zmh0T0Q3?=
- =?utf-8?B?K0RoN0t1Nk1MR0oydzY4ZnJTTkd3UDFQL0RoeWc0NWJZYXpLeHdyTklySmxG?=
- =?utf-8?B?KyttclVPaVkwL1pvdy8zNUV4alRoSmU1UDRsb05QeW9NTjJ5R0dyVThPbU5l?=
- =?utf-8?B?aGNPa1NETXQ4RUEzSVBtTG8zYVkwQ2hDT2pGb21hZGJacmRwOHJDN1hDcW5N?=
- =?utf-8?B?RGZYN3NxY05aaVBraXlmclZNcXZHdkMya2FkMml5YTJrenljYVFVNld3Wk00?=
- =?utf-8?B?NVphRkdQa3o0cUdFa3ZsTFJ1OGdpN1pXVUw5Zld1enVpb0xiWlZmamxUMUtr?=
- =?utf-8?B?R010WnZjZFZNcldxYjcyRWZEOWhqWFRwRDJaUnpYZjZkOStKempNS0g5bG5r?=
- =?utf-8?B?MkNjV2lYbDlpRVRXOGR1c0VVWWxzdzdlOFhFRGpkSGlyRjRSVmxNVFFOQmFY?=
- =?utf-8?B?UG00R1dMWEk4QTNCUEZkaEMram1Ocmk0MXZ2VnNFMnYvcnhJZDJsalZsVU0x?=
- =?utf-8?B?a2NIb3lIS0VaYk44SkZKOS9zOXlLQkR3WnF3N3JaNGxIbENpVS9UOUtwZFNP?=
- =?utf-8?B?UDRFMDM0T1MrY1owbktWTVhkSG5GbG9KeDJjQjhoeThhQjdqVkZOVTltTW5X?=
- =?utf-8?B?RlV4Y2hrRVhqUjdHQTFsN2k5TUJkNzlDdUVVWFRTYTJYd3pjeEJiQ0VVTjU1?=
- =?utf-8?B?SGtXN0FPUkdUMm56cERFcmd6djlVNEp2U3lSeU5DMGlFQ0xTamkzbTdBY3F3?=
- =?utf-8?B?Y0xGQkJQWGYwS2N6ZVJCV1ZZUHBUVGYzck5lUTM3K2hlejdEd2p2L3RwRlZx?=
- =?utf-8?B?MjYwUUhzK3J1ckl5Y1BvaDV4WVlDSjN1TEtGVHJFcnF0ck14UjRnVVo3aGN4?=
- =?utf-8?B?cllvSXdHRDRPT21HS2RqcHVGVytxaE1zeUtaUkxET2RwclNpRDYzaXRXbXNG?=
- =?utf-8?B?L3pISzBFOW9USHJ0TXZiQ3RXRmtKdXRWYmZZREJIVVRkZG9TS3JUSEpmM0p4?=
- =?utf-8?B?UDBXUWo0UENKOXdCZHpDenJVNHF1SWlGSnJWbTJpQzVKbjdvckVkemRsMGVH?=
- =?utf-8?Q?ce2j4/wm2M86RPHufNNqcnV3HywB8/y/zLrZk89ZHh4o?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 999d3f66-5b9a-45c5-b703-08de21845112
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 00:42:11.9628
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tTZqln+5NWDsc7tDGns5mxqABlpb8p3Bud+PFoFbAJcTPs+HSoJjto2rgj3wubUagj9tBw6XonAm1a+49R/6OQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6069
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3f2e834b-36d1-4227-b1bd-843e824ac353@intel.com>
 
-On Wed Nov 12, 2025 at 8:02 AM JST, Joel Fernandes wrote:
-> On 11/10/2025 8:43 AM, Alexandre Courbot wrote:
-> [..]
->>=20
->>> +            |cmd| {
->>> +                self.current_offset +=3D cmd.size_bytes();
->>> +                self.cmds_processed +=3D 1;
->>> +                Some(Ok(cmd))
->>> +            },
->>> +        )
->>> +    }
->>> +}
->>> +
->>> +impl<'a, 'b> IntoIterator for &'b GspSequencer<'a> {
->>> +    type Item =3D Result<GspSeqCmd>;
->>> +    type IntoIter =3D GspSeqIter<'b>;
->>> +
->>> +    fn into_iter(self) -> Self::IntoIter {
->>> +        let cmd_data =3D &self.seq_info.cmd_data[..];
->>> +
->>> +        GspSeqIter {
->>> +            cmd_data,
->>> +            current_offset: 0,
->>> +            total_cmds: self.seq_info.info.cmdIndex,
->>> +            cmds_processed: 0,
->>> +            dev: self.dev,
->>> +        }
->>> +    }
->>> +}
->>=20
->> You can do without this implementation by just having an `iter` method
->> returning the iterator where appropriate (in the current version this
->> would be `GspSequencer`, but I suggest moving that to the
->> `GspSequencerInfo/GspSequence`).
->>=20
->
-> If I do that, it becomes ugly on the caller side.
->
-> Caller side becomes:
-> for cmd_result in sequencer.seq_info.iter(&sequencer.dev) {
->  ..
-> }
->
-> instead of the current:
-> for cmd_result in sequencer {
->  ..
-> }
+On Tue, Nov 11, 2025 at 02:36:19PM -0800, Chen, Zide wrote:
+> 
+> 
+> On 11/11/2025 2:31 PM, Namhyung Kim wrote:
+> > On Tue, Nov 11, 2025 at 12:03:22PM -0800, Chen, Zide wrote:
+> >>
+> >>
+> >> On 11/11/2025 11:40 AM, Namhyung Kim wrote:
+> >>> On Tue, Nov 11, 2025 at 11:13:20AM -0800, Chen, Zide wrote:
+> >>>>
+> >>>>
+> >>>> On 11/10/2025 11:59 PM, Namhyung Kim wrote:
+> >>>>> It should also have PERF_SAMPLE_TID to enable inherit and PERF_SAMPLE_READ
+> >>>>> on recent kernels.  Not having _TID makes the feature check wrongly detect
+> >>>>> the inherit and _READ support.
+> >>>>>
+> >>>>> It was reported that the following command failed due to the error in
+> >>>>> the missing feature check on Intel SPR machines.
+> >>>>>
+> >>>>>   $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+> >>>>>   Error:
+> >>>>>   Failure to open event 'cpu/mem-loads,ldlat=3/PS' on PMU 'cpu' which will be removed.
+> >>>>>   Invalid event (cpu/mem-loads,ldlat=3/PS) in per-thread mode, enable system wide with '-a'.
+> >>>>>
+> >>>>> Fixes: 3b193a57baf15c468 ("perf tools: Detect missing kernel features properly")
+> >>>>> Reported-by: "Chen, Zide" <zide.chen@intel.com>
+> >>>>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> >>>>> ---
+> >>>>>  tools/perf/util/evsel.c | 2 +-
+> >>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> >>>>> index 67a898cda86ab559..989c56d4a23f74f4 100644
+> >>>>> --- a/tools/perf/util/evsel.c
+> >>>>> +++ b/tools/perf/util/evsel.c
+> >>>>> @@ -2474,7 +2474,7 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
+> >>>>>  	/* Please add new feature detection here. */
+> >>>>>  
+> >>>>>  	attr.inherit = true;
+> >>>>> -	attr.sample_type = PERF_SAMPLE_READ;
+> >>>>> +	attr.sample_type = PERF_SAMPLE_READ | PERF_SAMPLE_TID;
+> >>>>
+> >>>>
+> >>>> Seems this could have some unintended side effects. For example,
+> >>>> consider a :ppp event with PERF_SAMPLE_READ and inherit attributes
+> >>>> running on a system where the maximum precise_ip is 2:
+> >>>>
+> >>>> - It fails to open the event on the first attempt;
+> >>>> - It goes through the inherit_sample_read detection and fails again
+> >>>> after removing inherit;
+> >>>
+> >>> This is not what we want.  The kernel supports inherit + SAMPLE_READ
+> >>> so it should not remove the inherit bit.
+> >>>
+> >>>
+> >>>> - Finally, it succeeds after falling back to precision 2 — but the
+> >>>> inherit attribute has been unexpectedly removed.
+> >>>
+> >>> So it'll fallback to precision 2 without removing inherit.
+> >>>
+> >>>>
+> >>>> I may have missed something, but I don’t quite understand why commit
+> >>>> 3b193a57baf15 ("perf tools: Detect missing kernel features properly")
+> >>>> performs the check on a dummy evsel instead of the original one. In this
+> >>>> way, it might incorrectly fall back an attribute that doesn’t actually help.
+> >>>
+> >>> Because different platforms have different limitations on hardware
+> >>> events.  You cannot simply use current event for kernel feature check
+> >>> since it can result in wrong decisions due to the limitation.  So we
+> >>> picked the software event to avoid the hardware characteristics and to
+> >>> focus on kernel features.
+> >>>
+> >>>>
+> >>>> This means evsel__detect_missing_features() could theoretically roll
+> >>>> back a feature that might not actually work. Given that it cannot
+> >>>> restore the original evsel state after a failed attempt, side effects
+> >>>> may occur.
+> >>>
+> >>> The purpose is to turn off the non-supported features only and try with
+> >>> other settings like precise_ip and exclude_kernels and so on.
+> >>
+> >> OK, thanks!
+> > 
+> > Can you please confirm if this patch fixes your problem?
+> 
+> Yes, it works!
 
-That's if you need `dev` for iteration. Since it is only used for
-logging error messages, I'd suggest doing without it and returning a
-distinct error code (or a dedicated error type that implements Display
-or Debug and converts to the kernel's Error) that the caller can then
-print, removing the need to pass `dev`.
+Thanks, I'll add your Tested-by then!
 
->
-> Does it work for you if I remove IntoIterator and just have GspSequencer:=
-:iter()
-> return the iterator?
->
-> Then the caller becomes:
->
-> for cmd_result in sequencer.iter() {
->  ..
-> }
->
-> Although I think IntoIterator makes a lot of sense here too, and there ar=
-e other
-> usages of it in rust kernel code. But the sequencer.iter() would work for=
- me.
+Namhyung
 
-I guess it's a matter of personal taste, but I tend to prefer `iter`
-methods because they are more visible than an implementation on a
-reference type, and also because they allow us to have different kinds of
-iterators for the same type (not that this is useful here :)).
 
