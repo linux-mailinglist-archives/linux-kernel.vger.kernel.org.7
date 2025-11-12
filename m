@@ -1,264 +1,138 @@
-Return-Path: <linux-kernel+bounces-896774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E21C51320
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B527CC5132C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B56D3B9EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9233B7111
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69DE2FD675;
-	Wed, 12 Nov 2025 08:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="JRbVE0jL"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D23F2FE072;
+	Wed, 12 Nov 2025 08:49:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DE82F7AC8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532882FDC5B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937361; cv=none; b=swR7GsH7fs9/isdb4oo7dCl71DdAV+N3Q+EHBr6Gb3Kt7e33Tzmn4b9mnDFoOpuXYP1OOr6ZaMocS0b4Kw3GIGVMDqP8226tPssQnoyPAjL2kmxm5bkVBh3mtzlF8cJK7EwtSTFyqHkXgT7XQ3tGstFMzu+scDhahlNwl+F0RAo=
+	t=1762937365; cv=none; b=JChajekWnM9l+ahILqYuL61Br4zVqeM06119f4pjU/Rr7bHPjyrcIwdU2j4nGUTZi8O6Ahj0q3d3IvgsbXqo/uQjGMAGlMyWbPHdZy8siQ/+tL3odoER6ILjAUAFq92pwiK7eXYaqRS3NnOaMk8AZg8/4y437q+Qb9x0I4UdYdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937361; c=relaxed/simple;
-	bh=KdwRxz0E4L6h+Tsu/Xs65J0K6pzrmFwN0OGt2cFh/UE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WDaqK9rHWbfVBuGtkGc05xbFM3r5jqU/0d/c1J9Goe2krHUzPe3983O1jeri9Ad+8rHZr5aGrDvSoGgxNphMauda3wiMYGwTeWmTwN56BLoUc6sYNXqqPrh0r94zDdJN+MLBSMki81XJsQDXPqBb7TQKatF7/wcv53kb8v2PH4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=JRbVE0jL; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id IuX5vLeObaPqLJ6XVv2LMY; Wed, 12 Nov 2025 08:49:17 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id J6XUvWB75MoIXJ6XUvVefn; Wed, 12 Nov 2025 08:49:16 +0000
-X-Authority-Analysis: v=2.4 cv=R7wDGcRX c=1 sm=1 tr=0 ts=69144a0c
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=cM1T1WamysKh5OBvDc2ngA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=wqs6Pu8S3n5vyb6ov2UA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=deQSiP9b3EF2jDqf/qhV6x7CE33isY6FNZMQ566O670=; b=JRbVE0jLHbMY3eRj93tVN9cwDu
-	hmjfKh/3IlyiiwWXsQ6p8lwOu/Tvxu+TY3128QO/D++GI2rzKUE6RwDQj6ckDsckShaoLdvEdwhqA
-	tcIpvHxo8zalrDgN19NoXM2CCFlI3nHtxn0GmOvVuyfzCgOYhrF3mJtVqRNsL/jHENN27N5wGZnQ/
-	cLBEHSr20l9jlvNQou3QdRs6DC89wpKutbHA3LILWs+rLGQvk2yAUJvB0OTGN5l9xpLKdqNne0VHa
-	ikfXQiVTi0quwuC+rgfgZeMn0LSyY5DVbTtoBQ8UFb1JHHS5GPMyUS+Oe/9xTSHcyX8gZBmgCA9qM
-	0ASwQBBA==;
-Received: from fp93c06c1b.tkyc210.ap.nuro.jp ([147.192.108.27]:47530 helo=[10.221.86.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1vJ6XT-00000003qSB-2WKl;
-	Wed, 12 Nov 2025 02:49:15 -0600
-Message-ID: <d3336e9d-2b84-4698-a799-b49e3845f38f@embeddedor.com>
-Date: Wed, 12 Nov 2025 17:49:05 +0900
+	s=arc-20240116; t=1762937365; c=relaxed/simple;
+	bh=7Y0NcEO50k+Lkg2TaAhT6H2aLX/ROBKDfEWsp+yfC9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuf575DeutpNRT1my349vfGeOdOsPNmGCSab1HUG53zq3opnMoh/1n1/LF4Z8e5Zgq5IWUMYoBfbYEvmISlhbFvFfUCrijVNssGbaRTUQece9a6ZqNmZT9oxNXtd0kShNtOe6RghgL1VqfWb9kx3W65IglKzXDUx1yi4byaAxXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6XM-0002Yv-Jz; Wed, 12 Nov 2025 09:49:08 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6XL-0003Ic-24;
+	Wed, 12 Nov 2025 09:49:07 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 60C0B49D932;
+	Wed, 12 Nov 2025 08:49:07 +0000 (UTC)
+Date: Wed, 12 Nov 2025 09:49:07 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Cc: mani@kernel.org, thomas.kopp@microchip.com, mailhol.vincent@wanadoo.fr, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com, 
+	anup.kulkarni@oss.qualcomm.com
+Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
+Message-ID: <20251112-misty-functional-tench-b87da7-mkl@pengutronix.de>
+References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
- warnings
-To: Leon Romanovsky <leon@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aRKu5lNV04Sq82IG@kspp> <20251111115621.GO15456@unreal>
- <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
- <20251111141945.GQ15456@unreal>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20251111141945.GQ15456@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 147.192.108.27
-X-Source-L: No
-X-Exim-ID: 1vJ6XT-00000003qSB-2WKl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: fp93c06c1b.tkyc210.ap.nuro.jp ([10.221.86.44]) [147.192.108.27]:47530
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFe5of6QWDU5yfuFOY2Hb0rUISFvrn4VWC5supe127FAIUOuaSVbQ4SEZaiQ2hMr0QuFAHvo9/eAeeafyIYjaTOhvoG+8qcpnHw8fyuMyTmimPczWgEz
- W8he4jF/AnLTvpjxdsYcbj2Uz3nLJqwB0/Z5LT+Tx0JcbZhfAsRy4V7n13DqEAYvl/sKE3jykyivJaKcZERakcPE5reQHXvpPkEdiaoO5s9nSJl80al6pgpb
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x44lo3g2fuc72oal"
+Content-Disposition: inline
+In-Reply-To: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--x44lo3g2fuc72oal
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
+MIME-Version: 1.0
 
-On 11/11/25 23:19, Leon Romanovsky wrote:
-> On Tue, Nov 11, 2025 at 09:14:05PM +0900, Gustavo A. R. Silva wrote:
->>
->>
->> On 11/11/25 20:56, Leon Romanovsky wrote:
->>> On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
->>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->>>> getting ready to enable it, globally.
->>>>
->>>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
->>>>
->>>> 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>>>
->>>> This helper creates a union between a flexible-array member (FAM) and a
->>>> set of MEMBERS that would otherwise follow it.
->>>>
->>>> This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
->>>> the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
->>>> start of MEMBER aligned.
->>>>
->>>> The static_assert() ensures this alignment remains, and it's
->>>> intentionally placed inmediately after the related structure --no
->>>> blank line in between.
->>>>
->>>> Lastly, move the conflicting declaration struct rxe_resp_info resp;
->>>> to the end of the corresponding structure.
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->>>> ---
->>>>    drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
->>>>    1 file changed, 11 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
->>>> index fd48075810dd..6498d61e8956 100644
->>>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
->>>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
->>>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
->>>>    	u32			rkey;
->>>>    	u32			length;
->>>> -	/* SRQ only */
->>>> -	struct {
->>>> -		struct rxe_recv_wqe	wqe;
->>>> -		struct ib_sge		sge[RXE_MAX_SGE];
->>>> -	} srq_wqe;
->>>> -
->>>>    	/* Responder resources. It's a circular list where the oldest
->>>>    	 * resource is dropped first.
->>>>    	 */
->>>> @@ -232,7 +226,15 @@ struct rxe_resp_info {
->>>>    	unsigned int		res_head;
->>>>    	unsigned int		res_tail;
->>>>    	struct resp_res		*res;
->>>> +
->>>> +	/* SRQ only */
->>>> +	/* Must be last as it ends in a flexible-array member. */
->>>> +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
->>>> +		struct ib_sge		sge[RXE_MAX_SGE];
->>>> +	) srq_wqe;
->>>
->>> Will this change be enough?
->>>
->>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
->>> index fd48075810dd..9ab11421a585 100644
->>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
->>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
->>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
->>>           u32                     rkey;
->>>           u32                     length;
->>> -       /* SRQ only */
->>> -       struct {
->>> -               struct rxe_recv_wqe     wqe;
->>> -               struct ib_sge           sge[RXE_MAX_SGE];
->>> -       } srq_wqe;
->>> -
->>>           /* Responder resources. It's a circular list where the oldest
->>>            * resource is dropped first.
->>>            */
->>> @@ -232,6 +226,12 @@ struct rxe_resp_info {
->>>           unsigned int            res_head;
->>>           unsigned int            res_tail;
->>>           struct resp_res         *res;
->>> +
->>> +       /* SRQ only */
->>> +       struct {
->>> +               struct ib_sge           sge[RXE_MAX_SGE];
->>> +               struct rxe_recv_wqe     wqe;
->>> +       } srq_wqe;
->>>    };
->>
->> The question is if this is really what you want?
->>
->> sge[RXE_MAX_SGE] is of the following type:
->>
->> struct ib_sge {
->>          u64     addr;
->>          u32     length;
->>          u32     lkey;
->> };
->>
->> and struct rxe_recv_wqe::dma.sge[] is of type:
->>
->> struct rxe_sge {
->>          __aligned_u64 addr;
->>          __u32   length;
->>          __u32   lkey;
->> };
->>
->> Both types are basically the same, and the original code looks
->> pretty much like what people do when they want to pre-allocate
->> a number of elements (of the same element type as the flex array)
->> for a flexible-array member.
->>
->> Based on the above, the change you suggest seems a bit suspicious,
->> and I'm not sure that's actually what you want?
-> 
-> You wrote about this error: "warning: structure containing a flexible array
-> member is not at the end of another structure".
-> 
-> My suggestion was simply to move that flex array to be the last element
-> and save us from the need to have some complex, magic macro in RXE.
+On 01.10.2025 14:40:00, Viken Dadhaniya wrote:
+> Hi all,
+>
+> The mcp251xfd allows two pins to be configured as GPIOs. This series
+> adds support for this feature.
+>
+> The GPIO functionality is controlled with the IOCON register which has
+> an erratum.
+>
+> Patch 1 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime=
+_pm-v1-3-c26a93a66544@pengutronix.de/
+> Patch 2 refactor of no-crc functions to prepare workaround for non-crc wr=
+ites
+> Patch 3 is the fix/workaround for the aforementioned erratum
+> Patch 4 only configure pin1 for rx-int
+> Patch 5 adds the gpio support
+> Patch 6 updates dt-binding
+>
+> As per Marc's comment on below patch, we aim to get this series into
+> linux-next since the functionality is essential for CAN on the RB3 Gen2
+> board. As progress has stalled, Take this series forward with minor code
+> adjustments. Include a Tested-by tag to reflect validation performed on t=
+he
+> target hardware.
+>
+> https://lore.kernel.org/all/20240806-industrious-augmented-crane-44239a-m=
+kl@pengutronix.de/
 
-Yep, but as I commented above, that doesn't seem to be the right change.
+Applied to linux-can-next.
 
-Look at the following couple of lines:
+Thanks,
+Marc
 
-drivers/infiniband/sw/rxe/rxe_resp.c-286-       size = sizeof(*wqe) + wqe->dma.num_sge*sizeof(struct rxe_sge);
-drivers/infiniband/sw/rxe/rxe_resp.c-287-       memcpy(&qp->resp.srq_wqe, wqe, size);
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Notice that line 286 is the open-coded arithmetic (struct_size(wqe,
-dma.sge, wqe->dma.num_sge) is preferred) to get the number of bytes
-to allocate for a flexible structure, in this case struct rxe_recv_wqe,
-and its flexible-array member, in this case struct rxe_recv_wqe::dma.sge[].
+--x44lo3g2fuc72oal
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, `size` bytes are written in qp->resp.srq_wqe, and the reason this works
-seems to be because of the pre-allocation of RXE_MAX_SGE number of elements
-for flex array struct rxe_recv_wqe::dma.sge[] given by:
+-----BEGIN PGP SIGNATURE-----
 
-struct {
-	struct rxe_recv_wqe	wqe;
-	struct ib_sge		sge[RXE_MAX_SGE];
-} srq_wqe;
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSgAACgkQDHRl3/mQ
+kZwz0QgAipcjcGPzwKwxFbq5c4IoWpsPnYAFL+EOEL7hSL3OyHweBpeMW3tl7Lex
+NExeojiPB7ji26RDdMv6ZWeCsSo8z8zjGZSHo881gorLtT/RZXLEM2SR+HV0oCym
+ouEWEgVLMwAaN/EsB3OUiKP7MvrhBGdCWvZvHkwjxLaoB9BPaR9LHX1SgUfad6jb
+1UMT4Tmn9Nl26pZDubdl1ybVG9NOpQOlVXu4ne7p3OioVGWUXlaZhJmGL1pybMR0
+EHS9f7/h851NBzM+IdfF3pejmBU+22wZcFOrN9S8X4/td31HtVR9SLid5Yma/c85
+Ncye9dZMUL577iAde/B8uRWivo479g==
+=mfrj
+-----END PGP SIGNATURE-----
 
-So, unless I'm missing something, struct ib_sge sge[RXE_MAX_SGE];
-should be aligned with struct rxe_recv_wqe wqe::dma.sge[].
-
-The TRAILING_OVERLAP() macro is also designed to ensure alignment in these
-cases (and the static_assert() to preserve it). See this thread:
-
-https://lore.kernel.org/linux-hardening/aLiYrQGdGmaDTtLF@kspp/
-
-Thanks
--Gustavo
-
-
-
-
+--x44lo3g2fuc72oal--
 
