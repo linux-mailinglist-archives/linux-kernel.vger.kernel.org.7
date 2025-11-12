@@ -1,133 +1,112 @@
-Return-Path: <linux-kernel+bounces-896922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E2BC51935
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:10:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E78EC5188A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138453AA217
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3242D1882B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069EB2FF66C;
-	Wed, 12 Nov 2025 09:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B02FFDC4;
+	Wed, 12 Nov 2025 09:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ed16QTWo"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TPzg+0qn"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A016921ABAA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CC12FE579
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941446; cv=none; b=Q3yJc4k5PzTMzXgUa0yPEOHhv1FdFTSSDikvW9cImhnV2RJnJm/TmAMNxZyffmNx+QkdklEmGqk1dkv1hHiBBtYnCfOObPfr/vOOQd8/scoRdoJJPqmqD84wmIzHEIebcRng/nHcrYGTidF2vAX+y5PoJAH+y0luzS4pLFWK/DU=
+	t=1762941591; cv=none; b=nVDAPfhUVM2s7I98c7h0uMmMfmTnf84iH8flcfzDOS9urtjmSYHbFtBXfF3s78o2HQmv8N/iCxhQDCOdFoSrI9FExN6VjPnqHJcGEvwLhJIxCg3G7vmmm+f5MUAOvdRtFMIq52a77/OBisWxZ0FE244sf5Ythp7oceND4LxCXQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941446; c=relaxed/simple;
-	bh=h5pc/J9kECEj83qwMGeNWx9aIJNRYX1Hy3xLVwBEJGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GiFtpCZ7qxkcOdA0Vi4k1trHEBM6oAq7e8b32FSGMlU0yIqJSm/v04Piv4It+ACU+yS4nIuplU+tLZ7R205zjoPZBoRF/NTzkLTIeq36J0Wb7DXs/4BLnB9laZ6ZHcGbhflZkKImzCdTAOtpXEp/gwNT1QsYBurtj2CvwIvz9ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ed16QTWo; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b32a5494dso272566f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:57:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762941443; x=1763546243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=THV2t9S7ZHP7pdKhDRWq/0bVFWuA15jyz8cfeJ9DlQE=;
-        b=ed16QTWo5wP1wUMfSQsBaSpY6EeliF8axVT0bnUE+rlO1T+zMnpz3reuiW/Tv5vjms
-         S0uP82mGZX7uvbz4sic92If9aNk1LgpgmzTZ+jvaJdR2y6zWTvbCQ7a8tKXpj8fWSW8O
-         4Q9grhfH3IuLuEKhpB6BF4El69aiENEBk6x4BmrMWG+ZDm28Mn/hML1CuXvogQCp0NBO
-         MXOLO2QAUJya1bVn9CwF5qfOUlgX2lGTFiEz8e+wnyy9/QX1vwd26TxrgP2eRVqKB1/f
-         WEQf+DkKjrdIIxO7WDUFc0cM5DKtAcOgCjIO/EO7tfBqneoZus4va+dY2+ZKFB+fiaXJ
-         VuhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762941443; x=1763546243;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=THV2t9S7ZHP7pdKhDRWq/0bVFWuA15jyz8cfeJ9DlQE=;
-        b=QTy/0KnukI0EPwcuvkPHaueldT34lDgCpYWjdcR9W+R5AYPvRcw+YBRyR6hlPQmfew
-         IEkSPtuF2rsgm5czKyi3grhui6Cgc+CR38G1LAA4mTvGLYn5GimWnPhSLZNdt9V9HSzU
-         tGvvkklNmdFIDGK5V28lbz+uprzCfyf6YS+pZom6/FgU1QTOJNL2TQgut+yQHfFL488O
-         K0Ehjmb6iY71oqdSeX1MMkcrLlKwyqoSNRPs44QolbbAA6ASrBl0N9IORLcR3Cl1PWi3
-         iYJX3DAnZDoemCU/SyxA9h1wlZ834N9xT0QRWZPLxMmh1IFCOrCXN3cecV9J61tB7FjL
-         FAbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhEXUXgc4dhS5iMUQ/vZ0NHjj1ZA9ANMSxqJvCfwexzLuGIRKyTk0suUX4ZkdqcsFeikpc2OGLM35vD1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX07GRn24l2uyJRM7zE3y4X2ydMXIms4lEitmvX1L8r+cEf4qt
-	J/hgULtNKiXDFtqZZeffPvD3pLf0lYkZ185ymVo9/LWSAIMHGBdBP1pmxk+MsV7IYQs=
-X-Gm-Gg: ASbGncuXAh/9vyBPgc6ZUQavxgR6YUoUqFQc3Z8+x89VgHBa2vV1VvNnkoYHIk/ptqw
-	9q20w9edwyn/ftBfjdObZJgXm4AJUDgwLtkqZHZPB1s9Ze/uDzNVDRRU5a8Vg7jCdDv+Wzo2aYy
-	y1IbjxIedukUh2BO3FlqaAeW/jN+dm343vJ79wjFd71k6CDnuDSBaFh7EDS1++cWA89046U6MI1
-	nZ/tay+lRgd4vCJ+MnZPsO7pKwjwzq6nr+bPWGos9YqsDZD8iAae6Fqc4zEs/Nkt7Mnwv5Gu6zy
-	fTLp8D3BC9qOzzNkXxGNnIsXIa7mTR03TsHUTnLWFUrUdnvIBiH4+QQ1yoR6Df5uBmjU7PQ9DkK
-	LCBveoR1zA1VZ1KT1p8fHVPM3RBOlThRnvcFsttvQP6RUzXzOjYJKpCNMvGdkMuNcRu4TDxz/x/
-	lpGfn6X+BPWGNwokIGI/93hENKNS14VRMfnAXfEsD8JHdCAoZT8IVf
-X-Google-Smtp-Source: AGHT+IE6GPhOCh8HFhZfQQ3ULvU03kQlQmrGmLzCTYmC9ODd7TdLqnbZMWma58iY06JtZBKfzEDdkQ==
-X-Received: by 2002:a5d:5f50:0:b0:42b:3aca:5a86 with SMTP id ffacd0b85a97d-42b4bdd0f1dmr1885508f8f.57.1762941442847;
-        Wed, 12 Nov 2025 01:57:22 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d? ([2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42b2ee2ed31sm26858942f8f.29.2025.11.12.01.57.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:57:22 -0800 (PST)
-Message-ID: <3c2dee38-46a8-4359-b981-d4e3d53061fe@linaro.org>
-Date: Wed, 12 Nov 2025 10:57:21 +0100
+	s=arc-20240116; t=1762941591; c=relaxed/simple;
+	bh=IB0BDay0zBQmT+faxjzruvanmhRRELmbRKCgqLjkN9U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=XVZCZWGnN9m/pNZzZHHGjI/sxHgeG2clscADsYkzmJrcFyPM6+ZVydZeK2suI1uY5MwijWJT9XRc/8tlH0H7GZp2HH+go3N9N/z9QYwqzvbP1Q92kBdmjnVGQYiitv9CNuT95NMDXKqFjdoko+0mz+UqpTsUhKhSAqMANSAjJAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TPzg+0qn; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251112095941euoutp02cf6da69b8b3d5464913d6f691d581c4d~3OgcloxZA3142031420euoutp02U
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:59:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251112095941euoutp02cf6da69b8b3d5464913d6f691d581c4d~3OgcloxZA3142031420euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762941581;
+	bh=thLoqzL6EhsQKoVfFajezgLWEwlk5OOypk7k33hMFwE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=TPzg+0qnhE+xO8IsidkkrzEWX61AJOiJ+iko+qNqyailofTc+8IecuM1JaXk/wKSR
+	 iua4q1aGUbbOdvDTVbZvSZZSuCf4FuvDOi/pKZwiLluiRCsSYM0lG4AL1JNTUanEkS
+	 4ktnopUHn2uR6lIOgoXToyCXPtoAuTpCJdBGpLS4=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251112095941eucas1p2e0efc01a697cac1a9d51f5a2ae92b5ae~3OgcLnv192708827088eucas1p2R;
+	Wed, 12 Nov 2025 09:59:41 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251112095940eusmtip1a1e320c4c4df1645194d7530bdc9da80~3Ogb3wgbK2550625506eusmtip1O;
+	Wed, 12 Nov 2025 09:59:40 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>, Robin Murphy
+	<robin.murphy@arm.com>
+Subject: [GIT PULL] dma-mapping fixes for Linux 6.18
+Date: Wed, 12 Nov 2025 10:59:20 +0100
+Message-Id: <20251112095920.5802-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/drivers/stm: Fix section mismatches
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251017054943.7195-1-johan@kernel.org>
- <7ad2b976-3b0d-4823-a145-ceedf071450d@linaro.org>
- <aRH74auttb6UgnjP@hovoldconsulting.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <aRH74auttb6UgnjP@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251112095941eucas1p2e0efc01a697cac1a9d51f5a2ae92b5ae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251112095941eucas1p2e0efc01a697cac1a9d51f5a2ae92b5ae
+X-EPHeader: CA
+X-CMS-RootMailID: 20251112095941eucas1p2e0efc01a697cac1a9d51f5a2ae92b5ae
+References: <CGME20251112095941eucas1p2e0efc01a697cac1a9d51f5a2ae92b5ae@eucas1p2.samsung.com>
 
-On 11/10/25 15:51, Johan Hovold wrote:
-> Hi Daniel,
-> 
-> On Wed, Nov 05, 2025 at 02:32:18PM +0100, Daniel Lezcano wrote:
-> 
->> You should replace __init by __init_or_module
-> 
-> That's not sufficient as the driver can still be rebound through sysfs
-> currently (the driver would probably crash anyway, but that's a separate
-> issue).
-> 
-> Also note that no drivers use __init_or_module these days, likely as
-> everyone uses modules and it's not worth the added complexity in trying
-> to get the section markers right for a build configuration that few
-> people care about.
-> 
-> I can send a follow-on patch to suppress the unbind attribute, or
-> include it in a v2 if you insist on using __init_or_module.
-> 
-> What do you prefer?
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-I think it makes sens to use __init_or_module because these drivers have 
-been always compiled in and we are converting them into modules.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-[ ... ]
+are available in the Git repository at:
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+  https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.18-2025-11-12
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+for you to fetch changes up to a50f7456f853ec3a6f07cbe1d16ad8a8b2501320:
+
+  dma-mapping: Allow use of DMA_BIT_MASK(64) in global scope (2025-11-05 13:43:41 +0100)
+
+----------------------------------------------------------------
+dma-mapping fixes for Linux 6.18
+
+- two minor fixes for DMA API infrastructure: restoring proper structure
+padding used in benchmark tests (Qinxin Xia) and global DMA_BIT_MASK
+macro rework to make it a bit more clang friendly (James Clark)
+
+----------------------------------------------------------------
+James Clark (1):
+      dma-mapping: Allow use of DMA_BIT_MASK(64) in global scope
+
+Qinxin Xia (1):
+      dma-mapping: benchmark: Restore padding to ensure uABI remained consistent
+
+ include/linux/dma-mapping.h   | 2 +-
+ include/linux/map_benchmark.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+----------------------------------------------------------------
+
+Thanks!
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
