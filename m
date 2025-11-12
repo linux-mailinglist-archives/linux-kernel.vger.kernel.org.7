@@ -1,348 +1,161 @@
-Return-Path: <linux-kernel+bounces-897316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF094C5294D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:59:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F78C5291D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79FE54EEC32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6D9189B951
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922C5230D14;
-	Wed, 12 Nov 2025 13:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF63923ED5B;
+	Wed, 12 Nov 2025 13:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="rdx9qIKi"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ig/ZbuSr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AA721FF46;
-	Wed, 12 Nov 2025 13:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A2C23EA96
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762955430; cv=none; b=fwsbNn0HdLvsizhctJ1UflB7XqV9uCMc0ss2pcuWjQ/CiycclP1gesY42mh3y8DxfTIlnKm9NPGvca0vJkA4/IBP5dqVkMAKntr5R3bfyOLEO7Ofj/PUgwuCMxmdhHjDqUIbvFiZKUsclmU/ODCZksffqvAHuQdXbQKgy7SytZ0=
+	t=1762955434; cv=none; b=HOrXRqzzhxTtZC5INkl2+yzAEBVX16pkOy8lYJluaRpQbO5O1wnJnHBaYUONFM5wwtP/IphFxwQb/Rf9D8fA2HOaP3Nn5MsmR9O2hr/ULSZZiqSuT7rjEzPM7RlLnplQp9kJI6VJRJsxhjv+ru39X5r9o44Tyj7slDpYH2ijZrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762955430; c=relaxed/simple;
-	bh=7cl7TuwskHAaFGU9JBvTcFPO3OAalOvjMP+B5Z4aFQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qoUnlgPsbB9sVnSxagKa4p7c7MOTkPkT2aJRCxdYzBFfclZpNPMPMjLl9THCXdNl5SfjzpHqfQaQ0fuox4ZL8SLsN1K8aJFS55Fsmtc2HdyxemijPKKpMqkY6JZPrxPktRh1ep8WBZ1IOlD+o0ScS70xCkLk3hYmlcwTaXFt0v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=rdx9qIKi; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 4ACDD2FC0061;
-	Wed, 12 Nov 2025 14:50:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762955424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EHEYMlfrKUZPNLYAQuLIe9g6EBuDE9wJaoXtifI+35s=;
-	b=rdx9qIKibomwHkkNzEZDvd/QJQdYuC0VmnKv+I1XJCI+gemdY0gjO9vv4+zjk32Mayi5D6
-	G5t0YF4fSVAZkKrtndooJyB+luRoC07RAtF2gmFE4jyL/JS3c+M4XEKehgDMx1i8008IBt
-	Uq07Sp1evrjnhd+jYY5XNRyHH0GCAVY=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
-Message-ID: <fbd1a17a-937a-4b66-a1c7-5a3020e1332c@tuxedocomputers.com>
-Date: Wed, 12 Nov 2025 14:50:23 +0100
+	s=arc-20240116; t=1762955434; c=relaxed/simple;
+	bh=q23PTFUGv3McLMSbUMXGzBKmTnxMWxQmminnmHICve8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U0CyfCi6oCUMWWdXh5WQeG6Z0G6krzxizxH/a06bCz/9VseHLegnblFVqPfAm+p5CbXjW2cEIbi3oWwhzpdeb7H71FaJgVJDvUYVDNr//Uo3PCfwX7OEyznpD2Bp/M6QUVX8sffqhmNx0VOQwDbZuRFR18gx2VA0nC0asmfMq54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ig/ZbuSr; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b3d4d9ca6so745533f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:50:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762955431; x=1763560231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aIU6mTVT/9hNLX+UgvB1zHOKbS0kmwHXqjF+H6qseTo=;
+        b=ig/ZbuSrMSn5EqZ8J6RWicwah8ToOBdjqMorEEbK31FPeZs0m0uitGjhwD1OMLOofL
+         pIiLgf5xbjNKbDrnKWOJIliAgqIDJBF7q6TQ7CQt6la/DDcahJaSpBmwhNrZKIGKOduY
+         s02F/Wi8vOyNMiQRXlMQ09Pq+7VCubt7ewrInYwD1zNUbYQeRVjcFlIjlNUzcrOIO2Gd
+         b8yJSseGZiVls7Z2SDAt4O4ZNtzZun0m6BZHGutz4t1xHWzUSEBo2FEfkz7g/5t3UNOX
+         CL5mYVrGoVOp5p8eqXDtGno3cZYpKADgres0BZqTWFd1dOshNi0UKdQgH4NEtEcxs+PA
+         OXDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762955431; x=1763560231;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aIU6mTVT/9hNLX+UgvB1zHOKbS0kmwHXqjF+H6qseTo=;
+        b=w1Pmn1HmqNJoh1ywBtMWLItUMs2x/3cmN3RqtzuyTKWDythCZU0sn/er3VrsvO5ifL
+         Cw/bPCUJ5zYds3gShWB6ilvni8lizBn6OnfUQ18EgRLfUaT7DhUw0Y4eq8EPILUTtH72
+         o3m0Z4LyV3tv4KFozNK8Qz5ZSd43wtH+HCYurNmcDR5VjKYHXapOKva/mQMAhYuDbrRx
+         eDokZ2U7SmRAV/lqTr8RDhi/dPk2PFkLG4wgSL7bA+EIG3T8nlXbddgJVyAf4m4cSx95
+         uMkWIlYO5fbkZLooi4fnQV/6ZHf/Dsl8QjJuGew8oqRDRsWca4HDr9tzcW1IZ8Baolpf
+         W55g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNRPOzvSZh+yXWUNZn9LWzsFepkDi571PtQbs3tVsX5z8mCQZ7w8+ZIm2fpk/fqbHM4dXVs/821ep1+zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy80ihdOTGTYz7trz7MLi6Jg8TcAQES02d4LJcO4WqbfZLbbVIs
+	NWobGR4C6AXM4l4zRlp4VUZ8auWECrmowEK8q/Td1Txv1sJos+3au8fF
+X-Gm-Gg: ASbGncsmTmlp/xYTEVM7gcVL4RgoCcv6nkIXhOmEY4X02IElnvhszLJjJ5AILN1ednF
+	D0FnPZVyD8TGPdl0DDuN5AkRg+M0glUwNbKpy9duLLjcmEhgNrsltf9LRQpFk+HmEnD9xnA342e
+	vK9vRjF8ADKnURXP0UrRE8ZwvYj1S5bzzfpsrX7bmpaFDiorHtoAGYiz5iCPnKmlhR9WDHrI81o
+	iuRiJDBJGUoD3VJc8OqNb190mVxEkekp9GH31AyjtgQ+ssW+AWQN9+kWw2LKcB562aYuwlbAcVb
+	8XKOBNI1U36BmJW1efUpLVxTeM+nVwsDZ3YNDEy1KeNGY6Rl4xmDbkraIVqZN+8SpG3PdszN6Ss
+	VYBrMBDyMviZ7MbdbJAe+p+G+bSHT3m1hq+SZk+Zr6DMPKvylX0U7SdOCbiPhHPhjbYS5x8qFlx
+	e1jdfBkpLeF8HhWGj5Mtrb7x09a8VSt7t/uMpZ582YxmQj/jq0cU4v
+X-Google-Smtp-Source: AGHT+IFvzDC8q6K3eMX5NpCZe6iJ9ktlK/IQzxKcT7Sqmg87KhQwtu8BH5fJQ0IkmWi/CSJ5uD7Ofw==
+X-Received: by 2002:a05:6000:4210:b0:429:dc9a:ed35 with SMTP id ffacd0b85a97d-42b4bdb308bmr2351768f8f.43.1762955430589;
+        Wed, 12 Nov 2025 05:50:30 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679607esm33667757f8f.43.2025.11.12.05.50.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 05:50:30 -0800 (PST)
+Date: Wed, 12 Nov 2025 13:50:28 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: hariconscious@gmail.com
+Cc: cezary.rojewski@intel.com, liam.r.girdwood@linux.intel.com,
+ peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+ pierre-louis.bossart@linux.dev, broonie@kernel.org, perex@perex.cz,
+ tiwai@suse.com, amadeuszx.slawinski@linux.intel.com,
+ sakari.ailus@linux.intel.com, khalid@kernel.org, shuah@kernel.org,
+ david.hunter.linux@gmail.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: Intel: avs: Replace snprintf() with scnprintf()
+Message-ID: <20251112135028.18921229@pumpkin>
+In-Reply-To: <20251112120235.54328-2-hariconscious@gmail.com>
+References: <20251112120235.54328-2-hariconscious@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: Add device tree for TUXEDO Elite
- 14 Gen1
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Georg Gottleuber <ggo@tuxedocomputers.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ettore Chimenti <ettore.chimenti@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org,
- wse@tuxedocomputers.com, cs@tuxedo.de
-References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
- <20251105154107.148187-7-ggo@tuxedocomputers.com>
- <aRHre28Nbyv6ShbU@linaro.org>
-Content-Language: en-US
-From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-Autocrypt: addr=g.gottleuber@tuxedocomputers.com; keydata=
- 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
- bsxTTcOuRnk=
-In-Reply-To: <aRHre28Nbyv6ShbU@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 12 Nov 2025 17:32:35 +0530
+hariconscious@gmail.com wrote:
 
-
-Am 10.11.25 um 14:41 schrieb Stephan Gerhold:
-> On Wed, Nov 05, 2025 at 04:41:06PM +0100, Georg Gottleuber wrote:
->> Initial support for TUXEDO Elite 14 Gen1 based on Qualcomm Snapdragon X
->> Elite SoC (X1E78100).
->>
->> Working:
->> * Touchpad
->> * Keyboard
->> * eDP (no brightness control yet)
->> * NVMe
->> * USB Type-C port
->> * USB-C DP altmode
->> * HDMI-A port
->> * WiFi (WiFi 7 untested)
->> * Bluetooth
->> * GPU
->> * Video decoding
->> * USB Type-A
->> * Audio, speakers, microphones
->> 	- 4x speakers.
->> 	- 4x dmic
->> 	- headset
->> * Camera
->> * Fingerprint reader
->>
->> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
->> Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
->> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile             |    2 +
->>  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 1486 +++++++++++++++++
->>  2 files changed, 1488 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 296688f7cb26..598bf4c6e84a 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -350,3 +350,5 @@ x1p42100-hp-omnibook-x14-el2-dtbs := x1p42100-hp-omnibook-x14.dtb x1-el2.dtbo
->>  dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-hp-omnibook-x14.dtb x1p42100-hp-omnibook-x14-el2.dtb
->>  x1p42100-lenovo-thinkbook-16-el2-dtbs	:= x1p42100-lenovo-thinkbook-16.dtb x1-el2.dtbo
->>  dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-lenovo-thinkbook-16.dtb x1p42100-lenovo-thinkbook-16-el2.dtb
->> +x1e80100-tuxedo-elite-14-gen1-el2-dtbs	:=  x1e80100-tuxedo-elite-14-gen1.dtb x1-el2.dtbo
->> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-tuxedo-elite-14-gen1.dtb
+> From: HariKrishna Sagala <hariconscious@gmail.com>
 > 
-> Please also add x1e80100-tuxedo-elite-14-gen1-el2.dtb here (similar to
-> the other lines), so that the EL2/KVM-specific DTB is automatically
-> built and included in the installed DTBs.
+> As per the C99 standard snprintf() returns the length of the data
+> that *would have been* written if there were enough space for it.
+> It's generally considered safer to use the scnprintf() variant.
+
+Did you actually read the code?
+In this case the code is actually rather buggy and can read beyond
+the end of 'buf[]'.
+
+Neither snprintf() nor scnprintf() ever return -1 on error.
+So the existing code will attempt to write past the end of buf[]
+if there are a lot of entries.
+Fortunately there is a test for negative lengths - so nothing is
+written past the end - but the read can return data off the end.
+
+Changing to scnprintf() stops this happening, but the user will get
+truncated data.
+
+	David
+
+
 > 
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
->> new file mode 100644
->> index 000000000000..0bfe5931434e
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
->> @@ -0,0 +1,1486 @@
->> [...]
->> +	vreg_edp_3p3: regulator-edp-3p3 {
->> +		compatible = "regulator-fixed";
->> +
->> +		regulator-name = "VREG_EDP_3P3";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +
->> +		gpio = <&tlmm 54 GPIO_ACTIVE_HIGH>;
->> +		enable-active-high;
->> +
->> +		pinctrl-0 = <&edp_reg_en>;
->> +		pinctrl-names = "default";
->> +
->> +		regulator-always-on;
+> Link: https://github.com/KSPP/linux/issues/105
+> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
+> ---
+> This patch replaces snprintf() varaint with scnprintf() in
+> scenario to know the actual length of the data rather than *would
+> have been* written data of snprintf().
+> No functional changes intended.
+> Reference Links:
+> https://lwn.net/Articles/69419/
+> https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.snprintf
 > 
-> Does this need to be always on? It should be possible to enable/disable
-> this supply together with the panel (and it is already set as
-> power-supply for the panel).
-
-Nice catch. I agree with you.
-
->> +		regulator-boot-on;
->> +	};
->> +
->> [...]
->> +	sound {
->> +		compatible = "qcom,x1e80100-sndcard";
->> +		model = "X1E80100-TUXEDO-Elite-14";
->> +		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
->> +				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
->> +				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
->> +				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
->> +				"IN1_HPHL", "HPHL_OUT",
->> +				"IN2_HPHR", "HPHR_OUT",
->> +				"AMIC2", "MIC BIAS2",
->> +				"VA DMIC0", "MIC BIAS1",
->> +				"VA DMIC1", "MIC BIAS1",
->> +				"VA DMIC0", "VA MIC BIAS1",
->> +				"VA DMIC1", "VA MIC BIAS1",
+> Note:
+> Compile & boot tested with necessary config parameters.
+> Other areas of AVS uses scnprintf() variant.
 > 
-> Please drop the two "VA MIC BIAS" lines, see
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b49e37de8e70bc433b526a9f4382f72b7ac6492e
-
-Ack.
-
->> +				"TX SWR_INPUT1", "ADC2_OUTPUT";
->> +
->> +		wcd-playback-dai-link {
->> +			link-name = "WCD Playback";
->> +
->> +			cpu {
->> +				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
->> +			};
->> +
->> +			codec {
->> +				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
->> +			};
->> +
->> +			platform {
->> +				sound-dai = <&q6apm>;
->> +			};
->> +		};
->> +
->> +		wcd-capture-dai-link {
->> +			link-name = "WCD Capture";
->> +
->> +			cpu {
->> +				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
->> +			};
->> +
->> +			codec {
->> +				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
->> +			};
->> +
->> +			platform {
->> +				sound-dai = <&q6apm>;
->> +			};
->> +		};
->> +
->> +		wsa-dai-link {
->> +			link-name = "WSA Playback";
->> +
->> +			cpu {
->> +				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
->> +			};
->> +
->> +			codec {
->> +				sound-dai = <&left_woofer>, <&left_tweeter>,
->> +					    <&swr0 0>, <&lpass_wsamacro 0>,
->> +					    <&right_woofer>, <&right_tweeter>,
->> +					    <&swr3 0>, <&lpass_wsa2macro 0>;
->> +			};
->> +
->> +			platform {
->> +				sound-dai = <&q6apm>;
->> +			};
->> +		};
->> +
->> +		va-dai-link {
->> +			link-name = "VA Capture";
->> +
->> +			cpu {
->> +				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
->> +			};
->> +
->> +			codec {
->> +				sound-dai = <&lpass_vamacro 0>;
->> +			};
->> +
->> +			platform {
->> +				sound-dai = <&q6apm>;
->> +			};
->> +		};
->> +	};
->> [...]
->> +&remoteproc_adsp {
->> +	firmware-name = "qcom/x1e80100/adsp.mbn",
->> +			"qcom/x1e80100/adsp_dtb.mbn";
+>  sound/soc/intel/avs/debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> We need a custom ADSP firmware for the TUXEDO, so this needs to be a
-> device-specific path (so that you can upload the correct firmware to
-> linux-firmware). e.g. "qcom/x1e80100/TUXEDO/adsp.mbn"
-
-Ack.
-
->> +
->> +	status = "okay";
->> +};
->> +
->> +&remoteproc_cdsp {
->> +	firmware-name = "qcom/x1e80100/cdsp.mbn",
->> +			"qcom/x1e80100/cdsp_dtb.mbn";
+> diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
+> index 3534de46f9e4..100b95bfcd78 100644
+> --- a/sound/soc/intel/avs/debugfs.c
+> +++ b/sound/soc/intel/avs/debugfs.c
+> @@ -119,7 +119,7 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
+>  	}
+>  
+>  	for (i = 0; i < num_desc; i++) {
+> -		ret = snprintf(buf + len, PAGE_SIZE - len,
+> +		ret = scnprintf(buf + len, PAGE_SIZE - len,
+>  			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
+>  			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
+>  		if (ret < 0)
 > 
-> If you expect that production versions of this device will have the
-> (firmware) secure boot enabled, this path should also be
-> device-specific. If retail versions will allow loading arbitrary
-> firmware this can stay as-is. 
-> 
-> Same for all other "firmware-name"s.
+> base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
 
-Ack.
-
->> +
->> +	status = "okay";
->> +};
->> +
->> +&smb2360_0 {
->> +	status = "okay";
->> +};
->> +
->> +&smb2360_0_eusb2_repeater {
->> +	vdd18-supply = <&vreg_l3d_1p8>;
->> +	vdd3-supply = <&vreg_l2b_3p0>;
->> +};
->> +
->> +&smb2360_1 {
->> +	status = "okay";
->> +};
-> 
-> You have just a single USB-C port, so I would expect that there is also
-> only a single SMB2360 instance (for charging). Perhaps you can just drop
-> this node?
-
-Tested without this. Seems OK. Ack.
-
-Thanks,
-Georg
 
