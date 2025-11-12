@@ -1,131 +1,76 @@
-Return-Path: <linux-kernel+bounces-898281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A621BC54C24
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:55:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A59C54C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1F324E052E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A6F3B7FC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6CB2E427B;
-	Wed, 12 Nov 2025 22:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ADF2D193F;
+	Wed, 12 Nov 2025 22:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iSz6+8PY"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3U9ZtLM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F19C2DEA71;
-	Wed, 12 Nov 2025 22:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714852BF017
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762988149; cv=none; b=rkfUmYQXIms5ajUiSCKFl/Wb//dm/bOFNrLm6HC75yJ+InZ9gsx+DWiZtrulBxtO7Ago0/sSW5sp6QOkh8iug1tWkIrKscHdJhOl+UzXSaBIoL4BJFiUnHY2O2I3KF18iQbAykPO2C6I3rtrDB+73IWmjCU5qUug82VMKvHTdeo=
+	t=1762988165; cv=none; b=FPIgLJCDkZX4E55/CJzbtTzx/NGoJ/yt3jFbWvaw69B7he4qk7RDQpVnn8oRtzDbyxvgRijjvfB6VpZmxRYbhZZnomK52BLxe0PyevoYMpbagdyl9fh0ladLfjNhTxXMZRhgyiQ3QTBLEq12jLTtIWbsv1Ak/EBVYalJ3FmCGI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762988149; c=relaxed/simple;
-	bh=pUQ178O9L4vcmLu15xqz1pP0QPjFgXWJG1bIiO9qiww=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Fao3pl+VdVx80WloMq/LbTPOn4R9knltoJD570Dyr/YGH9b/YAsklEqtwXnszVw5c4tJ8p6O5Tk9QKHtSeDmfQ2wKZJLiY4dllcV8FZre5FeXgRFNdZCm1ag7zSUVDE/SNPlQbl+qJfNGFC7HTRpYBYlGgZE1rkOPOqLlSd7kkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iSz6+8PY; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762988142;
-	bh=1MAtvJW8M1OCbur8O3r7GsQ9rwRnohEuR1j1rW6F6Mw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=iSz6+8PYEiL7JpYVEz80opBZoq4rgUKg7y2CdzTVsWcxEsI4oM71ZF07+4Wg+1PXC
-	 L0XCYXsJG9UpUtzKkgj5yzWGhSf4i9/dr12JnVrsqVwqLxNnlWD8/qn0EIY8sPpSTx
-	 jdtHYQb8fyoTXMsbXQQs3IyJy3o3c61STcMe2oCTuuUKCKJD70JiEY6KESROFhBi44
-	 +vGCznFf4w0sr/h6geCDGEtDSKYG7BakNngjOWmOWKeR77C9iyqLjDaEPAe4QH99O8
-	 n4DkZxvUd7kgIVzYQTnqq1LX6JL4BrweqjNlPUgCW3/tYXgrTeqd4fTBK9j1DoEGfO
-	 8ek8L/T3CqL5A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d6Jf56Rs9z4w23;
-	Thu, 13 Nov 2025 09:55:41 +1100 (AEDT)
-Date: Thu, 13 Nov 2025 09:55:40 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Marc Zyngier <maz@kernel.org>,
- mrigendrachaubey <mrigendra.chaubey@gmail.com>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Message-ID: <20251113095540.4a66405f@canb.auug.org.au>
+	s=arc-20240116; t=1762988165; c=relaxed/simple;
+	bh=6F6Ph+mBRwZHPlibDEBt422QzwWtBzRDmoS6rRlf2hA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAEi4uD7ooAUcUCwuz0uXuOyB34uXzQxmChVdmyM/AJIjQOTsOneMh+kJsltv0M4txjJbrOAowBSwAPP3S7Qqqr95gDuBTjoyzVAqbev0+VDeeqvoOKXKIPpjHSpzletUJ51G74fgdWTDyHovHgdic1BRVo/XpbedX2UCNeT5Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3U9ZtLM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52672C4CEF7;
+	Wed, 12 Nov 2025 22:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762988165;
+	bh=6F6Ph+mBRwZHPlibDEBt422QzwWtBzRDmoS6rRlf2hA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T3U9ZtLM8oF+kzwDvVB6ER2pdVinRk5S03N501V/zUwBf6e1RlR6A6xXm5aIaa7Cn
+	 q3Nq9EZCjqNhWva/F9gIOuh+F+VXr1k6y0kWZ4vLv6+b64tGfdnq8tneBfw3W6T35Y
+	 KWX4Ji5xBnKC3ywMWL7cgkbSDMFbbCMlWVC56KAlU/xFqKwnviNZIOZOndB9L2JvW1
+	 nAlyqxi22NF3r/Z69UIuqvwnQd827gKajQLuDca6ikDdsCwbfE3Ox0V1oPJk7ExBnk
+	 5Qud0WfyMmuKAc/ZJ1u3uUov/XZo+XcfKF0LokYIlI5mYTJcRFnyjWIoE52yB+WHzd
+	 xotO3IleRDYoQ==
+Date: Wed, 12 Nov 2025 14:56:02 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: maddy@linux.ibm.com, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, joe.lawrence@redhat.com, Jan Stancek <jstancek@redhat.com>
+Subject: Re: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check
+ scripts
+Message-ID: <z4go2m2c7ufulwjk7vkcpv2oyfo2jwpxzieiuuetegnv7sjrsj@gbjwkp2dpdyd>
+References: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Kp47ZAGb.5n5nhHDi2NOVoD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
 
---Sig_/Kp47ZAGb.5n5nhHDi2NOVoD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 23, 2025 at 05:32:16PM +0200, Jan Stancek wrote:
+> We've been observing rare non-deterministic kconfig failures during
+> olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
+> disabled and with it number of other config options that depend on it.
+> 
+> The reason is that gcc-check-fpatchable-function-entry.sh can fail
+> if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
+> there is still someone writing on other side of pipe. `pipefail`
+> propagates that error up to kconfig.
 
-Hi all,
+Ping?  This fixes a nasty build bug, any objections to merging?
 
-Today's linux-next merge of the arm64 tree got a conflict in:
-
-  arch/arm64/include/asm/el2_setup.h
-
-between commit:
-
-  ca88ecdce5f5 ("arm64: Revamp HCR_EL2.E2H RES1 detection")
-
-from Linus' tree and commit:
-
-  96ac403ea2b4 ("arm64: Fix typos and spelling errors in comments")
-
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/include/asm/el2_setup.h
-index 99a7c0235e6d,cb0d72401d45..000000000000
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@@ -24,7 -24,11 +24,7 @@@
-  	 * ID_AA64MMFR4_EL1.E2H0 < 0. On such CPUs HCR_EL2.E2H is RES1, but it
-  	 * can reset into an UNKNOWN state and might not read as 1 until it has
-  	 * been initialized explicitly.
-- 	 * Initalize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
- -	 *
- -	 * Fruity CPUs seem to have HCR_EL2.E2H set to RAO/WI, but
- -	 * don't advertise it (they predate this relaxation).
- -	 *
-+ 	 * Initialize HCR_EL2.E2H so that later code can rely upon HCR_EL2.E2H
-  	 * indicating whether the CPU is running in E2H mode.
-  	 */
-  	mrs_s	x1, SYS_ID_AA64MMFR4_EL1
-
---Sig_/Kp47ZAGb.5n5nhHDi2NOVoD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkVEGwACgkQAVBC80lX
-0GzfZggAlnkaX6PVgE4zg/BFdWHwQE9W9c+Li0JqCu6WWLqpQrvFg/PG1UxEnNuS
-Xov8qTIDjahRsy4iC0GztS79g0Wg4fFfJkMta+9iZQrjwMLqjhBmwb8TVxvq41oP
-/RnCoCnKZn6BW2Xp4c9K72hjZd63N2772VVw4nWV+90+MqqD/GbLYZINgtpBmldZ
-m8UDcgftk8NnX0EY0HW99B03upoxRSYITNAUDrNG5OcDCF2BOZL7XPjAt2HAkCkM
-dQLHwfWsokIxvt5yV8Nmolm/iSh6xEFfSUbTgMu1Q97KZznApM4UprQSNLHe8t++
-cbwTZ5hPxtFeac0nkwHdojvn1L7SlQ==
-=zcGN
------END PGP SIGNATURE-----
-
---Sig_/Kp47ZAGb.5n5nhHDi2NOVoD--
+-- 
+Josh
 
