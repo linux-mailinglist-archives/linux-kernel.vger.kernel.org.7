@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-896435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612B3C505C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:46:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6FFC505DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA78D4E2146
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4A33A4159
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206001917FB;
-	Wed, 12 Nov 2025 02:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D4B2D0C7D;
+	Wed, 12 Nov 2025 02:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BtY8d5ny"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cj8UfccO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA8E257831;
-	Wed, 12 Nov 2025 02:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E5E2BDC0A;
+	Wed, 12 Nov 2025 02:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762915601; cv=none; b=ueR2E4EJyfu+ACx4z9aUuG/Exv+xAZ82r/v0eeabWssWyZlE4fvgyqgx0lBz71fq+nwCqmvTrh2+wU4nLkWwPTSgg5bK2cbSBqroIO2GAzvKHazawGGyOXY2hEXrwu7hF3t4DHzvE6xUsqRhAwFAst/MQqB2u8n29TWdw/X2ME4=
+	t=1762915908; cv=none; b=hL+E/FoM8L1JpmVdO8IEzLfCzP3zUQhAggtukoNZk7V8fWT8eU7G2ROxgXZ+4AY10FXfF+QKnmHLSEwWn3GO6AMDwEbRJMRsYlc699jUSoFFzIT5Wt/G50JmJP/pQZ6g+b46yKl5hv0EO4RHUJtcwuyV0OgD0NyBAP/sJFCS/nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762915601; c=relaxed/simple;
-	bh=aovnEXmhbrzhHC2Q+BjtZJ+vvE+Xl6uuzI5MpUG2/XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aKt9S2LMbclNeqa9sBIRfXnyEyaOjn6BiTaW82JE3BisWShYqBXVK1fzqMNxt9vq6DjkArA+GUm4FJTToFfEKfCyHyZnCbFKkXPbikALlQmZZUYVHpjwHMe7EykAWLEzhl7jPMH5WpGLnNeSLmB+raz/1hJNrWwz/lt5cUbLPqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BtY8d5ny; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762915597;
-	bh=K7ubCjvIti1/IH7LY8O1r9HwAG1KmG7PMS3MzITgJhM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BtY8d5ny+1+g9DVWzq+RLX37qqsgja+W2wNqz78iS/Z6+cQ1uWa5QD077uQe0eQYn
-	 y451RxRNmAsXktRejlTxpzouPJtsRhZ8LA0VEz0T6pDIAHNjFvuNzK7gp4V+2IcK5W
-	 igetiBcwRHoDxliaCSbT+OMRE7tHvZBQrPU0Pbj1Tj/8ciqKp5Lo33EccO7sjsm6h1
-	 A2XhwtVD9T/6aByRoqcdwgxzIDJM4Xbf2XVqq1BAvr+YBlXothAmjjUdPKrwyLEe/U
-	 ayMk68pRwFYJqIJg1Ga7Khg0base0Mfxl8p+ohLq1qBKoomuChERZQAArVR32Grc1N
-	 wcHPy0R49KHJA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d5nq04pGKz4wDR;
-	Wed, 12 Nov 2025 13:46:36 +1100 (AEDT)
-Date: Wed, 12 Nov 2025 13:46:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20251112134636.4adc9944@canb.auug.org.au>
+	s=arc-20240116; t=1762915908; c=relaxed/simple;
+	bh=FnjXGdhmi9cjf/H5GCn36qDisNiZcHAbPNAmtaAypr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiB9Dorv5oUxIHSswBbY/RxNBieCOqI1YBJWEh0yrmUR5DdyS0BKq1BiyLjj3SpWLA9MdpUSmPB8R4nzCR80/fd/5uR2pqrnh8DSzv0R5sYiEWiy2Ak+unRjnBwgwjQILIRRBLw+fJYAtTBiD60ArVM1Y7T9jiozvJXtzCFVXB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cj8UfccO; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762915907; x=1794451907;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FnjXGdhmi9cjf/H5GCn36qDisNiZcHAbPNAmtaAypr4=;
+  b=cj8UfccOQkts/ePUxPAylk/f5d6dilwOQiZWQ8cvUPb97Af3lSesVwSo
+   t35lZn4emoq7VoVuC+YPv6qBZgSknWSAmRqR+H7kfKnCU3QLcXq2Y04vx
+   YxfNfDNZVdAnAQcJpYvQIjkCaSoglLE8dT4m+DmZhErn1zvwQRNiIvZeh
+   dGRr+xKBGuqptU4QNuST5BhUpGmt2WwZ/Nj5ktkwOPrdK9mA8ezZzthU7
+   T2RIG9KQ0+AW1EXVvBz6SCK/r2jj3xsEA0HatDZe46hnymhpVJ+SCaFNG
+   sDohsybFrJ3TuJSoU2UU0qnzGuLtzrd4hS080zP18WnzuNExGpmJYmAF+
+   A==;
+X-CSE-ConnectionGUID: NNdxwlJ8ST6bm3XZWNNd3Q==
+X-CSE-MsgGUID: 8Bbjev3MTy2mTNd7B6djlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="87605763"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="87605763"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 18:51:46 -0800
+X-CSE-ConnectionGUID: Z7I0266wRPKqUZSzlavn7g==
+X-CSE-MsgGUID: ezqtxvUdTBKU2eF/psZZfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="189830912"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 18:51:41 -0800
+Message-ID: <b556b673-300f-486e-8891-809519b98797@linux.intel.com>
+Date: Wed, 12 Nov 2025 10:47:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dO6v3v24NC2ixw.yJk_MIUU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] iommu: Lock group->mutex in
+ iommu_deferred_attach()
+To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, afael@kernel.org,
+ bhelgaas@google.com, alex@shazbot.org, jgg@nvidia.com, kevin.tian@intel.com
+Cc: will@kernel.org, robin.murphy@arm.com, lenb@kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org, patches@lists.linux.dev,
+ pjaroszynski@nvidia.com, vsethi@nvidia.com, helgaas@kernel.org,
+ etzhao1900@gmail.com
+References: <cover.1762835355.git.nicolinc@nvidia.com>
+ <11b3ab833d717feb41ce23ae6ebdc3af13ea55a7.1762835355.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <11b3ab833d717feb41ce23ae6ebdc3af13ea55a7.1762835355.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/dO6v3v24NC2ixw.yJk_MIUU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/11/25 13:12, Nicolin Chen wrote:
+> The iommu_deferred_attach() function invokes __iommu_attach_device(), but
+> doesn't hold the group->mutex like other __iommu_attach_device() callers.
+> 
+> Though there is no pratical bug being triggered so far, it would be better
+> to apply the same locking to this __iommu_attach_device(), since the IOMMU
+> drivers nowaday are more aware of the group->mutex -- some of them use the
+> iommu_group_mutex_assert() function that could be potentially in the path
+> of an attach_dev callback function invoked by the __iommu_attach_device().
+> 
+> Worth mentioning that the iommu_deferred_attach() will soon need to check
+> group->resetting_domain that must be locked also.
+> 
+> Thus, grab the mutex to guard __iommu_attach_device() like other callers.
+> 
+> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
+> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> ---
+>   drivers/iommu/iommu.c | 13 ++++++++++---
+>   1 file changed, 10 insertions(+), 3 deletions(-)
 
-Hi all,
-
-After merging the vfs-brauner tree, today's linux-next build (htmldocs)
-produced this warning:
-
-WARNING: include/linux/pipe_fs_i.h:105 struct member 'pipe_index' not descr=
-ibed in 'pipe_inode_info'
-
-Introduced by commit
-
-  8d1442fdfa3d ("fs/pipe: stop duplicating union pipe_index declaration")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/dO6v3v24NC2ixw.yJk_MIUU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkT9QwACgkQAVBC80lX
-0Gwafwf/fi7FGlVrCAkfAYamzL8sBhvz855S5T2xkZPPWmfsd0RkKjB3UV/5L/Qx
-m0S8KB1LMV/WKU9uJu35D0NDrlOdeh6xtQUkYprvNKXEOB24ssDQMJbdhA/ILoQG
-e/gXF7RDdkPlEvaXG8JWNxxqFNIACHsH8snG/ebDISefEVuwxe1VOk2XTjVWuL8i
-9EuBXMgCfXPGICPt1SFGNxYz+OS/NjLugWKVBEC6vnIk3TLcvBq2E1eRaQE2fM1v
-S1ZYUuUNfPPBynMb/HKV1PNCWX4tj2smKF74ddVwIU1JXJ6nKjldIItnx+HWAhbL
-PqHFVsa0lDzCHOWjE02I3zuNMJS39Q==
-=hayu
------END PGP SIGNATURE-----
-
---Sig_/dO6v3v24NC2ixw.yJk_MIUU--
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
