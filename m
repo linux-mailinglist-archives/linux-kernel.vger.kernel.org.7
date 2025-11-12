@@ -1,136 +1,78 @@
-Return-Path: <linux-kernel+bounces-896370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F14C50371
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC695C50368
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DE984E9836
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 060AF4E6EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5882727EB;
-	Wed, 12 Nov 2025 01:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE3A2741B3;
+	Wed, 12 Nov 2025 01:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kFf+EOmV"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2wWr4nQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF1D241695;
-	Wed, 12 Nov 2025 01:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581E62E403;
+	Wed, 12 Nov 2025 01:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762911046; cv=none; b=m+iGVXqMgxPlOo/0CfA+Ry+glZb5j4CJvOcGPi9/jI6+yZRV3Y39w7tF5Tc43UTBpaEvdt/Pge4nN3W6eLiqnJe8NwNqHhUZqoBJ3vigdser3ckFCy2CKenB0hXwC+0XmTD2iNASorzq+B8SeGFEYN8N5xph58Z1bpM17DKtdhY=
+	t=1762911022; cv=none; b=smi7h95TcGj9oQnT1Yb/dJAgWSRgBqcEbqLJ9fG185vZXyyjl9F8ivNF5JOxw3RFAERpZoCTeG78kQpnf4DUFGOFSCC8NbBx+j5pQNlVS2zwIKb+T4r2UDqkBOMUqu/FORyODgC5RgRXkpT5MTU5dWsUxzQ9nWhOW77c8uGSZPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762911046; c=relaxed/simple;
-	bh=xhfGb6ZycktLx6DtRtGPeWPXRKJb3uLgZoLIbraIZjw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kEQ9Ce67pVcjoVWEw/rDUN1RzBaKBuglNQHPhzZ7Jos3xmT+nDtTFkUBrv6KayhLEpS0TGj2ZjuZXF7Y9EFAukcKwxg2iJEs1wxJeA6B23ZcfNoYVW8qQv+2kFD9US860vZKcLnhT+tV4Tc8Beh0ytez9WM8zkYVk1EjuDu4bqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kFf+EOmV; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762911042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tESTeWnloD3F0ybR0jqLCnFnlk32UlwI6uI9VspQVOg=;
-	b=kFf+EOmVstthelOt+ZjpHloeenyojPkMLFg09AVDN6fh1quxJCWu3i84tByqPuEJ9s6xwD
-	etQgT2PN54g1T2Cow383hG+Cz58ERuZPSJ2u97smFIXafbqX4o0Xx4gBsCg9SCTC7e1LaG
-	FPVehE99blTxlEtltWFSfu3wiKcCPAU=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	stable@vger.kernel.org
-Subject: [PATCH] KVM: SVM: Fix redundant updates of LBR MSR intercepts
-Date: Wed, 12 Nov 2025 01:30:17 +0000
-Message-ID: <20251112013017.1836863-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1762911022; c=relaxed/simple;
+	bh=75PIuoHEXowMg/7egDgGlJsGW/yk5CKxaEHvNzexu6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TwUTTLGPxABnH/U2OXkVNqalGCotTnJNE1lJi8MUMTX20CRQNc1w8z174XcgbDqGvjm+kjB5gWidAlNb91noH7vWetXZ68455c6Yue7d2L9QbZJ1HApCN9izmbd6h9wVSZVQ174srAt76tkHKCq+Z+yTqJnwy1C4Xcw5VJz6KgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2wWr4nQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABC7C116D0;
+	Wed, 12 Nov 2025 01:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762911021;
+	bh=75PIuoHEXowMg/7egDgGlJsGW/yk5CKxaEHvNzexu6E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z2wWr4nQGufj/mfHfSS5vL/+HsWpj9VwvHN61lPeN3wnv673+R/gZnT9a3gn3GrD0
+	 /svl20KP4/RbOadwddhv2UO2SZwJmSeL84cmiPbj9+c7v3EN/K0mjOH2ZAhaPafZXe
+	 yfpvgIERk9bIaYusDYzqTDonJzYE5LKKOb/EYMkSl6W3sGHa3vOuE8yqNwB38j15Fb
+	 0K4I3/zcqU67oXSlIAwLATwlp+xfoD1/26uBODoPzQikcYqP5mxRMuagFSEZPd9hPK
+	 JuAsEUsQK86luC7uuYq6Srdmvxbh98Qy7EDu7XOCY/JBQd9hu+v9+zPtGT+K6/lhFs
+	 JeN8MvvVKAKgA==
+Date: Tue, 11 Nov 2025 17:30:20 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Stanislav
+ Fomichev <sdf@fomichev.me>, Simon Horman <horms@kernel.org>, srk@ti.com,
+ Meghana Malladi <m-malladi@ti.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH net-next v2 4/7] net: ethernet: ti: am65-cpsw: Add
+ AF_XDP zero copy for RX
+Message-ID: <20251111173020.360b1066@kernel.org>
+In-Reply-To: <20251109-am65-cpsw-xdp-zc-v2-4-858f60a09d12@kernel.org>
+References: <20251109-am65-cpsw-xdp-zc-v2-0-858f60a09d12@kernel.org>
+	<20251109-am65-cpsw-xdp-zc-v2-4-858f60a09d12@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-svm_update_lbrv() always updates LBR MSRs intercepts, even when they are
-already set correctly. This results in force_msr_bitmap_recalc always
-being set to true on every nested transition, essentially undoing the
-hyperv optimization in nested_svm_merge_msrpm().
+On Sun, 09 Nov 2025 23:37:54 +0200 Roger Quadros wrote:
+> +			ndev->stats.rx_dropped++;
 
-Fix it by keeping track of whether LBR MSRs are intercepted or not and
-only doing the update if needed, similar to x2avic_msrs_intercepted.
-
-Avoid using svm_test_msr_bitmap_*() to check the status of the
-intercepts, as an arbitrary MSR will need to be chosen as a
-representative of all LBR MSRs, and this could theoretically break if
-some of the MSRs intercepts are handled differently from the rest.
-
-Also, using svm_test_msr_bitmap_*() makes backports difficult as it was
-only recently introduced with no direct alternatives in older kernels.
-
-Fixes: fbe5e5f030c2 ("KVM: nSVM: Always recalculate LBR MSR intercepts in svm_update_lbrv()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- arch/x86/kvm/svm/svm.c | 9 ++++++++-
- arch/x86/kvm/svm/svm.h | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 10c21e4c5406f..9d29b2e7e855d 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -705,7 +705,11 @@ void *svm_alloc_permissions_map(unsigned long size, gfp_t gfp_mask)
- 
- static void svm_recalc_lbr_msr_intercepts(struct kvm_vcpu *vcpu)
- {
--	bool intercept = !(to_svm(vcpu)->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK);
-+	struct vcpu_svm *svm = to_svm(vcpu);
-+	bool intercept = !(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK);
-+
-+	if (intercept == svm->lbr_msrs_intercepted)
-+		return;
- 
- 	svm_set_intercept_for_msr(vcpu, MSR_IA32_LASTBRANCHFROMIP, MSR_TYPE_RW, intercept);
- 	svm_set_intercept_for_msr(vcpu, MSR_IA32_LASTBRANCHTOIP, MSR_TYPE_RW, intercept);
-@@ -714,6 +718,8 @@ static void svm_recalc_lbr_msr_intercepts(struct kvm_vcpu *vcpu)
- 
- 	if (sev_es_guest(vcpu->kvm))
- 		svm_set_intercept_for_msr(vcpu, MSR_IA32_DEBUGCTLMSR, MSR_TYPE_RW, intercept);
-+
-+	svm->lbr_msrs_intercepted = intercept;
- }
- 
- void svm_vcpu_free_msrpm(void *msrpm)
-@@ -1221,6 +1227,7 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
- 	}
- 
- 	svm->x2avic_msrs_intercepted = true;
-+	svm->lbr_msrs_intercepted = true;
- 
- 	svm->vmcb01.ptr = page_address(vmcb01_page);
- 	svm->vmcb01.pa = __sme_set(page_to_pfn(vmcb01_page) << PAGE_SHIFT);
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index c856d8e0f95e7..dd78e64023450 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -336,6 +336,7 @@ struct vcpu_svm {
- 	bool guest_state_loaded;
- 
- 	bool x2avic_msrs_intercepted;
-+	bool lbr_msrs_intercepted;
- 
- 	/* Guest GIF value, used when vGIF is not enabled */
- 	bool guest_gif;
-
-base-commit: 8a4821412cf2c1429fffa07c012dd150f2edf78c
--- 
-2.51.2.1041.gc1ab5b90ca-goog
-
+AFAIU the device is multi-queue so using per-device stats looks racy.
+Please create your own per queue stats.
 
