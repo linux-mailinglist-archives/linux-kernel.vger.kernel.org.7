@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-897392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E7DC52D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:56:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30586C52B7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F2C5063EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:27:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC603343CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5473533B6C3;
-	Wed, 12 Nov 2025 14:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B1833BBA1;
+	Wed, 12 Nov 2025 14:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvZ8qQDd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qve7G4L0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC8D33AD98;
-	Wed, 12 Nov 2025 14:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1758733B6DE;
+	Wed, 12 Nov 2025 14:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957615; cv=none; b=vANEvfeS3Dj08PIqzjlpWe0HQFRv6bVb8oOZfT/4G9pH6f7FZi4MOV8qSlf8TWsh17XQ8b6ZLu3tgyw46YSaxAjjQAZYBREkcFQyJoaNEc9USRYBCzSsOhMRx6jVg4mF/edZ1Z5RmkQXAk1gwVkWW0p3kJmaV52veDnD4xuTX7M=
+	t=1762957617; cv=none; b=gfj3WWO3cRVyKC8IZGmbkIP4XHc3ggkbODLApNHmBwCNywnJ+Z7NFCkLKwXLxRUgB6UqMn3Rq0F/C0DYr0DUmzpSVorj33Tdz2qsl48Nfr2DR5zH5mEhYYGAcLVrlncw+8NQxR4uwCkSobHnHuT9V3VjIFX336P6HFi6BPgV1bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957615; c=relaxed/simple;
-	bh=8LUezGoas/zmkSOZwz/kzJnb2VRdwiKxlL8+JEtsPf8=;
+	s=arc-20240116; t=1762957617; c=relaxed/simple;
+	bh=qeuILCfLWad/qbdor3W9n5ZZy0hnPVSh5PPuu3qs/QE=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XcjWAKgOslw/kYibGDV1S8Mk7b2O+fSeZu5/Zquy4f5jOFWfFU1QtrI1EKDtLQpARj3YupUNctznXBwcekNTCFbfzr61gbkvkXZUbSQD9X4pwrd9uLawAUuF95acodBo9r+QLvetYrfXmbfro3qP1ZNr2d7VH5BSbnTIz0JhvF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvZ8qQDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E41EC16AAE;
-	Wed, 12 Nov 2025 14:26:54 +0000 (UTC)
+	 Message-Id:Subject; b=XQvLjojS3uCWk30gUjr17c9Pp78kLJIWNZA//FhSlKjN5tEUdItgTunpQ3RhUIYodmsa6vKVb2OkChVGA73ztpS7jRE7JFWjOhz4hEC69v19913ySk071UL2r1z3i+7eZ7glxdsLe9uI/LFPYwbNEejb0pObQBOJBZyoLQq03f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qve7G4L0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E68DC4CEF5;
+	Wed, 12 Nov 2025 14:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762957615;
-	bh=8LUezGoas/zmkSOZwz/kzJnb2VRdwiKxlL8+JEtsPf8=;
+	s=k20201202; t=1762957616;
+	bh=qeuILCfLWad/qbdor3W9n5ZZy0hnPVSh5PPuu3qs/QE=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=pvZ8qQDdJVqzltMy/ze8Er8u6IJu173ESkYNKVw9z9pkLu370HHo94TsqBRIXMVFz
-	 CGp7TZ0NXOecgl6ATmqX+YFTvmG2e8rNYf7N054NmVCC+qVBFSq8RhMIAOTYB80f6Z
-	 ZA/vYfyDK1C/QdDU7RiIiuMxvxSzqzhQn+tD6RkAUg4NrQqONLl4UTU596/pf0HJp+
-	 lWa4M5csMx5+HuF78H9Nk1j8Vh962P4W5SJMim4KcJDOLkHPREnoFU/R1TG/Oj83Mc
-	 k+pr3wLPI4Pfn9tVAv5ZvaCoDmE3TKBaEM2Hs5YdvVvl6+Dd64+41Xrewppnu2YP5K
-	 d0ArcASWF6+NQ==
-Date: Wed, 12 Nov 2025 08:26:53 -0600
+	b=qve7G4L0YkbRYzSqsV764xHqJipSwJLZHj1ww/HX7HeUzWhQmoOkvD06mELydd+6p
+	 vBe+03Yks5anblHWanxMmaKRFLYdBRYE2LXOk5OQ86x+FvMwLA8KvRjGvoM1tzyXBI
+	 1AqRNa1RCPCD7VE/h9+O5DF8MyE5DTdGzUrZExQwCa6paTArLe6ncDc48usZtCgQpa
+	 wix5EmQQky48KVxL1DGT6rU5y3wEH3cvA3WJvTD9yLPDVZV2zxcy2Ps0tNJEOapc1p
+	 Y2UnYtiOi+pELcNjbWhpdzUjKNXZxsSTGMh/D3rlKMZRaStt2gWo2lS+nbPDKX1T7q
+	 YpgzTjAvTymzQ==
+Date: Wed, 12 Nov 2025 08:26:55 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,125 +50,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, nfraprado@collabora.com, 
- jk@codeconstruct.com.au, linux-kernel@vger.kernel.org, 
- Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org, 
- Taniya Das <quic_tdas@quicinc.com>, linux-aspeed@lists.ozlabs.org, 
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, bmc-sw@aspeedtech.com, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Will Deacon <will@kernel.org>, Lee Jones <lee@kernel.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Eric Biggers <ebiggers@kernel.org>, Nishanth Menon <nm@ti.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-In-Reply-To: <20251112101157.2149169-1-ryan_chen@aspeedtech.com>
-References: <20251112101157.2149169-1-ryan_chen@aspeedtech.com>
-Message-Id: <176295563530.1637905.10146284162033916464.robh@kernel.org>
-Subject: Re: [PATCH v8 0/4] Introduce ASPEED AST27xx BMC SoC
+ linux-stm32@st-md-mailman.stormreply.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Patrick Delaunay <patrick.delaunay@foss.st.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@foss.st.com>
+In-Reply-To: <20251112-upstream_uboot_properties-v1-0-0b19133710e3@foss.st.com>
+References: <20251112-upstream_uboot_properties-v1-0-0b19133710e3@foss.st.com>
+Message-Id: <176295563590.1637939.3347883345967436731.robh@kernel.org>
+Subject: Re: [PATCH 0/6] Add boot phase tags for STMicroelectronics boards
 
 
-On Wed, 12 Nov 2025 18:11:53 +0800, Ryan Chen wrote:
-> This introduces initial support for the Aspeed AST27xx SoC and the AST2700
-> Evaluation Board (EVB) to the Linux kernel. The AST27xx is the 8th
-> generation Baseboard Management Controller (BMC) SoC from Aspeed,
-> featuring improved performance, enhanced security, and expanded I/O
-> capabilities compared to previous generations.
+On Wed, 12 Nov 2025 11:46:42 +0100, Patrice Chotard wrote:
+> The bootph-all flag was introduced in dt-schema
+> (dtschema/schemas/bootph.yaml) to define node usage across
+> different boot phases.
 > 
-> AST27xx SOC Family
->  - https://www.aspeedtech.com/server_ast2700/
->  - https://www.aspeedtech.com/server_ast2720/
->  - https://www.aspeedtech.com/server_ast2750/
+> To ensure SD boot, timer, gpio, syscfg, clock and uart nodes need to be
+> present in all boot stages, so add missing bootph-all phase flag
+> to these nodes to support SD boot.
 > 
-> Bindings Dependencies:
->  check with "make CHECK_DTBS=y W=1 arch/arm64/boot/dts/aspeed/ dtbs"
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+> Patrice Chotard (6):
+>       ARM: dts: stm32: Add boot phase tags for STMicroelectronics f4 boards
+>       ARM: dts: stm32: Add boot phase tags for STMicroelectronics f7 boards
+>       ARM: dts: stm32: Add boot phase tags for STMicroelectronics h7 boards
+>       ARM: dts: stm32: Add boot phase tags for STMicroelectronics mp13 boards
+>       ARM: dts: stm32: Add boot phase tags for STMicroelectronics mp15 boards
+>       arm64: dts: st: Add boot phase tags for STMicroelectronics mp2 boards
 > 
-> - scu/silicon-id: Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> - gpio: Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
-> Binding dependency patch:
-> - intc: Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
->  - https://lore.kernel.org/all/20251030060155.2342604-2-ryan_chen@aspeedtech.com/
->    (merged into the irq/drivers)
+>  arch/arm/boot/dts/st/stm32429i-eval.dts       | 11 +++++
+>  arch/arm/boot/dts/st/stm32746g-eval.dts       | 10 +++++
+>  arch/arm/boot/dts/st/stm32f4-pinctrl.dtsi     | 12 ++++++
+>  arch/arm/boot/dts/st/stm32f429-disco.dts      | 11 +++++
+>  arch/arm/boot/dts/st/stm32f429.dtsi           |  9 ++++
+>  arch/arm/boot/dts/st/stm32f469-disco.dts      | 12 ++++++
+>  arch/arm/boot/dts/st/stm32f7-pinctrl.dtsi     | 11 +++++
+>  arch/arm/boot/dts/st/stm32f746-disco.dts      | 12 ++++++
+>  arch/arm/boot/dts/st/stm32f746.dtsi           |  5 +++
+>  arch/arm/boot/dts/st/stm32f769-disco.dts      | 12 ++++++
+>  arch/arm/boot/dts/st/stm32h743.dtsi           | 19 +++++++++
+>  arch/arm/boot/dts/st/stm32mp131.dtsi          | 21 ++++++++++
+>  arch/arm/boot/dts/st/stm32mp135f-dk.dts       | 11 +++++
+>  arch/arm/boot/dts/st/stm32mp15-scmi.dtsi      | 26 ++++++++++++
+>  arch/arm/boot/dts/st/stm32mp151.dtsi          | 29 +++++++++++++
+>  arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts | 14 +++++++
+>  arch/arm/boot/dts/st/stm32mp157a-dk1.dts      | 43 +++++++++++++++++++
+>  arch/arm/boot/dts/st/stm32mp157c-dk2.dts      | 43 +++++++++++++++++++
+>  arch/arm/boot/dts/st/stm32mp157c-ed1-scmi.dts | 14 +++++++
+>  arch/arm/boot/dts/st/stm32mp157c-ed1.dts      | 60 +++++++++++++++++++++++++++
+>  arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dts | 31 ++++++++++++++
+>  arch/arm/boot/dts/st/stm32mp157c-ev1.dts      | 36 ++++++++++++++++
+>  arch/arm64/boot/dts/st/stm32mp211.dtsi        |  7 ++++
+>  arch/arm64/boot/dts/st/stm32mp215f-dk.dts     |  1 +
+>  arch/arm64/boot/dts/st/stm32mp231.dtsi        | 22 ++++++++++
+>  arch/arm64/boot/dts/st/stm32mp235f-dk.dts     | 11 +++++
+>  arch/arm64/boot/dts/st/stm32mp251.dtsi        | 27 +++++++++++-
+>  arch/arm64/boot/dts/st/stm32mp257f-dk.dts     | 11 +++++
+>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    | 11 +++++
+>  29 files changed, 541 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 53c18dc078bb6d9e9dfe2cc0671ab78588c44723
+> change-id: 20251112-upstream_uboot_properties-22480b0b4b1c
 > 
-> v8:
-> - Kconfig.platforms
->  - update commit message and help description.
-> - aspeed-g7-a35.dtsi,aspeed-g7-common.dtsi,ast2700-evb.dts
->  - change license using a dual license of MIT + GPL2.0+
->  - add company copyright.
-> - merge original v7 patch(3/5) and (4/5) to 1 v8patch(3/4)
->  - that can do build test with make CHECK_DTBS=y W=1 arch/arm64/boot/dts/aspeed/ dtbs
-> 
-> v7:
-> - remove aspeed,ast2x00-scu.yaml modify
-> - separate aspeed-g7.dtsi to aspeed-g7-a35.dtsi and aspeed-g7-common.dtsi
-> - move aliases to ast2700-evb.dts file
-> 
-> v6:
-> - rebased on v6.18-rc1
-> - aspeed,ast2x00-scu.yaml
->  - fixed dt-binding yaml issuse report.
-> 
-> v5:
-> - modify ast27XX 7th generation description to 8th generation.
-> - aspeed.yaml
->  - modify missing blank line.
-> - Kconfig.platforms
->  - modify ast27XX 7th generation to 8th generation.
-> 
-> v4:
-> - make CHECK_DTBS=y arch/arm64/boot/dts/aspeed/ fix.
-> - modify commit message remove itemlize.
-> - remove modify aspeed,ast2700-intc.yaml patch.
-> - aspeed.yaml
->  - Add AST2700 board compatible.
-> - aspeed-g7.dtsi
->  - modify all size-cells from 1 to 2.
->  - add serial aliases, gpio, mdio, uart0 ~ 14.
->  - add firmware for optee, reserved memory for atf and optee.
->  - modify cpu@0 to cpu0: cpu@0.
->  - fix intc-ic for yaml dependency.
-> - ast2700-evb.dts
->  - update stdout-path = "serial12:115200n8";
-> 
-> v3:
-> - https://lore.kernel.org/all/20241212155237.848336-1-kevin_chen@aspeedtech.com/
-> - Split clk and reset driver to other commits, which are in series of
->   "Add support for AST2700 clk driver".
-> - For BMC console by UART12, add uart12 using ASPEED INTC architecture.
-> 
-> aspeed,ast2700-intc.yaml
-> - Add minItems to 1 to fix the warning by "make dtbs_check W=1".
-> - Add intc1 into example.
-> 
-> Kconfig.platforms
->   - Remove MACH_ASPEED_G7.
-> 
-> Ryan Chen (4):
->   dt-bindings: arm: aspeed: Add AST2700 board compatible
->   arm64: Kconfig: Add ASPEED SoC family Kconfig support
->   arm64: dts: aspeed: Add initial AST27xx SoC device tree
->   arm64: configs: Update defconfig for AST2700 platform support
-> 
->  .../bindings/arm/aspeed/aspeed.yaml           |   6 +
->  arch/arm64/Kconfig.platforms                  |   6 +
->  arch/arm64/boot/dts/Makefile                  |   1 +
->  arch/arm64/boot/dts/aspeed/Makefile           |   4 +
->  arch/arm64/boot/dts/aspeed/aspeed-g7-a35.dtsi | 154 ++++++++
->  .../boot/dts/aspeed/aspeed-g7-common.dtsi     | 351 ++++++++++++++++++
->  arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |  31 ++
->  arch/arm64/configs/defconfig                  |   1 +
->  8 files changed, 554 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
->  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-a35.dtsi
->  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-common.dtsi
->  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> 
+> Best regards,
 > --
-> 2.34.1
+> Patrice Chotard <patrice.chotard@foss.st.com>
 > 
 > 
 > 
@@ -189,43 +141,21 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.18-rc3-15-gbe755eb2b021 (exact match)
- Base: tags/v6.18-rc3-15-gbe755eb2b021 (use --merge-base to override)
+ Base: 53c18dc078bb6d9e9dfe2cc0671ab78588c44723 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/aspeed/' for 20251112101157.2149169-1-ryan_chen@aspeedtech.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/st/' for 20251112-upstream_uboot_properties-v1-0-0b19133710e3@foss.st.com:
 
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@12101b00 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@12101b00 (aspeed,ast2700-intc-ic): interrupts: [[0, 192, 4], [0, 193, 4], [0, 194, 4], [0, 195, 4], [0, 196, 4], [0, 197, 4], [0, 198, 4], [0, 199, 4], [0, 200, 4], [0, 201, 4]] is too long
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18100 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18100 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 0]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18110 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18110 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 1]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18120 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18120 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 2]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18130 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18130 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 3]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18140 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18140 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 4]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18150 (aspeed,ast2700-intc-ic): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@14c18150 (aspeed,ast2700-intc-ic): interrupts-extended: [[7, 5]] is too short
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml
+arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dtb: pinctrl@50002000 (st,stm32mp157-pinctrl): qspi-bk1-0:pins1: 'pinmux' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl.yaml
+arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dtb: pinctrl@50002000 (st,stm32mp157-pinctrl): qspi-bk1-0:pins2: 'pinmux' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl.yaml
+arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dtb: pinctrl@50002000 (st,stm32mp157-pinctrl): qspi-bk2-0:pins1: 'pinmux' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl.yaml
+arch/arm/boot/dts/st/stm32mp157c-ev1-scmi.dtb: pinctrl@50002000 (st,stm32mp157-pinctrl): qspi-bk2-0:pins2: 'pinmux' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl.yaml
 
 
 
