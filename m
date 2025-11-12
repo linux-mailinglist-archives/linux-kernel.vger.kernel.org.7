@@ -1,287 +1,590 @@
-Return-Path: <linux-kernel+bounces-897656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA95C53983
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:11:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B0DC53989
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C33F5654CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610735025FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D551533D6EC;
-	Wed, 12 Nov 2025 15:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BE1345CBF;
+	Wed, 12 Nov 2025 16:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zi+7AE/z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nEMfzyI7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zi+7AE/z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nEMfzyI7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IzE7jqVH"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED18E311951
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56342343207
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962984; cv=none; b=Ma5uIiygXvYyYbVK5cd4GgIwBKDgKDnHGuHIUHTv4TzU3G/pjLSYUm3UZ/MNXjjxe6i+eLZP9XvB7f31pQnbNenlgzy+0MLq9ZuudmooH7ERwteHeHpO4JPSfPG/n4tAbldqthw2tfnqUwC+fxpCW0RxPdGonibGDMAKgmqIOts=
+	t=1762963455; cv=none; b=dYhNdVCQBjW03djrPlorn4ZiBfxODHMW9TIqBrGBNXSyJIRB/tQB3xdVxcLkQl/tJ9gNWc8cl10IWP+/aDjxKmTWKTB0YLwCup5ajq8xbKX9z1cXZh9CHZVrUyRc7Ru59pXg8SsfHXbPjJaNHmf7BbYtCgAkOwUzvMwAHKjBvCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962984; c=relaxed/simple;
-	bh=jtp8C1mqnPSam5IwKHyTdcViMuickjudGhWi5O7XdJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MKLEk81lI8dbD1hhN7hj6L1bK66MFZzJnM9ALgb6/Z4LARG8TXZUjpnV7Ad7hWpSsOJ03GoeUvt9mCYv2jS4afiH63mCIrRfouYoA+M+D4wtrqnxP+R6UmYv775gmXpwdkhHCOsyFaHsNRZKg5PIWVrt+ptT1Lg2qMdmJlmd77M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zi+7AE/z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nEMfzyI7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zi+7AE/z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nEMfzyI7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 049D41F7EC;
-	Wed, 12 Nov 2025 15:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762962980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HSA9Dr5E9tfo4xrQ+2Wj8n1qncu7n0/mScQ8QxAnOoQ=;
-	b=Zi+7AE/zfIqZQKcZQWQgC4brl8dA0tQS8lt5kCVzWKi4FVsl4458yYXjCG1zh9sTynqeV/
-	liY1uz8Ys1Qd7rQ+2GFxkNyXksf3rZXJ4k8VDq7IhIBtYjHnTtlnezgCwRmlz3HtQY/+l6
-	AKpH/88XKOBU0ZJOVN051jHCOzHhP1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762962980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HSA9Dr5E9tfo4xrQ+2Wj8n1qncu7n0/mScQ8QxAnOoQ=;
-	b=nEMfzyI7kZRUYI+9owCtb3ngDk4pGLU7xRD24sFEIc9/4Wi8y8qnKCVtYnX3NgurK0pd2K
-	Jcbjjypa2sEj7qDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Zi+7AE/z";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nEMfzyI7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762962980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HSA9Dr5E9tfo4xrQ+2Wj8n1qncu7n0/mScQ8QxAnOoQ=;
-	b=Zi+7AE/zfIqZQKcZQWQgC4brl8dA0tQS8lt5kCVzWKi4FVsl4458yYXjCG1zh9sTynqeV/
-	liY1uz8Ys1Qd7rQ+2GFxkNyXksf3rZXJ4k8VDq7IhIBtYjHnTtlnezgCwRmlz3HtQY/+l6
-	AKpH/88XKOBU0ZJOVN051jHCOzHhP1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762962980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HSA9Dr5E9tfo4xrQ+2Wj8n1qncu7n0/mScQ8QxAnOoQ=;
-	b=nEMfzyI7kZRUYI+9owCtb3ngDk4pGLU7xRD24sFEIc9/4Wi8y8qnKCVtYnX3NgurK0pd2K
-	Jcbjjypa2sEj7qDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4F0E3EA61;
-	Wed, 12 Nov 2025 15:56:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uWaTNyOuFGmwCwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Nov 2025 15:56:19 +0000
-Message-ID: <4b72bcad-5174-49c7-ad90-63a9c312df0b@suse.cz>
-Date: Wed, 12 Nov 2025 16:56:19 +0100
+	s=arc-20240116; t=1762963455; c=relaxed/simple;
+	bh=jnb+jw4cJX0KYewnHVML539qHFFynflD2IXsBim5+Hk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PJP0d7pdQHcUg/9rgr81iLPg5gMexFiHEtfl0FWYfnlrLnJNjqmUawC0rNtnJfMzj1qSuKUGm+GF4YPWvBW5C0+haF2tyvj1cRp5Z2FgcijS2WNhblLhoIHhYa/g7ZaHBG7MwTz6oA9uvcIVpCLrmrGsMP2v7xP6BnzZ7xx1vHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IzE7jqVH; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACG0T4u013512;
+	Wed, 12 Nov 2025 16:04:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=HGtNP
+	jlJ6RQLlQzEl+bxrsWOw+SssZH+N/YbRTfEQDA=; b=IzE7jqVHOm4UiUQCJNn1I
+	SlmPDNTPfuttK2xb5SolOgw+USopI2vpmH01bV3lbBUheERXUtcTMx0RitZGzRLh
+	3EZQaL1LQKDQTnr9NQNpfYYePgdlPFjAlmgaiRXSrUZ1WdV+n7dNukOiRc/wSPj4
+	1Wk6azKWuJ22IPFhnxiytnIlnRvidRaneHhScKOWVyIvDcCYCnvGdjgbszyepgBR
+	I/qXcYB2PotY3ibXdzxLZfSpt9/VmTu1WLDZ0fy7efGzf3AzK//8cX+8UK2v3PGt
+	L3ZlB16cbraIQX77YymGXzKUeseg74wAUzD0nhoY11U5hZqON2PT/cjlEL8XGHOI
+	g==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acwcg008a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 16:04:04 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEG3id018605;
+	Wed, 12 Nov 2025 16:04:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaavq51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 16:04:03 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ACFxw3W004655;
+	Wed, 12 Nov 2025 16:04:02 GMT
+Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-154-173-131.vpn.oracle.com [10.154.173.131])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaavnq6-9;
+	Wed, 12 Nov 2025 16:04:02 +0000
+From: Alexandre Chartre <alexandre.chartre@oracle.com>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org,
+        peterz@infradead.org
+Cc: alexandre.chartre@oracle.com
+Subject: [PATCH v3 08/28] objtool: Extract code to validate instruction from the validate branch loop
+Date: Wed, 12 Nov 2025 17:02:55 +0100
+Message-ID: <20251112160315.2207947-9-alexandre.chartre@oracle.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20251112160315.2207947-1-alexandre.chartre@oracle.com>
+References: <20251112160315.2207947-1-alexandre.chartre@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] mempool: add mempool_{alloc,free}_bulk
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251111135300.752962-1-hch@lst.de>
- <20251111135300.752962-8-hch@lst.de>
- <c691c9c1-a513-4db3-95f6-3d24111680b7@suse.cz> <20251112154754.GB7209@lst.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251112154754.GB7209@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 049D41F7EC
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid]
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_05,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511120130
+X-Authority-Analysis: v=2.4 cv=XL09iAhE c=1 sm=1 tr=0 ts=6914aff4 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=45N9rFkX92oTsxCXvtEA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEyOSBTYWx0ZWRfX0gbpHD0/DiVZ
+ L9NZg8PIu7YL085j5W7caDTBgMdmoeseJBnLJh5zXcnt0XcNTcSoxCpI7ggMMnq+2FBtB8lwarw
+ wqHJCvgXNel4YowMXeVt5SDc9reNrnqG3KRFUeVB4UMne4xIzaZnzQ+gsgrI+oetv/BN90a63o6
+ uKlWVlu0wA9t/zkZNbcqar3lqysWzcoE2Jl0k5kHFl8lmXfXmZmR9MkzsJUM4kPpHIZMIwPziki
+ 0C7VUS3tSNM8yQqx3IS2Lanu/LObZNMRskRI1nDZaS3QFwsDxX7FeAOWQIYj5w0bySYgn3tKdC4
+ 4pTznEAy5NwGmkzJhYqfZ+ZSH8u/1dP3/z8QJ29wQnNVhSGaanfv32/y730AbCkZjbXLh9ya3RW
+ AHrclTLuW1wqiC6l5dTiQoIQ37szDw==
+X-Proofpoint-ORIG-GUID: CULLMPBRoTcsMgdeVzAKYXMKHEVeaejl
+X-Proofpoint-GUID: CULLMPBRoTcsMgdeVzAKYXMKHEVeaejl
 
-On 11/12/25 16:47, Christoph Hellwig wrote:
-> On Wed, Nov 12, 2025 at 01:20:21PM +0100, Vlastimil Babka wrote:
->> > +	if (IS_ERR(fault_create_debugfs_attr("fail_mempool_alloc", NULL,
->> > +			&fail_mempool_alloc)) ||
->> > +	    IS_ERR(fault_create_debugfs_attr("fail_mempool_alloc_bulk", NULL,
->> > +			&fail_mempool_alloc_bulk)))
->> > +		return -ENOMEM;
->> 
->> Pedantically speaking the error (from debugfs_create_dir()) might be
->> different, probably doesn't matter in practice.
-> 
-> Yeah, this is an initcall, so the exact error really does not matter.
-> But adding an error variable isn't that annyoing, so I'll switch to
-> that.
-> 
->> >  	unsigned long flags;
->> > -	void *element;
->> > +	unsigned int i;
->> >  
->> >  	spin_lock_irqsave(&pool->lock, flags);
->> > -	if (unlikely(!pool->curr_nr))
->> > +	if (unlikely(pool->curr_nr < count - allocated))
->> 
->> So we might be pessimistic here when some of the elements in the array
->> already are not NULL so we need in fact less. Might be an issue if callers
->> were relying on this for forward progress? It would be simpler to just tell
->> them not to...
-> 
-> Yes.  I think alloc_pages_bulk always allocates from the beginning
-> and doesn't leave random holes?  That's what a quick look at the code
-> suggest, unfortunately the documentation for it totally sucks.
+The code to validate a branch loops through all instructions of the
+branch and validate each instruction. Move the code to validate an
+instruction to a separated function.
 
-Yeah I think it's fine with alloc_pages_bulk. It would only be a concern is
-the bulk alloc+mempool user used up part of the allocated array, NULLing
-some earlier pointers but leaving later ones alone, and then attempted to
-refill it.
+Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+---
+ tools/objtool/check.c | 392 ++++++++++++++++++++++--------------------
+ 1 file changed, 208 insertions(+), 184 deletions(-)
 
->> > + * @pool:	pointer to the memory pool
->> > + * @elems:	partially or fully populated elements array
->> > + * @count:	size (in entries) of @elem
->> > + * @gfp_mask:	GFP_* flags.  %__GFP_ZERO is not supported.
->> 
->> We should say __GFP_DIRECT_RECLAIM is mandatory...
-> 
-> It's not really going to fit in there :)  Maybe I should have ignored
-> Eric's request to mention __GFP_ZERO here and just keep everything
-> together.
-
-I thought it can be multiline, but if not, can refer to the notes below and
-explain there, yeah.
-
->> > +repeat_alloc:
->> > +	/*
->> > +	 * Try to allocate the elements using the allocation callback.  If that
->> > +	 * succeeds or we were not allowed to sleep, return now.  Don't dip into
->> > +	 * the reserved pools for !__GFP_DIRECT_RECLAIM allocations as they
->> > +	 * aren't guaranteed to succeed and chances of getting an allocation
->> > +	 * from the allocators using GFP_ATOMIC is higher than stealing one of
->> > +	 * the few items from our usually small pool.
->> > +	 */
->> 
->> Hm but the code doesn't do what the comment says, AFAICS? It will try
->> dipping into the pool and might succeed if there are elements, only will not
->> wait for them there?
-
-> Yeah, that comment is actually stale from an older version.
-> 
->> 
->> > +	for (; i < count; i++) {
->> > +		if (!elems[i]) {
->> > +			elems[i] = pool->alloc(gfp_temp, pool->pool_data);
->> > +			if (unlikely(!elems[i]))
->> > +				goto use_pool;
->> > +		}
->> > +	}
->> > +
->> > +	return 0;
->> > +
->> > +use_pool:
->> 
->> So should we bail out here with -ENOMEM when !(gfp_mask & __GFP_DIRECT_RECLAIM)?
-> 
-> No, I don't want the !__GFP_DIRECT_RECLAIM handling.  It's a mess,
-> and while for mempool_alloc having it for compatibility might make some
-> sense, I'd rather avoid it for this new interface where the semantics
-> of failing allocations are going to be really annoying.
-
-OK.
-
->> > +	if (!mempool_alloc_from_pool(pool, elems, count, i, gfp_temp)) {
->> > +		gfp_temp = gfp_mask;
->> > +		goto repeat_alloc;
->> 
->> Because this seems to be an infinite loop otherwise?
-> 
-> You mean if someone passed in !__GFP_DIRECT_RECLAIM and got the warning
-> above?  Yes, IFF that code makes it to production and then runs into
-> a low-memory situation it would.  But it's an API abuse.  The other
-> option would be to just force __GFP_DIRECT_RECLAIM.
-
-True, so let's ignore it.
-
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5b977bdb5512f..609994ad6ab41 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3535,256 +3535,280 @@ static bool skip_alt_group(struct instruction *insn)
+ 	return alt_insn->type == INSN_CLAC || alt_insn->type == INSN_STAC;
+ }
+ 
+-/*
+- * Follow the branch starting at the given instruction, and recursively follow
+- * any other branches (jumps).  Meanwhile, track the frame pointer state at
+- * each instruction and validate all the rules described in
+- * tools/objtool/Documentation/objtool.txt.
+- */
+ static int validate_branch(struct objtool_file *file, struct symbol *func,
+-			   struct instruction *insn, struct insn_state state)
++			   struct instruction *insn, struct insn_state state);
++
++static int validate_insn(struct objtool_file *file, struct symbol *func,
++			 struct instruction *insn, struct insn_state *statep,
++			 struct instruction *prev_insn, struct instruction *next_insn,
++			 bool *dead_end)
+ {
+ 	struct alternative *alt;
+-	struct instruction *next_insn, *prev_insn = NULL;
+-	struct section *sec;
+ 	u8 visited;
+ 	int ret;
+ 
+-	if (func && func->ignore)
+-		return 0;
++	/*
++	 * Any returns before the end of this function are effectively dead
++	 * ends, i.e. validate_branch() has reached the end of the branch.
++	 */
++	*dead_end = true;
+ 
+-	sec = insn->sec;
++	visited = VISITED_BRANCH << statep->uaccess;
++	if (insn->visited & VISITED_BRANCH_MASK) {
++		if (!insn->hint && !insn_cfi_match(insn, &statep->cfi))
++			return 1;
+ 
+-	while (1) {
+-		next_insn = next_insn_to_validate(file, insn);
++		if (insn->visited & visited)
++			return 0;
++	} else {
++		nr_insns_visited++;
++	}
+ 
+-		if (func && insn_func(insn) && func != insn_func(insn)->pfunc) {
+-			/* Ignore KCFI type preambles, which always fall through */
+-			if (!strncmp(func->name, "__cfi_", 6) ||
+-			    !strncmp(func->name, "__pfx_", 6) ||
+-			    !strncmp(func->name, "__pi___cfi_", 11) ||
+-			    !strncmp(func->name, "__pi___pfx_", 11))
+-				return 0;
++	if (statep->noinstr)
++		statep->instr += insn->instr;
+ 
+-			if (file->ignore_unreachables)
+-				return 0;
++	if (insn->hint) {
++		if (insn->restore) {
++			struct instruction *save_insn, *i;
+ 
+-			WARN("%s() falls through to next function %s()",
+-			     func->name, insn_func(insn)->name);
+-			func->warned = 1;
++			i = insn;
++			save_insn = NULL;
+ 
+-			return 1;
+-		}
++			sym_for_each_insn_continue_reverse(file, func, i) {
++				if (i->save) {
++					save_insn = i;
++					break;
++				}
++			}
+ 
+-		visited = VISITED_BRANCH << state.uaccess;
+-		if (insn->visited & VISITED_BRANCH_MASK) {
+-			if (!insn->hint && !insn_cfi_match(insn, &state.cfi))
++			if (!save_insn) {
++				WARN_INSN(insn, "no corresponding CFI save for CFI restore");
+ 				return 1;
++			}
+ 
+-			if (insn->visited & visited)
+-				return 0;
+-		} else {
+-			nr_insns_visited++;
++			if (!save_insn->visited) {
++				/*
++				 * If the restore hint insn is at the
++				 * beginning of a basic block and was
++				 * branched to from elsewhere, and the
++				 * save insn hasn't been visited yet,
++				 * defer following this branch for now.
++				 * It will be seen later via the
++				 * straight-line path.
++				 */
++				if (!prev_insn)
++					return 0;
++
++				WARN_INSN(insn, "objtool isn't smart enough to handle this CFI save/restore combo");
++				return 1;
++			}
++
++			insn->cfi = save_insn->cfi;
++			nr_cfi_reused++;
+ 		}
+ 
+-		if (state.noinstr)
+-			state.instr += insn->instr;
++		statep->cfi = *insn->cfi;
++	} else {
++		/* XXX track if we actually changed statep->cfi */
+ 
+-		if (insn->hint) {
+-			if (insn->restore) {
+-				struct instruction *save_insn, *i;
++		if (prev_insn && !cficmp(prev_insn->cfi, &statep->cfi)) {
++			insn->cfi = prev_insn->cfi;
++			nr_cfi_reused++;
++		} else {
++			insn->cfi = cfi_hash_find_or_add(&statep->cfi);
++		}
++	}
+ 
+-				i = insn;
+-				save_insn = NULL;
++	insn->visited |= visited;
+ 
+-				sym_for_each_insn_continue_reverse(file, func, i) {
+-					if (i->save) {
+-						save_insn = i;
+-						break;
+-					}
+-				}
++	if (propagate_alt_cfi(file, insn))
++		return 1;
+ 
+-				if (!save_insn) {
+-					WARN_INSN(insn, "no corresponding CFI save for CFI restore");
+-					return 1;
+-				}
++	if (insn->alts) {
++		for (alt = insn->alts; alt; alt = alt->next) {
++			ret = validate_branch(file, func, alt->insn, *statep);
++			if (ret) {
++				BT_INSN(insn, "(alt)");
++				return ret;
++			}
++		}
++	}
+ 
+-				if (!save_insn->visited) {
+-					/*
+-					 * If the restore hint insn is at the
+-					 * beginning of a basic block and was
+-					 * branched to from elsewhere, and the
+-					 * save insn hasn't been visited yet,
+-					 * defer following this branch for now.
+-					 * It will be seen later via the
+-					 * straight-line path.
+-					 */
+-					if (!prev_insn)
+-						return 0;
++	if (skip_alt_group(insn))
++		return 0;
+ 
+-					WARN_INSN(insn, "objtool isn't smart enough to handle this CFI save/restore combo");
+-					return 1;
+-				}
++	if (handle_insn_ops(insn, next_insn, statep))
++		return 1;
+ 
+-				insn->cfi = save_insn->cfi;
+-				nr_cfi_reused++;
+-			}
++	switch (insn->type) {
+ 
+-			state.cfi = *insn->cfi;
+-		} else {
+-			/* XXX track if we actually changed state.cfi */
++	case INSN_RETURN:
++		return validate_return(func, insn, statep);
+ 
+-			if (prev_insn && !cficmp(prev_insn->cfi, &state.cfi)) {
+-				insn->cfi = prev_insn->cfi;
+-				nr_cfi_reused++;
+-			} else {
+-				insn->cfi = cfi_hash_find_or_add(&state.cfi);
+-			}
++	case INSN_CALL:
++	case INSN_CALL_DYNAMIC:
++		ret = validate_call(file, insn, statep);
++		if (ret)
++			return ret;
++
++		if (opts.stackval && func && !is_special_call(insn) &&
++		    !has_valid_stack_frame(statep)) {
++			WARN_INSN(insn, "call without frame pointer save/setup");
++			return 1;
+ 		}
+ 
+-		insn->visited |= visited;
++		break;
+ 
+-		if (propagate_alt_cfi(file, insn))
+-			return 1;
++	case INSN_JUMP_CONDITIONAL:
++	case INSN_JUMP_UNCONDITIONAL:
++		if (is_sibling_call(insn)) {
++			ret = validate_sibling_call(file, insn, statep);
++			if (ret)
++				return ret;
+ 
+-		if (insn->alts) {
+-			for (alt = insn->alts; alt; alt = alt->next) {
+-				ret = validate_branch(file, func, alt->insn, state);
+-				if (ret) {
+-					BT_INSN(insn, "(alt)");
+-					return ret;
+-				}
++		} else if (insn->jump_dest) {
++			ret = validate_branch(file, func,
++					      insn->jump_dest, *statep);
++			if (ret) {
++				BT_INSN(insn, "(branch)");
++				return ret;
+ 			}
+ 		}
+ 
+-		if (skip_alt_group(insn))
++		if (insn->type == INSN_JUMP_UNCONDITIONAL)
+ 			return 0;
+ 
+-		if (handle_insn_ops(insn, next_insn, &state))
+-			return 1;
+-
+-		switch (insn->type) {
+-
+-		case INSN_RETURN:
+-			return validate_return(func, insn, &state);
++		break;
+ 
+-		case INSN_CALL:
+-		case INSN_CALL_DYNAMIC:
+-			ret = validate_call(file, insn, &state);
++	case INSN_JUMP_DYNAMIC:
++	case INSN_JUMP_DYNAMIC_CONDITIONAL:
++		if (is_sibling_call(insn)) {
++			ret = validate_sibling_call(file, insn, statep);
+ 			if (ret)
+ 				return ret;
++		}
+ 
+-			if (opts.stackval && func && !is_special_call(insn) &&
+-			    !has_valid_stack_frame(&state)) {
+-				WARN_INSN(insn, "call without frame pointer save/setup");
+-				return 1;
+-			}
++		if (insn->type == INSN_JUMP_DYNAMIC)
++			return 0;
+ 
+-			break;
++		break;
+ 
+-		case INSN_JUMP_CONDITIONAL:
+-		case INSN_JUMP_UNCONDITIONAL:
+-			if (is_sibling_call(insn)) {
+-				ret = validate_sibling_call(file, insn, &state);
+-				if (ret)
+-					return ret;
++	case INSN_SYSCALL:
++		if (func && (!next_insn || !next_insn->hint)) {
++			WARN_INSN(insn, "unsupported instruction in callable function");
++			return 1;
++		}
+ 
+-			} else if (insn->jump_dest) {
+-				ret = validate_branch(file, func,
+-						      insn->jump_dest, state);
+-				if (ret) {
+-					BT_INSN(insn, "(branch)");
+-					return ret;
+-				}
+-			}
++		break;
+ 
+-			if (insn->type == INSN_JUMP_UNCONDITIONAL)
+-				return 0;
++	case INSN_SYSRET:
++		if (func && (!next_insn || !next_insn->hint)) {
++			WARN_INSN(insn, "unsupported instruction in callable function");
++			return 1;
++		}
+ 
++		return 0;
++
++	case INSN_STAC:
++		if (!opts.uaccess)
+ 			break;
+ 
+-		case INSN_JUMP_DYNAMIC:
+-		case INSN_JUMP_DYNAMIC_CONDITIONAL:
+-			if (is_sibling_call(insn)) {
+-				ret = validate_sibling_call(file, insn, &state);
+-				if (ret)
+-					return ret;
+-			}
++		if (statep->uaccess) {
++			WARN_INSN(insn, "recursive UACCESS enable");
++			return 1;
++		}
+ 
+-			if (insn->type == INSN_JUMP_DYNAMIC)
+-				return 0;
++		statep->uaccess = true;
++		break;
+ 
++	case INSN_CLAC:
++		if (!opts.uaccess)
+ 			break;
+ 
+-		case INSN_SYSCALL:
+-			if (func && (!next_insn || !next_insn->hint)) {
+-				WARN_INSN(insn, "unsupported instruction in callable function");
+-				return 1;
+-			}
++		if (!statep->uaccess && func) {
++			WARN_INSN(insn, "redundant UACCESS disable");
++			return 1;
++		}
+ 
+-			break;
++		if (func_uaccess_safe(func) && !statep->uaccess_stack) {
++			WARN_INSN(insn, "UACCESS-safe disables UACCESS");
++			return 1;
++		}
+ 
+-		case INSN_SYSRET:
+-			if (func && (!next_insn || !next_insn->hint)) {
+-				WARN_INSN(insn, "unsupported instruction in callable function");
+-				return 1;
+-			}
++		statep->uaccess = false;
++		break;
+ 
+-			return 0;
++	case INSN_STD:
++		if (statep->df) {
++			WARN_INSN(insn, "recursive STD");
++			return 1;
++		}
+ 
+-		case INSN_STAC:
+-			if (!opts.uaccess)
+-				break;
++		statep->df = true;
++		break;
+ 
+-			if (state.uaccess) {
+-				WARN_INSN(insn, "recursive UACCESS enable");
+-				return 1;
+-			}
++	case INSN_CLD:
++		if (!statep->df && func) {
++			WARN_INSN(insn, "redundant CLD");
++			return 1;
++		}
+ 
+-			state.uaccess = true;
+-			break;
++		statep->df = false;
++		break;
+ 
+-		case INSN_CLAC:
+-			if (!opts.uaccess)
+-				break;
++	default:
++		break;
++	}
+ 
+-			if (!state.uaccess && func) {
+-				WARN_INSN(insn, "redundant UACCESS disable");
+-				return 1;
+-			}
++	*dead_end = insn->dead_end;
+ 
+-			if (func_uaccess_safe(func) && !state.uaccess_stack) {
+-				WARN_INSN(insn, "UACCESS-safe disables UACCESS");
+-				return 1;
+-			}
++	return 0;
++}
+ 
+-			state.uaccess = false;
+-			break;
++/*
++ * Follow the branch starting at the given instruction, and recursively follow
++ * any other branches (jumps).  Meanwhile, track the frame pointer state at
++ * each instruction and validate all the rules described in
++ * tools/objtool/Documentation/objtool.txt.
++ */
++static int validate_branch(struct objtool_file *file, struct symbol *func,
++			   struct instruction *insn, struct insn_state state)
++{
++	struct instruction *next_insn, *prev_insn = NULL;
++	struct section *sec;
++	bool dead_end;
++	int ret;
+ 
+-		case INSN_STD:
+-			if (state.df) {
+-				WARN_INSN(insn, "recursive STD");
+-				return 1;
+-			}
++	if (func && func->ignore)
++		return 0;
+ 
+-			state.df = true;
+-			break;
++	sec = insn->sec;
+ 
+-		case INSN_CLD:
+-			if (!state.df && func) {
+-				WARN_INSN(insn, "redundant CLD");
+-				return 1;
+-			}
++	while (1) {
++		next_insn = next_insn_to_validate(file, insn);
+ 
+-			state.df = false;
+-			break;
++		if (func && insn_func(insn) && func != insn_func(insn)->pfunc) {
++			/* Ignore KCFI type preambles, which always fall through */
++			if (!strncmp(func->name, "__cfi_", 6) ||
++			    !strncmp(func->name, "__pfx_", 6) ||
++			    !strncmp(func->name, "__pi___cfi_", 11) ||
++			    !strncmp(func->name, "__pi___pfx_", 11))
++				return 0;
+ 
+-		default:
+-			break;
++			if (file->ignore_unreachables)
++				return 0;
++
++			WARN("%s() falls through to next function %s()",
++			     func->name, insn_func(insn)->name);
++			func->warned = 1;
++
++			return 1;
+ 		}
+ 
+-		if (insn->dead_end)
+-			return 0;
++		ret = validate_insn(file, func, insn, &state, prev_insn, next_insn,
++				    &dead_end);
++		if (dead_end)
++			break;
+ 
+ 		if (!next_insn) {
+ 			if (state.cfi.cfa.base == CFI_UNDEFINED)
+@@ -3802,7 +3826,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 		insn = next_insn;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int validate_unwind_hint(struct objtool_file *file,
+-- 
+2.43.5
 
 
