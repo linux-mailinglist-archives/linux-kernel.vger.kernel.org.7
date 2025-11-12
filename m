@@ -1,259 +1,256 @@
-Return-Path: <linux-kernel+bounces-897120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460B2C520E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:46:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF65C52138
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A46C3B6C85
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:40:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E2C64EF7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206973128D4;
-	Wed, 12 Nov 2025 11:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE82312829;
+	Wed, 12 Nov 2025 11:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XDHa+e9W";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hijW3UH2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkOWnFAr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97A13126D1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947602; cv=none; b=vFVkkpCuSecLAbTXiFBYORpXadIbKFyWkesucx/4yRoCllGTk4+Lxwe+/H9UBj5/7XKgh0FfqER20jQztNcT2l+kHLp9Ntty8kJJNDJfopKm7/eBR6WcAbdp3yPbgqFwrrnAB9OtA6LUED+yiOdA5AWJ41xhRNZ5RQEswSOEG9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947602; c=relaxed/simple;
-	bh=3L85/oMCuqF+/EzJXAM9zXSxt4N4q9E5oV1hw6Vg3pE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hJ2GG76t9VEKRaJzm/LjKeMuulRabYBjzwM9mY7O6SHDBnhdvwbBf2KUGuQFwapvm0/jyLk1OVRzYD7Se+Wlga4KCD0jxSPmoaYBtU8xgd4zlFQ3XrCpy/g9hlYYuiGqgCNVxH85vafVSyLqnh8mFlPY95uyJa3WvomkHI/8nvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XDHa+e9W; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hijW3UH2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9CaMe510069
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:40:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/NSRf1wg9ZQmnz06DND1B4gmBm+AKQ6Xrvu5UXUezxQ=; b=XDHa+e9WF6h9NdrY
-	641e7zF1UCiDTSJRhxXGY3MFmb0NdOhRiiumYra/EMGOmLcGcUKeZA40BOuYNUJ6
-	CYJCTmGRmOYOaDU6tay6ALwahM1s5WoToyhmCk9w0vRNeVFBBCoLD4M8B8hPKTDJ
-	CEUOtWPkkhvKJX6teMh0njmm0nMhZ9AblM0yRwsOfdWN+BGxBJWsdfSKCrsmNeyd
-	gaxNYg8HRLXLLV76R4fOZ5dPR8JtXKT4rExyhk0lfSpA1e7FUaqWcZ/vWhc3Sg/p
-	6zIA9N/Rv1Apb166hj/GwHp394a/wEEy21QJxN+kimfC07og5MG6Um7pkHNbAIEL
-	3GlqIQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqdgggwh-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:39:59 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b184fa3ffbso31784985a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:39:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762947599; x=1763552399; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/NSRf1wg9ZQmnz06DND1B4gmBm+AKQ6Xrvu5UXUezxQ=;
-        b=hijW3UH21MqOB4hYXmokqo0gIF9DEYIDIT0KqIY/rcSH4z0w12wlB/pnz6N2ohfdlq
-         2PAY2p/czOg1OoBqmP83E2ITpoYPPFCVnLzPF0DGV7/m424lLIKT/8awOs7b1/oV+IPs
-         tlnI2X36FdHI3xD+uSUxT7g0b6LObBerYizBQnKVIBQuediycUD2lOcnG15owi4bLSjJ
-         BoBkt/Bnt3sYjP1w0FGyQke9d2ir1SM0DBP3XgQQexW0trUg7UEHiqqEW4OvGCLl+IWn
-         GhcyDZZazPJkVDlAEczEX2vcx9ueZbG/Bki3mLHosIKixQmKgmf4IuR2+DspIwF667a7
-         THYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762947599; x=1763552399;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/NSRf1wg9ZQmnz06DND1B4gmBm+AKQ6Xrvu5UXUezxQ=;
-        b=v5/+VAo5WtDXf92n3OP4A1qhywuqnDenPfATXevHu6OAupBpK4Fm5AMq8Vvs9Kr6Az
-         pzFGeaKItPUXLK+edl6IUye0/Uf37CSKgDhcC2CjFkhhhn1RzRxN/1VxNVtYA+X9FaF3
-         uzMSjA9uBzCT1KPJjSI+KgGxWfQw3JK4LsJNyGGM0WTkHqDkrdxQy1pe7j2awCSJxDSu
-         z+UAB8kJlpmhqPZK8rZX6s6PHFGiFSHHbR5jpaxIuGaDpWwakXSL3dzdX2fNSjLcorEr
-         967uSn/EKT3wf35eYnAgGMsHFm/+Ylke3+ahwYX0cBxK3bm3xq3MncrSbKV7fJXbDaRQ
-         VwQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUldlZ2t6IfMfuL+/+4bmHeyA4SBsTmRUTyEoji98PVdv5875d4tVwodAZl+NVIr5NWrLQ7u/9MveMzuX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfAr/bQGLohuA9SXZb35bODtlSei0gFs0NJ4vLz2AtbcdfK4bK
-	B0RNhOrroQi9uNolJV531ESbxRaNsAX0tkdqmBwX9XdhEF6bQmP55rK3M3alpO9eEu08LVM8hfq
-	TdkQ2ZFRvC9b2WmLWN4hdZ3XfmXsZTL1VTPX/A2iIyQyOvbw1eM0zBdbAhqr2JXcsnse1M55Fqg
-	8=
-X-Gm-Gg: ASbGncveZmGHBptDo+Tv77qmssxLZY2TSdAbQ90bgBNh58Ja2kJovyTTLy7QyJgB7T5
-	E/vMSou0/oM8XJATDojwzzRsw93iwL8Nn9Ipc83N6rt/z8XI9vvf8HxREw1J5qNM3DXPkeYWNV0
-	6rydIPaW5sSDezNVooOg2bY3xFS2hOKOuoVb/5WEJ9aZG5kek8zHxgmBBnmbwGtIdv8U7PHmK2i
-	H9lS6iTeWhWwG6KL3LxJ7PkOaMAVPh6xbXkfTkrE36Vu+j85DsVo5a/lY9eMUgWFq1ZlyKYpnHy
-	AmmH0onvJvgx1ndvIHMN/IVr5yg/KCKBN8Kg9VyOII1VWQym23Cz1x59h/p0s06x83VzcWSK8Z+
-	wC7yBCAgiTrYDKSU+0GLJSZCJ4j72tCuwS0CP+WNLe+OwuITv9I/HiTrp
-X-Received: by 2002:ac8:4817:0:b0:4ed:e2dc:dae2 with SMTP id d75a77b69052e-4ede2dceaf3mr3509971cf.0.1762947598588;
-        Wed, 12 Nov 2025 03:39:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGmVPhiEZGgXJznil6s2OoOPh+wSp2Lp3eALqOk8bHwKQeRv7sm+9a2avLNsIZD5Y5ZW7eULg==
-X-Received: by 2002:ac8:4817:0:b0:4ed:e2dc:dae2 with SMTP id d75a77b69052e-4ede2dceaf3mr3509811cf.0.1762947598035;
-        Wed, 12 Nov 2025 03:39:58 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72fcde0779sm930551066b.40.2025.11.12.03.39.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 03:39:57 -0800 (PST)
-Message-ID: <31c391c7-3e44-43ec-82da-2c612cb5b087@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 12:39:56 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89202D7818;
+	Wed, 12 Nov 2025 11:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762947677; cv=fail; b=QkAFg10D6S/9p11T/0ynVHlRzIp2QvUnvYHhlrZGsXe4cMc1CwRcmXWphatWrvxqJdLuY3uV8TXD9UThfmdoy6jVBuqvP7Yb0JOzLDpATbRglwu7gk95jQWpUXVvjhW7K5krXeLUkJ5crSrc7WJ/w40WMNbjDZxQxUtCDVccvY8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762947677; c=relaxed/simple;
+	bh=1iECY87GBIFsr7ptJAqYOIUokqD+dvV+XZcTHIDYK5Y=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FHzNI6USeUCyJygpJyj7XXXtdDH5Fs9gX9qyP1oRKBnCwrXVtQwo9RejzoSuVJ69UqbhX7pHj1kWJQBXqHWrAEHraB31UD/CeYimvLhVzGCQz7XWsAxAPpQyGz9NtYxx0bm4ZPb+B4ATGJ6mn7J7WD9FzBQUdN7SzZmL64kh1Dw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkOWnFAr; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762947675; x=1794483675;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=1iECY87GBIFsr7ptJAqYOIUokqD+dvV+XZcTHIDYK5Y=;
+  b=MkOWnFArUkUC9fmQzMc2nFH1EkweVGyuAH3xvFvJ+e/TjjVkigLhXsC3
+   iDozonKKSXo0oXnAfMe+NvNdryA/ennKnG1b3Z7gR0QMDnuPW+2nSJWGx
+   eUAA5c4/XdcVvnP4EbSzk4m4kdLwagTuZliDdR1FxMS4A3nV/rPoDie20
+   oidsLlVj2gWefCSJKC9OOA1bAchKkS17vRKCVCZnAUkQNjB/3WIyfOI1c
+   VevODsoXr78M4DThpjIWDeTD3wqxt9V7ytIPbiKWLG9lPo3+lfW09A4KX
+   /yhXoPGTSe0bixf99KWtbIUyG2T1YcdFsdSVj3zCDwzDhpKpxvdHfoMkH
+   Q==;
+X-CSE-ConnectionGUID: XBm4qJFjRFOKo3yFvpteBg==
+X-CSE-MsgGUID: cKZoNVHXTMS+7qaNO8K2Xw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="67611268"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="67611268"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 03:41:14 -0800
+X-CSE-ConnectionGUID: 9xV3rp1AQx2cR8GZMilDKw==
+X-CSE-MsgGUID: nT60nG3EQRy63rzpWmhsvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="188456940"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 03:41:14 -0800
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 03:41:12 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 03:41:12 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.49)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 12 Nov 2025 03:41:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MJd5Vws+ST7xbfyLSmuGvL3pacVOEkztBN3IuSNK8LuVjMCkHBWYRzFkA7nHuQUC1OYQUIJtHqNbusnFEXLqbBble+jku4wq9cHBqCcML4o4cWmhp0Hrpk+SZD2xj76vH44R0Gb8s4IVBYzPE0RFsai5zYb1MtJJU83jrlQ0WfrlOarLU01jtmCgp7K0d99FklIpN0+wyM+dee9w78OzkIWVqZ/sqpiaqhwlD92ILNnVRE/nCUibPbTQfj71ZbAOD5b4i77oodGlnKke+9SLoQc6/0PZzQAy0WO2FFPKCZfXp6h26pUT31fmshIucS0KxW64nQkJ7h6rkg4tO9wUnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D3cAauSWYiktknyIM/LkCiMgO4XeQDbqVqbGjPz+83M=;
+ b=NntuV5oo8pmZUouHIUraws/tnCBLugmSLlVCC17Knwu6xZQdk9euKRWHUmRl3Ce+XIKxxsR/gwSogQlaY0BSXSfwX7Si0its1Fh65EkoRRgNucXmJ6lYduXHfM0p42+PMNKPFZEO1VkRpNhiImC71F0UiLmjLFiInQ9tVlTxlbIq8OrgF7/dRl9IImORbZ+2OlwRb3g2KAaDMMgAppFEnJNKUG8yLRMqUXZJ62Zz6JyG6H8iRO3MixMo1alnfmK+1whcQGbPOw68Cet5SyNU7IhFl7uVq0m9ydtzPGRdl9rt7hhbMM9R0ZgvNkjpdwcNfrODtxA2HKlBPifMDxtGgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8283.namprd11.prod.outlook.com (2603:10b6:806:26c::16)
+ by IA4PR11MB9250.namprd11.prod.outlook.com (2603:10b6:208:56e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 11:41:05 +0000
+Received: from SN7PR11MB8283.namprd11.prod.outlook.com
+ ([fe80::3:e0a:87af:d4b6]) by SN7PR11MB8283.namprd11.prod.outlook.com
+ ([fe80::3:e0a:87af:d4b6%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 11:41:05 +0000
+Message-ID: <930835ae-b65b-408f-84ff-d2ddaf4b58e8@intel.com>
+Date: Wed, 12 Nov 2025 12:41:00 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ASoC: Intel: sst: Replace deprecated strcpy in
+ sst_acpi_probe
+To: Thorsten Blum <thorsten.blum@linux.dev>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Liam
+ Girdwood" <liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+References: <20251111224706.87508-2-thorsten.blum@linux.dev>
+ <20251111224706.87508-4-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Cezary Rojewski <cezary.rojewski@intel.com>
+In-Reply-To: <20251111224706.87508-4-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA2P291CA0018.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1e::13) To SN7PR11MB8283.namprd11.prod.outlook.com
+ (2603:10b6:806:26c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC RFT] interconnect: qcom: implement get_bw with
- rpmh_read
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251106-topic-sm8x50-icc-read-rpmh-v1-1-d03a2e5ca5f7@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251106-topic-sm8x50-icc-read-rpmh-v1-1-d03a2e5ca5f7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=dtrWylg4 c=1 sm=1 tr=0 ts=6914720f cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=EylLml8pCTcjifbIhvwA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: ETlIVS6XLMeD415MVXbvvGLOQn4L48ch
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA5MyBTYWx0ZWRfXw4gNJoOr7vRT
- i34KzxaHVor4/VLVzZVENwkzli4B2lXWuMEPGWwVrcjAg1ITzmPaxomv4nY00m/HeCcpnw5mE7N
- 95CliLJ06xOtQnQsy9QDE/UJB11C1Zq6DjV6IbPXkLkDQZIm/8e1UVTF5k23jRcnX3930paYCUE
- /IwfdtnVKCkORd/58603sdd+h6K7UYs710/c788FWlpVBZvWjrA7CQWoxsiIbxWOEWGONj+yLry
- XJZ3csw7ZGLjICIVPCvaz938NpVa4HrMbfoT56jUxr6yfn9FF/QE/OgR6lkedDrV/KKnuFeOxl0
- MB4X7H2++wNHQtcpNb+9gdUXgfzCNNaQ3j0ExTb+tdgWx8WonF03EhjqzlxeYL/B6rybzDsqacV
- ijULQZGRnMZfbrH7DJvQRiQFCf4gyg==
-X-Proofpoint-ORIG-GUID: ETlIVS6XLMeD415MVXbvvGLOQn4L48ch
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015 adultscore=0
- impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120093
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8283:EE_|IA4PR11MB9250:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3a86847-e480-4d5f-fcf8-08de21e05d2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MkdscGlJd2lGNEpVMmJmSDY2azZDdkNxSVVTMFBCMjFvVHFpMmtPZ0V0dExE?=
+ =?utf-8?B?OGQxWkdXWlNvZm9VWG1vRDd4TjYxallBL1d3cXl4WHZYZFBSK2dTRUxWbThl?=
+ =?utf-8?B?YUdQWFFkNlJNdVBSazgreW5VUUFtZG02QUkrUTZJNFBOMDZFSnFxRmdvYXdm?=
+ =?utf-8?B?Zll5R1ZhU2Q5SVhhS215aHkyUWw5OVh0VVFTTTNsUzhDbXV6V0UzdFoxa2g1?=
+ =?utf-8?B?TDNsWUNvNVVoWU5PM0llT01zWUFpN0JTRUpkUHZ5SGgxeDV1c0dqZnhIQk92?=
+ =?utf-8?B?QjlKYSszKzJMWnlCVG9mc25FZElyZVk3c1RmWW9RcG5TRFYxM3hRVjFtR2lP?=
+ =?utf-8?B?YXMxbTdSM3F0MnZYUzBCSlZ5NThVZGVvcjFJS1NraThUVFlDKzNRSVk0MnZq?=
+ =?utf-8?B?a2pLUjB6YlBCb2xPSkRMVU9BVUkybWx3dGhvUk9IMGNDcy82ZUZETDQ5a25H?=
+ =?utf-8?B?eDFRRWgwdk1PRUdqMHcza3hYZzk5UVRFUHFyVkJUdkdvR2tSdzNWdWJuZ0pw?=
+ =?utf-8?B?R1NBVThGN3k5QXRSOWIxYUNqTTI4cWd6UDZXT2d2TW9FZTZSb2ZtWHNCNlFz?=
+ =?utf-8?B?Q2kzUEJ6YnZqMjk2K1FDL2hCWHFLMUZzNS8yWEhuS0xSV3NSVHBuaTFma1ow?=
+ =?utf-8?B?ZENmT2d0Zk8xeDZmeDYrSzgrbGJaMkpGU3BvUXVRQmpNWngzWkRhNHBrMkFK?=
+ =?utf-8?B?Zzk4SDJsNzR1bHVneXBtRWltUnJaZ2p3UXFqVHZaRzBqQjc5YlBFdDQ3WUNs?=
+ =?utf-8?B?ZjdmMVJzdkNIaGNMdVVHRkozNEdPbjVoSTJVOXZYYjhwbHdmaTRZK1B4cHps?=
+ =?utf-8?B?U3V3S1VCWklNOGttVkx5T3NYQ3lKNG9lcVhlbnppQXRUOUhuY3dQTVh3dUhI?=
+ =?utf-8?B?TWtGOUs1d3g0aUxyaTRtVlpxdVF6M01UWkczdG1VaTZJVmVnR1pPc1hLM3lx?=
+ =?utf-8?B?QjJpOEJpa3o1SzhRNHVaSEhuY3RvTDc4SjMvT2FCUDNwWDBXRUQyclp6UUJP?=
+ =?utf-8?B?ZTkzR3RJRy92dTV3NjlVZDRONDZNZjNFZFJiRVBUc1ViQm9naUZBVE5LcU84?=
+ =?utf-8?B?dzZGTXVGOEFJbG9HRTZ3dGU1T1BDelNtTlBHRnBlWEFscXB4ektYNDRSU0tt?=
+ =?utf-8?B?MjgxbkFWVlNYZHQwZi9HL3A0WFo5cE9rcDZndDMyMTNzY1AwNTdjcDIyTHlC?=
+ =?utf-8?B?VTVvUjhOZVNHbXlVdGZEeVVTazBtRmQ4MERrdThRVjRPdmk4OGo3dFV4c0pF?=
+ =?utf-8?B?a1gwaGpDKzJ0VTlyZzlaRTF2ckhJMjJnTE5vQThwNWdYRCt5Y3VYY044WWxL?=
+ =?utf-8?B?cUI1dmZ5TFRhdDZvclJ5VHlDVzk1K0o2SldyV05LTnFmT3ZqaDdvY2lBeE93?=
+ =?utf-8?B?TnpqbHBhaXVXY3EyMmN6aDkrNlR5MVN2bHBVVkt0QmQwc2hGTUNOdzhKN01a?=
+ =?utf-8?B?THVTK0pVSFRJTHJQTFlHQmJjNC83Rm1Ldjk2U2dtNlRUb0dKWXIwaFM5S3o3?=
+ =?utf-8?B?Y1V0SEVWaUphbGloY1FBUlo5V2tyS0VrSFpycDQ3WkZxa0c0K0FreHRaRWZY?=
+ =?utf-8?B?SzJOWkIvcER6aVdWSlNuM1JLbGdydnB1OWVhckwrTDlrTkI3M3oyREZla1p4?=
+ =?utf-8?B?WkgvSTEvamI2ckorOUhwb2R2R1hyWHQyVWdlYnE1amhPS2xMSzlURmhsaksv?=
+ =?utf-8?B?WVpLaWpNdDBhT29LeXByZjMydW9sbk9yS2paSHl1ZDlHdmY1eGxtU2x1eHNI?=
+ =?utf-8?B?ZmsvdmgxSWl1UTZvaEpFQThSeURZaWxkUTFlNEJIODVJbEUzZHJSakJpZXAw?=
+ =?utf-8?B?RlhGZmJta2o0RVlabHVueFE4Y3pYS0QyQnFqa2VUNHhqcnppR0QyZG1KTmlE?=
+ =?utf-8?B?alVXWGZqaUVVNlVHZ2o0L1lsUGpnayt5TzlsWlhwWXZjbmcrZEh1RmJPYzJj?=
+ =?utf-8?B?UmVpaDE2NGF0SzdOU1BVd0pqM3J3czIrUmRLb0FieTlVWG5jUW5qVjFjSm5l?=
+ =?utf-8?B?OWFsd0NNam5nPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB8283.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MjFMbjhVNjg0OGtmMFNITzJTbUMxV1VaRjJ2bmZhQ2Nna3hsM0Rzei9kSVhm?=
+ =?utf-8?B?ZElaUVVic3AyWCtyS3czbStkZWJHOXhFS1dGUjFtenFDWXpaNUNySlUreUlQ?=
+ =?utf-8?B?RStTc2UxQ0x2QjBCQkJ5QWtNcFJMZW5JUklBd1l3cm9qR001cGtPU0RRTjhW?=
+ =?utf-8?B?Ri9pMjZ0aG1ITXJrMWhKNk81ZWtyWU01bmxiWDJBSDgrRE5UV2JvcE4wd1p6?=
+ =?utf-8?B?VHMyVVYvek9EbTQzazU2Y01Yb1ZmYXRLb3RZWlFOR1NRTnN6bGJQWUhnODc2?=
+ =?utf-8?B?WTVWYXpxWDFnWWxSblVsblZDNW1TUkVER0t6VUtaOWF5T0tCWU1wVDJUVVRB?=
+ =?utf-8?B?YnRVdVR6RXIwY2hhclh3alFyZDA0U2JsUm5scmxBRnM5TWpUaU9YeGx4ak5h?=
+ =?utf-8?B?MDI0eHh5RGhReE5JbkViSTRPSUNWNDRIR1BaRGd5eDBnWEdUSDVTWjA1SEYv?=
+ =?utf-8?B?bWE0M2R3aEpTYWF2Q0w3NFlnQVN3cGhPSk16TFRURWJGdGthN0I1cUxUZlEw?=
+ =?utf-8?B?dkwxK2ZWL2N1dFl2WG9zRC8rWG1LUkl0d1ByTDlxajk0aUhjN3pZUVJ6NWQx?=
+ =?utf-8?B?OUQ0T1Yza2hLSGxNZHFOSGlra0doa0dRNlliM0ZRYTVlRXRZSThwWkMzUmhU?=
+ =?utf-8?B?dFlkZjNKMDBwNjNlWFVreTBVL1h4aEtGYVRGaGNONDZ1YmV0aERyQzVWRTNp?=
+ =?utf-8?B?YlZvaWY4blYwbzhCaVZFMVFZZjFYZFlpVGRPS1NlbXRIMEtFUm5uc01yZUtD?=
+ =?utf-8?B?ZklCbzFkMno0dkpMVDMzaHlkZ1c3c0htN2pwMTNVNzRRS0lUUXR3ODRWcTFF?=
+ =?utf-8?B?VVgzRDJwSmkwa0RaV1BXVjZqVUR5c1gwdUNqUlJuUWZ4NjI1K21xbWZQdUxX?=
+ =?utf-8?B?M29LRm4wbFMwSTNabzhhdUJ0ZWJtZ1Fma2NkT2tOc0x0OGtlUGhVT2k1Z3hS?=
+ =?utf-8?B?VmVNd1M0elBGQlJPNFR4STZKRUVRVkdiZmJyRzlNQUxnQnBMbjNQbDl1UElU?=
+ =?utf-8?B?UTJvVEVZUElSYXkyTXQ4dGVjMkpxSDlTY0xvOUp2ZzYwVlpjZWNQK0p3cXpG?=
+ =?utf-8?B?SUo3V21VaDkvbE1lY1hhQUFDNGZxRFZNRXpoV045aEJXUThNdGdJenZWVHlo?=
+ =?utf-8?B?MlZzMmt5bEtnNVJ2aUJOUHVBSU5Ja0tsL1ZrQ1EzK2N1bVRTK1UwK3lpTDFG?=
+ =?utf-8?B?VWhuR05hRVRBZ1h4ditKY0ZkSExHbDBNVERheXJkb1JZdzkrek9yTm9QNmpN?=
+ =?utf-8?B?OHloWmZiNWZUakJqQXZSR0R4SzFNNzhQNzVFQkhiNC9pRkd1aGkySm90NGJo?=
+ =?utf-8?B?VUFZc3JZL1Rvc00vcHFuREgyNURBV3A5blRrWkorSUFjNU9YS0kybEx6TlZJ?=
+ =?utf-8?B?OVRraU0vN3V6SnZnOHpBZjhybWdFLzVZcXBuUXY2Y3UxMC9zQnBZL2hSeFFO?=
+ =?utf-8?B?VHNDOXZKOXhHcE9EdUdDeThlS3pBQktXUWNpMnFheWFFcFRjT0FFcFRPMmZ3?=
+ =?utf-8?B?Z2ZKMlczeG00ODFaUUZxQ1BBMTcrZWNuS01qc3NyUktUVDJFVThkSDZTYVg5?=
+ =?utf-8?B?WklYT3FHeldNT3loTVhtcWkrZHVZWWRyVFdEanhOUWEzUzMwQkVGMzNuTU40?=
+ =?utf-8?B?ZmJjV09EL3YwUXBSVFFoQTd5RjlhaEVldVN3RVp6dUljWFdZd1N6eWJISWRM?=
+ =?utf-8?B?NTlKdXJQUjExaCtTSnhwR1FBRjdKVkNLdHVQNFMxQnlSMFY0OElaQ2JpN1pX?=
+ =?utf-8?B?d0xYS01QM0hTSmh6bHdLOFlNR2NsVUJwZFhtZ2lqMnpKdmV1eVljY3FwWFNv?=
+ =?utf-8?B?bG11M0o2VFhPRkg1aEhwNDlLc2FmbW5NZ29hZ25XY3MzcEVNM09CazN0dmxz?=
+ =?utf-8?B?VHRkdmJIUjRsMnlieHFhbERCekQ0T2RVZXA4UWR5Q3lRWXZIY0o3RkI4QVRj?=
+ =?utf-8?B?MHR1U3hDUVhkMUJYcHcwUjR4Y3NybUc2RkNrSm5ud0paNC9iMTdGZy9sYysr?=
+ =?utf-8?B?eWRIcTRXSDhFWXFIdGNhYW55Ylo2ZzRMc20zWVVKOWVDS3ZMK1ZYc0ZWQXBm?=
+ =?utf-8?B?Z3BMZ3NMdEdDbEZicmV3aDRBZjI0U2owaDFnOVovMk5Dbk9oRFNwamlnTkVG?=
+ =?utf-8?B?RFNqM2ZRam1WSFhqSit1MlRrTGEwSFhCaGtXOHpCZXBqc1p1bGV5ZWpTeVpy?=
+ =?utf-8?B?aEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3a86847-e480-4d5f-fcf8-08de21e05d2a
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8283.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 11:41:05.5174
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pMuLwM4Ape5Ofp2pFcuYI3Bq92kgELULVuY9/6j/FO4AiwK62UHFTq6FdCCgokgN9W0WUtFAoDccspqnc71cJ/brni0g7pBtcdlAf2c4Z9w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9250
+X-OriginatorOrg: intel.com
 
-On 11/6/25 5:46 PM, Neil Armstrong wrote:
-> Since we can actually read back the APPS rpmh interconnect
-> BCM votes we can actually implement the get_bw() callback
-> and provide a coherent average and peak bandwidth at probe time.
+On 2025-11-11 11:47 PM, Thorsten Blum wrote:
+> strcpy() is deprecated; use the safer strscpy() instead.
 > 
-> The benefits of that are:
-> - keep disabled BCMs disabled
-> - avoid voting unused BCMs to INT_MAX
-> 
-> If the interconnects are correctly described for a platform,
-> all the required BCMs would be voted to the maximum bandwidth
-> until sync_state is reached.
-> 
-> Since we only get the BCM vote, we need to redistribute
-> the vote values to the associated nodes. The initial BCM
-> votes are read back at probe time in order to be ready when
-> the get_bw() is called when a node is added.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
-> Depends on:
-> https://lore.kernel.org/all/20251022-add-rpmh-read-support-v2-2-5c7a8e4df601@oss.qualcomm.com/
-> ---
->  drivers/interconnect/qcom/bcm-voter.c | 36 +++++++++++++++++++++
->  drivers/interconnect/qcom/bcm-voter.h |  2 ++
->  drivers/interconnect/qcom/icc-rpmh.c  | 60 ++++++++++++++++++++++++++++++++++-
->  3 files changed, 97 insertions(+), 1 deletion(-)
+>   sound/soc/intel/atom/sst/sst_acpi.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-> index a2d437a05a11..9014bf20adad 100644
-> --- a/drivers/interconnect/qcom/bcm-voter.c
-> +++ b/drivers/interconnect/qcom/bcm-voter.c
-> @@ -261,6 +261,42 @@ void qcom_icc_bcm_voter_add(struct bcm_voter *voter, struct qcom_icc_bcm *bcm)
->  }
->  EXPORT_SYMBOL_GPL(qcom_icc_bcm_voter_add);
->  
-> +/**
-> + * qcom_icc_bcm_get_bw - get current bcm vote
-> + * @voter: voter used to query bcm
-> + * @bcm: bcm to get current vote from
-> + */
-> +void qcom_icc_bcm_get_bw(struct bcm_voter *voter,
-> +			 struct qcom_icc_bcm *bcm)
-> +{
-> +	struct tcs_cmd cmd = { .addr = bcm->addr };
-> +	int ret, i;
-> +	u64 x, y;
-> +
-> +	mutex_lock(&voter->lock);
+> diff --git a/sound/soc/intel/atom/sst/sst_acpi.c b/sound/soc/intel/atom/sst/sst_acpi.c
+> index 257180630475..73624e1b138a 100644
+> --- a/sound/soc/intel/atom/sst/sst_acpi.c
+> +++ b/sound/soc/intel/atom/sst/sst_acpi.c
+> @@ -12,6 +12,7 @@
+>   #include <linux/fs.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/slab.h>
+> +#include <linux/string.h>
+>   #include <linux/io.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/firmware.h>
+> @@ -356,7 +357,7 @@ static int sst_acpi_probe(struct platform_device *pdev)
+>   
+>   	/* Fill sst platform data */
+>   	ctx->pdata = pdata;
+> -	strcpy(ctx->firmware_name, mach->fw_filename);
+> +	strscpy(ctx->firmware_name, mach->fw_filename);
+>   
+>   	ret = sst_platform_get_resources(ctx);
+>   	if (ret)
 
-guard(mutex)(&voter->lock) will let you drop the goto
+Thank you for the fix. I'd update the title though as 'sst' is 
+confusing. It stands for Smart Sound Technology and applies to most 
+things sound/soc/intel/*.
 
-> +
-> +	rpmh_invalidate(voter->dev);
-> +
-> +	ret = rpmh_read(voter->dev, &cmd);
-> +	if (ret) {
-> +		pr_err("Error sending AMC RPMH requests (%d)\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	x = FIELD_GET(BCM_TCS_CMD_VOTE_X_MASK, cmd.data);
-> +	y = FIELD_GET(BCM_TCS_CMD_VOTE_Y_MASK, cmd.data);
-> +
-> +	/* For boot-up, fill the AMC vote in all buckets */
+Go with either 'ASoC: Intel: atom: sst: ' or just 'ASoC: Intel: atom: '. 
+In fact, I'd just merge the two patches together given that both address 
+one driver - Intel atom sound driver.
 
-This isn't a good idea, I think we should be able to get information
-from all buckets separately. I asked on the thread that introduced this
-API. I'm assuming it was hardcoded to ACTIVE_ONLY because of its use
-with the current state of the upstream regulator driver
+Given that this is a small change, feel free to append in v2:
 
-> +static int qcom_icc_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
-> +{
-> +	struct qcom_icc_node *qn = node->data;
-> +	u32 avg_max = 0;
-> +	u32 peak_max = 0;
-> +	u64 x, y;
-> +	int i;
-> +
-> +	if (!qn->num_bcms) {
-> +		*avg = INT_MAX;
-> +		*peak = INT_MAX;
-
-Since this function returns an int, maybe you could alter the core to
-check for an error and if -EOPNOTSUPP, fall back to these values (as
-it does currently if !provider->get_bw)
-> +
-> +		return 0;
-> +	}
-> +
-> +	for (i = 0; i < qn->num_bcms; ++i) {
-
-odd pre-increment
-
-> +		struct qcom_icc_bcm *bcm = qn->bcms[i];
-> +
-> +		/* Use AMC vote for boot-up */
-> +		x = bcm->vote_x[QCOM_ICC_BUCKET_AMC];
-> +		y = bcm->vote_y[QCOM_ICC_BUCKET_AMC];
-> +
-> +		/* Consider enable mask and convert to INT_MAX */
-> +		if (bcm->enable_mask) {
-> +			if (x & bcm->enable_mask)
-> +				avg_max = INT_MAX;
-> +			if (y & bcm->enable_mask)
-> +				peak_max = INT_MAX;
-> +		} else {
-> +			if (x) {
-> +				x *= bcm->aux_data.unit;
-> +				do_div(x, bcm->vote_scale);
-> +				x *= qn->buswidth * qn->channels;
-> +				do_div(x, bcm->aux_data.width);
-
-mult_frac()
-
-Konrad
+Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
 
