@@ -1,108 +1,277 @@
-Return-Path: <linux-kernel+bounces-896668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F28C50EF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:29:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55A5C50EFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 942764E10F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:29:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC6C74E70D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1D32C234F;
-	Wed, 12 Nov 2025 07:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C8F2D12EB;
+	Wed, 12 Nov 2025 07:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IklV9Kkm"
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NHJ7UbgA"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011062.outbound.protection.outlook.com [52.101.52.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E84C2C21DB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932551; cv=none; b=pLz09nAnv1ifELUyo6Xb1na92kCXB793nk/p1MbX1Ffjd7YE70jJxZvpIF6nsws+UOM439o0Tvugxzx0A+z4k1A5lN08F6jfdSXc0aJuS/xoN1OsiQNrH7yW5FbjqTjXsGq0EzDU2HuFMaR/yKWLxvDdmp1cjdl/+24wXm502vg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932551; c=relaxed/simple;
-	bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7XjrEuOk5lpa3p0wx5z/XF7f23Qf9L0MXtPmiXZqeBT3Yohromm1bg5hbd22QRts0417l/o+qZ/t1nk7T8hCxgEOu7QMEVz6owSlC5feC3rPLq4vJV4C9P15YClOUfNpL2jhCQCgtnQe8FU1TY8mt2QnpRKaAO5GiP+BmJ/28Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IklV9Kkm; arc=none smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63f9beb2730so485271d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:29:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762932548; x=1763537348; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
-        b=IklV9KkmskmVjgaZyDIsCa86GTXhekUFui1i7s1W+UH0c4Vy28po8j991YTkGsdz64
-         VHemWC1/QDr4BBEq4V4Bfp5Uq5GTg7656XM/RaiT0mea9EKCNEclFOZAmrswGbUvoodU
-         nOL8xvyqTJ5GTBCKQTqAr7eT7fvUT7GpoCKJ2eZO02fqQ7aluqLiE8TlD2MzErfUbxLI
-         rNVUK9p/gpm7DxqioWQVqFf6DLkxhgGRRd0KwpZljNeD/SYmsxrdOKYBk4FYVP2w1Ys8
-         CNJ/0gq8YU1N3VKZugFYDRwbFw8DXkN4bsOyEYSqvwfpenA/yyBxVZ4RQ6L1xq0MbXlU
-         kxCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762932548; x=1763537348;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eC7AqgZQkH9Bf8jeUIBuhznj5sAlbf4jzNtUK6FuTHY=;
-        b=jO771f0J8iXzsm8GSHuefcTFeWmVGU6/mQYVBnkfEGRh7uk5MtyEPz94yrP39QOsv3
-         83VLT2/71TFQwfEJUsuYq8InqPAjOeKWAuhey3gXT8KBNc3QgMg4BpUdPP7GEkum/aBz
-         gKCH7FZsP+voHkAYvck3jW/xCedDMGdUSXDm0lqvcoiOA65+bnMBVhisFc55E8ofUQ3i
-         mnNC9tS3EmDepohTzS6NyrrZSLNiiTsMK3/j2qc1jHK1+uxXGyGP0yKiKLEB8ZO0Gu6s
-         3b2HtmMq7L6TVLjh1MqU4aXwPxtrwKR8JXCQ2ooAIQAb/Dk04Ck6otVuJyB0ypz3PW60
-         RGVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL8FY1btfEk2efJNjKcr/aKkWzbLh5aUGriDdTONTXKwl3PkSKTjR9cUG4wen2nS4RlWzI4h27P5jvJao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhIzkqzBbdsCF1AqDs9UW4inPExFKSBPZDm6aCZYcCaDMpF2fC
-	Ma6HNhx51hjXkkKFBVSqSen4xMnt4cBIA4p7/gVpgeJPJfVvVD1cEGxvnSAZ72s/9qiD48K50eh
-	8qhmGWSzaL/vNHFtN4iDLUXR60GQ5lNU=
-X-Gm-Gg: ASbGnculQ+V5K7q9vVIGPSvVfNNtlf5PvaZHcatocsMQndLGn8WVJsl1g0FRu3jkhdm
-	YJw+gP5LGfi5nSDbVu1+V62XC1PH2OXZ9lWlTm4h0BumnwzAHoy5IA0TQVRFhtbP5s57G5By0Yi
-	7tyPzkMDutaB8AxV2SWLQfY2C1GT1Heb8kJf0221zZqTOlgGOiqMq6oJHg8Lyf5VxRS7cmnVkQz
-	k/am+QUumjE3z4I3Jn0G+daGrUw+wfODKQsuMH2vdAeluRZcy7hTCdrY01fTYYp8EZbSTLQ/23y
-	2vz0l2AOvxt4BQ1KuA==
-X-Google-Smtp-Source: AGHT+IH7KULuuRrF2Oly5Rimc+QhsJIxRJ3ajNz39rkRuKHwfzBK/tXJ3NwVa7aPrWyci+T55J/S8XdqtHfeU2E+JxQ=
-X-Received: by 2002:a05:690e:d44:b0:63e:18d6:72c1 with SMTP id
- 956f58d0204a3-64101b37d64mr1604942d50.46.1762932548401; Tue, 11 Nov 2025
- 23:29:08 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA82C2343
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762932593; cv=fail; b=AIL5iBeOo2FUofYzoCPrdG2L5DXeznApZQ9BnMfbnZZZUqBNhcFxYDQ25svKroDQdvw9JJ/NRxeISKAGN2Gy6udnjD6U3DcNl01Q3MuNFT/HxCJgKp9ZNXgKA3He5RbcIKgQcul77C/2G8DBSH6hGBl2TLfMVuEHH4eivw4ugDQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762932593; c=relaxed/simple;
+	bh=Nxe1tfHoTOjfMJmhXtdcFRuz07x6ua6wACudVvS5BlE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFdsCcpPcx8vBzdv4dFLz+VpYDXoy+GIBL/UCgEeFHZo+hCAVwe5dlnebbAjV69CvgoD4nu9UhEom5pY2kf/imeW3161Mr2xrD6/JuWA2W7gwOGpAP5zb5ELtopzl6ChHL+yug8xEJDeZPDPslKLRBxXDwsAbbMg7I9q8fkj13w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NHJ7UbgA; arc=fail smtp.client-ip=52.101.52.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EK9y9wmCPbPrEKb5R7VsmJ54sjZ0P/3wR1okXjtTO0xCM9UQN5VoM3AxOqq+rrfLYWYjTDmpSfxUVECiSbOFmrZ90ojbVqRODJkRlHTkqXzQLaxgqun7Osfp4tN8fNttU8UanmUTAWo2D7z5cYL49U088ei0HO09YbvV2jp5XyncUfWUtPSPBShK90Yyr5nINpaGlcg0x1zr9zi6A1/d/IUh0iYEFt8dZPZwH/kXZXWV4pxVmQb99Y4AjpMT1UrbaQkwLh18ynBesESq437IAoLi81trUx17OUmmSeizaCkToQ+0X1zNybGpRliVheThqyVP48ZEzJXsEdkVw7oEVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jJzT98OqCfOqfQ4+mBGYHaHE39IzIeWz1t9gHEcfyfo=;
+ b=U3V3ANnR5rlc2WZSBBeJ4rbwx71qkpFm3C5HB9KSw9+KolIuiZKwf3/pJ8eQUIgD6qereBAueORsUJ4nV8SohF3/RTmgiijmkLcsx2kBRb3JmADe2mPeqoWtwol3FtQaMysJOAYaDANZn7aJE5AJG2Cp3yNjyQ/jDGEq07S2guo66ELVaRWCSZkzyXtAVdxwUiuWetwJcaCSbsXLhCm+dInFg06PHtIhQNTdrbh0H1fV4V4nyXNp1pkpgAKJLJN3NnbXn01z2+m67IiCDXo18xcytv4ftdw8I/fxGojnfifKSJH5tgSTI6AGN/cTCm6fZLH5FRhAYSOa82lHD/nN9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=collabora.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jJzT98OqCfOqfQ4+mBGYHaHE39IzIeWz1t9gHEcfyfo=;
+ b=NHJ7UbgAyncPHjZ2TOzFCwRsyol3IWSBvhp1CwH7pSk7a5im/rdm6izX9sunpkvgRvg6BSXIWIwOJHAZ7qCPAeKkV8uu2ZMfQSYEqYvo9xjiaDQIIdRJQIZMr8On0PtmJUQitKQgCyvqDZhhL+wRCOsQuIMJhwhRSD3+y/nUQp4=
+Received: from MW4P223CA0015.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::20)
+ by SA3PR12MB7808.namprd12.prod.outlook.com (2603:10b6:806:31b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 07:29:45 +0000
+Received: from MWH0EPF000989EB.namprd02.prod.outlook.com
+ (2603:10b6:303:80:cafe::58) by MW4P223CA0015.outlook.office365.com
+ (2603:10b6:303:80::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Wed,
+ 12 Nov 2025 07:29:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ MWH0EPF000989EB.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 07:29:45 +0000
+Received: from honglei-remote.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 11 Nov
+ 2025 23:29:40 -0800
+From: Honglei Huang <honglei1.huang@amd.com>
+To: <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
+	<christian.koenig@amd.com>, <Ray.Huang@amd.com>
+CC: <dmitry.osipenko@collabora.com>, <Xinhui.Pan@amd.com>,
+	<airlied@gmail.com>, <daniel@ffwll.ch>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <akpm@linux-foundation.org>, <honghuang@amd.com>
+Subject: [RFC PATCH 0/5] drm/amdkfd: Add batch SVM range registration support
+Date: Wed, 12 Nov 2025 15:29:05 +0800
+Message-ID: <20251112072910.3716944-1-honglei1.huang@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112031631.2315651-1-kartikey406@gmail.com> <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
-In-Reply-To: <2a10f8c9-dbdf-7bac-b387-e134890983df@google.com>
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-Date: Wed, 12 Nov 2025 12:58:57 +0530
-X-Gm-Features: AWmQ_bnwRTMjo11VJ1_SlN2ozfCDVzCWYVVmlr2dEKduOizviC1FKYdbRb3--IE
-Message-ID: <CADhLXY4qMvBTqirNmzgiPszn8vCkCFV6GGeDkNpxVDi32uhzEw@mail.gmail.com>
-Subject: Re: [PATCH] mm/memfd: clear hugetlb pages on allocation
-To: Hugh Dickins <hughd@google.com>
-Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
-	baolin.wang@linux.alibaba.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989EB:EE_|SA3PR12MB7808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a79b523-ef66-432b-19ba-08de21bd40d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tVoLD5UVlBV+XUttBtYUWBeW0cYMwjeIJcm163jaA9kSbQg2ej5BAh7ym9wc?=
+ =?us-ascii?Q?PserIJZSsC+YT+mILqqjP1y1dqDv/bALZZkokfQSJFxkAy3Ut2dobWrXzNR+?=
+ =?us-ascii?Q?VIxkAp+hcXbor0xXNwU2KqOSXKsRKXtCEPhC/zEhHvsmMuyuldc78dDN8Cg4?=
+ =?us-ascii?Q?uq6gjaLsN21F7Um3diIpS5J1YIHJjF9Lqdh9z1tcfGgq+gXr/uP+nfwY+sbU?=
+ =?us-ascii?Q?OfzwENOhvozt3LHOoZE/jpOARjI50VFqQ5RsIf7hDBYDYlkrduCL1vjwCZrE?=
+ =?us-ascii?Q?XtHvVnOn4TBE7tP3lXJUIasU9v6pogLwQ8oTw7RYVHJNS2A2hpn5B+TBhtXW?=
+ =?us-ascii?Q?YoRV3bd4vRTVMNrCSmqNLSbv3HMUqYJ0MdrukLXAuNpgQPdMdrH8EfYjjiMF?=
+ =?us-ascii?Q?jicmf7Ie6G6UbCdrvKJuidjUxy0X71zYIAwXWh0A1DX9geSIjkahKU6iMytY?=
+ =?us-ascii?Q?5eoCTN06r0i2pkV/sWnvAbRuVF3glMuWjcTiNFUQczTYcuZ6c3JJyZJXjzF1?=
+ =?us-ascii?Q?IPwvjQlLYuGXyZAITNMsJWkgfrlcsaJEGi8/HnAs2Sas+vuLI/4Nmg4KD23p?=
+ =?us-ascii?Q?VqBX++qdrttahAgjSQBSUTi+L+4YanNWSmMsWiGsnea0I+ggCWg2pjIpg00i?=
+ =?us-ascii?Q?BYn++Sr3zyuXeo4RUQVh+wZjRAN32W/vp6vf+q0ev5qfPhMg1nDO83w+Jqs9?=
+ =?us-ascii?Q?N7QfO67H89q5i2ZY5SjYqJNX7vr62L4VK4bfj+QKs8cwVUmlKFG1rGYRz7ap?=
+ =?us-ascii?Q?8T2uft0HsbY4eQf6v+C8PBUl6to3KwQ0XSqIbrPnrTdQ7jv18P7oyLKv8h79?=
+ =?us-ascii?Q?wjl6ZvW7rUqCei8DQPpd+AxSWyycEazra/6OfBHgiozhAdnAJtH6e0hjJZc1?=
+ =?us-ascii?Q?iSBo/MOoqPFrgxZ12mVAYFfwNBEp9mOOGUuw2GueaPePTnb+WHcwSN8N7AGt?=
+ =?us-ascii?Q?dcYAojxvUrruP8oOZQGbrk8n3KwsN+uqfDLZFeyM0+Y1TLxQRqgtyEKRLAsV?=
+ =?us-ascii?Q?b3PUlgpaX725yWzagUPRP8ykcL+hNUPTuKT3Byt/7SYeCDeWK983IB1MQW/H?=
+ =?us-ascii?Q?Zk7UEYrr114aDBydd49JJCGtXN6j93oSIVOTOMWshkvT8NHoB1QjexsyqEg+?=
+ =?us-ascii?Q?NOvA8/2AzM9Tt3z55KHLTgrzzyMjNVbf8HkfledUON/4fAlhLSw0wKAkWbpm?=
+ =?us-ascii?Q?x7u5NXBpTD84pLJLNIgWcIsZ4t+K3Q2pwa1miAFJvsrsFAWzvrlNfMHCcmrb?=
+ =?us-ascii?Q?8fKe2lUviJzZ2+/Q4yKAtw43lo1/1uAP6v1SlZ4V3tPwMP20E1H9DvkBvj5e?=
+ =?us-ascii?Q?orZ9GnhNOaxwxdtbtAOyQVFYUK7A+JCIghAQ/JTrIPvmgcelK4HbvKhTulO2?=
+ =?us-ascii?Q?ekkJwbLkHrhpQHxrbHpPSdAYve8krUl7/qIFiVQqXKI7rbvveauLIlDa+3vH?=
+ =?us-ascii?Q?V0SZjPOTlkt39iUapRPzi0RYYH5UUc5ZiwHYcb2B1vKr8klI9YWv9sjGy3Un?=
+ =?us-ascii?Q?suDVU377gtQ65YQA4ha569UU0rrQSUrHOgKFLQZIv4fTKga/wvY/k/3Ef+DB?=
+ =?us-ascii?Q?U7YQ6ao4Rz9e3GA0sHA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 07:29:45.1906
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a79b523-ef66-432b-19ba-08de21bd40d2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989EB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7808
 
-Hi Hugh,
+Hi all,
 
-Thank you for the quick review and for looping in the hugetlb maintainers!
+This RFC patch series introduces a new mechanism for batch registration of
+multiple non-contiguous SVM (Shared Virtual Memory) ranges in a single ioctl
+call. The primary goal of this series is to start a discussion about the best
+approach to handle scattered user memory allocations in GPU workloads.
 
-You raise good points about the approach. I chose explicit zeroing in
-memfd_alloc_folio() because hugetlb_reserve_pages() can allocate pages
-without seeing the __GFP_ZERO flag, but I'm happy to revise if the
-hugetlb maintainers prefer a different approach.
+Background and Motivation
+==========================
 
-I'll add the Fixes: 89c1905d9c14 tag and Cc: stable in v2.
+Current applications using ROCm/HSA often need to register many scattered
+memory buffers (e.g., multiple malloc() allocations) for GPU access. With the
+existing AMDKFD_IOC_SVM ioctl, each range must be registered individually,
+leading to:
+- Blocking issue in some special use cases with many memory ranges
+- High system call overhead when dealing with dozens or hundreds of ranges
+- Inefficient resource management
+- Complexity in userspace applications
 
-Should I send v2 now with just the tag added, or wait for feedback from
-Muchun/Oscar/David on the overall approach first?
+Use Case Example
+================
 
-Thanks,
-Deepanshu
+Consider a typical ML/HPC workload that allocates 100+ small buffers across
+different parts of the address space. Currently, this requires 100+ separate
+ioctl calls. The proposed batch interface reduces this to a single call.
+
+Paravirtualized environments exacerbate this issue, as KVM's memory backing
+is often non-contiguous at the host level. In virtualized environments, guest
+physical memory appears contiguous to the VM but is actually scattered across
+host memory pages. This fragmentation means that what appears as a single
+large allocation in the guest may require multiple discrete SVM registrations
+to properly handle the underlying host memory layout, further multiplying the
+number of required ioctl calls.
+
+Current Implementation - A Workaround Approach
+===============================================
+
+This patch series implements a WORKAROUND solution that pins user pages in
+memory to enable batch registration. While functional, this approach has
+several significant limitations:
+
+**Major Concern: Memory Pinning**
+- The implementation uses pin_user_pages_fast() to lock pages in RAM
+- This defeats the purpose of SVM's on-demand paging mechanism
+- Prevents memory oversubscription and dynamic migration
+- May cause memory pressure on systems with limited RAM
+- Goes against the fundamental design philosophy of HMM-based SVM
+
+**Known Limitations:**
+1. Increased memory footprint due to pinned pages
+2. Potential for memory fragmentation
+3. No support for transparent huge pages in pinned regions
+4. Limited interaction with memory cgroups and resource controls
+5. Complexity in handling VMA operations and lifecycle management
+6. May interfere with NUMA optimization and page migration
+
+Why Submit This RFC?
+====================
+
+Despite the limitations above, I am submitting this series to:
+
+1. **Start the Discussion**: I want community feedback on whether batch
+   registration is a useful feature worth pursuing.
+
+2. **Explore Better Alternatives**: Is there a way to achieve batch
+   registration without pinning? Could I extend HMM to better support
+   this use case?
+
+3. **Understand Trade-offs**: For some workloads, the performance benefit
+   of batch registration might outweigh the drawbacks of pinning. I'd
+   like to understand where the balance lies.
+
+Questions for the Community
+============================
+
+1. Are there existing mechanisms in HMM or mm that could support batch
+   operations without pinning?
+
+2. Would a different approach (e.g., async registration, delayed validation)
+   be more acceptable?
+
+Alternative Approaches Considered
+==================================
+
+I've considered several alternatives:
+
+A) **Pure HMM approach**: Register ranges without pinning, rely entirely on
+
+B) **Userspace batching library**: Hide multiple ioctls behind a library.
+
+Patch Series Overview
+=====================
+
+Patch 1: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute type
+Patch 2: Define data structures for batch SVM range registration
+Patch 3: Add new AMDKFD_IOC_SVM_RANGES ioctl command
+Patch 4: Implement page pinning mechanism for scattered ranges
+Patch 5: Wire up the ioctl handler and attribute processing
+
+Testing
+=======
+
+The series has been tested with:
+- Multiple scattered malloc() allocations (2-2000+ ranges)
+- Various allocation sizes (4KB to 1G+)
+- GPU compute workloads using the registered ranges
+- Memory pressure scenarios
+- OpecnCL CTS in KVM guest environment
+- HIP catch tests in KVM guest environment
+- Some AI applications like Stable Diffusion, ComfyUI, 3B LLM models based
+  on HuggingFace transformers
+
+I understand this approach is not ideal and are committed to working on a
+better solution based on community feedback. This RFC is the starting point
+for that discussion.
+
+Thank you for your time and consideration.
+
+Best regards,
+Honglei Huang
+
+---
+
+Honglei Huang (5):
+  drm/amdkfd: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute
+  drm/amdkfd: Add SVM ranges data structures
+  drm/amdkfd: Add AMDKFD_IOC_SVM_RANGES ioctl command
+  drm/amdkfd: Add support for pinned user pages in SVM ranges
+  drm/amdkfd: Wire up SVM ranges ioctl handler
+
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |  67 +++++++++++
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c     | 232 +++++++++++++++++++++++++++++--
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.h     |   3 +
+ include/uapi/linux/kfd_ioctl.h           |  52 +++++++-
+ 4 files changed, 348 insertions(+), 6 deletions(-)
 
