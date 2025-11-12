@@ -1,212 +1,160 @@
-Return-Path: <linux-kernel+bounces-898034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A206C54381
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:44:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D28C5430F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EA94231A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27BB1421327
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7183D3570C4;
-	Wed, 12 Nov 2025 19:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45BB34DB63;
+	Wed, 12 Nov 2025 19:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0t8G89EN"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ak/O6kmU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1395352925
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCE934D914
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975476; cv=none; b=UpM/6cRsjKuMffeuNlDXnu2b2+pKJXSByHKDMXixWy7JPrydNhrveMICGjBsn6oDLtsoIdi2vqVRCEVIlEIpSQitkOYwLM/sYENknSBr/A3L3vIMIezKkDXDzovXp+AsOiO3dMdT/WyysMRYwEXQPr5T4wFecM+OYNtroKGlj3g=
+	t=1762975466; cv=none; b=ZUw39wBvhsmc4V0XnQkVljdTpRkic7N3hE5qQ3WaE92iWU7ntRg59UHCHS7bcErKWZm0QWJw2fdBLyvt6NKIM8W65EcWsl/fRKiN5jxY3TQbjgtF0uVd+30cVZNhKJ2TiRyQ3U6Uejr61Atp+GpwgEGHrZ7Fumj6SimRPPEwq1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975476; c=relaxed/simple;
-	bh=toNGEDGM2fDo8bSkeyRBZN131/gcqcXF1zPXs1SMotM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=S1NhYGwGOrh/eNYtHtXv1vtwc4wGe0gp9kkFDAp3bbGOTT8X1L4kjAphpNWBfoh3X3J739wdfBHCFiuA20JzL7A9qN+bx8hmLI4Swpy3t/xk8b6xAjxci3qf5YzUe6dimIMvsJfrqgjCSetu/FmKOEGfOdMYjQCe6IyRhgx/JsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lrizzo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0t8G89EN; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lrizzo.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-64165abd7ffso17741a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:24:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762975473; x=1763580273; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc56Im0L/wPheTuphZBEmtz1ndMMkc1rQdJZlfQeq+U=;
-        b=0t8G89ENKBnhFiDLYda3FT79chNWlGLJUShyVKb1Nhmsq2Mu0eIFNwUM/fvuuFwkOU
-         aCvpv8+1CJciltNNyewOfxg3b4D7BhSZFuJNxyC8MFGDWH9hU8cN+g9JvnjIzlCBc5AB
-         8C6pA0T6DCH/ScTfaFAUsV1KkLDLZUUJ5QbrB8G2dzXYVlkH00Om184Kl850423xpIBH
-         Smu4x/N82AM+mKjar2hs7BW3Zae8VKtPAmZ7gRyg1mb13PDDRwjDc+/HV5/Pf4acvsXE
-         fOHntq32xpOLPC6ef2rl9CA0r4YTcF6dBQtd3X1BCuuGNmcYzEXOLHwP4SnLR+hzIg0j
-         ku8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975473; x=1763580273;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc56Im0L/wPheTuphZBEmtz1ndMMkc1rQdJZlfQeq+U=;
-        b=LJt4lG7g0E1X+zVjypCyvlj+KVBMyyh33kVTzvY9GB6ueesweCRWuwBLwN0XHBZ12o
-         5B5V4Zz57MVpWxtVE1EppRdCrjnVL74fQ11i6LitkPyfHYBZW+caee325EmWatANyKJT
-         UzRTJUXH37pQq8JPj8ioQKzw/WkGggWQEUuuuVnCFnZkxAfK6M1gxahqjBJKBE9ENzzB
-         2HccNCvS5bHcDFBfj0x6n8Gd/wQx6SZkaNOFForter1B0t5ut1NT3kSbisQYfA+Aosv9
-         ys2k12Op3iCIImqqFRGIno0Y8BDFW7+JCRwKNaJ6KfR5DdSeki2flf35H/hIjtXbH8JK
-         dj5Q==
-X-Gm-Message-State: AOJu0YyiGK20fxtQQU/ZWQ0DuBN6LUYT5US2ooCF108mAZLJ5WI6m4mn
-	HCViSRmoDb2YdZXnDYrRnXxm4r3OuiLG8au7zYx4jjafnrZ89k52QFxFh3JqX0xH97ttPanGY43
-	sn2v+dg==
-X-Google-Smtp-Source: AGHT+IHy1JZdLmmhLtppnkVtk92yU/GzqkzRArhgbpy6IgXzyGv+2/u+PlsYwaDikLZmzfb52j6h4XAZ/GY=
-X-Received: from edhr5.prod.google.com ([2002:a50:8d85:0:b0:641:92ae:b599])
- (user=lrizzo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:1449:b0:640:b8a0:1aad
- with SMTP id 4fb4d7f45d1cf-6431a39287emr4098002a12.6.1762975473032; Wed, 12
- Nov 2025 11:24:33 -0800 (PST)
-Date: Wed, 12 Nov 2025 19:24:08 +0000
-In-Reply-To: <20251112192408.3646835-1-lrizzo@google.com>
+	s=arc-20240116; t=1762975466; c=relaxed/simple;
+	bh=VWlJVlua6iS1JCewUB1BVWxoLPN5wEEPRegrFQ2V3zY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JG5GD+mQO8EJcClHPO2izP5HyeZlW1RU36mjsrVclrshgm4RpRsKN2B4bvUWg+idina316XoAxYNJQDmI8rmeVTaViwPWnt1r6I+pfi0ZW8OyQ5iCNK8idJGiRKBIa9vOSpbeDpndX+L45z3aMInqv0E3ceR1PX7CrGI/rHk7No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ak/O6kmU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762975463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U2VxMPfPM1mRBBE94HE3R7FECDA19LXKHeo3VGwgz2c=;
+	b=ak/O6kmUl0ORtzaw+OCSGKfcPAT6gJ6NE52W4r0RWzDaAnraIHcAD2TZXE4+8Hoa3PMZKk
+	olkOh3IIveUabEWXQWCBjBA3kDEbUqGriKI4/PJWRJtL1EeDpWNcr89G3IaOYA3g/tfdcd
+	rBgxEG0FU9ttdZCAsJR/sGVRzqpJASk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-68-1KmoTz2oORq_7iFYQiQcbA-1; Wed,
+ 12 Nov 2025 14:24:19 -0500
+X-MC-Unique: 1KmoTz2oORq_7iFYQiQcbA-1
+X-Mimecast-MFC-AGG-ID: 1KmoTz2oORq_7iFYQiQcbA_1762975458
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9BA718001D1;
+	Wed, 12 Nov 2025 19:24:17 +0000 (UTC)
+Received: from [10.44.32.66] (unknown [10.44.32.66])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 65F1030044E9;
+	Wed, 12 Nov 2025 19:24:15 +0000 (UTC)
+Message-ID: <45a93065-eaaa-4b18-90e0-e1d9cceb91b4@redhat.com>
+Date: Wed, 12 Nov 2025 20:24:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112192408.3646835-1-lrizzo@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112192408.3646835-7-lrizzo@google.com>
-Subject: [PATCH 6/6] genirq: soft_moderation: implement per-driver defaults
- (nvme and vfio)
-From: Luigi Rizzo <lrizzo@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>, 
-	Luigi Rizzo <rizzo.unipi@gmail.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Sean Christopherson <seanjc@google.com>, 
-	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Luigi Rizzo <lrizzo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/6] dpll: zl3073x: Store raw register values
+ instead of parsed state
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org
+Cc: Petr Oros <poros@redhat.com>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Michal Schmidt <mschmidt@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20251111181243.4570-1-ivecera@redhat.com>
+ <20251111181243.4570-2-ivecera@redhat.com>
+ <886723c3-ff9e-43cf-a1da-021f1ff088ab@linux.dev>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <886723c3-ff9e-43cf-a1da-021f1ff088ab@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Introduce helpers to implement per-driver module parameters to enable
-moderation at boot/probe time.
+On 11/12/25 3:12 PM, Vadim Fedorenko wrote:
+> On 11/11/2025 18:12, Ivan Vecera wrote:
+>> The zl3073x_ref, zl3073x_out and zl3073x_synth structures
+>> previously stored state that was parsed from register reads. This
+>> included values like boolean 'enabled' flags, synthesizer selections,
+>> and pre-calculated frequencies.
+>>
+>> This commit refactors the state management to store the raw register
+>> values directly in these structures. The various inline helper functions
+>> are updated to parse these raw values on-demand using FIELD_GET.
+>>
+>> Reviewed-by: Petr Oros <poros@redhat.com>
+>> Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>> ---
+>>   drivers/dpll/zl3073x/core.c | 81 ++++++++++++-------------------------
+>>   drivers/dpll/zl3073x/core.h | 61 ++++++++++++++++------------
+>>   2 files changed, 60 insertions(+), 82 deletions(-)
+>>
+>> diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
+>> index e42e527813cf8..50c1fe59bc7f0 100644
+>> --- a/drivers/dpll/zl3073x/core.c
+>> +++ b/drivers/dpll/zl3073x/core.c
+>> @@ -598,25 +598,22 @@ int zl3073x_write_hwreg_seq(struct zl3073x_dev 
+>> *zldev,
+>>    * @zldev: pointer to zl3073x_dev structure
+>>    * @index: input reference index to fetch state for
+>>    *
+>> - * Function fetches information for the given input reference that are
+>> - * invariant and stores them for later use.
+>> + * Function fetches state for the given input reference and stores it 
+>> for
+>> + * later user.
+>>    *
+>>    * Return: 0 on success, <0 on error
+>>    */
+>>   static int
+>>   zl3073x_ref_state_fetch(struct zl3073x_dev *zldev, u8 index)
+>>   {
+>> -    struct zl3073x_ref *input = &zldev->ref[index];
+>> -    u8 ref_config;
+>> +    struct zl3073x_ref *ref = &zldev->ref[index];
+>>       int rc;
+>>       /* If the input is differential then the configuration for N-pin
+>>        * reference is ignored and P-pin config is used for both.
+>>        */
+>> -    if (zl3073x_is_n_pin(index) &&
+>> -        zl3073x_ref_is_diff(zldev, index - 1)) {
+>> -        input->enabled = zl3073x_ref_is_enabled(zldev, index - 1);
+>> -        input->diff = true;
+>> +    if (zl3073x_is_n_pin(index) && zl3073x_ref_is_diff(zldev, index - 
+>> 1)) {
+>> +        memcpy(ref, &zldev->ref[index - 1], sizeof(*ref));
+> 
+> Oh, it's not obvious from the code that it's actually safe, unless
+> reviewer remembers that N-pins have only even indexes.
 
-As an example, use the helpers in nvme and vfio drivers.
+Would it be helpful to add here the comment describing that is safe and
+why?
 
-To test, boot a kernel with
+> Have you thought of adding an abstraction for differential pair pins?
 
-${driver}.soft_moderation=1 # enables moderation.
+No, zl3073x_ref represents mailbox for HW reference... Here, I’m just
+following the datasheet, which states: "If the P-pin is marked as
+differential then some content of the mailbox for N-pin is ignored and
+is inherited from the P-pin".
+For now, the content of zl3073x_ref is the inherited one, but this may
+change in the future.
 
-and verify with "cat /proc/irq/soft_moderation" that
-the counters increase.
+The abstraction for differential pin pairs is actually handled in
+dpll.c, where only a single dpll_pin is registered for each such pair.
 
-Change-Id: Iaad4110977deb96df845501895e0043bd93fc350
----
- drivers/nvme/host/pci.c           |  3 +++
- drivers/vfio/pci/vfio_pci_intrs.c |  3 +++
- include/linux/interrupt.h         | 13 +++++++++++++
- kernel/irq/irq_moderation.c       | 11 +++++++++++
- 4 files changed, 30 insertions(+)
-
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 72fb675a696f4..b9d7bce30061f 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -72,6 +72,8 @@
- static_assert(MAX_PRP_RANGE / NVME_CTRL_PAGE_SIZE <=
- 	(1 /* prp1 */ + NVME_MAX_NR_DESCRIPTORS * PRPS_PER_PAGE));
- 
-+DEFINE_IRQ_MODERATION_MODE_PARAMETER;
-+
- static int use_threaded_interrupts;
- module_param(use_threaded_interrupts, int, 0444);
- 
-@@ -1989,6 +1991,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid, bool polled)
- 		result = queue_request_irq(nvmeq);
- 		if (result < 0)
- 			goto release_sq;
-+		IRQ_MODERATION_SET_DEFAULT_MODE(pci_irq_vector(to_pci_dev(dev->dev), vector));
- 	}
- 
- 	set_bit(NVMEQ_ENABLED, &nvmeq->flags);
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 30d3e921cb0de..e54d88cfe601d 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -22,6 +22,8 @@
- 
- #include "vfio_pci_priv.h"
- 
-+DEFINE_IRQ_MODERATION_MODE_PARAMETER;
-+
- struct vfio_pci_irq_ctx {
- 	struct vfio_pci_core_device	*vdev;
- 	struct eventfd_ctx		*trigger;
-@@ -317,6 +319,7 @@ static int vfio_intx_enable(struct vfio_pci_core_device *vdev,
- 		vfio_irq_ctx_free(vdev, ctx, 0);
- 		return ret;
- 	}
-+	IRQ_MODERATION_SET_DEFAULT_MODE(pdev->irq);
- 
- 	return 0;
- }
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 007201c8db6dd..c7d68d8ec49d7 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -879,12 +879,25 @@ void irq_moderation_init_fields(struct irq_desc *desc);
- /* add/remove /proc/irq/NN/soft_moderation */
- void irq_moderation_procfs_entry(struct irq_desc *desc, umode_t umode);
- 
-+/* helpers for per-driver moderation mode settings */
-+#define DEFINE_IRQ_MODERATION_MODE_PARAMETER		\
-+	static bool soft_moderation;			\
-+	module_param(soft_moderation, bool, 0644);	\
-+	MODULE_PARM_DESC(soft_moderation, "0: off, 1: disable_irq")
-+
-+void irq_moderation_set_mode(int irq, bool mode);
-+#define IRQ_MODERATION_SET_DEFAULT_MODE(_irq)		\
-+	irq_moderation_set_mode(_irq, READ_ONCE(soft_moderation))
-+
- #else   /* empty stubs to avoid conditional compilation */
- 
- static inline void irq_moderation_percpu_init(void) {}
- static inline void irq_moderation_init_fields(struct irq_desc *desc) {}
- static inline void irq_moderation_procfs_entry(struct irq_desc *desc, umode_t umode) {};
- 
-+#define DEFINE_IRQ_MODERATION_MODE_PARAMETER
-+#define IRQ_MODERATION_SET_DEFAULT_MODE(_irq)
-+
- #endif
- 
- /*
-diff --git a/kernel/irq/irq_moderation.c b/kernel/irq/irq_moderation.c
-index 672e161ecf29e..3b3962dae33d1 100644
---- a/kernel/irq/irq_moderation.c
-+++ b/kernel/irq/irq_moderation.c
-@@ -83,6 +83,10 @@ static bool enable_posted_msi;
-  *
-  *    echo "on" > /proc/irq/NN/soft_moderation # use "off" to disable
-  *
-+ * For selected drivers, the default can also be supplied via module parameters
-+ *
-+ *	${DRIVER}.soft_moderation=1
-+ *
-  * === MONITORING ===
-  *
-  * cat /proc/irq/soft_moderation shows per-CPU and global statistics.
-@@ -302,6 +306,13 @@ static void set_moderation_mode(struct irq_desc *desc, bool mode)
- 	}
- }
- 
-+/* irq_to_desc is not exported. Wrap it in this function for a specific use. */
-+void irq_moderation_set_mode(int irq, bool mode)
-+{
-+	set_moderation_mode(irq_to_desc(irq), mode);
-+}
-+EXPORT_SYMBOL(irq_moderation_set_mode);
-+
- #pragma clang diagnostic error "-Wformat"
- /* Print statistics */
- static int moderation_show(struct seq_file *p, void *v)
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+Ivan
 
 
