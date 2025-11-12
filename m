@@ -1,101 +1,154 @@
-Return-Path: <linux-kernel+bounces-897584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9C7C533CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:59:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EFCC53257
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88E79505109
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:37:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF65E351C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCED29B78F;
-	Wed, 12 Nov 2025 15:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EZJyTJUj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F1C2750E6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A06302CD7;
+	Wed, 12 Nov 2025 15:38:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101D269811;
+	Wed, 12 Nov 2025 15:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961831; cv=none; b=aTumvvZSZXsJ9YpqY3cfsfDU+03CbxHsk0fr0UxKjg164c760O3RLrX4nm9fuHV0guYKRUEW0j1SoE84qzY5kuh4C4HKDXhbb/svJ5cLbd4VgqUSLKjPrukAgeDnCG0wpwHtmFTawp4Ywy/gM6zlmQR0voIc1MCRITNYcwrOVgk=
+	t=1762961880; cv=none; b=ShWHSTybVGZoHCZgCC7nmiwtfu+I1Skb3fldtIlV56UzYK1vKsSwbX5NUKI7c2gzSuSKdooMHKzAzdKF6nem7DBBd+M1DgjibDj0KG2qTdLopNBqJKfBXUR28GxkZcjuRqFp7liO7p28EVlW/WyUojdaxJ32mr44rtw75khBq20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961831; c=relaxed/simple;
-	bh=El9v2YHou57F4ZelpceI4moqozxDnwwk7sgNbOY1u4A=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=FuaIRdKK8y059z50X+E6akbDPEaYCJryu30TFUqZK2s241W+JSfdbl3GGevw8s+yFu/QtPvL7rvvWG08vM5AAISKujjRB+k39Ww5huTaEbtAUNbMJriUgxYRxn/yyCyWizo+PpKDGhrtUsyBnCfmhAK1rEd8+8Xx8e6w7m/hVk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EZJyTJUj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762961828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=El9v2YHou57F4ZelpceI4moqozxDnwwk7sgNbOY1u4A=;
-	b=EZJyTJUjPTmVlCy9yV2kJZIvUfxKxBMjf3IVVCXUnjxru/cDj8x7KJv+oWfsESxc9OSaii
-	YK/+KMJO5LozcmrGXC0rDVSBgUXXNen1AcbqaIPR0APdIyF8h8yylwx4hns8OlcyLiGLIG
-	TnChU/7mzgNVCdYdJXIeM+tgtRhO3gs=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-55-T9BcvPaAPIG20bMTCY_0nw-1; Wed,
- 12 Nov 2025 10:37:06 -0500
-X-MC-Unique: T9BcvPaAPIG20bMTCY_0nw-1
-X-Mimecast-MFC-AGG-ID: T9BcvPaAPIG20bMTCY_0nw_1762961823
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E584195606D;
-	Wed, 12 Nov 2025 15:37:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.87])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C454830044E9;
-	Wed, 12 Nov 2025 15:36:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <e624c242-b297-4bb7-a76a-cbb18b027472@suse.com>
-References: <e624c242-b297-4bb7-a76a-cbb18b027472@suse.com> <20251111154923.978181-1-petr.pavlu@suse.com> <20251111154923.978181-3-petr.pavlu@suse.com> <922480ff44bda3b6ecfda1ae780c659644560f94.camel@HansenPartnership.com>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: dhowells@redhat.com,
-    James Bottomley <James.Bottomley@HansenPartnership.com>,
-    David Woodhouse <dwmw2@infradead.org>,
-    Luis Chamberlain <mcgrof@kernel.org>,
-    Daniel Gomez <da.gomez@kernel.org>,
-    Sami Tolvanen <samitolvanen@google.com>,
-    Aaron Tomlin <atomlin@atomlin.com>, keyrings@vger.kernel.org,
-    linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sign-file: Remove support for signing with PKCS#7
+	s=arc-20240116; t=1762961880; c=relaxed/simple;
+	bh=ehcjdwzwHqCLwN5zy3PgTPFC6JJphL3yRBrEu05kED8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mshUWqZ2r5qbc6RDtpjKNtkwncaz98rRxXQLXjewYWOQeKV2cf6hvpBqDGWux+uqN4cjILBTIVYs60aJZ3NThACo3n7sT7M0loITb681iXAqSiXHOQTc7i8EfZC3Zr1lSiJR3AsYY8BAKcUx9V2og0W+9cIF0Pm8+WyMLXfNfJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17ED01515;
+	Wed, 12 Nov 2025 07:37:50 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2670E3F66E;
+	Wed, 12 Nov 2025 07:37:53 -0800 (PST)
+Message-ID: <83ba6e8f-30be-4e82-ae1f-2443a0f16d3c@arm.com>
+Date: Wed, 12 Nov 2025 15:37:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1234919.1762961817.1@warthog.procyon.org.uk>
-Date: Wed, 12 Nov 2025 15:36:57 +0000
-Message-ID: <1234920.1762961817@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ "james.morse@arm.com" <james.morse@arm.com>
+Cc: "amitsinght@marvell.com" <amitsinght@marvell.com>,
+ "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dakr@kernel.org" <dakr@kernel.org>,
+ "dave.martin@arm.com" <dave.martin@arm.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "gshan@redhat.com" <gshan@redhat.com>,
+ "guohanjun@huawei.com" <guohanjun@huawei.com>,
+ "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+ "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+ "kobak@nvidia.com" <kobak@nvidia.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "lenb@kernel.org" <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "quic_jiles@quicinc.com" <quic_jiles@quicinc.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "rohit.mathew@arm.com" <rohit.mathew@arm.com>,
+ "scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
+ "sdonthineni@nvidia.com" <sdonthineni@nvidia.com>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "xhao@linux.alibaba.com" <xhao@linux.alibaba.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-11-ben.horgan@arm.com>
+ <OSZPR01MB879857F2126672D1EADA04668BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <OSZPR01MB879857F2126672D1EADA04668BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Petr Pavlu <petr.pavlu@suse.com> wrote:
+Hi Shaopeng,
 
-> In practice, since distributions now typically sign modules with SHA-2, for
-> which sign-file already required CMS API support, removing the USE_PKCS7
-> code shouldn't cause any issues.
+On 11/12/25 07:22, Shaopeng Tan (Fujitsu) wrote:
+> Hello Ben,
+> 
+>> From: James Morse <james.morse@arm.com>
+>>
+>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may only be
+>> accessible from those CPUs, and they may not be online.
+>> Touching the hardware early is pointless as MPAM can't be used until the
+>> system-wide common values for num_partid and num_pmg have been
+>> discovered.
+>>
+>> Start with driver probe/remove and mapping the MSC.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>> Tested-by: Peter Newman <peternewman@google.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+>> ---
+[...]
+>> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device
+>> +*pdev) {
+>> +	int err;
+>> +	u32 tmp;
+>> +	struct mpam_msc *msc;
+>> +	struct resource *msc_res;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +	msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+>> +	if (!msc)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	err = devm_mutex_init(dev, &msc->probe_lock);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+>> +	err = devm_mutex_init(dev, &msc->part_sel_lock);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+>> +	msc->id = pdev->id;
+>> +	msc->pdev = pdev;
+>> +	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
+>> +	INIT_LIST_HEAD_RCU(&msc->ris);
+>> +
+>> +	err = update_msc_accessibility(msc);
+>> +	if (err)
+>> +		return ERR_PTR(err);
+> 
+> Since the return value of update_msc_accessibility(msc) is always 0,
+> this check is unnecessary.
 
-We're looking at moving to ML-DSA, and the CMS support there is slightly dodgy
-at the moment, so we need to hold off a bit on this change.
+Yes, I've changed update_msc_accessibility() to return void.
+> 
+> Best regards,
+> Shaopeng TAN
+> 
+Thanks,
 
-Patch 1, removing the option to sign with SHA-1 from the kernel is fine, but
-doesn't stop things that are signed with SHA-1 from being verified.
-
-David
+Ben
 
 
