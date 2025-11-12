@@ -1,82 +1,151 @@
-Return-Path: <linux-kernel+bounces-897868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D8BC53D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:06:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E911BC53DBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F38C4ED099
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B1D3ABBBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89233348440;
-	Wed, 12 Nov 2025 17:58:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7E8311C35;
-	Wed, 12 Nov 2025 17:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DD934A3B5;
+	Wed, 12 Nov 2025 18:00:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F224C34889A;
+	Wed, 12 Nov 2025 18:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762970336; cv=none; b=o/7mhBq7bYgJNu38TqxuKiEWYC8YCXgvcZbBvGoz5PKl3utyE2SyzfNKjbJFF4NPUIJYfOgJpZ8q90WjwAeen7yywL7Ky3UQsZI0IHnOK07cSuGlA4PuXZYhmZhPoha9uj8lOcvIQW5hd8YtpojaR+9AWmKp3g6wCTzD5kEbKh4=
+	t=1762970408; cv=none; b=ZRJ4Nm8NghuZFY5PHhmBQ2dLlPXLxJtffvGuvctLQXEjYqv7YwBVzleAVVKggqrmZgBtHrDGpt61AuAPpCJY9eyuuaRvS/s/kdQcaoKPHtpTYPP1uHS0xBj+Uzjztju9xGfQi6KxMHetUD3MAhoGOkR8QnYtWbgJyvywlHMBWfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762970336; c=relaxed/simple;
-	bh=r3Z+UIrdQAMlef30CA9Dy2wMBswk7OVprU8CGEOu36M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SqW07Ny0UZZuQu+yICKPYjKVcC618F/RoN9xzTP55mrksEp1hFLHCHVztnwpaWUYphkZwJa7kIJvCxVxqKJB87M6CEsztDzf9jqiggUD6xDZb5c+jzQXF4dd9VWw72TU7EV2bhCBPqRjv7mX11dw3c19Zlmbnet4kW9Yn4kKujg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6B2x1lJLzJ46DD;
-	Thu, 13 Nov 2025 01:58:17 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1A14B140370;
-	Thu, 13 Nov 2025 01:58:50 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
- 2025 17:58:49 +0000
-Date: Wed, 12 Nov 2025 17:58:47 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
- Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
-	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
-	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
- Elisei" <alexandru.elisei@arm.com>
-Subject: Re: [PATCH v4 09/26] perf: arm_spe_pmu: Convert to new IRQ affinity
- retrieval API
-Message-ID: <20251112175847.00001aa3@huawei.com>
-In-Reply-To: <20251020122944.3074811-10-maz@kernel.org>
-References: <20251020122944.3074811-1-maz@kernel.org>
-	<20251020122944.3074811-10-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762970408; c=relaxed/simple;
+	bh=AoCqvY0tBbLj146iF+WGYiI7uWng/r6twSXwU/G3En4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dfic66EGgkuLmXCkEUTYpE7pXLU0rGGbiKWQVYx05+98FE3iO68i7OkqupJduRILAm5wvw4bROECPbq9woJAUIp9xR0516YXXNr2j4E8KaBcFGgiWmCc0UBvZdmOj7rROPambcoQRcVNrqJJUaL2iCDH7cizboGC/oYSYSeq7+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D1A81515;
+	Wed, 12 Nov 2025 09:59:57 -0800 (PST)
+Received: from [10.1.28.59] (e127648.arm.com [10.1.28.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F0243F63F;
+	Wed, 12 Nov 2025 10:00:04 -0800 (PST)
+Message-ID: <8baa1d22-c3ad-4c62-a70e-fc64bfbfdf0e@arm.com>
+Date: Wed, 12 Nov 2025 18:00:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] cpuidle: governors: teo: Decay metrics below
+ DECAY_SHIFT threshold
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Reka Norman <rekanorman@chromium.org>
+References: <4701737.LvFx2qVVIh@rafael.j.wysocki>
+ <3396811.44csPzL39Z@rafael.j.wysocki>
+ <a5de1eca-494e-4624-a86b-bf917e562a08@arm.com>
+ <CAJZ5v0jcGsFh1ATM-Aw1oxZy-zazm+GaMUC4gwEaCskn9V-amg@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0jcGsFh1ATM-Aw1oxZy-zazm+GaMUC4gwEaCskn9V-amg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 20 Oct 2025 13:29:26 +0100
-Marc Zyngier <maz@kernel.org> wrote:
-
-> Now that the relevant interrupt controllers are equipped with
-> a callback returning the affinity of per-CPU interrupts, switch
-> the ARM SPE driver over to this new method.
+On 11/12/25 17:51, Rafael J. Wysocki wrote:
+> On Wed, Nov 12, 2025 at 6:29 PM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> On 11/12/25 16:25, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> If a given governor metric falls below a certain value (8 for
+>>> DECAY_SHIFT equal to 3), it will not decay any more due to the
+>>> simplistic decay implementation.  This may in some cases lead to
+>>> subtle inconsistencies in the governor behavior, so change the
+>>> decay implementation to take it into account and set the metric
+>>> at hand to 0 in that case.
+>>>
+>>> Suggested-by: Christian Loehle <christian.loehle@arm.com>
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> ---
+>>>  drivers/cpuidle/governors/teo.c |   20 +++++++++++++++-----
+>>>  1 file changed, 15 insertions(+), 5 deletions(-)
+>>>
+>>> --- a/drivers/cpuidle/governors/teo.c
+>>> +++ b/drivers/cpuidle/governors/teo.c
+>>> @@ -148,6 +148,16 @@ struct teo_cpu {
+>>>
+>>>  static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
+>>>
+>>> +static void teo_decay(unsigned int *metric)
+>>> +{
+>>> +     unsigned int delta = *metric >> DECAY_SHIFT;
+>>> +
+>>> +     if (delta)
+>>> +             *metric -= delta;
+>>> +     else
+>>> +             *metric = 0;
+>>> +}
+>>> +
+>>>  /**
+>>>   * teo_update - Update CPU metrics after wakeup.
+>>>   * @drv: cpuidle driver containing state data.
+>>> @@ -159,7 +169,7 @@ static void teo_update(struct cpuidle_dr
+>>>       int i, idx_timer = 0, idx_duration = 0;
+>>>       s64 target_residency_ns, measured_ns;
+>>>
+>>> -     cpu_data->short_idles -= cpu_data->short_idles >> DECAY_SHIFT;
+>>> +     teo_decay(&cpu_data->short_idles);
+>>>
+>>>       if (cpu_data->artificial_wakeup) {
+>>>               /*
+>>> @@ -195,8 +205,8 @@ static void teo_update(struct cpuidle_dr
+>>>       for (i = 0; i < drv->state_count; i++) {
+>>>               struct teo_bin *bin = &cpu_data->state_bins[i];
+>>>
+>>> -             bin->hits -= bin->hits >> DECAY_SHIFT;
+>>> -             bin->intercepts -= bin->intercepts >> DECAY_SHIFT;
+>>> +             teo_decay(&bin->hits);
+>>> +             teo_decay(&bin->intercepts);
+>>>
+>>>               target_residency_ns = drv->states[i].target_residency_ns;
+>>>
+>>> @@ -207,7 +217,7 @@ static void teo_update(struct cpuidle_dr
+>>>               }
+>>>       }
+>>>
+>>> -     cpu_data->tick_intercepts -= cpu_data->tick_intercepts >> DECAY_SHIFT;
+>>> +     teo_decay(&cpu_data->tick_intercepts);
+>>>       /*
+>>>        * If the measured idle duration falls into the same bin as the sleep
+>>>        * length, this is a "hit", so update the "hits" metric for that bin.
+>>> @@ -222,7 +232,7 @@ static void teo_update(struct cpuidle_dr
+>>>                       cpu_data->tick_intercepts += PULSE;
+>>>       }
+>>>
+>>> -     cpu_data->total -= cpu_data->total >> DECAY_SHIFT;
+>>> +     teo_decay(&cpu_data->total);
+>>>       cpu_data->total += PULSE;
+>>
+>> This will result in total no longer being a strict sum of the bins.
 > 
-> Reviewed-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Ah, good point.
+> 
+>> Any reason not to do something like:
+> 
+> Well, it would be more straightforward to just compute "total" from
+> scratch instead of using total_decay (it would be the same amount of
+> computation minus the teo_decay() changes AFAICS).
+
+Duh, of course...
+
+> 
+> I'll send an update of this patch.
+
+Thanks!
 
