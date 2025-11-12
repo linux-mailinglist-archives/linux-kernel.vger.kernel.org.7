@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-897846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB70C53CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:55:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D774C53BD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E718E50641C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:40:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D741345722
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30E634A3CC;
-	Wed, 12 Nov 2025 17:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8AC34B414;
+	Wed, 12 Nov 2025 17:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XE6L3XRY"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y3tyoGdq"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59143347BCC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A98734A76A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762969191; cv=none; b=CA/u7yjk+WmGpAoKchRKzPkqjNAybQzNB61TOiV0S6dX0BEFgHRWBsmcOu9YryeWcaKNTeAnwNldDHtG1Vvj8hSQIs8ML6KUY7QKCtqJzaGNpuh3UKYu7wxA6hxrynPHap5SohSM4hi3LzE97bsqk4+RzuvvC4RnZEECsC17tvQ=
+	t=1762969194; cv=none; b=dnlW26kGO6EgMFMY052obGdclfO5qAWcqYXhHFALUC1CI+MZ4gDxmLuhYnxTCB4a2/RZ2VU2XnE7ubH3GhoqKqVKfWWHlncN4rxHYVl2orKVGAKSNw3D0M1oztiozir9JHFsjkL+by3nqwRuTm5ZF5LwmQEOJaxeOXk9OrpbjoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762969191; c=relaxed/simple;
-	bh=3wjLaIqPwLhtaQu3sd4+Wy6uET4Lt+dOtxB/f9/oZG0=;
+	s=arc-20240116; t=1762969194; c=relaxed/simple;
+	bh=WiNWbvfwoo+8EdAa9Uz8Q0T/2sNuMxxs4D8jJ5u/WA8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ep8pCl5+Ylih6KdK3K9tXQYqr4XQejB90gRwu11MkIrLbQDnfWRjrDa1bYSFJzU56Oj8KzNNypE1nz2eXv2HZM/n2dnUI7yCezU2/gA0XSiAfTEPZxPgrG0qVBpjPFhnC+E/WO7EBL02MIiMwpVBmcU605tV8Wd1IIyNBe0uv+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XE6L3XRY; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=os5DL8EsZ7nGj9Cpy7p/XQGUB/vyIun6seF+bT2kAJrJG148NkYMgujndWb6IKw62o5WZ7c5jEnasatfuqon+Lo+qS+ZQRSZqDT8F31tBEFhkSLvfNa4t5L28jlRX9ydRIMDG/VSakW87Uy1qqrLm+60ztUGk8T7dRHMpaNJVE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y3tyoGdq; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-295915934bfso16576385ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:39:49 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b6ce25bea3eso1070570a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762969189; x=1763573989; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762969190; x=1763573990; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=B2W7BhYEA5i1i5woy4wPEVZBPGLjZrrhpv/7K43a+Bc=;
-        b=XE6L3XRYIGnHXqzE2hZSNKwfPkIn+KABRpvnxQEPdhP4eA0mYWv2Mc2BVdivuxLdGC
-         ZyUgylMBRHQymM1eD3cF0fpF5z5nj434JhRQjsYJ1aH/v+rzubvMv1HHU1vXM7BObPU1
-         dLKdhw/05wX81YDE9rPIi6yMiWbYWC2cTVnK86ExM4NQpInpklfh+zQYq3mVYh7lv7ZU
-         mDOXvlacBI6ZSswAXjmtkZAMa81eIEFBTASlnbKDUhjC7SD0EZVUunJzBsmV71JiNh7o
-         G/Slb6srgBDzWkTVnEf7deRzZKKv8sGasq9mDjy5DiIuO4bJEkuOfb5PekIAfo0XX7z3
-         ICtQ==
+        bh=3jB11KRi3IX+N8TsZocIARdIpUY/Xl/OcZwePjrIV+8=;
+        b=Y3tyoGdqbebJ/iYR0RzdyQOMJr0PQXO1K+T54w9ajGBsNzvAQIOcBxd34sb3SDUIN1
+         Uwewv+rSjoTz6PjZUjw/rKVp/F7PhrPhbnrYNRuvauRVAoJM/LPX6c94P+2iuSNuit4x
+         1G7wra4+l+EBsIWMFo7nqrlZ1YRlbMai2sCAIgd5duYJpW7UI/qq7WutrL1uYaAt5a7j
+         HifApJZMfD9Lx9xGEp9p3Sm3fjPREK0f2jQ10Qdl+ubFz6RVvhhL/ycu0BUGXItqgK5s
+         ZS8q1cX7Tw1Hx4YfprbeMtf14uVFawUce+uc6m1QnlPTWsyE/yVMnZJV0vDd7PsWrXBI
+         8f0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762969189; x=1763573989;
+        d=1e100.net; s=20230601; t=1762969190; x=1763573990;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=B2W7BhYEA5i1i5woy4wPEVZBPGLjZrrhpv/7K43a+Bc=;
-        b=JafCIabIe2FtOLCJcmJDHvtmTPkUPyfdIiPfgZxoX7/z4CZXF/s/DuPQSWA6XFkbIX
-         Cu80MeXZFC3Z7g0+kFfNI/Ay2gnEGH35PwFzpkhUKgYxryOusAHHVUUbrLYo7U8pWo6N
-         3/QwKMeupNynzdr2ycWhJ7zDys7VykaubFP37EssUa2WPIfjYlAEUrCD7gwoIrHAZ5gA
-         ICx/UhySdr+h8lYyAFWV37TzrPGtjEG0M64PhbUoU/4JKfEquECKNOCFHGgqeEUvZyS+
-         rl6JJxSAbD5B/APN/pB927IE0y0ftbafULK+0L6VowVzVA1RGiAtdlNWSwJGEuxrfjxv
-         CdAw==
-X-Gm-Message-State: AOJu0YyYXOlebiPc8Q2x8j75RDIVqFsTT+j5i6I8aQRkDaWdouVsOfwA
-	KY/LgTqClW0RxWqAlTGMGMN3HkLyn81Ipe4r1SDl6+tVVCNLkyjhyY1mrLBYwq/b4D8KRRrUh1t
-	FY61a7w==
-X-Google-Smtp-Source: AGHT+IGQoB1Kabu3uhkCb7ua9Zbxd1SwMYzdy0+WZvzbXxJsOOkw0xVig1+MnTLbGmRa1/KiP7NDHIAhv+E=
-X-Received: from plbks6.prod.google.com ([2002:a17:903:846:b0:27d:1f18:78ab])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d2c9:b0:297:e66a:2065
- with SMTP id d9443c01a7336-2984ee00891mr56835055ad.56.1762969188545; Wed, 12
- Nov 2025 09:39:48 -0800 (PST)
+        bh=3jB11KRi3IX+N8TsZocIARdIpUY/Xl/OcZwePjrIV+8=;
+        b=pZP6U4669SWJpriPyLJ+dNHP16wFjM5VxNOfgFdXiiXuKxRxnQI03V1SLy2mRcOESl
+         rN+lmUbTEBi9xgu+yTr1zIi+IFGTQyTVKYXB90K8de20MNhn+D4bIoLYvglLad84IM/D
+         VSH5T+5siyKWkepRt0iNgfeKdMyoZ0hSA7xIGlp7Ttl9/TSDx6/JN9A4QLRuej7LH9qf
+         EN8wTvQiBDHB+HXiJi84ZnPb7Y4UhiWcAenB2Xrt84SIwA4krNaP8FqS0yQp3YkjzObg
+         fD49l2vFFF/2IylPDuE3SiicQc4P+kUi85ZSnohSJxHRcK+Cdqhk3u34VYIj1XLmLUdL
+         XFKQ==
+X-Gm-Message-State: AOJu0YxKtqv1acoFh5hwxVSVniYNKLk1hr1grUs1+RHg8fAohJVeQ1Ay
+	feup8yPxUSk5bC+QivIsPY5J6tL1ljwusSazbmWl42RoV8U8fYT26BxRE2imld3/6reZ/TvE7GN
+	UQA9V1g==
+X-Google-Smtp-Source: AGHT+IEzUdshi4KJh5WFIAXko+n+YEgi4OqqdjsC4s4GZ3jRZGaScEAL16+P4T3e1ewsgL1T8TGXhgEoctI=
+X-Received: from pge1.prod.google.com ([2002:a05:6a02:2d01:b0:bac:6acd:817e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4305:b0:343:9397:c4d5
+ with SMTP id adf61e73a8af0-3590908eb63mr5330693637.12.1762969190457; Wed, 12
+ Nov 2025 09:39:50 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 12 Nov 2025 09:39:41 -0800
+Date: Wed, 12 Nov 2025 09:39:42 -0800
 In-Reply-To: <20251112173944.1380633-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251112173944.1380633-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112173944.1380633-2-seanjc@google.com>
-Subject: [PATCH 1/4] x86/bugs: Drop unnecessary export of "x86_spec_ctrl_base"
+Message-ID: <20251112173944.1380633-3-seanjc@google.com>
+Subject: [PATCH 2/4] x86/mtrr: Drop unnecessary export of "mtrr_state"
 From: Sean Christopherson <seanjc@google.com>
 To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -89,28 +89,28 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
 	Kai Huang <kai.huang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Don't export x86_spec_ctrl_base as it's used only in bugs.c and process.c,
-neither of which can be built into a module.
+Don't export "mtrr_state" as usage is limited to arch/x86/kernel/cpu/mtrr
+(and nothing outside of that directory even includes the local mtrr.h).
 
 No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 1 -
+ arch/x86/kernel/cpu/mtrr/generic.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d7fa03bf51b4..57c1d0ed36a5 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -102,7 +102,6 @@ static void __init vmscape_apply_mitigation(void);
+diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
+index 8c18327eb10b..0863733858dc 100644
+--- a/arch/x86/kernel/cpu/mtrr/generic.c
++++ b/arch/x86/kernel/cpu/mtrr/generic.c
+@@ -89,7 +89,6 @@ static int mtrr_state_set;
+ u64 mtrr_tom2;
  
- /* The base value of the SPEC_CTRL MSR without task-specific bits set */
- u64 x86_spec_ctrl_base;
--EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+ struct mtrr_state_type mtrr_state;
+-EXPORT_SYMBOL_GPL(mtrr_state);
  
- /* The current value of the SPEC_CTRL MSR with task-specific bits set */
- DEFINE_PER_CPU(u64, x86_spec_ctrl_current);
+ /* Reserved bits in the high portion of the MTRRphysBaseN MSR. */
+ u32 phys_hi_rsvd;
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
