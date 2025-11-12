@@ -1,229 +1,140 @@
-Return-Path: <linux-kernel+bounces-897016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FE9C51C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:54:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A44DC51D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A5189AAA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1953C3A718B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1FE304BDF;
-	Wed, 12 Nov 2025 10:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2321309DC6;
+	Wed, 12 Nov 2025 10:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SnuugUs6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3IQ7Cr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SnuugUs6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2g3IQ7Cr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bfFtztmy";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ouS84kuU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743412741C6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0453054C1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762944829; cv=none; b=nYYi2fRLucML54ht0OXBKABkr2WvVxU4MZPYuXkaqtCpcJntlzwJTh/afkSWryu24rx4L+TmOUAxifccfqY+bBDTCGYTb1pRrKnqh3NHth0/TUeiFhmK+eJ4cDTJCr4z4uXUkgiq7a3WhHsJGtaJVuQ0C4n6pM2qbvy6Vx0v4yk=
+	t=1762944897; cv=none; b=ky2TcOO6hkB2iG4DmQZrl1j9UyVjXIVza8NQ3CRGKnBHnF+T5Nfvy9FE4UkH9ffb2opqslIyi3KHVOF5k21TBjm0bvyR41wGV15VQi+Gc4N6mxBT3mQkNe4fiVM2KyFyhucUfjLFtIUAIIWmW/S1s/lwsvUkvMEeOjNh2nVJh1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762944829; c=relaxed/simple;
-	bh=D4vP1+X5jfInvmEj5aulxh+/5jnNxk9KacU2UJzVkuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNLu6RB4x8dz/ro2oK62yihfc4VwaEYUmr0Bd3/iL877SOVlqWGvxywgLjDYJPrCC2s4rRjk3Dk+WGa7gw1XDZRMsldTk3UtYNR7tnHwVWsoRjuM8krHtpDhdGTp6WX51ilizJeJz+/oB6KJZbPxI1ZMsMGx6k5aPM37PmCzve8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SnuugUs6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3IQ7Cr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SnuugUs6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2g3IQ7Cr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3D4F51F45E;
-	Wed, 12 Nov 2025 10:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762944820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
-	b=SnuugUs6s1i1G+ha+hOQ/OmhxQf1kpNet502wtDhpCQIM046YZQm/kYEr2XO7CmNuNHOSz
-	SvWC03cxUvmrbX09Ka9nD06/IQbvmtBaVrGVwwSftI+YJ9LSrW0dk+eaAJzabm5VGcUTz0
-	lLqEz1dcNViXOO7Fqc2Kk/SrWgD8GiM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762944820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
-	b=2g3IQ7CrieoVjAWYQ8/aQ/uUl3/ZY61tFT/tLgOfjhUUXCtuznNcjwTCxJuhL5IYeAcXwX
-	Xk1BQuKZ6Kg0tFBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762944820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
-	b=SnuugUs6s1i1G+ha+hOQ/OmhxQf1kpNet502wtDhpCQIM046YZQm/kYEr2XO7CmNuNHOSz
-	SvWC03cxUvmrbX09Ka9nD06/IQbvmtBaVrGVwwSftI+YJ9LSrW0dk+eaAJzabm5VGcUTz0
-	lLqEz1dcNViXOO7Fqc2Kk/SrWgD8GiM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762944820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OdJts0YerqvsGbnAyfaCLpmo7zmoI6SztVNRu9g+40U=;
-	b=2g3IQ7CrieoVjAWYQ8/aQ/uUl3/ZY61tFT/tLgOfjhUUXCtuznNcjwTCxJuhL5IYeAcXwX
-	Xk1BQuKZ6Kg0tFBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A4853EA61;
-	Wed, 12 Nov 2025 10:53:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id crmgCTRnFGn5VAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 12 Nov 2025 10:53:40 +0000
-Message-ID: <dec19492-bc23-49a0-a2b0-1cd8b5c7726e@suse.cz>
-Date: Wed, 12 Nov 2025 11:53:39 +0100
+	s=arc-20240116; t=1762944897; c=relaxed/simple;
+	bh=+d5+14LmUROJgkDGR1Oe1xzly7s950/vBN51axGk9eE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jt0C9QLBdLZ52OIa2iZuwmyjAoIy+nOa3K1Mfiqjh+P3fskEfBKLohCAQomanF2jDTzoGIGoIpfebJsbuzG8LSvnQvkyawtTrKRBb/CQ60vEIVLXuBMZIxCpY/vQ2KvG9gH1QOL4kkcPyGBZBJa7axuChNxRetCp/AUbP2uXN6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bfFtztmy; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ouS84kuU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762944894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+d5+14LmUROJgkDGR1Oe1xzly7s950/vBN51axGk9eE=;
+	b=bfFtztmytfdE6x5j0yYJYxs6YUPIDZcj+5WogYYuG8w5+0GeptZHB27x6HRjN9m6YitI2U
+	Z0ieIQ4sqY9RLpo4L/LtoFje9/BurODfu9ZvH0u/gxYQQK+OUOj47guZeRP6Kh82zMXoQU
+	8sWwscCmHLX59MsmhWGBsY6lc2ZmJX8=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-77-Krmh_i8UMJedMIOepGbhvA-1; Wed, 12 Nov 2025 05:54:53 -0500
+X-MC-Unique: Krmh_i8UMJedMIOepGbhvA-1
+X-Mimecast-MFC-AGG-ID: Krmh_i8UMJedMIOepGbhvA_1762944892
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-6409c803b1aso672263a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:54:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762944892; x=1763549692; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+d5+14LmUROJgkDGR1Oe1xzly7s950/vBN51axGk9eE=;
+        b=ouS84kuUOqxjVYqyd2JOu0jUlGc5vfFvzdwstviQTaLYhw8J2jsATzKrk4pQlzj+nz
+         3SDInp1Oyl2KGpOUK3UAKQDS4CqC1hD0Bc2Fc17OGlOhabo+kx6fxQB8HYLWhtqD80wd
+         YQtI3xqBfZ2Pab0LH9IUp5O5fmI/DngbV2UaT03XJBDCgNXG5Rb6PDN6A3WhDr1u6BqA
+         +xgfr1jlmmfDnceNpGwq6Y0uuZnXPHdksJro8mgAzxx1AW5BvgdAQem08bJa6Nm3HoJH
+         8iwWQwf5Qbq21J84bzKqHSMvYttTQdqOGB2HI+xTkP7MnKlrGNPpL4x3Vea60WT4cPXO
+         1Syw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762944892; x=1763549692;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+d5+14LmUROJgkDGR1Oe1xzly7s950/vBN51axGk9eE=;
+        b=SywZn6l6GzXD7VEpwwPMTrtugyp281/wVGgb8qykNeImqqD7stBHtzOQUiugGGo4X0
+         AUckbm2TfVPaR84CY7jv6W4b/5UI0D3iFJ0BTu2IOBz3Cx1wCG+s5nUyM7tTXMQOf+ju
+         L/FygqGtyHCr7++uc2wTZACktee3yqbQVlwqG7ItaBjbihnnPagmq7CouGbCBiK3PlcS
+         KBW8Ib7n0SdmJM+e3EFoN5w0mLh1Vtak2oaBI+Am8Af5nZrMsaxcTx8QEVIYnM5WHSpK
+         wdOk8DzhRJU6udC+xOgOir9y89K9s4bzL7yKj6AdiMApmJcOKOfGo1kbGfD9i+QXDlyM
+         05QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0ogyQjrZf14tCb37mS3gmV89+4zKO43iskCYz0q6V/R+lHrPdTTVf8/oLwoHgoTxhuAZ3igvg1XjR9X8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1BRNW7t9u2sRq+2UdyN0wDWXFPdVsZP67lYttFnw7jhwTd0mo
+	dEBnRO5AaIG0HlZZ7ShnEpOPT/zfITFzhzBcYUXrJ9ReXlhsBgPapI8HvVN8FD8q1+wUG+wMwbL
+	wO46NZiIBd+WQkP8WeS/3xg1uKrc5zQQruPi9dCDzBduadmk9DCbPhvYgk/l2J/KWXg==
+X-Gm-Gg: ASbGncsayCeUbRzYZrWu5AWajwR8WWD001WuLFiBaBRTYt4NPJ1oDdgLHGZYUIzQhn+
+	Hdf0IQkXLWgd4AQHoPb90R5KUAzfIkPk4aG6296zRyYq/VksRe0SJYWWBnJupxpjgNr9d1fbAYh
+	mTF8IXCT1stHOFi0tC6McY+Rb6wsnsnomjt7gqjIu8k5RGi3ooX0ATlQlpcNcnbwqUKwWvnOVpA
+	5QH8M5eAA9paquT/zTU4H9apqI+9zysxiOIvbmFYI34+79Y+/zvnyDchSN2yiVutkk8pC2r8cWW
+	a52YCNu9QcT47PjwRqxgt7YL3v8jffh0n7Urgunr+qgUvhNo/354rmczAvOYM/KrFzeTJobKzPL
+	XZzATRofcKBs/sJw8UxQ4GJQ=
+X-Received: by 2002:a05:6402:2689:b0:640:e75a:f95d with SMTP id 4fb4d7f45d1cf-6431a4ca1c7mr2289572a12.15.1762944891867;
+        Wed, 12 Nov 2025 02:54:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH6zPMnNj6//iJFyS3LCsJH7VDDk53FJ+jsm5ERoxaP9Mj04HNN3IWqXw7M8jI38CxB8FzfIA==
+X-Received: by 2002:a05:6402:2689:b0:640:e75a:f95d with SMTP id 4fb4d7f45d1cf-6431a4ca1c7mr2289545a12.15.1762944891443;
+        Wed, 12 Nov 2025 02:54:51 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f8578d4sm15715451a12.18.2025.11.12.02.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 02:54:50 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 00886329685; Wed, 12 Nov 2025 11:54:49 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Gal Pressman <gal@nvidia.com>, Leon Romanovsky
+ <leonro@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>, William Tu
+ <witu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>, Nimrod Oren
+ <noren@nvidia.com>, Alex Lazar <alazar@nvidia.com>
+Subject: Re: [PATCH net-next 0/6] net/mlx5e: Speedup channel configuration
+ operations
+In-Reply-To: <1762939749-1165658-1-git-send-email-tariqt@nvidia.com>
+References: <1762939749-1165658-1-git-send-email-tariqt@nvidia.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Wed, 12 Nov 2025 11:54:49 +0100
+Message-ID: <874iqzldvq.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] mempool: fix a wakeup race when sleeping for elements
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Eric Biggers <ebiggers@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251111135300.752962-1-hch@lst.de>
- <20251111135300.752962-7-hch@lst.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <20251111135300.752962-7-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+Content-Type: text/plain
 
-On 11/11/25 14:52, Christoph Hellwig wrote:
-> Waiters always need to re-check their condition after adding themselves
-> to the waitqueue, as otherwise they might miss a wakeup.  Check
-> for elements in the pool and use them before going to sleep.
-> 
-> The workaround mentioned was probably due to this, but seems genuinely
-> useful for other reasons, so keep it and update the comment describing
-> it.
+Tariq Toukan <tariqt@nvidia.com> writes:
 
-Thanks for looking into that historic comment :)
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  mm/mempool.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/mempool.c b/mm/mempool.c
-> index 850362f4ca7a..8cf3b5705b7f 100644
-> --- a/mm/mempool.c
-> +++ b/mm/mempool.c
-> @@ -388,6 +388,7 @@ static void *mempool_alloc_from_pool(struct mempool *pool, gfp_t gfp_mask)
->  	spin_lock_irqsave(&pool->lock, flags);
->  	if (unlikely(!pool->curr_nr))
->  		goto fail;
-> +alloc:
->  	element = remove_element(pool);
->  	spin_unlock_irqrestore(&pool->lock, flags);
->  
-> @@ -406,13 +407,17 @@ static void *mempool_alloc_from_pool(struct mempool *pool, gfp_t gfp_mask)
->  		DEFINE_WAIT(wait);
->  
->  		prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
-> +		if (pool->curr_nr) {
-> +			finish_wait(&pool->wait, &wait);
-> +			goto alloc;
-> +		}
->  		spin_unlock_irqrestore(&pool->lock, flags);
-I think the race already cannot exist, thanks to the pool->lock being
-unlocked after prepare_to_wait()?
-The freeing path can't bump pool->curr_nr without the lock, so the condition
-you added can't even be true, no?
+> Hi,
+>
+> This series significantly improves the latency of channel configuration
+> operations, like interface up (create channels), interface down (destroy
+> channels), and channels reconfiguration (create new set, destroy old
+> one).
 
->  
->  		/*
-> -		 * Wait for someone else to return an element to @pool.
-> -		 *
-> -		 * FIXME: this should be io_schedule().  The timeout is there as
-> -		 * a workaround for some DM problems in 2.6.18.
-> +		 * Wait for someone else to return an element to @pool, but wake
-> +		 * up occasionally as memory pressure might have reduced even
-> +		 * and the normal allocation in alloc_fn could succeed even if
-> +		 * no element was returned.
->  		 */
->  		io_schedule_timeout(5 * HZ);
->  		finish_wait(&pool->wait, &wait);
+On the topic of improving ifup/ifdown times, I noticed at some point
+that mlx5 will call synchronize_net() once for every queue when they are
+deactivated (in mlx5e_deactivate_txqsq()). Have you considered changing
+that to amortise the sync latency over the full interface bringdown? :)
+
+-Toke
 
 
