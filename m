@@ -1,296 +1,102 @@
-Return-Path: <linux-kernel+bounces-897093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62438C51FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:31:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A65C51F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D103AFEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0715B1884CFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DF73009D2;
-	Wed, 12 Nov 2025 11:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF1F30BB9F;
+	Wed, 12 Nov 2025 11:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U5aHRasN";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Od4EkHKh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MIhBGJIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CB274B28
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0780E2C15BE;
+	Wed, 12 Nov 2025 11:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946571; cv=none; b=erptuL8IQDkjI3npwQRBLRtRw8sBq7cd4+kga7iPBQAgGM4qREYW8BzwefnanCkJgrO5uPje4luE7JjFhWtvYawtswsLSYeJpGEPgohCf4BfCsxOqvMBFrzNujnaOLSglbnqkiHVecYLsokoNzw59Y7QKj+3IIp0pcBA1mBFPCc=
+	t=1762946578; cv=none; b=adoxFo5GloITWfVTQ4Jd+Te0IPCr3yS0RpSRHkS5p5504cERscBdNAltLuD6e7cbjcffhLv+TQD3nRJVq6+d9dHDPIPjmyEEcvYmFA7ncN6Li/RwA1JpHMFI8CGoeLoPg8YSMh9aeufES9LAPprXT4ZzwZgXHVp5lBgUPsbt650=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946571; c=relaxed/simple;
-	bh=VscW6L4TRLVaUV+OMnFLbNYIs/Ms82BMyVM2NevGrMo=;
+	s=arc-20240116; t=1762946578; c=relaxed/simple;
+	bh=hjXB8IW77oxvUB9X1HvFeAFgisSOfgJqp9S36dCalM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDqZQkyAa08FKg8pSpU6ert2eKNp0kBEm3E2bYRjzWRBuSKMIIxJTk8+YSA1VZZM42GVpt26h6IX85MCHg1CP7/VPwQmblITCU/VNgOfw918KFfF9XP/cPLHIrsi7xnWT+PTZezsGEyn7RwVQIzRtvb7Ld4j4R99kMn2w0lYcFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U5aHRasN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Od4EkHKh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762946568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NQOIQDhY7o0sAkMRKEMYJWvC/pedPTBEzV4lKuummL0=;
-	b=U5aHRasNgER3C4j+/zEJAKvGj05FDIEqXbA4/0ltQDAuAO7uUPWx61PkiPCn3Qjk0qzHbk
-	LtUrGJMCm0DYcWZh0vsiyXq7Wf0msfbf1fIW/A25IIGAuxMMCdzUZpYewNnzmaRXPtJA1j
-	zWUzn+Y9pfTIK8RnJ1C2w+OkjoJnuyU=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-411-q6my-iGoM-ura1enJBuooQ-1; Wed, 12 Nov 2025 06:22:47 -0500
-X-MC-Unique: q6my-iGoM-ura1enJBuooQ-1
-X-Mimecast-MFC-AGG-ID: q6my-iGoM-ura1enJBuooQ_1762946567
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-88236bcdfc4so16539876d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:22:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762946567; x=1763551367; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NQOIQDhY7o0sAkMRKEMYJWvC/pedPTBEzV4lKuummL0=;
-        b=Od4EkHKhW3O9wv0dFyc7U4BWMyAAUT6d+fAouaFJW5yS46/SRafvdK8jqpwb903zy3
-         cU+NMcOcvd+nA1V3iv5vImEt1PeZiVyz7FakU9rxIMjDlE4mcahfgaRk04m0bfOXk+VL
-         zwaMkfvWFDZ3HODhnCSf0r12F6Oc8WX2jNKwL/cPWQPFwvSGj+T6yFLM6kw334T2k66m
-         BICAbF63lQZw0VAJNBSL28triajemWbSsmAFFG73u8ThmFlpfAt/rJvPiQd6dzWjbnC0
-         7zqU1DMD7PdWUKXfmAVcWbchovVqmPsrW49dkLzuWxuHNKv/p+VNiA/y5yMk1erq4JaB
-         V4gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946567; x=1763551367;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NQOIQDhY7o0sAkMRKEMYJWvC/pedPTBEzV4lKuummL0=;
-        b=nnMZ/qFoXhqKd7I2+iScVi4wgDm2/GQ9TsTJJlB6JfEmKSh7bJVrEcCX+UyleAcuFa
-         aBYqZGc+4Kp4Ib2sL7k7lnjMYnbsFgzHSoJG4KeBH0R6JXRbVi4l+9N+cdoeSxc+UfuE
-         lUzQ6s6NXPIAgNY9CgpCPYYkBXS4hbl0g8B5Ku8A1+hryZMmjCqjEzDdKJRQ6E8qrHj8
-         M/5pAuM1tiXZ8mw9p9vvrXtsip6Zd21sjE552IdomspL6FcQ1szpYMlndU4o+ZV1FtIA
-         I2ubHv2OjQDtTWp2NYIxJpS0TOn0tlmV7+V1kPpdCKeWRyW5vRV5WFg8bxSdGRGcOLeA
-         pCzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvutn0sqlxDbqKFL2zYrBVNLZ5hrTOpJ+pChHUIr3DQk1yRV8PMWHspO8oY2e99b19OYlQKqM5PYXi3xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl32gFg4sadYKYQ5xBCGMWc3Eboy4qj7XdmmKY17t55WjnwdSJ
-	z+MB9aEhqL9WKXvppqYte7MvnhqEEgb2LI7GYxsXu/n+pKKZPCUZzWMa7RuUCnyenbkzFeSDMRz
-	nAAdw8JeI/gKpDsbcFLTScqfsMVv8w0mZSYs0XIjgfXBiShigcnjCw80iJyx48sW80w==
-X-Gm-Gg: ASbGnctgdXY305rpr3l8n6LCrtBrfhKDSfYEZy7j4TgQ6rQSHvNnlbzf5Fi2Akcta7a
-	mWxT1sfhZGFe06xA5uz3MzqMTOkN/FPB5UWhD8OODevYC5WgzychWD6dYVxDrxvRvrH7BsyyBko
-	fps+BtGoZ7t/94cdV1L2wYHJULRxOpXRMAmE8ajgnSQjIPWCO2hA9ww7dCYkmWWGNrcrZBpJg2Y
-	7Wudi73bZHtDHNkj7OAIGUDZPwRYuijw3oAr6msjvJaURzH+pmpHpFufOBZExqIPEHVZRx3NsV8
-	eRS1utEyowQFcr3Yfjn74HHXSNaZd9fFftiGvo9Wt7UGioHhTII9bUiwTLXtLXyGscDEMRvxzrQ
-	ZQ60WbwzXbYVvObkWR9Me+u+LOnvBurTY/Ki7vUO+8tbJoO832S0=
-X-Received: by 2002:a05:6214:628:b0:882:44cc:f590 with SMTP id 6a1803df08f44-8827196c120mr33091986d6.17.1762946566929;
-        Wed, 12 Nov 2025 03:22:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEqYLLUPKJIhO1usMYZBZTm6T+uWhl/OzYeE42ktzFP1X9W5/fpalqufI3dtFeRXv+BAFIHsg==
-X-Received: by 2002:a05:6214:628:b0:882:44cc:f590 with SMTP id 6a1803df08f44-8827196c120mr33091756d6.17.1762946566474;
-        Wed, 12 Nov 2025 03:22:46 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238b2936asm89469516d6.31.2025.11.12.03.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 03:22:45 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:22:41 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 04/12] selftests/vsock: avoid multi-VM
- pidfile collisions with QEMU
-Message-ID: <sljr5fiyqg4syuhpfvese2dflrbse4cej5ydpazbphon2qr57w@vyn7athtpyf2>
-References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
- <20251108-vsock-selftests-fixes-and-improvements-v4-4-d5e8d6c87289@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZhZaWUJBO9eMVmG4eC98DchtFt1zdRZfVWwL4UCmVgK/HR/57v3yDE1JnmPWvL9nekmzzlpxN7E0ags48GEKHIe+WLecvf2zsHPXIaec3FYSjyEMtMAVWtdogWWkJ2nJ0q7MADX2trSBKGTsH6QyX/GXNf9KvduKpX6IrRuFwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MIhBGJIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF2FC4CEF5;
+	Wed, 12 Nov 2025 11:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762946577;
+	bh=hjXB8IW77oxvUB9X1HvFeAFgisSOfgJqp9S36dCalM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MIhBGJIM2U45fn4oiaiLg6XOt+xA9as4EGD3E4pm2UXNIw/neuqegu9zwE7KGDtg3
+	 d/DOg4MDqHIJuerXZnzxxUVFZh6E3FgwAKRFHnS3rCdq9fGKWlXHe+ygUWAGJsehlR
+	 DHc3EgzAtD2+FW6tEdtJDzqrq6bdhp6p6LVAlYyw=
+Date: Wed, 12 Nov 2025 06:22:56 -0500
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+Message-ID: <2025111214-doily-anyway-b24b@gregkh>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+ <20251107173743.GA3131573@mit.edu>
+ <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+ <20251110033556.GC2988753@mit.edu>
+ <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251108-vsock-selftests-fixes-and-improvements-v4-4-d5e8d6c87289@meta.com>
+In-Reply-To: <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
 
-On Sat, Nov 08, 2025 at 08:00:55AM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Change QEMU to use generated pidfile names instead of just a single
->globally-defined pidfile. This allows multiple QEMU instances to
->co-exist with different pidfiles. This is required for future tests that
->use multiple VMs to check for CID collissions.
->
->Additionally, this also places the burden of killing the QEMU process
->and cleaning up the pidfile on the caller of vm_start(). To help with
->this, a function terminate_pidfiles() is introduced that callers use to
->perform the cleanup. The terminate_pidfiles() function supports multiple
->pidfile removals because future patches will need to process two
->pidfiles at a time.
->
->Change QEMU_OPTS to be initialized inside the vm_start(). This allows
->the generated pidfile to be passed to the string assignment, and
->prepares for future vm-specific options as well (e.g., cid).
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Changes in v4:
->- use terminate_pidfiles() in cleanup (Simon)
->- use associative array for PIDFILES and remove pidfiles as they are
->  terminated (Simon)
->
->Changes in v3:
->- do not add unneeded -u to mktemp (Stefano)
->- quote $PIDFILE_TEMPLATE (Stefano)
->- do not remove cleanup(). Though it is expected that vm_start() does
->  not exit(2) and its caller is responsible for pidfile cleanup,
->  retaining cleanup() on EXIT is worth keeping as ill-timed kill signals
->  (i.e., during manual runs) may leak those files.
->- add create_pidfile() function to generate pidfile and automatically
->  add it to array for cleanup() to terminate and remove later.
->
->Changes in v2:
->- mention QEMU_OPTS changes in commit message (Simon)
->---
-> tools/testing/selftests/vsock/vmtest.sh | 62 +++++++++++++++++++++++----------
-> 1 file changed, 43 insertions(+), 19 deletions(-)
+On Mon, Nov 10, 2025 at 07:57:22PM -0800, H. Peter Anvin wrote:
+> Honestly, though, I'm far less interested in what 8250-based hardware does than e.g. USB.
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+hahahahahahaha {snort}
 
->
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index 3bccd9b84e4a..13b685280a67 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -23,7 +23,8 @@ readonly VSOCK_CID=1234
-> readonly WAIT_PERIOD=3
-> readonly WAIT_PERIOD_MAX=60
-> readonly WAIT_TOTAL=$(( WAIT_PERIOD * WAIT_PERIOD_MAX ))
->-readonly QEMU_PIDFILE=$(mktemp /tmp/qemu_vsock_vmtest_XXXX.pid)
->+readonly PIDFILE_TEMPLATE=/tmp/vsock_vmtest_XXXX.pid
->+declare -A PIDFILES
->
-> # virtme-ng offers a netdev for ssh when using "--ssh", but we also need a
-> # control port forwarded for vsock_test.  Because virtme-ng doesn't support
->@@ -33,12 +34,6 @@ readonly QEMU_PIDFILE=$(mktemp /tmp/qemu_vsock_vmtest_XXXX.pid)
-> # add the kernel cmdline options that virtme-init uses to setup the interface.
-> readonly QEMU_TEST_PORT_FWD="hostfwd=tcp::${TEST_HOST_PORT}-:${TEST_GUEST_PORT}"
-> readonly QEMU_SSH_PORT_FWD="hostfwd=tcp::${SSH_HOST_PORT}-:${SSH_GUEST_PORT}"
->-readonly QEMU_OPTS="\
->-	 -netdev user,id=n0,${QEMU_TEST_PORT_FWD},${QEMU_SSH_PORT_FWD} \
->-	 -device virtio-net-pci,netdev=n0 \
->-	 -device vhost-vsock-pci,guest-cid=${VSOCK_CID} \
->-	 --pidfile ${QEMU_PIDFILE} \
->-"
-> readonly KERNEL_CMDLINE="\
-> 	virtme.dhcp net.ifnames=0 biosdevname=0 \
-> 	virtme.ssh virtme_ssh_channel=tcp virtme_ssh_user=$USER \
->@@ -90,15 +85,7 @@ vm_ssh() {
-> }
->
-> cleanup() {
->-	if [[ -s "${QEMU_PIDFILE}" ]]; then
->-		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
->-	fi
->-
->-	# If failure occurred during or before qemu start up, then we need
->-	# to clean this up ourselves.
->-	if [[ -e "${QEMU_PIDFILE}" ]]; then
->-		rm "${QEMU_PIDFILE}"
->-	fi
->+	terminate_pidfiles "${!PIDFILES[@]}"
-> }
->
-> check_args() {
->@@ -188,10 +175,37 @@ handle_build() {
-> 	popd &>/dev/null
-> }
->
->+create_pidfile() {
->+	local pidfile
->+
->+	pidfile=$(mktemp "${PIDFILE_TEMPLATE}")
->+	PIDFILES["${pidfile}"]=1
->+
->+	echo "${pidfile}"
->+}
->+
->+terminate_pidfiles() {
->+	local pidfile
->+
->+	for pidfile in "$@"; do
->+		if [[ -s "${pidfile}" ]]; then
->+			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
->+		fi
->+
->+		if [[ -e "${pidfile}" ]]; then
->+			rm -f "${pidfile}"
->+		fi
->+
->+		unset "PIDFILES[${pidfile}]"
->+	done
->+}
->+
-> vm_start() {
->+	local pidfile=$1
-> 	local logfile=/dev/null
-> 	local verbose_opt=""
-> 	local kernel_opt=""
->+	local qemu_opts=""
-> 	local qemu
->
-> 	qemu=$(command -v "${QEMU}")
->@@ -201,6 +215,13 @@ vm_start() {
-> 		logfile=/dev/stdout
-> 	fi
->
->+	qemu_opts="\
->+		 -netdev user,id=n0,${QEMU_TEST_PORT_FWD},${QEMU_SSH_PORT_FWD} \
->+		 -device virtio-net-pci,netdev=n0 \
->+		 -device vhost-vsock-pci,guest-cid=${VSOCK_CID} \
->+		--pidfile ${pidfile}
->+	"
->+
-> 	if [[ "${BUILD}" -eq 1 ]]; then
-> 		kernel_opt="${KERNEL_CHECKOUT}"
-> 	fi
->@@ -209,14 +230,14 @@ vm_start() {
-> 		--run \
-> 		${kernel_opt} \
-> 		${verbose_opt} \
->-		--qemu-opts="${QEMU_OPTS}" \
->+		--qemu-opts="${qemu_opts}" \
-> 		--qemu="${qemu}" \
-> 		--user root \
-> 		--append "${KERNEL_CMDLINE}" \
-> 		--rw  &> ${logfile} &
->
-> 	if ! timeout ${WAIT_TOTAL} \
->-		bash -c 'while [[ ! -s '"${QEMU_PIDFILE}"' ]]; do sleep 1; done; exit 0'; then
->+		bash -c 'while [[ ! -s '"${pidfile}"' ]]; do sleep 1; done; exit 0'; then
-> 		die "failed to boot VM"
-> 	fi
-> }
->@@ -499,7 +520,8 @@ handle_build
-> echo "1..${#ARGS[@]}"
->
-> log_host "Booting up VM"
->-vm_start
->+pidfile="$(create_pidfile)"
->+vm_start "${pidfile}"
-> vm_wait_for_ssh
-> log_host "VM booted up"
->
->@@ -523,6 +545,8 @@ for arg in "${ARGS[@]}"; do
-> 	cnt_total=$(( cnt_total + 1 ))
-> done
->
->+terminate_pidfiles "${pidfile}"
->+
-> echo "SUMMARY: PASS=${cnt_pass} SKIP=${cnt_skip} FAIL=${cnt_fail}"
-> echo "Log: ${LOG}"
->
->
->-- 
->2.47.3
->
+Hah.  that's a good one.
 
+Oh, you aren't kidding.
+
+Wow, good luck with this.  USB-serial adaptors are all over the place,
+some have real uarts in them (and so do buffering in the device, and
+line handling in odd ways when powered up), and some are almost just a
+straight pipe through to the USB host with control line handling ideas
+tacked on to the side as an afterthought, if at all.
+
+There is no standard here, they all work differently, and even work
+differently across the same device type with just barely enough hints
+for us to determine what is going on.
+
+So don't worry about USB, if you throw that into the mix, all bets are
+off and you should NEVER rely on that.
+
+Remeber USB->serial was explicitly rejected by the USB standard group,
+only to have it come back in the "side door" through the spec process
+when it turned out that Microsoft hated having to write a zillion
+different vendor-specific drivers because the vendor provided ones kept
+crashing user's machines.  So what we ended up with was "just enough" to
+make it through the spec process, and even then line signals are
+probably never tested so you can't rely on them.
+
+good luck!
+
+greg "this brought up too many bad memories" k-h
 
