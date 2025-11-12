@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-897013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459FBC51C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58266C51C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA43D1896F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8743189677B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8223C30ACFA;
-	Wed, 12 Nov 2025 10:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565CA29BD9B;
+	Wed, 12 Nov 2025 10:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="AdMfaWN0"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mizS3kv6"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923C1308F17
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098232F9980
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762944649; cv=none; b=aB1j6u66EqPuFnZiTZ3vxeIYRlQwPQbDpzbbV5BxWZKFrK18jIZZz3A3YgPAYbEOm0T64C63xXpCCDnQWvwdOA4yZoqkZfNce5Cnx/DO+KshK8vndZMhfHG9wt2xFfCxr6JaWUEXqmHqLwj1IVV/b6oZEUlC4bWGUpJ8qKVUFxw=
+	t=1762944645; cv=none; b=b4T2FsEzS520+xUbU+Of0B7YAyYnpNQJFpuflS271zlXCembmt3ccWdWW6snEw61bTzCzsLilDBsWBmaDactQCBadpolYsSqXJ46L/whXiiBpvvsiCRxaZMyWp40Hu0OJs7XmWu9rJfDVTwiManT5wzB1BQrXCE9TNGLG8wL0EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762944649; c=relaxed/simple;
-	bh=5Z/Sel55XGLWWt0Or4aaEmOg0nRkE2Q24yyei396xO4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qs90oj5UnLwFuRm1ASjUoL/EAaAgRb31AlUnT/nKAWlqcmpfSKxNuGUVbFjFWlDHaBrLVwXPxygFMyJcyFkh5V2W66dHxEy8CeaSXv6kS1KBbpMLhvjZI8VZzRX9z3cWi45CZzx/Nh5p74lJ5ZFrSzddD6MkXgoGrBmvi5GfdyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=AdMfaWN0; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3438231df5fso807622a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:50:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1762944648; x=1763549448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eDt+PkPIFcOkoVGyNRXMinYtQG6IfGLG4Ne73L8xsnI=;
-        b=AdMfaWN0ZjdHij6ofGKOD8OBBKiPKyuvvgTfm3jsNmNTvQ4qb4qXIBBBanbRne34hI
-         NT99UrkWhkdIwSdY+953owV57Rb1Mm0Br7tNtIok59OCrB6xsxsI6zRHPvv9JT8n0YME
-         XHgpG9gfl6o0D8oghrQaRVKq0SaCzejGX0pTxxJky5VO29pBf4O/vOwoLvhvLAXkBVDp
-         e19cbbnw+3Byp0HAeJcTSzKLPK6sYfiy35FT0cGmIuOC5Jzj7WCooirEQ/vv6VfDM1jC
-         RqCSE8fDES84x3Y4GPmzzrDgIZpgBqvkwMeyiBcX4zCsUxNrMAQVCszaGP+E9knx0pyp
-         m1nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762944648; x=1763549448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eDt+PkPIFcOkoVGyNRXMinYtQG6IfGLG4Ne73L8xsnI=;
-        b=IUFqHHn5eMfAe9Ydc9bKYLbBPFrqHE4mzeXltjL3lqZyxJHkHcjItvOog3qnMndxfT
-         XzxvnhSa42En4PrcXAhGB+pKfxOQ3HgOx/onl1l7Q03uf2TF2oNEB+29BMDCSGxt+nZ5
-         vPAi/iSNDIljYY8SVoq1iYIGGjH41orGJZDJrQ2p94Mo9BAmPPTH2GGzgQFqP+6a/viI
-         4tcikJ/z6wp7ZNWi0bfuk/cyMGGzEKffrFL0qfLPcIOagwpQU5dNlIk4cRqQH/0n8lcH
-         r6t/O2vjO57ywrk4CV1tN1Zv//ZDwEDA14yZaGDMzvyoT5zCEnon0+MCzh/7CUjKdAhs
-         BV4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Cu0XmeiX6dNohk0/sFnRjuOw2UobrwgB95r/ev9/hrcfhqbj7XcXB5pBzxaY84oeUuL+/5Vzq2fUQqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy79dyhEYS3W6r688o9R6Y5vYWhGyB6eIGvNkygztAkxYX+saci
-	HNACpPMZBOlBJV8+d0fi+Gtm0Kg9aKKlWtxOCPD+QBTHQo7uvKqPa0X2K5urkv9iGzDsszPprst
-	9G8VL0jAO8tIXFXA+ysRHLCUcaZHow+BLASTUy5vd
-X-Gm-Gg: ASbGnctwwRKTD8eHRLtU4xXhEdM8sb7zTTWddJTYHHYaYQqnb86qKkOKOLVD1jF2Bo0
-	pRsYedsOakx7DVG/0YLlQmQuW7Wo/UjUKelIF3MmTIKV90VNf+4FgK4CmJRQErIVB+gn+20mFnv
-	XVv9xrx+YOrVSc0aYiDD1I8mxZ7d3BC+GMVsiXNEkjoTZf/t64ssll4MQu+Ny5tg+CKaUKJqrG0
-	9oXf1PusM+1pccvTKp5Lzy+MhFw7RvobTjjPZqRUxxyWjW+ywTvYW9vlFpg8njVVvN0
-X-Google-Smtp-Source: AGHT+IFd1GAEDD22DSqeZAERmGI0Yy3shnOdbYrZoI4SJAFw9T2NTCYWO4NIIVgty2SrgCXz2TzubvGJOTr/RLGjLss=
-X-Received: by 2002:a17:90b:3e8d:b0:339:ec9c:b275 with SMTP id
- 98e67ed59e1d1-343dde10f3emr3441534a91.6.1762944647817; Wed, 12 Nov 2025
- 02:50:47 -0800 (PST)
+	s=arc-20240116; t=1762944645; c=relaxed/simple;
+	bh=0+unaSKUFdFHJhkY4RjZVR+uXBrXziaM/doRPyYlSzQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RUrrqBhi1V3wtIyvRtW3BoiLSiUBpeFH0FR1TDAALVOHJKTSDMnUzQqTqVJb7MBdtN+3GCvsvSOCl3zHuM34NCp4pwXbLImhfrDdroT6skKyHV5d1FX8gPWZl6HX2Pm31s/xnd1skLrAmqgAJx+979tuSErY2oMu6QIau3CHywA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mizS3kv6; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 181C54E41667;
+	Wed, 12 Nov 2025 10:50:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C59876070B;
+	Wed, 12 Nov 2025 10:50:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 768F3102F1699;
+	Wed, 12 Nov 2025 11:50:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762944640; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0+unaSKUFdFHJhkY4RjZVR+uXBrXziaM/doRPyYlSzQ=;
+	b=mizS3kv6uoJgba8W4pJm2oS1mrMVnDNPFVJGQtU9ZgSJ701Y4ZdRvd79WEdYs8x9oSCo2s
+	eib7tTolLYvjh7nAX9IW6fY5GD8Dgi75aZpad/kIZtuuxlEK/m2S4KhbjV1/IpEbPG4YM2
+	BFwpY/jSKDhFPWfHHmicaiK5iFxE+KicBh5szT0Jp1pNgGc7eO6h5gHI90amSMyC1579zS
+	Bz8F33OK+M9WL7/qMB9goIa/Hl52oAH+mAW7AeSQ+z73GxrFCxw7aWX7rc5S4dU7E2bytQ
+	Vego2TDdagK+fyvI6188iQ+SZ7qAHIr4CIpclwQWxXBNFSNm/te+7wtwhoAAEA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  stable@vger.kernel.org
+Subject: Re: [PATCH] mtd: mtdpart: ignore error -ENOENT from parsers on
+ subpartitions
+In-Reply-To: <691456b8.050a0220.3c21b3.5c4c@mx.google.com> (Christian
+	Marangi's message of "Wed, 12 Nov 2025 10:43:17 +0100")
+References: <20251109115247.15448-1-ansuelsmth@gmail.com>
+	<87y0ob7fyy.fsf@bootlin.com>
+	<691456b8.050a0220.3c21b3.5c4c@mx.google.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 12 Nov 2025 11:50:36 +0100
+Message-ID: <87ikffikxv.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112072709.73755-1-nichen@iscas.ac.cn>
-In-Reply-To: <20251112072709.73755-1-nichen@iscas.ac.cn>
-From: Jamal Hadi Salim <jhs@mojatatu.com>
-Date: Wed, 12 Nov 2025 05:50:36 -0500
-X-Gm-Features: AWmQ_bnhAIJldRZySXFM6YMLqOMoeHsLxRw20K50W9oAJgt68RFCpe5Bg9f-mmQ
-Message-ID: <CAM0EoMnQqNwkdUec0tX4cznZk8teiPRx9iBv5Ff-MeSDASj-zQ@mail.gmail.com>
-Subject: Re: [PATCH] net/sched: act_ife: convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Nov 12, 2025 at 2:28=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
->
-> Replace comma between expressions with semicolons.
->
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
->
+On 12/11/2025 at 10:43:17 +01, Christian Marangi <ansuelsmth@gmail.com> wro=
+te:
 
-IIRC, Simon brought this up in the review as well...
+> On Wed, Nov 12, 2025 at 10:33:25AM +0100, Miquel Raynal wrote:
+>> Hi Christian,
+>>=20
+>> On 09/11/2025 at 12:52:44 +01, Christian Marangi <ansuelsmth@gmail.com> =
+wrote:
+>>=20
+>> > Commit 5c2f7727d437 ("mtd: mtdpart: check for subpartitions parsing
+>> > result") introduced some kind of regression with parser on subpartitio=
+ns
+>> > where if a parser emits an error then the entire parsing process from =
+the
+>> > upper parser fails and partitions are deleted.
+>> >
+>> > Not checking for error in subpartitions was originally intended as
+>> > special parser can emit error also in the case of the partition not
+>> > correctly init (for example a wiped partition) or special case where t=
+he
+>> > partition should be skipped due to some ENV variables externally
+>> > provided (from bootloader for example)
+>> >
+>> > One example case is the TRX partition where, in the context of a wiped
+>> > partition, returns a -ENOENT as the trx_magic is not found in the
+>> > expected TRX header (as the partition is wiped)
+>>=20
+>> I didn't had in mind this was a valid case. I am a bit puzzled because
+>> it opens the breach to other special cases, but at the same time I have
+>> no strong arguments to refuse this situation so let's go for it.
+>>=20
+>
+> Thanks a lot for accepting this. I checked all the parser both upstream
+> and downstream and I found this ""undocumented"" pattern of returning
+> -ENOENT. [1] [2] [3]
+>
+> For sure it's a regression, we had various device on OpenWrt that broke
+> from migrating from 6.6 to 6.12. I agree there is the risk you are
+> pointing out but I feel this is a good compromise to restore original
+> functionality of the upstream parsers.
+>
+> (the other error condition are -ENOMEM or sometimes -EINVAL for parser
+> header present but very wrong)
+>
+> [1] https://elixir.bootlin.com/linux/v6.17.7/source/drivers/mtd/parsers/t=
+plink_safeloader.c#L93
+> [2] https://elixir.bootlin.com/linux/v6.17.7/source/drivers/mtd/parsers/s=
+cpart.c#L170
+> [3] https://elixir.bootlin.com/linux/v6.17.7/source/drivers/mtd/parsers/o=
+fpart_bcm4908.c#L47
 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Thanks for the digging. I will apply this to -next and not -fixes. It
+will be slightly longer to get it backported, but this gives a bit more
+time for this patch to be thought about as I plan on sending my fixes PR
+in the next days.
 
-Reviewed-by: Jamal Hadi Salim <jhs@mojatatu.com>
-
-cheers,
-jamal
-
-> ---
->  net/sched/act_ife.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
-> index 7c6975632fc2..1dfdda6c2d4c 100644
-> --- a/net/sched/act_ife.c
-> +++ b/net/sched/act_ife.c
-> @@ -649,9 +649,9 @@ static int tcf_ife_dump(struct sk_buff *skb, struct t=
-c_action *a, int bind,
->
->         memset(&opt, 0, sizeof(opt));
->
-> -       opt.index =3D ife->tcf_index,
-> -       opt.refcnt =3D refcount_read(&ife->tcf_refcnt) - ref,
-> -       opt.bindcnt =3D atomic_read(&ife->tcf_bindcnt) - bind,
-> +       opt.index =3D ife->tcf_index;
-> +       opt.refcnt =3D refcount_read(&ife->tcf_refcnt) - ref;
-> +       opt.bindcnt =3D atomic_read(&ife->tcf_bindcnt) - bind;
->
->         spin_lock_bh(&ife->tcf_lock);
->         opt.action =3D ife->tcf_action;
-> --
-> 2.25.1
->
+Miqu=C3=A8l
 
