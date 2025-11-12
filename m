@@ -1,150 +1,110 @@
-Return-Path: <linux-kernel+bounces-896347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED4EC50292
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:56:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6513C502AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B03524E5C1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:56:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 089254E93E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D981D220F5C;
-	Wed, 12 Nov 2025 00:56:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058621B808;
+	Wed, 12 Nov 2025 01:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kr8MMnhS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F20B14B96E;
-	Wed, 12 Nov 2025 00:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64031B142D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762908997; cv=none; b=h4ynm5EpJeTnFlq3L+V4ywEjcyBw0aBTL+zPavs7Nydq8fivbFZglWzp2yXtkALkinBP0NYR99dJQUtotLIyBbduFLEmbYCWwyeXaFiywEkXVmRj82FVZPZpEGSPKGTizbdjbYJaqPeJH8wB80rEjZQm96PH0FS5yqfFg1Sljg8=
+	t=1762909326; cv=none; b=ZmjbsPbuDrjM8P+8xiStO6USEIOy4JoHLoIyDXCvwQYlXHc1LSJ2fYss8BXR7tGnGPjk/bANxtRGBH/7WyFVhEpXlMo1fXECgdelSDA4x9JpDmv3zPJZYoCBkX6ctBHMdeUYZFWwP/BQ08DAIb+CEOnwyto8KtAeBaEWZC8zPw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762908997; c=relaxed/simple;
-	bh=TIoMZjpibgfM0vfF/TNu1msyh8gg3Ujr1PN57cUbzxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kqH2BTULJ1IxQXtchLXXAJ/N6gsureZHjQlnypynfj0SCvRtmwE1RDafDIieZqbrolpOG3LN49cZXm7v6MMPTKjX8ytX5suj4x0bKR2wQIaK1ezjy/lj3Cwtq+4/nDGQGsq0GAzMX5rO3lx4JX9+oIifUTcHDT4URIW8rsIk7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5lMQ6pWBzYQtpG;
-	Wed, 12 Nov 2025 08:56:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 881491A084B;
-	Wed, 12 Nov 2025 08:56:30 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBnw3k92xNp7pW8AQ--.37935S2;
-	Wed, 12 Nov 2025 08:56:30 +0800 (CST)
-Message-ID: <2f43bdf7-5ce0-4835-9e60-39d91f637152@huaweicloud.com>
-Date: Wed, 12 Nov 2025 08:56:28 +0800
+	s=arc-20240116; t=1762909326; c=relaxed/simple;
+	bh=nWLtCDFyxDJXd3sDd9Z8S0ulDuiXZzc63es1RkwCMVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDUZwG1CW87Vw65qSFqUl7TvaBFoKI2M2PcR4m8BBSTFeJ6a/XWPUoZlE7nx+XqxuC3aBfylqT+3FA9hE7RCZKxf7wIcA/Loi+2OE18uH0z6RHZ2JcFVsYOj6ptHDmp9tyWltWQ7qZgfCvFfRuw8QN3cMQlevLdCgUaJ7t/yKEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kr8MMnhS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762909317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QqGeUcwYfLWiIUxBOSFJgnfAAg9kUqwtogn1q9e0KTk=;
+	b=Kr8MMnhSWLMI0+Fx+nzbU0hQTFZHmryjuyn1GObgKHQR1IpdxABodZQpanqstW1daVmbDt
+	tEx2I8g3OOAMmcmgwvzQWpcapmzE7XzacO12NnLyGaRiBiX+0xD2uaEcoha0PgOeojT8Q6
+	+vfIkMqT3RUB3Kko0jKGo0JeLjFaeL8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-JzI5J6KIND6L0o-6_X6DkQ-1; Tue,
+ 11 Nov 2025 20:01:54 -0500
+X-MC-Unique: JzI5J6KIND6L0o-6_X6DkQ-1
+X-Mimecast-MFC-AGG-ID: JzI5J6KIND6L0o-6_X6DkQ_1762909313
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 946FD180048E;
+	Wed, 12 Nov 2025 01:01:52 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.17])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B71661955F1A;
+	Wed, 12 Nov 2025 01:01:47 +0000 (UTC)
+Date: Wed, 12 Nov 2025 09:01:42 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Keith Busch <kbusch@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as
+ number of bvecs
+Message-ID: <aRPcdmpZoet2fwbu@fedora>
+References: <20251111191530.1268875-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
- on-demand stats flushing
-To: Leon Huang Fu <leon.huangfu@shopee.com>
-Cc: akpm@linux-foundation.org, cgroups@vger.kernel.org, corbet@lwn.net,
- hannes@cmpxchg.org, jack@suse.cz, joel.granados@kernel.org,
- kyle.meyer@hpe.com, lance.yang@linux.dev, laoar.shao@gmail.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mclapinski@google.com, mhocko@kernel.org, mkoutny@suse.com,
- muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- tj@kernel.org
-References: <7d46ef17-684b-4603-be7a-a9428149da05@huaweicloud.com>
- <20251111064415.75290-1-leon.huangfu@shopee.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251111064415.75290-1-leon.huangfu@shopee.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBnw3k92xNp7pW8AQ--.37935S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr45Wr4UJrW8Xr1fZr4DCFg_yoW8tr1rpF
-	W3Jas0vF48tF97Crs2qwn7XryUtwn7WryUWr98Crn5G3ZxKr1akF45KFWYkF9xKr4fCr1j
-	vw4jga4Iva45ZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	bAw3UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111191530.1268875-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+
+On Tue, Nov 11, 2025 at 12:15:29PM -0700, Caleb Sander Mateos wrote:
+> io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
+> the number of bvecs in the request. However, bvecs may be split into
+> multiple segments depending on the queue limits. Thus, the number of
+> segments may overestimate the number of bvecs. For ublk devices, the
+> only current users of io_buffer_register_bvec(), virt_boundary_mask,
+> seg_boundary_mask, max_segments, and max_segment_size can all be set
+> arbitrarily by the ublk server process.
+> Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
+> loop actually yields. However, continue using blk_rq_nr_phys_segments()
+> as an upper bound on the number of bvecs when allocating imu to avoid
+> needing to iterate the bvecs a second time.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs")
+
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+
+BTW, this issue may not be a problem because ->nr_bvecs is only used in
+iov_iter_bvec(), in which 'offset' and 'len' can control how far the
+iterator can reach, so the uninitialized bvecs won't be touched basically.
+
+Otherwise, the issue should have been triggered somewhere.
+
+Also the bvec allocation may be avoided in case of single-bio request,
+which can be one future optimization.
 
 
-
-On 2025/11/11 14:44, Leon Huang Fu wrote:
-> On Tue, Nov 11, 2025 at 9:00 AM Chen Ridong <chenridong@huaweicloud.com> wrote:
->>
->>
->>
->> On 2025/11/10 21:50, Michal Koutný wrote:
->>> Hello Leon.
-> 
-> Hi Ridong,
-> 
->>>
->>> On Mon, Nov 10, 2025 at 06:19:48PM +0800, Leon Huang Fu <leon.huangfu@shopee.com> wrote:
->>>> Memory cgroup statistics are updated asynchronously with periodic
->>>> flushing to reduce overhead. The current implementation uses a flush
->>>> threshold calculated as MEMCG_CHARGE_BATCH * num_online_cpus() for
->>>> determining when to aggregate per-CPU memory cgroup statistics. On
->>>> systems with high core counts, this threshold can become very large
->>>> (e.g., 64 * 256 = 16,384 on a 256-core system), leading to stale
->>>> statistics when userspace reads memory.stat files.
->>>>
->>
->> We have encountered this problem multiple times when running LTP tests. It can easily occur when
->> using a 64K page size.
->>
->> error:
->>         memcg_stat_rss 10 TFAIL: rss is 0, 266240 expected
->>
-> 
-> Have you encountered this problem in real world?
-> 
-Do you mean whether we’ve encountered this issue in our product? We haven’t so far.
-
-However, this fails the LTP test quite easily. The error logs come directly from LTP. The issue
-occurs because the threshold isn’t reached, resulting in an RSS value of 0. We tried increasing the
-memory allocated by the LTP case, but that wasn’t the right solution.
-
->>>> This is particularly problematic for monitoring and management tools
->>>> that rely on reasonably fresh statistics, as they may observe data
->>>> that is thousands of updates out of date.
->>>>
->>>> Introduce a new write-only file, memory.stat_refresh, that allows
->>>> userspace to explicitly trigger an immediate flush of memory statistics.
->>>
-> [...]
->>>
->>> Next, v1 and v2 haven't been consistent since introduction of v2 (unlike
->>> some other controllers that share code or even cftypes between v1 and
->>> v2). So I'd avoid introducing a new file to V1 API.
->>>
->>
->> We encountered this problem in v1, I think this is a common problem should be fixed.
-> 
-> Thanks for pointing that out.
-> 
-> Thanks,
-> Leon
-> 
-> [...]
-
--- 
-Best regards,
-Ridong
+Thanks,
+Ming
 
 
