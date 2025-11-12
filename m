@@ -1,185 +1,340 @@
-Return-Path: <linux-kernel+bounces-896839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C18C515C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:31:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BAEC515CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D9D84F280F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:23:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 36CFC4EB3C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FB02F3600;
-	Wed, 12 Nov 2025 09:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719022FD692;
+	Wed, 12 Nov 2025 09:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="U2p6h2ff"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MeuVsTll"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5BC20DD48
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8532C0262;
+	Wed, 12 Nov 2025 09:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939373; cv=none; b=uLGmRuXgssqj8FQbmpglfH61QJgxBvFrTughTpGydQv6eOPnCYTYQuSdlA8x0e9M1/l9oySVgRpOTMbHxeurMQ+ABrHtXIfHvcb2l/6pBTosF+taoru40sut5lNjumEKRjHQOGv9sIDqJISvpO2OpefpmqUH46VdgcJe8Dur/Gc=
+	t=1762939517; cv=none; b=bfJEy/FJm4G18CO7/a+axB4UcBxQCkKNfJ+/+fStH1B7ySUa9E/Y9B/H21V9og5wUAWb1HUl75SyHq0CT8ZD4xxizghGsg7az0M0H0KvWyZKFGDH+jlPXgY0NilQDrU2KRW80KudaxaxX/MjSnLKmcCWwVXnnS6I1sDUTkDFagk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939373; c=relaxed/simple;
-	bh=FZ/0jtKLUWgbygyUSbN0xOSCJOX3o33PqNVNNKTnnDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Bdu64fyrkSRlI4nhtOH4Ot14DOi0FjitjLN5knHKSSKbDdLX+mrthAkzO0yXl2hEns3Z/T+6cDLuXtOWoVqn5myTm2Ydunos0j4q0swTrERqG9nKs/6ZdP5COzFfO6y7jplqT2jEFW+DwN/gM7FTBtwQYfye+jBU8tZUq8z7zzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=U2p6h2ff; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4F6D082E;
-	Wed, 12 Nov 2025 10:20:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762939248;
-	bh=FZ/0jtKLUWgbygyUSbN0xOSCJOX3o33PqNVNNKTnnDQ=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=U2p6h2ffYXJisMvYH5tmIdQvTGEntz98xt7rm/EAE/BsRwoy32GxbGLIXcizC6Uay
-	 dFQvOlsMygWVOlGdwCZDs2Z6qLwY7nVTs53y+A79rNIkHiHzI67aAp52FRh4Jlr3EB
-	 NOP6Dn3JMBLJBNF+eEC7dV5QNjfmw2/DhFdjgJv4=
-Message-ID: <3a05be44-97f6-4c0f-b565-0f70947d7fff@ideasonboard.com>
-Date: Wed, 12 Nov 2025 11:22:43 +0200
+	s=arc-20240116; t=1762939517; c=relaxed/simple;
+	bh=wfdiu7J2v8ebQjPtRjS9CStPzrfquDSfEs/pL6nqmaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hHqdwlapJlvqJf9zcXmGOP/hO6wCIR1ISCQnBnmOoHjpkbYYz1NGgoejrhakQQ0OH7HK//CFszHqfyWgJ/Hnd6CVVPRRttpnuQE0kPtYlpxZpRp1BP1vUUPAAqwrk/+T8ySopik5wijvpQDUS80HAeH0NgImhDcE5Gwq6+XAFcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MeuVsTll; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762939513;
+	bh=wfdiu7J2v8ebQjPtRjS9CStPzrfquDSfEs/pL6nqmaY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MeuVsTllT4ykJQdbbdHweXlWptimWOqEdLqKL7bcrfCrSqzE+IYsnSawgqaBLVumd
+	 lDdLYHJNix4epPZvJzO8U/lo/H+fa6CdtR3pDPrkhk2JmXkUqo5wxAxX9P3AAi3U8E
+	 YI3/frGF8lanYUkFyVFmgoKqIgbzzW3RkkEG20oMZIt++WToJvcp0oWPa+itdSGvnc
+	 Gw6tIWRjCZQgc6jyOHbuUt0jUa8g7v5jv0Wcvg4NKiLF3ndEYnFPYy3Ck+WIMi17Vb
+	 HbHxgkAi7JblZw5lgDdWCTL4NlLF+Xyxki1E/DhdDE99LYlNFqe1L4dG5320TCy1iy
+	 pp09DCW7We3zg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4CD0D17E1318;
+	Wed, 12 Nov 2025 10:25:12 +0100 (CET)
+Date: Wed, 12 Nov 2025 10:25:07 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
+ Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v7 06/11] drm/v3d: Use huge tmpfs mountpoint helpers
+Message-ID: <20251112102507.66060e30@fedora>
+In-Reply-To: <20251110155000.2936-7-loic.molinari@collabora.com>
+References: <20251110155000.2936-1-loic.molinari@collabora.com>
+	<20251110155000.2936-7-loic.molinari@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 6/6] drm/bridge: cadence: cdns-mhdp8546-core: Handle
- HDCP state in bridge atomic check
-To: Harikrishna Shenoy <h-shenoy@ti.com>
-References: <20251014094527.3916421-1-h-shenoy@ti.com>
- <20251014094527.3916421-7-h-shenoy@ti.com>
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Language: en-US
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- andrzej.hajda@intel.com, andy.yan@rock-chips.com, aradhya.bhatia@linux.dev,
- devarsht@ti.com, dianders@chromium.org, dri-devel@lists.freedesktop.org,
- javierm@redhat.com, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- linux-kernel@vger.kernel.org, linux@treblig.org, luca.ceresoli@bootlin.com,
- lumag@kernel.org, lyude@redhat.com, maarten.lankhorst@linux.intel.com,
- mordan@ispras.ru, mripard@kernel.org, neil.armstrong@linaro.org,
- rfoss@kernel.org, s-jain1@ti.com, simona@ffwll.ch, tzimmermann@suse.de,
- u-kumar1@ti.com
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20251014094527.3916421-7-h-shenoy@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 10 Nov 2025 16:49:54 +0100
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-On 14/10/2025 12:45, Harikrishna Shenoy wrote:
-> Now that we have DBANC framework and legacy connector functions removed,
-> handle the HDCP disabling in bridge atomic check rather than in connector
-> atomic check in !(DBANC) usecase.
-
-This sounds odd. The patch is only adding new code, so "handle the HDCP
-disabling in bridge atomic check rather than in connector atomic check
-in !(DBANC) usecase." doesn't quite make sense.
-
-Afaiu in patch 3 you removed the HDCP code for !DBANC, and here you add
-it for DBANC.
-
-Correct me if I'm wrong, but HDCP support for DBANC is currently broken
-in upstream, as the HDCP code is only for the !DBANC case?
-
-Isn't this patch then similar to patch 2, which is a fix for a missing
-feature with DBANC? So should this also be a fix, and perhaps be moved
-as after patch 2?
-
- Tomi
-
-> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+> Make use of the new drm_gem_huge_mnt_create() and
+> drm_gem_has_huge_mnt() helpers to avoid code duplication. Now that
+> it's just a few lines long, the single function in v3d_gemfs.c is
+> moved into v3d_gem.c.
+>=20
+> v3:
+> - use huge tmpfs mountpoint in drm_device
+> - move v3d_gemfs.c into v3d_gem.c
+>=20
+> v4:
+> - clean up mountpoint creation error handling
+>=20
+> v5:
+> - fix CONFIG_TRANSPARENT_HUGEPAGE check
+> - use drm_gem_has_huge_mnt() helper
+>=20
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
 > ---
->  .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> index 06ac5c2ee78f..120eb7ffe20c 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> @@ -1962,6 +1962,10 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
+>  drivers/gpu/drm/v3d/Makefile    |  3 +-
+>  drivers/gpu/drm/v3d/v3d_bo.c    |  5 ++-
+>  drivers/gpu/drm/v3d/v3d_drv.c   |  2 +-
+>  drivers/gpu/drm/v3d/v3d_drv.h   | 11 +-----
+>  drivers/gpu/drm/v3d/v3d_gem.c   | 27 ++++++++++++--
+>  drivers/gpu/drm/v3d/v3d_gemfs.c | 62 ---------------------------------
+>  6 files changed, 30 insertions(+), 80 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
+>=20
+> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
+> index fcf710926057..b7d673f1153b 100644
+> --- a/drivers/gpu/drm/v3d/Makefile
+> +++ b/drivers/gpu/drm/v3d/Makefile
+> @@ -13,8 +13,7 @@ v3d-y :=3D \
+>  	v3d_trace_points.o \
+>  	v3d_sched.o \
+>  	v3d_sysfs.o \
+> -	v3d_submit.o \
+> -	v3d_gemfs.o
+> +	v3d_submit.o
+> =20
+>  v3d-$(CONFIG_DEBUG_FS) +=3D v3d_debugfs.o
+> =20
+> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+> index d9547f5117b9..99c6a775d18b 100644
+> --- a/drivers/gpu/drm/v3d/v3d_bo.c
+> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
+> @@ -114,7 +114,7 @@ v3d_bo_create_finish(struct drm_gem_object *obj)
+>  	if (IS_ERR(sgt))
+>  		return PTR_ERR(sgt);
+> =20
+> -	if (!v3d->gemfs)
+> +	if (!drm_gem_has_huge_mnt(obj->dev))
+>  		align =3D SZ_4K;
+>  	else if (obj->size >=3D SZ_1M)
+>  		align =3D SZ_1M;
+> @@ -150,12 +150,11 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev=
+, struct drm_file *file_priv,
+>  			     size_t unaligned_size)
 >  {
->  	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
->  	const struct drm_display_mode *mode = &crtc_state->adjusted_mode;
-> +	struct drm_connector_state *old_state, *new_state;
-> +	struct drm_atomic_state *state = crtc_state->state;
-> +	struct drm_connector *conn = mhdp->connector;
-> +	u64 old_cp, new_cp;
->  
->  	mutex_lock(&mhdp->link_mutex);
->  
-> @@ -1981,6 +1985,25 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
->  	if (mhdp->info)
->  		bridge_state->input_bus_cfg.flags = *mhdp->info->input_bus_flags;
->  
-> +	if (conn && mhdp->hdcp_supported) {
-> +		old_state = drm_atomic_get_old_connector_state(state, conn);
-> +		new_state = drm_atomic_get_new_connector_state(state, conn);
-> +		old_cp = old_state->content_protection;
-> +		new_cp = new_state->content_protection;
-> +
-> +		if (old_state->hdcp_content_type != new_state->hdcp_content_type &&
-> +		    new_cp != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> +			new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
-> +			crtc_state = drm_atomic_get_new_crtc_state(state, new_state->crtc);
-> +			crtc_state->mode_changed = true;
-> +		}
-> +
-> +		if (!new_state->crtc) {
-> +			if (old_cp == DRM_MODE_CONTENT_PROTECTION_ENABLED)
-> +				new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
-> +		}
-> +	}
-> +
->  	mutex_unlock(&mhdp->link_mutex);
->  	return 0;
+>  	struct drm_gem_shmem_object *shmem_obj;
+> -	struct v3d_dev *v3d =3D to_v3d_dev(dev);
+>  	struct v3d_bo *bo;
+>  	int ret;
+> =20
+>  	shmem_obj =3D drm_gem_shmem_create_with_mnt(dev, unaligned_size,
+> -						  v3d->gemfs);
+> +						  dev->huge_mnt);
+
+I thought you needed some kind of drm_gem_huge_mnt() helper to cover
+for the fact drm_device::huge_mnt does not exist if
+CONFIG_TRANSPARENT_HUGEPAGE=3Dn.
+
+
+>  	if (IS_ERR(shmem_obj))
+>  		return ERR_CAST(shmem_obj);
+>  	bo =3D to_v3d_bo(&shmem_obj->base);
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+> index e8a46c8bad8a..30b55a00eeda 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> @@ -107,7 +107,7 @@ static int v3d_get_param_ioctl(struct drm_device *dev=
+, void *data,
+>  		args->value =3D v3d->perfmon_info.max_counters;
+>  		return 0;
+>  	case DRM_V3D_PARAM_SUPPORTS_SUPER_PAGES:
+> -		args->value =3D !!v3d->gemfs;
+> +		args->value =3D drm_gem_has_huge_mnt(dev);
+>  		return 0;
+>  	case DRM_V3D_PARAM_GLOBAL_RESET_COUNTER:
+>  		mutex_lock(&v3d->reset_lock);
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index 1884686985b8..99a39329bb85 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -158,11 +158,6 @@ struct v3d_dev {
+>  	struct drm_mm mm;
+>  	spinlock_t mm_lock;
+> =20
+> -	/*
+> -	 * tmpfs instance used for shmem backed objects
+> -	 */
+> -	struct vfsmount *gemfs;
+> -
+>  	struct work_struct overflow_mem_work;
+> =20
+>  	struct v3d_queue_state queue[V3D_MAX_QUEUES];
+> @@ -569,6 +564,7 @@ extern const struct dma_fence_ops v3d_fence_ops;
+>  struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_queue q=
+);
+> =20
+>  /* v3d_gem.c */
+> +extern bool super_pages;
+>  int v3d_gem_init(struct drm_device *dev);
+>  void v3d_gem_destroy(struct drm_device *dev);
+>  void v3d_reset_sms(struct v3d_dev *v3d);
+> @@ -576,11 +572,6 @@ void v3d_reset(struct v3d_dev *v3d);
+>  void v3d_invalidate_caches(struct v3d_dev *v3d);
+>  void v3d_clean_caches(struct v3d_dev *v3d);
+> =20
+> -/* v3d_gemfs.c */
+> -extern bool super_pages;
+> -void v3d_gemfs_init(struct v3d_dev *v3d);
+> -void v3d_gemfs_fini(struct v3d_dev *v3d);
+> -
+>  /* v3d_submit.c */
+>  void v3d_job_cleanup(struct v3d_job *job);
+>  void v3d_job_put(struct v3d_job *job);
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 5a180dc6c452..f316f67364d2 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -259,6 +259,30 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
+>  	v3d_invalidate_slices(v3d, 0);
 >  }
+> =20
+> +static void
+> +v3d_huge_mnt_init(struct v3d_dev *v3d)
+> +{
+> +	int err =3D 0;
+> +
+> +	/*
+> +	 * By using a huge shmemfs mountpoint when the user wants to
+> +	 * enable Super Pages, we can pass in mount flags that better
+> +	 * match our usecase.
+> +	 */
+> +
+> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+> +		err =3D drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> +
+> +	if (drm_gem_has_huge_mnt(&v3d->drm))
+> +		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+> +	else if (err)
+> +		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n",
+> +			 err);
+> +	else
+> +		drm_notice(&v3d->drm,
+> +			   "Transparent Hugepage support is recommended for optimal performan=
+ce on this platform!\n");
+> +}
+> +
+>  int
+>  v3d_gem_init(struct drm_device *dev)
+>  {
+> @@ -310,7 +334,7 @@ v3d_gem_init(struct drm_device *dev)
+>  	v3d_init_hw_state(v3d);
+>  	v3d_mmu_set_page_table(v3d);
+> =20
+> -	v3d_gemfs_init(v3d);
+> +	v3d_huge_mnt_init(v3d);
+> =20
+>  	ret =3D v3d_sched_init(v3d);
+>  	if (ret) {
+> @@ -330,7 +354,6 @@ v3d_gem_destroy(struct drm_device *dev)
+>  	enum v3d_queue q;
+> =20
+>  	v3d_sched_fini(v3d);
+> -	v3d_gemfs_fini(v3d);
+> =20
+>  	/* Waiting for jobs to finish would need to be done before
+>  	 * unregistering V3D.
+> diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_ge=
+mfs.c
+> deleted file mode 100644
+> index bf351fc0d488..000000000000
+> --- a/drivers/gpu/drm/v3d/v3d_gemfs.c
+> +++ /dev/null
+> @@ -1,62 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/* Copyright (C) 2024 Raspberry Pi */
+> -
+> -#include <linux/fs.h>
+> -#include <linux/mount.h>
+> -#include <linux/fs_context.h>
+> -
+> -#include <drm/drm_print.h>
+> -
+> -#include "v3d_drv.h"
+> -
+> -void v3d_gemfs_init(struct v3d_dev *v3d)
+> -{
+> -	struct file_system_type *type;
+> -	struct fs_context *fc;
+> -	struct vfsmount *gemfs;
+> -	int ret;
+> -
+> -	/*
+> -	 * By creating our own shmemfs mountpoint, we can pass in
+> -	 * mount flags that better match our usecase. However, we
+> -	 * only do so on platforms which benefit from it.
+> -	 */
+> -	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> -		goto err;
+> -
+> -	/* The user doesn't want to enable Super Pages */
+> -	if (!super_pages)
+> -		goto err;
+> -
+> -	type =3D get_fs_type("tmpfs");
+> -	if (!type)
+> -		goto err;
+> -
+> -	fc =3D fs_context_for_mount(type, SB_KERNMOUNT);
+> -	if (IS_ERR(fc))
+> -		goto err;
+> -	ret =3D vfs_parse_fs_string(fc, "source", "tmpfs");
+> -	if (!ret)
+> -		ret =3D vfs_parse_fs_string(fc, "huge", "within_size");
+> -	if (!ret)
+> -		gemfs =3D fc_mount_longterm(fc);
+> -	put_fs_context(fc);
+> -	if (ret)
+> -		goto err;
+> -
+> -	v3d->gemfs =3D gemfs;
+> -	drm_info(&v3d->drm, "Using Transparent Hugepages\n");
+> -
+> -	return;
+> -
+> -err:
+> -	v3d->gemfs =3D NULL;
+> -	drm_notice(&v3d->drm,
+> -		   "Transparent Hugepage support is recommended for optimal performanc=
+e on this platform!\n");
+> -}
+> -
+> -void v3d_gemfs_fini(struct v3d_dev *v3d)
+> -{
+> -	if (v3d->gemfs)
+> -		kern_unmount(v3d->gemfs);
+> -}
 
 
