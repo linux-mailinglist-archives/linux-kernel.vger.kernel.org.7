@@ -1,204 +1,218 @@
-Return-Path: <linux-kernel+bounces-896457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9F5C506B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:33:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA588C506C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F2BF4E70EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDED3A6A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F6D2BE035;
-	Wed, 12 Nov 2025 03:33:31 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFDD2D2381;
+	Wed, 12 Nov 2025 03:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k50I2Lqg"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010000.outbound.protection.outlook.com [40.93.198.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE228B652;
-	Wed, 12 Nov 2025 03:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762918411; cv=none; b=M3/fh6dVWkWoCfMh78UedeaBOrG65UsXwz72bN+U8r1qg4DEsovogxh20VZcwXY35SV10ii/tBg+1y16R9WWkuwAEkR0tTfCO+olI+SIwI5sQtLz5+1z/PqAWlv6m7tt2DYkxyvuwBf6TcQDDXfWBpnzywd3yz02cX7JRQUuf4w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762918411; c=relaxed/simple;
-	bh=m6oI5hrMk+/WG4ZUT582FYnudlzi+ZnfDEEbwSfeIqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hu6mm2YXOackDAeJAOsYFwhp+of5Rslea8koRj0Ze1k+fQ98oeva8Hp9cu9nIdmmkI5Iyp03if3QDg672y7o+dAupv8cJ+V8Z7Yx6X5ZU/rI8u5HBOCq6X+WtNanWqimhHHGeddVDYfFjJ5r6JCaJI4L2pLK1RtRdEERE2QYw4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d5prd3lVxzKHMX9;
-	Wed, 12 Nov 2025 11:33:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 8140B1A08AC;
-	Wed, 12 Nov 2025 11:33:22 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgC3YXgBABRp6VHJAQ--.51983S2;
-	Wed, 12 Nov 2025 11:33:22 +0800 (CST)
-Message-ID: <380567da-9079-4a4d-afae-42bde42d2a58@huaweicloud.com>
-Date: Wed, 12 Nov 2025 11:33:21 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7CD299924;
+	Wed, 12 Nov 2025 03:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762918614; cv=fail; b=YQ0WF+VlcL6m8VKckwCR48oH3+XNEvw6XLo8Q+8sh+JtSKPCmLipZ0UfMd2+JwxBdihnTwpqZUBevDR9rqc93pewn4p8HayXUZCGyQKMwGtgHW0LYDDo3m0VPL0ZDuFCws5/tVj8z3kCI/qj6vs6nOHdrm3xekcfXoyXf+a5g/s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762918614; c=relaxed/simple;
+	bh=otu4uqKW1o13HXP0Qqa7a/46d4i5EsHJ8Zo0EsIFVRM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MrSNPoxoOfSRyPSdm5+70b3HsG6CfLu2eEAOtXnmMZ/oJoPOeyqjkmI4vOFptkjA4x/RT5QFBY6gfVo/HkMTrNrF8VVj8v1x15FWLymXgWHVm7PmAOHKrV876NIFH9Ndq1xj0sZEQqyVFwzcHv86Hc9A40vhzi9LVyg8ftKAtSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k50I2Lqg; arc=fail smtp.client-ip=40.93.198.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cmk54+OM9aAGScK6Q6VNI2PpzxN2e5CZ0V1XCDkotJd+5zAF50MGWL8FEpaAlNPbuRbEEmzxoM2FzN3pkhP5Mf28kVV9mh259TjMqIJEytLHnjIdE74n6faEASjV7e2umm4ASb2SYPS5ib8BBg1mF8uyi10Mu5VerVqRVJGpKnELSe4vsA4pBmKpTZNiE+inkLP876oaErX2pLTkuRoaeE68FHWddtQBn04upO3Z5xuTQVDD8JLJSt9Z4acNyLY4Mbc4OyhOX2hOEfWKVSHFpu7ON3ZSXVoTmNMj/kXTIg/RJib24tAm0WkX8nlMmXnIKMIN7+kpRDBsstjXdgWydg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gCrP+TcJJ1MdaAQvXBNbHK4aNxiQHQDwnx+qiicoqgk=;
+ b=zWKPT4h5If/Y/lpxc444hkKWeSy0JEp/I0oxVRTkHTbsXRuLxxyw355TYGn0KHOo5x/SDzsx1Q7Cb0hYE4/If82VDCupBS9OFHUzG+ie8LXdMrDVM2UDZ+IsYAiAyCk3UbkOuT0v2wVC07SEka62wDoXfjD6N0Zr4Cec5BIY3frX8C7PDxB0KYQ+gbyzAbBW+8VNux7wI0y2yTqcjXuc9jGCPY0GDA0mmMPnp7PdQnJ/PZdPwrmkUby1AUNtSeaW5j5D97qMPtKUrQfmbQ5sh2gh1CHRRDzxKOLGoYcWu/9aIUUnhNIAUff4ImQJkNZv/M9biMCh9AstSalNUd21PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gCrP+TcJJ1MdaAQvXBNbHK4aNxiQHQDwnx+qiicoqgk=;
+ b=k50I2Lqg7F48ebr11b7orv2ckIKMyOvH2X+E67yfRJix/DWwCo2z6aqzLBuD8O2BozhcSM691L/lp+qhM+X+5rHGOOUNA0R6zEJNna4W17v47QB1DsDs84dSqzBibRHbmIEMlbxmsECWM5KYOeyr5BxAkxu64Ca9KNgZ6TK2kj37YORf5f26oy3sE7KdolCiGM1YiBtaf+R6aK8SsC48Vyd9ta7rsdy8XWpEyiU75THuUjbLNfxfdo9vPP3j3k0tHdAHmU3EEoW4zIIW84YN2R63+xsV7cePLtKTie0ObkcdbP5N9BK6F3MAhE15JSNVIu4HN1dUnt1IH4WveIIr7g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CY1PR12MB9603.namprd12.prod.outlook.com (2603:10b6:930:108::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 03:36:45 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 03:36:44 +0000
+Message-ID: <853de693-8ad1-4b3f-afa0-51b22b81a295@nvidia.com>
+Date: Tue, 11 Nov 2025 19:36:28 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] gpu: nova-core: make Architecture behave as a u8
+ type
+To: Timur Tabi <ttabi@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>,
+ "dakr@kernel.org" <dakr@kernel.org>
+Cc: "lossin@kernel.org" <lossin@kernel.org>,
+ "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
+ "boqun.feng@gmail.com" <boqun.feng@gmail.com>, Zhi Wang <zhiw@nvidia.com>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "tmgross@umich.edu"
+ <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ojeda@kernel.org" <ojeda@kernel.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "nouveau-bounces@lists.freedesktop.org"
+ <nouveau-bounces@lists.freedesktop.org>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ Edwin Peer <epeer@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "aliceryhl@google.com" <aliceryhl@google.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "gary@garyguo.net" <gary@garyguo.net>, Alistair Popple <apopple@nvidia.com>
+References: <20251108043945.571266-1-jhubbard@nvidia.com>
+ <20251108043945.571266-4-jhubbard@nvidia.com>
+ <5342a0f10a3e9ef7d3165bd8912bd042ae7f68f5.camel@nvidia.com>
+ <05cdeb51-2731-43f0-b24e-53534b524a44@nvidia.com>
+ <DE3ADB75TBUH.3ROHW8XJAC6K0@nvidia.com>
+ <a8cc96d5ae80a256b9e0101acb1d1b38169d21b4.camel@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <a8cc96d5ae80a256b9e0101acb1d1b38169d21b4.camel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0090.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::35) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
-To: Sun Shaojie <sunshaojie@kylinos.cn>, longman@redhat.com
-Cc: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, shuah@kernel.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20251112021120.248778-1-sunshaojie@kylinos.cn>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251112021120.248778-1-sunshaojie@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgC3YXgBABRp6VHJAQ--.51983S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XryUZw4kAw18urWfKw17Jrb_yoWxJry7pF
-	ykGr4jvw4YgF15C3srCF18WrsYqwsFqF17Jwn8Jr1xZF9xJFn29rnYk3sxJrWj9rWUGw15
-	u39av3yfXanIq37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CY1PR12MB9603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23600149-a622-4ccc-a620-08de219cb395
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WDE5YWhWZzNsWHA2MGRLRFpkRkQzWXo0K20rMHViajhqNFhObW9Qb3N1cUFo?=
+ =?utf-8?B?cjNkSEoxR0E3eVFpWlI1Z0RsMVdoWmRTcC91Nml6b3FDaHhjRVB5ajljdHgr?=
+ =?utf-8?B?dU1uai9oRjIyWkplcVU5blNsSGxNN2xrMCtOWDlCSVZVbzVpTHBwVkl6VjVt?=
+ =?utf-8?B?N0w5eVp6VTlFekE4Z1Jialk2RzdncktKNU8wWjYyZzdmMHRvNCtCaUFQTjFh?=
+ =?utf-8?B?aUNNVENtN3JqUlZZRWQ5UTZNak1ycTY3enE4bGt4WERMVm0zTmZHV3MyNENC?=
+ =?utf-8?B?QllkS0FHdmNmZHJWRit2T2U0cmFHZllKK3dUcUNCc29JVDBybVpLWm1SWFM3?=
+ =?utf-8?B?STFYUklSMk9vUnFnT29rWTQxMVJVRmNXRUh5YThLNlkydnNYQjRFZkREeDVL?=
+ =?utf-8?B?MkV6eFpRbUwvYUw1clZEZHBWZ2dvUFRtNmhBdjV6SENmQVRkZnB0Qi9nZVdq?=
+ =?utf-8?B?VEZpUEQxWVpYZmJqK21Yc3VZd1ZMbUZqVms4L1dtUnFkZ1VabEJJSE1YSytu?=
+ =?utf-8?B?WmJlMENCLzdjV284MEkwc0dnRTVSRFNIdXhqWlArdmhnSjVyRUVGOG5MamQx?=
+ =?utf-8?B?dmpxR2s0VHFFOTR0UnIwZXYzUUlZcnhZaXdoMkNROUFaZE1pRC96eDgvNGMx?=
+ =?utf-8?B?NXRFNkV2N0xNaDBJSzY3OHM1R1BGSTlIVDVFQWJXUENvZG9hcmZ5a3JNUnBI?=
+ =?utf-8?B?Ri9xdXdlamlwWm1VSUtudFNyVWd5UmVIYk5tdkFEbVQ0OTgzUG5ZeVp1NFhX?=
+ =?utf-8?B?VjhSS2xsSWh0ZC9rdmxzUjFiUTRnYzZsdFBGYTBpbysvSE5ucUgzQ3BsT2JO?=
+ =?utf-8?B?ekU3SUM1Z1FBOXRNNWtybEpUVkdFN2dMTVd0RDVBYWJEanl6RGVSRHZZcHZh?=
+ =?utf-8?B?N0UwNXNHNVFZNDQ2eXJPalMwVTJDVFd4TW1IdEVhbEhsQm44L2M2R1diWmg2?=
+ =?utf-8?B?SkQ5UW1SUjhNNU1jK1lPdFVISmorLzVBMFlxSjVTdDQ5Mmt4UUFZL29JTlY5?=
+ =?utf-8?B?cW5BWWdqU3FIK29CQXI4YnZJT3hyQU52Z1lvcG8rbFRJdEpwcFAxVE1ieldt?=
+ =?utf-8?B?L0F2bkJaMTVXN1RtaGdDcWZtUlBwQ0pOamtmMUZvYjdUZTNCcGJ0TVFQWjhC?=
+ =?utf-8?B?QWM0Qk5BZkRrMXUwdERtSERsZ25oL3NSdmlQQmN6Q1M5ZWc3QTNPN05TOENp?=
+ =?utf-8?B?K3VWOEd4MnVlelZET2dnSE0ybHRlZTdnTU1LeWtIc1BsV2o3WHFyK3NoaUZt?=
+ =?utf-8?B?djJSdUNZS2pZbmJYQjYwbWVJMjd6MVdQckw1MHM2bVB6Z3pCTXJYUHg5c3px?=
+ =?utf-8?B?Y04zWnczSnM5YjY5clRIV3c2bXdnVWw0R29NRmd6VytKeTNSNy9ieW9YRDE3?=
+ =?utf-8?B?Yy9UMDNLbkRVR0VoOHpIWlgycENNN1ZQZHE1bktRejFuRWxZUWVhTjA0MTBB?=
+ =?utf-8?B?RlhTWGpLelV4bzBDclhGbHhUSVl3dVVUVkRaSWhCWHBqenpyQmh6RjR1Unp5?=
+ =?utf-8?B?S0IyRm5uVTFCK1pGY3l2c0VrM2tQWVJ4aHdOZ052MUVJUWQ0NHNCUXZPZGIy?=
+ =?utf-8?B?QVovNm1haDJUZnQ3Y1JIQXBJZzJvdTBTdGhkMlFQMVdzVmxEQ2RvYU9jUW94?=
+ =?utf-8?B?bDZFQlAyVXcyY1RtQk9ES21VUUM2ZTVJWTJCdnl2MzdSMms4VmYwQVFqaDI2?=
+ =?utf-8?B?cjVOUXdLbi9HV2FWN055VElWMWx2R1VlVitnY1VvTCtGeWFMaGViRHEwSHVD?=
+ =?utf-8?B?NXJkaklJMzRVQkhEMjIvcDdoeEFrWXZuOG1zM2ViTDBnWW5pMHBkdmtJdmFR?=
+ =?utf-8?B?YUw1VzU2b3VyUEFKUDIrWWFEakVmQ0xSZEEwdnFycXIrejI0ajZDSVYwN0dB?=
+ =?utf-8?B?a0NKMDdlZytqMnpncVRqYXBVK2xSTHM2Mkkwc0FNV1lTOTd4QjFWY0YwcmxR?=
+ =?utf-8?Q?X+NdAER+8AKW9qrLnftQCkO/Faq/1a/5?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WHcwcTlkZmNScCtCZUlqY1RHcjQ3QmMxWVRDSlhQbGtLUFljL2lranl4d01Y?=
+ =?utf-8?B?bi9WNE9PdmJBdzZKeVJQTDRjWTQ1bW9XQzRVVk82K1BTa3BkL0V6NVpsVDNs?=
+ =?utf-8?B?UWExb3VFbG9FdVVvMXRCSjRySEdtN0VzWlBGQURPa21VbUtRSlZOek9vbE84?=
+ =?utf-8?B?bXpZQnoxWUMxWS9PMW5sRjR2YmNkb3BWSExoSk9nelM1YXNDdzRCbDRvZjE3?=
+ =?utf-8?B?ZDJPREhiUlFGbHZ2NTgzbFJIemdNY1U4OFlXRFY4M0ZXZ0xEQlRJWnlUUUFV?=
+ =?utf-8?B?MVFya1JsTzdybnFhSVNUd09hQVN0OUxMaUl4RDIvaXpveFNWVlZ3eTA0c1hG?=
+ =?utf-8?B?RmllQmpUa3Jtd3RsUTFSdSsvQkZuNmM4cFZlMVlGTERHSllid05pZWtXSndO?=
+ =?utf-8?B?Ym1mSTgyUURVemtzeHZVVGxsYzNPeDRmZjZqdWhUU05ZR2prT1R0VEVTR0pX?=
+ =?utf-8?B?TzFSelM2Nzl1VnlKOXc1RXNqdUNwaFhqT0dvL2hGRkdGQXMyYXpsMTVtYmZh?=
+ =?utf-8?B?Wk5BUzE3VWp2c3dsTXpMd3pkRHd5THRFNnRzQ1dRcWlWR3BFNnVSeWgxNEpU?=
+ =?utf-8?B?TmVWWTN0OW02K0t3eXVRQVFBOTVXeVI1THE3TzdrLzVhMGFwYnlYUHZOQW1S?=
+ =?utf-8?B?NldDOGNTMitPekpiQzF3Y1loZk1RMEtNbjFWWlNxQXAyMWttdWRERG05NlE3?=
+ =?utf-8?B?YlpBejhGdlNQUkJ3U1plcnJNUm82S2c0d1prMGpYMytaYTZSOWdYbEw3ZWFq?=
+ =?utf-8?B?YlFleWtOYXhWV25sOUQ0cHN2bTFnWVBDcmRuZTU2MzgzYWhHbnNKS3BDc0Iy?=
+ =?utf-8?B?clBJQUZmcXFGeEQxczZDdzlvZVpsTXR3UHBZL2c4djQxdHY4am85VUFKRlEw?=
+ =?utf-8?B?L2NLNGh1WGNGOXI5SHhYN3pqZGFZelZrNTA4dWV4ZmltMWE3bTRzUjNTUE1E?=
+ =?utf-8?B?Vndlc2NjT1pEaTBGVWdXZjU0L3RqRks0TzBPUWJkTHJ1SHR6WmEzcWZSdEFm?=
+ =?utf-8?B?M0tzbDZVNC9TbVRoZE41Q0JKd2RBN1JJeTVIMXIyMklJdGhGeTh4NW8vT0tS?=
+ =?utf-8?B?VnJTREFzUFF4SXI1blI0VWVoSkZvbmU3a2p0dzJVUUV6WnZSZml4cHhZNW9l?=
+ =?utf-8?B?TnBHUWN4SDlTdXBhLzlJaW1YaGVVSEQzaDdUekpRemM4b2NJSUVhSjR1R0Zz?=
+ =?utf-8?B?NmVqWmsrTjdEaVRXQnRhMW1hbzN1WndsRkRUelRRQVUxRXNTaVBValZhYkhX?=
+ =?utf-8?B?VE80K2VEQjJEUGt0a2JNM3RkU3J3L1RBRVNoY01JOVF4KzhJUHUvLzVNWkEr?=
+ =?utf-8?B?eHJDa0JQTWEyemQ1UTFQWGQ3OGxTeTZVZWlBNFNXbnBtcjVMSERYS0FlQXo5?=
+ =?utf-8?B?Wk9RZFRmcHh4b2kxZExTekc4cVY0dS9hME9WM2dLbVE2MjNXM2ExOU8wbjho?=
+ =?utf-8?B?K0FKcVJ4QkcrT1BHQWl6OVpqckJ3UVRWSlRaY05FWHJLOEw0c1JwYjJ6bXRT?=
+ =?utf-8?B?MnlpYjRadzhGTm12ZzVwQWM0eHBQbXhDOHNoMk1YbUpGajc3QWZHenNlVE1B?=
+ =?utf-8?B?eW9oTkRIK2kxMVFoZnVBZEFVbUxzUG8vWkwrU0hyQUFSSWZJaTEyVlBaVlQ0?=
+ =?utf-8?B?L2FtTUZuWXFUQXF1OVRJSjFob2t5ZHkyMEpya2lmYk5VZCt5aWFGQ3Y0RUhz?=
+ =?utf-8?B?TlBZWGRwcmpTdVNpcU1aZmZMTFc3ODlXeldYOTFOaVc2S1hLOVR3aWhyR0dD?=
+ =?utf-8?B?QldvSDUrT3FNelJSKysvRjFPYnNNNkQzUUNIRjFFb2JQUW9Jcll0RzhBUGhQ?=
+ =?utf-8?B?Z0dpT3BpVWRWclJ5dysyNnExQUIrME9WcXVUUVVoTDB2NXc1NzJXeWFjZWpZ?=
+ =?utf-8?B?WTB1WVJsTWJDdk5qeUlEb082UVFhYkdxRnBJYjg0Q0l3UkNrZnhrL0xrWmUy?=
+ =?utf-8?B?dTkwTm1vK2J6SSsxQWtNL0NHa0NCUm94WFdJWmxkdkVycS9mTDJDNGp6UHdV?=
+ =?utf-8?B?eHI4OXVxMVN0Z29veVRDdlRBVHNrNm9PTGF5UWdJZHRua0NCT2FMZmFLWWxO?=
+ =?utf-8?B?dG5udDJCT2h2MnhUL2QxUUQwaVJKUzAxaU9mK1ZpOXlEL29UMUR6OUhMVTBQ?=
+ =?utf-8?Q?d0R5fFBhgrD2ih/Ky/vuHPgEl?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23600149-a622-4ccc-a620-08de219cb395
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 03:36:44.7304
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hkfm72m5WwlGQcLQxY1L63Z2AJhPNeGUSaea4wgeTZKLTHVgbq9x3cneiAhiLntxzZ/KfLRvZ5qFkPKGBh8B5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9603
 
-
-
-On 2025/11/12 10:11, Sun Shaojie wrote:
-Hello Shaojie,
-
-> Currently, when a non-exclusive cpuset's "cpuset.cpus" overlaps with a
-> partitioned sibling, the sibling's partition state becomes invalid.
-> However, this invalidation is often unnecessary.
+On 11/8/25 9:27 AM, Timur Tabi wrote:
+> On Sat, 2025-11-08 at 20:45 +0900, Alexandre Courbot wrote:
+>> To be precise, we need to supply this because of a shortcoming in the
+>> `register`` macro: it doesn't support read-only registers yet, and write
+>> support requires a `Default` implementation for its fields. This is
+>> subject to be fixed in the future but for now we need this little
+>> workaround.
 > 
-> This can be observed in specific configuration sequences:
-> 
-> Case 1: Partition created first, then non-exclusive cpuset overlaps
->  #1> mkdir -p /sys/fs/cgroup/A1
->  #2> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
->  #3> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
->  #4> mkdir -p /sys/fs/cgroup/B1
->  #5> echo "0-3" > /sys/fs/cgroup/B1/cpuset.cpus
->  // A1's partition becomes "root invalid" - this is unnecessary
-> 
-> Case 2: Non-exclusive cpuset exists first, then partition created
->  #1> mkdir -p /sys/fs/cgroup/B1
->  #2> echo "0-1" > /sys/fs/cgroup/B1/cpuset.cpus
->  #3> mkdir -p /sys/fs/cgroup/A1
->  #4> echo "0-1" > /sys/fs/cgroup/A1/cpuset.cpus
->  #5> echo "root" > /sys/fs/cgroup/A1/cpuset.cpus.partition
->  // A1's partition becomes "root invalid" - this is unnecessary
-> 
-> In Case 1, the effective CPU mask of B1 can differ from its requested
-> mask. B1 can use CPUs 2-3 which don't overlap with A1's exclusive
-> CPUs (0-1), thus not violating A1's exclusivity requirement.
-> 
-> In Case 2, B1 can inherit the effective CPUs from its parent, so there
-> is no need to invalidate A1's partition state.
-> 
-> This patch relaxes the overlap check to only consider conflicts between
-> partitioned siblings, not between a partitioned cpuset and a regular
-> non-exclusive one.
-> 
+> This definitely feels like something that needs a TODO comment.
 
-Does this rule have any negative impact on your products?
+I've drafted it this way, for the next patchset revision:
 
-The CPUs specified by the user (including cpuset.cpus and cpuset.cpus.exclusive) can be treated as
-the dedicated exclusive CPUs for the partition. For the cases you provided, both siblings can be
-partitions. For example, in case 1, A1 can also be converted to a partition. If this rule is
-relaxed, I don’t see any check for exclusive conflicts when A1 becomes a partition.
+/// Enum representation of the GPU generation.
+///
+/// TODO: remove the `Default` trait implementation, and the `#[default]`
+/// attribute, once the register!() macro (which creates Architecture items) no
+/// longer requires it for read-only fields.
 
-Additionally, I think we should preserve the CPU affinity as the user intends as much as possible.
 
-> Signed-off-by: Sun Shaojie <sunshaojie@kylinos.cn>
-> ---
->  kernel/cgroup/cpuset.c                            |  8 ++++----
->  tools/testing/selftests/cgroup/test_cpuset_prs.sh | 10 +++++-----
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 52468d2c178a..e0d27c9a101a 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -586,14 +586,14 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
->   * Returns: true if CPU exclusivity conflict exists, false otherwise
->   *
->   * Conflict detection rules:
-> - * 1. If either cpuset is CPU exclusive, they must be mutually exclusive
-> + * 1. If both cpusets are exclusive, they must be mutually exclusive
->   * 2. exclusive_cpus masks cannot intersect between cpusets
->   * 3. The allowed CPUs of one cpuset cannot be a subset of another's exclusive CPUs
->   */
->  static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
->  {
-> -	/* If either cpuset is exclusive, check if they are mutually exclusive */
-> -	if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
-> +	/* If both cpusets are exclusive, check if they are mutually exclusive */
-> +	if (is_cpu_exclusive(cs1) && is_cpu_exclusive(cs2))
->  		return !cpusets_are_exclusive(cs1, cs2);
->  
->  	/* Exclusive_cpus cannot intersect */
-> @@ -695,7 +695,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
->  		goto out;
->  
->  	/*
-> -	 * If either I or some sibling (!= me) is exclusive, we can't
-> +	 * If both I and some sibling (!= me) are exclusive, we can't
->  	 * overlap. exclusive_cpus cannot overlap with each other if set.
->  	 */
->  	ret = -EINVAL;
-> diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> index a17256d9f88a..903dddfe88d7 100755
-> --- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> +++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> @@ -269,7 +269,7 @@ TEST_MATRIX=(
->  	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X3:P2    .      .     0 A1:0-2|A2:3|A3:3 A1:P0|A2:P2 3"
->  	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3  X2-3:P2   .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
->  	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:C3 .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
-> -	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-3|A2:1-3|A3:2-3|B1:2-3 A1:P0|A3:P0|B1:P-2"
-> +	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-1|A2:1|A3:1|B1:2-3 A1:P0|A3:P0|B1:P2 2-3"
->  	" C0-3:S+ C1-3:S+ C2-3   C4-5     .      .      .      P2    0 B1:4-5 B1:P2 4-5"
->  	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3  X2-3:P2   P2    0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
->  	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3 X2-3:P2:C1-3 P2  0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
-> @@ -318,7 +318,7 @@ TEST_MATRIX=(
->  	# Invalid to valid local partition direct transition tests
->  	" C1-3:S+:P2 X4:P2  .      .      .      .      .      .     0 A1:1-3|XA1:1-3|A2:1-3:XA2: A1:P2|A2:P-2 1-3"
->  	" C1-3:S+:P2 X4:P2  .      .      .    X3:P2    .      .     0 A1:1-2|XA1:1-3|A2:3:XA2:3 A1:P2|A2:P2 1-3"
-> -	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:4-6 A1:P-2|B1:P0"
-> +	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:5-6 A1:P2|B1:P0 0-4"
->  	"  C0-3:P2   .      .    C4-6 C0-4:C0-3  .      .      .     0 A1:0-3|B1:4-6 A1:P2|B1:P0 0-3"
->  
->  	# Local partition invalidation tests
-> @@ -388,10 +388,10 @@ TEST_MATRIX=(
->  	"  C0-1:S+  C1      .    C2-3     .      P2     .      .     0 A1:0-1|A2:1 A1:P0|A2:P-2"
->  	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2 0-1|1"
->  
-> -	# A non-exclusive cpuset.cpus change will invalidate partition and its siblings
-> -	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P0"
-> +	# A non-exclusive cpuset.cpus change will not invalidate partition and its siblings
-> +	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:3 A1:P1|B1:P0"
->  	"  C0-1:P1   .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P-1"
-> -	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P0|B1:P-1"
-> +	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-1|B1:2-3 A1:P0|B1:P1"
->  
->  	# cpuset.cpus can overlap with sibling cpuset.cpus.exclusive but not subsumed by it
->  	"   C0-3     .      .    C4-5     X5     .      .      .     0 A1:0-3|B1:4-5"
-
+thanks,
 -- 
-Best regards,
-Ridong
+John Hubbard
 
 
