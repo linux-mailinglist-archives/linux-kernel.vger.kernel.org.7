@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-896590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837E0C50BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:36:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A79C50BC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0904E34C1D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E668A3B63AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAA52E336E;
-	Wed, 12 Nov 2025 06:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A622DECCC;
+	Wed, 12 Nov 2025 06:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="f7OBgP8V"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SXxguDNY"
 Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013032.outbound.protection.outlook.com [40.107.162.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA51F2DCC03
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3E02E229F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762929380; cv=fail; b=tZjP7jvLuFKu+0vt5yRcYpVKaQjmBKukfg97S3aGeWCQh4hQgfryUU+2Y+XR6i2RXQRQsXLG8sgj+pr1WL8BN56SzwZzntT6ttz8BFcc4v9+q1pGT9+kOacPEGr9Gvl34QmvjX9DEqrtTqbbZYNm8q3oL5eg5O6ivXWlQfcWnwg=
+	t=1762929382; cv=fail; b=Z2wZ5BOwN9zm8kMyppcJnk/dWn7CMwfawP4NbdUXIYXFLpfT3tL5bGAlnZDg7FD7wJl3qAGmokE72rSn4IRU2xapXmhkNXSjvjNmSY8GY3yjLabPaGvoJCTOuv7diqaWIcgfFGi0t84j5rzfj8bw1Tz2LlwUsei4OXZZjzo3wWA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762929380; c=relaxed/simple;
-	bh=9z04Ep0G5ElhiVUuj0x/xZiFASLE/QZ1KwvnBGySPBQ=;
+	s=arc-20240116; t=1762929382; c=relaxed/simple;
+	bh=Jynd6hEp8Gwn0IwCRNKMTJw+4libXRl/ckl4sUhJCBk=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=hdt0O6AkvZVaUgBcWowDWg/B5K4/VRPHDnKLFAiWY1qqwvx2x3FKAqMhIOG6LQ4nDZT4PCKtYYDeq/aV3Yy7EAXI+oRqqdtxhhfx1k+Y+8UHmIfMcsjpAmuN3SSwn6mJMMFsApauW2+ojMPmGCbEM8nt9+xNOAM/GL0Zpl7b9LQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=f7OBgP8V; arc=fail smtp.client-ip=40.107.162.32
+	 To:Cc:MIME-Version; b=emIGp2Nb3wLo9Xybqz/mrE6W+nXIOIQIm4rye8drhyWf1Ga9OLG5ol9rn47GK8vlOojWte8WL3kU4ZLnZ0f0V6ix2ISuT+UzF+jZFQsXlB6IRlvDaPUkv5R815zmv2RfgX8E0etYP54MtcebN8U1LzEc2tOgIASWfp5h+38TyzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SXxguDNY; arc=fail smtp.client-ip=40.107.162.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j5Ff2hzLaGo1plUXqGf5+8p9hEasBnVHftTY42qmQfWQb65eGlUsK4pkTUWbDGlk1mTUnvRHhWD5sBtL/6wl5KYLbxkJdan/1IRTZePL8UvWNsL1Cg1ROQK5t5vTRcOD7TfRQKApgyNBUUenDYWupMR1jkDncZ5g+CbySse107c29sR2baMwVwC+kVBzjbObyho5j9Kh27qUZ5r0bkPgoPcHf9J9bDYY7Ylsj0gzWo6F09jYSSvQ1spjxQ4Xe53qS3M4/geotlNYI2dM4pS0inSreuHCy4BphFl64cJQMjngm9tugpQ+o2Lndv2bFkoZfUHldrNEodkNxRhh59aAxg==
+ b=KWywYeWmjNK7KfuQmDt7UwD2v262VoWmvQr5RWBaFwbXccY/KyYNvHKYzLq6y4C2Jxb2OsTtIkLqy+wbBNjvdgvx0tFcw8CqxRaF55EkyyioMsRruEoeKToSMFdJjFOc4ejFcLrOeG+4acAoqzSHOpTuXqjezG5T2zuJUuhtC2FPIUl9yxIIBXUZHj7T6hKm2XFWSVyfFIx7mqvCW4rQCcp56s66AQa75Myd5SSswzeJMHIT38E5ekcCF0eOqp8gxlbvZoQ1DAGlaWHiXP7xVWUBApwH17sQgjBI5sDwG1W9PPoGZZicz4/Xq9zEnmjKepgSR5ZAlFTE2ApYcmWTgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RunJnqTqTUPygsSQzMHiAbCecp0YEtqYme/+VgtNSXY=;
- b=mkLXNM0yxf9DKQcFA2XQ3KST0gca52beb5CycMxBKRFMGT7oOySq76/Qt8MZs345CPTa9S+txCvv4el0qfpUSaUX6k++G0KGSVg3lpql4QWnBkFuXwsenhTOiuhZNE0/abK8imwOVCkHK+G0OrCvgONYG748F7IlOjEamitON0FFgLV2GJwZuxi86vD792qkazqSLTscfeCFfVanMQPM75LqyWGa0nsZEnR26JCcwfjuBar0+5X/sLl5KGWQlNakyjusj/FiAXQbff/vPaYmY4eTcNn03gNXFLQLVfM9CNpChOAAJfjWcV3vxNs9C79L6Vo0p1S1h4yFrboaSCcgxg==
+ bh=DzNj7k1UG9yEKDP5Cngg1dFvnzdGxDqBDDEoIsGAYXw=;
+ b=sfU+27vKM4nGU1L3nL7mcIwDqvuki5sKiDqN5hx2Z6HTYm7m+8YOOGjEuUEyBFoX+Gw36f5Oe+M/gcDEdsuPOsHD29IdEpSnwBoZe+bSfDJBwhUjsNft+Kwa1mjaaNtCNJTp8nWuFtjJxiUiGXyz9Tqbmq6tFvWigrmYmwjrriNRw4xdP2PipS44SD90gX8TNHWS+wyuagj914DzQPThjA8KRQxl+zp0QTx5IyRpQ7LH9khXSRoxjgyV5iB1oODVtfjmxgjCpdRN2KXJg64b0Q4pJBjV+uVibiCqDxRIPcp8VrCId0sWuEePFCeAyujcdyuFYGQwMk2fEURLrUqV5g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RunJnqTqTUPygsSQzMHiAbCecp0YEtqYme/+VgtNSXY=;
- b=f7OBgP8VJm7wZYxsy3FwI0q5g3UvifLxkCdznzr2allMgAt447BRLEb9qJifE1Eh+RWSTx97Y+KLnXuhrYMk1xzwyINPRDEBN5zro9wphZIH4Henu1rflPiMw42CuiTUELQdDIpwNZOESO8SdL7ahGvms+/JN6XD2O+dMLg95BT3YD4Y/8f9sn0+qA3O8p8ey0eE4XtxV98ighNtacS6TfrmtGn9d14NFe8Y3u+iVFzEfhSzTizK7Th6VIPkiLfmhQgezQxoEn4q+Z7WHSfjpM6BIrES1INgP6j/ygYaWhkZ8TE5vKlwOooDihvMdC+IVdMZcm9edLc2vYA7jnhJ1Q==
+ bh=DzNj7k1UG9yEKDP5Cngg1dFvnzdGxDqBDDEoIsGAYXw=;
+ b=SXxguDNYyQ7n6+BLXoeLRo4MX3DR6aBFrxJ1al1nVxpz9WC0R1l2Bx5BV8kuWiX/dcy6F3PYUn+2Qqsg1iAQdqRPjmY2ZZq8S0Fl8rZS4wmLqfAaWXrrowrGo4u6g3e2ni1/Vw5/eXJsj17+jlQPZiqShWi+8vosJIlXgNkhGfnAHA4BRBobSdgx72q2Cg/Z+cXGIRVCFBdmRJQCuUVNbZ+xhaEhNYaPNBjalv2HGtsnFj1D7dHizif0pAmEsWeIkftpaDjVG9Xf7w3ujrGT6M3OyxTMtgH6ZeaSDrle5A0ckKFU8svm3dLyO3uEXv/8hqQUnsYZyHDzhEgwchhSfQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
  by DB9PR04MB8187.eurprd04.prod.outlook.com (2603:10a6:10:24a::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 06:36:15 +0000
+ 2025 06:36:19 +0000
 Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
  ([fe80::868b:3935:5e0f:6a33]) by DU0PR04MB9496.eurprd04.prod.outlook.com
  ([fe80::868b:3935:5e0f:6a33%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 06:36:15 +0000
+ 06:36:19 +0000
 From: Haibo Chen <haibo.chen@nxp.com>
-Date: Wed, 12 Nov 2025 14:36:21 +0800
-Subject: [PATCH v2 3/5] mtd: spi-nor: micron-st: use SFDP of mt35xu512aba
+Date: Wed, 12 Nov 2025 14:36:22 +0800
+Subject: [PATCH v2 4/5] mtd: spi-nor: micron-st: add mt35xu01gbba support
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-nor-v2-3-8699383714b9@nxp.com>
+Message-Id: <20251112-nor-v2-4-8699383714b9@nxp.com>
 References: <20251112-nor-v2-0-8699383714b9@nxp.com>
 In-Reply-To: <20251112-nor-v2-0-8699383714b9@nxp.com>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -70,11 +70,11 @@ To: Tudor Ambarus <tudor.ambarus@linaro.org>,
 Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Haibo Chen <haibo.chen@nxp.com>, imx@lists.linux.dev
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762929419; l=6839;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762929419; l=6776;
  i=haibo.chen@nxp.com; s=20250421; h=from:subject:message-id;
- bh=9z04Ep0G5ElhiVUuj0x/xZiFASLE/QZ1KwvnBGySPBQ=;
- b=TMUlhO3TJMhEP2wb8AJPc1Bhkst64PECLFbcihAHh/rMgzikNAJgiKagf4Ita5hPAIbljyT8w
- 6EeQobrKM8JB0VOSYaUMXwItk8EnTH4J4XMI4w/WX8kzaL0Rr+bGwBX
+ bh=Jynd6hEp8Gwn0IwCRNKMTJw+4libXRl/ckl4sUhJCBk=;
+ b=eoR5DcjO3lTjZZjnUrXVcP1G9YcmqRAbezzujtL6pi1E8qPZbcUbckSL925Ykb2ZPeMHOyYu6
+ hqzbv9KsfCQB0n7w6WjRAtpOlo4p16wxP0eZOQcyXpVfXFYmYuathoL
 X-Developer-Key: i=haibo.chen@nxp.com; a=ed25519;
  pk=HR9LLTuVOg3BUNeAf4/FNOIkMaZvuwVJdNrGpvKDKaI=
 X-ClientProxiedBy: SG2PR02CA0075.apcprd02.prod.outlook.com
@@ -88,116 +88,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|DB9PR04MB8187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d710171-c1bd-4d77-6ebb-08de21b5c764
+X-MS-Office365-Filtering-Correlation-Id: 597a19f0-6cbb-4625-1fa5-08de21b5c970
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|19092799006|376014|52116014|366016|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elBwRkNSUEcwbWJyeE1sdGFpVklJT2JheHdqNVBDaWs1bi9zR1hYZytwRFV0?=
- =?utf-8?B?NU9YbUJkdDJoTnZXazMzNDZndmpNdWdpRmoyaDRtQjlWTE9zZUZQK2psay96?=
- =?utf-8?B?RVM1T2FHb3ZuMGdCVmcrZ0lCMTA3eHNSRGFsNzFPSW1qbDdMbVVzc2dneWlW?=
- =?utf-8?B?alFiQzN6RUExN21mS3QwNHdCRTNNWkFTdk5JVDVPS2VibXJHcGhDT1NvZlJH?=
- =?utf-8?B?TGZRNUFmbCtpaHQ3THZsNVpQR3VSa3RFcjkrbU91NHkyR1lWUXBrU1BqdUNz?=
- =?utf-8?B?MUpTb3pEMjREbnRLRW1udzBlRXZ1SGpmRUhIQWlEcTgyKy9SNDFidGNtVzFw?=
- =?utf-8?B?Ym9uTVo5NkRHazZ0dVhBTSs1bkxvczVUTTgwOG9DbEtxOGNlYVlGR3BaS1Fn?=
- =?utf-8?B?STF4aVdhZStOdlZWNTVsbjBiOE9jQ0sxNmEwSXM5ZGR1dXVMc0I4TUlCT2R3?=
- =?utf-8?B?V1NrZmlHRWFVV3JRK0RTaWdJdit3OUdIRWFiaU5ZSTZzUThOeXFOM29NZDVO?=
- =?utf-8?B?dmxxWmlmS2pzd1dxU0FpTDV4MkYvYTJYMnRwdExHZ1FBTnRxdFJzVlc3MFBh?=
- =?utf-8?B?b3lyLzV5N054VG1NRWVQSkgrcUFteDRTckVLWmpTeXBrN1pPTWRhWlBqNFF5?=
- =?utf-8?B?U2c0eUVBL2NzUDdGT2pKRmM4RHRWSzcrUytyQlZVMzdScDlGWlZpdjVXK0lr?=
- =?utf-8?B?VEJXZWJvV28yMlU3WlR5dVZFbEcweXQxQ1JZdGx3VzlGeU1GUWVJTmh2SVlJ?=
- =?utf-8?B?UFVhaWo5QW1GQncxTUVGWnVhZmFNckUxYnd5RC9FYXJ3b3V5Q05vZ0txdTZz?=
- =?utf-8?B?aE15Yi9yR0I5QWtNT3A3bjNPQ2UxWnBMcnVOMTk0N3dqT0JxSW5HOXVmZVNt?=
- =?utf-8?B?SGtzREJXK0xuZVVwd1dBZStKWS9TNHc3NGY5Q3pmckZmOXM0d2ZySnJIb1o5?=
- =?utf-8?B?djlEemdQNnRhL0JlZGJXMkFPVHhYYnlsZXc0dlk1YXlQeEdZdmlwaTRCVlhR?=
- =?utf-8?B?NTdMQnZxYzNnZ1dqS0dWOVJOMUVRK3BxNXUxYk9EWFBCRWJiOWlrVzBPM1JF?=
- =?utf-8?B?NGhnSjIwMnlaVHZUQ0t1WWxsditHZjZFV0x4R2ZHaGRnSVA2WHBUbG1xMm9V?=
- =?utf-8?B?NXNsOG9oOWZ3L3Q2K3owdVJGd0xlcmxVTDE2cHNiWkZmazI5MVRVU0hkR3Vq?=
- =?utf-8?B?RmhmeFhERFk0Z1Jqdkp2S1E1L2JYZzF3dk81Y1pjOUMwaWYxSzlLb1IzTU1z?=
- =?utf-8?B?N0dYK3U3ZmI4NnhaZW4wSDlNbWtyUjNQZ2lZOVhoY2UzanpjZ1hOUU1pZFpz?=
- =?utf-8?B?dkhlYTJ3bG9IUkNrdzd5Y2dyR0xIU0RvaG1aSmVjTlloSFIzS3ZQaVZycHUw?=
- =?utf-8?B?WGRhTmRHcVNCR0JvdDJXK2tIMDExNW9oS2oxRXNTeUhqczFTVThhV3Rtd3Rt?=
- =?utf-8?B?azBpMTNiNUpPSmo4N1FPSzNMdWVqbHAxTDY3QUpqZ1o3L21HR0FhYm1MMG9o?=
- =?utf-8?B?VWExdzdBQzhFbmtxSVI0cWFGYVBucmFyY0x1U1BBc1NzZ2w3VXE2U25EV2Vu?=
- =?utf-8?B?bGVYMjFNNStaYVUzeGZxclY3dnowNFlhQUtRWXpIenpxUVBKSzlqSWlVUnRM?=
- =?utf-8?B?YTlWbXRmR044OW5Kd2tUYkNVVWl5ZnVnYWNpNVJWSUtISE9tV3pmVFpLemcx?=
- =?utf-8?B?TDdGTE82SVdsa3RRbWo3MTV0NS9xUzNVT2xSMEN3NFN2MUxWZjBNbHpQVXJj?=
- =?utf-8?B?NThYVUg1OHBMOXg3UEZkTTBqZGQ4M2hLT3hBK0k2YUlOYWN4cXNiWnE3SVEz?=
- =?utf-8?B?ZDZzSElJb2hrbXBnbUxVRk9xN212bjhkaGxiOWhVR1JyNG5NdDZIeGU2R0Zz?=
- =?utf-8?B?d3lISlJqdUpHTVEzRDZ3TUp0VXg0U2t5RkNDTnM1aXZxOFlhNU02R0k0dFNU?=
- =?utf-8?B?NEJ6UkpDd05hRno5eHNQQUFCdmZLVU1ickhKSTFaekxPTFJiSVVlTjNodkZq?=
- =?utf-8?B?Z3BBYTVHRms5VUxaR3hSVWhiU2ZOYkRORzBndXBRNU0yUkxOSGpQSU8xNzVt?=
- =?utf-8?Q?pjZsAS?=
+	=?utf-8?B?V0NMT3dWUHI0bTV4TFpYVFlWamd1NTljMC9GMnhFdVUzdTJLeHZTa0RIZWc5?=
+ =?utf-8?B?cUtkVXFkWjU1a3ZCT3d3WE9JbUlTeWFVUDV5L1hVbjZBaWtCekpaNGxrdXBp?=
+ =?utf-8?B?eWZIMVhOdzh1eVUvQUFrdUxDVWd1QnA5VU11VytXWjVEOXRiT1NQWXlCdk1B?=
+ =?utf-8?B?N01aaC9HMnE2bjQrY25qQVZxZVFaUDZDYXV0WjVzNG1vdTNjQkFkVWJaMERq?=
+ =?utf-8?B?V0hUYXJyaGtOZnJzMUNHSVFiWG1uY3puNmFmUHcrT2pYTmoyby94VVczRVlD?=
+ =?utf-8?B?V09EK1N3UkdqMlQ2SEJRV29lL0p1c2dsVSsyWWpKN3pVT0lEdko1Z21LL01U?=
+ =?utf-8?B?Y3VnVWJQd3FqL2JlRFFaMGdWSTh3bGd0RS9xK2ZlamVCQUtZaVM5c3VsTHYx?=
+ =?utf-8?B?S21xOXFYYU1FSUd4dXBzbWE5THB5MVQ1OHd6SW1SeCtkSFgyTFd1VGZveEY1?=
+ =?utf-8?B?RmdwMmpHSm1GWkVrVXJZNGR5cU80dDBJWFRRVmxuaHlaamNWbjJjOWJmdHEw?=
+ =?utf-8?B?dDVYWTZkUTMrcDZIQ0lGMTZueUZJdHN3cm15V3luVnNBKzU1ajN6Q1dhQ2Vq?=
+ =?utf-8?B?V2VodkpOaFZOZUtCQ21SaGxzbkI5aFB4YndZYWNwMVE2cGFKY1cyd0Z3ak8y?=
+ =?utf-8?B?SUhEWVA1Y0pyMjRGOTlnNlhGckk3eW1HUXB6S0t0YmJtUWdyaEtMK2g3aVhy?=
+ =?utf-8?B?NG9ZNDdaSkVGWklXQ1VtQ0tpMkF4NnN0dFpFZjZBbnVSVTZQU2tlVDdjY2pZ?=
+ =?utf-8?B?d3Y3a1RWZGZkcXUyNFBTVDBqZGtrekZIWXZPcmhjZ1ZvOFNQRVlJdGQ5ei9H?=
+ =?utf-8?B?U01pczNEZ0FqdVdJek5zTHBXNVhOK2FsejMybGJwZkFEcXBpbFJrOVpkU2Nr?=
+ =?utf-8?B?UHpIaXBHem0xYjlQQUZKRCtucFdaak02K25MM3hHQytKVnd1RDRFeEhyb3Fq?=
+ =?utf-8?B?d1Z2c3pOdEZCdFhjZXBjTUVmVGJyeW93dTc0K2djTGFTZ3FibHA0SUxUVTYw?=
+ =?utf-8?B?WFNSWnVlMElLZkQ3U3pIdlFVMHRTd3V3R3RML2ptOEpEU3ZtSjdKdEUvQ1lD?=
+ =?utf-8?B?blFPNmNIand4ajQ3UDB2aS9aa3BpOCs3Z2R5bk51TVNaRDlSWGR0blhhazJp?=
+ =?utf-8?B?VXZsRHlZdmp2WkxxZnIxZjVqS0NXODdOaW0vME10NkloMGRLQU9Qc2pFc0ZR?=
+ =?utf-8?B?Z1M2WHhUUWpycys0ZEJVY1NVQXZ3K241RUJGajJzblNLa0JvbW5IUDFMSG04?=
+ =?utf-8?B?QlVPenl3akJmK01yMWczalE4UlFzMmZ5WHp1dTlsWjVPSGtCcHpHWktwcldz?=
+ =?utf-8?B?eWdONUtiTEZrNXEvdnVGMXpkV1M4TkdIbGNGMTNCRWxoMnU4aGtrcGcvU2pN?=
+ =?utf-8?B?V2lWeDFZT3FRbDVHTS93TlNGQjltTlExNGY5cmtTYnFnbXViQURjRXg4cU5R?=
+ =?utf-8?B?aFBLZU5rU1o3UGVuZlIvZHJuVkJ4OWs1S3RWUWpDSllVU0thWjUrbllLTHVl?=
+ =?utf-8?B?Mm16NWpnbVdLMFYxM1NRaGNNZVRIZkJPRE5vdExlM2ZsdHFQdEp5Ykl6cmFM?=
+ =?utf-8?B?eU1YZnE2d2o2bFFibktacEwrb084Y2xQd1FUcjNqUmxQVVVFMjlkMWtYQkhZ?=
+ =?utf-8?B?WU9aZWhwejNwZnZvbnV1OXVwL1ZlNGk0LzBVWkc0OXdLa0tYZ0xYc0RvbVNo?=
+ =?utf-8?B?VUtJMTRGdi9Ic1dPaHNjRkRMTngrZWdkTk9FeFlxd2JhOWkvTCttR09XTnVL?=
+ =?utf-8?B?YVF4aDNiOWViK1BaWHAxZEZ5cFRQMmZsbW5WWWVScFVNYXJ5YUFGK01jTDMz?=
+ =?utf-8?B?VXVJVlNsSFk3OXhiVlBwdC82WFVmeXVsRkdDZmMwZkY5aFhTQW9SSFBLS0Za?=
+ =?utf-8?B?aUdNQ2Y1TlFra1p3R0V6V2w2WTFqWVg1RU5oMjVRNjU0anNzT0hMUzhUUm5W?=
+ =?utf-8?B?TEZNMVZqeWUzSHVkYXJzMkdrc1FScEl6VTVIZnZYd0xQNk1wcTA1K2QxaVhk?=
+ =?utf-8?B?OE45TFdrbGZ3PT0=?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0Ftakl2SDF5VE1FbE05KzRjRXA4Z3pvTU0xQ1NxZWQ1M2t4bGc5RzlWdm8z?=
- =?utf-8?B?YnZOcjEwZDNZN2tWTW9sQ3pGdk9tM3dEZ2QvZG9BRGN5UElLcCtaRzVtOTBY?=
- =?utf-8?B?VEpjUzc4Smlwai9vRjRUK0Z5YTVWWFhIL0tyYmx2aXNCclhQR1FzRlZDWmJz?=
- =?utf-8?B?S1pYcStwK09iU2FkaVFOR0o0aXUxS1ZRM09aZ2JEMjFWQ1FhV1ZRcFhtZW9Y?=
- =?utf-8?B?VWZlQ0k3dmpLMk55cEl5T091ejlQL05mLzhkck80TmZreGdVNTB4NDBmTi9l?=
- =?utf-8?B?TnFvY0UwNDZIaXpNdnRjekJhRFZuRnpIWW1jQ2M4SVhRK3Y5SUNkcUNEejM1?=
- =?utf-8?B?Vk9PUiszMnhoT0hQNWRmaEl6bFFYbDlNYzd6TVNFUzhHZjBaa3NORlYzRWpj?=
- =?utf-8?B?QWZEaUI5Tnk4R1lXODJjT01vZ2l1U0xTbWp1TGEyMmtvK2tRcGpSRm5tSGVy?=
- =?utf-8?B?RUZHYnRpa1RBbHpkcTJGL1JhWGVNZk1oekUrZjl1ZjgxOEJVWmFsVnFnalZC?=
- =?utf-8?B?eXVVcWtFVGJ3d20xV2hDWWJlTTJ5VlgxWTNnUmFudDhyQXlGRTZxRVdocDBI?=
- =?utf-8?B?RXJtV0ZRYWV0NUZEMENOZENtN0l4QjZmRVZZNUhsYTg0ejk1cU9LeHYwNDJB?=
- =?utf-8?B?dFhEYnV0N0IrUUJ3MFlBbVducHZpNmlhNjZ1bW5DZnArNWFZVFcveEVGVjk5?=
- =?utf-8?B?K2w5aGl0QStUY1ZBNEcrNHluWVIyNm9QR2xkbUVDaVFkTllJc2dScWUrcml4?=
- =?utf-8?B?VndKc3oxbGNOUGpJOVBvWEZ1blhadng4a1RGU2F2S1hGWlQvbnd4WWtxWnls?=
- =?utf-8?B?dGZwVzVjT0N1bHZ5L0RwUkdVZElIVjV3ZXR1bWlmRGI2QWg1cVdib25JRlFt?=
- =?utf-8?B?a0toQ1dLR0xZa3czUHF3VTRycmJQTUlCOFVRYng2dXZHRzA1SWcxNDJDMjVp?=
- =?utf-8?B?KzIxQjRJRDhLN1BaWHlscWh5bXlSNGF0bzBMaGpsS2M3MnFNSG04T2M4cnZB?=
- =?utf-8?B?SlZkUFJvU0g3ekt4T1JxZm5COTRTSjFLTzlhRnNjY3pCOTltZkFObzV0UlZZ?=
- =?utf-8?B?dndDTHRiNGcvV2piY3RUQWNFZmRNdWpaNk1aYlB6RXVPd1haSUZnV3VmamJQ?=
- =?utf-8?B?VG40UzBJRnhjeVhrQjU5NWZhRmpKUXR2RTZxOG1sODFYRFNrNXBkQk4xU3BG?=
- =?utf-8?B?N0FTL3EvMFZhLzZrRzNSanM4U0Y3RnB0bGJNdDR6dWMxTGlhajVJY2xlSFo4?=
- =?utf-8?B?U1V0Y25STGdjSmlReEdXdEhPb25sOW0vb0xZcmhianRzRXlNcEJ5VUV2VDR1?=
- =?utf-8?B?T0pML0V6WW0xYnV1ZHFST2Y2SG9oR0RLK2VOREZnUE0zcGUxeHA5M3pWaHE2?=
- =?utf-8?B?M1pYd1dlQ2NSSWEwVkIvNUlDa05Rc3pKaXZwcnBnRHRxK1Mrbk8rbFNIdGp1?=
- =?utf-8?B?bHFtRzVKdERDTU5MY3F4QldmcmRCMlcyTSt2ZXdOcXp3VmorT0UyS2RFRlNl?=
- =?utf-8?B?WE1uOEE3MDkxRnA1eUYwTTZXWmI5MVo4TjlXU1owSGlyRnhPUG9Wb0M3TW9Z?=
- =?utf-8?B?UWpSajd0R2RwSmIzL3RuZk93YmpYUFBLaWk3TzJ3WVBxTlZIS1NmcGFnYUxH?=
- =?utf-8?B?NHA5dktNMk1pRDFPaCtjYWVkNXppOWFzNVBMdmJNZmVzWmpxWERwRTBzdUNT?=
- =?utf-8?B?czFhZG1oZENwM3htTHo2em1nWDFkUmZTMnJnYngxbFFMM2w0b1M4dlZvdnVR?=
- =?utf-8?B?c1d0MVV2aVQzTzVMejQ1RDBVRXRqM3Q0T3NxaUlBYURvWHJTRVpwN3dlUnY3?=
- =?utf-8?B?M2ttL1hqVzl4bHhzOWw5cVFvbDFCSlVWNXh0QnFKOVk4cWVVaC9Ea0k3cWdK?=
- =?utf-8?B?QmpMcks1cm9PRDlUTUtSWU00MEtZRzVqNTQ2TWx3TElLZmgvN3pnU1NmSEhw?=
- =?utf-8?B?UTZFcW9RVDVaYk1HRm9CblBjaG16OVRLUFNaSjhCNkVONVk3QURKdGYyRGVt?=
- =?utf-8?B?Z05jNWdQdGx3cncyNEtNWURTTXByZ1B4OThZeHZKR1B2R3FKd29jb3hDSEFI?=
- =?utf-8?B?Y25MR2l2MVp2MFdnMk54U2x0QWtzMkhHdGVlK2R1MTR2Mk1saStZZU43bGs0?=
- =?utf-8?Q?dCmhIbLtTq3CMJI/YmBNUnSqL?=
+	=?utf-8?B?UDFwSHJULy9CNVZCbnZpSy9rL3psTjhEMUFzeHpwRzJQK3Z2anVaRjJ2M3Zw?=
+ =?utf-8?B?YnJoZ2czazRSSE5Ca1Q5S2h1SVArR2d3ZWh6eE9DVTYvK09BVWhnTHNzRjAr?=
+ =?utf-8?B?QytFVFZXcFhLRW1EYTV4NFZkNmhyeUVETkpiQUtNcjU5Q0N3T3pldmlhTEJn?=
+ =?utf-8?B?K3BQOTE3TGdYb3ljR2dDSkZwTTZMYkJkdzExMXBhRDFZTzloTWp4MDNNRE81?=
+ =?utf-8?B?RnpkNUFSN3Vkdk9mUmJ4Z29yR3IwZ2ZqSlp2aWljdzRQVW4xems3bmYrKzBo?=
+ =?utf-8?B?UVZ0clB1Y0FRVjljZFlnd1h0MjgrdXFJRzJDbDhwaldmYjBZVzNiVTNla2J6?=
+ =?utf-8?B?WHp5MGFkYUVOZHRmZUFMa04wTFRHb1N0OGVjL3AwWFlFZCtwcUpqRkJrWmFG?=
+ =?utf-8?B?Z1VqWjZTVTVOcE1RMGdJbDA4UTBKZmEwM08xeDBqTzkwLzkvRCtVOFk2YS9R?=
+ =?utf-8?B?eWs1aUhjY0xtVFBIQnEyOUdGdU5LTUpacmdTbXBlZ0s3ZTBmWlR0ekoxblBX?=
+ =?utf-8?B?YmZ4TXdwcFd4c0d1Y0l2MEZzZUh0Qk5tODE2S3U1cHY5NTNQZGtYSE1IZTFM?=
+ =?utf-8?B?MWFCYzBKVTQ4QUxkUlBkRzYvYTV0Z3FNbUYxNENuQ3B6Z01DbGxZQmdwSVRk?=
+ =?utf-8?B?c2JLUkxXOWR5ZjBqUU10c2ZVL0lTQ04vUTRTaGZVa2pJcHBaYVJoU2lLRjM2?=
+ =?utf-8?B?NVM3YmhVdS9rTkVxK3VXdjRrZzNENVlWbVJNMUJEV1pqUm9BMlVITTZ2Nkh6?=
+ =?utf-8?B?eFZhT0pmb2FiYVFSZDYwL2Z2ZXF5V2Y2U1dudjE1bkZlditTSEsxOWdqRnIr?=
+ =?utf-8?B?MlorOE5nTE5tU2ZHUFlXMUQ2TWpkQ1BIVUVCMlI3UXVpMStJQ2MxcHlxcVlP?=
+ =?utf-8?B?SER5M2FZQUczRW45b1c2L2YxTVV6RDdWSGJqcDZwak4xeVBRL0pHMXVLSkpY?=
+ =?utf-8?B?VDkvZzBIczIrNFRqRUZBTnlFbEVVTlljRmxSZmVWZW5STW5PdmRZUEt4RW82?=
+ =?utf-8?B?dlFFUXZnaldrWlB4dDhRRmU1akZzL0lFcWNteTJ1RWR4QUVHY3FjTkFhTG41?=
+ =?utf-8?B?KzBDc01lSnZFQlcycFltZ0twR0JIelZkUG5uQmcvN1pOaDhNZUtsMFdCUklJ?=
+ =?utf-8?B?eHJpRkI1eFNiMFltdkltZlRnZS83VFp5Z2FDY2VkV3dSSXA5V1FlN21MdDVv?=
+ =?utf-8?B?NE1ML0QxZHh3c2R6Sll1OS9ENlBtQ0ppc2FhTVVXOFc4Q3BhdFRCQ1dyNVd0?=
+ =?utf-8?B?bW9Lb1FWMWljQVMxOHk2c2JWMlkwL1lVdE4yejMyVWVqSExKZ3lWZ1pXaEMy?=
+ =?utf-8?B?SmVDZ2NPTkV6a2FYSHB6WWUxNUtPdE4zN0I0WFhHSHdtbUxPOXZTdU9OcHVz?=
+ =?utf-8?B?RDY2ZTZsTEVieDNqbThrWDZ1N3o5SWptVzhoNDUxM2pqd2tYQnJzOWh1cGlm?=
+ =?utf-8?B?QzhRRE1WdS9mTG5DbEptMkNuWFBDbVVPZE1UbVZrM1FSU01MSG1tM3Bad0M3?=
+ =?utf-8?B?M0xyb0JydGRCdWhWYkpqRlpPYUc3WktDWkgwODlBd0ZEejAyVmMrbjV1aUMy?=
+ =?utf-8?B?d0ZEQlBhTDBHMHhCUVo1aU1HV2o1aXZGellpekF3eFNadjh4YVlUK3RWYVU4?=
+ =?utf-8?B?SHpNVjFqZWtydXArM1FBSUFpVUMwR2N4RXY3QjB1N2xOZDVzYmlPYWRYUGEz?=
+ =?utf-8?B?NGYzdE01ZjN0UmdkNDJneHhtUGFWWXk5VEtybldrc0VPbFozUnV0UWVSVjk1?=
+ =?utf-8?B?Q28vK1NlV3Vlc3YzTllIbUhhcFRRTmtQaVpvUy9WQjIwYjBSeGpUWVJpZnQw?=
+ =?utf-8?B?cXZOenBDVFpSemwxMm0yZTNDUTlCOVI2VEtMK25ldWxxL1FWd20zbWw3WVZR?=
+ =?utf-8?B?S3JTSXY5ZUVvekpnNUEySXZLKzgrRUhISFRpamppUGVGZGVTKzNSZUgwaFR1?=
+ =?utf-8?B?bWVOZ1hTS2l3dE9wZmdqOEE1N3NReTcweVUyTDZaTWplRDJ1UXB2TElPR2FP?=
+ =?utf-8?B?TERoL0RVdUhsNEwxNWJjcjFBQzdzaEdhTUpDclN1VDdFWkplbkY3MGN3ZC91?=
+ =?utf-8?B?WGNmTzNKbTBzT3VnRlorRGV5ZUx4TEcxVnVPeTJLa1dXZGpyMEVaNDVndzBB?=
+ =?utf-8?Q?FFffZDJU8fZMY5RjYHhSnmJOY?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d710171-c1bd-4d77-6ebb-08de21b5c764
+X-MS-Exchange-CrossTenant-Network-Message-Id: 597a19f0-6cbb-4625-1fa5-08de21b5c970
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:36:15.3021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:36:19.0062
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +qGjPJWx3WceaWqPWAq0AhlYpFO79ty9pX4P4NI2Ezuw/dfxErqMmIh/c/QtFXaaoPOWeYfVPYENktVvSpYdQQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y46jiR5EuhpKz7xQwJGair+dytt1r32p1SzRPjAVJog75e6Hh+0cbeI2IBr+H3wVk8B9eb9pVGjF+oNI2ue/1g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8187
 
-mt35xu512aba has SFDP, already contain the necessary
-information, so remove size and some flags here.
+mt35xu01gbba is similar with mt35xu512aba, but with two dies.
+SFDP contain the wrong size, so define the size dierctly in
+the flash info. And it also support 8D-8D-8D mode, but SFDP
+lack SNOR_F_IO_MODE_EN_VOLATILE, so add this fixup flags here.
 
+Link: https://datasheet.octopart.com/MT35XU02GCBA1G12-0AAT-Micron-datasheet-138896808.pdf
 Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 
 ---
-1) This mt35xu512aba is populated on the imx943-evk board, was
-   tested at 200MHz using nxp,imx94-xspi SPI controller.
-2) root@imx943evk:~# cat /sys/bus/spi/devices/spi8.0/spi-nor/jedec_id
-   2c5b1a
-   root@imx943evk:~# cat /sys/bus/spi/devices/spi8.0/spi-nor/manufacturer
+1) This mt35xu01gbba is populated on the imx95-19x19-evk board, was
+   tested at 200MHz using nxp,imx95-fspi SPI controller.
+2) root@imx95evk:~# cat /sys/bus/spi/devices/spi1.0/spi-nor/jedec_id
+   2c5b1b
+   root@imx95evk:~# cat /sys/bus/spi/devices/spi1.0/spi-nor/manufacturer
    micron
-   root@imx943evk:~# hexdump -Cv /sys/bus/spi/devices/spi8.0/spi-nor/sfdp
+   root@imx95evk:~# hexdump -Cv /sys/bus/spi/devices/spi1.0/spi-nor/sfdp
    00000000  53 46 44 50 0a 01 03 ff  00 08 01 17 30 00 00 ff  |SFDP........0...|
    00000010  84 00 01 02 90 00 00 ff  05 01 01 06 a0 00 00 ff  |................|
    00000020  0a 00 01 08 b0 00 00 ff  ff ff ff ff ff ff ff ff  |................|
-   00000030  e5 20 8a ff ff ff ff 1f  00 00 00 00 00 00 00 00  |. ..............|
+   00000030  e5 20 8a ff ff ff ff 3f  00 00 00 00 00 00 00 00  |. .....?........|
    00000040  ee ff ff ff ff ff 00 00  ff ff 00 00 0c 20 11 d8  |............. ..|
    00000050  0f 52 00 00 39 61 99 00  87 8e 03 d3 ac a1 27 3d  |.R..9a........'=|
    00000060  7a 75 7a 75 fb bd d5 5c  00 00 70 ff 81 50 f8 a1  |zuzu...\..p..P..|
@@ -208,9 +210,9 @@ Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
    000000b0  00 0a 1a 88 10 00 00 00  ff ff ff ff ff ff ff ff  |................|
    000000c0  00 00 06 01 00 00 00 00  14 01 81 03 00 00 00 00  |................|
    000000d0
-   root@imx943evk:~# sha256sum /sys/bus/spi/devices/spi8.0/spi-nor/sfdp
-   809cbdfc57ae56771e017ff7bfdae7122afcbcbb238f2502420cfe3b2fe20d11  /sys/bus/spi/devices/spi8.0/spi-nor/sfdp
-3) root@imx943evk:~# cat /sys/kernel/debug/spi-nor/spi8.0/capabilities
+   root@imx95evk:~# sha256sum /sys/bus/spi/devices/spi1.0/spi-nor/sfdp
+   3848f0bd2436d7ca1373cee33f90e09d6479d0f4dc4bfd19f6a082d9e0039495  /sys/bus/spi/devices/spi1.0/spi-nor/sfdp
+3) root@imx95evk:~# cat /sys/kernel/debug/spi-nor/spi1.0/capabilities
    Supported read modes by the flash
     1S-1S-1S
      opcode        0x13
@@ -232,13 +234,13 @@ Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
    Supported page program modes by the flash
     1S-1S-1S
      opcode        0x12
-     8D-8D-8D
+    8D-8D-8D
      opcode        0x12
 
-   root@imx943evk:~# cat /sys/kernel/debug/spi-nor/spi8.0/params
+   root@imx95evk:~# cat /sys/kernel/debug/spi-nor/spi1.0/params
    name            (null)
-   id              2c 5b 1a 10 41 00
-   size            64.0 MiB
+   id              2c 5b 1b 10 41 00
+   size            128 MiB
    write size      1
    page size       256
    address nbytes  4
@@ -257,96 +259,93 @@ Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
     register       8D-8D-8D
 
    erase commands
-    21 (4.00 KiB) [1]
-    5c (32.0 KiB) [2]
-    dc (128 KiB) [3]
-    c7 (64.0 MiB)
+     21 (4.00 KiB) [1]
+     5c (32.0 KiB) [2]
+     dc (128 KiB) [3]
+     c4 (128 MiB)
 
    sector map
-    region (in hex)   | erase mask | overlaid
-    ------------------+------------+----------
-    00000000-03ffffff |     [   3] | no
-4) root@imx943evk:~# dd if=/dev/urandom of=./spi_test bs=1M count=2
+     region (in hex)   | erase mask | overlaid
+     ------------------+------------+----------
+     00000000-07ffffff |     [   3] | no
+4) root@imx95evk:~# dd if=/dev/urandom of=./spi_test bs=1M count=2
    2+0 records in
    2+0 records out
-   2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0213893 s, 98.0 MB/s
-   root@imx943evk:~# mtd_debug erase /dev/mtd0 0 2097152
+   2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0207974 s, 101 MB/s
+   root@imx95evk:~# mtd_debug erase /dev/mtd0 0 2097152
    Erased 2097152 bytes from address 0x00000000 in flash
-   root@imx943evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+   root@imx95evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
    Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-   root@imx943evk:~# hexdump spi_read
+   root@imx95evk:~# hexdump spi_read
    0000000 ffff ffff ffff ffff ffff ffff ffff ffff
    *
    0200000
-   root@imx943evk:~# sha256sum spi_read
+   root@imx95evk:~# sha256sum spi_read
    4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-   root@imx943evk:~# mtd_debug write /dev/mtd0 0 2097152 spi_test
+   root@imx95evk:~# mtd_debug write /dev/mtd0 0 2097152 spi_test
    Copied 2097152 bytes from spi_test to address 0x00000000 in flash
-   root@imx943evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+   root@imx95evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
    Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-   root@imx943evk:~# sha256sum spi*
-   f7d59270621c04aac29df9fc1742d0a0882047c618833ecf1577a57d109060ab  spi_read
-   f7d59270621c04aac29df9fc1742d0a0882047c618833ecf1577a57d109060ab  spi_test
-   root@imx943evk:~# mtd_debug erase /dev/mtd0 0 2097152
+   root@imx95evk:~# sha256sum spi*
+   57300768c1271d4588b850dcbf4e1400f287f09b2d515eda610890456695b205  spi_read
+   57300768c1271d4588b850dcbf4e1400f287f09b2d515eda610890456695b205  spi_test
+   root@imx95evk:~# mtd_debug erase /dev/mtd0 0 2097152
    Erased 2097152 bytes from address 0x00000000 in flash
-   root@imx943evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+   root@imx95evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
    Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-   root@imx943evk:~# sha256sum spi*
+   root@imx95evk:~# sha256sum spi*
    4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-   f7d59270621c04aac29df9fc1742d0a0882047c618833ecf1577a57d109060ab  spi_test
-   root@imx943evk:~# hexdump spi_read
-   0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-   *
-   0200000
-   root@imx943evk:~# mtd_debug info /dev/mtd0
+   57300768c1271d4588b850dcbf4e1400f287f09b2d515eda610890456695b205  spi_test
+   root@imx95evk:~# mtd_debug info /dev/mtd0
    mtd.type = MTD_NORFLASH
    mtd.flags = MTD_CAP_NORFLASH
-   mtd.size = 67108864 (64M)
+   mtd.size = 134217728 (128M)
    mtd.erasesize = 131072 (128K)
    mtd.writesize = 1
    mtd.oobsize = 0
    regions = 0
-   root@imx943evk:~# mtd_debug write /dev/mtd0 0 2097152 spi_test
-   Copied 2097152 bytes from spi_test to address 0x00000000 in flash
-   root@imx943evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+   root@imx95evk:~# flash_erase /dev/mtd0 0 0
+   Erasing 131072 Kibyte @ 0 -- 100 % complete
+   root@imx95evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
    Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-   root@imx943evk:~# hexdump spi_read -n 20
-   0000000 f3af 8ec6 388f 56a7 4b69 0859 7bde 910b
-   0000010 ea09 0762
-   0000014
-   root@imx943evk:~# flash_erase /dev/mtd0 0 0
-   Erasing 65536 Kibyte @ 0 -- 100 % complete
-   root@imx943evk:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
-   Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-   root@imx943evk:~# hexdump spi_read
+   root@imx95evk:~# hexdump spi_read
    0000000 ffff ffff ffff ffff ffff ffff ffff ffff
    *
    0200000
 ---
- drivers/mtd/spi-nor/micron-st.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/mtd/spi-nor/micron-st.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
-index 81a9bead1434056cce0893c97bd35ea248c15894..4cfa89b0fc3dcc16fe47fc58c043971f4c474ba4 100644
+index 4cfa89b0fc3dcc16fe47fc58c043971f4c474ba4..6d081ec176c37249e5ddb724b61bd70f68088163 100644
 --- a/drivers/mtd/spi-nor/micron-st.c
 +++ b/drivers/mtd/spi-nor/micron-st.c
-@@ -187,14 +187,11 @@ static const struct spi_nor_fixups mt35xu512aba_fixups = {
+@@ -185,6 +185,11 @@ static const struct spi_nor_fixups mt35xu512aba_fixups = {
+ 	.post_sfdp = mt35xu512aba_post_sfdp_fixup,
+ };
  
++static const struct spi_nor_fixups mt35xu01gbba_fixups = {
++	.post_sfdp = mt35xu512aba_post_sfdp_fixup,
++	.late_init = micron_st_nor_two_die_late_init,
++};
++
  static const struct flash_info micron_nor_parts[] = {
  	{
-+		/* MT35XU512ABA */
- 		.id = SNOR_ID(0x2c, 0x5b, 0x1a),
--		.name = "mt35xu512aba",
- 		.sector_size = SZ_128K,
--		.size = SZ_64M,
--		.no_sfdp_flags = SECT_4K | SPI_NOR_OCTAL_READ |
--				 SPI_NOR_OCTAL_DTR_READ | SPI_NOR_OCTAL_DTR_PP,
+ 		/* MT35XU512ABA */
+@@ -193,6 +198,13 @@ static const struct flash_info micron_nor_parts[] = {
  		.mfr_flags = USE_FSR,
--		.fixup_flags = SPI_NOR_4B_OPCODES | SPI_NOR_IO_MODE_EN_VOLATILE,
-+		.fixup_flags = SPI_NOR_IO_MODE_EN_VOLATILE,
+ 		.fixup_flags = SPI_NOR_IO_MODE_EN_VOLATILE,
  		.fixups = &mt35xu512aba_fixups,
++	}, {
++		/* MT35XU01GBBA */
++		.id = SNOR_ID(0x2c, 0x5b, 0x1b),
++		.sector_size = SZ_128K,
++		.mfr_flags = USE_FSR,
++		.fixup_flags = SPI_NOR_IO_MODE_EN_VOLATILE,
++		.fixups = &mt35xu01gbba_fixups,
  	}, {
  		.id = SNOR_ID(0x2c, 0x5b, 0x1c),
+ 		.name = "mt35xu02g",
 
 -- 
 2.34.1
