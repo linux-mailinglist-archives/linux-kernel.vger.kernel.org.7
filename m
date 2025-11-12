@@ -1,289 +1,441 @@
-Return-Path: <linux-kernel+bounces-896949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121FAC51A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:22:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A295AC519A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400553A52F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42FC5188CEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B887F214A64;
-	Wed, 12 Nov 2025 10:14:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6D2280025;
-	Wed, 12 Nov 2025 10:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B67130101E;
+	Wed, 12 Nov 2025 10:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tWODgprB"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E65A26D4C1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942454; cv=none; b=Oj4ZK/8IiNQyXX/8MHbszy0vLZiyJ8+yfK7Kv3MJxJWB33R8puU1m+EDj54A/XMFhY/OXMd8XZ7WM4bX4h9UqR5IOYDnnhyrGy2NnM6L6N9OYpj9Q8Z6f7E65OQMcg6YQbiHlmaBfDsZHjkJ8RmiPvY0nEAwgsZk5vumP3UoJUU=
+	t=1762942512; cv=none; b=EP4np2zZrmN2SWTRsJc8twICM0zlXC8uRvirS6VqUo5gkrAN9x6XZpHcuCgT8viTKOoRdqIUw6MjA7DaE87wAifQeePD2VVDpuNMT1UvQEn4kRKwrur6LOyqDTXqg6DT9QDl6sG7p39FCridvMPQjN6TtGtIpxGHfppizuDs6uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942454; c=relaxed/simple;
-	bh=OhqdizDqUMSv1sLBX1ZxZKWQ0KFBOMmKlbnG45xQFpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u740aD3Zs72jwsaDBdxIgI9yadDkSosdnuNMpgU+UZCuGMyDgWfckdHZhX2MJZzLp7JG6yREUuZzAvmF960Ip8oOrea2yBh1glX0EvudIfhjNnz/+KjFE4vvbG/OBb8O5SbdzqGBCuqpq0WYauLRHtzq2+znKg7yErfkX4u4MEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10E9C1515;
-	Wed, 12 Nov 2025 02:14:03 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C5DC3F5A1;
-	Wed, 12 Nov 2025 02:14:05 -0800 (PST)
-Message-ID: <ba2d4852-dd38-4d98-96fe-2716875ff199@arm.com>
-Date: Wed, 12 Nov 2025 10:14:04 +0000
+	s=arc-20240116; t=1762942512; c=relaxed/simple;
+	bh=o9+xpW4uPh8uhRYnWukE8UfaplpoEAJ9o211/Bb8GT8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ir6ryXcC5/kMaaxn1nvLVXJbufTMWMeLQ4WviqsmqjSijfrTicAzKyn/DqkIkk8l1bipLWsgtDErtLCWr4id3DFQOgo61Nvft+4ynxOPYQnxg5r1W2+yUCeUNkNKtAaI/O7yl/JG+T5GHuuA2AnVMmAOSDmz6uAKsTjnk5WTyPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tWODgprB; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-6408222225eso885540a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:15:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762942509; x=1763547309; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=73I2FUGpROBWvvc1rEHs+Shl3zJLhmBgQPZT0bfkTyg=;
+        b=tWODgprBhjFU294CNcY1IX7G2ROhJEo1yMmT4mKB6Ne2wonbAcA+iXPIQGEuPmOnc1
+         P+IGU/WOyRM0OnV9GrXfitQdqEP1/HkfYk9g2MIxlQ7sY9/6QgjPQRM5LmPlxvftlXur
+         Erzh7ipTNE/m168aRaWC3PmTAz9zINzreMBhvrf0OnIgLcQCK6wWg6hY8mc7qsFheV3O
+         L7usuiuI4HSFF/J5InXqqhpMNcvCYR/8DZLdBmC1KC+enCE3gNYxWXPJyJoPcB2KyRpE
+         abHDTrl1CxUctGzAZgv+x9Y5Lxc9K1ZnraZPoICuT0Vb9tRrhJtggsWGT3BuZi+26xsv
+         4fIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762942509; x=1763547309;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73I2FUGpROBWvvc1rEHs+Shl3zJLhmBgQPZT0bfkTyg=;
+        b=GzyuT64k41VzzRBmQhImJsgi8E0gDyboR3KQf4g/AbDJAFfPyYq0JXF8H2hkxRrOlH
+         ySfcrVK1KlPaGC52NbZdlfBuKGS+rUPj2eCZqDWr0wsCh6zUQ9GmjkdXdLrk0O2g+Sn8
+         UVTT89lJZJfevTYQ6KMZMPj1QNOxI63wHbgarI5ic1ynprPZQTuc1mLF7azoLhtkUf/M
+         1rg9Mkyx1ExRvNcImjS+jvcJndBpoSqsj/iZEQeIol19EQ5VJ1xdD6BKP+rCj+dVClU3
+         ZYtJjRk2iAknix6Jj3HCUKenqTek3EI+o1CxOrknBpH8dK1eSpDYAAKzMDASdZ8V4bNG
+         i/Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfZ/8ulASBfxo8TfEfiJ0EGhHABPphelEk5zL1i0DD7c2Z64scm6wq+Z7kCo6D7Wl/5WNryhf8A9KTC4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIcDoAsL60i2ULRju1mebQd7fKOy9FXGfiHg7DCektmLKIRz8f
+	XwPhNugTdwhJfweD1fIumA+v1VW1kgv+IYdWaY8rMSo87gVPI8H+REOpPwbXGKA68IrXyeRMhGM
+	2rlHniRwTgCUUCNIVsA==
+X-Google-Smtp-Source: AGHT+IFqKjM6hhCMFPCGk+2Jpbz5Hm1iHGXFKauxgdFMLZ34a2nCz7aZdsSy/MowpmbykFK42/F+adtGbWZpHz8=
+X-Received: from edg25.prod.google.com ([2002:a05:6402:23d9:b0:641:85b3:f437])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:26d1:b0:640:fa38:7e4a with SMTP id 4fb4d7f45d1cf-6431a49a8cemr2140719a12.8.1762942508817;
+ Wed, 12 Nov 2025 02:15:08 -0800 (PST)
+Date: Wed, 12 Nov 2025 10:15:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/33] ACPI / PPTT: Add a helper to fill a cpumask from a
- processor container
-To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-2-ben.horgan@arm.com>
- <11f80800-2e0b-4f41-a022-a88ad9792da8@redhat.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <11f80800-2e0b-4f41-a022-a88ad9792da8@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIACNeFGkC/0XMTQ6DIBCG4asQ1p1Gx/pTrtK4EBiVpAoFNDXGu
+ 5fWRWf3TvI9Ow/kDQUu2M49rSYYO6coLoyrsZsHAqNTc8ywzNOBseCG2MknQU9ZgyhvJLXmaeA
+ 89eb9wx7t2Z5eSzLj+fyTgp1gVoGnYBevCNy4BYibI019gErLor5jrfPyLlb8+rILBMpOk4mCr dU1b8Ar5O1xfACweRVgxwAAAA==
+X-Change-Id: 20251111-io-pgtable-fe0822b4ebdd
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12178; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=ZXrOBFdyf9TG39sXS6oqK5q38LX8QtvFEFyq+TKtdgQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpFF4nbVQ48kgpUcJKNVdzu9LCeXj0vRdE2I+Qv
+ qo/Vy3hpOCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRReJwAKCRAEWL7uWMY5
+ Ri6kEACJ1ErD1ff8rRfLJ/E1cEo3ogYuuSXdi9FVJi7KwZMw0ryDRadjy26jInquoxCCfu2qrS9
+ P6iY4wBtKDX+vOHETQMKq8nOmDOhDOB0nEEEPsnPD6dMTE+fzf6AOgO9xbpgbH9ZyYZIxbJPOtu
+ nNlG1p3mvjEbL56gmynSEyunQkDjE3oOPUC9w2nozhVlLQEG/8deuKcR0dk2tF1PNG+2GRRGTB9
+ YgpwbCf8mWn/eIS7R1bUMzLHnLX10EbWTQVeG2MdPgMe/HzrUzmhnbFNSaRpmeiuUdYpqMwYdlN
+ mXWPIVOB+qhqCR8rKwfOEBraN2N/xFGFqLpWUecNUPO5/8TgAM27a2fVJQchwqxdqVEQsIiiLrZ
+ qYQ9WjW94fhJvg6SIPUmJGlA0YFZbGVFOnQhBb0x7+i2Q9HFjHisL5XcPBoTCia5oUkQLEUhTB/
+ Y0BXqipcIUL79CmELu152HEAl3LqSN9Oc9brq7CYPgNs4HjA/HZO/qj1MLk3iEEBy2f8y7ZMGMR
+ IshBN7Kox/QxntpwacoOYZZCcJ6ScKG8qMcsA8OQAjOhO0idBw8egPuWPKFcy7U+uOe1w5E/Nhp
+ fA6Ca+tiJaUZQK8oyZerF33kS9pOps9AEY4gFHLdmGSvP32fRejNa/56LKZ7DbPtAyzqgvszjIr OFZWcZQaNThXsdQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20251112-io-pgtable-v3-1-b00c2e6b951a@google.com>
+Subject: [PATCH v3] io: add io_pgtable abstraction
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Will Deacon <will@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Asahi Lina <lina+kernel@asahilina.net>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, iommu@lists.linux.dev, linux-mm@kvack.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi Gavin,
+From: Asahi Lina <lina+kernel@asahilina.net>
 
-On 11/8/25 04:31, Gavin Shan wrote:
-> Hi Ben,
-> 
-> On 11/7/25 10:34 PM, Ben Horgan wrote:
->> From: James Morse <james.morse@arm.com>
->>
->> The ACPI MPAM table uses the UID of a processor container specified in
->> the PPTT to indicate the subset of CPUs and cache topology that can
->> access each MPAM System Component (MSC).
->>
->> This information is not directly useful to the kernel. The equivalent
->> cpumask is needed instead.
->>
->> Add a helper to find the processor container by its id, then walk
->> the possible CPUs to fill a cpumask with the CPUs that have this
->> processor container as a parent.
->>
->> CC: Dave Martin <dave.martin@arm.com>
->> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
->> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
->> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
->> Reviewed-by: Gavin Shan <gshan@redhat.com>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
->> Changes since v3:
->> Refer to processor hierarchy in comments (Jonathan)
->> Fix indent (Jonathan)
->> ---
->>   drivers/acpi/pptt.c  | 85 ++++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/acpi.h |  3 ++
->>   2 files changed, 88 insertions(+)
->>
-> 
-> Two nitpicks below...
-> 
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> index 54676e3d82dd..69917cc6bd2f 100644
->> --- a/drivers/acpi/pptt.c
->> +++ b/drivers/acpi/pptt.c
->> @@ -817,3 +817,88 @@ int find_acpi_cpu_topology_hetero_id(unsigned int
->> cpu)
->>       return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
->>                         ACPI_PPTT_ACPI_IDENTICAL);
->>   }
->> +
->> +/**
->> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT
->> + * processor hierarchy node
->> + *
->> + * @table_hdr:        A reference to the PPTT table
->> + * @parent_node:    A pointer to the processor hierarchy node in the
->> + *            table_hdr
->> + * @cpus:        A cpumask to fill with the CPUs below @parent_node
->> + *
->> + * Walks up the PPTT from every possible CPU to find if the provided
->> + * @parent_node is a parent of this CPU.
->> + */
->> +static void acpi_pptt_get_child_cpus(struct acpi_table_header
->> *table_hdr,
->> +                     struct acpi_pptt_processor *parent_node,
->> +                     cpumask_t *cpus)
->> +{
->> +    struct acpi_pptt_processor *cpu_node;
->> +    u32 acpi_id;
->> +    int cpu;
->> +
->> +    cpumask_clear(cpus);
->> +
->> +    for_each_possible_cpu(cpu) {
->> +        acpi_id = get_acpi_id_for_cpu(cpu);
->> +        cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
->> +
->> +        while (cpu_node) {
->> +            if (cpu_node == parent_node) {
->> +                cpumask_set_cpu(cpu, cpus);
->> +                break;
->> +            }
->> +            cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
->> +        }
->> +    }
->> +}
->> +
->> +/**
->> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all
->> CPUs in a
->> + *                                       processor container
->> + * @acpi_cpu_id:    The UID of the processor container
->> + * @cpus:        The resulting CPU mask
->> + *
->> + * Find the specified Processor Container, and fill @cpus with all
->> the cpus
->> + * below it.
->> + *
->> + * Not all 'Processor Hierarchy' entries in the PPTT are either a CPU
->> + * or a Processor Container, they may exist purely to describe a
->> + * Private resource. CPUs have to be leaves, so a Processor Container
->> + * is a non-leaf that has the 'ACPI Processor ID valid' flag set.
->> + */
->> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
->> +{
->> +    struct acpi_table_header *table_hdr;
->> +    struct acpi_subtable_header *entry;
->> +    unsigned long table_end;
->> +    u32 proc_sz;
->> +
->> +    cpumask_clear(cpus);
->> +
->> +    table_hdr = acpi_get_pptt();
->> +    if (!table_hdr)
->> +        return;
->> +
->> +    table_end = (unsigned long)table_hdr + table_hdr->length;
->> +    entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
->> +                 sizeof(struct acpi_table_pptt));
->> +    proc_sz = sizeof(struct acpi_pptt_processor);
->> +    while ((unsigned long)entry + proc_sz <= table_end) {
->> +
-> 
-> Unnecessary blank line here.
+This will be used by the Tyr driver to create and modify the page table
+of each address space on the GPU. Each time a mapping gets created or
+removed by userspace, Tyr will call into GPUVM, which will figure out
+which calls to map_pages and unmap_pages are required to map the data in
+question in the page table so that the GPU may access those pages when
+using that address space.
 
-Ack
+The Rust type wraps the struct using a raw pointer rather than the usual
+Opaque+ARef approach because Opaque+ARef requires the target type to be
+refcounted.
 
-> 
->> +        if (entry->type == ACPI_PPTT_TYPE_PROCESSOR) {
->> +            struct acpi_pptt_processor *cpu_node;
->> +
->> +            cpu_node = (struct acpi_pptt_processor *)entry;
->> +            if (cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID &&
->> +                !acpi_pptt_leaf_node(table_hdr, cpu_node) &&
->> +                cpu_node->acpi_processor_id == acpi_cpu_id) {
->> +                acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
->> +                break;
->> +            }
->> +        }
->> +        entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
->> +                     entry->length);
-> 
-> Need we to check if @cpu_node does crosses the boundary (@table_end), as
-> what's
-> doing in acpi_find_processor_node()? Actually, the similar hunk of code
-> from
-> the function can be reused here.
+Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
+Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+This patch is based on [1] but I have rewritten and simplified large
+parts of it. The Asahi driver no longer uses the io-pgtable abstraction,
+and Nova never planned to (since NVIDIA has its own separate memory).
+Therefore, I have simplified these abstractions to fit the needs of the
+Tyr GPU driver.
 
-As acpi_find_processor_node() is called from acpi_pptt_get_child_cpus()
-I don't think we need to duplicate the checking here.
+This series depends on the PhysAddr typedef [2].
 
-> 
-> static struct acpi_pptt_processor *acpi_find_processor_node(struct
-> acpi_table_header *table_hdr,
->                                                             u32
-> acpi_cpu_id)
-> {
->         :
->     while ((unsigned long)entry + proc_sz <= table_end) {
->                 cpu_node = (struct acpi_pptt_processor *)entry;
-> 
->                 if (entry->length == 0) {
->                         pr_warn("Invalid zero length subtable\n");
->                         break;
->                 }
-> 
->                 /* entry->length may not equal proc_sz, revalidate the
-> processor structure length */
->                 if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
->                     acpi_cpu_id == cpu_node->acpi_processor_id &&
->                     (unsigned long)entry + entry->length <= table_end &&
->                     entry->length == proc_sz + cpu_node-
->>number_of_priv_resources * sizeof(u32) &&
->                      acpi_pptt_leaf_node(table_hdr, cpu_node)) {
->                         return (struct acpi_pptt_processor *)entry;
->                 }
-> 
->                 entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
->                                      entry->length);
->     }
-> 
->         :
-> }
-> 
-> 
->> +    }
->> +}
->> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->> index 5ff5d99f6ead..4752ebd48132 100644
->> --- a/include/linux/acpi.h
->> +++ b/include/linux/acpi.h
->> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int
->> level);
->>   int find_acpi_cpu_topology_cluster(unsigned int cpu);
->>   int find_acpi_cpu_topology_package(unsigned int cpu);
->>   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
->> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t
->> *cpus);
->>   #else
->>   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
->>   {
->> @@ -1562,6 +1563,8 @@ static inline int
->> find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->>   {
->>       return -EINVAL;
->>   }
->> +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
->> +                             cpumask_t *cpus) { }
->>   #endif
->>     void acpi_arch_init(void);
-> 
-> Thanks,
-> Gavin
-> 
+[1]: https://lore.kernel.org/all/20250623-io_pgtable-v2-1-fd72daac75f1@collabora.com/
+[2]: https://lore.kernel.org/all/20251112-resource-phys-typedefs-v2-0-538307384f82@google.com/
+---
+ rust/bindings/bindings_helper.h |   3 +-
+ rust/kernel/io.rs               |   1 +
+ rust/kernel/io/pgtable.rs       | 254 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 257 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 2e43c66635a2c9f31bd99b9817bd2d6ab89fbcf2..faab6bc9463321c092a8bbcb6281175e490caccd 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -56,8 +56,9 @@
+ #include <linux/fdtable.h>
+ #include <linux/file.h>
+ #include <linux/firmware.h>
+-#include <linux/interrupt.h>
+ #include <linux/fs.h>
++#include <linux/interrupt.h>
++#include <linux/io-pgtable.h>
+ #include <linux/ioport.h>
+ #include <linux/jiffies.h>
+ #include <linux/jump_label.h>
+diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+index 56a435eb14e3a1ce72dd58b88cbf296041f1703e..5913e240d5a9814ceed52c6dc1a798e64158d567 100644
+--- a/rust/kernel/io.rs
++++ b/rust/kernel/io.rs
+@@ -8,6 +8,7 @@
+ use crate::{bindings, build_assert, ffi::c_void};
+ 
+ pub mod mem;
++pub mod pgtable;
+ pub mod poll;
+ pub mod resource;
+ 
+diff --git a/rust/kernel/io/pgtable.rs b/rust/kernel/io/pgtable.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..fe05bc1673f9a7741a887a3c9bbad866dd17a2b5
+--- /dev/null
++++ b/rust/kernel/io/pgtable.rs
+@@ -0,0 +1,254 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! IOMMU page table management.
++//!
++//! C header: [`include/io-pgtable.h`](srctree/include/io-pgtable.h)
++
++use core::{
++    marker::PhantomData,
++    ptr::NonNull, //
++};
++
++use crate::{
++    alloc,
++    bindings,
++    device::{Bound, Device},
++    devres::Devres,
++    error::to_result,
++    io::PhysAddr,
++    prelude::*, //
++};
++
++use bindings::io_pgtable_fmt;
++
++/// Protection flags used with IOMMU mappings.
++pub mod prot {
++    /// Read access.
++    pub const READ: u32 = bindings::IOMMU_READ;
++    /// Write access.
++    pub const WRITE: u32 = bindings::IOMMU_WRITE;
++    /// Request cache coherency.
++    pub const CACHE: u32 = bindings::IOMMU_CACHE;
++    /// Request no-execute permission.
++    pub const NOEXEC: u32 = bindings::IOMMU_NOEXEC;
++    /// MMIO peripheral mapping.
++    pub const MMIO: u32 = bindings::IOMMU_MMIO;
++    /// Privileged mapping.
++    pub const PRIV: u32 = bindings::IOMMU_PRIV;
++}
++
++/// Represents a requested `io_pgtable` configuration.
++pub struct Config {
++    /// Quirk bitmask (type-specific).
++    pub quirks: usize,
++    /// Valid page sizes, as a bitmask of powers of two.
++    pub pgsize_bitmap: usize,
++    /// Input address space size in bits.
++    pub ias: u32,
++    /// Output address space size in bits.
++    pub oas: u32,
++    /// IOMMU uses coherent accesses for page table walks.
++    pub coherent_walk: bool,
++}
++
++/// An io page table using a specific format.
++///
++/// # Invariants
++///
++/// The pointer references a valid io page table.
++pub struct IoPageTable<F> {
++    ptr: NonNull<bindings::io_pgtable_ops>,
++    _marker: PhantomData<F>,
++}
++
++// SAFETY: `struct io_pgtable_ops` is not restricted to a single thread.
++unsafe impl<F> Send for IoPageTable<F> {}
++// SAFETY: `struct io_pgtable_ops` may be accessed concurrently.
++unsafe impl<F> Sync for IoPageTable<F> {}
++
++/// The format used by this page table.
++pub trait IoPageTableFmt: 'static {
++    /// The value representing this format.
++    const FORMAT: io_pgtable_fmt;
++}
++
++impl<F: IoPageTableFmt> IoPageTable<F> {
++    /// Create a new `IoPageTable` as a device resource.
++    #[inline]
++    pub fn new(
++        dev: &Device<Bound>,
++        config: Config,
++    ) -> impl PinInit<Devres<IoPageTable<F>>, Error> + '_ {
++        // SAFETY: Devres ensures that the value is dropped during device unbind.
++        Devres::new(dev, unsafe { Self::new_raw(dev, config) })
++    }
++
++    /// Create a new `IoPageTable`.
++    ///
++    /// # Safety
++    ///
++    /// If successful, then the returned value must be dropped before the device is unbound.
++    #[inline]
++    pub unsafe fn new_raw(dev: &Device<Bound>, config: Config) -> Result<IoPageTable<F>> {
++        let mut raw_cfg = bindings::io_pgtable_cfg {
++            quirks: config.quirks,
++            pgsize_bitmap: config.pgsize_bitmap,
++            ias: config.ias,
++            oas: config.oas,
++            coherent_walk: config.coherent_walk,
++            tlb: &raw const NOOP_FLUSH_OPS,
++            iommu_dev: dev.as_raw(),
++            // SAFETY: All zeroes is a valid value for `struct io_pgtable_cfg`.
++            ..unsafe { core::mem::zeroed() }
++        };
++
++        // SAFETY:
++        // * The raw_cfg pointer is valid for the duration of this call.
++        // * The provided `FLUSH_OPS` contains valid function pointers that accept a null pointer
++        //   as cookie.
++        // * The caller ensures that the io pgtable does not outlive the device.
++        let ops = unsafe {
++            bindings::alloc_io_pgtable_ops(F::FORMAT, &mut raw_cfg, core::ptr::null_mut())
++        };
++        // INVARIANT: We successfully created a valid page table.
++        Ok(IoPageTable {
++            ptr: NonNull::new(ops).ok_or(ENOMEM)?,
++            _marker: PhantomData,
++        })
++    }
++
++    /// Obtain a raw pointer to the underlying `struct io_pgtable_ops`.
++    #[inline]
++    pub fn raw_ops(&self) -> *mut bindings::io_pgtable_ops {
++        self.ptr.as_ptr()
++    }
++
++    /// Obtain a raw pointer to the underlying `struct io_pgtable`.
++    #[inline]
++    pub fn raw_pgtable(&self) -> *mut bindings::io_pgtable {
++        // SAFETY: The io_pgtable_ops of an io-pgtable is always the ops field of a io_pgtable.
++        unsafe { kernel::container_of!(self.raw_ops(), bindings::io_pgtable, ops) }
++    }
++
++    /// Obtain a raw pointer to the underlying `struct io_pgtable_cfg`.
++    #[inline]
++    pub fn raw_cfg(&self) -> *mut bindings::io_pgtable_cfg {
++        // SAFETY: The `raw_pgtable()` method returns a valid pointer.
++        unsafe { &raw mut (*self.raw_pgtable()).cfg }
++    }
++
++    /// Map a physically contiguous range of pages of the same size.
++    ///
++    /// # Safety
++    ///
++    /// * This page table must not contain any mapping that overlaps with the mapping created by
++    ///   this call.
++    /// * If this page table is live, then the caller must ensure that it's okay to access the
++    ///   physical address being mapped for the duration in which it is mapped.
++    #[inline]
++    pub unsafe fn map_pages(
++        &self,
++        iova: usize,
++        paddr: PhysAddr,
++        pgsize: usize,
++        pgcount: usize,
++        prot: u32,
++        flags: alloc::Flags,
++    ) -> Result<usize> {
++        let mut mapped: usize = 0;
++
++        // SAFETY: The `map_pages` function in `io_pgtable_ops` is never null.
++        let map_pages = unsafe { (*self.raw_ops()).map_pages.unwrap_unchecked() };
++
++        // SAFETY: The safety requirements of this method are sufficient to call `map_pages`.
++        to_result(unsafe {
++            (map_pages)(
++                self.raw_ops(),
++                iova,
++                paddr,
++                pgsize,
++                pgcount,
++                prot as i32,
++                flags.as_raw(),
++                &mut mapped,
++            )
++        })?;
++
++        Ok(mapped)
++    }
++
++    /// Unmap a range of virtually contiguous pages of the same size.
++    ///
++    /// # Safety
++    ///
++    /// This page table must contain a mapping at `iova` that consists of exactly `pgcount` pages
++    /// of size `pgsize`.
++    #[inline]
++    pub unsafe fn unmap_pages(&self, iova: usize, pgsize: usize, pgcount: usize) -> usize {
++        // SAFETY: The `unmap_pages` function in `io_pgtable_ops` is never null.
++        let unmap_pages = unsafe { (*self.raw_ops()).unmap_pages.unwrap_unchecked() };
++
++        // SAFETY: The safety requirements of this method are sufficient to call `unmap_pages`.
++        unsafe { (unmap_pages)(self.raw_ops(), iova, pgsize, pgcount, core::ptr::null_mut()) }
++    }
++}
++
++// These bindings are currently designed for use by GPU drivers, which use this page table together
++// with GPUVM. When using GPUVM, a single mapping operation may be translated into many operations
++// on the page table, and in that case you generally want to flush the TLB only once per GPUVM
++// operation. Thus, do not use these callbacks as they would flush more often than needed.
++static NOOP_FLUSH_OPS: bindings::iommu_flush_ops = bindings::iommu_flush_ops {
++    tlb_flush_all: Some(rust_tlb_flush_all_noop),
++    tlb_flush_walk: Some(rust_tlb_flush_walk_noop),
++    tlb_add_page: None,
++};
++
++#[no_mangle]
++extern "C" fn rust_tlb_flush_all_noop(_cookie: *mut core::ffi::c_void) {}
++
++#[no_mangle]
++extern "C" fn rust_tlb_flush_walk_noop(
++    _iova: usize,
++    _size: usize,
++    _granule: usize,
++    _cookie: *mut core::ffi::c_void,
++) {
++}
++
++impl<F> Drop for IoPageTable<F> {
++    fn drop(&mut self) {
++        // SAFETY: The caller of `ttbr` promised that the page table is not live when this
++        // destructor runs.
++        unsafe { bindings::free_io_pgtable_ops(self.0.ops) };
++    }
++}
++
++/// The `ARM_64_LPAE_S1` page table format.
++pub enum ARM64LPAES1 {}
++
++impl IoPageTableFmt for ARM64LPAES1 {
++    const FORMAT: io_pgtable_fmt = bindings::io_pgtable_fmt_ARM_64_LPAE_S1 as io_pgtable_fmt;
++}
++
++impl IoPageTable<ARM64LPAES1> {
++    /// Access the `ttbr` field of the configuration.
++    ///
++    /// This is the physical address of the page table, which may be passed to the device that
++    /// needs to use it.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that the device stops using the page table before dropping it.
++    #[inline]
++    pub unsafe fn ttbr(&self) -> u64 {
++        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for `ARM64LPAES1`.
++        unsafe { (*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.ttbr }
++    }
++
++    /// Access the `mair` field of the configuration.
++    #[inline]
++    pub fn mair(&self) -> u64 {
++        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for `ARM64LPAES1`.
++        unsafe { (*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.mair }
++    }
++}
 
-Ben
+---
+base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
+change-id: 20251111-io-pgtable-fe0822b4ebdd
+prerequisite-change-id: 20251106-resource-phys-typedefs-6db37927d159:v2
+prerequisite-patch-id: 350421d8dbaf3db51b1243d82077c5eb88f54db5
+prerequisite-patch-id: ac0166fb3cd235de76841789173051191a4d2434
+prerequisite-patch-id: f4bca02c77c40093690b66cdf477f928784bdbf4
+prerequisite-patch-id: 083d1c22b1a7eb0dcae37052b926362543c68e8a
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
