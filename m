@@ -1,211 +1,123 @@
-Return-Path: <linux-kernel+bounces-897590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E04C532B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:49:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B179C532E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8052D34EBFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:41:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7DFC355836
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08250332EBA;
-	Wed, 12 Nov 2025 15:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD5E339B2F;
+	Wed, 12 Nov 2025 15:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SqTxO5Uj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V804Wny5"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A522C0277;
-	Wed, 12 Nov 2025 15:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E8E32D7DD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962057; cv=none; b=hX3hJLG7S7yiCjep0en1F0AQcpcyHQ9+oftC3+vEDXis43VZd2Qen4SWqf5eBPvX0IwgRhVfUIU8/pvJxDTMw16Q5ekAmfF0PmGzvtmNHm9McgsCfv0vWf3Kca8ZDatP0PvttLN+GTExtLMQh7i7YNE+xHoUC2VYtUNxLkJHle8=
+	t=1762962088; cv=none; b=t+y9pK1bRkK54jWhfQTvyurrFIzq8khf1U/XnlnxEeWvdWJMNN7tooje+CdaRT0JMj1EyPsEp84RIGqnXyE3z5N+o6upwQEFE7toARI2ICBTetXAEAeQB7ClbSCBtZq9J8Y0Ty+K0NL8140vJ0JQK9Fb1FajkEr3quv/R/vLBdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962057; c=relaxed/simple;
-	bh=mgVSVdhADCrs716f2wRkUVcYclGpyj5xUt6IfsjsOfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VwQlmAIuUAcxj+bhQPE75sOnkJAFqwLDh3On+YFZgUwS3IYPCgVaR99URNcqM7ls4eiAKwtl8HTuUxl2FoIjVfwaj3KErRAA9ooIx+7gKLiglwOcJF+PF1vjNGvL7ln/WKdvsI7CKmYKJJlZe2zV8ug8l4Ssv97jej87DwF7gco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SqTxO5Uj; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762962055; x=1794498055;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mgVSVdhADCrs716f2wRkUVcYclGpyj5xUt6IfsjsOfw=;
-  b=SqTxO5UjaN8lRjwAPeN/AwMP66uppU8W+fYW1jxw7OXDXKWFKAYtaMre
-   uictG8/SmFbxgpMhTpzdf0Ve7/BZEQ5zpjxaFfRXogT+hQQmhL5LVwrVN
-   Lf7tN5udvlv9SoJQDKO3nUIcHCvhxA0o8VUOgz1KXAr9jE8yL7BNJJsKZ
-   9RDQNERmE0S1xqNMczcxX7AVO1Am0Mk+ivvYrSdgAoAzWC+2nG/+EEneW
-   4U7c8M8eEGGuXIF/HZVvhJiVzuTvCijVubvIIM4TkQdg7/uMCDIBDvYhg
-   +RNycuCdNK9J+IKmFqfg/PxiBk/wgwfjVn3RD52famtdyE99butgPnG2/
-   w==;
-X-CSE-ConnectionGUID: Qd8KYdYfRIyTEJ4DTBliyg==
-X-CSE-MsgGUID: mcAehQV1Q96jQbPzNFjWvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="65179236"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="65179236"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 07:40:55 -0800
-X-CSE-ConnectionGUID: mh8h65ZtQfqzcljXJcLQmQ==
-X-CSE-MsgGUID: 1AVnEe/ZRi6GPGPf8erGeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="189516715"
-Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.108.30]) ([10.125.108.30])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 07:40:54 -0800
-Message-ID: <2aca7703-fae6-46bb-bef1-ee29e822b4c8@intel.com>
-Date: Wed, 12 Nov 2025 08:40:53 -0700
+	s=arc-20240116; t=1762962088; c=relaxed/simple;
+	bh=P70ux5XoL4sP7XKBF8mt9nEhNWg2Y0bKzzy2WXyp+MA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C7m83FhYo0m1FeJUtavpgdWQxP4FhOaDhaml8tChAiuUgfP5IJ5oOITFMOsZeIq+ugjjEU58+dB/O4NEaW3YGFSdkQT33pPB9W0H384xXaE//tusk1UayQXm9ioW1TbUdfH0tFz/iqdgG2KrHQEknD4l0Hz/ybRkdMR+QXjb07Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V804Wny5; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6419b7b4b80so1394941a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:41:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762962085; x=1763566885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
+        b=V804Wny53F8rsoC0D2aHjH3g007OZpczWy9EsPNIadKYAww8Y8cJy0gMWtiyigO7EF
+         ufLqCRVh/dAU0gvUeIsZq+Oz0TNRumgNEDnzdjcvd+9IsJr4O8q9nrKazJh8CS4HCvLF
+         kcdlLpsV3fXSgH9z9e74m+FOBbfSECchh87NXSim7QqqQiWuc0z2sjq2nYjVFUf3MWqx
+         qCm4kg6kSCwL7Q+HYonTH5oTUKRBOk1HBGVougmD56vv2FJqKTG7QI14eYD2dlxsnqxu
+         LICNUx7WzbvFwBuQ/YWBSrXenMSRKrERAZw/l6bo4oFuSZHEoqc8Z1JJDqN66SKMZGKD
+         hJ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962085; x=1763566885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EcqGRuJDH5DuPAeW4wBjcQ/B5B6evG4AWgj1C7n+4kU=;
+        b=ivxp6BrLnAl4RlNG291YkuedPO9x/BPnZSolIwDdkTS6d6Adkj4bYUfGWwm9tzlBAu
+         sKoD/AMzlClnB14Pg095oqBb12FVvzWaAcaN+3nfwfjnSAGtumrsFNhqs7VHh2C1Txat
+         U6ehk4UDCjB1iHNrzB7U0dKEP6o2Hi81zr/nZ2bh+gVP7l5cMmRlV0/oD4nUTtdWHW94
+         kfu02oWlTl1d/eLWVYiXFviGbqgIwOulNSeOCv86/iB2RksUbuyAMHxWxOtqAjVM3mUE
+         FZeesZlHT043NbIkQPvXTuQAZNF7lM1F0TsE+p8Oc1vEi11ntGe5ewEhFaVIAjmrsH+h
+         yXew==
+X-Forwarded-Encrypted: i=1; AJvYcCWOOG2NgZN0QfG6CxmDW6HATNeqCs2fgVaIP6yzrS3dJiL9x2TqBsdv5nhbJ3UBoR0hWSOk0678j2FW71M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR+ZLkYHRDUzmJlKMBaqfEs71hExWvIw1T5zPvm9K+OjqO7jYw
+	fHl6Ji8Z7NLOMgoOpDlx4RQZDBAWVUlS22fzO4E8KahujA+VzAfmDLpl
+X-Gm-Gg: ASbGncsRxl59fakaxt4mnhmqW8rnDaE8/psIj6Z3M07zJWhp5xxe/wxyvXdDXXBmpS6
+	RSnDzRyLjwdz6fP0zUYbu+p82WmaXBRlBIHjjg7JQxewKtHYUoYOorWw/EV3SuqD8TwzfymQgYz
+	WiIgSA/fWDp812+7a56J3l4A9+2ImiIR/O5RKBTmOvN0LEgWpHmyOB+RPEQAsbaF4REqCXLcywS
+	0a4DYUtFy6mlEIW9yy4op7LBTq9qrvIlWbe2OTppIO+3W0KlZee89PSAo1qb6zN7RCQ3xEBLDyR
+	FYCTKekKAnlreCoxNpXb0XEJAKe+HZEIylczXjp/W3slGQzz6XKc7Q76xRpHDLeyC/OfnmhR7Ia
+	OunwGaDuIHwHRuZMLAgf3k9sVOIsugMTW2nNea1XsyxKn++sS8BrDi4xfYtj//LavoXoNhEzow6
+	N4z7a+cXP1HgdzBFEW3ixtgt9TBb4BWcblJnlicB0CcUMkmqM9BIPRnaL/G1WYSJ+EG/hm4elD+
+	7YTGw==
+X-Google-Smtp-Source: AGHT+IHX3eOJnJ6b2ckYQuN9nF0Y5Rkb79t/DFxTrsKsHI+zlzbswhY4DwsGngMKF9S9FWP+40tSmg==
+X-Received: by 2002:a17:907:6092:b0:b70:bc2e:a6f0 with SMTP id a640c23a62f3a-b7331a054camr337287566b.5.1762962085303;
+        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 07:41:25 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/7] RZ/G2L SSI Improvements
+Date: Wed, 12 Nov 2025 15:41:01 +0000
+Message-ID: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 18/20] cxl/pmem_region: Prep patch to accommodate
- pmem_region attributes
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, gost.dev@samsung.com,
- a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134209epcas5p1b7f861dbd8299ec874ae44cbf63ce87c@epcas5p1.samsung.com>
- <20250917134116.1623730-19-s.neeraj@samsung.com>
- <147c4f1a-b8f6-4a99-8469-382b897f326d@intel.com>
- <1279309678.121759726504330.JavaMail.epsvc@epcpadp1new>
- <6e893bd1-467a-4e9a-91ca-536afa6e4767@intel.com>
- <1296674576.21762749302024.JavaMail.epsvc@epcpadp1new>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <1296674576.21762749302024.JavaMail.epsvc@epcpadp1new>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
+The first patch in this series fixes audio channel swap issue because of
+half duplex to full duplex switching during the streaming that involves
+FIFO reset which drops the word leading to audio channel swap issue. The
+second patch fixes sample width value in the hw_params_cache::sample_width
+Apart from this, support 24 and 32 bit sample format width.
 
-On 11/7/25 5:49 AM, Neeraj Kumar wrote:
-> On 06/10/25 09:06AM, Dave Jiang wrote:
->>
->>
->> On 9/29/25 6:57 AM, Neeraj Kumar wrote:
->>> On 24/09/25 11:53AM, Dave Jiang wrote:
->>>>
->>>>
->>>> On 9/17/25 6:41 AM, Neeraj Kumar wrote:
->>>>> Created a separate file core/pmem_region.c along with CONFIG_PMEM_REGION
->>>>> Moved pmem_region related code from core/region.c to core/pmem_region.c
->>>>> For region label update, need to create device attribute, which calls
->>>>> nvdimm exported function thus making pmem_region dependent on libnvdimm.
->>>>> Because of this dependency of pmem region on libnvdimm, segregated pmem
->>>>> region related code from core/region.c
->>>>
->>>> We can minimize the churn in this patch by introduce the new core/pmem_region.c and related bits in the beginning instead of introduce new functions and then move them over from region.c.
->>>
->>> Hi Dave,
->>>
->>> As per LSA 2.1, during region creation we need to intract with nvdimmm
->>> driver to write region label into LSA.
->>> This dependency of libnvdimm is only for PMEM region, therefore I have
->>> created a seperate file core/pmem_region.c and copied pmem related functions
->>> present in core/region.c into core/pmem_region.c.
->>> Because of this movemement of code we have churn introduced in this patch.
->>> Can you please suggest optimized way to handle dependency on libnvdimm
->>> with minimum code changes.
->>
->> Hmm....maybe relegate the introduction of core/pmem_region.c new file and only the moving of the existing bits into the new file to a patch. And then your patch will be rid of the delete/add bits of the old code? Would that work?
->>
->> DJ
-> 
-> Hi Dave,
-> 
-> As per LSA 2.1, during region creation we need to intract with nvdimmm
-> driver to write region label into LSA.
-> 
-> This dependency of libnvdimm is only for PMEM region, therefore I have
-> created a seperate file core/pmem_region.c and copied pmem related functions
-> present in core/region.c into core/pmem_region.c
-> 
-> I have moved following 7 pmem related functions from core/region.c to core/pmem_region.c
->  - cxl_pmem_region_release()
->  - cxl_pmem_region_alloc()
->  - cxlr_release_nvdimm()
->  - cxlr_pmem_unregister()
->  - devm_cxl_add_pmem_region()
->  - is_cxl_pmem_region()
->  - to_cxl_pmem_region()
-> 
-> I have created region_label_update_show/store() and region_label_delete_store() which
-> internally calls following libnvdimm exported function
->  - region_label_update_show/store()
->  - region_label_delete_store()
-> 
-> I have added above attributes as following
->    {{{
->     static struct attribute *cxl_pmem_region_attrs[] = {
->             &dev_attr_region_label_update.attr,
->             &dev_attr_region_label_delete.attr,
->             NULL
->     };
->     static struct attribute_group cxl_pmem_region_group = {
->             .attrs = cxl_pmem_region_attrs,
->     };
->     static const struct attribute_group *cxl_pmem_region_attribute_groups[] = {
->             &cxl_base_attribute_group,
->             &cxl_pmem_region_group,      ------> New addition in this patch
->             NULL
->     };
->     const struct device_type cxl_pmem_region_type = {
->             .name = "cxl_pmem_region",
->             .release = cxl_pmem_region_release,
->             .groups = cxl_pmem_region_attribute_groups,
->     };
-> 
->     static int cxl_pmem_region_alloc(struct cxl_region *cxlr)
->     {
->             <snip>
->             dev = &cxlr_pmem->dev;
->             dev->parent = &cxlr->dev;
->             dev->bus = &cxl_bus_type;
->             dev->type = &cxl_pmem_region_type;
->         <snip>
->     }
->    }}}
-> 
-> So I mean to say all above mentioned functions are inter-connected and dependent on libnvdimm
-> Keeping any of them in core/region.c to avoid churn, throws following linking error
->    {{{
->     ERROR: modpost: "nd_region_label_delete" [drivers/cxl/core/cxl_core.ko] undefined!
->     ERROR: modpost: "nd_region_label_update" [drivers/cxl/core/cxl_core.ko] undefined!
->     make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
->    }}}
-> 
-> Keeping these functions in core/region.c (CONFIG_REGION)) and manually enabling CONFIG_LIBNVDIMM=y
-> will make it pass.
-> 
-> Even if we can put these functions in core/region.c and forcefully make
-> libnvdimm (CONFIG_LIBNVDIMM) dependent using Kconfig. But I find it little improper as
-> this new dependency is not for all type of cxl devices (vmem and pmem) but only for cxl pmem
-> device region.
-> 
-> Therefore I have seperated it out in core/pmem_region.c under Kconfig control
-> making libnvdimm forcefully enable if CONFIG_CXL_PMEM_REGION == y
-> 
-> So, I believe this prep patch is required for this LSA 2.1 support.
+Biju Das (7):
+  ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
+  ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
+  ASoC: renesas: rz-ssi: Use dev variable in probe()
+  ASoC: renesas: rz-ssi: Remove trailing comma in the terminator entry
+  ASoC: renesas: rz-ssi: Move DMA configuration
+  ASoC: renesas: rz-ssi: Add support for 24 bits sample width
+  ASoC: renesas: rz-ssi: Add support for 32 bits sample width
 
-I think you misunderstood what I said. What I was trying to say is if possible to move all the diff changes of moving the existing code to a different place to a different patch. That way this patch is not full of those diff changes and make it easier to review.
+ sound/soc/renesas/rz-ssi.c | 193 +++++++++++++++++++++++++------------
+ 1 file changed, 132 insertions(+), 61 deletions(-)
 
-DJ
-
-
-> 
-> 
-> Regards,
-> Neeraj
-> 
+-- 
+2.43.0
 
 
