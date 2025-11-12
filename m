@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-897542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C99AC5308E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4B5C530EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F197A3510E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:23:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3A1135385A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05386338F5B;
-	Wed, 12 Nov 2025 15:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A4333BBA5;
+	Wed, 12 Nov 2025 15:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n4yaMC9Z"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AighG2nT"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB2F285C84
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF872BEC31
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960954; cv=none; b=uIvgjUm7v2eLbNpsM7wo3dTuCHiAP7tRcCTa3tnTRHZvi5/I3vwqY/1owWGWWpyyfTdekY+1fgK11M9/p1BmNjhjRB4PeaFErb4IgT3cSjmO0wngJNH1CmX1Kaft32hZduBozp86MUKzMk1cre3g3okLCJUNHI9jd4qBPmYyfvQ=
+	t=1762960955; cv=none; b=lxUCU0I9+25/a9uW3WkGpqDnfm46AiOheNETkxGfGqN4MsgzTXHcENZiwsM7QD1O2GJ7SRpV6PdxDOg5/pX8dU74cpO1PCaR7WpPXpMi6MzPb8DOCCzcZiZukQCpH7tMDlfFlQMLbnhNoTL661N1mguQHsdJ0OorJ/FQYyeh6Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960954; c=relaxed/simple;
-	bh=OwkdKB4I5DhVWVGSI73e7fFifbHjwD0w7111SvrRlUM=;
+	s=arc-20240116; t=1762960955; c=relaxed/simple;
+	bh=S/F+Q8EHvKO9iseD/uYd6QcoJRU9qpbbRgMtnDRy1DQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b1Z+jPOzxsyH8pZugSXQpW10aWPJpuAwQQ3+E3geI9sAekyX4FTj+4XmO9EL5VzJmYRegCPsKQGG0x7sNm2uNhOJ3nhhkbhM64PHcb602v57vXxl0ZLLdQ6Bywe2fpJU9RzYBrZy9eUXxRavqnzYDIHL1RLOD8LPOY0ESl7wSSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n4yaMC9Z; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:To:Cc; b=sOdibg0Q3RUne7qnGLQJLiKubx99jZdEuq0/2e0H7SAqqRuGaIzOOkKaK1aMvPVF/6HuywCehnAo1ENn6yem+e/PeECcpNHPMXymPVfggd9pzsah0Sjnv9D33EU7VJBuGJgWbGwyMcypB2ZdIAwmIm0aE0a9bAN5a5u0hqWu/O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AighG2nT; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b3669ca3dso514733f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:22:32 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47118259fd8so7084215e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762960951; x=1763565751; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762960952; x=1763565752; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bzxatPwaT12t+oimIyPlP1cYh9Rjm5+9wuJjQjgausI=;
-        b=n4yaMC9ZDRX7T0jXeyvQaK+6uXNxf9Md2b0AZQM9/lMWDKUjWveRqnskc3ihVV/Xhw
-         p40M3YY+XIqWkJ2bYtxl5pCsEP356GxrxpFs3/9jqoZ907U6J8e6EXmyVBqgsV6RPJ27
-         4CUjTu7km/mBU5RY8T7SVAQiznB+5JUyj1hQfk555s7QaPFBkU+XGomrtx/i96kJsOzB
-         6kxqvgFXQOqR7Y45o/eumg8ZjS90CQZ9p3i07haY0v4Jo832pD24r0OfAatiJL1EaL+W
-         qChiPVRR84FWPpq7hyTncKh7gdlaCsCc1C2P15Y1glrTUNLKo20YOKURq4+UcGxJ9lIJ
-         DnjQ==
+        bh=2uusonc4IVmEmKIwyNSABzF5dmeq8W3J1RDTb9RhE1k=;
+        b=AighG2nTC4EFpU//Fi0suUurF2WWtNHHGL+cwg93mgZTBUfMSZDs39Y11rItRd7Mn/
+         WBtOm2CV1ryWyv/vRxJh62sXTi5w+itBsFPr+qww/WGTFdIfNNl8Ht1f/x+aQ+CKZM/C
+         RpnfXz+ti92wLao8f1mmaxEf4Qm58iSxrcRjA3ipFC6rFdBgIVkkjqxdEt+0qURSR7Sg
+         UFIRX8wahEBt+Hhrv4QdyyDb4d9sTpol71KTOMhI3MM0tq/ZzLEjMl44waP2aMl0/NHg
+         UsSNbS3zYaS1S9sCvKcGAwx6MgrQXogSWAUltLn0q/QXSHzPOORXH0tL92mKZC9eCeeo
+         KXVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762960951; x=1763565751;
+        d=1e100.net; s=20230601; t=1762960952; x=1763565752;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=bzxatPwaT12t+oimIyPlP1cYh9Rjm5+9wuJjQjgausI=;
-        b=JoHFv5t9Pb8WxZztdTQEQHrLqb9/1OjCYlA+zXkYxLECS9qk1cqbiWWwUU7gpQbdLi
-         hawXp9MfY5lT3D/bukW9h1oT83M8XEZgddQ49ut/arB+fgV9l+/xVbAxSIRIFQEXaBl2
-         esCqXNWgFf3ZmeVY88XxDcGfN3oAscz+3Pke1Hv8h04pF4zDmmvq946M1Axd1Qkwq0ig
-         7ssx88J2LmZWoLSG0dIXzgOSMeTGwvg61UUkF2HgvsSZz6O7KWJVRxxeR1+uEFdL2jhF
-         yvHedeJ79jvb4JqjKeTLNXilxtKrlhwuWtgWmD4zrPeGnv8r9FzmtImh+ysRCq7LUmWE
-         ktEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXlXcmslu1tLaMRNW4wzx2sBnIfvJzQFKrEYj3o/Nk1xtOs1X9uWAPcjk/yYLPzyilkgbZ4qot1PRfPlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWhqJWPR9haWkU4Oa4mnGo+z0VPvGVWX6zRkUPjuNz4V8Bcj1F
-	WtERoK7N7NS6Tuf/Rtx6sEI8p5wnQ+B7urn58T53SanUpqvTUY75UMUP7D+/FcPKdwDmLzjSUVs
-	jANngLRk=
-X-Gm-Gg: ASbGncuo3LCAi/J/9gx+AhNIML2ifXNZsk2Dd6uc+Nr/V4o02EyE+Dd/ijisONreY8M
-	WYH825j87TuHUgfgypxFLLoFV5tEJdHU3+LKYKB3uA14Mhw3WModsPFZyJzDssPWl/u8S6fl2hc
-	ZG0Q8DHvOUUp0doro7u6ejYqWifx3Eq5Tme2iyByDoc5gEWau/4rLQlQSsqZx1+SgJE6FtvVdQg
-	JdrQtakP5GDNDOZDAanI/UVNe2vZ5QXOm9EpN8mCYoFX/CSFDrVlh2Ak25GXHdlbVoq8FRC4Sft
-	h2iwylNqxL5OqpEizzofwI+Sj+kqXYPYxihHKx9qok/N7Hir2gFWevkwg5+CLVnRQaPdhvzQyTN
-	ubDY9uVjgRw4mVfnTdWtEJOf+fYD2aONxqWfnLRDon36BNWyT0mvnbcMWUqAJUPlCv0l6xo4JoF
-	dTWI8KwSeG4w==
-X-Google-Smtp-Source: AGHT+IGB7ysGckgxYCnh4ScRny7zYE81+b6VpNLPB820Ao4qDE7C2hKXOhk1d2vMPEvdwcsZY1zqmQ==
-X-Received: by 2002:a05:6000:184e:b0:429:c4ce:eeaa with SMTP id ffacd0b85a97d-42b4bdd625bmr3030116f8f.60.1762960950859;
-        Wed, 12 Nov 2025 07:22:30 -0800 (PST)
+        bh=2uusonc4IVmEmKIwyNSABzF5dmeq8W3J1RDTb9RhE1k=;
+        b=LEPK+KQD5/XSV9a+0E4kRxsr352OhEm0EeTU14fAA2UeWocEtmiGAdu7tiyOSgY9ZE
+         aakwc5uDeyoS/rkHBEIEH6hsLKlI6N4WA6Y8B0zcOIXt8QRkGoB31zPSFYSfkRbEc2DJ
+         45kMJSDmPRGqZIPUr4l1N9boJAtIix3R20gpurgw6WexAUVqxTVupZsxUkDqmSURgX98
+         QCbylAwfYRlQOM7GrVb4Yn/d1U5vMiadHWW+ybaUKP0s5spvCL07xAmU+Sp3ccffP1vp
+         xGJdbX6L5Pb4OgmDelI5hlZaYcVBU/YPMeqNebTjROMq4REiHKWAZtXTvudUmvhTTmIg
+         20MA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjPl638qV7XyLu5mLwzVI7rpBtau9UtQ0TUCGm3VCJ+ckZwYBDdlP866d5FLNx14fyPFdeSe+2CqqKwl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLMLZN79OwzBCIfFm0x3qQY04OexrfG93SUO2ljVJna0iQsdfZ
+	z8ZKSK8swyXXVsQZNpsLjBB68J+Utc/5n4ANBCW7YH9kyKsDbqsQv0z/Ox5qdpDrPbuNaCN+aBF
+	DvcBEeiE=
+X-Gm-Gg: ASbGnctSdhv4uKLm1WmBXilSfyQMqI3RBndVLTsd7oirM1tXXB3tAoh8E0JoQ/THcc+
+	usqQdsReMJI6kGg8gaVmRBR0G7YpB656tQuiq721NmqP50JgvUg6YTTjvYQhaSV57Iufqp3+YGb
+	YYJi+lnIym31REq9bZd21x2VgNa/l4TaWT0MO8D6epRFo0bVzNphN1xm5LO7PtyoL0MjH+OAp4k
+	gQaX4/v+0V6gFMzktz4fQxfFe0/ioN5p0HRHXNDzGCVmSHsnRNLWPJzPxCG8HPLXReZNBR0A5pd
+	ZQiO2iB0pZTuUtVdqCNzfARIxIV/tmRVFrbXtgMsJ21MT1dgFyImLTWZEAt5n5ipfJm4jqZ2agU
+	LddhaquQHfVUelc2tVT8zJDPCZnUXCon5HFfQuGYylSpfoSn2WBTfI1kWqlyGZVeTdcBiwV2cgw
+	MiYhKfMurtIg==
+X-Google-Smtp-Source: AGHT+IE9sB9s/FnD51s9bvHKIuSCDAZDLn+Lwu16yVjVYz52tbr9N0U5pqNtEoKseunsJWxOI0/4tA==
+X-Received: by 2002:a05:600c:a43:b0:477:73cc:82c2 with SMTP id 5b1f17b1804b1-4778707ba5bmr33877885e9.9.1762960951695;
+        Wed, 12 Nov 2025 07:22:31 -0800 (PST)
 Received: from ho-tower-lan.lan ([185.48.77.170])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac677ab75sm33573485f8f.35.2025.11.12.07.22.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 07:22:30 -0800 (PST)
+        Wed, 12 Nov 2025 07:22:31 -0800 (PST)
 From: James Clark <james.clark@linaro.org>
-Date: Wed, 12 Nov 2025 15:22:08 +0000
-Subject: [PATCH v4 02/13] coresight: Repack struct etmv4_drvdata
+Date: Wed, 12 Nov 2025 15:22:09 +0000
+Subject: [PATCH v4 03/13] coresight: Refactor etm4_config_timestamp_event()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-james-cs-syncfreq-v4-2-165ba21401dc@linaro.org>
+Message-Id: <20251112-james-cs-syncfreq-v4-3-165ba21401dc@linaro.org>
 References: <20251112-james-cs-syncfreq-v4-0-165ba21401dc@linaro.org>
 In-Reply-To: <20251112-james-cs-syncfreq-v4-0-165ba21401dc@linaro.org>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -97,66 +97,212 @@ Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
  James Clark <james.clark@linaro.org>
 X-Mailer: b4 0.14.0
 
-Fix holes and convert the long list of bools to single bits to save
-some space because there's one of these for each ETM.
+Remove some of the magic numbers and try to clarify some of the
+documentation so it's clearer how this sets up the timestamp interval.
+
+Return errors directly instead of jumping to out and returning ret,
+nothing needs to be cleaned up at the end and it only obscures the flow
+and return value.
 
 Reviewed-by: Leo Yan <leo.yan@arm.com>
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm4x.h | 37 ++++++++++++++-------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 96 ++++++++++++++--------
+ drivers/hwtracing/coresight/coresight-etm4x.h      | 23 ++++--
+ 2 files changed, 81 insertions(+), 38 deletions(-)
 
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+index 1c17d5472920..380a7840adb8 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+@@ -651,18 +651,33 @@ static void etm4_enable_sysfs_smp_call(void *info)
+  * TRCRSCTLR1 (always true) used to get the counter to decrement.  From
+  * there a resource selector is configured with the counter and the
+  * timestamp control register to use the resource selector to trigger the
+- * event that will insert a timestamp packet in the stream.
++ * event that will insert a timestamp packet in the stream:
++ *
++ *  +--------------+
++ *  | Resource 1   |   fixed "always-true" resource
++ *  +--------------+
++ *         |
++ *  +------v-------+
++ *  | Counter x    |   (reload to 1 on underflow)
++ *  +--------------+
++ *         |
++ *  +------v--------------+
++ *  | Resource Selector y |   (trigger on counter x == 0)
++ *  +---------------------+
++ *         |
++ *  +------v---------------+
++ *  | Timestamp Generator  |  (timestamp on resource y)
++ *  +----------------------+
+  */
+ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+ {
+-	int ctridx, ret = -EINVAL;
+-	int counter, rselector;
+-	u32 val = 0;
++	int ctridx;
++	int rselector;
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	/* No point in trying if we don't have at least one counter */
+ 	if (!drvdata->nr_cntr)
+-		goto out;
++		return -EINVAL;
+ 
+ 	/* Find a counter that hasn't been initialised */
+ 	for (ctridx = 0; ctridx < drvdata->nr_cntr; ctridx++)
+@@ -672,15 +687,19 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+ 	/* All the counters have been configured already, bail out */
+ 	if (ctridx == drvdata->nr_cntr) {
+ 		pr_debug("%s: no available counter found\n", __func__);
+-		ret = -ENOSPC;
+-		goto out;
++		return -ENOSPC;
+ 	}
+ 
+ 	/*
+-	 * Searching for an available resource selector to use, starting at
+-	 * '2' since every implementation has at least 2 resource selector.
+-	 * ETMIDR4 gives the number of resource selector _pairs_,
+-	 * hence multiply by 2.
++	 * Searching for an available resource selector to use, starting at '2'
++	 * since resource 0 is the fixed 'always returns false' resource and 1
++	 * is the fixed 'always returns true' resource. See IHI0064H_b '7.3.64
++	 * TRCRSCTLRn, Resource Selection Control Registers, n=2-31'. If there
++	 * are no resources, there would also be no counters so wouldn't get
++	 * here.
++	 *
++	 * ETMIDR4 gives the number of resource selector _pairs_, hence multiply
++	 * by 2.
+ 	 */
+ 	for (rselector = 2; rselector < drvdata->nr_resource * 2; rselector++)
+ 		if (!config->res_ctrl[rselector])
+@@ -689,13 +708,9 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+ 	if (rselector == drvdata->nr_resource * 2) {
+ 		pr_debug("%s: no available resource selector found\n",
+ 			 __func__);
+-		ret = -ENOSPC;
+-		goto out;
++		return -ENOSPC;
+ 	}
+ 
+-	/* Remember what counter we used */
+-	counter = 1 << ctridx;
+-
+ 	/*
+ 	 * Initialise original and reload counter value to the smallest
+ 	 * possible value in order to get as much precision as we can.
+@@ -703,26 +718,41 @@ static int etm4_config_timestamp_event(struct etmv4_drvdata *drvdata)
+ 	config->cntr_val[ctridx] = 1;
+ 	config->cntrldvr[ctridx] = 1;
+ 
+-	/* Set the trace counter control register */
+-	val =  0x1 << 16	|  /* Bit 16, reload counter automatically */
+-	       0x0 << 7		|  /* Select single resource selector */
+-	       0x1;		   /* Resource selector 1, i.e always true */
+-
+-	config->cntr_ctrl[ctridx] = val;
+-
+-	val = 0x2 << 16		| /* Group 0b0010 - Counter and sequencers */
+-	      counter << 0;	  /* Counter to use */
+-
+-	config->res_ctrl[rselector] = val;
++	/*
++	 * Trace Counter Control Register TRCCNTCTLRn
++	 *
++	 * CNTCHAIN = 0, don't reload on the previous counter
++	 * RLDSELF = true, reload counter automatically on underflow
++	 * RLDTYPE = 0, one reload input resource
++	 * RLDSEL = RES_SEL_FALSE (0), reload on false resource (never reload)
++	 * CNTTYPE = 0, one count input resource
++	 * CNTSEL = RES_SEL_TRUE (1), count fixed 'always true' resource (always decrement)
++	 */
++	config->cntr_ctrl[ctridx] = TRCCNTCTLRn_RLDSELF |
++				    FIELD_PREP(TRCCNTCTLRn_RLDSEL_MASK, ETM_RES_SEL_FALSE) |
++				    FIELD_PREP(TRCCNTCTLRn_CNTSEL_MASK, ETM_RES_SEL_TRUE);
+ 
+-	val = 0x0 << 7		| /* Select single resource selector */
+-	      rselector;	  /* Resource selector */
++	/*
++	 * Resource Selection Control Register TRCRSCTLRn
++	 *
++	 * PAIRINV = 0, INV = 0, don't invert
++	 * GROUP = 2, SELECT = ctridx, trigger when counter 'ctridx' reaches 0
++	 *
++	 * Multiple counters can be selected, and each bit signifies a counter,
++	 * so set bit 'ctridx' to select our counter.
++	 */
++	config->res_ctrl[rselector] = FIELD_PREP(TRCRSCTLRn_GROUP_MASK, 2) |
++				      FIELD_PREP(TRCRSCTLRn_SELECT_MASK, 1 << ctridx);
+ 
+-	config->ts_ctrl = val;
++	/*
++	 * Global Timestamp Control Register TRCTSCTLR
++	 *
++	 * TYPE = 0, one input resource
++	 * SEL = rselector, generate timestamp on resource 'rselector'
++	 */
++	config->ts_ctrl = FIELD_PREP(TRCTSCTLR_SEL_MASK, rselector);
+ 
+-	ret = 0;
+-out:
+-	return ret;
++	return 0;
+ }
+ 
+ static int etm4_parse_event_config(struct coresight_device *csdev,
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-index 56a359184c6f..8f546764908c 100644
+index 8f546764908c..0f83a29320e6 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x.h
 +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-@@ -962,26 +962,27 @@ struct etmv4_drvdata {
- 	u8				ns_ex_level;
- 	u8				q_support;
- 	u8				os_lock_model;
--	bool				sticky_enable;
--	bool				boot_enable;
--	bool				os_unlock;
--	bool				instrp0;
--	bool				q_filt;
--	bool				trcbb;
--	bool				trccond;
--	bool				retstack;
--	bool				trccci;
--	bool				trc_error;
--	bool				syncpr;
--	bool				stallctl;
--	bool				sysstall;
--	bool				nooverflow;
--	bool				atbtrig;
--	bool				lpoverride;
-+	bool				sticky_enable : 1;
-+	bool				boot_enable : 1;
-+	bool				os_unlock : 1;
-+	bool				instrp0 : 1;
-+	bool				q_filt : 1;
-+	bool				trcbb : 1;
-+	bool				trccond : 1;
-+	bool				retstack : 1;
-+	bool				trccci : 1;
-+	bool				trc_error : 1;
-+	bool				syncpr : 1;
-+	bool				stallctl : 1;
-+	bool				sysstall : 1;
-+	bool				nooverflow : 1;
-+	bool				atbtrig : 1;
-+	bool				lpoverride : 1;
-+	bool				skip_power_up : 1;
-+	bool				paused : 1;
- 	u64				trfcr;
- 	struct etmv4_config		config;
--	bool				skip_power_up;
--	bool				paused;
-+
- 	DECLARE_BITMAP(arch_features, ETM4_IMPDEF_FEATURE_MAX);
- };
+@@ -225,6 +225,19 @@
+ #define TRCRSCTLRn_GROUP_MASK			GENMASK(19, 16)
+ #define TRCRSCTLRn_SELECT_MASK			GENMASK(15, 0)
  
++#define TRCCNTCTLRn_CNTCHAIN			BIT(17)
++#define TRCCNTCTLRn_RLDSELF			BIT(16)
++#define TRCCNTCTLRn_RLDTYPE			BIT(15)
++#define TRCCNTCTLRn_RLDSEL_MASK			GENMASK(12, 8)
++#define TRCCNTCTLRn_CNTTYPE_MASK		BIT(7)
++#define TRCCNTCTLRn_CNTSEL_MASK			GENMASK(4, 0)
++
++#define TRCTSCTLR_TYPE				BIT(7)
++#define TRCTSCTLR_SEL_MASK			GENMASK(4, 0)
++
++#define ETM_RES_SEL_FALSE 0 /* Fixed function 'always false' resource selector */
++#define ETM_RES_SEL_TRUE  1 /* Fixed function 'always true' resource selector */
++
+ /*
+  * System instructions to access ETM registers.
+  * See ETMv4.4 spec ARM IHI0064F section 4.3.6 System instructions
+@@ -825,7 +838,7 @@ struct etmv4_config {
+ 	u32				eventctrl0;
+ 	u32				eventctrl1;
+ 	u32				stall_ctrl;
+-	u32				ts_ctrl;
++	u32				ts_ctrl; /* TRCTSCTLR */
+ 	u32				ccctlr;
+ 	u32				bb_ctrl;
+ 	u32				vinst_ctrl;
+@@ -838,11 +851,11 @@ struct etmv4_config {
+ 	u32				seq_rst;
+ 	u32				seq_state;
+ 	u8				cntr_idx;
+-	u32				cntrldvr[ETMv4_MAX_CNTR];
+-	u32				cntr_ctrl[ETMv4_MAX_CNTR];
+-	u32				cntr_val[ETMv4_MAX_CNTR];
++	u32				cntrldvr[ETMv4_MAX_CNTR]; /* TRCCNTRLDVRn */
++	u32				cntr_ctrl[ETMv4_MAX_CNTR];  /* TRCCNTCTLRn */
++	u32				cntr_val[ETMv4_MAX_CNTR]; /* TRCCNTVRn */
+ 	u8				res_idx;
+-	u32				res_ctrl[ETM_MAX_RES_SEL];
++	u32				res_ctrl[ETM_MAX_RES_SEL]; /* TRCRSCTLRn */
+ 	u8				ss_idx;
+ 	u32				ss_ctrl[ETM_MAX_SS_CMP];
+ 	u32				ss_status[ETM_MAX_SS_CMP];
 
 -- 
 2.34.1
