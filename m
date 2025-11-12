@@ -1,47 +1,59 @@
-Return-Path: <linux-kernel+bounces-897566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC9BC53714
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABE0C5373E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776D33B95B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6771A3BA00D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8912C0297;
-	Wed, 12 Nov 2025 15:27:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780EC26A0DB
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E933AD8C;
+	Wed, 12 Nov 2025 15:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gP2427/l"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5328E2C0F60;
+	Wed, 12 Nov 2025 15:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961277; cv=none; b=D2hahL1I9LB8WUh3iJV6wF+j7IGhTuPK14lLDFMuUbGsoF7l0S1idGLbaNpLGkG4jBgNGHuvN2YgxSs1xIX0YHrJ/GZLzHawEczEmfCzUmyr7WZu1uSpyMC7uFJfbJ3HQ3EAyn9zA3YSP4cqoq/et9OyeaESsxSWly+ZDBLfzZk=
+	t=1762961287; cv=none; b=E8+b8fzMux2icl9LAFYlz4eiLefkHCDuxB4eHuGgYlTy1ZMlrhcQHDVQ9hrZjaPMo9l3df9mSb3xxYYJU/cV78LNDCeufPuSYYJJ7VgY+KH8mvtHmSqJjBQuC8wxDNDzbOgCU+BMqcrqO+Pa6k2mEV2VjFQoHMmrd+4BTinaCME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961277; c=relaxed/simple;
-	bh=MvTdJvA4E7d+6wvnxoj1oNlBoGaYrVav+B+T7S5H/PA=;
+	s=arc-20240116; t=1762961287; c=relaxed/simple;
+	bh=x/rkPQscTbeZ7bfRrWr7/hTnR52cEYMXdzAbOe1ZBJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HW+zHECy0QlrniZrRAedaAcp0u3UTFQOeGzfP+psO3Y7Ga+Ll6NpcXD01tQt+8NQCjHw4CodoI7R8uskv/p5G6ELuivQOv9V8aloaZR8S7aI/PStURdueSfo9MKI8cYGwyFkow4x8e5thMZIf/ejE/Nzd4TSyX1+EFDPjz24FUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4744B1515;
-	Wed, 12 Nov 2025 07:27:47 -0800 (PST)
-Received: from arm.com (arrakis.cambridge.arm.com [10.1.197.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5D5E3F66E;
-	Wed, 12 Nov 2025 07:27:53 -0800 (PST)
-Date: Wed, 12 Nov 2025 15:27:51 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: mrigendrachaubey <mrigendra.chaubey@gmail.com>
-Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH v2] arm64: Fix typos and spelling errors in comments
-Message-ID: <aRSnd6cyAdeBtEF4@arm.com>
-References: <aQoF3pu8CjO3tAl6@willie-the-truck>
- <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFnsQDH/0unmkxvMBgzLVuAEeg/4SOdGa1OH1n1Mr98MDduJ+D0gufFFvW0M7Hf5nRDKz18UFo2qbfE0/fRMC9yUyAFZdc98alL+/FkDiXvey8j4wffmsUJXGCuu/KVRWQf+SwCqYIqbWQO5zpWjtz4QKXHWNKQx2gZu38ZOKm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gP2427/l; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0KO36UCI41HIK5x8+kVYx7A+wVnDeo4ZtL4u1Nmqpx8=; b=gP2427/lmgrWOLEGeSvwn5rJ0M
+	HDRCvUqJh2Z/aQPdyO5J1lsLvglcZynb9UR9dmuQO/APXRawCdoxK+meEaihlmazqskEgNHqO0geN
+	TAZmB6KmXhTe8uMQ48jaJH9Eahl1vHnOllwuN2+N5e/DqFtiCvvvKRoSz+n+LlCZJyjtwLEW+lHIF
+	EnrvwQxVMQ1mlu+kfHF2rk58KOVVMwO23DTMDF8hpMShlAkhZeW80Hl0Jd/fnQiatsL27J9cCz9dj
+	7Co9yeIo1XJsxxrNUL7p3oqm2NpGJO0wPCC+6o0MF5w1BXkDbgVovDdbp0wJYADrX3z6lSb3pWSl3
+	o2ccyuiQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJClP-000000093tk-1UpV;
+	Wed, 12 Nov 2025 15:28:03 +0000
+Date: Wed, 12 Nov 2025 07:28:03 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
+Cc: cem@kernel.org, djwong@kernel.org, chandanbabu@kernel.org,
+	bfoster@redhat.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] xfs: ensure log recovery buffer is resized to avoid OOB
+Message-ID: <aRSng1I6l1f7l7EB@infradead.org>
+References: <20251112141032.2000891-3-rpthibeault@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,50 +62,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106135655.8441-1-mrigendra.chaubey@gmail.com>
+In-Reply-To: <20251112141032.2000891-3-rpthibeault@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Nov 06, 2025 at 07:26:55PM +0530, mrigendrachaubey wrote:
-> This patch corrects several minor typographical and spelling errors
-> in comments across multiple arm64 source files.
-> 
-> No functional changes.
-> 
-> Signed-off-by: mrigendrachaubey <mrigendra.chaubey@gmail.com>
-> ---
->  arch/arm64/include/asm/assembler.h  | 4 ++--
->  arch/arm64/include/asm/cpufeature.h | 4 ++--
->  arch/arm64/include/asm/el2_setup.h  | 2 +-
->  arch/arm64/include/asm/pgtable.h    | 4 ++--
->  arch/arm64/include/asm/suspend.h    | 2 +-
->  arch/arm64/kernel/acpi.c            | 2 +-
->  arch/arm64/kernel/cpufeature.c      | 2 +-
->  arch/arm64/kernel/ftrace.c          | 2 +-
->  arch/arm64/kernel/machine_kexec.c   | 2 +-
->  arch/arm64/kernel/probes/uprobes.c  | 2 +-
->  arch/arm64/kernel/sdei.c            | 2 +-
->  arch/arm64/kernel/smp.c             | 4 ++--
->  arch/arm64/kernel/traps.c           | 2 +-
->  arch/arm64/kvm/arch_timer.c         | 2 +-
->  arch/arm64/kvm/hyp/nvhe/ffa.c       | 2 +-
->  arch/arm64/kvm/mmu.c                | 2 +-
->  arch/arm64/kvm/nested.c             | 2 +-
+On Wed, Nov 12, 2025 at 09:10:34AM -0500, Raphael Pinsonneault-Thibeault wrote:
+> Fix by removing the check for xlog_rec_header h_version, since the code
+> is already within the if(xfs_has_logv2) path. The CRC checksum will
+> reject the bad record anyway, this fix is to ensure we can read the
+> entire buffer without an OOB.
 
-Marc, Oliver, do you care about these kvm typos and are you happy for
-them to go in via the arm64 tree?
+Thanks for the fix and the very detailed commit message explaining
+the logic.  I think this should work, but I suspect the better fix
+would be to just reject the mount for
 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 5ed401ff79e3..5c673778e28f 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1002,7 +1002,7 @@ static void __init sort_ftr_regs(void)
->  
->  /*
->   * Initialise the CPU feature register from Boot CPU values.
-> - * Also initiliases the strict_mask for the register.
-> + * Also initialises, the strict_mask for the register.
+	h_size > XLOG_HEADER_CYCLE_SIZE && !XLOG_VERSION_2
 
-This comma is wrong (I can drop it when applying).
+because the larger h_size can't work for v1 logs, and the log stripe
+unit adjustment is also a v2 feature, so it really should not have
+been applied even accidentally in mkfs.
 
--- 
-Catalin
+> Can xfs_has_logv2() and xlog_rec_header h_version ever disagree?
+
+They should not, but I'm pretty sure if we give syzbot enough time
+it'll craft an image doing that :)  So we better add sanity checks
+for that now.
+
 
