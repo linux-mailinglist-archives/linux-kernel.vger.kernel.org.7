@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-897010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770DEC51CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:00:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 459FBC51C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865223AA3C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA43D1896F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DDB304989;
-	Wed, 12 Nov 2025 10:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8223C30ACFA;
+	Wed, 12 Nov 2025 10:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Fsz/g+Uu"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E65429BD9B;
-	Wed, 12 Nov 2025 10:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="AdMfaWN0"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923C1308F17
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762944583; cv=none; b=lMKAlXL5jYxp6L1ED3KhxDRZvmAA3Pt7YFvFEVYGQrn9yjJyhPKs9+kfHUTTNqdLi6yKGnh7yppOBz3+VRNgvrbakUPXgUz3v6v9Hw4gXET/nzjIi1MBQ3ITN+Snniu04F/uPXf8xk2FlNhp1XdU2b5uOAD24u6pJH0Kal8IBqs=
+	t=1762944649; cv=none; b=aB1j6u66EqPuFnZiTZ3vxeIYRlQwPQbDpzbbV5BxWZKFrK18jIZZz3A3YgPAYbEOm0T64C63xXpCCDnQWvwdOA4yZoqkZfNce5Cnx/DO+KshK8vndZMhfHG9wt2xFfCxr6JaWUEXqmHqLwj1IVV/b6oZEUlC4bWGUpJ8qKVUFxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762944583; c=relaxed/simple;
-	bh=IX8qUzUk3b50d98YAIPFiw12dnof336Skxvj7fpuE1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PsmatbMSgEDpcLwzl2csm+yd3sW5sBTfJ+TpjecMwSJncWslqh2cG60q8Mtgj78vYyorZ23XcEvF9YjjoOExZ4Etqht1EKA7UCGbFWyFm4sQ0qW1oPpboqtWlCLxx0obDwxrJsXSbjuUUfZH6wzASeTlTe170fAHlYQZdJvZ8ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Fsz/g+Uu; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.76.239] (unknown [167.220.238.207])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 993352013353;
-	Wed, 12 Nov 2025 02:49:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 993352013353
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762944575;
-	bh=reATR7Vd96fAhYPF9PhiaC2fKXVLrWC6D+RVNdAQn/c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fsz/g+Uuur8Zt7TR/S5q3RyNfjAJF1wKUlPa2HNMw5mHuKV20pBflG8/yzqDc8qs1
-	 2FEwFycNntX9fJUjRZEDaLEKaibXeFQsmnEJiJCzwJFAjUXiiZf3JqBIfVly8+tlO5
-	 /rCKSgBgnDct4+aegi1YLk/Ww8zQY/Jru4jiphiQ=
-Message-ID: <e7740f58-34cd-4bee-9786-8f3f6654ff3f@linux.microsoft.com>
-Date: Wed, 12 Nov 2025 16:19:26 +0530
+	s=arc-20240116; t=1762944649; c=relaxed/simple;
+	bh=5Z/Sel55XGLWWt0Or4aaEmOg0nRkE2Q24yyei396xO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qs90oj5UnLwFuRm1ASjUoL/EAaAgRb31AlUnT/nKAWlqcmpfSKxNuGUVbFjFWlDHaBrLVwXPxygFMyJcyFkh5V2W66dHxEy8CeaSXv6kS1KBbpMLhvjZI8VZzRX9z3cWi45CZzx/Nh5p74lJ5ZFrSzddD6MkXgoGrBmvi5GfdyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=AdMfaWN0; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3438231df5fso807622a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:50:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1762944648; x=1763549448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eDt+PkPIFcOkoVGyNRXMinYtQG6IfGLG4Ne73L8xsnI=;
+        b=AdMfaWN0ZjdHij6ofGKOD8OBBKiPKyuvvgTfm3jsNmNTvQ4qb4qXIBBBanbRne34hI
+         NT99UrkWhkdIwSdY+953owV57Rb1Mm0Br7tNtIok59OCrB6xsxsI6zRHPvv9JT8n0YME
+         XHgpG9gfl6o0D8oghrQaRVKq0SaCzejGX0pTxxJky5VO29pBf4O/vOwoLvhvLAXkBVDp
+         e19cbbnw+3Byp0HAeJcTSzKLPK6sYfiy35FT0cGmIuOC5Jzj7WCooirEQ/vv6VfDM1jC
+         RqCSE8fDES84x3Y4GPmzzrDgIZpgBqvkwMeyiBcX4zCsUxNrMAQVCszaGP+E9knx0pyp
+         m1nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762944648; x=1763549448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eDt+PkPIFcOkoVGyNRXMinYtQG6IfGLG4Ne73L8xsnI=;
+        b=IUFqHHn5eMfAe9Ydc9bKYLbBPFrqHE4mzeXltjL3lqZyxJHkHcjItvOog3qnMndxfT
+         XzxvnhSa42En4PrcXAhGB+pKfxOQ3HgOx/onl1l7Q03uf2TF2oNEB+29BMDCSGxt+nZ5
+         vPAi/iSNDIljYY8SVoq1iYIGGjH41orGJZDJrQ2p94Mo9BAmPPTH2GGzgQFqP+6a/viI
+         4tcikJ/z6wp7ZNWi0bfuk/cyMGGzEKffrFL0qfLPcIOagwpQU5dNlIk4cRqQH/0n8lcH
+         r6t/O2vjO57ywrk4CV1tN1Zv//ZDwEDA14yZaGDMzvyoT5zCEnon0+MCzh/7CUjKdAhs
+         BV4w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Cu0XmeiX6dNohk0/sFnRjuOw2UobrwgB95r/ev9/hrcfhqbj7XcXB5pBzxaY84oeUuL+/5Vzq2fUQqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy79dyhEYS3W6r688o9R6Y5vYWhGyB6eIGvNkygztAkxYX+saci
+	HNACpPMZBOlBJV8+d0fi+Gtm0Kg9aKKlWtxOCPD+QBTHQo7uvKqPa0X2K5urkv9iGzDsszPprst
+	9G8VL0jAO8tIXFXA+ysRHLCUcaZHow+BLASTUy5vd
+X-Gm-Gg: ASbGnctwwRKTD8eHRLtU4xXhEdM8sb7zTTWddJTYHHYaYQqnb86qKkOKOLVD1jF2Bo0
+	pRsYedsOakx7DVG/0YLlQmQuW7Wo/UjUKelIF3MmTIKV90VNf+4FgK4CmJRQErIVB+gn+20mFnv
+	XVv9xrx+YOrVSc0aYiDD1I8mxZ7d3BC+GMVsiXNEkjoTZf/t64ssll4MQu+Ny5tg+CKaUKJqrG0
+	9oXf1PusM+1pccvTKp5Lzy+MhFw7RvobTjjPZqRUxxyWjW+ywTvYW9vlFpg8njVVvN0
+X-Google-Smtp-Source: AGHT+IFd1GAEDD22DSqeZAERmGI0Yy3shnOdbYrZoI4SJAFw9T2NTCYWO4NIIVgty2SrgCXz2TzubvGJOTr/RLGjLss=
+X-Received: by 2002:a17:90b:3e8d:b0:339:ec9c:b275 with SMTP id
+ 98e67ed59e1d1-343dde10f3emr3441534a91.6.1762944647817; Wed, 12 Nov 2025
+ 02:50:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Peter Zijlstra <peterz@infradead.org>,
- Michael Kelley <mhklinux@outlook.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
- <hpa@zytor.com>, "linux-hyperv@vger.kernel.org"
- <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- Mukesh Rathor <mrathor@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Christoph Hellwig <hch@infradead.org>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>
-References: <20251110050835.1603847-1-namjain@linux.microsoft.com>
- <20251110050835.1603847-3-namjain@linux.microsoft.com>
- <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
- <f32292e6-b152-4d6d-b678-fc46b8e3d1ac@linux.microsoft.com>
- <20251111081352.GD278048@noisy.programming.kicks-ass.net>
- <SN6PR02MB4157C399DB7624C28D0860AAD4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20251112093704.GC4067720@noisy.programming.kicks-ass.net>
- <SN6PR02MB4157F3F565621B32AC29EC92D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20251112101038.GE4067720@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <20251112101038.GE4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251112072709.73755-1-nichen@iscas.ac.cn>
+In-Reply-To: <20251112072709.73755-1-nichen@iscas.ac.cn>
+From: Jamal Hadi Salim <jhs@mojatatu.com>
+Date: Wed, 12 Nov 2025 05:50:36 -0500
+X-Gm-Features: AWmQ_bnhAIJldRZySXFM6YMLqOMoeHsLxRw20K50W9oAJgt68RFCpe5Bg9f-mmQ
+Message-ID: <CAM0EoMnQqNwkdUec0tX4cznZk8teiPRx9iBv5Ff-MeSDASj-zQ@mail.gmail.com>
+Subject: Re: [PATCH] net/sched: act_ife: convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 12, 2025 at 2:28=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
+>
+> Replace comma between expressions with semicolons.
+>
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
+>
 
+IIRC, Simon brought this up in the review as well...
 
-On 11/12/2025 3:40 PM, Peter Zijlstra wrote:
-> On Wed, Nov 12, 2025 at 09:44:20AM +0000, Michael Kelley wrote:
-> 
->> Thanks. If that symbol is referenced only by these few lines, I'd
->> go with something even shorter and simpler. Perhaps:
->>
->> .section		.discard.addressable,"aw"
->> .align 8
->> .type	vtl_return_sym, @object
->> .size	vtl_return_sym, 8
->> vtl_return_sym:
->> .quad	__SCK____mshv_vtl_return_hypercall
->>
->> Regardless of the choice of symbol name, add a comment about
->> mimicking __ADDRESSABLE(). That feels less messy to me, but
->> it's Naman's call.
-> 
-> Right, that'll work.
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Thanks Michael, Peter and Paolo for your inputs.
-I'll use a simpler name and add a comment to explain it.
+Reviewed-by: Jamal Hadi Salim <jhs@mojatatu.com>
 
-Regards,
-Naman
+cheers,
+jamal
+
+> ---
+>  net/sched/act_ife.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/net/sched/act_ife.c b/net/sched/act_ife.c
+> index 7c6975632fc2..1dfdda6c2d4c 100644
+> --- a/net/sched/act_ife.c
+> +++ b/net/sched/act_ife.c
+> @@ -649,9 +649,9 @@ static int tcf_ife_dump(struct sk_buff *skb, struct t=
+c_action *a, int bind,
+>
+>         memset(&opt, 0, sizeof(opt));
+>
+> -       opt.index =3D ife->tcf_index,
+> -       opt.refcnt =3D refcount_read(&ife->tcf_refcnt) - ref,
+> -       opt.bindcnt =3D atomic_read(&ife->tcf_bindcnt) - bind,
+> +       opt.index =3D ife->tcf_index;
+> +       opt.refcnt =3D refcount_read(&ife->tcf_refcnt) - ref;
+> +       opt.bindcnt =3D atomic_read(&ife->tcf_bindcnt) - bind;
+>
+>         spin_lock_bh(&ife->tcf_lock);
+>         opt.action =3D ife->tcf_action;
+> --
+> 2.25.1
+>
 
