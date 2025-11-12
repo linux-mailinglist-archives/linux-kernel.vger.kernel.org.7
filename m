@@ -1,91 +1,124 @@
-Return-Path: <linux-kernel+bounces-896834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11E8C51597
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:27:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0906DC51752
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257913BFD43
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A373B8A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6659B2D878C;
-	Wed, 12 Nov 2025 09:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D962FE573;
+	Wed, 12 Nov 2025 09:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4jXFHSf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="aoYO7KS1"
+Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F4D2BF017
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834002FD7D0;
+	Wed, 12 Nov 2025 09:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939164; cv=none; b=Am5bgBkQypxddN7f0O5NeaT2/gMUdvrjmKt6fbyOZh0jnQysgS4B31m5Ee8scYYfXt5nnN7jF1WaBt8Hat3pWcS7Z9ekSF8ot0RAcmqqJ3wfcP+TYSzskFK+cb2Wvp+fs59DhM/WC9bYuPV6ohHbriWQoV884rb7KRUr3vzgOj8=
+	t=1762940409; cv=none; b=gLQTRMHVhXRlBB4ExdypYFQePAlJWD2BCzyl9wzKJpHa9k+2OL4ciQ6u5+Q9o+uzwC65ur5FlgdzpERchScSpWNHNvYkpqFe5/GB52d+QVCvkEXqI3wPPhvOx8je9SVqQgg1FxGAFcUDTxmI2ljSU5XlVqWvIxIGtaRwLD4J67M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939164; c=relaxed/simple;
-	bh=TUBMdqXZtBxlRTi5nLhrFDdltLTrJzBC9flXUcPYToM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmZyl8SaotnuE1aheTAZFblyyoVU6MjN3tmJxwpibVEtQ2qfCaKnrpLc2S1KL4ACfwaDSI71dN65i/P6+P6f9UbMaqUULGDVxGAS82YIwYKRkTon6+HesYrw1r21KsDS5pgBUUg9ZwbmatKF+j3dKfMKXTvzTVHNMACbzaPqkns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4jXFHSf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70027C2BC9E;
-	Wed, 12 Nov 2025 09:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762939164;
-	bh=TUBMdqXZtBxlRTi5nLhrFDdltLTrJzBC9flXUcPYToM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K4jXFHSfp/JHxBeWG/JwKzJ7dsy5723jKztLydy1AOzcFcQwwWx4mRw2rIBiUNjYs
-	 ug81FRU4bs38vYu0iEktCXUfRmYCwSG6nlYWoQON0WoPfHn/zsN1w7fwKBuC9a92ts
-	 iv7IWYJkNvKyFWTfBvKfDVf+cs2n3N91vWQ3ky4gJL01SvIY2Oun/hgJ2V/XYnnX7V
-	 PnDcc7aWpVEHxyUbMVWd38xLnDvDn55ZlRIt1ba5r61QB6s8g2fkj/mB+AbsjMBaWa
-	 6BkttLqM9OvuEg+MNTpW3uOauwxUJegsCc8ZOT4tFJZmvoGeD3Y3HjXIJ+QQ6i6ses
-	 KH0p1iR5Qiu+A==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	tursulin@ursulin.net
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/sched: Don't crash kernel on wrong params
-Date: Wed, 12 Nov 2025 10:18:53 +0100
-Message-ID: <20251112091851.104443-3-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1762940409; c=relaxed/simple;
+	bh=wtm/toPwhxcCPbrqIOj64VZsX+Qke2L0qOuUxbs48Zs=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=aqUVU/GWF95Y5XHUohliAWikQmLGothlFfFsIXrn6XnlD2q9ZLSL1kxnGiiGwm69BrQnZ9XigKlWO0ZUa2ZYSQA8SolE38sUF5PJ8nuuFW1KwvM2NFsLBbAjkSDanlDqBUvwJ2mtdqPV6a2TYLlpYURejzCiG11cdUh3MJtEH4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=aoYO7KS1; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.4])
+	by mail.crpt.ru  with ESMTPS id 5AC9L40H028943-5AC9L40J028943
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Wed, 12 Nov 2025 12:21:04 +0300
+Received: from EX2.crpt.local (192.168.60.4) by ex2.crpt.local (192.168.60.4)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Wed, 12 Nov
+ 2025 12:21:04 +0300
+Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
+ ([192.168.60.4]) with mapi id 15.01.2507.044; Wed, 12 Nov 2025 12:21:04 +0300
+From: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
+	<a.vatoropin@crpt.ru>
+To: Ajit Khaparde <ajit.khaparde@broadcom.com>
+CC: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
+	<a.vatoropin@crpt.ru>, Sriharsha Basavapatna
+	<sriharsha.basavapatna@broadcom.com>, Somnath Kotur
+	<somnath.kotur@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Venkata Duvvuru
+	<VenkatKumar.Duvvuru@Emulex.Com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] be2net: check wrb_params for NULL value
+Thread-Topic: [PATCH net] be2net: check wrb_params for NULL value
+Thread-Index: AQHcU7WrbULp1sdKi0ef7fYLGowmsA==
+Date: Wed, 12 Nov 2025 09:21:04 +0000
+Message-ID: <20251112092051.851163-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX2.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 11/11/2025 10:59:00 PM
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0BDF0E96873DB94EBE800CD783423EB4@crpt.ru>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-FEAS-BEC-Info: WlpIGw0aAQkEARIJHAEHBlJSCRoLAAEeDUhZUEhYSFhIWUhZXkguLVxYWC48UVlRWFhYWVxaSFlRSAlGHgkcBxoHGAEGKAsaGBxGGh1IWUhaXkgJAgEcRgMACRgJGgwNKAoaBwkMCwcFRgsHBUhYSFpIWVpIWVFaRlleUEZeWEZcSFBIWEhYSFFIWEhYSFhIWl5ICQIBHEYDAAkYCRoMDSgKGgcJDAsHBUYLBwVIWEhaWUgJBgwaDR9DBg0cDA0eKAQdBgZGCwBIWEhZUUgMCR4NBSgMCR4NBQQHDhxGBg0cSFhIWVFIDQwdBQkSDRwoDwcHDwQNRgsHBUhYSFldSAMdCgkoAw0aBg0ERgcaD0hYSFpQSAQBBh0QRQMNGgYNBCgeDw0aRgMNGgYNBEYHGg9IWEhaUEgEHgtFGBoHAg0LHCgEAQYdEBwNGxwBBg9GBxoPSFhIWV9IGAkKDQYBKBoNDAAJHEYLBwVIWEhbWEg+DQYDCRwjHQUJGkYsHR4eHRodKA0FHQQNEEYLBwVIWA==
+X-FEAS-Client-IP: 192.168.60.4
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=wtm/toPwhxcCPbrqIOj64VZsX+Qke2L0qOuUxbs48Zs=;
+ b=aoYO7KS1yOvF0gl86TPvox2fEDlU2oggnadThVRcHezOb+F5IeozPMtyw6Pu3YnZ7eiIhz0+clkJ
+	ghUz106MUfDOIYH/L+BGtqNfK2L3UMWps0ASjsBf/2m1gSBSOurpMwrEqiedD7SKikC1A1qnGdUB
+	LUfXurCGYqm6BJCENUEyNelnEyV3N4qhvNQFWAgb9PanwSE5DpdVBrgES1ekvxxgwhDNdWSEGIj6
+	eTitBGj09tMc/8N7az/PiCIRvNbYmb1UpIJcdLJ8IKHYooFuYmk4kJZNrMrnL4CTXTNHPsh6Fvv+
+	XWwhDj0RFW5+NK1/Lc5zBx7FqOjU/Sy1ZwBmaw==
 
-drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
-entity being NULL. If the entity is NULL, subsequent accesses will crash
-the particular CPU anyways with a NULL pointer exception backtrace.
-
-Remove the BUG_ON().
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-Changes in v2:
-  - Drop BUG_ON() instead of replacing it. (Tvrtko)
----
- drivers/gpu/drm/scheduler/sched_main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 1d4f1b822e7b..05eb50d4cf08 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -857,7 +857,6 @@ void drm_sched_job_arm(struct drm_sched_job *job)
- 	struct drm_gpu_scheduler *sched;
- 	struct drm_sched_entity *entity = job->entity;
- 
--	BUG_ON(!entity);
- 	drm_sched_entity_select_rq(entity);
- 	sched = entity->rq->sched;
- 
--- 
-2.49.0
-
+RnJvbTogQW5kcmV5IFZhdG9yb3BpbiA8YS52YXRvcm9waW5AY3JwdC5ydT4NCg0KYmVfaW5zZXJ0
+X3ZsYW5faW5fcGt0KCkgaXMgY2FsbGVkIHdpdGggdGhlIHdyYl9wYXJhbXMgYXJndW1lbnQgYmVp
+bmcgTlVMTA0KYXQgYmVfc2VuZF9wa3RfdG9fYm1jKCkgY2FsbCBzaXRlLsKgIFRoaXMgbWF5IGxl
+YWQgdG8gZGVyZWZlcmVuY2luZyBhIE5VTEwNCnBvaW50ZXIgd2hlbiBwcm9jZXNzaW5nIGEgd29y
+a2Fyb3VuZCBmb3Igc3BlY2lmaWMgcGFja2V0LCBhcyBjb21taXQNCmJjMGMzNDA1YWJiYiAoImJl
+Mm5ldDogZml4IGEgVHggc3RhbGwgYnVnIGNhdXNlZCBieSBhIHNwZWNpZmljIGlwdjYNCnBhY2tl
+dCIpIHN0YXRlcy7CoCBBZGQgYSBjaGVjayBmb3IgdGhhdC4NCg0KQW5vdGhlciB3YXkgd291bGQg
+YmUgdG8gcGFzcyBhIHZhbGlkIHdyYl9wYXJhbXMgZnJvbSBiZV94bWl0KCksIGJ1dCB0aGF0DQpz
+ZWVtcyB0byBiZSByZWR1bmRhbnQgYXMgdGhlIGNvcnJlc3BvbmRpbmcgYml0IGluIHdyYl9wYXJh
+bXMgc2hvdWxkIGhhdmUNCmJlZW4gYWxyZWFkeSBzZXQgdGhlcmUgaW4gYWR2YW5jZSB3aXRoIGEg
+Y2FsbCB0byBiZV94bWl0X3dvcmthcm91bmRzKCkuDQoNCkZvdW5kIGJ5IExpbnV4IFZlcmlmaWNh
+dGlvbiBDZW50ZXIgKGxpbnV4dGVzdGluZy5vcmcpIHdpdGggU1ZBQ0UuDQogICAgICAgDQpGaXhl
+czogNzYwYzI5NWUwZThkICgiYmUybmV0OiBTdXBwb3J0IGZvciBPUzJCTUMuIikuDQpTaWduZWQt
+b2ZmLWJ5OiBBbmRyZXkgVmF0b3JvcGluIDxhLnZhdG9yb3BpbkBjcnB0LnJ1Pg0KLS0tDQogZHJp
+dmVycy9uZXQvZXRoZXJuZXQvZW11bGV4L2JlbmV0L2JlX21haW4uYyB8IDYgKysrKy0tDQogMSBm
+aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2VtdWxleC9iZW5ldC9iZV9tYWluLmMgYi9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9lbXVsZXgvYmVuZXQvYmVfbWFpbi5jDQppbmRleCBjYjAwNGZkMTYyNTIu
+LjQ2N2NjNDlmZTFkNSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2VtdWxleC9i
+ZW5ldC9iZV9tYWluLmMNCisrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2VtdWxleC9iZW5ldC9i
+ZV9tYWluLmMNCkBAIC0xMDYzLDcgKzEwNjMsOCBAQCBzdGF0aWMgc3RydWN0IHNrX2J1ZmYgKmJl
+X2luc2VydF92bGFuX2luX3BrdChzdHJ1Y3QgYmVfYWRhcHRlciAqYWRhcHRlciwNCiAJCS8qIGYv
+dyB3b3JrYXJvdW5kIHRvIHNldCBza2lwX2h3X3ZsYW4gPSAxLCBpbmZvcm1zIHRoZSBGL1cgdG8N
+CiAJCSAqIHNraXAgVkxBTiBpbnNlcnRpb24NCiAJCSAqLw0KLQkJQkVfV1JCX0ZfU0VUKHdyYl9w
+YXJhbXMtPmZlYXR1cmVzLCBWTEFOX1NLSVBfSFcsIDEpOw0KKwkJaWYgKHdyYl9wYXJhbXMpDQor
+CQkJQkVfV1JCX0ZfU0VUKHdyYl9wYXJhbXMtPmZlYXR1cmVzLCBWTEFOX1NLSVBfSFcsIDEpOw0K
+IAl9DQogDQogCWlmIChpbnNlcnRfdmxhbikgew0KQEAgLTEwODEsNyArMTA4Miw4IEBAIHN0YXRp
+YyBzdHJ1Y3Qgc2tfYnVmZiAqYmVfaW5zZXJ0X3ZsYW5faW5fcGt0KHN0cnVjdCBiZV9hZGFwdGVy
+ICphZGFwdGVyLA0KIAkJCQkJCXZsYW5fdGFnKTsNCiAJCWlmICh1bmxpa2VseSghc2tiKSkNCiAJ
+CQlyZXR1cm4gc2tiOw0KLQkJQkVfV1JCX0ZfU0VUKHdyYl9wYXJhbXMtPmZlYXR1cmVzLCBWTEFO
+X1NLSVBfSFcsIDEpOw0KKwkJaWYgKHdyYl9wYXJhbXMpDQorCQkJQkVfV1JCX0ZfU0VUKHdyYl9w
+YXJhbXMtPmZlYXR1cmVzLCBWTEFOX1NLSVBfSFcsIDEpOw0KIAl9DQogDQogCXJldHVybiBza2I7
+DQotLSANCjIuNDMuMA0K
 
