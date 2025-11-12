@@ -1,160 +1,142 @@
-Return-Path: <linux-kernel+bounces-897109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59475C51F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:29:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F18C51F97
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCE5B34D0BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:29:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 686E734DDA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AF330E0F3;
-	Wed, 12 Nov 2025 11:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AC730F942;
+	Wed, 12 Nov 2025 11:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NviFA56M";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bs7AuGmc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gu4k97dS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D5E30CD96
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A730DD0C;
+	Wed, 12 Nov 2025 11:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946965; cv=none; b=XEkhjYFE+jhpU6bbWXaLomhvTR1QMrbBOzDvwFmmSqZFle30NMy/XRyFmXh8pbL+xhs1g8cAd4LORiekcAUNwqpvr2h66046VyXKIP29EDAoYbTOiiiVi6ET5GlX2nL9wtOXFONzf7KWZt9cvs614g6D6YukT+AtsNiZFEc35dw=
+	t=1762946968; cv=none; b=u/j1CX/j4gSaEAazU12zzdkxwF5CRzGgbLgA4D+AR+FKyZlKN5vZ8YU75J/xN4qK4zRjXOGfEqy1ZJ2OyqyTSnqF0evl3Rxiq552IB4dWNDJXCA5GfRexgMTW7UwqoclHlgfZPaivnOD3UM17KpsACmD7EjVTtZp5sU3giJxIeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946965; c=relaxed/simple;
-	bh=yRKl92YIodipSDJpj5FM6SuTiPvUzBXwPijlqgd2Fgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVOaj32psDAY2glwp1F1gQSYNnV6uc4gnUDQoZn0V8zjrY56IE7gVvGg26J4TS1TbPGqIGA9V+Pt11EWMtTiVWh5tVM1MPEZpZ3VHiXY+Tf9ku5QtcJtKnCTsf/4M44biLp3AKxJBIBK7DZ2HmmLAgvO4pkof7mdHFhhSQMy9nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NviFA56M; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bs7AuGmc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762946962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g+0n/gIH659cLeiKRT95CYm5fjgEisAw12N4OwZEDpM=;
-	b=NviFA56MR+NxgJ+t3DyrYH9JWhLv1VHwW4lL2DTSgl50rqaY9qoxHqKVim4gl53XQ5ofhF
-	IC66nUOh8TNHQV4eFfG2ozk2geHHcFFrPbO11knGLNgFD5vh2h1ul3dG30IedZK3FYNPEK
-	HmUFDr29yhSMHnVUkWAKGMCG0lTQWII=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-g5pib95IMWycR8c2Jn7Gag-1; Wed, 12 Nov 2025 06:29:21 -0500
-X-MC-Unique: g5pib95IMWycR8c2Jn7Gag-1
-X-Mimecast-MFC-AGG-ID: g5pib95IMWycR8c2Jn7Gag_1762946961
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b25c61abe2so382210885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:29:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762946960; x=1763551760; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+0n/gIH659cLeiKRT95CYm5fjgEisAw12N4OwZEDpM=;
-        b=Bs7AuGmc0EYmV/rdwxPhAIiv4aHBX4oPjPvVYVLVn//QhJzZsLgOr1IlWvu33IO/Re
-         jq/mO/bb/l+QNylESDtj65grUiUIrhB2lAuPZtdOH10L7fk2dJ3HhBgDBqn+V6In64WA
-         pJo0fJrfNSv/oxMH0CEe+LauEI9ruchQGDQsvadYOLsxdhFGXiDERZ0/2rPkevM0pk1w
-         ZaNBazMPeb9mSAojr3ZfEMAbpBWeUSKpAaDAiZ7ViV1jjWUl6i3TjZBEWrgr+QqOkDi3
-         mCdnt2aIhTzrxirDAfdtmR2j2fqFYJzlmeeyefhdyXu3TkrrE24h3JiVeuczxoZRdeqG
-         nPGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946960; x=1763551760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g+0n/gIH659cLeiKRT95CYm5fjgEisAw12N4OwZEDpM=;
-        b=F/qEvmaRkz9yLNs8/eVGiuAJviceAJmoud5rMtYlz/ettG10gwhfoxeO6tp/MQfMd8
-         B6am0E6sNx7TKPjZ+ib3jcPQfNN/OYFcZahgGy9qki2lruwYlOIe1qnLIgYdIWQ/09O+
-         01jXI7ygZ1wvXsLGAhrSuqEfP3c8ay0ovKJbJCJ45Z2DYtPQQ0vYcmlrruWdXJKSwcRN
-         mpJgAmmzrHvxfOy6+B5/36kl/xDDFTREcgUDHIaoK4KC2OUy2+eB+R3aGsbJD7S1uaa6
-         ouVvdjNuCksHq24K8BRks6/s12CWxjs3nEKHKpn2tJXo9T2/c0WNkSd585SHxHza03+u
-         NOvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkEpGz+dy1yAwMe+XmkrInRork/VJn8DapjuKMp7+wlIAA/lUZWgIx4IsWv8DZ/RLo3FftvsWFOMHKe58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPi+TV/HdWdSh1yGqxSd24YFM5ctDWe/AScuZUmQvojFu0U0hk
-	ghbh3rzkztaZksMmW6kXaGTMvjs871MF6bq4mJILhyYk12QqfxbS8n8g5U+KpaMuVuFbffCVMPB
-	u3bKpi0m4zDJLWb+Pvu2G07H4FyrfH9cU/jtgEI3BVjSDqieqmx3KXxKnlAl2RdnKVQ==
-X-Gm-Gg: ASbGnctQ1VBIEcngxnHwqCzAOo0JC7J3TsDGITN6Rk74IEyZQiYC90Rk2JZCi7MX8Y8
-	omWEq5Te39Tw0IACCkt9cQKYXaIZjJpGchBRY000bb0MdKw+0Ruror0AwMqA2dxFE/MnfYsv3Yk
-	o8+ZQaFbPRxMtO2rM8ngr0C4RLVOFWrtZh451q1nEhB4TlC3/kIGyvgzEJoyg7ZGHKgvqnOXKx8
-	K6FDN3PjD5iPlLDpeY2h5XIvKgn/3SMnXuD1viQOm7WSuvdY4JuD7+hKJbBzaRN8akWRtpz9TPG
-	/sexshoX1c/20DRUUHIIjTM/is+jpItMfEvn5gfj2g48sjxgSCDA+mEvn4vns+7YM8r33MDsBLF
-	G5IpNTH7MVhZ4YENPk1fU/9oG6Ue3Vr0lVh1TqPe9KhHPfm3+ijM=
-X-Received: by 2002:a05:620a:288d:b0:854:b9a1:b478 with SMTP id af79cd13be357-8b29b764a91mr352965385a.18.1762946960679;
-        Wed, 12 Nov 2025 03:29:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHUJFxOJbDQYyH5iAisGFENmrwrjD8S/tLmssJoauTGvGRsQ2OlHPKZyUfeC9cCLoY0kaU2QQ==
-X-Received: by 2002:a05:620a:288d:b0:854:b9a1:b478 with SMTP id af79cd13be357-8b29b764a91mr352963785a.18.1762946960297;
-        Wed, 12 Nov 2025 03:29:20 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a9e7059sm172313385a.38.2025.11.12.03.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 03:29:19 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:29:12 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Bobby Eshleman <bobbyeshleman@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 00/12] selftests/vsock: refactor and improve
- vmtest infrastructure
-Message-ID: <3htkg6jotej6ev35jyc7edo6jtoo6tm7ciivnzvd7rd4my4nsp@47nbily4raoi>
-References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
- <d19c7bea-9b4d-4f00-a6bc-35247011e788@redhat.com>
+	s=arc-20240116; t=1762946968; c=relaxed/simple;
+	bh=6o7lJdSmPYz3CSs464Iw4AQ9hN14Oy7ACMwHI0Ol1Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CyS62W6k+K+LjQ2SZIeLPaEFJdHwgpJAUVilUjnsEE302JOa2cLQ3QmUml8j5AWpUf8lTMDywoF2KF+QzeBTDAv6i+EaeJeDOH37OP3fFPtOUkCh7UZDXMGn09p8RvbX/1SRg5thNWLTZZWzL413OeKOUNxYrM9phoDdDo1Zo4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gu4k97dS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9fUQ2721987;
+	Wed, 12 Nov 2025 11:29:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JYcNZaT5ZeY0Dk+c0VhKXnCB5fbAqUDNS+tyU5vX0dg=; b=Gu4k97dSkyKUkw8C
+	tAOTREkI8702/zA+pP4CuCkkg/GVGgooyh6xZFI6Uvf1pbr4VPiVhvqkaRpU4fqH
+	r8t6tEyc09fBLKGY5zdZNnxKp6TZ/F27U5bPe0XtX/6cLyBeesxecaX62a4EjbtS
+	98pTSW+PbsZOWDm9rkBl+XGnpMT6XJ7MEElFi02wGeYx6pL6w1XcqtLWSLneZ/HU
+	F7+spvufb1JHtTh+trLIxkbz61JyOdwgCKNIkPn/beeOYPbQVDzwuQRu0khZox6+
+	xkYsPiODoiWDqr70y0LRH3HgWgVkSSCkKKIiYzdu34sz6QjCWOPmFPfLtVRJUxjQ
+	z3SzuA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqu1rbbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 11:29:22 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5ACBTMqu028488
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 11:29:22 GMT
+Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 12 Nov
+ 2025 03:29:19 -0800
+Message-ID: <093749fb-5eee-4a1c-a29e-8232e0c9dd6d@quicinc.com>
+Date: Wed, 12 Nov 2025 19:29:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <d19c7bea-9b4d-4f00-a6bc-35247011e788@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: btqca: Add WCN6855 firmware priority
+ selection feature
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "Luiz Augusto von
+ Dentz" <luiz.dentz@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_chejiang@quicinc.com>,
+        <quic_jiaymao@quicinc.com>, <quic_chezhou@quicinc.com>
+References: <20251112074638.1592864-1-quic_shuaz@quicinc.com>
+ <0df692e3-7e39-4a7e-916a-c385015a2821@oss.qualcomm.com>
+Content-Language: en-US
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <0df692e3-7e39-4a7e-916a-c385015a2821@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2e6eSQpIqRN2AslMGH3jwWIuBKfpZmaS
+X-Authority-Analysis: v=2.4 cv=Hpl72kTS c=1 sm=1 tr=0 ts=69146f92 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=VCngsZfJQ2ioK8oHzuEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: 2e6eSQpIqRN2AslMGH3jwWIuBKfpZmaS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA5MiBTYWx0ZWRfX8vygm7JlRZWS
+ rdiJr1a4rTtaF+PVI0H7ao4gOldELXw9raVmNdk0usl0bAkovGZB7PNDcybu9PEqPj5/PDDeRqa
+ Svden6tdFBSEJMCiijmLHLysAq3oWhwBdvBQtVis6R0xeJlqBw7uRYbATxXan3dx3aFzeHtVfb5
+ ZuhusG/f5Z646y2cfxW0v/NxnvPo/fPygo1tuc5Otn3QHUzOMuaG4bPLVtLZcEJbu15HGC1C5R+
+ xXY01mVv3Mm+fMs9DpI9HPPoQJqDtyRV5E3jlcXoKtegB281Z7wp4oQptVgPHdZCVRtjLyQdVua
+ d5sNa/0rUQ7fUrORCkNiUyr12U/75MNxc5psD5o0z95hTcEgKfIExTbh+braCe7+dYPnCUAefnG
+ /vGO7g39E7c0Mc5ArW6fOB7d4Bms0A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120092
 
-On Tue, Nov 11, 2025 at 01:33:11PM +0100, Paolo Abeni wrote:
->On 11/8/25 5:00 PM, Bobby Eshleman wrote:
->> This patch series refactors the vsock selftest VM infrastructure to
->> improve test run times, improve logging, and prepare for future tests
->> which make heavy usage of these refactored functions and have new
->> requirements such as simultaneous QEMU processes.
->>
->> These patches were broken off from this prior series:
->> https://lore.kernel.org/all/20251021-vsock-vmtest-v7-0-0661b7b6f081@meta.com/
->>
->> To: Stefano Garzarella <sgarzare@redhat.com>
->> To: Shuah Khan <shuah@kernel.org>
->> Cc: virtualization@lists.linux.dev
->> Cc: netdev@vger.kernel.org
->> Cc: linux-kselftest@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: Simon Horman <horms@kernel.org>
->>
->> Changes in v4:
->> - fix messed up rebase (wrt check_result() and shared_vm_test() patches)
->> - more consistent variable quotes style
->> - use associative array for pidfiles, remove after terminate
->> - Link to v3: https://lore.kernel.org/r/20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com
->>
->> Changes in v3:
->> - see per-patch changes
->> - Link to v2: https://lore.kernel.org/all/20251104-vsock-selftests-fixes-and-improvements-v2-0-ca2070fd1601@meta.com
->>
->> Changes in v2:
->> - remove "Fixes" for some patches because they do not fix bugs in
->>   kselftest runs (some fix bugs only when using bash args that kselftest
->>   does not use or otherwise prepare functions for new usage)
->> - broke out one fixes patch for "net"
->> - per-patch changes
->> - add patch for shellcheck declaration to disable false positives
->> - Link to v1: https://lore.kernel.org/r/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com
->
->Series LGTM, but let's wait a little bit more for explicit ack from Stefano.
+Hi Konrad
 
-Sorry for the delay, yep it LGTM too and I should replied with my R-b to 
-all patches. In any case, it can go IMO.
+Thank you for your review.
+On 11/12/2025 5:53 PM, Konrad Dybcio wrote:
+> On 11/12/25 8:46 AM, Shuai Zhang wrote:
+>> For WCN6855: download wcnhpbtfwxx.tlv and wcnhpnvxx.xxx;
+>> if they do not exist, download hpbtfwxx.tlv and hpnvxx.xxx instead.
+>>
+>> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+>> ---
+> 
+> Would these files be fundamentally any different, or is it a workaround
+> for someone else being creative with filenames?
+> 
 
-Thanks,
-Stefano
+The prefix “wcn” corresponds to the WCN685x chip, while entries without
+the “wcn” prefix correspond to the QCA2066 chip. There are some feature
+differences between the two. 
 
+However, due to historical reasons, the WCN685x chip has been using firmware
+without the “wcn” prefix. We are now correcting the mapping between the chip
+and its corresponding firmware.
+
+If it is necessary to add a comment to explain this, I will submit a new patch.
+
+> Konrad
+
+Best,regard
+Shuai
 
