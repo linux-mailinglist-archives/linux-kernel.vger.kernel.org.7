@@ -1,137 +1,338 @@
-Return-Path: <linux-kernel+bounces-898303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6042C54D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:45:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E923C54D4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C50AC347FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:45:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 032BE34A170
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E832F2619;
-	Wed, 12 Nov 2025 23:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F0C264A76;
+	Wed, 12 Nov 2025 23:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pjbg6FCa"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sZnHBhM/"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC40B247281;
-	Wed, 12 Nov 2025 23:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40522173F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 23:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762991097; cv=none; b=jOKzBuUPRBPWThOE9z2gxGM7IYTkheg9KzUGjjVsYZ9PoIKx/MYcpsP5BKKAwk9SNA9HQxlGlKY3bge+jSWLHowbZqzEjghOBh4xYqgzXOdnSSHSuCP9ILA9levVP7DxIEyFw0p6rtqS+JlwaSsASCh2tna9ULMZZ+yyKi2+w3c=
+	t=1762991130; cv=none; b=pGYJo5wiTV1zWNTVWb2rJJdL2ptOGJN+RNG2KWszsx7+2PslIk8ryAo0RVOxKKr30Kn5HZzurBWZCc2uR0kq56d0cEDTwQkJvWFeHH1cVNiyDD3f+CdZj/ya8ZResv416cEAYHtFqYQZPa5+5BbO51KbtwyEG9CwV7cuhSjWrhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762991097; c=relaxed/simple;
-	bh=KqqPmb0Yg0oJERas9ZGVuwURJQcyrSsGMeI99lFLQH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SW6DB2L8lRcavDpVnUJt65c3uEXkouky09Kt87Ib62U3E9IZ2G5HYxCbG4WiqpZbirwigRcoXe8e0hHsQK0JbYcLGKMoO2XNC+GIzz3vSBoEsFl7u+hbTqT+sOhRSkYs/AF9kEs6hLzuKxuZeS3avwCyDUK0vcvi6mi4PgqOu6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pjbg6FCa; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762991091;
-	bh=3sZL979kE3k93TAuqsE/YmdfdFEAtbmc3/P3DZZdvMg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pjbg6FCawROnThYn4i09DcNEyDqSjZ5PspyTHbz6j3Qqrqg//eZYxocRKRChHwn1J
-	 VBzic+JToE3nQifa04+x6C4EmbDSz9Qkd7LhkAYzmpRoxv32u7hMw1KrDsQ1WGcCif
-	 3qY7gq9dP+oKdf0Rw0dmOFkTnV71dH/jsXSKQGcTwTcJiY131ZTW8CSFiRfUz/6Lqw
-	 i8/WQaueFRn67ozjYsVHcp2RP3AMD3qVbr/r2MYRrKDqYJZQUB5TWL18He3qoEChU7
-	 3YuupI/kaSu6bBCthZvxcL7G9fDfSW7iKQ9lU+MlAk4lUrWXOfSbdeTMdjilZknjBI
-	 JSzOd7kaKqkIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d6Kkp3jkBz4w8x;
-	Thu, 13 Nov 2025 10:44:50 +1100 (AEDT)
-Date: Thu, 13 Nov 2025 10:44:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bluetooth tree
-Message-ID: <20251113104449.2073bfa3@canb.auug.org.au>
+	s=arc-20240116; t=1762991130; c=relaxed/simple;
+	bh=98gBhiY7eHNgspoeN/g8z2ZGxsyp3RbJi2m1Sysa/N8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MWoqMZli6NU/KQOj5r5zjjtJyzrjK3wHGV8/HAAxCdt88md0u+XTdLcV7bEgcID+erWSJgx42kE8FcD/Ujuk7DAmphB9Wag7dgsk34pU+mgrBqZmd+C+jZERUuniEOQi75eb4qFP8F3YywyIpkFmcBhvYnNa5GM/l/A2Bqu5l7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sZnHBhM/; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-880503ab181so1908716d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:45:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762991127; x=1763595927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BM873e7SMffWd45MQMkDcJju/5ouVQmW954EgyfduEY=;
+        b=sZnHBhM/LTxWH3DSf3MbNw29yA6v0GDPJ/5rsLbEBxLoW3KY+uOENxy6Ca6+2R9Iy7
+         uBYMIU/nUznZoG0GFLnHBfac+9i7x8jQOinhjU1pjzKFdIG0ZghrOINwQztmzRyeCLOo
+         FugyUneeJH1C04EPzL4T6kzcFOxa8INZv9vUcIi09hZkaFoysV5lnwy1Hqoh9AD3taa8
+         +2NvvHvEmjqx+TCuhIjSQP90g1uxLK9WcEbI8wScX8cETJr3SBClQTz0hGBEL1R9FpNc
+         HLGhrbjYfgGheoC3iT0aDwJHc9QiVkMkFCfvHeCDUF7GszR18G9t/8yg+lbeDW7u1mKP
+         5l0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762991127; x=1763595927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BM873e7SMffWd45MQMkDcJju/5ouVQmW954EgyfduEY=;
+        b=QqT++FeeGOc1kB0dimRYFE1gcJraxt2pTw7g/OvRZ9CcHUgkiSQXUvfEyiordl2gxh
+         p04UgbyPFyh6+SaEvRWOilIZVpda6j77sW98TNk6Yo9czqIrdn5eMOlM7u35xZ8sBId8
+         D1UaSVeyJrAep+ZtttSIyys7V2BTrE+C3NX7pl3YMDOBnGAsVVhjDhf0FU8TqoaBD1aa
+         8OTu1lFakti4/ZvMfXscok9eU95OEy51CHwxXpuxush6Ocg60KGxvVQPn5CEPoHjp1b6
+         VbQhqJqOfuqCXqvYcsTfEXsJp5DrwnH8Rf8Aws3Qn45mDx2EAqExDSlQS+Z8S5qu1aET
+         qZCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZBCC/kp3Z3M26nvP7qHcsR2FUa3PhSAtO9meqaJKgCUlKok2Cy0HEmwWmvln5kT2lLMRa4+fBKToIZbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHeyov7ciyl4RyJf/spJyFlRa5yUfntSF8c5wpXIPK5IzhihLg
+	uOr36PhbchmOUjoPfk/uChkfWkP65w6O5GcN5Sj2fcBK6D8gzXZN1jvzJmBVLqiHPvCfH5BGm43
+	PxHU2PXTMfha67OJwsyKPBxEzxgqj3DE+iQnYV54B
+X-Gm-Gg: ASbGncsLoY2oRRSjB/EEZDvKcGO2r2qdCAR6cRm/g6BzDJ+t6l0jLbM3ES6RCG9Ek1j
+	nNGAwV0ALrINpE/gF/pthbIwGBX6eKhLLsdxNGoEw049XrOUGQ+OBTLMnzX01MJj08kHLRN8v+E
+	OtaA7umbnWwT52fWIIN4QLwE0GbV58Pu6MLPQlQgoAIWg9UWjCa235GwrTpZjnDk+xvnFEGmpCJ
+	Pdph2ONd6vzIw+zkGrcYDNo4S+YRh2OkGMnSC+C1w//Cns+Q/uSh2Pvb1yQ+EGuX8+ukz5KpJQA
+	tT5HtgxZ2BBbDG3OshVIwE+pZS99
+X-Google-Smtp-Source: AGHT+IEQmXMMWgUJYMSsXf8PXmcSJWCgzzvhaS0nAT5hecado0KMJB6Ms9uH+7zj6g5B2jxwuh/zNTPNlYAP8aoBzqU=
+X-Received: by 2002:a05:6214:20c6:b0:882:375d:7ed9 with SMTP id
+ 6a1803df08f44-88271900e7emr73367376d6.10.1762991127050; Wed, 12 Nov 2025
+ 15:45:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/hAakLIODg4juT4T21.eVWjL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/hAakLIODg4juT4T21.eVWjL
-Content-Type: text/plain; charset=US-ASCII
+References: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
+ <20251111-lid-switch-notifier-v2-1-789723d78d89@google.com> <s7nk2xerfa7ocscyaaez7qnygkmrdy2ch355uziodda654ws5p@zswljdmx3747>
+In-Reply-To: <s7nk2xerfa7ocscyaaez7qnygkmrdy2ch355uziodda654ws5p@zswljdmx3747>
+From: Jonathan Denose <jdenose@google.com>
+Date: Wed, 12 Nov 2025 17:45:16 -0600
+X-Gm-Features: AWmQ_bmpS3vCBfRvf7T-EU2BsZ-k_feNAK_h9t-NbYfMhWpnT3WrADM6NtW4CKs
+Message-ID: <CAMCVhVNUrcWD5avaBGotnEgQ-kS9HMPaDpkYczscozSg5H-NfA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] Input: Add lid switch notifier
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dmitry,
 
-The following commits are also in the net tree as different commits
-(but the same patches):
+Thanks for your review.
 
-  d6422a746fcd ("Bluetooth: btrtl: Avoid loading the config file on securit=
-y chips")
-  d3f4dfd9b4cc ("Bluetooth: hci_event: Fix not handling PA Sync Lost event")
-  84f59de96cf0 ("Bluetooth: hci_conn: Fix not cleaning up PA_LINK connectio=
-ns")
-  fde5b271c88f ("Bluetooth: 6lowpan: add missing l2cap_chan_lock()")
-  e1cd2d7db0bf ("Bluetooth: 6lowpan: Don't hold spin lock over sleeping fun=
-ctions")
-  35d11c1cf51d ("Bluetooth: L2CAP: export l2cap_chan_hold for modules")
-  c7409a88d204 ("Bluetooth: 6lowpan: fix BDADDR_LE vs ADDR_LE_DEV address t=
-ype confusion")
-  7de8dc9b760c ("Bluetooth: 6lowpan: reset link-local header on ipv6 recv p=
-ath")
-  162d88a68ccb ("Bluetooth: btusb: reorder cleanup in btusb_disconnect to a=
-void UAF")
-  2747d9296177 ("Bluetooth: MGMT: cancel mesh send timer when hdev removed")
+On Tue, Nov 11, 2025 at 4:34=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Hi Jonathan,
+>
+> On Tue, Nov 11, 2025 at 09:34:06PM +0000, Jonathan Denose wrote:
+> > This change creates a new input handler which can be included in the
+> > build via a new Kconfig option CONFIG_INPUT_LID_NOTIFIER. This input
+> > handler listens for lid switch events and publishes them through an
+> > atomic notification chain. Other modules may register for events
+> > through this notification chain with register_lid_notifier.
+> >
+> > Signed-off-by: Jonathan Denose <jdenose@google.com>
+> > ---
+> >  drivers/input/Kconfig        | 11 +++++
+> >  drivers/input/Makefile       |  1 +
+> >  drivers/input/lid-notifier.c | 98 ++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  include/linux/input.h        |  2 +
+> >  4 files changed, 112 insertions(+)
+> >
+> > diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
+> > index 88ecdf5218ee9ba35e1efec6341f8605b621bd49..16f6d24fd04ac8cb5af9d36=
+cc47155ea9be0e177 100644
+> > --- a/drivers/input/Kconfig
+> > +++ b/drivers/input/Kconfig
+> > @@ -38,6 +38,17 @@ config INPUT_LEDS
+> >         To compile this driver as a module, choose M here: the
+> >         module will be called input-leds.
+> >
+> > +config INPUT_LID_NOTIFIER
+> > +     tristate "Include notifier for lid switch events"
+> > +     help
+> > +       Say Y here if you would like to create a notifier to publish li=
+d switch
+> > +             events.
+> > +
+> > +       If unsure, say N.
+> > +
+> > +       To compile this driver as a module, choose M here: the
+> > +       module will be called lid-notifier.
+>
+> I think this better not surfaced to users but rather interested drivers
+> 'select' it.
 
-These are commits
+That makes sense to me, but how could I get the lid-notifier.c file to
+compile in that case? That was my only reason for adding it as a
+config option.
 
-  cd8dbd9ef600 ("Bluetooth: btrtl: Avoid loading the config file on securit=
-y chips")
-  485e0626e587 ("Bluetooth: hci_event: Fix not handling PA Sync Lost event")
-  41bf23338a50 ("Bluetooth: hci_conn: Fix not cleaning up PA_LINK connectio=
-ns")
-  15f32cabf426 ("Bluetooth: 6lowpan: add missing l2cap_chan_lock()")
-  98454bc812f3 ("Bluetooth: 6lowpan: Don't hold spin lock over sleeping fun=
-ctions")
-  e060088db0bd ("Bluetooth: L2CAP: export l2cap_chan_hold for modules")
-  b454505bf57a ("Bluetooth: 6lowpan: fix BDADDR_LE vs ADDR_LE_DEV address t=
-ype confusion")
-  3b78f5091827 ("Bluetooth: 6lowpan: reset link-local header on ipv6 recv p=
-ath")
-  23d22f2f7176 ("Bluetooth: btusb: reorder cleanup in btusb_disconnect to a=
-void UAF")
-  55fb52ffdd62 ("Bluetooth: MGMT: cancel mesh send timer when hdev removed")
+> > +
+> >  config INPUT_FF_MEMLESS
+> >       tristate "Support for memoryless force-feedback devices"
+> >       help
+> > diff --git a/drivers/input/Makefile b/drivers/input/Makefile
+> > index 2cd6e1c9a77844fe09cd3d99533e5d3efb038c7d..1efdba04f79a97e2a122b91=
+98341b18a1855b4b9 100644
+> > --- a/drivers/input/Makefile
+> > +++ b/drivers/input/Makefile
+> > @@ -15,6 +15,7 @@ obj-$(CONFIG_INPUT_MATRIXKMAP)      +=3D matrix-keyma=
+p.o
+> >  obj-$(CONFIG_INPUT_VIVALDIFMAP)      +=3D vivaldi-fmap.o
+> >
+> >  obj-$(CONFIG_INPUT_LEDS)     +=3D input-leds.o
+> > +obj-$(CONFIG_INPUT_LID_NOTIFIER)     +=3D lid-notifier.o
+> >  obj-$(CONFIG_INPUT_MOUSEDEV) +=3D mousedev.o
+> >  obj-$(CONFIG_INPUT_JOYDEV)   +=3D joydev.o
+> >  obj-$(CONFIG_INPUT_EVDEV)    +=3D evdev.o
+> > diff --git a/drivers/input/lid-notifier.c b/drivers/input/lid-notifier.=
+c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..954b9855532dbd0514860e3=
+09d0b76982e947673
+> > --- /dev/null
+> > +++ b/drivers/input/lid-notifier.c
+> > @@ -0,0 +1,98 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + *  Lid event notifier
+> > + *
+> > + *  Copyright (c) 2025 Jonathan Denose <jdenose@google.com>
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/input.h>
+> > +#include <linux/notifier.h>
+> > +
+> > +static struct input_handler lid_handler;
+> > +static struct atomic_notifier_head input_notifier_head;
+> > +
+> > +int register_lid_notifier(struct notifier_block *notifier)
+> > +{
+> > +     return atomic_notifier_chain_register(&input_notifier_head, notif=
+ier);
+> > +}
+> > +EXPORT_SYMBOL(register_lid_notifier);
+>
+> I wonder if we want to expose the "raw" notifier or if we want to
+> provide a higher-level API that would allocate a notifier blocki, set up
+> the callback, and return a "cookie" that can be used to free notifier
+> block later. This way we do not need to worry that some enterprising
+> driver suppresses notifications for the rest by returning NOTIFY_STOP.
+>
+> > +
+> > +static int lid_handler_connect(struct input_handler *handler,
+> > +             struct input_dev *input_dev, const struct input_device_id=
+ *id)
+>
+> Proper alignment of the arguments please.
+>
+> > +{
+> > +     struct input_handle *handle;
+> > +     int error;
+> > +
+> > +     handle =3D devm_kzalloc(&input_dev->dev, sizeof(struct input_hand=
+le), GFP_KERNEL);
+>
+> This is not driver probe path so devm_kzalloc must not be used here.
+> Also "sizeof(*handle)".
 
-in the net tree.
+So in that case, would I just use kzalloc?
 
-These are causing at least one conflict in include/net/bluetooth/hci.h .
+> > +     if (!handle)
+> > +             return -ENOMEM;
+> > +
+> > +     handle->dev =3D input_dev;
+> > +     handle->handler =3D handler;
+> > +     handle->name =3D "lid";
+> > +
+> > +     error =3D input_register_handle(handle);
+> > +     if (error)
+> > +             goto err_free_handle;
+> > +
+> > +     error =3D input_open_device(handle);
+> > +     if (error)
+> > +             goto err_unregister_handle;
+> > +
+> > +     return 0;
+> > +
+> > + err_unregister_handle:
+> > +     input_unregister_handle(handle);
+> > + err_free_handle:
+> > +     kfree(handle);
+>
+> Just FYI: One must never use kfree() with devm_kalloc()ed memory.
 
+Noted!
+
+> > +     return error;
+> > +}
+> > +
+> > +static void lid_handler_disconnect(struct input_handle *handle)
+> > +{
+> > +     input_close_device(handle);
+> > +     input_unregister_handle(handle);
+>
+>         kfree(handle);
+>
+> > +}
+> > +
+> > +static void lid_handler_event(struct input_handle *handle, unsigned in=
+t type,
+> > +             unsigned int code, int value)
+> > +{
+> > +     if (type =3D=3D EV_SW && code =3D=3D SW_LID)
+> > +             atomic_notifier_call_chain(&input_notifier_head, value, h=
+andle->dev);
+>
+> Why do you need to pass the device from which SW_LID originated?
+
+It isn't needed, I'll pass NULL instead.
+
+> > +}
+> > +
+> > +static const struct input_device_id lid_handler_ids[] =3D {
+> > +     {
+> > +             .flags =3D INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_=
+MATCH_SWBIT
+> > +                                             | INPUT_DEVICE_ID_MATCH_B=
+US,
+> > +             .evbit =3D { BIT_MASK(EV_SW) },
+> > +             .swbit =3D { [BIT_WORD(SW_LID)] =3D BIT_MASK(SW_LID) },
+> > +             .bustype =3D 0x19
+>
+> Why do we need to match in bus type? The LID does not have to always
+> come from ACPI.
+
+On the specific chromebook where this touchpad is found, when the lid
+switch is opened or closed, `cros_ec_buttons` also sends SW_LID
+events, so lid_handler_event was unnecessarily called twice. To
+prevent that, I'm filtering on the bus type to get only the events
+originating from the lid switch.
+
+> > +     },
+> > +     { },
+> > +};
+> > +
+> > +static struct input_handler lid_handler =3D {
+> > +     .connect =3D lid_handler_connect,
+> > +     .disconnect =3D lid_handler_disconnect,
+> > +     .event =3D lid_handler_event,
+> > +     .name =3D "lid",
+> > +     .id_table =3D lid_handler_ids
+> > +};
+> > +
+> > +static int __init lid_notifier_init(void)
+> > +{
+> > +     return input_register_handler(&lid_handler);
+> > +}
+> > +module_init(lid_notifier_init);
+> > +
+> > +static void __exit lid_notifier_exit(void)
+> > +{
+> > +     input_unregister_handler(&lid_handler);
+> > +}
+> > +module_exit(lid_notifier_exit);
+> > +
+> > +MODULE_AUTHOR("Jonathan Denose <jdenose@google.com>");
+> > +MODULE_DESCRIPTION("Lid event notifier");
+> > +MODULE_LICENSE("GPL");
+> > diff --git a/include/linux/input.h b/include/linux/input.h
+> > index 7d7cb0593a63e93c4906c49cde430188db2d1ab5..023eb92c77d9e8721d482b9=
+787632a671671de08 100644
+> > --- a/include/linux/input.h
+> > +++ b/include/linux/input.h
+> > @@ -592,3 +592,5 @@ int input_ff_create_memless(struct input_dev *dev, =
+void *data,
+> >               int (*play_effect)(struct input_dev *, void *, struct ff_=
+effect *));
+> >
+> >  #endif
+>
+> I think this should go into include/linux/lid-notifier.h.
+>
+> > +
+> > +int register_lid_notifier(struct notifier_block *notifier);
+>
+> Thanks.
+>
+> --
+> Dmitry
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/hAakLIODg4juT4T21.eVWjL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkVG/EACgkQAVBC80lX
-0GxEyQf+LpBPP/Ql/msq2PbbaphGO9QhF8fgYHQiRiPcRT/FoAfducwfbBEfREMl
-0C2/evwc6Q2f40IaH0mKnJYaZ/uIZAuU62yQsGq3UD3rgut/HtKMqtm2OavBOZem
-Pdm5HaHEMYDPmf+hUWeAd8IqS4VXH/PMMa/2dkV8+BFFcxgkxITg14314u/1QeVd
-037Wuz2ttQ//kq/BcReII0bnxAntRBjfkzSEbIgsQF0nGVWUuOByd12IpCqD4q3m
-3dQGAbBgVUi8sD/wpcZou5j+CN54XDkEIFxlWaL4Liq95jOapYQoiUVHsvg3Dx4y
-9idXR71mzorVDu3UFxTsBiJgTxVOTw==
-=K6bF
------END PGP SIGNATURE-----
-
---Sig_/hAakLIODg4juT4T21.eVWjL--
+Jonathan
 
