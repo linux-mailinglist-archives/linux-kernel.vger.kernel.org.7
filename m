@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-897550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367E2C5315C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:38:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280A5C530E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77123354AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:25:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0284E3551AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA44E342527;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D30341AAE;
 	Wed, 12 Nov 2025 15:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqlWArWU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmhUoiI6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108C233F8C3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1098733F8C5
 	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960960; cv=none; b=aNgU78hf6bCVBfLSclP/Ibn83MfgyY96c2VvJLcWFo9PWWL1Rond3xaKrc2XzTLAvm9YAiasnmsG29Q9fkJmzFv8DlsaQpQ4qpC4L8wGDIaCNfgPqK/RoNQ2wC+noXhe8X/ZR8gNV+dXr31PyYR0C1K/cuaviwvoP1/zz8/0q0s=
+	t=1762960960; cv=none; b=MxJXyehN5yzIGw+XPxEbX2pWRPaKF0JgiN9/B60ZOervp8Lz4lQbhWJRNJU/5NSkYpx8SewdUhX3KkpjDRx0n5r66u4Bk1sfmXDzBviRSMr+VCn6rQIZdH30bp3x8jr8E8GIfPB+z8v7nlA713mtutuFYxxgSnmmf2JEdN9taOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762960960; c=relaxed/simple;
-	bh=Ht1QDZrQSjmqwndN8HQ32Sq6TnlTCgcsALI1yQJPGHI=;
+	bh=SbQboSdSpbv701LGuN0nEbpX42AA8dCN+v1cOXn5aME=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=eK3dalT183LZTfU+voshvYBdRFz32pi+iuTmflnRH7nwCIkg/ftrnZhyOwxPlzIEl0BJfHHLlG9/jBMORMlsIWQoXcYc8PHRhmiQqDnZfJ/h8Y8O8eyRk7RYGxFwa7inFw8AOwHSp/dv+u82c59hYcWTLGA/ZdoGUV2fbU7FMLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqlWArWU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68081C2BCB2;
+	 Content-Type; b=pe9fWzceG8InBvfgZZnwmaAb4HLRV0H7aq31MJJ19ZW/FsL79fJwISc/wuRDRZFNdyp+UE+BsVO5yQ5/Hb45uze/yj740juD4MhOlzTtclOcO0d+mNyKLKfr36LbpRGqEsmtyGXTwflXimp8UTjqkj3KFaJz2TcP5m/jB4b3JKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmhUoiI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A2FC2BCB1;
 	Wed, 12 Nov 2025 15:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762960959;
-	bh=Ht1QDZrQSjmqwndN8HQ32Sq6TnlTCgcsALI1yQJPGHI=;
+	bh=SbQboSdSpbv701LGuN0nEbpX42AA8dCN+v1cOXn5aME=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=dqlWArWUOW+3rfh5p4NVTH/ajaaxtClySIylGqburAQ+TtI4SPtQL3LYDysz0/W89
-	 doKSN52T9Y2eI+crGTBdrqEdzo5T3+zeYRa6KVMuuONVXbvD88LUwAhz9B60jdf5cH
-	 qBZ4bNL19CRw51AF3i5P89UzUR8vhBYWzKjTnkBrzFejIjoTqOwCC/685vcMVEtE1T
-	 TEXwQ1nFw8jLtVgUltbJIMQ/PHaaBsS/caL4INtZSAyevtHpYyjZ2hZKJAQY4f/4BZ
-	 ryy43v2rsKzgpix2rXJ0o0K0yg8o1xiheyClgqTfw6eSl1jSBDxguQi6Z0kQ1Xh1Xe
-	 Bcsvh8Qil+r3A==
+	b=WmhUoiI6McD0aPNv0yqzsxrnBZx5gqGk/bPxVDO6RWFhAhHzokDEfl16uPJx66A6e
+	 QtGYR/KT4NichZ4G4JpuQhZ6ro2groFyozGNYyrYHlX+Fm1WS2tZQRzP0oOXaSiYud
+	 9ou52dLCXsBZKom1nKjOdYdYi+3rTRf6vxP6rCTylhuKdtR2x709yB5eo1Plr4aMfW
+	 nGP12eTMl2FkfUZwv99+2P8jYp0bIOVTZpW+eWA/In5ou/7Otn0iszjPmc9YcZr4LN
+	 cMMUrsDmrs2ltj//SmvOvJUkjU8BgZuYRyLEkVbb+K971e3auIlo9rYgZSL2sUSiF9
+	 2t/cUbzYAzGQg==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vJCgO-000000018M1-2ut6;
+	id 1vJCgO-000000018MW-3dOD;
 	Wed, 12 Nov 2025 10:22:52 -0500
-Message-ID: <20251112152252.544806936@kernel.org>
+Message-ID: <20251112152252.716220175@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 12 Nov 2025 10:22:37 -0500
+Date: Wed, 12 Nov 2025 10:22:38 -0500
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 2/4] tracing: Have tracer option be instance specific
+Subject: [for-next][PATCH 3/4] tracing: Have function tracer define options per instance
 References: <20251112152235.655878322@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,12 +65,12 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Tracers can add specify options to modify them. This logic was added
-before instances were created and the tracer flags were global variables.
-After instances were created where a tracer may exist in more than one
-instance, the flags were not updated from being global into instance
-specific. This causes confusion with these options. For example, the
-function tracer has an option to enable function arguments:
+Currently the function tracer's options are saved via a global mask when
+it should be per instance. Use the new infrastructure to define a
+"default_flags" field in the tracer structure that is used for the top
+level instance as well as new ones.
+
+Currently the global mask causes confusion:
 
   # cd /sys/kernel/tracing
   # mkdir instances/foo
@@ -95,570 +95,66 @@ function tracer has an option to enable function arguments:
   kworker/4:1-88      [004] ...1.   298.127741: round_jiffies_relative <-vmstat_update
 [..]
 
-The above shows that setting "func-args" in the top level instance also
-set it in the instance "foo", but since the interface of the trace flags
-are per instance, the update didn't take affect in the "foo" instance.
-
-Update the infrastructure to allow tracers to add a "default_flags" field
-in the tracer structure that can be set instead of "flags" which will make
-the flags per instance. If a tracer needs to keep the flags global (like
-blktrace), keeping the "flags" field set will keep the old behavior.
-
-This does not update function or the function graph tracers. That will be
-handled later.
+The above shows that updating the "func-args" option at the top level
+instance also updates the "func-args" option in the instance but because
+the update is only done by the instance that gets changed (as it should),
+it's confusing to see that the option is already set in the other instance.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://patch.msgid.link/20251111232429.305317942@kernel.org
+Link: https://patch.msgid.link/20251111232429.470883736@kernel.org
 Fixes: f20a580627f43 ("ftrace: Allow instances to use function tracing")
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 257 ++++++++++++++++++++++++++++++-------------
- kernel/trace/trace.h |   3 +
- 2 files changed, 186 insertions(+), 74 deletions(-)
+ kernel/trace/trace_functions.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0aea9cb84276..9268489d2ce8 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -94,6 +94,13 @@ static bool tracepoint_printk_stop_on_boot __initdata;
- static bool traceoff_after_boot __initdata;
- static DEFINE_STATIC_KEY_FALSE(tracepoint_printk_key);
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index d17c18934445..c12795c2fb39 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -154,11 +154,11 @@ static int function_trace_init(struct trace_array *tr)
+ 	if (!tr->ops)
+ 		return -ENOMEM;
  
-+/* Store tracers and their flags per instance */
-+struct tracers {
-+	struct list_head	list;
-+	struct tracer		*tracer;
-+	struct tracer_flags	*flags;
-+};
-+
- /*
-  * To prevent the comm cache from being overwritten when no
-  * tracing is active, only save the comm when a trace event
-@@ -2164,6 +2171,7 @@ static int save_selftest(struct tracer *type)
- static int run_tracer_selftest(struct tracer *type)
- {
- 	struct trace_array *tr = &global_trace;
-+	struct tracer_flags *saved_flags = tr->current_trace_flags;
- 	struct tracer *saved_tracer = tr->current_trace;
- 	int ret;
- 
-@@ -2194,6 +2202,7 @@ static int run_tracer_selftest(struct tracer *type)
- 	tracing_reset_online_cpus(&tr->array_buffer);
- 
- 	tr->current_trace = type;
-+	tr->current_trace_flags = type->flags ? : type->default_flags;
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	if (type->use_max_tr) {
-@@ -2210,6 +2219,7 @@ static int run_tracer_selftest(struct tracer *type)
- 	ret = type->selftest(type, tr);
- 	/* the test is responsible for resetting too */
- 	tr->current_trace = saved_tracer;
-+	tr->current_trace_flags = saved_flags;
- 	if (ret) {
- 		printk(KERN_CONT "FAILED!\n");
- 		/* Add the warning after printing 'FAILED' */
-@@ -2302,10 +2312,23 @@ static inline int do_run_tracer_selftest(struct tracer *type)
- }
- #endif /* CONFIG_FTRACE_STARTUP_TEST */
- 
--static int add_tracer_options(struct trace_array *tr, struct tracer *t);
-+static int add_tracer(struct trace_array *tr, struct tracer *t);
- 
- static void __init apply_trace_boot_options(void);
- 
-+static void free_tracers(struct trace_array *tr)
-+{
-+	struct tracers *t, *n;
-+
-+	lockdep_assert_held(&trace_types_lock);
-+
-+	list_for_each_entry_safe(t, n, &tr->tracers, list) {
-+		list_del(&t->list);
-+		kfree(t->flags);
-+		kfree(t);
-+	}
-+}
-+
- /**
-  * register_tracer - register a tracer with the ftrace system.
-  * @type: the plugin for the tracer
-@@ -2314,6 +2337,7 @@ static void __init apply_trace_boot_options(void);
-  */
- int __init register_tracer(struct tracer *type)
- {
-+	struct trace_array *tr;
- 	struct tracer *t;
- 	int ret = 0;
- 
-@@ -2353,10 +2377,13 @@ int __init register_tracer(struct tracer *type)
- 	if (ret < 0)
- 		goto out;
- 
--	ret = add_tracer_options(&global_trace, type);
--	if (ret < 0) {
--		pr_warn("Failed to create tracer options for %s\n", type->name);
--		goto out;
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		ret = add_tracer(tr, type);
-+		if (ret < 0) {
-+			/* The tracer will still exist but without options */
-+			pr_warn("Failed to create tracer options for %s\n", type->name);
-+			break;
-+		}
- 	}
- 
- 	type->next = trace_types;
-@@ -2373,7 +2400,7 @@ int __init register_tracer(struct tracer *type)
- 
- 	printk(KERN_INFO "Starting tracer '%s'\n", type->name);
- 	/* Do we want this tracer to start on bootup? */
--	tracing_set_tracer(&global_trace, type->name);
-+	WARN_ON(tracing_set_tracer(&global_trace, type->name) < 0);
- 	default_bootup_tracer = NULL;
- 
- 	apply_trace_boot_options();
-@@ -5139,6 +5166,7 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
- {
- 	struct tracer_opt *trace_opts;
- 	struct trace_array *tr = m->private;
-+	struct tracer_flags *flags;
- 	struct tracer *trace;
- 	u32 tracer_flags;
- 	int i;
-@@ -5152,12 +5180,14 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
- 			seq_printf(m, "no%s\n", trace_options[i]);
- 	}
- 
--	trace = tr->current_trace;
--	if (!trace->flags || !trace->flags->opts)
-+	flags = tr->current_trace_flags;
-+	if (!flags || !flags->opts)
- 		return 0;
- 
--	tracer_flags = tr->current_trace->flags->val;
--	trace_opts = tr->current_trace->flags->opts;
-+	trace = tr->current_trace;
-+
-+	tracer_flags = flags->val;
-+	trace_opts = flags->opts;
- 
- 	for (i = 0; trace_opts[i].name; i++) {
- 		if (tracer_flags & trace_opts[i].bit)
-@@ -5191,8 +5221,7 @@ static int __set_tracer_option(struct trace_array *tr,
- /* Try to assign a tracer specific option */
- static int set_tracer_option(struct trace_array *tr, char *cmp, int neg)
- {
--	struct tracer *trace = tr->current_trace;
--	struct tracer_flags *tracer_flags = trace->flags;
-+	struct tracer_flags *tracer_flags = tr->current_trace_flags;
- 	struct tracer_opt *opts = NULL;
- 	int i;
- 
-@@ -5203,7 +5232,7 @@ static int set_tracer_option(struct trace_array *tr, char *cmp, int neg)
- 		opts = &tracer_flags->opts[i];
- 
- 		if (strcmp(cmp, opts->name) == 0)
--			return __set_tracer_option(tr, trace->flags, opts, neg);
-+			return __set_tracer_option(tr, tracer_flags, opts, neg);
- 	}
- 
- 	return -EINVAL;
-@@ -6235,11 +6264,6 @@ int tracing_update_buffers(struct trace_array *tr)
- 	return ret;
- }
- 
--struct trace_option_dentry;
--
--static int
--create_trace_option_files(struct trace_array *tr, struct tracer *tracer);
--
- /*
-  * Used to clear out the tracer before deletion of an instance.
-  * Must have trace_types_lock held.
-@@ -6255,26 +6279,15 @@ static void tracing_set_nop(struct trace_array *tr)
- 		tr->current_trace->reset(tr);
- 
- 	tr->current_trace = &nop_trace;
-+	tr->current_trace_flags = nop_trace.flags;
- }
- 
- static bool tracer_options_updated;
- 
--static int add_tracer_options(struct trace_array *tr, struct tracer *t)
--{
--	/* Only enable if the directory has been created already. */
--	if (!tr->dir && !(tr->flags & TRACE_ARRAY_FL_GLOBAL))
--		return 0;
--
--	/* Only create trace option files after update_tracer_options finish */
--	if (!tracer_options_updated)
--		return 0;
--
--	return create_trace_option_files(tr, t);
--}
--
- int tracing_set_tracer(struct trace_array *tr, const char *buf)
- {
--	struct tracer *t;
-+	struct tracer *trace = NULL;
-+	struct tracers *t;
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	bool had_max_tr;
- #endif
-@@ -6292,18 +6305,20 @@ int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 		ret = 0;
- 	}
- 
--	for (t = trace_types; t; t = t->next) {
--		if (strcmp(t->name, buf) == 0)
-+	list_for_each_entry(t, &tr->tracers, list) {
-+		if (strcmp(t->tracer->name, buf) == 0) {
-+			trace = t->tracer;
- 			break;
-+		}
- 	}
--	if (!t)
-+	if (!trace)
+-	func = select_trace_function(func_flags.val);
++	func = select_trace_function(tr->current_trace_flags->val);
+ 	if (!func)
  		return -EINVAL;
  
--	if (t == tr->current_trace)
-+	if (trace == tr->current_trace)
+-	if (!handle_func_repeats(tr, func_flags.val))
++	if (!handle_func_repeats(tr, tr->current_trace_flags->val))
+ 		return -ENOMEM;
+ 
+ 	ftrace_init_array_ops(tr, func);
+@@ -459,14 +459,14 @@ func_set_flag(struct trace_array *tr, u32 old_flags, u32 bit, int set)
+ 	u32 new_flags;
+ 
+ 	/* Do nothing if already set. */
+-	if (!!set == !!(func_flags.val & bit))
++	if (!!set == !!(tr->current_trace_flags->val & bit))
  		return 0;
  
- #ifdef CONFIG_TRACER_SNAPSHOT
--	if (t->use_max_tr) {
-+	if (trace->use_max_tr) {
- 		local_irq_disable();
- 		arch_spin_lock(&tr->max_lock);
- 		ret = tr->cond_snapshot ? -EBUSY : 0;
-@@ -6314,14 +6329,14 @@ int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 	}
- #endif
- 	/* Some tracers won't work on kernel command line */
--	if (system_state < SYSTEM_RUNNING && t->noboot) {
-+	if (system_state < SYSTEM_RUNNING && trace->noboot) {
- 		pr_warn("Tracer '%s' is not allowed on command line, ignored\n",
--			t->name);
-+			trace->name);
- 		return -EINVAL;
- 	}
- 
- 	/* Some tracers are only allowed for the top level buffer */
--	if (!trace_ok_for_array(t, tr))
-+	if (!trace_ok_for_array(trace, tr))
- 		return -EINVAL;
- 
- 	/* If trace pipe files are being read, we can't change the tracer */
-@@ -6340,8 +6355,9 @@ int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 
- 	/* Current trace needs to be nop_trace before synchronize_rcu */
- 	tr->current_trace = &nop_trace;
-+	tr->current_trace_flags = nop_trace.flags;
- 
--	if (had_max_tr && !t->use_max_tr) {
-+	if (had_max_tr && !trace->use_max_tr) {
- 		/*
- 		 * We need to make sure that the update_max_tr sees that
- 		 * current_trace changed to nop_trace to keep it from
-@@ -6354,7 +6370,7 @@ int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 		tracing_disarm_snapshot(tr);
- 	}
- 
--	if (!had_max_tr && t->use_max_tr) {
-+	if (!had_max_tr && trace->use_max_tr) {
- 		ret = tracing_arm_snapshot_locked(tr);
- 		if (ret)
- 			return ret;
-@@ -6363,18 +6379,21 @@ int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 	tr->current_trace = &nop_trace;
- #endif
- 
--	if (t->init) {
--		ret = tracer_init(t, tr);
-+	tr->current_trace_flags = t->flags ? : t->tracer->flags;
-+
-+	if (trace->init) {
-+		ret = tracer_init(trace, tr);
- 		if (ret) {
- #ifdef CONFIG_TRACER_MAX_TRACE
--			if (t->use_max_tr)
-+			if (trace->use_max_tr)
- 				tracing_disarm_snapshot(tr);
- #endif
-+			tr->current_trace_flags = nop_trace.flags;
- 			return ret;
- 		}
- 	}
- 
--	tr->current_trace = t;
-+	tr->current_trace = trace;
- 	tr->current_trace->enabled++;
- 	trace_branch_enable(tr);
- 
-@@ -9598,40 +9617,20 @@ create_trace_option_file(struct trace_array *tr,
- 
- 	topt->entry = trace_create_file(opt->name, TRACE_MODE_WRITE,
- 					t_options, topt, &trace_options_fops);
--
- }
- 
- static int
--create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
-+create_trace_option_files(struct trace_array *tr, struct tracer *tracer,
-+			  struct tracer_flags *flags)
- {
- 	struct trace_option_dentry *topts;
- 	struct trace_options *tr_topts;
--	struct tracer_flags *flags;
- 	struct tracer_opt *opts;
- 	int cnt;
--	int i;
--
--	if (!tracer)
--		return 0;
--
--	flags = tracer->flags;
- 
- 	if (!flags || !flags->opts)
+ 	/* We can change this flag only when not running. */
+ 	if (tr->current_trace != &function_trace)
  		return 0;
  
--	/*
--	 * If this is an instance, only create flags for tracers
--	 * the instance may have.
--	 */
--	if (!trace_ok_for_array(tracer, tr))
--		return 0;
--
--	for (i = 0; i < tr->nr_topts; i++) {
--		/* Make sure there's no duplicate flags. */
--		if (WARN_ON_ONCE(tr->topts[i].tracer->flags == tracer->flags))
--			return -EINVAL;
--	}
--
- 	opts = flags->opts;
- 
- 	for (cnt = 0; opts[cnt].name; cnt++)
-@@ -9663,6 +9662,96 @@ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
- 	return 0;
- }
- 
-+static int get_global_flags_val(struct tracer *tracer)
-+{
-+	struct tracers *t;
-+
-+	list_for_each_entry(t, &global_trace.tracers, list) {
-+		if (t->tracer != tracer)
-+			continue;
-+		if (!t->flags)
-+			return -1;
-+		return t->flags->val;
-+	}
-+	return -1;
-+}
-+
-+static int add_tracer_options(struct trace_array *tr, struct tracers *t)
-+{
-+	struct tracer *tracer = t->tracer;
-+	struct tracer_flags *flags = t->flags ?: tracer->flags;
-+
-+	if (!flags)
-+		return 0;
-+
-+	/* Only add tracer options after update_tracer_options finish */
-+	if (!tracer_options_updated)
-+		return 0;
-+
-+	return create_trace_option_files(tr, tracer, flags);
-+}
-+
-+static int add_tracer(struct trace_array *tr, struct tracer *tracer)
-+{
-+	struct tracer_flags *flags;
-+	struct tracers *t;
-+	int ret;
-+
-+	/* Only enable if the directory has been created already. */
-+	if (!tr->dir && !(tr->flags & TRACE_ARRAY_FL_GLOBAL))
-+		return 0;
-+
-+	/*
-+	 * If this is an instance, only create flags for tracers
-+	 * the instance may have.
-+	 */
-+	if (!trace_ok_for_array(tracer, tr))
-+		return 0;
-+
-+	t = kmalloc(sizeof(*t), GFP_KERNEL);
-+	if (!t)
-+		return -ENOMEM;
-+
-+	t->tracer = tracer;
-+	t->flags = NULL;
-+	list_add(&t->list, &tr->tracers);
-+
-+	flags = tracer->flags;
-+	if (!flags) {
-+		if (!tracer->default_flags)
-+			return 0;
-+
-+		/*
-+		 * If the tracer defines default flags, it means the flags are
-+		 * per trace instance.
-+		 */
-+		flags = kmalloc(sizeof(*flags), GFP_KERNEL);
-+		if (!flags)
-+			return -ENOMEM;
-+
-+		*flags = *tracer->default_flags;
-+		flags->trace = tracer;
-+
-+		t->flags = flags;
-+
-+		/* If this is an instance, inherit the global_trace flags */
-+		if (!(tr->flags & TRACE_ARRAY_FL_GLOBAL)) {
-+			int val = get_global_flags_val(tracer);
-+			if (!WARN_ON_ONCE(val < 0))
-+				flags->val = val;
-+		}
-+	}
-+
-+	ret = add_tracer_options(tr, t);
-+	if (ret < 0) {
-+		list_del(&t->list);
-+		kfree(t->flags);
-+		kfree(t);
-+	}
-+
-+	return ret;
-+}
-+
- static struct dentry *
- create_trace_option_core_file(struct trace_array *tr,
- 			      const char *option, long index)
-@@ -10111,13 +10200,27 @@ static void init_trace_flags_index(struct trace_array *tr)
- 		tr->trace_flags_index[i] = i;
- }
- 
--static int __update_tracer_options(struct trace_array *tr)
-+static int __update_tracer(struct trace_array *tr)
- {
- 	struct tracer *t;
- 	int ret = 0;
- 
- 	for (t = trace_types; t && !ret; t = t->next)
-+		ret = add_tracer(tr, t);
-+
-+	return ret;
-+}
-+
-+static __init int __update_tracer_options(struct trace_array *tr)
-+{
-+	struct tracers *t;
-+	int ret = 0;
-+
-+	list_for_each_entry(t, &tr->tracers, list) {
- 		ret = add_tracer_options(tr, t);
-+		if (ret < 0)
-+			break;
-+	}
- 
- 	return ret;
- }
-@@ -10171,7 +10274,7 @@ static int trace_array_create_dir(struct trace_array *tr)
- 	}
- 
- 	init_tracer_tracefs(tr, tr->dir);
--	ret = __update_tracer_options(tr);
-+	ret = __update_tracer(tr);
- 	if (ret) {
- 		event_trace_del_tracer(tr);
- 		tracefs_remove(tr->dir);
-@@ -10226,11 +10329,13 @@ trace_array_create_systems(const char *name, const char *systems,
- 	spin_lock_init(&tr->snapshot_trigger_lock);
- #endif
- 	tr->current_trace = &nop_trace;
-+	tr->current_trace_flags = nop_trace.flags;
- 
- 	INIT_LIST_HEAD(&tr->systems);
- 	INIT_LIST_HEAD(&tr->events);
- 	INIT_LIST_HEAD(&tr->hist_vars);
- 	INIT_LIST_HEAD(&tr->err_log);
-+	INIT_LIST_HEAD(&tr->tracers);
- 	INIT_LIST_HEAD(&tr->marker_list);
- 
- #ifdef CONFIG_MODULES
-@@ -10403,6 +10508,7 @@ static int __remove_instance(struct trace_array *tr)
- 	free_percpu(tr->last_func_repeats);
- 	free_trace_buffers(tr);
- 	clear_tracing_err_log(tr);
-+	free_tracers(tr);
- 
- 	if (tr->range_name) {
- 		reserve_mem_release_by_name(tr->range_name);
-@@ -11437,6 +11543,7 @@ __init static int tracer_alloc_buffers(void)
- 	 * just a bootstrap of current_trace anyway.
- 	 */
- 	global_trace.current_trace = &nop_trace;
-+	global_trace.current_trace_flags = nop_trace.flags;
- 
- 	global_trace.max_lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
- #ifdef CONFIG_TRACER_MAX_TRACE
-@@ -11450,10 +11557,7 @@ __init static int tracer_alloc_buffers(void)
- 
- 	init_trace_flags_index(&global_trace);
- 
--	register_tracer(&nop_trace);
--
--	/* Function tracing may start here (via kernel command line) */
--	init_function_trace();
-+	INIT_LIST_HEAD(&global_trace.tracers);
- 
- 	/* All seems OK, enable tracing */
- 	tracing_disabled = 0;
-@@ -11474,6 +11578,11 @@ __init static int tracer_alloc_buffers(void)
- 	list_add(&global_trace.marker_list, &marker_copies);
- 	list_add(&global_trace.list, &ftrace_trace_arrays);
- 
-+	register_tracer(&nop_trace);
-+
-+	/* Function tracing may start here (via kernel command line) */
-+	init_function_trace();
-+
- 	apply_trace_boot_options();
- 
- 	register_snapshot_cmd();
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 8ecaf91ca823..299862aad66c 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -392,6 +392,7 @@ struct trace_array {
- 	int			buffer_percent;
- 	unsigned int		n_err_log_entries;
- 	struct tracer		*current_trace;
-+	struct tracer_flags	*current_trace_flags;
- 	u64			trace_flags;
- 	unsigned char		trace_flags_index[TRACE_FLAGS_MAX_SIZE];
- 	unsigned int		flags;
-@@ -406,6 +407,7 @@ struct trace_array {
- 	struct list_head	systems;
- 	struct list_head	events;
- 	struct list_head	marker_list;
-+	struct list_head	tracers;
- 	struct trace_event_file *trace_marker_file;
- 	cpumask_var_t		tracing_cpumask; /* only trace on set CPUs */
- 	/* one per_cpu trace_pipe can be opened by only one user */
-@@ -637,6 +639,7 @@ struct tracer {
- 						u64 mask, int set);
- 	struct tracer		*next;
- 	struct tracer_flags	*flags;
-+	struct tracer_flags	*default_flags;
- 	int			enabled;
- 	bool			print_max;
- 	bool			allow_instances;
+-	new_flags = (func_flags.val & ~bit) | (set ? bit : 0);
++	new_flags = (tr->current_trace_flags->val & ~bit) | (set ? bit : 0);
+ 	func = select_trace_function(new_flags);
+ 	if (!func)
+ 		return -EINVAL;
+@@ -491,7 +491,7 @@ static struct tracer function_trace __tracer_data =
+ 	.init		= function_trace_init,
+ 	.reset		= function_trace_reset,
+ 	.start		= function_trace_start,
+-	.flags		= &func_flags,
++	.default_flags	= &func_flags,
+ 	.set_flag	= func_set_flag,
+ 	.allow_instances = true,
+ #ifdef CONFIG_FTRACE_SELFTEST
 -- 
 2.51.0
 
