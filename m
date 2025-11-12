@@ -1,185 +1,167 @@
-Return-Path: <linux-kernel+bounces-896911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04772C5179D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:53:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3143C51887
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6308188D13F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0339E4FF204
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8912FFF94;
-	Wed, 12 Nov 2025 09:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THXlsGbF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B63F2FFF98;
+	Wed, 12 Nov 2025 09:50:29 +0000 (UTC)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0122FFDE0;
-	Wed, 12 Nov 2025 09:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B192FE581
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941028; cv=none; b=de6/GxKzQt05ObQAOyzQpnGInJw/0hStdkB2NryoJcbRFPZHWtVVxGtcH2HEh+NW6b3VmhPI+PYGJarVWOPUXQJNyrNV8DAmYwrhtv+zqOmdTtkWOFAgW1FRoPKKUXzfjxG4m3mwoY5CtFmYSnvP8kUM9L6muo9IoUCMBYc+bU0=
+	t=1762941028; cv=none; b=ewTXEo+s4oAbgOCgomhuGYNW6hA1yiU8nKhR30xn68cKExst8Xc9fkx62f/LQR71MumUQPkk5N/x/lQlnCDAD6wVuAWRdFFpVX4BORnp6dm7If4V9+xWtLNrqcTc0Cw0esyHgAYh2WcWE1/TFwqTGO1vTTiQcmFUWeL6t6HEwe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762941028; c=relaxed/simple;
-	bh=wKkYTwbaHODjzCytHEFDqnL5g4JxssRcsrQb6AjyIG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8XrxaaQ8OQxhXHF+qBUbqo9T7Tk605KnWJqcEYvMizxmxJlDSsrcMQ0Zg0MtmzHafmkH1hBgejFr1+Tc83V2wMXOssWc1ON+aW8fqwgbjuGkRLW1ThhNS/LkTC97gKzUe2B64JOVe85+PQqGyTOsellI/jB+AsU3QaJtlG+Hpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THXlsGbF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE0C7C4CEF8;
-	Wed, 12 Nov 2025 09:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762941027;
-	bh=wKkYTwbaHODjzCytHEFDqnL5g4JxssRcsrQb6AjyIG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=THXlsGbFErwUFo1wXBwnqtZVc6BeYn6L2UE7CtZWfMJ4+KHQIlHtuc0TildUHh9Ob
-	 lbTpx2tKz/MJDGXzxMH3yv/POWUQ2aqZzG7HA94ie+/hvHaVTkNs0qr3mkXqf8MUl6
-	 3xQrouYjCT1oIZFDzLeMNz2k5X4HgsMojIK8wtRmO6zaaZSfFJSKTvA/atntB+Nvce
-	 UTg4ZNmTK0FKQW5hAT0TVEXQQv998uAJgquRdnYwTccyPWKJ4vmwWzDuutaq7NLM3K
-	 yO9dpZI9D2EUC6PxhSTPniAIx6r42xtWyAYBzgMBzkGIU3Q09/XJ3yR3XEsaBgw3Vc
-	 GTO/aG2ppFgmw==
-Date: Wed, 12 Nov 2025 10:50:19 +0100
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Charles Mirabile <cmirabil@redhat.com>
-Cc: fj1078ii@fujitsu.com, catalin.marinas@arm.com, fj2767dz@fujitsu.com,
-	guohanjun@huawei.com, ilkka@os.amperecomputing.com, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, rafael@kernel.org,
-	sudeep.holla@arm.com, will@kernel.org, tglx@linutronix.de,
-	maz@kernel.org
-Subject: Re: [PATCH v4] ACPI: AGDI: Add interrupt signaling mode support
-Message-ID: <aRRYW7UK7PWb6cpS@lpieralisi>
-References: <OSAPR01MB7669F9B9E145A50B38819E13D5CEA@OSAPR01MB7669.jpnprd01.prod.outlook.com>
- <20251112044239.4049011-1-cmirabil@redhat.com>
+	bh=beH0aNDGKuJ+32YpmQmMT5gL32xJIZYbDXbe936SAvg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nCgeR8+70OmsTXk+y2nPdJfRMSJawBcqy0kfvve8Y+fWocFBXae0Cr5TTPyNqE0PbpVhfRhFVGT1B1GN1m20Kg520ykbmFRsUgZzr5k8+76RTbRANRY5PPUcS6ZS65tPoo56Zcd4jlxyHbj2Cp2cH9ly1y5G7ZJ2lehb0BV4nO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7c70eae77d7so149864a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:50:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762941026; x=1763545826;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DpXwwzHOaxXlBoIFLoYYIaNOb3AgpnrR/uWR9cK9DAI=;
+        b=q+nJQWjDQNt3HSPyXEYWD/jemcPIpvf83oNFT2EpX0XwL5A5ndLNi0lwPCaCqEWz1u
+         G+a5Ee6XCrJ7ZQpMhC536yF4p2SgnBG2kh0TJzCEvjQBkzfweuoLo4mDP3ZJkh43rPuy
+         Ah5A4MQxkbq0GIJXjLxPAglJJif+2hBqPCdL8k/kxbWV/QSlFyexIRQPrMjMmweCUXiV
+         6uUa/OOSxxJU7/DOFkJRQ9DkQx/qMaqo195Gb4Jiq4RUiesuMA1R2CZXgc0WhzhgZ8HC
+         A1lCw7+yPMziJSZMudKsUUSAKSUGcJZwagOXyRfmDgmtrR8CzRcj623Ed6f/fF5fFNm9
+         ukWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcO6CrnFIf7lPUyF0YpvH2WB367/qSwa4YPAUm7SjREVE76jBF7D2VZXF5L/ML2D55DUM9Hebx5BsP/WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv0RxJ/VE3Y7m0sNX11RDFDj4NgVwDKpCxrT6fB4FqKXUEU1L0
+	ADA0LbN2idxkAR4Ee0LEXWelJ+nXgDCNEnTY66RQ8sMJgCpb/fPxX4VW
+X-Gm-Gg: ASbGncu9sGDfiVy1Gf4BdFiEYB6OQ+ucgv9knxlJOBckq0magxd/W+8zEbqCd+pA1NA
+	kHuR0i6V/fnC+BUN61ScPGMxK7rsts6bPX7GQFcL5I1HtoEJs71jt2LE7/DQsgcNLSxZT0gEulB
+	KTBXdjhTFSZSmScc75vzDrSx8R7MkpNQJQBNqnFOv50UhmZdjAioFy6Cg6NIdT6h17KqHmey4uM
+	NHUww9K9S0k6Ul/X+cH+v41Uq9RQ2aT9x9bq+c9hmmp7QKMMUjnjF4HZQTRdg2+Z6nknA797V3D
+	gAhPi2E4CAKkFiThIgUKIVQNwAzdfIZ/xukBfFwJKRucyLP4a1OAwQ5PnTTdajCn0FWH411Sw4N
+	KKCNExAKQURVaiB7g43hItYef+ssAppWIcDyKRjVQZ7XkciQ0CZoogtsC+qcbSxW7VogkCA3Y2g
+	4egG0=
+X-Google-Smtp-Source: AGHT+IHtHCFbCH8j0aKNtBOwFbMViba6SRutkgYrQJRH1tU0LDhiR1WN8lt5sDOpUMv6IklQY4noQw==
+X-Received: by 2002:a05:6808:22a6:b0:44d:af21:bf34 with SMTP id 5614622812f47-4507444e54fmr991030b6e.2.1762941025668;
+        Wed, 12 Nov 2025 01:50:25 -0800 (PST)
+Received: from localhost ([2a03:2880:10ff:49::])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4500280856fsm8065047b6e.24.2025.11.12.01.50.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 01:50:25 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 12 Nov 2025 01:50:23 -0800
+Subject: [PATCH net-next] net: bnx2x: convert to use get_rx_ring_count
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251112044239.4049011-1-cmirabil@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251112-bnx_grxrings-v1-1-1c2cb73979e2@debian.org>
+X-B4-Tracking: v=1; b=H4sIAF5YFGkC/x3MUQrCMAwG4KuE/3mFNTqQXkVE1jareYmSDimM3
+ V3wO8B3oIurdCQ64PLVrm9DojgRymu1JkErEoFnXmKMHLKNZ/Phaq2HOZdSr5zrjS+YCB+XTce
+ /u8NkDyZjx+M8fx7dJm9oAAAA
+X-Change-ID: 20251112-bnx_grxrings-0bccd42bd823
+To: Sudarsana Kalluru <skalluru@marvell.com>, 
+ Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2471; i=leitao@debian.org;
+ h=from:subject:message-id; bh=beH0aNDGKuJ+32YpmQmMT5gL32xJIZYbDXbe936SAvg=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFFhgjgMAx8QI7DUEZko2QkT4Y3jl+kfC2Jz2u
+ e04QWGWqwqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRRYYAAKCRA1o5Of/Hh3
+ bT3dD/0b4Mgi2kgPBK1La5cXRsiG7Nx78A+Bgs05IeE6ZcjjqvPEVpBLQD/yPu4p0Q7oT01yu1z
+ riiUlyQdOTWf6AR3uOY+ggqqCfPH2wkbG3OoJL2FGSQ4GXNP7Tux7BIST2APfgTvvZcx0g7VfA4
+ i2DeZr9s3GDUoQdyG5FWTj6uyQZT7W4Fbe+ejoJ7OClrXmSGu9fJ3W4aIvdS2tIBSf/BWTkjwyk
+ eqfl4DMNZ1gvcNyDN6f1zDGphzp51lJp1hkXsXGAFNnFrp7KzCCUOW7Lm3cmDTqWYXaSKkylBbr
+ VkIGJWD/tbrk+3XxnEJZmhWOAFcjXP/VXl8JAz4UfIBQkQRA3OeC3bSXeIVKppnkeIHlwovn037
+ AT6PhYDx+ATjnaOqGIdbzbvh0XUDyxymJgdg3B2JzMTZLOlCDvmTxaQ+SGFbplHikUAwrUnErT6
+ Zxn3ojkdt66fkHHg4uggDnXu1yCdFUvH/DXBzd9EgIadjLueNOmGzdqO7Hupn+fzcYceQkdLwyF
+ UzITPv61FC43K+Q6fsnbLhHCYe02/SsRem8zSbg/YXvLw5q6SNuAuDBCIdJH5/wl64SkahEzleV
+ YTFnWT2WD3uSGHkrWG8prq78P0s8tENIm9Fioehm33Dak2DwpFSx1Lb5k/TbY6oqRE60Orxgv+L
+ CnOGj43T6BdmXsw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-[+cc Thomas, Marc]
+Convert the bnx2x driver to use the new .get_rx_ring_count ethtool
+operation instead of implementing .get_rxnfc solely for handling
+ETHTOOL_GRXRINGS command. This simplifies the code by replacing the
+switch statement with a direct return of the queue count.
 
-On Tue, Nov 11, 2025 at 11:42:37PM -0500, Charles Mirabile wrote:
-> Hi All—
-> 
-> On Mon, Nov 10, 2025 at 07:38:17AM +0000, Kazuhiro Abe (Fujitsu) wrote:
-> > Hi Will,
-> > 
-> > > Hi Will,
-> > > 
-> > > > [You don't often get email from will@kernel.org. Learn why this is
-> > > > important at https://aka.ms/LearnAboutSenderIdentification ]
-> > > >
-> > > > On Mon, Oct 20, 2025 at 09:23:05PM +0800, Hanjun Guo wrote:
-> > > > > On 2025/10/17 15:39, Kazuhiro Abe wrote:
-> > > > > > AGDI has two types of signaling modes: SDEI and interrupt.
-> > > > > > Currently, the AGDI driver only supports SDEI.
-> > > > > > Therefore, add support for interrupt signaling mode The interrupt
-> > > > > > vector is retrieved from the AGDI table, and call panic function
-> > > > > > when an interrupt occurs.
-> > > > > >
-> > > > > > Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> > > > > > Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
-> > > > > > ---
-> > > > > > Hanjun, I have addressed all your comments.
-> > > > > > Please review them.
-> > > > > >
-> > > > > > v3->v4
-> > > > > >   - Add a comment to the flags member.
-> > > > > >   - Fix agdi_interrupt_probe.
-> > > > > >   - Fix agdi_interrupt_remove.
-> > > > > >   - Add space in struct initializsation.
-> > > > > >   - Delete curly braces.
-> > > > >
-> > > > > Looks good to me,
-> > > > >
-> > > > > Acked-by: Hanjun Guo <guohanjun@huawei.com>
-> > > >
-> > > > I wasn't cc'd on the original patch but I couldn't figure out why it
-> > > > uses IRQF_NO_AUTOEN when requesting the irq given that the first thing
-> > > > it does is enable it.
-> > > 
-> > > I misunderstood the usage of request_irq and enable_irq.
-> > > Since there's no need to separate them, I will remove IRQF_NO_AUTOEN and the
-> > > enable_irq call, and send v5.
-> > 
-> > I found out when calling request_nmi, removing IRQF_NO_AUTOEN results in an error (-EINVAL).
-> > Therefore, I would like to keep IRQF_NO_AUTOEN specified.
-> > If you have any comments on this version, please let me know.
-> 
-> Could it be that this is just a bug in `request_nmi`? I see the following:
-> 
-> if (!desc || (irq_settings_can_autoenable(desc) &&
->     !(irqflags & IRQF_NO_AUTOEN)) ||
->     !irq_settings_can_request(desc) ||
->     WARN_ON(irq_settings_is_per_cpu_devid(desc)) ||
->     !irq_supports_nmi(desc))
-> 	return -EINVAL;
-> 
-> Perhaps there is just a missing `!` before `irq_settings_can_autoenable`.
-> 
-> As far as I can tell it has always been wrong - git blame points me to the
-> original commit where that code was introduced:
-> 
-> b525903c254da ("genirq: Provide basic NMI management for interrupt lines")
+The new callback provides the same functionality in a more direct way,
+following the ongoing ethtool API modernization.
 
-I don't think that's the right rationale (and I can't claim to understand
-it fully either - that's why I added Thomas/Marc in CC).
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-As per b525903c254da - IIUC NMI must not be autoenable-capable -
-enable/disable must be done using enable_nmi/disable_nmi_nosync explicitly.
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index fc8dec37a9e4..3d853eeb976f 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -3355,19 +3355,11 @@ static int bnx2x_get_rxfh_fields(struct net_device *dev,
+ 	return 0;
+ }
+ 
+-static int bnx2x_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info,
+-			   u32 *rules __always_unused)
++static u32 bnx2x_get_rx_ring_count(struct net_device *dev)
+ {
+ 	struct bnx2x *bp = netdev_priv(dev);
+ 
+-	switch (info->cmd) {
+-	case ETHTOOL_GRXRINGS:
+-		info->data = BNX2X_NUM_ETH_QUEUES(bp);
+-		return 0;
+-	default:
+-		DP(BNX2X_MSG_ETHTOOL, "Command parameters not supported\n");
+-		return -EOPNOTSUPP;
+-	}
++	return BNX2X_NUM_ETH_QUEUES(bp);
+ }
+ 
+ static int bnx2x_set_rxfh_fields(struct net_device *dev,
+@@ -3674,7 +3666,7 @@ static const struct ethtool_ops bnx2x_ethtool_ops = {
+ 	.get_strings		= bnx2x_get_strings,
+ 	.set_phys_id		= bnx2x_set_phys_id,
+ 	.get_ethtool_stats	= bnx2x_get_ethtool_stats,
+-	.get_rxnfc		= bnx2x_get_rxnfc,
++	.get_rx_ring_count	= bnx2x_get_rx_ring_count,
+ 	.get_rxfh_indir_size	= bnx2x_get_rxfh_indir_size,
+ 	.get_rxfh		= bnx2x_get_rxfh,
+ 	.set_rxfh		= bnx2x_set_rxfh,
+@@ -3702,7 +3694,7 @@ static const struct ethtool_ops bnx2x_vf_ethtool_ops = {
+ 	.get_sset_count		= bnx2x_get_sset_count,
+ 	.get_strings		= bnx2x_get_strings,
+ 	.get_ethtool_stats	= bnx2x_get_ethtool_stats,
+-	.get_rxnfc		= bnx2x_get_rxnfc,
++	.get_rx_ring_count	= bnx2x_get_rx_ring_count,
+ 	.get_rxfh_indir_size	= bnx2x_get_rxfh_indir_size,
+ 	.get_rxfh		= bnx2x_get_rxfh,
+ 	.set_rxfh		= bnx2x_set_rxfh,
 
-cbe16f35bee6 ("genirq: Add IRQF_NO_AUTOEN for request_irq/nmi()")
-added the logic checking the IRQF_NO_AUTOEN flag to request_nmi().
+---
+base-commit: 37eb4c8985f12ea1c5b62defc673346ac4a113cd
+change-id: 20251112-bnx_grxrings-0bccd42bd823
 
-Now, AFAICS irq_settings_can_autoenable(desc) returns true in this
-specific case - the IRQ is a GICv3 SPI.
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
-First question is - before commit cbe16f35bee6, how request_nmi() could
-have possibly succeeded - irq_settings_can_autoenable() would return
-true and request_nmi() would have failed.
-
-Come cbe16f35bee6:
-
-if (!desc || (irq_settings_can_autoenable(desc) && !(irqflags & IRQF_NO_AUTOEN)) ||
-	!irq_settings_can_request(desc) ||
-	WARN_ON(irq_settings_is_per_cpu_devid(desc)) ||
-	!irq_supports_nmi(desc))
-		return -EINVAL;
-
-Now the check passes _if_ you pass in irqflags IRQF_NO_AUTOEN.
-
-I agree with Will that's a bit counterintuitive - maybe we can force
-the irqdesc to be NOAUTOEN in request_nmi() directly ?
-
-Thomas and Marc know better so that's where I stop.
-
-Thanks,
-Lorenzo
-
-> I looked and the only two callers are using `IRQF_NO_AUTOEN` so I guess it
-> just hasn't been noticed yet.
-> 
-> Happy to send a patch to fix it.
-> 
-> > 
-> > Best Regards,
-> > Kazuhiro Abe
-> > 
-> > > 
-> > > Best Regards,
-> > > Kazuhiro Abe
-> > > 
-> > > >
-> > > > Will
-> 
-> Best—Charlie
-> 
 
