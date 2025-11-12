@@ -1,83 +1,109 @@
-Return-Path: <linux-kernel+bounces-896919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C0CC51917
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:09:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AE2C518C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:06:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA603A9885
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:56:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 684614EB496
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268D62FF15A;
-	Wed, 12 Nov 2025 09:56:23 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B499921C194;
-	Wed, 12 Nov 2025 09:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BC12FFDFF;
+	Wed, 12 Nov 2025 09:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MytEszeF"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBEA2FE580
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941382; cv=none; b=ket+Grzwz4TSZTnUAdcEie4HFZCevdrXXwzgdtkzfDEr077gXdNIUmCE2MAs5q8imBusNSZDONd+dEprXhHwRC5ZJRE4OIu6v1N16lADJya8pPJ28rIaVe6iPbo5HVx87n4ohljzSiN5egqj0dJrd/OtfXbXpiIlAfgsovsbOpo=
+	t=1762941428; cv=none; b=OAtQgUeDRn+iCyOTKm3VUof8WAi39FuulQGJesvpF1vB0yONS+klkysVpzc/AmZeAF4T6HgS9vWWQsBYU+YCp0Q7+ws2sRJTc18Ceo/kilX75QAt/0+Gqq5zrus8Dq0CmaVzoJq8QUKlox7+xOpyOdPqkn9x8XpEpX4vjOSriqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941382; c=relaxed/simple;
-	bh=8jt8rlBeGab/FL4KkfJu8liGWlNYNX8MU01la3kQr2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JA1Y9u+0cU1gLmTWiNN62FDvaJJNxE7byP5wCkhIKLSrRmO5RejFU5C0RrcRB1TuGP7/wn4DiO3thOy2xofl1he49IxNlVkRNimg4WcqHGs50K18bKRaRxsU74lVsr2uU64z5opSyI4CyddSMB6ivg7Qp3aM+Y4AX5J+5sOWKpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1vJ7aJ-0003qh-00; Wed, 12 Nov 2025 10:56:15 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C7825C0256; Wed, 12 Nov 2025 10:56:05 +0100 (CET)
-Date: Wed, 12 Nov 2025 10:56:05 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
- uniquification
-Message-ID: <aRRZtbBdCfEEhad9@alpha.franken.de>
-References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk>
- <aRMrmjJcLJYR8QO-@alpha.franken.de>
- <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
+	s=arc-20240116; t=1762941428; c=relaxed/simple;
+	bh=CIbkZoEcvxMuArEM88rMsYIiHa3ILLozzeTvmZfTtT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=asI9PAaDCaBk5AKmFXZ7pRUuUW85mC4Dc8bhDT6gVDzn+zs/B9ucyD9xPfWaSzyZ+bpl9OBKrijegiJC2TsER05ZlAt8aJX1/VeSbX18tEpIy/uV3+16YdTBHEY9jANQLEHJ+a6KDjD/UiiQb9ICo1yI7h0zO1Z/mj0DfJsN/Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MytEszeF; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b983fbc731bso24172a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:57:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762941426; x=1763546226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CIbkZoEcvxMuArEM88rMsYIiHa3ILLozzeTvmZfTtT0=;
+        b=MytEszeFd0wvJ/wuqK6NxlN1QefOYVAO9HXEowT45u60+HCefw/nIrfoaXUhufX2nU
+         OkHgE1D4A9iOBTlIofrniMgpiqFrKF75GddJ3Oo+JCfYBQg72HHTIBCx3dE+fGZnTvTu
+         1gwrZNUsThvakhEB+6FDzD4zWq8ue6oIWN3IHfKzurWTANuMSONyGxpEec4xQbQTS2rD
+         4vSFASjxFFOsB6ledt3cJT0SLeildTq4VcMUJj8cseWdQYRqiIQGqT1qIN7qyGw/SQSX
+         aM9EjLnf8wl8CvXnBxun86n+eKCkZ3Ix7JJfd0GlX73XpVzpFplnvKeZ9swM5HYITGtg
+         3csA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762941426; x=1763546226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CIbkZoEcvxMuArEM88rMsYIiHa3ILLozzeTvmZfTtT0=;
+        b=X8Yl6jT4b0TRHmj38+3VY3BotgcBJ6sOQa4AUgtsPl0aZSJNGTiY3JSmxW+blBM2yd
+         jsW03xAoskHul6nNL2K0r9tB+kA9v/r89KpNkovL7hOy2n7Dr9yhfgzaLWfLjh0Rerfq
+         mu+NwYlHmwbFVlufBxukEtaFm0D4V62ugZgaJPCNwpT848M9VLmV0bEqS4GhceqOMdDV
+         jXSlC+sDRYko0Cqby7VRStwrFL24vYB3294cc3rHEr+Yn9FKZUJc6703LfEp7brWbL9+
+         J9UBxAznWFSL20Q6cxkXMSCUPW8Q6DaPnu4YsGAitjsaruqL0WVXrkRtBQxfAL2t9b1G
+         HkRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWiaQSUZfFatWcYyUinRfapwM6Q1vaY9DjYp91vHEu32HgnBgwB6Y/PEDQ+0JW1u40aej3zxNrGKq8urQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAMbRl3gdZD9ZeTYXRKhFL8OQlb5tWRupzNG8NdwavSQuPKE01
+	ZCFR+iND4+nrX7N1HSihMyc5nN+MDW9P8D539C64pPxGDjE8MrbCT0xi6eq++Jz7yDuG3JHZoIp
+	LcPIKW8gpXVW23qoLJ/djynGPzvJUgLs=
+X-Gm-Gg: ASbGnctfC7t+taychlDmIu7lRrbhsOsQDIaIgzmpVtixLZ6HRST79yxb5/8Bjksdzki
+	OSXHSClCB5RVZFbP/y8Qn4Cj4tYRKWLwVtUjcOJuOyIhX1iZiX77ndp+N065ELTIIkRWtBzPEDu
+	cA0oz7GQu4bS9/5H0QqraTf32r6JzsdRGjJUZtQBEL+puYKWuZo08L9o9Jc0YqR4XQWnKvWNnBc
+	IWsGdJZMf2iwtB4mSUu98pUDcuau99yTEvzybzxFCoMtJK9bGCRNKyTq+smeKlCZAobydeutJsX
+	+uJ25CV2eJHHkSXluRKxV/iBium5dTMLcebCkUdQEvuQ7Dc3n/NF7KR3eDA+He9qM5IhxdknGxR
+	xcDvxNInV5TMl6g==
+X-Google-Smtp-Source: AGHT+IEhemJfSLH/p4Bhjk03hiHG8nPZMckQ4o1gzMhDR33YwdnDKqTg/WdwFRNF3u+gDynCToXBRDMfK6PTspqbdUQ=
+X-Received: by 2002:a17:902:d4cf:b0:297:fe30:3b94 with SMTP id
+ d9443c01a7336-2984ee0ca79mr17858365ad.9.1762941425924; Wed, 12 Nov 2025
+ 01:57:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
+References: <20251101214629.10718-1-mt@markoturk.info> <aRRJPZVkCv2i7kt2@vps.markoturk.info>
+ <CANiq72kfy3RvCwxp7Y++fKTMrviP5CqC_Zts_NjtEtNCnpU3Mg@mail.gmail.com>
+In-Reply-To: <CANiq72kfy3RvCwxp7Y++fKTMrviP5CqC_Zts_NjtEtNCnpU3Mg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 12 Nov 2025 10:56:53 +0100
+X-Gm-Features: AWmQ_bmwDCOcARGiEKIpjIRnRae5yfDKTRIUwc3OloyDgPkRmaMpijy0lYQ_hkA
+Message-ID: <CANiq72=yQ1tn0MmxNHPO4qOiGm7xZzHJAdXFsBBwmFdsC37=ZA@mail.gmail.com>
+Subject: Re: [PATCH] samples: rust: fix endianness issue in rust_driver_pci
+To: Marko Turk <mt@markoturk.info>, Dirk Behme <dirk.behme@de.bosch.com>
+Cc: dakr@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 03:41:50PM +0000, Maciej W. Rozycki wrote:
-> On Tue, 11 Nov 2025, Thomas Bogendoerfer wrote:
-> 
-> > >  Can you please give it a try with your systems?
-> > 
-> > it's booting on my R4400 SGI Indy, but I see a lot of segmentation
-> > faults during system start. If I comment out r4k_tlb_uniquify() every-
-> > thing boots fine, which is kind of strange as there is a local_flush_tlb_all(),
-> > which should leave the TLB in the same stage.... No idea why, yet.
-> 
->  Can you try the diagnostic patch below, which is what I used to verify 
-> this change, and report the entries produced?  Otherwise I wonder whether 
-> I haven't missed a barrier somewhere.
+On Wed, Nov 12, 2025 at 10:37=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Cc'ing Dirk, since he tested the sample originally.
 
-Update on the issue: Your patch is good and the segmentation faults,
-I'm seeing, have IMHO a different reason. Instead of removing the call
-to r4k_tlb_uniquify() I've replaced the jal in the binary with a nop.
-And the issue is still there with this patched kernel. I've seen
-something similair on a R12k Octanes, which comes and goes probably
-depeding on code layout. So far I wasn't able to nail this down :-(
+i.e. a new Tested-by is appreciated if you have the time since you
+tested with QEMU originally, even if this is a no-op in x86 (where I
+think you tested).
 
-Do you want to send a v2 of the patch ? I'm fine with the current version
-for applying...
+I guess we could potentially consider something like returning a
+wrapper to force us to explicitly pick either LE or BE to prevent
+things like this.
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Cheers,
+Miguel
 
