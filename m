@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-898261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48C8C54B4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:24:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12E7C54B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5170E4E1A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24E83B44AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5042E6CA0;
-	Wed, 12 Nov 2025 22:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B1D2E717C;
+	Wed, 12 Nov 2025 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="scZ7fIIA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dhaeVo4s"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F70335CBB2;
-	Wed, 12 Nov 2025 22:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEA326CE04
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762986134; cv=none; b=dk3WF3HmGw/871SKYyYS3QXMAUS6sHfLQIJgrDpIs0us7eaj8NVj0r05mk9aSTJAi9m0wym6h0lcxy8AmeRPA5jFDkJRrgtwA23SjAks28Ey9YkAl+LMeG6nlnkzGKxJi32g3S+FjD+tFV+/14SBedsSfAKyEbB55EWiy5Yrw/M=
+	t=1762986236; cv=none; b=N9pK1RlqB2qpxbehihubDV2SHflYLHP7kMPXR/1AGDYWG39sY71xj4IZyssE6Rq6UlhNLjKeRl/DIhmNfyemGrM2DRedaM2PKWynzccOnFYhGxOR59fhLVjWJiUz7H+aLwCeAwZtd1zMEAiSJXgu/9X128N8bafss0Z22k4hd2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762986134; c=relaxed/simple;
-	bh=Xnq1zlhUzQlq4w7pNhD9+285Oip5KNSnZLZFH1CTK7A=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Exs3JmWVEHsgtdahoJHTkY+HW/0ToqIhIxty2vepBJqQTWMyfp2MBV3sw2laUH5nagGj7DvLwHJxSmFVjv6aA3PDlR9e6huaj3P1vr3iKNyQiK6VoxVTkdOt+i3uBk0P4BjJqV2KtmtmLvwp+fvPHF3FYB810dBxiGf7eMDz3O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=scZ7fIIA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D1FC4CEF1;
-	Wed, 12 Nov 2025 22:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762986134;
-	bh=Xnq1zlhUzQlq4w7pNhD9+285Oip5KNSnZLZFH1CTK7A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=scZ7fIIAjmpG3n3F9Q5lLUk8HbQXHeXjOTMhm7EB1qihhQhQZ2psy2l53qUs1yeeC
-	 HmsQQGjCw9+09migWcXEzPLTShaS2/ATeGIkPJFwZSUpg6VbeZhvlYhb9lD0wbSDE7
-	 G5c1uJGoMLmLbPNsWkAs5qP8EX7OvZJ5nxzjk9rQ=
-Date: Wed, 12 Nov 2025 14:22:13 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 0/4] make vmalloc gfp flags usage more apparent
-Message-Id: <20251112142213.bc01a3abe37de98f9d40e392@linux-foundation.org>
-In-Reply-To: <20251112185834.32487-1-vishal.moola@gmail.com>
-References: <20251112185834.32487-1-vishal.moola@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762986236; c=relaxed/simple;
+	bh=1dATqO0nEuFQDqeYmGHYSBBpQc0Dmbg+kkj7JSrXrEk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EJNIG5LJZiF1e3i51o2ahmdYWJw+7L4CvSuD3KJMuR9+6aj6n+gcxcjaDHjIsQfmhDPtoEkwaqJ6uHAFYyqwg6kMyAxGMroS6Gmxsi2xuvxr8sFQSljvCavQb0ojPgxJ2pXHEwqqLO/a/vgSWrn6LOTBA9yoMv1NfNfiGB0Wzhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dhaeVo4s; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297ddb3c707so1139585ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:23:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762986234; x=1763591034; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kw4f1reWMcSIQ6pzE8/3VdwzTz8hfGSrFUGEZWPw50Q=;
+        b=dhaeVo4sdrZmWEizhfBkN/beP9EMA73++SUoZn8Z+yUMeGZ0SCMoHgL9L9WUH3kVDp
+         aRfUx38nexmowYLb2eFXtnUWYg4k62Ir6KJ+/ZuaPrNsX3PeUXCgc5RTjaseOMTMzt26
+         Xv7WMEdFbgcw7EZTlOxS89JtvF3isVL1Uir/JwT08kxhoiOzncAwsqu5L2hA2rzVz85r
+         rmatBg3HAJVGOFuw4OYEQFQZTSD72pzVneX1VlA3IYEKle2B0dg/p7bzPPgyXjAoKlna
+         03N8I85OPGMe68BJ6FjwRWvQAG5ViACZpKJXOZ4+MEMFIAZY9iHJgdsVX2BhZDFwbqZk
+         AZUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762986234; x=1763591034;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kw4f1reWMcSIQ6pzE8/3VdwzTz8hfGSrFUGEZWPw50Q=;
+        b=beWBRYURXDjqzJd91vXgRckw2GS3h6sE0SLtjRo3IyLe+RwZ7SeM0wF6a70fU1zRkj
+         s78zV12nY+CACe445eEfTgKkjwGBi/6V4t1RpNz0LojRngCt2ovr31DvpDX4L9/r6Jlz
+         CKWkGQJHuhfn8DLN/RIQm/G9558oJlN6boazzmyie3y7v821AIGNnOhlXeWqXgjeoBZa
+         173hKU6EnzYNUUYtHCM/a0oq6pcL4S2t2vb5PiZc8IR0e62qr8YQUMe6nQMD5ncoaIT/
+         +QfQU9zchsvMv1oefVWiAaZmkneUyw5tgyuU2B8a02TdDXmXFOEVwxxATyU5Ku40EHMw
+         u7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXT8nkXtjaeOcwhJxQ/Lk+2chJr5pC8dXBwzbrKNYKXXHgW80RwAjlF9G6uP/qEZvP+1urOKWjKcl6PNPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9b3k4svym5xIdKXbyB6IpO4QnFmKlx+BmLn2eQT4nbgwIt7hF
+	DYzQw5GxGt6jIxV9j/o/i4tYLcsAF9Dpc0X+HDvil2btVc4UEKajbzt2gSzM1PQ8ybPjRUu5bW/
+	gR4+wiw==
+X-Google-Smtp-Source: AGHT+IFRDn0Up2tw4QzGoUgCS4Z+fQYxb0kDQeHkuY5hAI1bGwySPTsxvKjtMiE2+kGA10Lg7snsdkDpTmc=
+X-Received: from plfh8.prod.google.com ([2002:a17:902:f548:b0:248:7327:44b8])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:15cc:b0:297:f0a8:e84c
+ with SMTP id d9443c01a7336-2984edec330mr54153015ad.52.1762986234586; Wed, 12
+ Nov 2025 14:23:54 -0800 (PST)
+Date: Wed, 12 Nov 2025 14:23:53 -0800
+In-Reply-To: <aRF5+3NW4V1z8oSi@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251106202811.211002-1-seanjc@google.com> <aRF5+3NW4V1z8oSi@intel.com>
+Message-ID: <aRUI-eHG2Bg1IOxR@google.com>
+Subject: Re: [PATCH] KVM: x86: Enforce use of EXPORT_SYMBOL_FOR_KVM_INTERNAL
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 12 Nov 2025 10:58:29 -0800 "Vishal Moola (Oracle)" <vishal.moola@gmail.com> wrote:
+On Mon, Nov 10, 2025, Chao Gao wrote:
+> On Thu, Nov 06, 2025 at 12:28:11PM -0800, Sean Christopherson wrote:
+> >+ifneq (0,$$(nr_kvm_exports))
+> >+$$(error ERROR ***\
+> >+$$(newline)found $$(nr_kvm_exports) unwanted occurrences of $(1):\
+> >+$$(newline)  $(subst AAAA,$$(newline) ,$(call get_kvm_exports,$(1)))\
+> >+$$(newline)in directories:\
+> >+$$(newline)  $(srctree)/arch/x86/kvm\
+> >+$$(newline)  $(srctree)/virt/kvm\
+> 
+> any reason to print directories here? the error message already has the file
+> name and the line number.
 
-> v2:
->   - Add __GFP_HARDWALL[3] for bpf and drm users.
->   - cc BPF mailing list
-
-v1->v2 diff:
-
---- a/mm/vmalloc.c~b
-+++ a/mm/vmalloc.c
-@@ -3922,10 +3922,12 @@ fail:
- /*
-  * See __vmalloc_node_range() for a clear list of supported vmalloc flags.
-  * This gfp lists all flags currently passed through vmalloc. Currently,
-- * __GFP_ZERO is used by BFP and __GFP_NORETRY is used by percpu.
-+ * __GFP_ZERO is used by BPF and __GFP_NORETRY is used by percpu. Both drm
-+ * and BPF also use GFP_USER, which is GFP_KERNEL | __GFP_HARDWALL.
-  */
- #define GFP_VMALLOC_SUPPORTED (GFP_KERNEL | GFP_ATOMIC | GFP_NOWAIT |\
--				__GFP_NOFAIL |  __GFP_ZERO | __GFP_NORETRY)
-+				__GFP_NOFAIL |  __GFP_ZERO | __GFP_NORETRY |\
-+				__GFP_HARDWALL)
- 
- static gfp_t vmalloc_fix_flags(gfp_t flags)
- {
-_
-
+I want to fully disambiguate the file, e.g. KVM has multiple versions of pmu.c.
+And on the off chance someone unfamiliar with KVM breaks things, to provide a
+more verbose hint on how to fix the issue.  We have a similar "rule" internally
+related to mmu_lock, and the initial implementation of the rule simply failed
+the build with no diagnostic information.  It was incredibly painful to debug,
+and I want to avoid foisting that experience on others. :-)
 
