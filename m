@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-897707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9ADC53612
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE90C535EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62952358FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:14:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A7351E15
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CA7350298;
-	Wed, 12 Nov 2025 16:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F2350A12;
+	Wed, 12 Nov 2025 16:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JMj5eyIc"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rMMomRg3"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08123451BF
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9BC350280
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963640; cv=none; b=f+l3Hdd5/t0oc2/9Py4TfrMR88PWolJaJtDUtGc3Zk3XEZ4+XomUgpPKtR6JhTfzjhWmUN4t/dthcCqBmZQFRYVvs0YkuNMUA8QxjmwV/CToaDOeS+UXjTmUJbWVl68RL2xBlZgaTTtjgZ9+bTYyiH40SKrtQPUbaS+bMKOiy3E=
+	t=1762963641; cv=none; b=MODOVfULpOtPUrLKxeIMJo8ogwAK2KGKudV+bmn8xHfCSDr8sQYF9gvOOdU0GzQ0UUVMd8Br7i/rV7lvaYev7CpPL5heo+o6ITFLhBIUP93tvs9q18ydtnmoFdyis0UEnFQ4zuOgW5/HKdm/M2LixD7uPKjbOLyqqztuJdCWly8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963640; c=relaxed/simple;
-	bh=9acULfMg/Em2axGK9DycBu+aaZYt/pGLTnRxCeFygXU=;
+	s=arc-20240116; t=1762963641; c=relaxed/simple;
+	bh=/JOce5MvxYjnhG+9whc6YtktzEE1MUnOCL4g++H5Qvw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=imyF+Ei2edeLc9KNSHBcGHYN+AGzqTt6U41verKweplTvEaQKByek639y/9ZIzpoyTs+eFxig6kRXRwvzm/6zR0kP+YhTG7GD12HDBto2Tyf8DYbSU1o+cinLI0lPt2V+To9Qh9N6vyt+i1DUWBj4r6K3FEpxc4KQFT7Zggy0OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JMj5eyIc; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=TP1qEXppQph59FGpEtta5WIjzt4tCFZDvS3SriHy9ZqreVWIQreU4j+3/23v9i8XekRom3gtLTFNWb/J3N8SDzAvNEUC4Edomi8q5VYg5YlZwh2kOuvfJMfINbmdyX3uN+ma5xABNSW1Yb+hqSVjbxO4kSUHHn5DnuwGFHthXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rMMomRg3; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7b89ee2c1a4so261507b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:07:18 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-342701608e2so1266973a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:07:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762963638; x=1763568438; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762963639; x=1763568439; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0PD3WVE3Et8Mx4ML0jlkTqIwvMykTxKsHBXz3f7gqI=;
-        b=JMj5eyIcEKjeKgi28k6lLCC/fBQF6evMjnHpYAQxQjyNNKSqIqDxwC5utZGkAHMJEk
-         bHZ/XKEYlMKIgh1awBlpBeIYaFz6EWcXt6qZ/mdXR/encqDyGbPbT/JZ+ZLmDFjXCPun
-         8g2OfmelWnXQfL+6soHfX+IoR2y9Ti89SGsru35ypdrLmv6wfazn91nos1ulrivyl4DL
-         r4hegxToPOFzqajoBPxMY35fekZ8kb1j/NC0+lcjaZxdyj80AzUFzCpQ2Mel5C/ZxjLy
-         ZXLyqInsG3T5pyqb7RDPyiB6BIZa0g4GrHzNSQEsMODQ7bHJLITpMMVu+q1R8GeZQOgA
-         +Oxw==
+        bh=NeRxT3I5fTlFPGzsOfdrv5zO/0SPs+Jxk1vfyCkm7NQ=;
+        b=rMMomRg3V7MAGEUJ+gtjOKRCAO/apCDGxAXR3U04svMHL3XtFAC/cv43G1kIjvfTAj
+         fQj2HGJUrw5/mwJouqNy3Oqrogas7AvAOyoHbF18sjYeVy/R0vsi6CKeM7cyu1XgmG1Z
+         hgsdYIyNwagmXOAd8hCI/MB8xqdFEbjSerzYq+CAvUxXkJaF6JSHVfDdrtX9YsM0bnlq
+         cZxZJ1PWZsFw+QK5mpd33DC1jIJcubtWtwIfmf+pspWBXX95rFwhml5femTxjYzA/nDK
+         dJb62haGSN2fWxbNxISZ//baDFMU2j9YWefAw3qlnXR1QtP3WBJ7SfgqxRz7Vy695fuw
+         pvBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762963638; x=1763568438;
+        d=1e100.net; s=20230601; t=1762963639; x=1763568439;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=T0PD3WVE3Et8Mx4ML0jlkTqIwvMykTxKsHBXz3f7gqI=;
-        b=TFeyaQM1ntLRL/JkknWdlQ/QAzjg78XlYOH3b2fu5E0q6zdEoO34h6PdbGtolMljNS
-         pw4aC1cEpN1myEmgLZzw+UrCtWz959qTLEbjYznAonGpD32qQYuvArabtapbPFfR0sBC
-         asKUr3jH5bGhg/AkgIg1wJCv3ssY7LxJZgjco+ff3sIKqMLyvpC6dHQYRKPm7EnaPSgq
-         L034JNpy6yNkfeezYrCXHVFm1bADQwWvbvntpJc5Ojo+H9E/k4Uc7VMjaUXGqAuJZyOf
-         QMPidEdpHFbgj4Jick3/cxJzPYmBdHqZSU68gazXndPgWQRtY7BKBVDZ4BO/m7O+MxgU
-         3hoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLmdazFsp0ziWSfHB9kwmiUbXHwtcIY6FmMUZg3hfkysYHDCmn3kCjZd30x5xvNVan/wrNa3fwtCSQVPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy7qPanvW7eKTis4DNr08y44QHai1v/EP15XH93LmUQTkV4sUR
-	Vz2jZFAj7/71LWY7QTZcTCtaRPyp+Xg9HFxvNw479qGXY5cicBXYWpZf6LnitL1asfCBBILQw0k
-	lJueMuQ==
-X-Google-Smtp-Source: AGHT+IEjXXyndI3uyYnz6VdwVRwrRE/2TwTE6PlHeOG9AsQOOA8swuLYcU/PB/iJul+vKtv3h6P+91qtb18=
-X-Received: from pgbfe27.prod.google.com ([2002:a05:6a02:289b:b0:bac:a20:5eed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6452:b0:359:9d33:df08
- with SMTP id adf61e73a8af0-3599d33e666mr2467151637.18.1762963637808; Wed, 12
- Nov 2025 08:07:17 -0800 (PST)
+        bh=NeRxT3I5fTlFPGzsOfdrv5zO/0SPs+Jxk1vfyCkm7NQ=;
+        b=gJPXcTjNB9C2HC/r8hQbdDH4tTyxqH8NgXBjYNrBinXU6F7B8z+oA0A6cSssfOjWuX
+         I7wUaKh2FGoVtHClEPVt6qC9QjmZShhqsM6LBqf7b9v0G+4MHGFcpDB/eqbFshwlHUWW
+         gbGxvLeT34HGzhII/PLDjVUhsuda5oqqJChyoKE/eTxFjlytGF8QmYl7fJKbAjCwuh9y
+         jHV07W0dee4W24ROLxCsPapjLYMYUnMRhFrQ/kKL6dJhR/4sPRat0ggr/NJ4LYvkf0wk
+         WKdvfa4gzC37lGdQCiOcDPV/TJQoc4qooTLf0fFYH85R/QyF0zd2Dw47/joQh3xfueA5
+         O8VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJTiB73JKykJ3Z6vZeYZUmgaQjG5jbuH7zoX2A3sIw7W89K7zvYsYLCGiglTmmparH7McNbJoQVgGdRm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV5Wky6LK/iqGsAy6pda5oe+5KO7qgA8rl7nxNiPfE5hgt59xX
+	22SOzks3rbug/+Y/6N2WWKFG+JHFoSkFKZeI6wxn1joLNnQ4EQNMz3+6Qb1Ol8UZJee8HEAMWi2
+	wRabd2Q==
+X-Google-Smtp-Source: AGHT+IHW/VRW2YS3MUxdH2USXZLmkU4KxcWEaSqjoMCmQ+a2fgXYqtxaEYVcXnrl//MQDzhTVtj5DS7SUhw=
+X-Received: from pjpy13.prod.google.com ([2002:a17:90a:a40d:b0:33b:51fe:1a73])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f43:b0:340:dd2c:a3da
+ with SMTP id 98e67ed59e1d1-343ddde89f2mr3893297a91.8.1762963639540; Wed, 12
+ Nov 2025 08:07:19 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 12 Nov 2025 08:07:07 -0800
+Date: Wed, 12 Nov 2025 08:07:08 -0800
 In-Reply-To: <20251112160708.1343355-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251112160708.1343355-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112160708.1343355-5-seanjc@google.com>
-Subject: [PATCH 4/5] x86/sgx: Remove superfluous asterisk from copyright
- comment in asm/sgx.h
+Message-ID: <20251112160708.1343355-6-seanjc@google.com>
+Subject: [PATCH 5/5] x86/sgx: Fix a typo in the kernel-doc comment for enum sgx_attribute
 From: Sean Christopherson <seanjc@google.com>
 To: Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
@@ -86,13 +85,11 @@ Cc: linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Stephen Rothwell <sfr@canb.auug.org.au>, Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop an asterisk from a file-level copyright comment so that the comment
-isn't intrepeted as a kernel-doc comment.
+Use the exact enum name when documenting "enum sgx_attribute" to fix a
+warning if the file is fed into kernel-doc processing:
 
-E.g. if arch/x86/include/asm/sgx.h is fed into kernel-doc processing:
-
-  WARNING: ./arch/x86/include/asm/sgx.h:2 This comment starts with '/**',
-  but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+  WARNING: ./arch/x86/include/asm/sgx.h:139 expecting prototype for enum
+           sgx_attributes. Prototype was for enum sgx_attribute instead
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
@@ -100,16 +97,18 @@ Signed-off-by: Sean Christopherson <seanjc@google.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index a88c4ab95edd..3c90cae04e1d 100644
+index 3c90cae04e1d..04958459a7ca 100644
 --- a/arch/x86/include/asm/sgx.h
 +++ b/arch/x86/include/asm/sgx.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--/**
-+/*
-  * Copyright(c) 2016-20 Intel Corporation.
-  *
-  * Intel Software Guard Extensions (SGX) support.
+@@ -112,7 +112,7 @@ enum sgx_miscselect {
+ #define SGX_SSA_MISC_EXINFO_SIZE	16
+ 
+ /**
+- * enum sgx_attributes - the attributes field in &struct sgx_secs
++ * enum sgx_attribute - the attributes field in &struct sgx_secs
+  * @SGX_ATTR_INIT:		Enclave can be entered (is initialized).
+  * @SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
+  * @SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
