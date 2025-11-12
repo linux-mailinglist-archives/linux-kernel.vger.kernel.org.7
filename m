@@ -1,772 +1,362 @@
-Return-Path: <linux-kernel+bounces-896475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B0DC50781
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:00:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689FCC50718
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 493C934D7A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D0B3AC870
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2392C3268;
-	Wed, 12 Nov 2025 04:00:03 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841F32C08AD;
-	Wed, 12 Nov 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE3427CB04;
+	Wed, 12 Nov 2025 03:47:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954AACA4B;
+	Wed, 12 Nov 2025 03:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762920002; cv=none; b=lUef8GXKU4jz5y7d5nXijMkUrN3ceXtjQ6yVnJ3aHck0lm76NzPpMpcYSwgLn2OGsUYWdEj37VaaTp2y6BeEpK3qLqWzQxzwG4UFuq1FkizTkucZRzltqn2D00Ho7Udi9Xpejj6udvLUrFvub8PMPH5kH1AUaOuups8rgmCUkkE=
+	t=1762919265; cv=none; b=MWFQHy/wo21d1BnVJenyqG4B8WcAH31WGyjUx4N0rKga8IO2zoKbISN1BxVk+ODurxidT+bxXyM+fo5rEhy19eIowRqvHkg7FdswiIVICxNTl3GcLtVib9s0uLC9yFcuyMJY4rdF/BQJA7AjBHYraoV8qPgx+frzdDAipiJ4CXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762920002; c=relaxed/simple;
-	bh=QVecN2KTxqDlNFhkmL1GOvksDgeE61gJHKq5S1idZBg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KiNPt4m3Kzo06XbdvPQbexsWyyEXH9YKJACP3DTNTjJltsNdSb+7JOmX+sELWZL2Pm2vejLJJd+WszZhmhN5cGgAvW+XlYhK35HPaKkyrNU6CxPDP4JeVcut8Tmo5J8pTJZT/hcpz3wV25xnv44aW/GqDbjLy/b2S196SziBiII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 5AC3meoL061616;
-	Wed, 12 Nov 2025 11:48:40 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 5AC3m5tV061547
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Wed, 12 Nov 2025 11:48:05 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Nov
- 2025 11:48:05 +0800
-From: CL Wang <cl634@andestech.com>
-To: <cl634@andestech.com>, <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tim609@andestech.com>
-Subject: [PATCH 2/2] spi: atcspi200: Add ATCSPI200 SPI driver
-Date: Wed, 12 Nov 2025 11:47:24 +0800
-Message-ID: <20251112034724.1977630-3-cl634@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251112034724.1977630-1-cl634@andestech.com>
-References: <20251112034724.1977630-1-cl634@andestech.com>
+	s=arc-20240116; t=1762919265; c=relaxed/simple;
+	bh=QE3ejo4akh/Drs6MO5L3RaoOCLqO6gVOFN1aUjyEkDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z9yx9oSQpjSNHLW7UMcMiPZet5djX0SwkvVSf/btbPC+pSVAy4g1NsGdLs3TfbpNsgCHC8Kf/1ZPhZBijzNXZxBj1UlD/CvPx+RTnpSt+JdJNKFzZRbKmX22KF6DvpMQN7F/G7lHH8h3+S557LTWsk5gSoe7JfHqx+HICmzI7NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D65901515;
+	Tue, 11 Nov 2025 19:47:34 -0800 (PST)
+Received: from [10.164.136.35] (unknown [10.164.136.35])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1CCD3F66E;
+	Tue, 11 Nov 2025 19:47:39 -0800 (PST)
+Message-ID: <55be2604-e70e-4529-ab2c-7df26dc32e4a@arm.com>
+Date: Wed, 12 Nov 2025 09:17:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
+ __change_memory_common
+To: Yang Shi <yang@os.amperecomputing.com>, Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, ryan.roberts@arm.com, rppt@kernel.org,
+ shijie@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251103061306.82034-1-dev.jain@arm.com>
+ <aQjHQt2rYL6av4qw@willie-the-truck>
+ <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
+ <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
+ <aQn4EwKar66UZ7rz@willie-the-truck>
+ <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
+ <17eed751-e1c5-4ea5-af1d-e96da16d5e26@arm.com>
+ <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
+ <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
+ <94c91f8f-cd8f-4f51-961f-eb2904420ee4@os.amperecomputing.com>
+ <47f0fe70-5359-4b98-8a23-c09ab20bd6d9@arm.com>
+ <ca628d43-502a-42f1-be57-bcb37103ddf8@os.amperecomputing.com>
+ <19def538-3fb6-48a1-ae8b-a82139b8bbb9@arm.com>
+ <5cd5fe49-42e9-41b4-8bf1-6b5136c88693@os.amperecomputing.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <5cd5fe49-42e9-41b4-8bf1-6b5136c88693@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 5AC3meoL061616
 
-SPI driver for Andes ATCSPI200 SPI controller.
 
-Signed-off-by: CL Wang <cl634@andestech.com>
----
- drivers/spi/Kconfig         |   9 +
- drivers/spi/Makefile        |   1 +
- drivers/spi/spi-atcspi200.c | 651 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 661 insertions(+)
- create mode 100644 drivers/spi/spi-atcspi200.c
+On 12/11/25 5:15 am, Yang Shi wrote:
+>
+>
+> On 11/10/25 9:12 PM, Dev Jain wrote:
+>>
+>> On 11/11/25 10:38 am, Yang Shi wrote:
+>>>
+>>>
+>>> On 11/10/25 8:55 PM, Dev Jain wrote:
+>>>>
+>>>> On 11/11/25 10:14 am, Yang Shi wrote:
+>>>>>
+>>>>>
+>>>>> On 11/10/25 8:37 PM, Dev Jain wrote:
+>>>>>>
+>>>>>> On 11/11/25 9:47 am, Yang Shi wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 11/10/25 7:39 PM, Dev Jain wrote:
+>>>>>>>>
+>>>>>>>> On 05/11/25 9:27 am, Dev Jain wrote:
+>>>>>>>>>
+>>>>>>>>> On 04/11/25 6:26 pm, Will Deacon wrote:
+>>>>>>>>>> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
+>>>>>>>>>>> On 04/11/25 12:15 am, Yang Shi wrote:
+>>>>>>>>>>>> On 11/3/25 7:16 AM, Will Deacon wrote:
+>>>>>>>>>>>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
+>>>>>>>>>>>>>> Post a166563e7ec3 ("arm64: mm: support large block 
+>>>>>>>>>>>>>> mapping when
+>>>>>>>>>>>>>> rodata=full"),
+>>>>>>>>>>>>>> __change_memory_common has a real chance of failing due 
+>>>>>>>>>>>>>> to split
+>>>>>>>>>>>>>> failure.
+>>>>>>>>>>>>>> Before that commit, this line was introduced in 
+>>>>>>>>>>>>>> c55191e96caa,
+>>>>>>>>>>>>>> still having
+>>>>>>>>>>>>>> a chance of failing if it needs to allocate pagetable 
+>>>>>>>>>>>>>> memory in
+>>>>>>>>>>>>>> apply_to_page_range, although that has never been 
+>>>>>>>>>>>>>> observed to be true.
+>>>>>>>>>>>>>> In general, we should always propagate the return value 
+>>>>>>>>>>>>>> to the caller.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>>>>>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
+>>>>>>>>>>>>>> areas to its linear alias as well")
+>>>>>>>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>> Based on Linux 6.18-rc4.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
+>>>>>>>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> diff --git a/arch/arm64/mm/pageattr.c 
+>>>>>>>>>>>>>> b/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>>>> index 5135f2d66958..b4ea86cd3a71 100644
+>>>>>>>>>>>>>> --- a/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>>>> +++ b/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
+>>>>>>>>>>>>>> long addr, int numpages,
+>>>>>>>>>>>>>>        unsigned long size = PAGE_SIZE * numpages;
+>>>>>>>>>>>>>>        unsigned long end = start + size;
+>>>>>>>>>>>>>>        struct vm_struct *area;
+>>>>>>>>>>>>>> +    int ret;
+>>>>>>>>>>>>>>        int i;
+>>>>>>>>>>>>>>          if (!PAGE_ALIGNED(addr)) {
+>>>>>>>>>>>>>> @@ -185,8 +186,10 @@ static int 
+>>>>>>>>>>>>>> change_memory_common(unsigned
+>>>>>>>>>>>>>> long addr, int numpages,
+>>>>>>>>>>>>>>        if (rodata_full && (pgprot_val(set_mask) == 
+>>>>>>>>>>>>>> PTE_RDONLY ||
+>>>>>>>>>>>>>> pgprot_val(clear_mask) == PTE_RDONLY)) {
+>>>>>>>>>>>>>>            for (i = 0; i < area->nr_pages; i++) {
+>>>>>>>>>>>>>> - __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>>>>>>> +            ret =
+>>>>>>>>>>>>>> __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>>>>>>>                               PAGE_SIZE, set_mask, 
+>>>>>>>>>>>>>> clear_mask);
+>>>>>>>>>>>>>> +            if (ret)
+>>>>>>>>>>>>>> +                return ret;
+>>>>>>>>>>>>> Hmm, this means we can return failure half-way through the 
+>>>>>>>>>>>>> operation. Is
+>>>>>>>>>>>>> that something callers are expecting to handle? If so, how 
+>>>>>>>>>>>>> can they tell
+>>>>>>>>>>>>> how far we got?
+>>>>>>>>>>>> IIUC the callers don't have to know whether it is half-way 
+>>>>>>>>>>>> or not
+>>>>>>>>>>>> because the callers will change the permission back (e.g. 
+>>>>>>>>>>>> to RW) for the
+>>>>>>>>>>>> whole range when freeing memory.
+>>>>>>>>>>> Yes, it is the caller's responsibility to set 
+>>>>>>>>>>> VM_FLUSH_RESET_PERMS flag.
+>>>>>>>>>>> Upon vfree(), it will change the direct map permissions back 
+>>>>>>>>>>> to RW.
+>>>>>>>>>> Ok, but vfree() ends up using update_range_prot() to do that 
+>>>>>>>>>> and if we
+>>>>>>>>>> need to worry about that failing (as per your commit 
+>>>>>>>>>> message), then
+>>>>>>>>>> we're in trouble because the calls to set_area_direct_map() 
+>>>>>>>>>> are unchecked.
+>>>>>>>>>>
+>>>>>>>>>> In other words, this patch is either not necessary or it is 
+>>>>>>>>>> incomplete.
+>>>>>>>>>
+>>>>>>>>> Here is the relevant email, in the discussion between Ryan and 
+>>>>>>>>> Yang:
+>>>>>>>>>
+>>>>>>>>> https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/ 
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> We had concluded that all callers of set_memory_ro() or 
+>>>>>>>>> set_memory_rox() (which require the
+>>>>>>>>> linear map perm change back to default, upon vfree() ) will 
+>>>>>>>>> call it for the entire region (vm_struct).
+>>>>>>>>> So, when we do the set_direct_map_invalid_noflush, it is 
+>>>>>>>>> guaranteed that the region has already
+>>>>>>>>> been split. So this call cannot fail.
+>>>>>>>>>
+>>>>>>>>> https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/ 
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> This email notes that there is some code doing set_memory_rw() 
+>>>>>>>>> and unnecessarily setting the VM_FLUSH_RESET_PERMS
+>>>>>>>>> flag, but in that case we don't care about the 
+>>>>>>>>> set_direct_map_invalid_noflush call failing because the 
+>>>>>>>>> protections
+>>>>>>>>> are already RW.
+>>>>>>>>>
+>>>>>>>>> Although we had also observed that all of this is fragile and 
+>>>>>>>>> depends on the caller doing the
+>>>>>>>>> correct thing. The real solution should be somehow getting rid 
+>>>>>>>>> of the BBM style invalidation.
+>>>>>>>>> Ryan had proposed some methods in that email thread.
+>>>>>>>>>
+>>>>>>>>> One solution which I had thought of, is that, observe that we 
+>>>>>>>>> are doing an overkill by
+>>>>>>>>> setting the linear map to invalid and then default, for the 
+>>>>>>>>> *entire* region. What we
+>>>>>>>>> can do is iterate over the linear map alias of the vm_struct 
+>>>>>>>>> *area and only change permission
+>>>>>>>>> back to RW for the pages which are *not* RW. And, those 
+>>>>>>>>> relevant mappings are guaranteed to
+>>>>>>>>> be split because they were changed from RW to not RW.
+>>>>>>>>
+>>>>>>>> @Yang and Ryan,
+>>>>>>>>
+>>>>>>>> I saw Yang's patch here:
+>>>>>>>> https://lore.kernel.org/all/20251023204428.477531-1-yang@os.amperecomputing.com/ 
+>>>>>>>>
+>>>>>>>> and realized that currently we are splitting away the linear 
+>>>>>>>> map alias of the *entire* region.
+>>>>>>>>
+>>>>>>>> Shouldn't this then imply that set_direct_map_invalid_noflush 
+>>>>>>>> will never fail, since even
+>>>>>>>>
+>>>>>>>> a set_memory_rox() call on a single page will split the linear 
+>>>>>>>> map for the entire region,
+>>>>>>>>
+>>>>>>>> and thus there is no fragility here which we were discussing 
+>>>>>>>> about? I may be forgetting
+>>>>>>>>
+>>>>>>>> something, this linear map stuff is confusing enough already.
+>>>>>>>
+>>>>>>> It still may fail due to page table allocation failure when 
+>>>>>>> doing split. But it is still fine. We may run into 3 cases:
+>>>>>>>
+>>>>>>> 1. set_memory_rox succeed to split the whole range, then 
+>>>>>>> set_direct_map_invalid_noflush() will succeed too
+>>>>>>> 2. set_memory_rox fails to split, for example, just change 
+>>>>>>> partial range permission due to page table allocation failure, 
+>>>>>>> then set_direct_map_invalid_noflush() may
+>>>>>>>    a. successfully change the permission back to default till 
+>>>>>>> where set_memory_rox fails at since that range has been 
+>>>>>>> successfully split. It is ok since the remaining range is 
+>>>>>>> actually not changed to ro by set_memory_rox at all
+>>>>>>>    b. successfully change the permission back to default for the 
+>>>>>>> whole range (for example, memory pressure is mitigated when 
+>>>>>>> set_direct_map_invalid_noflush() is called). It is definitely 
+>>>>>>> fine as well
+>>>>>>
+>>>>>> Correct, what I mean to imply here is that, your patch will break 
+>>>>>> this? If set_memory_* is applied on x till y, your patch changes 
+>>>>>> the linear map alias
+>>>>>>
+>>>>>> only from x till y - set_direct_map_invalid_noflush instead 
+>>>>>> operates on 0 till size - 1, where 0 <=x <=y <= size - 1. So, it 
+>>>>>> may encounter a -ENOMEM
+>>>>>>
+>>>>>> on [0, x) range while invalidating, and that is *not* okay 
+>>>>>> because we must reset back [0, x) to default?
+>>>>>
+>>>>> I see your point now. But I think the callers need to guarantee 
+>>>>> they call set_memory_rox and set_direct_map_invalid_noflush on the 
+>>>>> same range, right? Currently kernel just calls them on the whole 
+>>>>> area.
+>>>>
+>>>> Nope. The fact that the kernel changes protections, and undoes the 
+>>>> changed protections, on the *entire* alias of the vm_struct region, 
+>>>> protects us from the fragility we were talking about earlier.
+>>>
+>>> This is what I meant "kernel just calls them on the whole area".
+>>>
+>>>>
+>>>> Suppose you have a range from 0 till size - 1, and you call 
+>>>> set_memory_* on a random point (page) p. The argument we discussed 
+>>>> above is independent of p, which lets us drop our
+>>>>
+>>>> previous erroneous conclusion that all of this works because no 
+>>>> caller does a partial set_memory_*.
+>>>
+>>> Sorry I don't follow you. What "erroneous conclusion" do you mean? 
+>>> You can call set_memory_* on a random point, but 
+>>> set_direct_map_invalid_noflush() should be called on the random 
+>>> point too. The current code of set_area_direct_map() doesn't 
+>>> consider this case because there is no such call. Is this what you 
+>>> meant?
+>>
+>>
+>> I was referring to the discussion in the linear map work - I think we 
+>> had concluded that we don't need to worry about the BBM style 
+>> invalidation failing, *because* no one does a partial set_memory_*.
+>
+> Yes, we don't have to worry about it.
+>
+>>
+>> What I am saying - we don't care whether caller does a partial or a 
+>> full set_memory_*, we are still safe, because the linear map alias 
+>> change on both sides (set_memory_* -> __change_memory_common, and 
+>> vm_reset_perms -> set_area_direct_map() )
+>>
+>> operate on the entire region.
+>
+> Yes, this is the current behavior. My patch changes 
+> change_memory_common() to just do permission update for the requested 
+> range from the callers instead of assuming change the entire region, 
+> although there is no one calls set_memory_* on a partial range. Shall 
+> set_area_direct_map() be aware of potential partial range change from 
+> set_memory_*()? Maybe. But it is just called from vfree() which just 
+> free the entire region.
+>
+> What happened if someone does something crazy, for example, call 
+> set_memory_* on a partial range, then call vfree? IIUC, it is fine as 
+> well. It is still covered by the 3 cases that I mentioned in the 
+> previous email if I don't miss anything, right?
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 592d46c9998b..b2e35f55aa88 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -136,6 +136,15 @@ config SPI_AR934X
- 	  This enables support for the SPI controller present on the
- 	  Qualcomm Atheros AR934X/QCA95XX SoCs.
- 
-+config SPI_ATCSPI200
-+	tristate "Andes ATCSPI200 SPI controller"
-+	depends on ARCH_ANDES
-+	help
-+	  SPI driver for Andes ATCSPI200 SPI controller.
-+	  ATCSPI200 controller supports DMA and PIO modes. When DMA
-+	  is not available, the driver automatically falls back to
-+	  PIO mode.
-+
- config SPI_ATH79
- 	tristate "Atheros AR71XX/AR724X/AR913X SPI controller driver"
- 	depends on ATH79 || COMPILE_TEST
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 8ff74a13faaa..869d6fbc53f8 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_SPI_APPLE)			+= spi-apple.o
- obj-$(CONFIG_SPI_AR934X)		+= spi-ar934x.o
- obj-$(CONFIG_SPI_ARMADA_3700)		+= spi-armada-3700.o
- obj-$(CONFIG_SPI_ASPEED_SMC)		+= spi-aspeed-smc.o
-+obj-$(CONFIG_SPI_ATCSPI200)		+= spi-atcspi200.o
- obj-$(CONFIG_SPI_ATMEL)			+= spi-atmel.o
- obj-$(CONFIG_SPI_ATMEL_QUADSPI)		+= atmel-quadspi.o
- obj-$(CONFIG_SPI_AT91_USART)		+= spi-at91-usart.o
-diff --git a/drivers/spi/spi-atcspi200.c b/drivers/spi/spi-atcspi200.c
-new file mode 100644
-index 000000000000..65ffbaaf9124
---- /dev/null
-+++ b/drivers/spi/spi-atcspi200.c
-@@ -0,0 +1,651 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Driver for Andes ATCSPI200 SPI Controller
-+ *
-+ * Copyright (C) 2025 Andes Technology Corporation.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/dev_printk.h>
-+#include <linux/dmaengine.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/jiffies.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+/* Register definitions  */
-+#define ATCSPI_TRANS_FMT	0x10	/* SPI transfer format register */
-+#define ATCSPI_TRANS_CTRL	0x20	/* SPI transfer control register */
-+#define ATCSPI_CMD		0x24	/* SPI command register */
-+#define ATCSPI_ADDR		0x28	/* SPI address register */
-+#define ATCSPI_DATA		0x2C	/* SPI data register */
-+#define ATCSPI_CTRL		0x30	/* SPI control register */
-+#define ATCSPI_STATUS		0x34	/* SPI status register */
-+#define ATCSPI_TIMING		0x40	/* SPI interface timing register */
-+#define ATCSPI_CONFIG		0x7C	/* SPI configuration register */
-+
-+/* Transfer format register */
-+#define TRANS_FMT_CPHA		BIT(0)
-+#define TRANS_FMT_CPOL		BIT(1)
-+#define TRANS_FMT_DATA_MERGE_EN	BIT(7)
-+#define TRANS_FMT_DATA_LEN_MASK	GENMASK(12, 8)
-+#define TRANS_FMT_ADDR_LEN_MASK	GENMASK(17, 16)
-+#define TRANS_FMT_DATA_LEN(x)	FIELD_PREP(TRANS_FMT_DATA_LEN_MASK, (x) - 1)
-+#define TRANS_FMT_ADDR_LEN(x)	FIELD_PREP(TRANS_FMT_ADDR_LEN_MASK, (x) - 1)
-+
-+/* Transfer control register */
-+#define TRANS_MODE_MASK		GENMASK(27, 24)
-+#define TRANS_MODE_W_ONLY	FIELD_PREP(TRANS_MODE_MASK, 1)
-+#define TRANS_MODE_R_ONLY	FIELD_PREP(TRANS_MODE_MASK, 2)
-+#define TRANS_MODE_NONE_DATA	FIELD_PREP(TRANS_MODE_MASK, 7)
-+#define TRANS_MODE_DMY_READ	FIELD_PREP(TRANS_MODE_MASK, 9)
-+#define TRANS_FIELD_DECNZ(m, x)	((x) ? FIELD_PREP(m, (x) - 1) : 0)
-+#define TRANS_RD_TRANS_CNT(x)	TRANS_FIELD_DECNZ(GENMASK(8, 0), x)
-+#define TRANS_DUMMY_CNT(x)	TRANS_FIELD_DECNZ(GENMASK(10, 9), x)
-+#define TRANS_WR_TRANS_CNT(x)	TRANS_FIELD_DECNZ(GENMASK(20, 12), x)
-+#define TRANS_DUAL_QUAD(x)	FIELD_PREP(GENMASK(23, 22), (x))
-+#define TRANS_ADDR_FMT		BIT(28)
-+#define TRANS_ADDR_EN		BIT(29)
-+#define TRANS_CMD_EN		BIT(30)
-+
-+/* Control register */
-+#define CTRL_SPI_RST		BIT(0)
-+#define CTRL_RX_FIFO_RST	BIT(1)
-+#define CTRL_TX_FIFO_RST	BIT(2)
-+#define CTRL_RX_DMA_EN		BIT(3)
-+#define CTRL_TX_DMA_EN		BIT(4)
-+
-+/* Status register */
-+#define ATCSPI_ACTIVE		BIT(0)
-+#define ATCSPI_RX_EMPTY		BIT(14)
-+#define ATCSPI_TX_FULL		BIT(23)
-+
-+/* Interface timing setting */
-+#define TIMING_SCLK_DIV_MASK	GENMASK(7, 0)
-+#define TIMING_SCLK_DIV_MAX	0xFE
-+
-+/* Configuration register */
-+#define RXFIFO_SIZE(x)		FIELD_GET(GENMASK(3, 0), (x))
-+#define TXFIFO_SIZE(x)		FIELD_GET(GENMASK(7, 4), (x))
-+
-+/* driver configurations */
-+#define ATCSPI_MAX_TRANS_LEN	512
-+#define ATCSPI_MAX_SPEED_HZ	50000000
-+#define ATCSPI_RDY_TIMEOUT_US	1000000
-+#define ATCSPI_XFER_TIMEOUT(n)	((n) * 10)
-+#define ATCSPI_MAX_CS_NUM	1
-+#define ATCSPI_DMA_THRESHOLD	256
-+#define ATCSPI_BITS_PER_UINT	8
-+#define ATCSPI_DATA_MERGE_EN	1
-+#define ATCSPI_DMA_SUPPORT	1
-+
-+/**
-+ * struct atcspi_dev - Andes ATCSPI200 SPI controller private data
-+ * @host:           Pointer to the SPI controller structure.
-+ * @mutex_lock:     A mutex to protect concurrent access to the controller.
-+ * @dma_completion: A completion to signal the end of a DMA transfer.
-+ * @dev:            Pointer to the device structure.
-+ * @regmap:         Register map for accessing controller registers.
-+ * @clk:            Pointer to the controller's functional clock.
-+ * @dma_addr:       The physical address of the SPI data register for DMA.
-+ * @clk_rate:       The cached frequency of the functional clock.
-+ * @sclk_rate:      The target frequency for the SPI clock (SCLK).
-+ * @txfifo_size:    The size of the transmit FIFO in bytes.
-+ * @rxfifo_size:    The size of the receive FIFO in bytes.
-+ * @data_merge:     A flag indicating if the data merge mode is enabled for
-+ *                  the current transfer.
-+ * @use_dma:        Enable DMA mode if ATCSPI_DMA_SUPPORT is set and DMA is
-+ *                  successfully configured.
-+ */
-+struct atcspi_dev {
-+	struct spi_controller	*host;
-+	struct mutex		mutex_lock;
-+	struct completion	dma_completion;
-+	struct device		*dev;
-+	struct regmap		*regmap;
-+	struct clk		*clk;
-+	dma_addr_t		dma_addr;
-+	unsigned int		clk_rate;
-+	unsigned int		sclk_rate;
-+	unsigned int		txfifo_size;
-+	unsigned int		rxfifo_size;
-+	bool			data_merge;
-+	bool			use_dma;
-+};
-+
-+static int atcspi_wait_fifo_ready(struct atcspi_dev *spi,
-+				  enum spi_mem_data_dir dir)
-+{
-+	unsigned int val;
-+	unsigned int mask;
-+	int ret;
-+
-+	mask = (dir == SPI_MEM_DATA_OUT) ? ATCSPI_TX_FULL : ATCSPI_RX_EMPTY;
-+	ret = regmap_read_poll_timeout(spi->regmap,
-+				       ATCSPI_STATUS,
-+				       val,
-+				       !(val & mask),
-+				       0,
-+				       ATCSPI_RDY_TIMEOUT_US);
-+	if (ret)
-+		dev_info(spi->dev, "Timed out waiting for FIFO ready\n");
-+
-+	return ret;
-+}
-+
-+static int atcspi_xfer_data_poll(struct atcspi_dev *spi,
-+				 const struct spi_mem_op *op)
-+{
-+	void *rx_buf = op->data.buf.in;
-+	const void *tx_buf = op->data.buf.out;
-+	unsigned int val;
-+	int trans_bytes = op->data.nbytes;
-+	int num_byte;
-+	int ret = 0;
-+
-+	num_byte = spi->data_merge ? 4 : 1;
-+	while (trans_bytes) {
-+		if (op->data.dir == SPI_MEM_DATA_OUT) {
-+			ret = atcspi_wait_fifo_ready(spi, SPI_MEM_DATA_OUT);
-+			if (ret)
-+				return ret;
-+
-+			if (spi->data_merge)
-+				val = *(unsigned int *)tx_buf;
-+			else
-+				val = *(unsigned char *)tx_buf;
-+			regmap_write(spi->regmap, ATCSPI_DATA, val);
-+			tx_buf = (unsigned char *)tx_buf + num_byte;
-+		} else {
-+			ret = atcspi_wait_fifo_ready(spi, SPI_MEM_DATA_IN);
-+			if (ret)
-+				return ret;
-+
-+			regmap_read(spi->regmap, ATCSPI_DATA, &val);
-+			if (spi->data_merge)
-+				*(unsigned int *)rx_buf = val;
-+			else
-+				*(unsigned char *)rx_buf = (unsigned char)val;
-+			rx_buf = (unsigned char *)rx_buf + num_byte;
-+		}
-+		trans_bytes -= num_byte;
-+	}
-+
-+	return ret;
-+}
-+
-+static void atcspi_set_trans_ctl(struct atcspi_dev *spi,
-+				 const struct spi_mem_op *op)
-+{
-+	unsigned int tc = 0;
-+
-+	if (op->cmd.nbytes)
-+		tc |= TRANS_CMD_EN;
-+	if (op->addr.nbytes)
-+		tc |= TRANS_ADDR_EN;
-+	if (op->addr.buswidth > 1)
-+		tc |= TRANS_ADDR_FMT;
-+	if (op->data.nbytes) {
-+		tc |= TRANS_DUAL_QUAD(ffs(op->data.buswidth) - 1);
-+		if (op->data.dir == SPI_MEM_DATA_IN) {
-+			if (op->dummy.nbytes)
-+				tc |= TRANS_MODE_DMY_READ |
-+				      TRANS_DUMMY_CNT(op->dummy.nbytes);
-+			else
-+				tc |= TRANS_MODE_R_ONLY;
-+			tc |= TRANS_RD_TRANS_CNT(op->data.nbytes);
-+		} else {
-+			tc |= TRANS_MODE_W_ONLY |
-+			      TRANS_WR_TRANS_CNT(op->data.nbytes);
-+		}
-+	} else {
-+		tc |= TRANS_MODE_NONE_DATA;
-+	}
-+	regmap_write(spi->regmap, ATCSPI_TRANS_CTRL, tc);
-+}
-+
-+static void atcspi_set_trans_fmt(struct atcspi_dev *spi,
-+				 const struct spi_mem_op *op)
-+{
-+	unsigned int val;
-+
-+	regmap_read(spi->regmap, ATCSPI_TRANS_FMT, &val);
-+	if (op->data.nbytes) {
-+		if (ATCSPI_DATA_MERGE_EN && ATCSPI_BITS_PER_UINT == 8 &&
-+		    !(op->data.nbytes % 4)) {
-+			val |= TRANS_FMT_DATA_MERGE_EN;
-+			spi->data_merge = true;
-+		} else {
-+			val &= ~TRANS_FMT_DATA_MERGE_EN;
-+			spi->data_merge = false;
-+		}
-+	}
-+
-+	val = (val & ~TRANS_FMT_ADDR_LEN_MASK) |
-+	      TRANS_FMT_ADDR_LEN(op->addr.nbytes);
-+	regmap_write(spi->regmap, ATCSPI_TRANS_FMT, val);
-+}
-+
-+static void atcspi_prepare_trans(struct atcspi_dev *spi,
-+				 const struct spi_mem_op *op)
-+{
-+	atcspi_set_trans_fmt(spi, op);
-+	atcspi_set_trans_ctl(spi, op);
-+	if (op->addr.nbytes)
-+		regmap_write(spi->regmap, ATCSPI_ADDR, op->addr.val);
-+	regmap_write(spi->regmap, ATCSPI_CMD, op->cmd.opcode);
-+}
-+
-+static int atcspi_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
-+{
-+	struct atcspi_dev *spi;
-+
-+	spi = spi_controller_get_devdata(mem->spi->controller);
-+	op->data.nbytes = min(op->data.nbytes, ATCSPI_MAX_TRANS_LEN);
-+
-+	/* DMA needs to be aligned to 4 byte */
-+	if (spi->use_dma && op->data.nbytes >= ATCSPI_DMA_THRESHOLD)
-+		op->data.nbytes = ALIGN_DOWN(op->data.nbytes, 4);
-+
-+	return 0;
-+}
-+
-+static int atcspi_dma_config(struct atcspi_dev *spi, bool is_rx)
-+{
-+	struct dma_slave_config conf = { 0 };
-+	struct dma_chan *chan;
-+
-+	if (is_rx) {
-+		chan = spi->host->dma_rx;
-+		conf.direction = DMA_DEV_TO_MEM;
-+		conf.src_addr = spi->dma_addr;
-+	} else {
-+		chan = spi->host->dma_tx;
-+		conf.direction = DMA_MEM_TO_DEV;
-+		conf.dst_addr = spi->dma_addr;
-+	}
-+	conf.dst_maxburst = spi->rxfifo_size / 2;
-+	conf.src_maxburst = spi->txfifo_size / 2;
-+
-+	if (spi->data_merge) {
-+		conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	} else {
-+		conf.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+		conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	}
-+
-+	return dmaengine_slave_config(chan, &conf);
-+}
-+
-+static void atcspi_dma_callback(void *arg)
-+{
-+	struct completion *dma_completion = arg;
-+
-+	complete(dma_completion);
-+}
-+
-+static int atcspi_dma_trans(struct atcspi_dev *spi,
-+			    const struct spi_mem_op *op)
-+{
-+	struct dma_async_tx_descriptor *desc;
-+	struct dma_chan *dma_ch;
-+	struct sg_table sgt;
-+	enum dma_transfer_direction dma_dir;
-+	dma_cookie_t cookie;
-+	unsigned int ctrl;
-+	int timeout;
-+	int ret;
-+
-+	regmap_read(spi->regmap, ATCSPI_CTRL, &ctrl);
-+	ctrl |= CTRL_TX_DMA_EN | CTRL_RX_DMA_EN;
-+	regmap_write(spi->regmap, ATCSPI_CTRL, ctrl);
-+	if (op->data.dir == SPI_MEM_DATA_IN) {
-+		ret = atcspi_dma_config(spi, TRUE);
-+		dma_dir = DMA_DEV_TO_MEM;
-+		dma_ch = spi->host->dma_rx;
-+	} else {
-+		ret = atcspi_dma_config(spi, FALSE);
-+		dma_dir = DMA_MEM_TO_DEV;
-+		dma_ch = spi->host->dma_tx;
-+	}
-+	if (ret)
-+		return ret;
-+
-+	ret = spi_controller_dma_map_mem_op_data(spi->host, op, &sgt);
-+	if (ret)
-+		return ret;
-+
-+	desc = dmaengine_prep_slave_sg(dma_ch, sgt.sgl, sgt.nents, dma_dir,
-+				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!desc) {
-+		ret = -ENOMEM;
-+		goto exit_unmap;
-+	}
-+
-+	reinit_completion(&spi->dma_completion);
-+	desc->callback = atcspi_dma_callback;
-+	desc->callback_param = &spi->dma_completion;
-+	cookie = dmaengine_submit(desc);
-+	ret = dma_submit_error(cookie);
-+	if (ret)
-+		goto exit_unmap;
-+
-+	dma_async_issue_pending(dma_ch);
-+	timeout = msecs_to_jiffies(ATCSPI_XFER_TIMEOUT(op->data.nbytes));
-+	if (!wait_for_completion_timeout(&spi->dma_completion, timeout)) {
-+		ret = -ETIMEDOUT;
-+		dmaengine_terminate_all(dma_ch);
-+	}
-+
-+exit_unmap:
-+	spi_controller_dma_unmap_mem_op_data(spi->host, op, &sgt);
-+
-+	return ret;
-+}
-+
-+static int atcspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
-+{
-+	struct spi_device *spi_dev = mem->spi;
-+	struct atcspi_dev *spi;
-+	unsigned int val;
-+	int ret;
-+
-+	spi = spi_controller_get_devdata(spi_dev->controller);
-+	mutex_lock(&spi->mutex_lock);
-+	atcspi_prepare_trans(spi, op);
-+	if (op->data.nbytes) {
-+		if (spi->use_dma && op->data.nbytes >= ATCSPI_DMA_THRESHOLD)
-+			ret = atcspi_dma_trans(spi, op);
-+		else
-+			ret = atcspi_xfer_data_poll(spi, op);
-+		if (ret) {
-+			dev_info(spi->dev, "SPI transmission failed\n");
-+			goto exec_mem_exit;
-+		}
-+	}
-+
-+	ret = regmap_read_poll_timeout(spi->regmap,
-+				       ATCSPI_STATUS,
-+				       val,
-+				       !(val & ATCSPI_ACTIVE),
-+				       0,
-+				       ATCSPI_RDY_TIMEOUT_US);
-+	if (ret)
-+		dev_info(spi->dev, "Timed out waiting for ATCSPI_ACTIVE\n");
-+
-+exec_mem_exit:
-+	mutex_unlock(&spi->mutex_lock);
-+
-+	return ret;
-+}
-+
-+static const struct spi_controller_mem_ops atcspi_mem_ops = {
-+	.exec_op = atcspi_exec_mem_op,
-+	.adjust_op_size = atcspi_adjust_op_size,
-+};
-+
-+static int atcspi_setup(struct atcspi_dev *spi)
-+{
-+	unsigned int ctrl_val;
-+	unsigned int val;
-+	int actual_spi_sclk_f;
-+	int ret;
-+	unsigned char div;
-+
-+	ctrl_val = CTRL_TX_FIFO_RST | CTRL_RX_FIFO_RST | CTRL_SPI_RST;
-+	regmap_write(spi->regmap, ATCSPI_CTRL, ctrl_val);
-+	ret = regmap_read_poll_timeout(spi->regmap,
-+				       ATCSPI_CTRL,
-+				       val,
-+				       !(val & ctrl_val),
-+				       0,
-+				       ATCSPI_RDY_TIMEOUT_US);
-+	if (ret)
-+		return dev_err_probe(spi->dev, ret,
-+				     "Timed out waiting for ATCSPI_CTRL\n");
-+
-+	val = TRANS_FMT_DATA_LEN(ATCSPI_BITS_PER_UINT) |
-+	      TRANS_FMT_CPHA | TRANS_FMT_CPOL;
-+	regmap_write(spi->regmap, ATCSPI_TRANS_FMT, val);
-+
-+	regmap_read(spi->regmap, ATCSPI_CONFIG, &val);
-+	spi->txfifo_size = BIT(TXFIFO_SIZE(val) + 1);
-+	spi->rxfifo_size = BIT(RXFIFO_SIZE(val) + 1);
-+
-+	regmap_read(spi->regmap, ATCSPI_TIMING, &val);
-+	val &= ~TIMING_SCLK_DIV_MASK;
-+
-+	/*
-+	 * The SCLK_DIV value 0xFF is special and indicates that the
-+	 * SCLK rate should be the same as the SPI clock rate.
-+	 */
-+	if (spi->sclk_rate >= spi->clk_rate) {
-+		div = TIMING_SCLK_DIV_MASK;
-+	} else {
-+		/*
-+		 * The divider value is determined as follows:
-+		 * 1. If the divider can generate the exact target frequency,
-+		 *    use that setting.
-+		 * 2. If an exact match is not possible, select the closest
-+		 *    available setting that is lower than the target frequency.
-+		 */
-+		div = (spi->clk_rate + (spi->sclk_rate * 2 - 1)) /
-+		      (spi->sclk_rate * 2) - 1;
-+
-+		/* Check if the actual SPI clock is lower than the target */
-+		actual_spi_sclk_f = spi->clk_rate / ((div + 1) * 2);
-+		if (actual_spi_sclk_f < spi->sclk_rate)
-+			dev_info(spi->dev,
-+				 "Clock adjusted %d to %d due to divider limitation",
-+				 spi->sclk_rate, actual_spi_sclk_f);
-+
-+		if (div > TIMING_SCLK_DIV_MAX)
-+			return dev_err_probe(spi->dev, -EINVAL,
-+					     "Unsupported SPI clock %d\n",
-+					     spi->sclk_rate);
-+	}
-+	val |= div;
-+	regmap_write(spi->regmap, ATCSPI_TIMING, val);
-+
-+	return ret;
-+}
-+
-+static int atcspi_init_resources(struct platform_device *pdev,
-+				 struct atcspi_dev *spi,
-+				 struct resource **mem_res)
-+{
-+	void __iomem *base;
-+	const struct regmap_config atcspi_regmap_cfg = {
-+		.name = "atcspi",
-+		.reg_bits = 32,
-+		.val_bits = 32,
-+		.cache_type = REGCACHE_NONE,
-+		.reg_stride = 4,
-+		.pad_bits = 0,
-+		.max_register = ATCSPI_CONFIG
-+	};
-+
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, mem_res);
-+	if (IS_ERR(base))
-+		return dev_err_probe(spi->dev, PTR_ERR(base),
-+				     "Failed to get ioremap resource\n");
-+
-+	spi->regmap = devm_regmap_init_mmio(spi->dev, base,
-+					    &atcspi_regmap_cfg);
-+	if (IS_ERR(spi->regmap))
-+		return dev_err_probe(spi->dev, PTR_ERR(spi->regmap),
-+				     "Failed to init regmap\n");
-+
-+	spi->clk = devm_clk_get(spi->dev, NULL);
-+	if (IS_ERR(spi->clk))
-+		return dev_err_probe(spi->dev, PTR_ERR(spi->clk),
-+				     "Failed to get SPI clock\n");
-+
-+	spi->sclk_rate = ATCSPI_MAX_SPEED_HZ;
-+	return 0;
-+}
-+
-+static struct dma_chan *atcspi_request_dma_chan(struct device *dev,
-+						unsigned char *chan_name)
-+{
-+	struct dma_chan *dma_chan;
-+	dma_cap_mask_t mask;
-+
-+	dma_chan = dma_request_chan(dev, chan_name);
-+	if (PTR_ERR(dma_chan) == -ENODEV) {
-+		dma_cap_zero(mask);
-+		dma_cap_set(DMA_SLAVE, mask);
-+		dma_chan = dma_request_channel(mask, NULL, NULL);
-+	}
-+
-+	return dma_chan;
-+}
-+
-+static int atcspi_configure_dma(struct atcspi_dev *spi)
-+{
-+	struct dma_chan *dma_chan;
-+	int ret = 0;
-+
-+	dma_chan = atcspi_request_dma_chan(spi->dev, "spi_rx");
-+	if (IS_ERR(dma_chan)) {
-+		ret = PTR_ERR(dma_chan);
-+		goto err_exit;
-+	}
-+	spi->host->dma_rx = dma_chan;
-+
-+	dma_chan = atcspi_request_dma_chan(spi->dev, "spi_tx");
-+	if (IS_ERR(dma_chan)) {
-+		ret = PTR_ERR(dma_chan);
-+		goto free_rx;
-+	}
-+	spi->host->dma_tx = dma_chan;
-+	init_completion(&spi->dma_completion);
-+
-+	return ret;
-+
-+free_rx:
-+	dma_release_channel(spi->host->dma_rx);
-+	spi->host->dma_rx = NULL;
-+err_exit:
-+	return ret;
-+}
-+
-+static int atcspi_enable_clk(struct atcspi_dev *spi)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(spi->clk);
-+	if (ret)
-+		return dev_err_probe(spi->dev, ret,
-+				     "Failed to enable clock\n");
-+
-+	spi->clk_rate = clk_get_rate(spi->clk);
-+	if (!spi->clk_rate)
-+		return dev_err_probe(spi->dev, -EINVAL,
-+				     "Failed to get SPI clock rate\n");
-+
-+	return 0;
-+}
-+
-+static void atcspi_init_controller(struct platform_device *pdev,
-+				   struct atcspi_dev *spi,
-+				   struct spi_controller *host,
-+				   struct resource *mem_res)
-+{
-+	/* Get the physical address of the data register for DMA transfers. */
-+	spi->dma_addr = (dma_addr_t)(mem_res->start + ATCSPI_DATA);
-+
-+	/* Initialize controller properties */
-+	host->bus_num = pdev->id;
-+	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_RX_QUAD | SPI_TX_QUAD;
-+	host->dev.of_node = pdev->dev.of_node;
-+	host->num_chipselect = ATCSPI_MAX_CS_NUM;
-+	host->mem_ops = &atcspi_mem_ops;
-+	host->max_speed_hz = spi->sclk_rate;
-+}
-+
-+static int atcspi_probe(struct platform_device *pdev)
-+{
-+	struct spi_controller *host;
-+	struct atcspi_dev *spi;
-+	struct resource *mem_res;
-+	int ret;
-+
-+	host = spi_alloc_host(&pdev->dev, sizeof(*spi));
-+	if (!host)
-+		return -ENOMEM;
-+
-+	spi = spi_controller_get_devdata(host);
-+	spi->host = host;
-+	spi->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, host);
-+
-+	ret = atcspi_init_resources(pdev, spi, &mem_res);
-+	if (ret)
-+		goto free_controller;
-+
-+	ret = atcspi_enable_clk(spi);
-+	if (ret)
-+		goto free_controller;
-+
-+	atcspi_init_controller(pdev, spi, host, mem_res);
-+
-+	ret = atcspi_setup(spi);
-+	if (ret)
-+		goto free_controller;
-+
-+	ret = devm_spi_register_controller(&pdev->dev, host);
-+	if (ret) {
-+		dev_err_probe(spi->dev, ret,
-+			      "Failed to register SPI controller\n");
-+		goto free_controller;
-+	}
-+
-+	spi->use_dma = false;
-+	if (ATCSPI_DMA_SUPPORT) {
-+		ret = atcspi_configure_dma(spi);
-+		if (ret)
-+			dev_info(spi->dev,
-+				 "Failed to init DMA, fallback to PIO mode\n");
-+		else
-+			spi->use_dma = true;
-+	}
-+	mutex_init(&spi->mutex_lock);
-+
-+	return 0;
-+
-+free_controller:
-+	spi_controller_put(host);
-+	return ret;
-+}
-+
-+static const struct of_device_id atcspi_of_match[] = {
-+	{ .compatible = "andestech,qilai-spi", },
-+	{ .compatible = "andestech,atcspi200", },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(of, atcspi_of_match);
-+
-+static struct platform_driver atcspi_driver = {
-+	.probe = atcspi_probe,
-+	.driver = {
-+		.name = "atcspi200",
-+		.of_match_table = atcspi_of_match,
-+	},
-+};
-+module_platform_driver(atcspi_driver);
-+
-+MODULE_AUTHOR("CL Wang <cl634@andestech.com>");
-+MODULE_DESCRIPTION("Andes ATCSPI200 SPI controller driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+Assuming the caller also does set_vm_flush_reset_perms(), the 3 cases 
+will work out.
 
+
+>
+> Thanks,
+> Yang
+>
+>>
+>>
+>>>
+>>>>
+>>>>
+>>>> I would like to send a patch clearly documenting this behaviour, 
+>>>> assuming no one else finds a hole in this reasoning.
+>>>
+>>> Proper comment to explain the subtle behavior is definitely welcome.
+>>>
+>>> Thanks,
+>>> Yang
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Yang
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Hopefully I don't miss anything.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Yang
+>>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Will
+>>>>>>>>>
+>>>>>>>
+>>>>>
+>>>
+>
 
