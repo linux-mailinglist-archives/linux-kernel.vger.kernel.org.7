@@ -1,384 +1,84 @@
-Return-Path: <linux-kernel+bounces-897095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80462C51FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:31:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345AEC51E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFBF83B5AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41ACB3AD852
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9437030C63B;
-	Wed, 12 Nov 2025 11:23:08 +0000 (UTC)
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1687E303A1E;
+	Wed, 12 Nov 2025 11:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGaqKeRd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C902630274F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D81728A701;
+	Wed, 12 Nov 2025 11:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946587; cv=none; b=Vdx6VEYAiRhE3WMt0hLVRi6DejTyL18G8b/yn6boPjyaazM8YkfzCu5TS34vlRiG+xe7wNW7nd27u76Qr9sfifHsHGxdYw3I29aGJtrQ/dzE8/L/vEnoXCeiRzdqgpsVI3nqZZlcTforv9MCGIdt8vEU+A6/AIGXrHO+2RekE0A=
+	t=1762946052; cv=none; b=naK92zp7fFCGpmQt+e1zAClVgHuL5HM+1Tgb3OBfA4g6Hs+lbyM/mWIWF4pweHTgscmMvGg69fcCXOxK0H+ev1WgDWOy5OowP04rpEKSRjB/nf1I8qo5+xU3hP+XAocfcxyW7ZtOm87F+/ErwNAKcNpnmY6t+I2XnOF/DwJTX9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946587; c=relaxed/simple;
-	bh=eGRfvoI+MOkv+mAK9sRVJNkwPQNp6iUcCJWWz9cilmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MZ/liBP3J99BwMtfc8lXNHxa00QHj+ZTE/wgUDOsEvWBCcV4BfiwJLdhS6p3IvuitN6it7npGW4mw0IPw8jKks0HQBbKtwAcRoMdhGLq2PZBMW2407Wd45DSPR5xoJKJ25gANMoPHCIW/lw2v8hMALQO37IiI9P4seSosd39/+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so141344966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:23:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946584; x=1763551384;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NfXUW2hDOILChCEHt+EepC/hcfBLAxrken+StjOWht0=;
-        b=mpyyzDvkhVEfIV3XIvJF45JXnefxaPHZZICdT6/Qo6HlFCDj9MWliYEfu/nbzvNq0J
-         z3cEgTKtDEu3F27FK1gbZrXT9ImcLnKXvQuf4c9Xxcon0yT+g75OwWDv06Xb6Rs/wHul
-         wd0BqSI+sxqD5aAZjq7Sqecg1EUOGOSLFjQ6MJhugQ7PgpdClVkiDzymSvhwwkIs+gvr
-         6umIxVpO3xb5FOmjt+fSgZ1IMcKd0zYm1DLK0yuL9Cuq6BPmsCChkkYZCIXHo3iid6tI
-         mHhIWVTBQLTdEpytndwI5dIX4BCjvYvOyxGNz3TNpRPCNdmgtn81tURlGSeGLdsA1UA4
-         B0yA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxIu46h+N3/b32Mk2DndhwLaZmXtQhH7p1azunfB5OCMB60t82A/Tbof6eHWDW19Uvf9BX5lTNF879Jqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGj1uWjgj2UtKm7wRDcYaTioKENnuf1r4NcQHVMPZPWG7eyVky
-	bjcBXNO1x94WrlNjHitvYeDtk3KmQlaMxnl+BDDN2Zudp6leT0RkVlUX
-X-Gm-Gg: ASbGncszUBcOXf4XxBgY+kGnZyu09Mckg1rqXnD0KoNt3DyQZHBKDNtHC76OZsaU5Lw
-	CvQsptQZQBCOVhAPLcHaPLasLVrzzGDCExdHJRJwh+YKoVQ2vvDHHuD6QC4mduUdA6HJbV2v19f
-	359k/ub2XpM90sfOLkJUSU7yNnm0G9duEJkVVe1IBXHuBwpzygYTXt8Mr4JP4DXKhoUWyIv36Vt
-	ctnZtYvfesRwIEYRElb81wdkNpmnx3/zI7ttdfdrMGw+38/KYK3Ii2Gc4LRq+pLmhoaRjtUtbJD
-	rUsc4m4umGjwOIEKMXImvJZ9Cay85LY4cJ7lbG/+ogWzA36c7zZt6BOhAROBEWn71Wn7b1PZpHG
-	FlDTUhheGSz8vF88ly8FIB2vfBxGaRXQ2IWpcDnT5XhpUeUXoxuY85DNV099eo5JvzMR0MFASth
-	wFFIlmmAO6gJJa6ycL7tf8lC6dtRZ8FwSlvHyp
-X-Google-Smtp-Source: AGHT+IFFGyzFqGpSXqAFvyKh8Jy52j0nqH7fJrPownyA4IhnfsXvri289iEMhImS/AGTgYahNbXPdw==
-X-Received: by 2002:a17:906:4fcf:b0:b40:5752:16b7 with SMTP id a640c23a62f3a-b7331ac5fdbmr303287566b.51.1762946583889;
-        Wed, 12 Nov 2025 03:23:03 -0800 (PST)
-Received: from im-t490s.redhat.com (89-24-34-247.nat.epc.tmcz.cz. [89.24.34.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11367sm1554779266b.68.2025.11.12.03.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 03:23:03 -0800 (PST)
-From: Ilya Maximets <i.maximets@ovn.org>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	dev@openvswitch.org,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>,
-	Willy Tarreau <w@1wt.eu>,
-	LePremierHomme <kwqcheii@proton.me>,
-	Ilya Maximets <i.maximets@ovn.org>,
-	Junvy Yang <zhuque@tencent.com>
-Subject: [PATCH net] net: openvswitch: remove never-working support for setting nsh fields
-Date: Wed, 12 Nov 2025 12:14:03 +0100
-Message-ID: <20251112112246.95064-1-i.maximets@ovn.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762946052; c=relaxed/simple;
+	bh=/rFm4H0OK7cJ+QUyXrsnB6rz/zY0jTlBYJD1rF72Boo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xr5dGRfRb9j7HCMJ6Je6jGykPaFXZVPtx/hXAzbm/xYY+GfO/L0EcMVVv5UXuhXwI3BuiXZ3Kew0/WveR/ujEZlsa8ohfoLfhWn80YCCdMBEvDrjgzSmyunnmrUMhDxDc9XE9GkaSvN6e2Ikc8YKwO2UoPz1lp380w/8YTQjnCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGaqKeRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0C7C2BC86;
+	Wed, 12 Nov 2025 11:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762946052;
+	bh=/rFm4H0OK7cJ+QUyXrsnB6rz/zY0jTlBYJD1rF72Boo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gGaqKeRdL17XIL/VxDhdpf7so5/NQRC3UdQ2+JG1bFJM9ZSSOOsqHauYTWFkLFmed
+	 KkElNliL4RtD7YejpRP+pzx3YEr15nIl8bvwf0ICvuNUkzMPDuBM1O5hdaoEK4McCu
+	 Wbblwl51IJr4zGdTaf7vj1kp1Z7VRaYjL0G87krdRx9Bq3q2WOtKLnAzluXXZ1nZy9
+	 7GKvBRN7yHCmQ6ZuMILYwLZShHOBip1aZ9fty+fNfMfcaVFXs1xpqElaOSKgn72B6x
+	 o/01hoJxhAa/UydnqA6xJX7pOjOscd7dZisQepF1ReyTSPRCfLJ9s+2oSVX/J/7ZFb
+	 IxpH3L62h+7bA==
+Date: Wed, 12 Nov 2025 12:14:04 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH] perf/x86/intel: Fix and clean up
+ intel_pmu_drain_arch_pebs() type use
+Message-ID: <aRRr_O9Enzkb5B5d@gmail.com>
+References: <20251112154200.4d3671f9@canb.auug.org.au>
+ <cb49c1be-99a5-4aba-b3da-f902058a4996@linux.intel.com>
+ <aRRcyoOobRyam5yD@gmail.com>
+ <d3d49960-b7b6-4270-961e-9895cfdff1be@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d3d49960-b7b6-4270-961e-9895cfdff1be@linux.intel.com>
 
-The validation of the set(nsh(...)) action is completely wrong.
-It runs through the nsh_key_put_from_nlattr() function that is the
-same function that validates NSH keys for the flow match and the
-push_nsh() action.  However, the set(nsh(...)) has a very different
-memory layout.  Nested attributes in there are doubled in size in
-case of the masked set().  That makes proper validation impossible.
 
-There is also confusion in the code between the 'masked' flag, that
-says that the nested attributes are doubled in size containing both
-the value and the mask, and the 'is_mask' that says that the value
-we're parsing is the mask.  This is causing kernel crash on trying to
-write into mask part of the match with SW_FLOW_KEY_PUT() during
-validation, while validate_nsh() doesn't allocate any memory for it:
+* Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000018
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 1c2383067 P4D 1c2383067 PUD 20b703067 PMD 0
-  Oops: Oops: 0000 [#1] SMP NOPTI
-  CPU: 8 UID: 0 Kdump: loaded Not tainted 6.17.0-rc4+ #107 PREEMPT(voluntary)
-  RIP: 0010:nsh_key_put_from_nlattr+0x19d/0x610 [openvswitch]
-  Call Trace:
-   <TASK>
-   validate_nsh+0x60/0x90 [openvswitch]
-   validate_set.constprop.0+0x270/0x3c0 [openvswitch]
-   __ovs_nla_copy_actions+0x477/0x860 [openvswitch]
-   ovs_nla_copy_actions+0x8d/0x100 [openvswitch]
-   ovs_packet_cmd_execute+0x1cc/0x310 [openvswitch]
-   genl_family_rcv_msg_doit+0xdb/0x130
-   genl_family_rcv_msg+0x14b/0x220
-   genl_rcv_msg+0x47/0xa0
-   netlink_rcv_skb+0x53/0x100
-   genl_rcv+0x24/0x40
-   netlink_unicast+0x280/0x3b0
-   netlink_sendmsg+0x1f7/0x430
-   ____sys_sendmsg+0x36b/0x3a0
-   ___sys_sendmsg+0x87/0xd0
-   __sys_sendmsg+0x6d/0xd0
-   do_syscall_64+0x7b/0x2c0
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> BTW, the offensive commit should be the below one instead of '2721e8da2de7
+> ("perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR") '.
+> 
+> d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragments")
 
-The third issue with this process is that while trying to convert
-the non-masked set into masked one, validate_set() copies and doubles
-the size of the OVS_KEY_ATTR_NSH as if it didn't have any nested
-attributes.  It should be copying each nested attribute and doubling
-them in size independently.  And the process must be properly reversed
-during the conversion back from masked to a non-masked variant during
-the flow dump.
+Indeed, this is the one that introduced it - I fixed 
+the changelog and updated the tags.
 
-In the end, the only two outcomes of trying to use this action are
-either validation failure or a kernel crash.  And if somehow someone
-manages to install a flow with such an action, it will most definitely
-not do what it is supposed to, since all the keys and the masks are
-mixed up.
+Thanks,
 
-Fixing all the issues is a complex task as it requires re-writing
-most of the validation code.
-
-Given that and the fact that this functionality never worked since
-introduction, let's just remove it altogether.  It's better to
-re-introduce it later with a proper implementation instead of trying
-to fix it in stable releases.
-
-Fixes: b2d0f5d5dc53 ("openvswitch: enable NSH support")
-Reported-by: Junvy Yang <zhuque@tencent.com>
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
----
- net/openvswitch/actions.c      | 68 +---------------------------------
- net/openvswitch/flow_netlink.c | 64 ++++----------------------------
- net/openvswitch/flow_netlink.h |  2 -
- 3 files changed, 9 insertions(+), 125 deletions(-)
-
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index 2832e0794197..792ca44a461d 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -572,69 +572,6 @@ static int set_ipv6(struct sk_buff *skb, struct sw_flow_key *flow_key,
- 	return 0;
- }
- 
--static int set_nsh(struct sk_buff *skb, struct sw_flow_key *flow_key,
--		   const struct nlattr *a)
--{
--	struct nshhdr *nh;
--	size_t length;
--	int err;
--	u8 flags;
--	u8 ttl;
--	int i;
--
--	struct ovs_key_nsh key;
--	struct ovs_key_nsh mask;
--
--	err = nsh_key_from_nlattr(a, &key, &mask);
--	if (err)
--		return err;
--
--	/* Make sure the NSH base header is there */
--	if (!pskb_may_pull(skb, skb_network_offset(skb) + NSH_BASE_HDR_LEN))
--		return -ENOMEM;
--
--	nh = nsh_hdr(skb);
--	length = nsh_hdr_len(nh);
--
--	/* Make sure the whole NSH header is there */
--	err = skb_ensure_writable(skb, skb_network_offset(skb) +
--				       length);
--	if (unlikely(err))
--		return err;
--
--	nh = nsh_hdr(skb);
--	skb_postpull_rcsum(skb, nh, length);
--	flags = nsh_get_flags(nh);
--	flags = OVS_MASKED(flags, key.base.flags, mask.base.flags);
--	flow_key->nsh.base.flags = flags;
--	ttl = nsh_get_ttl(nh);
--	ttl = OVS_MASKED(ttl, key.base.ttl, mask.base.ttl);
--	flow_key->nsh.base.ttl = ttl;
--	nsh_set_flags_and_ttl(nh, flags, ttl);
--	nh->path_hdr = OVS_MASKED(nh->path_hdr, key.base.path_hdr,
--				  mask.base.path_hdr);
--	flow_key->nsh.base.path_hdr = nh->path_hdr;
--	switch (nh->mdtype) {
--	case NSH_M_TYPE1:
--		for (i = 0; i < NSH_MD1_CONTEXT_SIZE; i++) {
--			nh->md1.context[i] =
--			    OVS_MASKED(nh->md1.context[i], key.context[i],
--				       mask.context[i]);
--		}
--		memcpy(flow_key->nsh.context, nh->md1.context,
--		       sizeof(nh->md1.context));
--		break;
--	case NSH_M_TYPE2:
--		memset(flow_key->nsh.context, 0,
--		       sizeof(flow_key->nsh.context));
--		break;
--	default:
--		return -EINVAL;
--	}
--	skb_postpush_rcsum(skb, nh, length);
--	return 0;
--}
--
- /* Must follow skb_ensure_writable() since that can move the skb data. */
- static void set_tp_port(struct sk_buff *skb, __be16 *port,
- 			__be16 new_port, __sum16 *check)
-@@ -1130,10 +1067,6 @@ static int execute_masked_set_action(struct sk_buff *skb,
- 				   get_mask(a, struct ovs_key_ethernet *));
- 		break;
- 
--	case OVS_KEY_ATTR_NSH:
--		err = set_nsh(skb, flow_key, a);
--		break;
--
- 	case OVS_KEY_ATTR_IPV4:
- 		err = set_ipv4(skb, flow_key, nla_data(a),
- 			       get_mask(a, struct ovs_key_ipv4 *));
-@@ -1170,6 +1103,7 @@ static int execute_masked_set_action(struct sk_buff *skb,
- 	case OVS_KEY_ATTR_CT_LABELS:
- 	case OVS_KEY_ATTR_CT_ORIG_TUPLE_IPV4:
- 	case OVS_KEY_ATTR_CT_ORIG_TUPLE_IPV6:
-+	case OVS_KEY_ATTR_NSH:
- 		err = -EINVAL;
- 		break;
- 	}
-diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-index ad64bb9ab5e2..1cb4f97335d8 100644
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -1305,6 +1305,11 @@ static int metadata_from_nlattrs(struct net *net, struct sw_flow_match *match,
- 	return 0;
- }
- 
-+/*
-+ * Constructs NSH header 'nh' from attributes of OVS_ACTION_ATTR_PUSH_NSH,
-+ * where 'nh' points to a memory block of 'size' bytes.  It's assumed that
-+ * attributes were previously validated with validate_push_nsh().
-+ */
- int nsh_hdr_from_nlattr(const struct nlattr *attr,
- 			struct nshhdr *nh, size_t size)
- {
-@@ -1314,8 +1319,6 @@ int nsh_hdr_from_nlattr(const struct nlattr *attr,
- 	u8 ttl = 0;
- 	int mdlen = 0;
- 
--	/* validate_nsh has check this, so we needn't do duplicate check here
--	 */
- 	if (size < NSH_BASE_HDR_LEN)
- 		return -ENOBUFS;
- 
-@@ -1359,46 +1362,6 @@ int nsh_hdr_from_nlattr(const struct nlattr *attr,
- 	return 0;
- }
- 
--int nsh_key_from_nlattr(const struct nlattr *attr,
--			struct ovs_key_nsh *nsh, struct ovs_key_nsh *nsh_mask)
--{
--	struct nlattr *a;
--	int rem;
--
--	/* validate_nsh has check this, so we needn't do duplicate check here
--	 */
--	nla_for_each_nested(a, attr, rem) {
--		int type = nla_type(a);
--
--		switch (type) {
--		case OVS_NSH_KEY_ATTR_BASE: {
--			const struct ovs_nsh_key_base *base = nla_data(a);
--			const struct ovs_nsh_key_base *base_mask = base + 1;
--
--			nsh->base = *base;
--			nsh_mask->base = *base_mask;
--			break;
--		}
--		case OVS_NSH_KEY_ATTR_MD1: {
--			const struct ovs_nsh_key_md1 *md1 = nla_data(a);
--			const struct ovs_nsh_key_md1 *md1_mask = md1 + 1;
--
--			memcpy(nsh->context, md1->context, sizeof(*md1));
--			memcpy(nsh_mask->context, md1_mask->context,
--			       sizeof(*md1_mask));
--			break;
--		}
--		case OVS_NSH_KEY_ATTR_MD2:
--			/* Not supported yet */
--			return -ENOTSUPP;
--		default:
--			return -EINVAL;
--		}
--	}
--
--	return 0;
--}
--
- static int nsh_key_put_from_nlattr(const struct nlattr *attr,
- 				   struct sw_flow_match *match, bool is_mask,
- 				   bool is_push_nsh, bool log)
-@@ -2839,17 +2802,13 @@ static int validate_and_copy_set_tun(const struct nlattr *attr,
- 	return err;
- }
- 
--static bool validate_nsh(const struct nlattr *attr, bool is_mask,
--			 bool is_push_nsh, bool log)
-+static bool validate_push_nsh(const struct nlattr *attr, bool log)
- {
- 	struct sw_flow_match match;
- 	struct sw_flow_key key;
--	int ret = 0;
- 
- 	ovs_match_init(&match, &key, true, NULL);
--	ret = nsh_key_put_from_nlattr(attr, &match, is_mask,
--				      is_push_nsh, log);
--	return !ret;
-+	return !nsh_key_put_from_nlattr(attr, &match, false, true, log);
- }
- 
- /* Return false if there are any non-masked bits set.
-@@ -2997,13 +2956,6 @@ static int validate_set(const struct nlattr *a,
- 
- 		break;
- 
--	case OVS_KEY_ATTR_NSH:
--		if (eth_type != htons(ETH_P_NSH))
--			return -EINVAL;
--		if (!validate_nsh(nla_data(a), masked, false, log))
--			return -EINVAL;
--		break;
--
- 	default:
- 		return -EINVAL;
- 	}
-@@ -3437,7 +3389,7 @@ static int __ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
- 					return -EINVAL;
- 			}
- 			mac_proto = MAC_PROTO_NONE;
--			if (!validate_nsh(nla_data(a), false, true, true))
-+			if (!validate_push_nsh(nla_data(a), log))
- 				return -EINVAL;
- 			break;
- 
-diff --git a/net/openvswitch/flow_netlink.h b/net/openvswitch/flow_netlink.h
-index fe7f77fc5f18..ff8cdecbe346 100644
---- a/net/openvswitch/flow_netlink.h
-+++ b/net/openvswitch/flow_netlink.h
-@@ -65,8 +65,6 @@ int ovs_nla_put_actions(const struct nlattr *attr,
- void ovs_nla_free_flow_actions(struct sw_flow_actions *);
- void ovs_nla_free_flow_actions_rcu(struct sw_flow_actions *);
- 
--int nsh_key_from_nlattr(const struct nlattr *attr, struct ovs_key_nsh *nsh,
--			struct ovs_key_nsh *nsh_mask);
- int nsh_hdr_from_nlattr(const struct nlattr *attr, struct nshhdr *nh,
- 			size_t size);
- 
--- 
-2.51.0
-
+	Ingo
 
