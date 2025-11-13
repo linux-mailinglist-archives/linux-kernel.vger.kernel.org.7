@@ -1,171 +1,125 @@
-Return-Path: <linux-kernel+bounces-899105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6382C56C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:15:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF87C56CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEE493ACC65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:13:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A5FB4EC885
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F61320A0B;
-	Thu, 13 Nov 2025 10:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dx4L72BG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vRMchbv0"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AC4322768;
+	Thu, 13 Nov 2025 10:15:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C85305044;
-	Thu, 13 Nov 2025 10:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13518312831;
+	Thu, 13 Nov 2025 10:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763028807; cv=none; b=hAcst7SQkai1NiaUg1iMEI9Qa1pXE/+8RMoRAREHLzJf7lZLLDnKNpFKNO+yusslKLpUT5tZXbLpn7idQYXtsBL89QOPTdFw8ldsxsG1/2NHK3onWFs3FhbEFkNbcjJwjpEFv7cTj5HgyVCNgs7SmM3eQFnxRTsodIIpoDQm4YQ=
+	t=1763028917; cv=none; b=lGafCv0fnaGeRxgCOh6311mwI26dxK5Eqyv2RXR6WsO04O3xY1mxn4n5kNCWrsbkEyRYbxbn3HElvvsNUISohxDG2AjoRX6IZMUh8dA8fFkNk8jlO61EK3A740JQp2O+TOEtRdtvwuNSg3n7CzN1nlDA5qhrbeP6tBoUNDhlWvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763028807; c=relaxed/simple;
-	bh=3wdKEAz/9cBOlM86QatywL0i7JyUxxjh85cq7JJLyi4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=SOfmRHqbSR3v6SBjBFU80MHzU6bXOPkCwPkuDC10XKbW6kR44uDrSRYjUAc/ijAjs1xeBQj1g7f55TmtYvk6M91eYoNHTYV17zo8w68VUAcq43g4jTCpzW8NojUjAHEpDvV/ECOKO7FyaDXOMlJ722YC1w0I03iibnuajNrZvfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dx4L72BG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vRMchbv0; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E525A140016D;
-	Thu, 13 Nov 2025 05:13:23 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Thu, 13 Nov 2025 05:13:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1763028803;
-	 x=1763115203; bh=eBsaFtA2xBcklMBM2lcRD3QQiiT0+IpJhfUOqJ08udk=; b=
-	dx4L72BG/Weyjy69zTnbObR32UfXg1Kw8iNWEtEAsc5ctiYB9KiV+Y5KHXKAAFyV
-	znTtPr97A7XPqUq6kqTG0t4x99wH0CL0wo/+Io92jdFb+M9ltLQjRLpoPtFnMpab
-	uIharEfdRj55SEfwSiacBpy1LhsYiikhOnXYysamSQrk6+RqhNZh/VfIEkVDpPoV
-	Ggsu1ixpcpYPec3hKZJ+kqvRxsC81YJ1j7EyK61SKZ6djuLHixpcJ6NjlGzhqBwB
-	ySqAiolMiio8+z/7Sw085mu9UwA88QaYT9qIpnhwIEHk+BTOPQgbvv4X0SUjvwlE
-	HBmXzg//bKE7FUKziXnKIA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1763028803; x=
-	1763115203; bh=eBsaFtA2xBcklMBM2lcRD3QQiiT0+IpJhfUOqJ08udk=; b=v
-	RMchbv0sISLH4MACLD2Xur8OemJoKpH/lrUkmb2bd06oHzddVHR9Jh6Y7wTEf9SV
-	UPl9b5NoPy8Ud9grx8HXjADs9RFvs45cR0/bBzgELXkdBdMwsN0chXusr646LhlM
-	Z0jF7I4izj996Y5tUh4VJkhdqyQM1Tco/J8Fy/eWwZCkdT0ghxcnkhAzmQgr0Kcj
-	iEQagtz9GgaB3r1kojoaWWUXGl1BiIhu08/vJTUKCMm9HlI7f4neW2N6YjORV3G0
-	EssG57zQTapGcEaNqzv0uFAzGMc9U1MO652ZRYRBtn1zyLOTYaofyYjIe7RHe91+
-	Uim604CkGUgpDyJ0j1JIw==
-X-ME-Sender: <xms:Q68VaSHBnABlehvIB8HPLW1ZPP6tZIr4l4xh6kr1kC9kKKzEywDbgA>
-    <xme:Q68VaeK0PJywiAn5sO0QtCbhWtpa4C6k-C1LKuTzyX5bfrjrBpD7MgOsquQjAGuPh
-    7xBxjzgvlJBGWEjJYhsmwvos-8QjSPCa460qPCjU7sHm8CzpWV0UcM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeiieejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
-    phhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghhvghlghgrrg
-    hssehgohhoghhlvgdrtghomhdprhgtphhtthhopehkihhshhhonheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepkhifihhltgiihihnshhkiheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhpihgvrhgrlhhishhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehm
-    rghniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhn
-    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehunhhitghorhhnpgifrghnghesohhuth
-    hlohhokhdrtghomhdprhgtphhtthhopehsqdhvrggurghprghllhhisehtihdrtghomh
-X-ME-Proxy: <xmx:Q68VafAHyv8bK6Ia8xhwRSoZVJZ-23YfWweBZ8eMyvWbXODYpACFVg>
-    <xmx:Q68VaatI5w3AsYwXW5HDHo4k-RdK6zja_vVWsVXJ8gWGFG6YFWdmGg>
-    <xmx:Q68Vad8a0h3ovFMUiJiwnhwyAPdtiKYPFGlTB08M6a7RPOIDx1Rfdw>
-    <xmx:Q68VaRQKTDzHimbKtlnbdrZjMFhicrKweFiiliNmy2Ndb_wdL1U8LQ>
-    <xmx:Q68Vaevt84g7sRauZ_invuhu7qkg2Yo7dhzae9iFqMsr3pCTZAV471Hv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 02C82700054; Thu, 13 Nov 2025 05:13:23 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1763028917; c=relaxed/simple;
+	bh=BAf4PChdrXsEECboXjuWhMhLZMG7PICo2eR6NUwLSpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kYTiHnK3mAbCQXnqJ37NSxhLA8i7GKDAIKiDk5zOG2kVcctTCGW/6WMhe6CgsMXvnG3LXZsNwezwv49BQQkbH5VLN/Whr8xZULkAKEHZek2/tBD5RkDf3O316Lecg6xUwZsNskhLqDrHV1/ZipAmZarAMDY0mtdyIANir+i96zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.48.119])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 80DDB340861;
+	Thu, 13 Nov 2025 10:15:11 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: soc@kernel.org
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alex Elder <elder@riscstar.com>,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RISC-V SpacemiT Devicetrees for v6.19
+Date: Thu, 13 Nov 2025 18:14:50 +0800
+Message-ID: <20251113180732-GYC0846694@gentoo.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AO4N9SNPwumV
-Date: Thu, 13 Nov 2025 11:13:01 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Siddharth Vadapalli" <s-vadapalli@ti.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- "Manivannan Sadhasivam" <mani@kernel.org>, "Rob Herring" <robh@kernel.org>,
- bhelgaas@google.com, "Chen Wang" <unicorn_wang@outlook.com>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>
-Cc: stable@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- srk@ti.com
-Message-Id: <084b804f-2999-4f8d-8372-43cfbf0c0d28@app.fastmail.com>
-In-Reply-To: <20251113092721.3757387-1-s-vadapalli@ti.com>
-References: <20251113092721.3757387-1-s-vadapalli@ti.com>
-Subject: Re: [PATCH] PCI: cadence: Kconfig: change PCIE_CADENCE configs from tristate
- to bool
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025, at 10:27, Siddharth Vadapalli wrote:
-> The drivers associated with the PCIE_CADENCE, PCIE_CADENCE_HOST AND
-> PCIE_CADENCE_EP configs are used by multiple vendor drivers and serve as a
-> library of helpers. Since the vendor drivers could individually be built
-> as built-in or as loadable modules, it is possible to select a build
-> configuration wherein a vendor driver is built-in while the library is
-> built as a loadable module. This will result in a build error as reported
-> in the 'Closes' link below.
->
-> Address the build error by changing the library configs to be 'bool'
-> instead of 'tristate'.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: 
-> https://lore.kernel.org/oe-kbuild-all/202511111705.MZ7ls8Hm-lkp@intel.com/
-> Fixes: 1c72774df028 ("PCI: sg2042: Add Sophgo SG2042 PCIe driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Hi Arnd,
 
-I really think there has to be a better solution here, this is not
-an unusual problem.
+   Please pull SpacemiT's DeviceTree changes for v6.19
 
-> @@ -4,16 +4,16 @@ menu "Cadence-based PCIe controllers"
->  	depends on PCI
-> 
->  config PCIE_CADENCE
-> -	tristate
-> +	bool
-> 
->  config PCIE_CADENCE_HOST
-> -	tristate
-> +	bool
->  	depends on OF
->  	select IRQ_DOMAIN
->  	select PCIE_CADENCE
-> 
->  config PCIE_CADENCE_EP
-> -	tristate
-> +	bool
->  	depends on OF
->  	depends on PCI_ENDPOINT
->  	select PCIE_CADENCE
+Yixun Lan
 
-I think the easiest way would be to leave PCIE_CADENCE as
-a 'tristate' symbol but make the other two 'bool', and then
-adjust the Makefile logic to use CONFIG_PCIE_CADENCE as
-the thing that controls how the individual drivers are built.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-That way, if any platform specific driver is built-in, both
-the EP and HOST support are built-in or disabled but never
-loadable modules. As long as all platform drivers are
-loadable modules, so would be the base support.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-     Arnd
+are available in the Git repository at:
+
+  https://github.com/spacemit-com/linux tags/spacemit-dt-for-6.19-1
+
+for you to fetch changes up to 5a97a38c22799a802f33001dcb022d2942fe4a41:
+
+  riscv: dts: spacemit: define all missing I2C controller nodes (2025-11-12 18:53:26 +0800)
+
+----------------------------------------------------------------
+RISC-V SpacemiT DT changes for 6.19
+
+- Add Uart and I2C nodes
+- Add P1 PMIC nodes
+- Add MusePi Pro board support
+- Add OrangePi R2S board support
+- Enable eeprom for BPI-F3
+- Enable QSPI on BPI-F3
+- Enable Ethernet and PDMA on OrangePi RV2
+
+----------------------------------------------------------------
+Alex Elder (4):
+      riscv: dts: spacemit: enable the i2c8 adapter
+      riscv: dts: spacemit: define fixed regulators
+      riscv: dts: spacemit: define regulator constraints
+      riscv: dts: spacemit: enable K1 SoC QSPI on BPI-F3
+
+Aurelien Jarno (3):
+      riscv: dts: spacemit: enable the i2c2 adapter on BPI-F3
+      riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+      riscv: dts: spacemit: add i2c aliases on BPI-F3
+
+Hendrik Hamerlinck (1):
+      riscv: dts: spacemit: add UART pinctrl combinations
+
+Michael Opdenacker (3):
+      riscv: dts: spacemit: add Ethernet and PDMA to OrangePi RV2
+      dt-bindings: riscv: spacemit: Add OrangePi R2S board
+      riscv: dts: spacemit: Add OrangePi R2S board device tree
+
+Troy Mitchell (4):
+      dt-bindings: riscv: spacemit: add MusePi Pro board
+      riscv: dts: spacemit: add MusePi Pro board device tree
+      riscv: dts: spacemit: reorder i2c2 node
+      riscv: dts: spacemit: define all missing I2C controller nodes
+
+ .../devicetree/bindings/riscv/spacemit.yaml        |   2 +
+ arch/riscv/boot/dts/spacemit/Makefile              |   2 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    | 172 ++++++++
+ arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts     |  79 ++++
+ arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts   |  90 ++++
+ arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts   |  52 +++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       | 465 ++++++++++++++++++++-
+ arch/riscv/boot/dts/spacemit/k1.dtsi               | 122 ++++++
+ 8 files changed, 982 insertions(+), 2 deletions(-)
+ create mode 100644 arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
+ create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
 
