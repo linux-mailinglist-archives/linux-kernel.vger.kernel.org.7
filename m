@@ -1,73 +1,61 @@
-Return-Path: <linux-kernel+bounces-899322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB58C5763D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:26:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E95C576AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4E0E4EA074
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E5C3BB83A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A470351FDE;
-	Thu, 13 Nov 2025 12:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2036D3502A4;
+	Thu, 13 Nov 2025 12:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jdaT2YM1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="atH/31oK"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A4C34FF77;
-	Thu, 13 Nov 2025 12:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547F34DCE0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763036571; cv=none; b=KjWT4776F+Lh7shGw/WvyEL3q8WcWZCX+I2erWtTwFFJQHYYM7aRVP8t3+Z1+An+2sBA2bUY/zoc/5rqa6RNxFLpjkUEHO+EPFW7WokOv12XfHhfcFA5iAbWuvLFF9Myw9Ft4QnuOcymvPCc4ibcpuaM5DWr7xr9S48bUeyHzfA=
+	t=1763036603; cv=none; b=Te5Ovz0HgtyaloSwhz4WUjqsR1eCygbIW0WKdEUydF1ztVGtq4ZLiwIoB6OurKLvGLYiYaBXUos455DCbgfKYlb5p5/9cTR0HRkqsKbSxQP7HRstugBpjW7VkwM7t+xkepmAb85nJL75tx11tMtvxJtLx+tY1EOoswbJgGJDFhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763036571; c=relaxed/simple;
-	bh=JFgZElGuW7huMLg5IeTiiaMe7V7hDDxmcenUv8VvhSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=myEglwPeZCCf396vYhxdMeLOTnfdmT7Bkrw7b+Ez75FwvhgQ7woVRevc41MucETVm4he3kqvNKZfUMsZGxscXUs5jy8pKKJJh+MPAA5A8BZmmQDbnZ3DvbgUq1waGkagLrKXm46/JZWQsOF5LaS+TfeNPzpnXafx4O7G5oaQghc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jdaT2YM1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1763036563;
-	bh=JFgZElGuW7huMLg5IeTiiaMe7V7hDDxmcenUv8VvhSo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jdaT2YM10QNyrQb4uPfRepfG9a90LnHiYl+WClEpOpiN6E9jWAfbDQDLzds2Zi17p
-	 yGHOxASDgHDbrC3kxt/4vD9Y64iTUUQIeQaWg19rUwUSob9YPgrzc+I3xYEf56lb8F
-	 FpDFx1y6A7scsOWlNlSmePFPtFPj2iWln7E/BnHX3gZZZO5pydt4zPRviDs2BzmSGa
-	 soHqTzBQ6388YsykB6RBOJND7kejaY2MLrxwoKiATdqb4bDgFNLDtc3WoCUX+K74GP
-	 XZUNnfEiIW0K2fc512pBlEFtRfnAVBa0NAdFfRNR5zgCb6hkOhDKOCkqQEihBiAqpt
-	 rqfylKbOkCWmQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4E40017E151F;
-	Thu, 13 Nov 2025 13:22:43 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: dmaengine@vger.kernel.org
-Cc: sean.wang@mediatek.com,
-	vkoul@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	long.cheng@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH 8/8] dmaengine: mediatek: mtk-uart-apdma: Add support for Dimensity 9200
-Date: Thu, 13 Nov 2025 13:22:29 +0100
-Message-ID: <20251113122229.23998-9-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1763036603; c=relaxed/simple;
+	bh=kFIIvvybEz4k8OUWTJoB9Zel7jb//Xa1to2R3k8Phmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N8p59Q6cZirWTaZ/lH+s8RzMYZ5ugNsFSrgnc8UKZcKm9vmp7e9t57eiHKs4x9M0bVjemUc+s/8lN6DpKSWxn6exV463ButEhWXy7P0GiEridVH7YilJDFI/cpn2vTf88rX+/5BLXMy+XcxCywsGjrUGArCmT3Sxl7j/8WImW1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=atH/31oK; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=VIuRL0oXLtNaj3TeYp7lAh4FpV+kGIchTTBPXGDDMw8=; b=atH/31oKYyntT9hil9bMYl84iP
+	Bnnv3PLJ5o5GC3EFdLDtp49YDeP7RFsG0LVExeTAB/r3LG+yzawJIzWUoPgtMaZ/sHvfgwbT6fc3l
+	FnzX5kafu/sFZPyFV6tEtrLoF86I+xwltUwjP57Ciuvml8oMduOM6P3Jglc1SlnJwvVcZa/qa4vgs
+	obfmxW/5bgtrQTFpwYczBOFt6jYo0Kv4fzo6zbzqrSKUftCJaK8czKfaxflhdUQT/FrCY+AprbrCH
+	sXXK8MNRGRis9Zui2CndurPaw6HxSp1pzmQP192Ix7wwjCId/r2XYwkb7Jcwua/dykJpEp+D1D+c4
+	bfcyX1LA==;
+Received: from [90.240.106.137] (helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vJWM8-0001Gg-51; Thu, 13 Nov 2025 13:23:15 +0100
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Peter Ziljstra <peterz@infradead.org>
+Subject: [PATCH] sched/psi: Streamline the flow in psi_group_change
+Date: Thu, 13 Nov 2025 12:22:54 +0000
+Message-ID: <20251113122254.40445-1-tvrtko.ursulin@igalia.com>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251113122229.23998-1-angelogioacchino.delregno@collabora.com>
-References: <20251113122229.23998-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,31 +64,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a compatible string and match data for the APDMA IP version
-found in the MediaTek Dimensity 9200 MT6985 SoC; this supports
-extended addressing with up to 35 bits.
+Given that psi_group_change() can be called rather frequently from the
+scheduler task switching code lets streamline it a bit to reduce the
+number of loops and conditionals on the typical invocation.
 
-Other SoCs with this IP version also include the Dimensity 9400
-MT6991 and Kompanio Ultra MT8196 (which don't need a specific
-compatible in this driver and can reuse the mt6985 one).
+First thing is that we replace the open coded mask walks with the standard
+for_each_set_bit(). This makes the source code a bit more readable and
+also enables usage of the efficient CPU specific zero bit skip
+instructions.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In doing so we also remove the need to mask out the special TSK_ONCPU bit
+from the set and clear masks, since for_each_set_bit() now directly limits
+the array index to the safe range.
+
+As the last remaining step we can now easily move the new state mask
+computation to only run when required.
+
+End result is hopefully more readable code and a very small but measurable
+reduction in task switching CPU overhead.
+
+Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Peter Ziljstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/dma/mediatek/mtk-uart-apdma.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/sched/psi.c | 48 ++++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/dma/mediatek/mtk-uart-apdma.c b/drivers/dma/mediatek/mtk-uart-apdma.c
-index dfcfc618bb8c..ead00636b048 100644
---- a/drivers/dma/mediatek/mtk-uart-apdma.c
-+++ b/drivers/dma/mediatek/mtk-uart-apdma.c
-@@ -471,6 +471,7 @@ static const struct of_device_id mtk_uart_apdma_match[] = {
- 	{ .compatible = "mediatek,mt6577-uart-dma", .data = (void *)32 },
- 	{ .compatible = "mediatek,mt6795-uart-dma", .data = (void *)33 },
- 	{ .compatible = "mediatek,mt6835-uart-dma", .data = (void *)34 },
-+	{ .compatible = "mediatek,mt6985-uart-dma", .data = (void *)35 },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, mtk_uart_apdma_match);
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 59fdb7ebbf22..fe19aeef8dbd 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -798,39 +798,26 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 			     u64 now, bool wake_clock)
+ {
+ 	struct psi_group_cpu *groupc;
+-	unsigned int t, m;
++	unsigned long t, m;
+ 	u32 state_mask;
+ 
+ 	lockdep_assert_rq_held(cpu_rq(cpu));
+ 	groupc = per_cpu_ptr(group->pcpu, cpu);
+ 
+ 	/*
+-	 * Start with TSK_ONCPU, which doesn't have a corresponding
+-	 * task count - it's just a boolean flag directly encoded in
+-	 * the state mask. Clear, set, or carry the current state if
+-	 * no changes are requested.
++	 * TSK_ONCPU does not have a corresponding task count - it's just a
++	 * boolean flag directly encoded in the state mask. Clear, set, or carry
++	 * the current state if no changes are requested.
++	 *
++	 * The rest of the state mask is calculated based on the task counts.
++	 * Update those first, then construct the mask.
+ 	 */
+-	if (unlikely(clear & TSK_ONCPU)) {
+-		state_mask = 0;
+-		clear &= ~TSK_ONCPU;
+-	} else if (unlikely(set & TSK_ONCPU)) {
+-		state_mask = PSI_ONCPU;
+-		set &= ~TSK_ONCPU;
+-	} else {
+-		state_mask = groupc->state_mask & PSI_ONCPU;
+-	}
+-
+-	/*
+-	 * The rest of the state mask is calculated based on the task
+-	 * counts. Update those first, then construct the mask.
+-	 */
+-	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
+-		if (!(m & (1 << t)))
+-			continue;
+-		if (groupc->tasks[t]) {
++	m = clear;
++	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks)) {
++		if (likely(groupc->tasks[t])) {
+ 			groupc->tasks[t]--;
+ 		} else if (!psi_bug) {
+-			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
++			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%lu tasks=[%u %u %u %u] clear=%x set=%x\n",
+ 					cpu, t, groupc->tasks[0],
+ 					groupc->tasks[1], groupc->tasks[2],
+ 					groupc->tasks[3], clear, set);
+@@ -838,9 +825,9 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 		}
+ 	}
+ 
+-	for (t = 0; set; set &= ~(1 << t), t++)
+-		if (set & (1 << t))
+-			groupc->tasks[t]++;
++	m = set;
++	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks))
++		groupc->tasks[t]++;
+ 
+ 	if (!group->enabled) {
+ 		/*
+@@ -853,6 +840,13 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
+ 			record_times(groupc, now);
+ 
++		if (unlikely(clear & TSK_ONCPU))
++			state_mask = 0;
++		else if (unlikely(set & TSK_ONCPU))
++			state_mask = PSI_ONCPU;
++		else
++			state_mask = groupc->state_mask & PSI_ONCPU;
++
+ 		groupc->state_mask = state_mask;
+ 
+ 		return;
 -- 
 2.51.1
 
