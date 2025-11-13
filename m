@@ -1,271 +1,252 @@
-Return-Path: <linux-kernel+bounces-898322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD765C54E15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:14:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1133C54E2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786B53B4D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:14:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D05AE4E1D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32581EED8;
-	Thu, 13 Nov 2025 00:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2295E1494C2;
+	Thu, 13 Nov 2025 00:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="yGzeVX18";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HVFFoefh"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdGTDT0F";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hak9tl3H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7375D2905;
-	Thu, 13 Nov 2025 00:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7AF35977
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762992887; cv=none; b=mc1CqhGZStUFsiEds8R4IG+TgREmBlV/XLGIRUvu2oFvWRYSOdkEufgz5KtvEqWtNz72O3UYxErkRsVdxWT5Li6xmXjLY7GFW4SikXnjsRd7GeKbLXhZQJqDyPDUc2Ibab0yfj/UjdKjAPo6HQk/ERaPhlDfUUDSYYb8GfsFrG8=
+	t=1762992920; cv=none; b=AQgmjXUSBZZ1sgV4dP3rlziKfDuBKW9v686qFXcq3z9GDYTS/z7947ycylQApcZZB9uAFcH7+GGVGsO+SOEKHpeSdrZM4JZacfyOaMeDSLDq/g3tSlpdAV0cxJWrfs8B8m8s913rY+BAbW3igVdfgPfR3Fksl25ouqJHLh6lhaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762992887; c=relaxed/simple;
-	bh=ZdkIxb/t5hQ7WUCu9nyo3fziclzhOGu4PfXkyH2r2YQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSw9vtQnLavrsA8Xl/YEVsHEZg5FWzzbAO16LDJTSIV99hNMG/Oa0ifi8APDpzyUM3Bt0xM/noHow8cC0SFMjqqppWU/qGoyLIWB06sF6r9grMEWai/vA2fA6FlHvwZyQMpgpc4/IH2hGAiLLUM0TMMfQlkayn5QH4RzFMsBSMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=yGzeVX18; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HVFFoefh; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6F4F4EC0198;
-	Wed, 12 Nov 2025 19:14:43 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Wed, 12 Nov 2025 19:14:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762992883;
-	 x=1763079283; bh=jVuUMhj1KrgwimXJyiXoIkRS9hx86+cnax0jKzvLld8=; b=
-	yGzeVX18zMAoywxAQsty3YEoj9XPchKb+BJ1yf7Iii3wzuXAQGyPGUZcH+4ibaUF
-	IZWnuKXxcZmY/UFhDJY86aYBjGbP0kadVtea242z/VH8elUSu+BMHimO+tUatcZs
-	vcOf6WS5TyCDlTjrrd3klZaVWt0lhQKJXxwP09D04N4LH8rWlgBhMF12ahS5MXu8
-	ZIw9qDgrlY5ZP5pbK/W+Lcr8SkUQltYkwTNjho8NceNEnGpT1A0hELbCDjSq9J3O
-	yGIKAdVJKSataY8XzJxyqUAJDDSE5NMZacy4JDYvLqGb0jN+UrQrAqp8ZTiVeRKA
-	XR4n9rC1RsukN1Uf9d4LCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762992883; x=
-	1763079283; bh=jVuUMhj1KrgwimXJyiXoIkRS9hx86+cnax0jKzvLld8=; b=H
-	VFFoefh7PH2sux8tGIPQcEChHMjDQSa2Tt4b9v0zVJjkANieMzvV/ww/i9ODTgj2
-	4L2eZ3xWFdJ1JwqBW36BwbFzFBWbcwZfQHC/yJ93cuChxbvCrahgNwujK00CbEPn
-	Jdf6ZZkyE7RHLraOeMbo0aIGzPRTS9jJ1pG9wC+l83SCBUJHdXW50Jn0sjJpEHvr
-	m3/FjibPcmHnh6L1JyPKxh0WK0usdKGjDSm0TdDi+HZBYYXKYM5fbleUsCw4hE5R
-	uBbyJCgMqgnwiHggHI8PmR/RPTgkVZfVKOLEJoNqcEyYseJuSHsMhUzrfAcia7wW
-	8kOqg0T96GNXxaFXXfdVg==
-X-ME-Sender: <xms:8iIVaR72VUalhrotXkFwxA0Gitpym0mwmEmS855u24sDN1PilLbbiQ>
-    <xme:8iIVaYMuTvlxHi779zkpx7zViEFV1eFVucMJn731J0WtkeJf-g-j9Csxm8Z1spLZ7
-    thGq7utS1Q1t2bibOB-29-xDTmqTM8W3Zxt0Wv19SVR2P_6>
-X-ME-Received: <xmr:8iIVaftOTUUTNSE6n2hREJQ7tFu3tG_2qSlokyN2z4FKOCl1uWUr-gNbG99WdMUGpXRsjXQzqhHemYA98g_2m4SzWj3zyXrOMMnE5-0GNyOT6dcjO5JT6HA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdehgeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
-    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvih
-    hrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
-    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
-    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:8yIVabZBdP_VHHdVVAAxqXUvBN7d_69wYz5Cl5N1GuIxaP52MVXe4w>
-    <xmx:8yIVaRz1Wa2YlpVxUZtoasIGDYFYnefd_fCuYX8wov9THb4pGmY3wA>
-    <xmx:8yIVaTiJIt5qeKpi3xtaU8UyNPZzyETUENbGdwMQqo12Zv60RJA6Vw>
-    <xmx:8yIVadmY4JZB0btjl8Aec4XYfzlUmK4-Mc5VScvMHESuMQQNzDrdeA>
-    <xmx:8yIVaSXpEHUdCrbgx0U9Uwyl51PejtGu-fjX5SrfY_GTh7F2NIYktJrA>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 19:14:40 -0500 (EST)
-Message-ID: <0dfa7fc6-3a15-4adc-ad1d-81bb43f62919@themaw.net>
-Date: Thu, 13 Nov 2025 08:14:36 +0800
+	s=arc-20240116; t=1762992920; c=relaxed/simple;
+	bh=Y2vNdC1fdOKu3WTqJ+2BAwZop7f2ruuqCfhWlmWdCpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Np527DNcsq4yNg+bx6ldnAMy6hr+vkm4kNTejrz7aZYWQy38URrukmXKjPrCoTOvL3+I+AKeuf4oiTAHAaPtM40eRl4/Sw7B6T8wHfk5o5D9TPrcOK7jg8Fz/iALZ6K9X0zLO9CNvMy0nTkP3r2FlhDhlorrJQjAsL2DOqf1lWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdGTDT0F; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hak9tl3H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762992917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=S5ZzKSnFFTV49zcwyI0NhobHlfLAH6ZslL6z8Bt9IdY=;
+	b=VdGTDT0FEfb2TVpckselWA4l7oaInX4dceb3rrH0lTnFTCoEq5/eG7kHc14X8XyPIQylza
+	aexhOBSTUVGmaxEyN8k6v/FBgjyUvxROPTs8i5L8ykDsbBrRTTefsSeGgTLtbJujcsFfjp
+	btQY9cAhN3jL8JsB1sH8zsPFvpA+q38=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-U6ghXq4WNIahOQZ8AC3_Xg-1; Wed, 12 Nov 2025 19:15:15 -0500
+X-MC-Unique: U6ghXq4WNIahOQZ8AC3_Xg-1
+X-Mimecast-MFC-AGG-ID: U6ghXq4WNIahOQZ8AC3_Xg_1762992914
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477563e531cso2149725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:15:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762992914; x=1763597714; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S5ZzKSnFFTV49zcwyI0NhobHlfLAH6ZslL6z8Bt9IdY=;
+        b=Hak9tl3HfVENXTxSUJJGKA9iOm0t4MxGxEr2zGL3CBYki92ZR+gXy/vTxeSsoUlRx6
+         pui9VNjqvwJMNn6mXjD2ZyBiiY7GrXOtgGc0oQ3W+QXI1MsUvw1YGMy3HX9noFRPDC69
+         lYtvGgWR7ND7Y54ZOXxXsYH+CBA19jdHzs5TnLgt6+8UXkMkEMTBfkTYrV086FrpFG9d
+         VoAkpRkLe1YpyYbFNq1U/gNiu1P7fudKaNEQT6UYkLK2zNi4uBdPpSnHNR7d+/BKxTMe
+         E7GfVYblThw+cq0jCPCtRpSwG7tOgvV1cFUjYm0ZC0WcRnPe/ePHzJKtbhSiEocx9zi7
+         wtkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762992914; x=1763597714;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S5ZzKSnFFTV49zcwyI0NhobHlfLAH6ZslL6z8Bt9IdY=;
+        b=v5iGVzVrYtCX54yUOWL/+jyd9kslQto0xsTE5eSzsNEDX5NReCzpPKhLi+iYY3pBAz
+         gXZv81c4hAs6CfwPeE6DT2tNFrTvEhmvOipETU3a1KGea2ejQlMcy41JeAx4TwvyxnVn
+         diogfwH7CLcurRqoQ4o72QIAk6zBwHdapr2uY2Y+0bjT/YIYUWO3vOngZTOH3xY7Ojoe
+         FPeIl3eeYr5ujAIlGk6RPbT9yCPd+AelJuckVxWyVABKfaPskwY4wQVC3PjQifD9ETwm
+         3+k7jIzXwtbuEaxuzH0vJldZXO+SMe+PD/YopWm1fzAGPZEDjxGeaOMz5XxrYm+IHUyi
+         byXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPfzEGTHUXy5bC969jO0azTk4tUYx4mF7U5SFlBk6F90CJfQa0+qpmf5jaRNNPSVKvZTlPGj4FPoPkGSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznj+qdYumWNxz3z99wL2sAKlvQgX9+XXh1CdhxC99xjFG+EeTp
+	a+ulclZawqovWmtwRYbunEYl8EZ6K9z+aOuI4LxZG3seoVcE4YYofe91AI/YpbVQk8ZYxN0fl+y
+	4/o6BuJhbSDTc5k/E3fzyKuANzBBesU0mRnKtVkKWHHhNoCdxlcf17S1zESCWvDgQpA==
+X-Gm-Gg: ASbGncsuqeZvM/mPqKA5QLqdLzdMlkjx8aKeIGngT3MjV2470q5pa7ng2t43qPzBpJv
+	HQeIaJ7RuNDD56jqMLQ5dsnrF8JnIqjaqn+VaybmnzoMCLC1U8W7m22NCKmMswBZyJ4FSBAV3oU
+	G/8fAcchupQu5Lqtd6e9Tt6ktIw5aro22va1IQ3MdDnoJikL3gaTterHg10kgbad4Qg3Dsn1NKt
+	Cbm4D0FD2TzDx5fjSy1tdH5mzvDvVbXJuSnT+XP8/lvU3YtgmdJ5edNtA6qq9sNNzXjVfpuR9xC
+	539jqGJ7XfRRVjk4WZaxTmUXuxXqAwYFLvT7hR/StdPn/H5cJX7UHy/3tVMn4qvB6lEzSzGcUJi
+	FXKQ2raX9yLJKPQ==
+X-Received: by 2002:a05:600c:26d1:b0:477:8985:4039 with SMTP id 5b1f17b1804b1-4778a01e47amr18495725e9.17.1762992914259;
+        Wed, 12 Nov 2025 16:15:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEsg4jnVOYbGrqvgUk0lx0gs2mkXOnVysczE7+VU6Cs7eKvrQLn4nazsZcHyX8z1XVsxBjKGA==
+X-Received: by 2002:a05:600c:26d1:b0:477:8985:4039 with SMTP id 5b1f17b1804b1-4778a01e47amr18495595e9.17.1762992913810;
+        Wed, 12 Nov 2025 16:15:13 -0800 (PST)
+Received: from sissix.lzampier.com ([2a06:5900:814a:ab00:3725:2991:6cf3:b3aa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b589sm432983f8f.23.2025.11.12.16.15.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 16:15:13 -0800 (PST)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-input@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Bastien Nocera <hadess@hadess.net>,
+	linux-pm@vger.kernel.org
+Subject: [RFC PATCH v2 0/3] HID: Add support for multiple batteries per device
+Date: Thu, 13 Nov 2025 00:15:02 +0000
+Message-ID: <20251113001508.713574-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
- Kernel Mailing List <linux-kernel@vger.kernel.org>,
- autofs mailing list <autofs@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20251111060439.19593-1-raven@themaw.net>
- <20251111060439.19593-3-raven@themaw.net>
- <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
- <20251111102435.GW2441659@ZenIV>
- <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
- <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
- <20251112-kleckern-gebinde-d8dbe0d50e03@brauner>
-Content-Language: en-AU
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <20251112-kleckern-gebinde-d8dbe0d50e03@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/11/25 19:01, Christian Brauner wrote:
-> On Tue, Nov 11, 2025 at 08:27:42PM +0800, Ian Kent wrote:
->> On 11/11/25 18:55, Christian Brauner wrote:
->>> On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
->>>> On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
->>>>
->>>>>> +	sbi->owner = current->nsproxy->mnt_ns;
->>>>> ns_ref_get()
->>>>> Can be called directly on the mount namespace.
->>>> ... and would leak all mounts in the mount tree, unless I'm missing
->>>> something subtle.
->>> Right, I thought you actually wanted to pin it.
->>> Anyway, you could take a passive reference but I think that's nonsense
->>> as well. The following should do it:
->> Right, I'll need to think about this for a little while, I did think
->>
->> of using an id for the comparison but I diverged down the wrong path so
->>
->> this is a very welcome suggestion. There's still the handling of where
->>
->> the daemon goes away (crash or SIGKILL, yes people deliberately do this
->>
->> at times, think simulated disaster recovery) which I've missed in this
-> Can you describe the problem in more detail and I'm happy to help you
-> out here. I don't yet understand what the issue is.
+This RFC introduces support for multiple batteries per HID device, addressing
+a long-standing architectural limitation in the HID battery reporting subsystem.
 
-I thought the patch description was ok but I'll certainly try.
+## Background
 
+The current HID implementation explicitly prevents multiple batteries per device
+through an early return in hidinput_setup_battery() that enforces a single-battery
+assumption. Linux treats peripheral batteries (scope=Device) differently from system
+batteries, with desktop environments often displaying them separately or ignoring
+them entirely. However, this design doesn't account for modern multi-battery hardware patterns.
 
-Consider using automount in a container.
+## Problem Statement
 
+Multiple battery scenarios that cannot be properly reported today:
 
-For people to use autofs in a container either automount(8) in the init
+1. Gaming headsets with charging docks (e.g., SteelSeries Arctis Nova Pro
+   Wireless) - headset battery reported, dock battery invisible
+2. Graphics tablets with stylus batteries (Wacom) - requires driver-specific
+   workarounds
+3. Wireless earbuds with per-earbud batteries plus charging case
+4. Multi-device receivers (Logitech Unifying) - requires proprietary HID++
+   protocol parsing
 
-mount namespace or an independently running automount(8) entirely within
+This forces manufacturers to use proprietary protocols and vendor-specific
+software. Community projects parse USB packets directly because standard HID
+battery reporting cannot handle multi-battery scenarios.
 
-the container can be used. The later is done by adding a volume option
+## Why This Matters
 
-(or options) to the container to essentially bind mount the autofs mount
+The current limitation creates a cycle: OS lacks support, so manufacturers
+implement proprietary protocols, which makes vendor software necessary, which
+reduces pressure to fix the OS limitation. Improving HID core support for
+multiple batteries would enable standardized reporting, reduce the need for
+vendor software, improve OS integration, reduce driver duplication, and provide
+a foundation for future multi-battery devices.
 
-into the container and the option syntax allows the volume to be set
+## Proposed Solution
 
-propagation slave if it is not already set by default (shared is bad,
+This series introduces struct hid_battery to encapsulate individual battery
+state, refactors the code to use this structure internally, and adds support
+for multiple batteries tracked in a list within struct hid_device. Batteries
+are identified by report ID. The implementation maintains full backwards
+compatibility with existing single-battery code.
 
-the automounts must not propagate back to where they came from). If the
+## Testing
 
-automount(8) instance is entirely within the container that also works
+Tested with split keyboard hardware (Dactyl 5x6) using custom ZMK firmware
+that implements per-side HID battery reporting. Each battery (left and right
+keyboard halves) reports independently through the power supply interface with
+distinct report IDs (0x05 and 0x06).
 
-fine as everything is isolated within the container (no volume options
+Test firmware available on my personal fork at:
+https://github.com/zampierilucas/zmk/tree/feat/individual-hid-battery-reporting
+If this series gets merged, these changes will be proposed to upstream ZMK.
 
-are needed).
+HID descriptor and recording captured with hid-recorder:
 
+D: 0
+R: 162 05 01 09 06 a1 01 85 01 05 07 19 e0 29 e7 15 00 25 01 75 01 95 08 81 02 05 07 75 08 95 01 81 03 05 07 15 00 25 01 19 00 29 67 75 01 95 68 81 02 c0 05 0c 09 01 a1 01 85 02 05 0c 15 00 26 ff 0f 19 00 2a ff 0f 75 10 95 06 81 00 c0 05 84 09 05 a1 01 05 85 85 05 09 44 15 00 25 01 35 00 45 01 75 08 95 01 81 02 09 65 15 00 25 64 35 00 45 64 75 08 95 01 81 02 c0 05 84 09 05 a1 01 05 85 85 06 09 44 15 00 25 01 35 00 45 01 75 08 95 01 81 02 09 65 15 00 25 64 35 00 45 64 75 08 95 01 81 02 c0
+N: ZMK Project Dactyl 5x6
+P: usb-0000:2d:00.3-4.2/input2
+I: 3 1d50 615e
+D: 0
+E: 0.000000 3 05 00 56
+E: 0.000977 3 05 00 56
+E: 1.490974 3 06 00 52
+E: 1.491958 3 06 00 52
+E: 6.492979 3 06 00 53
+E: 6.493962 3 06 00 53
 
-Now with unshare(1) (and there are other problematic cases, I think systemd
+The recording shows both batteries reporting with different charge levels
+(Report ID 05: 86%, Report ID 06: 82%-83%), demonstrating the multi-battery
+functionality. This can be used to verify UPower compatibility.
 
-private temp gets caught here too) where using something like "unshare -Urm"
+## Future Work: Userspace Integration
 
-will create a mount namespace that includes any autofs mounts and sets them
+As suggested by Bastien, semantic battery differentiation (e.g., "left
+earbud" vs "right earbud") requires userspace coordination, as HID
+reports typically lack role metadata.
 
-propagation private. These mounts cannot be unmounted within the mount
+This will require:
+1. systemd/hwdb entries for device-specific battery role mappings
+2. UPower updates to enumerate and group multi-battery devices
+3. Desktop environment changes to display batteries with meaningful labels
 
-namepsace by the namespace creator and accessing a directory within the
+This kernel infrastructure is a prerequisite for that userspace work.
 
-autofs mount will trigger a callback to automount(8) in the init namespace
+## Request for Comments
 
-which mounts the requested mount. But the newly created mount namespace is
+Is list-based storage appropriate or would another structure work better?
+Should we support usage-based identification in addition to report ID for
+devices using the same report ID? Is sequential naming (battery-N) sufficient
+or should batteries have semantic role identifiers like "main", "stylus", "dock"?
 
-propagation private so the process in the new mount namespace loops around
+To HID maintainers (Jiri Kosina, Benjamin Tissoires): Does this belong in
+hid-input.c or should it be separate? Any concerns about the backwards
+compatibility approach? Meaning, should I have removed the whole
+dev->bat legacy mapping and use the new struct?
 
-sending mount requests that cannot be satisfied. The odd thing is that 
-on the
+To power supply maintainers (Sebastian Reichel): Any issues with multiple
+power_supply devices from a single HID device?
 
-second callback to automount(8) returns an error which does complete the
+Related commits:
+- c6838eeef2fb: HID: hid-input: occasionally report stylus battery
+- a608dc1c0639: HID: input: map battery system charging
+- fd2a9b29dc9c: HID: wacom: Remove AES power_supply after inactivity
 
-->d_automount() call but doesn't seem to result in breaking the loop in
+Community projects demonstrating the need:
+- HeadsetControl: https://github.com/Sapd/HeadsetControl
+- Solaar: https://github.com/pwr-Solaar/Solaar
+- OpenRazer: https://github.com/openrazer/openrazer
 
-__traverse_mounts() for some unknown reason. One way to resolve this is to
+Lucas Zampieri (3):
+  HID: input: Introduce struct hid_battery
+  HID: input: Refactor battery code to use struct hid_battery
+  HID: input: Add support for multiple batteries per device
 
-check if the mount can be satisfied and if not bail out immediately and
+Changes in v2:
+- Split the monolithic v1 patch into three logical patches for easier review:
+  1. Introduce struct hid_battery (pure structure addition)
+  2. Refactor existing code to use the new structure (internal changes)
+  3. Add multi-battery support (new functionality)
+- Added detailed testing section with hardware specifics
+- Added hid-recorder output (dactyl-hid-recording.txt) demonstrating two-battery
+  HID descriptor for UPower validation
+- Added "Future Work: Userspace Integration" section addressing Bastien's feedback
+  about semantic battery differentiation
+- Added hardware examples with product links to commit messages (per Bastien's
+  suggestion)
+- No functional changes from v1, only improved patch organization and documentation
 
-returning an error in this case does work.
+ drivers/hid/hid-core.c  |   4 +
+ drivers/hid/hid-input.c | 196 +++++++++++++++++++++++++++-------------
+ include/linux/hid.h     |  42 ++++++++-
+ 3 files changed, 179 insertions(+), 63 deletions(-)
 
-
-I was tempted to work out how to not include the autofs mounts in the cloned
-
-namespace but that's file system specific code in the VFS which is not 
-ok and
-
-it (should) also be possible for the namespace creator to "mount 
---make-shared"
-
-in the case the creator wants the mount to function and this would 
-prevent that.
-
-So I don't think this is the right thing to do.
-
-
-There's also the inability of the mount namespace creator to umount the 
-autofs
-
-mount which could also resolve the problem which I haven't looked into yet.
-
-
-Have I made sense?
-
-
-Clearly there's nothing on autofs itself and why one would want to use it
-
-but I don't think that matters for the description.
-
-
-Ian
+--
+2.51.1
 
 
