@@ -1,185 +1,254 @@
-Return-Path: <linux-kernel+bounces-899242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D833C57320
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:32:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B16C572C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6133B711B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:24:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5171934BDE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D07B33B943;
-	Thu, 13 Nov 2025 11:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945922D5C6C;
+	Thu, 13 Nov 2025 11:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FjiEvGLn"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013020.outbound.protection.outlook.com [40.93.201.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BcchcW6n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VP0PVcRo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k+o8lrDV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QQZystZa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC6D2E0B68;
-	Thu, 13 Nov 2025 11:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033064; cv=fail; b=kUj0uX30Phs51fWVrpEyI7ktEEvRo1Rqr3qZjVE6oD/2+x4+jcvisNK2fgcfGG84O/eEO594NAlFFLFDjAtau8pWkSfIHqbJdSXym/ea263mhKf1kpEjHOqpRiiqZT9Krr3a359Hry/uD1sAgBFFq/IJdSiysRzFujlE1uhTB0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033064; c=relaxed/simple;
-	bh=Qw4dx2uCFBd5VUySgCmqR+p+UoEIiWU/eaGqvqd4+sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=USTEe2s0BLOosaNzJJ7AG5vhmJc9B3NqOp0+2ccVre84bJ5Arjvb8o17ppa7VCpCW651I7M61eq5ujjDGtxFpr+FNDMY/BPbsXKTF/XTGwqAPG25wbVWYNgcFjqU8xlkhebXD1/z+uy5kWWpIF77US2wfwrswV+bKBAndcMyydQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FjiEvGLn; arc=fail smtp.client-ip=40.93.201.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PfJpZkKIQjhFHtfFeb5Q7V+pHoz9imImN9eGCBbYXirgNzknhK3QWOlpAYnsaXY+HVMMnBr8H4gg6rAsWJ7VORe7yZ4+d16uF6UcKMP7ieTPnNw7KjyRv66eSw4LH2AquQW8HwUgf3BlbHmYo102toJFhZRQZEZvUXYqfUmSWEcBkPuL/zBdHvYR84zuEBZCluhr1j5p7vIMFnwGfY1c1AxKTzH2HWsUNYM1r1aabwbpVWEkLVbijmAcs9a75gSxMCNcYAIJPX4Cb/Cc9dW1K4aI0dLxeDZkabrqwjFa4Q6h3bz1VBDseMG2tD3byT30+wH2dQBjhzRx9a8Psudtgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qKlXxNjSTGtrxNhAdiVKaY9S8EgGfg1pHQD4GOy7z/U=;
- b=QzwwWELhnSDX6CQa3lGmfCHqrSdUnXcAaZAd8swgWjtVrB8ks2gQ0KTJTEYHDa6F0l13FcCDSS8aOagldfbyNgdiazZzJQcM2y2a28mINAXxEPKCfN81dQUt1e0mT+xqlqMbIOY8JTuyfWMii3I6KDidLFRu2/wbF16vpTG/4FF4U1R1DKl4zZJ6v2kI1dUniofRSin84p3P4yzVFlcpQQVpATiQ1aawAnjfIhkS5dNSbXl5oHqKv3rEDhWPxc09JjPEaLFuj+uyTK5Eduzuz6WOa4XBJQvCn/pR5uRbqgzPuuw3jqyJmN24k2GCsoZRlhkO44WWITvGvsblkfWjUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qKlXxNjSTGtrxNhAdiVKaY9S8EgGfg1pHQD4GOy7z/U=;
- b=FjiEvGLnhNwawxrFbkScsTdIf1WGrikLGdSpoIVrJl4qmX6IIi6FKWa4/Lhi885O69D4S+iYoobzp2TbTayafstTUYMM33V0YZAi3gBmovHNtwYt8/y6kUUwsEbrjdkCuh5cpeEr2gD4AvDynhCC2YVI9fWY1/oN6aSWIBBkH0w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 11:24:17 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 11:24:17 +0000
-Date: Thu, 13 Nov 2025 12:24:46 +0100
-From: Robert Richter <rrichter@amd.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v4 10/14] cxl: Enable AMD Zen5 address translation using
- ACPI PRMT
-Message-ID: <aRW__tkE9Ogbw3Je@rric.localdomain>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-11-rrichter@amd.com>
- <20251111153049.00005ef3@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111153049.00005ef3@huawei.com>
-X-ClientProxiedBy: FR4P281CA0075.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ce::20) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F112E0B68
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763033127; cv=none; b=Sse+pNOLQy3x+gHz6HgQCWk1K9mlnhU77N14bascmOm4a8kjDTeTVQYpRrYaK8i0l5RF4Yle3gyPklVuNcGQGwQ0rseWxmXysXs7Hnne0yo8aS5bpDM8xVOTuXAPprwPxVQE5n5BT1qP2PtT+4seLTQ3NqylX6CYXB6SKodqOpg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763033127; c=relaxed/simple;
+	bh=zJ/7WXTed2yCxzIMBLp/XGM1mdmPXOap1LSnEUyoj9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmF87s43ElKWgVh0Agt08vW5S6w1roI71Fd8x2xHRIlT7uPsUuDLpgT0Iw/JJriBSLRdZKx49fVhBN+bpDgOmeX9m5CcpSUKTREr5YmC+KhyJpluEUKGtwHKvEuZekfJKBW45jTDnvh2PBFGf6A3vfkMbl+1HBP2nSYMOmsM8P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BcchcW6n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VP0PVcRo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k+o8lrDV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QQZystZa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E4FEA1F388;
+	Thu, 13 Nov 2025 11:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763033124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eu353YNxBkiqRkBJ1FFBBjYCeCnToRGzdWP8jji7cmI=;
+	b=BcchcW6ngCIll4+e79fZVZcbq7qp2XLUJd4GgsM9I9XZscI+hf4LyXOtZePGb9Wjw+thps
+	t+ITwRU8Z458yDijyzkcUYyElYdXv+QkRasK6c+rIqGRU2JQiq7TYCIY1P+sLZdYHX+QE1
+	HU9BjzhTOItkeN+t2oyq0hay2DEpBeU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763033124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eu353YNxBkiqRkBJ1FFBBjYCeCnToRGzdWP8jji7cmI=;
+	b=VP0PVcRo9UUs5LdM7HVhTM59KBDR72W2zP7il/irXxkWcq6TgrFMuV7YWQnrTs5YgzRt9x
+	IpLE21bFolUWUGDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=k+o8lrDV;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QQZystZa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763033123;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eu353YNxBkiqRkBJ1FFBBjYCeCnToRGzdWP8jji7cmI=;
+	b=k+o8lrDVRdKYxsALH94wJgfcyXwLRX5ejV3aWIaLmsH+bulmF/Czo9wwtxt4Zl6H/gqS6z
+	4WyML5AFMCH3OIKA+2p/X8W0g961RV2wKrfmiPeLP7/1b5GvM5lSGC5Lg0cX5A1wtbeKv0
+	ydDjSLTnkbQklP8Mtn3UNaHeTIYt0fM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763033123;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eu353YNxBkiqRkBJ1FFBBjYCeCnToRGzdWP8jji7cmI=;
+	b=QQZystZaXjwPID5zmz40eObH8FdVMcJjS92C1qHpRF4X+F316/vPz+gBqfvZc8oux8t3Yd
+	GCdjMWSzONmBNPCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB3333EA61;
+	Thu, 13 Nov 2025 11:25:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id p25uMSPAFWnNaAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 13 Nov 2025 11:25:23 +0000
+Date: Thu, 13 Nov 2025 12:25:14 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Gladyshev Ilya <foxido@foxido.dev>
+Cc: David Sterba <dsterba@suse.com>, neelx@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 4/8] btrfs: simplify function protections with guards
+Message-ID: <20251113112514.GN13846@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <cover.1762972845.git.foxido@foxido.dev>
+ <c7abcfeb7e549bf5ad9861044c97b9a111d64370.1762972845.git.foxido@foxido.dev>
+ <20251113084323.GG13846@twin.jikos.cz>
+ <35e1977e-7cca-4ea3-9df8-0a2b43bc0f85@foxido.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|PH7PR12MB5685:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9ae206c-ab85-4777-55e0-08de22a72ed9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2b8seCZXRR4zMLoXzwFJrCBevYELfTXyS05bFP6nTfHUP55vA08EsIabNYgr?=
- =?us-ascii?Q?l3JMaG6Kkd1HP6pOTtlWE3s+fj17aSHA/WWY12JE5TIJQ62fWGWgNBjXZoaR?=
- =?us-ascii?Q?GX8fMyCjjixwqX6SuKVVjfdzr9gNcXw+U3MqRQ643uv4Xsie3Zc3li2po7Nw?=
- =?us-ascii?Q?ecH7va65D12H0CqKeg2nymV5smUStkIZdDDpG2G0nc+UjK6KuQa8JLTP49WC?=
- =?us-ascii?Q?D/uKJZv2+Wa55ktu2OC2sAETi6mbWACDCyS274M2J3KqaAib5wnvaMKPHKnd?=
- =?us-ascii?Q?jUG8NxoO+iHBGRCDSfjgWHYtvD3TnMsFASyENcxTzfUf1WYJTULtEmgzXTif?=
- =?us-ascii?Q?1Gx/aBDuCX72Do6qc46dQbqZdC2t5cX5C/of5yTbH3wu/frBoIFwjiy0gLLy?=
- =?us-ascii?Q?0ttTgITuos+/hMNXhpnk3jSRY1FXNXW14E93jiE9/AXfqfU83qjPS7atiCY8?=
- =?us-ascii?Q?HlL9L32yuG247YC1DsDA4LlgtHA4lJFGbRaDrlUySTDqBMTLynrDbc/Iw5Je?=
- =?us-ascii?Q?rPs6CL1av5azjudBCiOVeRWYo4nzp6kzuP9bI3DqRCa3gNduJaUfRkOWbUkZ?=
- =?us-ascii?Q?uKkYUPK3cKijSNUX1Ev0+aErThVCPvt/ZtjUbDbhaZfAZMMYMcsdrs+fyJcC?=
- =?us-ascii?Q?WUxRXjkb5/KJUhICWfpQmMz7mU3PHX47Jn+pony5lwLp3VWdZ/Uo1sCw49No?=
- =?us-ascii?Q?KmT6ifSJBAn029nRYRw2GxH4kDxXvoBXhx5a/Q4A5fLiw7TKw1hFFt0O7aW1?=
- =?us-ascii?Q?9vlwomlQYQNRN7NqxHEeXnKKbMraaFlOMkJBt0lIISvBLTYOIMmnAB1j4B1p?=
- =?us-ascii?Q?y1f9BBPUQmVOVKYt2PRvKN4eVaoEFoJcNPvE7PMuiYzTySraz/zNa1N2egNR?=
- =?us-ascii?Q?xPU4QiYjoSjsXa2K1NQv+CKlmfhCBo3zSk7zDocmJoZATtNXLkqmnW2eZa17?=
- =?us-ascii?Q?l2GjsOFroZQgF6T/ObIPbesG+MINvwsGDJX8x1m5rFw8vckxCxhr66mzqaro?=
- =?us-ascii?Q?u7G3440wBp0q6JGaAwG81ttZwbs+0KPRrssk7A9Y9ieH+V0Rml6yHFUyHL1G?=
- =?us-ascii?Q?FGVqoEXw7Xc2Z60Qf9L7Qkzuf+XAmpxUndDHTp0rcgGtRp1J3GYF9IK9+TWc?=
- =?us-ascii?Q?uvzB/wBTJSZIIDaeTnnTg+69l99UFoeV5vVdtk/whTI+HFSX46XT47CR3jZq?=
- =?us-ascii?Q?YEIWfHmBCSGlxfqNKBZ1PE0kYOeMfL73PL15JUdOKOVBdCAHYetOhZtUIVOh?=
- =?us-ascii?Q?+DQREvYDBx0cB0SyB//e7zi6kYWKWkwy3GpLMfl0pcFbOijypSTV/U+HKagt?=
- =?us-ascii?Q?R/HPicvq+VHEo7pxCoR8ET+Zm/UgG0HG/TQZRG5rNlWoqXCwFqN6HrQegx6G?=
- =?us-ascii?Q?H/j3XDLDRuSkZUbVUszrB2J7qZP4/uJ9F4jE2CGhYNM0mxodOyoIgPVL8sBr?=
- =?us-ascii?Q?ZPRDE/+PImN9Qd4PkyPAczoYxlfkLZGu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ahtqa6HsjwLmj29DP9SLK0+sG3BZjWStCPC+/rMpWxEtG+Cg9/+ffkdhZJnr?=
- =?us-ascii?Q?Z9tzn9peqRmBJqat3REvJapf6OMgKRFWqWSYRxZrsm7KAW/p2Qff2VxVyj7B?=
- =?us-ascii?Q?VGNZoAMxQn4jvXWmw8yuxLO6nd4rydmIsFP2TNNOhTM1cZegmyMpquLnCjk7?=
- =?us-ascii?Q?+LCDxDbhnt1G/FCeW1CaRz6TESYEeFhCJZPWHwro4MftlmqyoXSTqb5iFUo6?=
- =?us-ascii?Q?cF39d/oEnLH0PDtbB/zcHHQimVulH58/FsZwI2jNrBKMfwDKL2ExTBQ/L2qS?=
- =?us-ascii?Q?LKWYOZXqm/dIYN9nxfcs6CoY8D95X2T3uS7jI/VYwFT80RISHPLwXDHjEzaM?=
- =?us-ascii?Q?MOe0kFe/n2LLdsM8PtIg81MFc/5aVkm2P2dLwLMueDfg5N7zawONwe6+AAe5?=
- =?us-ascii?Q?5ZJgZWA7pJJ0lOZ8kOG/jutzsYIEuOMXTXlcgukFYWvUepHRQbC3XwmmmaC6?=
- =?us-ascii?Q?MVRPLSaMRC3LE12+ZWzimq5VkylzIL4mUP6KivAvyFfomzRzmJpoi0PZH7Rl?=
- =?us-ascii?Q?i0G8X0OpCotXQ3sXsW9blWiWF0sXn6U4v9clLPwYVOTbyCE/OSUtBXqrU/Hj?=
- =?us-ascii?Q?3jnD6LuuvFnU0UAkYgkC+oceprFOScFy5XiMII5FCG5Vb1q2RFVZNkpF1dpF?=
- =?us-ascii?Q?wbZAFAzhFObDR+kVvMP3pNtXCIYCvyIJ3QppFt59u366GzzDaXnqEYMtKGYX?=
- =?us-ascii?Q?s/3tn+PL004j8uig1BULmR4eAvQxj2Ymh2N/0sScFXInds4kjXX4YSeBgPHm?=
- =?us-ascii?Q?ge7IfEUg8AR0E6MjahQOLZrk1IFBPnGMZSCrei4bzkzgz15tLWu1OA9VUXB7?=
- =?us-ascii?Q?1iS08TxWjNxQLQa9SFlqmasbwSQMR2QZdRqaFhiUjOeipDPnCbd2LRvhuJ1h?=
- =?us-ascii?Q?BysyxiDJzeimTo02+1LIB3ArzhJV3BRI+JCnjI2Y8Fnzg5hImoo65GWhy76a?=
- =?us-ascii?Q?kE1VocVui/oGhOYVc15ISOGPan/HBzrLG1ZucAfuAbpliz6o0MXb7Xq0R6h7?=
- =?us-ascii?Q?HCm+PpCl7h2hVL8eRLhBbsJY/jxDHllWEGqYG97JCCYLfvGtHigIHH77hifr?=
- =?us-ascii?Q?du0Fw2osy8Fc+h98AcSQaR0FbfEUdzfVr96p9RArO4x0QylHmgd5/fEUL+Nv?=
- =?us-ascii?Q?S7adY2H8A8+ZqU3sprBYuUvi1cO1o7eBV1AgJQ1aQRDD6jrbgm7WiB+ujjb6?=
- =?us-ascii?Q?MyEz8VlYiSXWdRYA4rRgXKcao8kDnl/n6dUcdHaO58WioEL66W0wOwYMVr4Q?=
- =?us-ascii?Q?eIHvR8t+LBm3/d/sU18u3p4JLSrKW8ROsgxBHVbuL2dlR4qVRfQec0x+80ee?=
- =?us-ascii?Q?5Qpgi0F+5CJryl13x6Hd0c8I3INemT4IpgH1CZJHxDFjlpUJ2x3zYOHyBM+Z?=
- =?us-ascii?Q?yjd49QrMEre5JY1PGfhD9P2emBKR22JBR0gKetvfV1e3bPfIinlbeteb3Kcx?=
- =?us-ascii?Q?ry8w+oyPuOS05oZ9hFoi3WOE2bwCS3a1sbyQN7IALOi3hMhhYZwGjjSqSOMn?=
- =?us-ascii?Q?p3ScctBqoxloJiaVLFNcfpOYKOsE+u0zbx/9/xCiMt6hfCL9G1EXHSwpcn9h?=
- =?us-ascii?Q?kbmtf1jC8lMC5Nym0kPj1VNTy5AesElJYuozjRea?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9ae206c-ab85-4777-55e0-08de22a72ed9
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:24:17.5761
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iKHOl3qOyQdHckIkXDORWTOszHC/3DGhqFRV/tLRDyjWzT1bh2v5lExkp3l7PiTJC/shYAd+zGdEtGQ/Jhq9iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5685
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35e1977e-7cca-4ea3-9df8-0a2b43bc0f85@foxido.dev>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: E4FEA1F388
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:replyto]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.21
+X-Spam-Level: 
 
-On 11.11.25 15:30:49, Jonathan Cameron wrote:
-> On Mon, 3 Nov 2025 19:47:51 +0100
-> Robert Richter <rrichter@amd.com> wrote:
+On Thu, Nov 13, 2025 at 01:06:42PM +0300, Gladyshev Ilya wrote:
+> On 11/13/25 11:43, David Sterba wrote:
+> > On Wed, Nov 12, 2025 at 09:49:40PM +0300, Gladyshev Ilya wrote:
+> >> Replaces cases like
+> >>
+> >> void foo() {
+> >>      spin_lock(&lock);
+> >>      ... some code ...
+> >>      spin_unlock(&lock)
+> >> }
+> >>
+> >> with
+> >>
+> >> void foo() {
+> >>      guard(spinlock)(&lock);
+> >>      ... some code ...
+> >> }
+> >>
+> >> While it doesn't has any measurable impact,
+> > 
+> > There is impact, as Daniel mentioned elsewhere, this also adds the
+> > variable on stack. It's measuable on the stack meter, one variable is
+> > "nothing" but combined wherever the guards are used can add up. We don't
+> > mind adding variables where needed, occasional cleanups and stack
+> > reduction is done. Here it's a systematic stack use increase, not a
+> > reason to reject the guards but still something I cannot just brush off
+> I thought it would be optimized out by the compiler in the end, I will 
+> probably recheck this
 
-> > +void cxl_setup_prm_address_translation(struct cxl_root *cxl_root)
-> > +{
-> > +	struct device *host = cxl_root->port.uport_dev;
-> > +	u64 spa;
-> > +	struct prm_cxl_dpa_spa_data data = { .spa = &spa, };
+There are cases where compiler will optimize it out, IIRC when the lock
+is embedded in a structure, and not when the pointer is dereferenced.
+
+> >> it makes clear that whole
+> >> function body is protected under lock and removes future errors with
+> >> additional cleanup paths.
+> > 
+> > The pattern above is the one I find problematic the most, namely in
+> > longer functions or evolved code. Using your example as starting point
+> > a followup change adds code outside of the locked section:
+> > 
+> > void foo() {
+> >      spin_lock(&lock);
+> >      ... some code ...
+> >      spin_unlock(&lock)
+> > 
+> >      new code;
+> > }
+> > 
+> > with
+> > 
+> > void foo() {
+> >      guard(spinlock)(&lock);
+> >      ... some code ...
+> > 
+> >      new code;
+> > }
+> > 
+> > This will lead to longer critical sections or even incorrect code
+> > regarding locking when new code must not run under lock.
+> > 
+> > The fix is to convert it to scoped locking, with indentation and code
+> > churn to unrelated code to the new one.
+> > 
+> > Suggestions like refactoring to make minimal helpers and functions is
+> > another unecessary churn and breaks code reading flow.
 > 
-> Trailing comma is a tiny bit pointless as any change will have to replace
-> the line anyway.  So I'd drop it. (trivial so ignore if you like ;)
+> What if something like C++ unique_lock existed? So code like this would 
+> be possible:
+> 
+> void foo() {
+>    GUARD = unique_lock(&spin);
+> 
+>    if (a)
+>      // No unlocking required -> it will be done automatically
+>      return;
+> 
+>    unlock(GUARD);
+> 
+>    ... unlocked code ...
+> 
+>    // Guard undestands that it's unlocked and does nothing
+>    return;
+> }
+> 
+> It has similar semantics to scoped_guard [however it has weaker 
+> protection -- goto from locked section can bypass `unlock` and hold lock 
+> until return], but it doesn't introduce diff noise correlated with 
+> indentations.
+> 
+> Another approach is allowing scoped_guards to have different indentation 
+> codestyle to avoid indentation of internal block [like goto labels for 
+> example].
+> 
+> However both of this approaches has their own downsides and are pure 
+> proposals
 
-I have chosen the MIT comma here, but dropped it in v5. Are you
-Cambridge or Oxford? ;)
+Thanks, it's good to have concrete examples to discuss. It feels like
+we'd switch away from C and force patterns that are maybe common in
+other languages like C++ that do things under the hood and it's fine
+there as it's the mental programming model one has. This feels alien to
+kernel C programming, namely for locking where the "hide things" is IMO
+worse than "make things explicit".
 
- https://xkcd.com/2995/
-
-Thanks for your reviews.
-
--Robert
+There are cases where switching to guards would be reasonable because
+the functions are short and simple but then it does not utilize the
+semantics of automatic cleanup. In more complex functions it would mean
+to make more structural changes to the code at the cost of churn and
+merge conflicts of backported patches.
 
