@@ -1,152 +1,116 @@
-Return-Path: <linux-kernel+bounces-899016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAA6C5692B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:25:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAAEC56934
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2EEE3523BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:21:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B0F313531BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E129ACC6;
-	Thu, 13 Nov 2025 09:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFEB2D23B6;
+	Thu, 13 Nov 2025 09:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZpXHuIo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRBPlZhB"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D652D63EF;
-	Thu, 13 Nov 2025 09:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D227C287246
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763025635; cv=none; b=VVATJT41MiKLBMk+BJG2vDoUbI/M+LLW197LOY8NP/gu3mY1hXqgg4PRPxVzAH3IOZ+JByWvDE603W7OaTIsjVSesyO6yi2dH0VTrwcl9iA0psdHXI6ZJ/gJtfIwy62zQydiF6EQ7GjXM1usU2OZwU19j/o1CvS8QkTEZ/nyGjo=
+	t=1763025694; cv=none; b=SqiMzSgw4MRp9tm6COVu4Lsk/mdIZUp2CSxQqv6jUkBDaL+4YoL9vdRH4Z3Dal1ujnfzMUMJ398zr4UW0CqPVTxWOQm0+aPMlVqTtk3UpxWbyeL7C8RXLbE/Di090XSqrt/p68W4a9Gsm2ewCg7X1lL1EfFAq7xekkjKGPXoRVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763025635; c=relaxed/simple;
-	bh=qWeXKefTr39Z8QEjwx9tm3gjalzsAeVjEjzYhlbwRLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LGV1vPXahWJn+H45yT9UpHcCzo3CXjxWte6LAqq2m1iBNGnrpXSoQ1jnvbSVHaqQP14FcckD+HreZj4ZfUyhN3RgOZdwdeBNZ4ObZykSzUTCcXAlCLUrbOdUCzPOTQeI+bKjUAw9UgyU8p8Zm+Tw0Om5mFmq4ii+2zIuIQQA2+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZpXHuIo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 318D1C4CEF8;
-	Thu, 13 Nov 2025 09:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763025635;
-	bh=qWeXKefTr39Z8QEjwx9tm3gjalzsAeVjEjzYhlbwRLk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mZpXHuIo3H0Egv1WBvo4ABjZoXf/Ci7KeFuiEV49hQKzupIZa+lZL1qvjl0IQWK/U
-	 XmdIh5Wq8FVW4cGmedobTnlvmkjd1HEW2nvPphS6oepn5iJ46yxyc0WxGxl5Xarigv
-	 FMYNO98+W8LvaWJcsQu+XKL48ez4hWlQk++JZ1IMAIiQzv9EED9p3oxHBf5bOTx6AL
-	 rmKTRVIfQSRH5jstDjYuz97FgVmoKmqh0QWlpaKnduUGQP0b6pevGQlycLr/cFy7OW
-	 VEVwCKkKnDimgS7OIxx7OeylF/s3pEFfHWbgdRjUwOnUtuO1P5XTXFM3jHt0vBLERe
-	 LMHvQqEW79YUQ==
-Message-ID: <6d104efa-0686-4621-aba1-3ce17ef85391@kernel.org>
-Date: Thu, 13 Nov 2025 10:20:30 +0100
+	s=arc-20240116; t=1763025694; c=relaxed/simple;
+	bh=HqJJwnuhSPmFDMkoRfA3CX+LjNXittqjXdLVN3Yi0iU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u3vIcFefOgCwxGY5r4US0q1IgmLAfMXF6/sj+qlMP7mDTbEuFc5Zy9APeiws+e0VaPhFoLJmX4xo8Q/xs5g/EtLSvWkkK2b0God8jMmkFG84VyXzK1B40vOUqwrJiYtKpo+sxhFaKfvuTWsP//HmsyAsfNbLkL4dQyvzbNc4JiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRBPlZhB; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297ea4c2933so326785ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763025692; x=1763630492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HqJJwnuhSPmFDMkoRfA3CX+LjNXittqjXdLVN3Yi0iU=;
+        b=gRBPlZhBgMtlKS4FUHhr7Wklc6ovQ/66+HAQzRlnu07yM01KYncLSMz8fp5sUgWP9r
+         jkSQfsqp+tMzpbxQimgnmH2ZyRDL/+MLi1A64haOlnCD5tCH5lbzj75x8k4w23OmCSBd
+         02+45/YFpNnRLIcNqU8smccbsavRMik46agr51zP6Ylec/jg+GYGYCutjZ3Lzhv+iW+u
+         2fG36VxT1TrFxpT3w33c/fPwHUm4bnz46y5ir5nN5eIKBXBKwETxxbTeZMZUXnrkoF5Y
+         dc21LXpt1lrnM4WyeJKqbI/ItytSc3HtAk6PLFoBz683nnsuJ4509BORzSA4W2RieJt8
+         tD4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763025692; x=1763630492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HqJJwnuhSPmFDMkoRfA3CX+LjNXittqjXdLVN3Yi0iU=;
+        b=GB+iQZUdsIiUhGv9z85yOLIxBR1lCc7eOtDlET4X+zy5g2XGn6btChb+YM/LdNNJJs
+         d1W2AjdLQ2gu84giYCd1EslwFPkCfbTJRyI5mZ1l5EZWzTUeA1tMVXjKILGTsLg+ZKko
+         P6jKarfEtyn//2WzrCLldodPHpJhS5tzI8Gm2qv8amGOJeUxgB+8FiFNYKyD7bfeZNmD
+         MG1ve0d0Q9SAUJpxb00zc3biOOqOvRAODf6/OnWyBimjJfEciWzTYLHhLJY7p2tZES5D
+         KCwzVdppvY2IthDvwpIWLdXOdRFmVGsqXM5gUhcrzUldkfKXvcYZLswaAqoZ0M/ymDJr
+         l6Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoRlrLHym9zHs6+GP5Zr0x84HTtG7kvqTpPSgOAu0hizVSXYk1sNdboDsPS2iuULP4N2BhZTdpbvTDwFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsFx1eMQw5FVxack/GexPoIsiePhbC5RmEmmwjKtfk0syigseX
+	N9Grp5lcYX15IubAULDCRRAVVkOGWb0F/+yuvhommg3hYIKzQsCZUa3pRRasIwO833/C9IC6L9e
+	HJO41RD/oHUvBtgmaVr1ur8iM8gyC0MI=
+X-Gm-Gg: ASbGncvHnMwJXD96YTwF4n1tfwLQZ8bMK15dNj/GhglY5RxQ6/JiC5npM/roFV65iAx
+	xIFYS6CKQE2tLOZVZcu6Pi/uutsOvcenpvx58QfTOkMyjTgq1nvHKDr4Ybnbne5exSrBNoGjy5A
+	COvcXujvIdhX+Volj/d8qOH7AnEfQdoPLunQkaGJc3/acifPQl3KL3W91yy/HVU/bmr9gKxCvou
+	zvTpUSy+5PEoRwHg4Tu2Y09J0acYzZGjdxIzCfu9uktDygmR4qCol8XGLsgiIL/GeeKPJghyVQx
+	vhXDJ8ujRLRUUn/am5hRVpmIj6CH6YBzMW3Es+IIYpIwUDziueTWSZurY3anRYdDSmLvzVGVnyf
+	HBvo=
+X-Google-Smtp-Source: AGHT+IEmA0uOG86gaMLms71+k9nerriBq7yV/bNgdSSQ0uGPxv5p0m52ue78t1UkmbjQMf39XAyH4hdMig4vnGuN45c=
+X-Received: by 2002:a17:903:1109:b0:298:535e:ef34 with SMTP id
+ d9443c01a7336-2985b973375mr15566045ad.5.1763025692169; Thu, 13 Nov 2025
+ 01:21:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/memfd: fix information leak in hugetlb folios
-To: Deepanshu Kartikey <kartikey406@gmail.com>, hughd@google.com,
- baolin.wang@linux.alibaba.com, akpm@linux-foundation.org,
- muchun.song@linux.dev, osalvador@suse.de
-Cc: kraxel@redhat.com, airlied@redhat.com, jgg@ziepe.ca, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, vivek.kasireddy@intel.com,
- syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com, stable@vger.kernel.org
-References: <20251112145034.2320452-1-kartikey406@gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251112145034.2320452-1-kartikey406@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
+ <20251112-binder-bitmap-v5-6-8b9d7c7eca82@google.com> <aRTbX6RPsFf0NW48@yury>
+ <aRUZq0Fo6T1f3lOD@google.com> <CANiq72najqKYQGWpc9UuOnDzPELiFB3hmFYmX-7pk8Eh7zA+Rw@mail.gmail.com>
+ <aRWhakNj7_DGZDYC@google.com>
+In-Reply-To: <aRWhakNj7_DGZDYC@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 13 Nov 2025 10:21:18 +0100
+X-Gm-Features: AWmQ_bmxEFrPCwsCsz_DeFclRfIg4KeejcDD4up8UdhIWBiaOtxSVGB1gV6kGt8
+Message-ID: <CANiq72nPgvzmOJKQHu81k1cvEA34+1XjWGiKmDe2fjyOmSJ-Hg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] rust_binder: use bitmap for allocation of handles
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.11.25 15:50, Deepanshu Kartikey wrote:
-> When allocating hugetlb folios for memfd, three initialization steps
-> are missing:
-> 
-> 1. Folios are not zeroed, leading to kernel memory disclosure to userspace
-> 2. Folios are not marked uptodate before adding to page cache
-> 3. hugetlb_fault_mutex is not taken before hugetlb_add_to_page_cache()
-> 
-> The memfd allocation path bypasses the normal page fault handler
-> (hugetlb_no_page) which would handle all of these initialization steps.
-> This is problematic especially for udmabuf use cases where folios are
-> pinned and directly accessed by userspace via DMA.
-> 
-> Fix by matching the initialization pattern used in hugetlb_no_page():
-> - Zero the folio using folio_zero_user() which is optimized for huge pages
-> - Mark it uptodate with folio_mark_uptodate()
-> - Take hugetlb_fault_mutex before adding to page cache to prevent races
-> 
-> The folio_zero_user() change also fixes a potential security issue where
-> uninitialized kernel memory could be disclosed to userspace through
-> read() or mmap() operations on the memfd.
-> 
-> Reported-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/20251112031631.2315651-1-kartikey406@gmail.com/ [v1]
-> Closes: https://syzkaller.appspot.com/bug?extid=f64019ba229e3a5c411b
-> Fixes: 89c1905d9c14 ("mm/gup: introduce memfd_pin_folios() for pinning memfd folios")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Oscar Salvador <osalvador@suse.de>
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Tested-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
-> 
-> v1 -> v2:
-> - Use folio_zero_user() instead of folio_zero_range() (optimized for huge pages)
-> - Add folio_mark_uptodate() before adding to page cache
-> - Add hugetlb_fault_mutex locking around hugetlb_add_to_page_cache()
-> - Add Fixes: tag and Cc: stable for backporting
-> - Add Suggested-by: tags for Oscar and David
-> ---
->   mm/memfd.c | 27 +++++++++++++++++++++++++++
->   1 file changed, 27 insertions(+)
-> 
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index 1d109c1acf21..d32eef58d154 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -96,9 +96,36 @@ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx)
->   						    NULL,
->   						    gfp_mask);
->   		if (folio) {
-> +			u32 hash;
-> +
-> +			/*
-> +			 * Zero the folio to prevent information leaks to userspace.
-> +			 * Use folio_zero_user() which is optimized for huge/gigantic
-> +			 * pages. Pass 0 as addr_hint since this is not a faulting path
-> +			 *  and we don't have a user virtual address yet.
-> +			 */
-> +			folio_zero_user(folio, 0);
+On Thu, Nov 13, 2025 at 10:14=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> I was thinking of warn_on!. There is already a pr_err call.
 
-Staring at hugetlbfs_fallocate(), we see, to pass the offset within the 
-file.
+I see -- if you end up not adding the `warn_on!`, then please add the
+`debug_assert!` instead.
 
-I think it shouldn't make a difference here (I don't see how the offset 
-in the file would be better than 0: it's in both cases not the user 
-address).
+That should help and it also makes it even more clear that it is
+something that should never ever happen.
 
-> +
-> +			/*
-> +			 * Mark the folio uptodate before adding to page cache,
-> +			 * as required by filemap.c and other hugetlb paths.
-> +			 */
-> +			__folio_mark_uptodate(folio);
-
-Personally, I'd drop this comment as it is really just doing what we do 
-everywhere else :)
-
-Hoping we can factor that out into hugetlb code properly.
-
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
-
--- 
-Cheers
-
-David
+Cheers,
+Miguel
 
