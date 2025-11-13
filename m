@@ -1,450 +1,158 @@
-Return-Path: <linux-kernel+bounces-899196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0DCC5711B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:02:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E56C57121
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DE153B6956
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:57:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9B764E6BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA22E335BC1;
-	Thu, 13 Nov 2025 10:56:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BC13346A1;
-	Thu, 13 Nov 2025 10:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A3633507B;
+	Thu, 13 Nov 2025 10:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyS+VXkB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7142D0607;
+	Thu, 13 Nov 2025 10:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763031418; cv=none; b=DHVj/Suzqk/e0+lt7/A9kKynqOne0h7XlPGJCNy3htd4Sq3eVntn0JZ6UB8WyE/j6opN+fpGfaHzh1XDkH3IoG7M8NlCfd19QjMM6TK7163SYneiHFUp1WDjqecV1UQkQtEIRtTX0tGBipTjf27oxrcAO+uYrdCRXyOtyaMK6F0=
+	t=1763031467; cv=none; b=WxjHEoWfPoOB4K0cskKPKN5b/Mlkx4eeOdH3Qgm4zZY29i7uzoKl/APpGcLWN1LtadT/+eWmDoqSrQVXs0SC5kV69CwqedevmQkkKkLcmUUPREfDyf/9fwBDRlKT02poDo/RCl/v9sswQ9aMyJReIaPuxRef/LzyoZEULZyD6gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763031418; c=relaxed/simple;
-	bh=wwla/DfICk8GpawwzmuHDrOrFU5Yu+Eo/4wBqE+pOAs=;
+	s=arc-20240116; t=1763031467; c=relaxed/simple;
+	bh=OMfFW1nnKw5k2mezbZUycTzr4g1sGGxhFbFHTc77Xdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6WQSNDVcKMeyf6+D+0DySDzrs8hPXzNhKP6UktVhU+QGukgP9o4elhNpd/0lhv+MxGkg3V9NuSELeVUfDonKKQGNaoYuHsqrBMpjdQF2dJ17sVpjuR6QpDLUSXMMD0bxsoX32tVMC3jw8ZSk0dMHrn6ZDxbX8r6juO7jZrD76k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 671D212FC;
-	Thu, 13 Nov 2025 02:56:48 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B298A3F66E;
-	Thu, 13 Nov 2025 02:56:55 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:56:54 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, zhanjie9@hisilicon.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
-	bbasu@nvidia.com
-Subject: Re: [PATCH v4 4/8] ACPI: CPPC: add APIs and sysfs interface for
- min/max_perf
-Message-ID: <aRW5dhyN5/JF3F3i@arm.com>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-5-sumitg@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtMiKuRT68MWf8PE5ESOCX7pUlXqkEJH4qHqNESpkB1wULTYW2PVjgwEFqwKwL9YsufB6omqUvFDOtAnejTnuK8xkE5NydGh6OuXnP0GHyAEtsNm90BiM7Xd9+Icb2sQZv/dQQ+qFU1r8+NaX732eKK6a9TgGTy88E5/5pZw9vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyS+VXkB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E90C19422;
+	Thu, 13 Nov 2025 10:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763031465;
+	bh=OMfFW1nnKw5k2mezbZUycTzr4g1sGGxhFbFHTc77Xdw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GyS+VXkBGeRBeL5aBOjs4Sn+VEaE8YGlvkKK2hPFzt7EwSjw7KcbtxQVJ3iXn4ybL
+	 wz9BbOzaNDw12FDRBwsGzz3aEM2VaycoDGFswsIVB9Qxw/CRx6NroC8NhBlKnVebQ0
+	 WeSpZqhOwDJarwAc+UEFyNGVkIck1h75Vue3D/qw8nWTBWcNoOtNzw40HLySVKuP86
+	 +my6QnYEhxrsArnkQjOOWBJaZ90wuoIypbYpfTIH9o6K/b97vTX0ujhlZtF4HnT8uf
+	 u5IXhpTj20X16k4aTVjRilFqJ6qpyh3LrRLH9AFpeK2EU0znmDMOWiph3Badx6zl+C
+	 Kjphjdzx0Bkwg==
+Date: Thu, 13 Nov 2025 11:57:42 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: angelogioacchino.delregno@collabora.com, jianhao.xu@seu.edu.cn,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org,
+	matthias.bgg@gmail.com, nbd@nbd.name, ryder.lee@mediatek.com,
+	sean.wang@mediatek.com, shayne.chen@mediatek.com
+Subject: Re: [PATCH net] mt76: mt7615: Fix memory leak in
+ mt7615_mcu_wtbl_sta_add()
+Message-ID: <aRW5phMmzul8wTn-@lore-desk>
+References: <aRWF9QJuwGaDlUvT@lore-desk>
+ <20251113094135.348383-1-zilin@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="39OyxfwhcaPPfO4y"
+Content-Disposition: inline
+In-Reply-To: <20251113094135.348383-1-zilin@seu.edu.cn>
+
+
+--39OyxfwhcaPPfO4y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-5-sumitg@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+> On Thu, Nov 13, 2025 at 08:17:09AM +0100, Lorenzo Bianconi wrote:
+> > [-- Attachment #1: Type: text/plain, Size: 1475 bytes --]
+> >=20
+> > > In mt7615_mcu_wtbl_sta_add(), an skb sskb is allocated. If the
+> > > subsequent call to mt76_connac_mcu_alloc_wtbl_req() fails, the functi=
+on
+> > > returns an error without freeing sskb, leading to a memory leak.
+> > >=20
+> > > Fix this by calling dev_kfree_skb() on sskb in the error handling path
+> > > to ensure it is properly released.
+> > >=20
+> > > Fixes: 99c457d902cf9 ("mt76: mt7615: move mt7615_mcu_set_bmc to mt761=
+5_mcu_ops")
+> > > Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+> > > ---
+> > >  drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/driver=
+s/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > > index 4064e193d4de..08ee2e861c4e 100644
+> > > --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > > @@ -874,8 +874,10 @@ mt7615_mcu_wtbl_sta_add(struct mt7615_phy *phy, =
+struct ieee80211_vif *vif,
+> > >  	wtbl_hdr =3D mt76_connac_mcu_alloc_wtbl_req(&dev->mt76, &msta->wcid,
+> > >  						  WTBL_RESET_AND_SET, NULL,
+> > >  						  &wskb);
+> > > -	if (IS_ERR(wtbl_hdr))
+> > > +	if (IS_ERR(wtbl_hdr)) {
+> > > +		dev_kfree_skb(sskb);
+> >=20
+> > Hi Zilin,
+> >=20
+> > I can't see how this is useful since if mt76_connac_mcu_alloc_wtbl_req =
+returns
+> > an error, wskb will not be allocated.
+> >=20
+> > Regards,
+> > Lorenzo
+>=20
+> Hi Lorenzo,
+>=20
+> Thanks for your review.
+>=20
+> You are correct that 'wskb' is not allocated in this error path.=20
+> However, my patch is intended to free 'sskb', which was allocated=20
+> earlier in the function. Without this change, 'sskb' is leaked if
+> mt76_connac_mcu_alloc_wtbl_req() fails.
+>=20
+> This approach is similar to the error handling logic later in the
+> function, where a failure in sending one skb results in the other one
+> being freed.
+>=20
+> Hope this clarifies.
 
-On Wednesday 05 Nov 2025 at 17:08:40 (+0530), Sumit Gupta wrote:
-> CPPC allows platforms to specify minimum and maximum performance
-> limits that constrain the operating range for CPU performance scaling
-> when Autonomous Selection is enabled. These limits can be dynamically
-> adjusted to implement power management policies or workload-specific
-> optimizations.
-> 
-> Add cppc_get_min_perf() and cppc_set_min_perf() functions to read and
-> write the MIN_PERF register, allowing dynamic adjustment of the minimum
-> performance floor.
-> 
-> Add cppc_get_max_perf() and cppc_set_max_perf() functions to read and
-> write the MAX_PERF register, enabling dynamic ceiling control for
-> maximum performance.
-> 
-> Expose these capabilities through cpufreq sysfs attributes that accept
-> frequency values in kHz (which are converted to/from performance values
-> internally):
-> - /sys/.../cpufreq/policy*/min_perf: Read/write min perf as freq (kHz)
-> - /sys/.../cpufreq/policy*/max_perf: Read/write max perf as freq (kHz)
-> 
+yes, right. I misread the code. I agree with the fix.
 
-There's a theoretical problem here for CPUFREQ_SHARED_TYPE_ANY, when
-multiple CPUs share a policy, but that existed before your
-patches :). Almost all of the files exposed by cppc_cpufreq should be
-per-CPU and not per policy: auto_select, energy_performance_preference,
-etc., and now min_perf, max_perf and perf_limited.
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-In practice it's likely not a problem as all CPUs that have P-State
-dependencies would likely share all of these controls. But that's not
-mandated by the ACPI specification.
+>=20
+> > >  		return PTR_ERR(wtbl_hdr);
+> > > +	}
+> > > =20
+> > >  	if (enable) {
+> > >  		mt76_connac_mcu_wtbl_generic_tlv(&dev->mt76, wskb, vif, sta,
+> > > --=20
+> > > 2.34.1
+> > >=20
+>=20
+> Best Regards,
+> Zilin Guan
 
-> The frequency-based interface provides a user-friendly abstraction which
-> is similar to other cpufreq sysfs interfaces, while the driver handles
-> conversion to hardware performance values.
-> 
-> Also update EPP constants for better clarity:
-> - Rename CPPC_ENERGY_PERF_MAX to CPPC_EPP_ENERGY_EFFICIENCY_PREF
-> - Add CPPC_EPP_PERFORMANCE_PREF for the performance-oriented setting
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/acpi/cppc_acpi.c       |  55 ++++++++++-
->  drivers/cpufreq/cppc_cpufreq.c | 166 +++++++++++++++++++++++++++++++++
->  include/acpi/cppc_acpi.h       |  23 ++++-
->  3 files changed, 242 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 757e8ce87e9b..ef53eb8a1feb 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1634,7 +1634,7 @@ EXPORT_SYMBOL_GPL(cppc_set_epp_perf);
->   */
->  int cppc_set_epp(int cpu, u64 epp_val)
->  {
-> -	if (epp_val > CPPC_ENERGY_PERF_MAX)
-> +	if (epp_val > CPPC_EPP_ENERGY_EFFICIENCY_PREF)
->  		return -EINVAL;
->  
->  	return cppc_set_reg_val(cpu, ENERGY_PERF, epp_val);
-> @@ -1757,6 +1757,59 @@ int cppc_set_enable(int cpu, bool enable)
->  	return cppc_set_reg_val(cpu, ENABLE, enable);
->  }
->  EXPORT_SYMBOL_GPL(cppc_set_enable);
-> +
-> +/**
-> + * cppc_get_min_perf - Get the min performance register value.
-> + * @cpu: CPU from which to get min performance.
-> + * @min_perf: Return address.
-> + *
-> + * Return: 0 for success, -EIO on register access failure, -EOPNOTSUPP if not supported.
-> + */
-> +int cppc_get_min_perf(int cpu, u64 *min_perf)
-> +{
-> +	return cppc_get_reg_val(cpu, MIN_PERF, min_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_min_perf);
-> +
-> +/**
-> + * cppc_set_min_perf() - Write the min performance register.
-> + * @cpu: CPU on which to write register.
-> + * @min_perf: Value to write to the MIN_PERF register.
-> + *
-> + * Return: 0 for success, -EIO otherwise.
-> + */
-> +int cppc_set_min_perf(int cpu, u64 min_perf)
-> +{
-> +	return cppc_set_reg_val(cpu, MIN_PERF, min_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_set_min_perf);
-> +
-> +/**
-> + * cppc_get_max_perf - Get the max performance register value.
-> + * @cpu: CPU from which to get max performance.
-> + * @max_perf: Return address.
-> + *
-> + * Return: 0 for success, -EIO on register access failure, -EOPNOTSUPP if not supported.
-> + */
-> +int cppc_get_max_perf(int cpu, u64 *max_perf)
-> +{
-> +	return cppc_get_reg_val(cpu, MAX_PERF, max_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_max_perf);
-> +
-> +/**
-> + * cppc_set_max_perf() - Write the max performance register.
-> + * @cpu: CPU on which to write register.
-> + * @max_perf: Value to write to the MAX_PERF register.
-> + *
-> + * Return: 0 for success, -EIO otherwise.
-> + */
-> +int cppc_set_max_perf(int cpu, u64 max_perf)
-> +{
-> +	return cppc_set_reg_val(cpu, MAX_PERF, max_perf);
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_set_max_perf);
-> +
->  /**
->   * cppc_get_perf - Get a CPU's performance controls.
->   * @cpu: CPU for which to get performance controls.
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index cf3ed6489a4f..cde6202e9c51 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -23,10 +23,12 @@
->  #include <uapi/linux/sched/types.h>
->  
->  #include <linux/unaligned.h>
-> +#include <linux/cleanup.h>
->  
->  #include <acpi/cppc_acpi.h>
->  
->  static struct cpufreq_driver cppc_cpufreq_driver;
-> +static DEFINE_MUTEX(cppc_cpufreq_update_autosel_config_lock);
->  
->  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->  static enum {
-> @@ -582,6 +584,68 @@ static void cppc_cpufreq_put_cpu_data(struct cpufreq_policy *policy)
->  	policy->driver_data = NULL;
->  }
->  
-> +/**
-> + * cppc_cpufreq_set_mperf_limit - Generic function to set min/max performance limit
-> + * @policy: cpufreq policy
-> + * @val: performance value to set
-> + * @update_reg: whether to update hardware register
-> + * @update_policy: whether to update policy constraints
-> + * @is_min: true for min_perf, false for max_perf
-> + */
-> +static int cppc_cpufreq_set_mperf_limit(struct cpufreq_policy *policy, u64 val,
-> +					bool update_reg, bool update_policy, bool is_min)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
-> +	unsigned int cpu = policy->cpu;
-> +	struct freq_qos_request *req;
-> +	unsigned int freq;
-> +	u32 perf;
-> +	int ret;
-> +
-> +	perf = clamp(val, caps->lowest_perf, caps->highest_perf);
-> +	freq = cppc_perf_to_khz(caps, perf);
-> +
-> +	pr_debug("cpu%d, %s_perf:%llu, update_reg:%d, update_policy:%d\n", cpu,
-> +		 is_min ? "min" : "max", (u64)perf, update_reg, update_policy);
-> +
-> +	guard(mutex)(&cppc_cpufreq_update_autosel_config_lock);
-> +
-> +	if (update_reg) {
-> +		ret = is_min ? cppc_set_min_perf(cpu, perf) : cppc_set_max_perf(cpu, perf);
-> +		if (ret) {
-> +			if (ret != -EOPNOTSUPP)
-> +				pr_warn("Failed to set %s_perf (%llu) on CPU%d (%d)\n",
-> +					is_min ? "min" : "max", (u64)perf, cpu, ret);
-> +			return ret;
-> +		}
-> +
-> +		if (is_min)
-> +			cpu_data->perf_ctrls.min_perf = perf;
-> +		else
-> +			cpu_data->perf_ctrls.max_perf = perf;
-> +	}
-> +
-> +	if (update_policy) {
-> +		req = is_min ? policy->min_freq_req : policy->max_freq_req;
-> +
-> +		ret = freq_qos_update_request(req, freq);
-> +		if (ret < 0) {
-> +			pr_warn("Failed to update %s_freq constraint for CPU%d: %d\n",
-> +				is_min ? "min" : "max", cpu, ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +#define cppc_cpufreq_set_min_perf(policy, val, update_reg, update_policy) \
-> +	cppc_cpufreq_set_mperf_limit(policy, val, update_reg, update_policy, true)
-> +
-> +#define cppc_cpufreq_set_max_perf(policy, val, update_reg, update_policy) \
-> +	cppc_cpufreq_set_mperf_limit(policy, val, update_reg, update_policy, false)
-> +
->  static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  {
->  	unsigned int cpu = policy->cpu;
-> @@ -881,16 +945,118 @@ static ssize_t store_energy_performance_preference_val(struct cpufreq_policy *po
->  	return cppc_cpufreq_sysfs_store_u64(policy->cpu, cppc_set_epp, buf, count);
->  }
->  
-> +/**
-> + * show_min_perf - Show minimum performance as frequency (kHz)
-> + *
-> + * Reads the MIN_PERF register and converts the performance value to
-> + * frequency (kHz) for user-space consumption.
-> + */
-> +static ssize_t show_min_perf(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = cppc_get_min_perf(policy->cpu, &perf);
-> +	if (ret == -EOPNOTSUPP)
-> +		return sysfs_emit(buf, "<unsupported>\n");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert performance to frequency (kHz) for user */
-> +	return sysfs_emit(buf, "%u\n", cppc_perf_to_khz(&cpu_data->perf_caps, perf));
-> +}
-> +
-> +/**
-> + * store_min_perf - Set minimum performance from frequency (kHz)
-> + *
-> + * Converts the user-provided frequency (kHz) to a performance value
-> + * and writes it to the MIN_PERF register.
-> + */
-> +static ssize_t store_min_perf(struct cpufreq_policy *policy, const char *buf, size_t count)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int freq_khz;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = kstrtouint(buf, 0, &freq_khz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert frequency (kHz) to performance value */
-> +	perf = cppc_khz_to_perf(&cpu_data->perf_caps, freq_khz);
-> +
-> +	ret = cppc_cpufreq_set_min_perf(policy, perf, true, cpu_data->perf_caps.auto_sel);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +/**
-> + * show_max_perf - Show maximum performance as frequency (kHz)
-> + *
-> + * Reads the MAX_PERF register and converts the performance value to
-> + * frequency (kHz) for user-space consumption.
-> + */
-> +static ssize_t show_max_perf(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = cppc_get_max_perf(policy->cpu, &perf);
-> +	if (ret == -EOPNOTSUPP)
-> +		return sysfs_emit(buf, "<unsupported>\n");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert performance to frequency (kHz) for user */
-> +	return sysfs_emit(buf, "%u\n", cppc_perf_to_khz(&cpu_data->perf_caps, perf));
-> +}
-> +
-> +/**
-> + * store_max_perf - Set maximum performance from frequency (kHz)
-> + *
-> + * Converts the user-provided frequency (kHz) to a performance value
-> + * and writes it to the MAX_PERF register.
-> + */
-> +static ssize_t store_max_perf(struct cpufreq_policy *policy, const char *buf, size_t count)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int freq_khz;
-> +	u64 perf;
-> +	int ret;
-> +
-> +	ret = kstrtouint(buf, 0, &freq_khz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Convert frequency (kHz) to performance value */
-> +	perf = cppc_khz_to_perf(&cpu_data->perf_caps, freq_khz);
-> +
-> +	ret = cppc_cpufreq_set_max_perf(policy, perf, true, cpu_data->perf_caps.auto_sel);
+--39OyxfwhcaPPfO4y
+Content-Type: application/pgp-signature; name=signature.asc
 
-Can you give me some details around updating the policy limits when
-auto-select is true? I suppose if P-state selection is autonomous, the
-policy limits should not matter, right?
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Ionela.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaRW5pgAKCRA6cBh0uS2t
+rMwDAP47wALgPmIE6tUjCgJFQCsffcrKOTD677lZaRxgFK1KiQEAgtoWFZ4Rph8X
+FRyBF15dTBXErLYgBnyapoMTJ/x/gQw=
+=IWEV
+-----END PGP SIGNATURE-----
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
->  cpufreq_freq_attr_ro(freqdomain_cpus);
->  cpufreq_freq_attr_rw(auto_select);
->  cpufreq_freq_attr_rw(auto_act_window);
->  cpufreq_freq_attr_rw(energy_performance_preference_val);
-> +cpufreq_freq_attr_rw(min_perf);
-> +cpufreq_freq_attr_rw(max_perf);
->  
->  static struct freq_attr *cppc_cpufreq_attr[] = {
->  	&freqdomain_cpus,
->  	&auto_select,
->  	&auto_act_window,
->  	&energy_performance_preference_val,
-> +	&min_perf,
-> +	&max_perf,
->  	NULL,
->  };
->  
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 42e37a84cac9..be7de1222eee 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -39,7 +39,8 @@
->  /* CPPC_AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
->  #define CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
->  
-> -#define CPPC_ENERGY_PERF_MAX	(0xFF)
-> +#define CPPC_EPP_PERFORMANCE_PREF		0x00
-> +#define CPPC_EPP_ENERGY_EFFICIENCY_PREF		0xFF
->  
->  /* Each register has the folowing format. */
->  struct cpc_reg {
-> @@ -172,6 +173,10 @@ extern int cppc_get_auto_act_window(int cpu, u64 *auto_act_window);
->  extern int cppc_set_auto_act_window(int cpu, u64 auto_act_window);
->  extern int cppc_get_auto_sel(int cpu, bool *enable);
->  extern int cppc_set_auto_sel(int cpu, bool enable);
-> +extern int cppc_get_min_perf(int cpu, u64 *min_perf);
-> +extern int cppc_set_min_perf(int cpu, u64 min_perf);
-> +extern int cppc_get_max_perf(int cpu, u64 *max_perf);
-> +extern int cppc_set_max_perf(int cpu, u64 max_perf);
->  extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
->  extern int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator);
->  extern int amd_detect_prefcore(bool *detected);
-> @@ -264,6 +269,22 @@ static inline int cppc_set_auto_sel(int cpu, bool enable)
->  {
->  	return -EOPNOTSUPP;
->  }
-> +static inline int cppc_get_min_perf(int cpu, u64 *min_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_set_min_perf(int cpu, u64 min_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_get_max_perf(int cpu, u64 *max_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int cppc_set_max_perf(int cpu, u64 max_perf)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  static inline int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf)
->  {
->  	return -ENODEV;
-> -- 
-> 2.34.1
-> 
+--39OyxfwhcaPPfO4y--
 
