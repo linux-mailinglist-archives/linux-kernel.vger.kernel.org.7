@@ -1,223 +1,285 @@
-Return-Path: <linux-kernel+bounces-900073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AAEC598B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4CCC598D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 04C09348E2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:42:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1B684353BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D713128BD;
-	Thu, 13 Nov 2025 18:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E0530FC15;
+	Thu, 13 Nov 2025 18:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dskw5zhW"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="KAOtBBAp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="okJS8zZI"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7BC12DDA1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2881212DDA1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059341; cv=none; b=RSBE2YlfWcVtK2a7C7di/hvWRjj9o+wTTTiqNls0s80jfkePH3UPRFu7DwumD8X5qDoDez0FuoHuIb3WhQ0LFFfWAMonvCmffvtokXrdWTMHZj64NR7gKE8A0mM3b+9J+3m9+BBNfk8HFJF6EoEhZn+UmN0QrPIE2UfRH+AdJw0=
+	t=1763059394; cv=none; b=Vr0QcmJQZS9xq/mrlRTz55S/3ICaV01QL9MZX9z6Q93uvht3G1UEbEqQn2JVnNYzSW68qpCb+0/vQRU8fgtEEUdPQczww2HKWjGP8YUKZtyysEno6lHUHqhi28uRgGIxSJRwiyVKbkQeXbiJAdOpfo9PtJKe0S4Cln41eN9Qgd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059341; c=relaxed/simple;
-	bh=VCK4+5C8NcYq0P9jDNeakspMs/yrMuAbxdcuxCnWLok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cro2hZEiYi2mR5dTsnHg7Xgq9CN5KWUjyc9zMHCelBdD80bjRkDSP4sdjH06DVK/CBqCAUoDEVnISw0zSM/MrwGati1rkIG1plKgKWj0Ej+vBIj4HRBA/eMM57Kl1hdFOf3bFZ0cxDtSlOiIew1rFBL4odK0lZ4SeX+wFzAygE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dskw5zhW; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64320b9bb4bso2554487a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1763059334; x=1763664134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pXTM/+Sn5ck0pJjBV1Lup/KQT4FwvuZ93IhS694xuE=;
-        b=dskw5zhWogT04uel3cM8jIs9sWQhQ+6FIRvQeLyzP8NveV0ZGqEaLY6Y3ETVBQmwo6
-         bw00AqF0KeV25X6SJlzJF61JxaWlZK+9I7VS8zEcnAi6dWuMLTgKQyV3bCl8nqgueaA4
-         bIUHiekN/fUgVzdavUYyYe+w/15D7yb6dDaAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059334; x=1763664134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/pXTM/+Sn5ck0pJjBV1Lup/KQT4FwvuZ93IhS694xuE=;
-        b=aPnwxmL9pBmJRRlaCESeoB5q9IgqZZAz9C10pMRm3UG/KK+Tz3I1c4vQRplgeOWd9y
-         Q5W67sH9VL2yevY2vgYoNYU8phJ/eGb5UDZt05JI+AB5oIpivDtfDIAl7ro3mN/S24h0
-         bPkP/1JUWQs4y2v3ToaqEy59bT2cCT3mDYiVvoUjJthhPleX/NLD7ffwCBfqJhA1qv+M
-         fDX3/GCqZVAF+8QF78QjMVsbABy+Wjxnfqm9EE33Mw+kKP8TAMvhzmEVCOTFAJ77ewbS
-         zU4zT+lXefckv+7lECityHjVPF9/R8P4HW+rctqEBsVK1358b7P3SdzfvNcEykYBTWvv
-         GfeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXM1c5EO8u4DqsuzRWqgpMlRI40+5HqAYin3UCDuth7CYO4XdQsaE9sL9BOS6pBysJVqfYxpwFTjyarENY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTKDItwZmgLhL1dqSec2bmaxBeNvT9RkGEtEEJMdCPQFUVMlss
-	lR+qYVuVX32WNuRJa3r8a+9CdpnZXM73gd/8UadUADZer1MU81D5PRaH1rgeZuDB0NWEftJvHuw
-	ztNUzOPix
-X-Gm-Gg: ASbGncs7kNvFhwg6B+v5xnnUgfpy2DBnJRrtBaO0uq2NOIOeNDNCMwRzy/XTU5+salo
-	HtZYRFjssxMxgO75Rl6aJ87m6CAmyF9Mqo7ELdFF8g9O1hij1c9bkh5XHENy8ccLfVx/zIdziS7
-	9H0uYiU7DABK+mygfp4YxAlP5knNYy8Dp4dhos5hgbvFUyK98Mgtmnxc66+EHSnmE865Gjy/piQ
-	IzUWDy2z7JhqOfkTfnwt2XM09TggmWL6jg9i7eTcBnJSIIm1lkVgYQujq4GDjxfmqPa5lMJTxrf
-	o2tMO3T4IOhc6zbn15xZrTWgeggwumgMqL1C2gyzA0aAiWtncvAVWz8hrYk/pYg/hHr+hB0uO1q
-	q4NrKAcx6HZAjcIITeFWf7GOvfq+4Y0bWtuUQiHwBu73eIyiDnh3MBOZy1pjg+nQkzLOljTYcwo
-	goIVUnMCnyJWOpFJxNgX5MmiZ7KQTAas+BaHPuk5extzWhgIk4ULTZTCvLrbLw
-X-Google-Smtp-Source: AGHT+IEWx4svGNdii4hjwlEC3pvfhhrXHTj1+njN2micFFO54gknUDA5JuQC4wrU6fPjnEYJ7vT5QA==
-X-Received: by 2002:a05:6402:254a:b0:62e:ebb4:e6e0 with SMTP id 4fb4d7f45d1cf-6434f8104abmr595607a12.1.1763059333511;
-        Thu, 13 Nov 2025 10:42:13 -0800 (PST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a3f96e2sm2031885a12.16.2025.11.13.10.42.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:42:11 -0800 (PST)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477563e28a3so8021055e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW5ozD6uyVddpxXH06qpGRO2x8r1XFNG88pHRch/FY+QxK3jHR1mNqT+Rv2GYse2ee6PheKZx0I+H7QUuE=@vger.kernel.org
-X-Received: by 2002:a05:600c:c87:b0:475:d91d:28fb with SMTP id
- 5b1f17b1804b1-4778bcb36d1mr39940165e9.4.1763059330721; Thu, 13 Nov 2025
- 10:42:10 -0800 (PST)
+	s=arc-20240116; t=1763059394; c=relaxed/simple;
+	bh=ztPwJ+7cMcLpg0x4rIzQAo7X2WjabXKpfzo7dLKsKGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rm8M6CqDYDxDpzf8QQn/W4DdFrB3PeNllZpF7KoVcoLZ0OEvDBPAxIUbgNYEE/lMf3N4FdbwlrE0AT5N0orrO/HHWP60eZJkSjNRKBkVpCC5biC9Euc1nDDpws7MaFVfrCrhNFN7zWiUnE+ucSF7OyjpmYVzeBvawO4/MMAt3O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=KAOtBBAp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=okJS8zZI; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0C9A71D00313;
+	Thu, 13 Nov 2025 13:43:12 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 13 Nov 2025 13:43:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1763059391;
+	 x=1763145791; bh=lXxLZsOxpREcR2HuC2Fg0UpqH2BHTtEmo6JxubieZyA=; b=
+	KAOtBBApaFoXo1ev2sX81dEjpOwSx88xDiKvL17DK5xSVzR9tOrpSTH/LDKso1dE
+	HygUFq4ywRQEYw8SwDZKXR1g+4GoO4l7GfvuiP5vYyjFdwcet9nB4JD9UwQzJNHd
+	3VzVP8huy6E2TVOaU0B1LWLY2owM34eGxa3ZIHjhPb/HUuQBWKKxPLXLsug/CuGw
+	lg1WzBfeOyY7EhojcnvRS/yvdr9FCxUzB+nqL2u7X5BJrgQEiYcCL8BfkKBKuDD2
+	iM2SfPWznqdRoz5OxuhonR3UWo2YYO23ZMBLmXjw5uAp6kkkDi9LRswZc0JDzDFJ
+	GFNMwa19WFedVK3SXXV/FQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1763059391; x=1763145791; bh=lXxLZsOxpREcR2HuC2Fg0UpqH2BHTtEmo6J
+	xubieZyA=; b=okJS8zZIk6KNPbQrqKWzVNt0s75dEtfV5QtmgKKaVKhFLkD6+/t
+	1lrjxKCrCDB4ZDDprpNf+jR4QZx1w9r6LgoYezwARBetfnNaPWun4csiKshjXn6/
+	xhOvLtRkDI3tEozbJ3E5PZss6q5UQ1/+OiJ0+mbDp1eqhQvj3dycQEKNAdQUrF/i
+	naOhOszABdDE3OsqYWUkeokID4Oy0TcD5IZgF7aCoAKc89GGBt87qXEYqT+4O1lO
+	nhmCtJ462psyqWGR2hmFrw9TK2S8Kb1DGsDXlJBZiLyzmYj8i1B8YyKZFxJnD1Zf
+	1/rg9vQ6zmPJZdbzujYmFpDlnH1/AeCECkQ==
+X-ME-Sender: <xms:viYWaflcrBwHFfi9H4DAVYlkWZTPuEf4PNzZShGPUAO7_-n_f5HvIg>
+    <xme:viYWae1JL5W2mtFO8mr-uBCpLv-9GhtfaZT13kaNOhfxFFI800ON-ykEcuCfbEZzD
+    P9LPmJmoapQJMx4jWIQ57kXDlKuZd9oQK-uau9SyZ58fPcMecE>
+X-ME-Received: <xmr:viYWaX24zDD4Emr8zQXTEC4UQFRzLvK9og_DIq56jQcBNmere7U7BZ5XtEhbSNOdG_3JTGuvNXHmmRR10JS4m0BOsThlztgROMA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdejieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrrhgvkhcu
+    ofgrrhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomhgrrhhmrghrvghksehinhhvih
+    hsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecuggftrfgrthhtvghrnhepieeluddv
+    keejueekhfffteegfeeiffefjeejvdeijedvgfejheetuddvkeffudeinecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehmrghrmhgrrhgvkhesihhnvhhishhisghlvghthhhinhhgshhlrg
+    gsrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehjghhrohhsshesshhushgvrdgtohhmpdhrtghpthhtohepshhsthgrsggvlhhl
+    ihhniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhlvghkshgrnhgurhgpthihsh
+    hhtghhvghnkhhosegvphgrmhdrtghomhdprhgtphhtthhopehjihgrnhhgrdhpvghnghel
+    seiithgvrdgtohhmrdgtnhdprhgtphhtthhopegthhgvnhhqihhujhhiieeiieesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehjrghsohhnrdgrnhgurhihuhhksegrmhgurdgtohhm
+    pdhrtghpthhtohepgigvnhdquggvvhgvlheslhhishhtshdrgigvnhhprhhojhgvtghtrd
+    horhhg
+X-ME-Proxy: <xmx:viYWaYq72mAbLE6ZjHOIexKo5CBfw5XhM-X8ivyjDyycQKzAVXdNww>
+    <xmx:viYWabiq9dfFJCgJNel92GabUZMqPSE0uMT3D2yUSVQR3P-x7Mvvqg>
+    <xmx:viYWac-1J6roKTKpn4zsuYd58CvB4D6-PQIoNUj571oenr_wTchgMA>
+    <xmx:viYWafWSlL5Tb8_48cWM70HjW6QP0nZRK0CpZAjSSnK_slG9toGbWA>
+    <xmx:vyYWac8fLx6NH354UureVdHrvxp2BRJzEP9yIXe4imP6SXmX4CqXqFro>
+Feedback-ID: i1568416f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Nov 2025 13:43:09 -0500 (EST)
+Date: Thu, 13 Nov 2025 19:43:07 +0100
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Peng Jiang <jiang.peng9@zte.com.cn>,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	"moderated list:XEN HYPERVISOR INTERFACE" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH] xen/xenbus: better handle backend crash
+Message-ID: <aRYmuwW5rShXqMj1@mail-itl>
+References: <20251102032105.772670-1-marmarek@invisiblethingslab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
- <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org> <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
- <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org> <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
- <6490f20a-2492-4ee0-8f34-d529e0df0bad@kernel.org> <CAD=FV=Us7SU_OifVkS4mdfVhc=xGYSBiBpBk9aA1Ki0y+iYBpQ@mail.gmail.com>
- <abb77afe-c285-46ba-88ac-08574bd67712@kernel.org> <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
-In-Reply-To: <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 13 Nov 2025 10:41:59 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X4bV_YdeqymOMb5dphZwW4T4tASJo6hbuCjDMykVtYVg@mail.gmail.com>
-X-Gm-Features: AWmQ_bmy1aehQ6uhI85I3Z-_qkNj2-reqpyxguooVv-yaJfHf2TNxdZyFa3FBPw
-Message-ID: <CAD=FV=X4bV_YdeqymOMb5dphZwW4T4tASJo6hbuCjDMykVtYVg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for frankel/blazer/mustang
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, 
-	Julius Werner <jwerner@chromium.org>, William McVicker <willmcvicker@google.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oRemhD1n1wZhbvYq"
+Content-Disposition: inline
+In-Reply-To: <20251102032105.772670-1-marmarek@invisiblethingslab.com>
+
+
+--oRemhD1n1wZhbvYq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Date: Thu, 13 Nov 2025 19:43:07 +0100
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Peng Jiang <jiang.peng9@zte.com.cn>,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	"moderated list:XEN HYPERVISOR INTERFACE" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH] xen/xenbus: better handle backend crash
 
-Hi,
+Ping?
 
-On Thu, Nov 13, 2025 at 10:04=E2=80=AFAM Doug Anderson <dianders@chromium.o=
-rg> wrote:
->
-> Hi,
->
->
-> On Thu, Nov 13, 2025 at 9:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> >
-> > >>> Yes, the complexity of just "hooking up" the components on an SoC i=
-s
-> > >>> an order of magnitude harder than a Raspberry Pi, but it's still ju=
-st
-> > >>> hooking it up to external components. In both cases, we are modelin=
-g
-> > >>> the core "brains" (the part that contains the processor) as the DTB
-> > >>> and everything else just "hooks up" to interfaces.
-> > >>
-> > >> You mix the topics, so I don't follow. I speak here about bindings -=
- you
-> > >> cannot have the that compatible alone, because it is incomplete, jus=
-t
-> > >> like compatible for "transistor" is not correct in that context. You
-> > >> speak what could or could be DTB, different topic.
-> > >
-> > > A "SoC" is "complete". It has a processor that can run instructions.
-> >
-> > Then show me executing any piece of software, which is the consumer of
-> > the bindings, and runs on the SoC without the rest of the hardware syst=
-em.
->
-> Show me something that runs on a Raspberry Pi (the models that don't
-> have eMMC) that runs without hooking up power and plugging in an SD
-> card. :-P
->
->
-> > > In any case, maybe we can approach this a different way that I allude=
-d
-> > > to in one of my other posts. Can we just call the SoC thing something
-> > > different and make everyone happy?
-> > >
-> > > 1. Rename the SoC file to lga-b0.dtf (device tree fragment) and
-> > > _REMOVE_ the top-level compatible. Problem solved--we're not adding a
-> > > top-level compatible.
-> > >
-> > > 2. Add a special node at the top level of the "dtf" file describing i=
-t
-> > > (so someone could figure it's useful for). Like:
-> > >
-> > > fragment-info {
-> > >   compatible =3D "google,soc-id";
-> > >   google,product-id =3D <0x5>;
-> > >   google,major-rev =3D <0x1>;
-> > >   google,minor-rev =3D <0x0>;
-> > >   google,package-mode =3D <0x0>;
-> > > };
-> > >
-> > > 3. We can compile the "dtf" file using existing tools into a "dtfb".
-> > > This looks just like a "dtb" but has no top-level compatible but
-> > > instead has "fragment-info".
-> > >
-> > > Now we're not violating any spec because we're not adding any
-> > > top-level compatible.
-> >
-> > Didn't you just describe an overlay or DTSI file?
->
-> Sure, you can look at it that way. ...and since you're happy with
-> "dtsi" files I assume you're happy with my "device tree fragment"
-> files, right?
->
-> The difference here is:
->
-> * A "dtf" file must be able to compile (with dtc) on its own. Contrast
-> with a "dtsi" file could rely on labels that are provided by the file
-> including it.
->
-> * A "dtf" file needs to have "/dts-v1/;" at the top, unlike a "dtsi" file=
-.
->
-> * Kernel (or other OS) build rules will be happy compiling a "dtf"
-> file. This is in contrast with a "dtsi" file.
->
-> * A "dtf" file is _intended_ to be compiled and hooked up to an
-> overlay. This means it will always be compiled with "-@".
->
-> * We can document the requirement that a "dtf" file needs to live
-> together with the overlays that it will be combined with to make
-> complete device trees. This means that there is no need to set a new
-> ABI boundary here and we can be flexible with what labels are exported
-> by the "dtf" file.
->
->
-> If that all sounds reasonable, I'll get working on it right away.
+On Sun, Nov 02, 2025 at 04:20:12AM +0100, Marek Marczykowski-G=C3=B3recki w=
+rote:
+> When the backend domain crashes, coordinated device cleanup is not
+> possible (as it involves waiting for the backend state change). In that
+> case, toolstack forcefully removes frontend xenstore entries.
+> xenbus_dev_changed() handles this case, and triggers device cleanup.
+> It's possible that toolstack manages to connect new device in that
+> place, before xenbus_dev_changed() notices the old one is missing. If
+> that happens, new one won't be probed and will forever remain in
+> XenbusStateInitialising.
+>=20
+> Fix this by checking backend-id and if it changes, consider it
+> unplug+plug operation. It's important that cleanup on such unplug
+> doesn't modify xenstore entries (especially the "state" key) as it
+> belong to the new device to be probed - changing it would derail
+> establishing connection to the new backend (most likely, closing the
+> device before it was even connected). Handle this case by setting new
+> xenbus_device->vanished flag to true, and check it before changing state
+> entry.
+>=20
+> And even if xenbus_dev_changed() correctly detects the device was
+> forcefully removed, the cleanup handling is still racy. Since this whole
+> handling doesn't happend in a single xenstore transaction, it's possible
+> that toolstack might put a new device there already. Avoid re-creating
+> the state key (which in the case of loosing the race would actually
+> close newly attached device).
+>=20
+> The problem does not apply to frontend domain crash, as this case
+> involves coordinated cleanup.
+>=20
+> Problem originally reported at
+> https://lore.kernel.org/xen-devel/aOZvivyZ9YhVWDLN@mail-itl/T/#t,
+> including reproduction steps.
+>=20
+> Signed-off-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblethingsl=
+ab.com>
+> ---
+> I considered re-using one of existing fields instead of a new
+> xenbus_device->vanished, but I wasn't sure if that would work better.
+> Setting xenbus_device->nodename to NULL would prevent few other places
+> using it (including some log messages). Setting xenbus_device->otherend
+> might have less unintentional impact, but logically it doesn't feel
+> correct.
+>=20
+> With this patch applied, I cannot reproduce the issue anymore - neither
+> with the simplified reproducer script, nor with the full test suite.
+> ---
+>  drivers/xen/xenbus/xenbus_client.c |  2 ++
+>  drivers/xen/xenbus/xenbus_probe.c  | 25 +++++++++++++++++++++++++
+>  include/xen/xenbus.h               |  1 +
+>  3 files changed, 28 insertions(+)
+>=20
+> diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenb=
+us_client.c
+> index e73ec225d4a61..ce2f49d9aa4ad 100644
+> --- a/drivers/xen/xenbus/xenbus_client.c
+> +++ b/drivers/xen/xenbus/xenbus_client.c
+> @@ -275,6 +275,8 @@ __xenbus_switch_state(struct xenbus_device *dev,
+>   */
+>  int xenbus_switch_state(struct xenbus_device *dev, enum xenbus_state sta=
+te)
+>  {
+> +	if (dev->vanished)
+> +		return 0;
+>  	return __xenbus_switch_state(dev, state, 0);
+>  }
+> =20
+> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbu=
+s_probe.c
+> index 86fe6e7790566..3c3e56b544976 100644
+> --- a/drivers/xen/xenbus/xenbus_probe.c
+> +++ b/drivers/xen/xenbus/xenbus_probe.c
+> @@ -444,6 +444,9 @@ static void xenbus_cleanup_devices(const char *path, =
+struct bus_type *bus)
+>  		info.dev =3D NULL;
+>  		bus_for_each_dev(bus, NULL, &info, cleanup_dev);
+>  		if (info.dev) {
+> +			dev_warn(&info.dev->dev,
+> +			         "device forcefully removed from xenstore\n");
+> +			info.dev->vanished =3D true;
+>  			device_unregister(&info.dev->dev);
+>  			put_device(&info.dev->dev);
+>  		}
+> @@ -659,6 +662,28 @@ void xenbus_dev_changed(const char *node, struct xen=
+_bus_type *bus)
+>  		return;
+> =20
+>  	dev =3D xenbus_device_find(root, &bus->bus);
+> +	/* Backend domain crash results in not coordinated frontend removal,
+> +	 * without going through XenbusStateClosing. Check if the device
+> +	 * wasn't replaced to point at another backend in the meantime.
+> +	 */
+> +	if (dev && !strncmp(node, "device/", sizeof("device/")-1)) {
+> +		int backend_id;
+> +		int err =3D xenbus_gather(XBT_NIL, root,
+> +				        "backend-id", "%i", &backend_id,
+> +					NULL);
+> +		if (!err && backend_id !=3D dev->otherend_id) {
+> +			/* It isn't the same device, assume the old one
+> +			 * vanished and new one needs to be probed.
+> +			 */
+> +			dev_warn(&dev->dev,
+> +				 "backend-id mismatch (%d !=3D %d), reconnecting\n",
+> +				 backend_id, dev->otherend_id);
+> +			dev->vanished =3D true;
+> +			device_unregister(&dev->dev);
+> +			put_device(&dev->dev);
+> +			dev =3D NULL;
+> +		}
+> +	}
+>  	if (!dev)
+>  		xenbus_probe_node(bus, type, root);
+>  	else
+> diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> index 7dab04cf4a36c..43a5335f1d5a3 100644
+> --- a/include/xen/xenbus.h
+> +++ b/include/xen/xenbus.h
+> @@ -87,6 +87,7 @@ struct xenbus_device {
+>  	struct completion down;
+>  	struct work_struct work;
+>  	struct semaphore reclaim_sem;
+> +	bool vanished;
+> =20
+>  	/* Event channel based statistics and settings. */
+>  	atomic_t event_channels;
+> --=20
+> 2.51.0
+>=20
 
-FWIW, I wasn't terribly happy with the name "fragment" or the "dtf"
-suffix but couldn't come up with anything better. ...but then I just
-had a realization. Perhaps it would be better to think of this as a
-"SoC Tree". Thus:
+--=20
+Best Regards,
+Marek Marczykowski-G=C3=B3recki
+Invisible Things Lab
 
-* .sts: SoC tree source
-* .stb: SoC tree binary
+--oRemhD1n1wZhbvYq
+Content-Type: application/pgp-signature; name=signature.asc
 
-...and a "SoC" tree it always intended to be the base for a device tree ove=
-rlay.
+-----BEGIN PGP SIGNATURE-----
 
-This also matches with my assertion that really anything with a CPU on
-it should be able to act as the base here.
+iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAmkWJrsACgkQ24/THMrX
+1ywbfAgAmQnHHJlmbMTOX3RtNPXxgqaSefI2mnhv5lYA7X74m8OZxYA6RV/AIkU/
+yAVUPQmOahNBjJnSGhkTTV2aFgyf+r5O63Hr9eFGgbGY6TH416bgXLj/dJ/cfLgL
+OWxAhSF9TphGmIu1Aqm/JmkM7dic8yTNoL72eKdHY2oKie6dqtX6NfmJEwxrQYwP
+iw1pP1A2tWDR+mzfvm4p+camWTAxlYc59CgA5VKOGcb9XsC6PxPXteIkG70bz/iv
+d1FywMWsOTb4buaLMRGAGATEOhrK5BY5nPO3uYRogL0EB8zBVUJOIIlLlOYma8GV
+G21Rrxa+gQvJtJM73m47Tj0cq8O+TQ==
+=/ugj
+-----END PGP SIGNATURE-----
 
--Doug
+--oRemhD1n1wZhbvYq--
 
