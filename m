@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-900084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D52CC5996A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 20:00:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4D3C5991B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE4E74E5630
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8203A5FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A058A3164D0;
-	Thu, 13 Nov 2025 18:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AE9314D07;
+	Thu, 13 Nov 2025 18:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tylerwross.com header.i=@tylerwross.com header.b="cj77aCq5"
-Received: from mail-07.mail-europe.com (mail-07.mail-europe.com [188.165.51.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGYOArWL"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCAC35957;
-	Thu, 13 Nov 2025 18:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6091F3101B2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059933; cv=none; b=EU82R/9OPLdh4S5qeWIITV1T+oC48Tm08itX3FFkyiSi9bQkmblR4UM/Nka//VByxibwtKHQIdxn2X900KL+13lS+DVU3lA6M8Iwcb1UgmxBxn+b6lGdaofOCvs73wl6oO/Tw7+nW4Xw4XtVlaOamyP+Z1rZ1cd9CGQ0xTKYPyo=
+	t=1763059926; cv=none; b=ppffdnmkiZUF5ZUhLS2xzBOkgoK9R9ugsOCn6D12wJIm4LIrANNPdWC0sxBFPo6gQ4xzPXSXhceOH88emBk2cKZEGq1vTrGAuW6PF04ye705lhDUutRWChFfLbP+KJm/cjRzjl9zsirqzoF/xD7xJUpjideDBg5H+havemHJY4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059933; c=relaxed/simple;
-	bh=FqbLIISeogDIGCCTnHJETiehz7+QH4OmW2DFoH1HTeE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DzqVvyFKCs7fvbnGxJUSaFg2XWYbxH8lh+H+H1kf7QkbZJumjsouadfzl2V19PBm8/oO2SuIE2Yh6jh/SBESP2VQBaPNwzPQv2/SNXRGHxxCacfP1WEjMBLwND0B7z03cuc/RMPfcy2wpratFhqYlmvf4lV3v9kfsiRxMO+dKfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tylerwross.com; spf=pass smtp.mailfrom=tylerwross.com; dkim=pass (2048-bit key) header.d=tylerwross.com header.i=@tylerwross.com header.b=cj77aCq5; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tylerwross.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tylerwross.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tylerwross.com;
-	s=protonmail; t=1763059920; x=1763319120;
-	bh=FqbLIISeogDIGCCTnHJETiehz7+QH4OmW2DFoH1HTeE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cj77aCq5lL14I5BIzHlu2y8XTolhBNsFloY27u9uIBqsqNpGXFt7jkhi7YmD5e+kV
-	 IpqOpqsvPi3074Y7pXWeXPrcaPw0t40Gr4gmurBEEH878YnL9tHMEIobFOAVsOp9oe
-	 /M2UISEcubLKSnBNy2UpBDiVP9gpSZyUa0B1r+seXNImnY8MQXBMA9OIvwn3HBlMRf
-	 WfPlGTKJVjjGfgA194qm1uq2xnsXakypLkxzJ1L6qPKLDauLkVYxlYYm0m5PWozEx8
-	 cPvFYKrLgVpzDt0tdNDBtMAqmCBLJHTT7ys6P+Ob8XrxHEnftLxZJc8fbBct+ezpQd
-	 J4JjUkcBcOAIQ==
-Date: Thu, 13 Nov 2025 18:51:57 +0000
-To: Chuck Lever <chuck.lever@oracle.com>
-From: "Tyler W. Ross" <TWR@tylerwross.com>
-Cc: "1120598@bugs.debian.org" <1120598@bugs.debian.org>, Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, Scott Mayhew <smayhew@redhat.com>, Steve Dickson <steved@redhat.com>, Salvatore Bonaccorso <carnil@debian.org>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ls input/output error ("NFS: readdir(/) returns -5") on krb5 NFSv4 client using SHA2
-Message-ID: <eUtqaTOrHO8Sj-82m04dsCpmYX8bPkr5r9Nla1muHxSnxBYq57wxk7LLf_RuI377WMpUcczBXteWGvF5OfNfe5gwLmfTn_YblJucaF58POo=@tylerwross.com>
-In-Reply-To: <4b77bf39-bc1a-47a1-9a16-14c44c31614f@oracle.com>
-References: <176298368872.955.14091113173156448257.reportbug@nfsclient-sid.ipa.twrlab.net> <aRVl8yGqTkyaWxPM@eldamar.lan> <8d873978-2df6-4b79-891d-f0fd78485551@oracle.com> <c8-cRKuS2KXjk19lBwOGLCt21IbVv7HsS-V-ihDmhQ1Uae_LHNm83T0dOKvbYqsf4AeP5T8PR_xdiKLj5-Nvec-QVTLqIC4NGuU2FA0hN5U=@tylerwross.com> <c7136bad-5a00-4224-a25c-0cf7e8252f4a@oracle.com> <N14GL1WKSGqrFl8nF0e6sa0QxOZrnrpoC7IZlZ20YqUyfsxpsoqu2W3a31H_GfQv7OEqaEWKwDXdgtAV-xv613w_slTAFZIoyWMutIE5pKk=@tylerwross.com> <4b77bf39-bc1a-47a1-9a16-14c44c31614f@oracle.com>
-Feedback-ID: 101639484:user:proton
-X-Pm-Message-ID: 9eb9bbf23a0d1f0841a100d9503cd17805100d41
+	s=arc-20240116; t=1763059926; c=relaxed/simple;
+	bh=1I81ZMh2flMGmGHT9awFaIU8CTiz5EtPfzZ60BaJIQg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eU7GvzYZtW6r68GIMzfTJ3eg7dmtBjQCtVU5QAgi5xccobSx3BoWL+Bqn1jMGW7IR99NgqKm4Fv8gsmhQ7aUSH0ICw1TfzwchLJ1SH02P1rO1r37PdpOH/LXMCwE8nGikbRJi0E2nF6svrC6NgkFsD3G5i6AUXjtXatbRdeHLG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rGYOArWL; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2982b47ce35so13173535ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763059925; x=1763664725; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cIVgrZy+vZcCrxI7QYJ8hXcnFmjFjPoiu79u6DzwfMA=;
+        b=rGYOArWLBoU/z7s2/0AFUplNEZJlfgGZoFD0CPngpcrsVtURCpOHU5T8W1uWSDnD72
+         i3QCs2ESzUzudtmienyD0J/nc2O1Hr2cBHB8R/hFhTOKyDmFrcJz4uT5vPE0DXjGAXSB
+         wREraRFWzCZDCHB+BPFQ4rFo/+DXMm8tsocoX0sGhLP417QhH+NWf2oY46zCW2m7HX5C
+         tLqjkfLLECu3yBngKAbDa5img1EVRvDarrs64s5HBy+qaqWDDv7hNdTDBAzmDOwJ8c4z
+         zWp3HwaXx0wecl8fQRwf8zp0yjLf3nRFP4hOjSCUfXD+C5wvSD+gx6itbQTBKAnirHdH
+         kcGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763059925; x=1763664725;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cIVgrZy+vZcCrxI7QYJ8hXcnFmjFjPoiu79u6DzwfMA=;
+        b=ezr4w978Bpsuzb1N85t2iQVA93SJEznllreUIlsVeZXok02O/HW5SqeL5tGtqEypOz
+         BOOa2pC/3N9aLrXGqcHWahrMnrdp8pLD9lhL2hFFXCCnyf6Ch5QcrkzAO/oEr9JTZiKV
+         OqVTsh1TWXgqpPkQkjNIu9yNsgmGPxnPK9I1UsBE81ikzJNQDwmSwyh5z3pya++2sPk4
+         RukTFVDC3jCn5NzAuRgN65kiZqSouohpTb1IxHX4PMPbIBbHQs/c+AciB5jIafjTIdn4
+         gEahUNk4V8NolgiI3jVN9EBBEYCdMMXUOZBWQwx5754CWL3okDsu2QHx/b001HmlgPAN
+         4/VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTkWZavJlcXIwnqyOUO6VV8FkCFSGcA+RXqtkRwmB8BfE6SSFDK5NQktI+r7c/nXvVRbOmYZML+OSxwNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi2Zup1IFrKBSkcoQVFaAkZdafGOM8TFvoPY66/JCLSYcHCQvA
+	NOLPaeKXFzQZR07IDjxMmP0BBeOo5uF2uddYMzhX4eL3AgS7rLJnDq6d19L14yDNO8PgTRXjHuc
+	6/rS8Wg==
+X-Google-Smtp-Source: AGHT+IELLdvnYt/gi3DBJs5U+itYxHk4SoCPsQR2iLQbi7s7Ha6OS3ZSPCJ4OFt28AA30gan8pj0zZ6ieKk=
+X-Received: from plbkp5.prod.google.com ([2002:a17:903:2805:b0:297:fd8b:fe1e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ecc7:b0:297:db6a:a82f
+ with SMTP id d9443c01a7336-2986a6d27fcmr422445ad.24.1763059924664; Thu, 13
+ Nov 2025 10:52:04 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:52:03 -0800
+In-Reply-To: <e3f711366ddc22e3dd215c987fd2e28dc1c07f54.1761593632.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <cover.1761593631.git.thomas.lendacky@amd.com> <e3f711366ddc22e3dd215c987fd2e28dc1c07f54.1761593632.git.thomas.lendacky@amd.com>
+Message-ID: <aRYo05KMsaNdj59U@google.com>
+Subject: Re: [PATCH v4 2/4] crypto: ccp - Add an API to return the supported
+ SEV-SNP policy bits
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-crypto@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thursday, November 13th, 2025 at 11:12 AM, Chuck Lever <chuck.lever@orac=
-le.com> wrote:
+On Mon, Oct 27, 2025, Tom Lendacky wrote:
+> Supported policy bits are dependent on the level of SEV firmware that is
+> currently running. Create an API to return the supported policy bits for
+> the current level of firmware.
+> 
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
 
-> Then I would start looking for differences between the Debian 13 and
-> Fedora 43 kernel code base under net/sunrpc/ .
->=20
-> Alternatively, "git bisect first, ask questions later" ... :-)
+...
 
-This is outside my day-to-day, so I don't have a workflow for this kind of
-testing/debugging, but I'll see what I can do.
+> @@ -1014,6 +1031,7 @@ void *snp_alloc_firmware_page(gfp_t mask);
+>  void snp_free_firmware_page(void *addr);
+>  void sev_platform_shutdown(void);
+>  bool sev_is_snp_ciphertext_hiding_supported(void);
+> +u64 sev_get_snp_policy_bits(void);
+>  
+>  #else	/* !CONFIG_CRYPTO_DEV_SP_PSP */
+>  
+> @@ -1052,6 +1070,8 @@ static inline void sev_platform_shutdown(void) { }
+>  
+>  static inline bool sev_is_snp_ciphertext_hiding_supported(void) { return false; }
+>  
+> +static inline u64 sev_get_snp_policy_bits(void) { return 0; }
 
-Thanks for the starting place.
+As called out in the RFC[*], this stub is unnecesary.
 
-> So I didn't find an indication of whether this was sec=3Dkrb5, sec=3Dkrb5=
-i,
-> or sec=3Dkrb5p. That might narrow down where the code changed.
-
-I confirmed the issue with all 3 krb5 sec modes, in both the 6.12 kernel
-that ships with Debian 13 and the 6.17 that currently ships with Debian
-Sid/unstable. Similarly, I confirmed NFSv4.2, 4.1 and 4.0 are impacted.
-
-> Also, the xdr_buf might have a page boundary positioned in the middle of
-> an XDR data item. Knowing which data item is being decoded where the
-> "overflow" occurs might be helpful (I think adding pr_info() call sites
-> or trace_printk() will be adequate to gain some better observability).
-
-No experience with kernel hacking, so I'm not confident I can locate
-meaningful places to insert those.
-
-I'll see where some snooping and a bisect gets me. Failing that, if
-anyone has recommendations on where to add those calls, I'd appreciate
-the guidance.
-
-
-TWR
+[*] https://lore.kernel.org/all/aMHP5EO-ucJGdHXz@google.com
 
