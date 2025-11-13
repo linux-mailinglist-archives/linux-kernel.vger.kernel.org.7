@@ -1,110 +1,262 @@
-Return-Path: <linux-kernel+bounces-900087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949E3C5992D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:54:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E186C59948
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429C23ABEDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:54:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CBD7F3463D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED08C31281C;
-	Thu, 13 Nov 2025 18:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938553161A2;
+	Thu, 13 Nov 2025 18:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wI8zZZW/"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x20oT7jx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMNq5YXn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x20oT7jx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMNq5YXn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD46313522
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7C630FC21
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763060061; cv=none; b=gGt9at495JFjBM0e/HnN5Ywavgm83b/53qoI5q905vQslvejMnLbzvQyXOrtwPvO13aNhTiUkS3hcIsC1f6tbJk+Y97i8FskQ51UUmPIWfk2zym8foMtn60wt1KRbCplEJ8fC+h4P3auYKAeAnd2li7ir9hICg4rkxaJ2HZTwSM=
+	t=1763060096; cv=none; b=lxhmVZ64y0j1+KjZkIfHbnoBf/acVW9uy25x/pvsZ8eZXTbmbVMNhMsK6n4isRls1CGHi6qlyE6l+3ZZAnQUI1LW6ViGpXqDiKsKhtn65yMZLvEdE+u0SHMa6tcfXSqpOHDUcsC0FwG33hPskld86fzW27XDeKkHQCWS/KqJy9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763060061; c=relaxed/simple;
-	bh=FMPyLvuUt/PZ/G5WxsY1vXR+Y88MXaoP25kSbGbbODI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RCXtQr2IyE2xqPwKVp4y04Pk67vE9uPXQ8nN6kFGkl0hG6NpOjOmyuPlAnmKzqvf6dmmXiKmN8Jgf4bCLdhGnZDS+yZOowImLroNlMNM5UeKX1vuMy1etLNs6kM2Bn//fTy7EmxJYi+n2oT0tUTaPry1MQwM4R9jh+shoyjMTvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wI8zZZW/; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297df52c960so27747645ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763060058; x=1763664858; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8n1/s9RaZEcOt9m3QKGZKQE6sB/YqrRhU3punAll4EM=;
-        b=wI8zZZW/VF8Oqchn4RmT5CMgfJc7cIhrIaP5VP04ocNyNIp/6fdsjQMxoglbZpcc+T
-         QCMrPhRiwmjUALSNFoWp9hdMPTEKMt7E5J5LQiOpm+7oEnCMqCLfzOfSIdj1uWF3FZcq
-         DuxY1rmn1dGoj2BtpBGXMS6xpPBNSGDi9u7TbaQ4D/8Il868LHgZVGKIuP74/oTp4M5R
-         49RWsHRpk1cCqroalz2R3tb9YE16d2N5F0HxbRhb/8rrirVxXWawj+hxmdffvL6v9J3f
-         2bR8Gyrfh5dvz24OJM5Sz3Og3+0bfqAc+225RX3ePc1h4uypR81DHPoOl95YocGfZ8iO
-         B8kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763060058; x=1763664858;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8n1/s9RaZEcOt9m3QKGZKQE6sB/YqrRhU3punAll4EM=;
-        b=UPXmQOulIVThjxWQ2DcuCD5HrYCvrcE77BbbhcybLm7yoL6qf5fOBQgJr3d+wIdQjg
-         ycuz0AI1qhP0HbAdKtcscI71nBipN/h/Glbc6EwaFdPietHb4QD4q2RVn1+jAR7lXd9p
-         ns167qf6hgGz0ptidaE9DbCcUi40DTla2aVqe1BMKIKsHZx468mD7UcutmdGrX34znuN
-         cPFQHxNPAZQLhbkDiOBJXxc38+1O59ERaezdXiCQcFV7hFFETRgiur4kyOA/D7g5IvKW
-         ugNYmqFRX+iq+x+lYSXSbspVHXt2X7N9aJfdQh8iufr0Z3WtU6pDOxCAbPOgjfv4tiaP
-         TbEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUs7mVfzaFJ652myjAc5h1aPZSTpZUueOuP0/wAmV2xBscXtaQ5w4aCNrWiCdIKkt5+S90MHM74zFhXryA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzULXb+7UoprrQjtDpXYYMU3CxJd9YE+4DpX0E4lZE6Qv1Scvff
-	CRQhxFYGvgpNLlteTbOa3CLtHqhAaVS1PjBk46XdgcIrMIWq/6y/qbhHA5CQ7+95DA7MIp74Fml
-	7ouk2cQ==
-X-Google-Smtp-Source: AGHT+IEvsarrirvmCeHl1ineeicRUqdZYmQTIKm6UrYT7suNIHa17FzvX/dSYhupzGO5pgYCgT7nAj0KE/M=
-X-Received: from plbkw15.prod.google.com ([2002:a17:902:f90f:b0:290:bd15:24ab])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1107:b0:297:e1e1:beb1
- with SMTP id d9443c01a7336-2986a6d684bmr712255ad.16.1763060058279; Thu, 13
- Nov 2025 10:54:18 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:54:16 -0800
-In-Reply-To: <cover.1761593631.git.thomas.lendacky@amd.com>
+	s=arc-20240116; t=1763060096; c=relaxed/simple;
+	bh=BifFwtvlNQQkStSIF8vllGhQjq9oCr2r6Bw9zrRLrMQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fve5lNJivav3i6UWceUd7njrWTwlMN3fVebZR2qknhNSseLmNdrFCE2C75ui8ifJI5smwvB86Sydbna46bbakBC0dd7zSYYB8ZZjUYJRx/BnaWkyvAZ3iGcxbQnB1sZys3V4Hh/o/scMyx6s8bbtPAvEL1t0L04V0ix/N9CUBp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x20oT7jx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMNq5YXn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x20oT7jx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMNq5YXn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4C72221751;
+	Thu, 13 Nov 2025 18:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763060092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JfARLRctgc1MHcXWbnkWDpLKf7T7MZGOzbfYRAmasic=;
+	b=x20oT7jx8jlcFyIH4Kvvc/CmlE7n/AXxDp36MtmPn516Z1g7dXF2nywHCZQv/orfZ3cNv3
+	VTA3O8O+ntRTeQ03k8VNsrBQk0vzkUh28BwjTIPdoXF5k2XXxwXNFRc78Oq2p4B6x8v3qg
+	qjhBqVumvFvF1XVUU8MbME+dm1TEYnw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763060092;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JfARLRctgc1MHcXWbnkWDpLKf7T7MZGOzbfYRAmasic=;
+	b=RMNq5YXn43niDu9a7sc9/UsnhVWqSSKbKzS57lemF8sudjuUvElUQvsMb/GVxnjho2uFdF
+	qJPYlofq88KkN6AA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=x20oT7jx;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RMNq5YXn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763060092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JfARLRctgc1MHcXWbnkWDpLKf7T7MZGOzbfYRAmasic=;
+	b=x20oT7jx8jlcFyIH4Kvvc/CmlE7n/AXxDp36MtmPn516Z1g7dXF2nywHCZQv/orfZ3cNv3
+	VTA3O8O+ntRTeQ03k8VNsrBQk0vzkUh28BwjTIPdoXF5k2XXxwXNFRc78Oq2p4B6x8v3qg
+	qjhBqVumvFvF1XVUU8MbME+dm1TEYnw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763060092;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JfARLRctgc1MHcXWbnkWDpLKf7T7MZGOzbfYRAmasic=;
+	b=RMNq5YXn43niDu9a7sc9/UsnhVWqSSKbKzS57lemF8sudjuUvElUQvsMb/GVxnjho2uFdF
+	qJPYlofq88KkN6AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3427D3EA61;
+	Thu, 13 Nov 2025 18:54:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id K7EKDHwpFml8JwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 13 Nov 2025 18:54:52 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Thu, 13 Nov 2025 19:54:35 +0100
+Subject: [PATCH] mm/mempool: fix poisoning order>0 pages with HIGHMEM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1761593631.git.thomas.lendacky@amd.com>
-Message-ID: <aRYpWLUn5IABs1Vx@google.com>
-Subject: Re: [PATCH v4 0/4] SEV-SNP guest policy bit support updates
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-crypto@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251113-mempool-poison-v1-1-233b3ef984c3@suse.cz>
+X-B4-Tracking: v=1; b=H4sIAGopFmkC/x3MQQqAIBBA0avErBMaK6iuEi0spxpIRxQiCO+et
+ HyL/19IFJkSTNULkW5OLL4A6wq20/iDFNti0I3uEbFVjlwQuVQQTuLV1gxoBr2Otu+gRCHSzs8
+ /nJecP93ZIEZgAAAA
+X-Change-ID: 20251113-mempool-poison-c081a82b9d54
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <oliver.sang@intel.com>, Christoph Hellwig <hch@lst.de>, 
+ Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4240; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=BifFwtvlNQQkStSIF8vllGhQjq9oCr2r6Bw9zrRLrMQ=;
+ b=owGbwMvMwMG4+8GG0kuuHbMYT6slMWSKaVbu0ZGJ0IjfGfYy9IamYl3gFz12feZf1q8//jHYG
+ cIe3tnWyejPwsDIwWAppshSvfuEo+hMZY9pHr4fYQaxMoFMkRZpYAACFga+3MS8UiMdIz1TbUM9
+ Q0MdIJOBi1MApvr0LPa/EhuvBjVsCd7FpvuqbK6Yc8jhpJXyhYeOH/t89Umw5+wzNYZtmf2XD02
+ 8d+X6dGXtv/M9OmduNTnldmnr84h/WQ8Fjm51OGEux3323MIJ2/e5zyq6HF7aH5W2XCig4qdy0a
+ HGH69brubusemZNi00LNdT45bY19TACI7nbycf79eLeNSjcXWnmZXS2luXCiufTTtxwvKT+QTJH
+ W+fcWyckrT1LPNrq/Z+q1lFpkpM8x4s3bB6zb+/6+1e1MUuyi1wUlT1PMp6e7rXzfq7/BHKck5u
+ dxZ13pCuD9fguJGcMv9X1tSDHPOsdwdfLbkdOE267n4A/wudvtU6b2LtTDI157HFphrlxwdte3C
+ 4z2RbNAA=
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 4C72221751
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-On Mon, Oct 27, 2025, Tom Lendacky wrote:
-> This series aims to allow more flexibility in specifying SEV-SNP policy
-> bits by improving discoverability of supported policy bits from userspace
-> and enabling support for newer policy bits.
+The kernel test has reported:
 
-...
+  BUG: unable to handle page fault for address: fffba000
+  #PF: supervisor write access in kernel mode
+  #PF: error_code(0x0002) - not-present page
+  *pde = 03171067 *pte = 00000000
+  Oops: Oops: 0002 [#1]
+  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G                T   6.18.0-rc2-00031-gec7f31b2a2d3 #1 NONE  a1d066dfe789f54bc7645c7989957d2bdee593ca
+  Tainted: [T]=RANDSTRUCT
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+  EIP: memset (arch/x86/include/asm/string_32.h:168 arch/x86/lib/memcpy_32.c:17)
+  Code: a5 8b 4d f4 83 e1 03 74 02 f3 a4 83 c4 04 5e 5f 5d 2e e9 73 41 01 00 90 90 90 3e 8d 74 26 00 55 89 e5 57 56 89 c6 89 d0 89 f7 <f3> aa 89 f0 5e 5f 5d 2e e9 53 41 01 00 cc cc cc 55 89 e5 53 57 56
+  EAX: 0000006b EBX: 00000015 ECX: 001fefff EDX: 0000006b
+  ESI: fffb9000 EDI: fffba000 EBP: c611fbf0 ESP: c611fbe8
+  DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAGS: 00010287
+  CR0: 80050033 CR2: fffba000 CR3: 0316e000 CR4: 00040690
+  Call Trace:
+   poison_element (mm/mempool.c:83 mm/mempool.c:102)
+   mempool_init_node (mm/mempool.c:142 mm/mempool.c:226)
+   mempool_init_noprof (mm/mempool.c:250 (discriminator 1))
+   ? mempool_alloc_pages (mm/mempool.c:640)
+   bio_integrity_initfn (block/bio-integrity.c:483 (discriminator 8))
+   ? mempool_alloc_pages (mm/mempool.c:640)
+   do_one_initcall (init/main.c:1283)
 
-> Tom Lendacky (4):
->   KVM: SEV: Consolidate the SEV policy bits in a single header file
->   crypto: ccp - Add an API to return the supported SEV-SNP policy bits
->   KVM: SEV: Publish supported SEV-SNP policy bits
->   KVM: SEV: Add known supported SEV-SNP policy bits
-> 
->  arch/x86/include/uapi/asm/kvm.h |  1 +
->  arch/x86/kvm/svm/sev.c          | 45 ++++++++++++++++++++-------------
->  arch/x86/kvm/svm/svm.h          |  3 ---
->  drivers/crypto/ccp/sev-dev.c    | 37 +++++++++++++++++++++++++++
->  include/linux/psp-sev.h         | 39 ++++++++++++++++++++++++++++
->  5 files changed, 105 insertions(+), 20 deletions(-)
+Christoph found out this is due to the poisoning code not dealing
+properly with CONFIG_HIGHMEM because only the first page is mapped but
+then the whole potentially high-order page is accessed.
 
-Looks good overall, just the one minor nit.  Given that this adds new KVM uAPI,
-and the CCP changes are fairly minor in the grand scheme, my preference would be
-to take the entire series through kvm-x86 (with Acks as appropriate).
+This went unnoticed for years probably because nobody has yet used a
+mempool for order>0 pages before the new block code in -next.
+
+We could give up on HIGHMEM here, but it's straightforward to fix this
+with a loop that's mapping, poisoning or checking and unmapping
+individual pages.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202511111411.9ebfa1ba-lkp@intel.com
+Analyzed-by: Christoph Hellwig <hch@lst.de>
+Fixes: bdfedb76f4f5 ("mm, mempool: poison elements backed by slab allocator")
+Tested-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Will push to slab/for-next-fixes 
+---
+ mm/mempool.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 1c38e873e546..d7bbf1189db9 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -68,10 +68,20 @@ static void check_element(mempool_t *pool, void *element)
+ 	} else if (pool->free == mempool_free_pages) {
+ 		/* Mempools backed by page allocator */
+ 		int order = (int)(long)pool->pool_data;
+-		void *addr = kmap_local_page((struct page *)element);
+ 
+-		__check_element(pool, addr, 1UL << (PAGE_SHIFT + order));
+-		kunmap_local(addr);
++#ifdef CONFIG_HIGHMEM
++		for (int i = 0; i < (1 << order); i++) {
++			struct page *page = (struct page *)element;
++			void *addr = kmap_local_page(page + i);
++
++			__check_element(pool, addr, PAGE_SIZE);
++			kunmap_local(addr);
++		}
++#else
++		void *addr = page_address((struct page *)element);
++
++		__check_element(pool, addr, PAGE_SIZE << order);
++#endif
+ 	}
+ }
+ 
+@@ -97,10 +107,20 @@ static void poison_element(mempool_t *pool, void *element)
+ 	} else if (pool->alloc == mempool_alloc_pages) {
+ 		/* Mempools backed by page allocator */
+ 		int order = (int)(long)pool->pool_data;
+-		void *addr = kmap_local_page((struct page *)element);
+ 
+-		__poison_element(addr, 1UL << (PAGE_SHIFT + order));
+-		kunmap_local(addr);
++#ifdef CONFIG_HIGHMEM
++		for (int i = 0; i < (1 << order); i++) {
++			struct page *page = (struct page *)element;
++			void *addr = kmap_local_page(page + i);
++
++			__poison_element(addr, PAGE_SIZE);
++			kunmap_local(addr);
++		}
++#else
++		void *addr = page_address((struct page *)element);
++
++		__poison_element(addr, PAGE_SIZE << order);
++#endif
+ 	}
+ }
+ #else /* CONFIG_SLUB_DEBUG_ON */
+
+---
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+change-id: 20251113-mempool-poison-c081a82b9d54
+
+Best regards,
+-- 
+Vlastimil Babka <vbabka@suse.cz>
+
 
