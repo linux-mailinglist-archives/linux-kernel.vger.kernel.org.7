@@ -1,181 +1,136 @@
-Return-Path: <linux-kernel+bounces-899168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068BBC56F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:47:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4195C56F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF19F4E4210
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:45:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71A4E4E8679
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083C633343B;
-	Thu, 13 Nov 2025 10:45:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E49334C00;
+	Thu, 13 Nov 2025 10:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CxVTpbVX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090972D73B4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58C334681
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030713; cv=none; b=C9T3ZeZV4NdkyDBmsdi5n486i3KA8FzjHDrJcbiDxvzRl4SBxN4otr4CcooqOyLeYPTYwkpoImMz+LoSNhZxOnlvK+WL5VGT2A1lOaBbgimsTQSW7l2ehSMKhNwAkP6KBLdEPpl/+HBy6tYWMv7uoNyhUKVip3Hn06vjacnG+kU=
+	t=1763030727; cv=none; b=YuS6jAKanXSO9RmbIg4bTT/QmZ21V6dtk9+luyVhlJibjIOjPdIk64IfsU/D6Lo6+4Wxg8F4dfjYbd+KztdyNOMat+KfzB60W/Z12QwpwAeaDaYU/p6/ROs038u19pLbq/A906RA1u/fWM3kxb/HIZWRGdRKXvAZU1SHXm3ffFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030713; c=relaxed/simple;
-	bh=4rgRuekFY/f5v8UarWrgIrVKImDTj9ox/JgwI9CtWv4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cBADSSOWA/JyBBiaTTyo/TPtMCqQK4nKIN1t2jsbLJsTMY4HaSemQ6Pi199vPzeroW+TlceL6aYOtFTAIUz493OjlZzxKyXoQbAvfd1gcrxSZaY8KyBJITKP97p4EDUTY6l+/lLc9gBzE2jMFotSJZ8wWYID9nOjmG2QKCOgPBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJUp6-0007QK-KI; Thu, 13 Nov 2025 11:45:04 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJUp6-000Ez2-0q;
-	Thu, 13 Nov 2025 11:45:04 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJUp6-000000005XD-0n6P;
-	Thu, 13 Nov 2025 11:45:04 +0100
-Message-ID: <5422542a5bc21edeb229006dc6776c590bb74410.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/3] reset: cix: add support for cix sky1 resets
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, cix-kernel-upstream@cixtech.com
-Date: Thu, 13 Nov 2025 11:45:04 +0100
-In-Reply-To: <20251113075935.774359-3-gary.yang@cixtech.com>
-References: <20251113075935.774359-1-gary.yang@cixtech.com>
-	 <20251113075935.774359-3-gary.yang@cixtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1763030727; c=relaxed/simple;
+	bh=ncaOv8MzKaMpRo7yk3kmtFeKkc2V9ODYrJKEBcAlO8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4oE32FTKn0rZJQLUDDiWXsnBbSTwmmsTMT3bRYLZ5A0WDDMDmywVMxKkVELgY7wdZjZKrUecgK0h01rETipwkMMepEJe8OT3unXoIZ9BZIcdX1EjYnE/vojGw7G2EcdMJpoMYF+Y5IqDPLGUJV1h+hzAfK9BAksQtY8iQj/Vxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CxVTpbVX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477632cc932so2852325e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1763030723; x=1763635523; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XupxkMVhJzCmHKi3TycOZh0SLqIfeWtCzXp2GzyeoR8=;
+        b=CxVTpbVXZ8wKv6bdz5HndrHgHLMu3RsxudR3JiafeNf52GtwxG2NAuyzxM1H2uMiWc
+         DlK2dl7iyiTpBD6zq4QUoTnVdMYYlb6xngG4XFeWgrDl95Y1Y5nOoYtP8bkvj/Xf2f1V
+         jfQuWlbSKiExihybNCu5RgcUPPwPgtn/g3cTxNSMLGRMVkNs//xxdqsCu+KzeTS1NW5i
+         bqnZZ15ZAEc8CO/ssEp8sHmDkLWFlwZhYbkTMguZ7TVYDBiHcCY8pNrER92IzcwOslsw
+         xSVz4vCmyXV3jq6O6aOpPqNTrKgR1j3y8Q3efl5/trnWVyQ89f6RVqL4W5B/bjvoHCN8
+         YPYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763030723; x=1763635523;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XupxkMVhJzCmHKi3TycOZh0SLqIfeWtCzXp2GzyeoR8=;
+        b=jKdNBEOS13oI6OPgZGuO12Dns8VaNyn+/RLzOIaL5QnIC0AUOurYVhWHNo0kXN2wwM
+         ZH3ffivRgSxYO7DxnuYMVdI4TFB5moIu1iF8yYnBhhQsV4LwQZYw+KGKIrN0XFbTZJt7
+         a2t/EK/Aii9wsRaJFB1lMBs7rahOTcSaPPzN+8iKzAF8rJSKDbFqEsC2gxPzJRcqTDb6
+         sOPqzfTCYGOQX4bbcC7pq8ywCwCdnnUoeNA3wG+Jwp3mDVotZKcSoWFNynnEnRLmMPI0
+         lsY28ZroDHJ1nG3HxV9Ybm/iTOCZLT4vNbS3Q5ElKAU1hppajCXWgOEf2FqRtNTekw1f
+         dbdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu9nW3dheenewkr35LwUD0AKgiFCK/15SDkQURRFyeijR1U5SDJ1MSfa+TEgCUZDLOKp3SAR++U5ic/vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Si4Bz4DK/GPCSd7vDO2amfOfu3PRdV5mHwfr4WeX7PqFTtjP
+	D0yAS/CLL/Dvzig3GOj7q3WdCsXDWu/Dpg/wJhfRzcYLxrPtt/pJUX7CjJoravXjqOtPepyGlLA
+	QSCFk
+X-Gm-Gg: ASbGncv94UYT7Jcf5Zq1Cw0bDRl8DbbRKpq9pjqd06yGiBTWhH/0RvUtE+iMjdbaCRL
+	zuqjfWHLDEbbdPo7Ev3oJngN7my4c19mW/Pzi02/Fjl4ZtMwV/MGpUpg8gyGbfC7VJR5xsJ0Azq
+	HxPSHeoQgqcrmWXONzODyE3ldl7io9iOm+9+OM2ygMiJsr4MRJQnbCqYePj9IpDVDtQjc3keESc
+	0hgbRJ7Ok7S3SGwSE9nFVaJ2r/2BzDlmVhyRkdCu7UxhipEDtNQs2bCzDKFiLOBW8gEGEq2VAp2
+	yzzeRV86olpBe2A2hoQOuKtwjja8iqa+6e+Ft33T0v3V60sKWaFkiBOG27FADXnIyfFGBU/s0w+
+	QElUZbMr7wdHOShTuH5qE0iFDtAh4wGqn28skb1/KmR7zTsakkPV4tcaheBw6S1yhwjfntviOAa
+	xfxofQ/lwXBdyHLNCTzTVY
+X-Google-Smtp-Source: AGHT+IH5Ri8mJ/OLQa/2PlpPQAc2QP6Xlq29FlxULF7JNXRxiVvOKESy7Uus1gQMlIUWbYz2acAJkg==
+X-Received: by 2002:a05:600c:3587:b0:477:63db:c718 with SMTP id 5b1f17b1804b1-477870857f9mr50413565e9.16.1763030722534;
+        Thu, 13 Nov 2025 02:45:22 -0800 (PST)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c897c3csm27893605e9.14.2025.11.13.02.45.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 02:45:22 -0800 (PST)
+Date: Thu, 13 Nov 2025 11:45:20 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Guopeng Zhang <zhangguopeng@kylinos.cn>
+Cc: tj@kernel.org, hannes@cmpxchg.org, shuah@kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sebastian Chlad <sebastian.chlad@suse.com>
+Subject: Re: [PATCH] selftests/cgroup: conform test to TAP format output
+Message-ID: <6lwnagu63xzanum2xx6vkm2qe4oh74fteqeymmkqxyjbovcce6@3jekdivdr7yf>
+References: <20251113095025.2811205-1-zhangguopeng@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t3rqswcvswh4xq2b"
+Content-Disposition: inline
+In-Reply-To: <20251113095025.2811205-1-zhangguopeng@kylinos.cn>
 
-On Do, 2025-11-13 at 15:59 +0800, Gary Yang wrote:
-> There are two reset controllers on Cix Sky1 Soc.
-> One is located in S0 domain, and the other is located
-> in S5 domain.
->=20
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> ---
->  drivers/reset/Kconfig      |   7 +
->  drivers/reset/Makefile     |   1 +
->  drivers/reset/reset-sky1.c | 381 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 389 insertions(+)
->  create mode 100644 drivers/reset/reset-sky1.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 78b7078478d4..45768cd3b135 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -278,6 +278,13 @@ config RESET_SIMPLE
->  	   - SiFive FU740 SoCs
->  	   - Sophgo SoCs
-> =20
-> +config RESET_SKY1
-> +	bool "Cix Sky1 reset controller"
-> +	depends on HAS_IOMEM
-> +	depends on ARCH_CIX || COMPILE_TEST
-> +	help
-> +	  This enables the reset controller for Cix Sky1.
-> +
->  config RESET_SOCFPGA
->  	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOC=
-FPGA)
->  	default ARM && ARCH_INTEL_SOCFPGA
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index f7934f9fb90b..a878ac4a6e4b 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-=
-usbphy-ctrl.o
->  obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2phy.o
->  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
->  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
-> +obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
->  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
->  obj-$(CONFIG_RESET_SPACEMIT) +=3D reset-spacemit.o
->  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
-> diff --git a/drivers/reset/reset-sky1.c b/drivers/reset/reset-sky1.c
-> new file mode 100644
-> index 000000000000..b9e03e76736a
-> --- /dev/null
-> +++ b/drivers/reset/reset-sky1.c
-> @@ -0,0 +1,381 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + *
-> + * CIX System Reset Controller (SRC) driver
-> + *
-> + * Author: Jerry Zhu <jerry.zhu@cixtech.com>
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/reset/cix,sky1-rst.h>
-> +#include <dt-bindings/reset/cix,sky1-rst-fch.h>
-> +
-> +#define SKY1_RESET_SLEEP_MIN_US		50
-> +#define SKY1_RESET_SLEEP_MAX_US		100
-> +
-> +struct sky1_src_signal {
-> +	unsigned int offset, bit;
-> +};
-> +
-> +struct sky1_src_variant {
-> +	const struct sky1_src_signal *signals;
-> +	unsigned int signals_num;
-> +};
-> +
-> +struct sky1_src {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +	const struct sky1_src_signal *signals;
-> +};
-> +
-> +enum {
-> +	CSU_PM_RESET				=3D 0x304,
-> +	SENSORHUB_RESET				=3D 0x308,
-> +	SENSORHUB_NOC_RESET			=3D 0x30c,
-> +
-> +	RESET_GROUP0_S0_DOMAIN_0		=3D 0x400,
-> +	RESET_GROUP0_S0_DOMAIN_1		=3D 0x404,
-> +	RESET_GROUP1_USB_PHYS			=3D 0x408,
-> +	RESET_GROUP1_USB_CONTROLLERS		=3D 0x40c,
-> +
-> +	RESET_GROUP0_RCSU			=3D 0x800,
-> +	RESET_GROUP1_RCSU			=3D 0x804,
-> +
 
-Unnecessary empty line.
+--t3rqswcvswh4xq2b
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH] selftests/cgroup: conform test to TAP format output
+MIME-Version: 1.0
 
-Please fix this and the other issues reported by
+Hi.
+Thanks for coming up with this.  I've brought up something similar just
+yesterday [1].
 
-  scripts/checkpatch.pl --strict
+On Thu, Nov 13, 2025 at 05:50:25PM +0800, Guopeng Zhang <zhangguopeng@kylinos.cn> wrote:
+> Conform the layout, informational and status messages to TAP.  No
 
-regards
-Philipp
+Could you please explain more why is the TAP layout beneficial?
+(I understand selftest are for oneself, i.e. human readable only by default.)
+
+Or is this part of some tree-wide effort?
+
+I'm asking to better asses whether also the scripts listed in
+Makefile:TEST_PROGS should be converted too.
+
+Thanks,
+Michal
+
+[1] https://lore.kernel.org/all/rua6ubri67gh3b7atarbm5mggqgjyh6646mzkry2n2547jne4s@wvvpr3esi5es/
+
+--t3rqswcvswh4xq2b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaRW2vRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AhG2gD9EtnJzhyp5tB+MfoR06g6
+QRHywZakcYP+V5BRS/MX/iQBAO7qgJH/sTH+CxzaT5tELVVVC6XAsVNg9ec1G/WR
+zngJ
+=Bid3
+-----END PGP SIGNATURE-----
+
+--t3rqswcvswh4xq2b--
 
