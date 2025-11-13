@@ -1,243 +1,295 @@
-Return-Path: <linux-kernel+bounces-899987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38343C594AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:57:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AACC594AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69E5234D438
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9FE3A4934
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C552253B0;
-	Thu, 13 Nov 2025 17:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDFF357A3B;
+	Thu, 13 Nov 2025 17:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cQyGNBKt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXn3UgDE"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69650261B92
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268BF3587A3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763056189; cv=none; b=kkAe019geKvZy78gmWskuGOSzvWzAJsUvgRXhBklwVkaIMxIhTS0Gg3NIZdUAYGtFSqkjMhPtrsMuwADaou60uMCb71+C0do7KEgAI5w6++DeK+BPzLbacq/xfenojPzoE6KpNRhH0m/DIr4N7jrh12UUgzargB6WUKoMnn/mgk=
+	t=1763056242; cv=none; b=aWZMS7trLLkGivC+dzu4wza7noIV68xKcfJcRlwO2eWEXqpZx5FCkK2RtNRL08O75TchpdM/dFteSolIxJVDkKsVaZqtmljrDxiK8fL9elQnsvywYqqET8fpQPMgNDej3JN4macZlct5/4hvdnvzNTlf9apsKLwWrmI9l1Hycc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763056189; c=relaxed/simple;
-	bh=O7qgWoDmB30MfsoG2hR6CZuPvwamER2DqTA9l1PR3nA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YNGo8w3FiYCqaUXtJ25pVQiRlhLG/imNQGEh7+Dd1qAHvkmywwxFk4PFMQgUNK9Rhc+TdNMz14PvUYLanOgrTxIgrOLLOPQASC/ICWJ64qhyihaTVFDuiMYs83/KuZuwQDX4wC+a+3XwbecAteaWJ0y5d5tjlgQzEjfVZCNPO4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cQyGNBKt; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763056187; x=1794592187;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=O7qgWoDmB30MfsoG2hR6CZuPvwamER2DqTA9l1PR3nA=;
-  b=cQyGNBKtFHBhHRYePs4Ltl37UlWaCaEadlPV5meQ3bmacDecyvhAeXRa
-   NzVnYqFs9VmtXFKQMEB5Fknk16KbnhfeeX6dJuhq7222MuPTI9RhJK528
-   VSTJdTiFtw1fIzmmhE7xJHcOISLrQH08p1bchz3Ia/k0DXM2lsp4+eX4z
-   Drv0u1ue5JBbsim8WskzlZgiS9D0gtuCPq4tnpECSOWUaObDp/CEFHfbj
-   UqIDM5Vcg5XY+V6Ygkb5Rca8jiUEq+XLd+4uWHj92MZFQrObdAG6+2sKB
-   SToPCQsaqkkOl7CI8V7Aa2OOClwPxXgAkLFNmgcJ4rkDgYptyeTbIiqtc
-   g==;
-X-CSE-ConnectionGUID: 7eRIpnDzSrysbtbDdw1n5A==
-X-CSE-MsgGUID: YiScoPedR+e080Bwh7YCwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="64854485"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="64854485"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 09:49:46 -0800
-X-CSE-ConnectionGUID: 3RLfuQwkQGu2Tv/mQA4S1w==
-X-CSE-MsgGUID: cIxGwAm2RvS67yOy0RuE7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="193822905"
-Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 09:49:46 -0800
-Message-ID: <ef2e38bcab0d4cd3a8307a242a35eb431f16f6c3.camel@linux.intel.com>
-Subject: Re: [PATCH v4] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>, Peter Zijlstra
-	 <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, Doug
- Nelson	 <doug.nelson@intel.com>, Mohini Narkhede
- <mohini.narkhede@intel.com>, 	linux-kernel@vger.kernel.org, Vincent Guittot
- <vincent.guittot@linaro.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Srikar Dronamraju <srikar@linux.ibm.com>, Linus Torvalds	
- <torvalds@linux-foundation.org>
-Date: Thu, 13 Nov 2025 09:49:46 -0800
-In-Reply-To: <96d58672-330a-48fb-a308-fb41ce084063@linux.ibm.com>
-References: 
-	<6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
-	 <aRQ_D1vyNfGVo-xK@linux.ibm.com>
-	 <20251112103740.GF4067720@noisy.programming.kicks-ass.net>
-	 <20251112104555.GE4068168@noisy.programming.kicks-ass.net>
-	 <55e02921-6477-4ed0-9ef6-16c3f34594a8@linux.ibm.com>
-	 <20251112112113.GO278048@noisy.programming.kicks-ass.net>
-	 <c6fe7ac0f6de4d51705bb2f24f82df2c3018804f.camel@linux.intel.com>
-	 <96d58672-330a-48fb-a308-fb41ce084063@linux.ibm.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1763056242; c=relaxed/simple;
+	bh=G+pURF9WwdcBeWSWrxIp6gPYxG9iJRMNrP5VmKdPu7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PqA9UryD7T8WN1A9G6INop0UwqHqqs7lUksbkRgOYle88GUOb6uGOJbUl2VMxxklpy6Ykf6ZQALH9p28Sd52lp9/uU7sJCJKAx7GW7KuFjw2tU0PrskNgoaYGzAOOHbYcOlSTmxjvjloJFctYINMPe+Ew6SVWbWeo73dPCX2Aac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXn3UgDE; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7866375e943so9440407b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:50:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763056239; x=1763661039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HCiL4Jx127OKQeBjNWQG9vQfRbIsSIlUdnID04I7YSQ=;
+        b=BXn3UgDEjM5uMMyeHdh10U/cdSJkHACBVPogON4QGV/TC1WaeYSsWRmLzBtMA5zwg7
+         k5QIKDlhQu6piRD4vuKIJjU1ccxgl8/TMbnEyg2yB5eoRn80fyksWesA52fnUHajHO+m
+         GWF1VbooPbJPhXo/J8ay43fkskC3w+bhZLwH3ERKsAmg1MfnIjti7dXHqQ9tmBz6LQn3
+         s7TIClicClW9yZ8uI1z+u1pL+gsaob0U3AeruaYcBB1ug+LibG/MQpv+De+5/r2qAm03
+         t1r98M9OcJhlaB1WaMj/u7GNvyz4TBhZIMixxS91XpobsTrVUjj77ro+yP+Zx8hUckEf
+         B9+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763056239; x=1763661039;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HCiL4Jx127OKQeBjNWQG9vQfRbIsSIlUdnID04I7YSQ=;
+        b=fNdEu5V9wWyjU/McjeWLlsjiAIHdUBYdHmHzM+qBfQUPj3TKKabizol5jZsbrHwcFY
+         3x0zDoSomTCE4GxWtj34rM0ThqlvZ1qa62sdg+WojHn3mNLonEHJn8O6zE8ea41sESkG
+         qHIloqR23iL3c93UK00LsljJAXqCiCIHDh0VmWRNi3jJ5dlDYFYBvHpB1JEdXiZJpgT3
+         CekimDdbyQ6awxdUJSc/IYjQYtabIdFymrMtbK24q7RE702y97IiC7wuQpRUlY3AwGwf
+         mcvUH7r5wLS1Gs3FXud95Av0IJqFx/CQ0FGSV0XD1BCH7sdRM7uWQxU082XLl/JUOhnz
+         Bujg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXOOjoiLNwNXvgBS8J1F4MZseIog8LpQDq/HUbr6sa0LCU2/V9/F/na6ulYEgYp7+N9M/VlEmfuYKnnAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB0+XXUZuP6+AN3ze3JMFaDJueG0/VARYrK9ILqz0yO4K4BGIT
+	FNYXso92n7I5wm9VpbRSLII1xea0UuT5+uu0D2zvF+4QZxtCda6PNVfc
+X-Gm-Gg: ASbGncs4Wc8uZ+GI7XFvLkF2Z6AJswimz4WaP7ucL8tPensRTPH1B00liE1dEwXmWxJ
+	xHefC8S234CdyO0b4yexRMtZOPbFfu6rULC4xNq0i39AYQXryfNqQs6hbn3uHhHc/cGuzm40lZ1
+	Io1CbWUhDRwhke559nOKZEgJvkgCmdcX9tGAtMSkUy8JtZOxL+AjrAE8c+xZ1RxPvMVAcIfXGDl
+	Ocf/qBbpIQowMnD3Z6Fz6jkwuOSh44qFG/7dCSLWhSW6TqKNAZZd2hrbJQgGVim8FYZzBs0j6Et
+	/KEcN2ks0E6H/dRrgqAWFwgHWKtXPz5ze8ZOTfLUku7BiNZRKcke4k0WYmrC1KrHqAPNwyPFxkQ
+	LuO0WAyv62FKNYW2cFWXfSNRpZ5ITHeGnA+5Is31wCca1AW3VPoZhqOyE4TuAovUM9gT3QHorCy
+	k19FC9uGIINQMqp38B2AAqBvxEZEPXqF1Twkelpxy1i38=
+X-Google-Smtp-Source: AGHT+IEPm4B/iq/qqXgrDVPIU5K84/ZfKDTF5zZRj1sXxMH/8gptFRhKDCDHGV8CL/sGz7P5y5DCYQ==
+X-Received: by 2002:a05:690c:6585:b0:785:d330:e39a with SMTP id 00721157ae682-78929ee4186mr1632867b3.40.1763056239017;
+        Thu, 13 Nov 2025 09:50:39 -0800 (PST)
+Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78821ddb632sm8544437b3.11.2025.11.13.09.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 09:50:38 -0800 (PST)
+Date: Thu, 13 Nov 2025 12:50:37 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] rust_binder: use bitmap for allocation of handles
+Message-ID: <aRYaYlX1vQG_GUAy@yury>
+References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
+ <20251112-binder-bitmap-v5-6-8b9d7c7eca82@google.com>
+ <aRTbX6RPsFf0NW48@yury>
+ <aRUZq0Fo6T1f3lOD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRUZq0Fo6T1f3lOD@google.com>
 
-On Thu, 2025-11-13 at 09:55 +0530, Shrikanth Hegde wrote:
->=20
-> On 11/13/25 2:40 AM, Tim Chen wrote:
-> > On Wed, 2025-11-12 at 12:21 +0100, Peter Zijlstra wrote:
-> > > On Wed, Nov 12, 2025 at 04:39:43PM +0530, Shrikanth Hegde wrote:
-> > > >=20
-> > > >=20
-> > >=20
-> > > > > So perhaps this is the better option -- or did I overlook somethi=
-ng with
-> > > > > should_we_balance? It doesn't look like that will make a differen=
-t
-> > > > > decision on the retry.
-> > > > >=20
-> > > >=20
-> > > > I think in newidle balance, these checks are there in swb to bail o=
-f load balance.
-> > > > redo logic catches it right?
-> > >=20
-> > > Urgh, my brain still thinks we're not serializing on newidle. Perhaps=
- I
-> > > should make this 2 patches, one moving the serializing and one adding=
- it
-> > > to newidle.
-> > >=20
-> > > > env->dst_rq lock is taken only in attach_tasks, meanwhile, if the w=
-akeup happened,
-> > > > pending would be set. is irq enabled or remote CPU can set ttwu_pen=
-ding on this rq?
-> > > >=20
-> > > >          if (env->idle =3D=3D CPU_NEWLY_IDLE) {
-> > > >                  if (env->dst_rq->nr_running > 0 || env->dst_rq->tt=
-wu_pending)
-> > > >                          return 0;
-> > > >                  return 1;
-> > > >          }
-> > >=20
-> > > Right, that could get tickled.
-> >=20
-> > How about something like the following on top of v4 patch?
-> > This will avoid releasing the lock and take care of the NEWLY_IDLE case=
-.
-> >=20
-> > Tim
-> >=20
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 43c5ec039633..26179f4b77f6 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -11772,14 +11772,13 @@ static int sched_balance_rq(int this_cpu, str=
-uct rq *this_rq,
-> >   		.fbq_type	=3D all,
-> >   		.tasks		=3D LIST_HEAD_INIT(env.tasks),
-> >   	};
-> > -	bool need_unlock;
-> > +	bool need_unlock =3D false;
-> >  =20
-> >   	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
-> >  =20
-> >   	schedstat_inc(sd->lb_count[idle]);
-> >  =20
-> >   redo:
-> > -	need_unlock =3D false;
-> >   	if (!should_we_balance(&env)) {
-> >   		*continue_balancing =3D 0;
-> >   		goto out_balanced;
-> > @@ -11916,9 +11915,9 @@ static int sched_balance_rq(int this_cpu, struc=
-t rq *this_rq,
-> >   			if (!cpumask_subset(cpus, env.dst_grpmask)) {
-> >   				env.loop =3D 0;
-> >   				env.loop_break =3D SCHED_NR_MIGRATE_BREAK;
-> > -				if (need_unlock)
-> > -					atomic_set_release(&sched_balance_running, 0);
-> > -
-> > +				if (env->idle =3D=3D CPU_NEWLY_IDLE &&
-> > +				    (env->dst_running > 0 || env->dst_rq->ttwu_pending))
-> > +					goto out;
->=20
-> IIUC, we come here, it means busiest cpu was found, but due to
-> affinity restrictions none of the tasks can come to this cpu.
->=20
-> So a redo is done excluding that busiest cpu if there are cpus other
-> than the group_mask of this cpu. So doing a redo does make sense speciall=
-y
-> for newidle.
->=20
-> So doing bailing out might be wrong.
+On Wed, Nov 12, 2025 at 11:35:07PM +0000, Alice Ryhl wrote:
+> On Wed, Nov 12, 2025 at 02:09:19PM -0500, Yury Norov wrote:
+> > On Wed, Nov 12, 2025 at 12:47:24PM +0000, Alice Ryhl wrote:
+> > > To find an unused Binder handle, Rust Binder currently iterates the
+> > > red/black tree from the beginning until it finds a gap in the keys. This
+> > > is extremely slow.
+> > 
+> > Can you share performance numbers? 
+> 
+> I have not benchmarked it in the Rust driver, but it replaces
+> potentially thousands of calls to rb_next() with a single call to
+> find_unused_id(), so I'm feeling good about the performance. And the
 
-My understanding is the reason for the idle balancing is because the
-dst_rq becomes idle.  If we see that the dst_rq already has something to ru=
-n,
-why add latency to search for more tasks to pull as it is likely the dst_rq
-is the current cpu.
+Feelings are good, but numbers are better. In the original dbitmap
+patch, Carlos shared the experiment details and rough numbers, and
+it's enough for me. Can you just reproduce his steps?
 
-Tim
+> equivalent change in the C driver was done because this particular piece
+> of code was causing contention issues by holding the spinlock for a long
+> time.
+> 
+> The characteristics of this collection is that there is one per process
+> using the driver. Most processes have only a few entries in this bitmap,
+> so the inline representation will apply in most cases. However, there
+> are a few processes that have a large number of entries in the 4 to
+> maybe 5 figures range. Those processes are what caused the contention
+> issue mentioned above.
+> 
+> > > To improve the performance, add a bitmap that keeps track of which
+> > > indices are actually in use. This allows us to quickly find an unused
+> > > key in the red/black tree.
+> > > 
+> > > This logic matches the approach used by C Binder. It was chosen
+> > > partially because it's the most memory efficient solution.
+> > 
+> > That inaccurate. You are adding a new data structure (bitmap), advocating
+> > it with an improvement on search side, and that makes sense.
+> > 
+> > But now you're saying it's also a more memory efficient approach, which
+> > doesn't sound trivial because the most memory efficient solution is to
+> > bring no new data structures at all.
+> > 
+> > I guess you meant that bitmap is the most efficient data structure to
+> > index used/unused nodes. If so, can you please rephrase the sentence?
+> 
+> Yes I can rephrase.
+> 
+> Adding more data is of course always less memory efficient. What I meant
+> is that this is more memory efficient than the competing solution of
+> using an augmented rbtree that Carlos mentioned here:
+> 
+> https://lore.kernel.org/p/aC1PQ7tmcqMSmbHc@google.com
+> 
+> > > +            if let Some(res) = refs.handle_is_present.find_unused_id(start) {
+> > > +                match refs.by_handle.entry(res.as_u32()) {
+> > > +                    rbtree::Entry::Vacant(entry) => break (res, entry),
+> > > +                    rbtree::Entry::Occupied(_) => {
+> > > +                        pr_err!("Detected mismatch between handle_is_present and by_handle");
+> > > +                        res.acquire();
+> > > +                        continue;
+> > 
+> > At this point you've detected mismatch between two linked data
+> > structures. It means that one of them or both are corrupted. To
+> > me it looks fatal, and your pr_err() confirms it. How could you
+> > continue then?
+> 
+> Although we should never hit this codepath in real code, I don't think
+> we need to kill the kernel. We can treat the r/b tree as source of truth
+> and adjust the bitmap when mismathces are detected.
 
->=20
-> >   				goto redo;
-> >   			}
-> >   			goto out_all_pinned;
+There's no such thing like a 'source of truth', and rb-tree is not even
+close to that.
+
+You add bitmap for performance reasons, but with that you also bring
+some redundancy. Now, you cross-check two data structures and see
+discrepancy. At this point you can only say that either one of them
+or both are corrupted.
+
+Relying on rb-tree over bitmap is simply wrong. Statistically
+speaking, there's more chances to corrupt rb-tree - just because it
+is scattered and takes more memory.
+
+> I could add a kernel warning, though. That shouldn't kill an Android
+> device.
+
+Assuming, you're talking about WARN(), I agree. But it looks like my
+reasoning differs.
+ 
+You never hit this path during a normal operation, as you said. So if
+you're there, it means that something is already going wrong. If you
+issue WARN(), you let those focused on system integrity to leverage
+panic_on_warn and shut the system down to minimize any possible damage. 
+
+With that precaution, you're free to do whatever you find practical to
+'recover', or even do nothing. But please avoid referring rb-tree as a
+source of truth - it's a misleading and dangerous misconception.
+
+> > > +                    }
+> > > +                }
+> > > +            }
+> > > +
+> > > +            let grow_request = refs.handle_is_present.grow_request().ok_or(ENOMEM)?;
+> > > +            drop(refs_lock);
+> > > +            let resizer = grow_request.realloc(GFP_KERNEL)?;
+> > > +            refs_lock = self.node_refs.lock();
+> > > +            refs = &mut *refs_lock;
+> > > +            refs.handle_is_present.grow(resizer);
+> > 
+> > Is it possible to turn this block into a less wordy statement? Maybe a
+> > wrapper function for it? Ideally, the grow request should be handled
+> > transparently in .find_unused_id().
+> 
+> I can extract this block into a separate function, but I think it would
+> be tricky to move the entire logic inside .find_unused_id() because of
+> the mutex lock/unlock situation.
+> 
+> > > @@ -905,6 +924,16 @@ pub(crate) fn update_ref(
+> > >                  let id = info.node_ref().node.global_id();
+> > >                  refs.by_handle.remove(&handle);
+> > >                  refs.by_node.remove(&id);
+> > > +                refs.handle_is_present.release_id(handle as usize);
+> > > +
+> > > +                if let Some(shrink) = refs.handle_is_present.shrink_request() {
+> > 
+> > This is questionable. Shrinking is usually the very slow path, and we
+> > don't shrink unless we're really close or even inside the OOM condition.
+> > 
+> > In this case, shrink_request() on average returns false, but it's
+> > O(N), which makes _every_ release_id() O(N), while it should be O(1).
+> 
+> The current implementation of shrink_request() will refuse to shrink the
+> pool unless the largest bit is less than 1/4 of the capacity, so it
+> should not perform the expensive operation very often.
+> 
+> That said, it does call find_last_bit() each time, which I guess is
+> O(N). But my assumption was that find_last_bit() is cheap enough that it
+> wouldn't be a problem.
+
+It's O(N), while the expectation for release_id() is to be O(1). But if
+you think it's OK for you - I'm OK as well. Can you explicitly mention
+it in function description?
+
+> > Consider a very realistic case: you're destroying every object, and thus
+> > removing every ID in the associate ID pool, doing it in LIFO order. That
+> > way you will need to call shrink_request() about O(log(N)) times, making
+> > the whole complexity ~O(N*log(N)); and you'll have to make log(N)
+> > realloc()s for nothing. If you release IDs in FIFO order, you don't
+> > call realloc(), but your shrink_request() total complexity will be O(N^2). 
+> 
+> Even if we end up making log(N) reallocs, the total complexity of the
+> reallocs is O(N) because the amount of data being reallocd halves each
+> time. So the total number of bytes copied by reallocs ends up being:
+> 
+>     1 + 2 + 4 + 8 + ... + 2^log(N) <= 2^(1+log(N)) = 2*N
+> 
+> which is O(N).
+
+OK, I trust your math better than mine. :)
+
+> Of course, deleting the corresponding entry from the red/black tree is
+> O(log N), so it's still O(N*log(N)) for the N deletions from the rb
+> tree.
+> 
+> > Can you compare performance numbers with and without shrinking under a
+> > typical payload? Is there any mechanism to inspect the ID pools at runtime,
+> > like expose via procfs?
+> 
+> We expose the contents of the red/black tree via the binder_logs
+> mechanism, but that doesn't show the *capacity* of the bitmap. Only the
+> index of the largest set bit.
+> 
+> > Can you make your shrinking logic conditional on some reasonable OOM
+> > heuristics, maybe OOM event driven?
+> > 
+> > And even without OOM, you can safely skip shrinking if the number of IDs in
+> > use is greater than 1/4 of the capacity, or there's any used ID with
+> > the index greater than the 1/2 capacity.
+> 
+> I guess we could register a shrinker, but I don't think it's worth it.
+
+OK, if you're fine with O(N) for release_id() - I'm fine as well. Can
+you mention OOM-driven shrinking as a possible alternative for the
+following improvements?
+
+Thanks,
+Yury
 
