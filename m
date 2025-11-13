@@ -1,118 +1,247 @@
-Return-Path: <linux-kernel+bounces-899298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E447EC574E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:00:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD286C57516
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED433B4A48
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:59:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D9A34E6BB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E397734DB63;
-	Thu, 13 Nov 2025 11:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A66334DB67;
+	Thu, 13 Nov 2025 12:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPYFMjtm"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBk8bIqm"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A3333892C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0513285045
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035155; cv=none; b=ViQvPR+k/rHfGXdwptJ+aFKGJSZh07rdGIjCkelTR/rqbMbqQdBLwXMVIN8vRmAdSDUjebLlfhkzqq9hxoLr0s7OdspONEgJETlhmntHT9Nq2wbPw/wiWPCptDK2MQMDlG+kiCjZexVq7WfFV8SW+Pz25vS6upMO3Q7vwnFd3CU=
+	t=1763035235; cv=none; b=JKhgj2AaY+LyytfuLrMWjpo0pBI49qjkUCBB2Joh/czXHJD+5R5kf8Cdj/CugJjMFz/rDUfLQoit0Jx382lrNAo+l2TPfJ9eR5CujNQfjZr3h31R8p3kXlAEjlIzn8W5dag3P4mXg7cjhpzE5wM8gljs5MttjWloJEUX3vHgCQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035155; c=relaxed/simple;
-	bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
+	s=arc-20240116; t=1763035235; c=relaxed/simple;
+	bh=4P4LhGMXNDpOMLzkgSnNvj8G+OXHvtlSD4CrCtiKVM4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DROOg80Fi0Vd/+6IkGV/Jd7JAIIFezB4YKv0ugrnLFXyL87V4mfViXYwwF0EvFAtfLKq9iRPpGmxVyvcltoRxcPLg/FfzTm8547SDyC2Nf4xcV0WKZlQWZzazM9s2pdA1z+PtO6Udb7Yi9GT92jIsx17+TF4Q9tw2S5FcuVcieM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPYFMjtm; arc=none smtp.client-ip=209.85.214.170
+	 To:Cc:Content-Type; b=L9ppSWYiim+h5Odu9ntur36gORoqpINBFzuW+807HyLvQ09k0dlxXvHYBXnVFdZRWOHhQXI3d81JWRnnUHMrAbQ/sXkCdDV7yTbJb0kVfYeOiTrz2E28bb4unFL1kzzTSEg2tpo3Y57kWqH0E72ek+By23/aT02b1G/5oNsUjtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBk8bIqm; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297ec8a6418so900605ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:59:13 -0800 (PST)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-340ba29d518so536250a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:00:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763035153; x=1763639953; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763035233; x=1763640033; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
-        b=MPYFMjtmF2zkT0JL/WICrah/g+d8C+cKznJ66MxhUhaBBUiSMf6DC1Y88EcTRxtspz
-         cbMBPw/uaiLcz24gGy/6bvfyWDU5aUVolf2m/PweSY11CDUCsPp/togxhuJQRSxw+xiO
-         RQjRksYhbY8vUaNqyjkRhW/+pZhXQD9CvpkTjuRIT3YA7nVfXS/CgLifvXWUcA62Lrjd
-         4lYrSveMLAsuMdRtrfwm3DoeelFF1cBtOhpKspqAStpqhN4FL8g1WpDRm6LFG02SHksM
-         6E1baFBn8jKFnmINNVyG91yaJMfLnxezi5rs0wxBljPSYomsZQAtFFYIqMOccGmm+XT6
-         eKRg==
+        bh=VMbZe017tqsUHZpQ2QjARaQuit2dg0zAawqoQ3eFuRM=;
+        b=eBk8bIqm4A2dQDXlFI/NG+b82jOhbvl6/xQehWcEWuZS7pJeHVAehMQZLOi+UACtO3
+         4Op2eR2/eCjS7mfhhKpF0VHuBA51iwu2PUMh1moYR1ka8fyFXdM1G897+NAoDJQpKY3z
+         2iJdpworRIZwfFeQyzQllzanrWrTAAXCMLYc17EzC9GpIBOxppD6nrIZQYsoX3ePqqAR
+         DEfP7BD6oC7ese65TnBmff2J5ymszsIIOI3kZskzfysvvrac9ShEpKH6IrQmaAtFuMKt
+         g9ZRD+EdrOnfiCCbbLxiot5DeeBOBUL6AUUkqJY9xMrx31c9YF46BJf/LRFimyA2DxSV
+         Ptbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763035153; x=1763639953;
+        d=1e100.net; s=20230601; t=1763035233; x=1763640033;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
-        b=XJ0EYh+9rkTyIUQOaraKVlOx9meWZwWlwxkfifPK1zc/5Ut7h7EzBFCfLTGhC6tQTF
-         cIL2VEKWWNCHbqJMT6K6Z8xblDhTa7cMRLX+kCU/vowL9BUa8PvOmX3bYRfjy3mlM8DL
-         lKmBYJjiOKwKaFkCosHnH+VlDo5wj+gwbx9U+9lLD7QVERIPMycYqa7q67yPc4SqLw77
-         O//EHlaa4wXJUTAQ4XOsKIs+QrOveotZUV/lcdHhLoAUcgiKgW/gLgiwbk9zBTJYDpnx
-         MLKSrYtYwfaeRCtAvBAx5yYWFJQCWaBeFcKZkLFpt+VZ6GOyoOPpFdllANTtZyWnepAe
-         9QRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8kaoOga8fw0TaGUVwo9X5U2lB8GW9hY0SBROrc11xuM2U/ySgbiK6b/zhX2u9BTw72Wp7jEKqEclN4v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAz8BnRep19T0A/S7DRSdc++b2vBzP9999Il5JHdfP5oWGa97G
-	jP/1YhC+l8YSc5AKY9huTKF1FJyGfnKNyvNCFEM5tNBPzZZ56OGzhBD+FbBQS4NTqyP+uIiGaQp
-	hLjrNaNOlaloiTpuMus+8VRUEQp+uC+Y=
-X-Gm-Gg: ASbGncsaAKlpaDrolKgZ0Tx1vnC3dOugDUsVAVVjT9sZ9StnozNJQUAZBDeiRs8+d/M
-	qOsJ2HYQZecKrgIHwkslyp1P7xoVc9MW6+hQX+Eiko5AriRj8Gaggh4+m7iGX49tg6lY5s6Fs/4
-	8dnQdShZlOLdT4hddcUFoVd/W31U0DiL7Pdcv+ZYrodrtv9kzCuruvMpmrhTOlkhyUhuZtZIDUt
-	qhCSTSjIpxRhnsCvxzHP6VgjbcR6FaQj72/Ro78BqbycKUlXulFl3E2DM1D8Az4ImBx4em8L4lt
-	pncFNvfqxHuJMaKTezlebgucSwK9Vlmk/AEyLX1mfdwtDeaBeewZVktOFv0fCQfSqOyP2M/Yqvs
-	hbG4=
-X-Google-Smtp-Source: AGHT+IH+D8mikItI/8Y6u4gUIPrRb5tLtmrJuENgrbMSvZ0tfOZVAyP/NCtfZ76q8QGb2mFA/ILYSlBWkwz9/2ETygU=
-X-Received: by 2002:a17:902:e80d:b0:297:f2a0:fad6 with SMTP id
- d9443c01a7336-2984ee1bademr45282445ad.9.1763035153039; Thu, 13 Nov 2025
- 03:59:13 -0800 (PST)
+        bh=VMbZe017tqsUHZpQ2QjARaQuit2dg0zAawqoQ3eFuRM=;
+        b=hyYNkSmtSVJiljtxMrMxnF6YElJy37rCOL2rUc/ezN6/xUOy5NsGxj4y+VhwUag2ng
+         MCTh4SQBNlft46YbNw1JqMDTQHvttcWMx7DAj5xYsqtL9jwAU2TRNiHt9SDISHaCgrIj
+         CyRkVD9yLekqp77o7HN8IpntF/S9db4MnZJyXUxd5RzgKQJ1sUFgZ9utw1+Za80Px31Z
+         NK06jjeHkHE9qCfQXYJ6dSqw0H5pyn6WT+ZVs/1S0XDEDEIwDwIZ8AJlV1jOTAOFE+9w
+         VRGoWvQRiBY1heLlW1x9VMf8X7Wk7uwzXnkRCdOg9+e4XgPOJx8prm1PsIuEEkeOkPl9
+         aHkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiorEd/WQBJS1cWrz8lI3a7ahPVN0ZZgwmqSgSkOyJI9kzTCJo78bG+zLGRicEVQxRDgEyfBOYeToLcCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcJp+wTnW02mxjAZl8vrwSLjQ3MjAC0908WFyu53DjiDfRQvon
+	T2oQ7Hf6Z+CkmRv4VHMBhTfdoqbO3RlOPNrn34U1DosFm1aZKahrSnM2DkWML2FutKPb8ICzTjP
+	NlVoZk4j/sWThp6Ni/x0D36QPGG1tM0Y=
+X-Gm-Gg: ASbGncu01SHcBJ0d49mXHKfB+PkDd9tEyzIOgB3ezatjti+QqCFdFNZ7L8uuFg7dWgF
+	mwUy+CcCoHoVa6VWp/7CB0rSlyNv7h0ic7sbxi7OAGF+aHoFjvgcdWyANQmCAEcNltfAQd9QTVR
+	NnyyWyf/Wttva2o71Qip91IAKsTrIOR8VO5mzEC8/ZH2ZUfrhndrvU1Y29P842A/mQhPHmAsWfw
+	5G2CryNkqp6ButpbhxrYxyWI1pGwkqfZX/5wzhOSE4Mu6adNwrfzHT8GE0W
+X-Google-Smtp-Source: AGHT+IEI2/ETIyN+HIgY1WEvq69lhMhuMqrT7htmjzbXfUhWwBXWYHygAT11nF7Fs+GljLoWjfY7MsHoOczG1GMYc8c=
+X-Received: by 2002:a17:90a:d448:b0:340:f7d6:dc70 with SMTP id
+ 98e67ed59e1d1-343dde13826mr7620363a91.13.1763035233051; Thu, 13 Nov 2025
+ 04:00:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113-create-workqueue-v2-0-8b45277119bc@google.com>
- <20251113-create-workqueue-v2-1-8b45277119bc@google.com> <CANiq72k1VqR7P7tY2V_siBQZrNXf_ck5aBkapo6M_6X=1P+nDA@mail.gmail.com>
- <CAH5fLgixPsBwqFdY-ku3AtGQHY+qa9m5oqMUshqdob7nzGQpag@mail.gmail.com>
-In-Reply-To: <CAH5fLgixPsBwqFdY-ku3AtGQHY+qa9m5oqMUshqdob7nzGQpag@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 13 Nov 2025 12:58:58 +0100
-X-Gm-Features: AWmQ_bkW9VeZXUswN2jzNBepz02JOobTrhcASJoPSgwdewJn2LinH9hrzYbmObg
-Message-ID: <CANiq72kamBPnWFg0nBCe4_mcmd66vW86ryiQnV_mTsnemxmjow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: workqueue: restrict delayed work to global wqs
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	John Hubbard <jhubbard@nvidia.com>, Philipp Stanner <phasta@kernel.org>, 
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benno Lossin <lossin@kernel.org>
+References: <20251110033232.12538-1-kernellwp@gmail.com> <20251110033232.12538-3-kernellwp@gmail.com>
+ <015bfa4d-d89c-4d4e-be06-d6e46aec28cb@amd.com>
+In-Reply-To: <015bfa4d-d89c-4d4e-be06-d6e46aec28cb@amd.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Thu, 13 Nov 2025 20:00:21 +0800
+X-Gm-Features: AWmQ_bm9GFF_fVDEXPJNSBQ91hN0PH9vClzZfoOKcy5ZG0d_ttlXsdzXEocsdlQ
+Message-ID: <CANRm+CzsjNyd9-QjUupszpULNkJ31U+wPWC81A5jaTFRFdPfMg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] sched/fair: Add rate-limiting and validation helpers
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Wanpeng Li <wanpengli@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 11:08=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
+Hi Prateek=EF=BC=8C
+
+On Wed, 12 Nov 2025 at 14:40, K Prateek Nayak <kprateek.nayak@amd.com> wrot=
+e:
 >
-> I could go either way. Without the next patch, there's no way to use a
-> non-global workqueue. But probably is useful to backport anyway and
-> there's certainly no harm.
+> Hello Wanpeng,
+>
+> On 11/10/2025 9:02 AM, Wanpeng Li wrote:
+> > +/*
+> > + * High-frequency yield gating to reduce overhead on compute-intensive=
+ workloads.
+> > + * Returns true if the yield should be skipped due to frequency limits=
+.
+> > + *
+> > + * Optimized: single threshold with READ_ONCE/WRITE_ONCE, refresh time=
+stamp on every call.
+> > + */
+> > +static bool yield_deboost_rate_limit(struct rq *rq, u64 now_ns)
+> > +{
+> > +     u64 last =3D READ_ONCE(rq->yield_deboost_last_time_ns);
+> > +     bool limited =3D false;
+> > +
+> > +     if (last) {
+> > +             u64 delta =3D now_ns - last;
+> > +             limited =3D (delta <=3D 6000ULL * NSEC_PER_USEC);
+> > +     }
+> > +
+> > +     WRITE_ONCE(rq->yield_deboost_last_time_ns, now_ns);
+>
+> We only look at local rq so READ_ONCE()/WRITE_ONCE() seems
+> unnecessary.
 
-Yeah, I would say then let's propose it for stable to be safe than
-sorry in case this gets missed later on (or someone else out there
-uses only the other one etc.).
+You're right. Since we're under rq->lock and only accessing the local
+rq's fields, READ_ONCE()/WRITE_ONCE() provide no benefit here. Will
+simplify to direct access.
 
-Cc: stable@vger.kernel.org
-Fixes: 7c098cd5eaae ("workqueue: rust: add delayed work items")
+>
+> > +     return limited;
+> > +}
+> > +
+> > +/*
+> > + * Validate tasks and basic parameters for yield deboost operation.
+> > + * Performs comprehensive safety checks including feature enablement,
+> > + * NULL pointer validation, task state verification, and same-rq requi=
+rement.
+> > + * Returns false with appropriate debug logging if any validation fail=
+s,
+> > + * ensuring only safe and meaningful yield operations proceed.
+> > + */
+> > +static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq,=
+ struct task_struct *p_target,
+> > +                                       struct task_struct **p_yielding=
+_out,
+> > +                                       struct sched_entity **se_y_out,
+> > +                                       struct sched_entity **se_t_out)
+> > +{
+> > +     struct task_struct *p_yielding;
+> > +     struct sched_entity *se_y, *se_t;
+> > +     u64 now_ns;
+> > +
+> > +     if (!sysctl_sched_vcpu_debooster_enabled)
+> > +             return false;
+> > +
+> > +     if (!rq || !p_target)
+> > +             return false;
+> > +
+> > +     now_ns =3D rq->clock;
+>
+> Brief look at Patch 5 suggests we are under the rq_lock so might
+> as well use the rq_clock(rq) helper. Also, you have to do a
+> update_rq_clock() since it isn't done until yield_task_fair().
 
-Thanks!
+Good catch. Since yield_to() holds rq_lock but doesn't call
+update_rq_clock() before invoking yield_to_task(), I need to call
+update_rq_clock(rq) at the start of yield_to_deboost() and use
+rq_clock(rq) instead of direct rq->clock access. This ensures the
+clock is current before rate limiting checks.
 
-Cheers,
-Miguel
+>
+> > +
+> > +     if (yield_deboost_rate_limit(rq, now_ns))
+> > +             return false;
+> > +
+> > +     p_yielding =3D rq->curr;
+> > +     if (!p_yielding || p_yielding =3D=3D p_target ||
+> > +         p_target->sched_class !=3D &fair_sched_class ||
+> > +         p_yielding->sched_class !=3D &fair_sched_class)
+> > +             return false;
+>
+> yield_to() in syscall.c has already checked for the sched
+> class matching under double_rq_lock. That cannot change by the
+> time we are here.
+
+Correct. The sched_class checks are redundant since yield_to() already
+validates curr->sched_class =3D=3D p->sched_class under double_rq_lock(),
+and sched_class cannot change while holding the lock. Will remove.
+
+>
+> > +
+> > +     se_y =3D &p_yielding->se;
+> > +     se_t =3D &p_target->se;
+> > +
+> > +     if (!se_t || !se_y || !se_t->on_rq || !se_y->on_rq)
+> > +             return false;
+> > +
+> > +     if (task_rq(p_yielding) !=3D rq || task_rq(p_target) !=3D rq)
+>
+> yield_to() has already checked for this under double_rq_lock()
+> so this too should be unnecessary.
+
+Right. yield_to() already ensures both tasks are on their expected run
+queues under double_rq_lock(), so the task_rq(p_yielding) !=3D rq ||
+task_rq(p_target) !=3D rq check is redundant. Will remove.
+
+>
+> > +             return false;
+> > +
+> > +     *p_yielding_out =3D p_yielding;
+> > +     *se_y_out =3D se_y;
+> > +     *se_t_out =3D se_t;
+>
+> Why do we need these pointers? Can't the caller simply do:
+>
+>     if (!yield_deboost_validate_tasks(rq, target))
+>         return;
+>
+>     p_yielding =3D rq->donor;
+>     se_y_out =3D &p_yielding->se;
+>     se_t =3D &target->se;
+
+You're right, the output parameters are unnecessary. The caller can
+derive them directly:
+   p_yielding =3D rq->donor (accounting for proxy exec)
+   se_y =3D &p_yielding->se
+   se_t =3D &target->se
+I'll simplify yield_deboost_validate_tasks() to just return bool and
+let the caller obtain these pointers.
+
+>
+> That reminds me - now that we have proxy execution, you need
+> to re-evaluate the usage of rq->curr (running context) vs
+> rq->donor (vruntime context) when looking at all this.
+
+Good catch. Since we're manipulating vruntime/deadline/vlag, I should
+use rq->donor (scheduling context) instead of rq->curr (execution
+context). In the yield_to() path, curr should equal donor (the
+yielding task is running), but using donor makes the vruntime
+semantics clearer and consistent with
+update_curr_fair()/check_preempt_wakeup_fair().
+
+Regards,
+Wanpeng
 
