@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-899891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F692C594F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:00:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84159C590B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A23B50122D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:00:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CBE2736505A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC0B357A31;
-	Thu, 13 Nov 2025 16:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E8436CE0E;
+	Thu, 13 Nov 2025 16:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IWBVV6pG"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WTvqBvXH"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2612E366578
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C536999A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052600; cv=none; b=OkvN7YAON+YvEWvDNi3ugxke+XjaIRRX0WJhFJH+q1TqOuFUxTHTBNYLJWxSqtQ/nllUjmE0mRrZqJfv1M6yTkkRSvJk24xRtw8HiObwRDXqD4hQ6sCH7rwy4/1IGWBT1bV6jOZn8rJIm2QrXMgDU2S7JFuMqEI7LRYIYpE/tAw=
+	t=1763052603; cv=none; b=CD3EaIdoqbrlDLBmMwvfo/2eoV/BcmkRAq7OQfeQnDrFO9dzuuJ0P9wuSO0wzeTHIlBSSz1aU+FILa87UKHw0IBbfL7eeznoAT5UlgUBtD16nL6Ene3H03/ZkmtjBIWaJj3tiT/dutPs9G1qopGBK1qfF3n+kKyajFocfJ0VeRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052600; c=relaxed/simple;
-	bh=xkPHbeEa/fyoEXZ+IfoRNpBXeQZNyTaLsImOKbE6Tjk=;
+	s=arc-20240116; t=1763052603; c=relaxed/simple;
+	bh=FlVFBT6oZY2IDD6hO+du+x/huN0yXjvoBQfQjVLEu2M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u/nn7W1x0MRAN93uMVk/yFD2VmO6UdSbjXZxcI9LwdHPhV4MU/b8jOCXVDI3aT92f6A35YCi2B/gmdNfbLgg4FSsWS9QM7GYfYWYnBnTyVAdtOgXvEwlBainazZybN7yvh/15/RWqmuFdjaWQIQC+/6PDX+NxLl3IADRMo9UFeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IWBVV6pG; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=gF28Yw2nVMUXG9Q+G+zHbyN8xgmB3YGlBJqkT3FXFd+42rEi7OUPC1VKi6hf36Cln3A7zQ5HcCKCH0gdicvRWNSviUxWtK2cp0CYxNKSj4dTIs8QoJiwtI5BuVcytWUMWoQUjTHEnB2tx7kDrM+1tSpL0AtFs7T455Bc74drVkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WTvqBvXH; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADE9tSv023882;
-	Thu, 13 Nov 2025 16:49:52 GMT
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADEA6VF028865;
+	Thu, 13 Nov 2025 16:49:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=ynjPT
-	RHYEswaRnW1oTgJz838cGYP3Pd020uwtpiU0WE=; b=IWBVV6pGtqLVzOdaC2C5H
-	AoszfNOc842Xe2BBAARjVmSXs8KUWRi2cyXywx4fDWU9LX83TUuQ6Td4x15Fn7e1
-	Cz+L0iQ6l/1zF+PViHgiT5jCUKDOaEOhnONuSq8YYgeq3rLZ9n+3RBGwM765y2DA
-	bEqbfJZvkOLSF4144l9nzd4qnnjHEq2UMkPFtAAFYRao3KFIAWSK0Ym776o9VDzI
-	Q5Lm1U0/TawPIeLbQ1QOupF/3SYc3qF6gQLE/XuHSl909iFDnaslhGnLdIDk27VA
-	01IeCQGSPZtUcCSKuAwdEKYeLPWpQHC9bVEwN0Sh7pznQ4eTYmgAH8PTRpLeL/DQ
-	g==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=5H1K8
+	PxA4tuOMbESqPA3aePI5+UCeoDPy0LIarZYvWA=; b=WTvqBvXHaYrHteEbr+ug8
+	sZkxjRe4zWmL268c694OqGZjsrvsQuNNiiIg0FYG+4hTfh8yBK1OautShXuDBD52
+	fNTrN30T68ueHoffKudNVQLgjwRj2lTbE9PJAsqSNw2fwPOPAXZ8yRgZsmEUksE7
+	eCXLzgldT6pDDI+x6TWIbRIh2Efl7icyLQEI3HesB2nkx36NNVtx3AFpqRWkn3Qg
+	3nrIPtGBiH0tf50ye3n2qjVTRHkCPUGCeUQL1kXWhjdAshs0IfTJOeHm/Aq1DKSs
+	p4Y8/roiS+X0Rk2y5iRMtX7XpaVwRuVrzIRo0Xo0JPjevtjEruSvu3qtL9Nu0w06
+	w==
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acvsstnnb-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acxpnjb00-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:49:52 +0000 (GMT)
+	Thu, 13 Nov 2025 16:49:54 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADG207b038612;
-	Thu, 13 Nov 2025 16:49:51 GMT
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADGGxtR038510;
+	Thu, 13 Nov 2025 16:49:53 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacc3tx-1
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacc3vn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:49:51 +0000
+	Thu, 13 Nov 2025 16:49:53 +0000
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ADGnKAL008288;
-	Thu, 13 Nov 2025 16:49:51 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ADGnKAN008288;
+	Thu, 13 Nov 2025 16:49:52 GMT
 Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-154-172-143.vpn.oracle.com [10.154.172.143])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacc38f-19;
-	Thu, 13 Nov 2025 16:49:50 +0000
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacc38f-20;
+	Thu, 13 Nov 2025 16:49:52 +0000
 From: Alexandre Chartre <alexandre.chartre@oracle.com>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org,
         peterz@infradead.org
 Cc: alexandre.chartre@oracle.com
-Subject: [PATCH v4 18/28] objtool: Disassemble group alternatives
-Date: Thu, 13 Nov 2025 17:49:07 +0100
-Message-ID: <20251113164917.2563486-19-alexandre.chartre@oracle.com>
+Subject: [PATCH v4 19/28] objtool: Print addresses with alternative instructions
+Date: Thu, 13 Nov 2025 17:49:08 +0100
+Message-ID: <20251113164917.2563486-20-alexandre.chartre@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20251113164917.2563486-1-alexandre.chartre@oracle.com>
 References: <20251113164917.2563486-1-alexandre.chartre@oracle.com>
@@ -84,240 +84,296 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 m
  adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
  phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2510240000 definitions=main-2511130130
-X-Authority-Analysis: v=2.4 cv=bJUb4f+Z c=1 sm=1 tr=0 ts=69160c30 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=Criys34D c=1 sm=1 tr=0 ts=69160c32 cx=c_pps
  a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=BZlt5mrdIDfIrSVFCwQA:9
-X-Proofpoint-GUID: W10CRdUWyr9DuYn6gj6w95RFTZIHa6_P
-X-Proofpoint-ORIG-GUID: W10CRdUWyr9DuYn6gj6w95RFTZIHa6_P
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEyMyBTYWx0ZWRfX7GfEcU5xL09+
- x0Vbpfvlnglzr0yE9xA+8JJuZhG6WjDbifO7UGTNU2KYbB6utCkK69A7ZPJWifKK2glhFnNtu9X
- YII1c7mtgqwDXop8NR1aOh+4F+T6P1zvBuzQymegiq8FQI/Y320Np9dRmhLLEOenKrZpm5rll6w
- anlebfQRk/EBR8HSmBQwJP/iqqpIhiOA+9I8MmjB6qnz2S53jVlnCX6cG3QsnU1d6jLwSxpOQ2U
- jz0lum+SXOcQ/X+bAUbS1hIU42s+th6SZZMjZ7fxuEPCRMXE9BseJeBLqjlxhDPrGBAjW20EgN4
- JYtMT5slg28tNJsZnXYDDBoQcDR8/QY8HzDuf3AMdXFzrK2y7Y1PxksAfLFEAz1TasKE9809K7U
- HFlptihlGGYezELzwO4fIjTSVKtMnw==
+ a=WFXfjiaBZm73b8CXPiEA:9
+X-Proofpoint-GUID: FK6mA87YbP45O3z-CcxgOt_g57w5XzJx
+X-Proofpoint-ORIG-GUID: FK6mA87YbP45O3z-CcxgOt_g57w5XzJx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0MSBTYWx0ZWRfX+fu80ODm5K7S
+ w8pit4v6cQ/OEWbmF+MC9HwZyjFODwmu2R8T7Re+JM1huJx1lqEOvSIQsf6rp3TdyZW+GAoJTXD
+ QQMfj1iyNd1h6/MeF+vmLEDmOe+xyrVAiVzQ03H61XmGnGpDjpvVMGrIm117J0CU9VCdyqnUxpc
+ WmMZQRx+/MWZcVacQNOCIlntFnUu3XqgbyIFosbzuWUzlOQ8GLmX87EbLf7nf2dXMpxZkYPBfEB
+ P9Y1ATfHLj1eNh0bTZvwjOrGNCMm2VpJ6DpthnL1yUdmd26q2LHRKwoLHWos1Y/tgFnJ8c7Kq71
+ 6nKf2arxgeBT6g+iyvDgtK97RKJn7UfaqBnauROxgGhzjVN3DGgJ2bYdCyxltZ2i4PDIXSvgSGU
+ X2v1qEPRHgw/wZw9EzH3t7KEJjuupQ==
 
-When using the --disas option, disassemble all group alternatives.
-Jump tables and exception tables (which are handled as alternatives)
-are not disassembled at the moment.
+All alternatives are disassemble side-by-side when using the --disas
+option. However the address of each instruction is not printed because
+instructions from different alternatives are not necessarily aligned.
+
+Change this behavior to print the address of each instruction. Spaces
+will appear between instructions from the same alternative when
+instructions from different alternatives do not have the same alignment.
 
 Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
- tools/objtool/disas.c | 146 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 138 insertions(+), 8 deletions(-)
+ tools/objtool/disas.c | 152 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 121 insertions(+), 31 deletions(-)
 
 diff --git a/tools/objtool/disas.c b/tools/objtool/disas.c
-index 57a13da5e1b39..321256f746425 100644
+index 321256f746425..f4bd802e38474 100644
 --- a/tools/objtool/disas.c
 +++ b/tools/objtool/disas.c
-@@ -47,8 +47,14 @@ struct disas_alt {
+@@ -47,7 +47,11 @@ struct disas_alt {
  	struct alternative *alt;		/* alternative or NULL if default code */
  	char *name;				/* name for this alternative */
  	int width;				/* formatting width */
-+	char *insn[DISAS_ALT_INSN_MAX];		/* alternative instructions */
+-	char *insn[DISAS_ALT_INSN_MAX];		/* alternative instructions */
++	struct {
++		char *str;			/* instruction string */
++		int offset;			/* instruction offset */
++	} insn[DISAS_ALT_INSN_MAX];		/* alternative instructions */
++	int insn_idx;				/* index of the next instruction to print */
  };
  
-+#define DALT_DEFAULT(dalt)	(!(dalt)->alt)
-+#define DALT_INSN(dalt)		(DALT_DEFAULT(dalt) ? (dalt)->orig_insn : (dalt)->alt->insn)
-+#define DALT_GROUP(dalt)	(DALT_INSN(dalt)->alt_group)
-+#define DALT_ALTID(dalt)	((dalt)->orig_insn->offset)
-+
- /*
-  * Wrapper around asprintf() to allocate and format a string.
-  * Return the allocated string or NULL on error.
-@@ -470,6 +476,21 @@ size_t disas_insn(struct disas_context *dctx, struct instruction *insn)
- 	return disasm(insn->offset, &dctx->info);
- }
+ #define DALT_DEFAULT(dalt)	(!(dalt)->alt)
+@@ -364,16 +368,14 @@ char *disas_result(struct disas_context *dctx)
+ 	disas_print_insn(stdout, dctx, insn, depth, "\n")
  
-+static struct instruction *next_insn_same_alt(struct objtool_file *file,
-+					      struct alt_group *alt_grp,
-+					      struct instruction *insn)
-+{
-+	if (alt_grp->last_insn == insn || alt_grp->nop == insn)
-+		return NULL;
-+
-+	return next_insn_same_sec(file, insn);
+ /*
+- * Print a message in the instruction flow. If insn is not NULL then
+- * the instruction address is printed in addition of the message,
+- * otherwise only the message is printed. In all cases, the instruction
+- * itself is not printed.
++ * Print a message in the instruction flow. If sec is not NULL then the
++ * address at the section offset is printed in addition of the message,
++ * otherwise only the message is printed.
+  */
+-void disas_print_info(FILE *stream, struct instruction *insn, int depth,
+-		      const char *format, ...)
++static void disas_vprint(FILE *stream, struct section *sec, unsigned long offset,
++			 int depth, const char *format, va_list ap)
+ {
+ 	const char *addr_str;
+-	va_list args;
+ 	int len;
+ 	int i;
+ 
+@@ -383,9 +385,9 @@ void disas_print_info(FILE *stream, struct instruction *insn, int depth,
+ 		depth = 0;
+ 	}
+ 
+-	if (insn && insn->sec) {
+-		addr_str = offstr(insn->sec, insn->offset);
+-		fprintf(stream, "%6lx:  %-*s  ", insn->offset, len, addr_str);
++	if (sec) {
++		addr_str = offstr(sec, offset);
++		fprintf(stream, "%6lx:  %-*s  ", offset, len, addr_str);
+ 		free((char *)addr_str);
+ 	} else {
+ 		len += DISAS_INSN_OFFSET_SPACE + 1;
+@@ -396,11 +398,44 @@ void disas_print_info(FILE *stream, struct instruction *insn, int depth,
+ 	for (i = 0; i < depth; i++)
+ 		fprintf(stream, "| ");
+ 
+-	if (format) {
+-		va_start(args, format);
+-		vfprintf(stream, format, args);
+-		va_end(args);
++	if (format)
++		vfprintf(stream, format, ap);
 +}
 +
-+#define alt_for_each_insn(file, alt_grp, insn)			\
-+	for (insn = alt_grp->first_insn; 			\
-+	     insn;						\
-+	     insn = next_insn_same_alt(file, alt_grp, insn))
++static void disas_print(FILE *stream, struct section *sec, unsigned long offset,
++			int depth, const char *format, ...)
++{
++	va_list args;
 +
++	va_start(args, format);
++	disas_vprint(stream, sec, offset, depth, format, args);
++	va_end(args);
++}
++
++/*
++ * Print a message in the instruction flow. If insn is not NULL then
++ * the instruction address is printed in addition of the message,
++ * otherwise only the message is printed. In all cases, the instruction
++ * itself is not printed.
++ */
++void disas_print_info(FILE *stream, struct instruction *insn, int depth,
++		      const char *format, ...)
++{
++	struct section *sec;
++	unsigned long off;
++	va_list args;
++
++	if (insn) {
++		sec = insn->sec;
++		off = insn->offset;
++	} else {
++		sec = NULL;
++		off = 0;
+ 	}
++
++	va_start(args, format);
++	disas_vprint(stream, sec, off, depth, format, args);
++	va_end(args);
+ }
+ 
  /*
-  * Provide a name for an alternative.
-  */
-@@ -522,6 +543,83 @@ static int disas_alt_init(struct disas_alt *dalt,
+@@ -534,6 +569,7 @@ static int disas_alt_init(struct disas_alt *dalt,
+ {
+ 	dalt->orig_insn = orig_insn;
+ 	dalt->alt = alt;
++	dalt->insn_idx = 0;
+ 	dalt->name = alt ? strfmt("ALTERNATIVE %d", alt_num) :
+ 		strfmt("<alternative.%lx>", orig_insn->offset);
+ 	if (!dalt->name)
+@@ -543,7 +579,8 @@ static int disas_alt_init(struct disas_alt *dalt,
  	return 0;
  }
  
-+static int disas_alt_add_insn(struct disas_alt *dalt, int index, char *insn_str)
-+{
-+	int len;
-+
-+	if (index >= DISAS_ALT_INSN_MAX) {
-+		WARN("Alternative %lx.%s has more instructions than supported",
-+		     DALT_ALTID(dalt), dalt->name);
-+		return -1;
-+	}
-+
-+	len = strlen(insn_str);
-+	dalt->insn[index] = insn_str;
-+	if (len > dalt->width)
-+		dalt->width = len;
-+
-+	return 0;
-+}
-+
+-static int disas_alt_add_insn(struct disas_alt *dalt, int index, char *insn_str)
++static int disas_alt_add_insn(struct disas_alt *dalt, int index, char *insn_str,
++			      int offset)
+ {
+ 	int len;
+ 
+@@ -554,7 +591,8 @@ static int disas_alt_add_insn(struct disas_alt *dalt, int index, char *insn_str)
+ 	}
+ 
+ 	len = strlen(insn_str);
+-	dalt->insn[index] = insn_str;
++	dalt->insn[index].str = insn_str;
++	dalt->insn[index].offset = offset;
+ 	if (len > dalt->width)
+ 		dalt->width = len;
+ 
+@@ -569,12 +607,14 @@ static int disas_alt_group(struct disas_context *dctx, struct disas_alt *dalt)
+ {
+ 	struct objtool_file *file;
+ 	struct instruction *insn;
++	int offset;
+ 	char *str;
+ 	int count;
+ 	int err;
+ 
+ 	file = dctx->file;
+ 	count = 0;
++	offset = 0;
+ 
+ 	alt_for_each_insn(file, DALT_GROUP(dalt), insn) {
+ 
+@@ -583,9 +623,10 @@ static int disas_alt_group(struct disas_context *dctx, struct disas_alt *dalt)
+ 		if (!str)
+ 			return -1;
+ 
+-		err = disas_alt_add_insn(dalt, count, str);
++		err = disas_alt_add_insn(dalt, count, str, offset);
+ 		if (err)
+ 			break;
++		offset += insn->len;
+ 		count++;
+ 	}
+ 
+@@ -613,13 +654,63 @@ static int disas_alt_default(struct disas_context *dctx, struct disas_alt *dalt)
+ 	str = strdup(disas_result(dctx));
+ 	if (!str)
+ 		return -1;
+-	err = disas_alt_add_insn(dalt, 0, str);
++	err = disas_alt_add_insn(dalt, 0, str, 0);
+ 	if (err)
+ 		return -1;
+ 
+ 	return 1;
+ }
+ 
 +/*
-+ * Disassemble an alternative and store instructions in the disas_alt
-+ * structure. Return the number of instructions in the alternative.
++ * For each alternative, if there is an instruction at the specified
++ * offset then print this instruction, otherwise print a blank entry.
++ * The offset is an offset from the start of the alternative.
++ *
++ * Return the offset for the next instructions to print, or -1 if all
++ * instructions have been printed.
 + */
-+static int disas_alt_group(struct disas_context *dctx, struct disas_alt *dalt)
++static int disas_alt_print_insn(struct disas_alt *alts, int alt_count,
++				int insn_count, int offset)
 +{
-+	struct objtool_file *file;
-+	struct instruction *insn;
++	struct disas_alt *dalt;
++	int offset_next;
 +	char *str;
-+	int count;
-+	int err;
++	int i, j;
 +
-+	file = dctx->file;
-+	count = 0;
++	offset_next = -1;
 +
-+	alt_for_each_insn(file, DALT_GROUP(dalt), insn) {
++	for (i = 0; i < alt_count; i++) {
++		dalt = &alts[i];
++		j = dalt->insn_idx;
++		if (j == -1) {
++			printf("| %-*s ", dalt->width, "");
++			continue;
++		}
 +
-+		disas_insn(dctx, insn);
-+		str = strdup(disas_result(dctx));
-+		if (!str)
-+			return -1;
++		if (dalt->insn[j].offset == offset) {
++			str = dalt->insn[j].str;
++			printf("| %-*s ", dalt->width, str ?: "");
++			free(str);
++			if (++j < insn_count) {
++				dalt->insn_idx = j;
++			} else {
++				dalt->insn_idx = -1;
++				continue;
++			}
++		} else {
++			printf("| %-*s ", dalt->width, "");
++		}
 +
-+		err = disas_alt_add_insn(dalt, count, str);
-+		if (err)
-+			break;
-+		count++;
++		if (dalt->insn[j].offset > 0 &&
++		    (offset_next == -1 ||
++		     (dalt->insn[j].offset < offset_next)))
++			offset_next = dalt->insn[j].offset;
 +	}
++	printf("\n");
 +
-+	return count;
-+}
-+
-+/*
-+ * Disassemble the default alternative.
-+ */
-+static int disas_alt_default(struct disas_context *dctx, struct disas_alt *dalt)
-+{
-+	char *str;
-+	int err;
-+
-+	if (DALT_GROUP(dalt))
-+		return disas_alt_group(dctx, dalt);
-+
-+	/*
-+	 * Default alternative with no alt_group: this is the default
-+	 * code associated with either a jump table or an exception
-+	 * table and no other instruction alternatives. In that case
-+	 * the default alternative is made of a single instruction.
-+	 */
-+	disas_insn(dctx, dalt->orig_insn);
-+	str = strdup(disas_result(dctx));
-+	if (!str)
-+		return -1;
-+	err = disas_alt_add_insn(dalt, 0, str);
-+	if (err)
-+		return -1;
-+
-+	return 1;
++	return offset_next;
 +}
 +
  /*
   * Disassemble an alternative.
   *
-@@ -534,22 +632,30 @@ static void *disas_alt(struct disas_context *dctx,
- {
+@@ -633,13 +724,14 @@ static void *disas_alt(struct disas_context *dctx,
  	struct disas_alt alts[DISAS_ALT_MAX] = { 0 };
  	struct alternative *alt;
-+	struct disas_alt *dalt;
-+	int insn_count;
+ 	struct disas_alt *dalt;
++	int offset_next;
+ 	int insn_count;
  	int alt_count;
  	int alt_id;
--	int i;
-+	char *str;
-+	int count;
-+	int i, j;
+-	char *str;
++	int offset;
+ 	int count;
+-	int i, j;
  	int err;
++	int i;
  
  	alt_id = orig_insn->offset;
  
+@@ -700,16 +792,14 @@ static void *disas_alt(struct disas_context *dctx,
  	/*
--	 * Initialize the default alternative.
-+	 * Initialize and disassemble the default alternative.
+ 	 * Print instructions for each alternative.
  	 */
- 	err = disas_alt_init(&alts[0], orig_insn, NULL, 0);
- 	if (err)
- 		goto error;
+-	for (j = 0; j < insn_count; j++) {
+-		disas_print_info(stdout, NULL, -2, NULL);
+-		for (i = 0; i < alt_count; i++) {
+-			dalt = &alts[i];
+-			str = dalt->insn[j];
+-			printf("| %-*s ", dalt->width, str ?: "");
+-			free(str);
+-		}
+-		printf("\n");
+-	}
++	offset_next = 0;
++	do {
++		offset = offset_next;
++		disas_print(stdout, orig_insn->sec, orig_insn->offset + offset,
++			    -2, NULL);
++		offset_next = disas_alt_print_insn(alts, alt_count, insn_count,
++						   offset);
++	} while (offset_next > offset);
  
-+	insn_count = disas_alt_default(dctx, &alts[0]);
-+	if (insn_count < 0)
-+		goto error;
-+
- 	/*
--	 * Initialize all other alternatives.
-+	 * Initialize and disassemble all other alternatives.
- 	 */
- 	i = 1;
- 	for (alt = orig_insn->alts; alt; alt = alt->next) {
-@@ -558,10 +664,25 @@ static void *disas_alt(struct disas_context *dctx,
- 			     orig_insn->offset);
- 			break;
- 		}
--		err = disas_alt_init(&alts[i], orig_insn, alt, i);
-+		dalt = &alts[i];
-+		err = disas_alt_init(dalt, orig_insn, alt, i);
- 		if (err)
- 			goto error;
+ 	return orig_insn->alt_group ? orig_insn->alt_group->last_insn : orig_insn;
  
-+		/*
-+		 * Only group alternatives are supported at the moment.
-+		 */
-+		switch (dalt->alt->type) {
-+		case ALT_TYPE_INSTRUCTIONS:
-+			count = disas_alt_group(dctx, dalt);
-+			break;
-+		default:
-+			count = 0;
-+		}
-+		if (count < 0)
-+			goto error;
-+
-+		insn_count = count > insn_count ? count : insn_count;
- 		i++;
- 	}
- 	alt_count = i;
-@@ -577,11 +698,20 @@ static void *disas_alt(struct disas_context *dctx,
- 	printf("\n");
- 
- 	/*
--	 * Currently we are not disassembling any alternative but just
--	 * printing alternative names. Return NULL to have disas_func()
--	 * resume the disassembly with the default alternative.
-+	 * Print instructions for each alternative.
- 	 */
--	return NULL;
-+	for (j = 0; j < insn_count; j++) {
-+		disas_print_info(stdout, NULL, -2, NULL);
-+		for (i = 0; i < alt_count; i++) {
-+			dalt = &alts[i];
-+			str = dalt->insn[j];
-+			printf("| %-*s ", dalt->width, str ?: "");
-+			free(str);
-+		}
-+		printf("\n");
-+	}
-+
-+	return orig_insn->alt_group ? orig_insn->alt_group->last_insn : orig_insn;
- 
- error:
- 	WARN("Failed to disassemble alternative %x", alt_id);
 -- 
 2.43.5
 
