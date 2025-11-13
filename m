@@ -1,220 +1,370 @@
-Return-Path: <linux-kernel+bounces-898995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF30C568EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:22:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2908C567E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBAA44EE685
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8B33A4167
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E188A2C2343;
-	Thu, 13 Nov 2025 09:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54682F1FC3;
+	Thu, 13 Nov 2025 09:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="TQS+ZFC6"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013010.outbound.protection.outlook.com [40.93.201.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="miZkR8ie"
+Received: from sonic315-8.consmr.mail.gq1.yahoo.com (sonic315-8.consmr.mail.gq1.yahoo.com [98.137.65.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC27286A4;
-	Thu, 13 Nov 2025 09:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763024846; cv=fail; b=jBpRiaKPF4oo9u+V6T0uRLvE7jbkmRSY1CrDoJ+DJA+H+003QbB0JfEoUJBfgTqgSq7zl6QzHHm8tbczKKq3Yc7WEoHtsQvrS1qMnES2MRt4aeiu6Eu5Ssudupqq4bC/PZHkYjyGLcCTbwIvlXOMfMG1oQ6JDqFrAr9KETdUF/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763024846; c=relaxed/simple;
-	bh=vhb3oPUEPIe9QbvvDG7RBr9Kl9/ecUQxbgkLD/0LSOE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QBwKdpLxGc3kgVXs39Lzy0kKGl91T3ao4CL5+hdRp1BKKoPm7iQksMIyX8eP3rqwGMDkqRFkHOO0V6pcUoqFa7T8nNT1TvVuY1BoxlvIwHwDTU+nOp0/DtrSOgkCq7PJb7/AS3NqU64qT6bXPQ1gWGKsompyd38wORDNW89sc1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=TQS+ZFC6; arc=fail smtp.client-ip=40.93.201.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aRhwfadc9jpH0Kt6A6ClcNxPsoxghYMRc/LEFqOszAZSFmjGHWRBMFKIhjjQSgrnxnZqkDIsrqOuHIfE+9O4sSb1/vKS6mO5azia4j2O1YopZU8UKn+Iv2MZTPF+pOq4YfJ/xfQKIZHn/Aa7CexPjIgn/CCRcUc4AWMbBEPJTH61Fo5BVRyxh3ZGP7q+m8/TlWUGOb8q5PrqJHpDHb/gYgzp1rgYfwbHfA2lXmlPpdvK5QVHiRIK4eVr5cdpPWH4HKTR9k7x7DdBXqAvWI17opnAhk8gcJiag55o+I8T5WnGgJAR6UJ48tzWL8sjdgxur6pzSTpZXTbJUBOeiUf2Kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vhb3oPUEPIe9QbvvDG7RBr9Kl9/ecUQxbgkLD/0LSOE=;
- b=J4SfOOPo79WcqoF5aSaauYBhNBhFc4+wz03m7YOEeNkXw+bjSnSPnu2+/FPzsC86G4FTJyJMhngXsenNOAglUWaVXBTWAg2UMpMYko7HFvsOG4pQyuMscHE7fhbo9LnnB6ELSSuU49ocFbhaUeqQNe3LUueBCBIxnujoTG0XGs7YxaIIwUmFqlK0SDWK43jEJXKqZxodxEKWZKGeYyXCBY4/7R2vIWWtnoBFGxOKteBISdyXOQsJ9IbDGRu9Y5bKZURmlY9gfL9wRaU34/KcdGcvAbpY8hWFwTWmYu70uejtV4SGem7rnHXfcdatKCnxwSmZJqjbALUlHyW+uzULdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhb3oPUEPIe9QbvvDG7RBr9Kl9/ecUQxbgkLD/0LSOE=;
- b=TQS+ZFC6mUkGMg0hQuoRyYELPPc8gtc8I9/O0L8WYivCA9o9LWu+lVN9O0rdGv2WlGZrnY5FBpqgRUvpuqAdGQLWjyxDEEgBRHvwXo/mY/liaLezBsJJG1ZkN8B/TXoYje74N5bBlpQEA4m60IDlTvsxX2TK+ufHRlwK8SdAv63VmpU7o+TOxGATWirnURv3KADDaYrXPHGmDYptp2mbw3OBsHO6Aw4ftP4pPJnbcvRWaJWb1/X81JUefeWyJ7s7CclOP3+1RJUVx/YQPYh0l/nZKUrZ6D+M4oehKmayPF0jU9y5/PMDLlCWLDw1ipEfVjy+gvTlGjsG4fiqgWL+QQ==
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by BY1PR03MB7238.namprd03.prod.outlook.com (2603:10b6:a03:52d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 09:07:22 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 09:07:19 +0000
-From: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Xu Yilun <yilun.xu@linux.intel.com>
-CC: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, Tom Rix
-	<trix@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>, "Ng, Adrian Ho
- Yin" <adrian.ho.yin.ng@altera.com>, "Rabara, Niravkumar Laxmidas"
-	<nirav.rabara@altera.com>, "linux-fpga@vger.kernel.org"
-	<linux-fpga@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] Enable FPGA Manager support for Agilex5
-Thread-Topic: [PATCH v2 0/2] Enable FPGA Manager support for Agilex5
-Thread-Index: AQHcVFgjC6R2hGI81EaKjKdwifePr7TwHVIAgAAT/oCAAB/SAA==
-Date: Thu, 13 Nov 2025 09:07:19 +0000
-Message-ID: <cdd2d579-65a3-4e1f-b8e8-45b30a6d9848@altera.com>
-References: <cover.1763008269.git.khairul.anuar.romli@altera.com>
- <aRV0UCZD6fwnfWUE@yilunxu-OptiPlex-7050>
- <a0214340-d0dd-4689-9692-d934f3a80c40@kernel.org>
-In-Reply-To: <a0214340-d0dd-4689-9692-d934f3a80c40@kernel.org>
-Accept-Language: en-MY, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR03MB4927:EE_|BY1PR03MB7238:EE_
-x-ms-office365-filtering-correlation-id: bf5b6539-3dd3-4e5b-80e4-08de22940c77
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d2tkWnNkR0QxeHQrOEhIMXhwcEZtZHZJV2dzVm0wK1ZPdjE4SnFEcDVYbkFW?=
- =?utf-8?B?YVVmSnN0Ym1LTjRJaUUrTGxYeXRwa2ZBVDdCZlh6NnNJczNjd1cycjFxWE5G?=
- =?utf-8?B?dWFkOTVuelRlNHdveTdUZGwwR1Q3U0c2YlRvKzJ0bk1jVkpXTk90cWplempB?=
- =?utf-8?B?VWhDTllRR1NiekF4dG1RMjJ3cW5Zd2toK3l0OWZaSFlZZEJMSlRxR3FOb0xZ?=
- =?utf-8?B?Y3VrdklERXNiNWUwMHdXR1FRS0dLRkJ2UU10N1NsNG91dUQrdjdwL2sxenpO?=
- =?utf-8?B?WHZWdlRPYk1QeGNSSElIWkljTksxWkN0UDFKYlMwSnVSSkc0SVFxenlRanlX?=
- =?utf-8?B?MGwvMW5RYVBQSFZMZ2h6UFprMnZMMjR3blpJdTM2SmRFRDRHM0MxWDdjVTly?=
- =?utf-8?B?dGRDa2FVQ1ZKbUZWMlFNZ1NPajkxM2g0eTdjMTZMYld0ZW1JN0sxdW0zYWdo?=
- =?utf-8?B?M3NJTnora2lnOVJEejkyRFR3ZUFpUGUza3krUnl1MkZTWVh2Q2tYNW9pN0JP?=
- =?utf-8?B?RmFzUldqNEQ5K3NCZ1pnUENzbUxiWUkvMTZZcFBDN1FBU3krTWhWMEo4clkr?=
- =?utf-8?B?cUxydUJOeS9ZRWVPcGtCMkpld1FqQ2dLZVAzcUJEcDFGd1E3NTFmVDYxa2VG?=
- =?utf-8?B?U3laSW9TclpPZE4xbTFJQmRnSnhPZzh5OXRoc3hBMXBuQkl1UDRTek13SW1U?=
- =?utf-8?B?Y3BPVm9aNTc2dWhkMVVaZldFSk1UaUhPck9oMjN0Y2lFeHNDS2NIaG9vK1pL?=
- =?utf-8?B?SGdoek1tWkNaRGRJR1BOQWdIV0hlT0t1bmpxZDE4cHYwMFZvOWhNTHhSSXRz?=
- =?utf-8?B?TFdBRng3SDdlQXhVOW5QczdUZnJ4NDZpZk9nbjlmNEpmZndyaFNWZXIxelJi?=
- =?utf-8?B?VVNibDhJUmltcDVEVkdrMVFzdkFFNm9zaFZVRkxpU1NKbHBZVC92WFpXNmhs?=
- =?utf-8?B?WnR4WGVOb2g3dldiVldRd3BEcHhGRGZWUVZlbVJBNllxazBablVtMHJCSnhV?=
- =?utf-8?B?ZVdNSmVIeXc2MzdoSVowRUR5ZEl3bUJJdlpoY0ltQlUyWDlYQzBPMG95QzdE?=
- =?utf-8?B?aGprajZxemFvL1FQU3B0amhWNEFQME9MRFVYOGtxWlgvMXBKTk8yZE96VVAz?=
- =?utf-8?B?NDIrR2pOdlo5Y0Fpc01tNXBsTWZwTG92QnJNODZVbWZsMktSR05rZmlVclBU?=
- =?utf-8?B?RFFaMUxySFYvNU5KS2tnbGJ5LytBbDVwTVdCdVlvdGg4MUhobjZHdS9ZUXdU?=
- =?utf-8?B?TFp1Z0VQek16Z2pQRmFQUlliWDZucmdXOEhrazlGMFpVWTJCM2VtWkZydGJw?=
- =?utf-8?B?TXg4SUhNMWNOS0NvVHIydkV2QlBZYkpzUklZK25VRER4cVZKUGZCMWFuaWFH?=
- =?utf-8?B?SXRTTnpOY3licTg5bEZDbnpkU2dBeHJ6dURod1dqMFhFaEVIM1ZNWk45bXZR?=
- =?utf-8?B?czIyVlVsdnpjNnFMQVF2MktmbXhBdExmY05YVWZuUXRmWVgwTzZtRy8zc1l4?=
- =?utf-8?B?Z1JnYmw1UDM2N3UxYVplWGo4THp5OXlMdFkzd2lzL2R0NEpQRnFoVXhrTytK?=
- =?utf-8?B?VThJdHN4VXFoeTFJeUVJdk9HcFVDSXVMMVUzSXBCSTFVT1YwdnFLajlud082?=
- =?utf-8?B?S3Y5RGdsU1VON1J0S1JXamJ6ai9VQlNyemZsT1lnejNodHh5YmlKeitkQTVy?=
- =?utf-8?B?S2FVZzlvWlVSYzl0d1QwbUZ2eGhnZkF0ODVBS1BRYnNMRERTV3BOT1Z5THdO?=
- =?utf-8?B?QTRGY1RXYkVQYWN1WFRvRDRYVjhIQk9jcVRFYnYvWCtTN3NUYVVPQVhjcXl3?=
- =?utf-8?B?L0ZjY0h1a1RFcEEvOVJTYnM3cUdwOGJKMWpJYVF2aVVqaEc4aXRaWVpQdGR5?=
- =?utf-8?B?RlZLL2hLcGx6KzBkTEs3WFNMVUoyVllOc3dxUDVDb2tHWWQyZkdRRXA1d1RJ?=
- =?utf-8?B?d2RveUh0Q2ZmYU4zUnV0clB2VklmOTJaR3lnWjBZa0VOZzFYNlZnMGk2enNX?=
- =?utf-8?B?MDhhdjV0Z3pCM2FybHhJQXhsVGI3TzVweXlZQjJ6R1VXSVFpZEQ1dEdZamtr?=
- =?utf-8?Q?9WBdir?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?N0pXODZua1NpbHFxNGFXdnB6ajM0T0xMb1B1cnBFNEEyTkhSWFZRSmlmMTVx?=
- =?utf-8?B?d0plTGNMVERDMmZob0g0YlV3OVIxeVRvdElXeUdlcDJtN2dMQVlsUE9BUThG?=
- =?utf-8?B?dzNsdUNPK0ptbUZGajJIT3JEd2hudzdqK2JhY2MwSUViM1J0clV2bVFvbURG?=
- =?utf-8?B?ZzZYdTdoOERaUTVnelBWUCs3aDR2ZUVtc1RLYWVtQW9xYjJBbjNzMmdDNFN2?=
- =?utf-8?B?cG45YlIwNjdPZVBuQ2lJQnVQa1oxY0hWZ1o4cWlIeUhpRjBGamhJQ3h4a0xP?=
- =?utf-8?B?SHRYOHBTUCtoOEl2L2J2MlgvYWhvU0NNOEtoeGlBandZeUZQV0FnVi9jZm9P?=
- =?utf-8?B?SHB4T3NVd3pDUC9NUzJGZU0raWlJQ3ZRUUlVUnFqRHFFbkVYZFRkazVmTk9Y?=
- =?utf-8?B?K3VkT3JwTndGNEJ3TFlvK0ZrUkhkV3Z6Q3lraDIzbHNBVHVuN0plVHQyS3NG?=
- =?utf-8?B?dkY4Y29yc2h5SXJQV0ZkNEQrN3lUczU3N0plenpORzJKNU93NXFKdi8wYkJr?=
- =?utf-8?B?YXp3Y29pSkZkSWtRL3BKYlNqUUwwZWZ0MmJLeTFwdDU2K3dFYzVYT21oTSth?=
- =?utf-8?B?cGFUdjc4WUd6eExNUlFPSGg5ekdseVorMm1SZ3g2Q0xsdnQ3a3Rza2V2d0tD?=
- =?utf-8?B?UFlJSzFIb3JwMUpNM2V0cWpXUmdYNnZpNmNubU1LNHhaWEp6RDRZaDZaQzZn?=
- =?utf-8?B?V1dQcFE1c092bXphTnYvYzhWTlZsQ2pSbUczZncyRUQwcnhwY21mSWp4R0VJ?=
- =?utf-8?B?Y3MvRDBmdlN4ejd1bmt0NUdZaERXdS9BMFhZRi9FSTFCNHFzVUJiL2NPbFhC?=
- =?utf-8?B?MzlMdzZpaWlCQWU3bGJqS28wL0s2MlA4cXZpNGhFSkdXNWVlQWJsc2NTVFE1?=
- =?utf-8?B?SmJRdkU2eTBUUWhoL0tzWVpDZlptK1VYajliUTh3cEJyN1Q5VDdNRFFZZVdx?=
- =?utf-8?B?dnhtc2pxajBmNnRubytDM0c5WThaaytuWGpPQXNrRklvU2hGYXF2RFEzT3Vn?=
- =?utf-8?B?UnNESTdscTUwZEJBSjJUNGFuY25DNVJuMElTbndVZmdyRFpOZ3dIenowTTNM?=
- =?utf-8?B?UUVUSS9RU0o2UHdsZ1c5NXVkWVhVdis5MUgxRklWMXlkOCttakRHYVBhTE1G?=
- =?utf-8?B?NThMT1Y5dEMzSDdQTzBBWUg2VDBya2gwYnM4S2ZrbGh5TTN3THZFVWtHVk9y?=
- =?utf-8?B?S1RBWnY4QThQNzh5amtYLzlLNnFGaHIwZXV3N1pvWGlOR1FJQm0xc1ZuUUFw?=
- =?utf-8?B?TldOSTk0VHlXN3RyaGRmdmswa05YUG9IbCtwYVpGSGd2aXlJYlJmeXVhQTVC?=
- =?utf-8?B?b2FwOFd1bFM2NjQyKzRldmdDcVpyeHE0MmFCck92OWpmZXFNSmF4ZjVYaVl0?=
- =?utf-8?B?UzRxZlNKbUwzQktSUFpzYlJuTW1ONnFBYjhDNHhuWHE5MEJrM1k3ZGhtc0JJ?=
- =?utf-8?B?Uy9IUUdKNzBuRk8ydUZ3LzBiK2pVYk9seW1CR0tpTzlSMEk5Y0JVR0lVcVRQ?=
- =?utf-8?B?UzZ5RnZ3c0ZEWTJ5VHFTRHoyTFE5dEZ2WmZSZXFoUkEzWjM3WElIVGNyb1Zp?=
- =?utf-8?B?clVaZUtZYndoWDA4bjBvNXZZZjBKaFh1dThZV01lSlZBNEhQYy81US9vV3B5?=
- =?utf-8?B?a21WL3ZVMTFOK25ZaTRKZXNGeG9hd2paT0F0RjNKTkVvYUFsT1M3TGh1YVRo?=
- =?utf-8?B?Y3lseFo3Z1Q4QU04eGd2K3lCeE1oZ2hDUG1mSWs0YnJxeW41V1JsaVh5djNv?=
- =?utf-8?B?d1d2ZW9wR3hLanR5SlA1M3A5eloxSThkVm13anIyQXhvZ2ZzRlBWd1ZsT0Rv?=
- =?utf-8?B?M1R4K3hEdythUWdBWXNCQmNZUDhENGwrMmNZaTl4eFRiaWdNeXA2SWdTYjl2?=
- =?utf-8?B?T2xpVGZMY3ZoVnFXckdOdjBwalArVGhPa1JJQnY2WEZMMEJQZVVZUGdmcDhj?=
- =?utf-8?B?cno5eE95OTU1djVxeXpUMzlUdjNvUkluYU9IOFQ2RXU5b1graXRQYU00Mnh4?=
- =?utf-8?B?UWxVWTZYRFE5blcrOEoyVGFrT3d0VHplM2puYzJQM1NZc3VuZWZCQm0xam12?=
- =?utf-8?B?UENYeUNzWU1FaVNtSkE4Y3ZVS05zTTNJTVNaK2piMm9oZzlyTWNXY1lYZVJm?=
- =?utf-8?B?Y3UxczgzWWxIS3BnaXBrOGp0VCs5cjB1UEJ3ZWtyZTY5Wk9NNm5CbjNjMTcw?=
- =?utf-8?Q?s6aTAzw+vJFSjG6h9EOF40k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E3C9783A314E5242B30FAC0BE29D55AE@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DB6244664
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.32
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763024943; cv=none; b=LaJ/pSdqw74QFOJnw8P8cGakbp/EIaJVHAQY4bdc52q1LV6G3bOzAHv6vgLL1Bs3+TydWbZRlol6I7cr35D+9lAkd5MpLfddOCZINx2BC/uPTC92QRiSmXiEQU6O9cVKx5NcXnFl8+L5QJQvimjynSvqS7iDpmKTbeagFn0QyV4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763024943; c=relaxed/simple;
+	bh=CwvV06c0j02ohPrWnmShptC6or4QZNgaNdyuGU45zpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i/eQ3Nzo2A+eqJshjW2oDFhMNfbxQFuPiV4gYZaXwTnJXhGefjR88+BWhWmXSj0oFkpMChQM1l2EAYGUxSeSYeFmIoGk5lYGEt3JfWmGW4YNpzNd6CAtN1J7zxRGl4drnod8WCmYp6HsdtIXitdWrXacdYdoEX/NvC2v0ftlLdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=miZkR8ie; arc=none smtp.client-ip=98.137.65.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763024939; bh=MMknRcqQGM7el+Tdt6AzBBcCY6hjBX+ZqSYQZHHoMbM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=miZkR8ieFjOzi4aCKS+oTXZuj6CHcmUgKg/wMOIQm8a8glya7jefRzhwdxJnZzTG1ZTcHAyaFlvmYHEEOetwzPazNOCieDuiO30iZU5Q+DHFdq/s7A2XTEnGNVSqX58e6RHKntixVfDwJ+jtwbM2/XLSxu4H0VY7qB34/AnKO2o53mO1pEtYolC4efW2T7BDHjb0zQijiMlVaY1nNpgNjA4HuWlUT2m9epI5mNzakzjAM9M/pc/oQnhh3S+qWbcaoNRHBSgMxXVgWEo03Cl2GbP6DvD+7tqk0rPgH55p4++kxt7uRHQNKBnjaZFDEmLaASvodYEHgTllVllgJz0hhg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763024939; bh=P2dHwo/jICi09YLwJjlpT6Tm3t0BAZ+WPScGryLaK58=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sNMlncDkiRdgJY+Mj3ZMdnvP8gjUbUz+rXzxpWt+ZnGQrbgkkermk88Qx1Ke+Wa4jKhEyhCKMPSzhHlSuYKyGnfj+P1k+1TXOYY5W6elsqurIzWZMenteBO2zSkMiSafcoBUPKjA2GXqBUEnSvATxXsA9J3eiVclRcydrnKX+9hPS8CtWivzGORpeXCFjkRkBDsOUEr2v4attM5GMKSM2HotgwJne4Po61Krhra4eqwsagG272mV2xc4U0OzceYFE0yIin1oteQNm+Xh3Rtk+Z6xoPxmtU43Ot3Ra1noGlUDS6oEBqjjkQhgNeaJsaf1I70KMPbdjvV2/t7eZeXeuA==
+X-YMail-OSG: H3QI864VM1kjGBAIJ.lfiRLwJjx9DiZVbw67QVtfkaQ8w6P_UBT2yZpNbR23EQj
+ 9QoISeQZ4R3JZHkZWFcBZxAbhrNAy7T5K2PEAtp3CgLl.jnuqdJXoj5YhM70OAJ9oP.rXeyoTVGF
+ Mmk2GVVWh6xpBIazDGCgwbczhvBlPvMkqLuRs9a7IxUvVdV9fZm7bLpacfZwuKnY_FhIrUlB_Avp
+ jPuGa3n.D3J1XDO8rCPrJ.kGVOAIFH1xvS9YqaqNkJ9Roxyhb4HE1AiHMIdvYiK6uy6JsXH8q9Le
+ 1.EuUBNAIXqW86LYPBwXQEwk9Bs9nMxNpwnMTQWZgYDS3kXlv_Vwwm.EVJP9rDW3EEl7B0ufN63T
+ 5SzdnzTv7Xitm6VeA0pHUGAsUYlGxourIzehzih7NAOTwgg9rrre7cmZ8Kd2VtEzY6_40QcVvJ01
+ dL2bg71vqfF.4QzRn5qlYNmyfJRKz6FTSiXo1kWWX6M9SSU7ZnyEJHLjLr6FmzJ.S2N8KjHwZU0t
+ ajBmS9nk8M.mughghobnQbJKyf76OgMkqckyhIsDbyuhyeiH7n9RjBKPiprZ3w_KkR8aiFp9PdWE
+ HA0ltt2sqUfsqxcWlVRr3LUb2e7AMguPRHFfb93U0rhYcbJQB4CPx9ezzviHa_3aIzWUx7HwjCA4
+ .Cm4Tqpk_lDy.ncOmWtI7kTtJYbDcmJwxmUqJHRbtgHJCUmljGfQxi11PN7RtUYmh0W3JC_fJP0T
+ 9ezDZkoY_V1y3_58vsdWdQSSGU6xPFlu7n4WFCCstWT7giMsaEruoa3wej0F5mnl8GGGNXR.LZCl
+ QF3xWdvT9l93TeeNovuUc2XZoxUV3wdHi55mM44Dwa22PJVlSzMwFH1JE21OVCk1glxwRPE7QEWm
+ 9g3EyVLrdpr0RjxwXxiXXn773gTUmoQaD4LcocXHMyaGeqKiQM6ttlxk.2G8mSJRo8MTzGZi8qYc
+ zeni2NW06v_x_CGrl9aB.jOPn5kepAue319pM9isEZ5mAj7kUs3DcaWpQDis9_HaNA2NQ6e7eiNr
+ fuO6Q.fdPonkjHGgnRYdDreZvAF8.kTw1z_XOX.78.fBSZQeq2dQOG70mTIcTPfYY4_N2SJNLrsr
+ 4oxPBgOtM0sKjSiHV3ImIwPSr4U7JZGBgx3A.o0oO9B3YF.lGPuET91.lbUPM_AyGMGxPFZ_kJAK
+ LkSitBA7N7QgKzOCBuNe7Ym1KlWJw8kLfVh8fA6tPHFE8qb37DwCwvMAHxgbRqPc4LnN9Zttfckf
+ 29Gu0FHzuIo2swVQdAYswHLoLSB_WnbqSihz2liZp_RvWPpDCC6hqdqZlUhOhg6e6BNZ8Un5Nzyg
+ vj1VNPsrtwKN163IrOt3mjLQmJFACVgv_xMFrLR1GYaMnIsMvjHirStceitOe6v8chJ0VJEMgU9O
+ jQXeJR7fG1gZnBgpvN9UIq499h2n_jP32BGz4MNbILvG8TIFeomHPeqm2vSnglqfxNphYMA5eNzC
+ WgQqaEOmjipSB4W_ZMnlZ4WEwFIpadCmt6GgfxTJg6hV4GUcYJw1WDLeUxEGQy8CJS08a4Gr1XzX
+ 8QvoShpTW4u6XiygwqlSXdhryLoZ4eDTZ6V6wUUD09nIYk9yTn9cChi9UDp4RMbNq69N8lxdEujb
+ ztOKudXfpw4hhBDLPsifnfo5d2RfPhQmUA8BXtTb86XRY5zB_vBLIyxIKLzctQdc.cERXj33pC.2
+ 4pxDGy5MeDrfNqjfYIO8vFELVZK8aDDTQxuGenR3ZxzXIUj5DywwPFqJV1m2kJz_Hyv_lbsx0_Oz
+ pgPUEHZEOIqTiTwyx9YBQPkskzDrHaezbtQORA169H847aoXRY2cqWUzYEdKOdfv91NyDTTGLHFA
+ oCyxvMLAw2eCf_NOSkhDDJeSMj8e66xJ12dOjWJjyfDnIovCio0fXqySp5_ndUMEi_as3kYZXtfC
+ favETqF2wuYsa1Ofn1.NHQ2ADXv9dH1L1tOH2hlZ95bU0Q3F51BKySxixzaYhZ2JFyeoOJA2KOPm
+ cOA7yJQlt8eN01C3Pn43M_CXgEDrKpEVYk2yKXx8XG7eCG9if88HPKIQGvtPro2hgmW8zwUfB.ig
+ CDRgWZt8Ucm9o9ioGcCGi4WiMZ5P0rxUw14WOFgvxP4fFz31mrkx1gFAGNuLPI_fKbcXwY5DX4ni
+ 9ZMRtUFbmQ9aTs7kjXEBvr85YYTzhLoj0NM4N0__gwpdBafc7GHhWQGtkvqVGq2lnNDdI3uSXZDH
+ i.fuTDoG8ouA2z578d0eW4lOf64Faht7ABkI1imGdiorOjd2WUyDM7_cIqVGGri5LgkW8pPUc73U
+ F7_gr8y.9vwR4KviA96mWpvI4tA--
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: e4833e3d-7fdc-413d-aca0-8214303fc968
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 09:08:59 +0000
+Received: by hermes--production-bf1-58477f5468-tllkx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d6fd48f5390c9041d0017d1e906ed9be;
+          Thu, 13 Nov 2025 09:08:53 +0000 (UTC)
+Message-ID: <216b2c7d-09eb-4d20-b8af-b8160ce14e32@yahoo.com>
+Date: Thu, 13 Nov 2025 10:08:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf5b6539-3dd3-4e5b-80e4-08de22940c77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 09:07:19.2290
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 72WZwAV55ZFaGuuWFOYiIoqxaqrJ5eVJlXGylfxZV1Qymy75PYXXNoS2eif/BQCmtA/z+zSXC+HfMq9Sq/+9nLSxBXqAPiwU6h9NQD6w578=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR03MB7238
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] selftests: af_unix: Add tests for ECONNRESET and EOF
+ semantics
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251113071756.40118-1-adelodunolaoluwa.ref@yahoo.com>
+ <20251113071756.40118-1-adelodunolaoluwa@yahoo.com>
+ <CAAVpQUBvLN=sRVb8cbMngwm3o=KZkVOeCYdyi2p5sYjjZQU=HQ@mail.gmail.com>
+Content-Language: en-US
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <CAAVpQUBvLN=sRVb8cbMngwm3o=KZkVOeCYdyi2p5sYjjZQU=HQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-T24gMTMvMTEvMjAyNSAzOjEzIHBtLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOg0KPiBPbiAx
-My8xMS8yMDI1IDA3OjAxLCBYdSBZaWx1biB3cm90ZToNCj4+IE9uIFRodSwgTm92IDEzLCAyMDI1
-IGF0IDEyOjQzOjU0UE0gKzA4MDAsIEtoYWlydWwgQW51YXIgUm9tbGkgd3JvdGU6DQo+Pj4gVGhp
-cyBwYXRjaCBzZXJpZXMgYWRkcyBkZXZpY2UgdHJlZSBiaW5kaW5ncywgZHJpdmVyIHN1cHBvcnQs
-IGFuZCBEVFMNCj4+PiB1cGRhdGVzIHRvIGVuYWJsZSBGUEdBIE1hbmFnZXIgZnVuY3Rpb25hbGl0
-eSBmb3IgSW50ZWwgQWdpbGV4NSBTb0MuDQo+Pj4NCj4+PiBUaGVzZSBjaGFuZ2VzIGFyZSBpbnRl
-bmRlZCB0byBlbmFibGUgRlBHQSBwcm9ncmFtbWluZyBhbmQgbWFuYWdlbWVudA0KPj4+IGNhcGFi
-aWxpdGllcyBvbiBBZ2lsZXg1LWJhc2VkIHBsYXRmb3Jtcy4NCj4+Pg0KPj4+IC0tLQ0KPj4+IE5v
-dGVzOg0KPj4+IFBhdGNoICMzIGRlcGVuZHMgb24gICJhcm02NDogZHRzOiBpbnRlbDogQWRkIEFn
-aWxleDUgU1ZDIG5vZGUgd2l0aCBtZW1vcnkNCj4+DQo+PiBUaGVyZSBpcyBubyBwYXRjaCAjMyBu
-b3cuIFNob3VsZCBiZSBQYXRjaCAjMiA/DQo+Pg0KPj4+IHJlZ2lvbiIgZnJvbQ0KPj4+IGh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2FsbC8zMzgxZWY1NmMxZmYzNGEwYjU0Y2Y3NjAxMDg4OWI1NTIz
-ZWFkODI1LjE3NjIzODc2NjUuZ2l0LmtoYWlydWwuYW51YXIucm9tbGlAYWx0ZXJhLmNvbS8NCj4+
-Pg0KPj4+IFRoaXMgcGF0Y2ggc2VyaWVzIGlzIGFwcGxpZWQgb24gc29jZnBnYSBtYWludGFpbmVy
-J3MgdHJlZQ0KPj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwv
-Z2l0L2Rpbmd1eWVuL2xpbnV4LmdpdC9sb2cvP2g9c29jZnBnYV9kdHNfZm9yX3Y2LjE5DQo+Pg0K
-Pj4gR2l2ZW4gdGhhdCwgQERpbmggTmd1eWVuIGNvdWxkIHlvdSB0YWtlIHRoZSBzZXJpZXMgaWYg
-eW91IGFyZSBnb29kPw0KPg0KPiBUaGlzIHdhcyBuZXZlciB0ZXN0ZWQsIHNvIHNlcmllcyBjYW5u
-b3QgYmUgdGFrZW4uDQo+DQo+IE5BSywgQWx0ZXJhIHNob3VsZCB0ZXN0IHRoZSBjb2RlIEJFRk9S
-RSBzZW5kaW5nIGl0IHRvIHVwc3RyZWFtLCBub3QNCj4gYWZ0ZXIgd2Ugc2F5IGl0IHdhcyBub3Qg
-dGVzdGVkLg0KPg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KDQpJZiB5b3UgYXJlIHJl
-ZmVycmluZyB0byB0aGUgY29kZSBiZWluZyB0ZXN0ZWQgb24gdGhlIEFnaWxleDUsIGl0IHdhcw0K
-dGVzdGVkLiBJIGV2ZW4gdGFrZSB0aGUgbWVhc3VyZSB0byBhZGQgdGhlIGRlYnVnIHByaW50IHRo
-ZSBpbiBpbml0IHRvDQpzZWUgaWYgdGhlIGZhbGxiYWNrIGlzIHdvcmtpbmcsIHdoaWNoIGl0IGRp
-ZC4NCg0KT2YgY291cnNlIEkgdG9vayBjbG9jayBtYW5hZ2VyIHBhdGNoIGZyb20gRGluaCdzIGNs
-b2NrIG1hbmFnZXIgZHJpdmVyDQpmb3IgQWdpbGV4NSBoYXZlIGxvY2FsIGRlZmNvbmZpZyBpbnN0
-ZWFkIG9mIHVzaW5nIGRlZmF1bHQgZGVmY29uZmlnIGZvcg0KdGVzdGluZyB0aGUgY29kZS4NCg0K
-aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzkzMjZlZTY2Y2I4ZTMzYzBmZTgzYTI0ZTlhMWVm
-ZmM4ZGEyNTJmZjIuMTc2MDM5NjYwNy5naXQua2hhaXJ1bC5hbnVhci5yb21saUBhbHRlcmEuY29t
-Lw0KDQpBcmUgeW91IHJlZmVycmluZyB0byBkaWZmZXJlbnQga2luZCBvZiB0ZXN0Pw0KDQpUaGFu
-a3MuDQoNCkJlc3QgUmVnYXJkcywNCktoYWlydWwNCg0K
+On 11/13/25 09:43, Kuniyuki Iwashima wrote:
+> On Wed, Nov 12, 2025 at 11:19 PM Sunday Adelodun
+> <adelodunolaoluwa@yahoo.com> wrote:
+>> Add selftests to verify and document Linux’s intended behaviour for
+>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
+>> The tests verify that:
+>>
+>>   1. SOCK_STREAM returns EOF when the peer closes normally.
+>>   2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
+>>   3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+>>   4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
+>>   5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+>>
+>> This follows up on review feedback suggesting a selftest to clarify
+>> Linux’s semantics.
+>>
+>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+>> ---
+>> Changelog:
+>>
+>> changes made in v4 to v5:
+>> 1. Moved the send() call before the socket type check in Test 2 to ensure
+>>     the unread data behavior is tested for SOCK_DGRAM as well.
+>>
+>> 2. Removed the misleading commend about accept() for clarity.
+>>
+>> 3. Applied indentation fixes for style consistency
+>>     (alignment with open parenthesis).
+>>
+>> 4. Minor comment and formatting cleanups for clarity and adherence
+>>     to kernel coding style.
+>>
+>>   tools/testing/selftests/net/.gitignore        |   1 +
+>>   tools/testing/selftests/net/af_unix/Makefile  |   1 +
+>>   .../selftests/net/af_unix/unix_connreset.c    | 178 ++++++++++++++++++
+>>   3 files changed, 180 insertions(+)
+>>   create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+>>
+>> diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
+>> index 439101b518ee..e89a60581a13 100644
+>> --- a/tools/testing/selftests/net/.gitignore
+>> +++ b/tools/testing/selftests/net/.gitignore
+>> @@ -65,3 +65,4 @@ udpgso
+>>   udpgso_bench_rx
+>>   udpgso_bench_tx
+>>   unix_connect
+>> +unix_connreset
+>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
+>> index de805cbbdf69..5826a8372451 100644
+>> --- a/tools/testing/selftests/net/af_unix/Makefile
+>> +++ b/tools/testing/selftests/net/af_unix/Makefile
+>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
+>>          scm_pidfd \
+>>          scm_rights \
+>>          unix_connect \
+>> +       unix_connreset \
+>>   # end of TEST_GEN_PROGS
+>>
+>>   include ../../lib.mk
+>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>> new file mode 100644
+>> index 000000000000..9cb0f48597eb
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>> @@ -0,0 +1,178 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
+>> + *
+>> + * This test verifies:
+>> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
+>> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
+>> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+>> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
+>> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+>> + *
+>> + * These tests document the intended Linux behaviour.
+>> + *
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <stdlib.h>
+>> +#include <string.h>
+>> +#include <fcntl.h>
+>> +#include <unistd.h>
+>> +#include <errno.h>
+>> +#include <sys/socket.h>
+>> +#include <sys/un.h>
+>> +#include "../../kselftest_harness.h"
+>> +
+>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
+>> +
+>> +static void remove_socket_file(void)
+>> +{
+>> +       unlink(SOCK_PATH);
+>> +}
+>> +
+>> +FIXTURE(unix_sock)
+>> +{
+>> +       int server;
+>> +       int client;
+>> +       int child;
+>> +};
+>> +
+>> +FIXTURE_VARIANT(unix_sock)
+>> +{
+>> +       int socket_type;
+>> +       const char *name;
+>> +};
+>> +
+>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
+>> +       .socket_type = SOCK_STREAM,
+>> +       .name = "SOCK_STREAM",
+>> +};
+>> +
+>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
+>> +       .socket_type = SOCK_DGRAM,
+>> +       .name = "SOCK_DGRAM",
+>> +};
+>> +
+>> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
+>> +       .socket_type = SOCK_SEQPACKET,
+>> +       .name = "SOCK_SEQPACKET",
+>> +};
+>> +
+>> +FIXTURE_SETUP(unix_sock)
+>> +{
+>> +       struct sockaddr_un addr = {};
+>> +       int err;
+>> +
+>> +       addr.sun_family = AF_UNIX;
+>> +       strcpy(addr.sun_path, SOCK_PATH);
+>> +       remove_socket_file();
+>> +
+>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
+>> +       ASSERT_LT(-1, self->server);
+>> +
+>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
+>> +       ASSERT_EQ(0, err);
+>> +
+>> +       if (variant->socket_type == SOCK_STREAM ||
+>> +           variant->socket_type == SOCK_SEQPACKET) {
+>> +               err = listen(self->server, 1);
+>> +               ASSERT_EQ(0, err);
+>> +       }
+>> +
+>> +       self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
+>> +       ASSERT_LT(-1, self->client);
+>> +
+>> +       err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>> +       ASSERT_EQ(0, err);
+>> +}
+>> +
+>> +FIXTURE_TEARDOWN(unix_sock)
+>> +{
+>> +       if ((variant->socket_type == SOCK_STREAM ||
+>> +            variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
+> Sorry for missing this one, but NIPA caught this.
+No problem, that was my oversight.
+
+I added it because, in the third test, no child (no accept()) is 
+created, so I wanted to avoid closing something that doesn’t exist.
+
+Looks like I was just being a bit overcautious.
+> see: https://netdev.bots.linux.dev/static/nipa/1022816/14311938/build_tools/stderr
+>
+> +unix_connreset.c: In function ‘unix_sock_teardown’:
+> +unix_connreset.c:92:68: warning: suggest parentheses around
+> comparison in operand of ‘&’ [-Wparentheses]
+> +   92 |              variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
+> +      |                                                        ~~~~~~~~~~~~^~~
+>
+> I think you can simply remove the "& self->child >0" part
+> because you don't check that for self->server below anyway.
+>
+> Thanks
+I will remove it and send v6 right away.
+Thank you.
+>
+>> +               close(self->child);
+>> +
+>> +       close(self->client);
+>> +       close(self->server);
+>> +       remove_socket_file();
+>> +}
+>> +
+>> +/* Test 1: peer closes normally */
+>> +TEST_F(unix_sock, eof)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       if (variant->socket_type == SOCK_STREAM ||
+>> +           variant->socket_type == SOCK_SEQPACKET) {
+>> +               self->child = accept(self->server, NULL, NULL);
+>> +               ASSERT_LT(-1, self->child);
+>> +
+>> +               close(self->child);
+>> +       } else {
+>> +               close(self->server);
+>> +       }
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +
+>> +       if (variant->socket_type == SOCK_STREAM ||
+>> +           variant->socket_type == SOCK_SEQPACKET) {
+>> +               ASSERT_EQ(0, n);
+>> +       } else {
+>> +               ASSERT_EQ(-1, n);
+>> +               ASSERT_EQ(EAGAIN, errno);
+>> +       }
+>> +}
+>> +
+>> +/* Test 2: peer closes with unread data */
+>> +TEST_F(unix_sock, reset_unread_behavior)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       /* Send data that will remain unread */
+>> +       send(self->client, "hello", 5, 0);
+>> +
+>> +       if (variant->socket_type == SOCK_DGRAM) {
+>> +               /* No real connection, just close the server */
+>> +               close(self->server);
+>> +       } else {
+>> +               /* Accept client connection */
+>> +               self->child = accept(self->server, NULL, NULL);
+>> +               ASSERT_LT(-1, self->child);
+>> +
+>> +               /* Peer closes before client reads */
+>> +               close(self->child);
+>> +       }
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +       ASSERT_EQ(-1, n);
+>> +
+>> +       if (variant->socket_type == SOCK_STREAM ||
+>> +           variant->socket_type == SOCK_SEQPACKET) {
+>> +               ASSERT_EQ(ECONNRESET, errno);
+>> +       } else {
+>> +               ASSERT_EQ(EAGAIN, errno);
+>> +       }
+>> +}
+>> +
+>> +/* Test 3: closing unaccepted (embryo) server socket should reset client. */
+>> +TEST_F(unix_sock, reset_closed_embryo)
+>> +{
+>> +       char buf[16] = {};
+>> +       ssize_t n;
+>> +
+>> +       if (variant->socket_type == SOCK_DGRAM)
+>> +               SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
+>> +
+>> +       /* Close server without accept()ing */
+>> +       close(self->server);
+>> +
+>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>> +
+>> +       ASSERT_EQ(-1, n);
+>> +       ASSERT_EQ(ECONNRESET, errno);
+>> +}
+>> +
+>> +TEST_HARNESS_MAIN
+>> +
+>> --
+>> 2.43.0
+>>
+
 
