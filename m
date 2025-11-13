@@ -1,178 +1,147 @@
-Return-Path: <linux-kernel+bounces-900076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652E9C598F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C21C598E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B0D8934DB4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:45:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D671E348533
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0268312803;
-	Thu, 13 Nov 2025 18:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973E63101B2;
+	Thu, 13 Nov 2025 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PR6xYFk6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC0cZpHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3562C30FC15;
-	Thu, 13 Nov 2025 18:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A3630F52B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059500; cv=none; b=M6vsqcDRuOTnXbRGb2pXJuldD8DpMXvtPC/m6d49gGLyikiXgsiikPYTejHCCmKjqvq4rE9C6WshJke/48JVXQJ+DHS02Ixt8z/w6mU4uEIz1CHn+adkYA5cg5tquXw377gQFub2/yA/cE6+L6bzHFHNdV01XcRnpK+KJyWUe2Q=
+	t=1763059480; cv=none; b=atSdF5MP8ZeUrPcGKXHXsrqRuLB83ytI2LRzSGlUHwZD8zYXAGbCeRCCJFzQ0RNm26ZRhh+v6jmEXA+s6zwOqHXZx+0JpwGdLQkpZePatDN7tfdGpNtbqZk6ZQobgEJmdVXD1TOXELLOfOOLk27kttTi11E+NDZDra8CxP5FaYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059500; c=relaxed/simple;
-	bh=uJwfz7y+UOjyl3txMn7ctra7YU4BaP0tmmsat+CbBmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fph8YdAWS0m8sG2DZdwUGJi/h2fkzm6BxWvZ6B0gA9rHa1v3PYxF3iv2lS9ouoJmWMjnyCtrvNsk2S+0yO9Bo1zqROQvD1swEMN9ukXdIzqdyn1xoGsOhB6/5TSEDgW+sHTgL5bobip2uK99a8Bm1siKZbIBkFi3WWCh8M642cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PR6xYFk6; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763059498; x=1794595498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uJwfz7y+UOjyl3txMn7ctra7YU4BaP0tmmsat+CbBmU=;
-  b=PR6xYFk6qzUcxnEZIaVSpVaAt0c+LkEsHcif0As7UCSa0pSy2T41nHG7
-   Q9QwUZ3pt+lA+rmvD7RSmUp8xmD8QUxpSPqf1yhjwPjtqRnvX/kM5yvF5
-   E+kXmf+4v3tLfRLbMBQpsdIcqXkqGmMXW3jPIc0TTp18Dy3ezY+LVXkjX
-   VjqfB/LjMLo7fm/QQ+S8Z4QMvcTHOhEe4ktAJ5wc4QmezKtRFcx0fqEAz
-   Y7kwqFgRvuMzK9vzJt8KeORMwV6ZQKfChP+Z+Ro3pfDZ10vbSjdniyvf2
-   XZWr+VrQQDe4VubCGGMx8V1j+FK3piuY2z/VL4xuL4BW4+yaNVmO8OWGy
-   g==;
-X-CSE-ConnectionGUID: 5iK8ftCjT0yY0GaecxRbSQ==
-X-CSE-MsgGUID: JFw5oROvSrKyATRfmd1kVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="82782235"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="82782235"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:44:57 -0800
-X-CSE-ConnectionGUID: pXRj2ntZQ4eRt1WRIuqYvA==
-X-CSE-MsgGUID: ckktt7N/RVqHdg43JpF33A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="189835423"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 13 Nov 2025 10:44:53 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJcJO-0005l9-2G;
-	Thu, 13 Nov 2025 18:44:50 +0000
-Date: Fri, 14 Nov 2025 02:43:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuntao Wang <yuntao.wang@linux.dev>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Morse <james.morse@arm.com>, Baoquan He <bhe@redhat.com>,
-	Zhen Lei <thunder.leizhen@huawei.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geoff Levand <geoff@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Alexander Graf <graf@amazon.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yuntao Wang <yuntao.wang@linux.dev>
-Subject: Re: [PATCH v2 3/7] of/fdt: Fix the len check in
- early_init_dt_check_for_usable_mem_range()
-Message-ID: <202511140236.zLyckeBA-lkp@intel.com>
-References: <20251113155104.226617-4-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1763059480; c=relaxed/simple;
+	bh=RE5P0X9RyxwuZjuBP8m4q0k+WYSIyGbR3hJ44uf4r7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pwkz69vaTBky/wT6T8EvvyTmsx6ymmwgRJ5uzyXhx1seqefQeTY9sPB16rypIsL1UgDGnE+tiZt0ykuSl0FbsUwde60BIUFIdblELCy5dngUPkyRwaBFz6sSlsCP1sHB2YUfNBXu3eo5ME/ibflNfd8l45fj3dOWMCT+0lGQy/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC0cZpHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9161C19421;
+	Thu, 13 Nov 2025 18:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763059479;
+	bh=RE5P0X9RyxwuZjuBP8m4q0k+WYSIyGbR3hJ44uf4r7s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pC0cZpHvF6d0hLbVgoHS87+c6/lwBz35mdlUvl+etMUkoQnyYhzYKdq2Y6LU9nGsL
+	 TyIbKCToQbXil/j7Hqc2snvjgEbSuvrBmloVgxHooOPwgNH+R0THEcYG4brJgOo6M8
+	 bqZp04im0C6eLsy+xT+Mro2rnnIa+sLi32Njq6GAliFD2kKvOJkNmUSsSp6CSqWxjD
+	 gXUyK8iE4eLp8CE7dWr+FSbvrhhoxms/LwucBVOTfQjAdZGyUEuJe5ycL/jzDB7B5G
+	 c+urL7KgfK111uclHjIboI/TfOcSAS6d252bJxTcdqfHzq3R+2MwtEVtqZJeohqgxr
+	 eCxQROZG94TZg==
+Message-ID: <027b6ac9-836d-4f89-a819-e24d487f9c8e@kernel.org>
+Date: Thu, 13 Nov 2025 19:44:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113155104.226617-4-yuntao.wang@linux.dev>
-
-Hi Yuntao,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.18-rc5 next-20251113]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuntao-Wang/of-fdt-Consolidate-duplicate-code-into-helper-functions/20251114-004121
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20251113155104.226617-4-yuntao.wang%40linux.dev
-patch subject: [PATCH v2 3/7] of/fdt: Fix the len check in early_init_dt_check_for_usable_mem_range()
-config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20251114/202511140236.zLyckeBA-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 0bba1e76581bad04e7d7f09f5115ae5e2989e0d9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251114/202511140236.zLyckeBA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511140236.zLyckeBA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/of/fdt.c:903:31: error: incompatible pointer types passing 'phys_addr_t *' (aka 'unsigned int *') to parameter of type 'u64 *' (aka 'unsigned long long *') [-Wincompatible-pointer-types]
-     903 |                 of_fdt_read_addr_size(prop, &rgn[i].base, &rgn[i].size);
-         |                                             ^~~~~~~~~~~~
-   drivers/of/fdt.c:663:60: note: passing argument to parameter 'addr' here
-     663 | void __init of_fdt_read_addr_size(const __be32 *prop, u64 *addr, u64 *size)
-         |                                                            ^
-   drivers/of/fdt.c:903:45: error: incompatible pointer types passing 'phys_addr_t *' (aka 'unsigned int *') to parameter of type 'u64 *' (aka 'unsigned long long *') [-Wincompatible-pointer-types]
-     903 |                 of_fdt_read_addr_size(prop, &rgn[i].base, &rgn[i].size);
-         |                                                           ^~~~~~~~~~~~
-   drivers/of/fdt.c:663:71: note: passing argument to parameter 'size' here
-     663 | void __init of_fdt_read_addr_size(const __be32 *prop, u64 *addr, u64 *size)
-         |                                                                       ^
-   2 errors generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: fix MAX_FOLIO_ORDER on powerpc configs with
+ hugetlb
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ Sourabh Jain <sourabhjain@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Donet Tom
+ <donettom@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
+References: <20251112145632.508687-1-david@kernel.org>
+ <eaf2e733-f967-43bb-88e6-7876a28a370c@lucifer.local>
+ <3fa6d496-b9de-4b66-a7db-247eebec92ca@kernel.org>
+From: Christophe Leroy <chleroy@kernel.org>
+Content-Language: fr-FR
+In-Reply-To: <3fa6d496-b9de-4b66-a7db-247eebec92ca@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +903 drivers/of/fdt.c
 
-   879	
-   880	/**
-   881	 * early_init_dt_check_for_usable_mem_range - Decode usable memory range
-   882	 * location from flat tree
-   883	 */
-   884	void __init early_init_dt_check_for_usable_mem_range(void)
-   885	{
-   886		struct memblock_region rgn[MAX_USABLE_RANGES] = {0};
-   887		const __be32 *prop;
-   888		int len, i;
-   889		unsigned long node = chosen_node_offset;
-   890	
-   891		if ((long)node < 0)
-   892			return;
-   893	
-   894		pr_debug("Looking for usable-memory-range property... ");
-   895	
-   896		prop = of_fdt_get_addr_size_prop(node, "linux,usable-memory-range", &len);
-   897		if (!prop)
-   898			return;
-   899	
-   900		len = min(len, MAX_USABLE_RANGES);
-   901	
-   902		for (i = 0; i < len; i++) {
- > 903			of_fdt_read_addr_size(prop, &rgn[i].base, &rgn[i].size);
-   904	
-   905			pr_debug("cap_mem_regions[%d]: base=%pa, size=%pa\n",
-   906				 i, &rgn[i].base, &rgn[i].size);
-   907		}
-   908	
-   909		memblock_cap_memory_range(rgn[0].base, rgn[0].size);
-   910		for (i = 1; i < MAX_USABLE_RANGES && rgn[i].size; i++)
-   911			memblock_add(rgn[i].base, rgn[i].size);
-   912	}
-   913	
+Le 13/11/2025 à 16:21, David Hildenbrand (Red Hat) a écrit :
+> On 13.11.25 14:01, Lorenzo Stoakes wrote:
+> 
+> [...]
+> 
+>>> @@ -137,6 +137,7 @@ config PPC
+>>>       select ARCH_HAS_DMA_OPS            if PPC64
+>>>       select ARCH_HAS_FORTIFY_SOURCE
+>>>       select ARCH_HAS_GCOV_PROFILE_ALL
+>>> +    select ARCH_HAS_GIGANTIC_PAGE        if ARCH_SUPPORTS_HUGETLBFS
+>>
+>> Given we know the architecture can support it (presumably all powerpc
+>> arches or all that can support hugetlbfs anyway?), this seems reasonable.
+> 
+> powerpc allows for quite some different configs, so I assume there are 
+> some configs that don't allow ARCH_SUPPORTS_HUGETLBFS.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes indeed. For instance the powerpc 603 and 604 have no huge pages.
+
+> 
+> [...]
+> 
+>>>   /*
+>>>    * There is no real limit on the folio size. We limit them to the 
+>>> maximum we
+>>> - * currently expect (e.g., hugetlb, dax).
+>>> + * currently expect: with hugetlb, we expect no folios larger than 
+>>> 16 GiB.
+>>
+>> Maybe worth saying 'see CONFIG_HAVE_GIGANTIC_FOLIOS definition' or 
+>> something?
+> 
+> To me that's implied from the initial ifdef. But not strong opinion 
+> about spelling that out.
+> 
+>>
+>>> + */
+>>> +#define MAX_FOLIO_ORDER        get_order(SZ_16G)
+>>
+>> Hmm, is the base page size somehow runtime adjustable on powerpc? Why 
+>> isn't
+>> PUD_ORDER good enough here?
+> 
+> We tried P4D_ORDER but even that doesn't work. I think we effectively 
+> end up with cont-pmd/cont-PUD mappings (or even cont-p4d, I am not 100% 
+> sure because the folding code complicates that).
+> 
+> See powerpcs variant of huge_pte_alloc() where we have stuff like
+> 
+> p4d = p4d_offset(pgd_offset(mm, addr), addr);
+> if (!mm_pud_folded(mm) && sz >= P4D_SIZE)
+>      return (pte_t *)p4d;
+> 
+> As soon as we go to things like P4D_ORDER we're suddenly in the range of 
+> 512 GiB on x86 etc, so that's also not what we want as an easy fix. (and 
+> it didn't work)
+> 
+
+On 32 bits there are only PGDIR et Page Table,
+
+PGDIR_SHIFT = P4D_SHIFT = PUD_SHIFT = PMD_SHIFT
+
+For instance on powerpc 8xx,
+PGDIR_SIZE is 4M
+Largest hugepage is 8M.
+
+So even PGDIR_ORDER isn't enough.
+
+Christophe
 
