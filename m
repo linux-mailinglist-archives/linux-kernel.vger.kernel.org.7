@@ -1,194 +1,261 @@
-Return-Path: <linux-kernel+bounces-900017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB86BC596AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:20:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A343C595A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD43F50671F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:05:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FE704ECE95
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8408A358D1C;
-	Thu, 13 Nov 2025 18:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9F63596F3;
+	Thu, 13 Nov 2025 17:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X45YUh3w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd6klbLc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C385270ED9;
-	Thu, 13 Nov 2025 18:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7421357736;
+	Thu, 13 Nov 2025 17:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057016; cv=none; b=JklSNQmhygxZJnhIVVD4NZjDVCiEu7lFNT3RT8mwSwVs8kM3SqSiMIGk46aTnRKHME1vW/Ga0UKgoSEQ8XBP9OPVUbX+3tN6j1soZt7Jw0kMrsPI41dQtpaxM4+3sJVjD2dNQcMLbGkvGBu9FV5uW16HWp4gZjsM45XhPChFjcE=
+	t=1763056635; cv=none; b=e2eDoI+q/s9hb4qi9fItvdKxnerPt/h2PmKBlUci3FiDQEo+ejRwu9GoDpSETayYGzCjQWKMy1bB0ZAli9U4RA/1ZVyg54ZRYMH6zf7n33/lXzkpu0oNk1jWac7QrooSaI/Dq1TFWwTrp/T16TqxU4Rc0CzzMWWneKzAzImcyno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057016; c=relaxed/simple;
-	bh=d+MXZ4DY1vw/qz4xqKxtxsAAGCa9o+jzDmGdXpGbA0I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O7mgZz2+n7D0dqbNOS/F/R5N7tVPJo1ZBLWOFNQvJ3TqnVK9dWNHKVAOtzTmyHgpJyL6nrq+1FrfdEcMOfAPQ1/ZUKkwzPzY+7H+sALGpHrB2Al0qnogemxFUkLS/zwVie2ukyDlKXCA/sAaFjtrpkFiRBAP0nOrIZO34TcjaxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X45YUh3w; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763057015; x=1794593015;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=d+MXZ4DY1vw/qz4xqKxtxsAAGCa9o+jzDmGdXpGbA0I=;
-  b=X45YUh3wQCUPgQJC29oDCFxEV+xpKBuXoKGpAsTgOoLteAJNIB6aA/Nu
-   tqezzy2IUa1gsIoEVgZlDYGrhpFytm4X8s8uE0yQq8L3Rik+BI2/SLavm
-   N+Uj1n7SidYknUzogBNU64T140pRcrxEFX21ggrWIPkBN3rmp0w6Au9YV
-   r90HB2eFVR79/RLSzIAVehwnrMeWzneWuok81QQCtJmCZz79WUxqCKa78
-   0m7KYHQWZgBDmrT7ZNbyPi/PCxLVpNfH/MMMJ2dUSOX+MbNvbD+PXwrz+
-   SteaEgzIPF4buluVBkVSEcz+rbIT3TNL9+oAZwVYGMMTMvwe22PbnOBBI
-   Q==;
-X-CSE-ConnectionGUID: VjPxJTJpSCa9bPkegCOJJg==
-X-CSE-MsgGUID: abM4HxsyT5+Pz4Wkoqgy0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="65186449"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="65186449"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:03:34 -0800
-X-CSE-ConnectionGUID: 4jHij2NnTPunN/MfNXLzSQ==
-X-CSE-MsgGUID: T9yigM35Qiyv2xnabZItlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="194001432"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:03:27 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	"Michael J . Ruhl" <mjruhl@habana.ai>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v4 11/11] PCI: Convert BAR sizes bitmasks to u64
-Date: Thu, 13 Nov 2025 20:00:53 +0200
-Message-Id: <20251113180053.27944-12-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251113180053.27944-1-ilpo.jarvinen@linux.intel.com>
-References: <20251113180053.27944-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1763056635; c=relaxed/simple;
+	bh=LKHZZvO2jHql3ksMJdLc/BWAsCltAd1QdFx3MtO4FOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEQednLIl7/HCeqzKLIGBSNFtaGx53Hz2eeuY3rBAK49BERyvHmIMcJQrfO5/I7YqIgogaAXzQEU5P6cOqwE7fTRiysnD2Uq/slVzhnh9Ejw3IJE8nsWLnMD8fvtqKsc/rbtxbIRleyorq9eF31U2sd8mLW/XO9MTtFuJlDHonQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd6klbLc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550D7C19421;
+	Thu, 13 Nov 2025 17:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763056635;
+	bh=LKHZZvO2jHql3ksMJdLc/BWAsCltAd1QdFx3MtO4FOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nd6klbLcMqvMpiOb4KGbXZMnu1ps+D0i98PFnP2oFedbhFgeV7xyDjteXNJy/9dO2
+	 whKX3d5CZHgBM4uQMUueH1mEORo7wGI1j86yhUsvaB+MxXMWIXxRUhsN2TacuZ8Hxy
+	 rqo6qtCaAecZUXio3Ytt6oxn2qPuxbz7UQjjqbs29gechjlatv8+3Oj1uXJU+A5Ypr
+	 K2CF6gB0zefc2PXYWO56ysq+4cCy9U8FhQbnPYyK0I63aL5g1FLPpZ3wAVMyL9X6So
+	 yy5qwjzL0sES6JI/1cZjFmQrHKQ4XkxhuJ5bWyEtkqlAdwM6TmzPJ5Jzj3U6EJx3ua
+	 iI7ZgHmoeZeiQ==
+Date: Thu, 13 Nov 2025 12:01:37 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
+Message-ID: <zi6jlw35clxwxtlshhjazbotv2wkfrbv3kkzgb76igirycxzak@3nujn2mvhjbh>
+References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
+ <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
+ <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
+ <ad00835e-bc20-4f97-aba6-e1b4f5e97191@oss.qualcomm.com>
+ <f2q7a7r7quq6pplcn3kklwrhdc6hxa5zvc7osygshtyurwyvi4@t5iyragt7irh>
+ <b5ecf5e7-4dc4-41ac-9b56-7c52afacb950@oss.qualcomm.com>
+ <01de9616-825b-4fbb-83cf-e0bf91e8cf39@oss.qualcomm.com>
+ <81174278-c3c4-4dc6-856e-b58aa2cb6fea@oss.qualcomm.com>
+ <br3fmilhh7fihv4atnf4olvy4w66z4p7sh4ypicuc3766ky6tb@pppfdynfhfz7>
+ <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
 
-PCIe r7.0, sec 7.8.6, defines resizable BAR sizes beyond the currently
-supported maximum of 128TB, which will require more than u32 to store the
-entire bitmask.
+On Thu, Nov 13, 2025 at 06:03:33PM +0800, Aiqun(Maria) Yu wrote:
+> On 11/12/2025 12:05 AM, Bjorn Andersson wrote:
+> > On Tue, Nov 11, 2025 at 08:27:17PM +0800, Aiqun(Maria) Yu wrote:
+> >> On 11/7/2025 12:24 AM, Konrad Dybcio wrote:
+> >>> On 11/6/25 11:16 AM, Aiqun(Maria) Yu wrote:
+> >>>> On 11/6/2025 5:06 AM, Bjorn Andersson wrote:
+> >>>>> On Tue, Nov 04, 2025 at 01:35:01PM +0800, Jingyi Wang wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 11/4/2025 12:02 PM, Bjorn Andersson wrote:
+> >>>>>>> On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
+> >>>>>>>> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
+> >>>>>>>>> Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
+> >>>>>>>>> control and status functions for their peripherals.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >>>>>>>>> ---
+> >>>>>>>>>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+> >>>>>>>>>  1 file changed, 1 insertion(+)
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>>>> index 14ae3f00ef7e..ae55b0a70766 100644
+> >>>>>>>>> --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>>>> +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>>>> @@ -48,6 +48,7 @@ properties:
+> >>>>>>>>>            - qcom,tcsr-ipq8064
+> >>>>>>>>>            - qcom,tcsr-ipq8074
+> >>>>>>>>>            - qcom,tcsr-ipq9574
+> >>>>>>>>> +          - qcom,tcsr-kaanapali
+> >>>>>>>>
+> >>>>>>>> It looks good to me. Glymur didn't have this functionality verified yet.
+> >>>>>>>
+> >>>>>>> You spelled Reviewed-by: Aiqun Yu <..> wrong.
+> >>>>>>>
+> >>>>>>>> Remind for review.
+> >>>>>>>
+> >>>>>>> No need for that, reviewers will review when they have time.
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>
+> >>>>>> Hi Bjorn,
+> >>>>>>
+> >>>>>>>
+> >>>>>>> But that said, most modern additions to this binding follow the common
+> >>>>>>> format of qcom,<soc>-<block>.
+> >>>>>>>
+> >>>>>>> So I would prefer this to be qcom,kaanapali-tcsr.
+> >>>>>>>
+> >>>>>>> Regards,
+> >>>>>>> Bjorn
+> >>>>>>>
+> >>>>>>
+> >>>>>> qcom,tcsr-kaanapali is used to distinguish with binding for GCC:
+> >>>>>> https://lore.kernel.org/all/20251030-gcc_kaanapali-v2-v2-2-a774a587af6f@oss.qualcomm.com/
+> >>>>>>
+> >>>>>
+> >>>>> So, qcom,kaanapali-tcsr is the clock controller region of TCSR and
+> >>>>> qcom,tcsr-kaanapali is the non-clock controller region of TCSR?
+> >>>>>
+> >>>>> Sorry for not understanding that earlier, but this doesn't work for me.
+> >>>>>
+> >>>>> It's a bit of a lie that TCSR_MUTEX is a separate node in devicetree,
+> >>>>> but it's always an nice chunk of 256K in the beginning (or end in some
+> >>>>> cases?) of TCSR. But for the rest, there should be a single tcsr node in
+> >>>>> DeviceTree and that one node should be a syscon and a clock controller.
+> >>>>
+> >>>> I've been dive deeply on this tcsr block. And actually the tcsr clock
+> >>>> controller part is a very small trunk size(0x1c) of the tcsr block. And
+> >>>> this block have contain other multiple purposed sys registers. So maybe
+> >>>> we can have a more discussion on how to have device tree node describe
+> >>>> this situation? It is not straight forward that to have a non-tcsrcc
+> >>>> related area being described in tcsrcc.
+> >>>>
+> >>>> What about option 1 (tcsr_mutex + tcsr_dload_syscon + tcsrcc):>> tcsr_mutex: hwlock@1f40000 {
+> >>>> 	compatible = "qcom,tcsr-mutex";
+> >>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+> >>>> 	#hwlock-cells = <1>;
+> >>>> };
+> >>>>
+> >>>> tcsr_dload: syscon@1fc0000 {
+> >>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+> >>>> 	reg = <0x0 0x1fc0000 0x0 0x30000>;
+> >>>> };
+> >>>>
+> >>>> tcsrcc: clock-controller@1fd5044 {
+> >>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+> >>
+> >> Remove "syscon" here. Not need for tcsrcc fallback to "syscon".
+> >>
+> >>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+> >>>> ...
+> >>>> };
+> >>>>
+> >>>> What about option 2 (tcsr whole block + tcsr_mutex  + tcsrcc):
+> >>>>
+> >>>> tcsr: syscon@1f40000 {
+> >>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+> >>>> 	reg = <0x0 0x1f40000 0x0 0xC0000>; //align with the whole hardware
+> >>>> block design.
+> >>>> };
+> >>>>
+> >>>> tcsr_mutex: hwlock@1f40000 {
+> >>>> 	compatible = "qcom,tcsr-mutex";
+> >>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+> >>>> 	#hwlock-cells = <1>;
+> >>>> };
+> >>>>
+> >>>> tcsrcc: clock-controller@1fd5044 {
+> >>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+> >>
+> >> Same here, don't need to have "syscon" here.
+> >>
+> >>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+> >>>> ...
+> >>>> };
+> >>>
+> >>> Is there anything wrong with what we have done for x1e80100?
+> >>> ______________________
+> >>> |             |       |
+> >>> | TCSR_MUTEX  | mutex |
+> >>> |_____________|_______|
+> >>> |	      |       |
+> >>> | RANDOM_REGS |       |
+> >>> |_____________|       |
+> >>> |	      |       |
+> >>> | TCSR_CLKS   | tcsr  |
+> >>> |_____________|       |
+> >>> |	      |       |
+> >>> | RANDOM_REGS |       |
+> >>> |_____________|_______|
+> >>>
+> >>
+> >> Second you! We can firstly have a option selected for kaanapali, and
+> >> then other platform can be followed or fixed afterwards.
+> >>
+> >> Here suggest to have option 2 which is remove "syscon" from tcsr clocks,
+> >> and only add the whole "syscon" to "tcsr" whole block.
+> >>
+> > 
+> > I think you misunderstood Konrad, or perhaps I misunderstand you.
+> 
+> Maybe let Konrad help to explain more here. I thought the chart below is
+> very clearly indicate the tcsr_clks is only part of the tcsr block.
+> 
 
-Convert Resizable BAR related functions to use u64 bitmask for BAR sizes to
-make the typing more future-proof.
+Yes, the TCSR clocks are controlled in the TCSR block, but there's no
+"TCSR clocks"-IP-block in the memory map, it's just some registers in
+the TCSR block.
 
-The support for the larger BAR sizes themselves is not added at this point.
+And technically TCSR_MUTEX isn't a block of its own either, but so far
+it's always been a clearly defined region of TCSR, either in the
+beginning or end. (Might even be a separate block in the register map on
+some older target, iirc)
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/xe/xe_vram.c | 2 +-
- drivers/pci/iov.c            | 2 +-
- drivers/pci/pci-sysfs.c      | 2 +-
- drivers/pci/rebar.c          | 4 ++--
- include/linux/pci.h          | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > This is what we have for Hamoa:
+> > 
+> > tcsr_mutex: hwlock@1f40000 {
+> >         compatible = "qcom,tcsr-mutex";
+> >         reg = <0 0x01f40000 0 0x20000>;
+> >         #hwlock-cells = <1>;
+> > };
+> > 
+> > tcsr: clock-controller@1fc0000 {
+> 
+> 
+> It is not a clock-controller start from 0x1fc0000.
+> 
 
-diff --git a/drivers/gpu/drm/xe/xe_vram.c b/drivers/gpu/drm/xe/xe_vram.c
-index 524469f8a4bd..10f8a73e190b 100644
---- a/drivers/gpu/drm/xe/xe_vram.c
-+++ b/drivers/gpu/drm/xe/xe_vram.c
-@@ -69,7 +69,7 @@ static void resize_vram_bar(struct xe_device *xe)
- 
- 		if (!pci_rebar_size_supported(pdev, LMEM_BAR, rebar_size)) {
- 			drm_info(&xe->drm,
--				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%x. Leaving default: %lluMiB\n",
-+				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%llx. Leaving default: %lluMiB\n",
- 				 (u64)pci_rebar_size_to_bytes(rebar_size) >> 20,
- 				 pci_rebar_get_possible_sizes(pdev, LMEM_BAR),
- 				 (u64)current_size >> 20);
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 71ed85d38508..00784a60ba80 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -1367,7 +1367,7 @@ EXPORT_SYMBOL_GPL(pci_iov_vf_bar_set_size);
- u32 pci_iov_vf_bar_get_sizes(struct pci_dev *dev, int resno, int num_vfs)
- {
- 	u64 vf_len = pci_resource_len(dev, resno);
--	u32 sizes;
-+	u64 sizes;
- 
- 	if (!num_vfs)
- 		return 0;
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 2a1b5456c2dc..cb512bf0df7c 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1587,7 +1587,7 @@ static ssize_t __resource_resize_show(struct device *dev, int n, char *buf)
- 	pci_config_pm_runtime_get(pdev);
- 
- 	ret = sysfs_emit(buf, "%016llx\n",
--			 (u64)pci_rebar_get_possible_sizes(pdev, n));
-+			 pci_rebar_get_possible_sizes(pdev, n));
- 
- 	pci_config_pm_runtime_put(pdev);
- 
-diff --git a/drivers/pci/rebar.c b/drivers/pci/rebar.c
-index d85d458c7007..8f7af3053cd8 100644
---- a/drivers/pci/rebar.c
-+++ b/drivers/pci/rebar.c
-@@ -105,7 +105,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
-  * Return: A bitmask of possible sizes (bit 0=1MB, bit 31=128TB), or %0 if
-  *	   BAR isn't resizable.
-  */
--u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
-+u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
- {
- 	int pos;
- 	u32 cap;
-@@ -155,7 +155,7 @@ EXPORT_SYMBOL_GPL(pci_rebar_size_supported);
-  */
- int pci_rebar_get_max_size(struct pci_dev *pdev, int bar)
- {
--	u32 sizes;
-+	u64 sizes;
- 
- 	sizes = pci_rebar_get_possible_sizes(pdev, bar);
- 	if (!sizes)
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 898bc3a4e8e7..4b7f4c08b5c7 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1423,7 +1423,7 @@ int pci_release_resource(struct pci_dev *dev, int resno);
- /* Resizable BAR related routines */
- int pci_rebar_bytes_to_size(u64 bytes);
- resource_size_t pci_rebar_size_to_bytes(int size);
--u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar);
-+u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar);
- bool pci_rebar_size_supported(struct pci_dev *pdev, int bar, int size);
- int pci_rebar_get_max_size(struct pci_dev *pdev, int bar);
- int __must_check pci_resize_resource(struct pci_dev *dev, int i, int size,
--- 
-2.39.5
+Compare with GCC, the DeviceTree isn't saying "address X is a clock,
+address Y is a reset, address Z is a GDSC...".
 
+The DeviceTree says "at address A we have the Kaanapali GCC IP block",
+and we can refer to it from other nodes as a clock controller, a
+reset-controller, and a power-domain provider.
+
+
+Same here, the DeviceTree should say that at 0x01fc0000 there is a
+Kaanapali TCSR block, which is a "syscon", a clock controller and a
+reset controller.
+
+We don't know which operating system (or other implementation - e.g.
+U-boot) will consume this information, and we don't know what frameworks
+or driver model is implemented, so we need to describe things without
+thinking of a particular driver model.
+
+Regards,
+Bjorn
 
