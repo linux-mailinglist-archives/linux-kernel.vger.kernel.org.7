@@ -1,229 +1,109 @@
-Return-Path: <linux-kernel+bounces-899485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E5FC57F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:30:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF07CC57E9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:24:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D152F3AE52A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:18:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 382914E94BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76479284884;
-	Thu, 13 Nov 2025 14:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fsyT2DR9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fHFYuCyT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC28283FE2;
+	Thu, 13 Nov 2025 14:18:53 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0867E2727E3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DC223D288
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043518; cv=none; b=T+VrqL8lIQI7wTgfIC4PA2RP3GYAs/rnyAJj6IwOYPbdqC1/m5I/Zp4VvlmXNOrszSaZwI4CeX4UZcgNJk1HdXRsH5T2leI4m7oTJyi53+QeyPqJzcopOyhw3I8++WKyfrHpNN+/G3HlqhMyIdVm107OpUOd8Q2o51I925dmWZs=
+	t=1763043533; cv=none; b=YFrOEBfgRjUpEF0TzMsM4FmgUJbuI73yfUEnKQ7y4gaISwg/VEBHdcRegj/y50Ssry6Itpqa/IJwoQcP9LlRunLWGwse3iPxGp8rXmHs/tm81itVzM3DiF/3e2tCyrjkhbUje0WJN6bLx95LdQL2P3S7NDDIrJsfAU4SPvnmLwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043518; c=relaxed/simple;
-	bh=YPiMjVGtnmzVmhP2MBtXj02fTkYPYr7pqgd1RZjfN3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBYkjMtqgysLByZCrq0MCwoUAvkynFekgttSbsZfrCtS6TOLy5nVFJg10YS8Mp5ONhCFz8d5Mbjf6WljDRz24kNnQwxqjd9ZRBnrZb5ovwSgPbM56V2SKactaAr5wfhoOcZR1oI+m6MT8e31I2/6pjbbYywrqfQcld5SR/TQjHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fsyT2DR9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fHFYuCyT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD8v3Dh2993478
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:18:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PYfAGt7xLkn4IooIS/dHIQut
-	IGT7n93ycU/0f7jdrwk=; b=fsyT2DR9Z6EGpz7UZwYGX+c/PHOi6PG2tCSSe10e
-	j0QKJHQtqWK5K2o+m5nj2y2v4wYkYHoLmMo5PJGWt6cX8cMxwQq1em76Pw7v9er+
-	J68o4gDGAOCcXxa/3ODHDXci1zLYFJC2mGYOFJvR46qPpeAuoYU3G1MpRpM9cnZR
-	oRGwhI3J9WINQuuVJbx7SxT6Q6Jz/gV3/pMpVocFX55Vng9Npno7AJVjplk/jfyU
-	Uj8aisMlrZWXj6+IeSWDq8kAyaJObuWWDNjp8kWG4ArlB6erAduP8b2MSGJPqjM7
-	Zj80xLF9gpbpVReuCCvxNqGeyn9WBaZm7Q2v4B5Aj4tg2g==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ad47jjgx3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:18:35 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-29809acd049so11505965ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763043515; x=1763648315; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYfAGt7xLkn4IooIS/dHIQutIGT7n93ycU/0f7jdrwk=;
-        b=fHFYuCyTCxRP2paq5NpShMNdHpNYheqXhDwMSRMhaWcJSlTpY+pLLriU0YS353wbXQ
-         ooK0L+hdUHfwUXrFJ7UOpijvLzqPNZG1zUzQ6EGTVNa7Z445q5XFhW8fT1eLtuyGrj0I
-         471ulT7lATNStZrV2aziqFl/eJIYNSlZ3nf+8y0Dci3VM5RU6n4zPhXQa1v30FzOk88K
-         PvSjoDTLjotSWTLsl0VKdLosOCqJ/cUop8ddJ37lq3HlyRDttX76yawqICE4taoXhe1w
-         ErcPIVfEAn6Tl6wQg0rv+fFeB5n8Pd/Lk5Vtu9wjQCbPJpvSne8z5XV3Y0EgqkTOU0+g
-         Yb3w==
+	s=arc-20240116; t=1763043533; c=relaxed/simple;
+	bh=SglwgdJjdXgtbcGuhBd+z1SY8I+c9+nx3fEEJ4chWEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zk4zJCgUgjFDdFWgzleHCMLVsVBdPEGmcoW0Q5OjBx4LYxGz5Mk9TogS3M+wM89Xd/63rsqg9SIClvRf3XxJ2kwdM0fvwlkQGBVtL0xzQ1Te4LgoFeJEGN+0VyL/v4wHYk0YkSKamkhfFLE26iYo/TmuE2DQeKXGKfI4X1Ravbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5dbde7f4341so1501397137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:18:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763043515; x=1763648315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PYfAGt7xLkn4IooIS/dHIQutIGT7n93ycU/0f7jdrwk=;
-        b=DDLslogNz53OQN8zTzWkjIzmJ6w7CsfYprbs7aPulj0rpCj9zRuT5fzeQ5hSyVzL6O
-         gD3DnPeayuSuljzyO90NyJCNnPePlGAneDyZkMiHB8vyC2aialfho/yK9WUP88iS5GMb
-         XGloLxQF3EPgBn9yUHRoElw/phZynZt2NHjzVpXDnbfxQDscQmocmhXIvE9q8nlP3asW
-         AYSETbDnCEUKnSjAPdIqPyMMLaq2iytoiQzZ3vdWcQMv4tXGKdwSx6tbPt2p8qhpMAG9
-         6ay6pqFqrBW9NdnwLXf7RC2Eu8dWA5HPIW4lC+YvhdByJ6O4RImroZWOjRujG2un7p/M
-         9g8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJ/NcpmGCtS1l/jRhVE3RwZbwQ0zk5dZUQFtLbPwRZT4IH/zPOibRKIby50wi4QyFiGZfDnfg5NkU0Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIRCGYHs1B8XU6g5tm1/tuL9lw+LvoRZO8TZqZOhQgL9h0/eba
-	uFX/WsA8WUV2gYbmf9iZMVjPoF/r0qG6sntolP2msHq5BC1fGM3mQNGDctgawQHYZGz8mjhfSBu
-	XJvkyKhf5LaOaEuS3Er4zkPfg2ihwI3yLCIFDQ+XIb3zIryp5pJEOke2UY85wUJkcUGw=
-X-Gm-Gg: ASbGncseXfn4ZtGqbPWd/1PelkMWIsHJDbFmIieBz1/LlUzRTL4GjmjugrDJJFRMw/W
-	bpqDhFOuX5l9Yc7C4PGZDBt9ylfyh7x7X5UcF1uJoCGQN9tk1v+d65pJoUdGDCcKjLeqoku24E/
-	S+buxxHo824Y/4RrU3mByBMJTq84pANS13a8L6HSG8H85N2fensQ90ZbdU3/tTiyuEbaCHW2H1M
-	x//qjta0VGzAvIY03E0hlrYPOvSOR1sRnXaUjZXfJ5PIKJroMK9kKFBEqovbXC7YMC7NqRaWXdY
-	ZFwdSuR8WBqyyJSyHPtR8A1wcrMDnaq9yWjxMyss4n/K4jP9p3qryfE3DAFHp7Jgtgh5FUe8WZ7
-	334DnvWvefGxYohlAlv1At8dqMA==
-X-Received: by 2002:a17:903:1c7:b0:267:f7bc:673c with SMTP id d9443c01a7336-2984edccae7mr85923145ad.44.1763043514533;
-        Thu, 13 Nov 2025 06:18:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJyQhQCidxyHZGx2ofEawlrPhEHp8JTQarlTsdV8cD9Z81y5uxOIWAhSZjP2GH3r0u2/kFpQ==
-X-Received: by 2002:a17:903:1c7:b0:267:f7bc:673c with SMTP id d9443c01a7336-2984edccae7mr85922725ad.44.1763043513787;
-        Thu, 13 Nov 2025 06:18:33 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245f74sm27334445ad.39.2025.11.13.06.18.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 06:18:33 -0800 (PST)
-Date: Thu, 13 Nov 2025 19:48:26 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 04/14] firmware: qcom_scm: Introduce PAS context
- initialization helper function
-Message-ID: <20251113141826.qvjz4ozlnvx3ucw6@hu-mojha-hyd.qualcomm.com>
-References: <20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com>
- <20251113-kvm-rproc-v7-v7-4-df4910b7c20a@oss.qualcomm.com>
- <aRXHlL49sSGML__G@linaro.org>
+        d=1e100.net; s=20230601; t=1763043531; x=1763648331;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8lsBSIAEUPRTn5OJ+c8R/u4+S4nJOhGwxwcKm3MB6tI=;
+        b=tAhspPjbqnJt9LdPG81qhvOpTJSP42hadBsTc7D3EK3Wht+MEBHXC5ZTA/GWZKF5nN
+         JkzOG+C1W0g6UeYXjvrcjzYGwav0LTb9l0W5ROjw8rjo1v7dUB8E/724KXfOof6Ht0TF
+         3jOUbK2Jn4Aru5+nb3Czp+Kb/ZtCXyp3WUnr7Sdh5fHhCdgzVt7JRBxhFw4dgl9Yyk1G
+         wgULvlVQNVQXGDQzoBpZ4WJbVgTy2VZPyJeaQTZXj8iibKZ1hXa9glzmWNZniZifLIuQ
+         8nC5IO1y8+7jwz/XHPPU5Nr0nHrI3RzD8ekkcztMJL2EezoarwUZ3PiJA727U8XlGEvu
+         H/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVE6bEs+Tv8qHcHfFmw3WSvOqpRw2W1l+nd85nEXn9nIUWLOBsCDNPDSEGRk1qkX4o9tcntNHBrMueDOFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlUcklpB9stZdQkn13AxlJkf4MHqhIpsdSo3HWZ0kNzrDSrb6x
+	crhMUTYRwuiPqZVXyhzLDWysfDuhvUFqqTDc4eZaRg8J6Uykbd94yfL/bkCvOgku33s=
+X-Gm-Gg: ASbGncvK4LLFhpMMr/eKRJdiI+UX5kLgaouRc8e01HoCzs/k5neKmhiG7tHuxXpU7kT
+	aVHo4kGLwkVMFirrzpG+KjL6ey7yO/3ynoZlBhze1CoRJJLSZf1jSf57ICm0C4vcIprl8zfeDu2
+	ERPYj460JMMO+8f6+1gswi3JwYi08a8tFhqL5OPc1eLencmD47hn3RR25I4KiwW2ZIHBTGeJVAl
+	o2zMF75f+AdPPVGvRtzsyTpL+MvluDQTW/lL5S7YSyw2UAH4BmD94+RKuNTaZxtgKo2dTIOEmkR
+	pJ4P9afp2C0SmDqkpnQsZrYh5sxRNR3S2G1hKv/EjBaduqk7pIpMPdUhx6dCoNqotj3lVuONbiE
+	b/U/e/uWauATZa2FA6DrWhBW41cHCvKnTEDG4AuDZYDasG4PSZb8N6xHf987DnADC/tWY4jEyvR
+	aYcxa/syNmU9UXdWVXec6pvQfrxhfnjQPZKGMcmA==
+X-Google-Smtp-Source: AGHT+IE5Tc0LqA73lGckOlLaqs5fZARLeOjc3JTZKy1vUnRFtDSc53ZWJourejkbDoo9Jd72R0yJfQ==
+X-Received: by 2002:a05:6102:3310:b0:5dd:a0bf:8c89 with SMTP id ada2fe7eead31-5dfb40abcbbmr1150118137.7.1763043530698;
+        Thu, 13 Nov 2025 06:18:50 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f49865fsm702922e0c.22.2025.11.13.06.18.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 06:18:50 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5deb0b2f685so1099703137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:18:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW1QlgycaEFI7ZVUWQ0gDxgFzAdCMkb4ZKXKfUh9suVS/zkh/pGRBJwpIe4S9EjBPoh5ZvZnEnOW0cpVls=@vger.kernel.org
+X-Received: by 2002:a05:6102:b0b:b0:5db:dad4:840 with SMTP id
+ ada2fe7eead31-5dfb41e3b61mr1262190137.12.1763043529716; Thu, 13 Nov 2025
+ 06:18:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRXHlL49sSGML__G@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDEwOSBTYWx0ZWRfX7umwMi+zJCy/
- wMiFxx0Kmeo/HJeRX/TR+ZiFoVQ/X+6xHx/rpP49GuawK6J6xkgu51kI5rataO/z9MifAQrlY9q
- 3Yo/w2YfwUK0Yzrn1FGA43bcKOOWeLRmaH2bhs0ZP9rF74eODaRxXpqGaaB+7zt2h7k0k4aqg+Z
- JHtAHE0bViif//vj914LL1FI0OhJzJf40QfnIkFUp80cpt2O0y5JVtw5Qq7SWHk1u1oaElAIYR9
- aQtei+Tb21GjQ4D83+DitojPJ5Lq4DCZH6M/l8+Bi446Km2WhG66uh96mLt6WCHp7uKpae1n7SM
- Xkx9+W3bvBaEz7F3b7v8NbcMHB1dtoODCWEdf4DKVKHoJTiE++khnrEOUVJcBJvTLszPGftajcI
- AjcfOWrgmOYsf4n6SAUESxrvD01lig==
-X-Proofpoint-GUID: HR-if21hE_LMNDXnLkAjnG9AD_OeU3Yv
-X-Authority-Analysis: v=2.4 cv=A5Fh/qWG c=1 sm=1 tr=0 ts=6915e8bb cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=uguQWuAc9R0SQO7IgggA:9
- a=CjuIK1q_8ugA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: HR-if21hE_LMNDXnLkAjnG9AD_OeU3Yv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 clxscore=1015 spamscore=0 phishscore=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130109
+References: <20251107210706.45044-1-ovidiu.panait.rb@renesas.com> <20251107210706.45044-4-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251107210706.45044-4-ovidiu.panait.rb@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 15:18:36 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXr+pdZuYM0b1p+hZAjFMR25t3FV8cGWSbqRnTk118TPw@mail.gmail.com>
+X-Gm-Features: AWmQ_blZmrYQK7IiX68T9lKCtdQnRgn565V-vW-eTn9Sd-DrKbAs0Z8Z3RjSLgE
+Message-ID: <CAMuHMdXr+pdZuYM0b1p+hZAjFMR25t3FV8cGWSbqRnTk118TPw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] arm64: dts: renesas: r9a09g057: Add RTC node
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-rtc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 13, 2025 at 12:57:08PM +0100, Stephan Gerhold wrote:
-> On Thu, Nov 13, 2025 at 04:05:54PM +0530, Mukesh Ojha wrote:
-> > When the Peripheral Authentication Service (PAS) method runs on a SoC
-> > where Linux operates at EL2 (i.e., without the Gunyah hypervisor), the
-> > reset sequences are handled by TrustZone. In such cases, Linux must
-> > perform additional steps before invoking PAS SMC calls, such as creating
-> > a SHM bridge. Therefore, PAS SMC calls require awareness and handling of
-> > these additional steps when Linux runs at EL2.
-> > 
-> > To support this, there is a need for a data structure that can be
-> > initialized prior to invoking any SMC or MDT functions. This structure
-> > allows those functions to determine whether they are operating in the
-> > presence or absence of the Gunyah hypervisor and behave accordingly.
-> > 
-> > Currently, remoteproc and non-remoteproc subsystems use different
-> > variants of the MDT loader helper API, primarily due to differences in
-> > metadata context handling. Remoteproc subsystems retain the metadata
-> > context until authentication and reset are completed, while
-> > non-remoteproc subsystems (e.g., video, graphics, IPA, etc.) do not
-> > retain the metadata context and can free it within the
-> > qcom_scm_pas_init() call by passing a NULL context parameter and due to
-> > these differences, it is not possible to extend metadata context
-> > handling to support remoteproc and non remoteproc subsystem use PAS
-> > operations, when Linux operates at EL2.
-> > 
-> > Add PAS context data structure and initialization helper function.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> >  drivers/firmware/qcom/qcom_scm.c       | 32 ++++++++++++++++++++++++++++++++
-> >  include/linux/firmware/qcom/qcom_scm.h | 12 ++++++++++++
-> >  2 files changed, 44 insertions(+)
-> > 
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > index 0a0c48fca7cf..e4eb7f3ab7a5 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -558,6 +558,38 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
-> >  		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
-> >  }
-> >  
-> > +/**
-> > + * devm_qcom_scm_pas_context_init() - Initialize peripheral authentication service
-> > + *				      context for a given peripheral
-> > + *
-> > + * PAS context is device-resource managed, so the caller does not need
-> > + * to worry about freeing the context memory.
-> > + *
-> > + * @dev:	  PAS firmware device
-> > + * @pas_id:	  peripheral authentication service id
-> > + * @mem_phys:	  Subsystem reserve memory start address
-> > + * @mem_size:	  Subsystem reserve memory size
-> > + *
-> > + * Upon successful, returns the PAS context or ERR_PTR() of the error otherwise.
-> > + */
-> > +void *devm_qcom_scm_pas_context_init(struct device *dev, u32 pas_id, phys_addr_t mem_phys,
-> 
-> Why does this return void* rather than struct qcom_scm_pas_context *?
+On Fri, 7 Nov 2025 at 22:07, Ovidiu Panait <ovidiu.panait.rb@renesas.com> wrote:
+> Add RTC node to Renesas RZ/V2H ("R9A09G057") SoC DTSI.
+>
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-I kept it similar to align with other devm_* api, however, I can change it to
-struct qcom_scm_pas_context if it looks more reasonable.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.19.
 
-> 
-> > +				     size_t mem_size)
-> > +{
-> > +	struct qcom_scm_pas_context *ctx;
-> > +
-> > +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> > +	if (!ctx)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	ctx->dev = dev;
-> > +	ctx->pas_id = pas_id;
-> > +	ctx->mem_phys = mem_phys;
-> > +	ctx->mem_size = mem_size;
-> > +
-> > +	return ctx;
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_qcom_scm_pas_context_init);
-> 
-> Thanks,
-> Stephan
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
--Mukesh Ojha
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
