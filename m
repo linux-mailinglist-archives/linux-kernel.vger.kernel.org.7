@@ -1,110 +1,291 @@
-Return-Path: <linux-kernel+bounces-900032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B1C597BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:35:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931C1C596A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 480654F7200
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9FC3A625B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BED34F486;
-	Thu, 13 Nov 2025 18:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39823358D34;
+	Thu, 13 Nov 2025 18:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LGdw+TmK"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFezV8W+"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E37D299A8C;
-	Thu, 13 Nov 2025 18:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA7A22A7E0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057375; cv=none; b=V0ZCqBnhrbDM+yxX8rTch0rx1aqzquLHD2LyRl+xdIZ2uTj2UAY3sal6RCxtIX5pXv5Z5LOyuPjQ5jP12ujfUOKMF8DM3y3FJmJzC3ao2gmvW4FtXTI0K1AjOKUqYYgCUKax1uIDo99aL7OSvsXJYb6Gp7hI/PaFIGZQr1AwfRI=
+	t=1763057438; cv=none; b=XR1l4ETTIpKEXVrVY52rcA27deRspdaSvnDCHOtxaD0UzoNlTwMdIe21u4G6s+fVQ25zrmI3NJKN4bSEzcCi9+wcuqVT04yA5UwQOYIX+awtTtE8Ct6+MHNaqfUsoUluUzJw9yDNKW7dAR81AXnxaMpjVF/5ML/L5PvYhCZu+Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057375; c=relaxed/simple;
-	bh=+WfrJYAcG5cVtaeOgZk4Ik7SVUGLhfv+q/98SoorJR0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=AMEc5pebWVex25mUxgcDMMvSFcEM6kEJqIyX2tKk3owWzqsP6QkeIEP82IWCgL+celrccyeea5F7PoH7ZbvB9hFzkQerHIjFW3qz8G2KJc8N7P5zQcSBK6HMTTuPZdi+x7DOfI68j/ULuxzxnoV+O+gKRkZ4WdJXx4WGP26pj8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LGdw+TmK; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B448026599;
-	Thu, 13 Nov 2025 19:09:23 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 4JuVBlzQUfkY; Thu, 13 Nov 2025 19:09:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1763057363; bh=+WfrJYAcG5cVtaeOgZk4Ik7SVUGLhfv+q/98SoorJR0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=LGdw+TmKg4/ga7JVk6RR2cNrViS4yxLbbMGIC7edjZ4aMgmEVjBt2KUJeymOIP65b
-	 izz/D3nd1BuwLkh+CFH7Ecn4mgsSeVDYaoIG7pg+L3nZfW0HAMtR9DBAX5xbTbaIJB
-	 WswuogQCKQq6+4bzGcg2nbVgu1wU8GCuFSAQ49Cp4DxZL4NyWbKe7E66JqvDlN/h1I
-	 dJarBGWmf4T6agr9xwBxGSYPLqT89m6hFwA5HDdHGAcve9ZGPDVpBHv9bGcqRaybiR
-	 zPtODu5O5AOYvlq+InKRc29oMvW/xjwBbg/RBiarpyOrMMQ1ZXWX98JHIrspjH//EM
-	 OEKCxNtOVesAQ==
+	s=arc-20240116; t=1763057438; c=relaxed/simple;
+	bh=0QgMRtdD83RcFucBfkLS2hJinG0DlPzvPLvSV5Q4piU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tbBl39v5hbkGifeSIr4HsVc+qZz79M95sphdbij6JKSY7Q0eMC2D2DQRr2rUypXH7STTuufwrjng/HK5w0S0ChaC3cxJLGHUlOxnXsLw4l15hZGczaYfKT71tQ9nR+FeakO2mGsrYJLRRf/ankpIylnjbwRQDEJbER3hT+hAQtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFezV8W+; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b710601e659so178991266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:10:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763057434; x=1763662234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=87BEAOUBPph3TzBH1vV5g7Ztob9f0IjgY5bWUM5E6Ww=;
+        b=MFezV8W+pt5tBxIuK/g45V+RUbRWbVTPNBLg0Ne5jnSJuOkLBbdksx0FCKLRfbExx1
+         VQ/v1VB1DRXebpofFXevV/mhJubLCJtuD15EATFBK5i/oGa5712pwTAey6Y9OdUPbQO6
+         RNmvysTfbIXdceE9dvzSyjZLLIQJQnLJ/6RXTNm2/l11qknZbfV/6My4MIk7qK36HfnB
+         +PAANYBZ0sANaIt8dRhHNh3LbqhQMdht4/U2L+fX6W1igZIK44PSPOaBHz/Or7XpGHVJ
+         gWKJ+AJZzfE1ZGwHMOj0o+2l9Ams8xDCi/1WhsY3brgXVbv85e2tXwXssS42io/BXT9H
+         QTOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763057434; x=1763662234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=87BEAOUBPph3TzBH1vV5g7Ztob9f0IjgY5bWUM5E6Ww=;
+        b=JyoIv69Ruw7YqzlKAsYswYxkdOMypghnZDyOyGFUqtOl/4o9CmqYIFjNgrsiMwq2cL
+         jobsmHwXpL/lT+vB6XELyBV6QikMuUCUIxnXhxpfi5VB/itFtuSPlaXvHi0on1Vhf86S
+         nagpfWPM18o1k6PTVmnyWkks0FS6T1cA8k1v1IL6dveJFNyJIUB0zlmEZ+DoKOu8MoQA
+         Ef2fKVKE+2baHKT39GECG9xdab0ice+ktldRZAi2QBqoi3Hy6IIhaJnVFp8KwQHXU+u0
+         YOo4i6rhww0DTKvTgjQwZGjmo6BDubwAr6YRyzh8jeMYat1hSItd17SemqGMES+1BL9t
+         F2nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWaPmlA3AbT2a0mxTfbOLULEbiNPKj6iFgTeoMzStebRquLVJy/ZIptWUdUahLdoyLqhj0HJNCyYVXpBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzork4jjspce6dpA93C5l9LvcuqVEM0jQfUjtyzWL3u4VM/2q4o
+	m+T486nBNfT5cQEJC8HVIVvwyaRResAiTK3gDCY5E7Zc811Xtoamlp0=
+X-Gm-Gg: ASbGncsrrCeKtL+hrkBUTeNMrOmAsR4Ot+UQTgfk2R9SsyVKuX3ioZmWMrDAGq0Aa7N
+	71rMSzQYwBMiVS9kBuGLvZRdBXOOPrWVz9nhfmlNm6GuDHdAgAqwXS/8XPnJrWYZ4/r+3n+fL9p
+	0kUbyTClJXVooVvqqKiN4+X2rjBGqTkbBcndHaFM4Ls+N3rFcKV+0I9EXOGqKiYxS+hazMW6bPb
+	7EwhAaiqW64L4k7mBVIHA8QbZHl+886hAg7FGt7gFssvwc95nxkPjgre8V9whn6C6PYmfKycK2w
+	B1vOt1Sf5ThYeg/OJr7Y1IvcIBJYOhU7CbUb4lO1AAvGD/e8bGAhzAPZiQ8HLYnJJXah7g3Avk9
+	wamRJTgiM07kIR4ndrX7uqkVu2r13Yv4znTetw/7AATtT9l7Ivo62rdYQeWYgfffdAZ58gZfwjS
+	5L3hNzx+Ppfwcjplz5SebbUO0eC00zCi8OoXSXC3GEuhY1BGaMo+5jmsuVI6MWno3Qnh7l
+X-Google-Smtp-Source: AGHT+IGz29WAKXKe+U4nMt5douwl+2MqO7amrWJcnBL9iYqpI8wTmeKa4ANLVfbfh8GHVmaNVscELw==
+X-Received: by 2002:a17:907:78d:b0:b71:cec2:d54 with SMTP id a640c23a62f3a-b736796a61amr13099066b.57.1763057433996;
+        Thu, 13 Nov 2025 10:10:33 -0800 (PST)
+Received: from localhost ([2a02:810d:4a94:b300:bb0e:996a:397f:d689])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b734fd809fasm211020266b.45.2025.11.13.10.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 10:10:33 -0800 (PST)
+From: Florian Fuchs <fuchsfl@gmail.com>
+To: Geoff Levand <geoff@infradead.org>,
+	netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Masakazu Mokuno <mokuno@sm.sony.co.jp>,
+	Jeff Garzik <jeff@garzik.org>,
+	fuchsfl@gmail.com
+Subject: [PATCH net v2] net: ps3_gelic_net: handle skb allocation failures
+Date: Thu, 13 Nov 2025 19:10:00 +0100
+Message-ID: <20251113181000.3914980-1-fuchsfl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 13 Nov 2025 18:09:22 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: samsung-dsim: Fix device node reference leak
- in samsung_dsim_parse_dt
-In-Reply-To: <20251029074121.15260-1-linmq006@gmail.com>
-References: <20251029074121.15260-1-linmq006@gmail.com>
-Message-ID: <209646801ba4a40da89aa16853524756@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-29 07:41, Miaoqian Lin wrote:
-> The function samsung_dsim_parse_dt() calls of_graph_get_endpoint_by_regs()
-> to get the endpoint device node, but fails to call of_node_put() to release
-> the reference when the function returns. This results in a device node
-> reference leak.
-> 
-> Fix this by adding the missing of_node_put() call before returning from
-> the function.
-> 
-> Found via static analysis and code review.
-> 
-> Fixes: 77169a11d4e9 ("drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge")
+Handle skb allocation failures in RX path, to avoid NULL pointer
+dereference and RX stalls under memory pressure. If the refill fails
+with -ENOMEM, complete napi polling and wake up later to retry via timer.
+Also explicitly re-enable RX DMA after oom, so the dmac doesn't remain
+stopped in this situation.
 
-Is the Fixes: tag correct? This is what I get for relevant code:
+Previously, memory pressure could lead to skb allocation failures and
+subsequent Oops like:
 
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2074)     endpoint = of_graph_get_endpoint_by_regs(node, 1, -1);
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2075)     nr_lanes = of_property_count_u32_elems(endpoint, "data-lanes");
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2076)     if (nr_lanes > 0 && nr_lanes <= 4) {
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2077)             /* Polarity 0 is clock lane, 1..4 are data lanes. */
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2078)             of_property_read_u32_array(endpoint, "lane-polarities",
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2079)                                        lane_polarities, nr_lanes + 1);
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2080)             for (i = 1; i <= nr_lanes; i++) {
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2081)                     if (lane_polarities[1] != lane_polarities[i])
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2082)                             DRM_DEV_ERROR(dsi->dev, "Data lanes polarities do not match");
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2083)             }
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2084)             if (lane_polarities[0])
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2085)                     dsi->swap_dn_dp_clk = true;
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2086)             if (lane_polarities[1])
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2087)                     dsi->swap_dn_dp_data = true;
-74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2088)     }
+	Oops: Kernel access of bad area, sig: 11 [#2]
+	Hardware name: SonyPS3 Cell Broadband Engine 0x701000 PS3
+	NIP [c0003d0000065900] gelic_net_poll+0x6c/0x2d0 [ps3_gelic] (unreliable)
+	LR [c0003d00000659c4] gelic_net_poll+0x130/0x2d0 [ps3_gelic]
+	Call Trace:
+	  gelic_net_poll+0x130/0x2d0 [ps3_gelic] (unreliable)
+	  __napi_poll+0x44/0x168
+	  net_rx_action+0x178/0x290
 
-This should be a fix for 74629c49e66c instead.
+Steps to reproduce the issue:
+	1. Start a continuous network traffic, like scp of a 20GB file
+	2. Inject failslab errors using the kernel fault injection:
+	    echo -1 > /sys/kernel/debug/failslab/times
+	    echo 30 > /sys/kernel/debug/failslab/interval
+	    echo 100 > /sys/kernel/debug/failslab/probability
+	3. After some time, traces start to appear, kernel Oopses
+	   and the system stops
+
+Step 2 is not always necessary, as it is usually already triggered by
+the transfer of a big enough file.
+
+Fixes: 02c1889166b4 ("ps3: gigabit ethernet driver for PS3, take3")
+Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
+---
+Changes v1->v2:
+- Rename and declare return value of gelic_descr_prepare_rx() in the top
+  of gelic_card_decode_one_descr() ret -> prepare_rx_ret
+- Invert the order of calls in gelic_card_down() run napi_disable()
+  first, then timer_delete_sync()
+- Remove useless kdoc from gelic_rx_oom_timer()
+- Fix gelic_net_poll() to reduce indentation level of success path
+
+v1: https://lore.kernel.org/linuxppc-dev/20251110114523.3099559-1-fuchsfl@gmail.com/
+
+Note: This change has been tested on real hardware Sony PS3 (CECHL04 PAL),
+the patch was tested for many hours, with continuous system load, high
+network transfer load and injected failslab errors.
+
+ drivers/net/ethernet/toshiba/ps3_gelic_net.c | 45 +++++++++++++++-----
+ drivers/net/ethernet/toshiba/ps3_gelic_net.h |  1 +
+ 2 files changed, 35 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+index 5ee8e8980393..591866fc9055 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+@@ -260,6 +260,7 @@ void gelic_card_down(struct gelic_card *card)
+ 	if (atomic_dec_if_positive(&card->users) == 0) {
+ 		pr_debug("%s: real do\n", __func__);
+ 		napi_disable(&card->napi);
++		timer_delete_sync(&card->rx_oom_timer);
+ 		/*
+ 		 * Disable irq. Wireless interrupts will
+ 		 * be disabled later if any
+@@ -970,7 +971,8 @@ static void gelic_net_pass_skb_up(struct gelic_descr *descr,
+  * gelic_card_decode_one_descr - processes an rx descriptor
+  * @card: card structure
+  *
+- * returns 1 if a packet has been sent to the stack, otherwise 0
++ * returns 1 if a packet has been sent to the stack, -ENOMEM on skb alloc
++ * failure, otherwise 0
+  *
+  * processes an rx descriptor by iommu-unmapping the data buffer and passing
+  * the packet up to the stack
+@@ -981,16 +983,18 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
+ 	struct gelic_descr_chain *chain = &card->rx_chain;
+ 	struct gelic_descr *descr = chain->head;
+ 	struct net_device *netdev = NULL;
+-	int dmac_chain_ended;
++	int dmac_chain_ended = 0;
++	int prepare_rx_ret;
+ 
+ 	status = gelic_descr_get_status(descr);
+ 
+ 	if (status == GELIC_DESCR_DMA_CARDOWNED)
+ 		return 0;
+ 
+-	if (status == GELIC_DESCR_DMA_NOT_IN_USE) {
++	if (status == GELIC_DESCR_DMA_NOT_IN_USE || !descr->skb) {
+ 		dev_dbg(ctodev(card), "dormant descr? %p\n", descr);
+-		return 0;
++		dmac_chain_ended = 1;
++		goto refill;
+ 	}
+ 
+ 	/* netdevice select */
+@@ -1048,9 +1052,10 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
+ refill:
+ 
+ 	/* is the current descriptor terminated with next_descr == NULL? */
+-	dmac_chain_ended =
+-		be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
+-		GELIC_DESCR_RX_DMA_CHAIN_END;
++	if (!dmac_chain_ended)
++		dmac_chain_ended =
++			be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
++			GELIC_DESCR_RX_DMA_CHAIN_END;
+ 	/*
+ 	 * So that always DMAC can see the end
+ 	 * of the descriptor chain to avoid
+@@ -1062,10 +1067,11 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
+ 	gelic_descr_set_status(descr, GELIC_DESCR_DMA_NOT_IN_USE);
+ 
+ 	/*
+-	 * this call can fail, but for now, just leave this
+-	 * descriptor without skb
++	 * this call can fail, propagate the error
+ 	 */
+-	gelic_descr_prepare_rx(card, descr);
++	prepare_rx_ret = gelic_descr_prepare_rx(card, descr);
++	if (prepare_rx_ret)
++		return prepare_rx_ret;
+ 
+ 	chain->tail = descr;
+ 	chain->head = descr->next;
+@@ -1087,6 +1093,13 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
+ 	return 1;
+ }
+ 
++static void gelic_rx_oom_timer(struct timer_list *t)
++{
++	struct gelic_card *card = timer_container_of(card, t, rx_oom_timer);
++
++	napi_schedule(&card->napi);
++}
++
+ /**
+  * gelic_net_poll - NAPI poll function called by the stack to return packets
+  * @napi: napi structure
+@@ -1099,14 +1112,22 @@ static int gelic_net_poll(struct napi_struct *napi, int budget)
+ {
+ 	struct gelic_card *card = container_of(napi, struct gelic_card, napi);
+ 	int packets_done = 0;
++	int work_result = 0;
+ 
+ 	while (packets_done < budget) {
+-		if (!gelic_card_decode_one_descr(card))
++		work_result = gelic_card_decode_one_descr(card);
++		if (work_result != 1)
+ 			break;
+ 
+ 		packets_done++;
+ 	}
+ 
++	if (work_result == -ENOMEM) {
++		napi_complete_done(napi, packets_done);
++		mod_timer(&card->rx_oom_timer, jiffies + 1);
++		return packets_done;
++	}
++
+ 	if (packets_done < budget) {
+ 		napi_complete_done(napi, packets_done);
+ 		gelic_card_rx_irq_on(card);
+@@ -1576,6 +1597,8 @@ static struct gelic_card *gelic_alloc_card_net(struct net_device **netdev)
+ 	mutex_init(&card->updown_lock);
+ 	atomic_set(&card->users, 0);
+ 
++	timer_setup(&card->rx_oom_timer, gelic_rx_oom_timer, 0);
++
+ 	return card;
+ }
+ 
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+index f7d7931e51b7..c10f1984a5a1 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+@@ -268,6 +268,7 @@ struct gelic_vlan_id {
+ struct gelic_card {
+ 	struct napi_struct napi;
+ 	struct net_device *netdev[GELIC_PORT_MAX];
++	struct timer_list rx_oom_timer;
+ 	/*
+ 	 * hypervisor requires irq_status should be
+ 	 * 8 bytes aligned, but u64 member is
+
+base-commit: fe82c4f8a228d3b3ec2462ea2d43fa532a20ac67
+-- 
+2.43.0
+
 
