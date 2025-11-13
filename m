@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-898331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AD8C54E9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:33:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97EEC54EA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E3B3A7016
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A553A78A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81FF76026;
-	Thu, 13 Nov 2025 00:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BA81448D5;
+	Thu, 13 Nov 2025 00:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A4bARZzk"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="viNgrp3B"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B5218B0A;
-	Thu, 13 Nov 2025 00:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07F21A26B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762993963; cv=none; b=Wub0dCSXu62/jV3ViUwjNT0pKVBm8efgw7XAOY67YgcAPRtJt6kteh0DYyUckar07RWAQNlwgQCAVGDgvAKvfqc+Sl95QVn1w+3jkCx+u0vyyXyEOF2ASLy7kMWvaXHVgHJ4vhNAUWR7r9hSq5TELJRr6dYOEerAk/goY03tcvw=
+	t=1762994119; cv=none; b=Oh2rRxclcnASE5oFTjB0iekzMc/Z32mu6BV6hsbrgnx8SowYllXSgCxO+UD33rIx62dIMpvn+h9C7JmAx9e3OBlZ7BZEscf1eziAeNHy1jjgrsEVEg2Cn4YwNKvQCa8/CgdEKh1I7ZLvItSdzWIwX/G2bh4k+pgBi9fQMvcEp4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762993963; c=relaxed/simple;
-	bh=m/+r9aGxJvEn7xkVNj8FDtFlt7hWIeI90pRuJKP7cIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFCV1gEf76d4MiDQs+A4HblnNWkWjxlALQwkvdQ9B0g9pdX99gBZ0NOVDzNwvY5iWAP9bMbQvMzxSbwD+f76o8zGAHj2UJ8e68/iODKjW6LdZ5DHAp3aJDC1tiy218XcsxBItNXNta7/uRCDfOvFzteWIGw0RiIMXeGEixqFnYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A4bARZzk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=3FeclHIMfmP0p5yi4YgVnpfMuDANY93EGTrbRzcQEog=; b=A4bARZzkjhEc4B94Bse4UFyY7e
-	uBjBc+DcEEHJelPd7qEh+Py8k1o2/cbcuwfVtu6nLD8SXo3qAREz5jKZhMFlKOs92qM+W6TXrpf3U
-	ojnFK0kFWGVzXiGrhHdqixnB1IPUnD0nzxLkqyWOzHUF7VuAml3PODvFAF7YD60aQk6BQIF5khvDA
-	AKpk17AQ9wcb6QjvlbjAfUUfA/y5iYEIQ2F1JwbufqFgTWrMKtEig0TS6jfr7m0fl+WTl8ECocCGh
-	QeyWteT/9oO500Oj/efpJDtzkb6N+hu9DZgt/C4s3NHfqw5t2T2zjuIesY/5s1NyzU7WWf191v6Zz
-	NjZkB71A==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJLGQ-00000009dUo-3ROc;
-	Thu, 13 Nov 2025 00:32:38 +0000
-Message-ID: <da641dee-0481-4392-aeb2-1573239d2fb3@infradead.org>
-Date: Wed, 12 Nov 2025 16:32:38 -0800
+	s=arc-20240116; t=1762994119; c=relaxed/simple;
+	bh=pqaWapcSx1fG/eg63jrW4womW8bqwrPCzR9rpSBWqUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SulFgJFc0UnUcbbYY0XuKq4ipeWr+32u2KlF+MnOvp9l5nmKQMY9vOKCV5gtXrkcmPirpKCxKFVhyX14a9nwYTUVGmcparbVd/8Xm/qPyBujvkemzuscOlelZUVAseypHzbsIqTUyeiZYOagg3SVYlUaedFfKMTe72+kRN+1aFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=viNgrp3B; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5943d1d6471so243083e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762994116; x=1763598916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tkmP58eOOzM61HVymH4b01vkY2iRcbp7BM0yKv/+Lgg=;
+        b=viNgrp3BaPYr7S6e0enLdqUp6skcvv3zmFX8C2ErAvx9kB+AOwOgXfPam6Yy0i9wf/
+         n/Jde2Of5BoduLoucZUhHRoS4meM79cwQQmj/kHvgmimr853dri4T+2AzdHQpqxeEZbE
+         mXn2GTv9oMWw/nCp2AIOI6I6ktZz5F16NLxy9K4vUi2Bp4ZWfPd6IAPRzkVeDLWCug/B
+         zXWJgGR7IDtnfmcj0Np9B1DR/ZZnyfmCmRlMTNrisZFRUu8qJ1IAyTs47MOT/xlX4FKc
+         QqXxr9hrNahE2eHpSytr3qH3R5U8nANCsgs7YquxpCFiQWTkgP+1Lau2OassQS4K/jBZ
+         zdAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762994116; x=1763598916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tkmP58eOOzM61HVymH4b01vkY2iRcbp7BM0yKv/+Lgg=;
+        b=trhrXf27BULmrIuxaZCAdFuiF7pUD1bwDJjffpalvOCQU4xhhgirOwoAfEv9lFG1OX
+         /8ElbABJepRkXfGWJ6UTF5gl0RO9WcqOGoDnpYRwqrOuQ8VbVhkcBF34ZGOdlbjERme4
+         D9clsCkCFHqs5W1xvBv4hx6w66TCU8TSZvmWjr5EVa+wy0H2B/Bbdqc0EG7ke8p8ImxG
+         TZhd7uuryEsXSK4LzTkWFZPdXCr7Sw5UNTiph4nAAgaoEJH3a5Wluc1PfKIDadeJPh4u
+         wUE9HAhKW6y2JtzCxJsgpYFhw31jR+MPKPU87OmFsVuMcxNfH79P6RJjnLPNDnaVa+In
+         rxiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZszVH/pmqHjhhlYOZEYyokFOeaPVm2WKZVpx5w1aHGZdBZ2k7NM7kBPhQwfGOeJ4aIjN+AQxob70frlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1qzo3081J0q/LCbJ6NZ3hPzOT7ACFCFIxTkiAxBmm5YbshmbN
+	/eumd7P+wXPDi6cvONWkQ7EBUEONEdzv/6n0UYA9NSRv9y+Mo8uhfOMLQ1e0l08RuabWbOmp2wq
+	S7odjv6vMaOdkLCiR9YIXWSAZv66qJNK0M74KSdqp
+X-Gm-Gg: ASbGncuLymGxBeLO06loemUfV/UECJx1pQYZdF9ylJE0iBfH/lwFrW1iFcNEln9sSMU
+	O8ICKouBQI02+IzrWMQ4Gw1YaEtaKlpGc8PH0HcYyErtRDscETVhr2Vo+ms1dwQ6ucD3uPLDgPi
+	lGt66TuYBrEonwMOrigrs/KNvgda4jcPkC6a/bFZ3ZF0XLRFdD0hX321HJcxohi8FDOTU9PSaQr
+	QmqAGLWKMVso48jMUqHA3jEatn4ImJmia+tKxlAlq735VYdMDWC3weHZOK8w8/o2O4zQUg=
+X-Google-Smtp-Source: AGHT+IHS/Kzh0J9JYNHr2D3ULKDt78ThxpCQIIKEBGFx1+HIJhZiigh8difVsCMYmuVEig16Ad6HrnNP542iimGxtQI=
+X-Received: by 2002:a05:6512:2c90:b0:595:78e2:fbe9 with SMTP id
+ 2adb3069b0e04-59578e2fdc4mr1629903e87.4.1762994115701; Wed, 12 Nov 2025
+ 16:35:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] Documentation: gpio: Add a compatibility and
- feature list for PCA953x
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Levente_R=C3=A9v=C3=A9sz?= <levente.revesz@eilabs.com>,
- linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>
-References: <20251112224924.2091880-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251112224924.2091880-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251112192232.442761-1-dmatlack@google.com> <20251112192232.442761-19-dmatlack@google.com>
+ <aRUQAg1kNVzfKkuv@devgpu015.cco6.facebook.com>
+In-Reply-To: <aRUQAg1kNVzfKkuv@devgpu015.cco6.facebook.com>
+From: David Matlack <dmatlack@google.com>
+Date: Wed, 12 Nov 2025 16:34:47 -0800
+X-Gm-Features: AWmQ_blBM6dOH1o_M6QHhvqvhltx_Al5yFrg6jKCV2WNKsSpZRUCPCb5OssgibQ
+Message-ID: <CALzav=e3ZQsVEGmRFAZ1dmMg+SVkBpEzgzpUMJw3LSA6NZJw1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 18/18] vfio: selftests: Add vfio_pci_device_init_perf_test
+To: Alex Mastro <amastro@fb.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, Alex Williamson <alex@shazbot.org>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Raghavendra Rao Ananta <rananta@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Aaron Lewis <aaronlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 12, 2025 at 2:54=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote:
+>
+> On Wed, Nov 12, 2025 at 07:22:32PM +0000, David Matlack wrote:
+> > +static s64 to_ns(struct timespec ts)
+> > +{
+> > +     return (s64)ts.tv_nsec + 1000000000LL * (s64)ts.tv_sec;
+> > +}
+> > +
+> > +static struct timespec to_timespec(s64 ns)
+> > +{
+> > +     struct timespec ts =3D {
+> > +             .tv_nsec =3D ns % 1000000000LL,
+> > +             .tv_sec =3D ns / 1000000000LL,
+>
+> nit - I think you can get NSEC_PER_SEC from #include <linux/time64.h>
 
+Thanks for the tip. I'll include that in v3.
 
-On 11/12/25 2:48 PM, Andy Shevchenko wrote:
-> From: Levente Révész <levente.revesz@eilabs.com>
-> 
-> I went through all the datasheets and created this note listing
-> chip functions and register layouts.
-> 
-> Signed-off-by: Levente Révész <levente.revesz@eilabs.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> 
-> inline reply --> v1: made a formal patch, converted to reST format
-> 
->  Documentation/driver-api/gpio/index.rst   |   1 +
->  Documentation/driver-api/gpio/pca953x.rst | 552 ++++++++++++++++++++++
->  2 files changed, 553 insertions(+)
->  create mode 100644 Documentation/driver-api/gpio/pca953x.rst
-
-Wowsa. That's a lot of info.
-
-Looks good. Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
+>
+> Otherwise LGTM
+>
+> Reviewed-by: Alex Mastro <amastro@fb.com>
 
