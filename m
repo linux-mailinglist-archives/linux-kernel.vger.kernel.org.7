@@ -1,150 +1,149 @@
-Return-Path: <linux-kernel+bounces-898832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18643C561C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:50:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD45C561D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B4D71342C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:50:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30C9B4E3A45
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59F32ED41;
-	Thu, 13 Nov 2025 07:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fs46xumC"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39F32F740;
+	Thu, 13 Nov 2025 07:51:18 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD47C301004
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CA132E72B;
+	Thu, 13 Nov 2025 07:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763020203; cv=none; b=t5Bft7FisgcXF6/ButQT2wEvAR657PcGStlrPb4uHBehaLUbZvIilx49S1L3aB8vSXkkvhzf32Z+EGJ5Uk+E7ApBho+Jr42eockjpnqs/6tDJtPMY2b2NX2PRQlvMl7D+wsUnY/R+6bQTpq+Il6Wflg0leCuUI9I6Yzy1sdxLHg=
+	t=1763020278; cv=none; b=OQP4dZ1KX+SP6ACg8dnU6+7AiL8ATbjb51UDqLVfssZvy3KJo2CL/tbmfCyMxbNfUHQiq5S19mBtIw+L2FX8HVd6TVBhee1fcvR8Yxr71k3EE8YfhNTsho8DPB1BGwFXH5sZomQNxE5WVUnU48i2mTUdufuTf1Xzn4aEYypLcS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763020203; c=relaxed/simple;
-	bh=CYUxaRVdnkO8INxjVez/NqLTT9qn9nO8JWbhwLdLjS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MhB14+GdtHIqGV4qkA26ZYd9Pi3z8rZGpr+nlLE6inOYHoscW+k4jn99VTUL42HRRhFMsCkb4rFyvb6IfHSue7f5Xm0bJSE1msuViFKkfkrlcdKfJBAZMwIaS2XtZy6uD3WqWUq9ZJ7NeTDUjXQ4OeUtMhY1+jsDczUH0fvt1Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fs46xumC; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CBC944E4167F;
-	Thu, 13 Nov 2025 07:49:57 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9EB986068C;
-	Thu, 13 Nov 2025 07:49:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A522102F182C;
-	Thu, 13 Nov 2025 08:49:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763020196; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=09Mb+D15S2RcxtFci5mixnzc0SY2qTDKvhXPP64yilY=;
-	b=Fs46xumC4ZEDToBHMg6mg0OPZqWRZAmd9zvldAPBvUTz43MO9GtMdL5dJxBViBkw4KtS7i
-	evYsG0CpsuMizfmOHty4UAWYT5kB91RcWk+JlD2tgJs/Abj+6wMl3vxdWUXFtdZOY3rdfX
-	vCYR+ID+eiPmsenNo4aJ39xOz9fUOK/MMQRC9kQflZzRsMCtEqFd4G6vfczCObUKAX3nWm
-	LRGBO+UeFHGXlZMN95IbUhUQYwxaHKXEo0TjiCPAzuCepl1w9y9oJn8cuyqdxQLX0YzQMV
-	KvW040fwSeF0MVJZJy53v6x+Dup8szK6kgNhZynKmvfyg1xS3t2cjrnxKQcRXg==
-Date: Thu, 13 Nov 2025 08:49:50 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <jpaulo.silvagoncalves@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: [REGRESSION] TI SN65DSI83 is being reset making display to
- blink On/Off
-Message-ID: <20251113084950.44a09e8e@bootlin.com>
-In-Reply-To: <bhkn6hley4xrol5o3ytn343h4unkwsr26p6s6ltcwexnrsjsdx@mgkdf6ztow42>
-References: <bhkn6hley4xrol5o3ytn343h4unkwsr26p6s6ltcwexnrsjsdx@mgkdf6ztow42>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1763020278; c=relaxed/simple;
+	bh=H1qOcA6eFMFqHCEyCVcEkZ+J9Tlx0VvtvRNodVjvXIg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RxGYmu62Tm9fNpjLD4YLv/AotJG/YKyOfEw9yVqJesQsVjKr9Xd5BucDIcs6E8TYahauiLTRLACwyTDBZgXDQddgaGvSw2aBDRCwAwx0QN3pR8SL/tcDgw2/yNg3sRri2bAcQTssqmsXnKeldnTcLEGPwgmm5a+CUefpJ8Zw3Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowADnr3DvjRVp8daWAA--.40885S2;
+	Thu, 13 Nov 2025 15:51:12 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] crypto: sa2ul: Add error handling for DMA metadata retrieval
+Date: Thu, 13 Nov 2025 15:51:04 +0800
+Message-ID: <20251113075104.1396-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-CM-TRANSID:zQCowADnr3DvjRVp8daWAA--.40885S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW7Jw4UCF47XF1Uur18AFb_yoW5Ar1Upa
+	yrWay2y398JFZ7JrW3J3W3Ar45ur93Wa43C39rGF1xuw15WF18KF4UC34rXF1jyas5ta43
+	JrZrWa43uwn8tFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUSNtxUUU
+	UU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0FA2kVJ-uQ-wABsD
 
-Hi João
+The SA2UL driver calls dmaengine_desc_get_metadata_ptr() in AES, SHA and
+AEAD DMA paths without checking for error pointers. If the metadata
+retrieval fails, these functions may dereference an ERR_PTR value,
+leading to kernel crashes or undefined behavior.
 
-On Mon, 10 Nov 2025 16:03:51 -0300
-João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com> wrote:
+Add proper IS_ERR() checks after each dmaengine_desc_get_metadata_ptr()
+call, log the failure, clean up the DMA state, and complete the crypto
+request with an error.
 
-> Hello,
-> 
-> After commit ad5c6ecef27e ("drm: bridge: ti-sn65dsi83: Add error
-> recovery mechanism"), our DSI display stopped working correctly. The
-> display internally uses a TI SN65DSI83 to convert DSI-to-LVDS, and with
-> the change, it keeps blinking on and off because the bridge is being
-> reset by the error recovery mechanism.
-> 
-> Even before the change, it was possible to see the message below from
-> the driver indicating that the bridge's internal PLL was not locked
-> (register 0xE5, bit 0 in [1]):
-> 
-> [ 11.198616] sn65dsi83 2-002c: Unexpected link status 0x01
-> 
-> However, it was working. After the change, it stopped working. Masking
-> the PLL error makes it work again:
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> index 033c44326552..89a0a2ab45b1 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> @@ -429,7 +429,7 @@ static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
->          */
-> 
->         ret = regmap_read(ctx->regmap, REG_IRQ_STAT, &irq_stat);
-> -       if (ret || irq_stat) {
-> +       if (ret || (irq_stat & ~REG_IRQ_STAT_CHA_PLL_UNLOCK)) {
->                 /*
->                  * IRQ acknowledged is not always possible (the bridge can be in
->                  * a state where it doesn't answer anymore). To prevent an
-> 
-> Any suggestions on how to proceed here?
-> 
-> #regzbot introduced: ad5c6ecef27e
-> 
-> [1] https://www.ti.com/lit/ds/symlink/sn65dsi83.pdf
-> 
+Fixes: 7694b6ca649f ("crypto: sa2ul - Add crypto driver")
+Fixes: 2dc53d004745 ("crypto: sa2ul - add sha1/sha256/sha512 support")
+Fixes: d2c8ac187fc9 ("crypto: sa2ul - Add AEAD algorithm support")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/crypto/sa2ul.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-The PLL should be locked.
+diff --git a/drivers/crypto/sa2ul.c b/drivers/crypto/sa2ul.c
+index fdc0b2486069..eaec284b5e4b 100644
+--- a/drivers/crypto/sa2ul.c
++++ b/drivers/crypto/sa2ul.c
+@@ -1051,6 +1051,13 @@ static void sa_aes_dma_in_callback(void *data)
+ 	if (req->iv) {
+ 		mdptr = (__be32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl,
+ 							       &ml);
++		if (IS_ERR(mdptr)) {
++			dev_err(rxd->ddev, "Failed to get AES RX metadata pointer: %ld\n",
++				PTR_ERR(mdptr));
++			sa_free_sa_rx_data(rxd);
++			skcipher_request_complete(req, PTR_ERR(mdptr));
++			return;
++		}
+ 		result = (u32 *)req->iv;
+ 
+ 		for (i = 0; i < (rxd->enc_iv_size / 4); i++)
+@@ -1272,6 +1279,12 @@ static int sa_run(struct sa_req *req)
+ 	 * crypto algorithm to be used, data sizes, different keys etc.
+ 	 */
+ 	mdptr = (u32 *)dmaengine_desc_get_metadata_ptr(tx_out, &pl, &ml);
++	if (IS_ERR(mdptr)) {
++		dev_err(pdata->dev, "Failed to get TX metadata pointer: %ld\n",
++			PTR_ERR(mdptr));
++		ret = PTR_ERR(mdptr);
++		goto err_cleanup;
++	}
+ 
+ 	sa_prepare_tx_desc(mdptr, (sa_ctx->cmdl_size + (SA_PSDATA_CTX_WORDS *
+ 				   sizeof(u32))), cmdl, sizeof(sa_ctx->epib),
+@@ -1367,6 +1380,14 @@ static void sa_sha_dma_in_callback(void *data)
+ 	authsize = crypto_ahash_digestsize(tfm);
+ 
+ 	mdptr = (__be32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl, &ml);
++	if (IS_ERR(mdptr)) {
++		dev_err(rxd->ddev, "Failed to get SHA RX metadata pointer: %ld\n",
++			PTR_ERR(mdptr));
++		sa_free_sa_rx_data(rxd);
++		skcipher_request_complete(req, PTR_ERR(mdptr));
++		return;
++	}
++
+ 	result = (u32 *)req->result;
+ 
+ 	for (i = 0; i < (authsize / 4); i++)
+@@ -1677,6 +1698,13 @@ static void sa_aead_dma_in_callback(void *data)
+ 	authsize = crypto_aead_authsize(tfm);
+ 
+ 	mdptr = (u32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl, &ml);
++	if (IS_ERR(mdptr)) {
++		dev_err(rxd->ddev, "Failed to get AEAD RX metadata pointer: %ld\n",
++			PTR_ERR(mdptr));
++		sa_free_sa_rx_data(rxd);
++		skcipher_request_complete(req, PTR_ERR(mdptr));
++		return;
++	}
+ 	for (i = 0; i < (authsize / 4); i++)
+ 		mdptr[i + 4] = swab32(mdptr[i + 4]);
+ 
+-- 
+2.50.1.windows.1
 
-Also in the datasheet, in 'Table 7-2. Initialization Sequence', the status
-is checked at the end of the initialization sequence and the sequence has to
-be done again when the status register value is not 0x00.
-
-Even before monitoring (irq or polling method), you have an issue with your PLL
-mentioned with the "sn65dsi83 2-002c: Unexpected link status 0x01" message.
-
-I don't understand even how your panel can be correctly driven with the bridge
-PLL unlock.
-
-I don't think that masking the error would be the correct solution.
-The root cause has to be identified. The "sn65dsi83 2-002c: Unexpected link
-status 0x01" should not appear.
-
-Can you check your clocks ?
-Does your hardware use the REFCLK external clock ?
-
-The driver expects the clock from the MIPI D-PHY channel A HS continuous (bit 0
-in 0x0A register).
-
-Best regards,
-Hervé
-
-clock
 
