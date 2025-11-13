@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-899849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282F8C58FDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:06:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69295C5941F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA55F362BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:48:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 906F54EC757
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BC363C4E;
-	Thu, 13 Nov 2025 16:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420B364E8B;
+	Thu, 13 Nov 2025 16:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SRXNNkn2"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooEGjnbM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A043624CC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E5F363C6F;
+	Thu, 13 Nov 2025 16:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051984; cv=none; b=dcHKjxYm2dc+AUGV0dzRwbAzN63aRgiYFVb+UgKyA2wP2b1nYWRr93QbfTTkFPzPp07qhFkVHvCNTbjB7q/5AF7vaKJMMDjtWuJCzDMdCIgUc6GepdqFV8rzw0HPrVMAamWiudUp/LIMJYJsCSR1UbtJey+dX4r2hWeL+86SdSA=
+	t=1763052015; cv=none; b=rL3xG5vlJmccB/RyYgsuZphh9RIt6LvxOyqNbG5AxdffkHdfEIVxyFqCp/r+lamms4QVufktGIGNBLQfZca02llIFHBEcrgl937eowUWW7FxY22owlvn6dMzIkkkpnEp20IV5Wyuxm8sG9kHpsvtGzu9lOjdmT3hr4Jsm3nk3x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051984; c=relaxed/simple;
-	bh=k72pYZwFQ2V3zxmVhhX4AUxj4txODChO9HtKLZFMgtw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FvWR4paPfGqqKlP4nn2eaYF4eFyJL9emm+pNy+qqz2O+chc6/7QUqAcMbaUOEYCWz40JVcKygmoFxLL7Vj4UYdJmaDUbvtp5N8i4/LYa0JzthH0BvIs0YzJzhPSyKqFdQx9VR5OMdh76dhHk8ylBAgPfEjliGLACAV/lVZlBuzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SRXNNkn2; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-44f7be0adcfso413021b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:39:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763051981; x=1763656781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=acnorco3r1OWVqxwisFCZtNNuSVKZYX9Y3wyP7m23lo=;
-        b=SRXNNkn2B5TjjwiVNkf5ekb6H2aCVQQnTA/BzyfmSMsOvFthwkDx0XB11Wzchdg88p
-         xu10GxlGrvMwLe4squ7aumhWsSE62bGUkvVGlEb3W6bWKH//3DZd1s6fPswKqy3rkynD
-         Ho03AgV94CTpMVcXpyY+MTncNh0c6eK5DZEY9Er+Jr/6PwsRC3PmhwSGpCVTHhRmiuO+
-         5tFWGqNMStG+dwx+ONiMXYlrOyTzJurIWgtCsmmORQQDsnh5iVsmTd61kf13lj4rTrZi
-         yvN8CEHdP015IpHmrMmG/ZeBPcipbBsg3ZBU8wljo3y9Q49s6JSc6GngUocc37sPfwzM
-         kAsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763051981; x=1763656781;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=acnorco3r1OWVqxwisFCZtNNuSVKZYX9Y3wyP7m23lo=;
-        b=rsCcxamSDI2OpBViY19o3UwMWTQ/F/DslvhSJnv4IGhJJCgUn8cm/rtdoMzpeqrXy3
-         cWrhTPo6Rv/kFg2pvdjpsDsy20GrIzjSrZHtnIFCCWvQCj7VbN8eDLWCHk9rsnCFbz+/
-         DpoqK6hsKjHvpXnq+t6ANkLGBZGLHRgm+gXOCG5angqkGwGMy4P6VZJ+1W1nzB4X4WqW
-         UUDc7fCtEIFiGOoxnqhjyBH6G4OOKgt/lWN0fGPOl7U3L5zKPEUmUdihs3vbOgIYH9GV
-         bAtOovJVJeiu0gW60/Upr5/Qfo3tUQ0lKZmYXBCOM050X36wfGOKrSMXUot2aUaQqARM
-         yMfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGiK2CmMrjSQhmx8M1nrtSQ//g4LLYi3iYPlymgeBc9bCl9i3nQ9hZYevoroeSvsSR07y2vT5xNYsZU8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUAAZbq57TVBlw94k/ie2mvg8CiZVDqNYd5bG8jPnckMDpkFz8
-	TV64imbYnEoJ4i5JRE9qF2ud6N2NTLSp8/6bQ+EML/t5NPmToHBrXksj7xks/RqFbuavuBSo00w
-	6BvRr
-X-Gm-Gg: ASbGnct1dXruOpDhOT1mmFR0jLXf/UtX1Ol4tQ9iTP1w9yrfl0KHB2sj8wdEORrJVW/
-	dIuGDWa/K3yB6n5jsxsrRHWswHWc+kd2TsJUAXcGaltus3WBtjohkcH5zjV3EtUKweNulxGQ6f+
-	PW0nbLUikgbOcATm/sHhrKvV00Q8PqKA4/HPIGXnZj9ft97Ax6MJgJY/uGx/QyZYgk5iX0E/ld3
-	E7iS41ypIQB3qlIg0L6S8vJTfxvxZqjVWL5m1VG3CUk6856HweMMGtDBJFkZJzPXJroOnSYHf/+
-	mzr2bF1r+jpzWl+PcdAYNDF7Dv7lpk5qD8rXGXIH1ke9AaDNo1+IZa9qQHHcLeFkVvDfDKveVH4
-	vHbJRdsLsdIwedhm7k+FgF27L0SySxsHCEV+9WihrsSiFvCPg5xDTwPX+vg+PyfZxxGE=
-X-Google-Smtp-Source: AGHT+IEN9Kca9UVNMkaDQH4sixh1UDXbVuoaQZrNLuxjjpOlBG92d5Tw7nSUHhmYRwVQ4lVJgFmtdw==
-X-Received: by 2002:a05:6808:d52:b0:44f:e931:38ab with SMTP id 5614622812f47-4507454af73mr2995413b6e.43.1763051981315;
-        Thu, 13 Nov 2025 08:39:41 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7bd35c5f4sm852672173.61.2025.11.13.08.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:39:40 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, Leon Romanovsky <leon@kernel.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nvme@lists.infradead.org
-In-Reply-To: <20251112-block-with-mmio-v4-0-54aeb609d28d@nvidia.com>
-References: <20251112-block-with-mmio-v4-0-54aeb609d28d@nvidia.com>
-Subject: Re: [PATCH v4 0/2] block: Enable proper MMIO memory handling for
- P2P DMA
-Message-Id: <176305197986.133468.1935881415989157155.b4-ty@kernel.dk>
-Date: Thu, 13 Nov 2025 09:39:39 -0700
+	s=arc-20240116; t=1763052015; c=relaxed/simple;
+	bh=ee+JYwZFiWl4rPvu1lWFozwqOKR006mY1ONvIK0qE1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LU82DUhl+3hfHbW3bUrClIzPIxq8VICk6k6o6Qh4a10l9fKA9XreWFh/EfdFnuHoQshO5yPOY0/17jJJmn+/BYweQ8MeCU09IY7vxoRPbS5ekN0bfkXQNt/27xyXm04WQJMV2XGMTTXN/6OnSR9pC1TF1BUWXpqdLJIwqKshh3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooEGjnbM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41ACC4CEF7;
+	Thu, 13 Nov 2025 16:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763052014;
+	bh=ee+JYwZFiWl4rPvu1lWFozwqOKR006mY1ONvIK0qE1Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ooEGjnbMmSQrPkE0Ps+Q3yUSrS4YUF35htEs4f2SE24S1Uwf2aYYdJrKk5xTyAMls
+	 uiLlwGyNsKBsO2swIX+g8h8SF8XbuMxw/Dul4Qiu+zHrB/C9lKYR3v2/e/yCysRGg1
+	 T7n9h06pB8tY5zb+0ochXdGNCcEOdcjbC+23e1bj6bYQNrSddeZBnqyrDLtyJJDleT
+	 zzZyajAp7cCIRE1nKMLfxfKgNJy7YlWdBsYAujGho1cGZ9GORYmgKBQ0zy7AkK4B/l
+	 wxGABXJLJjrUQSD6S1B859/ZuyPp0NlErIwcxSnsTUViuKndFC5r0ZTk1m+AFfIpVl
+	 fNBYJ0k+MYFeA==
+Date: Thu, 13 Nov 2025 10:40:13 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	bhelgaas@google.com, will@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	linux-arm-msm@vger.kernel.org, zhangsenchuan@eswincomputing.com,
+	vincent.guittot@linaro.org, Frank Li <Frank.li@nxp.com>
+Subject: Re: [PATCH v2 3/3] PCI: dwc: Check for the device presence during
+ suspend and resume
+Message-ID: <20251113164013.GA2285612@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107044319.8356-4-manivannan.sadhasivam@oss.qualcomm.com>
 
+[+cc Frank]
 
-On Wed, 12 Nov 2025 21:48:03 +0200, Leon Romanovsky wrote:
-> Changelog:
-> v4:
->  * Changed double "if" to be "else if".
->  * Added missed PCI_P2PDMA_MAP_NONE case.
-> v3: https://patch.msgid.link/20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com
->  * Encoded p2p map type in IOD flags instead of DMA attributes.
->  * Removed REQ_P2PDMA flag from block layer.
->  * Simplified map_phys conversion patch.
-> v2: https://lore.kernel.org/all/20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com/
->  * Added Chirstoph's Reviewed-by tag for first patch.
->  * Squashed patches
->  * Stored DMA MMIO attribute in NVMe IOD flags variable instead of block layer.
-> v1: https://patch.msgid.link/20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com
->  * Reordered patches.
->  * Dropped patch which tried to unify unmap flow.
->  * Set MMIO flag separately for data and integrity payloads.
-> v0: https://lore.kernel.org/all/cover.1760369219.git.leon@kernel.org/
+On Fri, Nov 07, 2025 at 10:13:19AM +0530, Manivannan Sadhasivam wrote:
+> If there is no device available under the Root Ports, there is no point in
+> sending PME_Turn_Off and waiting for L2/L3 transition during suspend, it
+> will result in a timeout. Hence, skip those steps if no device is available
+> during suspend.
 > 
-> [...]
+> During resume, do not wait for the link up if there was no device connected
+> before suspend. It is very unlikely that a device will get connected while
+> the host system was suspended.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 20c9333bcb1c..5a39e7139ec9 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/platform_device.h>
+>  
+>  #include "../../pci.h"
+> +#include "../pci-host-common.h"
+>  #include "pcie-designware.h"
+>  
+>  static struct pci_ops dw_pcie_ops;
+> @@ -1129,6 +1130,9 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  	u32 val;
+>  	int ret;
+>  
+> +	if (!pci_root_ports_have_device(pci->pp.bridge->bus))
+> +		goto stop_link;
 
-Applied, thanks!
+This looks racy.  Maybe it's still OK, but I think it would be good to
+include a comment to acknowledge that and explain why either outcome
+is acceptable, e.g., if a user removes a device during suspend, it
+results in a timeout but nothing more terrible.
 
-[1/2] nvme-pci: migrate to dma_map_phys instead of map_page
-      commit: f10000db2f7cf29d8c2ade69266bed7b51c772cb
-[2/2] block-dma: properly take MMIO path
-      commit: 8df2745e8b23fdbe34c5b0a24607f5aaf10ed7eb
+>  	/*
+>  	 * If L1SS is supported, then do not put the link into L2 as some
+>  	 * devices such as NVMe expect low resume latency.
+> @@ -1162,6 +1166,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  	 */
+>  	udelay(1);
+>  
+> +stop_link:
+>  	dw_pcie_stop_link(pci);
+>  	if (pci->pp.ops->deinit)
+>  		pci->pp.ops->deinit(&pci->pp);
+> @@ -1195,6 +1200,14 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
+>  	if (ret)
+>  		return ret;
+>  
+> +	/*
+> +	 * If there was no device before suspend, skip waiting for link up as
+> +	 * it is bound to fail. It is very unlikely that a device will get
+> +	 * connected *during* suspend.
 
-Best regards,
--- 
-Jens Axboe
+I'm not convinced.  Unlike the suspend side, where the race window is
+tiny, here the window is the entire time the system is suspended, and
+at least in laptop usage, there's no reason I would hesitate to plug
+something in while suspended.
 
+Regardless, the overall behavior needs to be acceptable whether or not
+a device was connected during suspend.
 
+This is probably the same thing you said, Frank, sorry if I'm just
+repeating it.
 
+> +	if (!pci_root_ports_have_device(pci->pp.bridge->bus))
+> +		return 0;
+> +
+>  	ret = dw_pcie_wait_for_link(pci);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.48.1
+> 
 
