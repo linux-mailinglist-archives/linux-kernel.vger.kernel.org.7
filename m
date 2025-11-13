@@ -1,73 +1,57 @@
-Return-Path: <linux-kernel+bounces-898414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1CBC553E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:23:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76417C553DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B416343837
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB4D3A5202
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90F526B742;
-	Thu, 13 Nov 2025 01:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WlCTKE4m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6614225A33F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5FF267B90;
+	Thu, 13 Nov 2025 01:21:55 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB4025A33F;
+	Thu, 13 Nov 2025 01:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762996920; cv=none; b=OBJoSRRNbuxsqiShq+BKff9aXOXDwOD6gq9y7HU6V5FtcXN1Njz93H7xRFIAEj7YE9EktiA67YlvGm4sCcqAPP4Sk6uxzAVdlqY44BnGxZo3ki7JBAEe9iM9+dKNpC0X1+C2hEJfrr1+VEj4ywMWpYFrvM3ckZpBWCZxmaYZgn8=
+	t=1762996915; cv=none; b=BtS+2o/znwYFvDCRFZtIIyQXtzEx2iexT2F2WSRcQvTc7266fIQSpt/gzHKQwv1FV4fSltFYNi93eOOIh/PHm+CaON8Y0km63R8K0+NCqNj8RNsVjIF0aCRP42JKzJagVVGIhfFoKo3Q+a4d687RRe6kw4+Dl3DtHjlOGH36yHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762996920; c=relaxed/simple;
-	bh=VCU/UpThEEuUSJvH8oUai1bQrxsdrYWG4fWskAwTNYw=;
+	s=arc-20240116; t=1762996915; c=relaxed/simple;
+	bh=4J2w0vQ2SIHCJ212oHrkdW5EhKGUnJtjrmEhtVi+nW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4dwTbB/eP9vw1/kc+tcQqUBQwpvMeN2ViewDj8FtirRhADukD3Vo+O0ojOdR+MGrFnjdexn82aOI5KH5wqTsCsKSn3seGdqW44ErWvbcyTg+rlhK03NUBwUvvfxMI/sFzi30Oid4g5GeBOG94cGLSVg4zx20mZtLXbzu79b8Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WlCTKE4m; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762996917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EgETUmOyvY3UMMPLegrObzK3nipblxlLivW6LyEucSY=;
-	b=WlCTKE4mPww1w3gRMjBtTCqccM0SivVzgKT9pjlt4FXYCipVfI1hWG9+MhnUu5fINcT7ha
-	cMmTf+M483gWDnW7i/KblDrzXj7VjLSUMOzBj4jt59s68QZinMX4F0zPiLDIv8uPesbP6z
-	tl+PIqYeCqTkZAAftAtQtlB9qkRlF6k=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-_fY0jWUGNbGBk0Lg9Dsjmg-1; Wed,
- 12 Nov 2025 20:21:54 -0500
-X-MC-Unique: _fY0jWUGNbGBk0Lg9Dsjmg-1
-X-Mimecast-MFC-AGG-ID: _fY0jWUGNbGBk0Lg9Dsjmg_1762996913
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 438921956050;
-	Thu, 13 Nov 2025 01:21:52 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.134])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DD591955F1A;
-	Thu, 13 Nov 2025 01:21:46 +0000 (UTC)
-Date: Thu, 13 Nov 2025 09:21:41 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Uday Shankar <ushankar@purestorage.com>,
-	Stefani Seibold <stefani@seibold.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 01/27] kfifo: add kfifo_alloc_node() helper for NUMA
- awareness
-Message-ID: <aRUypQzcovGikrV0@fedora>
-References: <20251112093808.2134129-1-ming.lei@redhat.com>
- <20251112093808.2134129-2-ming.lei@redhat.com>
- <20251112112914.459baa16c4e9117d67f53011@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gPTgAtPAXRSLNAXs3qJRmbEXNAUGj2q3QEmIBUOI2DJNKcl2Hc7lQGJ3I/+7PeuCI0OeqSdMHWrXI9Z/DyyqQk0CtBkiurW1Lo9j/h8jPbNMwBWtnBcvzbppGSmBAZoosJ4b8WCBrs9EmA/wbIThk5xy3MZ5DV2S444mGNAAP/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-3b-691532ad56c5
+Date: Thu, 13 Nov 2025 10:21:44 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Guangbo Cui <2407018371@qq.com>, Liam.Howlett@oracle.com,
+	amir73il@gmail.com, andi.shyti@kernel.org, andrii@kernel.org,
+	boqun.feng@gmail.com, bsegall@google.com,
+	gregkh@linuxfoundation.org, linaro-mm-sig@lists.linaro.org,
+	link@vivo.com, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+	masahiroy@kernel.org, mathieu.desnoyers@efficios.com,
+	matthew.brost@intel.com, max.byungchul.park@gmail.com,
+	mcgrof@kernel.org, melissa.srw@gmail.com, mgorman@suse.de,
+	mhocko@kernel.org, minchan@kernel.org, oleg@redhat.com,
+	paulmck@kernel.org, penberg@kernel.org, peterz@infradead.org,
+	petr.pavlu@suse.com, torvalds@linux-foundation.org,
+	vincent.guittot@linaro.org, will@kernel.org, yeoreum.yun@arm.com,
+	ysk@kzalloc.com, rust-for-linux@vger.kernel.org, ojeda@kernel.org,
+	gary@garyguo.net, lossin@kernel.org, a.hindborg@kernel.org,
+	aliceryhl@google.com, alex.gaynor@gmail.com,
+	bjorn3_gh@protonmail.com, kernel_team@skhynix.com
+Subject: Re: [PATCH] rust: bindings: add `rust_helper_wait_for_completion`
+ helper function
+Message-ID: <20251113012144.GB75428@system.software.com>
+References: <20251002081247.51255-37-byungchul@sk.com>
+ <tencent_13F1EDE0D6B7A44697F31AE274C8E664E908@qq.com>
+ <DD7RK3CJOYMR.24WFU9NPUEX96@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,98 +60,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251112112914.459baa16c4e9117d67f53011@linux-foundation.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <DD7RK3CJOYMR.24WFU9NPUEX96@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzHfZ/v86vjtsep+Sqb7SysEVrsYwybxXeGCRvDxjM90zPXaRcp
+	hkSWFML8KCH0Q+5kXYRFuUyH2kpNzxSFunVSfl1nxE0Xxn/vvT6fvd6fPz4iNti4YFE1b1Ms
+	Ztlk5HWsrndE/hRbRJA67ZI3FNLT9kJbeycHP3MrBHC2pLLQcP0agvb+dARfB3IxaA1VGKzl
+	+xg47d7HQs+pjzw01vUg2H+5lIeKlA4BPM2vGbBmujA03T3HQ2v9UQEKWhoZeN2hcWCvr8Pg
+	PRICDdlZHGjHuhDY+i7xcKLPhaDHW4ihsP+DAFcvFCG4WZWG4PMVLwsHv/g4qM2qZqDA04eh
+	1FWD4c2RXgHSH3oxHGibAXme6eC5VsLPn0St562IFjx9z9Mrh74z9E7OS4FeLNtO7cVh9HKl
+	m6FlJYd4mj/QjWnb80qeOs8MsLQqzyrQVt9bTD91vWBp5sEyhr5w2bjlQWt1c2IUk5qoWKbO
+	3aiLddUcRvHPuKTz7i42BdWwGShAJFIkOZl1V/ibtUYb78+sFEqOv20f4rw0kWjaN5yBRDFQ
+	mkAy6qMzkE7EUrlA7BU92L8zSlpPsu9kIn/WS0B8N0o4fzZIZxB55Iz+zUeSx2c7h3qxFEY0
+	n5vxO7EUQop8oh8HDJ5QfrppSBkkjSfVt2oZfxeRmkWSa6/7c/MY8qBYY48hKec/bc5/2px/
+	2osIlyCDak6Mk1VTZHhssllNCt+0Na4MDT5R4e4f626jzw0rHUgSkXGEvvtsoGrg5MSE5DgH
+	IiI2Bupvrh5E+hg5eadi2brBst2kJDhQiMgaR+sjvDtiDNJmeZuyRVHiFcvfKSMGBKegyZXL
+	56W55QhaKvVfeDWPfXdrXFGTobvtwJJJKyyK6WFQVMBMwR4cfn/BsGUDjtlra8wtex4Xpcrq
+	lJWzirNHDr+e+SU/OlK3NCq1d/ji6FGzPKtwc+2bRTFPPp5YWN1575Raz6c4ZZ9Drd4Sqjk7
+	asemr45qjQ/O81zthDVJu3YZ2YRYeXoYtiTIvwCI95BPQAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTcRTG+b//9+Zq8La03tQMFppJWUbGgcT65r+gix9KiChHvuRwrtjU
+	UpK0i+matyK1lZWlVrqlzVtJpGioXQTNLkMts3JlM7utRVojZ0R++/Gc8zzn+XB4rMhnfHm1
+	NknSaVUaJSujZZvXHl1uWeWjXvmgdRZkHz8Mg0NvGfh9romDrudHaOi5UY1g6Hs2gh+T5zDY
+	elowmOszKSgezaTBUfSZhd5HDgRHr9Sw0F56n4GmjFccOJ8MU2A22jH0NZ9nYaA7n4OK570U
+	DL+yMVDX/QiDK88PegpzGbAVjCCwjF9m4fS4HYHDVYmh8vsnDq5fvIqgoeU4gq/lLhqyvrkZ
+	6MxtpaDCOY6hxt6O4XXeRw6y77kwHBsMh1JnGDirq9j1S4n5ghmRiodjLCnPmaDIbdMLjlyy
+	JpO6ayHkyp1RilirclhSNvkek8Fnd1jSVTJJk5ZSM0cG3G8w+TLSTxNjlpUi/XYLs3XeDllE
+	nKRRp0i6FZGxsnh7+0m0/zFz8MLoCJ2B2mkD8uJFYbVo67WwHqaFQPHUmyHOw6ywRLTZfmID
+	4nlvIUg0dEcbkIzHQj0n1jU5sGdnrrBTLLxtRB6WCyC6a6sYDyuEEiR2dEX/1eeI98++nb6F
+	hRDR5h6lPJlY8BOvunmP7DVVob64bzrSR1gstjZ2UgVIbprhNs1wm/67LyFchbzV2pRElVoT
+	HqpPiE/Vqg+G7tmXaEVTb1KZ/qvwFnL2RbUhgUfK2XIy7q1WMKoUfWpiGxJ5rPSWN8RMSfI4
+	VWqapNu3W5eskfRtyI+nlfPlG2OkWIWwV5UkJUjSfkn3b0rxXr4ZqKa2V7YpqHkLWZB8svrM
+	IadRXvTZ6Fvttf2uJSrIejO4MckxO7AjNvKd7p4hIiCBXFy0LbL4SH/t1jUnnpRL3IfmjJyy
+	kYGJMbmPaVVPf3Ht7qJl+cHD7K4DMXxj2Ia02NTryxob6rI6XNqIkomAseinFf6aidaFH/ue
+	6V6mK/zXKWl9vCosBOv0qj8bQDGJIgMAAA==
+X-CFilter-Loop: Reflected
 
-On Wed, Nov 12, 2025 at 11:29:14AM -0800, Andrew Morton wrote:
-> On Wed, 12 Nov 2025 17:37:39 +0800 Ming Lei <ming.lei@redhat.com> wrote:
+On Thu, Oct 02, 2025 at 12:27:53PM +0200, Danilo Krummrich wrote:
+> On Thu Oct 2, 2025 at 12:06 PM CEST, Guangbo Cui wrote:
+> > The DEPT patch series changed `wait_for_completion` into a macro.
+> > Because bindgen cannot handle function-like macros, this caused
+> > Rust build errors. Add a helper function to fix it.
 > 
-> > Add __kfifo_alloc_node() by refactoring and reusing __kfifo_alloc(),
-> > and define kfifo_alloc_node() macro to support NUMA-aware memory
-> > allocation.
-> > 
-> > The new __kfifo_alloc_node() function accepts a NUMA node parameter
-> > and uses kmalloc_array_node() instead of kmalloc_array() for
-> > node-specific allocation. The existing __kfifo_alloc() now calls
-> > __kfifo_alloc_node() with NUMA_NO_NODE to maintain backward
-> > compatibility.
-> > 
-> > This enables users to allocate kfifo buffers on specific NUMA nodes,
-> > which is important for performance in NUMA systems where the kfifo
-> > will be primarily accessed by threads running on specific nodes.
+> Good catch!
 > 
-> I was about to ask "please don't add infrastructure without users", but
-> I see a "01/27" there.  I wander over to lkml but I can't find 02-27
-> there either.  Maybe something went wrong.
+> Given that the latest version of this series was just posted, please squash this
+> fix into patch "dept: assign unique dept_key to each distinct
+> wait_for_completion() caller" [1].
 
-It can be found in lore:
+Thank you all.  I will squash this into the patch.  Thanks again!
 
-https://lore.kernel.org/all/20251112093808.2134129-1-ming.lei@redhat.com/
-
+	Byungchul
 > 
-> I prefer to be cc'ed on the entire series, please.
-
-OK.
-
+> Thanks,
+> Danilo
 > 
-> > --- a/include/linux/kfifo.h
-> > +++ b/include/linux/kfifo.h
-> > @@ -369,6 +369,30 @@ __kfifo_int_must_check_helper( \
-> >  }) \
-> >  )
-> >  
-> > +/**
-> > + * kfifo_alloc_node - dynamically allocates a new fifo buffer on a NUMA node
-> > + * @fifo: pointer to the fifo
-> > + * @size: the number of elements in the fifo, this must be a power of 2
-> > + * @gfp_mask: get_free_pages mask, passed to kmalloc()
-> > + * @node: NUMA node to allocate memory on
-> > + *
-> > + * This macro dynamically allocates a new fifo buffer with NUMA node awareness.
-> > + *
-> > + * The number of elements will be rounded-up to a power of 2.
-> > + * The fifo will be release with kfifo_free().
-> > + * Return 0 if no error, otherwise an error code.
-> > + */
-> > +#define kfifo_alloc_node(fifo, size, gfp_mask, node) \
-> > +__kfifo_int_must_check_helper( \
-> > +({ \
-> > +	typeof((fifo) + 1) __tmp = (fifo); \
-> > +	struct __kfifo *__kfifo = &__tmp->kfifo; \
-> > +	__is_kfifo_ptr(__tmp) ? \
-> > +	__kfifo_alloc_node(__kfifo, size, sizeof(*__tmp->type), gfp_mask, node) : \
-> > +	-EINVAL; \
-> > +}) \
-> > +)
-> 
-> Well this is an eyesore.  Do we really need it?  It seems to be here so
-> we can check for a programming bug?  Well, don't add programming bugs!
-> 
-> I'm actually not enjoying the existence of __is_kfifo_ptr() at all. 
-> What  is it all doing?  It's a FIFO for heck's sake, why is this so hard.
-
-It is basically a clone of existing kfifo_alloc().
-
-Do we need to clean kfifo_alloc() first? Otherwise I'd keep the same
-pattern with existing definitions.
-
-> 
-> > @@ -902,6 +926,9 @@ __kfifo_uint_must_check_helper( \
-> >  extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
-> >  	size_t esize, gfp_t gfp_mask);
-> >  
-> > +extern int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
-> > +	size_t esize, gfp_t gfp_mask, int node);
-> > +
-> 
-> Nit: please align things like this:
-> 
-> extern int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
-> 			      size_t esize, gfp_t gfp_mask, int node);
-
-OK.
-
-Thanks,
-Ming
-
+> [1] https://lore.kernel.org/all/20251002081247.51255-37-byungchul@sk.com/
 
