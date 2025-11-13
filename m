@@ -1,349 +1,399 @@
-Return-Path: <linux-kernel+bounces-899300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ED7C57546
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:06:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03F2C572F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29930358471
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:01:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1FF84E30F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A5A34F24A;
-	Thu, 13 Nov 2025 12:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="T/Q1ZTJJ"
-Received: from sonic312-50.consmr.mail.gq1.yahoo.com (sonic312-50.consmr.mail.gq1.yahoo.com [98.137.69.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E14334E75D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B83233C515;
+	Thu, 13 Nov 2025 11:28:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460FB27B4E8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035239; cv=none; b=bbcdlZEWum+OF0EtDC3SWwxx4tsDrUI/+MkcS5b+LWHTOavJdtK+qUDdB9FTHe5U4xsvSUm2IbIh0y8652dLZ/Vy+H6RUYAben9f5ArFhQIxFPGi8k+vvGGRq3L34kdsZATdJ3lNm6g4qSF54YZ55TgKNax/vVmyAafhSnRxwno=
+	t=1763033306; cv=none; b=Vw8MbmYxJ27Th4uz0Sbe44wc6dPafc7QFLQqlsucJSJRYfaYf68DivtURxjlH/qhpjUXzkqrEvweuE8nxkaatBiQBMz4TlVrYBjlhqUL7g1Y2d3wxxT2XZIcYaxUQ2nWq4tgdep6OEF/2edalWhE9qieoJZcjv+s/aDyBG/APlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035239; c=relaxed/simple;
-	bh=BjyrwqxvG3mHuQruUr8TYV34YQVp1pw+ETUGTRsNRYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=qlMKN/JtC1rUZW2iO3MuRI+WYJ9NttY6rNnmKU/Arf5rpSvmEvSp2tBhSV184KaRFZH6K4ELifb1IfNt7sh2BYbbabbP6x+Wg4MFQoTU0QqFDup2MIu+pPTKs8sdZSif0EZNlhsuijtipm2bPm+HwSeI1/ygAiSmY2PEUthxJvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=T/Q1ZTJJ; arc=none smtp.client-ip=98.137.69.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763035236; bh=vsc2zIDV9/l3N6sMLht900KIugzNpcZMNEAIUVyatoY=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=T/Q1ZTJJ77/rCsXPAM+iQ/ZU3ayq7Ca6hgWT625vQ6VzwJQerSjrlWeP4BPR0ERO8WvRNpb8/u3gxt+h4hArEOzvKNz5en8ZcF34Vs167MQeXvjygRsTEsLDdx9jG9Jh7AluXiFUxW60Y1hk/TAl0nekahqyleeIvNtqzLUe0rTCd3DMNoIx/tVbym2RTz0RIeuBfVDkgdtGrt+B+r/4HylclEhsR3O8Xt0bbGzLCGc1jA//dSuR72rM0VQeE9m/nwemXrqdHNbsFgfSr0DD8vHAtsPlyBWJ/uQqyI3ua53WSyEEA6gdU/eF2x2IdaWAsWLm55MwmmnXhv/3F/kRCg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763035236; bh=nBsJaJgeNeKUpaE7sBH3dPgp+i2Y4cUUGLLWNf+hdpE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=oepDKch6D8SP5ey8GZsWltnpUihRpIAW/1wC84E/RhN8yjoELREQFG7yuz3ZyM2l2fL4Uur2DSN/Xl9DpBb2MujjqT6Q9tPbLg4oNVjw5bgb9VL95VndOccEPSqX7m0+e7trv+f1StwL/FM7TJ7kg4Vr8Numf5hlCxZcMiSQEnvEMhjw/vshrXWWtSS3Jj4QB80dWOas//7m4Bur6pLpNPvORgsQ40cjYf/iaNnquTJegrdU45KlqQ8teLaTZ7BQarAmmvJO3KfdhWJ6Q9xLfuOE4U/XFhNxUqXog6TOQTSrOsgVYxXQpKKAyrQ4xnapvfpfisTf4SfwmdpTUbtpvQ==
-X-YMail-OSG: dA_3nAAVM1l97D_TcyfqvQxByU5P9szVHOMMJytNlkSr85CIQuWGD8W.Y8.Of92
- IjOuwTTwO33CMQrNK9uEitiCeahppCd6zd1jxub6JcmT8JnB5RREVIP6Ye75lhkkpl6q9.wxjfSn
- 6o4ayjHZ6wKgf83ZQ1BUSpPd5sTNYnZfiJW2Nz6yg0.n8Z0VGUdZE9UUeusjl86.6KyXQlKEOJhp
- PPceS3B_9JOUBshZfm1T3sFjNYaN5XQylCFnKHl4xg48UvgrB2Oe57vaz7YmBdo05BCL.E.t.zV0
- JAj_hf2ePEOBWovW6rmNeQPIVuiWiKsaucN6FnK2F0b04WJR6R4Wpotbezi1fbqr.cwsBittPVs0
- hN_fJhW1.bOR2Wz.MUYoj_KC0PuxSZvLzbtcDKY3N1Q5mRXjXAe9QmCRPeYC6yG4LDp7jfywrGpj
- tO5VYpAXj_1GqxR9eijRNO88S1wEI1iFMqG_p_nqBMXzk6cBCYu7Mfp3OED1DGSSRI7vYM3aGlnG
- 5OT52.AeWVqSn2pN6vKQUGOsyWjjYJlKSnAbMVil37McN9O71iT_7W8bUYayCQzWMsDi3sJKhznH
- SwAYew42YD2dIX7F2eOybEJHL.TB9wbWb4lZYxqeKl6v23qhXg2fyXqfuH4Gck1bdzBKHVjbV.vH
- BSdzHx2r8043yf7q6LASoZY6QmEPY2M0MhSK5fStbEMDqu6ZOFYjAXPDyIBMzZnG43.1maxapbw8
- ne7xdUkV1pHp3.noh3pmjR04_ukrPhbBzuTFYYJI_.M078AKGBON8SacmoVVUrw8_PI9rZlILik1
- o1Lr3reAghVxYGVlEX5STrhzfV8_EHAwu1Gc5p_mxcSqqe.ud0OiM4pl4veM8AxD8gQXN_wO.TYt
- D7U4AUwV1GWWf5vjcnUowJrZhtzgEBEKp5WrX0xdFKS8.4425T4.SzDgEMwJnfmoWglrM42UUVqg
- 3MgA_5A8RdloKYwbU67YachEVr4YdPs_X8RABs1rfUMI88IwRirtF7hVeY6RSzy9jFxW1SX2LSlX
- bVVDDcO7_WXP_E1KNmWjD7S6gleIUDHC3wV.ruklf8puvOtHeHklr93mTya8Rcrhgx55oSiBq_5g
- bWTtlTySxbEm3luRp1HP4DbNmxXs77caNCtwtY0RwBM8drR8EtyhjCLPUcUob_EqQrBfhXNgEvQ4
- oBNmxFZue0wrG8xnAkDDrF8q7Em2yLWXmq_dD2I8IvuHf3U43AzqG1yW.V8bqwesjF.2uTLPsCi6
- qCnnQ.jw4tPnPeFS8.p1hwZiXuZ7M8M..rLPR0JoF1t34VhswH1hWriBy8a5sq_64WrhWt1wYhpk
- pFVNPeBGQ3T1ANzL3Dvnw4osJjnSeG5Chxb9r96vg08hXAhyAUxnN_.r7u4iFxNgxacG8VeGpI.w
- n7NbX7VyYc25lfosfL9IG9hu348xkzQdVg9Cg72kiQ6lO0iubIFX6PjoUW44b5kiqyF0df3Oqm9J
- 33gNZ8ckkfdnh7qFyOB5Y1oASFwfRI9wHmtzUyO8Brg3JNOHmoovgIF1lXfW9O36bKPBZAgY.xEK
- .eoNNNU8nB_uXj_m_P_3P7GdJg2QIJn6FQ2U54qYmd0DNMt.cDuhNAG9dSXRsu2JDzhtc0QsJDzD
- 7u7J5tITRM36rEQiS4UhbQGaXVyEzetk9AqRE2rj2__oIV4CSJ52szPAqSuU10x.zU1Zfu1WhMxA
- 2427HrznLsrlH9vGIa37UTl6DeULbyt8xn1xno8Cz3Lrs8HY2XcG18tRf0qXxU57EnlB2ZQ5Tzwx
- V6NtW9_MBQNPn5fPOey8FOC_mZcljwaTXjans.0g6Byjo7l7Akv3jmyEcMT4gG3Ab1LvOjvSRTUd
- 9BEvjMKdxMShheJ1sWqbXaS5KmZylL9BItL1XzLEYMhWvbLo3n43WULED7_N7YdHhTg2gi_6b4G_
- xtCqUh7OEoVm.jLjJmfjqhggricEgsO8M.qe6fSoF7a2gJXtod06hHIbUXUSC2knBVCiJ4wYUd48
- nQXECehhcRWmn1.iD.3PKoXIyZhTfZDrs_1PceGA_NcKq9jy4BmR8H29bv0ITe43HEqPsclpi07t
- ddh9CnHAvYMao.uV6X1eRADxzSBixnhYyViGtGyRv3EJfWPeOSphLXAxspl08TUHJM4eYm0VpsrI
- Z39ccwBTe18T2T4onojpu1OQpMWize5IzpGL4gAGLrGEu8gLeozxzg9pwbrqzEYVFCLYtQmgY_AX
- CNaMb9qyzog3Ip2bgeZ63TxxzXeANqfWjIIiJwoWybWMHOiQj9MLDQaUYMiLDoq0gJYCN9A3zF4S
- Wzwm1H0MveSJMU1K31r3mUe6DSQN7sR_rAoKDyPMjgixVgcZau73dSWU4H2rfT1dJaMUdmlfIyvt
- ef8Ujm_0ZLinqQaNQajYOXQc-
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 23f27373-26d7-4c58-b550-da61e8faefbd
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 12:00:36 +0000
-Received: by hermes--production-bf1-58477f5468-wnnm5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e2ddb9b3ed0e230064ffd349fd918855;
-          Thu, 13 Nov 2025 11:28:11 +0000 (UTC)
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH v6] selftests: af_unix: Add tests for ECONNRESET and EOF semantics
-Date: Thu, 13 Nov 2025 12:28:02 +0100
-Message-ID: <20251113112802.44657-1-adelodunolaoluwa@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763033306; c=relaxed/simple;
+	bh=8fzGe4Si7XC+xwPxfCdoiJtHpF9UoAWcJzAWQ4oJDHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thEWvCWViJCKGRId/CoC8SGkvN5SdhziAl+LImrGlPtpazJHmD3KjZQ9wmZC0VUqZr9CU87Im2zx+EURBPQIfEasCY2c537SiLG6iKYjS3vhZLDCxINlatep+wa7G+S+BW1OLIOPdQCiGFYlI0Ni0j3qXWygoDV8YL/pfSAnuiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 153F11477;
+	Thu, 13 Nov 2025 03:28:16 -0800 (PST)
+Received: from [10.57.88.12] (unknown [10.57.88.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0B723F66E;
+	Thu, 13 Nov 2025 03:28:22 -0800 (PST)
+Message-ID: <6a3c7a5a-fcb4-4a46-b385-74153f78337a@arm.com>
+Date: Thu, 13 Nov 2025 11:28:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 PATCH] arm64: mm: show direct mapping use in /proc/meminfo
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, cl@gentwo.org,
+ catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251023215210.501168-1-yang@os.amperecomputing.com>
+ <3af5d651-5363-47f7-b828-702d9a0c881c@arm.com>
+ <0bb112c7-1ed0-4ee1-a1df-6a7d4b224fb6@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <0bb112c7-1ed0-4ee1-a1df-6a7d4b224fb6@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-References: <20251113112802.44657-1-adelodunolaoluwa.ref@yahoo.com>
 
-Add selftests to verify and document Linux’s intended behaviour for
-UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
-The tests verify that:
+On 12/11/2025 22:24, Yang Shi wrote:
+> 
+> 
+> On 11/12/25 2:16 AM, Ryan Roberts wrote:
+>> Hi Yang,
+>>
+>>
+>> On 23/10/2025 22:52, Yang Shi wrote:
+>>> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
+>>> rodata=full"), the direct mapping may be split on some machines instead
+>>> keeping static since boot. It makes more sense to show the direct mapping
+>>> use in /proc/meminfo than before.
+>>> This patch will make /proc/meminfo show the direct mapping use like the
+>>> below (4K base page size):
+>>> DirectMap4K:       94792 kB
+>>> DirectMap64K:      134208 kB
+>>> DirectMap2M:     1173504 kB
+>>> DirectMap32M:     5636096 kB
+>>> DirectMap1G:    529530880 kB
+>> I have a long-term aspiration to enable "per-process page size", where each user
+>> space process can use a different page size. The first step is to be able to
+>> emulate a page size to the process which is larger than the kernel's. For that
+>> reason, I really dislike introducing new ABI that exposes the geometry of the
+>> kernel page tables to user space. I'd really like to be clear on what use case
+>> benefits from this sort of information before we add it.
+> 
+> Thanks for the information. I'm not sure what "per-process page size" exactly
+> is. But isn't it just user space thing? I have hard time to understand how
+> exposing kernel page table geometry will have impact on it.
 
- 1. SOCK_STREAM returns EOF when the peer closes normally.
- 2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
- 3. SOCK_SEQPACKET returns EOF when the peer closes normally.
- 4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
- 5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+It's a feature I'm working on/thinking about that, if I'm honest, has a fairly
+low probability of making it upstream. arm64 supports multiple base page sizes;
+4K, 16K, 64K. The idea is to allow different processes to use a different base
+page size and then actually use the native page table for that size in TTBR0.
+The idea is to have the kernel use 4K internally and most processes would use 4K
+to save memory. But performance critical processes could use 64K.
 
-This follows up on review feedback suggesting a selftest to clarify
-Linux’s semantics.
+Currently the kernel page size always matches the user page size and there is
+certain data passed through procfs where that assumption becomes apparent. First
+step is to be able to emulate the process page size to the process. Exposing the
+kernel page table geometry makes this harder.
 
-Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
----
-changelog:
+But really this is my problem to solve, so I doubt a real consideration for this
+patch.
 
-changes from v5 to v6
-- Remove the not-needed check for self->child > 0 in the
-  FIXTURE_TEARDOWN
+> 
+> The direct map use information is quite useful for tracking direct map
+> fragmentation which may have negative impact to performance and help diagnose
+> and debug such issues quickly.
+> 
+>>
+>> nit: arm64 tends to use the term "linear map" not "direct map". I'm not sure why
+>> or what the history is. Given this is arch-specific should we be aligning on the
+>> architecture's terminology here? I don't know...
+> 
+> I actually didn't notice that. They are basically interchangeable. Just try to
+> keep the consistency with other architectures, for example, x86. The users may
+> have arm64 and x86 machines deployed at the same time and they should prefer as
+> few churn as possible for maintaining multiple architectures.
 
-changes from v4 to v5:
-1. Moved the send() call before the socket type check in Test 2 to ensure
-  the unread data behavior is tested for SOCK_DGRAM as well.
+Yeah fair enough.
 
-2. Removed the misleading commend about accept() for clarity.
+> 
+>>
+>>> Although just the machines which support BBML2_NOABORT can split the
+>>> direct mapping, show it on all machines regardless of BBML2_NOABORT so
+>>> that the users have consistent view in order to avoid confusion.
+>>>
+>>> Although ptdump also can tell the direct map use, but it needs to dump
+>>> the whole kernel page table. It is costly and overkilling. It is also
+>>> in debugfs which may not be enabled by all distros. So showing direct
+>>> map use in /proc/meminfo seems more convenient and has less overhead.
+>>>
+>>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+>>> ---
+>>>   arch/arm64/mm/mmu.c | 86 +++++++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 86 insertions(+)
+>>>
+>>> v2: * Counted in size instead of the number of entries per Ryan
+>>>      * Removed shift array per Ryan
+>>>      * Use lower case "k" per Ryan
+>>>      * Fixed a couple of build warnings reported by kernel test robot
+>>>      * Fixed a couple of poential miscounts
+>>>
+>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>>> index b8d37eb037fc..7207b55d0046 100644
+>>> --- a/arch/arm64/mm/mmu.c
+>>> +++ b/arch/arm64/mm/mmu.c
+>>> @@ -29,6 +29,7 @@
+>>>   #include <linux/mm_inline.h>
+>>>   #include <linux/pagewalk.h>
+>>>   #include <linux/stop_machine.h>
+>>> +#include <linux/proc_fs.h>
+>>>     #include <asm/barrier.h>
+>>>   #include <asm/cputype.h>
+>>> @@ -51,6 +52,17 @@
+>>>     DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
+>>>   +enum direct_map_type {
+>>> +    PTE,
+>>> +    CONT_PTE,
+>>> +    PMD,
+>>> +    CONT_PMD,
+>>> +    PUD,
+>>> +    NR_DIRECT_MAP_TYPE,
+>>> +};
+>>> +
+>>> +static unsigned long direct_map_size[NR_DIRECT_MAP_TYPE];
+>> I wonder if you should wrap all the adds and subtracts into a helper function,
+>> which can then be defined as a nop when !CONFIG_PROC_FS. It means we only need
+>> direct_map_size[] when PROC_FS is enabled too.
+>>
+>> e.g.
+>>
+>> #ifdef CONFIG_PROC_FS
+>> static unsigned long direct_map_size[NR_DIRECT_MAP_TYPE];
+>>
+>> static inline void direct_map_meminfo_add(unsigned long size,
+>>                       enum direct_map_type type)
+>> {
+>>     direct_map_size[type] += size;
+>> }
+>>
+>> static inline void direct_map_meminfo_sub(unsigned long size,
+>>                       enum direct_map_type type)
+>> {
+>>     direct_map_size[type] -= size;
+>> }
+>> #else
+>> static inline void direct_map_meminfo_add(unsigned long size,
+>>                       enum direct_map_type type) {}
+>> static inline void direct_map_meminfo_sub(unsigned long size,
+>>                       enum direct_map_type type) {}
+>> #endif
+>>
+>> Then use it like this:
+>> direct_map_meminfo_sub(next - addr, PMD);
+>> direct_map_meminfo_add(next - addr, to_cont ? CONT_PTE : PTE);
+> 
+> Thanks for the suggestion. It seems good and it also should be able to make
+> solve the over-accounting problem mentioned below easier.
+> 
+>>
+>>> +
+>>>   u64 kimage_voffset __ro_after_init;
+>>>   EXPORT_SYMBOL(kimage_voffset);
+>>>   @@ -171,6 +183,45 @@ static void init_clear_pgtable(void *table)
+>>>       dsb(ishst);
+>>>   }
+>>>   +#ifdef CONFIG_PROC_FS
+>>> +void arch_report_meminfo(struct seq_file *m)
+>>> +{
+>>> +    char *size[NR_DIRECT_MAP_TYPE];
+>>> +
+>>> +#if defined(CONFIG_ARM64_4K_PAGES)
+>>> +    size[PTE] = "4k";
+>>> +    size[CONT_PTE] = "64k";
+>>> +    size[PMD] = "2M";
+>>> +    size[CONT_PMD] = "32M";
+>>> +    size[PUD] = "1G";
+>>> +#elif defined(CONFIG_ARM64_16K_PAGES)
+>>> +    size[PTE] = "16k";
+>>> +    size[CONT_PTE] = "2M";
+>>> +    size[PMD] = "32M";
+>>> +    size[CONT_PMD] = "1G";
+>>> +#elif defined(CONFIG_ARM64_64K_PAGES)
+>>> +    size[PTE] = "64k";
+>>> +    size[CONT_PTE] = "2M";
+>>> +    size[PMD] = "512M";
+>>> +    size[CONT_PMD] = "16G";
+>>> +#endif
+>>> +
+>>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
+>>> +            size[PTE], direct_map_size[PTE] >> 10);
+>>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
+>>> +            size[CONT_PTE],
+>>> +            direct_map_size[CONT_PTE] >> 10);
+>>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
+>>> +            size[PMD], direct_map_size[PMD] >> 10);
+>>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
+>>> +            size[CONT_PMD],
+>>> +            direct_map_size[CONT_PMD] >> 10);
+>>> +    if (pud_sect_supported())
+>>> +        seq_printf(m, "DirectMap%s:    %8lu kB\n",
+>>> +            size[PUD], direct_map_size[PUD] >> 10);
+>>> +}
+>>> +#endif
+>>> +
+>>>   static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+>>>                phys_addr_t phys, pgprot_t prot)
+>>>   {
+>>> @@ -234,6 +285,11 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned
+>>> long addr,
+>>>             init_pte(ptep, addr, next, phys, __prot);
+>>>   +        if (pgprot_val(__prot) & PTE_CONT)
+>>> +            direct_map_size[CONT_PTE] += next - addr;
+>>> +        else
+>>> +            direct_map_size[PTE] += next - addr;
+>>> +
+>>>           ptep += pte_index(next) - pte_index(addr);
+>>>           phys += next - addr;
+>>>       } while (addr = next, addr != end);
+>>> @@ -262,6 +318,17 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr,
+>>> unsigned long end,
+>>>               (flags & NO_BLOCK_MAPPINGS) == 0) {
+>>>               pmd_set_huge(pmdp, phys, prot);
+>>>   +            /*
+>>> +             * It is possible to have mappings allow cont mapping
+>>> +             * but disallow block mapping. For example,
+>>> +             * map_entry_trampoline().
+>>> +             * So we have to increase CONT_PMD and PMD size here
+>>> +             * to avoid double counting.
+>>> +             */
+>>> +            if (pgprot_val(prot) & PTE_CONT)
+>>> +                direct_map_size[CONT_PMD] += next - addr;
+>>> +            else
+>>> +                direct_map_size[PMD] += next - addr;
+>>>               /*
+>>>                * After the PMD entry has been populated once, we
+>>>                * only allow updates to the permission attributes.
+>>> @@ -368,6 +435,7 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long
+>>> addr, unsigned long end,
+>>>               (flags & NO_BLOCK_MAPPINGS) == 0) {
+>>>               pud_set_huge(pudp, phys, prot);
+>>>   +            direct_map_size[PUD] += next - addr;
+>> I think this (and all the lower levels) are likely over-accounting. For example,
+>> __kpti_install_ng_mappings() and map_entry_trampoline() reuse the infra to
+>> create separate pgtables. Then you have fixmap, which uses
+>> create_mapping_noalloc(), efi which uses create_pgd_mapping() and
+>> update_mapping_prot() used to change permissions for various parts of the kernel
+>> image. They all reuse the infra too.
+> 
+> Yes, thanks for catching this.
+> 
+>>
+>>>               /*
+>>>                * After the PUD entry has been populated once, we
+>>>                * only allow updates to the permission attributes.
+>>> @@ -532,9 +600,13 @@ static void split_contpte(pte_t *ptep)
+>>>   {
+>>>       int i;
+>>>   +    direct_map_size[CONT_PTE] -= CONT_PTE_SIZE;
+>>> +
+>>>       ptep = PTR_ALIGN_DOWN(ptep, sizeof(*ptep) * CONT_PTES);
+>>>       for (i = 0; i < CONT_PTES; i++, ptep++)
+>>>           __set_pte(ptep, pte_mknoncont(__ptep_get(ptep)));
+>>> +
+>>> +    direct_map_size[PTE] += CONT_PTE_SIZE;
+>> Similar issue: we aspire to reuse this split_* infra for regions other than the
+>> linear map - e.g. vmalloc. So I don't like the idea of baking in an assumption
+>> that any split is definitely targetting the linear map.
+> 
+> Yeah, this needs to tell whether it is splitting linear map or not.
+> 
+>>
+>> I guess if you pass the start and end VA to the add/subtract function, it could
+>> fitler based on whether the region is within the linear map region?
+> 
+> I think it could. It seems ok for kpti, tramp and efi too because their virtual
+> addresses are not in the range of linear map IIUC. And it should be able to
+> exclude update_mapping_prot() as well because update_mapping_prot() is just
+> called on kernel text and data segments whose virtual addresses are not in the
+> range of linear map either.
 
-3. Applied indentation fixes for style consistency
-  (alignment with open parenthesis).
+I'm not sure if there are cases where we will walk a range of the linear map
+multiple times? I guess not. Probably worth double checking and documenting.
 
-4. Minor comment and formatting cleanups for clarity and adherence
-  to kernel coding style.
+> 
+> And it seems using start address alone is good enough? I don't think kernel
+> install page table crossing virtual address space areas. 
 
- tools/testing/selftests/net/.gitignore        |   1 +
- tools/testing/selftests/net/af_unix/Makefile  |   1 +
- .../selftests/net/af_unix/unix_connreset.c    | 177 ++++++++++++++++++
- 3 files changed, 179 insertions(+)
- create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+Agreed. I suggested passing start/end instead of start/size because you have
+start/end at the callsites. Then you can calculate size in the function instead
+of having to do it at every callsite. But looking again, the split_ functions
+don't even have start. I think go with start/end vs start/size based on which
+will look neater more of the time...
 
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index 439101b518ee..e89a60581a13 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -65,3 +65,4 @@ udpgso
- udpgso_bench_rx
- udpgso_bench_tx
- unix_connect
-+unix_connreset
-diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
-index de805cbbdf69..5826a8372451 100644
---- a/tools/testing/selftests/net/af_unix/Makefile
-+++ b/tools/testing/selftests/net/af_unix/Makefile
-@@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
- 	scm_pidfd \
- 	scm_rights \
- 	unix_connect \
-+	unix_connreset \
- # end of TEST_GEN_PROGS
- 
- include ../../lib.mk
-diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
-new file mode 100644
-index 000000000000..bffef2b54bfd
---- /dev/null
-+++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
-+ *
-+ * This test verifies:
-+ *  1. SOCK_STREAM returns EOF when the peer closes normally.
-+ *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
-+ *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
-+ *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
-+ *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
-+ *
-+ * These tests document the intended Linux behaviour.
-+ *
-+ */
-+
-+#define _GNU_SOURCE
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <sys/socket.h>
-+#include <sys/un.h>
-+#include "../../kselftest_harness.h"
-+
-+#define SOCK_PATH "/tmp/af_unix_connreset.sock"
-+
-+static void remove_socket_file(void)
-+{
-+	unlink(SOCK_PATH);
-+}
-+
-+FIXTURE(unix_sock)
-+{
-+	int server;
-+	int client;
-+	int child;
-+};
-+
-+FIXTURE_VARIANT(unix_sock)
-+{
-+	int socket_type;
-+	const char *name;
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, stream) {
-+	.socket_type = SOCK_STREAM,
-+	.name = "SOCK_STREAM",
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, dgram) {
-+	.socket_type = SOCK_DGRAM,
-+	.name = "SOCK_DGRAM",
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
-+	.socket_type = SOCK_SEQPACKET,
-+	.name = "SOCK_SEQPACKET",
-+};
-+
-+FIXTURE_SETUP(unix_sock)
-+{
-+	struct sockaddr_un addr = {};
-+	int err;
-+
-+	addr.sun_family = AF_UNIX;
-+	strcpy(addr.sun_path, SOCK_PATH);
-+	remove_socket_file();
-+
-+	self->server = socket(AF_UNIX, variant->socket_type, 0);
-+	ASSERT_LT(-1, self->server);
-+
-+	err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
-+	ASSERT_EQ(0, err);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		err = listen(self->server, 1);
-+		ASSERT_EQ(0, err);
-+	}
-+
-+	self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
-+	ASSERT_LT(-1, self->client);
-+
-+	err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
-+	ASSERT_EQ(0, err);
-+}
-+
-+FIXTURE_TEARDOWN(unix_sock)
-+{
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET)
-+		close(self->child);
-+
-+	close(self->client);
-+	close(self->server);
-+	remove_socket_file();
-+}
-+
-+/* Test 1: peer closes normally */
-+TEST_F(unix_sock, eof)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		self->child = accept(self->server, NULL, NULL);
-+		ASSERT_LT(-1, self->child);
-+
-+		close(self->child);
-+	} else {
-+		close(self->server);
-+	}
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		ASSERT_EQ(0, n);
-+	} else {
-+		ASSERT_EQ(-1, n);
-+		ASSERT_EQ(EAGAIN, errno);
-+	}
-+}
-+
-+/* Test 2: peer closes with unread data */
-+TEST_F(unix_sock, reset_unread_behavior)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	/* Send data that will remain unread */
-+	send(self->client, "hello", 5, 0);
-+
-+	if (variant->socket_type == SOCK_DGRAM) {
-+		/* No real connection, just close the server */
-+		close(self->server);
-+	} else {
-+		self->child = accept(self->server, NULL, NULL);
-+		ASSERT_LT(-1, self->child);
-+
-+		/* Peer closes before client reads */
-+		close(self->child);
-+	}
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+	ASSERT_EQ(-1, n);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		ASSERT_EQ(ECONNRESET, errno);
-+	} else {
-+		ASSERT_EQ(EAGAIN, errno);
-+	}
-+}
-+
-+/* Test 3: closing unaccepted (embryo) server socket should reset client. */
-+TEST_F(unix_sock, reset_closed_embryo)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	if (variant->socket_type == SOCK_DGRAM)
-+		SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
-+
-+	/* Close server without accept()ing */
-+	close(self->server);
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+
-+	ASSERT_EQ(-1, n);
-+	ASSERT_EQ(ECONNRESET, errno);
-+}
-+
-+TEST_HARNESS_MAIN
-+
--- 
-2.43.0
+> So the add/sub ops
+> should seem like:
+> 
+> static inline void direct_map_meminfo_add(unsigned long start, unsigned long size,
+>                       enum direct_map_type type)
+> {
+>     if (is_linear_map_addr(start))
+>         direct_map_use[type] += size;
+> }
+> 
+>>
+>> Overall, I'm personally not a huge fan of adding this capability. I'd need to
+>> understand the use case to change my mind. But I'm not the maintainer so perhaps
+>> my opinion isn't all that important ;-)
+> 
+> Understood. I think this is quite helpful IMHO :-) Thanks for the valuable inputs.
+> 
+> Thanks,
+> Yang
+> 
+>>
+>> Thanks,
+>> Ryan
+>>
+>>>   }
+>>>     static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
+>>> @@ -559,8 +631,13 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp,
+>>> bool to_cont)
+>>>       if (to_cont)
+>>>           prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>>>   +    direct_map_size[PMD] -= PMD_SIZE;
+>>>       for (i = 0; i < PTRS_PER_PTE; i++, ptep++, pfn++)
+>>>           __set_pte(ptep, pfn_pte(pfn, prot));
+>>> +    if (to_cont)
+>>> +        direct_map_size[CONT_PTE] += PMD_SIZE;
+>>> +    else
+>>> +        direct_map_size[PTE] += PMD_SIZE;
+>>>         /*
+>>>        * Ensure the pte entries are visible to the table walker by the time
+>>> @@ -576,9 +653,13 @@ static void split_contpmd(pmd_t *pmdp)
+>>>   {
+>>>       int i;
+>>>   +    direct_map_size[CONT_PMD] -= CONT_PMD_SIZE;
+>>> +
+>>>       pmdp = PTR_ALIGN_DOWN(pmdp, sizeof(*pmdp) * CONT_PMDS);
+>>>       for (i = 0; i < CONT_PMDS; i++, pmdp++)
+>>>           set_pmd(pmdp, pmd_mknoncont(pmdp_get(pmdp)));
+>>> +
+>>> +    direct_map_size[PMD] += CONT_PMD_SIZE;
+>>>   }
+>>>     static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
+>>> @@ -604,8 +685,13 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp,
+>>> bool to_cont)
+>>>       if (to_cont)
+>>>           prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>>>   +    direct_map_size[PUD] -= PUD_SIZE;
+>>>       for (i = 0; i < PTRS_PER_PMD; i++, pmdp++, pfn += step)
+>>>           set_pmd(pmdp, pfn_pmd(pfn, prot));
+>>> +    if (to_cont)
+>>> +        direct_map_size[CONT_PMD] += PUD_SIZE;
+>>> +    else
+>>> +        direct_map_size[PMD] += PUD_SIZE;
+>>>         /*
+>>>        * Ensure the pmd entries are visible to the table walker by the time
+> 
 
 
