@@ -1,354 +1,277 @@
-Return-Path: <linux-kernel+bounces-898943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C439C565C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:51:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D35C565E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2EF013578F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:45:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 274C0351AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62BA2459C9;
-	Thu, 13 Nov 2025 08:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B8A2C0F6F;
+	Thu, 13 Nov 2025 08:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="N07yRMNU"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PBZQgJ+A";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dZbDPD6B"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A04026ED2A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55116257824
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763023488; cv=none; b=uy+EIKpLjJRWdRzFb/ZNUdinu6kz427mAMVGvc+lhZ6cHEzwr/L2ltLX31X7+UHexvBRIk7ELKJJrLTD9k62FJJUUYJ+TM+6pzPyLpmjCwmR4JYqAG35E39p1KJuo61br8zH7083NJNn9X0KR4DGYqyQ9c5K8Izj4+nSxP+L4wM=
+	t=1763023583; cv=none; b=l+O1YHrGEZB0VldE2imTFy2r89NjwlELDEnlPCE+Ppr/RmeQL6dI9nfNdFKV8BVw6fGArwEdaPcpp2dQKad31o2B2xkaroGgn4Yivisi0/cGE/DW4CvUTzD0gP1lTMM+M4hJQI9AlNHIYaB7HYxdjXu063JZQ2P7xwo1WukPnx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763023488; c=relaxed/simple;
-	bh=p8k7WifucDpT6EGz4jqiedoInt47e2DEoyTztAVmg8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZWKT5Fo0pLryXAkrWZ0kV/SBex8wnRh0vy7RGDkCDxojBHvPIMZiD5Q15LF5OJLdSfLNjAiNIoWlaxCdYCKG0m2ZW/Z4W/ziVKlDRXHOTFtVk6Mg79BPO50e3RvAgLPx7WR8BxJXsTGv2/5HCsWf8Gp1I9UbCsvn+nH8HUKX+a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (2048-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=N07yRMNU; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 7BC9EC355A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:43 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 2E064C3545
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:42 +0200 (EET)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 859B01FE6E5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:41 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1763023481;
-	bh=dhovFHoHb8qSQBovicVWAESq7ahI0AP216oMQOcv1DU=;
-	h=Received:From:Subject:To;
-	b=N07yRMNU/531yaWLE+SrTEviAS8bzNHmF0+tWkkbDPDXqU8o+HDoahryzT98Tv9f2
-	 1F7n1JiQYUd1I8fEtt6QZhKyoYWXzy+RbkHRBYLJ2NzC2S9/vumFbXgqcxDs9hZCAB
-	 4leOFStGMgvDcDzr5yIPUqHYQzxq3bnIW6XqG4m26f+cZViNEPDbt/4kMCe1pUnd8W
-	 ljiVg21/vyj3xRThot3fEPG7AePTRKEQbHLI3U/ifFmTlZezkHD5Ac3YqTZPYtuOoZ
-	 QFNU5GMgXkF+F+KBOBGATqvbSzRGu8SAC7PFpJ2WgqS90q6FSSxf9hHC0w41N+0lLT
-	 oh2FUPZFgmRoA==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-37a875e3418so3916161fa.1
-        for <linux-kernel@vger.kernel.org>;
- Thu, 13 Nov 2025 00:44:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWGs1tMvf6qtLMtQDFe9B+Y0DvvrILOp7NvK3fnfgL9X8nLky0sV9eSJ+MyUGrqgCd6roupbs91YWK8gLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ogFR+WIevPakMDRa0AyHu7FxAq1X4fcUN1iVFLf6AZm3jExp
-	XyMlC7lNa2/14YeRzK0l9K/6U5J6UQW2UUvFyFjvyZoTQ9BBAAa6FTB+t1OlRUj2snpY/s5UKnF
-	Qob1kcThshXcVUcl3eSQnNWINs00xLXY=
-X-Google-Smtp-Source: 
- AGHT+IFcvnlK1g9gem08iqzl3IeGNTJP877Z1QLrGtuXpfBlosJ62owDR4OYnKTypeP8yOawbHwYcXU2tGaqREB0LnE=
-X-Received: by 2002:a05:651c:3043:b0:37a:2dca:cfaf with SMTP id
- 38308e7fff4ca-37b8c2ec367mr15230501fa.20.1763023480919; Thu, 13 Nov 2025
- 00:44:40 -0800 (PST)
+	s=arc-20240116; t=1763023583; c=relaxed/simple;
+	bh=jGAs8GDkTdepMafZ6RRqwys5UhmLlRnQZMfjPFvWU14=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rCXJS0zLZ8uXZlpmPvTiioYQYyztOqfcPBCcrUKZE7WHYRJtrmFrTyp7MAP42tKlSauw9yaVNNYB+jNoH49dnZLGuHknhq0f6y9GdEj6h9Fl1cuQdPVBGxGdsBfPc+OawlquOTfL5lCNt++H8x0y9Hg/eQUKEov7oB8oT4cNo1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PBZQgJ+A; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dZbDPD6B; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD11g0v3036259
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:46:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=D3wze9fyhGDJ4KP1QzTcteRoRGZ7U9g3nAS
+	QGeqMgHk=; b=PBZQgJ+AqRlc6m/JUx2XvTH9CE2LbP55t/P0RXhhEPZqf689daE
+	KzU/o//WJtInYW4NExRqah3qogG8qJXlwOf8OFNkfTRbkk04QviWdPMS5X5mLtaB
+	XD2b0bI67N1ElQ7CWJp/WMxLord2qnDiq9JRV0PEy6TDsy7k7HeHFI1hu7sL6CEH
+	S8SCc8zDYvb5wwRVQ1LuVmGIztm21k5CGl5xrzSLub9Ho564BOJUnPgPYE4dDpwj
+	RUcSKyR5z7GsDfmNE2ZNbs5AtPOSNPWPhLtpIoVwpli1HWPuvIYd3aL2YN55jvQo
+	fSp6o0+PxC2ALLHcKfl6Kx97ZPZ1vGQs/IA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ad4ju9d2q-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:46:21 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-343bf6ded5cso1367274a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:46:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763023581; x=1763628381; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3wze9fyhGDJ4KP1QzTcteRoRGZ7U9g3nASQGeqMgHk=;
+        b=dZbDPD6BK0xaq4DIKLgfsOOjbhBDJrUIQ6ZZ4wp+aVByDkxTLLzFSkLBf8sbLKlZXs
+         lsXUVcbFgOI+URfOFEPgOifi6ASzZfg7HoykXHo8plZxjfgnsDhageTmwkwO7Gc5/Clg
+         hifydP+EOo5B15wMFXLxI16u9lz9xl1SAOARPGrLxC+eW/Xinp5YpVJeg5gUPbNQ2Owh
+         ELnnJKN2okZHWF+KdO4KpEWPCmftN0a25gHzdIJLJ7vfkWwGXUPUESNhF4N0EK9xEe3T
+         U/ong1RAzw8Jbbxll4F7+7PElXgKESdvDEvKjZqossWNUwf3vfeTrTaNfN+ogOLwKASi
+         5ywg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763023581; x=1763628381;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D3wze9fyhGDJ4KP1QzTcteRoRGZ7U9g3nASQGeqMgHk=;
+        b=fIwkwp45/XBNY9AUhDmhbuqln4shl4umGfhSZixRWdhgHA8nBLYRIahXDxo9rRJ0IH
+         DP+Xk+ofSMIy3vLd3lrUZ9n/9qEa166mbh18p10nxK4y/Xa624CyFWAImVqd9z1vGjVH
+         Wst7uU9hw5LKTzypb5f9b4yGVh48D5fT0XYeSK/yGOZx3XR7sO3dWig01yGIgoHNPZ5n
+         g4rnCTkKjle5Gr28XPnDpYTWJzOf7UWDuNwul6FyFzJ6a6R9Nzq1AGrSxOx7OltcI1Rg
+         YLg/cw3aGbFyIMqnRnMOpYSa0gGVbMfpQtalGu46XF+zBaCKaVsq1afqzAbmrIkEdRat
+         RJ9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZc0/04zqH42XOPSUMkdQd4IEtaOSWPSQufQspfaIAXmQjNZRN2Xb5is/Ugg/BrCgCw810lJQXLx0lzFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6nakzPqB9UeJ3mVtlBTjfkS5D/Y6fI4Gd7+KXnlY2M6qHHgtQ
+	KLt/RtWtvc+BFHrNQceyhADTE0yhEttZdq9zh1G/k5LoU+GovyTEA/IKk2TA2GghH+vxAejiuJc
+	8/KHG8uZr81xpa4/+qStpLW/Jc1Sw7NFOxcV07C5J97jnvLUuS+lbKRtbsZxX0yq1vqQ=
+X-Gm-Gg: ASbGncsQF7IpOpR66KSu3pcw3+Vj6I1ckMAD74++RIBkNxnItH0WLxQkvD8jrNaB4wK
+	SmuZhdxRflCUsWP+32MMSasVMY84OArXS1DOI8l4zE3hAq9z/lX76gELlI3aULuA0mQZEul5lwT
+	CX5fCZ8UxnoirFXwVR8lAtKktf5tvKgkz5CfTsahtyLqVx/ccpDg+uTh8AO9QhFpKnjyXQLvNsK
+	nsSnLD+8Lg8BbJgGPJeVezuudxqD1lykMDiopwadYezC9+jwKaK8758TNGd5gmkGTkWm3lpmmBn
+	3fpVPu6fk51ekyQaTpf3fse2ciWrzu14PvKh9zQuh3ZwsAxCesepMMtiU8Ax8HX+M08g1FR2GGE
+	RlwTRCasnWx6rgXEqeuE2XleojUT6fn3KVMIi
+X-Received: by 2002:a17:90b:5625:b0:341:88ba:c6d3 with SMTP id 98e67ed59e1d1-343ddec5702mr7210234a91.23.1763023580737;
+        Thu, 13 Nov 2025 00:46:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEqX2Ea/Aovz7+Slvwr4ycE1eB3ZqJee0sXrnYFeJDXMYYaEaRLil3IMHwxyr5d4Ygv6d5f6Q==
+X-Received: by 2002:a17:90b:5625:b0:341:88ba:c6d3 with SMTP id 98e67ed59e1d1-343ddec5702mr7210205a91.23.1763023580146;
+        Thu, 13 Nov 2025 00:46:20 -0800 (PST)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bc375fe4da5sm1422954a12.26.2025.11.13.00.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 00:46:19 -0800 (PST)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH] arm64: dts: qcom: sdx75: Flatten usb controller node
+Date: Thu, 13 Nov 2025 14:16:08 +0530
+Message-Id: <20251113084608.3837064-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101104712.8011-1-lkml@antheas.dev>
- <CAGwozwE+3vkm0-amRqnNJBzxTvXabgBF9h_G_vG_L7OJj91LBg@mail.gmail.com>
- <27a74ecc-bff7-f3ae-b23e-a8362ac3a6b3@linux.intel.com>
- <CAGwozwGpacR=wYXpf3vOiwWNxaV6pJ6CdE-E-G1gRRpO4VHVMg@mail.gmail.com>
- <74f91d3c-6494-4754-a10f-4d8c1d45f7ff@gmail.com>
- <CAGwozwEKqqJxxmtjJhy2MzNVhmBTMmy8xG5TZGkKJqJCgK=X5w@mail.gmail.com>
- <4671d267-d823-4bf7-af30-b587e67dec49@gmail.com>
-In-Reply-To: <4671d267-d823-4bf7-af30-b587e67dec49@gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 13 Nov 2025 09:44:28 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwFDm80YuC9AfES2d7Xk2bnCNPjHtgXCz5gZuh7fuajHgg@mail.gmail.com>
-X-Gm-Features: AWmQ_bk4ktN1laFYsydus_0eoARRn9jxNUvpvSPEDxKLDO3uwo9j9jLqdkTKno8
-Message-ID: 
- <CAGwozwFDm80YuC9AfES2d7Xk2bnCNPjHtgXCz5gZuh7fuajHgg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] HID: asus: Fix ASUS ROG Laptop's Keyboard
- backlight handling
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <176302348182.1956594.15118961950409458663@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: FAQ1yneNwGf0S3j6v3LSdD-Q70xH9b5r
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA2MiBTYWx0ZWRfXxtOrhsQXKfDq
+ SwYPa4QGdYpniQ8ynDKMrIHnC9L2UUd/H1u/SzZHXrIKpYynPZ5tqh4eDg1pBI5TsNYydYI2k7I
+ koy2BPi6riTmcKNvOClRkPBxtt1dkDAb7+DVIDzRDKGRObxER/XCQ+Xn0HvWI9cyfSuRk9DvtHk
+ OztAEn4y5T8GrV3x6ncyx+b+merucNZs2c2JhnzyfBzGbGFYKCj2s2uj+Xb92kxjnD/H+YG+UeY
+ jJ0q5d8J35nhQfa9Ph1wTWOCqa+iTDAlW5GrM0LOh2vIAKXaC6JEfUsyUSWQw9CIot1R5FDXbsW
+ u9JxcyCdbbYwK1RF1gqYPxnY8p0oFLnMpEVTugzooIIa9Wx+V0kOdVw/h3SDbhrP0WjkWJVhmuN
+ lm8oUTgHMv7UOxnrnb6lfKWB0j4zDw==
+X-Authority-Analysis: v=2.4 cv=BdnVE7t2 c=1 sm=1 tr=0 ts=69159add cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=1q36Q9n_z7eM6CNx3OUA:9 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: FAQ1yneNwGf0S3j6v3LSdD-Q70xH9b5r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_01,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 bulkscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130062
 
-On Thu, 13 Nov 2025 at 02:14, Denis Benato <benato.denis96@gmail.com> wrote=
-:
->
->
-> On 11/12/25 23:08, Antheas Kapenekakis wrote:
-> > On Wed, 12 Nov 2025 at 20:51, Denis Benato <benato.denis96@gmail.com> w=
-rote:
-> >>
-> >> On 11/12/25 14:41, Antheas Kapenekakis wrote:
-> >>> On Wed, 12 Nov 2025 at 14:22, Ilpo J=C3=A4rvinen
-> >>> <ilpo.jarvinen@linux.intel.com> wrote:
-> >>>> On Wed, 12 Nov 2025, Antheas Kapenekakis wrote:
-> >>>>
-> >>>>> On Sat, 1 Nov 2025 at 11:47, Antheas Kapenekakis <lkml@antheas.dev>=
- wrote:
-> >>>>>> This is a two part series which does the following:
-> >>>>>>   - Clean-up init sequence
-> >>>>>>   - Unify backlight handling to happen under asus-wmi so that all =
-Aura
-> >>>>>>     devices have synced brightness controls and the backlight butt=
-on works
-> >>>>>>     properly when it is on a USB laptop keyboard instead of one w/=
- WMI.
-> >>>>>>
-> >>>>>> For more context, see cover letter of V1. Since V5, I removed some=
- patches
-> >>>>>> to make this easier to merge.
-> >>>>> Small bump for this.
-> >>>> I looked at v8 earlier but then got an impression some of Denis' com=
-ments
-> >>>> against v7 were not taken into account in v8, which implies there wi=
-ll be
-> >>>> delay until I've time to delve into the details (I need to understan=
-d
-> >>>> things pretty deeply in such a case, which does take lots of time).
-> >>>>
-> >>>> Alternatively, if Denis says v8 is acceptable, then I don't need to =
-spend
-> >>>> so much time on it, but somehow I've a feeling he isn't happy with v=
-8
-> >>>> but just hasn't voiced it again...
-> >>>>
-> >>>> Please do realize that ignoring reviewer feedback without a very ver=
-y good
-> >>>> reason always risks adding delay or friction into getting things
-> >>>> upstreamed. Especially, when the review comes from a person who has =
-been
-> >>>> around for me to learn to trust their reviews or from a maintainer o=
-f the
-> >>>> code in question.
-> >>> Sure, sorry if it came out this way. Dennis had two comments on the V=
-7
-> >>> version of the series.
-> >>>
-> >>> The first one was that asusctl has a hang bug, which he hasn't had
-> >>> time to look into yet. This should have been fixed by dropping the
-> >>> HID_QUIRK_INPUT_PER_APP. I retested the series and that QUIRK was a
-> >>> bit of a NOOP that does not need to be added in the future.
-> >> So it is supposed to not regress it now, correct?
-> >>> The second is he is concerned with dropping the 0x5d/0x5e inits. Luke
-> >>> said (back in March) that it is fine to drop 0x5e because it is only
-> >>> used for ANIME displays. However, for 0x5d, it is hard to verify some
-> >>> of the older laptops because they have only been tested with 0x5d and
-> >>> we do not have the hardware in question to test.
-> >>>
-> >>> For this series, I re-added "initialize LED endpoint early for old
-> >>> NKEY keyboards" that re-adds 0x5d for the keyboards that cannot be
-> >>> tested again so this comment should be resolved too. With that in
-> >>> mind, we do end up with an additional quirk/command that may be
-> >>> unneeded and will remain there forever, but since it was a point of
-> >>> contention, it is not worth arguing over.
-> >>>
-> >>> So both comments should be resolved
-> >> The driver should also not late-initialize anything.
-> >>
-> >> Windows doesn't do it and the official asus application
-> >> can freely send LEDs changing commands to either WMI or USB
-> >> so I don't see any reason to do things differently [than windows]
-> >> and not prepare every USB endpoint to receive commands,
-> >> this has not been addressed unless I confused v7 and v8?
-> > Yes, it's been added on v8. 0x5d is init for the laptops it is
-> > problematic for. Not because it does not work, but because it has not
-> > been verified to work for those laptops.
-> I am not sure I am reading this right:
-> are you telling me that on recent models the windows driver
-> doesn't issue 0x5d?
+Flatten usb controller node and update to using latest bindings
+and flattened driver approach.
 
-Try to add spaces in your replies. This is hard to follow.
+Also add the missing usb-role-switch property in base dt node.
 
-Do not conflate driver with software. 0x5a (over the application
-0xff310076) has traditionally been used by a driver in Windows to
-control the backlight level, as it is done in this driver. 0x5d (over
-the application 0xff310079) is only used by laptops with RGB by
-Armoury crate. But this driver does not do RGB. No device
-functionality relies on it being sent for any device I've seen. The
-device remembers its Windows settings, incl. the backlight color, in
-the absence of a driver.
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sdx75-idp.dts |  6 +--
+ arch/arm64/boot/dts/qcom/sdx75.dtsi    | 67 ++++++++++++--------------
+ 2 files changed, 34 insertions(+), 39 deletions(-)
 
-Laptops without RGB such as the Duo series which I would like to add
-support for next only have a 0x5a endpoint. But, they are sent garbage
-inits for 0x5d and 0x5e currently. This should be fixed.
-
-Moreso, it seems that Armoury crate on the Xbox Ally series uses
-exclusively 0x5a commands and if you use 0x5d it ignores them (perhaps
-RGB still works though). With the previous generation, commands worked
-for either report id.
-
-> >>> @Denis: can give an ack if this is the case?
-> >>>
-> >>> As for Derek's comment, he has a PR for his project where he removes
-> >>> the name match for Ally devices with ample time for it to be merged
-> >>> until kernel 6.19 is released. In addition, that specific software fo=
-r
-> >>> full functionality relies on OOT drivers on the distros it ships with=
-,
-> >>> so it is minimally affected in either case.
-> >> The part we are talking about depends on this driver (hid-asus)
-> >> and there are people on asus-linux community using inputplumber
-> >> for non-ally devices (the OOT driver is only for ally devices)
-> >> therefore it is very important to us (and various other distributions)
-> >> not to break that software in any way.
-> > This driver is only used for Ally devices. If you mean that people
-> > remap their keyboards using inputplumber I guess they could but I have
-> > not seen it.
-> I meant people remap keyboards using IP. I am sure there were
-> (and very probably still are) people doing that.
-> >> Weighting pros and cons of changing the name I am not sure
-> >> changing name brings any benefit? Or am I missing something here?
-> >> It's simply used by userspace so the hardware should be loading
-> >> regardless of the name...
-> > Users see the name of their devices in their settings menu. They
-> > should be accurate. Also, the early entry needs to be added anyway to
-> > prevent kicking devices.
-> If it's just aesthetics I don't see much reasons in changing the name.
->
-> "the early entry needs to be added anyway ...." has no meaning to me,
-> please rephrase. Sorry.
-
-Early exit-
-
-> >> Along with IP and your tool and asusctl there is also openrgb,
-> >> and a newborn application for asus devices (I don't have contacts
-> >> with that dev nor I remember the name of the tool)
-> >> and I am not even that sure these are all asus-related
-> >> applications.
-> > My tool never checked for names, it briefly did for around a month
-> > after its creation for some devices until capability matches. Around
-> > 6.1 and 6.7 the kernel changed the names of most USB devices and that
-> > caused issues. It currently only uses name matches for VID/PID 0/0
-> > devices created by the kernel. Specifically, WMI and AT Keyboards. I
-> > am not sure there is a workaround for those. Asusctl also does not use
-> > names either.
-> But IP does, so I would like to hear confirmation from at least Derek
-> before the merge that there won't be future issues.
->
-> Interpret what I say here as a broad topic, not just name/PER_APP flag:
-> avoid changing data flow on older models...
-
-In [1] Derek removes the name matches
-
-There are no other name matches concerning this driver in it.
-
-The data flow is not changed in this series; you should go through the
-patches once again if you think that. The only difference is 0x5e is
-not sent, and 0x5d is not sent for newer devices.
-
-[1] https://github.com/ShadowBlip/InputPlumber/pull/453
-
-> >> Excercise EXTRA care touching this area as these are enough changes
-> >> to make it difficult to understand what exactly is the problem if
-> >> someone shows up with LEDs malfunctioning, laptop not entering sleep
-> >> anymore or something else entirely. Plus over time
-> >> ASUS has used various workarounds for windows problems
-> >> and I am not eager to find out what those are since there is only
-> >> a realistic way it's going to happen....
-> > These changes are not doing something extraordinary. It's just a minor =
-cleanup.
-> >
-> >>> Moreover, that specific commit is needed for Xbox Ally devices anyway=
-,
-> >>> as the kernel kicks one of the RGB endpoints because it does not
-> >>> register an input device (the check skipped by early return) so
-> >>> userspace becomes unable to control RGB on a stock kernel
-> >>> (hidraw/hiddev nodes are gone). For more context here, this specific
-> >>> endpoint implements the RGB Lamparray protocol for Windows dynamic
-> >>> lighting, and I think in an attempt to make it work properly in
-> >>> Windows, Asus made it so Windows has to first disable dynamic lightin=
-g
-> >>> for armoury crate RGB commands to work (the 0x5a ones over the 0xff31
-> >>> hid page).
-> >> Yes once ASUS introduces something new it sticks with that for
-> >> future models so it's expected more and more laptops will have
-> >> the same problem: I am not questioning if these patches are needed
-> >> as they very clearly are; I am questioning if everything that these
-> >> patches are doing are worth doing and aren't breaking/regressing
-> >> either tools or the flow of actions between the EC and these USB devic=
-es.
-> > Well, this series is needed to account for that. Sending the disable
-> > command is out of scope for now though.
-> Here I apologize for confusion: my comments were mostly about
-> older models: I absolutely don't want to break those, but if you find a w=
-ay
-> to distinguish them from newer models that would give you more freedom wi=
-th those.
-
-Yes, we know their specific PIDs, so if you see the patch that adds
-the 0x5d init, it is only added for those models.
-
-> No disable commands unless we find hard evidence those are strictly neede=
-d.
-
-They are needed for the Xbox Ally series, but since this driver does
-not do RGB it is out of scope.
-
-> > Antheas
-> >
-> >>> Hopefully this clears things up
-> >>>
-> >>> Antheas
-> >>>
-> >>>>> Unrelated but I was b4ing this series on Ubuntu 24 and got BADSIG:
-> >>>>> DKIM/antheas.dev. Is there a reference for fixing this on my host?
-> >>>>> Perhaps it would help with spam
-> >>>> I see BADSIG very often these days from b4 (thanks to gmail expiring
-> >>>> things after 7 days or so, I recall hearing somewhere), I just ignor=
-e them
-> >>>> entirely.
-> >>>>
-> >>>> AFAIK, that has never caused any delay to any patch in pdx86 domain =
-so if
-> >>>> that is what you thought is happening here, it's not the case.
-> >>>> If your patch does appear in the pdx86 patchwork, there's even less =
-reason
-> >>>> to worry as I mostly pick patches to process using patchwork's list.
-> >>> Turns out I had to update my DNS records. It should be good now.
-> >>>
-> >>>> --
-> >>>>  i.
-> >> snipp
-> >>>>>> 2.51.2
-> >>>>>>
-> >>>>>>
->
+diff --git a/arch/arm64/boot/dts/qcom/sdx75-idp.dts b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+index 06cacec3461f..6696e1aee243 100644
+--- a/arch/arm64/boot/dts/qcom/sdx75-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sdx75-idp.dts
+@@ -337,11 +337,9 @@ &uart1 {
+ };
+ 
+ &usb {
+-	status = "okay";
+-};
+-
+-&usb_dwc3 {
+ 	dr_mode = "peripheral";
++
++	status = "okay";
+ };
+ 
+ &usb_hsphy {
+diff --git a/arch/arm64/boot/dts/qcom/sdx75.dtsi b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+index f26ba90ba66d..6e7695146ff8 100644
+--- a/arch/arm64/boot/dts/qcom/sdx75.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdx75.dtsi
+@@ -1019,12 +1019,9 @@ opp-384000000 {
+ 			};
+ 		};
+ 
+-		usb: usb@a6f8800 {
+-			compatible = "qcom,sdx75-dwc3", "qcom,dwc3";
+-			reg = <0x0 0x0a6f8800 0x0 0x400>;
+-			#address-cells = <2>;
+-			#size-cells = <2>;
+-			ranges;
++		usb: usb@a600000 {
++			compatible = "qcom,sdx75-dwc3", "qcom,snps-dwc3";
++			reg = <0x0 0x0a600000 0x0 0xfc100>;
+ 
+ 			clocks = <&gcc GCC_USB30_SLV_AHB_CLK>,
+ 				 <&gcc GCC_USB30_MASTER_CLK>,
+@@ -1041,21 +1038,35 @@ usb: usb@a6f8800 {
+ 					  <&gcc GCC_USB30_MASTER_CLK>;
+ 			assigned-clock-rates = <19200000>, <200000000>;
+ 
+-			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
++			interrupts-extended = <&intc GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
++					      <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
+ 					      <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+ 					      <&pdc 10 IRQ_TYPE_EDGE_RISING>,
+ 					      <&pdc 9 IRQ_TYPE_EDGE_RISING>,
+ 					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "pwr_event",
++			interrupt-names = "dwc_usb3",
++					  "pwr_event",
+ 					  "hs_phy_irq",
+ 					  "dp_hs_phy_irq",
+ 					  "dm_hs_phy_irq",
+ 					  "ss_phy_irq";
+ 
++			iommus = <&apps_smmu 0x80 0x0>;
++
++			snps,dis_u2_susphy_quirk;
++			snps,dis_enblslpm_quirk;
++			snps,dis-u1-entry-quirk;
++			snps,dis-u2-entry-quirk;
++
+ 			power-domains = <&gcc GCC_USB30_GDSC>;
+ 
+ 			resets = <&gcc GCC_USB30_BCR>;
+ 
++			phys = <&usb_hsphy>,
++			       <&usb_qmpphy>;
++			phy-names = "usb2-phy",
++				    "usb3-phy";
++
+ 			interconnects = <&system_noc MASTER_USB3_0 QCOM_ICC_TAG_ALWAYS
+ 					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+ 					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+@@ -1063,38 +1074,24 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+ 			interconnect-names = "usb-ddr",
+ 					     "apps-usb";
+ 
++			usb-role-switch;
+ 			status = "disabled";
+ 
+-			usb_dwc3: usb@a600000 {
+-				compatible = "snps,dwc3";
+-				reg = <0x0 0x0a600000 0x0 0xcd00>;
+-				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+-				iommus = <&apps_smmu 0x80 0x0>;
+-				snps,dis_u2_susphy_quirk;
+-				snps,dis_enblslpm_quirk;
+-				snps,dis-u1-entry-quirk;
+-				snps,dis-u2-entry-quirk;
+-				phys = <&usb_hsphy>,
+-				       <&usb_qmpphy>;
+-				phy-names = "usb2-phy",
+-					    "usb3-phy";
+-
+-				ports {
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-
+-					port@0 {
+-						reg = <0>;
+-
+-						usb_1_dwc3_hs: endpoint {
+-						};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					usb_1_dwc3_hs: endpoint {
+ 					};
++				};
+ 
+-					port@1 {
+-						reg = <1>;
++				port@1 {
++					reg = <1>;
+ 
+-						usb_1_dwc3_ss: endpoint {
+-						};
++					usb_1_dwc3_ss: endpoint {
+ 					};
+ 				};
+ 			};
+-- 
+2.34.1
 
 
