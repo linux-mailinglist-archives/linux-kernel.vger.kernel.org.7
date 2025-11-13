@@ -1,96 +1,294 @@
-Return-Path: <linux-kernel+bounces-899450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E921AC57CC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A92DC57E2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC01A343A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC934A11CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227E8208994;
-	Thu, 13 Nov 2025 13:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40122264B0;
+	Thu, 13 Nov 2025 13:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jWTVc56K";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ELhvdV3D"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZzu4l+U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="roeUSB9w";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZzu4l+U";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="roeUSB9w"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189E8132117
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177332153D3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041657; cv=none; b=qToVfHx9TzxYVNMuHayU4F/GTmoIry3mQ7GlSQq7IC/hCMjUXyAqkb9DwiX9OjgCDiPfKdi79I9xPa3CDHbCabyGT+/WmFF5wCSmFXg2TBRk0tXTO8/omie/TrymT9dSqxc1utW0avkI/a/0dfBKlR3FTnvV+K3blCYYsxWEQ9c=
+	t=1763041692; cv=none; b=Q5xXAMYoe3l2Wo2iJZ0oKGYSwUMqICcPWeIr2Mk5vrIzwy02KSQEIOP0tnxcyAnCxQL23VsPsypJo572D/FwgrJYk36iIkXjuuH0uG1lTVQGGr8bE+xojfkDjlP1L8FV2ESIzNEZZMcVBcgrGaPaL0O/uzLqMiBQsBddSGpDCpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041657; c=relaxed/simple;
-	bh=zvuIv4KSuF+si8ggFN8/0vj1DwlbmFSr98IuX/PJuyI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S4osplz4ySEMuvfolxmEpTUwG08GjJxUXznaKh7ekwffjYSozyRZ0jff4rkyu9kua3g5s+P5xvRXUKQJ1Ui/ILQpzYLOnUO9mXthbWRLO8v3tckJSr97kaD7lp3H9C0i37+nTsBhPpLvLqkXIBpaicCxSL2CM53zsfj9piiA0TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jWTVc56K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ELhvdV3D; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763041654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bfgjqdkl3nu+9pQIon0tTsyOOqARcFrleejnJYi0Q0Y=;
-	b=jWTVc56KxZbmXe1taBYMHCSbYo4zm6D8AMfU9tX91XEPf6g5UD5IRvOeCmomfvjUeLu7M8
-	uislhLoNSyvnqbsXiiP+33KMUfjI1QsUQViGSqDVOyOWvYO9zTwImczrBPGXsaih/yQ/WM
-	c7isNeTMdOryAgpnH/tXXIy8QPuvS7v7CoOsUXBT9b+nUhe6Cj+1MJ3wqzI2M3neLjtC9o
-	r7AbSAR4udD0cHlilyDezZOYnHjoSOZtNKrS3f5qD3VCVnpfntjweoaYDs41rxIQ4B3THC
-	EaM5rZl9N2jDSETZh4dSSi5paMEFGM0qXHl8h3WW9HvjdWPse6AhNL2gkj0KIw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763041654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bfgjqdkl3nu+9pQIon0tTsyOOqARcFrleejnJYi0Q0Y=;
-	b=ELhvdV3DeaDjKc8cHTwMQnDebj60FfxKN7bQU8V3vR275fxFNvyqtY0HMVONFr70k7firl
-	yMY4pxLjHNGHjnDQ==
-To: Troy Mitchell <troy.mitchell@linux.dev>, Paul Walmsley <pjw@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
- <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Troy
- Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH v2] riscv/plic: assign context ID based on hartid
-In-Reply-To: <20251027-fix-plic-amp-v2-1-f077b9439112@linux.dev>
-References: <20251027-fix-plic-amp-v2-1-f077b9439112@linux.dev>
-Date: Thu, 13 Nov 2025 14:47:33 +0100
-Message-ID: <87bjl6cadm.ffs@tglx>
+	s=arc-20240116; t=1763041692; c=relaxed/simple;
+	bh=2ay4WwEd7UmWy2E/pZTZ94XLdYLLgp2LX7tjcCEbjPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OBAvzyCjiN0TeEV+QIaWN9Gu9HFYlz+fvKufmDlpgUve1n4J4ST99j2zP8QULONaAFdLwTSYHIPBhr8rC6QQEJ4OkFJHToBXyvj7JsgY6wBHLHaeBqZK428k1FQgl4fMY4Orp7ap2VkiSJSad12kMyflq6HGNdtbAgkRl1Q/EPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZzu4l+U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=roeUSB9w; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZzu4l+U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=roeUSB9w; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 82E54216EE;
+	Thu, 13 Nov 2025 13:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763041686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mFAGU4XxhhELslwlDz67aEXHbA7WKGtlGK0QybdrGNE=;
+	b=EZzu4l+UCK+XZUrSKIG+VtcI9P+R2W8BPUvGlGGho/8pUbD8WyfImBEM0nMebZFzxYDHbe
+	uRYHhZ3zTvowBmgVorucv9275w2NGIJgJ/71PKWfWIa8p0GmPEEB/4g5V95xsuu0oga8GI
+	u3ig7gT5/FvENJQ6WMsqn5H0hyft2Uw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763041686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mFAGU4XxhhELslwlDz67aEXHbA7WKGtlGK0QybdrGNE=;
+	b=roeUSB9wdsPt9YbUAWGEuUvyhnnja24H3lIUYW+LUn95KayXevOtek2Xe40O/LI9dGUD3C
+	z1NJC2Fx5EqCUuBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EZzu4l+U;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=roeUSB9w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763041686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mFAGU4XxhhELslwlDz67aEXHbA7WKGtlGK0QybdrGNE=;
+	b=EZzu4l+UCK+XZUrSKIG+VtcI9P+R2W8BPUvGlGGho/8pUbD8WyfImBEM0nMebZFzxYDHbe
+	uRYHhZ3zTvowBmgVorucv9275w2NGIJgJ/71PKWfWIa8p0GmPEEB/4g5V95xsuu0oga8GI
+	u3ig7gT5/FvENJQ6WMsqn5H0hyft2Uw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763041686;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mFAGU4XxhhELslwlDz67aEXHbA7WKGtlGK0QybdrGNE=;
+	b=roeUSB9wdsPt9YbUAWGEuUvyhnnja24H3lIUYW+LUn95KayXevOtek2Xe40O/LI9dGUD3C
+	z1NJC2Fx5EqCUuBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63E2C3EA61;
+	Thu, 13 Nov 2025 13:48:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XDgMGJbhFWlyeQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 13 Nov 2025 13:48:06 +0000
+Message-ID: <e88f9909-cb5e-4205-b4cb-461fdd71120a@suse.cz>
+Date: Thu, 13 Nov 2025 14:48:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: poison_element vs highmem, was Re: [linux-next:master] [block]
+ ec7f31b2a2: BUG:unable_to_handle_page_fault_for_address
+Content-Language: en-US
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, Andrew Morton
+ <akpm@linux-foundation.org>, Christoph Lameter <cl@gentwo.org>,
+ David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, oe-lkp@lists.linux.dev, lkp@intel.com,
+ Jens Axboe <axboe@kernel.dk>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Johannes Thumshirn
+ <johannes.thumshirn@wdc.com>, Anuj Gupta <anuj20.g@samsung.com>,
+ Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <202511111411.9ebfa1ba-lkp@intel.com>
+ <20251111074828.GA6596@lst.de> <a90b1707-b97a-454c-bced-a25068b28325@suse.cz>
+ <aRWMT6DTNhAdudn+@xsang-OptiPlex-9020>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <aRWMT6DTNhAdudn+@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 82E54216EE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-On Mon, Oct 27 2025 at 15:03, Troy Mitchell wrote:
-> The PLIC driver for OF-based platforms currently assigns 'context_id = i'
-> within the context loop. This implies an assumption that all harts are
-> numbered contiguously starting from 0.
->
-> In Asymmetric Multi-Processing (AMP) systems, where Linux might boot on
-> a non-zero hart ID (e.g., hart4), while other harts (e.g., hart0) are
-> running a different OS, this assumption is violated. This can lead to
->  different system inadvertently sharing the same
-> PLIC enable_base register. Consequently, this causes configuration
-> conflicts and incorrect interrupt handling.
->
-> Assign the PLIC context ID based on the actual hart ID provided by the
-> OF node. This ensures that each hart context maps to a unique enable
-> region within the PLIC, thereby resolving conflicts in AMP setups. This
-> change preserves the correct behavior on Symmetric Multi-Processing (SMP)
-> and Uniprocessor (UP) systems.
+On 11/13/25 08:44, Oliver Sang wrote:
+> hi, Vlastimil Babka,
+> 
+> On Wed, Nov 12, 2025 at 10:33:32AM +0100, Vlastimil Babka wrote:
+>> On 11/11/25 08:48, Christoph Hellwig wrote:
+>> > Looks like this is due to the code in poison_element, which tries
+>> > to memset more than PAGE_SIZE for a single page.  This probably
+>> > implies we are the first users of the mempool page helpers for order > 0,
+>> > or at least the first one tested by anyone on 32-bit with highmem :)
+>> > 
+>> > That code seems to come from
+>> > 
+>> > commit bdfedb76f4f5aa5e37380e3b71adee4a39f30fc6
+>> > Author: David Rientjes <rientjes@google.com>
+>> > Date:   Wed Apr 15 16:14:17 2015 -0700
+>> > 
+>> >     mm, mempool: poison elements backed by slab allocator
+>> > 
+>> > originally.  The easiest fix would be to just skip poisoning for this
+>> > case, although that would reduce the usefulness of the poisoning.
+>> 
+>> #syz test
+> 
+> we applied below patch upon ec7f31b2a2 directly, and confirmed the issue we
+> reported gone now with the patch.
+> 
+> Tested-by: kernel test robot <oliver.sang@intel.com>
 
-Can the RISCV people please have a look at this?
+Thanks!
 
-Thanks,
+> BTW, we are kernel test robot, not the syzbot :) thanks
 
-        tglx
+Yeah I realized only after sending...
+
+I'll make this a full patch then. How urgent is it, Christoph? I suppose
+this is related to the bulk mempool changes, and we discussed the users will
+target 6.20 (7.0?) merge window? So landing this fix in 6.19 is enough?
+
+>> ----8<----
+>> From 4d97b55c208c611cb01062e0fbf9dbda9f5617d5 Mon Sep 17 00:00:00 2001
+>> From: Vlastimil Babka <vbabka@suse.cz>
+>> Date: Wed, 12 Nov 2025 10:29:52 +0100
+>> Subject: [PATCH] mm/mempool: fix poisoning order>0 pages with HIGHMEM
+>> 
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  mm/mempool.c | 28 ++++++++++++++++++++++------
+>>  1 file changed, 22 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/mm/mempool.c b/mm/mempool.c
+>> index 1c38e873e546..75fea9441b93 100644
+>> --- a/mm/mempool.c
+>> +++ b/mm/mempool.c
+>> @@ -68,10 +68,18 @@ static void check_element(mempool_t *pool, void *element)
+>>  	} else if (pool->free == mempool_free_pages) {
+>>  		/* Mempools backed by page allocator */
+>>  		int order = (int)(long)pool->pool_data;
+>> -		void *addr = kmap_local_page((struct page *)element);
+>> +#ifdef CONFIG_HIGHMEM
+>> +		for (int i = 0; i < (1 << order); i++) {
+>> +			struct page *page = (struct page *)element;
+>> +			void *addr = kmap_local_page(page + i);
+>> 
+>> -		__check_element(pool, addr, 1UL << (PAGE_SHIFT + order));
+>> -		kunmap_local(addr);
+>> +			__check_element(pool, addr, PAGE_SIZE);
+>> +			kunmap_local(addr);
+>> +		}
+>> +#else
+>> +		void *addr = page_address((struct page *)element);
+>> +		__check_element(pool, addr, PAGE_SIZE << order);
+>> +#endif
+>>  	}
+>>  }
+>> 
+>> @@ -97,10 +105,18 @@ static void poison_element(mempool_t *pool, void *element)
+>>  	} else if (pool->alloc == mempool_alloc_pages) {
+>>  		/* Mempools backed by page allocator */
+>>  		int order = (int)(long)pool->pool_data;
+>> -		void *addr = kmap_local_page((struct page *)element);
+>> +#ifdef CONFIG_HIGHMEM
+>> +		for (int i = 0; i < (1 << order); i++) {
+>> +			struct page *page = (struct page *)element;
+>> +			void *addr = kmap_local_page(page + i);
+>> 
+>> -		__poison_element(addr, 1UL << (PAGE_SHIFT + order));
+>> -		kunmap_local(addr);
+>> +			__poison_element(addr, PAGE_SIZE);
+>> +			kunmap_local(addr);
+>> +		}
+>> +#else
+>> +		void *addr = page_address((struct page *)element);
+>> +		__poison_element(addr, PAGE_SIZE << order);
+>> +#endif
+>>  	}
+>>  }
+>>  #else /* CONFIG_SLUB_DEBUG_ON */
+>> -- 
+>> 2.51.1
+>> 
+>> 
+
 
