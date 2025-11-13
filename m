@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-898608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16481C5594A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:46:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E0C5594D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DA53B09ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:46:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D61C8345364
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54DE296BBE;
-	Thu, 13 Nov 2025 03:46:28 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2A125557
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E058C2D94A6;
+	Thu, 13 Nov 2025 03:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zXXBwuHJ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B13286410
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763005588; cv=none; b=j9i2ncus81/ahtdfCj49203JRg32ElRMicDlkgt961DuhZY4Nliy/4Tkx8FIkv2H6dyCtr6uCFjC/Pahjp6MY7/VwPhrxchj/IQc7V+j0sN5+VYt77nX70tShsfaHWh4elY+ymPvSI9vKvJpUBLvAm2L2vWNOLna89HZ/P2klJM=
+	t=1763005589; cv=none; b=hWzYfw7PZZ/V/ZTWwijIXE6+UDF0gBdEbdYlKXfkDNFBieOqf5tQM4jPnJaKO3Q03yYfsUdaP5SwCaPtR3qB4psv+9omUNAr6OQ1aq9JXTYC676NDTvJCxGvzWP0TbpFxy8w9L/F/xysKx5/PHvGBK8fU4ugZw1cJ9qSrjyHqEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763005588; c=relaxed/simple;
-	bh=x11Y37J0bS/5OqxW0bzdcQwtXAeG3/BWc48b1Cuzy88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rn4nwi48Mo4OxqgVDrUJjyXFxAhin8t9nGnWjZ4QRPcIFAsaTU/YJO9XvkaFD3D6rtHIvTffHX+6lNqIO7J1g4SDuWCiZ4HCp4WFel8rynYqLyOZr0esP4M1sk1GvBMV/nOBvKSQXtcKMKW7HtznsXehMYXyxTcdCyhLvF9ZI2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.46.139])
-	by gateway (Coremail) with SMTP id _____8CxrtOJVBVpt7ciAA--.4812S3;
-	Thu, 13 Nov 2025 11:46:17 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.46.139])
-	by front1 (Coremail) with SMTP id qMiowJAxE+SBVBVpYDkxAQ--.13740S2;
-	Thu, 13 Nov 2025 11:46:09 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	akpm@linux-foundation.org,
-	willy@infradead.org,
-	david@redhat.com,
-	linmag7@gmail.com,
-	thuth@redhat.com,
-	maobibo@loongson.cn,
-	apopple@nvidia.com
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH v6 0/2]  Loongarch irq-redirect support
-Date: Thu, 13 Nov 2025 11:46:08 +0800
-Message-ID: <20251113034608.9672-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1763005589; c=relaxed/simple;
+	bh=xNrBJ9JKhl94hsQQloq6sf3vO4Sqwb09Lpz3KK53sXM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=do/6rrqnX5xmZSaWudsvsqhIU5dM5Z2rqjT/je0Cn8CUaUniSfV/W3ByFAFeF/r3atX5IRPRGb0rNvAjEzo9UyxsWJIq/yPRtaiEw91I3RYydG/HkdNs401ApL4uamc+qZBwp69asuyzVFJQnIp8xb2OQdGu+Jb/EuCQN+HemiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zXXBwuHJ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so389790a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763005587; x=1763610387; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=adduDIgHwGkFi5eI+DMenkw4/FG0bTrtUTxhLb5vmxg=;
+        b=zXXBwuHJQvupCyS6gAfCQ6Eu6c9yDAsqWzC4/R6QMYNCgBWRHBpk1rc4Mh90oQXtgW
+         2iOYPPbyQU/ZcvKxQ0giCb66rAmc3Q9/I5b5WR0i613WYfH+v5YdKuwjNS81crKwxd4V
+         2L/weWL6llZWReikJVHir7ng9ETSmRGm0nb8YnXp/Z3lppBIV2ofnVi9lBHH+nyqlOJr
+         Ju4xnB7lgqdN+hZZiuqMs+RKkTZ/C+LQJSkl9u7eDzgYu+ZBi+/zdsjMFY0UERg6alUI
+         0+0nu9wVRS382fzEC7h67pCZHeCbovtF+iyi7fZt5eEE14AXyBhfMlhmYbSBSAAbrbUe
+         v5hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763005587; x=1763610387;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=adduDIgHwGkFi5eI+DMenkw4/FG0bTrtUTxhLb5vmxg=;
+        b=GaGmeuK7xGPbS4ezMX1lXKqQDH1A55dywBqizQwqYeAZGDeRG27RsM4BPojBbVS7nu
+         Bb96jQIgMY6RrOUOpLMdfK+tdejxiOQjNQNLLuKFdD+x93/QMTStWmVX7xTENyWScgNR
+         eKYqogqDii1CgWKonlFMxbMimZBUy5FuoSSiMMP2C9V5zNB+FEOCntBcSXsusqF721o6
+         PJ8u2oGM7JxfSy3JkDF+O7bijpCfZbKyhXUraSNKQIIq7hsGcunnerxAHSK0L58DSCcp
+         MzhnLmnwQzRf5izlHVj0aoh8kti0N0XTsgPGmGfUCV3T2PLSHlIVCSxMN0f8jW5px/Ej
+         018w==
+X-Forwarded-Encrypted: i=1; AJvYcCXBZ7IkxPFbAv8h5ZKxlHP4WOrLdkF5pHC/NPnGOKT77RZRQx8w+l20pXUFzQHBBQYC/ZNJFjyf0Bz/rUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws3bFssN9tvuRERy3Mf01gqBwOFIc/EiBi87fiQUmp+RGx1YmD
+	QsChcAkkJFhKiKpaO56hXK7HDV+k01DNhpHCR3h7GMPuC/pvHnBVr2ZS4p+OjgPfd9SECIo+Fss
+	4dlplui7YWVrmAA==
+X-Google-Smtp-Source: AGHT+IGEXQEv1ck2MMfwU6rgK0ZJutzaTXShQnbjZpIAo+t8a2V6IvSghLh5iFSwIMiZroqb5nh669NLVFj+pQ==
+X-Received: from dlbrp1.prod.google.com ([2002:a05:7022:1601:b0:119:49ca:6b84])
+ (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:2406:b0:298:4f73:d872 with SMTP id d9443c01a7336-2984f73d8d1mr72305215ad.21.1763005587061;
+ Wed, 12 Nov 2025 19:46:27 -0800 (PST)
+Date: Thu, 13 Nov 2025 03:46:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+SBVBVpYDkxAQ--.13740S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxGF4UKr1DZry5Cr1UJF1rXwc_yoWrJF1kpF
-	W7uas5Ars0kr4xCFn7Wa18ZFy3GrykG3y2q3W3C347uwn8Cr1qqF18KF98ZFy8Gw4rK3WI
-	qr4qq34DW3WDAagCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251113034623.3127012-1-cmllamas@google.com>
+Subject: [PATCH] selftests/mm: fix division-by-zero in uffd-unit-tests
+From: Carlos Llamas <cmllamas@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Shuah Khan <shuah@kernel.org>, Ujwal Kundur <ujwal.kundur@gmail.com>, 
+	Brendan Jackman <jackmanb@google.com>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	Carlos Llamas <cmllamas@google.com>, stable@vger.kernel.org, 
+	"open list:MEMORY MANAGEMENT - USERFAULTFD" <linux-mm@kvack.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-This series of patches introduces support for interrupt-redirect
-controllers, and this hardware feature will be supported on 3C6000
-for the first time
+Commit 4dfd4bba8578 ("selftests/mm/uffd: refactor non-composite global
+vars into struct") moved some of the operations previously implemented
+in uffd_setup_environment() earlier in the main test loop.
 
-change log:
-        v0->v1:
-        1.Rename the model names in the document.
-        2.Adjust the code format.
-        3.Remove architecture - specific prefixes.
-        4.Refactor the initialization logic, and IR driver no longer set 
-	  AVEC_ENABLE.
-        5.Enhance compatibility under certain configurations.
+The calculation of nr_pages, which involves a division by page_size, now
+occurs before checking that default_huge_page_size() returns a non-zero
+This leads to a division-by-zero error on systems with !CONFIG_HUGETLB.
 
-        v1->v2:
-        1.Fixed an erroneous enabling issue.
+Fix this by relocating the non-zero page_size check before the nr_pages
+calculation, as it was originally implemented.
 
-        v2->v3
-        1.Replace smp_call with address mapping to access registers
-        2.Fix some code style issues
+Cc: stable@vger.kernel.org
+Fixes: 4dfd4bba8578 ("selftests/mm/uffd: refactor non-composite global vars into struct")
+Signed-off-by: Carlos Llamas <cmllamas@google.com>
+---
+ tools/testing/selftests/mm/uffd-unit-tests.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-        v3->v4
-        1.Provide reasonable comments on the modifications made to
-	  IRQ_SET_MASK_OK_DONE
-        2.Replace meaningless empty functions with parent_mask/unmask/ack
-        3.Added and indeed released resources
-        4.Added judgment for data structure initialization completion to 
-          avoid duplicate creation during cpuhotplug
-        5.Fixed the code style and some unnecessary troubles
-
-        v4->v5
-	1.when it is detected in avecintc_set_affinity that the current affinity
-	remains valid, the return value is modified to IRQ_SET_MASK_OK_DONE.
-	  After the introduction of redirect-domain, for each interrupt source, 
-	avecintc-domain only provides the CPU/interrupt vector, while redirect-domain 
-	provides other operations to synchronize interrupt affinity information 
-	among multiple cores. 	  The original intention is to notify the cascaded
-	redirect_set_affinity that multi-core synchronization is not required. 
-	  However, this introduces some compatibility issues, such as the new return
-	value causing msi_domain_set_affinity to no longer perform irq_chip_write_msi_msg.
-	  1) When redirect exist in the system, the msi msg_address and msg_data no 
-	longer changes after the allocation phase, so it does not actually require updating
-	the MSI message info.
-	  2) When only avecintc exists in the system, the irq_domain_activate_irq
-	interface will be responsible for the initial configuration of the MSI message,
-	which is unconditional. After that, if unnecessary, no modification to the MSI
-	message is alse correctly.
-
-	2.Restructured the macro definitions to make them appear more logical.
-
-	3.Adjusted the layout of members struct redirect_queue\struct redirect_table and 
-	struct redirect_item, making redirect_item the primary interface for accessing
-	other members.
-
-	4.The method of accessing registers has been standardized to MMIO.
-
-	5.Initialize variables at declaration whenever possible.
-
-	6.Replaced the the "struct page" in redirect_table and redirect_queue with "struct folio".
-
-	7.Adjusted the initialization process so that all irq_desc configurations are completed
-	during driver initialization, no longer relying on specific CPUs being online.
-
-	8.Refactored portions of the code to make them more concise and logical.
-
-	v5->v6
-	Fix the warning messages reported by the test bot.
-
-Tianyang Zhang (2):
-  Docs/LoongArch: Add Advanced Extended-Redirect IRQ model description
-  irqchip/irq-loongarch-ir:Add Redirect irqchip support
-
- .../arch/loongarch/irq-chip-model.rst         |  38 ++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   |  37 ++
- arch/loongarch/include/asm/cpu-features.h     |   1 +
- arch/loongarch/include/asm/cpu.h              |   2 +
- arch/loongarch/include/asm/loongarch.h        |   6 +
- arch/loongarch/kernel/cpu-probe.c             |   2 +
- drivers/irqchip/Makefile                      |   2 +-
- drivers/irqchip/irq-loongarch-avec.c          |  20 +-
- drivers/irqchip/irq-loongarch-ir.c            | 527 ++++++++++++++++++
- drivers/irqchip/irq-loongson.h                |  19 +
- 10 files changed, 640 insertions(+), 14 deletions(-)
- create mode 100644 drivers/irqchip/irq-loongarch-ir.c
-
+diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
+index 9e3be2ee7f1b..f917b4c4c943 100644
+--- a/tools/testing/selftests/mm/uffd-unit-tests.c
++++ b/tools/testing/selftests/mm/uffd-unit-tests.c
+@@ -1758,10 +1758,15 @@ int main(int argc, char *argv[])
+ 			uffd_test_ops = mem_type->mem_ops;
+ 			uffd_test_case_ops = test->test_case_ops;
+ 
+-			if (mem_type->mem_flag & (MEM_HUGETLB_PRIVATE | MEM_HUGETLB))
++			if (mem_type->mem_flag & (MEM_HUGETLB_PRIVATE | MEM_HUGETLB)) {
+ 				gopts.page_size = default_huge_page_size();
+-			else
++				if (gopts.page_size == 0) {
++					uffd_test_skip("huge page size is 0, feature missing?");
++					continue;
++				}
++			} else {
+ 				gopts.page_size = psize();
++			}
+ 
+ 			/* Ensure we have at least 2 pages */
+ 			gopts.nr_pages = MAX(UFFD_TEST_MEM_SIZE, gopts.page_size * 2)
+@@ -1776,12 +1781,6 @@ int main(int argc, char *argv[])
+ 				continue;
+ 
+ 			uffd_test_start("%s on %s", test->name, mem_type->name);
+-			if ((mem_type->mem_flag == MEM_HUGETLB ||
+-			    mem_type->mem_flag == MEM_HUGETLB_PRIVATE) &&
+-			    (default_huge_page_size() == 0)) {
+-				uffd_test_skip("huge page size is 0, feature missing?");
+-				continue;
+-			}
+ 			if (!uffd_feature_supported(test)) {
+ 				uffd_test_skip("feature missing");
+ 				continue;
 -- 
-2.41.0
+2.51.2.1041.gc1ab5b90ca-goog
 
 
