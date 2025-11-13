@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-899282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C271C5748F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:57:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75E6C5746B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79256343FB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CE93AF2DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D1C34DB6E;
-	Thu, 13 Nov 2025 11:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tmtGWLb9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A038634D4D4;
-	Thu, 13 Nov 2025 11:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F291634A763;
+	Thu, 13 Nov 2025 11:55:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E445299AA3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763034755; cv=none; b=XhLYpJpN7ssQGRITcS9kMtaJpZzQB+ADEaZKdfa0PnWIj+ox3oL0c1q8YDmNfUnwej5JZRl12pKHDLuKnaG0oAGXDAAWZ9uSYd86DziSlXV4zp7w9MiNuAAfrocg/LQcYaztztJrF0cWPPpkDuIUWlwX8pkXhbDTBjzMNE2oGwo=
+	t=1763034953; cv=none; b=BfrnQ0DZQdn0p3m1gIHetdwZlvxCgf96AWLuxnSkj36T1tr4tPzPlY+nLDHv6q1UjY/KDquO1Av3PASUPfKqsQMNYp0KcjI5tN6Agup6U2c6EowIKxnJ0a15lrWAUTYWWFjS2TsM/Unz+OvmgwDI3hbz6UWC4hTzWk8ppuIBzKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763034755; c=relaxed/simple;
-	bh=GZF8lgeDQC7Hi6xFhfCRpYi6s7kn1kyAv2TSa5O3FrA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EuuV0x6KZDXuDR1KxgITsA3SvDrGfqMbwwba/CEoYL4sqWz+BCFTn01T6HFlAXdg37Prw1f3TKTrwkoSOnePOf+526HSSIRpmxviQbJ77zzEY3i5Pd3h7Y9jIH76t6/yn5WrWLuTtv4INUJ0+q68sdv7CBzwYVtt8lrfnHpfWYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tmtGWLb9; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1763034753; x=1794570753;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GZF8lgeDQC7Hi6xFhfCRpYi6s7kn1kyAv2TSa5O3FrA=;
-  b=tmtGWLb964mKwy6i0BFyDdOGsadJnEt9CWnbvHNWKw5O0mZTJkRcrYHE
-   TkEA45msS685sLB0OTOp+OZsG1a3zGivfhMcEY9sVUrzcswuSsIXuVCas
-   DPiZNL0S4Htm/1JGan5mogytQSieIO7TzwN+zbw95+5K5YljLIfQX4c/T
-   NJ0qdePjvF6WVSBRKRu0VK961v8CY3lHpOs8EqaV0BPLH7v9hGaD6Wx8F
-   mIP5YniSVPlmr5NNhpEgoww9cH9rzv3o6f6Zc70SOZri6NgNvowkAdGm4
-   eQjswl/ToLdeA20ZH9EgtQjklwIDOMy1d2MEq3zbs6pwAVlemFx92n8rB
-   Q==;
-X-CSE-ConnectionGUID: 3YIJu1weQma93cjyGpczEw==
-X-CSE-MsgGUID: WJ5Ct3BCSkiGrTsFsPRkSA==
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="55526998"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 04:52:25 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Thu, 13 Nov 2025 04:52:25 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 13 Nov 2025 04:52:20 -0700
-From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-To: <Parthiban.Veerasooran@microchip.com>, <piergiorgio.beruto@gmail.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
- Veerasooran" <parthiban.veerasooran@microchip.com>
-Subject: [PATCH net-next 2/2] net: phy: microchip_t1s: add SQI support for LAN867x Rev.D0 PHYs
-Date: Thu, 13 Nov 2025 17:22:06 +0530
-Message-ID: <20251113115206.140339-3-parthiban.veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251113115206.140339-1-parthiban.veerasooran@microchip.com>
-References: <20251113115206.140339-1-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1763034953; c=relaxed/simple;
+	bh=SeJ/WzyXEKJSUbI9hAVu4ICNYMT/JTl35fXdHsDRKG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YhyaIQkeZWCY/ZH6gVMycT5pruQpWf3mJoh26oUXtfZt1uN5ILOXe+Oi5XFglmG9sNlBV+s6wH9uSIIweT4x5oBeAfiy6uSyahMpyQJ9ZlKvTJqGPxMK+H4dvOz95hmcRAhejCgqRDmH+kuhX5jhfuavzyZypGICbAt/VhvGp7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C339D12FC;
+	Thu, 13 Nov 2025 03:55:43 -0800 (PST)
+Received: from [10.57.88.12] (unknown [10.57.88.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 274493F5A1;
+	Thu, 13 Nov 2025 03:55:50 -0800 (PST)
+Message-ID: <6bc0fac0-3c00-4ecf-948e-5648584ec939@arm.com>
+Date: Thu, 13 Nov 2025 11:55:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64/pageattr: Propagate return value from
+ __change_memory_common
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
+Cc: rppt@kernel.org, shijie@os.amperecomputing.com,
+ yang@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251112062716.64801-1-dev.jain@arm.com>
+ <20251112062716.64801-2-dev.jain@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251112062716.64801-2-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add support for Signal Quality Index (SQI) reporting in the
-Microchip T1S PHY driver for LAN867x Rev.D0 (OATC14-compliant) PHYs.
+On 12/11/2025 06:27, Dev Jain wrote:
+> The rodata=on security measure requires that any code path which does
+> vmalloc -> set_memory_ro/set_memory_rox must protect the linear map alias
+> too. Therefore, if such a call fails, we must abort set_memory_* and caller
+> must take appropriate action; currently we are suppressing the error, and
+> there is a real chance of such an error arising post commit a166563e7ec3
+> ("arm64: mm: support large block mapping when rodata=full"). Therefore,
+> propagate any error to the caller.
+> 
+> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-This patch registers the following callbacks in the microchip_t1s driver
-structure:
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-- .get_sqi      - returns the current SQI value
-- .get_sqi_max  - returns the maximum SQI value
+It would be good to get this into v6.18 I guess?
 
-This allows network drivers and diagnostic tools to query link
-signal quality, improving monitoring and troubleshooting
-capabilities. Existing PHY functionality remains unchanged.
+Although I think this will conflict with a patch from Yang that makes this work
+with a partial vm area range - But I think that one will only go to v6.19.
 
-Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
----
- drivers/net/phy/microchip_t1s.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
+Ryan
 
-diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-index 5a0a66778977..e601d56b2507 100644
---- a/drivers/net/phy/microchip_t1s.c
-+++ b/drivers/net/phy/microchip_t1s.c
-@@ -575,6 +575,8 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 		.cable_test_start   = genphy_c45_oatc14_cable_test_start,
- 		.cable_test_get_status = genphy_c45_oatc14_cable_test_get_status,
-+		.get_sqi            = genphy_c45_oatc14_get_sqi,
-+		.get_sqi_max        = genphy_c45_oatc14_get_sqi_max,
- 	},
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_LAN865X_REVB),
--- 
-2.34.1
+> ---
+> v1 of this patch: https://lore.kernel.org/all/20251103061306.82034-1-dev.jain@arm.com/
+> I have dropped stable since no real chance of failure was there.
+> 
+>  arch/arm64/mm/pageattr.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 5135f2d66958..b4ea86cd3a71 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned long addr, int numpages,
+>  	unsigned long size = PAGE_SIZE * numpages;
+>  	unsigned long end = start + size;
+>  	struct vm_struct *area;
+> +	int ret;
+>  	int i;
+>  
+>  	if (!PAGE_ALIGNED(addr)) {
+> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned long addr, int numpages,
+>  	if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
+>  			    pgprot_val(clear_mask) == PTE_RDONLY)) {
+>  		for (i = 0; i < area->nr_pages; i++) {
+> -			__change_memory_common((u64)page_address(area->pages[i]),
+> +			ret = __change_memory_common((u64)page_address(area->pages[i]),
+>  					       PAGE_SIZE, set_mask, clear_mask);
+> +			if (ret)
+> +				return ret;
+>  		}
+>  	}
+>  
 
 
