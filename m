@@ -1,217 +1,224 @@
-Return-Path: <linux-kernel+bounces-898725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2237C55DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:57:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA24BC55DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA1FF4E36FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:56:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C34A343EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5386D303CAF;
-	Thu, 13 Nov 2025 05:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="VBXhSngL"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011030.outbound.protection.outlook.com [52.101.125.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A64330215B;
+	Thu, 13 Nov 2025 05:56:39 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432323EAB7;
-	Thu, 13 Nov 2025 05:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763013386; cv=fail; b=L5MvWMaf8AHGO7bhKj725CEn0c+I4EmZIRiEc6GidX1NVdO5huj9IuShHqmRN6MD2kXCRadDUboUlnGTZJiwz7z2xyZj0svsGuQvQst8WQtJdpxef/Ez1sql7BtWtf/Thi85dXsy7tqt0IaiZr5QWpAjxfeLJO8SkgwNh1D3rJs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763013386; c=relaxed/simple;
-	bh=TVVIhL1rFVXyjD69Jag0sNwu7C24PjbcAqSDQlxB4Lg=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=qthYWPJ7Wmd62xm1C4VRDWyVPdSDB+IT2eRplB6oP3nPr+pOe6NYxLAkQkN+Ougk1F8Hn7W/5aA7bB8qWO9dNdVAQiz8wRMsTKxWmmusFgE2RwCVbWuaJTkzSesTBCcg/0e2n8SJwrBkax8D7v7nOmYahCmQxnW4kPG1tITBeQo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=VBXhSngL; arc=fail smtp.client-ip=52.101.125.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Otf6xkIQDYhFTj+ugszQve5jXUrHfb2SpH23QRSGUWy5W3F+eFHN3miZFaHaWcvIchCBBufzZVSat6uuDAMKUbbWeHtzabnZYjEdGdoEN+loaHhEqweCAnK+T1pbzghUL4v82FTUS6pjnoVtgA2l/6eCSnMxJhbbL/8TEkODqmtYQe88j1FLlao32FGdMCGxwKUzrrJEfJ8q7aJ1GwNRQq1gRxrmTYnB3NR+wYtTlevtcC/6EXPz5fjlL546C7eKWe0AIGSTAfCJ7wUcFAv6091TlQ4EY8w5IT3BUdV5ZVJAc0NEFXH4ssCJYdOK26n2drBTwevDmn3ZkkQePKyISA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5QG/Zcb8X0FGywR5dbbQDS4OXySi4R8vz93KPv1Z0iQ=;
- b=WRTZG7ca9lGo8hBO9o43Kc6gI/VAZJiFHtGwvcvJyuc0eBVHbCKLIBs7ehbD9qcbQ+d+7U036vUfO4aIOyC8v/HHaSeL/YsJG+RLnk+jTP8leeuxMA814qqhLxPKKh0x1DeUyRCilGjf4kGhb4yqYekZy9T9Y7vKLVrdUyq5c9qpKXENVRnZt7QcOPFH00PdVv4DlNuulZZ5U0/Uwsj4Tf18ErqyUWVNIxyuM3qj4gjz1V2WUMK0PLJUcDhN91ALMM7pKhYAF2ZXRxiM+1wditBbKvqDkN2uZUtwQuGXeyR5bibRy3oqZOmQHqx1i7gDlPo5apRFQuAkcnDMLRsaaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5QG/Zcb8X0FGywR5dbbQDS4OXySi4R8vz93KPv1Z0iQ=;
- b=VBXhSngLnNGc+ZA86yjq15kilGIP52+l4Dlg5HLnTQ0LZT88s4LVxQgXOkLJ0InyjfLpzEylBisnNWWnbiWzCeWahI7C2MFSJJuRrIS84aUirPZFfvL7zeadw5qlKwtNPpW08YK3/3i81/TigiDL0fbi+ofcysgil2/i7LqIEss=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OSCPR01MB16454.jpnprd01.prod.outlook.com
- (2603:1096:604:346::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 05:56:21 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%3]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 05:56:21 +0000
-Message-ID: <877bvuwk57.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 6/7] ASoC: renesas: rz-ssi: Add support for 24 bits sample width
-In-Reply-To: <20251112154115.1048298-7-biju.das.jz@bp.renesas.com>
-References: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
-	<20251112154115.1048298-7-biju.das.jz@bp.renesas.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 13 Nov 2025 05:56:21 +0000
-X-ClientProxiedBy: TY4P286CA0033.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:2b2::14) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB0523EAB7;
+	Thu, 13 Nov 2025 05:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763013398; cv=none; b=GQ266SVXNGc+0fSnK7Fk5YGIUCvu45T/X5oeOsjMwp9wfKq4vFzFLp251T/c+p+VK0m9Vry2zgIJ0MFfqzFJowInQAp5Twzt8/VpAy/vTBbdzFhJ0K6XoTb6DSpQk/dZJtEz5BVo51NPhsr/L+KrSbmjwpQbWszSXwLPHK9tp8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763013398; c=relaxed/simple;
+	bh=6WGz9Kqg6eyW6tMj7qhCcRCbkyOl4odWeRrUrxE2nZo=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=aLttFWbOlwu7U2Wv31AHP0kuyDJi9JQxiUqWSk978PVdyptow87sqC44nt6qaZAPMgsvjQhcMgXbqPca3X2vN8hb/stvv0BL14119fPcMnIX/T44oDph0D0WF67bHQD9DUCabIJO01HoHU0G4s1FJOqqy2hKVtR0QQ/MWN80ESA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4d6Tzh4Ylvz5PM32;
+	Thu, 13 Nov 2025 13:56:32 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 5AD5uPD6088235;
+	Thu, 13 Nov 2025 13:56:25 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 13 Nov 2025 13:56:27 +0800 (CST)
+Date: Thu, 13 Nov 2025 13:56:27 +0800 (CST)
+X-Zmail-TransId: 2af96915730bb14-1bcca
+X-Mailer: Zmail v1.0
+Message-ID: <20251113135627439rGwzvG7JzdmnN8VMHAfMs@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OSCPR01MB16454:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0b98473-e460-4699-370f-08de22795ee9
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cGej2FvbnlW0qZcbpRVDjK5RbD/CABW63eQN8yczpWZgCTV10urTx3efyHgN?=
- =?us-ascii?Q?LqGRrvKUHBdPc3pVBiGWjfSW3KXpuCt0yXIAGptPP1JrAuITgRr5/LWHboBw?=
- =?us-ascii?Q?25+afLwVI3vBzCC3lOZYxiLulB1wAzTMCg65KnTx8JXEkLU9IB7b24pHbY0g?=
- =?us-ascii?Q?6MZzIautCOhprqkxIW1+5UuVCwCMpur/b8KBGJSdYa93XIboHLZpMv9ID3K4?=
- =?us-ascii?Q?CWGNVA/dKGOLbEbIcUXWNkMxieqfSqA1vW04FlutBeu4bsDqiYjtis6j5ER8?=
- =?us-ascii?Q?9i47NXXB2CF92KruYnQXY5mKvU+BTOu57MZYrCkSLj25AcNFuohLUwDCmNZe?=
- =?us-ascii?Q?2ixN35Jt1KWJFUKX3wM+7q7PSVg/0Vw3/5WbDfzFUJWB/Wzdzq6/biMrWYwP?=
- =?us-ascii?Q?KAiK+EUzebbuAMqjC5oFxl7yiyw/V9n+8tfqo9HK+xaC0BJmr3gYCm1M3ZBZ?=
- =?us-ascii?Q?q9YFbhkhKKzDu7Ukr+bMIzlqhGKOT/n0daGQiDhygtBYU9L3Ekpu1Uc1s1tM?=
- =?us-ascii?Q?wyBeld5NooRcw9OihON6bA2vr04v4BBi2GP2q0GCe6GOPsHGZo9pktSYo95x?=
- =?us-ascii?Q?lFhj2TahfY+5rLgCBiURlkbUTVqZ8VeL9T9DnVQRHjkUqgksNCnSSpgO/7gn?=
- =?us-ascii?Q?GbRLkmy44frw1LfSEwsoqoU1D3+lRQ9ambqlcATc2ppRAyIC23GYS+EPK9jI?=
- =?us-ascii?Q?hBdgmxanJPj+lmvTPLHACrP3AqsCpxnwgSybhHHSSjxxj9AHXI8iTbwpovN+?=
- =?us-ascii?Q?j2kW743cUesf0ANL+c2uxTLDq0KouWzdZJGBayPl3YT61TqOdq800Zp258Vc?=
- =?us-ascii?Q?oUR9vQPA9cCeEhsQECiszGz0H3yeANXWFn/kLk4tYwcgbvXcWttZkSgs5EXV?=
- =?us-ascii?Q?BNsfsOaesIrBvW9RtnGYzpGfDDR7lPfooJvqYufxG5RLexN2deS1nhOeUUVq?=
- =?us-ascii?Q?6hJCHPzQ0mPxPEa0hHhnZ7jy9/si6ck2e43foSP+kUrG9w3DoYw7o6c7zN/2?=
- =?us-ascii?Q?DGx+pboJBZEmSEFE0bqLNsu2jPbXsutST32psraBz+/s9Pby/IGqunqAbRRu?=
- =?us-ascii?Q?apJotspwxEgAY8o7Z3CZbQ5MTGO+6GfX3zKwui6s2crzaecdxY929mwb7Un3?=
- =?us-ascii?Q?ZbByp7qKImS79k4YgflpIfhsjVKtLIsFq/El/wTOy5Dc+Pvh8R6lwGg/nyTs?=
- =?us-ascii?Q?5M6sAnnlmAfUVk7qxjXOWWTwQuOhTJlrCecxBxdR1c9lbcBZhRqnewazIw61?=
- =?us-ascii?Q?LeT+OJl5TqsXhtPDIQ3BmNMVI7WLkkTHsEkCw1L8bwzQPWvXOC1RN1JHnDVZ?=
- =?us-ascii?Q?2tvc7V4/lE91jNn74fA3rq1JjVmXRDr0Wbq46ayoZM/ju7D5KJvL/KWBCOPs?=
- =?us-ascii?Q?JoKFfFhvoYyvJGI95ngtx66LHzspmHgsOJltvHh6Dztg5+7EigDyh74N768N?=
- =?us-ascii?Q?BTpob24Nn/GB2M51f00ZbKuemA48SRRuCk7NesocAbQQW5kSUIVD3CDZNgHL?=
- =?us-ascii?Q?8X1dkKuziaB4lP4iKRsXtmJwcZjcgsvOhucM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wBcafdrFc1L/2DRauxLy3GlI4l9IP7IaRShhwKiThFPwaymL/PyeX7dPp1lx?=
- =?us-ascii?Q?1RHFK43n9b1nEt3VD2/jOvdOjlv6EiG2LlWnQ/04XW3+P1ewxRunMRXtvlSu?=
- =?us-ascii?Q?PG3SlM0JgCNyMlyq39acr0l4Vl4KQzoFGL3aylRaPKg9bM631Y9NqRRgcLBC?=
- =?us-ascii?Q?wCPPMt3QUFgqQW1pg4IbWsalizev9beIQOe7NDOW/d4BuCx4A43CAa6y97vU?=
- =?us-ascii?Q?jXWibKDDe8b1x5zciIdg7zBUn9HE2ydalLgOPGBuTSgxOZcSv3WYCkUb7i/M?=
- =?us-ascii?Q?8kuH0fguGSupmo07F0FauBfSzYT27uJs4hBpKouJQoIVeJ7p0EI3c2sO/Hir?=
- =?us-ascii?Q?f7r9b+sfYSkboynqqhQTkr3Lo+dHrLrJgWuW39Qf9d0HJUb+JneRsf5eVCAU?=
- =?us-ascii?Q?A87Hqo/BFzDPuDz5Jvc006DrWsUAaBBNhSDKI/ThfXFPHxgVp97o2fe5rzht?=
- =?us-ascii?Q?RMQczwkAQEy0O0AD7DPg/5BUTyGydATuMrie3r72q8Cl8JLXwidPK0i513iV?=
- =?us-ascii?Q?8sgTQBm5A4YNg/fLHvxvc3eC4rK4TBFLrA7y2/slEbryTM6vD9wFowyEef59?=
- =?us-ascii?Q?QYEHkeSO6xNH7NcGPwSRZgxkkIGrNrJ0J56Qq31LsmXzL1E1yN7LPQavpHx5?=
- =?us-ascii?Q?e2tXQgXN3UWrmS+K6+qv4dYPrMYZiQHCZ3XNIjpyNKmMWIgbcBPBpkOi/cDz?=
- =?us-ascii?Q?PMZJD4+KL/MPdwCGwlWdbdUr5a5iIGFzI5pCBCwszorAeqaBmbARE93VGEnW?=
- =?us-ascii?Q?GMI1fgrda5bQ/VDvitB4ECdvqwFfyioyef94aHeUY9uch6JAXs3owD5+/hCg?=
- =?us-ascii?Q?vkEDhyOAYmVu10Gudu187eIVeXiXxVVyoykfYI97XwYiwtCv2Xefjr+s76ho?=
- =?us-ascii?Q?jU8wak0oNsoqNEX8VRUCcs/UXyMNEk4t07OMQ9U4gDxqRlHRGLMY/ylkv2j3?=
- =?us-ascii?Q?fqnqJTbG5WrXVQmdLof4yxeiPQFn1/TqGrSLpNd6ejOvI6nFlYU4lvUrUTwd?=
- =?us-ascii?Q?6arH4WZ7bOnc29vzA5Q496+elvl/jUM2Ku2b/3PUgIm/SjwgKpIfM3NjRH9P?=
- =?us-ascii?Q?5rR5fKs9D3Ok74xjL4ngxHkDYhl8YPeHaqGJRS0NI1MUdMFXaf1O5Jiin1PW?=
- =?us-ascii?Q?/aMvrksMm1CKKJFIS+fWN5zsMWpuyzFt80ugpIyoZfhG6hi/3KhR/au7NRWI?=
- =?us-ascii?Q?jscftOumEgkd1cyPqxIkmPOgow95CdGnQ7qq2Gbe2/DzzYxhtjY8MbkXDCiJ?=
- =?us-ascii?Q?0Lfw0P6Mud8Pjwvfp/4ylc6fBL+AIzJtyr0bzLY2l5ALwfWJl1+kJZEIab+J?=
- =?us-ascii?Q?VB/HbXkLb3/9dbE8/jayCvNcbFuWl5FTDqP8yeyw/3Ci+FOb9thZG+jm9LWd?=
- =?us-ascii?Q?VCcb00SrOFTddi+fpzCpcgmjpCq3/MJ8o53ontbcjpN5ZS/Rfr1jHiaQs1MS?=
- =?us-ascii?Q?UTxkWbBPbklBUJ2kZyUQAAAxEir02Ed75rNBOVA4zOnSPnEqQ+8+HQhc4etq?=
- =?us-ascii?Q?hXh48WUXjuD205tREgKA3e4vNX2u7Z8bQkxEoC+znh4m1LTTuadKrw+FDxKp?=
- =?us-ascii?Q?5eKd0mzpr4+jmp6KNuQUSBlApdn90ITi20py4Zos/6DvkYmZExqgdv0t7t2U?=
- =?us-ascii?Q?uKfC65/xXa/VW/DaNqzCDH4=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0b98473-e460-4699-370f-08de22795ee9
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:56:21.3817
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4elGZn40NzoUA9Gil4NrSkX31nZBJXk/kqPyiFB1USzqCYbeInfRULAhaRC1Hz/r/4l0W8LvkdNuNqRkhwGE5dMSL3rKUe/jmczd2y3mmpNT6rCbXbypLXUaqLMkHmaA
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB16454
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
+        <mathieu.desnoyers@efficios.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <hu.shengming@zte.com.cn>, <hang.run@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIGZncmFwaDogRml4IGFuZCB0aWdodGVuIFBJRCBmaWx0ZXJpbmcgc3VwcG9ydA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 5AD5uPD6088235
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 13 Nov 2025 13:56:32 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 69157310.000/4d6Tzh4Ylvz5PM32
 
+From: Shengming Hu <hu.shengming@zte.com.cn>
 
-Hi
+Function graph tracing did not honor set_ftrace_pid() rules properly.
 
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Add support for 24 bits sample format width for RZ/G2L SoCs.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-(snip)
->  	ssicr |= SSICR_CKDV(clk_ckdv);
-> -	ssicr |= SSICR_DWL(1) | SSICR_SWL(3);
-> +	switch (ssi->hw_params_cache.sample_width) {
-> +	case 16:
-> +		ssicr |= SSICR_DWL(1);
-> +		break;
-> +	case 24:
-> +		ssicr |= SSICR_PDTA;
-> +		ssicr |= SSICR_DWL(5);
+The root cause is that for fgraph_ops, the underlying ftrace_ops->private
+was left uninitialized. As a result, ftrace_pids_enabled(op) always
+returned false, effectively disabling PID filtering in the function graph
+tracer.
 
-nitpick
-It can be 1 line ?
+PID filtering seemed to "work" only because graph_entry() performed an
+extra coarse-grained check via ftrace_trace_task(). Specifically,
+ftrace_ignore_pid is updated by ftrace_filter_pid_sched_switch_probe
+during sched_switch events. Under the original logic, when the intent
+is to trace only PID A, a context switch from task B to A sets 
+ftrace_ignore_pid to A’s PID. However, there remains a window
+where B’s functions are still captured by the function-graph tracer. 
+The following trace demonstrates this leakage
+(B = haveged-213, A = test.sh-385):
 
-> @@ -662,8 +697,13 @@ static int rz_ssi_dma_slave_config(struct rz_ssi_priv *ssi,
->  	cfg.direction = is_play ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
->  	cfg.dst_addr = ssi->phys + SSIFTDR;
->  	cfg.src_addr = ssi->phys + SSIFRDR;
-> -	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-> -	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-> +	if (ssi->hw_params_cache.sample_width == 24) {
-> +		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	} else {
-> +		cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-> +		cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
-> +	}
+ 4)  test.sh-385   |               |    set_next_entity() {
+ 4)  test.sh-385   |   2.108 us    |      __dequeue_entity();
+ 4)  test.sh-385   |   1.526 us    |      __update_load_avg_se();
+ 4)  test.sh-385   |   1.363 us    |      __update_load_avg_cfs_rq();
+ 4)  test.sh-385   | + 14.144 us   |    }
+ 4)  test.sh-385   |   1.417 us    |    __set_next_task_fair.part.0();
+ 4)  test.sh-385   | + 77.877 us   |  }
+ 4)  test.sh-385   |               |  __traceiter_sched_switch() {
+ 4)  test.sh-385   |   2.097 us    |    _raw_spin_lock_irqsave();
+ 4)  test.sh-385   |   1.483 us    |    _raw_spin_unlock_irqrestore();
+ 4)  test.sh-385   | + 14.014 us   |  }
+ ------------------------------------------
+ 4)  test.sh-385   =>  haveged-213  
+ ------------------------------------------
 
-You can reduce extra if check when 32 case ([7/7]) if it was
+ 4)  haveged-213   |               |  switch_mm_irqs_off() {
+ 4)  haveged-213   |   2.387 us    |    choose_new_asid();
+ 4)  haveged-213   | + 12.462 us   |    switch_ldt();
+ 4)  haveged-213   | + 45.288 us   |  }
+ 4)  haveged-213   |   1.639 us    |  x86_task_fpu();
+ 4)  haveged-213   |               |  save_fpregs_to_fpstate() {
+ 4)  haveged-213   |   1.888 us    |    xfd_validate_state();
+ 4)  haveged-213   |   6.995 us    |  }
+ ------------------------------------------
+ 4)  haveged-213   =>  test.sh-385  
+ ------------------------------------------
 
-	if (xxx == 16) {
-		...
-	} else { // for 24, 32
-		...
-	}
+ 4)  test.sh-385   |               |    finish_task_switch.isra.0() {
+ 4)  test.sh-385   |   1.857 us    |      _raw_spin_unlock();
+ 4)  test.sh-385   |   5.618 us    |    }
+ 4)  test.sh-385   | ! 446.226 us  |  }
+ 4)  test.sh-385   |               |  __pte_offset_map_lock() {
+ 4)  test.sh-385   |               |    ___pte_offset_map() {
+ 4)  test.sh-385   |   1.933 us    |      __rcu_read_lock();
+ 4)  test.sh-385   |   6.271 us    |    }
+ 4)  test.sh-385   |   2.056 us    |    _raw_spin_lock();
+ 4)  test.sh-385   | + 14.281 us   |  }
 
-Thank you for your help !!
+Fix this by:
+  1. Properly initializing gops->ops->private so that
+     ftrace_pids_enabled() works as expected.
+  2. Removing the imprecise fallback check in graph_entry().
+  3. Updating register_ftrace_graph() to set gops->entryfunc =
+     fgraph_pid_func whenever PID filtering is active, so the correct
+     per-task filtering is enforced at entry time.
 
-Best regards
+With this change, function graph tracing will respect the configured
+PID filter list consistently, and the redundant coarse check is no
+longer needed.
+
+Signed-off-by: Shengming Hu <hu.shengming@zte.com.cn>
 ---
-Kuninori Morimoto
+ kernel/trace/fgraph.c                | 9 +++++++--
+ kernel/trace/trace.h                 | 9 ---------
+ kernel/trace/trace_functions_graph.c | 3 ---
+ 3 files changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 484ad7a18..00df3d4ac 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1019,6 +1019,7 @@ void fgraph_init_ops(struct ftrace_ops *dst_ops,
+ 		mutex_init(&dst_ops->local_hash.regex_lock);
+ 		INIT_LIST_HEAD(&dst_ops->subop_list);
+ 		dst_ops->flags |= FTRACE_OPS_FL_INITIALIZED;
++		dst_ops->private = src_ops->private;
+ 	}
+ #endif
+ }
+@@ -1375,6 +1376,12 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 	gops->idx = i;
+
+ 	ftrace_graph_active++;
++	/* Always save the function, and reset at unregistering */
++	gops->saved_func = gops->entryfunc;
++#ifdef CONFIG_DYNAMIC_FTRACE
++	if (ftrace_pids_enabled(&gops->ops))
++		gops->entryfunc = fgraph_pid_func;
++#endif
+
+ 	if (ftrace_graph_active == 2)
+ 		ftrace_graph_disable_direct(true);
+@@ -1395,8 +1402,6 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 	} else {
+ 		init_task_vars(gops->idx);
+ 	}
+-	/* Always save the function, and reset at unregistering */
+-	gops->saved_func = gops->entryfunc;
+
+ 	gops->ops.flags |= FTRACE_OPS_FL_GRAPH;
+
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index a3a15cfab..048a53282 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1162,11 +1162,6 @@ struct ftrace_func_command {
+ 					char *params, int enable);
+ };
+ extern bool ftrace_filter_param __initdata;
+-static inline int ftrace_trace_task(struct trace_array *tr)
+-{
+-	return this_cpu_read(tr->array_buffer.data->ftrace_ignore_pid) !=
+-		FTRACE_PID_IGNORE;
+-}
+ extern int ftrace_is_dead(void);
+ int ftrace_create_function_files(struct trace_array *tr,
+ 				 struct dentry *parent);
+@@ -1184,10 +1179,6 @@ void ftrace_clear_pids(struct trace_array *tr);
+ int init_function_trace(void);
+ void ftrace_pid_follow_fork(struct trace_array *tr, bool enable);
+ #else
+-static inline int ftrace_trace_task(struct trace_array *tr)
+-{
+-	return 1;
+-}
+ static inline int ftrace_is_dead(void) { return 0; }
+ static inline int
+ ftrace_create_function_files(struct trace_array *tr,
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index fe9607edc..0efe831e4 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -232,9 +232,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
+ 		return 1;
+ 	}
+
+-	if (!ftrace_trace_task(tr))
+-		return 0;
+-
+ 	if (ftrace_graph_ignore_func(gops, trace))
+ 		return 0;
+
+-- 
+2.25.1
 
