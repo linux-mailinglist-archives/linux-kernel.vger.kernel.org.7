@@ -1,132 +1,354 @@
-Return-Path: <linux-kernel+bounces-898944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD6DC565E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C439C565C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA1B63538E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:45:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2EF013578F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E145F330B01;
-	Thu, 13 Nov 2025 08:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62BA2459C9;
+	Thu, 13 Nov 2025 08:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="no1+SRZj"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="N07yRMNU"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C022C21EC;
-	Thu, 13 Nov 2025 08:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A04026ED2A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763023535; cv=none; b=Ro6ZifmTCJJCp4JQQ8QFlUGCLdx+Km0BztERYAxNL/+o8Syuu66QsoTkjNm0/3MmXTjJsMeP7VWidgNNM+vEWMKmHV0kAR2xPjeyKLfJXva9tlPXa8F5d4UhQ2Y5+H2+p2kTH5cd+JmuuBzrAP3x+GvHiFzSi0JzSkQkS6rXynA=
+	t=1763023488; cv=none; b=uy+EIKpLjJRWdRzFb/ZNUdinu6kz427mAMVGvc+lhZ6cHEzwr/L2ltLX31X7+UHexvBRIk7ELKJJrLTD9k62FJJUUYJ+TM+6pzPyLpmjCwmR4JYqAG35E39p1KJuo61br8zH7083NJNn9X0KR4DGYqyQ9c5K8Izj4+nSxP+L4wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763023535; c=relaxed/simple;
-	bh=yZH1UkLt0oe2VEji1eEQrjQIwX753ewx3YaYtlAQDm8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OIUZYbWE5QL/xGYf8AsIni64LZ9HrK7Dn414WHPGUna2E/26VEwYRQjF0w8ruO3mX1193wVEommC6OmU5jKbPu1M1Hs4dCm3PcHclcp6v5CK68ukyzle+RaW3yFJ272egGOZ/lsoVLGMPrBg2gynJNs2oD1VH9nBZaMEfMHX9ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=no1+SRZj; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 165206a8c06d11f0b33aeb1e7f16c2b6-20251113
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=hu479yPj8wbBYx+WzD14ywVL3ZHRcGR0GXGR0sSeAEc=;
-	b=no1+SRZjdc/QUFWioe22TRkQGQhriQgNN9Jl5sYCj/hq5s4ssmuqhewIVi2UZPLTO5LNlZmgZgxupT6MfArZQDiZMOyylon755lX9/DwrcuePbOAlH7p5HyRDttdxVI7BlBajI5GAfjXlWIV+aLJ68PVDW5ap3U87mKcxoyVXZo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:5d9dc6a4-b194-43e4-a3ff-a566a2fdc45f,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:a9d874c,CLOUDID:983dda57-17e4-43d2-bf73-55337eed999a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
-	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 165206a8c06d11f0b33aeb1e7f16c2b6-20251113
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <johnny-cc.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 548567511; Thu, 13 Nov 2025 16:45:20 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 13 Nov 2025 16:45:19 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Thu, 13 Nov 2025 16:45:19 +0800
-From: Johnny Chang <Johnny-CC.Chang@mediatek.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Digits_Upstream_Group@mediatek.com>, Johnny-CC Chang
-	<Johnny-CC.Chang@mediatek.com>
-Subject: [PATCH] PCI: Mark Nvidia GB10 to avoid bus reset
-Date: Thu, 13 Nov 2025 16:44:06 +0800
-Message-ID: <20251113084441.2124737-1-Johnny-CC.Chang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1763023488; c=relaxed/simple;
+	bh=p8k7WifucDpT6EGz4jqiedoInt47e2DEoyTztAVmg8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZWKT5Fo0pLryXAkrWZ0kV/SBex8wnRh0vy7RGDkCDxojBHvPIMZiD5Q15LF5OJLdSfLNjAiNIoWlaxCdYCKG0m2ZW/Z4W/ziVKlDRXHOTFtVk6Mg79BPO50e3RvAgLPx7WR8BxJXsTGv2/5HCsWf8Gp1I9UbCsvn+nH8HUKX+a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (2048-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=N07yRMNU; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 7BC9EC355A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:43 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 2E064C3545
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:42 +0200 (EET)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 859B01FE6E5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:44:41 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1763023481;
+	bh=dhovFHoHb8qSQBovicVWAESq7ahI0AP216oMQOcv1DU=;
+	h=Received:From:Subject:To;
+	b=N07yRMNU/531yaWLE+SrTEviAS8bzNHmF0+tWkkbDPDXqU8o+HDoahryzT98Tv9f2
+	 1F7n1JiQYUd1I8fEtt6QZhKyoYWXzy+RbkHRBYLJ2NzC2S9/vumFbXgqcxDs9hZCAB
+	 4leOFStGMgvDcDzr5yIPUqHYQzxq3bnIW6XqG4m26f+cZViNEPDbt/4kMCe1pUnd8W
+	 ljiVg21/vyj3xRThot3fEPG7AePTRKEQbHLI3U/ifFmTlZezkHD5Ac3YqTZPYtuOoZ
+	 QFNU5GMgXkF+F+KBOBGATqvbSzRGu8SAC7PFpJ2WgqS90q6FSSxf9hHC0w41N+0lLT
+	 oh2FUPZFgmRoA==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-37a875e3418so3916161fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Thu, 13 Nov 2025 00:44:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWGs1tMvf6qtLMtQDFe9B+Y0DvvrILOp7NvK3fnfgL9X8nLky0sV9eSJ+MyUGrqgCd6roupbs91YWK8gLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ogFR+WIevPakMDRa0AyHu7FxAq1X4fcUN1iVFLf6AZm3jExp
+	XyMlC7lNa2/14YeRzK0l9K/6U5J6UQW2UUvFyFjvyZoTQ9BBAAa6FTB+t1OlRUj2snpY/s5UKnF
+	Qob1kcThshXcVUcl3eSQnNWINs00xLXY=
+X-Google-Smtp-Source: 
+ AGHT+IFcvnlK1g9gem08iqzl3IeGNTJP877Z1QLrGtuXpfBlosJ62owDR4OYnKTypeP8yOawbHwYcXU2tGaqREB0LnE=
+X-Received: by 2002:a05:651c:3043:b0:37a:2dca:cfaf with SMTP id
+ 38308e7fff4ca-37b8c2ec367mr15230501fa.20.1763023480919; Thu, 13 Nov 2025
+ 00:44:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20251101104712.8011-1-lkml@antheas.dev>
+ <CAGwozwE+3vkm0-amRqnNJBzxTvXabgBF9h_G_vG_L7OJj91LBg@mail.gmail.com>
+ <27a74ecc-bff7-f3ae-b23e-a8362ac3a6b3@linux.intel.com>
+ <CAGwozwGpacR=wYXpf3vOiwWNxaV6pJ6CdE-E-G1gRRpO4VHVMg@mail.gmail.com>
+ <74f91d3c-6494-4754-a10f-4d8c1d45f7ff@gmail.com>
+ <CAGwozwEKqqJxxmtjJhy2MzNVhmBTMmy8xG5TZGkKJqJCgK=X5w@mail.gmail.com>
+ <4671d267-d823-4bf7-af30-b587e67dec49@gmail.com>
+In-Reply-To: <4671d267-d823-4bf7-af30-b587e67dec49@gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 13 Nov 2025 09:44:28 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFDm80YuC9AfES2d7Xk2bnCNPjHtgXCz5gZuh7fuajHgg@mail.gmail.com>
+X-Gm-Features: AWmQ_bk4ktN1laFYsydus_0eoARRn9jxNUvpvSPEDxKLDO3uwo9j9jLqdkTKno8
+Message-ID: 
+ <CAGwozwFDm80YuC9AfES2d7Xk2bnCNPjHtgXCz5gZuh7fuajHgg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/10] HID: asus: Fix ASUS ROG Laptop's Keyboard
+ backlight handling
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176302348182.1956594.15118961950409458663@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-From: Johnny-CC Chang <Johnny-CC.Chang@mediatek.com>
+On Thu, 13 Nov 2025 at 02:14, Denis Benato <benato.denis96@gmail.com> wrote=
+:
+>
+>
+> On 11/12/25 23:08, Antheas Kapenekakis wrote:
+> > On Wed, 12 Nov 2025 at 20:51, Denis Benato <benato.denis96@gmail.com> w=
+rote:
+> >>
+> >> On 11/12/25 14:41, Antheas Kapenekakis wrote:
+> >>> On Wed, 12 Nov 2025 at 14:22, Ilpo J=C3=A4rvinen
+> >>> <ilpo.jarvinen@linux.intel.com> wrote:
+> >>>> On Wed, 12 Nov 2025, Antheas Kapenekakis wrote:
+> >>>>
+> >>>>> On Sat, 1 Nov 2025 at 11:47, Antheas Kapenekakis <lkml@antheas.dev>=
+ wrote:
+> >>>>>> This is a two part series which does the following:
+> >>>>>>   - Clean-up init sequence
+> >>>>>>   - Unify backlight handling to happen under asus-wmi so that all =
+Aura
+> >>>>>>     devices have synced brightness controls and the backlight butt=
+on works
+> >>>>>>     properly when it is on a USB laptop keyboard instead of one w/=
+ WMI.
+> >>>>>>
+> >>>>>> For more context, see cover letter of V1. Since V5, I removed some=
+ patches
+> >>>>>> to make this easier to merge.
+> >>>>> Small bump for this.
+> >>>> I looked at v8 earlier but then got an impression some of Denis' com=
+ments
+> >>>> against v7 were not taken into account in v8, which implies there wi=
+ll be
+> >>>> delay until I've time to delve into the details (I need to understan=
+d
+> >>>> things pretty deeply in such a case, which does take lots of time).
+> >>>>
+> >>>> Alternatively, if Denis says v8 is acceptable, then I don't need to =
+spend
+> >>>> so much time on it, but somehow I've a feeling he isn't happy with v=
+8
+> >>>> but just hasn't voiced it again...
+> >>>>
+> >>>> Please do realize that ignoring reviewer feedback without a very ver=
+y good
+> >>>> reason always risks adding delay or friction into getting things
+> >>>> upstreamed. Especially, when the review comes from a person who has =
+been
+> >>>> around for me to learn to trust their reviews or from a maintainer o=
+f the
+> >>>> code in question.
+> >>> Sure, sorry if it came out this way. Dennis had two comments on the V=
+7
+> >>> version of the series.
+> >>>
+> >>> The first one was that asusctl has a hang bug, which he hasn't had
+> >>> time to look into yet. This should have been fixed by dropping the
+> >>> HID_QUIRK_INPUT_PER_APP. I retested the series and that QUIRK was a
+> >>> bit of a NOOP that does not need to be added in the future.
+> >> So it is supposed to not regress it now, correct?
+> >>> The second is he is concerned with dropping the 0x5d/0x5e inits. Luke
+> >>> said (back in March) that it is fine to drop 0x5e because it is only
+> >>> used for ANIME displays. However, for 0x5d, it is hard to verify some
+> >>> of the older laptops because they have only been tested with 0x5d and
+> >>> we do not have the hardware in question to test.
+> >>>
+> >>> For this series, I re-added "initialize LED endpoint early for old
+> >>> NKEY keyboards" that re-adds 0x5d for the keyboards that cannot be
+> >>> tested again so this comment should be resolved too. With that in
+> >>> mind, we do end up with an additional quirk/command that may be
+> >>> unneeded and will remain there forever, but since it was a point of
+> >>> contention, it is not worth arguing over.
+> >>>
+> >>> So both comments should be resolved
+> >> The driver should also not late-initialize anything.
+> >>
+> >> Windows doesn't do it and the official asus application
+> >> can freely send LEDs changing commands to either WMI or USB
+> >> so I don't see any reason to do things differently [than windows]
+> >> and not prepare every USB endpoint to receive commands,
+> >> this has not been addressed unless I confused v7 and v8?
+> > Yes, it's been added on v8. 0x5d is init for the laptops it is
+> > problematic for. Not because it does not work, but because it has not
+> > been verified to work for those laptops.
+> I am not sure I am reading this right:
+> are you telling me that on recent models the windows driver
+> doesn't issue 0x5d?
 
-Nvidia GB10 PCIe hosts will encounter problem occasionally
-after SBR(secondary bus reset) is applied.
-Enable NO_BUS_RESET quirk for Nvidia GB10 PCIe hosts.
+Try to add spaces in your replies. This is hard to follow.
 
-Signed-off-by: Johnny-CC Chang <Johnny-CC.Chang@mediatek.com>
----
- drivers/pci/quirks.c    | 11 +++++++++++
- include/linux/pci_ids.h |  2 ++
- 2 files changed, 13 insertions(+)
+Do not conflate driver with software. 0x5a (over the application
+0xff310076) has traditionally been used by a driver in Windows to
+control the backlight level, as it is done in this driver. 0x5d (over
+the application 0xff310079) is only used by laptops with RGB by
+Armoury crate. But this driver does not do RGB. No device
+functionality relies on it being sent for any device I've seen. The
+device remembers its Windows settings, incl. the backlight color, in
+the absence of a driver.
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index b94264cd3833..12a10fa84c8a 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3746,6 +3746,17 @@ static void quirk_no_bus_reset(struct pci_dev *dev)
- 	dev->dev_flags |= PCI_DEV_FLAGS_NO_BUS_RESET;
- }
- 
-+/*
-+ * Nvidia GB10 PCIe hosts will encounter problem occasionally
-+ * after SBR (secondary bus reset) is applied.
-+ * SBR needs to be prevented for these PCIe hosts.
-+ */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_GB10_GEN5_X4,
-+			 quirk_no_bus_reset);
-+
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_GB10_GEN4_X1,
-+			 quirk_no_bus_reset);
-+
- /*
-  * Some NVIDIA GPU devices do not work with bus reset, SBR needs to be
-  * prevented for those affected devices.
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 92ffc4373f6d..661dc1594213 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1382,6 +1382,8 @@
- #define PCI_DEVICE_ID_NVIDIA_GEFORCE_320M           0x08A0
- #define PCI_DEVICE_ID_NVIDIA_NFORCE_MCP79_SMBUS     0x0AA2
- #define PCI_DEVICE_ID_NVIDIA_NFORCE_MCP89_SATA	    0x0D85
-+#define PCI_DEVICE_ID_NVIDIA_GB10_GEN5_X4           0x22CE
-+#define PCI_DEVICE_ID_NVIDIA_GB10_GEN4_X1           0x22D0
- 
- #define PCI_VENDOR_ID_IMS		0x10e0
- #define PCI_DEVICE_ID_IMS_TT128		0x9128
--- 
-2.45.2
+Laptops without RGB such as the Duo series which I would like to add
+support for next only have a 0x5a endpoint. But, they are sent garbage
+inits for 0x5d and 0x5e currently. This should be fixed.
+
+Moreso, it seems that Armoury crate on the Xbox Ally series uses
+exclusively 0x5a commands and if you use 0x5d it ignores them (perhaps
+RGB still works though). With the previous generation, commands worked
+for either report id.
+
+> >>> @Denis: can give an ack if this is the case?
+> >>>
+> >>> As for Derek's comment, he has a PR for his project where he removes
+> >>> the name match for Ally devices with ample time for it to be merged
+> >>> until kernel 6.19 is released. In addition, that specific software fo=
+r
+> >>> full functionality relies on OOT drivers on the distros it ships with=
+,
+> >>> so it is minimally affected in either case.
+> >> The part we are talking about depends on this driver (hid-asus)
+> >> and there are people on asus-linux community using inputplumber
+> >> for non-ally devices (the OOT driver is only for ally devices)
+> >> therefore it is very important to us (and various other distributions)
+> >> not to break that software in any way.
+> > This driver is only used for Ally devices. If you mean that people
+> > remap their keyboards using inputplumber I guess they could but I have
+> > not seen it.
+> I meant people remap keyboards using IP. I am sure there were
+> (and very probably still are) people doing that.
+> >> Weighting pros and cons of changing the name I am not sure
+> >> changing name brings any benefit? Or am I missing something here?
+> >> It's simply used by userspace so the hardware should be loading
+> >> regardless of the name...
+> > Users see the name of their devices in their settings menu. They
+> > should be accurate. Also, the early entry needs to be added anyway to
+> > prevent kicking devices.
+> If it's just aesthetics I don't see much reasons in changing the name.
+>
+> "the early entry needs to be added anyway ...." has no meaning to me,
+> please rephrase. Sorry.
+
+Early exit-
+
+> >> Along with IP and your tool and asusctl there is also openrgb,
+> >> and a newborn application for asus devices (I don't have contacts
+> >> with that dev nor I remember the name of the tool)
+> >> and I am not even that sure these are all asus-related
+> >> applications.
+> > My tool never checked for names, it briefly did for around a month
+> > after its creation for some devices until capability matches. Around
+> > 6.1 and 6.7 the kernel changed the names of most USB devices and that
+> > caused issues. It currently only uses name matches for VID/PID 0/0
+> > devices created by the kernel. Specifically, WMI and AT Keyboards. I
+> > am not sure there is a workaround for those. Asusctl also does not use
+> > names either.
+> But IP does, so I would like to hear confirmation from at least Derek
+> before the merge that there won't be future issues.
+>
+> Interpret what I say here as a broad topic, not just name/PER_APP flag:
+> avoid changing data flow on older models...
+
+In [1] Derek removes the name matches
+
+There are no other name matches concerning this driver in it.
+
+The data flow is not changed in this series; you should go through the
+patches once again if you think that. The only difference is 0x5e is
+not sent, and 0x5d is not sent for newer devices.
+
+[1] https://github.com/ShadowBlip/InputPlumber/pull/453
+
+> >> Excercise EXTRA care touching this area as these are enough changes
+> >> to make it difficult to understand what exactly is the problem if
+> >> someone shows up with LEDs malfunctioning, laptop not entering sleep
+> >> anymore or something else entirely. Plus over time
+> >> ASUS has used various workarounds for windows problems
+> >> and I am not eager to find out what those are since there is only
+> >> a realistic way it's going to happen....
+> > These changes are not doing something extraordinary. It's just a minor =
+cleanup.
+> >
+> >>> Moreover, that specific commit is needed for Xbox Ally devices anyway=
+,
+> >>> as the kernel kicks one of the RGB endpoints because it does not
+> >>> register an input device (the check skipped by early return) so
+> >>> userspace becomes unable to control RGB on a stock kernel
+> >>> (hidraw/hiddev nodes are gone). For more context here, this specific
+> >>> endpoint implements the RGB Lamparray protocol for Windows dynamic
+> >>> lighting, and I think in an attempt to make it work properly in
+> >>> Windows, Asus made it so Windows has to first disable dynamic lightin=
+g
+> >>> for armoury crate RGB commands to work (the 0x5a ones over the 0xff31
+> >>> hid page).
+> >> Yes once ASUS introduces something new it sticks with that for
+> >> future models so it's expected more and more laptops will have
+> >> the same problem: I am not questioning if these patches are needed
+> >> as they very clearly are; I am questioning if everything that these
+> >> patches are doing are worth doing and aren't breaking/regressing
+> >> either tools or the flow of actions between the EC and these USB devic=
+es.
+> > Well, this series is needed to account for that. Sending the disable
+> > command is out of scope for now though.
+> Here I apologize for confusion: my comments were mostly about
+> older models: I absolutely don't want to break those, but if you find a w=
+ay
+> to distinguish them from newer models that would give you more freedom wi=
+th those.
+
+Yes, we know their specific PIDs, so if you see the patch that adds
+the 0x5d init, it is only added for those models.
+
+> No disable commands unless we find hard evidence those are strictly neede=
+d.
+
+They are needed for the Xbox Ally series, but since this driver does
+not do RGB it is out of scope.
+
+> > Antheas
+> >
+> >>> Hopefully this clears things up
+> >>>
+> >>> Antheas
+> >>>
+> >>>>> Unrelated but I was b4ing this series on Ubuntu 24 and got BADSIG:
+> >>>>> DKIM/antheas.dev. Is there a reference for fixing this on my host?
+> >>>>> Perhaps it would help with spam
+> >>>> I see BADSIG very often these days from b4 (thanks to gmail expiring
+> >>>> things after 7 days or so, I recall hearing somewhere), I just ignor=
+e them
+> >>>> entirely.
+> >>>>
+> >>>> AFAIK, that has never caused any delay to any patch in pdx86 domain =
+so if
+> >>>> that is what you thought is happening here, it's not the case.
+> >>>> If your patch does appear in the pdx86 patchwork, there's even less =
+reason
+> >>>> to worry as I mostly pick patches to process using patchwork's list.
+> >>> Turns out I had to update my DNS records. It should be good now.
+> >>>
+> >>>> --
+> >>>>  i.
+> >> snipp
+> >>>>>> 2.51.2
+> >>>>>>
+> >>>>>>
+>
 
 
