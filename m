@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-899853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E98C58FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:06:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2BBC59046
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCE493625E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC6B4A3AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB641354ACC;
-	Thu, 13 Nov 2025 16:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38316357A35;
+	Thu, 13 Nov 2025 16:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNgGXQIa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2dNwiVh"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055913557E9;
-	Thu, 13 Nov 2025 16:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A2C328B61
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052123; cv=none; b=PD4jXBcN/XO8di+lg2JwqyKChERwZra81U9T19qwDK/XX1IMOdXCE0+y0Q3B+gM2cT87LWIk/JUIHiHaqRMcTSZj5TwnCkPRMgCci47LeuoQrg21XIR4Uc8IFZeWCkLLgIIbdrWxL+eS7MFrXpSifhcryz8CDnX5jsCWGKN3cf0=
+	t=1763052150; cv=none; b=IgFmHcd/XTEXMItv+Fnybr2Z2CDmEmzfcCuZsdKpOFkjquodPcuClEPuZUEEuOQ3ZFbmH8UOHCVAuVrZKShAzjK5kMH7sC3zcC2tuJTAWzFSI35c/49Iq8UQx52Np7lZBel+1iWUewuzlIq/cGdqfyLulDIvxQxy666QsVPchLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052123; c=relaxed/simple;
-	bh=tbI30SQdpsjBi0FiA0lyqvsLgdo6wOPvrHQ/VuIekYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbEb5YOHBOo6ymN6PVG5uu9UT1SxajoUjaYyND4B8CVfbyKUrswWSptf7s6Fv2QdmyCcU8dTvWgOANVPngv8HZNoEPE4ND3P3Vv1VPXWQtfk5pt76Tg+c7JP0bUsIBwyD712JQslAICNnYVaw+GjN7X5gXjg8B2goTn9WRUSxZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNgGXQIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46851C113D0;
-	Thu, 13 Nov 2025 16:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763052122;
-	bh=tbI30SQdpsjBi0FiA0lyqvsLgdo6wOPvrHQ/VuIekYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qNgGXQIajwxVe7WQ6kGYsfOs7tSWSzNInH4olIfs/uNUQzMJDBdh1uWvYgVARgS7L
-	 MkAaVG9auvsafOddLcG45jmQc3v1nOehwRhRvHGQjzcKei4eZEe5Ym44vPahLnL916
-	 QgDNMcuEuhc+oJ17Xpuavg9cl0TZ3yruFjCPTXVuEnk1T/5wBmKbNA/CfUlyK1V6se
-	 HY2sE5/OILtgWAA75hTY+o9QlRhMRAw44S+qk+cObISqfwHdtorH238PvR2M0MBqj7
-	 0GhzF8VV7KeT7s+YnwnEGp3be9KojOk5Tz6DEdtf/7g3QUK0KghiWpbgovzeetJB8B
-	 xcm4CJq+pWrVQ==
-Date: Thu, 13 Nov 2025 22:11:47 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	andersson@kernel.org, robh@kernel.org, manivannan.sadhasivam@linaro.org, 
-	krzk@kernel.org, helgaas@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, lpieralisi@kernel.org, kw@linux.com, conor+dt@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-spec@vger.kernel.org, 
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v2] schemas: pci: Document PCIe T_POWER_ON
-Message-ID: <epqkkezjnkwznh4minlvhh7vbnwh3isqeofqamgupj7rjnhjv2@wtrx4ecjgvob>
-References: <20251110112947.2071036-1-krishna.chundru@oss.qualcomm.com>
- <aRHdiYYcn2uZkLor@wunner.de>
- <44c7b4a8-33ce-4516-81bf-349b5e555806@oss.qualcomm.com>
- <aRWYoHvaCCN95ZR9@wunner.de>
+	s=arc-20240116; t=1763052150; c=relaxed/simple;
+	bh=lD7uKF4a/ewK/luXx9qr7X9aeCw/M0HmweHz5Mq9Qrg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FrnhpszAGMf8CW9pF91Ww9w1mky1dPTArmP0m7iYXPwU/tFcZr6voDfMviqj0FxsNBb6f9eKBiRdjpdx1fBpZkEp+CqS0a9AWCLmE0wp1stlzKtxnPXbuzvjjMxBH6dAwVnyaNKVZ49mWsjp+IwNks7qH6jd448V/PhTq+qCE+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2dNwiVh; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-429c5e0f94eso91132f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763052147; x=1763656947; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1iPrEVkt5hq6iKDIzwWz1JLhZGrRKwp4Km+TwvoaLw=;
+        b=D2dNwiVhy+mUgtHvd+YgQq0WZVjbQaIlIyPr/zZZLBhw7I6BljtpWdruZjlY12tgLv
+         UbmebPhfR5p91qeL6c02aKbYCqnWEq38L/fJTclWOF0gOsVR8ELjzwvGOStrV5VYTkjG
+         Rbt03Z+jAnZsgTTP4KoORc8vRhALunufu9A8/wKoI1Ap9UN6P82hN3KXMd1GQKR6ROTk
+         EuJwBkFZMvZdxFvGvIjcmpC2R6iTCdfheRlNqqBXCSIo4UFyiYbNJOup6n8/jB2TNUXg
+         UvTGanMlJqMJgZrWO6eu/IjnrUcVR6prLIDaPVLjZUoMxcc2zF9S2UyE7zzjjsFlBTfb
+         GOFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763052147; x=1763656947;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q1iPrEVkt5hq6iKDIzwWz1JLhZGrRKwp4Km+TwvoaLw=;
+        b=s3+7L+cOBx5IL6ZxOnoJCk5F0eqqOMrQPQ03wKd9WhMo8Wt0QV4SZZ6B1doXx2xHOQ
+         601X9h47dHpAf4FsaqQvppC4F31jlWd21nqYruX7wYdmHJyyf40XL4UCsNCtfnStf8zM
+         GGTq0xaIDT0zkqqHbJFHpQ1j6U+ZLFojE5ESUbv/YoTNIm7vhZJx3lRH195zMAkqYYSi
+         tHJSW29IPWkmq4aVSzYa84KojO//dQY6DTnVYnokO6QiPBpGOmG1+AtlBYRw1R0WD+7Q
+         DxiY4bjv0MOzweDDGrpg7y8lXE0kye776LbQfzWkq6IAlTjHfaEGHZRCKWe34K++EFhF
+         b3UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJxOwYYfrzVR1jjhnxGAshSSnO6Y284PskKNa/rA8wITVmvJfoTy2fD1SYguWg9UO65/V6NdE/UiyN5QE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxECdxNXKJAvPTmsIeVqd/+YaRuI5Dpftk9N9hS10xDTsW2eXRq
+	VIjAkZ+7rADBYo/GCSBmsN6Ds/nSxYjv+JMLfWw+wQN/qz/JqjBlxFEO
+X-Gm-Gg: ASbGnctkt0M7GxNgVqk8WAmRP9vFvKOb0Nyoh8kneFMKXpz1ZgMd1qAy+ZzmLj9Wefs
+	BZMQpcLgYUWh7x5xlI6phvVA+xfd1W9XchlQRBq13ufRQXUUEBiNj0hs9UBGAF+1ScrZMW5kAs8
+	SlQQrBvRcsCHNXCz53LeiYjlsegUZihMCVGl27kpxYjrIGHRroXRiXdWGx8txwynKJzAJjY5wjD
+	pseK0R+dPKsZvhe0bn2RO6gCi4zjWnV5naj1Wd3V2l8DdnkWmNi84E6UXJZ58fNnxefcKjFCEVL
+	srqDNOTPIAcdowDhrqRlUF+mE5igymlP0m7mzwSgs0o/2p7V31uBKSabFHLlM8l6tUAonYO9ePs
+	OCRrqBvsXgqUvMGjZRIJFDg/osqxJCol8dPvg39HhhSKUh2K1P1nV/xy8lxf3Bt2GtZAvZOzZSG
+	M/6+aKGZ05OPPNxc8h9qZRRVhybg==
+X-Google-Smtp-Source: AGHT+IGclhtkVC+SQIwavEUnzhQXgeen+aHzFX2HGR9pvr4YinanB82JsLHIPDaDDzl6c6Ni7eJakw==
+X-Received: by 2002:a05:600c:4706:b0:477:7bd8:8f2d with SMTP id 5b1f17b1804b1-4778feafe3amr467895e9.8.1763052146552;
+        Thu, 13 Nov 2025 08:42:26 -0800 (PST)
+Received: from localhost ([2a03:2880:31ff:4e::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778f247821sm17578525e9.5.2025.11.13.08.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 08:42:25 -0800 (PST)
+From: Gustavo Luiz Duarte <gustavold@gmail.com>
+Subject: [PATCH net-next v2 0/4] netconsole: Allow userdata buffer to grow
+ dynamically
+Date: Thu, 13 Nov 2025 08:42:17 -0800
+Message-Id: <20251113-netconsole_dynamic_extradata-v2-0-18cf7fed1026@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRWYoHvaCCN95ZR9@wunner.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGoKFmkC/32NWwrDIBBFtxLmuxa1eX91HyUEo5NmoNGiEhJC9
+ l5xAf08XM49JwT0hAH64gSPGwVyNoG8FaAXZd/IyCQGyWUlOG+YxaidDe6DozmsWkmPuEevjIq
+ KSTGZzjSyruoW0sXX40x7vn9BMpO9RxjSslCIzh+5u4m854Tg1f/EJhhnopRtx6e57B71c8Wo7
+ tqtMFzX9QMD55JW0QAAAA==
+To: Breno Leitao <leitao@debian.org>, Andre Carvalho <asantostc@gmail.com>, 
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Gustavo Luiz Duarte <gustavold@gmail.com>
+X-Mailer: b4 0.13.0
 
-On Thu, Nov 13, 2025 at 09:36:48AM +0100, Lukas Wunner wrote:
-> On Thu, Nov 13, 2025 at 09:33:54AM +0530, Krishna Chaitanya Chundru wrote:
-> > On 11/10/2025 6:11 PM, Lukas Wunner wrote:
-> > > On Mon, Nov 10, 2025 at 04:59:47PM +0530, Krishna Chaitanya Chundru wrote:
-> > > >  From PCIe r6, sec 5.5.4 & Table 5-11 in sec 5.5.5 T_POWER_ON is the
-> > > Please use the latest spec version as reference, i.e. PCIe r7.0.
-> > ack.
-> > > > minimum amount of time(in us) that each component must wait in L1.2.Exit
-> > > > after sampling CLKREQ# asserted before actively driving the interface to
-> > > > ensure no device is ever actively driving into an unpowered component and
-> > > > these values are based on the components and AC coupling capacitors used
-> > > > in the connection linking the two components.
-> > > > 
-> > > > This property should be used to indicate the T_POWER_ON for each Root Port.
-> > > What's the difference between this property and the Port T_POWER_ON_Scale
-> > > and T_POWER_ON_Value in the L1 PM Substates Capabilities Register?
-> > > 
-> > > Why do you need this in the device tree even though it's available
-> > > in the register?
-> > 
-> > This value is same as L1 PM substates value, some controllers needs to
-> > update this
-> > value before enumeration as hardware might now program this value
-> > correctly[1].
-> > 
-> > [1]: [PATCH] PCI: qcom: Program correct T_POWER_ON value for L1.2 exit
-> > timing
-> > 
-> > <https://lore.kernel.org/all/20251104-t_power_on_fux-v1-1-eb5916e47fd7@oss.qualcomm.com/>
-> 
-> Per PCIe r7.0 sec 7.8.3.2, all fields in the L1 PM Substates Capabilities
-> Register are of type "HwInit", which sec 7.4 defines as:
-> 
->    "Register bits are permitted, as an implementation option, to be
->     hard-coded, initialized by system/device firmware, or initialized
->     by hardware mechanisms such as pin strapping or nonvolatile storage.
->     Initialization by system firmware is permitted only for
->     system-integrated devices.
->     Bits must be fixed in value and read-only after initialization."
->                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> These bits are not supposed to be writable by the operating system,
-> so what you're doing in that patch is not spec-compliant.
-> 
+The current netconsole implementation allocates a static buffer for
+extradata (userdata + sysdata) with a fixed size of
+MAX_EXTRADATA_ENTRY_LEN * MAX_EXTRADATA_ITEMS bytes for every target,
+regardless of whether userspace actually uses this feature. This forces
+us to keep MAX_EXTRADATA_ITEMS small (16), which is restrictive for
+users who need to attach more metadata to their log messages.
 
-I interpret 'initialized by system/device firmware', same as 'initialized by
-OS', as both are mostly same for the devicetree platforms. So it is fine IMO.
-Ofc, if the initialization was carried out by the firmware, then OS has no
-business in changing it, but it is not the case.
+This patch series enables dynamic allocation of the userdata buffer,
+allowing it to grow on-demand based on actual usage. The series:
 
-> I think it needs to be made explicit in the devicetree schema that
-> the property is only intended for non-compliant hardware which allows
-> (and requires) the operating system to initialize the register.
-> 
+1. Refactors send_fragmented_body() to simplify handling of separated
+   userdata and sysdata (patch 1/4)
+2. Splits userdata and sysdata into separate buffers (patch 2/4)
+3. Implements dynamic allocation for the userdata buffer (patch 3/4)
+4. Increases MAX_USERDATA_ITEMS from 16 to 256 now that we can do so
+   without memory waste (patch 4/4)
 
-Sorry, I disagree. The hardware is spec compliant, just that the firmware missed
-initializing the fields.
+Benefits:
+- No memory waste when userdata is not used
+- Targets that use userdata only consume what they need
+- Users can attach significantly more metadata without impacting systems
+  that don't use this feature
 
-> Maybe it makes more sense to have a property which specifies the raw
-> 32-bit register contents, instead of having a property for each
-> individual field.  Otherwise you'll have to amend the schema
-> whenever the PCIe spec extends the register with additional fields.
-> 
+Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
+---
+Changes in v2:
+- Added null pointer checks for userdata and sysdata buffers
+- Added MAX_SYSDATA_ITEMS to enum sysdata_feature
+- Moved code out of ifdef in send_msg_no_fragmentation()
+- Renamed variables in send_fragmented_body() to make it easier to
+  reason about the code
+- Link to v1: https://lore.kernel.org/r/20251105-netconsole_dynamic_extradata-v1-0-142890bf4936@meta.com
 
-DT properties do not specify a register value, but instead they specify hardware
-configuration value and that's what this property is doing. The OS/other DT
-consumers should interpret this value as per the spec and program the relevant
-registers.
+---
+Gustavo Luiz Duarte (4):
+      netconsole: Simplify send_fragmented_body()
+      netconsole: Split userdata and sysdata
+      netconsole: Dynamic allocation of userdata buffer
+      netconsole: Increase MAX_USERDATA_ITEMS
 
-- Mani
+ drivers/net/netconsole.c                           | 370 ++++++++++-----------
+ .../selftests/drivers/net/netcons_overflow.sh      |   2 +-
+ 2 files changed, 179 insertions(+), 193 deletions(-)
+---
+base-commit: 68fa5b092efab37a4f08a47b22bb8ca98f7f6223
+change-id: 20251007-netconsole_dynamic_extradata-21bd9d726568
 
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Gustavo Duarte <gustavold@meta.com>
+
 
