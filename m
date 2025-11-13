@@ -1,185 +1,160 @@
-Return-Path: <linux-kernel+bounces-899039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C81C56A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:39:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB0BC56A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3244213DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543553BB44C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0AB330B39;
-	Thu, 13 Nov 2025 09:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E71F320CA0;
+	Thu, 13 Nov 2025 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Gk8LHruY";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Gk8LHruY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ygwUYp2F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+qRXOq4J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFCC2D63E8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE62320380;
+	Thu, 13 Nov 2025 09:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763026281; cv=none; b=pFUAkdzm0n4oEKKpZBR6gFQlTetSU0CvZRCEA1plDw4uAO59SohuatrxMAkaeMuddtB1suEzInKH+kdhRnDIjfbHlr9ysYgokYaWVerVHz4hyFgtM+j9DI1ZO5Tg2vw3uK3MbcUNUUNW8ZQO1OBWHM1xBIU0gTsHwQF00huCI44=
+	t=1763026276; cv=none; b=nBDQXOKXjcNt8V9F/SLl73YkjJ+g0XbTTye6QeUIi8x389HJWjmDAq/eE0+E9KJ2JaICxZp/lwKEnDFBqMAAkj/AC+o+oF7qQTMXiCb/eVImLPJFu7vn2Aa4wku5F0xoVtH3ILHGYbGstNGduE4LCz17eU8cIteqApWRCh01Mn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763026281; c=relaxed/simple;
-	bh=roGW0J1nkok8VY2tkIAysrKT4AC3ihAMuoWBge8IYW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oo1rrG3l3dUfEpjQ9vowHZLaERQuJN8K5iqL7PmynM3TokWRRoyZB653GF/IJPLsEsfXtko6SMpe+0emsxkHfxF2rPpvVDI0dsqSoXFkCbqlIys15JAhL5AG4qBD8ekXG81M0aq5du54BaMCKmgrEz3C/DPMD/0bIdADr+w4bMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Gk8LHruY; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Gk8LHruY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E9221F7D3;
-	Thu, 13 Nov 2025 09:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1763026276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=zVnqbEqTlQ0N33trDfhQPbhXbYt0EJdQnaYBCHpvu9U=;
-	b=Gk8LHruYLhl6Sv/7nhIjbLykUyuhAfmlUskpzJi/5f+2F+F2cmYXKyzmuEfQWZodJekwsp
-	hGNPcOnV0UEo9SUwcqUjyXtBr0QPsmdhuIez3aaLYHENggSC+sZqQ6h8fqJeMuhIPLCYwv
-	emSjtxnMWS1TplYE6wOZ9YKJzmQvY0Y=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1763026276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=zVnqbEqTlQ0N33trDfhQPbhXbYt0EJdQnaYBCHpvu9U=;
-	b=Gk8LHruYLhl6Sv/7nhIjbLykUyuhAfmlUskpzJi/5f+2F+F2cmYXKyzmuEfQWZodJekwsp
-	hGNPcOnV0UEo9SUwcqUjyXtBr0QPsmdhuIez3aaLYHENggSC+sZqQ6h8fqJeMuhIPLCYwv
-	emSjtxnMWS1TplYE6wOZ9YKJzmQvY0Y=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 443273EA61;
-	Thu, 13 Nov 2025 09:31:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dRcDEGSlFWnHdQAAD6G6ig
-	(envelope-from <neelx@suse.com>); Thu, 13 Nov 2025 09:31:16 +0000
-From: Daniel Vacek <neelx@suse.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: Qu Wenruo <wqu@suse.com>,
-	Daniel Vacek <neelx@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: simplify async csum synchronization
-Date: Thu, 13 Nov 2025 10:31:09 +0100
-Message-ID: <20251113093110.2619692-1-neelx@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1763026276; c=relaxed/simple;
+	bh=O2/vwPXeEDFD/mI8BsOKjIlkUNBH5z8ELoKjc7T8RfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7lrnf/2B6Zbm7BgsU3TABcMyWtnxC6PB6QyjNsXG6ci3NgBs+Vjq0wfA7uOWx1iJBMtb5y7XmS+gRSYP9AmiS2uDvPmOXF73MGkj24lqCH+AAxVuqToaK6RDzR/8eXG/1WNnjnS2h3dwBk0ok18SIb5UI2FTcqcEUP1V2tWjm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ygwUYp2F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+qRXOq4J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Nov 2025 10:31:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763026270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=di0zlvtolFZ2ujSvVa+1BFR0CAlyEx4DiO0mYSWQDwc=;
+	b=ygwUYp2FepRzD3HjKdKbHo13iKPe5fGwe/j9Ys6zZiMvxAWN1OBuAhyCiELOtD2RGYJltU
+	8VX7MMGJ5DjE9n6DrWYVAuNwfdZvsbH1aHRwEYX3teYkFw5AJBO35bW4WpF5Tk5kFHUWrL
+	gLNEY+Wc1BUOIms3gsYJ/wOrqfpecWcaeu7T+cTr/m0bQLMtttloE8h10mHvi2/tYzORRN
+	G/jTKrO/gkksvgHb4CvJQr0H0W8vsKeIQ0e8rgMNvSrLaU6xLfa0eBk4Zd3xD9o+7GQDNd
+	mfHowgXQeM41cjXmGj3ubXSd3BExQ+zjAH7KBXzuEcjBpvptyc3CwuDZVPJ21A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763026270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=di0zlvtolFZ2ujSvVa+1BFR0CAlyEx4DiO0mYSWQDwc=;
+	b=+qRXOq4Jk2slHhdA1iSs+PP5mTSlOHMcDybHXlytmmFNwk4bSfci9b5O8vXXVZ+OjYzTkf
+	EiwvRX9YrR/EFeCw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] kbuild: userprogs: introduce
+ architecture-specific CC_CAN_LINK and userprog flags
+Message-ID: <20251113102307-ca2180c8-4876-46ea-8678-aaedd9ba36f0@linutronix.de>
+References: <20251014-kbuild-userprogs-bits-v2-0-faeec46e887a@linutronix.de>
+ <aRToC77bNUy2sKAK@derry.ads.avm.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+In-Reply-To: <aRToC77bNUy2sKAK@derry.ads.avm.de>
 
-We don't need the completion csum_done which marks the csum work
-has been executed. We can simply flush_work() instead.
+On Wed, Nov 12, 2025 at 09:03:23PM +0100, Nicolas Schier wrote:
+> On Tue, Oct 14, 2025 at 03:05:15PM +0200, Thomas Weiﬂschuh wrote:
+> > The current logic to inherit -m32/-m64 from the kernel build only works
+> > for a few architectures. It does not handle byte order differences,
+> > architectures using different compiler flags or different kinds of ABIs.
+> > 
+> > Introduce a per-architecture override mechanism to set CC_CAN_LINK and
+> > the flags used for userprogs.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> > Changes in v2:
+> > - Rebase and drop already applied patch
+> > - Disable CC_CAN_LINK if the test program generates warnings
+> > - Move to architecture-specific logic
+> > - Link to v1: https://lore.kernel.org/r/20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de
+> > 
+> > ---
+> > Thomas Weiﬂschuh (10):
+> >       kbuild: don't enable CC_CAN_LINK if the dummy program generates warnings
+> >       init: deduplicate cc-can-link.sh invocations
+> >       kbuild: allow architectures to override CC_CAN_LINK
+> >       riscv: Implement custom CC_CAN_LINK
+> >       s390: Implement custom CC_CAN_LINK
+> >       powerpc: Implement custom CC_CAN_LINK
+> >       MIPS: Implement custom CC_CAN_LINK
+> >       x86/Kconfig: Implement custom CC_CAN_LINK
+> >       sparc: Implement custom CC_CAN_LINK
+> >       kbuild: simplify CC_CAN_LINK
+> > 
+> >  Makefile                |  8 ++++++--
+> >  arch/mips/Kconfig       | 15 +++++++++++++++
+> >  arch/powerpc/Kconfig    | 15 +++++++++++++++
+> >  arch/riscv/Kconfig      | 11 +++++++++++
+> >  arch/s390/Kconfig       | 11 +++++++++++
+> >  arch/sparc/Kconfig      | 11 +++++++++++
+> >  arch/x86/Kconfig        | 11 +++++++++++
+> >  init/Kconfig            |  7 +++++--
+> >  scripts/Kconfig.include |  3 +++
+> >  scripts/cc-can-link.sh  |  2 +-
+> >  10 files changed, 89 insertions(+), 5 deletions(-)
+> > ---
+> > base-commit: 10f8210c7a7098897fcee5ca70236167b39eb797
+> > change-id: 20250813-kbuild-userprogs-bits-03c117da4d50
+> > 
+> > Best regards,
+> > -- 
+> > Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > 
+> 
+> Thanks for the patch set and all the work behind!  I found only one
+> issue in patch 3, the rest looks good to me as they are.
+> 
+> I haven't reviewed the compiler flags for the archs, but from the formal
+> point of view they look good to me, too.
+> 
+> How shall we proceed with here?  I think, easiest would be if we get
+> appropriate acks from the architecture maintainers, so we could take
+> this via kbuild.
 
-This way we can slim down the btrfs_bio structure by 32 bytes matching
-it's size to what it used to be before introducing the async csums.
-Hence not making any change with respect to the structure size.
----
-This is a simple fixup for "btrfs: introduce btrfs_bio::async_csum" in
-for-next and can be squashed into it.
----
- fs/btrfs/bio.c       | 2 +-
- fs/btrfs/bio.h       | 1 -
- fs/btrfs/file-item.c | 6 +++---
- 3 files changed, 4 insertions(+), 5 deletions(-)
+That would surely be the best option. Unfortunately quite frequently it is hard
+to get architecture maintainer's feedback on a cross-architecture series.
 
-diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index a73652b8724a..fd6e4278a62f 100644
---- a/fs/btrfs/bio.c
-+++ b/fs/btrfs/bio.c
-@@ -106,7 +106,7 @@ void btrfs_bio_end_io(struct btrfs_bio *bbio, blk_status_t status)
- 	ASSERT(in_task());
- 
- 	if (bbio->async_csum)
--		wait_for_completion(&bbio->csum_done);
-+		flush_work(&bbio->csum_work);
- 
- 	bbio->bio.bi_status = status;
- 	if (bbio->bio.bi_pool == &btrfs_clone_bioset) {
-diff --git a/fs/btrfs/bio.h b/fs/btrfs/bio.h
-index deaeea3becf4..0b09d9122fa2 100644
---- a/fs/btrfs/bio.h
-+++ b/fs/btrfs/bio.h
-@@ -57,7 +57,6 @@ struct btrfs_bio {
- 			struct btrfs_ordered_extent *ordered;
- 			struct btrfs_ordered_sum *sums;
- 			struct work_struct csum_work;
--			struct completion csum_done;
- 			struct bvec_iter csum_saved_iter;
- 			u64 orig_physical;
- 		};
-diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index 72be3ede0edf..3e9241f360c8 100644
---- a/fs/btrfs/file-item.c
-+++ b/fs/btrfs/file-item.c
-@@ -792,7 +792,6 @@ static void csum_one_bio_work(struct work_struct *work)
- 	ASSERT(btrfs_op(&bbio->bio) == BTRFS_MAP_WRITE);
- 	ASSERT(bbio->async_csum == true);
- 	csum_one_bio(bbio, &bbio->csum_saved_iter);
--	complete(&bbio->csum_done);
- }
- 
- /*
-@@ -805,6 +804,7 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	struct bio *bio = &bbio->bio;
- 	struct btrfs_ordered_sum *sums;
-+	struct workqueue_struct *wq;
- 	unsigned nofs_flag;
- 
- 	nofs_flag = memalloc_nofs_save();
-@@ -825,11 +825,11 @@ int btrfs_csum_one_bio(struct btrfs_bio *bbio, bool async)
- 		csum_one_bio(bbio, &bbio->bio.bi_iter);
- 		return 0;
- 	}
--	init_completion(&bbio->csum_done);
- 	bbio->async_csum = true;
- 	bbio->csum_saved_iter = bbio->bio.bi_iter;
- 	INIT_WORK(&bbio->csum_work, csum_one_bio_work);
--	schedule_work(&bbio->csum_work);
-+	wq = bio->bi_opf & REQ_META? fs_info->endio_meta_workers: fs_info->endio_workers;
-+	queue_work(wq, &bbio->csum_work);
- 	return 0;
- }
- 
--- 
-2.43.0
+> Other opinions?
 
+It would also work to only take the first three patches through the kbuild tree
+and push the other ones through the architecture trees.
+
+I don't really have a clear preference.
+
+
+Thomas
 
