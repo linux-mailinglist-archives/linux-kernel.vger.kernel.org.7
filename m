@@ -1,374 +1,267 @@
-Return-Path: <linux-kernel+bounces-900034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12DDC5978C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E945EC596C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D709C4EEBA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C893AB2A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DD9326937;
-	Thu, 13 Nov 2025 18:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B48634DCFC;
+	Thu, 13 Nov 2025 18:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i0CbDAF6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fl2onfhg";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="0Np2PbvR"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA89130AD1B;
-	Thu, 13 Nov 2025 18:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057528; cv=none; b=HOp8kKgwEUXfwDofze3OoXuwZbHM43yruUZiHMX7JAkXhapT5MVvMneCBV4CZaYNQoTZpaplGEAKOooVgzJJbDLIfkNWJPiemPJlLMYuK5zreDdzRpPBZ6QBu6/EmozEnFoJet9s27K7E4dZypgEXGiyAuTjpepBckNraZqObSM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057528; c=relaxed/simple;
-	bh=eggkhC6mk5737Q6dXVCr1HI04S4YU8Wm2zybbQQ4foA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zd5tt+V/M5chdZdj9ZN10u6whXcCGe6/16IkgOaE4Cw4buxoUUUWSaFclx40DV3Df/XlOh8XmmTopxt9M7BXq67mGvkCf+wOMi0xqbBMpqBovSN4nCwhTCjxaXa4HDiWQgh7bduEvu7dbyivOoQcEtIcRillrgTCkL/4NZxNHzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i0CbDAF6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1763057523;
-	bh=eggkhC6mk5737Q6dXVCr1HI04S4YU8Wm2zybbQQ4foA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i0CbDAF6pCbWEMlJpLb//tNQ6Yv1i+dHQZGVPCJnVkweoEGmlw48d5tZDmSxx333M
-	 nt4GoO0PyuP0bNbEwDVNY98cz438MWKbbxMjCD7dmmefRgQpXVVnQ321Rz9W4WBxr9
-	 hD6NU3aIKykDFuGCJs028cshFoa/0CsSJCbdMtxLP+mtf94jPIFPj5LS8mnmIvR5fB
-	 VrmSy0RLe/MFKL5HKfC7rc6/pcdLWGaZinio6jRZGnk50KKHbPwVoPEHabv3b9fBOs
-	 x+gim+uMWamOOdj/T5PsKDWrMKn3cf9SwpobDBglRpuOtLPfsW2D8s5CBr4bNlbnV2
-	 BuHRmPPV7+XRQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9222917E127F;
-	Thu, 13 Nov 2025 19:12:02 +0100 (CET)
-Date: Thu, 13 Nov 2025 19:11:58 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
- Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
- Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v8 07/11] drm/gem: Get rid of *_with_mnt helpers
-Message-ID: <20251113191158.43328c47@fedora>
-In-Reply-To: <20251113170008.79587-8-loic.molinari@collabora.com>
-References: <20251113170008.79587-1-loic.molinari@collabora.com>
-	<20251113170008.79587-8-loic.molinari@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D3E299AB5;
+	Thu, 13 Nov 2025 18:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763057580; cv=fail; b=uL4Xmc2cp50LpVZEHjTuoDM5QkPVOHGjaa2WSyRfEzM70zJBlKqctEnZKE2rEYa8QBIoakY6BjsdngCZ2UkC5qH4oaqxOmphr437tM+tNWJQ7Xx4f2GBKmc12YH3DsordVHltJwssz3UmpNpKjjQA06l3KPzeuhqKXjFnG/XsIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763057580; c=relaxed/simple;
+	bh=ogJEjDuEO99bFvbBcGDvOOScZOQh0NvEetPVydI4lr4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ova0rN23NSzL8/QqKN41w2uOyBmfq+h82HrwQLeTHthsC5uPEOmYqKWNkpBNO8u3DGLaqb2C0F/ao5kk5i1eAfD8agxr37FJpLbhVXkCd8x3cxnK3otG7m0MYEQcpo/cEptMnZDGbrhsbyMGgCa3o6G8rvTubSag7afuWO/vRzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fl2onfhg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=0Np2PbvR; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADE9w93014753;
+	Thu, 13 Nov 2025 18:12:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=I90OU2aYkkI7r5yoREeMGJYYEZ3UePkM7e1eg256Sb4=; b=
+	fl2onfhgSE+7YaZRzSLzr51Xm7WDjWII1s0SNlLRXRsHjW0EfR0ylESMxbLFhk50
+	glzeVZaplIfxh3HlhTCov96hpQjj7TfYkDxntAGffoOSd14UvPxr1Lcp9GHWZmol
+	CaFVS1/dblvM52cPgp87vFpgguqM1OcWEp0IA6RbRp385Ob0eoqtZ7y6y8Qk3PI4
+	2OqItF0zFnf/f2asjZvtCid3E8oTuYbprRvWAf8pCZFgjPhZ9xcBPnh34KntUUnS
+	LbwriVqAv72Ajx2lACG51u4D+4xbCLqdq6E3avwEqSTPG6ey9lHew3+MP/H0aqLd
+	N15yKFpFnjoqorwIVXpvFA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acxwq2e2t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 18:12:41 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADHbOsU039272;
+	Thu, 13 Nov 2025 18:12:40 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012019.outbound.protection.outlook.com [40.107.200.19])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacfg8w-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 18:12:40 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gc38yrphCAAuPRaodAjzBiBbIxww1W/7J/1/9B/ERTcD3k5HRgPkTskdr/QRgdtjKHiRKSO8Ok072alD/rHspoE/u/aHG9bXr2JAuM9L/nUYuazRSja6oE+poI11XuKgYSIiAnw6rbpdbi+KWUDrK3+y2H1pQxu24cc8bwPOqXD4fQB70IOO2OW1lDcq+huGBnFVN0Q2PehWl/zcnDU3r6S3iWrTqUBg78NHYU1+iNIfcoNm+WelAsD4Ig/xEVSCrIMHV4+uqY2/YmECY+i8/npAZ5vhhHYpUUXO9yYptF3WQvXXG2sxID6svPFKtga0mo1qfIYqvJlXpkr/fjo6rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I90OU2aYkkI7r5yoREeMGJYYEZ3UePkM7e1eg256Sb4=;
+ b=cEA20rgr7FIK15BN3GQoMxpAeNo/8A4QzSBmmRy7wLwnOch+uwbGS9NuIcebmDMgP91hcukSm3NDo1uksMFLheCflI4ugAjJ8RAge+wRMWR57u0Y6bcykc2Y2fuZv2kATMZ7l3kjvMUI+y4d8Ch0u28Z9dBWqVMMDuwuF3Srns6HGkH7IDmGPm1gUfAMpQrGngwNDGqoXqR/r4M4wZKNeex/qe+S29HqMI/iSh75BYEVTSfcl4LBRRAtMY76G/LhQ2AXg4YWzKWT98hzECXYyR+DgRrehKw6re8uw420CrmY42w7RkUed01rT7FaMDNTy6F0/rqlb8nSxTwX7+zebw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I90OU2aYkkI7r5yoREeMGJYYEZ3UePkM7e1eg256Sb4=;
+ b=0Np2PbvRTSQ1hs4ilJDmNIHb86PlWMqfs6h0sT49anH5mr425MLIJcXGq3U3PvXHx/58MEX68sipt5qsuKDM+hqGWC1vx8FHUQrstSdH2USc+/1XTK23KsiqpSPtPSiXUFVYFmRu0v0r80Q9phTyzo7zrTWkx/LuiFMol5mpQpc=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by MW6PR10MB7592.namprd10.prod.outlook.com (2603:10b6:303:242::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
+ 2025 18:12:35 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.9298.010; Thu, 13 Nov 2025
+ 18:12:32 +0000
+Message-ID: <4b77bf39-bc1a-47a1-9a16-14c44c31614f@oracle.com>
+Date: Thu, 13 Nov 2025 13:12:30 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: ls input/output error ("NFS: readdir(/) returns -5") on krb5
+ NFSv4 client using SHA2
+To: "Tyler W. Ross" <TWR@tylerwross.com>
+Cc: "1120598@bugs.debian.org" <1120598@bugs.debian.org>,
+        Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+        Scott Mayhew <smayhew@redhat.com>, Steve Dickson <steved@redhat.com>,
+        Salvatore Bonaccorso <carnil@debian.org>,
+        Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>,
+        Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <176298368872.955.14091113173156448257.reportbug@nfsclient-sid.ipa.twrlab.net>
+ <aRVl8yGqTkyaWxPM@eldamar.lan>
+ <8d873978-2df6-4b79-891d-f0fd78485551@oracle.com>
+ <c8-cRKuS2KXjk19lBwOGLCt21IbVv7HsS-V-ihDmhQ1Uae_LHNm83T0dOKvbYqsf4AeP5T8PR_xdiKLj5-Nvec-QVTLqIC4NGuU2FA0hN5U=@tylerwross.com>
+ <c7136bad-5a00-4224-a25c-0cf7e8252f4a@oracle.com>
+ <N14GL1WKSGqrFl8nF0e6sa0QxOZrnrpoC7IZlZ20YqUyfsxpsoqu2W3a31H_GfQv7OEqaEWKwDXdgtAV-xv613w_slTAFZIoyWMutIE5pKk=@tylerwross.com>
+Content-Language: en-US
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <N14GL1WKSGqrFl8nF0e6sa0QxOZrnrpoC7IZlZ20YqUyfsxpsoqu2W3a31H_GfQv7OEqaEWKwDXdgtAV-xv613w_slTAFZIoyWMutIE5pKk=@tylerwross.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR18CA0041.namprd18.prod.outlook.com
+ (2603:10b6:610:55::21) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|MW6PR10MB7592:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3209f1f0-bc1c-461a-a83a-08de22e036f3
+X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|159843002;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?cUFmUWJKTHlPK2dCaUFjTytwTlBpZVptbXM3Zy9nUVE4R2hFVmhuOWxOR3dW?=
+ =?utf-8?B?NDhYeGNWajhXdTY1anVYVE1pNm1adWI2MzJjaWNIbWwwYWgvWmhNZUV4YlAy?=
+ =?utf-8?B?bHcvWXdyZzFJY0NOTHhmcjBmY09yNVF2K2lEUkFudThTK3lJUnV0UmJFdVJX?=
+ =?utf-8?B?TDZIQzZvZTRuSXVaWEh3ekRhaU4ycnhEMDMrSlFIdCt3d2lZcmh5bkJ6WE40?=
+ =?utf-8?B?VjAyOWJvU29TaXRFdGV4b2VZK3NzNnprRkNCWXl1NUNUQTF0K2FZTUFHNGwx?=
+ =?utf-8?B?QVN2Z1dYK0tuYytsbnVlSElsYmVWSUt2K3VGdVRmdjdOK3doUXQza2JNWGRD?=
+ =?utf-8?B?VytuMXpqRkVaa0w2d282NFp4VmMxcHk0Vlh4S0c2TFd6VWZ3end2Q2ZDek5X?=
+ =?utf-8?B?czlPdzYvRGJFYW9pM1lXZXpxRkxBVTBBNXpqSEpIWTBMR3RQU09tTkZRaGJY?=
+ =?utf-8?B?VUk0QU1UVXhaVzhLcUZNK3V4YmM1NHp5MmV6aDJWWTlreHRUNGJXc1NHRGxs?=
+ =?utf-8?B?R2RVL1dTUnRFMElKWGsrWUJRYnRJRXNoYzNnc3VpMXJ5c1c1Um1mZ1hQMGhy?=
+ =?utf-8?B?R3F1VHFOYXovcTRPc0JKT3hLV25KTGNFdlRpWTNIS252TEh0a2xublRrRnhh?=
+ =?utf-8?B?VlZaWVdLdTlKVHdiSTVCQVltVmt1aEpCaS8vMFhyMDA0cG02R3BDd3YyZkFj?=
+ =?utf-8?B?bG5laWlqRWtWc2VVbEFCR0R5WGxRbVgyNnloSURhOVpEemM2SzJYWC9NbVRF?=
+ =?utf-8?B?QkFyekFrdDJ1ejljOS9QQ2MxSWtMVmNZOFF5R2NubWJVRkhEUXNYMjc2bzNx?=
+ =?utf-8?B?dGpNU20rc3d5UFExSm5kN05aRjRZMW54M29RZHdCMTRTd0VxY01ndmpjNGMz?=
+ =?utf-8?B?ZVc1di9WdTh2OGpReEplaFNPVDFERnNOMW9JTWVtOVBHd2lIOFpnU3dYRWdN?=
+ =?utf-8?B?aEcvbWtDZ0p6WWl2R1hZclZteWU0dzBjUnRwYytseHRBek1BUkpRaW9RckYy?=
+ =?utf-8?B?TVBZQS9CYlM5Qk0rVEFLU0VaS04rRFhubnNkTVpmRVhtOUV1NWsxdEJLSDFF?=
+ =?utf-8?B?YVdhMG8wZTllSy9jYjJzWHJKZlRIY2plV013VnhuVVlnM1lSMzQreEp1VUox?=
+ =?utf-8?B?WlltM25UaVRWRjZ4Y2YxaTZVemNzSDQvODZDeG92dlhIaWFMSzhPeXNLaWJN?=
+ =?utf-8?B?Vlk5TElINktFSE5DMVpLdW1qNXlzUkZWQ2lRNGFsV00xN0ZjSkhkdDBISUk3?=
+ =?utf-8?B?SjNvK1JrZGxJbmRHQU9uaUpZajZ6VmVGL1htRFZabWUyK0dwbUVqVWl6NElY?=
+ =?utf-8?B?c1FhZFVEblBHdnBFMnNTWld2RE5wMG1SSVdZWmdmODVHVkhXUlJHL2dJNnNE?=
+ =?utf-8?B?UUNCVmV5eFgyTHpoZlUyVFdONnRYY0V2MUlrOEZmbG05aXYraDNxUm1tVm5q?=
+ =?utf-8?B?SjhXUzdVUmNuRU91TmpCUEw1QWFydjduTHF3dTZ1T1BJV1JiTytwbUlDbVdv?=
+ =?utf-8?B?am5qTk9MRm5KdE14WjVlRktXeFlnVCtLRE5xL0pnZDRrbUp3YjZua3BwVnl5?=
+ =?utf-8?B?aWRvZFRsdDgzbmZSVlArR2RHeXNQTkl4TjJrdTdtTStJZTJxb0hoZHVLYVNW?=
+ =?utf-8?B?MTFVTnpUVFhRdGduV2dPZC9UekFlOE5tNk82UThVMnlML2dHc2FKeEdwKzRr?=
+ =?utf-8?B?Yk1WaGFQVGpQQi83THNyWUxCSUljMmhXMGlUYjhaUTZXM0JTWVRjRjA2ZFov?=
+ =?utf-8?B?aW9SY1hHQTFCcWhaOE5PUXJMZTF5dWhnUmprQTBQYjJSNjZqdGVFblZNMEVQ?=
+ =?utf-8?B?WlJveXk4MlhkK2dSSXRnM2tDbm9DczRPVXZUZVB2eFVMZERRR0NDaXNyMmx6?=
+ =?utf-8?B?UG1oUEEyTEdFNndkQmk2ZVBxSER2RGk3TUhYTHRrSFl0SEdGb1BJNHRlWHJK?=
+ =?utf-8?B?M3NqajNEU040bmdlNlY0dThLZXM0S2ZLZGNqdFlGOWY4a2xUdjhJMkFZdG9V?=
+ =?utf-8?B?YjQ4NzVzNGkwQitINExHOTNDQ2lHUm90ZnpQQXY1Nldxb3BOUElZK05JYWRT?=
+ =?utf-8?Q?lnuehP?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(159843002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?eHphaDhhUzlzRFpONHFoK2xuenhOK05ndHdHaUZpTWIyS2tWUU54OVkweWZL?=
+ =?utf-8?B?Z2hBbG96WURvL3N4VDRONDF0UnR5QWxEY2NWdnFVRnBjUWhsYmlaWVkvUm5P?=
+ =?utf-8?B?ZURORUs3OEdBQXppWGxkbS80MWdncnBZYXl0UUgvMzR0eVhDcVA2b0xQSmli?=
+ =?utf-8?B?MVVENFFEUlFGa3RLMzhHN1QzazB4ZWoxK2NqN2hEd05uOXlBRkxvM0dJWUVu?=
+ =?utf-8?B?V3gzYXJUWk9lTU14d1lwdTdkM2pYTXo5QkNxYklLUlNrMFZWeFBoa1FnYllH?=
+ =?utf-8?B?RG1JVWlyUHpKR2g4a2ZyWEhZcUZJSHFtVzZHUGZNUGlSNjNJSThxNyt2VVFD?=
+ =?utf-8?B?L3ZNcUNpTVBzU1ZSeWFWOXgyd1N1QW9YOGhRbXYrelYvVEQ4dmFlR21nVzdj?=
+ =?utf-8?B?YWpBT1hDWHE2M2ZGOW9GZmdHZ3k3WkFNaVRPb0dsTTlvN1hQUzlBVy84clE5?=
+ =?utf-8?B?VGtBeGlRL0F6WTNUc2QzaDJQSmJYK0hTaThmRHZ6N0dTKyt3aCtPcmtRZVRW?=
+ =?utf-8?B?Mno3dE0zTEU3TEl1ZTRDOFRLbDZTZzVBa3RHVDVqNm5DaEF0MnUzbitvemZo?=
+ =?utf-8?B?Sk5UNURtb0w2dXhkVmNsTDJuODk3MUd3R1VadUYrNWpxdnZXM2F2YUNSK2dt?=
+ =?utf-8?B?OVFuVXhNRm14TWVMRkJTSFBQLysvYnp2UHFCWmRRZG1RVEdrRkI0YkZabnpv?=
+ =?utf-8?B?ZC9WRjFtWkZHSk0weStPcGdPdGsvMGh4REFYemtOdW4zYzFWTzV5VkRyODNq?=
+ =?utf-8?B?L041aXdZSUtsOU43b1UxWDVEOEZHdWUzSWZFcHlydVZ5MEVkMTBacFBLL1RB?=
+ =?utf-8?B?aDRQN2pES3Axc1QzS3RnYUlNMTBnODVKRkdZa3p3MC9pdE9mczhBUit5aCtY?=
+ =?utf-8?B?VUg0WStaa2w3Qzg2Sk9lK1EvZHBzTzJDR3ZmZ1hxS1A4VllmSHRKN2lkbXpw?=
+ =?utf-8?B?MkJ5WjdFOWdwRG5OZ0VpM0FPSFFIVSs1WFRPaExtTjR4TWJYaklZV0ZJbkxW?=
+ =?utf-8?B?ZEdhTTFINnR6V2pzT01NVjBXZEd4dE03Vm9KclgwRnNZb2NNVlFEMytqNGRr?=
+ =?utf-8?B?LzVpYXNoTFRYRWN6K0duU3lRWmIrY1dwNFBCM2RCeXc1cFhJSnVMVktlSHlw?=
+ =?utf-8?B?Z0gvMmZ5OGhlTVREaitvU0RtdWQ1NS9xelN5bjN6MWZxUVo1dktjeWsyK3Bh?=
+ =?utf-8?B?YnZPZVlNMzlSc25OU2lvMzU2bnZVY2pCU2l3TDRVbXkvSnJYUmlNdzFlSnM4?=
+ =?utf-8?B?Y0tJOW5QTjc3M0Nsek9VWXhrTVFqblJCUnFuTk9UbFdyeUg4dVd5RjAyWmZ6?=
+ =?utf-8?B?M0RnOXZlS3lORjVZdFRiWUx1Q1JxQzRiWDZ2MmFoc29FTjBoaHR2R1pRc2o3?=
+ =?utf-8?B?dEdmTEtraUd5SU9STkppRUdKS0tuTll4VEtBMk4ybVp6M0FZWk5jU3hFMENz?=
+ =?utf-8?B?UWRxM0pLQzZRYW9qUHRDOTRKOURXd0lpdWVhMEZCQnZKMjdhaW1tc2doU1Zj?=
+ =?utf-8?B?VEVyZ3lrT0lxZFc0N1hRbVBvLzhoT09ScWNKdjhjRzBta0hLRTIrN0UrdHRL?=
+ =?utf-8?B?L2VpUFl6cnhna2hoRmVsaEdZa0ZBRlE2WlVJNEFTa2hYTzRKbGpkbW5yaGxl?=
+ =?utf-8?B?d0FrallGK2tzczhuai9jbU9EQmpvU2RiOUdQb3BCd05OWjhyWFBiOFJSbHpQ?=
+ =?utf-8?B?R1FCYTFkcytGVCtQQWpUZCt6c05CTVAzS3UxSURmM21TazBoUm5WTW0yTEJT?=
+ =?utf-8?B?L0hTMGo0ZVUrbGFHazdKUzgyOU5ueGFwc1NaUGR2dUtJV1gvbXE5aFVqa3dX?=
+ =?utf-8?B?cXo4aHM4UFBpa2tIaTNTbXlKdDhjcWlNdFRFem55TWdaeDdMRGl0YzVpRllM?=
+ =?utf-8?B?cEc4QUY5SW9maWd2MDU4NFh3TzNNR1p6N3lqcE44dVE3M2xwQkdqRG9STmFX?=
+ =?utf-8?B?dGh3c2tMc29MUDZId3JXa1k5WWErd3hLcGU3VGtUUk5Jd0s0d1piNmFxdUVa?=
+ =?utf-8?B?Q1FFR0RteitZcmlBU0hCTXlhVS9XNUw5eWV5Q3l0ZzJZR0JSY1Ezem5HWlJy?=
+ =?utf-8?B?a01qYU01UFZjU2pqYk0rY3dEaGNwcjRXWThNd2s2T0dFQUN4alZsTHlxQTNm?=
+ =?utf-8?B?ZGwvWkFyVUdNRmlaZDJRa1pqQVB0R0NGZnF0Mk9ZUER4V041d3hKZG1LenEw?=
+ =?utf-8?B?QUE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	EZSVlH1mMZCM9qAjzAhNus/LotsQG8dDTkUCd1/XpojlxSUEuwJW0Z9OHNp+cJbs69Uc/rFtwVLrbzDBYYvrjZRsh3f2UQzWmeIMJE3WTB7l4kineSEJbZ/pia/0Or3NTrcrQfaUrNjQCSGSrRB445e3dRDq8r6QCTwmRhAdqyXn7T0ZxJygpLKtedpf06epfGHtL52gMPCkh9mHKDH4+NkcBjZl8EGpBASwnLayUG12Pl3UZ3LRqgcm1YE5r1AdFLe51H9olArUnhmR5wkzjSxZ2dFNb3mi0Xk2EiFzJ0TEyMnKcv/7vjfJdyuJQJxRNruVRMYyZI796zGf7ipMPhmVW/WgVWKElcw5V80qitsGsid6kpppsYWJTrIWYyMJhsjYsTXrG3H25r1kyhBRu7xr2QHAG7I3M4chfRGom1CJcFr7OvNRHNAwnd4UBlHp3G/B+AQKipCaqZV7KGl/t1XzZn2+E6cyYAG7/6QyVPoKV2G2SDne6MSc7TJD3VU+8JQ8RWzeE3k/LKxywWFRqTN99+x1NoKeQUaL7wJjT7QDLi1Fd4yaARiXfFYuan7kMDVxg2C7I0hIYce5TxZkXtv08ayTBGoCJbHOjgH+yVw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3209f1f0-bc1c-461a-a83a-08de22e036f3
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 18:12:32.4353
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DnRpq5osrrkPpvP1qosfj4jbh1aV92Z0Sua1jYDy68OIXnkAmyY7s4E3KoOFzU9iFKUjbfEvzNkZYeOdLPXl9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR10MB7592
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_03,2025-11-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510240000 definitions=main-2511130141
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0MSBTYWx0ZWRfX0C97oN/5I0yX
+ oM6knNeabVANwQH0Vu3DqIg1lnB134s7Wiyufi3w4B2Ej58Y7cNo8J8fm2LTApCg7T69ywYWkXK
+ VGJIRNauWZlf0usYO2lPNB5ffNPWC6rki+GjTAMEbk8q5NYPGBCAPwNWq4DfeWyepufVSGc/VcJ
+ lWKJFleMO34VCRmsBGp+3UBs5P1ojkj6p0adySEvfrqvOoomuZ+zZodRlNN6cK+102CqJJ3Eo4Q
+ ddrMXSWakzjLnWwgFdqGe4a3FE6FOgNIeN3xDlVk2zDL/bWGR0knJKj1ZKPZGTEZdQ7q9d3/BJ4
+ iwBk55s/FFtcwKY0U+gRYEWfo3Ham8x1CiUfg23raj8Z5eRZK0KE0llfNVu69MS7FZO1j/J+gny
+ pFTEKYp8BkQxt2ICiNDHgB/ixlu4sA==
+X-Proofpoint-ORIG-GUID: B1muEgen7fUn0wYk0HoFbmxhhVS3GwP1
+X-Authority-Analysis: v=2.4 cv=RrjI7SmK c=1 sm=1 tr=0 ts=69161f99 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yPCof4ZbAAAA:8 a=Kq4p5Eb50wfIDcVisxgA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: B1muEgen7fUn0wYk0HoFbmxhhVS3GwP1
 
-On Thu, 13 Nov 2025 18:00:03 +0100
-Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
+On 11/13/25 1:05 PM, Tyler W. Ross wrote:
+> On Thursday, November 13th, 2025 at 10:47 AM, Chuck Lever <chuck.lever@oracle.com> wrote:
+> 
+>>> ls-969 [003] ..... 270.327063: rpc_xdr_recvfrom: task:00000008@00000005 head=[0xffff8895c29fef64,140] page=4008(88) tail=[0xffff8895c29feff0,36] len=988
+>>> ls-969 [003] ..... 270.327067: rpc_xdr_overflow: task:00000008@00000005 nfsv4 READDIR requested=8 p=0xffff8895c29fefec end=0xffff8895c29feff0 xdr=[0xffff8895c29fef64,140]/4008/[0xffff8895c29feff0,36]/988
+>>
+>>
+>> Here's the problem. This is a sign of an XDR decoding issue. If you
+>> capture the traffic with Wireshark, does Wireshark indicate where the
+>> XDR is malformed?
+> 
+> Wireshark appears to decode the READDIR reply without issue. Nothing is obviously marked as malformed, and values all appear sane when spot-checking fields in the decoded packet.
+Then I would start looking for differences between the Debian 13 and
+Fedora 43 kernel code base under net/sunrpc/ .
 
-> drm_gem_object_init_with_mnt() and drm_gem_shmem_create_with_mnt() can
-> be removed now that the drivers use the new drm_gem_huge_mnt_create()
-> and drm_gem_has_huge_mnt() helpers.
->=20
-> v5:
-> - use drm_gem_has_huge_mnt() helper
-> - compile out shmem_file_setup_with_mnt() call in builds with
->   CONFIG_TRANSPARENT_HUGEPAGE=3Dn
->=20
-> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> ---
->  drivers/gpu/drm/drm_gem.c              | 38 ++++++++------------------
->  drivers/gpu/drm/drm_gem_shmem_helper.c | 38 ++++++--------------------
->  drivers/gpu/drm/v3d/v3d_bo.c           |  5 ----
->  include/drm/drm_gem.h                  |  3 --
->  include/drm/drm_gem_shmem_helper.h     |  3 --
->  5 files changed, 20 insertions(+), 67 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index bbca2ab9e9a5..1b0b5813acef 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -171,31 +171,33 @@ drm_gem_init(struct drm_device *dev)
->  }
-> =20
->  /**
-> - * drm_gem_object_init_with_mnt - initialize an allocated shmem-backed G=
-EM
-> - * object in a given shmfs mountpoint
-> + * drm_gem_object_init - initialize an allocated shmem-backed GEM object
->   *
->   * @dev: drm_device the object should be initialized for
->   * @obj: drm_gem_object to initialize
->   * @size: object size
-> - * @gemfs: tmpfs mount where the GEM object will be created. If NULL, use
-> - * the usual tmpfs mountpoint (`shm_mnt`).
->   *
->   * Initialize an already allocated GEM object of the specified size with
-> - * shmfs backing store.
-> + * shmfs backing store. A huge mountpoint can be used by calling
-> + * drm_gem_huge_mnt_create() beforehand.
->   */
-> -int drm_gem_object_init_with_mnt(struct drm_device *dev,
-> -				 struct drm_gem_object *obj, size_t size,
-> -				 struct vfsmount *gemfs)
-> +int drm_gem_object_init(struct drm_device *dev, struct drm_gem_object *o=
-bj,
-> +			size_t size)
->  {
->  	struct file *filp;
-> =20
->  	drm_gem_private_object_init(dev, obj, size);
-> =20
-> -	if (gemfs)
-> -		filp =3D shmem_file_setup_with_mnt(gemfs, "drm mm object", size,
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	if (drm_gem_has_huge_mnt(dev))
-> +		filp =3D shmem_file_setup_with_mnt(dev->huge_mnt,
-> +						 "drm mm object", size,
->  						 VM_NORESERVE);
->  	else
->  		filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
-> +#else
-> +	filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
-> +#endif
+Alternatively, "git bisect first, ask questions later" ... :-)
 
-I keep thinking it'd be simpler with a drm_gem_get_huge_mnt() helper:
+So I didn't find an indication of whether this was sec=krb5, sec=krb5i,
+or sec=krb5p. That might narrow down where the code changed.
 
-static inline struct vfsmount *
-drm_gem_get_huge_mnt(struct drm_device *dev)
-{
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-	return dev->huge_mnt;
-#else
-	return NULL;
-#endif
-}
+Also, the xdr_buf might have a page boundary positioned in the middle of
+an XDR data item. Knowing which data item is being decoded where the
+"overflow" occurs might be helpful (I think adding pr_info() call sites
+or trace_printk() will be adequate to gain some better observability).
 
-so we can avoid those #ifdef CONFIG_TRANSPARENT_HUGEPAGE in a few other
-places.
 
-For this one that would give you something like:
-
-	if (drm_gem_get_huge_mnt(dev))
-		filp =3D shmem_file_setup_with_mnt(drm_gem_get_huge_mnt(dev),
-						 "drm mm object", size,
-						 VM_NORESERVE);
-	else
-		filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
-
-> =20
->  	if (IS_ERR(filp))
->  		return PTR_ERR(filp);
-> @@ -204,22 +206,6 @@ int drm_gem_object_init_with_mnt(struct drm_device *=
-dev,
-> =20
->  	return 0;
->  }
-> -EXPORT_SYMBOL(drm_gem_object_init_with_mnt);
-> -
-> -/**
-> - * drm_gem_object_init - initialize an allocated shmem-backed GEM object
-> - * @dev: drm_device the object should be initialized for
-> - * @obj: drm_gem_object to initialize
-> - * @size: object size
-> - *
-> - * Initialize an already allocated GEM object of the specified size with
-> - * shmfs backing store.
-> - */
-> -int drm_gem_object_init(struct drm_device *dev, struct drm_gem_object *o=
-bj,
-> -			size_t size)
-> -{
-> -	return drm_gem_object_init_with_mnt(dev, obj, size, NULL);
-> -}
->  EXPORT_SYMBOL(drm_gem_object_init);
-> =20
->  /**
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
-_gem_shmem_helper.c
-> index 81f4ac7cb8f6..43a80f3fcfd9 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -50,7 +50,7 @@ static const struct drm_gem_object_funcs drm_gem_shmem_=
-funcs =3D {
->  };
-> =20
->  static int __drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_s=
-hmem_object *shmem,
-> -				size_t size, bool private, struct vfsmount *gemfs)
-> +				size_t size, bool private)
->  {
->  	struct drm_gem_object *obj =3D &shmem->base;
->  	int ret =3D 0;
-> @@ -62,7 +62,7 @@ static int __drm_gem_shmem_init(struct drm_device *dev,=
- struct drm_gem_shmem_obj
->  		drm_gem_private_object_init(dev, obj, size);
->  		shmem->map_wc =3D false; /* dma-buf mappings use always writecombine */
->  	} else {
-> -		ret =3D drm_gem_object_init_with_mnt(dev, obj, size, gemfs);
-> +		ret =3D drm_gem_object_init(dev, obj, size);
->  	}
->  	if (ret) {
->  		drm_gem_private_object_fini(obj);
-> @@ -103,13 +103,12 @@ static int __drm_gem_shmem_init(struct drm_device *=
-dev, struct drm_gem_shmem_obj
->   */
->  int drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obje=
-ct *shmem, size_t size)
->  {
-> -	return __drm_gem_shmem_init(dev, shmem, size, false, NULL);
-> +	return __drm_gem_shmem_init(dev, shmem, size, false);
->  }
->  EXPORT_SYMBOL_GPL(drm_gem_shmem_init);
-> =20
->  static struct drm_gem_shmem_object *
-> -__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private,
-> -		       struct vfsmount *gemfs)
-> +__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private)
->  {
->  	struct drm_gem_shmem_object *shmem;
->  	struct drm_gem_object *obj;
-> @@ -129,7 +128,7 @@ __drm_gem_shmem_create(struct drm_device *dev, size_t=
- size, bool private,
->  		obj =3D &shmem->base;
->  	}
-> =20
-> -	ret =3D __drm_gem_shmem_init(dev, shmem, size, private, gemfs);
-> +	ret =3D __drm_gem_shmem_init(dev, shmem, size, private);
->  	if (ret) {
->  		kfree(obj);
->  		return ERR_PTR(ret);
-> @@ -150,31 +149,10 @@ __drm_gem_shmem_create(struct drm_device *dev, size=
-_t size, bool private,
->   */
->  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
-, size_t size)
->  {
-> -	return __drm_gem_shmem_create(dev, size, false, NULL);
-> +	return __drm_gem_shmem_create(dev, size, false);
->  }
->  EXPORT_SYMBOL_GPL(drm_gem_shmem_create);
-> =20
-> -/**
-> - * drm_gem_shmem_create_with_mnt - Allocate an object with the given siz=
-e in a
-> - * given mountpoint
-> - * @dev: DRM device
-> - * @size: Size of the object to allocate
-> - * @gemfs: tmpfs mount where the GEM object will be created
-> - *
-> - * This function creates a shmem GEM object in a given tmpfs mountpoint.
-> - *
-> - * Returns:
-> - * A struct drm_gem_shmem_object * on success or an ERR_PTR()-encoded ne=
-gative
-> - * error code on failure.
-> - */
-> -struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
-vice *dev,
-> -							   size_t size,
-> -							   struct vfsmount *gemfs)
-> -{
-> -	return __drm_gem_shmem_create(dev, size, false, gemfs);
-> -}
-> -EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
-> -
->  /**
->   * drm_gem_shmem_release - Release resources associated with a shmem GEM=
- object.
->   * @shmem: shmem GEM object
-> @@ -861,7 +839,7 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device=
- *dev,
->  	size_t size =3D PAGE_ALIGN(attach->dmabuf->size);
->  	struct drm_gem_shmem_object *shmem;
-> =20
-> -	shmem =3D __drm_gem_shmem_create(dev, size, true, NULL);
-> +	shmem =3D __drm_gem_shmem_create(dev, size, true);
->  	if (IS_ERR(shmem))
->  		return ERR_CAST(shmem);
-> =20
-> @@ -909,7 +887,7 @@ struct drm_gem_object *drm_gem_shmem_prime_import_no_=
-map(struct drm_device *dev,
-> =20
->  	size =3D PAGE_ALIGN(attach->dmabuf->size);
-> =20
-> -	shmem =3D __drm_gem_shmem_create(dev, size, true, NULL);
-> +	shmem =3D __drm_gem_shmem_create(dev, size, true);
->  	if (IS_ERR(shmem)) {
->  		ret =3D PTR_ERR(shmem);
->  		goto fail_detach;
-> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-> index 3bc714ea6392..d3b68ee05dbb 100644
-> --- a/drivers/gpu/drm/v3d/v3d_bo.c
-> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
-> @@ -153,12 +153,7 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev,=
- struct drm_file *file_priv,
->  	struct v3d_bo *bo;
->  	int ret;
-> =20
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -	shmem_obj =3D drm_gem_shmem_create_with_mnt(dev, unaligned_size,
-> -						  dev->huge_mnt);
-> -#else
->  	shmem_obj =3D drm_gem_shmem_create(dev, unaligned_size);
-> -#endif
->  	if (IS_ERR(shmem_obj))
->  		return ERR_CAST(shmem_obj);
->  	bo =3D to_v3d_bo(&shmem_obj->base);
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index 58fa1e6b9773..75276a12208e 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -529,9 +529,6 @@ void drm_gem_object_release(struct drm_gem_object *ob=
-j);
->  void drm_gem_object_free(struct kref *kref);
->  int drm_gem_object_init(struct drm_device *dev,
->  			struct drm_gem_object *obj, size_t size);
-> -int drm_gem_object_init_with_mnt(struct drm_device *dev,
-> -				 struct drm_gem_object *obj, size_t size,
-> -				 struct vfsmount *gemfs);
->  void drm_gem_private_object_init(struct drm_device *dev,
->  				 struct drm_gem_object *obj, size_t size);
->  void drm_gem_private_object_fini(struct drm_gem_object *obj);
-> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shm=
-em_helper.h
-> index 589f7bfe7506..6b6478f5ca24 100644
-> --- a/include/drm/drm_gem_shmem_helper.h
-> +++ b/include/drm/drm_gem_shmem_helper.h
-> @@ -109,9 +109,6 @@ struct drm_gem_shmem_object {
-> =20
->  int drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obje=
-ct *shmem, size_t size);
->  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
-, size_t size);
-> -struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
-vice *dev,
-> -							   size_t size,
-> -							   struct vfsmount *gemfs);
->  void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem);
->  void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem);
-> =20
-
+-- 
+Chuck Lever
 
