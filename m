@@ -1,179 +1,154 @@
-Return-Path: <linux-kernel+bounces-900042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A10C5972F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:26:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F08C5974A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFDA93A3B9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5543A6D18
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A70359F8C;
-	Thu, 13 Nov 2025 18:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EAF2877D5;
+	Thu, 13 Nov 2025 18:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XpJiW3zf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KYaFV0zd"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F4535971B;
-	Thu, 13 Nov 2025 18:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F102E9749
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763058036; cv=none; b=i5T73q9cmPtM0EKTQTPKByJ46hxWodF5biW6eW93ytdRXO/lwMuE4fouUs9zxlxMO/teRvo+aSAix4XToIYb0p1hR005o/J/9vxvq9RjyCJ0OJ0ESfBUBUirMJ30D2lKLZnRVJoCyqugfe+l7ByB2FQTcdqayAqDb+W+up+Ua8I=
+	t=1763058118; cv=none; b=ipyLhCBg3KCo5N4JLJW0HLQi/3pTpREQvw6+qc/SeTW0lhEFUVH/GBiMECi2t5+KbodTWMEdMZaZ7XAuio05fslq+Ll/4GVB/iaPpwpbZNAx73kYCBckrk48yp066/C567zufhwLdg625GzaL3VlT8V3fJaMNwTLC8mcTU24ZiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763058036; c=relaxed/simple;
-	bh=xBPAuk5vfKvWiJamfUh8vtN+hDRtyxOY2R9j/XJFKjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHO4N0AkZQZNBAD8eV6Ex7lihfK7CqmK0gn4nEUDbwKX5NGZ9rRkWlNPQNu7rxPVrukC70VWS3Yd63dHICfOH8ZPF0rbJyXQ1WPVyByuuYnV9TouVMtNRxdvs9R26WAWQTdsDSVU5vy8SA//26gPSqcZplts27flTfDeU+jSy1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XpJiW3zf; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763058033; x=1794594033;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xBPAuk5vfKvWiJamfUh8vtN+hDRtyxOY2R9j/XJFKjc=;
-  b=XpJiW3zf6l/Hv+LBY1YRX0kbTx/oBHgrrcy6DZ5Jmmz8qqezuttH4fv6
-   LmgSJaMq3Ez1XTxk6rNY3vkfrbPoJvDVDMVP2RSABte6T2KBKPYXkR2p3
-   1vl4acKJAjUEvdJFV0xJn/sly3h9YhLsItyyVdtdgiaH+NMXbFT6jeM7U
-   7o60LHh8075pRf36K6nCYB1Gu4bd558vMUksQCKG85SNRMoWdv5TvAWI3
-   fOVNGOLnfN0hfXCwaCDlhzj5xwkUxPpZn2TC6YXEKtT3jmSTfVE/9qkeM
-   nM7CiFgWNMf8EpBJZIHLRibIvxXa8XhsWopnwNhahMlZoyIzP+MqlIZIs
-   A==;
-X-CSE-ConnectionGUID: cdgvioXrT7+2akBqUM54zg==
-X-CSE-MsgGUID: qb7PpgVARCChTIa599eiZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="65243689"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="65243689"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:20:31 -0800
-X-CSE-ConnectionGUID: +nko5Ir0SgaPEbP1Ndp03g==
-X-CSE-MsgGUID: UdlA+nJBQZandO7u60GayQ==
-X-ExtLoop1: 1
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.136]) ([10.125.108.136])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:20:31 -0800
-Message-ID: <6e84a532-5d30-487f-b849-84893ac2a652@intel.com>
-Date: Thu, 13 Nov 2025 10:20:31 -0800
+	s=arc-20240116; t=1763058118; c=relaxed/simple;
+	bh=M1YRC3EZuqhEa+vddm/0lZ0BSjtWI8L6D1eAzYbvdV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UWXofv4B45+EHvs5+jKQkXz7sc+gDCn29hAa6IMI7Mpqn6ouHyeNcfuHwN/pv5ESFI8q/NqX6er2R71ZhM86DKITBryFzLfbXex9JyxayJzOUvgKwvUBMUkQM7ppzAyEgOE9YkxELb0U+i1tmN+4OWeDOzx2pGG4IfioBPlgF0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KYaFV0zd; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 13 Nov 2025 10:21:34 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763058114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NUDmGsLuzt7y0qWak8NiOpLtPu0rSZCLo1L1cHvQHAU=;
+	b=KYaFV0zdSrAsy3+bs3d+Njo5HH7l5LDFC+vVwJNgeam5lFDlKGiqBaEIq/Pop6uDctz6CU
+	K0dpQsv9myUU67EubhxWDnd2mb53KLfuGzpRQG4ohGsdzYHYWBxrjKy/RUU++EuOdUrsuF
+	dh8lf+UmmKCYpFgOfbnxuQ8tAnSn+/U=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jiaqi Yan <jiaqiyan@google.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	maz@kernel.org, duenwen@google.com, rananta@google.com,
+	jthoughton@google.com, vsethi@nvidia.com, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com,
+	corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] VMM can handle guest SEA via KVM_EXIT_ARM_SEA
+Message-ID: <aRYhrmLz__AbnCFN@linux.dev>
+References: <20251013185903.1372553-1-jiaqiyan@google.com>
+ <20251020144646.GT316284@nvidia.com>
+ <CACw3F528D6odL3MJWb28Y4HVOLo56tMQXBpvti5nhczdpMxOdQ@mail.gmail.com>
+ <wuuvrqxezybzdnijarlom4wvxlfgzgjoakwt7ixittz2jb4mal@ngjvq2rrt2ps>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/events/intel/cstate: Add Pantherlake support
-To: "Kumar, Kaushlendra" <kaushlendra.kumar@intel.com>,
- "mingo@redhat.com" <mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>,
- "namhyung@kernel.org" <namhyung@kernel.org>,
- "jolsa@kernel.org" <jolsa@kernel.org>,
- "Hunter, Adrian" <adrian.hunter@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251112090024.3298186-1-kaushlendra.kumar@intel.com>
- <1ba407b6-a108-41ce-b1b2-3c03aa25d272@intel.com>
- <LV3PR11MB87682D759248CA310546261CF5CDA@LV3PR11MB8768.namprd11.prod.outlook.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <LV3PR11MB87682D759248CA310546261CF5CDA@LV3PR11MB8768.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <wuuvrqxezybzdnijarlom4wvxlfgzgjoakwt7ixittz2jb4mal@ngjvq2rrt2ps>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/12/25 20:05, Kumar, Kaushlendra wrote:
-> On 11/12/25, [Reviewer Name] wrote:
->> On 11/12/25 01:00, Kaushlendra Kumar wrote:
->>> It supports the same C-state residency counters as
->>> Lunarlake.This enables monitoring of C1, C6, C7 core states and
->>> C2,C3,C6,C10 package states residency counters on Pantherlake
->>> platforms.
->> 
->> Is this actually documented? Or is there just a smoke-filled room
->> at Intel somewhere where this is decided?
+On Thu, Nov 13, 2025 at 02:54:33PM +0100, Mauro Carvalho Chehab wrote:
+> Hi,
 > 
-> Good point. Baseline for Pantherlake is Lunarlake with respect to C
-> states. It is documented in internal documents. This approach is
-> consistent with similar implementations throughout the kernel
-> codebase for related CPU families.
-
-It needs to be publicly documented somewhere. It doesn't have to be
-fancy: a web page or white paper would be fine.
-
-I know it's been allowed to slide up until now. But, according to[1]:
-
-	We (Intel) continuously improve, enabling us to be more curious,
-	bold and innovative.
-
-So, can we try to improve this, please?
-
-...>> Also, why *can't* this just be enumerated?
+> On Mon, Nov 10, 2025 at 09:41:33AM -0800, Jiaqi Yan wrote:
+> > On Mon, Oct 20, 2025 at 7:46 AM Jason Gunthorpe <jgg@nvidia.com> wrote:
+> > >
+> > > On Mon, Oct 13, 2025 at 06:59:00PM +0000, Jiaqi Yan wrote:
+> > > > Problem
+> > > > =======
+> > > >
+> > > > When host APEI is unable to claim a synchronous external abort (SEA)
+> > > > during guest abort, today KVM directly injects an asynchronous SError
+> > > > into the VCPU then resumes it. The injected SError usually results in
+> > > > unpleasant guest kernel panic.
+> > > >
+> > > > One of the major situation of guest SEA is when VCPU consumes recoverable
+> > > > uncorrected memory error (UER), which is not uncommon at all in modern
+> > > > datacenter servers with large amounts of physical memory. Although SError
+> > > > and guest panic is sufficient to stop the propagation of corrupted memory,
+> > > > there is room to recover from an UER in a more graceful manner.
+> > > >
+> > > > Proposed Solution
+> > > > =================
+> > > >
+> > > > The idea is, we can replay the SEA to the faulting VCPU. If the memory
+> > > > error consumption or the fault that cause SEA is not from guest kernel,
+> > > > the blast radius can be limited to the poison-consuming guest process,
+> > > > while the VM can keep running.
 > 
-> Could you clarify what you mean by "enumerated"? Are you suggesting:
-> 1. Runtime detection instead of static matching?
-> 2. A different approach to CPU model matching?
-> 3. Something else?
+> I like the idea of having a "guest-first"/"host-first" approach for APEI,
+> letting userspace (likely rasdaemon) to decide to handle hardware errors
+> either at the guest or at the host. Yet, it sounds wrong to have a flag
+> called KVM_EXIT_ARM_SEA, as:
 > 
-> The current approach follows the established pattern for other Intel 
-> CPU models in this driver. If there's a preferred alternative approach, 
-> I'm happy to implement it.
-Your patch effectively says:
+>     1. This is not exclusive to ARM;
+>     2. There are other notification mechanisms that can rise an APEI
+>        errors. For instance QEMU code defines:
+> 
+>     ACPI_GHES_NOTIFY_POLLED = 0,
+>     ACPI_GHES_NOTIFY_EXTERNAL = 1,
+>     ACPI_GHES_NOTIFY_LOCAL = 2,
+>     ACPI_GHES_NOTIFY_SCI = 3,
+>     ACPI_GHES_NOTIFY_NMI = 4,
+>     ACPI_GHES_NOTIFY_CMCI = 5,
+>     ACPI_GHES_NOTIFY_MCE = 6,
+>     ACPI_GHES_NOTIFY_GPIO = 7,
+>     ACPI_GHES_NOTIFY_SEA = 8,
+>     ACPI_GHES_NOTIFY_SEI = 9,
+>     ACPI_GHES_NOTIFY_GSIV = 10,
+>     ACPI_GHES_NOTIFY_SDEI = 11,
+>     ACPI_GHES_NOTIFY_RESERVED = 12
+> 
+>  - even on arm. QEMU currently implements two mechanisms (SEA and GPIO);
+>  - once we implement the same feature on Intel, it will likely use
+>    NMI, MCE and/or SCI.
+> 
+> So, IMO, the best would be to use a more generic name like
+> KVM_EXIT_APEI or KVM_EXIT_GHES - or maybe even name it the way it really
+> is meant: KVM_EXIT_ACPI_GUEST_FIRST.
 
-	PTL supports C10 package states residency counters
+This is not the sort of thing that I'd like to seen dressed up as an
+arch-generic interface.
 
-(among others of course). Why can't there be a bit in CPUID or an MSR
-somewhere that, when set, means the same thing? That way, we don't have
-to keep patching the kernel every time there's a new CPU model.
+What Jiaqi is dealing with is the very sorry state of RAS on arm64,
+giving userspace the opportunity to decide how an SEA is handled when a
+platform's firmware couldn't be bothered to do so. The SEA is an
+architecture-specific event so we provide the hardware context to
+the VMM to sort things out.
 
-I guess in general PMU things haven't been architectural. But this seems
-like something that wouldn't be too hard for the CPU itself to enumerate
-to software.
+If the APEI driver actually registers to handle the SEA then it will
+continue to handle the SEA before ever involving the VMM. I'm not
+aware of any system that does this. If you're lucky you'll take an
+*asynchronous* vector after to process a CPER and still have to deal
+with a 'bare' SEA.
 
-1.
-https://www.intel.com/content/www/us/en/corporate-responsibility/our-values.html
+And of course, none of this even matters for the several billion
+DT-based hosts out in the wild.
+
+Thanks,
+Oliver
 
