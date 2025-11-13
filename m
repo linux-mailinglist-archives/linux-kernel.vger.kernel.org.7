@@ -1,148 +1,119 @@
-Return-Path: <linux-kernel+bounces-899788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0092C58D22
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:45:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD59C58E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9056A358532
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28CCC35C6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB91C359FB5;
-	Thu, 13 Nov 2025 16:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C141D30595C;
+	Thu, 13 Nov 2025 16:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="xfx8k0sh"
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="THPvzLqh"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B015F2FB085;
-	Thu, 13 Nov 2025 16:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3BB2F5316;
+	Thu, 13 Nov 2025 16:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050774; cv=none; b=ZLWdrwi4xH8L/vnFnuwlWHx877fqiqzb7DccikOfh2oErSXuXUy46lWtkzNWUw9QFowjP86ZsBBF9mQSH2rPjXH2/0cH0wYMWReY5VhkaEUoIb+n9EF0x3irjgT+XW8goJnQPh7iPlVrLnSfNVuAHxUV/uI6wnXcoGqWfj0IC28=
+	t=1763050811; cv=none; b=ScMRuh7O/XuNcXHR95aRDPGj5CDC1Dpzczy8dG68HeNtnsgC4zD+1x9m7SjOjNJHy0I5CJwx3KHaiDQxf62FXOgQllJ13eT1xgefLtvi1Zyy3nQHyaqu8jDDapsIYINsQEheVVcbgH4YuUUMnsBTcSTDUlUyG2PhGnAbLil0Nrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050774; c=relaxed/simple;
-	bh=7wf/xOs7XuSmGg449lsqqvdQlHgd0WZoRwyEoxYWEsI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IuiLkKHMhbOmZh+AE7LtE1T0J5xrVZpn0u+YR0fTZhSMq0gIPWAUMje7R1GbZGy71Ugda/du5GEdyfudQU0BMDIQjfPNwvuB8QabDOf/uu0Djb9fg+Cg6O8JIDODgAIc0QEbz504VCJBFKpQFW5LWpCv9URw1o4i1uZWodP3LXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=xfx8k0sh; arc=none smtp.client-ip=91.103.66.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1763050768;
-	bh=jnA9DA8lX4Guv4D7cGrX3r5E4UpXiQdK0MPT7VSRILs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=xfx8k0shGB53wDM8+2laIcnxxJzhsneRVU96FJbJ16Tp21kzyB2ulgVkOS6U+hGL3
-	 yxZgQ13iuRArXn4Yyzu7ImWWPYjFsLJz8jX8y4BT+A4dqeHnzl204HY8FexWbt8oPr
-	 AHb1o7e87opw0WLG792Vzowde34Qj6dt3XFMCd/Y4V30ktfzIFZVm1lpLqzgXF5a8y
-	 bI1va3pwqGIzaQkfnv4T2uWcr2S381F2LLAN5AslF/5MI4f1MQ4xIENQdzUU3QUxjm
-	 1+TXeKSa821BruKSTmam+8QenBknWPa0qcy7vd6cYdS4/4spdi8SfysNajdez2RQHX
-	 Pt+WbEu2/bQCQ==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id B43D93E2614;
-	Thu, 13 Nov 2025 19:19:28 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 4599A3E4518;
-	Thu, 13 Nov 2025 19:19:27 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV3.avp.ru
- (10.64.57.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
- 2025 19:19:26 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: Ido Schimmel <idosch@nvidia.com>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Petr Machata
-	<petrm@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
-	<jiri@resnulli.us>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net] net: mlxsw: linecards: fix missing error check in mlxsw_linecard_devlink_info_get()
-Date: Thu, 13 Nov 2025 19:19:21 +0300
-Message-ID: <20251113161922.813828-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763050811; c=relaxed/simple;
+	bh=iju4UxEjC6Er8r/XHnOtVmZHRm/BGYvhT4UITzxjpng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKWz/uXdNWUqJlj89shqdYVEZyVaNpiK3eTCLZn1GI1hGY2hr02riGd/fLWblC2H5311i5y1TU0riIFlAw7ZS9PDbZcbBjYzPVfYfbaRqzf7Aa94L6f8qYuGt3F9ZB1qkjq1yT8KXpqdknEYkUdDcX4cYJwcJ0llZQ2y9vpPGV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=THPvzLqh; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CFE2E40E022E;
+	Thu, 13 Nov 2025 16:20:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lDaDVhbwhSWZ; Thu, 13 Nov 2025 16:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1763050800; bh=Brp04zwnPVYxaZ0H/+uagz7v1Dnnya1p0aoJs22dp1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=THPvzLqhPkn3Wt23XC2uI3hZGvvRgIv3UyS6fOAsoha+bU+Q+u1jF1b/USaruVPC6
+	 d2hkGzv4jOAzcnAtOobIWNsEhrmHZc7wz5bP37PnFbmSJ8JLoHlSufZUZprIebzBHf
+	 BivaqLNzINTNmIgZD2tJ23UlmowLAI0HWXHVj+aejUF9KXWlXyI4rqySXwWBzVntii
+	 ePZV2GYT1ZO39IP5RYZZibHI1qQbYobGpknY0jOYK2IKD7p8TSojy+1YQqykIMaOby
+	 QRXVs91tNvzpQ4elB9HT0sE8XFDCnwTAsh4bgc6DIcIu846ziIIrMYiEH9QQMdJHzO
+	 7eIPRX7GhlvPsBU9WgNabBOaEme2plVzOQGyxClmn2CghBuVivD7hTG/BRkKvrpm0k
+	 XLnfx/uly+JdaeimJvYulHRTw+BRTPaEGJOAlRBnwRXUPTcyq959IEnT3Ttk3zumBK
+	 rlrYAWJola05IJ4IPw0G+SDxboE8QOvjac32hRy4BiugrK+OtNDkW0Mi6MGu8Qmytl
+	 BEbhXHjy+VrxgQdGMQOpuR0DJQSQKcb2+ynPnTRf08MpexodWp67ua3Wg5EQ+3FNpl
+	 9inu/0DUL8farDMYp/u4qhKCQsSLb4Wet1njmST1hj05jgFHEr5bbIDWtFaNZvJXb2
+	 c5zlZiGR8jpOoNUEIZddz7uA=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E30A040E0216;
+	Thu, 13 Nov 2025 16:19:50 +0000 (UTC)
+Date: Thu, 13 Nov 2025 17:19:44 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 5/8] x86/bugs: KVM: Move VM_CLEAR_CPU_BUFFERS into SVM
+ as SVM_CLEAR_CPU_BUFFERS
+Message-ID: <20251113161944.GDaRYFIFXihcRSSBkU@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-6-seanjc@google.com>
+ <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
+ <aRX7UDGm3LHFnPAg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV4.avp.ru (10.64.57.54) To HQMAILSRV3.avp.ru
- (10.64.57.53)
-X-KSE-ServerInfo: HQMAILSRV3.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/13/2025 16:01:27
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 198067 [Nov 13 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 76 0.3.76
- 6aad6e32ec76b30ee13ccddeafeaa4d1732eef15
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/13/2025 16:04:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/13/2025 3:25:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/13 15:20:00 #27921117
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aRX7UDGm3LHFnPAg@google.com>
 
-The call to devlink_info_version_fixed_put() in
-mlxsw_linecard_devlink_info_get() did not check for errors,
-although it is checked everywhere in the code.
+On Thu, Nov 13, 2025 at 07:37:52AM -0800, Sean Christopherson wrote:
+> On Thu, Nov 13, 2025, Borislav Petkov wrote:
+> > On Thu, Oct 30, 2025 at 05:30:37PM -0700, Sean Christopherson wrote:
+> > > Now that VMX encodes its own sequency for clearing CPU buffers, move
+> > 
+> > Now that VMX encodes its own sequency for clearing CPU buffers, move
+> > Unknown word [sequency] in commit message.
+> > Suggestions: ['sequence',
+> > 
+> > Please introduce a spellchecker into your patch creation workflow. :)
+> 
+> I use codespell, but it's obviously imperfect.  Do you use something fancier?
 
-Add missed 'err' check to the mlxsw_linecard_devlink_info_get()
+Fancy? no.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Homegrown and thus moldable as time provides? Yeah:
 
-Fixes: 3fc0c51905fb ("mlxsw: core_linecards: Expose device PSID over device info")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
----
- drivers/net/ethernet/mellanox/mlxsw/core_linecards.c | 2 ++
- 1 file changed, 2 insertions(+)
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/tree/.tip/bin/vp.py?h=vp&id=880f7f0393ae7d10643aeab32234086ee253687a#n815
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-index b032d5a4b3b8..10f5bc4892fc 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
-@@ -601,6 +601,8 @@ int mlxsw_linecard_devlink_info_get(struct mlxsw_linecard *linecard,
- 		err = devlink_info_version_fixed_put(req,
- 						     DEVLINK_INFO_VERSION_GENERIC_FW_PSID,
- 						     info->psid);
-+		if (err)
-+			goto unlock;
+That's my patch checker.
 
- 		sprintf(buf, "%u.%u.%u", info->fw_major, info->fw_minor,
- 			info->fw_sub_minor);
---
-2.43.0
+I also have enabled spellchecking in vim when I write the commit message.
 
+But meh, typos will slip from time to time regardless...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
