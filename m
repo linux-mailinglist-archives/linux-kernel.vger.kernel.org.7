@@ -1,345 +1,239 @@
-Return-Path: <linux-kernel+bounces-898792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D87C56086
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:20:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD53C5608C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65F0A4E431D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:19:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59E664E2DC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5ED3009DE;
-	Thu, 13 Nov 2025 07:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB7320CBA;
+	Thu, 13 Nov 2025 07:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jWgTbNkx"
-Received: from sonic310-20.consmr.mail.gq1.yahoo.com (sonic310-20.consmr.mail.gq1.yahoo.com [98.137.69.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XoHXrO4m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD8F29CEB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53B929CEB;
+	Thu, 13 Nov 2025 07:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018357; cv=none; b=IraN6RJ5ZT7/jz4dpYai/lbZMOsOyo4jPUeWnYpSqWXNhRMBmlFC3xgenQqX+pONjeXBIsDkHFZcPzvLTltZMKOnC6qoWeeABsPWp85WSSCr2RECZ9snY3Q+zvNJf8O4MenFo/ih67tWB6R9EqDZVG/ehbrbIHU7Gf0dlCST3I4=
+	t=1763018443; cv=none; b=MptV/xyOeZfppE0hhcj/hYlYDHuoMQNaMovqmT/wMzBGxE6k2E0r3CJWk+8Mt9gqB5E5lqzXWt0SPZMxE940Fy7Qmi5XvcPkBTNAwNj+egErcNvX3Qz/++DKzDrqXY3kwOc7LdnNkMICUj8ZJcFRbBuOA/KA/zWHkCqP8g5xZRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018357; c=relaxed/simple;
-	bh=DLr9toDY83cCfjt++2H6Oq80YZjEbfV5ZwT1kwcmvp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=jjyriEW46r2tX3BMnqr/dz6R9xoGlOunrjDx1/74HHFGEyNOdwa1yb+50H1VXgiz26ffeLHbenTUatAyW7L7tTtXnuKF5poC7U6Cifrrgfpvo2GtekLqC4n8UYVcMXvIbyyMgnmOhZ3jLlKGeQOz7dw5p9a3CQ86J+NdBMkZm9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=jWgTbNkx; arc=none smtp.client-ip=98.137.69.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763018354; bh=6RgDM1j6x8tVvRJ08rdzLDOVbTDAJCCXf7p9mQsikiI=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=jWgTbNkxzSTgloXmtANvD+CYJt+mj6BJ2YbhMnYItdKIpwEqsq0dXxWd7DHykJL+vLwG0sU2gqdxUFdSHDQXKD4Elx4PqAU8IL4GnPDPFJHY+PkjaA6pRwaXy4J2W3SXyMf78LWjF+HnUX/1NSqpQF0dgpDYy5VUyBIqyO2Ve0dAW7gVMLUidSpKhuTwXmh5OD4+tkNv500wWjzctcO6RSHn+ULpBY0MHHXIvTvi1sapA6g8sHv16NaC2Uy98VR7WwHIwSfd+F62j8EASDuzxAoRKguylFJN6cpS7mPx3pCqIByj40Tc0qmuIVPgX0jbMFGv8GY1xJRAunz2yOjJlg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763018354; bh=JVRB2W2Zmm4QTx3sda9ffIBgmu2GZ2DSFIosBVX1ujg=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=VmhdY2VTLsyB6VwaX51ixux3bt4X4QKkWOAodS1N4a0DVSltS6mjsJe1frqlin0Qb60fiXEGm0S/6jkdstcpaY0XrUeByypFpWqT0tzr4M0xWQ5IIRkaOKfzU98zA9vL4vNxK0J0dq+3CgLoA42vM86CXjhBg31TxZQloaBpcUAP3S2cpKMtnOTE73zSjtDQY0he7L1Mp9fM6FgYYYet1PSN3weDSQZqL1KpNd/ChbCsnun+6gtUQTBQGJIXzi2CrouF6GXGq1t/kxuaZe6/lK0JRvDE6kxffeu8J1TFUUi2+CwB2ls0Io3CGgRwmNXLZcqSjxQnLvWHxRoDCcJL5Q==
-X-YMail-OSG: l._rA3gVM1kkvMkYfM1DyqJ4cJSXGqkZY3_1_ywIrxgczI9bZ3jO4krfc_Akp14
- r9K5Z98oMrSnXYDA8tupZAnNgms2tnrFjJ5r44k0Ug27h6VWiWD6USKQKeWyURD7mYhmJ0zeyMRi
- 5V6SACpjmMkaq_HkxMx6Xatj5rOWuwvQRs4b_KM0x6JzySp_wl3xWTJOyv045X8G9zkatEvyJaim
- y_V8BucNA1yj1hv8gqyT1a0RLfkEG2G2jtldiJb9bCpIv56vFWuk5vfno3JXlPNSn4XYZF79SLgV
- LYDa8I8yT8jZk1Fd_3HfkvoFLG31yN.TdLLtoBzCzdTFepinKgrbR0uVAbujJSa21StLvPYZ6.7k
- UB3j.K.FGfHU6wW_1uzrlTu4owj5b5AVBJhf0ZD.M_WfLfVzgCDKN0FY_kRhc9dMQHaQPa3aUKzG
- BjHQ_0YYU8sTWHNa0N5E3uYHpBRQgMTJsceGWeX3w30PlYCQNR7spH1.kp5rmM8DOmzuslViWDpk
- szM2YdvLjT1EzHL8J_Nx63v6PgjkzRscyspm5fAnIQClwc3mEoq1MnOYm_PU4cmL2UkuBOp0Afwv
- aY2wdFWLoVbqdy8cABJibCqcaO8FiJgVBlIXFXRR.Wp4GUTzpWdP5PRBD7qL54gPI7A1rNxgz7Db
- H6_stCOK2ynmt38leFNQ5Lb1uKzeZ.ucZLTEBS.dci5CeE6wWTWZbnKOgCYKu5xAwOQjP1UHhQ0c
- g69PYZcx1xAivyR.sQ8a8tk8ECrm1Ay9e73MT5qoCsy0cLid88eoVKvJJm2thLmibf4bs0QTDul1
- _zs6TZFY1FbuQG_oR_IszV7HQbkP0mK8IjGcGgzZ32.9WY8nEU2F7sfqEmMruLmL4v7AISjvyarb
- Sa4aIy3Mp8GoHRX_GBnOtGdO95pCuoDYuYUNPjgszbyX8KymMSHBvXusCqAD5JM74eRMbnlMMZMD
- ZNYjwENaQhkfB5IXJw7LFoSxd59wS5M2MMUrF_ddyG71vgHTUOtqCetVKzZCNU4dtJ5fifMUIRlD
- Y5TEmzo3y.j.0.tPCrlOQR6pqcB1fvAKm_GzSVybJG2Fv.8yF4b1lQrLB8afWPvepOKAHWmsTfMs
- uhoq.V2K7TzWJuKCthMXLC4MCGX3EU_ftJTjEJwkQ8KrpWJsLi6iglFPhq0ZNP41p.8PHRfRfbw1
- R3evCEHmV_XLZzycSef68I6JfW8TchI4UkkwSrdepWSoBUO7KtUnT_7i0DY_cg9vfUKLZHestgGv
- Y3hXpgkhtZMmtHUxxuhga5D35EJ4CvQ7hEO3cjcmWsB.S40tAtyQp0xfLQJtbp_aFruL_sJ9OIG2
- qGccXD3ia_KztqbC7O5Kw_YcII3AAhZ7O7OPDfymXc4YFj3TShwIUFNSCBskDOqC5gRR0OkhXFgg
- SZxPS0kwIRq9XT85nsU_O1RBPWVr4DHwLRE56ONsh.riQByKNDGyeR4xa.JlHgxPeGNjISIJyvQ7
- qdeNCSgCgzRIgDiDjHw3IsFSPRfjZeS_LMDhd8UUyHYGVTpUZOoP_oUARJczeTMIiuI57IT_JSr3
- e3YSJYuvaeG4JsSNk2xpqIg9xPKojPJ0xV0J7m..Tu7D_GHHcAyn82.IevSkiwm8jX0z6nbtzRjW
- r84tOg2yMos2BmIgK0louNWvIilbC4sbMDYDjC4sUA.3N1FvEdCEL01ravcm1XHUGjCVzQbrsc6t
- B407k_Z1d5yZZfXAIk.eoHqX7IC_owiWBKsqPz9f1Lj8BvW99c3seCuU_D2bTSqwSQY1J70mIHr3
- .xsGjQBJzYGywZ.0pmGyoH68A7WBTGpIhwnTER_hRr9RHTv5yD3yafsC219xsy_vnzpnyOuM9Btn
- jjRxCoQVHbi0SSTx03FeyK8sYUthzXZjJjlw7Jjo0ojbfoM3Tkt17XcwfA36k4_ohZfketwEOUru
- WS9vYmEjc7RtknLpOJT5ttl0v0abDHvpx6Pf8C2GY0hgYQMOTmh8Swp0BiqjdIqtPE1kAtrkwmbp
- Jw49PPxuTHRrC0TB6ZJiqa3cdEfCqmEL.nWrX5tp6Aj2WuiIYQdsvF2nN0jz9S4vU1qniJEqonym
- .b4w71FqWVlQXA8Zp0jOxWfGMOdxmkTQ0qPVHEm6Mb8RVEBj6PBU97YZEZFv7rVY6HYpRPtmg6Tv
- WfDmJ97SyZ9.OWCZdzHVgQ_DzbtpA8NK9z6D.Qx66tX3y42ekzG.kaf6b6wNVReq4VzrAsjfQtZA
- u797fwacLNq0OGSa8v5CpLKYhHRp2OF8k77EUiUTgecvGL0Tg9.yvadv4g5u5GXshe9t3_268E0J
- Qo6FTymdIzt_VPhWhPfT79cXDCA55te4ImN_P
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 28799e42-f718-4a0b-9c70-1bb863c9345c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 07:19:14 +0000
-Received: by hermes--production-bf1-58477f5468-5cz64 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e17cd425b8ad63cf024c60d82cf60d04;
-          Thu, 13 Nov 2025 07:19:12 +0000 (UTC)
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-To: kuniyu@google.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	shuah@kernel.org
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH v5] selftests: af_unix: Add tests for ECONNRESET and EOF semantics
-Date: Thu, 13 Nov 2025 08:17:56 +0100
-Message-ID: <20251113071756.40118-1-adelodunolaoluwa@yahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763018443; c=relaxed/simple;
+	bh=6Me6GWqOMV1Te3Vqndd4JPy4GgWbf+TWVFwtSqdGhwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pVWyJBPAu/RX5kQDx8v3jzI2NJQB0sovY/ps2znTT/S5szidlCeox+FghpoW8VS2wV8o2aA4Du9KdprG54HaaOx2HzM+g175Q3O7U7WEgnnPszAvrcdvcxpty2U8jayg5SbLOIrZNF7PP1TXx/kcsOyUqOqO4vqRpgkJ5BgDhfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XoHXrO4m; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763018441; x=1794554441;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6Me6GWqOMV1Te3Vqndd4JPy4GgWbf+TWVFwtSqdGhwE=;
+  b=XoHXrO4m2Yhq1LoEz3M3uBAQFx47UO6m0xcfZrHt75ivhZNBDrUXFv7L
+   US2f+hoaefflnDOeIDFPuzr0o1wmqVZm11TBHECuRBWIceapPMtu35EPA
+   KxlERTK9U4zniMRG2UXLL+DuOCX4S0bmIbKNbCH0eGbxi/edECrAH03Ip
+   pqQyN2C67EGyDbFCSQ5XznN7PHFMyNUGs2Z4GHn5q1udD4f4+8TYRXnyu
+   AYiNyr5Y7TfvrFYG1xDDsYxKd1QMdDuBNcGFVkU6AjJRWNtZOMPLUM3e2
+   ytEft3SMJlGDrZSjMNSCgAR4UJQvgr9GZG3TYYn3Mvz0nXe9+YCf9uaMj
+   g==;
+X-CSE-ConnectionGUID: G+urj6xYRjm3sNkRx+8NHQ==
+X-CSE-MsgGUID: bd6YLeY8Qm633qVyroyOwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65018343"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="65018343"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 23:20:40 -0800
+X-CSE-ConnectionGUID: Gj2hNzySSG+P7YfpZN0+0w==
+X-CSE-MsgGUID: Rg/fE/d9SqiQUCtfAuTUPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="189614267"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 12 Nov 2025 23:20:36 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJRdB-00051L-19;
+	Thu, 13 Nov 2025 07:20:33 +0000
+Date: Thu, 13 Nov 2025 15:19:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	devicetree@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
+	Michal Hocko <mhocko@suse.com>, Conor Dooley <conor@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh+dt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v3 08/22] mm: Allow page table accessors to be
+ non-idempotent
+Message-ID: <202511131448.ZCsuBlBE-lkp@intel.com>
+References: <20251113014656.2605447-9-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-References: <20251113071756.40118-1-adelodunolaoluwa.ref@yahoo.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113014656.2605447-9-samuel.holland@sifive.com>
 
-Add selftests to verify and document Linux’s intended behaviour for
-UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
-The tests verify that:
+Hi Samuel,
 
- 1. SOCK_STREAM returns EOF when the peer closes normally.
- 2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
- 3. SOCK_SEQPACKET returns EOF when the peer closes normally.
- 4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
- 5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+kernel test robot noticed the following build errors:
 
-This follows up on review feedback suggesting a selftest to clarify
-Linux’s semantics.
+[auto build test ERROR on 24172e0d79900908cf5ebf366600616d29c9b417]
 
-Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
----
-Changelog:
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/mm-ptdump-replace-READ_ONCE-with-standard-page-table-accessors/20251113-095117
+base:   24172e0d79900908cf5ebf366600616d29c9b417
+patch link:    https://lore.kernel.org/r/20251113014656.2605447-9-samuel.holland%40sifive.com
+patch subject: [PATCH v3 08/22] mm: Allow page table accessors to be non-idempotent
+config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20251113/202511131448.ZCsuBlBE-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251113/202511131448.ZCsuBlBE-lkp@intel.com/reproduce)
 
-changes made in v4 to v5:
-1. Moved the send() call before the socket type check in Test 2 to ensure
-   the unread data behavior is tested for SOCK_DGRAM as well.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511131448.ZCsuBlBE-lkp@intel.com/
 
-2. Removed the misleading commend about accept() for clarity.
+All errors (new ones prefixed by >>):
 
-3. Applied indentation fixes for style consistency
-   (alignment with open parenthesis).
+   mm/gup.c: In function 'gup_fast_pte_range':
+>> mm/gup.c:2848:9: error: implicit declaration of function 'set_pmd'; did you mean 'set_p4d'? [-Wimplicit-function-declaration]
+    2848 |         set_pmd(&pmd, pmd);
+         |         ^~~~~~~
+         |         set_p4d
+--
+   mm/pgtable-generic.c: In function '___pte_offset_map':
+>> mm/pgtable-generic.c:303:9: error: implicit declaration of function 'set_pmd'; did you mean 'set_p4d'? [-Wimplicit-function-declaration]
+     303 |         set_pmd(&pmdval, pmdval);
+         |         ^~~~~~~
+         |         set_p4d
 
-4. Minor comment and formatting cleanups for clarity and adherence
-   to kernel coding style.
 
- tools/testing/selftests/net/.gitignore        |   1 +
- tools/testing/selftests/net/af_unix/Makefile  |   1 +
- .../selftests/net/af_unix/unix_connreset.c    | 178 ++++++++++++++++++
- 3 files changed, 180 insertions(+)
- create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+vim +2848 mm/gup.c
 
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index 439101b518ee..e89a60581a13 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -65,3 +65,4 @@ udpgso
- udpgso_bench_rx
- udpgso_bench_tx
- unix_connect
-+unix_connreset
-diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
-index de805cbbdf69..5826a8372451 100644
---- a/tools/testing/selftests/net/af_unix/Makefile
-+++ b/tools/testing/selftests/net/af_unix/Makefile
-@@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
- 	scm_pidfd \
- 	scm_rights \
- 	unix_connect \
-+	unix_connreset \
- # end of TEST_GEN_PROGS
- 
- include ../../lib.mk
-diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
-new file mode 100644
-index 000000000000..9cb0f48597eb
---- /dev/null
-+++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
-+ *
-+ * This test verifies:
-+ *  1. SOCK_STREAM returns EOF when the peer closes normally.
-+ *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
-+ *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
-+ *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
-+ *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
-+ *
-+ * These tests document the intended Linux behaviour.
-+ *
-+ */
-+
-+#define _GNU_SOURCE
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <sys/socket.h>
-+#include <sys/un.h>
-+#include "../../kselftest_harness.h"
-+
-+#define SOCK_PATH "/tmp/af_unix_connreset.sock"
-+
-+static void remove_socket_file(void)
-+{
-+	unlink(SOCK_PATH);
-+}
-+
-+FIXTURE(unix_sock)
-+{
-+	int server;
-+	int client;
-+	int child;
-+};
-+
-+FIXTURE_VARIANT(unix_sock)
-+{
-+	int socket_type;
-+	const char *name;
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, stream) {
-+	.socket_type = SOCK_STREAM,
-+	.name = "SOCK_STREAM",
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, dgram) {
-+	.socket_type = SOCK_DGRAM,
-+	.name = "SOCK_DGRAM",
-+};
-+
-+FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
-+	.socket_type = SOCK_SEQPACKET,
-+	.name = "SOCK_SEQPACKET",
-+};
-+
-+FIXTURE_SETUP(unix_sock)
-+{
-+	struct sockaddr_un addr = {};
-+	int err;
-+
-+	addr.sun_family = AF_UNIX;
-+	strcpy(addr.sun_path, SOCK_PATH);
-+	remove_socket_file();
-+
-+	self->server = socket(AF_UNIX, variant->socket_type, 0);
-+	ASSERT_LT(-1, self->server);
-+
-+	err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
-+	ASSERT_EQ(0, err);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		err = listen(self->server, 1);
-+		ASSERT_EQ(0, err);
-+	}
-+
-+	self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
-+	ASSERT_LT(-1, self->client);
-+
-+	err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
-+	ASSERT_EQ(0, err);
-+}
-+
-+FIXTURE_TEARDOWN(unix_sock)
-+{
-+	if ((variant->socket_type == SOCK_STREAM ||
-+	     variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
-+		close(self->child);
-+
-+	close(self->client);
-+	close(self->server);
-+	remove_socket_file();
-+}
-+
-+/* Test 1: peer closes normally */
-+TEST_F(unix_sock, eof)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		self->child = accept(self->server, NULL, NULL);
-+		ASSERT_LT(-1, self->child);
-+
-+		close(self->child);
-+	} else {
-+		close(self->server);
-+	}
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		ASSERT_EQ(0, n);
-+	} else {
-+		ASSERT_EQ(-1, n);
-+		ASSERT_EQ(EAGAIN, errno);
-+	}
-+}
-+
-+/* Test 2: peer closes with unread data */
-+TEST_F(unix_sock, reset_unread_behavior)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	/* Send data that will remain unread */
-+	send(self->client, "hello", 5, 0);
-+
-+	if (variant->socket_type == SOCK_DGRAM) {
-+		/* No real connection, just close the server */
-+		close(self->server);
-+	} else {
-+		/* Accept client connection */
-+		self->child = accept(self->server, NULL, NULL);
-+		ASSERT_LT(-1, self->child);
-+
-+		/* Peer closes before client reads */
-+		close(self->child);
-+	}
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+	ASSERT_EQ(-1, n);
-+
-+	if (variant->socket_type == SOCK_STREAM ||
-+	    variant->socket_type == SOCK_SEQPACKET) {
-+		ASSERT_EQ(ECONNRESET, errno);
-+	} else {
-+		ASSERT_EQ(EAGAIN, errno);
-+	}
-+}
-+
-+/* Test 3: closing unaccepted (embryo) server socket should reset client. */
-+TEST_F(unix_sock, reset_closed_embryo)
-+{
-+	char buf[16] = {};
-+	ssize_t n;
-+
-+	if (variant->socket_type == SOCK_DGRAM)
-+		SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
-+
-+	/* Close server without accept()ing */
-+	close(self->server);
-+
-+	n = recv(self->client, buf, sizeof(buf), 0);
-+
-+	ASSERT_EQ(-1, n);
-+	ASSERT_EQ(ECONNRESET, errno);
-+}
-+
-+TEST_HARNESS_MAIN
-+
+  2819	
+  2820	#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+  2821	/*
+  2822	 * GUP-fast relies on pte change detection to avoid concurrent pgtable
+  2823	 * operations.
+  2824	 *
+  2825	 * To pin the page, GUP-fast needs to do below in order:
+  2826	 * (1) pin the page (by prefetching pte), then (2) check pte not changed.
+  2827	 *
+  2828	 * For the rest of pgtable operations where pgtable updates can be racy
+  2829	 * with GUP-fast, we need to do (1) clear pte, then (2) check whether page
+  2830	 * is pinned.
+  2831	 *
+  2832	 * Above will work for all pte-level operations, including THP split.
+  2833	 *
+  2834	 * For THP collapse, it's a bit more complicated because GUP-fast may be
+  2835	 * walking a pgtable page that is being freed (pte is still valid but pmd
+  2836	 * can be cleared already).  To avoid race in such condition, we need to
+  2837	 * also check pmd here to make sure pmd doesn't change (corresponds to
+  2838	 * pmdp_collapse_flush() in the THP collapse code path).
+  2839	 */
+  2840	static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
+  2841			unsigned long end, unsigned int flags, struct page **pages,
+  2842			int *nr)
+  2843	{
+  2844		int ret = 0;
+  2845		pte_t *ptep, *ptem;
+  2846	
+  2847		/* transform pmd as if &pmd pointed to a hardware page table */
+> 2848		set_pmd(&pmd, pmd);
+  2849		ptem = ptep = pte_offset_map(&pmd, addr);
+  2850		pmd = pmdp_get(&pmd);
+  2851		if (!ptep)
+  2852			return 0;
+  2853		do {
+  2854			pte_t pte = ptep_get_lockless(ptep);
+  2855			struct page *page;
+  2856			struct folio *folio;
+  2857	
+  2858			/*
+  2859			 * Always fallback to ordinary GUP on PROT_NONE-mapped pages:
+  2860			 * pte_access_permitted() better should reject these pages
+  2861			 * either way: otherwise, GUP-fast might succeed in
+  2862			 * cases where ordinary GUP would fail due to VMA access
+  2863			 * permissions.
+  2864			 */
+  2865			if (pte_protnone(pte))
+  2866				goto pte_unmap;
+  2867	
+  2868			if (!pte_access_permitted(pte, flags & FOLL_WRITE))
+  2869				goto pte_unmap;
+  2870	
+  2871			if (pte_special(pte))
+  2872				goto pte_unmap;
+  2873	
+  2874			/* If it's not marked as special it must have a valid memmap. */
+  2875			VM_WARN_ON_ONCE(!pfn_valid(pte_pfn(pte)));
+  2876			page = pte_page(pte);
+  2877	
+  2878			folio = try_grab_folio_fast(page, 1, flags);
+  2879			if (!folio)
+  2880				goto pte_unmap;
+  2881	
+  2882			if (unlikely(pmd_val(pmd) != pmd_val(pmdp_get(pmdp))) ||
+  2883			    unlikely(pte_val(pte) != pte_val(ptep_get(ptep)))) {
+  2884				gup_put_folio(folio, 1, flags);
+  2885				goto pte_unmap;
+  2886			}
+  2887	
+  2888			if (!gup_fast_folio_allowed(folio, flags)) {
+  2889				gup_put_folio(folio, 1, flags);
+  2890				goto pte_unmap;
+  2891			}
+  2892	
+  2893			if (!pte_write(pte) && gup_must_unshare(NULL, flags, page)) {
+  2894				gup_put_folio(folio, 1, flags);
+  2895				goto pte_unmap;
+  2896			}
+  2897	
+  2898			/*
+  2899			 * We need to make the page accessible if and only if we are
+  2900			 * going to access its content (the FOLL_PIN case).  Please
+  2901			 * see Documentation/core-api/pin_user_pages.rst for
+  2902			 * details.
+  2903			 */
+  2904			if ((flags & FOLL_PIN) && arch_make_folio_accessible(folio)) {
+  2905				gup_put_folio(folio, 1, flags);
+  2906				goto pte_unmap;
+  2907			}
+  2908			folio_set_referenced(folio);
+  2909			pages[*nr] = page;
+  2910			(*nr)++;
+  2911		} while (ptep++, addr += PAGE_SIZE, addr != end);
+  2912	
+  2913		ret = 1;
+  2914	
+  2915	pte_unmap:
+  2916		pte_unmap(ptem);
+  2917		return ret;
+  2918	}
+  2919	#else
+  2920	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
