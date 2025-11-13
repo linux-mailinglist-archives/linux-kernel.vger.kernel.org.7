@@ -1,237 +1,252 @@
-Return-Path: <linux-kernel+bounces-899519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1455C5803C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:46:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7FCC58033
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94C83AECEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:39:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1386D4E842F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9AE281532;
-	Thu, 13 Nov 2025 14:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB49C2727E3;
+	Thu, 13 Nov 2025 14:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0tIzY4O"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GahRMcoJ"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB73520F09C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5C51BDCF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044746; cv=none; b=OqkIC7G72Ink+fnPEX7YDggXyl2xx+EbM9ixPGyj9paV38Tl0SpmJgZyNEVSvz95HmKlCJecUaoJe8LysWYJ62BTHS1dvNTABvbcQ+CTI+lvp/kw32+b9MS6Bb1/P/Vj2HYKkLpYQmokcyUcu4gcrgH5cWE2/Vch8bQssIScJg4=
+	t=1763044804; cv=none; b=d2WOyRVnsqSgdFHstoDFEGW0XsEBmWDRu67sT1mPOtTx7KjYPZ1WdJSjjf/1eDABXOjh5qeNfuYAMU9fTSXdF9C9FTcvHUhA+m1iduYqh2lzrhb/qjhrJKgMjNmBpC8qCpz9vCmvAYAI6n9bztAPPL/lo+MR/25Isuwbd+0pO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044746; c=relaxed/simple;
-	bh=2LHPChggk8GI1AbJ9hxVs2N8lvv8FEag0/iJX2XlCyg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KJx35YTmWDaNgilAxa/96nNILkVr1fkmPxMqWtQx6Arr4GZnUxtrhY8WGcA7j9hznbHUzueZL+b2+a5uAfF9+puX06F/uTcUPl8wc3j8LGiZbtCxh+Bu2vEev9N4Ncp8FNsUm17tjtfIpl9MZ6k2TaJhMGRq+l/pIt/QZqqvWD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0tIzY4O; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b312a086eso567788f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:39:04 -0800 (PST)
+	s=arc-20240116; t=1763044804; c=relaxed/simple;
+	bh=LghFzzgYBjyF4DUix/4QjpTX8Cu2IkIHbWjtdoIpPok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BtrFFLdhPp+nae2biIiPWbPD04UBPpwR7ciAT7bA7gFGCIYhH3X6n5rx8Pvwsh314LzMDEaMjYAWedFD9/hhL89i9aq0H6gZUjtYaB2in/UM1pZ5fhUb9ASQRTlN7Vv0Oe9uI2e9/5laj3VtVCApFH3zxbADjlTodEyy0kVXnNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GahRMcoJ; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-595819064cdso857703e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:40:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763044743; x=1763649543; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yLNZpnuIgcxTHHM90SiKN3q2bg/DZbAhXAi/tX9Vd+M=;
-        b=m0tIzY4Oe8UWhnn1bXL04Pekw9imDwMp42cApWiDCS6gnXJtK0Ml0/1r6SUu6kAiXq
-         Qc7wt6sCpSYmlIZVq5MuKzCk2D1UYJm0N0mYenc0QTUCG2cA/Bfhrdn5s3KFgi5SHlug
-         UiElXMsit0b+ZPPke909411aG0/Ewn74DyUtQD8MHfF1PRRDsJZCDbRKG/672r8EVX70
-         TJczAmOms8fH2Ip/hl1eeyKFAVm2moHgjdgAcBL7naA7mjypPX3ShqWobp7jPjtYKzMh
-         y32sH5wG8YuOotZq/wewn5ZebWwJgQHOpkuV8bhaK+Vd9qbZJGk040WKJJhKX2cH9Tsi
-         f1kQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763044800; x=1763649600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wl4571SxJAzignqkvu+iEEF0Pe+/jqH/UWVoWMdIiw4=;
+        b=GahRMcoJi3n7zVWIHvX+LiLzkfo+HKvHAaJJzWiW91ExIvEDeInJDw0hhQSvy3pJtB
+         74l030XK/02bd/yErd+bcq3e02xbBXSRPforr+q6sGYgacQoNvEUzRWVRDopRyCXKsx1
+         oHFFjHx3hfza3oim4JACBu6zmcWSsyUmjlBRtEkUjXvLGPWWM6dCRyfkT4VMovtJROJ5
+         K0iybyc9NVMDnAi50uSHZBJe/2N0t7foBl82mpQSQZSIgweyhgfogdl+OMijlZtN3NZ5
+         Lr2m2Ei+w+r7ncHV3yOHot/YFXNdp+z5dqjyFPr9JhEYQRRZWqiMvO30c7O9iI/98eL3
+         c2Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044743; x=1763649543;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLNZpnuIgcxTHHM90SiKN3q2bg/DZbAhXAi/tX9Vd+M=;
-        b=SMxbaY5I7KbB3pSjSrR3iedQC/nI0YruHnhx6gqY6JQ2Ae3lwQ6yDBlgGKnFheToYh
-         NzvF084AsZM0wl9THCCl6Qfs1QYra2QgOU20/rfpbjdxmWYxDw9wJ0aIipGRzxfzz3f7
-         u5YuArdw0e0hrcaw3hDMI2lDKwhzyyX+qHOd5xL4HNoxDGnbjXnh4j1lIJ9s2uN4OdyT
-         j2zQPYED0HFO3YdtTJseqHFqumPy2ds2/eyNL6jbSv2Xld4n1H06jfHydqjiXcF3yVUY
-         Ivtl7yvTZFx9egoXHcc20ofiDR7vaeRikKiF6fEI1JXXZil8qhDE/cU6582OAkJ2tSAN
-         NYCg==
-X-Gm-Message-State: AOJu0YwtERLDutsZqUuQV09vB0ScLUvn4bJhZZtgFHTloh4HhaUOtrit
-	2DADHQSaoZdUvuEmnudHsMWaudGeAkTkh72jY6hTRZC/1JdEgmS3oZMo
-X-Gm-Gg: ASbGncugRivJpvjSalBkg9G74e9PZ5SXXiLOOqFQsOfg7QaFMCdCl0Wjwf4q3A7AZF9
-	bsARR0jgR7JHi+wb5VMcDhWp+9mxyCxTHenJIInNGX4j7BPNqOUaGKsZ41lKvaHBt2UX7dOhGxW
-	0kxJ3B5XiUE2b9+2At9Cio1qZ6uAHMRjR318CrBPbGc8FXZDyqKQyFGJV9aq0PnH14ReNDOivlK
-	RFDLN/8q7dJ9Pqprj4ehZ545qVpoPQqh+6X/4/JoChLbgE/mQZscDsxdgAfm2wM57YAuveJdvNa
-	kvDMKz56it1CHPjcB14J9aE0F7yGU+2BFozBpyZrO03pFEvgN1/10SXUOrUwEwljL46F0IPTOml
-	bROKpISDbE9FPcqiBQdobaok0g6quqpiyU1QCKUNH+tvzh3O7nHC4n3sDMo4drcgfFdle42YlU/
-	hybxioCPCbAn+vU2EKWZM=
-X-Google-Smtp-Source: AGHT+IGIviz4e5mBL+hQkKKgV2FMlGbrVkUKtfusirhRvbQGt5YWOHprvcfZ8tZZlkWJ7qjlICzlBw==
-X-Received: by 2002:a05:6000:2509:b0:42b:3ab7:b8a4 with SMTP id ffacd0b85a97d-42b4bdb0343mr6423452f8f.33.1763044742810;
-        Thu, 13 Nov 2025 06:39:02 -0800 (PST)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b589sm4197053f8f.23.2025.11.13.06.39.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 06:39:02 -0800 (PST)
-Message-ID: <cbe4f6071952e0055f4df400b56fd283a1294115.camel@gmail.com>
-Subject: Re: [PATCH 1/3] iio: frequency: adf41513: driver implementation
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, rodrigo.alencar@analog.com
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Cameron	
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Andy Shevchenko	
- <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich	
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>
-Date: Thu, 13 Nov 2025 14:39:39 +0000
-In-Reply-To: <aRXZlMsPjIGWJ_oc@debian-BULLSEYE-live-builder-AMD64>
-References: <20251110-adf41513-iio-driver-v1-0-2df8be0fdc6e@analog.com>
-	 <20251110-adf41513-iio-driver-v1-1-2df8be0fdc6e@analog.com>
-	 <aRXZlMsPjIGWJ_oc@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+        d=1e100.net; s=20230601; t=1763044800; x=1763649600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wl4571SxJAzignqkvu+iEEF0Pe+/jqH/UWVoWMdIiw4=;
+        b=ICuPcvBvDc6FMGD5p+9sO+/ILk0O56G1pq66xcDSPeuZ/3gniq4lfgnisaYLdwCHaP
+         IvKhpEBBos/xxgW/xPJ3AUxGFM3PXn6LA1mOVD6yjFFiD8HOtDQ52VseoHStmjhFvKeH
+         Ara/SBIhzRIfmqyyFGvr2U41tSyTZIfl5iyt32agpgtJQwWCe1uCAHLDpuWg6vkUPgHL
+         Lofbq4gU7gcju3Bux2EpRMBQmuQPrshgF4ithfqxf4BkSRGQHjP6ZobQYC+fHeULat7o
+         wlBjSHO46Q+TXhczpjLUE/YbYKzj410F3etw+3PbTfzQwdsP0MpDGjb9ZCUxgnp6w7VP
+         C9kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBKXxP+g4p9A9gTplrRlf1Rj0N9Q0lpIO3CXiUMKDIaZ5Ra3OF9JxX4JrlTuOsZxGfMQrKOFdCauKb4PE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY35zCsitp0bhP0B8u1nqtXsyxiri05PXbG5gb5rkrMyYrjrbi
+	x3rGZB2OCnBoRJbdJnmMY+H7PnHOUcb1Xjq2VNc1vi64b0SrCJuv5+6erQPeloS/a3myThEGnhn
+	GqtAoxxe+67d4yJjgY7pYBS8NeJzZ1ZPdRDYc6llCvQ==
+X-Gm-Gg: ASbGncv2XwRRyXFT2S+PeN+1dZIGflh0LAVnGz8R6hM5I79+v2wMkBSsY92EPB3Rexz
+	DFo9cX3mWI57z0Lp2yVYr2I6KsJfKM3EAKubX+0DDLwd2hXHU4gYOdfkrbaKPGvQKUF6g5NBeNU
+	Eg9wezAyPFTq1Stp1JJ2TXeHSSHwW0T3DArjRd7ZWJ4buMM/8Gr3DzjS4IBNuaT0P/qyXLPpABU
+	n78QyB2G57yCqqVClpYv4kaguA8JuLqATP+4fVdqmIki3GjH9GlFJvCsb6NE17esRPjw4y/k8sR
+	CBu/xMpKifUiyjeb
+X-Google-Smtp-Source: AGHT+IHcp5RL49BzQ/EwQ2Jax7wwd/a8PEM1WoZpid3JGwwdtlpJzBmzwt/P9jvyh9TplD5Nus8fFpsIw/K4cuDWoP0=
+X-Received: by 2002:a05:6512:104f:b0:594:2876:c901 with SMTP id
+ 2adb3069b0e04-5957ececcc7mr1012811e87.25.1763044799557; Thu, 13 Nov 2025
+ 06:39:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
+ <20251107-qcom-sa8255p-emac-v5-8-01d3e3aaf388@linaro.org> <aRMiafCQNPVDOljU@horms.kernel.org>
+In-Reply-To: <aRMiafCQNPVDOljU@horms.kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 13 Nov 2025 15:39:45 +0100
+X-Gm-Features: AWmQ_bmyO0__RPwdcHgOIMRaFCfnIoYFER6JzR_p2Qqf8fR68sQPWn6kw1o5zWY
+Message-ID: <CAMRc=MfEuAhichw-tPJkj_BKxy7AzvfmVJJyXzHsqa2wf=2EKw@mail.gmail.com>
+Subject: Re: [PATCH v5 8/8] net: stmmac: qcom-ethqos: add support for sa8255p
+To: Simon Horman <horms@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Matthew Gerlach <matthew.gerlach@altera.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Keguang Zhang <keguang.zhang@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
+	Romain Gantois <romain.gantois@bootlin.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Minda Chen <minda.chen@starfivetech.com>, 
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Maxime Ripard <mripard@kernel.org>, Shuang Liang <liangshuang@eswincomputing.com>, 
+	Zhi Li <lizhi2@eswincomputing.com>, Shangjuan Wei <weishangjuan@eswincomputing.com>, 
+	"G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	Linux Team <linux-imx@nxp.com>, Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>, 
+	Samin Guo <samin.guo@starfivetech.com>, 
+	Christophe Roullier <christophe.roullier@foss.st.com>, Swathi K S <swathi.ks@samsung.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
+	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-11-13 at 10:13 -0300, Marcelo Schmitt wrote:
-> Hi Rodrigo,
->=20
-> A couple of comments inline since this is on the mailing list.
-> As mentioned in the other thread, we ought to continue the review of this=
- internally.
->=20
-> On 11/10, Rodrigo Alencar via B4 Relay wrote:
-> > From: Rodrigo Alencar <rodrigo.alencar@analog.com>
-> >=20
-> > - ADF41513: 1 GHz to 26.5 GHz frequency range
-> > - ADF41510: 1 GHz to 10 GHz frequency range
-> > - Integer-N and fractional-N operation modes
-> > - Ultra-low phase noise (-235 dBc/Hz integer-N, -231 dBc/Hz fractional-=
-N)
-> > - High maximum PFD frequency (250 MHz integer-N, 125 MHz fractional-N)
-> > - 25-bit fixed modulus or 49-bit variable modulus fractional modes
-> > - Programmable charge pump currents with 16x range
-> > - Digital lock detect functionality
-> > - Phase resync capability for consistent output phase
-> > - Clock framework integration for system clock generation
-> >=20
-> > Signed-off-by: Rodrigo Alencar <rodrigo.alencar@analog.com>
-> > ---
+On Tue, Nov 11, 2025 at 12:48=E2=80=AFPM Simon Horman <horms@kernel.org> wr=
+ote:
+>
+> On Fri, Nov 07, 2025 at 11:29:58AM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
 > ...
-> > +
-> > +static int adf41513_parse_uhz(const char *str, u64 *freq_uhz)
+>
+> > +static int qcom_ethqos_pd_init(struct platform_device *pdev, void *pri=
+v)
 > > +{
-> > +	u64 uhz =3D 0;
-> > +	int f_count =3D ADF41513_HZ_DECIMAL_PRECISION;
-> > +	bool frac_part =3D false;
+> > +     struct qcom_ethqos *ethqos =3D priv;
+> > +     int ret;
 > > +
-> > +	if (str[0] =3D=3D '+')
-> > +		str++;
+> > +     /*
+> > +      * Enable functional clock to prevent DMA reset after timeout due
+> > +      * to no PHY clock being enabled after the hardware block has bee=
+n
+> > +      * power cycled. The actual configuration will be adjusted once
+> > +      * ethqos_fix_mac_speed() is called.
+> > +      */
+> > +     ethqos_set_func_clk_en(ethqos);
 > > +
-> > +	while (*str && f_count > 0) {
-> > +		if ('0' <=3D *str && *str <=3D '9') {
-> > +			uhz =3D uhz * 10 + *str - '0';
-> > +			if (frac_part)
-> > +				f_count--;
-> > +		} else if (*str =3D=3D '\n') {
-> > +			if (*(str + 1) =3D=3D '\0')
-> > +				break;
-> > +			return -EINVAL;
-> > +		} else if (*str =3D=3D '.' && !frac_part) {
-> > +			frac_part =3D true;
-> > +		} else {
-> > +			return -EINVAL;
-> > +		}
-> > +		str++;
-> > +	}
+> > +     ret =3D qcom_ethqos_domain_on(ethqos, ETHQOS_PD_CORE);
+> > +     if (ret)
+> > +             return ret;
 > > +
-> > +	for (; f_count > 0; f_count--)
-> > +		uhz *=3D 10;
+> > +     ret =3D qcom_ethqos_domain_on(ethqos, ETHQOS_PD_MDIO);
+> > +     if (ret) {
+> > +             qcom_ethqos_domain_off(ethqos, ETHQOS_PD_CORE);
+> > +             return ret;
+> > +     }
 > > +
-> > +	*freq_uhz =3D uhz;
-> > +
-> > +	return 0;
+> > +     return 0;
 > > +}
-> didn't check the details, but can't the sub-Hz resolution be supported wi=
-th
-> .write_raw_get_fmt()?
-> e.g.
->=20
-> static int adf41513_write_raw_get_fmt(struct iio_dev *indio_dev,
-> 				=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan, long mask)
-> {
-> 	switch (mask) {
-> 	case IIO_CHAN_INFO_FREQUENCY:
-> 		return IIO_VAL_INT_64;
-> 	default:
-> 		return IIO_VAL_INT_PLUS_MICRO;
-
-I think the above is already the default anyways... But the key here is tha=
-t (I think) the goal
-is to be able to do things like:
-
-echo integer.fractional > out_altvoltage0_frequency
-
-where integer can be u64. If I'm not missing anything, we cannot do that th=
-rough the standard
-interfaces.
-
-- Nuno S=C3=A1
-
-> 	}
-> }
->=20
-> static const struct iio_info adf41513_info =3D {
-> ...
-> 	.write_raw_get_fmt =3D adf41513_write_raw_get_fmt(),
-> };
->=20
-> ...
 > > +
-> > +static ssize_t adf41513_write(struct iio_dev *indio_dev,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 uintptr_t private,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t len)
+> > +static void qcom_ethqos_pd_exit(struct platform_device *pdev, void *da=
+ta)
 > > +{
-> > +	struct adf41513_state *st =3D iio_priv(indio_dev);
-> > +	unsigned long long readin;
-> > +	unsigned long tmp;
-> > +	u64 freq_uhz;
-> > +	int ret;
+> > +     struct qcom_ethqos *ethqos =3D data;
 > > +
-> > +	guard(mutex)(&st->lock);
+> > +     qcom_ethqos_domain_off(ethqos, ETHQOS_PD_MDIO);
+> > +     qcom_ethqos_domain_off(ethqos, ETHQOS_PD_CORE);
+> > +}
 > > +
-> > +	switch ((u32)private) {
-> > +	case ADF41513_FREQ:
-> > +		ret =3D adf41513_parse_uhz(buf, &freq_uhz);
-> > +		if (ret)
-> > +			return ret;
-> > +		ret =3D adf41513_set_frequency(st, freq_uhz, ADF41513_SYNC_DIFF);
-> > +		break;
-> > +	case ADF41513_FREQ_REFIN:
-> > +		ret =3D kstrtoull(buf, 10, &readin);
-> > +		if (ret)
-> > +			return ret;
+> >  static void ethqos_ptp_clk_freq_config(struct stmmac_priv *priv)
+> >  {
+> >       struct plat_stmmacenet_data *plat_dat =3D priv->plat;
+>
+> ...
+>
+> > @@ -852,28 +993,63 @@ static int qcom_ethqos_probe(struct platform_devi=
+ce *pdev)
+> >       ethqos->rgmii_config_loopback_en =3D drv_data->rgmii_config_loopb=
+ack_en;
+> >       ethqos->has_emac_ge_3 =3D drv_data->has_emac_ge_3;
+> >       ethqos->needs_sgmii_loopback =3D drv_data->needs_sgmii_loopback;
+> > -
+> > -     ethqos->pm.link_clk =3D devm_clk_get(dev, clk_name);
+> > -     if (IS_ERR(ethqos->pm.link_clk))
+> > -             return dev_err_probe(dev, PTR_ERR(ethqos->pm.link_clk),
+> > -                                  "Failed to get link_clk\n");
+> > -
+> > -     ret =3D ethqos_clks_config(ethqos, true);
+> > -     if (ret)
+> > -             return ret;
+> > -
+> > -     ret =3D devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos=
+);
+> > -     if (ret)
+> > -             return ret;
+> > -
+> > -     ethqos->pm.serdes_phy =3D devm_phy_optional_get(dev, "serdes");
+> > -     if (IS_ERR(ethqos->pm.serdes_phy))
+> > -             return dev_err_probe(dev, PTR_ERR(ethqos->pm.serdes_phy),
+> > -                                  "Failed to get serdes phy\n");
+> > -
+> > -     ethqos->set_serdes_speed =3D ethqos_set_serdes_speed_phy;
+> >       ethqos->serdes_speed =3D SPEED_1000;
+> > -     ethqos_update_link_clk(ethqos, SPEED_1000);
 > > +
-> > +		if (readin < ADF41513_MIN_REF_FREQ || readin > ADF41513_MAX_REF_FREQ=
-) {
-> Can, alternatively, this check be made with in_range() macro?
-> If so, then
-> #include <linux/minmax.h>
->=20
-> Same question/suggestion to other similar value bounds checks throughout =
-the driver.
->=20
-> > +			ret =3D -EINVAL;
-> > +			break;
-> > +		}
+> > +     if (pm_data && pm_data->use_domains) {
+> > +             ethqos->set_serdes_speed =3D ethqos_set_serdes_speed_pd;
 > > +
->=20
-> With best regards,
-> Marcelo
+> > +             ret =3D devm_pm_domain_attach_list(dev, &pm_data->pd,
+> > +                                              &ethqos->pd.pd_list);
+> > +             if (ret < 0)
+> > +                     return dev_err_probe(dev, ret, "Failed to attach =
+power domains\n");
+> > +
+> > +             plat_dat->clks_config =3D ethqos_pd_clks_config;
+> > +             plat_dat->serdes_powerup =3D qcom_ethqos_pd_serdes_poweru=
+p;
+> > +             plat_dat->serdes_powerdown =3D qcom_ethqos_pd_serdes_powe=
+rdown;
+> > +             plat_dat->exit =3D qcom_ethqos_pd_exit;
+>
+> Hi Bartosz,
+>
+> It seems that the intention of this is to ensure
+> that domains turned on by qcom_ethqos_pd_init()
+> are turned off again on exit or clean-up in error paths.
+>
+> > +             plat_dat->init =3D qcom_ethqos_pd_init;
+> > +             plat_dat->clk_ptp_rate =3D pm_data->clk_ptp_rate;
+> > +
+> > +             ret =3D qcom_ethqos_pd_init(pdev, ethqos);
+> > +             if (ret)
+> > +                     return ret;
+>
+> And here those domains are turned on.
+>
+> > +
+> > +             ret =3D qcom_ethqos_domain_on(ethqos, ETHQOS_PD_SERDES);
+> > +             if (ret)
+>
+> But it seems that if we reach this error path then the cleanup is not
+> performed. This is because plat_dat and thus it's exit callback are
+> registered until the call to devm_stmmac_pltfr_probe() towards the end of
+> this function.
+
+We can only reach this if devm_stmmac_pltfr_probe() fails. Yeah it
+probably warrants a devres action.
+
+Bartosz
 
