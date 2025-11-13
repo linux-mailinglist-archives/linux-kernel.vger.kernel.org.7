@@ -1,352 +1,119 @@
-Return-Path: <linux-kernel+bounces-899586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354E7C58614
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0C3C58638
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F135D428
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:22:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755C4425CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDD92FC861;
-	Thu, 13 Nov 2025 15:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8674A2FE573;
+	Thu, 13 Nov 2025 15:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MP4wNlIJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YX2x49H0"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DA72FC017
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893DB2FD683
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046527; cv=none; b=o1z64Q2cNrXKSE+hISBlj5wgXJoFmYqO55rpipPVMmx3r/vAxM/cFVbnuMwnE1xi3oYZh94HdzPpKXdszNj0rht3ka15Vnbpox11WL5c/tEvdz6pwjOV9sQJvTbQLDouVOuOCyIpmznFBQqIFOohVu3KeN8PgtITA9seXRFSqcs=
+	t=1763046573; cv=none; b=nj34c5xdipYYBy8CGiAEdZY3dBjDH7kup2VszA5a8/maMZkdGsRfijHbyw9Gyo8SzlU5LO6UJqs23s6X2b6vuXNCufAZGKFcsbd2/JtlsnjnA83Tq1x8EoFswa6q5VCVJwlDqQZwdzkMGhyQKe04/XX55SzT7wS79JJNFDv3TlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046527; c=relaxed/simple;
-	bh=wAVRgEmnZIxgyQBCgbBxqS2a2X7Tql8nxCsscAkX2Bw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bsl4HD4NbZSkFM0qw5uhYuLG/LkDHgIpr68PxbNk+lL9I2+4BY/twRSzH5NpKuoEyxeruMcJ98YjqzjJYZxFEbuFaxOlzBCUDq2gbwp1vAU0OWLGFUrz8dW1Qpa4D63fqzhGj/D1IYza/xe9eFlDVZvMBtbHn+qcrNkOp5zxvTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MP4wNlIJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763046523; x=1794582523;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=wAVRgEmnZIxgyQBCgbBxqS2a2X7Tql8nxCsscAkX2Bw=;
-  b=MP4wNlIJrSKZpsjJFqbhiVbtCLP8AIksFTaKGsYVAU3TLmkfvXV1/Y0B
-   frTuVT5ltz7mNe1wciLrsUv2pBYWRW7fdk/ahKg59e77qFEMv5Lab3iEF
-   gGuq46wjjj/ZpBLocP9L3aGqO5Q44HtQ/toM6Xo/wulm9SMikZL+6Gua+
-   EHtYZ2c5BBAOlw4yMg7JdxRbZ4IIoTMOJEXR0sQZXggPRhx0ITH0Bdavs
-   803Qr78oXgrUB41W53YOpcdgNRjeo/+IUfBXnPajOUEUlnR4woKEKhs60
-   nyUr2s4t5QKzh4kWogYY10iVZFjt8rmPQCADpjKlyJVWGSQdk5IpTqSf+
-   w==;
-X-CSE-ConnectionGUID: 1LnxNlA3QmmrOVeESrzeqw==
-X-CSE-MsgGUID: HL3rSzxQT1uFSS+dXqp2tA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="65167148"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="65167148"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:08:42 -0800
-X-CSE-ConnectionGUID: 1LrMgLnvTDqu5M3RxPuokA==
-X-CSE-MsgGUID: O3nhC1jRTXOx6EkjLFXpqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="193961130"
-Received: from aotchere-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.135])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:08:39 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>, Simona Vetter
- <simona@ffwll.ch>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6n?=
- =?utf-8?Q?ig?=
- <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, "open
- list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, "open
- list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list
- <linux-kernel@vger.kernel.org>, Mario Limonciello
- <mario.limonciello@amd.com>, Simona Vetter <simona.vetter@ffwll.ch>, Harry
- Wentland <Harry.Wentland@amd.com>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH] drm/amd: Move adaptive backlight modulation property to
- drm core
-In-Reply-To: <20251112222646.495189-1-mario.limonciello@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20251112222646.495189-1-mario.limonciello@amd.com>
-Date: Thu, 13 Nov 2025 17:08:36 +0200
-Message-ID: <83aa8a816cf301085a3e3638238f8fba11053dc2@intel.com>
+	s=arc-20240116; t=1763046573; c=relaxed/simple;
+	bh=h6UlhZ4Ba7cJzydqwOO0750ALHLQFMT8ZapUHDdYcxU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LlV+alIz4Bfsc8cjXOnOQ5e7iCmgOUjdoeBA3mw1FeEvtMf9dMa/qBplVCG2zZiAV/9ASK4FxLaEWQdn/Y979gVuECc07udA1nu/BgXfi42rR31mYReTtfnx6PvIa4c+Jl75P6+20Bfeq/F3KBp5qxuYrtVhjiw8oVaz8IMKN8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YX2x49H0; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7b9208e1976so899260b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:09:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763046572; x=1763651372; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Osoqj+KfH9e9c7HCxCwaBxJ5YlsbXGetX83a8Y9Q07I=;
+        b=YX2x49H0DPrnV67Wo26zr2ojc3glG79zlz9zw4iPfuW8S5tx7KXV9Q8wQH1Rjk6WcD
+         KgkZ47K02voRDAHbRAeKQ7K52+lH7l6Ap8iddE8JBunxkvR3TTUKGEYKmmCTMUlpWzDB
+         o5EdvdjAfm86HaZ2BViipe7APJhDnJOZYlqfa04U5RXOieqp0GL3HUtDPrYfOg+LH+e2
+         RdqaPnkbJMRdJItPFuZsVjeqdl5z0pFj93TxQE0Pg+Qf8L7V4GyYH0SzWC0f2fjrMAcH
+         VY8ZwT+UxABl+o5B0FmNBj/hRYkp79BFlagrXSq8UM9T9a7KyLtBajZqgqrdSeLBdsJX
+         WpTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763046572; x=1763651372;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Osoqj+KfH9e9c7HCxCwaBxJ5YlsbXGetX83a8Y9Q07I=;
+        b=J6Ib7SFs+oTOuIVRK8Zu99inXP7PptV/4RkVewGMTuN+d+xg04n/K3eY1Asvxhxa3Z
+         53LWqse8MUTbOuyByovftC/sKlb+bipC2KJ0cTQGPUYUYrxNNseNDZRygnnZ/G+15MgO
+         DzUKLa12w2JORYNiqoY3aN6vopzQ9NlMP6FO6930KXLVLAzH+0DyXp5V4x67Nvd87flE
+         TA8r3tTbF5UDcHwqDgY1mRySw4EnuLSOpUMTffjGqCwm4awKJN8CFzPZPbBQDDXgZRY9
+         Hd5PDy4+hdBHtOZJSNe+s4HCLLUqxLjm0196tkd625JCrXnFUbkz7nMs6/N9tf93VkHD
+         wI/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFIscqKuTAW4O35GDznlpHTrLl9ywygkkqXQZ60hh/Bfo4oaoOsM/uerilfkS2buE5/MlGIizL5D1tcdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsyvdVDQSHFAycQVxHCmJo4HNfmL55gBqO1MpzPP7bvjkBQ3Bu
+	xT2JakDRHVM1U3cjYnxl07xMBF97YjsksQaECrFPJrAE0dCuhW+XqaNEIpqEJhPXqmsRg6w1BfN
+	2eLaj+Q==
+X-Google-Smtp-Source: AGHT+IEuoZ5TTwctwMh+n68VMy6MVwQhHq00IHTFircxz33TSH4UlAXeNZUVuLlkrF78tTLU5wAyIUNjY3k=
+X-Received: from pjpy13.prod.google.com ([2002:a17:90a:a40d:b0:33b:51fe:1a73])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a83:b0:340:c179:3666
+ with SMTP id 98e67ed59e1d1-343dddd8c7cmr8237657a91.8.1763046571703; Thu, 13
+ Nov 2025 07:09:31 -0800 (PST)
+Date: Thu, 13 Nov 2025 07:09:30 -0800
+In-Reply-To: <9adc3a5437cf7d9af99642a0df837bbd0237bb58.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20251112160708.1343355-1-seanjc@google.com> <20251112160708.1343355-3-seanjc@google.com>
+ <9adc3a5437cf7d9af99642a0df837bbd0237bb58.camel@intel.com>
+Message-ID: <aRX0iB7gYS_GgGOV@google.com>
+Subject: Re: [PATCH 2/5] x86/sgx: Add kernel-doc descriptions for params
+ passed to vDSO user handler
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "jarkko@kernel.org" <jarkko@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 12 Nov 2025, Mario Limonciello <mario.limonciello@amd.com> wrote:
-> The adaptive backlight modulation property is supported on AMD hardware but
-> compositors should be aware of it in standard DRM property documentation.
+On Thu, Nov 13, 2025, Kai Huang wrote:
+> On Wed, 2025-11-12 at 08:07 -0800, Sean Christopherson wrote:
+> > Add kernel-doc markup for the register parameters passed by the vDSO blob
+> > to the user handler to suppress build warnings, e.g.
+> > 
+> >   WARNING: arch/x86/include/uapi/asm/sgx.h:157 function parameter 'r8' not
+> >            described in 'sgx_enclave_user_handler_t'
+> > 
+> > Call out that except for RSP, the registers are undefined on asynchronous
+> > exits as far as the vDSO ABI is concerned.  E.g. the vDSO's exception
+> > handler clobbers RDX, RDI, and RSI, and the kernel doesn't guarantee that
+> > R8 or R9 will be zero (the synthetic value loaded by the CPU).
+> 
+> Perhaps a nit:
+> 
+> I am not that familiar with this part, but AFAICT the kernel always sets
+> RDI/RSI/RDX to exception vector/error code/addr before invoking the user
+> handler, after the vDSO's exception handler clobbers them.
+> 
+> Since you are adding description to them, should we somehow call this out in
+> the comment, if I didn't miss anything?
 
-I think the reason for adding a property in drm core code should be to
-share the ABI between drivers.
+I don't think we want to commit to that as ABI for the vDSO interface, which is
+why I documented the values as being "undefined".  Maybe were already stuck with
+that ABI, e.g. if some funky userspace is looking at the register params instead
+of its run structure, but IMO we should at least discourage relying on the values.
 
-> Move the helper to create the property and documentation into DRM.
->
-
-Link: to the userspace implementation according to
-Documentation/gpu/drm-uapi.rst
-
-> Suggested-by: Simona Vetter <simona.vetter@ffwll.ch>
-> Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 69 +++------------------
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.h |  7 ---
->  drivers/gpu/drm/drm_connector.c             | 63 +++++++++++++++++++
->  include/drm/drm_connector.h                 |  8 +++
->  4 files changed, 80 insertions(+), 67 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> index f8b35c487b6c..3d840bef77bf 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> @@ -1363,67 +1363,9 @@ static const struct drm_prop_enum_list amdgpu_dither_enum_list[] = {
->  	{ AMDGPU_FMT_DITHER_ENABLE, "on" },
->  };
->  
-> -/**
-> - * DOC: property for adaptive backlight modulation
-> - *
-> - * The 'adaptive backlight modulation' property is used for the compositor to
-> - * directly control the adaptive backlight modulation power savings feature
-> - * that is part of DCN hardware.
-> - *
-> - * The property will be attached specifically to eDP panels that support it.
-> - *
-> - * The property is by default set to 'sysfs' to allow the sysfs file 'panel_power_savings'
-> - * to be able to control it.
-> - * If set to 'off' the compositor will ensure it stays off.
-> - * The other values 'min', 'bias min', 'bias max', and 'max' will control the
-> - * intensity of the power savings.
-> - *
-> - * Modifying this value can have implications on color accuracy, so tread
-> - * carefully.
-> - */
-> -static int amdgpu_display_setup_abm_prop(struct amdgpu_device *adev)
-> -{
-> -	const struct drm_prop_enum_list props[] = {
-> -		{ ABM_SYSFS_CONTROL, "sysfs" },
-> -		{ ABM_LEVEL_OFF, "off" },
-> -		{ ABM_LEVEL_MIN, "min" },
-> -		{ ABM_LEVEL_BIAS_MIN, "bias min" },
-> -		{ ABM_LEVEL_BIAS_MAX, "bias max" },
-> -		{ ABM_LEVEL_MAX, "max" },
-> -	};
-> -	struct drm_property *prop;
-> -	int i;
-> -
-> -	if (!adev->dc_enabled)
-> -		return 0;
-> -
-> -	prop = drm_property_create(adev_to_drm(adev), DRM_MODE_PROP_ENUM,
-> -				"adaptive backlight modulation",
-> -				6);
-> -	if (!prop)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(props); i++) {
-> -		int ret;
-> -
-> -		ret = drm_property_add_enum(prop, props[i].type,
-> -						props[i].name);
-> -
-> -		if (ret) {
-> -			drm_property_destroy(adev_to_drm(adev), prop);
-> -
-> -			return ret;
-> -		}
-> -	}
-> -
-> -	adev->mode_info.abm_level_property = prop;
-> -
-> -	return 0;
-> -}
-> -
->  int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
->  {
-> -	int sz;
-> +	int ret, sz;
->  
->  	adev->mode_info.coherent_mode_property =
->  		drm_property_create_range(adev_to_drm(adev), 0, "coherent", 0, 1);
-> @@ -1467,7 +1409,14 @@ int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
->  					 "dither",
->  					 amdgpu_dither_enum_list, sz);
->  
-> -	return amdgpu_display_setup_abm_prop(adev);
-> +	adev->mode_info.abm_level_property = drm_create_abm_property(adev_to_drm(adev));
-> +	if (IS_ERR(adev->mode_info.abm_level_property)) {
-> +		ret = PTR_ERR(adev->mode_info.abm_level_property);
-> +		adev->mode_info.abm_level_property = NULL;
-> +		return ret;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  void amdgpu_display_update_priority(struct amdgpu_device *adev)
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-> index 2b1536a16752..dfa0d642ac16 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-> @@ -54,11 +54,4 @@ int amdgpu_display_resume_helper(struct amdgpu_device *adev);
->  int amdgpu_display_get_scanout_buffer(struct drm_plane *plane,
->  				      struct drm_scanout_buffer *sb);
->  
-> -#define ABM_SYSFS_CONTROL	-1
-> -#define ABM_LEVEL_OFF		0
-> -#define ABM_LEVEL_MIN		1
-> -#define ABM_LEVEL_BIAS_MIN	2
-> -#define ABM_LEVEL_BIAS_MAX	3
-> -#define ABM_LEVEL_MAX		4
-> -
->  #endif
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 272d6254ea47..376169dac247 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -2603,6 +2603,69 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
->  	return 0;
->  }
->  
-> +/**
-> + * DOC: integrated panel properties
-> + *
-> + * adaptive backlight modulation:
-> + *	Adaptive backlight modulation (ABM) is a power savings feature that
-> + *	dynamically adjusts the backlight brightness based on the content
-> + *	displayed on the screen. By reducing the backlight brightness for
-> + *	darker images and increasing it for brighter images, ABM helps to
-> + *	conserve energy and extend battery life on devices with integrated
-> + *	displays.  This feature is part of AMD DCN hardware.
-
-So this is basically Content Adaptive Brightness Control, but with the
-technology ("backlight" and "modulation") unnecessarily encoded in the
-ABI.
-
-You could have the same knob for adjusting CABC implemented in an OLED
-panel, controlled via DPCD.
-
-> + *
-> + *	sysfs
-> + *		The ABM property is exposed to userspace via sysfs interface
-> + *		located at 'amdgpu/panel_power_savings' under the DRM device.
-
-Err what? Seriously suggesting that to the common ABI? We shouldn't have
-sysfs involved at all, let alone vendor specific sysfs.
-
-> + *	off
-> + *		Adaptive backlight modulation is disabled.
-> + *	min
-> + *		Adaptive backlight modulation is enabled at minimum intensity.
-> + *	bias min
-> + *		Adaptive backlight modulation is enabled at a more intense
-> + *		level than 'min'.
-> + *	bias max
-> + *		Adaptive backlight modulation is enabled at a more intense
-> + *		level than 'bias min'.
-> + *	max
-> + *		Adaptive backlight modulation is enabled at maximum intensity.
-
-So values 0-4 but with names. I don't know what "bias" means here, and I
-probably shouldn't even have to know. It's an implementation detail
-leaking to the ABI.
-
-In the past I've encountered CABC with different modes based on the use
-case, e.g. "video" or "game", but I don't know how those would map to
-the intensities.
-
-I'm concerned the ABI serves AMD hardware, no one else, and everyone
-else coming after this is forced to shoehorn their implementation into
-this.
-
-> + */
-> +struct drm_property *drm_create_abm_property(struct drm_device *dev)
-> +{
-> +	const struct drm_prop_enum_list props[] = {
-> +		{ ABM_SYSFS_CONTROL, "sysfs" },
-> +		{ ABM_LEVEL_OFF, "off" },
-> +		{ ABM_LEVEL_MIN, "min" },
-> +		{ ABM_LEVEL_BIAS_MIN, "bias min" },
-> +		{ ABM_LEVEL_BIAS_MAX, "bias max" },
-> +		{ ABM_LEVEL_MAX, "max" },
-> +	};
-> +	struct drm_property *prop;
-> +	int i;
-> +
-> +	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
-> +				"adaptive backlight modulation",
-> +				6);
-
-Please use drm_property_create_enum(), see
-e.g. drm_connector_attach_broadcast_rgb_property().
-
-> +	if (!prop)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(props); i++) {
-> +		int ret;
-> +
-> +		ret = drm_property_add_enum(prop, props[i].type,
-> +						props[i].name);
-> +
-> +		if (ret) {
-> +			drm_property_destroy(dev, prop);
-> +
-> +			return ERR_PTR(ret);
-> +		}
-> +	}
-> +
-> +	return prop;
-> +}
-> +EXPORT_SYMBOL(drm_create_abm_property);
-> +
->  /**
->   * drm_mode_create_hdmi_colorspace_property - create hdmi colorspace property
->   * @connector: connector to create the Colorspace property on.
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 8f34f4b8183d..644c0d49500f 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -2454,6 +2454,7 @@ int drm_connector_attach_hdr_output_metadata_property(struct drm_connector *conn
->  bool drm_connector_atomic_hdr_metadata_equal(struct drm_connector_state *old_state,
->  					     struct drm_connector_state *new_state);
->  int drm_mode_create_aspect_ratio_property(struct drm_device *dev);
-> +struct drm_property *drm_create_abm_property(struct drm_device *dev);
->  int drm_mode_create_hdmi_colorspace_property(struct drm_connector *connector,
->  					     u32 supported_colorspaces);
->  int drm_mode_create_dp_colorspace_property(struct drm_connector *connector,
-> @@ -2563,4 +2564,11 @@ const char *drm_get_colorspace_name(enum drm_colorspace colorspace);
->  	drm_for_each_encoder_mask(encoder, (connector)->dev, \
->  				  (connector)->possible_encoders)
->  
-> +#define ABM_SYSFS_CONTROL	-1
-> +#define ABM_LEVEL_OFF		0
-> +#define ABM_LEVEL_MIN		1
-> +#define ABM_LEVEL_BIAS_MIN	2
-> +#define ABM_LEVEL_BIAS_MAX	3
-> +#define ABM_LEVEL_MAX		4
-
-These need to be an enum, with documentation, name prefixes, the works.
-
-BR,
-Jani.
-
-> +
->  #endif
-
--- 
-Jani Nikula, Intel
+E.g. if the kernel ever changed its exception fixup to use different registers,
+then RDI/RSI/RDX might not hold the same values.  In hindsight, we probably should
+have scrambled those registers after propagating the exception information to the
+run structure.
 
