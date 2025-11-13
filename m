@@ -1,167 +1,78 @@
-Return-Path: <linux-kernel+bounces-899372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B82C578D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBB7C57A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F293AD73D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23152422D42
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E46B35292D;
-	Thu, 13 Nov 2025 13:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CFD352958;
+	Thu, 13 Nov 2025 13:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lvk+IzY+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwH8UZ+Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF780351FD3;
-	Thu, 13 Nov 2025 13:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB736352933;
+	Thu, 13 Nov 2025 13:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038941; cv=none; b=QS+KhB4Zya3ZaQNx1vy/ei55kkwrLJYbQJDasSHDQzpgqMB1EPRvIp6ZYLf6/j9PDD+SKCZgoMt8Bq7ui8/Xpzw5PnDtzFneXcFDETIusYuo+K/pAqQ8sn8vwLGOzC0b0nMqXe99F2yDn48Ae15hDPPEpm1GakDUaH0DJSwYf7U=
+	t=1763039121; cv=none; b=UhygX6py4CtVUpng5Pp86fh35Tp5b0YgEyW/awqRF+tGLyqj//R6qvDK75OHsx34oY2BwESuuSnPu1Nysa6qzrWJ2z6WzaXi6GTSH7b6ij2u+fp2cNY0CMqVsOXHASdM20rC8TA+BSfRzIvsLkxY+GYhDuKvLrBb7BZSirTOQFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038941; c=relaxed/simple;
-	bh=DAkhzIUlG7glLtApG0JL3Nzp/VCQH1OHCGnfSmY2w+A=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=DtW/hOtYYk+heNLrIPw3LZqlHnRRVT13wQeVOMxSW4n/VXbmz+EX/v5c366lnI5LYo0OTEQ05lONfbw1M8gTc8g89I1ob5MA6Lf8RJcKl/FHRk8+C0MHxd57UpkuFg45XfwvYdIap5uHp9dYjh0IBXD6LQOSHZwHNM7P5PVxp0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lvk+IzY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB07C4CEF8;
-	Thu, 13 Nov 2025 13:02:21 +0000 (UTC)
+	s=arc-20240116; t=1763039121; c=relaxed/simple;
+	bh=b6AVM/55YOIU7sxAY+20XYw1+V/P2RtbaE0tvYN9zSY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HJIALovDKHbLkws4tIarN7WrMo0gkR4rTdMrjEvQoAPefYdbkI3/5zi5nxq+42g4M+qklbVgvQDkyptQdzLmz4y7/z0yKfWJDXzc9/0IyJCQHuUHa/Q3y7XhjSimQfeVIH4UjLlTAWS/+7tazo39ySoK+zFWtTQVqSA4XftxYvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwH8UZ+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B83C4CEF5;
+	Thu, 13 Nov 2025 13:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763038941;
-	bh=DAkhzIUlG7glLtApG0JL3Nzp/VCQH1OHCGnfSmY2w+A=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=Lvk+IzY+lB1vXAiV3KiK/Dl+SooaiijPPGGZX7BqCq5K/P6OhksFdbSdOhWHl5Jby
-	 Cxk9xl9C2WaNalvHvFdPt9cQKgHflLxl5xFQ507KNhLAFLDIQSZN9KhwryG07WM4uk
-	 C/ObKhgdZFKgSMdPKHLif6IOYcdWY8YHOlW9aNSozldLaOoN1DjzXNU5wfo27lDzCR
-	 w8U7r4/EpeYxGXBMuWMeUl7X6xVabSWoz1Eofc20iBbz//jBB4vy1hG9yzv8PqxFKf
-	 w962dj6qYhXTQhb3iMg+WL/iV0ErG8t1OfR7C+Txk/JbA0BWOvKnfmJIS+S019Fbtj
-	 M+cyXHOjQGlog==
-Content-Type: multipart/mixed; boundary="===============2663991294437569515=="
+	s=k20201202; t=1763039121;
+	bh=b6AVM/55YOIU7sxAY+20XYw1+V/P2RtbaE0tvYN9zSY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=lwH8UZ+Z2AdqyxxsrlaPR4CTxc2AZcT/NxnM5pfQo7QMp25gKXpX1cOR6ewgHfl6q
+	 YH3wU9poy30i39JS7hWzZ/FNvLD9MPBsXyUOdM3QVmfASkoaIruWhHsfEIQ1rOeLhj
+	 N0Hzl0e+CTwLNomfOHFbigHGOqcNyxIQfUKjULWl5WJFAJPngAbwPu3i7PVOv1OXbi
+	 23/MN5jmoxf3uki5T1jo+S8+2oFrYzumK/N03pYSAeQgb7vpb3VsYc9vvT68kZ2i1x
+	 iwOlzizZm/0/QZshhRH+/ueyusFst2ghWyvfhjBX5uS29gOyW321n/DTQ2VfLYHWB1
+	 rx+M63p5thlYw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FD73A41034;
+	Thu, 13 Nov 2025 13:04:52 +0000 (UTC)
+Subject: Re: [GIT PULL] ksmbd server fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mt03Ds=Fcbn59XO+9Vy6SVpeQ4DvcUzu-gA4-=gw5A2nw@mail.gmail.com>
+References: <CAH2r5mt03Ds=Fcbn59XO+9Vy6SVpeQ4DvcUzu-gA4-=gw5A2nw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mt03Ds=Fcbn59XO+9Vy6SVpeQ4DvcUzu-gA4-=gw5A2nw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/v6.18-rc5-smb-server-fixes
+X-PR-Tracked-Commit-Id: 55286b1e1bf4ce55f61ad2816d4ff8a7861a8cbb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 967a72fa7f6b77eb9f65c7365487662a4d04dbe4
+Message-Id: <176303909079.842124.2716335830497466078.pr-tracker-bot@kernel.org>
+Date: Thu, 13 Nov 2025 13:04:50 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, "Stefan (metze) Metzmacher" <metze@samba.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <367c6cc9ffa12937ce18f37fc1271e3d17a3f7aa6ea6d1152cc8a41539994865@mail.kernel.org>
-In-Reply-To: <20251113123750.2507435-5-jolsa@kernel.org>
-References: <20251113123750.2507435-5-jolsa@kernel.org>
-Subject: Re: [PATCHv2 bpf-next 4/8] ftrace: Add update_ftrace_direct_del function
-From: bot+bpf-ci@kernel.org
-To: jolsa@kernel.org,rostedt@kernel.org,revest@google.com,mark.rutland@arm.com
-Cc: bpf@vger.kernel.org,linux-kernel@vger.kernel.org,linux-trace-kernel@vger.kernel.org,linux-arm-kernel@lists.infradead.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,menglong8.dong@gmail.com,song@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Thu, 13 Nov 2025 13:02:21 +0000 (UTC)
 
---===============2663991294437569515==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+The pull request you sent on Wed, 12 Nov 2025 22:39:33 -0600:
 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index ded3a306a..433c36c3a 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -543,6 +543,7 @@ int modify_ftrace_direct(struct ftrace_ops *ops, unsigned long addr);
->  int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned long addr);
->
->  int update_ftrace_direct_add(struct ftrace_ops *ops, struct ftrace_hash *hash);
-> +int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash);
->
->  void ftrace_stub_direct_tramp(void);
+> git://git.samba.org/ksmbd.git tags/v6.18-rc5-smb-server-fixes
 
-[ ... ]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/967a72fa7f6b77eb9f65c7365487662a4d04dbe4
 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 311ce6406..345f3fdd2 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
+Thank you!
 
-[ ... ]
-
-> +int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
-> +{
-> +	struct ftrace_hash *new_hash = NULL, *filter_hash = NULL, *free_hash = NULL;
-> +	struct ftrace_func_entry *del, *entry;
-> +	unsigned long size, i;
-> +	int err = -EINVAL;
-> +
-> +	if (!hash_count(hash))
-> +		return 0;
-> +	if (check_direct_multi(ops))
-> +		return -EINVAL;
-> +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
-> +		return -EINVAL;
-> +	if (direct_functions == EMPTY_HASH)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&direct_mutex);
-> +
-> +	/* Make sure requested entries are already registered. */
-> +	size = 1 << hash->size_bits;
-> +	for (i = 0; i < size; i++) {
-> +		hlist_for_each_entry(entry, &hash->buckets[i], hlist) {
-> +			del = __ftrace_lookup_ip(direct_functions, entry->ip);
-> +			if (!del || del->direct != entry->direct)
-> +				goto out_unlock;
-> +		}
-> +	}
-> +
-> +	err = -ENOMEM;
-> +	filter_hash = hash_sub(ops->func_hash->filter_hash, hash);
-> +	if (!filter_hash)
-> +		goto out_unlock;
-> +
-> +	new_hash = hash_sub(direct_functions, hash);
-> +	if (!new_hash)
-> +		goto out_unlock;
-
-Can this leak new_hash?  If hash_sub() succeeds for both filter_hash
-and new_hash, but then either unregister_ftrace_function() or
-ftrace_update_ops() fails below, we goto out_unlock without freeing
-new_hash.  The cleanup code only frees filter_hash:
-
-> +
-> +	/* If there's nothing left, we need to unregister the ops. */
-> +	if (ftrace_hash_empty(filter_hash)) {
-> +		err = unregister_ftrace_function(ops);
-> +		/* cleanup for possible another register call */
-> +		ops->func = NULL;
-> +		ops->trampoline = 0;
-> +		ftrace_free_filter(ops);
-> +		ops->func_hash->filter_hash = NULL;
-> +	} else {
-> +		err = ftrace_update_ops(ops, filter_hash, EMPTY_HASH);
-> +	}
-> +
-> +	if (!err) {
-> +		free_hash = direct_functions;
-> +		rcu_assign_pointer(direct_functions, new_hash);
-> +	}
-> +
-> + out_unlock:
-> +	mutex_unlock(&direct_mutex);
-> +
-> +	if (free_hash && free_hash != EMPTY_HASH)
-> +		call_rcu_tasks(&free_hash->rcu, register_ftrace_direct_cb);
-> +	if (filter_hash)
-> +		free_ftrace_hash(filter_hash);
-> +
-> +	return err;
-> +}
-
-If err != 0, new_hash remains allocated but is never freed.  Should the
-cleanup code add free_ftrace_hash(new_hash) when it's non-NULL?
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19332026793
-
---===============2663991294437569515==--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
