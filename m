@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-899270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F77C5740E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:46:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DF8C5741A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0EDDA34B241
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2432A3ACEB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B15345CAC;
-	Thu, 13 Nov 2025 11:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08F533892C;
+	Thu, 13 Nov 2025 11:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSsSfW5n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EyydNcHn"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690CA2DAFB9;
-	Thu, 13 Nov 2025 11:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECA53112BB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763034162; cv=none; b=bmLlF0mLgDDDKvBM4G6pF2nkPP3D0p4AHNbFJR18UunMeOODIAOpNMSGjq1FtM3quQsCoEvsCsJ8SVC9FPbKvm92r7KfoQwE1MAn0MnlVBGX7iXQ6oJUCv/SRFInj2mraawEJa/hUz6JRQdD+sOcS99CUd7QBCcvAIFw8iKzMhw=
+	t=1763034273; cv=none; b=U3LpuA6xWFNhEXPf3R1rG2NmCQYxf4xnrJJPTK0o/1VeyNW7wh848sV3giFIOxDS/0i400RZR5grRjNiea5W6JhFjbRNOMlHqBFHEwloJHVokglwD4M2q5gQW7BsRJVuKsKo+CyVRVT2mrnkpg07+1m1mNoBeoS3qjBwsSiBk3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763034162; c=relaxed/simple;
-	bh=oH5KU5/6HrAVYqg3IqBO/mqMxwAJncA9peHsf4tgYN8=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=rbNCuBfZ7ZVbmNcPYB6Rp7K6B3j0MCW7dumqZrBEHnP/9qzLlVfBwbP+C1YsXWKayh8Hs2trs6xJYqlUjxaLs/haUsnGHx46ictc/tWItBX0CnDZO30+ehp9CWWA7OJCIGDhekbeF6L0vUa6greVVBbftGxc2sSjGlPQ0yVIFvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSsSfW5n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493AFC19423;
-	Thu, 13 Nov 2025 11:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763034161;
-	bh=oH5KU5/6HrAVYqg3IqBO/mqMxwAJncA9peHsf4tgYN8=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=gSsSfW5nwmXMPLyuX1Qr2im6sYq9oPgwlLcF8ObWxDW5Vv8wDNcluBSVQ+9+ZxWYb
-	 JhsKQEq3Y9ZLLtnAQvzSseQCPXuzr8If8/WFuOZeh4GassghQCrQItbxR/pn21WXTn
-	 8yYEMrRx25fURyYlppoZJyTLEflm4UWgjCq3RXN8qRD5UGdiZy/hsrfzRdN8chzdtX
-	 FRWhSPFTBktKI/GG/59M2vTAvDBu7pId3PvvjIE9tKadNEUu0lSSfKx/mk0Oy8herp
-	 kOegFZWfheJA6+bdxy5MtM7jBdItTntTebunjW4cZdCNQyPNqb12xqIo4YG/+PHbbD
-	 yZnCIYOSyjIsQ==
-Content-Type: multipart/mixed; boundary="===============1700948574828837009=="
+	s=arc-20240116; t=1763034273; c=relaxed/simple;
+	bh=cayhevHlhqpCkcyseaRFmNDhVj8QyOhC36i7FYExAfA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=nbR001WMiQTUyr5brOgqg1VR2MB9rQ2Ij4tYPsErbi6USKAor5OkhfgEOClhyXbPYrrQYfWo1gSFSKD3P+MD9WpMiuO3Uhnbh1N2K8q3p6z+mmOaOSrTOIKO3ll9tXGmitA+V2ydtGFbjYi8eii7ySwGWuSXAD6dH7HL7bsD4J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EyydNcHn; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763034259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=OpSEyujv6xez7n2B9Rt5/pmDqH1hHhrLwBlVTGozI5Y=;
+	b=EyydNcHnigncRiI/sA5/DuUq+ar8c4s8T3lyQwXyMMeWZFAExFhkcfQfE1Mc+JK7iN34sX
+	/IGYD6DTru5dFOVvxy5Rr5vx53xDF4FdLmKOiXh4XpbuXWZFbOh6+Y0h6+hXMoHHzNvfID
+	C5mnFt+WRGSzLbThX7DgQ6cSctG+cHQ=
+From: Zqiang <qiang.zhang@linux.dev>
+To: tj@kernel.org,
+	void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	qiang.zhang@linux.dev
+Subject: [PATCH] sched_ext: Fix possible deadlock in the deferred_irq_workfn()
+Date: Thu, 13 Nov 2025 19:43:55 +0800
+Message-Id: <20251113114355.24572-1-qiang.zhang@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <8a586dfbb76e489a4dadc1852769a24c3ef79ffcc4007df2084d047052bdde05@mail.kernel.org>
-In-Reply-To: <d0458ec2290e85a8c885432359a33ba8596ba992.1763024337.git.paul.houssel@orange.com>
-References: <d0458ec2290e85a8c885432359a33ba8596ba992.1763024337.git.paul.houssel@orange.com>
-Subject: Re: [PATCH v3 1/2] libbpf: fix BTF dedup to support recursive typedef definitions
-From: bot+bpf-ci@kernel.org
-To: paulhoussel2@gmail.com,paulhoussel2@gmail.com,eddyz87@gmail.com,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org
-Cc: martin.horth@telecom-sudparis.eu,ouail.derghal@imt-atlantique.fr,guilhem.jazeron@inria.fr,ludovic.paillat@inria.fr,robin.theveniaut@irit.fr,tristan.daudibert@gmail.com,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,shuah@kernel.org,paul.houssel@orange.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Thu, 13 Nov 2025 11:42:41 +0000 (UTC)
 
---===============1700948574828837009==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+For PREEMPT_RT=y kernels, the deferred_irq_workfn() is executed in
+the per-cpu irq_work/* task context and not disable-irq, if the rq
+returned by container_of() is current CPU's rq, the following scenarios
+may occur:
 
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 9f141395c..5c4035eb9 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
+lock(&rq->__lock);
+<Interrupt>
+  lock(&rq->__lock);
 
-[ ... ]
+This commit use IRQ_WORK_INIT_HARD() to replace init_irq_work() to
+initialize rq->scx.deferred_irq_work, make the deferred_irq_workfn()
+is always invoked in hard-irq context.
 
-> @@ -4844,14 +4865,31 @@ static void btf_dedup_merge_hypot_map(struct btf_dedup *d)
->  	}
->  }
->
-> +static inline long btf_hash_by_kind(struct btf_type *t, __u16 kind)
-> +{
-> +	if (kind == BTF_KIND_TYPEDEF)
-> +		return btf_hash_typedef(t);
-> +	else
-> +		return btf_hash_struct(t);
-> +}
-> +
-> +static inline bool btf_equal_by_kind(struct btf_type *t1, struct btf_type *t2, __u16 kind)
-> +{
-> +	if (kind == BTF_KIND_TYPEDEF)
-> +		return btf_equal_typedef(t1, t2);
-> +	else
-> +		return btf_shallow_equal_struct(t1, t2);
-> +}
-> +
->  /*
-> - * Deduplicate struct/union types.
-> + * Deduplicate struct/union and typedef types.
->   *
->   * For each struct/union type its type signature hash is calculated, taking
->   * into account type's name, size, number, order and names of fields, but
->   * ignoring type ID's referenced from fields, because they might not be deduped
-> - * completely until after reference types deduplication phase. This type hash
-> - * is used to iterate over all potential canonical types, sharing same hash.
-> + * completely until after reference types deduplication phase. For each typedef
-> + * type, the hash is computed based on the type's name and size. This type hash
-> + * is used to iterate over all potential canonical types, sharingsame hash.
-                                                                   ^^^^^^^^^^
-
-This isn't a bug, but there's a typo here - "sharingsame" should be
-"sharing same" (two words).
-
->   * For each canonical candidate we check whether type graphs that they form
->   * (through referenced types in fields and so on) are equivalent using algorithm
->   * implemented in `btf_dedup_is_equiv`. If such equivalence is found and
-
-[ ... ]
-
-
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
 ---
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19329986070
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 2b0e88206d07..747b0d8528ab 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5225,7 +5225,7 @@ void __init init_sched_ext_class(void)
+ 		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_kick_if_idle, GFP_KERNEL, n));
+ 		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_preempt, GFP_KERNEL, n));
+ 		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_wait, GFP_KERNEL, n));
+-		init_irq_work(&rq->scx.deferred_irq_work, deferred_irq_workfn);
++		rq->scx.deferred_irq_work = IRQ_WORK_INIT_HARD(deferred_irq_workfn);
+ 		init_irq_work(&rq->scx.kick_cpus_irq_work, kick_cpus_irq_workfn);
+ 
+ 		if (cpu_online(cpu))
+-- 
+2.17.1
 
---===============1700948574828837009==--
 
