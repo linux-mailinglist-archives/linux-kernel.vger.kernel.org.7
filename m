@@ -1,44 +1,75 @@
-Return-Path: <linux-kernel+bounces-898776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502ACC55FE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF0DC56040
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EAD6734D4EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:03:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C610E349EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFC9314D14;
-	Thu, 13 Nov 2025 07:03:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2126320CBA;
+	Thu, 13 Nov 2025 07:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Gb2VBb1r"
+Received: from sonic312-25.consmr.mail.gq1.yahoo.com (sonic312-25.consmr.mail.gq1.yahoo.com [98.137.69.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA81E2A1CF;
-	Thu, 13 Nov 2025 07:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69B13043BD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763017405; cv=none; b=Yre3uj4nmDquF1TObBO2PIBzar0vvgZSnx6P/OeZ5dljFD1zBrUZzlJZYMvAZtRqIUeXf5UsOAhyF6ATs1D/bNcTTeWnWAb7SseaJ6n+oKs6sEx8TRKhBP4fSWhLuIjww2FRNHfbgIW+AawifNeVc2Zhk28AMbHJUvwnBZZMuVA=
+	t=1763017920; cv=none; b=hD9RkTCaXRHamObjWqj5V9IhH7VubieHa6OuRUOiEGtBAVf1S1S4Zsxafh5pCjAan6MKyT3QXcHVf/qGkOnNV9jMPOeFO3P6SW+K/vdT2IxIaXUmx7CB385ETkybn2Kmrm/uwQSDTgXWOhyFrl+UKOhppOql4rt65ttNMeKHbuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763017405; c=relaxed/simple;
-	bh=I3SOh6jRlurIISZfw38ut0G2vxBbXgNkWvMzTt+lrn8=;
+	s=arc-20240116; t=1763017920; c=relaxed/simple;
+	bh=9mRkm0thRkAeL1Ah01Kul6o2+tcofOSucv8u+yexQwk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DuvjLHY7b3Y9zufICOuKhGbRfYu/IkLeVvEG6y3tkjtwT9O1yKppMj/l6v+W1BAr1LaXRevUC7VSdRk8tUegLjRuMwkkG+LdEUUmNCw2HJRJ/wQXPy2Jk4yDgcEZo+zIWVfvbtIX+v0UfWaihC/sagjRZ4SNX/ynVET3Hs09Nbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6WS84T9JzYQv6p;
-	Thu, 13 Nov 2025 15:02:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5473B1A144C;
-	Thu, 13 Nov 2025 15:03:18 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP4 (Coremail) with SMTP id gCh0CgDnDly0ghVpihdPAg--.59079S2;
-	Thu, 13 Nov 2025 15:03:18 +0800 (CST)
-Message-ID: <fd98e16d-0602-4ecd-9f8b-9ee494ddaa1d@huaweicloud.com>
-Date: Thu, 13 Nov 2025 15:03:16 +0800
+	 In-Reply-To:Content-Type; b=GvztXxiKPtkTwa57rMIoB/nrOPaCAS+YhBUVPfpnBqnop8E+vFbd12ut9PIsX7fTSjPyuVDQxFMdLpU0F8kKboo5dCkx1HJ5OK98gn8h+inuonVuB/E4pfMtR7iuTLLcdAQlMQpnQ/mtCFPYwZEwFl0OtJfQR7E/hHofA1tnrxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Gb2VBb1r; arc=none smtp.client-ip=98.137.69.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763017918; bh=kx2Gc5JMZxIsn9Y/g/pzvq1ZU2AYiX6d4Mm9inJ05Qc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Gb2VBb1rodunOhX1prOITdbm2Ytg7rwxlszNmSB+SAWCOTJRIbxpGCr0RqR2BtIl6ygl5JVSe+Z3I6Im7BLQzgKSSOzAVCyls6R4MabYDrwgcEc4Y6WcQM6xWqxEB2vo+Ipj7HccLPRgK7jgE7volK4pyyj92a5Qms/++xlgqGMyT8Sq4pf81p6aqbB8xyRIkhXhsf0lr5AS3lznl+AsoVhVpq3qc+oPfcMWo2oLVNgK3ZdUJwn044MqrCYbwIwIG9Yx2dgkoB4E9km7vAbfssZepdy6RYAAn2PPaQ7mviuiXcgUWI9l0aBSM3n3OEoflH0y4FZ4yrbkvHvLRYRs2w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763017918; bh=jHtQX+UGeUT0BN0NWWVj0uJ9i55REgNQ18dTZFcsfhG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=npchCPqN2eH9EpuTrAeE0QKVePyqdSMMpje/fXDAxPeLVAQuVHdt6sr7JGFPW2d1Fmbioca7Rt9Gos4IV2nNU4bMXasZTjqCXaBGTldHtjqMKrKHxGfb/T6YsOPZM1OKken/uvrvFH4IS5H5vZTCVGyvhDJKhhh7Mahp5k6vXcSpYOJ0S7CM1+/O8MG4vcw40hPhQ1BBgJYex4mNk3BO1WMBq+O0cv3+UMg3MT2vm7R472BJMiI2m/OHPPyS+vd+v4w3gRDZAZlm9DmR1+GrdggxNH2QiPZPSfn9AKKOLr0pdcJBwViVdif7L+WQyNvtP4PtkwJaWie5DiWX+5ZANg==
+X-YMail-OSG: 1Vnvb5QVM1kFxSXi5ErfmFdf2QCETan4FtYdyQTiRg7bpeiBx4tHkWIpM.OeA0L
+ 4Ohg5OMZ0bqM1EdKjShltMIWEY6XjH3wSEoVehTc7HLB3G.DX3IjDYIlYYNdTJaDKhXrOxQZP_h_
+ Mgh713Q7ITQgUPnlyM2uFs4Mq_YqlByTydHTzV4dVF5nPbvRn13VxvJoNlDJA.et1ToTLr_SNZAI
+ QTNoYtd6S_CumD0vDvnShpsx5FsWwd5mfhK2GftIw772Rm9PrpTimcaS4aqemSzuxi8Eq60Ef9S0
+ nub9EtWo87duHw.nuGjtxBKDvnZ.asulbODaFYBvkucELbXtmhcAcCQbn..hewsyoFWx2EWnbajR
+ jpF8ftJDgQe8cEN9.S2a3lJRyDR_8QgKAiOATJYd_wkr_RqrVLTm.6tdZ4y01ABqqX1ZsdEZes40
+ ns.eT8QcFhPvgglxLHZB9tcC7ElqMiywMgJXDL3gBy_7J6hwvFJWKlxRNmpIIsUKgkUSsFtav_qL
+ GY.eP6r8q2irBPg0MqTCtUb7VDX8yklRf958HS8Iq6pKH.di8v7h7u9NrwwsNi.s4m9dvz8Caz8q
+ fodVHleAXV_cQqXsCCIUgYPxojX.KRg1PIOuOjELWPsxJB.FtDwvx5yDHtHrLXufFQ4v6erKodfT
+ 3w4ddqIUj3CCoDGWz3IMARVicTuHZ.2gSGAe5nSmkyMOhSWJ6IcbR8ITPcksFPPv9h4ZvUMKSYQf
+ 01Ma0ucJA.4IUvz7D06sFnm.gJuuudcAvXMK9lckGo5MIpLmImJUzoO02ecl40Dho4C12dHKM8RO
+ zz_kBd_wys5QDNDOn092hnsrG9HfcqcOab.k3.RT_iqiesEPP3XS9xbD.5AJCODaSzeJ4jFF8ren
+ eSWrfo8ZWdLeMO9LN6EYaI9H5jBKeFT61Kk_9gwScdWXvfWJRcwuGDwqUIhPYF.HEK09wUsVTo8G
+ ro4T6i5YEONMJqQwzlvlnDANywf7BbhDEGnmGhKeVaWxAuFZnVRFXBUrM1gHkJH5ktHlMRDh5Pya
+ h69N4BcXXx9nTL27OiX_6ev7bnUBANZhMfakVS_yd8OnBPc9l.__vJMQ2m_mcrACZTbDht3NN_hh
+ OWbrcuw9f4ZCbxP_IvOZyD4e9zCjuEA9vkAqadaRevvHtOrrtOpG3B4CiouJQ1fbjUt6yDct9NV.
+ W74vYX7ueWzOcFWTfRQ0D3loG.Qg6LzNlAaCse0jcKIoo.U78eewCxHwCJfNO6m.ObqHhkC4FfCW
+ nVXhb2q_Kimpz64Vd38gsbec9KvhyhpEXMdRXpvXUZn.R5Z_LMJUt5RsJeSrlxKcRBXA1MwgPZaY
+ iAJ78L6rCukw8T14vElmvhzEBmJV8cv56SVYDX7iPRba7Ym0qwYg_kPesjs0ogJF3EXwEh0pSqqr
+ hzy5zbd9wix5joMYmkjIGXFW7.4BfXN46ESD1rFqBWK7.F3HG5Xw1pl6JcjgzhpjMkheqYC3wDZG
+ TYdeayZ0pQkyM4nRHxLNdXrOb8jGVItcBJsnq0q7aCp7o1si7bkoKizZgcx7ZVGczMneW5aSgd_y
+ aqwO6Y9vrJtrQbyLDeUygS7VZ8rWnZc3Rhem4t69aG7a0ZDIBx9DkRKJFmO5SBHGL3mgPkKwNhaT
+ NJCpaovcoWXyABvnn38cxc92Nj7k15xIb2SCx2atLwMtyePgU2j5NbF8SgLMCVqV1TSX5xgthTEr
+ pArYJ8lTjDg.bzwb1vrB76bUfQoL6qFSJKkizzcOJ.PJxm4RcS4JknOQrrsHPyB5QO.QCjNsK2hq
+ rc_qIu0VNzCbg2zdJq_4H_fx9HQKNdgVS6wi1Tb9Ly7soZLA.Yw2zkCFyZqWpgkr3C.7RjwcHn1d
+ 0UkVLwMKTNMMdwSpnyg2yiQsvJKsc08f3k4W60xbt1wDDIf1phpnSuXS6DAiZ2iWxGbYZCOng6T0
+ QLP.xYamYY3wKygY8VK86_J1r7wH0ChBfcjra6Wvs8.F5ZB2R8cnEzsxOL0va8HYRVNyXI1KSrtq
+ h7kGjwQfXnqfLWPu4vTUPWozNuc4bWBvKgEp30zEDBW65k4e.rmk2KziUBrA7hWqqGkvEX9UKzEr
+ pqRawkR_pkDMCy1n6COX0uqlmTA7B8xeJSYjbMi8iaYyWn_1T4.tLz5_P4E8_MBtxxMS4mGHESgc
+ G7QswjEXJSY4uJt.2c23LeYlXbS4uLxyBo2PHjIwo2UjEU91XUwNZf5.KU5NTHDmGtObBFDGt.Km
+ y94ifyZ1A0Rt9twiPbzblOxfMyrDsGBBtgWZyGeAtmWs-
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 25bb90e9-018e-4e72-87d4-c2dbc32102c2
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 07:11:58 +0000
+Received: by hermes--production-bf1-58477f5468-xwsfb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7988a6bd19b29596b4f47d1e6b68cb03;
+          Thu, 13 Nov 2025 06:41:35 +0000 (UTC)
+Message-ID: <335f64d5-390b-4529-b2da-0af019c7f598@yahoo.com>
+Date: Thu, 13 Nov 2025 07:41:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,211 +77,326 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 12/22] cpuset: introduce
- local_partition_invalidate()
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
- <20251025064844.495525-13-chenridong@huaweicloud.com>
- <f9a3fffb-922c-4d4a-81ad-9eeb489cef07@redhat.com>
+Subject: Re: [PATCH v4] selftests: af_unix: Add tests for ECONNRESET and EOF
+ semantics
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251112212026.31441-1-adelodunolaoluwa.ref@yahoo.com>
+ <20251112212026.31441-1-adelodunolaoluwa@yahoo.com>
+ <CAAVpQUB97EBnTbA9pKwdhPM0pHadiM3QhP4_1qLSKGg2LAwzkA@mail.gmail.com>
+ <295e5440-94eb-447f-b4f0-4943e9d02f1c@yahoo.com>
+ <CAAVpQUAyPwyG=aSnv-2w7g3dqhB3BLXGoo5VmbSNqQ0txpqqWQ@mail.gmail.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <f9a3fffb-922c-4d4a-81ad-9eeb489cef07@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <CAAVpQUAyPwyG=aSnv-2w7g3dqhB3BLXGoo5VmbSNqQ0txpqqWQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnDly0ghVpihdPAg--.59079S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw15WF4Dtr18XrW5WFWDtwb_yoWfGryDpr
-	18JrW7JrWUJr1rC347JFs7JryrGw1DJ3WDtr1kXF1rJr17Jw1qqF1jq34vgr1UJr4kJr1U
-	ZF1UXrsrZF17ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
+On 11/13/25 07:10, Kuniyuki Iwashima wrote:
+> On Wed, Nov 12, 2025 at 9:25 PM Sunday Adelodun
+> <adelodunolaoluwa@yahoo.com> wrote:
+>> On 11/12/25 23:04, Kuniyuki Iwashima wrote:
+>>> On Wed, Nov 12, 2025 at 1:20 PM Sunday Adelodun
+>>> <adelodunolaoluwa@yahoo.com> wrote:
+>>>> Add selftests to verify and document Linux’s intended behaviour for
+>>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
+>>>> The tests verify that:
+>>>>
+>>>>    1. SOCK_STREAM returns EOF when the peer closes normally.
+>>>>    2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
+>>>>    3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+>>>>    4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
+>>>>    5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+>>>>
+>>>> This follows up on review feedback suggesting a selftest to clarify
+>>>> Linux’s semantics.
+>>>>
+>>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+>>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+>>>> ---
+>>>>    tools/testing/selftests/net/.gitignore        |   1 +
+>>>>    tools/testing/selftests/net/af_unix/Makefile  |   1 +
+>>>>    .../selftests/net/af_unix/unix_connreset.c    | 178 ++++++++++++++++++
+>>>>    3 files changed, 180 insertions(+)
+>>>>    create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>>
+>>>> diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
+>>>> index 439101b518ee..e89a60581a13 100644
+>>>> --- a/tools/testing/selftests/net/.gitignore
+>>>> +++ b/tools/testing/selftests/net/.gitignore
+>>>> @@ -65,3 +65,4 @@ udpgso
+>>>>    udpgso_bench_rx
+>>>>    udpgso_bench_tx
+>>>>    unix_connect
+>>>> +unix_connreset
+>>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
+>>>> index de805cbbdf69..5826a8372451 100644
+>>>> --- a/tools/testing/selftests/net/af_unix/Makefile
+>>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
+>>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
+>>>>           scm_pidfd \
+>>>>           scm_rights \
+>>>>           unix_connect \
+>>>> +       unix_connreset \
+>>>>    # end of TEST_GEN_PROGS
+>>>>
+>>>>    include ../../lib.mk
+>>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>> new file mode 100644
+>>>> index 000000000000..9413f8a0814f
+>>>> --- /dev/null
+>>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>> @@ -0,0 +1,178 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
+>>>> + *
+>>>> + * This test verifies:
+>>>> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
+>>>> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
+>>>> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+>>>> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
+>>>> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+>>>> + *
+>>>> + * These tests document the intended Linux behaviour.
+>>>> + *
+>>>> + */
+>>>> +
+>>>> +#define _GNU_SOURCE
+>>>> +#include <stdlib.h>
+>>>> +#include <string.h>
+>>>> +#include <fcntl.h>
+>>>> +#include <unistd.h>
+>>>> +#include <errno.h>
+>>>> +#include <sys/socket.h>
+>>>> +#include <sys/un.h>
+>>>> +#include "../../kselftest_harness.h"
+>>>> +
+>>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
+>>>> +
+>>>> +static void remove_socket_file(void)
+>>>> +{
+>>>> +       unlink(SOCK_PATH);
+>>>> +}
+>>>> +
+>>>> +FIXTURE(unix_sock)
+>>>> +{
+>>>> +       int server;
+>>>> +       int client;
+>>>> +       int child;
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT(unix_sock)
+>>>> +{
+>>>> +       int socket_type;
+>>>> +       const char *name;
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
+>>>> +       .socket_type = SOCK_STREAM,
+>>>> +       .name = "SOCK_STREAM",
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
+>>>> +       .socket_type = SOCK_DGRAM,
+>>>> +       .name = "SOCK_DGRAM",
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
+>>>> +       .socket_type = SOCK_SEQPACKET,
+>>>> +       .name = "SOCK_SEQPACKET",
+>>>> +};
+>>>> +
+>>>> +FIXTURE_SETUP(unix_sock)
+>>>> +{
+>>>> +       struct sockaddr_un addr = {};
+>>>> +       int err;
+>>>> +
+>>>> +       addr.sun_family = AF_UNIX;
+>>>> +       strcpy(addr.sun_path, SOCK_PATH);
+>>>> +       remove_socket_file();
+>>>> +
+>>>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
+>>>> +       ASSERT_LT(-1, self->server);
+>>>> +
+>>>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
+>>>> +       ASSERT_EQ(0, err);
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_STREAM ||
+>>>> +           variant->socket_type == SOCK_SEQPACKET) {
+>>>> +               err = listen(self->server, 1);
+>>>> +               ASSERT_EQ(0, err);
+>>>> +       }
+>>>> +
+>>>> +       self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
+>>>> +       ASSERT_LT(-1, self->client);
+>>>> +
+>>>> +       err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>>>> +       ASSERT_EQ(0, err);
+>>>> +}
+>>>> +
+>>>> +FIXTURE_TEARDOWN(unix_sock)
+>>>> +{
+>>>> +       if ((variant->socket_type == SOCK_STREAM ||
+>>>> +            variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
+>>>> +               close(self->child);
+>>>> +
+>>>> +       close(self->client);
+>>>> +       close(self->server);
+>>>> +       remove_socket_file();
+>>>> +}
+>>>> +
+>>>> +/* Test 1: peer closes normally */
+>>>> +TEST_F(unix_sock, eof)
+>>>> +{
+>>>> +       char buf[16] = {};
+>>>> +       ssize_t n;
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_STREAM ||
+>>>> +           variant->socket_type == SOCK_SEQPACKET) {
+>>>> +               self->child = accept(self->server, NULL, NULL);
+>>>> +               ASSERT_LT(-1, self->child);
+>>>> +
+>>>> +               close(self->child);
+>>>> +       } else {
+>>>> +               close(self->server);
+>>>> +       }
+>>>> +
+>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_STREAM ||
+>>>> +           variant->socket_type == SOCK_SEQPACKET) {
+>>>> +               ASSERT_EQ(0, n);
+>>>> +       } else {
+>>>> +               ASSERT_EQ(-1, n);
+>>>> +               ASSERT_EQ(EAGAIN, errno);
+>>>> +       }
+>>>> +}
+>>>> +
+>>>> +/* Test 2: peer closes with unread data */
+>>>> +TEST_F(unix_sock, reset_unread_behavior)
+>>>> +{
+>>>> +       char buf[16] = {};
+>>>> +       ssize_t n;
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_DGRAM) {
+>>>> +               /* No real connection, just close the server */
+>>>> +               close(self->server);
+>>>> +       } else {
+>>>> +               /* Establish full connection first */
+>>>> +               self->child = accept(self->server, NULL, NULL);
+>>>> +               ASSERT_LT(-1, self->child);
+>>>> +
+>>>> +               /* Send data that will remain unread */
+>>>> +               send(self->client, "hello", 5, 0);
+>>> Could you move this send() before "if (...)" because we want
+>>> to test unread_data behaviour for SOCK_DGRAM too ?
+>>>
+>>> Otherwise looks good, so with that fixed:
+>>>
+>>> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+>>>
+>>> Thanks!
+>> Thank you for the prompt response.
+>> I thought of putting the send before the if the statement , but I was afraid
+>> STREAM and SEQPACKET connections won't be accepted before data sending.
+> connect() create the paired child socket and accept()
+> allocates a file descriptor to expose the socket to user
+> space.
+Thank you for this explanation.
+>
+> In that sense, the comment above accept() sounds a
+> bit weird ;)
+I understand.
+I am changing it to
+/* Accept client connection */
 
+If this is accepted, I will send v5 immediately
 
-On 2025/11/13 6:54, Waiman Long wrote:
-> On 10/25/25 2:48 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
+Thank you for your guidance.
+>
+>
+>> I will start working on v5.
 >>
->> Build on the partition_disable() infrastructure introduced in the previous
->> patch to handle local partition invalidation.
+>> That part will look like this now:
+>> /* Test 2: peer closes with unread data */
+>> TEST_F(unix_sock, reset_unread_behavior)
+>> {
+>>           char buf[16] = {};
+>>           ssize_t n;
 >>
->> The local_partition_invalidate() function factors out the local partition
->> invalidation logic from update_parent_effective_cpumask(), which delegates
->> to partition_disable() to complete the invalidation process.
+>> */* Send data that will remain unread */
+>>           send(self->client, "hello", 5, 0);*
 >>
->> Additionally, correct the transition logic in cpuset_hotplug_update_tasks()
->> when determining whether to transition an invalid partition root, the check
->> should be based on non-empty user_cpus rather than non-empty
->> effective_xcpus. This correction addresses the scenario where
->> exclusive_cpus is not set but cpus_allowed is configured - in this case,
->> effective_xcpus may be empty even though the partition should be considered
->> for re-enablement. The user_cpus-based check ensures proper partition state
->> transitions under these conditions.
+>> *if (variant->socket_type == SOCK_DGRAM) {
+>>                   /* No real connection, just close the server */
+>>                   close(self->server);
+>>           } else {
+>>                   /* Establish full connection first */
+>>                   self->child = accept(self->server, NULL, NULL);
+>>                   ASSERT_LT(-1, self->child);
 >>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 66 +++++++++++++++++++++++++++---------------
->>   1 file changed, 43 insertions(+), 23 deletions(-)
+>>                   /* Peer closes before client reads */
+>>                   close(self->child);
+>>           }*
 >>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index f36d17a4d8cd..73a43ab58f72 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1914,6 +1914,40 @@ static void local_partition_disable(struct cpuset *cs, enum prs_errcode
->> part_err
->>       }
->>   }
->>   +/**
->> + * local_partition_invalidate - Invalidate a local partition
->> + * @cs: Target cpuset (local partition root) to invalidate
->> + * @tmp: Temporary masks
->> + */
->> +static void local_partition_invalidate(struct cpuset *cs, struct tmpmasks *tmp)
->> +{
->> +    struct cpumask *xcpus = user_xcpus(cs);
->> +    struct cpuset *parent = parent_cs(cs);
->> +    int new_prs = cs->partition_root_state;
->> +    bool cpumask_updated = false;
->> +
->> +    lockdep_assert_held(&cpuset_mutex);
->> +    WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
->> +
->> +    if (!is_partition_valid(cs))
->> +        return;
->> +
->> +    /*
->> +     * Make the current partition invalid.
->> +     */
->> +    if (is_partition_valid(parent))
->> +        cpumask_updated = cpumask_and(tmp->addmask,
->> +                          xcpus, parent->effective_xcpus);
-> Invalidation is different from disable. It can be called when parent is no longer a valid partition
-> root. So the check here is appropriate.
-
-In patch 17, I’ve unified local_partition_disable() and local_partition_invalidate() into a single
-local_partition_disable() function—this simplifies the logic significantly. For remote partitions,
-only remote_partition_disable() is used, making the interface symmetrical.
-
-I split this into a separate patch solely to make the review clearer and easier.
-
-Maybe I should directly replace the relevant logic in update_parent_effective_cpumask() with
-local_partition_disable()?
-
->> +    if (cs->partition_root_state > 0)
->> +        new_prs = -cs->partition_root_state;
->> +
->> +    partition_disable(cs, parent, new_prs, cs->prs_err);
->> +    if (cpumask_updated) {
-> 
-> The cpumask_and() operation above is no longer relevant as it should be done inside
-> partition_disable(). Instead of cpumask_updated, we can just do a "is_partition_valid(parent))"
-> check here to decide if the following two helpers should be called.
-> 
-> Cheers,
-> Longman
-> 
-
-Similar to local_partition_disable, cpumask_updated indicates whether any CPUs need to be returned
-to the parent. partition_disable will return the CPUs to the parent if tmp->addmask is empty.
-However, since tmp->addmask may indeed be empty, I believe cpumask_updated is necessary.
-
-In the next version, I’ll try directly replacing the relevant logic in
-update_parent_effective_cpumask() with local_partition_disable()—this should make the code much clearer.
-
-> 
->> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
->> +        update_sibling_cpumasks(parent, cs, tmp);
->> +    }
->> +}
->> +
->>   /**
->>    * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
->>    * @cs:      The cpuset that requests change in partition root state
->> @@ -1974,22 +2008,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>       adding = deleting = false;
->>       old_prs = new_prs = cs->partition_root_state;
->>   -    if (cmd == partcmd_invalidate) {
->> -        if (is_partition_invalid(cs))
->> -            return 0;
->> -
->> -        /*
->> -         * Make the current partition invalid.
->> -         */
->> -        if (is_partition_valid(parent))
->> -            adding = cpumask_and(tmp->addmask,
->> -                         xcpus, parent->effective_xcpus);
->> -        if (old_prs > 0)
->> -            new_prs = -old_prs;
->> -
->> -        goto write_error;
->> -    }
->> -
->>       /*
->>        * The parent must be a partition root.
->>        * The new cpumask, if present, or the current cpus_allowed must
->> @@ -2553,7 +2571,7 @@ static int cpus_allowed_validate_change(struct cpuset *cs, struct cpuset
->> *trialc
->>               if (is_partition_valid(cp) &&
->>                   cpumask_intersects(xcpus, cp->effective_xcpus)) {
->>                   rcu_read_unlock();
->> -                update_parent_effective_cpumask(cp, partcmd_invalidate, NULL, tmp);
->> +                local_partition_invalidate(cp, tmp);
->>                   rcu_read_lock();
->>               }
->>           }
->> @@ -2593,8 +2611,7 @@ static void partition_cpus_change(struct cpuset *cs, struct cpuset *trialcs,
->>                          trialcs->effective_xcpus, tmp);
->>       } else {
->>           if (trialcs->prs_err)
->> -            update_parent_effective_cpumask(cs, partcmd_invalidate,
->> -                            NULL, tmp);
->> +            local_partition_invalidate(cs, tmp);
->>           else
->>               update_parent_effective_cpumask(cs, partcmd_update,
->>                               trialcs->effective_xcpus, tmp);
->> @@ -4040,18 +4057,21 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs, struct tmpmasks
->> *tmp)
->>        *    partitions.
->>        */
->>       if (is_local_partition(cs) && (!is_partition_valid(parent) ||
->> -                tasks_nocpu_error(parent, cs, &new_cpus)))
->> +                tasks_nocpu_error(parent, cs, &new_cpus))) {
->>           partcmd = partcmd_invalidate;
->> +        local_partition_invalidate(cs, tmp);
->> +    }
->>       /*
->>        * On the other hand, an invalid partition root may be transitioned
->> -     * back to a regular one with a non-empty effective xcpus.
->> +     * back to a regular one with a non-empty user xcpus.
->>        */
->>       else if (is_partition_valid(parent) && is_partition_invalid(cs) &&
->> -         !cpumask_empty(cs->effective_xcpus))
->> +         !cpumask_empty(user_xcpus(cs))) {
->>           partcmd = partcmd_update;
->> +        update_parent_effective_cpumask(cs, partcmd, NULL, tmp);
->> +    }
->>         if (partcmd >= 0) {
->> -        update_parent_effective_cpumask(cs, partcmd, NULL, tmp);
->>           if ((partcmd == partcmd_invalidate) || is_partition_valid(cs)) {
->>               compute_partition_effective_cpumask(cs, &new_cpus);
->>               cpuset_force_rebuild();
-> 
-
--- 
-Best regards,
-Ridong
+>>           n = recv(self->client, buf, sizeof(buf), 0);
+>>           ASSERT_EQ(-1, n);
+>>
+>>           if (variant->socket_type == SOCK_STREAM ||
+>>               variant->socket_type == SOCK_SEQPACKET) {
+>>                   ASSERT_EQ(ECONNRESET, errno);
+>>           } else {
+>>                   ASSERT_EQ(EAGAIN, errno);
+>>           }
+>> }
+>>
+>> Thank you once again.
+>>>
+>>>> +
+>>>> +               /* Peer closes before client reads */
+>>>> +               close(self->child);
+>>>> +       }
+>>>> +
+>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>>>> +       ASSERT_EQ(-1, n);
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_STREAM ||
+>>>> +           variant->socket_type == SOCK_SEQPACKET) {
+>>>> +               ASSERT_EQ(ECONNRESET, errno);
+>>>> +       } else {
+>>>> +               ASSERT_EQ(EAGAIN, errno);
+>>>> +       }
+>>>> +}
+>>>> +
+>>>> +/* Test 3: closing unaccepted (embryo) server socket should reset client. */
+>>>> +TEST_F(unix_sock, reset_closed_embryo)
+>>>> +{
+>>>> +       char buf[16] = {};
+>>>> +       ssize_t n;
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_DGRAM)
+>>>> +               SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
+>>>> +
+>>>> +       /* Close server without accept()ing */
+>>>> +       close(self->server);
+>>>> +
+>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>>>> +
+>>>> +       ASSERT_EQ(-1, n);
+>>>> +       ASSERT_EQ(ECONNRESET, errno);
+>>>> +}
+>>>> +
+>>>> +TEST_HARNESS_MAIN
+>>>> +
+>>>> --
+>>>> 2.43.0
+>>>>
 
 
