@@ -1,183 +1,434 @@
-Return-Path: <linux-kernel+bounces-899370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F5AC5785D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:03:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC4CC57893
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7142834FAD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0CA11355BC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98B1350A13;
-	Thu, 13 Nov 2025 13:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B36434E74C;
+	Thu, 13 Nov 2025 13:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiqKhseE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q1arBTdI";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tPLaJUq+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2616734EEE8;
-	Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038938; cv=none; b=PNwOQshYWcpgtTUg8LNrdP4e3TGbWjgz+z1VQd/2tRrr6RMbdMWBAbLQiwE6ZgaqIbfpRukp1ytNDlLxn1OdFSb8c6Mfw3uudSF/IaDW8I51YHaF/kM88+fxyLxjKaGp3+5gMF47DHIcdSRwwMtnLftUf2C056CHNoaFNMgzRBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038938; c=relaxed/simple;
-	bh=bUt+qNmjwdJ7gVejc5aNxtgCj7fJkFVLsF+93X0SgNw=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=V3pv2pwsq9mw+YzdmlEqOMYd4OjMj6XMV0Jf/St3cwFFUie5W/A6Z6Ej/62GlMmoSoSLDGJq/AyZ9UneUJb1Oen3DGe1OAaBJIdqlrQRA3jYnB97Fdhgv+3fpKYlaglpfKCHZdvMUsELeAL8RoNNt58KUBvc2J2QzTntERrP0ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiqKhseE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F68C16AAE;
-	Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763038937;
-	bh=bUt+qNmjwdJ7gVejc5aNxtgCj7fJkFVLsF+93X0SgNw=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=LiqKhseE0ZjpKS3SHSmWzPRqgP937v6AY4LeZnP+KIPvP+UZ2rOH1rws/j6FxkNkb
-	 EtIprRU7GTxCbIvwhETrdRO0FXpwgmLXL5cbx5y1dJllSYEQKDK8Q7vt1Krud9Vn3E
-	 EgXPVlWeOfRyP4x9DElh4/lUP26erBP0mqdpoSE1w6EH/TRjpTZ8ad5aWjyfdh+HM+
-	 Z60F55ydiIe0KHPUq7Zzjl+u9TJqitqalySBBfykuNTEIa7X3UQLjpG8Wg7p2k6471
-	 CmOEtx8T4t/IaV/ZlwElGm+NwprmW4PKcdcLoqopYXqgLL8Q5tpXdYMdsngkPUumbe
-	 GR2SYNl2UBvoQ==
-Content-Type: multipart/mixed; boundary="===============0521505570487395101=="
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F5352F96
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763038961; cv=fail; b=FuHUH3OOfiobbroSgSNGUQOy0SbsOKjSpjSaaimQxrdNtHBofnMRu72QnVoNMEMqTXN9ttjgk/6KAJ6zAGLD58bHvowNx/1zX4nOXKqeUJQrMb1wFaX3ugrjUU4qm88GQpGDIAsj+6lp3l6hkCHgXl3XGnRXThXVRSOkGcZ9Koc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763038961; c=relaxed/simple;
+	bh=i7sRUaVIXc5q4mRa8BtrN01rTFoIquUnzcb7S5PJ1Vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GVTbDJUZlUVkcNGwRSeq/VjsGGBV37k+qjAD9R9YrvbV531YnJQNcvGmIOh7IGeBd5vKq3EKYJ783mo+6UxaY4LIqiRzaMQ7n0wDZ2NMjy0U3DP6knWHP4dlu/aVSP77EZfAAWK82OXPiR3/BFAzcj3lwbJ7eXPvjDQYW55rVrE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=q1arBTdI; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tPLaJUq+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADBdnW8023110;
+	Thu, 13 Nov 2025 13:01:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=EHohONR3Bno+6oQ2UB
+	iBcSgA1vz7vBNlKcdEjHbK1hU=; b=q1arBTdI6Y5qm1pmlSxh5R0yEeiIeHR6So
+	T60FUyYFtNfsQHbfYYxcErTulno4+KAu+bUEQYIfxWjY4MiAj4vbT9ab71YDxMar
+	3f7wuA5p2kqJWcaWYoJR3C0fXUR/hTL36dOeaKjwkbrrs5n4Fxcut5ljFtTn3nk6
+	BieWOgnFC17wnjQq3pgusmgvE6W5PiWSxh/ZH1d5enHvPeEUPwyIHAazCZdtAdos
+	y+SB6+YuvSlb44iawZjCr7FQz4ib2dlqmCzoAmLTDH+4qyi6CDPpGTFK9jst1L6B
+	fwOc99Tf+s3akJa6UkFSFR3yS5WtjsfOyqaufXQYutVkkDp1DfJA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acybqsqjy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 13:01:50 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADBsvBR003108;
+	Thu, 13 Nov 2025 13:01:49 GMT
+Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010045.outbound.protection.outlook.com [52.101.193.45])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacmafp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 13:01:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=adLlDOU2myL7x0eUdAdRNHPYAIkU1RFW6ip+XfY9OIVeEdhRvFPQtQ6yAu/CxsoHp5UU1yi6w2XyE2+c+8Lgg4X58TeiCDriKots63A3xCdiYbJiC2o8aUGyXT0i2FEOMcheKM5Pz1aXDclfEQ0xn9wA0KtPGhbqNYjbmA8Patht45dS3AV5KO4KQKeNJ97GzxiTHdahWThRpN8jr7P20xwSIVeCGXVz2i4z7nq6Jm6Dl8HWphXUL+yy/5C6qLffLrostjzr+opCZC45HNbSpM6RC8zwP2g6UG7kr9ryLbHoEhNXwBwiMrHXD3cooDetU9gBWMjfqrEwDFcL2+t1kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EHohONR3Bno+6oQ2UBiBcSgA1vz7vBNlKcdEjHbK1hU=;
+ b=AHmD9KnUjOYQmuR6nkJVVsdZwUxY7AJMqQvRrNSWgsivTi2ZXKOh2Ni8sXbwvZWjIi3Znt1wug2EjcVp8cH0pd9b2mcyjl7/agb9yREK1upEIT90lZNT4t5NVXnJPOsCFhOkrvRVuP9X1kPwonuRgWVi90SpR8XOqA8whiSYieKHZeYEiMkeGhAg074eiUBEnap33ygZAi/tRElHH/7xmPAMhDIIFNlBtq+4VnwzD+iWdTnl8Box4QPKrqNoKDC8l6zVmnMzA+E7kmdq4DQbhk3w8CNu8NUwuT7x9C2+YBe5Zf8eppOSM+IkTQ8qRLDbUchJBaRgtzgubZ5bAWZ/fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EHohONR3Bno+6oQ2UBiBcSgA1vz7vBNlKcdEjHbK1hU=;
+ b=tPLaJUq+bZ559kbieBgJwjoy4BLs4zjd9gMHgy1zMsfrR0mtBwCUExow9Kfr/XvyzM5VWtaaJKFz7YeXsqzXDJK/KNeYbsagooz0XPp27lEHt1DYNCVB6hQj09R4EPszVQJfp3sJdR21RBO6CoRYrbKuZSy2TCoCj+OTwIapvhQ=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ2PR10MB7857.namprd10.prod.outlook.com (2603:10b6:a03:56f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
+ 2025 13:01:45 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 13:01:45 +0000
+Date: Thu, 13 Nov 2025 13:01:42 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Donet Tom <donettom@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v1] mm: fix MAX_FOLIO_ORDER on powerpc configs with
+ hugetlb
+Message-ID: <eaf2e733-f967-43bb-88e6-7876a28a370c@lucifer.local>
+References: <20251112145632.508687-1-david@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112145632.508687-1-david@kernel.org>
+X-ClientProxiedBy: LO4P123CA0227.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::16) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c3260fe9e3d8ad79c75a6e8281f9fae5580beb3fcdd08e2015f417e11ec0a1b2@mail.kernel.org>
-In-Reply-To: <20251113123750.2507435-6-jolsa@kernel.org>
-References: <20251113123750.2507435-6-jolsa@kernel.org>
-Subject: Re: [PATCHv2 bpf-next 5/8] ftrace: Add update_ftrace_direct_mod function
-From: bot+bpf-ci@kernel.org
-To: jolsa@kernel.org,rostedt@kernel.org,revest@google.com,mark.rutland@arm.com
-Cc: bpf@vger.kernel.org,linux-kernel@vger.kernel.org,linux-trace-kernel@vger.kernel.org,linux-arm-kernel@lists.infradead.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,menglong8.dong@gmail.com,song@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ2PR10MB7857:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f6c9e3c-318d-40ca-0f0f-08de22b4cc5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dGRj13HGi3LZJC3FhmRlAughOv+4ztNkkscJOUUoxUqOZhfjCas0D9/x9/vT?=
+ =?us-ascii?Q?rUJQ4n+H6LkuQVtOnS7vDVpULmM8nq2I3n3aO4OkTwHTdy1novwBJsC2ZBB3?=
+ =?us-ascii?Q?7whkQS4wN+vu2fzmv+mX5T0ClWMdiWE9zkf3iATuqLDGyPLiIw4apTQtVJxX?=
+ =?us-ascii?Q?doQFsMK+SAuDvGFCBnkqlZW+yIK4Y1F4fwO5q1wkaimD5mYY6VW8Ln90ouu2?=
+ =?us-ascii?Q?orGqjnzjYw6mQborxuAoKvvJwP4ShcIILQW6xvTqnempOW7OZ8577111sw3t?=
+ =?us-ascii?Q?ZgqQN/3/ZesSI4e5jWgTDKJjbc8+lU1FjzcBKL2s7DMquZTZp1UIuyvXF/gc?=
+ =?us-ascii?Q?avKIjy4ApvtScGlOjL8632gsmvLNs2r5vItPGiUFmKF0DoCG/tffR2e3arjG?=
+ =?us-ascii?Q?NguEnJMbbriJNKjhMYLv5hZq3j2YyD3CkkIMHsOnaQzcRMuiPEYLES0LP/2N?=
+ =?us-ascii?Q?SfOZsU6dISbYh2tRNEU8WVH8QVNN3NkE3O4a2nNEJeCdkWHeGhHTgm6lMih3?=
+ =?us-ascii?Q?OsU/XNTtlGIhcAdRObSaf7axH2JUmnwXH+1usnP2zv6UPq/EbZ7sxxY5PRpc?=
+ =?us-ascii?Q?BH+Ab1vzV0+x3jZmgZ4zf0yyQv1aXvaZGL5S+bfYtScBTFPbLOTwFCwiJCcf?=
+ =?us-ascii?Q?6Yr0J61GQLVa8sfQstmIgzcWeQLaKEL7l+CGdHQwumFc9bWlgJ06izQN1Apo?=
+ =?us-ascii?Q?5fMKFrL2eFbTONTSgX1xzA+umwpQ7bbkSEnx/xgWSDybsug2vqNYMOD3pDuC?=
+ =?us-ascii?Q?XIgdlW6zK61ycrVpWINCs5wwUd1+LfjbFo5vbXYT5G1OhhSmpbjzdbdht6VR?=
+ =?us-ascii?Q?KqoXs6uISoBu008t20PgeqPufR28JJh/g4+adrN8d8I8D3rMLg6NryZ+yZr+?=
+ =?us-ascii?Q?Ae+69ghyA69YbE+pWnMo86nxb8d/Tapy+Tg+LP5j1KPX23AihKIsrsmLXnDD?=
+ =?us-ascii?Q?JBVTPNAJsDzwzZg5AdmipQlYA+kl35C/ZRWrIgKtiCQDT6srt8OUmPkyv/rY?=
+ =?us-ascii?Q?z0JIRZp6Abiz9DJJ530/oZKkl0NGVHgpFmlrEO/Nh6ZBvxhUM6sEC+0Er+zr?=
+ =?us-ascii?Q?muHFJg2EXnqbiIiugAovKVFwjDVVMSgHWqQ8p0WMTn/oNk9SEgWe2fXTBuYU?=
+ =?us-ascii?Q?cg5jmyQerpjyiV9MAvYxxbc8+ueLIHGH7l2XkMHKhvJwYcy0red1OMEUuk/8?=
+ =?us-ascii?Q?eeLYeNxvBujcZr83KmJPBzCWWTR/Ks8pb3pzN/RyIhAc3tg37xvCYp4NUPa6?=
+ =?us-ascii?Q?9An2G0Omy02hYjo/Qz64WgG2dqRq+dNjARJn2VFQe15nPj1CRJK8rMvQNqP6?=
+ =?us-ascii?Q?q90F7Vj5Pa4G1szpRFQkEO0t9IJ4MtaH5ZjjKypje0To5WSfiAXFC353SLk/?=
+ =?us-ascii?Q?yu3GAhD3QUpvF1zPN+BacSFadoG0nLPUZJv53hvDiaz+6NkyHWJ06i2aMYM3?=
+ =?us-ascii?Q?gB0L2QyZ8MA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1krif+UMqcyME1Ms+9Xi2yQL8wdogY6CCvNrzVdfp5zq++I4ZqtyxSNqO1/Y?=
+ =?us-ascii?Q?Ik4JnS6e3/QIq3km6rwXLJ42pAQOW5TffFc5w+E7KjaZ6xcs8t4C6Bz0X+Dz?=
+ =?us-ascii?Q?RHv+VPL2xRZvX1TVG85K2sYF1ZTvzIgIsQAET0sSDU1lQEBOIkg8it6zwuhP?=
+ =?us-ascii?Q?eR+jjj+c4OUoxwcnTX1Oq351QJO9E15ati7m7Flb46cj+/b+jxPssxooLOkS?=
+ =?us-ascii?Q?2yS+2Epc2z/7pw4NJR3YNI71yuknlNk03e/QgPalQF7FBxXiKdjYN3KFvukj?=
+ =?us-ascii?Q?3TMakZnZ8x1n/gbEtugWDwIrjOZCZ4rvqUK5sgXfCJ5GaQjIu2tbZ9yHky/T?=
+ =?us-ascii?Q?FYU2xfljk5kzd2EVbu/B8BIvgc5JgrSCLZcH2AiE4u89d3/toX5aeIJE/gtz?=
+ =?us-ascii?Q?iVdGmpRbgyUrm67Q83bqHRKP22ruqOLA7vRAREvcxcqkR3lcjZOfK9i2sHxQ?=
+ =?us-ascii?Q?TB6h13mqJ+SHDGR9Zt7AYmvZOrJtsXcI/DLoJ66iRmyQyQMwbR2vl4rZUOlI?=
+ =?us-ascii?Q?gRXXIpKp7HXg8LAWv/FSh4J5KjmJMO5PlXpUvXoP/xCfcGhtk+pkBE3bqwZS?=
+ =?us-ascii?Q?DBHGJoyLDHWC8GO5b6lFAv/kAK1cR2YvMzstsC6NXKFycAtOIr3gLHAnXY3t?=
+ =?us-ascii?Q?gSRhr9ct1SxqeDnIgBlRybw1+N5Lk4dwxJs+xhTaNWUZmkbbuLDUBveHFZh0?=
+ =?us-ascii?Q?itxNUR9WttUZfsab6bRPxWaqk/4G8trq5z+aqdCYAuqbFlkfDkWKTiJiRwb4?=
+ =?us-ascii?Q?e/uUXoV1BkY9i85R+SGbt4NgLgIMjncemtfixSgAqbZ/UTswrUHRfc/4VgSq?=
+ =?us-ascii?Q?zLKw165dpWNJp+wvhaoeY1lz+qGJCsM0PZNaOYj6AhGmPEsSGd9k+2Fwi2aT?=
+ =?us-ascii?Q?oRe4u0aCpkfTkhjUG65XdFZoUWiYQgrIPIIoE5EgrIqryexv8OCZw0Tq7cJq?=
+ =?us-ascii?Q?e0S6Mlebc0XNmxHUnE1ugp5YGNceL8X7iQWVGACOCdZNgOqb4AlfvIR4feZZ?=
+ =?us-ascii?Q?pRA32x/mJwZk6LuWzFtYOc4IpFV0WqM8apGCsGyc+Q1AyGc9YzM43xfmDch+?=
+ =?us-ascii?Q?yY0pCkW31mBCWhO9FhP3SjdqydxW8N6Mw9h/jCI5xnlzdDepOcJq/dQ5/M6n?=
+ =?us-ascii?Q?Tk5bpaeWdpZ8QrygwGMeRdQcFKIP7QFOrWuD2YMZyYc7+hZi64ODspydgwCS?=
+ =?us-ascii?Q?VSqYbv+1fNrplq2hvORcamRKLlFLV0Zvm7Fi4iZCpEHPMe69MDlurqc+ul5f?=
+ =?us-ascii?Q?fE5Jw32dWk3ZqviIqax4Xmun7RmG0iVTwJzJy9eV6nqg7uAm0az6gVnsrmUs?=
+ =?us-ascii?Q?ve1RVS3kedZ3jL2gU1eRf0U5MCACc2ZWa5rOeIqqOFMNa//a7UGo2Bc/2E6U?=
+ =?us-ascii?Q?5LNoyc6ss75tFklQZNM9pH8Hc3WHYjH+rT2m0LFqN8QvB0qsqa1yfbcFUvmV?=
+ =?us-ascii?Q?0veorK2dUPp2UADgEQuoxX6yc/+Y3kIzpY/5Bus/aeo/pkoLInIs6Js1p040?=
+ =?us-ascii?Q?GDXTkI+/In1/Lkv8CV7rJQ2Xel0NM91UDWll5UsQk5Jk522jBcSfJzHetJ85?=
+ =?us-ascii?Q?SsX509R6T0612zG2BwO/2QNpNfyu0TabtpoOMeiNhT7wfx8X8CvxuITfcVxF?=
+ =?us-ascii?Q?ng=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	G0w0l7npcQYEO14Bprb8GYH9thEs6xP0MCuTFobpdyzkGnrczC8wXUC4BSvnGNHeyW5dbWF4k+GwZWAxMibWmNIslP7rEqH+PPMyh+x9zoAh92A6S1xuWq4tBgxe0lbM1mmFS1mqkHf8RfKXMCAjRJDHaEzhaMkPfONAPjSRedZpOYP+63fiI2AfTMs2yxle41simPAi++XLoG/TwLaMp4n38+drRheVXdsCCRH++cpBsvA78Q1WgBV3DTd0Rc+n2x1FtO2VXJrIOsfMPVe5kFVky9ow6ZDUSuqDccOXJrq7yGJOCaM9i4s4m9ftkgesJZDjH67+xWijXse7UKvHvdN9F8pSfcGFmi1y2AAN9asLJ4X14UGz24rspcLwDVWnFaR7kOzGXeEn2p5A4OU6P4x6RNHzyCpPfzpb38oyAbjabk/WExyH9FJ6yRUFe2NWp/8wubb7fhIkU5yIK/3Dm5opzH7+SLqN7J8zdyxeNyLFPsuNOLbGwZFFltgpej49jJHBhcusXobIysJrjlmy5L+Fmyf0pWwQNHMb6zk76X3SlTS7Cj3SVZyGduIMoaiOOoBT/QfizDRLkPG3APUO1cMZTWvz+bZ2A0upWS7ymqI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f6c9e3c-318d-40ca-0f0f-08de22b4cc5e
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 13:01:45.2370
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tFJ4OonFw4Kep4NZnVYtxbuTt/BGHH1ueIILrzVZ2G19F2nqAN8QBJA+GDe8dYenefGM5b7WF4BoGkxpMhd2ZnUkfS0tvW3eR1uuqXDhAs4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7857
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511130098
+X-Proofpoint-GUID: RbkxTKwQuChX0086mVCbHSRQtGSNJTKD
+X-Proofpoint-ORIG-GUID: RbkxTKwQuChX0086mVCbHSRQtGSNJTKD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0NyBTYWx0ZWRfXx+L3n/h8lAWx
+ WJo3pF9eRpVjpcpbdhputSr5h9m1rQ6lbc7m0oY7RmiomR9jANidGROeYRAShzIKC4HwK8aOwX1
+ AdlyFtZMEUsLY+w0deyGHpPrle4EKtn95NmJAMP6Rs63jBpLpbnYgP6MyR6GnNoGJl1yzsvZp0B
+ 5IISwOMYW+q2zWtzdfvlBk4y9Z1gWcyNzv3fx7jZT3d4N7CR4nVJdxSm0DTKi1xCUp6nyqsc8rn
+ Ej2CMkko0QJWlU/SZTlJo36NgNkgIfhQG/itsBq0K21BruFk5NyESdVizatNrpgHw1khmpmgri5
+ ENG/QizTHQLjHZy+o2yMrysT755mkADmN0eoqoZ7dyqyUa4N9pJofC+sUAX1ajv3wtjYLvHNpYV
+ O0WcgjiMMIwUr8C1KhjqLJ7+sNvRDw==
+X-Authority-Analysis: v=2.4 cv=X7hf6WTe c=1 sm=1 tr=0 ts=6915d6be cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=1UX6Do5GAAAA:8 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8
+ a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=1XWaLZrsAAAA:8 a=iox4zFpeAAAA:8
+ a=uDd0VpAFM0u23N_P4iwA:9 a=CjuIK1q_8ugA:10 a=Et2XPkok5AAZYJIKzHr1:22
+ a=HkZW87K1Qel5hWWM3VKY:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=cPQSjfK2_nFv0Q5t_7PE:22
 
---===============0521505570487395101==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+FYI, trivial to fix but a conflict on mm/Kconfig for mm-new:
 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index 433c36c3a..bacb6d9ab 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -544,6 +544,7 @@ int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned long addr);
+<<<<<<< HEAD
+config ASYNC_KERNEL_PGTABLE_FREE
+	def_bool n
+=======
+#
+# We can end up creating gigantic folio.
+#
+config HAVE_GIGANTIC_FOLIOS
+	def_bool (HUGETLB_PAGE && ARCH_HAS_GIGANTIC_PAGE) || \
+		 (ZONE_DEVICE && HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
+>>>>>>> mm: fix MAX_FOLIO_ORDER on powerpc configs with hugetlb
+
+On Wed, Nov 12, 2025 at 03:56:32PM +0100, David Hildenbrand (Red Hat) wrote:
+> In the past, CONFIG_ARCH_HAS_GIGANTIC_PAGE indicated that we support
+> runtime allocation of gigantic hugetlb folios. In the meantime it evolved
+> into a generic way for the architecture to state that it supports
+> gigantic hugetlb folios.
 >
->  int update_ftrace_direct_add(struct ftrace_ops *ops, struct ftrace_hash *hash);
->  int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash);
-> +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock);
+> In commit fae7d834c43c ("mm: add __dump_folio()") we started using
+> CONFIG_ARCH_HAS_GIGANTIC_PAGE to decide MAX_FOLIO_ORDER: whether we could
+
+Hm strange commit to introduce this :)
+
+> have folios larger than what the buddy can handle. In the context of
+> that commit, we started using MAX_FOLIO_ORDER to detect page corruptions
+> when dumping tail pages of folios. Before that commit, we assumed that
+> we cannot have folios larger than the highest buddy order, which was
+> obviously wrong.
 >
->  void ftrace_stub_direct_tramp(void);
+> In commit 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes
+> when registering hstate"), we used MAX_FOLIO_ORDER to detect
+> inconsistencies, and in fact, we found some now.
+
+Makes sense. And this is what the report bisects the issue to.
+
 >
-> @@ -581,6 +582,11 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
->  	return -ENODEV;
+> Powerpc allows for configs that can allocate gigantic folio during boot
+> (not at runtime), that do not set CONFIG_ARCH_HAS_GIGANTIC_PAGE and can
+> exceed PUD_ORDER.
+
+God...
+
+>
+> To fix it, let's make powerpc select CONFIG_ARCH_HAS_GIGANTIC_PAGE with
+> hugetlb on powerpc, and increase the maximum folio size with hugetlb to 16
+> GiB (possible on arm64 and powerpc). Note that on some powerpc
+
+I guess this is due to 64 KiB base page possibilities. Fun :)
+
+Will this cause powerpc to now support gigantic hugetlb pages when it didn't
+before?
+
+> configurations, whether we actually have gigantic pages
+> depends on the setting of CONFIG_ARCH_FORCE_MAX_ORDER, but there is
+> nothing really problematic about setting it unconditionally: we just try to
+> keep the value small so we can better detect problems in __dump_folio()
+> and inconsistencies around the expected largest folio in the system.
+>
+> Ideally, we'd have a better way to obtain the maximum hugetlb folio size
+> and detect ourselves whether we really end up with gigantic folios. Let's
+> defer bigger changes and fix the warnings first.
+
+Right.
+
+>
+> While at it, handle gigantic DAX folios more clearly: DAX can only
+> end up creating gigantic folios with HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD.
+
+Yes, this is... quite something. Config implying gigantic THP possible but
+actually only relevant to DAX...
+
+>
+> Add a new Kconfig option HAVE_GIGANTIC_FOLIOS to make both cases
+> clearer. In particular, worry about ARCH_HAS_GIGANTIC_PAGE only with
+> HUGETLB_PAGE.
+
+Hm, I see:
+
+config HUGETLB_PAGE
+	def_bool HUGETLBFS
+	select XARRAY_MULTI
+
+
+Which means (unless I misunderstand Kconfig, very possible :) that this is
+always set if HUGETLBFS is specified. Would it be clearer to just check for
+CONFIG_HUGETLBFS?
+
+>
+> Note: with enabling CONFIG_ARCH_HAS_GIGANTIC_PAGE on powerpc, we will now
+> also allow for runtime allocations of folios in some more powerpc configs.
+
+Ah OK you're answering the above. I mean I don't think it'll be a problem
+either.
+
+> I don't think this is a problem, but if it is we could handle it through
+> __HAVE_ARCH_GIGANTIC_PAGE_RUNTIME_SUPPORTED.
+>
+> While __dump_page()/__dump_folio was also problematic (not handling dumping
+> of tail pages of such gigantic folios correctly), it doesn't relevant
+> critical enough to mark it as a fix.
+
+Small typo 'it doesn't relevant critical enough' -> 'it doesn't seem
+critical enough' perhaps? Doesn't really matter, only fixup if respin or
+easy for Andrew to fix.
+
+Are you planning to do follow ups then I guess?
+
+>
+> Fixes: 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when registering hstate")
+> Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Closes: https://lore.kernel.org/r/3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu/
+> Reported-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> Closes: https://lore.kernel.org/r/94377f5c-d4f0-4c0f-b0f6-5bf1cd7305b1@linux.ibm.com/
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Donet Tom <donettom@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: David Hildenbrand (Red Hat) <david@kernel.org>
+> ---
+>  arch/powerpc/Kconfig |  1 +
+>  include/linux/mm.h   | 12 +++++++++---
+>  mm/Kconfig           |  7 +++++++
+>  3 files changed, 17 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index e24f4d88885ae..9537a61ebae02 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -137,6 +137,7 @@ config PPC
+>  	select ARCH_HAS_DMA_OPS			if PPC64
+>  	select ARCH_HAS_FORTIFY_SOURCE
+>  	select ARCH_HAS_GCOV_PROFILE_ALL
+> +	select ARCH_HAS_GIGANTIC_PAGE		if ARCH_SUPPORTS_HUGETLBFS
+
+Given we know the architecture can support it (presumably all powerpc
+arches or all that can support hugetlbfs anyway?), this seems reasonable.
+
+>  	select ARCH_HAS_KCOV
+>  	select ARCH_HAS_KERNEL_FPU_SUPPORT	if PPC64 && PPC_FPU
+>  	select ARCH_HAS_MEMBARRIER_CALLBACKS
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index d16b33bacc32b..63aea4b3fb5d9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2074,7 +2074,7 @@ static inline unsigned long folio_nr_pages(const struct folio *folio)
+>  	return folio_large_nr_pages(folio);
 >  }
 >
-> +int modify_ftrace_direct_hash(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-The stub function name doesn't match the declaration. Should this be
-update_ftrace_direct_mod() instead of modify_ftrace_direct_hash()?
+> -#if !defined(CONFIG_ARCH_HAS_GIGANTIC_PAGE)
+> +#if !defined(CONFIG_HAVE_GIGANTIC_FOLIOS)
+>  /*
+>   * We don't expect any folios that exceed buddy sizes (and consequently
+>   * memory sections).
+> @@ -2087,10 +2087,16 @@ static inline unsigned long folio_nr_pages(const struct folio *folio)
+>   * pages are guaranteed to be contiguous.
+>   */
+>  #define MAX_FOLIO_ORDER		PFN_SECTION_SHIFT
+> -#else
+> +#elif defined(CONFIG_HUGETLB_PAGE)
+>  /*
+>   * There is no real limit on the folio size. We limit them to the maximum we
+> - * currently expect (e.g., hugetlb, dax).
+> + * currently expect: with hugetlb, we expect no folios larger than 16 GiB.
 
-> +{
-> +	return -ENODEV;
-> +}
-> +
+Maybe worth saying 'see CONFIG_HAVE_GIGANTIC_FOLIOS definition' or something?
 
-[ ... ]
+> + */
+> +#define MAX_FOLIO_ORDER		get_order(SZ_16G)
 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 345f3fdd2..627d05b57 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -6445,6 +6445,74 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
->  	return err;
->  }
+Hmm, is the base page size somehow runtime adjustable on powerpc? Why isn't
+PUD_ORDER good enough here?
+
+Or does powerpc have some way of getting 16 GiB gigantic pages even with 4
+KiB base page size?
+
+> +#else
+> +/*
+> + * Without hugetlb, gigantic folios that are bigger than a single PUD are
+> + * currently impossible.
+>   */
+>  #define MAX_FOLIO_ORDER		PUD_ORDER
+>  #endif
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 0e26f4fc8717b..ca3f146bc7053 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -908,6 +908,13 @@ config PAGE_MAPCOUNT
+>  config PGTABLE_HAS_HUGE_LEAVES
+>  	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
 >
-> +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
-> +{
-> +	struct ftrace_hash *orig_hash = ops->func_hash->filter_hash;
-> +	struct ftrace_func_entry *entry, *tmp;
-> +	static struct ftrace_ops tmp_ops = {
-> +		.func		= ftrace_stub,
-> +		.flags		= FTRACE_OPS_FL_STUB,
-> +	};
-> +	unsigned long size, i;
-> +	int err;
-> +
-> +	if (!hash_count(hash))
-> +		return 0;
-> +	if (check_direct_multi(ops))
-> +		return -EINVAL;
-> +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
-> +		return -EINVAL;
-> +	if (direct_functions == EMPTY_HASH)
-> +		return -EINVAL;
-> +
-> +	if (do_direct_lock)
-> +		mutex_lock(&direct_mutex);
-> +
-> +	/* Enable the tmp_ops to have the same functions as the direct ops */
-> +	ftrace_ops_init(&tmp_ops);
-> +	tmp_ops.func_hash = ops->func_hash;
-> +
-> +	err = register_ftrace_function_nolock(&tmp_ops);
-> +	if (err)
-> +		goto unlock;
-> +
-> +	/*
-> +	 * Call __ftrace_hash_update_ipmodify() here, so that we can call
-> +	 * ops->ops_func for the ops. This is needed because the above
-> +	 * register_ftrace_function_nolock() worked on tmp_ops.
-> +	 */
-> +	err = __ftrace_hash_update_ipmodify(ops, orig_hash, orig_hash, true);
-                                                                        ^^^^
-Does __ftrace_hash_update_ipmodify() accept a fourth argument? The
-function signature shows it only takes three parameters (ops, old_hash,
-new_hash). This looks like a compilation error.
+> +#
+> +# We can end up creating gigantic folio.
+> +#
+> +config HAVE_GIGANTIC_FOLIOS
+> +	def_bool (HUGETLB_PAGE && ARCH_HAS_GIGANTIC_PAGE) || \
+> +		 (ZONE_DEVICE && HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
 
-> +	if (err)
-> +		goto out;
-
-[ ... ]
+Maybe worth spelling out in a comment these two cases?
 
 > +
-> +out:
-> +	/* Removing the tmp_ops will add the updated direct callers to the functions */
-> +	unregister_ftrace_function(&tmp_ops);
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Can this deadlock when do_direct_lock is true? Looking at the code:
-
-  update_ftrace_direct_mod() with do_direct_lock=true
-    -> mutex_lock(&direct_mutex)
-    -> register_ftrace_function_nolock(&tmp_ops) succeeds
-    -> __ftrace_hash_update_ipmodify() fails
-    -> goto out (still holding direct_mutex)
-    -> unregister_ftrace_function(&tmp_ops)
-       -> cleanup_direct_functions_after_ipmodify()
-          -> mutex_lock(&direct_mutex) /* deadlock */
-
-The unregister path tries to reacquire direct_mutex that we're already
-holding.
-
-> +
-> +unlock:
-> +	if (do_direct_lock)
-> +		mutex_unlock(&direct_mutex);
-> +	return err;
-> +}
-> +
->  #endif /* CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19332026793
-
---===============0521505570487395101==--
+>  # TODO: Allow to be enabled without THP
+>  config ARCH_SUPPORTS_HUGE_PFNMAP
+>  	def_bool n
+> --
+> 2.51.0
+>
 
