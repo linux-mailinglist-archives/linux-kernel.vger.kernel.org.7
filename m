@@ -1,94 +1,85 @@
-Return-Path: <linux-kernel+bounces-899791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D1EC58D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:46:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECC7C58E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5DFEF368B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:29:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A2EA35F9A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED9F35A942;
-	Thu, 13 Nov 2025 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15935A95E;
+	Thu, 13 Nov 2025 16:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RZo/K8MG"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FXGx0vo5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E8130ACED
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD835A15E;
+	Thu, 13 Nov 2025 16:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050844; cv=none; b=FqiXu86wbkJIGXyb/kGHZixi/o0RdjkTgJpC0PpVSiYMEx00ooQZJEpW3DiSNyMPkiDClZGmOlmjG++DgcxoeTOZvIQoBGoYVqO5GN1z041A7TQR+BLFh4lSUd63l8J3XqnKgoR77mUbBVP+wGgdVppo7DNvEXhuyiYDRki+5XM=
+	t=1763050868; cv=none; b=IIxo5puebYFQkIv30DUM6WhzR4ITYviLQLPsl0JQRInXxvfK1QEZrncjEkw6oQUjGsVNi4+PoA2zmYYPmhXCABzBGYXORrlQUAyzGh6x7SyRz/At/rMUG0OIa+xpabP5N6fH2hJUe2hQ8l1RP89syrMszb5zG3JcJh9xk81yipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050844; c=relaxed/simple;
-	bh=5Q6+jx694R5FD9t9uLYyFN92bEi8X+fGwEsS2Iy+wf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M9r67R9Yj9OYO2nRhthZguZLXeLV03Ix2J/1n4ceQs8irZhRNgVvJS0QfcsM9c6E8iiPnYfLvcYRlmNO4U9hupQp96f7uIV24nlbVu3mkUKjA3NmrkwgrlELc+2G0MyocPXokkaW/x9599eTKs8hKtUZJ+p8+HfEz0K7uifxdwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RZo/K8MG; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4775638d819so6133095e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763050841; x=1763655641; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UILebnM/hGlC/4mGqUQsEbI9oK9lCHY4NHYgMXAAz80=;
-        b=RZo/K8MGI65fLtPI3dbFS/as2t2IzBrpZBk9bA9CTjTogy//zgteyPMznbwN7Z4EdZ
-         /1mqVNKHdbm2lGJwsQ0WInQzZsWUoTXXaE/awhFYb0KGG9BA6EI4QL5dAGp8bymXlREh
-         jhLpWE43KzmIPZ16NHpJ1pFGCQpg030GMbybUOq5JH6frQTKllvyzky/56tayxdsdAqQ
-         rL0a+QUo4nb8BzCTEDiHjvwEeMUKsQYeTowb4KKh+yIvxFjw3vo7B694BCFW+A6eXDPm
-         vjqwvZFVmlC3aB7X/hoCgDYhBBnl5iNAqWTNa0aTOedviHo2iaCC6MVK5yNV3YDh9/Io
-         Ggfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763050841; x=1763655641;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UILebnM/hGlC/4mGqUQsEbI9oK9lCHY4NHYgMXAAz80=;
-        b=gOi7B0chUN/068ZznNf8kFGPjZRFhiDV4R/RtQVhivf0qorQbkAxpUkbuFhu+fwf19
-         JNlAvqjOUmbEoD5i6rHMrpsP6GfRgk2cljnI7d2MQg/eJyP2LDoHmGRQim1FP65SRm99
-         7neidG4ciq2XYyPHmx9cQfTrsl2z/WRWAPcGe12X8S7is/VIrIc6FBYVY7a31Bc4fGlb
-         5i5U83eOlNfS87Oe8XHzs6AnMVQA78ra5E8jdKk7EPBPuC+kHMB6ntwdt/2HS5JQ+yd8
-         wCFo2jFY/rHct7VWaxpqgVrRsFNwzRTPVcd9LCAPJjRdz6R1+I/6rB7DxrzdyTsbBk8b
-         sH+w==
-X-Gm-Message-State: AOJu0YwRIu1QqjwSZFEJjSMZib1GpLE/U6ItPTVY/nbIVxr5zV7sTZiB
-	tRZcF3eEzDOj62mSCtc4VT/cqstjKI77faGKyzs2Upn5GJqvQ//tRLnuG2dH03A9/5mrnUPclXx
-	j1Xzw
-X-Gm-Gg: ASbGncuV7XplBjWPlM+nrAQZMZiKk8Qow1HWBtLvYB8l6PP3u4s6Wqc0Qpl5OKpzvvB
-	X05xWz+gCTBvJnNeE4plFioouqWmUPw9XvtkZB0zcvRiu9LDvn+uy72jL3sOfL6435JYBJLEbWk
-	x2DOwF6VHB52y44gqv6eFpS2UTF5dMPJRygk/rSfVB0/DNI9Tj5aVvHGvqvKJgRsQ1QPCzCROJn
-	MdYRVgzVSlutn4Bu8Iv4Je9gyQ6pcOxhIza7ts/6Ab2cAzsXN1JKST2zbqCgjJtFx8AUVdEiA9N
-	BtDtSNg2bmARLrFOarxJ7KpUVynKYGrfRvS5/rg7X0ZBRtu+E4yX6lOf/3RlaUwYdbGq29qZWqq
-	Xdazgqz72KBuLUUa+NJPGLPvolLVgWJ4J9flBKGeHPTaAnZ48IWyQAVB+LQOb6hybDg+DP90qvq
-	jteARXwhzrWYuLRyKXuEFdufPB
-X-Google-Smtp-Source: AGHT+IGRGVhomNJJ/A5Jk/utPwPfv4ER6SuTf9w33S/DWCwxgGisxtoZnw3vVDZc2FooeR+k4EqTPA==
-X-Received: by 2002:a05:600c:4503:b0:477:a9e:859a with SMTP id 5b1f17b1804b1-4778fea8b8dmr350895e9.22.1763050840655;
-        Thu, 13 Nov 2025 08:20:40 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f203afsm4680578f8f.39.2025.11.13.08.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:20:40 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH 1/3] ath6kl: add WQ_PERCPU to alloc_workqueue users
-Date: Thu, 13 Nov 2025 17:20:30 +0100
-Message-ID: <20251113162032.394804-2-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251113162032.394804-1-marco.crivellari@suse.com>
-References: <20251113162032.394804-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1763050868; c=relaxed/simple;
+	bh=eBWGYbEPMSvsTZJWmtZWO1t79PMxcV429zFLf0WhYQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kc6VD4UzMlKMjP4yw9RCxm/ZmFhi+SxLikIJmiCnSyxvgDPgzJb9P1arVq03t65PKCz0QMVOPAu8McGs/AFS3uO0QRnC/GvBcHqXNiDQGGKkf2qea5PLAj6QK+yKv9Hic20mWtNion0FD7k2MOS3tPTGUIcG9oELcJY0u3qdKnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FXGx0vo5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1763050864;
+	bh=eBWGYbEPMSvsTZJWmtZWO1t79PMxcV429zFLf0WhYQw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FXGx0vo55dQWrQLSZ6T5FwniDgYI8sm4cMlr4ZHSh0vV2u9jFCJsdEcRIbc7Tqdhr
+	 w/P4ldsvV+lsw6AGnXfWLgVu6XnFxaQ+J11rJiHgM8vE6bmEJs+AsfaIZUoYvZR8nh
+	 T5c7GcM+bDwbbNxRvnwst2Dr0au4OntLx9K99s3uAMbmEuJt67dgU8iyTogu4ch3MD
+	 xyYEPdMW+4+e4UgU7z0ppYQvxdtIv3Sx1eHwZFWIBZrSOv8GCYEIkyvJBVlS+ISK7F
+	 uip+yMNGWz97aCboHz61ru3EoKCProh9B/a0t23QVRJyGwwYGsEqVNkAbiuhI5c4Wx
+	 T2IyvBkxMAO/g==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:9cb8:f653:99e7:c419])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 97DB117E1341;
+	Thu, 13 Nov 2025 17:21:03 +0100 (CET)
+From: Laura Nao <laura.nao@collabora.com>
+To: daniel.lezcano@linaro.org
+Cc: andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com,
+	arnd@arndb.de,
+	bchihi@baylibre.com,
+	colin.i.king@gmail.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	frank-w@public-files.de,
+	fshao@chromium.org,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	lala.lin@mediatek.com,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	matthias.bgg@gmail.com,
+	nfraprado@collabora.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	rui.zhang@intel.com,
+	srini@kernel.org,
+	u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH RESEND v3 4/9] thermal: mediatek: lvts: Add platform ops to support alternative conversion logic
+Date: Thu, 13 Nov 2025 17:20:53 +0100
+Message-Id: <20251113162053.281093-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
+References: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,59 +89,112 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+Hi Daniel,
 
-This lack of consistency cannot be addressed without refactoring the API.
-For more details see the Link tag below.
+On 11/10/25 14:06, Daniel Lezcano wrote:
+> On 10/16/25 16:21, Laura Nao wrote:
+>> Introduce lvts_platform_ops struct to support SoC-specific versions of
+>> lvts_raw_to_temp() and lvts_temp_to_raw() conversion functions.
+>>
+>> This is in preparation for supporting SoCs like MT8196/MT6991, which
+>> require a different lvts_temp_to_raw() implementation.
+>>
+>> Reviewed-by: Fei Shao <fshao@chromium.org>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>   drivers/thermal/mediatek/lvts_thermal.c | 27 ++++++++++++++++++++++---
+>>   1 file changed, 24 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+>> index 4ef549386add..df1c0f059ad0 100644
+>> --- a/drivers/thermal/mediatek/lvts_thermal.c
+>> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+>> @@ -125,8 +125,14 @@ struct lvts_ctrl_data {
+>>               continue; \
+>>           else
+>>   +struct lvts_platform_ops {
+>> +    int (*lvts_raw_to_temp)(u32 raw_temp, int temp_factor);
+>> +    u32 (*lvts_temp_to_raw)(int temperature, int temp_factor);
+>> +};
+>> +
+>>   struct lvts_data {
+>>       const struct lvts_ctrl_data *lvts_ctrl;
+>> +    const struct lvts_platform_ops *ops;
+>>       const u32 *conn_cmd;
+>>       const u32 *init_cmd;
+>>       int num_cal_offsets;
+>> @@ -300,6 +306,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
+>>       struct lvts_ctrl *lvts_ctrl = container_of(lvts_sensor, struct lvts_ctrl,
+>>                              sensors[lvts_sensor->id]);
+>>       const struct lvts_data *lvts_data = lvts_ctrl->lvts_data;
+>> +    const struct lvts_platform_ops *ops = lvts_data->ops;
+>>       void __iomem *msr = lvts_sensor->msr;
+>>       u32 value;
+>>       int rc;
+>> @@ -332,7 +339,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
+>>       if (rc)
+>>           return -EAGAIN;
+>>   -    *temp = lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
+>> +    *temp = ops->lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor); 
+>
+> Don't do this in each functions. It does not help for the readability.
+>
+> May be something like:
+>
+> int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
+> {
+>     return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
+> }
+>
+> or
+>
+> int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
+> {
+>     int temperature;
+>
+>     if (data->ops->lvts_temp_to_raw)
+>         return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
+>
+>     temperature = ((s64)(raw_temp & 0xFFFF) * temp_factor) >> 14;
+>         temperature += golden_temp_offset;
+>
+>         return temperature;
+> }
+>
+> ... and get rid of all the lvts_platform_ops_v1
+>
+> (btw _v1 is confusing, it suggests there multiple versions of the same SoC)
+>
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+Right, the first option looks more efficient. Since temp_offset is 
+already part of lvts_data, the function would look like:
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+int lvts_raw_to_temp(u32 raw_temp, const struct lvts_data *lvts_data)
+{
+	return lvts_data->ops->lvts_raw_to_temp(raw_temp, lvts_data->temp_factor);
+}
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+and the same pattern applies for temp_to_raw().
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+This change will require renaming the existing 
+lvts_raw_to_temp()/lvts_temp_to_raw()/lvts_temp_to_raw_v2() 
+implementations. I agree the current _v1 and _v2 suffixes aren’t very 
+descriptive. Since lvts_temp_to_raw_v2() version is only used by MT8196,
+it could be renamed to lvts_temp_to_raw_mt8196(), with the corresponding 
+platform ops defined as lvts_platform_ops_mt8196. The base 
+lvts_raw_to_temp()/lvts_temp_to_raw() are shared across the other SoCs,
+so they could be renamed after the first supported platform (mt7988) and 
+reused for all SoCs that share the same logic.
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+I'll send out a v4 with the proposed changes.
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
+Thanks,
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+Laura
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
----
- drivers/net/wireless/ath/ath6kl/usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 38bb501fc553..bfb21725d779 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -637,7 +637,7 @@ static struct ath6kl_usb *ath6kl_usb_create(struct usb_interface *interface)
- 	ar_usb = kzalloc(sizeof(struct ath6kl_usb), GFP_KERNEL);
- 	if (ar_usb == NULL)
- 		return NULL;
--	ar_usb->wq = alloc_workqueue("ath6kl_wq", 0, 0);
-+	ar_usb->wq = alloc_workqueue("ath6kl_wq", WQ_PERCPU, 0);
- 	if (!ar_usb->wq) {
- 		kfree(ar_usb);
- 		return NULL;
--- 
-2.51.1
+> [ ... ]
+>
 
 
