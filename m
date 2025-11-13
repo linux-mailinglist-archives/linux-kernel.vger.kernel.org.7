@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-899369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5604EC57851
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:02:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F5AC5785D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C3E54E124C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7142834FAD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68782350281;
-	Thu, 13 Nov 2025 13:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98B1350A13;
+	Thu, 13 Nov 2025 13:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zmRLx/Cl"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiqKhseE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382D834D91E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2616734EEE8;
+	Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038918; cv=none; b=q7kCNUsS9rBiw+HO98MxkM9RRJ0oB9LNeH3TZ/4kc4LG7UI8ZyGJFGRDBDYSp2DrT/jPiYLj2/CXMcVPuB0+Cs3MgPuLe94q0dyAsUCJqUKfGLed2uM/OgVSnevVV4FsnUCbGCJqM/2jSy7IPJbQrwuqSlEwULoMcCNBNR1h8uU=
+	t=1763038938; cv=none; b=PNwOQshYWcpgtTUg8LNrdP4e3TGbWjgz+z1VQd/2tRrr6RMbdMWBAbLQiwE6ZgaqIbfpRukp1ytNDlLxn1OdFSb8c6Mfw3uudSF/IaDW8I51YHaF/kM88+fxyLxjKaGp3+5gMF47DHIcdSRwwMtnLftUf2C056CHNoaFNMgzRBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038918; c=relaxed/simple;
-	bh=sOv3gpVFSUTOf8qccBUFlmorrQlW6YAkct0+Z3bQd3Y=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=eR9adwHRUxaHkzgyaRLovkt5Z5idpu0VYImvuurG/hHpy7u+imKOpsPymAvDyzJygxabZ9aPmSO0dM+RPv8H+6WiC04/D0rNvNviu9l0AzGGsA/i1cI1kSfWnY5cy+JzNb1Z7y1ptZ2i7Q3hwEPUChZ247yV8CXxDwnlEMmjn28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zmRLx/Cl; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1763038912; bh=/GQTtJfCoEQKgTxPit1J56QLlgdP/pwagyLI+EW9z0I=;
-	h=From:To:Cc:Subject:Date;
-	b=zmRLx/ClAQcwckMcZR1MZwQutgvY81+YK+sekMGUBQ3uc/4Hghkw2iBRdQICuwIpc
-	 qVsU0PSF1fA2i5Z0g0gkAkWyO3LQp/zVE/HVbaCQ61M7dK6FpIhSaJUeqTCKUo7YgL
-	 LUzgdQUIlo1o2EQoB0SkjWFuqmw4t4F0BCSecnrU=
-Received: from cjz-VMware-Virtual-Platform ([110.176.66.153])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 71044C0; Thu, 13 Nov 2025 21:01:49 +0800
-X-QQ-mid: xmsmtpt1763038909t8bqh70fz
-Message-ID: <tencent_7710B04B6BEE52903BA2F56376DB9D18A907@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuDkyxHrl5zINS911HPJeNGCbHELH9l+vnjxOT5Bx7zaZyTUd9/w
-	 /gMcG0QZ8vKBexkGg+7xSWnLg0yp5ZkOsVDsZ/IO9Hy3mLNDURCgTYkL7vbhcjUIUaaJHtAPmfTc
-	 DOxKS2vHR7psP07SL4rlf8w/9t6Ykjc1pFrIAgdN5tomK32H+wy3gEjScTD9VVhU9XhRYXky4V54
-	 ML+HUmt/G0UxfUrDITWKzy0xbECN6pXzcZWSRGPGe0Dzjs5grXfvajtLM5cOI8uUDzd81aTBDbgd
-	 FvTgsG9USwVSnWvK6gQNFDGSqp6DxCc0N0RuwTcQdtaAOpkC4Ns7qVxcCVKsDzRp0tGFWkDGgGLR
-	 CaQAFDKnv5Hhkz4rxKJ3X1Wg+BP+3dJjC9zFQuwANF4t1Qm3DDSaH80CfRD/ZS6t9d9U6uNVCC1p
-	 rGmzEiHA7ePkEZB/hHkZKfJEH4TRCPxY2R/4/NLYT/yBSCHd730VogMpBWMIGJYRH0MardF2PBgV
-	 JLwa2FHJ+HRMjPBJDx1NiJxM+hgPrW1fhrGTyMaSsi6ONSN2LVsaW04yFqILPCmlVytXkSvOR3Sk
-	 OCZolXSb+AwADDLoBp/IZPkU4DMmqQumDOCERWaKmWUFSlFvG0FbxArINiMpLq/xae8nKM7hYfIF
-	 l+3uG7oP3m+LZc1Qbql4noqHYPgnqctFmWuqk6zxs46sV7ylGIYz6c2C9gvlC08tBB6lEUR3OcBh
-	 E0yB70/Uj0Lm+/+R5Xfu+VDZDSK8XIizbCat0jFFBPO0sa2GYg8iskfSwOBJO+RBTRneSOXcw01l
-	 RsNLsJ6/Rz3dWHnCSkNhKAkvVJ+VhnvI+Sjb1QAEBhEkB9oi3x9l96AJ7QNCdFVXeHMXJ1STJ+2C
-	 zDSOELsXcygqTP9CAYRnwgItvEJ4+WQkaKmW5yvtPZNixep58RP15720Tp3BRX1HR+qOpLzBZAHv
-	 o9eV7d2E8KcQqaBwyhO4z/6LYY4fqr9joy/5tec0VgMMRjsiRHRUrE58kZt37DZuSyv0rTgiQgYP
-	 K3VzlK9XhLpzps6A+URTb18ocZSm4Be2wbHM1Yc444v/deAoSBMyOuoDmoCqLutEEmy6uhdU822r
-	 rHM+pkGRZFSerB1dw=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Chang Junzheng <guagua210311@qq.com>
-To: outreachy@lists.linux.dev
-Cc: Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-	Mark Greer <mgreer@animalcreek.com>,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	guagua210311@qq.com,
-	Chang Junzheng <guagua210311@outlook.com>
-Subject: [PATCH] staging: greybus: audio_manager_module: make envp array static const
-Date: Thu, 13 Nov 2025 21:01:46 +0800
-X-OQ-MSGID: <20251113130146.72831-1-guagua210311@qq.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763038938; c=relaxed/simple;
+	bh=bUt+qNmjwdJ7gVejc5aNxtgCj7fJkFVLsF+93X0SgNw=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=V3pv2pwsq9mw+YzdmlEqOMYd4OjMj6XMV0Jf/St3cwFFUie5W/A6Z6Ej/62GlMmoSoSLDGJq/AyZ9UneUJb1Oen3DGe1OAaBJIdqlrQRA3jYnB97Fdhgv+3fpKYlaglpfKCHZdvMUsELeAL8RoNNt58KUBvc2J2QzTntERrP0ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiqKhseE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F68C16AAE;
+	Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763038937;
+	bh=bUt+qNmjwdJ7gVejc5aNxtgCj7fJkFVLsF+93X0SgNw=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=LiqKhseE0ZjpKS3SHSmWzPRqgP937v6AY4LeZnP+KIPvP+UZ2rOH1rws/j6FxkNkb
+	 EtIprRU7GTxCbIvwhETrdRO0FXpwgmLXL5cbx5y1dJllSYEQKDK8Q7vt1Krud9Vn3E
+	 EgXPVlWeOfRyP4x9DElh4/lUP26erBP0mqdpoSE1w6EH/TRjpTZ8ad5aWjyfdh+HM+
+	 Z60F55ydiIe0KHPUq7Zzjl+u9TJqitqalySBBfykuNTEIa7X3UQLjpG8Wg7p2k6471
+	 CmOEtx8T4t/IaV/ZlwElGm+NwprmW4PKcdcLoqopYXqgLL8Q5tpXdYMdsngkPUumbe
+	 GR2SYNl2UBvoQ==
+Content-Type: multipart/mixed; boundary="===============0521505570487395101=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <c3260fe9e3d8ad79c75a6e8281f9fae5580beb3fcdd08e2015f417e11ec0a1b2@mail.kernel.org>
+In-Reply-To: <20251113123750.2507435-6-jolsa@kernel.org>
+References: <20251113123750.2507435-6-jolsa@kernel.org>
+Subject: Re: [PATCHv2 bpf-next 5/8] ftrace: Add update_ftrace_direct_mod function
+From: bot+bpf-ci@kernel.org
+To: jolsa@kernel.org,rostedt@kernel.org,revest@google.com,mark.rutland@arm.com
+Cc: bpf@vger.kernel.org,linux-kernel@vger.kernel.org,linux-trace-kernel@vger.kernel.org,linux-arm-kernel@lists.infradead.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,menglong8.dong@gmail.com,song@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Thu, 13 Nov 2025 13:02:17 +0000 (UTC)
 
-From: Chang Junzheng <guagua210311@outlook.com>
+--===============0521505570487395101==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-The envp array in send_add_uevent() function is declared as a non-const
-local array, which triggers the following checkpatch.pl warning:
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 433c36c3a..bacb6d9ab 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -544,6 +544,7 @@ int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned long addr);
+>
+>  int update_ftrace_direct_add(struct ftrace_ops *ops, struct ftrace_hash *hash);
+>  int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash);
+> +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock);
+>
+>  void ftrace_stub_direct_tramp(void);
+>
+> @@ -581,6 +582,11 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
+>  	return -ENODEV;
+>  }
+>
+> +int modify_ftrace_direct_hash(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+The stub function name doesn't match the declaration. Should this be
+update_ftrace_direct_mod() instead of modify_ftrace_direct_hash()?
 
-WARNING: char * array declaration might be better as static const
+> +{
+> +	return -ENODEV;
+> +}
+> +
 
-Change the declaration to 'static const char * const' to improve code
-safety by making the array read-only and allow for better compiler
-optimization. This follows the kernel coding style recommendations.
+[ ... ]
 
-Signed-off-by: Chang Junzheng <guagua210311@qq.com>
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 345f3fdd2..627d05b57 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -6445,6 +6445,74 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
+>  	return err;
+>  }
+>
+> +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
+> +{
+> +	struct ftrace_hash *orig_hash = ops->func_hash->filter_hash;
+> +	struct ftrace_func_entry *entry, *tmp;
+> +	static struct ftrace_ops tmp_ops = {
+> +		.func		= ftrace_stub,
+> +		.flags		= FTRACE_OPS_FL_STUB,
+> +	};
+> +	unsigned long size, i;
+> +	int err;
+> +
+> +	if (!hash_count(hash))
+> +		return 0;
+> +	if (check_direct_multi(ops))
+> +		return -EINVAL;
+> +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
+> +		return -EINVAL;
+> +	if (direct_functions == EMPTY_HASH)
+> +		return -EINVAL;
+> +
+> +	if (do_direct_lock)
+> +		mutex_lock(&direct_mutex);
+> +
+> +	/* Enable the tmp_ops to have the same functions as the direct ops */
+> +	ftrace_ops_init(&tmp_ops);
+> +	tmp_ops.func_hash = ops->func_hash;
+> +
+> +	err = register_ftrace_function_nolock(&tmp_ops);
+> +	if (err)
+> +		goto unlock;
+> +
+> +	/*
+> +	 * Call __ftrace_hash_update_ipmodify() here, so that we can call
+> +	 * ops->ops_func for the ops. This is needed because the above
+> +	 * register_ftrace_function_nolock() worked on tmp_ops.
+> +	 */
+> +	err = __ftrace_hash_update_ipmodify(ops, orig_hash, orig_hash, true);
+                                                                        ^^^^
+Does __ftrace_hash_update_ipmodify() accept a fourth argument? The
+function signature shows it only takes three parameters (ops, old_hash,
+new_hash). This looks like a compilation error.
+
+> +	if (err)
+> +		goto out;
+
+[ ... ]
+
+> +
+> +out:
+> +	/* Removing the tmp_ops will add the updated direct callers to the functions */
+> +	unregister_ftrace_function(&tmp_ops);
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Can this deadlock when do_direct_lock is true? Looking at the code:
+
+  update_ftrace_direct_mod() with do_direct_lock=true
+    -> mutex_lock(&direct_mutex)
+    -> register_ftrace_function_nolock(&tmp_ops) succeeds
+    -> __ftrace_hash_update_ipmodify() fails
+    -> goto out (still holding direct_mutex)
+    -> unregister_ftrace_function(&tmp_ops)
+       -> cleanup_direct_functions_after_ipmodify()
+          -> mutex_lock(&direct_mutex) /* deadlock */
+
+The unregister path tries to reacquire direct_mutex that we're already
+holding.
+
+> +
+> +unlock:
+> +	if (do_direct_lock)
+> +		mutex_unlock(&direct_mutex);
+> +	return err;
+> +}
+> +
+>  #endif /* CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
+
+
 ---
- drivers/staging/greybus/audio_manager_module.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
-diff --git a/drivers/staging/greybus/audio_manager_module.c b/drivers/staging/greybus/audio_manager_module.c
-index 4a4dfb42f50f..ca6a2cd0bc4f 100644
---- a/drivers/staging/greybus/audio_manager_module.c
-+++ b/drivers/staging/greybus/audio_manager_module.c
-@@ -159,14 +159,14 @@ static void send_add_uevent(struct gb_audio_manager_module *module)
- 	char ip_devices_string[64];
- 	char op_devices_string[64];
- 
--	char *envp[] = {
--		name_string,
--		vid_string,
--		pid_string,
--		intf_id_string,
--		ip_devices_string,
--		op_devices_string,
--		NULL
-+	static const char * const envp[] = {
-+						name_string,
-+						vid_string,
-+						pid_string,
-+						intf_id_string,
-+						ip_devices_string,
-+						op_devices_string,
-+						NULL
- 	};
- 
- 	snprintf(name_string, 128, "NAME=%s", module->desc.name);
--- 
-2.43.0
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19332026793
 
+--===============0521505570487395101==--
 
