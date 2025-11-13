@@ -1,320 +1,181 @@
-Return-Path: <linux-kernel+bounces-899167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D6CC57027
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:53:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068BBC56F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF603BC129
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:44:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF19F4E4210
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BD5335543;
-	Thu, 13 Nov 2025 10:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKrbqIVy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083C633343B;
+	Thu, 13 Nov 2025 10:45:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178ED3321A4;
-	Thu, 13 Nov 2025 10:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090972D73B4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030659; cv=none; b=UV1mxFiI+A13d1fqFZOVbAlZMojVbU0GkSnO7/AO8V0lBw0DtKdrXj+AZfnIIwRKHhEyXCWvpsPY0UBQ2Ixg9RWy9KffTbuYatWTkoCg1AkaGe5TDHQI/Nko2zdrxF4e6uN0Ak7wBJX74XiesYZ0SW0AMN23FF45Sc5JX60lFh8=
+	t=1763030713; cv=none; b=C9T3ZeZV4NdkyDBmsdi5n486i3KA8FzjHDrJcbiDxvzRl4SBxN4otr4CcooqOyLeYPTYwkpoImMz+LoSNhZxOnlvK+WL5VGT2A1lOaBbgimsTQSW7l2ehSMKhNwAkP6KBLdEPpl/+HBy6tYWMv7uoNyhUKVip3Hn06vjacnG+kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030659; c=relaxed/simple;
-	bh=doOu73A/baQQtoQbTZKLUlfNvk+R4uFSI7Dk3v8t5Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z201cMGNqjN4PnY/f6hag0uwd21uBRjAD7tS8zSvbLEd+vu3B2lGnvp6fMF/fl4e3IQLesG+G9J4HRYRMURPcb08ixY5NVjl41g2GQr8qMcWoKzQWx0Cf3RcPy9ETkMHWZgm01HmLGx7tfPMxkm4e23Iv1RRY6hDRnnhZ6EuanQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKrbqIVy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8E8C16AAE;
-	Thu, 13 Nov 2025 10:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763030658;
-	bh=doOu73A/baQQtoQbTZKLUlfNvk+R4uFSI7Dk3v8t5Yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKrbqIVyrZQsVjcXoLQ5T0SDLiSw6nxnRtJp0jgyFRFFoWHpAUJx80Zd1awgQV3+0
-	 Q+JmWtQhbFSVc0OhMGywKhRQvARBdYmHegCgJyW+c5yvGQFt8CAVrWrWAUnIT9e84m
-	 LWmQ/fqfDFZrCwyiKpOCJEpMslwkk8HuZnPJYwp1ollO0v9hZlczQMbbAAFEtda+X6
-	 FeHPn+CvKVVVX67zSExM+m+WZy2CpB8STsHakp8FMxS5D3GINEDl6cWPHO1QBfttdm
-	 f5ROYsRzNmxzUVf1vjrF8liciQP+xVR65lKDcFCvlr8z1VykWXWE7YMpyGogQH6NVO
-	 w/WAWKAbGwlzA==
-Date: Thu, 13 Nov 2025 11:44:14 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Lucas Zampieri <lzampier@redhat.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Kosina <jikos@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Bastien Nocera <hadess@hadess.net>, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] HID: Add support for multiple batteries per
- device
-Message-ID: <em2u4ncbsu3ivwkiucthvqzhzbklu72eo3ovhshzy4m6iqiv4v@bvlk4w4ux2qh>
-References: <20251113001508.713574-1-lzampier@redhat.com>
+	s=arc-20240116; t=1763030713; c=relaxed/simple;
+	bh=4rgRuekFY/f5v8UarWrgIrVKImDTj9ox/JgwI9CtWv4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cBADSSOWA/JyBBiaTTyo/TPtMCqQK4nKIN1t2jsbLJsTMY4HaSemQ6Pi199vPzeroW+TlceL6aYOtFTAIUz493OjlZzxKyXoQbAvfd1gcrxSZaY8KyBJITKP97p4EDUTY6l+/lLc9gBzE2jMFotSJZ8wWYID9nOjmG2QKCOgPBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vJUp6-0007QK-KI; Thu, 13 Nov 2025 11:45:04 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vJUp6-000Ez2-0q;
+	Thu, 13 Nov 2025 11:45:04 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vJUp6-000000005XD-0n6P;
+	Thu, 13 Nov 2025 11:45:04 +0100
+Message-ID: <5422542a5bc21edeb229006dc6776c590bb74410.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/3] reset: cix: add support for cix sky1 resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, cix-kernel-upstream@cixtech.com
+Date: Thu, 13 Nov 2025 11:45:04 +0100
+In-Reply-To: <20251113075935.774359-3-gary.yang@cixtech.com>
+References: <20251113075935.774359-1-gary.yang@cixtech.com>
+	 <20251113075935.774359-3-gary.yang@cixtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113001508.713574-1-lzampier@redhat.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Lucas,
+On Do, 2025-11-13 at 15:59 +0800, Gary Yang wrote:
+> There are two reset controllers on Cix Sky1 Soc.
+> One is located in S0 domain, and the other is located
+> in S5 domain.
+>=20
+> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+> ---
+>  drivers/reset/Kconfig      |   7 +
+>  drivers/reset/Makefile     |   1 +
+>  drivers/reset/reset-sky1.c | 381 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 389 insertions(+)
+>  create mode 100644 drivers/reset/reset-sky1.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 78b7078478d4..45768cd3b135 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -278,6 +278,13 @@ config RESET_SIMPLE
+>  	   - SiFive FU740 SoCs
+>  	   - Sophgo SoCs
+> =20
+> +config RESET_SKY1
+> +	bool "Cix Sky1 reset controller"
+> +	depends on HAS_IOMEM
+> +	depends on ARCH_CIX || COMPILE_TEST
+> +	help
+> +	  This enables the reset controller for Cix Sky1.
+> +
+>  config RESET_SOCFPGA
+>  	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOC=
+FPGA)
+>  	default ARM && ARCH_INTEL_SOCFPGA
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index f7934f9fb90b..a878ac4a6e4b 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) +=3D reset-rzg2l-=
+usbphy-ctrl.o
+>  obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2phy.o
+>  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
+>  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+> +obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
+>  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
+>  obj-$(CONFIG_RESET_SPACEMIT) +=3D reset-spacemit.o
+>  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
+> diff --git a/drivers/reset/reset-sky1.c b/drivers/reset/reset-sky1.c
+> new file mode 100644
+> index 000000000000..b9e03e76736a
+> --- /dev/null
+> +++ b/drivers/reset/reset-sky1.c
+> @@ -0,0 +1,381 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + *
+> + * CIX System Reset Controller (SRC) driver
+> + *
+> + * Author: Jerry Zhu <jerry.zhu@cixtech.com>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/reset/cix,sky1-rst.h>
+> +#include <dt-bindings/reset/cix,sky1-rst-fch.h>
+> +
+> +#define SKY1_RESET_SLEEP_MIN_US		50
+> +#define SKY1_RESET_SLEEP_MAX_US		100
+> +
+> +struct sky1_src_signal {
+> +	unsigned int offset, bit;
+> +};
+> +
+> +struct sky1_src_variant {
+> +	const struct sky1_src_signal *signals;
+> +	unsigned int signals_num;
+> +};
+> +
+> +struct sky1_src {
+> +	struct reset_controller_dev rcdev;
+> +	struct regmap *regmap;
+> +	const struct sky1_src_signal *signals;
+> +};
+> +
+> +enum {
+> +	CSU_PM_RESET				=3D 0x304,
+> +	SENSORHUB_RESET				=3D 0x308,
+> +	SENSORHUB_NOC_RESET			=3D 0x30c,
+> +
+> +	RESET_GROUP0_S0_DOMAIN_0		=3D 0x400,
+> +	RESET_GROUP0_S0_DOMAIN_1		=3D 0x404,
+> +	RESET_GROUP1_USB_PHYS			=3D 0x408,
+> +	RESET_GROUP1_USB_CONTROLLERS		=3D 0x40c,
+> +
+> +	RESET_GROUP0_RCSU			=3D 0x800,
+> +	RESET_GROUP1_RCSU			=3D 0x804,
+> +
 
-On Nov 13 2025, Lucas Zampieri wrote:
-> This RFC introduces support for multiple batteries per HID device, addressing
-> a long-standing architectural limitation in the HID battery reporting subsystem.
+Unnecessary empty line.
 
-(TBH, that cover letter screams AI :-P)
+Please fix this and the other issues reported by
 
-Stating a "long-standing architectural limitation" is a bit rough. The
-need wasn't there or nobody took the time and effort to plug this hole
-:)
+  scripts/checkpatch.pl --strict
 
-General comment on this cover letter actually: it is way too detailed,
-and try to iron out every corner case the AI bot thought would be fought
-against.
-Which leads to people actually nitpicking on the details below:
-for example, I immediately thought the Wacom bit down below was wrong.
-
-But really, all you need is multiple battery support on devices.
-And this is fine. A couple of example would be good enough, and we can
-move on.
-
-> 
-> ## Background
-> 
-> The current HID implementation explicitly prevents multiple batteries per device
-> through an early return in hidinput_setup_battery() that enforces a single-battery
-> assumption. Linux treats peripheral batteries (scope=Device) differently from system
-> batteries, with desktop environments often displaying them separately or ignoring
-> them entirely. However, this design doesn't account for modern multi-battery hardware patterns.
-> 
-> ## Problem Statement
-> 
-> Multiple battery scenarios that cannot be properly reported today:
-> 
-> 1. Gaming headsets with charging docks (e.g., SteelSeries Arctis Nova Pro
->    Wireless) - headset battery reported, dock battery invisible
-> 2. Graphics tablets with stylus batteries (Wacom) - requires driver-specific
->    workarounds
-
-Technically, most Wacom styluses are battery-less for their pencils. The
-battery issue that was related below is for a AES device, which is an
-integrated wacom tablet in a laptop, so the only battery we have is on
-the stylus itself. Arguably we can have several styluses, but only one
-can be used at the same time, so reusing the same power supply device is
-fine.
-
-(see, I told you, that's the "someone is wrong on the internet effect")
-
-> 3. Wireless earbuds with per-earbud batteries plus charging case
-> 4. Multi-device receivers (Logitech Unifying) - requires proprietary HID++
->    protocol parsing
-
-That's an entire different reason why there is HID++, and the fact that
-Solaar handles batteries itself is lack of support in the kernel for
-some devices. (and because sometimes it's much simpler to update a user
-space client than a kernel driver)
-
-> 
-> This forces manufacturers to use proprietary protocols and vendor-specific
-> software. Community projects parse USB packets directly because standard HID
-> battery reporting cannot handle multi-battery scenarios.
-
-I don't think Linux ever forced any manufacturer to use proprietary
-protocols or vendor-specific software. For Logitech (or any gaming mouse
-FWIW), those protocols were in place well before Linux ever had support
-for them.
-
-> 
-> ## Why This Matters
-> 
-> The current limitation creates a cycle: OS lacks support, so manufacturers
-> implement proprietary protocols, which makes vendor software necessary, which
-> reduces pressure to fix the OS limitation. Improving HID core support for
-> multiple batteries would enable standardized reporting, reduce the need for
-> vendor software, improve OS integration, reduce driver duplication, and provide
-> a foundation for future multi-battery devices.
-
-This is completely BS and AI generated. There is no such cycle.
-
-But again, the need is there, so we need to push this series forward.
-The packaging of the cover letter is wrong. We are not salesmen, there
-is no need to pitch this like that.
-
-> 
-> ## Proposed Solution
-> 
-> This series introduces struct hid_battery to encapsulate individual battery
-> state, refactors the code to use this structure internally, and adds support
-> for multiple batteries tracked in a list within struct hid_device. Batteries
-> are identified by report ID. The implementation maintains full backwards
-> compatibility with existing single-battery code.
-
-That paragraph is good. Keep it please :)
-
-> 
-> ## Testing
-> 
-> Tested with split keyboard hardware (Dactyl 5x6) using custom ZMK firmware
-> that implements per-side HID battery reporting. Each battery (left and right
-> keyboard halves) reports independently through the power supply interface with
-> distinct report IDs (0x05 and 0x06).
-> 
-> Test firmware available on my personal fork at:
-> https://github.com/zampierilucas/zmk/tree/feat/individual-hid-battery-reporting
-> If this series gets merged, these changes will be proposed to upstream ZMK.
-> 
-> HID descriptor and recording captured with hid-recorder:
-> 
-> D: 0
-> R: 162 05 01 09 06 a1 01 85 01 05 07 19 e0 29 e7 15 00 25 01 75 01 95 08 81 02 05 07 75 08 95 01 81 03 05 07 15 00 25 01 19 00 29 67 75 01 95 68 81 02 c0 05 0c 09 01 a1 01 85 02 05 0c 15 00 26 ff 0f 19 00 2a ff 0f 75 10 95 06 81 00 c0 05 84 09 05 a1 01 05 85 85 05 09 44 15 00 25 01 35 00 45 01 75 08 95 01 81 02 09 65 15 00 25 64 35 00 45 64 75 08 95 01 81 02 c0 05 84 09 05 a1 01 05 85 85 06 09 44 15 00 25 01 35 00 45 01 75 08 95 01 81 02 09 65 15 00 25 64 35 00 45 64 75 08 95 01 81 02 c0
-> N: ZMK Project Dactyl 5x6
-> P: usb-0000:2d:00.3-4.2/input2
-> I: 3 1d50 615e
-> D: 0
-> E: 0.000000 3 05 00 56
-> E: 0.000977 3 05 00 56
-> E: 1.490974 3 06 00 52
-> E: 1.491958 3 06 00 52
-> E: 6.492979 3 06 00 53
-> E: 6.493962 3 06 00 53
-> 
-> The recording shows both batteries reporting with different charge levels
-> (Report ID 05: 86%, Report ID 06: 82%-83%), demonstrating the multi-battery
-> functionality. This can be used to verify UPower compatibility.
-
-Same, please keep that testing note in future versions.
-
-> 
-> ## Future Work: Userspace Integration
-> 
-> As suggested by Bastien, semantic battery differentiation (e.g., "left
-> earbud" vs "right earbud") requires userspace coordination, as HID
-> reports typically lack role metadata.
-
-The sad part is that HID can report a lot of things, but manufacturers
-don't make a full use of it.
-
-For example, in the split keyboard case, you could make use of the
-Handedness NAry of the generic device Controls page (0x06) which can
-help describing Left Hand (0x32) and Right Hand (0x33).
-
-But the problem is more likely that no known manufacturer will follow
-your lead on this, and the NAry code you put here will only be used by
-your firmware.
-
-For the bluetooth earbuds, the Logical collection Channel Left (0x161,
-page Consumer Page 0x0c) and Channel Right (0x162, same page) could be
-used.
-
-> 
-> This will require:
-> 1. systemd/hwdb entries for device-specific battery role mappings
-> 2. UPower updates to enumerate and group multi-battery devices
-> 3. Desktop environment changes to display batteries with meaningful labels
-> 
-> This kernel infrastructure is a prerequisite for that userspace work.
-> 
-> ## Request for Comments
-> 
-> Is list-based storage appropriate or would another structure work better?
-
-List based storage should be fine. We don't receive battery updates that
-often, so if that is simpler for you, that's all right.
-
-> Should we support usage-based identification in addition to report ID for
-> devices using the same report ID?
-
-If the question is:
-- should we enforce each battery to have a different name, the answer is
-	yes
-- should we take the report ID as the battery identifier in the name:
-	why not?
-- should we make use of other collections to split up batteries: maybe.
-	If you have a device which reports multiple batteries on the same
-	report ID, then yes, we will need a way to split them.
-
-But again, we are only theorically speaking here, so it's hard to
-answer. I really wish we had an actual consumer device we could use as a
-reference, not a custom firmware we can tune in any way we want.
-
-> Is sequential naming (battery-N) sufficient
-> or should batteries have semantic role identifiers like "main", "stylus", "dock"?
-
-Semantic would be ideal, but at least having a unique identifier is a
-requirement. That's more a question for the upower guys.
-
-> 
-> To HID maintainers (Jiri Kosina, Benjamin Tissoires): Does this belong in
-> hid-input.c or should it be separate? 
-
-hid-input.c seems fine to me. There are technically not a lot of
-differences from the existing AFAICT, it's just that we iterate over a
-list.
-
-> Any concerns about the backwards
-> compatibility approach? Meaning, should I have removed the whole
-> dev->bat legacy mapping and use the new struct?
-
-I'm not sure I follow that backwards compatibility. AFAIU that API is
-kernel internal, so it should be easier to drop it entirely instead of
-duplicating the data for no benefit.
-
-> 
-> To power supply maintainers (Sebastian Reichel): Any issues with multiple
-> power_supply devices from a single HID device?
-
-Not a power supply maintainer, but unless upower builds a graph of the
-devices it sees, I don't see why this would be a problem.
-
-> 
-> Related commits:
-> - c6838eeef2fb: HID: hid-input: occasionally report stylus battery
-> - a608dc1c0639: HID: input: map battery system charging
-> - fd2a9b29dc9c: HID: wacom: Remove AES power_supply after inactivity
-
-What the point of those?
-
-> 
-> Community projects demonstrating the need:
-> - HeadsetControl: https://github.com/Sapd/HeadsetControl
-> - Solaar: https://github.com/pwr-Solaar/Solaar
-> - OpenRazer: https://github.com/openrazer/openrazer
-> 
-> Lucas Zampieri (3):
->   HID: input: Introduce struct hid_battery
->   HID: input: Refactor battery code to use struct hid_battery
->   HID: input: Add support for multiple batteries per device
-> 
-> Changes in v2:
-> - Split the monolithic v1 patch into three logical patches for easier review:
->   1. Introduce struct hid_battery (pure structure addition)
->   2. Refactor existing code to use the new structure (internal changes)
->   3. Add multi-battery support (new functionality)
-> - Added detailed testing section with hardware specifics
-> - Added hid-recorder output (dactyl-hid-recording.txt) demonstrating two-battery
->   HID descriptor for UPower validation
-> - Added "Future Work: Userspace Integration" section addressing Bastien's feedback
->   about semantic battery differentiation
-> - Added hardware examples with product links to commit messages (per Bastien's
->   suggestion)
-> - No functional changes from v1, only improved patch organization and documentation
-> 
->  drivers/hid/hid-core.c  |   4 +
->  drivers/hid/hid-input.c | 196 +++++++++++++++++++++++++++-------------
->  include/linux/hid.h     |  42 ++++++++-
->  3 files changed, 179 insertions(+), 63 deletions(-)
-> 
-> --
-> 2.51.1
-> 
-
-And now after all of this bikeshedding, I can move on to the review of
-the series.
-
-Cheers,
-Benjamin
+regards
+Philipp
 
