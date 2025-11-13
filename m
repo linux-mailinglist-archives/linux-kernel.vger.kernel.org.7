@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-899917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3B7C59191
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:22:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD81C5917C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:22:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFED3BDB02
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:08:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EEB0562A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477ED35C1A8;
-	Thu, 13 Nov 2025 16:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPgbhtBP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D39935CB6D;
+	Thu, 13 Nov 2025 16:54:59 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9779E35A93A;
-	Thu, 13 Nov 2025 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E00035CB68
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052871; cv=none; b=c25SrypPFkdhGt+wY+3REvF2+wrsm4uvfFId+LxM0src2uOXCu3vgqTWbvVz0HJ9T/CS9FMrEg+ODs4mkCTL+N4x5kQnCHC5Pt4wZPcJSh+Hh+ZMUqa1hNcTOO7ht2V+Py22zWQQqiB21jRtuPJG+S9Xdy7WVytudf2xhFxagKI=
+	t=1763052899; cv=none; b=Ca2QOVJR9uPdfjHMu7bB3fPl2GY8YGTNUaksfAtPuT6bo6biOwzEimUysddtOwT83bjHmcATHaEZuq4W4aVCj4a6WGDIm+9pVeLEiIs8lp06PoJBvl9YchwVfXMcpaTWzfn0dTSxu+OKG/zwqyLrzPAFoh9vBHOOSXabtWp3yP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052871; c=relaxed/simple;
-	bh=JeYwUKQwr+IxDDxKQu8g9ocn8mWOdn0gU01do0ot+ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXnC7aWB1rxHlyQeiV7KQwfXBy+50dfmvdFsme5N0y0MHdoZhvQ0o+SsbnEijp9af4GOxYKSRhdVpTn7CX4UqvZRgbRumzIaVWkSCIsECNt2IOSwS1YiUJ2HOCJpypLlXrGxvOYfnwjxIBrQEaJdMWA7t6c2MNtDYcTLu+hh1vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPgbhtBP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE99C2BCB0;
-	Thu, 13 Nov 2025 16:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763052871;
-	bh=JeYwUKQwr+IxDDxKQu8g9ocn8mWOdn0gU01do0ot+ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FPgbhtBPBhmd8fJ30cqe+m5IyWwl2+bMJVFYPd92SUN7dvpR/dqTg76gV7EeC5H4m
-	 w4ttkfWQKT9y0COmfsoOBEx+r8z6mdih6SKJTLo2BVtKownAru28UaU2OMXXALWzLr
-	 M2swxQcd1+yMmE2Efw4XT9sNtlfDjfuTsFLLojS20RkZ1+Q2rvZG9HfdAgOgI7q0wf
-	 b8ydMinQpt37LzSWN8iJrCWV/MkKnowdcL8o6Hf18eseU8gkhaRESUoF6emJDhxlF1
-	 4X0SFfBCqJHq5Gp34FJFqOP5jnB3TP3JDB3C69YQnbLl2H4lvomTJkWa3a6WCpDFRU
-	 cwVNHeJPyPqwg==
-Date: Thu, 13 Nov 2025 22:24:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, will@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
-	linux-arm-msm@vger.kernel.org, zhangsenchuan@eswincomputing.com, vincent.guittot@linaro.org
-Subject: Re: [PATCH v2 2/3] PCI: qcom: Check for the presence of a device
- instead of Link up during suspend
-Message-ID: <zgj3ubyb234ig6ndz6ov5q3szvuxnd3jkz2rjglbad4ksri6nl@ov7boxuar4va>
-References: <20251107044319.8356-3-manivannan.sadhasivam@oss.qualcomm.com>
- <20251113164147.GA2285894@bhelgaas>
+	s=arc-20240116; t=1763052899; c=relaxed/simple;
+	bh=/w7U1lULN0Wt5cy2n+o8BXmaQCUvdOw6lpumB8VVy08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdANJd36QrQe8y2jd5O/xOMQNtXQgJJ3GmGYnSvirl0n83KKuj/4W1ha3yQ8fP41rVl6MgEy24XZJbE7w0FvaMdcuU/n+7rMcU8no3X0Omsz9xP66YQDwJjTu4kSmeleDDo8x4NmRhk7TebemGL/Vt0BIXcDXGWxxvuki/LBkGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5595c4a7816so667113e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:54:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763052896; x=1763657696;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DiVTOOriFml3/StIKpZ5dwhW9Hno3lDZNqDkWyJuxDU=;
+        b=SgjYrOCvwk5fGMR5LtlnGlCUg2FEaFyG+1Tp1d/jiPMJVki+5DutDs4d2cdsZSD5iL
+         O7YJtua6YSN5wxUZTLI1Zj8TD63tFNED1M3MXdaBlAwqayBrOuu1DoGuwrfRDkm4OyrN
+         Bc/8NmCyLKfH9C+MfcXt2mUzXql2GenGjGj+p4FD4s0OJWoqwMe0ZRNsRRLn1WBuLRmN
+         Z2lpT4v8r7+m2Ch//tg0rk2hfWwHc9RTKhs7ym4PgNfbvFvAt8yRM1u6+ghK/FSYbZjI
+         gpFfMtleU0hUkP2NLUDE3b8ByA9XFWPCSUEwDwiZN0opcTjy1gl+w1hzSlvmYu81tNRA
+         rVaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGIg6gqeNFyJ56aM9P47zBuiK3P1PXcIQR8nf8caS9LpU2lqRIJNsyg0gA+PvUXXZHsJYh4wEKXXYIbzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRjo314h8yXCSMJJIqdfuMzAB5UO1tn+9nx1PvQXakCFyef9a9
+	FgsMFy4Gd0UKSyOZd1MdqQzuzs2VBJi07YTBtpR3qBJxValqstIbynaLBmWIcuQ3u7M=
+X-Gm-Gg: ASbGncsFcDna4MGzBN17c9eAObMCmtK+FfHWM6MzwHWIyBiULi6WCkpSSrqm6fWjTls
+	fc8UTZz27LQ05KiTQaHDmqo6Kw9QL6Z8m4u5f006yBz3Sxww09YluC5Ijl27BVyTqrERuFyJXxp
+	KjeaVwGd1F1OU+xQ97Fzz9mYk8O63LLBPD07pw009N0xPCEokg48PXVWLuiTXGRvhe6DpK96AtP
+	O5RsMidx0acC48lYYSLCFTuh63TaogMjEgWs2L+nHqKT+jdQnmXFPbSFjSFhvUy4lPaYh0yPCUe
+	Ek0YgF7lVGIEEviAPq6fj9dtEaKsZRNBg1mst2k3hZyypPcCVKDN9ydrk61lkpiezuxasc2w5Nk
+	f30oMWAi4HJwmJ1V+vsi+4+Saia8UUal/fEwYM/7NGMPgN3fTSzv42uJT58TdrH6cRHcpj8WoiB
+	DD5JP8/Oe2fycqcqqnWXlqw+UC6owM8iPz+bqkvps3yg==
+X-Google-Smtp-Source: AGHT+IG2gWx8FRDbkIfjWZqSLZS4nnWYYXUVoxJ0xBXz4mi9OXPKH0EJtiES4otztq6WFkrLobQ4mA==
+X-Received: by 2002:a05:6122:488d:b0:557:c38b:4dbd with SMTP id 71dfb90a1353d-55b1bde8c79mr206275e0c.9.1763052895716;
+        Thu, 13 Nov 2025 08:54:55 -0800 (PST)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f359fa2sm932578e0c.8.2025.11.13.08.54.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 08:54:54 -0800 (PST)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5595c4a7816so667099e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:54:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWaq3CoLJ40GoMx9BfFPGrUpJXP+BQeFKWWMBVxVYZ4qgFjnIX1dP9dLMQZ8hKj12dzyGfYufGLo3GZlvA=@vger.kernel.org
+X-Received: by 2002:a05:6102:3751:b0:5dd:c538:b85c with SMTP id
+ ada2fe7eead31-5dfc5b9485dmr175827137.24.1763052894285; Thu, 13 Nov 2025
+ 08:54:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251113164147.GA2285894@bhelgaas>
+References: <20251101050034.738807-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251101050034.738807-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251101050034.738807-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 17:54:43 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXRkiJHSFj1QsQjH_6g-WqVK0aYE4Q1+WS2zGKLXWoj1Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bmUKyeVUtnm2gNnWCtpgD7bmlT9Yk_sNHgyVVXH3XqZY-ChGkFlPHKyXXU
+Message-ID: <CAMuHMdXRkiJHSFj1QsQjH_6g-WqVK0aYE4Q1+WS2zGKLXWoj1Q@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: renesas: r9a09g056: Add USB3.0 clocks/resets
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 13, 2025 at 10:41:47AM -0600, Bjorn Helgaas wrote:
-> On Fri, Nov 07, 2025 at 10:13:18AM +0530, Manivannan Sadhasivam wrote:
-> > The suspend handler checks for the PCIe Link up to decide when to turn off
-> > the controller resources. But this check is racy as the PCIe Link can go
-> > down just after this check.
-> > 
-> > So use the newly introduced API, pci_root_ports_have_device() that checks
-> > for the presence of a device under any of the Root Ports to replace the
-> > Link up check.
-> 
-> Why is pci_root_ports_have_device() itself not racy?
-> 
+On Sat, 1 Nov 2025 at 06:01, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add USB3.0 clock and reset entries.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Because it is very uncommon for the 'pci_dev' to go away during the host
-controller suspend. It might still be possible in edge cases, but very common as
-the link down. I can reword it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
-- Mani
+Gr{oetje,eeting}s,
 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 805edbbfe7eb..b2b89e2e4916 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -2018,6 +2018,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> >  static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  {
-> >  	struct qcom_pcie *pcie;
-> > +	struct dw_pcie_rp *pp;
-> >  	int ret = 0;
-> >  
-> >  	pcie = dev_get_drvdata(dev);
-> > @@ -2053,8 +2054,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  	 * powerdown state. This will affect the lifetime of the storage devices
-> >  	 * like NVMe.
-> >  	 */
-> > -	if (!dw_pcie_link_up(pcie->pci)) {
-> > -		qcom_pcie_host_deinit(&pcie->pci->pp);
-> > +	pp = &pcie->pci->pp;
-> > +	if (!pci_root_ports_have_device(pp->bridge->bus)) {
-> > +		qcom_pcie_host_deinit(pp);
-> >  		pcie->suspended = true;
-> >  	}
-> >  
-> > -- 
-> > 2.48.1
-> > 
+                        Geert
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
