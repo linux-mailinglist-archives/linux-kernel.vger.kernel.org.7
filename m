@@ -1,145 +1,197 @@
-Return-Path: <linux-kernel+bounces-898711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AB0C55D74
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:47:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BD9C55D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:49:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C9694E2AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544353A7A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAE23009F1;
-	Thu, 13 Nov 2025 05:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54279301006;
+	Thu, 13 Nov 2025 05:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gm2F9Djw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="MUaLWdtZ"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011028.outbound.protection.outlook.com [52.101.65.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB20287246;
-	Thu, 13 Nov 2025 05:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763012853; cv=none; b=gygtV+bJf3fkCXnNPfTWmL9d28+PclO5Nefzf3TJw2RYaxc4jWdpm2EAoAnE8bK3RftDaUt3PtLPY3k3X7ZG9UsQ/A78lco8a+kzFYZCxy8ROtNOFNscdBoY5//B9YSIRG8Vgek3V1PopULM/1dHWMoUF/bTWB3tFwfVM4RSF6Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763012853; c=relaxed/simple;
-	bh=tYTHNNf+YGbTSSvqqxsTBUg/KkDpiG6hdbKFlnGdIzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ab5jddW6VmU7GlhgnwVkAT8SzfBppTdcxumDXkwkFua0JqzAa8++j03V8+ukKMmMpu0dfQEHu3SyS4f9I6z9rjZQxhhALsKoiT3JFP7mhXelMSkwKxdrrOJw/B7NJpLN+gc8V2C0iNwM7HdEn/wBiMAIjRxpGPiINXxaW3Gukd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gm2F9Djw; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763012851; x=1794548851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tYTHNNf+YGbTSSvqqxsTBUg/KkDpiG6hdbKFlnGdIzE=;
-  b=gm2F9Djwvg4bPaEaByxaI8IiDyWT2gN7sQTMYLQXH2XsAuC7wq5pjj0O
-   MDinV1FGkj70CtDk0RPk93k3NMpBUohFY6tVJQmPD0menOsEwnKMTQ9c1
-   NxNc6Sq4clo9CtawtINdZ77K28T6ahSHY4GLXa/SAnygY+j8JK6B8nyLt
-   F+ZxjHjh6QRUW43iWupM8RIO7ATClu/BEMycoR9MPMXA+2Ob6p0av/DXy
-   UXO0MpZenFCpitAS2jGB3SMc01h57a70FN68CL/bj0Q80pnPHa6RXS1fj
-   kI6BoYgYSFPe3ZBJjXnoiPyb9T2mEhJHTSmYMadlm66S5FQc5I1Jan+h7
-   w==;
-X-CSE-ConnectionGUID: vYL7odV5SZ++ecYjOIL/Vg==
-X-CSE-MsgGUID: Tl/in1jjR6Sq0T4m5QyyYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65011344"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65011344"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 21:47:30 -0800
-X-CSE-ConnectionGUID: LZMRPt/QQRmtXvbcDjngVg==
-X-CSE-MsgGUID: uhQmO3RJRcaWuElWg0Lv/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="189689750"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 12 Nov 2025 21:47:25 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJQB1-0004wl-2L;
-	Thu, 13 Nov 2025 05:47:23 +0000
-Date: Thu, 13 Nov 2025 13:46:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	devicetree@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@suse.com>, Conor Dooley <conor@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh+dt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>
-Subject: Re: [PATCH v3 06/22] mm: Always use page table accessor functions
-Message-ID: <202511131118.UUi1EVXL-lkp@intel.com>
-References: <20251113014656.2605447-7-samuel.holland@sifive.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B716D35CBC9;
+	Thu, 13 Nov 2025 05:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763012943; cv=fail; b=r3z+qrkcyLAUgLT/q/W0slqr3ZquoEhSVJcxfDwLoCz4Vw6dltqeyOCcEnbiHKipQ618H1GMhtgcOveijMu6FmRDBegycn397KtA/TD04Rp5tlRZmiLILMle6LtZ5cyTE5Qh64wXuXE03xBANMU84K7fa4NMpFPZdE18CBMdwq4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763012943; c=relaxed/simple;
+	bh=/N9TG8SmZqMzI0Ya+vyB3NpHq/2E9zhrzZtOQTL2zEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DwzT4Fzu6wGn/p/RPnHtFyL/dSQ9Kg4duatCbudjlQCSD4IOyexSaBs7HiUcuBaQIFCvmn5LnLuUZaJNQ6VHumEJRsxSQssj4kF+TjzfowQR9kxw2rya3UIg6zCOM3bmAKZ0zm006u0ifJn7US7wrQNNK4XCtr+xJXZb0vzKCJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=MUaLWdtZ; arc=fail smtp.client-ip=52.101.65.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D6QuYJHelQLRvdSy/E/5qK5qJL+6GP8jv8FbNb3Ntya2mrovwDUVAr5/4V7UESCjoey7qVdapV7MBT5k+MYzBai+yYSJz39sUXc9RBbaHAUPVarr0Earo4wzAGeT2vON7NMtLTyWvKjkliNYiMxanSYAMTsqsNuoDRXQrDqltF+CNsKPGF5VgMmKkNv5LUGZA/QNQHlXfUpUGGWVk7t1vx4afmTARPtSaf8AnWI0frJZSE24pq/fWCrZnJl0eZ/V7eCMhv9rh8t9fiwFC5hxAkn5B4b0vjqfascPiv3KyPc+HrzQphwKxetld+oKFIz1Vzdg5IaHCfWGCcGdsusz4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s3oZypIm5BZZtNp9WP9unlYFUNtyHLU2sm+ucDQ5/nw=;
+ b=HmvQXtxbVXJHwFiZTHRcow4eZ7FRHG7m4F5k7G/k3vfCL1IDd0lnlF/RRhl7FZOwU4Y45p3vWcZeDTcFdPUJj3KOM8ywZu6PRFxW6lq3QlTGUqDLyIPYQV09rezVICwGxD3Oj04I0K7vVyAo0guyosRsbbuE4ADgRHiKs5V9XEe8Daqd0PMs+dWLH6xoMPDQeARzDPsuMTGay5FZ3wFJsuId8OFTxhs+1zEZJeG4Ik1pP3QF5eAmUrzjGo2+1fsWdZLjp1jY2k8At6YtQ7KxOySVS5WGJAnYXuy/Ui6pvoqny24LOR5vZutiq/eEIKy2a5zS3Q49hta7aFoT3L8m2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=gmail.com smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s3oZypIm5BZZtNp9WP9unlYFUNtyHLU2sm+ucDQ5/nw=;
+ b=MUaLWdtZGh0bjHDTLA1VFIXLHTrC+qjgLlr1HNwwpeXT2eN8n3BuRsmL7CVzbT61gXfmpO2zr2lRQIh1fk+HXyqw9aarLlBZ0758bd7Vc+HVWB6EzbzmdMdP1HSGg0L0PyYuYKmDfiEkvQ+q2FQ5LfcXWUnDqAMqAgRstzjaw3CCGB/hh5cEF83cxRYw3u4aaDPEByF+eLkj7KCt8EBgQIWeAGIHwJx6iNXySArUm44qNu4wWC3WSfL8z2BZokbp0DqEyamJWuyWL3U3RA6GNqosv08MdCserS3kQVYu2Ue6Lwcjux9eJHhylzJdNIb+hHjfs+51WU3H+p9+/taPqA==
+Received: from DB9PR06CA0008.eurprd06.prod.outlook.com (2603:10a6:10:1db::13)
+ by AM7PR10MB3574.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:131::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 05:48:54 +0000
+Received: from DB1PEPF00039231.eurprd03.prod.outlook.com
+ (2603:10a6:10:1db:cafe::2b) by DB9PR06CA0008.outlook.office365.com
+ (2603:10a6:10:1db::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
+ 13 Nov 2025 05:48:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ DB1PEPF00039231.mail.protection.outlook.com (10.167.8.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 05:48:54 +0000
+Received: from RNGMBX3002.de.bosch.com (10.124.11.207) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
+ 2025 06:48:46 +0100
+Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
+ (10.124.11.207) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
+ 2025 06:48:45 +0100
+Message-ID: <be8d69f9-c21b-4b9e-b7b5-92dfdc668857@de.bosch.com>
+Date: Thu, 13 Nov 2025 06:48:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113014656.2605447-7-samuel.holland@sifive.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] samples: rust: fix endianness issue in rust_driver_pci
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+CC: Marko Turk <mt@markoturk.info>, <dakr@kernel.org>, <bhelgaas@google.com>,
+	<kwilczynski@kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+References: <20251101214629.10718-1-mt@markoturk.info>
+ <aRRJPZVkCv2i7kt2@vps.markoturk.info>
+ <CANiq72kfy3RvCwxp7Y++fKTMrviP5CqC_Zts_NjtEtNCnpU3Mg@mail.gmail.com>
+ <7f3bb267-7cff-45e1-84a7-15245cffd99f@de.bosch.com>
+ <CANiq72=xZ08i3MFqXyxFG63gq29EUggoyb57SJWPNW-Y_VFqqg@mail.gmail.com>
+Content-Language: en-GB
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <CANiq72=xZ08i3MFqXyxFG63gq29EUggoyb57SJWPNW-Y_VFqqg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF00039231:EE_|AM7PR10MB3574:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cd3159c-6984-4f38-959b-08de227854ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R3RxcDZObmczTllKcDlUVm1CUXB2MDZ5L3JNem9Td2FGRWkyY2hTWG5nM3B3?=
+ =?utf-8?B?eVNGbFVPalNxTDV2OHF4REhGLzk4S21DM2pmcGNtQlAranVNK0IremtjVURF?=
+ =?utf-8?B?NjRON3RJTEdraWpYcEd6T0l4MWlBVFZaUUtndXJ4bkowalVrOWpuOHMvaTF5?=
+ =?utf-8?B?dkZteUw1VXlXNmZMbXMrenZRYmVxaUtQdVVNU1BDNjBoalNBd0hodEx2d3ZX?=
+ =?utf-8?B?YmMvN2xLN1NjejBDVUt4dS9mbW5mdEJkZDdHUCtpbVZzTml2ZVFCQ1RrWVM0?=
+ =?utf-8?B?M1pYcUE5bjR5eklxUkRmZzhEMTkyQkowVHdRWVZtUG5ITlZGajlNVGVOcDZU?=
+ =?utf-8?B?UjRhWlFacEZSSERqK0h1cHBoaTI2emNxaHNpVTlTb0EzSlBEUThma1Q3VDF6?=
+ =?utf-8?B?NTdXcU9TeHkxbkYxbmlIWnljSEpFcWxVeEgwWC90RW90Nm5NSFFjVmtXSFZF?=
+ =?utf-8?B?ZjV2R3ZzN21pcGJHQXFobHF4N2t5QmNTR21YLzVVSDdrR2ppUE9US1JJV2Fw?=
+ =?utf-8?B?cXJrZklVbWxUR3hpK3VCTStENXBGNFZFdU1OZ0V2S0l6d3dQall5bzRxUU9T?=
+ =?utf-8?B?d2Z0UTVlSkdZWldYTUZRZnVTL2xwZlpPOFY2UWxVa1BaZzlkVVJZSnF5bEhB?=
+ =?utf-8?B?TUlXRHVBclRwckw3RzdPNk5vc0ttSlZjaXVCaHlXb0ludkJVdXVOU0xlYnlk?=
+ =?utf-8?B?WlJLaVNPL3FqdWtRa3NONGdpeXhKUXdnVEVQZDlKZVl5bEMvd2REN1NiQjRD?=
+ =?utf-8?B?UGVKQXdocCtuaXpnZWkxZEJnQnJjdTI0SGRyZXRoSWdNaHFudUV5Q0xVOEFZ?=
+ =?utf-8?B?RDdwSnlLLzY3Lzl3RHhUcVFtZVBsV01xVC9SdjlnU0kxZE9uUUdlWWRpQk1z?=
+ =?utf-8?B?R3VUazVtYXVZTFlCbTB3SW1BZXpVL2ZySEtmM3FDVXRHQ09rRzJwZE1OZ0V2?=
+ =?utf-8?B?M2U4bW5WUGl5Qkx6REFoYnhscU1nc1dmbFhkYjkrYXJMbnRUTWR2eGhmc01F?=
+ =?utf-8?B?SEs4MGV0SFFEc2w0RTBBWHI2QVlBM2ZDSjJaZ0tjNCtpZk8vVGVkQjNISzhv?=
+ =?utf-8?B?L3dPcFVGVThEaEtrbnRqQXh3dU52VXBDTkVtYWI1M2x5aERNa2NYaktDOE0y?=
+ =?utf-8?B?dGl1Q0ZjL2p5TVhWLzdjVHdvcjl5WFZ3OUJudmxOMHF5SlVtdVZod1pIK0M0?=
+ =?utf-8?B?MFR4eHVDeVp3ZERZU01Nc0RTd0pQNjEvVWRZcGRXZlNvSmpZWEYya3ZzSTVO?=
+ =?utf-8?B?dzNJempHNGZva2Y1OVREM1RPcnk4ZUVUVVc2WXBuVldrQWE1aUFvR243NGVQ?=
+ =?utf-8?B?Sy8razdCY0haK2d5MVBCWG0zVis0U3J5VmhXRHZHQUdCSDRkRjVtSGRnSmI2?=
+ =?utf-8?B?WFJHQ0xMWjNJMUhZZlNHY2Znd1lCSkxOUmxoUzhIOTVqSzc0R3pzdUhWbys4?=
+ =?utf-8?B?WEI4U2RDUkxtczFNUWovSFAzUGdWTkQvRDZ0VUIwYVZIQ2dxMVYrYkIyejU1?=
+ =?utf-8?B?T3pFZGRzbHJReEEyVGdGMDVhQ2JZTXQzTGJMS0lLd3FadDBtVTVpSlBzSzRi?=
+ =?utf-8?B?Vng3dGg2V0hLaStEcDliMTZFWmZVV21WZHZFcnJ0cmVJOVlCaVFiVUxjU3RC?=
+ =?utf-8?B?Qy9jSFV4RkpFTFc2a2FmYzZEdlFKNDcrZ0ZqVFRrS0VIaGlSd2hkQkR2QW1y?=
+ =?utf-8?B?YzJhRFNJMjRRWjNVUWM3cHZXZ0N3Nm85WVJIK3lFN0JGQmxHcG1ZQ3FPRk5m?=
+ =?utf-8?B?U1BzbkdQWi80U3ByamptMHRWRDRPRWlBVmFrQm9Yckx6NC9HZ2NlQ1ZSZi9F?=
+ =?utf-8?B?NUZBb3R4VTlYL0F2SjFWYnQzcTk5cDV3NjNWcksydllNSERnUGJzM05JNTAr?=
+ =?utf-8?B?Y3pWbFUwREtGL0pIQ2k3bEYrN0VXWjNGdjdHdEYyUVFMOEtERUZ4U3c4L0tt?=
+ =?utf-8?B?Q0dkZWZ5SFMwUEdkRndJTkZ0QlkwT3BaWFhQakEzQkxpeVhiRS92cDBweUp6?=
+ =?utf-8?B?Tjloc3hFV2lMdll5SjU1ekowTTk0TURsTXp6QmNTVHYzTE52VlVQdlhjZkl4?=
+ =?utf-8?B?L0M4V3VuVEFpUzFDNE83SzRMWDFhbzZXajZsMS9rUkhSV3BsaDRUaDJVUzBp?=
+ =?utf-8?Q?+99E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:48:54.6166
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cd3159c-6984-4f38-959b-08de227854ca
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF00039231.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3574
 
-Hi Samuel,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 24172e0d79900908cf5ebf366600616d29c9b417]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/mm-ptdump-replace-READ_ONCE-with-standard-page-table-accessors/20251113-095117
-base:   24172e0d79900908cf5ebf366600616d29c9b417
-patch link:    https://lore.kernel.org/r/20251113014656.2605447-7-samuel.holland%40sifive.com
-patch subject: [PATCH v3 06/22] mm: Always use page table accessor functions
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20251113/202511131118.UUi1EVXL-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251113/202511131118.UUi1EVXL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511131118.UUi1EVXL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/madvise.c: In function 'guard_install_set_pte':
->> mm/madvise.c:1119:9: error: implicit declaration of function 'set_pte'; did you mean 'set_ptes'? [-Wimplicit-function-declaration]
-    1119 |         set_pte(ptep, make_pte_marker(PTE_MARKER_GUARD));
-         |         ^~~~~~~
-         |         set_ptes
+On 12/11/2025 11:24, Miguel Ojeda wrote:
+> On Wed, Nov 12, 2025 at 11:17 AM Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>
+>> Hmm, I can't find the initial patch in my Inbox. Even
+>>
+>> https://lore.kernel.org/rust-for-linux/aRRJPZVkCv2i7kt2@vps.markoturk.info/
+>>
+>> doesn't seem to have it?
+> 
+> It was only sent to the linux-pci list -- for situations like this,
+> you can click in the "[not found]" message at the bottom, and then on
+> 
+>      Message-ID: <20251101214629.10718-1-mt@markoturk.info>
+>      found in another inbox:
+> 
+>      ../../linux-pci/20251101214629.10718-1-mt@markoturk.info/
+> 
+> where that last line is a link to the other list that you can click to find it.
+> 
+> I hope that helps!
 
 
-vim +1119 mm/madvise.c
+Yes, thanks, that helps a lot!
 
-  1112	
-  1113	static int guard_install_set_pte(unsigned long addr, unsigned long next,
-  1114					 pte_t *ptep, struct mm_walk *walk)
-  1115	{
-  1116		unsigned long *nr_pages = (unsigned long *)walk->private;
-  1117	
-  1118		/* Simply install a PTE marker, this causes segfault on access. */
-> 1119		set_pte(ptep, make_pte_marker(PTE_MARKER_GUARD));
-  1120		(*nr_pages)++;
-  1121	
-  1122		return 0;
-  1123	}
-  1124	
+And yes, the change itself looks good. I gave this a try with x86 QEMU 
+and as expected (as mentioned it is a no-op on x86) I get with and 
+without this patch
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+rust_driver_pci 0000:00:04.0: pci-testdev data-match count: 1
+
+With this:
+
+Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
+
+Thanks,
+
+Dirk
 
