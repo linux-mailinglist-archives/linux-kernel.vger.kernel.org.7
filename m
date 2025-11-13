@@ -1,233 +1,135 @@
-Return-Path: <linux-kernel+bounces-898422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C662C5542A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:35:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89989C55430
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46A624E2F58
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:33:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF1244E1E00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1CB2877FE;
-	Thu, 13 Nov 2025 01:33:42 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0F8288502;
+	Thu, 13 Nov 2025 01:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="yLT5YQJt"
+Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AD1264638
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF228751A;
+	Thu, 13 Nov 2025 01:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=137.74.80.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997621; cv=none; b=TeErVmROVdPQWXLiPnlbeaC1/DWpCRk9BHOsvB/WkmBN4OkSoSk5XE1cUpu16XFopn9WmCICmoQMbHaY1KOWeH3sa0pk/Gh5M2WA0evH7t2MR+9xBVaRr6NFoy/yXxE5gf4XJz0etKZir30B4inyLz82ZWMNUR207P3X7Lzgetc=
+	t=1762997668; cv=none; b=Skce4KL59fjbMp74jDA/j+XY5ZKyU9jZYOajK+Hb0s4wPbU4PefkJT+Mil2Eco490Blfr08iDxtzskeZmmGyKkqITyAuHSU0e/npFR9XGaSt5NChTW0KInzIQotipoPuKxU2eGnkqq05Fw7sfLwwCb4OhNep79MqnrwKA/C/Ck8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997621; c=relaxed/simple;
-	bh=YYr0ovGXbPx1j+h8mG4oGlF/bo67CcFXqo/NraN20eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGqtRUZZvH+axGBSJjKUs/Uvax/NySU9SZrdye3GMw+pnjTPqLvlnuLSJyEh1XbKtjzQDOaalFY80q9rTDBtXXp575lRldOjzou0qoaqR5EMjO1v3blvL9PwtCo1qf6GnZSRnFGjhVxlRUzlK3h5baacBwbkwdXK/NaQAvoEWgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 13 Nov 2025 10:33:29 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Thu, 13 Nov 2025 10:33:29 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kasong@tencent.com,
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, gunho.lee@lge.com, taejoon.song@lge.com
-Subject: Re: [RFC] mm/swap, memcg: Introduce swap tiers for cgroup based swap
- control
-Message-ID: <aRU1abZaS+c1rK4R@yjaykim-PowerEdge-T330>
-References: <20251109124947.1101520-1-youngjun.park@lge.com>
- <CACePvbV80ZtC2FL6Z-Y4Rg=5bzdi1O8zqQSMEGuxqhj5P0txsA@mail.gmail.com>
+	s=arc-20240116; t=1762997668; c=relaxed/simple;
+	bh=/C8d2McLRUeNClD+TCW1xxnMF0x3wXTvVg6S8iQDfxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ozM5S7dNKyN6iBfiWdfZgJU+c69ZnOX+taHArE2fbu7CNCn9YxkyGez2kkwAEJG6/B1yAIN+d7EsREBgMOwzQoq8QUGSbsAV0rfiOpRslhxSogyAIVue7XYBxS6D0L80C7ncpfR/jTiHCsvtODu3aUm/zwTfHXd0qyMbengzmd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=yLT5YQJt; arc=none smtp.client-ip=137.74.80.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay4.mymailcheap.com (Postfix) with ESMTPS id 10044202D9;
+	Thu, 13 Nov 2025 01:34:19 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 0330740084;
+	Thu, 13 Nov 2025 01:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1762997656; bh=/C8d2McLRUeNClD+TCW1xxnMF0x3wXTvVg6S8iQDfxk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=yLT5YQJtCOMQ0wAicIwX+bXUcUDiQZcfjoAB81C+dgPsKmHGPZP2RRIm4pX9cHZk3
+	 XZHEDZZU2e8psGhxNKnAZyBHEa17XXn8eZt7bfAOfNe2gp+P7HV+7vMkpwqG7mRgNN
+	 H1Y2HAYvLQiV9g5zzHqZoAQ+GvYJez9o/vTvdQdc=
+Received: from [192.168.0.64] (unknown [223.104.43.17])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 25C0042A31;
+	Thu, 13 Nov 2025 01:34:13 +0000 (UTC)
+Message-ID: <a2e3e8ec-bac6-401b-a302-c1a6ddc50e51@aosc.io>
+Date: Thu, 13 Nov 2025 09:34:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] alpha/boot: Add .gitignore ignoring vmlinux kernel
+ image
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Matt Turner <mattst88@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org
+References: <20251112172248.3927-1-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: WangYuli <wangyuli@aosc.io>
+In-Reply-To: <20251112172248.3927-1-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACePvbV80ZtC2FL6Z-Y4Rg=5bzdi1O8zqQSMEGuxqhj5P0txsA@mail.gmail.com>
+X-Rspamd-Queue-Id: 0330740084
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Spamd-Result: default: False [-0.10 / 10.00];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[linux.dev,linaro.org,gmail.com,kernel.org,fjasle.eu];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[thorsten.blum.linux.dev:server fail,wangyl5933.chinaunicom.cn:server fail];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Action: no action
 
-On Wed, Nov 12, 2025 at 05:34:05AM -0800, Chris Li wrote:
+[ Cc the kbuild subsystem mailing list and its maintainers. ]
 
-Hello Chris :)
 
-> Thanks for the patches. I notice that your cover letter does not have
-> [0/3] on it. One tool I found useful is using the b4 to send out
-> patches in series. Just for your consideration, it is not an ask. I
-> can review patches not sent out from b4 just fine.
+Hi Thorsten Blum,
 
-I manually edited the cover letter title, but made a human error.
-Thanks for the tip.
- 
-> On Sun, Nov 9, 2025 at 4:50 AM Youngjun Park <youngjun.park@lge.com> wrote:
-> >
-> > Hi all,
-> >
-> > In constrained environments, there is a need to improve workload
-> > performance by controlling swap device usage on a per-process or
-> > per-cgroup basis. For example, one might want to direct critical
-> > processes to faster swap devices (like SSDs) while relegating
-> > less critical ones to slower devices (like HDDs or Network Swap).
-> >
-> > Initial approach was to introduce a per-cgroup swap priority
-> > mechanism [1]. However, through review and discussion, several
-> > drawbacks were identified:
-> >
-> > a. There is a lack of concrete use cases for assigning a fine-grained,
-> >    unique swap priority to each cgroup.
-> > b. The implementation complexity was high relative to the desired
-> >    level of control.
-> > c. Differing swap priorities between cgroups could lead to LRU
-> >    inversion problems.
-> >
-> > To address these concerns, I propose the "swap tiers" concept,
-> > originally suggested by Chris Li [2] and further developed through
-> > collaborative discussions. I would like to thank Chris Li and
-> > He Baoquan for their invaluable contributions in refining this
-> > approach, and Kairui Song, Nhat Pham, and Michal Koutný for their
-> > insightful reviews of earlier RFC versions.
-> >
-> > Concept
-> > -------
-> > A swap tier is a grouping mechanism that assigns a "named id" to a
-> > range of swap priorities. For example, all swap devices with a
-> > priority of 100 or higher could be grouped into a tier named "SSD",
-> > and all others into a tier named "HDD".
-> >
-> > Cgroups can then select which named tiers they are permitted to use for
-> > swapping via a new cgroup interface. This effectively restricts a
-> > cgroup's swap activity to a specific subset of the available swap
-> > devices.
-> >
-> > Proposed Interface
-> > ------------------
-> > 1. Global Tier Definition: /sys/kernel/mm/swap/tiers
-> >
-> > This file is used to define the global swap tiers and their associated
-> > minimum priority levels.
-> >
-> > - To add tiers:
-> >   Format: + 'tier_name':'prio'[,|' ']'tier_name 2':'prio']...
-> >   Example:
-> >   # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
-> 
-> I think a lot of this documentation nature of the cover letter should
-> move into a kernel document commit. Maybe
-> Documentation/mm/swap_tiers.rst
 
-I will create a Documentation file based on what is mentioned here.
+(If the maintainers happen to spot patches like this), Please feel free 
+to add my "Co-developed-by" or "Reviewed-by" tag: WangYuli 
+<wangyl5933@chinaunicom.cn>
 
-> Another suggestion is use "+SSD:100,+HDD:2,-SD" that kind of flavor
-> similar to "cgroup.subtree_control" interface, which allows adding or
-> removing cgroups. That way you can add and remove in one line action.
+  — I would be very grateful!
 
-Your suggested format is more familiar. I have no objections and will
-change it accordingly.
+Link: 
+https://lore.kernel.org/all/6269AF2792BA8D05+20250704085945.317850-1-wangyuli@uniontech.com/
 
-> >
-> >   There are several rules for defining tiers:
-> >   - Priority ranges for tiers must not overlap.
-> 
-> We can add that we suggest allocating a higher priority range for
-> faster swap devices. That way more swap page faults will likely be
-> served by faster swap devices.
+Link: 
+https://lore.kernel.org/all/47F75842218B0DDC+20250507060012.1203990-1-wangyuli@uniontech.com/
 
-It would be good to explicitly state this in the Documentation.
+Link: 
+https://lore.kernel.org/all/90A2E6E70A68DD1E+20250415091206.413647-1-wangyuli@uniontech.com/
 
-> >   - The combination of all defined tiers must cover the entire valid
-> >     priority range (DEF_SWAP_PRIO to SHRT_MAX) to ensure every swap device
-> >     can be assigned to a tier.
-> >   - A tier's prio value is its inclusive lower bound,
-> >     covering priorities up to the next tier's prio.
-> >     The highest tier extends to SHRT_MAX, and the lowest tier extends to DEF_SWAP_PRIO.
-> >   - If the specified tiers do not cover the entire priority range,
-> >     the priority of the tier with the lowest specified priority value
-> >     is set to SHRT_MIN
-> >   - The total number of tiers is limited.
-> >
-> > - To remove tiers:
-> >   Format: - 'tier_name'[,|' ']'tier_name2']...
-> >   Example:
-> >   # echo "- SSD,HDD" > /sys/kernel/mm/swap/tiers
-> 
-> See above, make the '-SSD, -HDD' similar to the "cgroup.subtree_control"
 
-Ack as I said before commenct. Thanks for suggestion again.
-
-> >   Note: A tier cannot be removed if it is currently in use by any
-> >   cgroup or if any active swap device is assigned to it. This acts as
-> >   a reference count to prevent disruption.
-> >
-> > - To show current tiers:
-> >   Reading the file displays the currently configured tiers, their
-> >   internal index, and the priority range they cover.
-> >   Example:
-> >   # echo "+ SSD:100,HDD:2" > /sys/kernel/mm/swap/tiers
-> >   # cat /sys/kernel/mm/swap/tiers
-> >   Name      Idx   PrioStart   PrioEnd
-> >             0
-> >   SSD       1    100         32767
-> >   HDD       2     -1         99
-> >
-> >   - `Name`: The name of the tier. The unnamed entry is a default tier.
-> >   - `Idx`: The internal index assigned to the tier.
-> >   - `PrioStart`: The starting priority of the range covered by this tier.
-> >   - `PrioEnd`: The ending priority of the range covered by this tier.
-> >
-> > Two special tiers are predefined:
-> > - "": Represents the default inheritance behavior in cgroups.
-> This belongs to the memory.swap.tiers section.
-> "" is not a real tier's name. It is just a wide cast to refer to all tiers.
-
-I will manage it separately as a logical tier that is not exposed to
-users, and also handle it at the code level.
-
-> > - "zswap": Reserved for zswap integration.
+On 2025/11/13 01:22, Thorsten Blum wrote:
+> Building the kernel creates the untracked kernel image file 'vmlinux' in
+> 'arch/alpha/boot/' - ignore it by adding a new local .gitignore file.
 >
-> One thing I realize is that, we might need to have per swap tier have
-> a matching zswap tier. Otherwise when we refer to zswap, there is no
-> way for the cgroup to select which backing swapfile does this zswap
-> use for allocating the swap entry.
-
-From the perspective of per-cgroup swap control,
-if a ZSWAP tier is assigned and a cgroup selects that tier,
-it determines whether to use zswap or not.
-
-However, since the zswap backend does not know which tier it is linked
-to, there could be a mismatch between the zswap tier (1), the backend
-storage (2), and possibly another layer (3).  
-This could lead to a contradiction where the cgroup-selected tier may
-or may not correspond to the actual backend tier.  
-Is this the correct understanding?
-
-> We can avoid this complexity by providing a dedicated ghost swapfile,
-> which only zswap can use to allocate swap entries.
-
-From what I understood when youpreviously mentioned this concept,
-the “ghost swapfile” is not a real swap device.  
-It exists conceptually so that zswap can operate as if there is a swap
-device, but in reality, only compressed swap entries are managed by
-zswap itself. (zswap needs actual swap for compress swap)
-
-Considering both points above, could you please clarify the intended
-direction?  
-
-Are you suggesting removing the zswap tier entirely, or defining a
-specific way to manage it?  
-
-I would appreciate a bit more explanation on how you envision the zswap
-tier being handled.
-
-Best Regards,
-Youngjun Park
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>   arch/alpha/boot/.gitignore | 2 ++
+>   1 file changed, 2 insertions(+)
+>   create mode 100644 arch/alpha/boot/.gitignore
+>
+> diff --git a/arch/alpha/boot/.gitignore b/arch/alpha/boot/.gitignore
+> new file mode 100644
+> index 000000000000..4abc9c8ab7d3
+> --- /dev/null
+> +++ b/arch/alpha/boot/.gitignore
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +vmlinux
 
