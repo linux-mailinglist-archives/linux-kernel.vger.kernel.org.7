@@ -1,170 +1,176 @@
-Return-Path: <linux-kernel+bounces-899313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A867C575D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:20:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC15C575EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:22:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 092CF4E56D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0553AFC2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2367134DCDF;
-	Thu, 13 Nov 2025 12:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8134DB68;
+	Thu, 13 Nov 2025 12:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcuaqM7F"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo5USDGo"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216434D4C1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FDD27B4E8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763036394; cv=none; b=AhO0HxGdsiXvBtIQzilQMFTblVX8rKOxMpo67tRuRbI/PUypNuZqfi0hpKcK8mVClDa/RGLCDEDMQHFr/qlFpo9WPvGspbpCqcIqiRgwMdafIvnYLFPYVVjIxgUkbt9liffDTGDww0cJ2xrIsgQwSnUX4wOCLSDT4NdtHfYuTMc=
+	t=1763036563; cv=none; b=QxmIkDjHxtAViPAlwFXJ89czqj58/BVuPwH/M24lHphnAtHG5RZoeHbP9/TD7fGRsS/Ne94OCb7uulECIX/KL0vmf4N9LyDuShNMBYUhjrlXOd+W66QRWT8NQR43CgCVgozxPsZpHPLcS2GR4Q0mCQKjqT1b2AnggvVVcBjAJpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763036394; c=relaxed/simple;
-	bh=hFrCmasW3dJTdQBRMZd6hGI1h3snbWI80Lfv91M7y5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9C15oVx1P4QY1cf1DON30tQ2nRtGe3bkygIV501yMDvz9AbH4vWfRWzBYeygzuNAlLjDBNT8w2VBW8jPn9DVYdLujtCFV/+6eAcIYhk4ylEckWGeUcdTxPapnBugk/0GKgI/iyRS46BFNV+pks0O1RQJyLTyudqw0wEH0QEpAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcuaqM7F; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775895d69cso4188455e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:19:52 -0800 (PST)
+	s=arc-20240116; t=1763036563; c=relaxed/simple;
+	bh=ZYqX+ZLRuN0c7Bk/ICAa1u2V7Ht3w8x6fas785R2TSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BdeJEjqAeQyfgQ/qExP4nIRkZKVxuSrwR1EF9BgS/aeRE34ZvZmMLmYgc/lBXL9jdXd1LMM1OoMpRX8B3RVfHZ4jRVO2i1NN5aAe/6P0w6Baf6xP6+viyzszA4tWuvoVCGhSpse+tnGQS2t81oHwYBDIUAXe2oRn2HsqPs9Ti+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lo5USDGo; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b72cbc24637so129624766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:22:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763036391; x=1763641191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=duoUSRGaQi6NsgJv/pi2xphHVVy8YVSx2yc+RI8LbNM=;
-        b=lcuaqM7FJqIR2jCcmr+onbMPfm33h254BG2NZIL48yjHPaG7uVxl9tGItTF4sC0lV7
-         KKpknjevQNwMKL+dmuJM8MNTT2EWsa00yQirXEgwUvMoUyao54q5a4nRCn63dLIzQUwv
-         zQeLJVezreN6Xe5cJo2tPt6RG04DrBOmIYgSTuj2DCx7AGjUJQq9FI0ZWmTWDOt02r5s
-         yx791dnAi+YIkast4kjoAjFQp3M3vk9OGUNchTLN5RSNnj0SX3Up0L2lR9qbj4FWg7W0
-         vWtkS/0Q0xnNVAStOeDBdyX/JEBfYm0UbDLirSpW59TcuXXAUELVHAvjR5bW3yxnJto+
-         /3UQ==
+        d=gmail.com; s=20230601; t=1763036560; x=1763641360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3p5IabBvXdkXZ7+EGubMbHl6mikKS/LG8xMUC3eAH00=;
+        b=lo5USDGo0QbA5ijZAnqOGITfz98y/RZVJBWwBz6K5hTJ+x57A1VOa1oAYut8V4doWX
+         7JCwqg4qm9lBJxnsw5Lag9f9hqG4RdGoXQZ9VP2x2LwYeQT1BBE1cvzzENDjzaGmeU03
+         drpRmbvK7T0IvI70cgImIp2VqD9ABjUe1UuIkAyY4iQ0oaXsNkSqLdxvvKzeVWJS2k/o
+         SQuKyum5KLVQZpmZO9yarACycpNAAdzZkAoTixNpcKdn2GEB3oxxdN217b5saPCInJRa
+         PfO0MpAyaqac+gb2TIZje7zOxcxxEF6Rwx2z5Io58nnAIcW+Qj58Uy0xX2FTh85ctfM+
+         gzVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763036391; x=1763641191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=duoUSRGaQi6NsgJv/pi2xphHVVy8YVSx2yc+RI8LbNM=;
-        b=PJNY5w6IA4Q2Um01sVXk9DyZgMfoYF1hPnWoyoLyNtBht3q7s/P06vtqu2dJE/UzR8
-         lDgZrCpeasDvNpvm8jJmxofEMh1/KHVj687FhQFFpo4/nBqrsZBJxCQY/aQ7Zwr6ruiT
-         lsDrFLX1z2ZpDMygrdfUKGq0/URZD59fpoXHCOt2Ky/QSGQjR7mba7rnEoN233YVovPM
-         LaOMxDbLH5r5eHvRY7Rai9h/sp/SmGuk5XBSi/xg5obmWE6YT8MW91R25kZwHofvd+B9
-         xH54+w0QMz8oliZQegbdgagoTgtUQxaaYvsZw3+b/459rLddqdNKnfF83gl2aRz9JNu+
-         il6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWgT57DVSJ9P/mhdW8yJdt+WEXyCSDQoOS21e34Uo2Ho9p1+bvTjDVfe6Y7p9cHuTnlVd6oeV1LMAXeNYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmjx42WvcnsGn1ChAvDtoTI5KKAbj3Jaj79k3wnAIEkaJ0AFDD
-	HcFvXvzsrOT8SV0I4c1OLg5w0BTx+dbJ1gr7hApxbtQyyB9LZEUCYnl875DwHCswu0o=
-X-Gm-Gg: ASbGncu9AOHtotvM9YhwDaB8tLVhf+zeQAePEc86lmZmAkXOYBWfUAbiYgGqJFRyWY3
-	ACy0b7YrT6ABfRptcw14q1836tuWOcLeeyklkKupAM9qibQ5+KmStPKHoQd0QHMOD2D8KZp0Wv1
-	nuohMT1g4BpxwTJG/mIcO3B091nWyFxdTFFEBukESBcvz56AUleFoop4CunKWbwvOyHpPgtffUh
-	XPz0IwAq13I6I/0t3wNZKhGMppUaG1EqXs5ke7tox7oPWZZl6kPi2zRpq3iKUJ4jmCuFQTaKY6I
-	P84fZvCqUYXcauZCFrb07vcVLt9IMjoI2V3+E8kvOlh7IRZJ596kh6nWWYDqtFdBurpT1b/teBi
-	uuIiKlhltMMrEjSp8jRtngs7DBDclaaNeGefiaMLNbma3fFnquQK0TX4/BPTo8Lu7nQUmbymJ0V
-	5SiKjdCALjH662
-X-Google-Smtp-Source: AGHT+IH8T4ZyL5HYmAGvNL/oZLRRXU8OO4RxTJEHDGnN0oDjnzobpXuL2pV25qu0GlPmyxzXDorawg==
-X-Received: by 2002:a05:600c:19c7:b0:477:7bca:8b3c with SMTP id 5b1f17b1804b1-477870c5352mr61064035e9.19.1763036390818;
-        Thu, 13 Nov 2025 04:19:50 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff23:4430:e68d:9e37:1627:2b9b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f19664sm3679227f8f.36.2025.11.13.04.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 04:19:50 -0800 (PST)
-Date: Thu, 13 Nov 2025 13:19:48 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 12/14] remoteproc: pas: Extend parse_fw callback to
- fetch resources via SMC call
-Message-ID: <aRXM5OfxYTt2a8yj@linaro.org>
-References: <20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com>
- <20251113-kvm-rproc-v7-v7-12-df4910b7c20a@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1763036560; x=1763641360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3p5IabBvXdkXZ7+EGubMbHl6mikKS/LG8xMUC3eAH00=;
+        b=Xxo3up2ALxeK5mfQa34dvEirZwSPsKkqjNAOuafoT+qqVlqmCjpVqlId9dZdotz04L
+         uPtQNHAAjg8+IsNudAyEQHYRoZw1yOKt4Vbm8x3hFlj2Ik0kOn84/03oT36TyIqZyuot
+         5atIsP1nKrK/o/P5aqNijP9Xm2GDMuvhDkJHYXsjnvd1fYmMObQr+SUDHospcs6qhxXF
+         jvV58NG0H8RG26vli+VPHCqPqJCGB3bGI7Gtxm+gWWu0mzFyqjmuvwQNqDLRPRku3/O4
+         UinG8c705BXEHj2J20guAEqioaKurh+GRG9xXGZWQz48zduSuw5J5ZfapIBkMFPTH1Wf
+         FbqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEa1D9/YYSB91OdWD7Hcl7V5EhnUHDlROjVH84Jiua98ft5jurbF6v2Qp0ZOpLt7ofvvD7rmaOCatrSYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCdHfetlVjI+RZ4PwAJ2q9Am3eq24DSoL7EOlHTtleEeAv0oXW
+	A2gT7tT7tKLumOj7ZZGg7OWkoUKPQvWWK8DWq3GnVF75/D/eNC+EQDg4fkBMBEWUkujwDp5ZE/K
+	SQTiUcBEdQ59OuK5whsjBCf4nkgPMfSw=
+X-Gm-Gg: ASbGncvtY4AmELoS7Yaq17Sn9ZS4RCw0YdUe6i5HPUx1hTZTW+V8AJ3dxYXAWaCGi2H
+	y8vLsptUX9ctdLhbRou0uC7y04Ht7RA7CfvoSE3e0i7TMSLKejR1IvT6t4mN4BlCDy95er/AISP
+	MKinZwCH1vfRl8iz3lq/6DjQKVjiJg8YbvbdvNJu+bDX7g1R+hKC9ZQmrVuXRIM2yv7psEPmLIC
+	m8GAbWXkOpSCcnOMmghlhjB14hoZrnxp5kSQdc2mXPkG3ITv5zY2DdFW3k1F9CQhQjuG/DDM3Sc
+	2VJy6xf/Cq6wWXrjGujlzVXJXQ==
+X-Google-Smtp-Source: AGHT+IHajWmOUi5tVirqZttadrxPuDW8EgmHs+9YBUIXUMLLZEAk7AvCdaI53LFV6WjAMP90FcJnMv5O+DsAooIz/88=
+X-Received: by 2002:a17:907:3f23:b0:b42:f820:b7c with SMTP id
+ a640c23a62f3a-b7331a6c6d3mr650622166b.41.1763036560109; Thu, 13 Nov 2025
+ 04:22:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113-kvm-rproc-v7-v7-12-df4910b7c20a@oss.qualcomm.com>
+References: <20251111234519.3467440-1-alistair.francis@wdc.com>
+ <20251111234519.3467440-4-alistair.francis@wdc.com> <caadfcbb-8964-4447-a93d-8e49b4c14c7e@suse.de>
+ <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com> <2019e372-c079-4230-97ba-a3299ced0474@suse.de>
+In-Reply-To: <2019e372-c079-4230-97ba-a3299ced0474@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Thu, 13 Nov 2025 22:22:13 +1000
+X-Gm-Features: AWmQ_bmAssFXEqhTauCGTaWw-0uu2B0mXfE1GiVBD99ZnIinb6qgcFh4JAAHSvY
+Message-ID: <CAKmqyKOBr2eV6AeWH6SHz_UX4ciKgdf3zGJ9LMHEOuFz55kO+A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] nvme: Expose the tls_configured sysfs for secure
+ concat connections
+To: Hannes Reinecke <hare@suse.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, 
+	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 04:06:02PM +0530, Mukesh Ojha wrote:
-> Qualcomm remote processor may rely on static and dynamic resources for
-> it to be functional. For most of the Qualcomm SoCs, when run with Gunyah
-> or older QHEE hypervisor, all the resources whether it is static or
-> dynamic, is managed by the hypervisor. Dynamic resources if it is
-> present for a remote processor will always be coming from secure world
-> via SMC call while static resources may be present in remote processor
-> firmware binary or it may be coming from SMC call along with dynamic
-> resources.
-> 
-> Remoteproc already has method like rproc_elf_load_rsc_table() to check
-> firmware binary has resources or not and if it is not having then we
-> pass NULL and zero as input resource table and its size argument
-> respectively to qcom_scm_pas_get_rsc_table() and while it has resource
-> present then it should pass the present resources to Trustzone(TZ) so that
-> it could authenticate the present resources and append dynamic resource
-> to return in output_rt argument along with authenticated resources.
-> 
-> Extend parse_fw callback to include SMC call to get resources from
-> Trustzone and to leverage resource table parsing and mapping and
-> unmapping code from the remoteproc framework.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 60 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 58 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 9feee2cb1883..4d00837db58d 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> [...]
-> @@ -413,6 +414,61 @@ static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is
->  	return pas->mem_region + offset;
->  }
->  
-> +static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	size_t output_rt_size = MAX_RSCTABLE_SIZE;
-> +	struct qcom_pas *pas = rproc->priv;
-> +	struct resource_table *table = NULL;
-> +	void *output_rt;
-> +	size_t table_sz;
-> +	int ret;
-> +
-> +	ret = qcom_register_dump_segments(rproc, fw);
-> +	if (ret) {
-> +		dev_err(pas->dev, "Error in registering dump segments\n");
-> +		return ret;
-> +	}
-> +
-> +	if (!rproc->has_iommu)
-> +		return ret;
+On Thu, Nov 13, 2025 at 5:21=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
+e:
+>
+> On 11/13/25 03:08, Alistair Francis wrote:
+> > On Wed, Nov 12, 2025 at 5:08=E2=80=AFPM Hannes Reinecke <hare@suse.de> =
+wrote:
+> >>
+> >> On 11/12/25 00:45, alistair23@gmail.com wrote:
+> >>> From: Alistair Francis <alistair.francis@wdc.com>
+> >>>
+> >>> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> >>> ---
+> >>> v2:
+> >>>    - New patch
+> >>>
+> >>>    drivers/nvme/host/sysfs.c | 2 +-
+> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+> >>> index 29430949ce2f..6d10e12136d0 100644
+> >>> --- a/drivers/nvme/host/sysfs.c
+> >>> +++ b/drivers/nvme/host/sysfs.c
+> >>> @@ -838,7 +838,7 @@ static umode_t nvme_tls_attrs_are_visible(struct =
+kobject *kobj,
+> >>>            !ctrl->opts->tls && !ctrl->opts->concat)
+> >>>                return 0;
+> >>>        if (a =3D=3D &dev_attr_tls_configured_key.attr &&
+> >>> -         (!ctrl->opts->tls_key || ctrl->opts->concat))
+> >>> +         !ctrl->opts->concat)
+> >>>                return 0;
+> >>>        if (a =3D=3D &dev_attr_tls_keyring.attr &&
+> >>>            !ctrl->opts->keyring)
+> >>
+> >> ??
+> >>
+> >> How can you have a configured TLS Key for secure concatenation?
+> >
+> > I'm not sure I follow
+> >
+> > `ctrl->opts->tls_key` is directly set at the end of the
+> > `nvme_auth_secure_concat()` function, so it will be set for secure
+> > concatenation.
+> >
+> Right, sorry. Of course you are right.
+>
+> But I'm still a bit unsure about the interface here; just writing
+> anything into it doesn't feel like the correct way of doing it.
 
-Just do "return 0;" please, you know already that it is 0.
+I'm happy to change that.
 
-> +
-> +	ret = rproc_elf_load_rsc_table(rproc, fw);
-> +	if (ret)
-> +		dev_info(&rproc->dev, "Error in loading resource table from firmware\n");
+I was thinking a bool, so basically write 1 to trigger
 
-This is odd, you log an "error" as dev_info(), so is it an error or not?
-If it is expected that firmware images may not have the resource table
-in the ELF, you should probably just silently ignore this error (or use
-dev_dbg()).
+>
+> I would rather modify the interface to allow a key serial number (or 0).
+> That would allow us to modify the configured key, which currently is
+> fixed for the lifetime of the connection.
 
-Thanks,
-Stephan
+Wouldn't a configured key (`tls_key`) be changed via the tlshd
+interface, not writing a key serial to sysfs?
+
+> And writing '0' would reset the configured key, reverting to automatic
+> key selection.
+> Having such an interface would actually be beneficial, as it would
+> remove some limitations from the current interface.
+
+Anyway, I'm not sure your vision conflicts with allowing "write 1 to
+`tls_configured_key` to trigger a REPLACETLSPSK"
+
+Alistair
+
+>
+> Hmm?
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
