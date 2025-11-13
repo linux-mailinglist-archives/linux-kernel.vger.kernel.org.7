@@ -1,152 +1,95 @@
-Return-Path: <linux-kernel+bounces-899352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8670BC577AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:48:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEE1C577E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223503BAB7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:41:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C494D4E2BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A742434FF68;
-	Thu, 13 Nov 2025 12:41:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3838E34DCFE;
-	Thu, 13 Nov 2025 12:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631A634FF67;
+	Thu, 13 Nov 2025 12:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="OU/cg4z0"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F087B2FE58F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037687; cv=none; b=p4hqVoprkvjeQZgtLqMXdAEzaXDCiapcTNSb1M7DBlwbjkKVb5WZ+R+4QgXDcZBzTidmgBFgYlSnoNtZmOJZ7V1JhW0ATFsnZyFT9yp3Xze0RuaBsB/xZQKIJYd2HRAP+Bb6PE00I/vVcjnSArRZI9mX87fL1229oxROnG6oJis=
+	t=1763038494; cv=none; b=FXC2d90RD20/QfkbHKSIgkhL2fhX5DYYs3HkBwed1utKAeToS5MX2gTrUhdBJ3Q9faCycvn4rxDBOYKiy4ukeb6SrmoxvfFJ8sCIegYX8FfJO+IDNk3LMXQ2AtfcNTU0u9vARIOjRHI0Vo92noyjBCsev22WSa1HAX8uS2Nwvp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037687; c=relaxed/simple;
-	bh=XaTNNB/CqGz+V+OMzj/mIjV+mLYVDACn92ZqVORRSbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGQtwWGpvSRE3rZqCBr6YsDBZ3xf5YJjR/31CnDfvrFvoKlulf3pdhMFqyaf9pndTijPryqI1+Sl8BNoznQ79X6gyczOnvN/SLxfGwvlpxMcM11y5AGpJAYr+JPoV+i0nTzbgeRd4q47eDfelLUNoyB4upBvvsRJxB+jHgOuBv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C26B012FC;
-	Thu, 13 Nov 2025 04:41:16 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 026C73F5A1;
-	Thu, 13 Nov 2025 04:41:24 -0800 (PST)
-Date: Thu, 13 Nov 2025 12:41:19 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, zhanjie9@hisilicon.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
-	bbasu@nvidia.com
-Subject: Re: [PATCH v4 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
- perf_limited
-Message-ID: <aRXR7yKyG6l1Agfq@arm.com>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-7-sumitg@nvidia.com>
+	s=arc-20240116; t=1763038494; c=relaxed/simple;
+	bh=inMuMW2OtqRUfQ7VZG+edIgj9nDRzVyBr+EwN2nBIrs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=prLWCCuMvGAHMYHDc7Vv2qgE7LqpCgtIgcLHMGIsayQRi1n7G0mY/zoCsmwwC6aaVN08IMJOEVwbNL9mETozDhv9nTbF1ny48VlyF00vqC7qfrxFSVbnhh/5MmjBilKHJiG9wVkmxa5nleESSaNRlm3UaZBACXx1A9jXZ05QSAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=OU/cg4z0; arc=none smtp.client-ip=117.135.210.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ra
+	Fevk6H2Bk/ffRHdozuP35Zfc9D2yMlTPJd1mpdixc=; b=OU/cg4z0ZeD7I4wjiY
+	e0fQTLA5vL7zFLBFEZnvRs0c0nc+/Vdf/o2pgpnOzr0yfBlzC7AICZoIPYVtJWH2
+	CQBt6/bEj+FI/be53lkhkw1lcoIzu25FKXYm5cXdvxCcSQWqVN1JbKJXLDJP61fV
+	XY5rrsTRRnl21vOPlX0MXoX+c=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PykvCgCnT8Fv0hVpD537BQ--.46139S2;
+	Thu, 13 Nov 2025 20:43:28 +0800 (CST)
+From: Honglei Wang <jameshongleiwang@126.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/stats: correct the wait_start calculation logic
+Date: Thu, 13 Nov 2025 20:43:26 +0800
+Message-Id: <20251113124326.27588-1-jameshongleiwang@126.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-7-sumitg@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PykvCgCnT8Fv0hVpD537BQ--.46139S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFWDtFy5Gw47try5CF4Durg_yoWfGrb_ta
+	yYvF1jkryUKrZxtFyrWw4xX3sYyw4DtF1DAa4DAF4UAFy5Jr98Jas8WF15XrnFgrsagF9r
+	GrsxXFWkKFnFvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUBMNUUUUUU==
+X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbirxgFrWkV0akMfwAAso
 
-Hi,
+It's not necessary to do the delta-related subtraction if the task
+is not on rq migrating. Add the migrating related judgment back.
 
-On Wednesday 05 Nov 2025 at 17:08:42 (+0530), Sumit Gupta wrote:
-> Add sysfs interfaces for Minimum Performance, Maximum Performance
-> and Performance Limited Register in the cppc_cpufreq driver.
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../ABI/testing/sysfs-devices-system-cpu      | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> index 8aed6d94c4cd..6f1f70696000 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> @@ -327,6 +327,52 @@ Description:	Energy performance preference
->  
->  		This file is only present if the cppc-cpufreq driver is in use.
->  
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Minimum Performance Frequency
-> +
-> +		Read/write a frequency value in kHz from/to this file. This
-> +		file conveys the minimum performance level (as frequency) at
-> +		which the platform may run. The frequency value is internally
-> +		converted to a performance value and must correspond to a
-> +		performance level in the range [Lowest Performance, Highest
-> +		Performance], inclusive. The minimum must be less than or equal
-> +		to the maximum performance. The performance range can be checked
-> +		from nodes:
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/highest_perf
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/lowest_perf
+Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
+---
+ kernel/sched/stats.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I think information on highest/lowest performance is irrelevant here. If
-the user is expected to provide a frequency value, it should only care
-about it being in the range [cpuinfo_min_freq, cpuinfo_max_freq].
+diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
+index d1c9429a4ac5..60560fb31e63 100644
+--- a/kernel/sched/stats.c
++++ b/kernel/sched/stats.c
+@@ -12,7 +12,8 @@ void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
+ 	wait_start = rq_clock(rq);
+ 	prev_wait_start = schedstat_val(stats->wait_start);
+ 
+-	if (p && likely(wait_start > prev_wait_start))
++	if (p && task_on_rq_migrating(p) &&
++	    likely(wait_start > prev_wait_start))
+ 		wait_start -= prev_wait_start;
+ 
+ 	__schedstat_set(stats->wait_start, wait_start);
+-- 
+2.33.0
 
-I think ideally all of these controls (auto-select, EPP, min, max, etc.)
-would have been better placed under
-/sys/devices/system/cpu/cpuX/acpi_cppc, but I suppose the intention
-was/is to have all performance related controls under cpufreq. But that
-means that the user should not be concerned about the underlying CPPC
-scale and only use /sys/devices/system/cpu/cpuX/acpi_cppc for
-information purposes.
-
-Thanks,
-Ionela.
-
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Maximum Performance Frequency
-> +
-> +		Read/write a frequency value in kHz from/to this file. This
-> +		file conveys the maximum performance level (as frequency) at
-> +		which the platform may run. The frequency value is internally
-> +		converted to a performance value and must correspond to a
-> +		performance level in the range [Lowest Performance, Highest
-> +		Performance], inclusive. The performance range can be checked
-> +		from nodes:
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/highest_perf
-> +			/sys/devices/system/cpu/cpuX/acpi_cppc/lowest_perf
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
-> +Date:		December 2025
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	Performance Limited
-> +
-> +		Read/write a 32 bits value from/to this file. This file indicates
-> +		to OSPM that an unpredictable event has limited processor
-> +		performance, and the delivered performance may be less than
-> +		desired/minimum performance.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
->  
->  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->  Date:		August 2008
-> -- 
-> 2.34.1
-> 
 
