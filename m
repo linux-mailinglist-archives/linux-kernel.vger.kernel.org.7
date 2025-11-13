@@ -1,125 +1,226 @@
-Return-Path: <linux-kernel+bounces-899767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED0BC58C1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:35:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3ABC58C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B16354F457F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:20:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 201BB35F20C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBFF35A93E;
-	Thu, 13 Nov 2025 16:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91CB3570C5;
+	Thu, 13 Nov 2025 16:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWRVCEnu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2mE03IR2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MXPz51/N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2mE03IR2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MXPz51/N"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A917328B57
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDBA352F85
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050234; cv=none; b=fZ/mmMshylOETQy/WKxH6XEk9bJuKmc5nLOn+Ernrw4uzJz2XSAAIyQdXgbW6dEz0VvCxciZj0SGvXDi1mHhCF8DMYChbnqyEtT1IdMqsCUbYHeoCEyUwkvjaH6tHQ0jKkOtIVxtQY6MtAUgx+I5H7sX55Q7vTKDjBjtRwiCvuc=
+	t=1763050342; cv=none; b=h8HMy7R7I2w5wFHaciGbTlb9zHmTBvfnEpAzSH6tYQNrOTE4mtYNNCYpWFNYg4fOd61S02mWzuxRU3IRKQjL8vcjUJybQYnjz98gbRv4EPKCULjZE7vS45FtFglnQ7kL1CY2YDa2iSHoy+e07ipAGcJn0zCnTJVj9lQAntZYT1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050234; c=relaxed/simple;
-	bh=uoiSwBZ2fFI7bc6BNtYaJ1tZg2fIebS4JU9VTGUTOCA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kCLJ/ztaF6chrLu2E6QqNT0JQkSnybH1ziRuwxxEOovvIN8ogzNvdRManVXKsZCvAylDQYUm+ErQSQK6445PqbPiB8DJjhRW7cBc/7rb+VYMHXEq79m62LV2cU8w4fcG3CwwJC1A/xvK+bZLFXq0bggoy/kn1HiSCoSgHWhJFcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWRVCEnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A4A7C113D0;
-	Thu, 13 Nov 2025 16:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763050234;
-	bh=uoiSwBZ2fFI7bc6BNtYaJ1tZg2fIebS4JU9VTGUTOCA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=qWRVCEnuTbl9GxPtWoY8rpjnkc1n6jFEhG5XcIt0ZDjOOnLwpofn5Kee94FciU7hp
-	 eZo0dlsADOk3+qed8NPJQx3Y41tHMbq1FEEIzgStc24Il7S0aT9Snl/qNZHvHMR2Dk
-	 hUevieM5T1DEsWefRNGv+P4r/Dy4+nS83FoPHbTSWuDwOxhOL2LL9qtA6UU8L0p+Eg
-	 fXxswU4D+0+KMd9QD6tIXS7WqowfQubRCy9Rb3ncbhaFYwn1NS8UoDS4VlTDkvNBdd
-	 mMQc5UlIQMtdB09mZeyfFTCUQSueUIt+hPVrtLK2cZIvDWbaGVXOFoiCy/mh+uZ1yv
-	 cm6o0OzEB8LqQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F378BCD8C99;
-	Thu, 13 Nov 2025 16:10:33 +0000 (UTC)
-From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
-Date: Thu, 13 Nov 2025 17:10:32 +0100
-Subject: [PATCH v2] riscv: Update MIPS vendor id to 0x127.
+	s=arc-20240116; t=1763050342; c=relaxed/simple;
+	bh=GDnD34kRWaK82DI7P2fi4qClQtp+HWr7aEZDtGHv31o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DG6L7FXU9JfY+ZC5zmr9WjYeyzlEQkbhDb2+swiCEVDJGTXM8fx8HwSNi+GSfNpQ5QHGxbLPLOm2A6Lik2yxk4nHGVwfpbkn2H2CvnRrQhT6VGE65VFk6H+WOu8ELJxmP+tIrCFDQitph9HNTm1X6qb+qeQqhWJfqx0fdALFKDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2mE03IR2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MXPz51/N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2mE03IR2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MXPz51/N; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 403E21F395;
+	Thu, 13 Nov 2025 16:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763050339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9WZzM1qgOW7FW2V5s9/sNf+huVF6LA0jwcovxLpeozY=;
+	b=2mE03IR2k1SQ54QsXbKZ0JeUlhGDpmiyZDISXzuKSXqF2B9bKiq9tS69GKBeEMCtcNG6JG
+	bBPE/SzM7qnR2TrTCSWrqYAOX5PlMATV3XTtU1nUfYuF5OeVQGI2l6S9VezagM9oyvUewZ
+	mTYKSLosKqoUC4vAwiqxRbBPBOkf5wo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763050339;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9WZzM1qgOW7FW2V5s9/sNf+huVF6LA0jwcovxLpeozY=;
+	b=MXPz51/NGs7BSYMDwKGaJjjm7j1EYD74M61/JlOvSXZdIrGE/jgF2vnwFYHy59QX9DJJeU
+	f4z6D0EBycJSHCCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2mE03IR2;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="MXPz51/N"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763050339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9WZzM1qgOW7FW2V5s9/sNf+huVF6LA0jwcovxLpeozY=;
+	b=2mE03IR2k1SQ54QsXbKZ0JeUlhGDpmiyZDISXzuKSXqF2B9bKiq9tS69GKBeEMCtcNG6JG
+	bBPE/SzM7qnR2TrTCSWrqYAOX5PlMATV3XTtU1nUfYuF5OeVQGI2l6S9VezagM9oyvUewZ
+	mTYKSLosKqoUC4vAwiqxRbBPBOkf5wo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763050339;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9WZzM1qgOW7FW2V5s9/sNf+huVF6LA0jwcovxLpeozY=;
+	b=MXPz51/NGs7BSYMDwKGaJjjm7j1EYD74M61/JlOvSXZdIrGE/jgF2vnwFYHy59QX9DJJeU
+	f4z6D0EBycJSHCCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 269073EA61;
+	Thu, 13 Nov 2025 16:12:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CbQbCWMDFmkQDAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 13 Nov 2025 16:12:19 +0000
+Message-ID: <f58a2fcb-2306-4c27-a20c-11ac953c1b5d@suse.cz>
+Date: Thu, 13 Nov 2025 17:12:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: mempool_alloc_bulk and various mempool improvements v3
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>,
+ Eric Biggers <ebiggers@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251113084022.1255121-1-hch@lst.de>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251113084022.1255121-1-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-mips-vendorid-v2-1-3279489b7f84@htecgroup.com>
-X-B4-Tracking: v=1; b=H4sIAPcCFmkC/12MQQ7CIBBFr9LMWkyhJSauvIfposJQZlEgUImm4
- e6Odefq5/3kvR0KZsIC126HjJUKxcCgTh0YP4cFBVlmUL3Ssh+kWCkVUTHYmMkK6/ickUdegJ2
- U0dHr6N0nZk9li/l95Kv8vr8SW3+lKoUUozMP7UarB4c3v6FZcnyms4krTK21D4p8D3euAAAA
-X-Change-ID: 20251031-mips-vendorid-df103aedf117
-To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
- Conor Dooley <conor.dooley@microchip.com>
-Cc: Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chao-ying Fu <cfu@wavecomp.com>, 
- Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763050233; l=1465;
- i=aleksa.paunovic@htecgroup.com; s=20250806; h=from:subject:message-id;
- bh=htvoMgY/r9ZZuZiS5oLQr0msScykVQRnyI0BkorgU5s=;
- b=DH0Z+mWY5DvQ1ZxYsIpMOn7gANn02HB+BPNMvkRg7eQ4UStyb1EgAQ25LZVGT9XGYIyk6D91j
- lGONnSsnfbdAof526t7owx6W4CImuzeLdyRHSBbcDvie3SEj0LzNJCv
-X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
- pk=Dn4KMnDdgyhlXJNspQQrlHJ04i7/irG29p2H27Avd+8=
-X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250806
- with auth_id=476
-X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-Reply-To: aleksa.paunovic@htecgroup.com
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 403E21F395
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-From: Chao-ying Fu <cfu@wavecomp.com>
+On 11/13/25 09:39, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series adds a bulk version of mempool_alloc that makes allocating
+> multiple objects deadlock safe.
+> 
+> The initial users is the blk-crypto-fallback code:
+> 
+>   https://lore.kernel.org/linux-block/20251031093517.1603379-1-hch@lst.de/
+> 
+> with which v1 was posted, but I also have a few other users in mind.
+> 
+> Changes since v2:
+>  - improve the alloc_pages_bulk documentation a bit
+>  - drop the not needed race fix again
+>  - drop the gfp_mask argument to mempool_alloc_bulk to reduce misuse
+>    potential
+>  - add an allocated argument to mempool_alloc_bulk
+>  - drop the caller_ip handling that was already not required since the
+>    last version
+>  - add a few more mempool cleanups
 
-[1] defines MIPS vendor id as 0x127. All previous MIPS RISC-V patches
-were tested on QEMU, also modified to use 0x722 as MIPS_VENDOR_ID. This
-new value should reflect real hardware.
-
-[1] https://mips.com/wp-content/uploads/2025/06/P8700_Programmers_Reference_Manual_Rev1.84_5-31-2025.pdf
-
-Fixes: a8fed1bc03ac ("riscv: Add xmipsexectl as a vendor extension")
-Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
----
-Changes in v2:
-- Fix "Fixes" formatting
-- Move "MIPS_VENDOR_ID" to the correct place.
-- Link to v1: https://lore.kernel.org/r/20251103-mips-vendorid-v1-1-4fcb5f4d53fe@htecgroup.com
----
- arch/riscv/include/asm/vendorid_list.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/include/asm/vendorid_list.h b/arch/riscv/include/asm/vendorid_list.h
-index 3b09874d7a6dfb8f8aa45b0be41c20711d539e78..7f5030ee1fcf830b17c6529e9c430fe19ac68b05 100644
---- a/arch/riscv/include/asm/vendorid_list.h
-+++ b/arch/riscv/include/asm/vendorid_list.h
-@@ -7,8 +7,8 @@
- 
- #define ANDES_VENDOR_ID		0x31e
- #define MICROCHIP_VENDOR_ID	0x029
-+#define MIPS_VENDOR_ID		0x127
- #define SIFIVE_VENDOR_ID	0x489
- #define THEAD_VENDOR_ID		0x5b7
--#define MIPS_VENDOR_ID		0x722
- 
- #endif
-
----
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-change-id: 20251031-mips-vendorid-df103aedf117
-
-Best regards,
--- 
-Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-
-
+LGTM now.
+Since mempool is now part of SLAB in MAINTAINERS, added to slab/for-next.
+Thanks!
+> Changes since v1:
+>  - fix build for !CONFIG_FAULT_INJECTION
+>  - improve the kerneldoc comments further
+>  - refactor the code so that the mempool_alloc fastpath does not
+>    have to deal with arrays
+>  - don't support !__GFP_DIRECT_RECLAIM for bulk allocations
+>  - do poll allocations even if not all elements are available
+>  - s/elem/elems/
+>  - use a separate failure injection know for the bulk allocator
+> 
+> diffstat:
+>  include/linux/fault-inject.h |    8 
+>  include/linux/mempool.h      |   58 ++----
+>  mm/mempool.c                 |  401 ++++++++++++++++++++++++++-----------------
+>  mm/page_alloc.c              |   15 +
+>  4 files changed, 289 insertions(+), 193 deletions(-)
 
