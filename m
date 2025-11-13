@@ -1,135 +1,101 @@
-Return-Path: <linux-kernel+bounces-899181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9201C5706F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:56:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB511C5705D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC29C3B9F33
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:49:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53A3D34437F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769E22E093B;
-	Thu, 13 Nov 2025 10:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="VAsPvDUt"
-Received: from mx-relay48-hz3.antispameurope.com (mx-relay48-hz3.antispameurope.com [94.100.134.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB37C2D979C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.237
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030979; cv=pass; b=ga6mPpXrd1rHUrv8lUrPUUxTIFlBzKXyyFy+00kYtrdbviMo7+lybsPXdDn/+mU+6wSVBCRua1wl6Au34e+6sM24W45szJrkjxMMB66SK2EClT5mra4TQl11/dfrU72TuXpmVcLZPRDFVs89xZQJQhTYFtUAiAKUnLd5r4j6U4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030979; c=relaxed/simple;
-	bh=J6BsqTCmOrFFiAQAx5pEd4B6YJ3Nlg5q4umEShFXHAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B08JDtF7OhSn9owVJoJMM/yQtfRjQRz+qts2RGKp9IwHuscSJGW25qofQWe+zpAWFY5rPMjrPIVHfF4Nu8MIi+R90aSH5A4EFgEsfKeNiS8e1UxKKdNZZSjavaUcYc0aGoxZdmmClamWC7H3Am6ai04IieNoLfFfr4agft0qSf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=VAsPvDUt; arc=pass smtp.client-ip=94.100.134.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate48-hz3.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out02-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=HwZpnlL5PSUjD1ekyFYHL+mEFm8pXGu4Iwrph47h1b8=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1763030963;
- b=sAWpkZUMXRswL3x3xJve3P+ax7TbAeZ6ggdElHzfT9EN2PmqpCnmLqMBE39h0IIYVylwLhax
- jVG/ADAjQVO4WX3oHuqKbV722ssOzsenJhMckFwNzdoyB85zTVLKo0U3tUQncgK9aRKskVJJdsT
- K2CoXXdLshAE+1Sqi7SSwGEIS9ifTgnyDfdHOvoTCgKl6jc1sqHbtU0nA9T/YZ5jyZpZwNtZYOQ
- QL9aUMiubZxyy6k9N3UMD3QDGnWQzeu5s3QSnFuX6Xpoh0FN87vyeEhu9YtYuAKSv9MrkisAcFh
- ngDPNTekSfxsjQsGYzCfQKsB63/p8zyGwRr76pSOkopfg==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1763030963;
- b=ghs8U2tHTvJDCseE+Y7WBBSrZnRhndevv78rpR6sx8JVuGV66BjG1yYZMipBVqc20kl+eiXb
- 8LG1jSQimH62co0c/03IixY8YdicjoWl9IQeWWpMWLv1peJkiMxF6ouHVv3TgOFF0S5dOvPMGUH
- QOZT9ATrZPIEpDfp8zDmr7s6sChaL3lLEP7n705aYFGo2PrEhQDWqYB7HChLP53AWA8Ixw485xN
- WqEdxI0kPA3W43RNsNRh1GqlTpvbnM/txt5V9E3uz0GW3jYnMEpGbxZgQRLHzWNqwrZDqmPdeCY
- gndLJ5DKJTep1P1MsSn79+8n5E65DL2JyOE52+ibUl/bw==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay48-hz3.antispameurope.com;
- Thu, 13 Nov 2025 11:49:23 +0100
-Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by smtp-out02-hz1.hornetsecurity.com (Postfix) with ESMTPSA id C3B245A063D;
-	Thu, 13 Nov 2025 11:49:06 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D75F332EDE;
+	Thu, 13 Nov 2025 10:51:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A25D3321D0;
+	Thu, 13 Nov 2025 10:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763031119; cv=none; b=fG/vLeA9+9URf6pECHj6gOmyacbm+ylz/rwotiyIRG621CTJ0rg0MqS4YZpL3jI6P3nO8Y+UXBMT+s5UWtx6sxzYdKD9wQGS0tjkvFUl70RqafrFsRSR9GFDHpwN47qjOF8yhDfbEnWXlMNU1xOBHnhtgBQptLFeI55gz+rIt6E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763031119; c=relaxed/simple;
+	bh=TMalLOBJ2Ps+T1mVeULqAsJxSVmOVKoC84RboHyKnMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwWqAIzstP2gHfMNeQqT7rKmriXohezOKbBqlluQ1EqmyrvtTGyNnsbNyHtenLmf3TXAZsMRYcS1bPUs2w96SN8Y/e9lIF6jwcNqZmEUIiv1ofYsf7leRmAEDRIxLe43mjHyxwuy9Ppk6WD5shr7x7BGt0y9DIz1qbgNal0YlS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4F7412FC;
+	Thu, 13 Nov 2025 02:51:48 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49EE73F66E;
+	Thu, 13 Nov 2025 02:51:55 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:51:42 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: mb-smarc-2: Add MicIn routing
-Date: Thu, 13 Nov 2025 11:48:56 +0100
-Message-ID: <20251113104859.1354420-3-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251113104859.1354420-1-alexander.stein@ew.tq-group.com>
-References: <20251113104859.1354420-1-alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH v2] scmi: reset: validate number of reset domains
+Message-ID: <aRW4PpPjVw1-melm@pluto>
+References: <20251103161044.2269377-1-a.shimko.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay48-hz3.antispameurope.com with 4d6cTH3cvgz1kPGJ0
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:ed014fac5779153bf3b07ca053158c71
-X-cloud-security:scantime:1.897
-DKIM-Signature: a=rsa-sha256;
- bh=HwZpnlL5PSUjD1ekyFYHL+mEFm8pXGu4Iwrph47h1b8=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1763030962; v=1;
- b=VAsPvDUtJwDxOB66H5h7TEVrPamucgAhKjmRPbKF0XBl53hyyGPqSkTe7c1KIxtfzmXAlsjJ
- Yh8ichZ7gM8LDBdLKznXA/Kx19/2DOQmp+DuOazJqH7feBOqNiIdwGgzli0dYTgOpqKop39URCU
- NYSGH4e8oqjMnTBjYQLod+fVj/29cMJQA69Ra72Nl83tf6ZqsVtmqu3RtQ4jr6iHq9gqBP/NvXs
- FwQSdq9dbDVnOYyqF72EGJvYuftkrhDmcgPctMOGKUxeM8tTo//OVd0W5yYUSUHCdoitwum+oMK
- 0CrrTIrIMAn49+qtCKw2WxDDItuFBhQRrZINyYhp7VnsQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103161044.2269377-1-a.shimko.dev@gmail.com>
 
-MicIn is connected to IN3_L. Add routing including the Mic Bias.
+On Mon, Nov 03, 2025 at 07:10:43PM +0300, Artem Shimko wrote:
+> Add validation to reject zero reset domains during protocol initialization.
+> 
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/tqma8xxs-mb-smarc-2.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hi Artem,
 
-diff --git a/arch/arm64/boot/dts/freescale/tqma8xxs-mb-smarc-2.dtsi b/arch/arm64/boot/dts/freescale/tqma8xxs-mb-smarc-2.dtsi
-index 478cc8ede05ef..3d20e3bf32ce7 100644
---- a/arch/arm64/boot/dts/freescale/tqma8xxs-mb-smarc-2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/tqma8xxs-mb-smarc-2.dtsi
-@@ -98,6 +98,13 @@ sound {
- 		model = "tqm-tlv320aic32";
- 		ssi-controller = <&sai1>;
- 		audio-codec = <&tlv320aic3x04>;
-+		audio-routing =
-+			"IN3_L", "Mic Jack",
-+			"Mic Jack", "Mic Bias",
-+			"IN1_L", "Line In Jack",
-+			"IN1_R", "Line In Jack",
-+			"Line Out Jack", "LOL",
-+			"Line Out Jack", "LOR";
- 	};
- };
- 
--- 
-2.43.0
+> The fix adds an explicit check for zero domains in
+> scmi_reset_protocol_init(), returning -EINVAL early during protocol
+> initialization. This prevents the driver from proceeding with a
+> non-functional state and avoids potential kernel panics in functions
+> like scmi_reset_domain_reset() and scmi_reset_notify_supported() that
+> assume dom_info is always valid.
 
+Indeed, this was alreay spotted/reported/fixed in other protocols, but
+the preferred solution is NOT to bail-out when there are ZERO domains,
+but to carry-on WITHOUT crashing of course: the reason for this is
+testing scenarios in which you can have a platform/FW reply with ZERO
+domains.
+
+> 
+> The change is minimal and safe, affecting only the error case while
+> preserving all existing functionality for valid configurations.
+> The existing -ENOMEM handling for memory allocation remains unchanged
+> and sufficient.
+>
+
+In fact if you look at the code there are already a lot of places in
+reset.c where the code path is anyway guarded by num_domains so it is
+NOT problematic.
+
+There are, though, other places where the dom-> dereference is NOT
+protected and those could be probelematic.
+
+Have you seen any crash related to this for real when zero num_domains
+are reported ?
+
+Anyway, it would be good to harden the protocol code as already done
+a bit in other protocols in the past, but I advise you to lookup in
+perf.c the scmi_perf_domain_lookup() helper as an example and see
+how it used across perf to address a similar scenario and adopt the
+same solution for reset in order to harden the code while preserving
+the possibility to initialize the protocol even with ZERO domains for
+testing purposes.
+
+Thanks,
+Cristian
 
