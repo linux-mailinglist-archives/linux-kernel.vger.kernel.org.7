@@ -1,219 +1,178 @@
-Return-Path: <linux-kernel+bounces-899390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0B5C57A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:28:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B632C57A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D175A4A4A18
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243D44A6155
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017AF352953;
-	Thu, 13 Nov 2025 13:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1hR2ZcG"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146E9351FA7;
+	Thu, 13 Nov 2025 13:15:12 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A432635292A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8E73502B0;
+	Thu, 13 Nov 2025 13:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763039561; cv=none; b=YDr3oksViiBra8e4EzC4pVNEGNiuKQJXuuL/WrFKLTRmA9P75drNyjAfgPpSmBAx0gOwDIFLBWn/KNw6z8ziHiZcWh6LxSyyPv/0fZsqbrG/g2yMaYSup23PuXbdCLILiDzaeP+ZFvb88nTFajt1oeDYCtM56tmF0bm4c6NKVk0=
+	t=1763039711; cv=none; b=pqybhtYrhGB99wm1Q/Cj2NWZi391uFIzi7sirf9tn9N/e+rCzEFyUr/ccET0vy+O7Hm7yiHpM9T/Q7up7lMKf9hoeqBO7LQFWFMasDwOJ1Qj+zAJePsPcY6ilXoUeAcMoJmrGeOZ70N+59anYFruT1L/2PHbVZxNyFU2Ltz/b8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763039561; c=relaxed/simple;
-	bh=PYHbKpYtcN2fDp/XLJTpHxlUS9sULnm6PE4CIW+WlNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjabjHDcXTd2dTDbG45HpDsAYNgWSk+w4JtoYse2Tdp7FjDrIhKfyFWOSnnrp8M7t09jQfOb3aJaiF3pENRE4ipTAbp7QD0KM6x2z1t792sm6q7gmYDXJ39ylEYAmUcWGyzCqtl+FgkUR2M7yZYbdHv9c3FgF3DDxieR5Hi7J9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1hR2ZcG; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-298287a26c3so8822395ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:12:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763039559; x=1763644359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIIPN/N9Vp0LrvuR8gE94KTgdl5e+2K5VQUK3v6uGlM=;
-        b=k1hR2ZcGPAoBDl458GB26haFUIRdU+g7Dwdjd4VATi3NXjDGLYnlys50x46He1zhYn
-         zP2jhGV/vys61we7IGfNB0y1vBJafM6CVA5QPbb8HvEZPBSUuQl5raNFPQhpdN1fiLWE
-         HJJMuRYt9UeuuM/Fi46FrmbQBsLPmo5UFrM4IEoVAE9u3i8vjbZLPh3Ci/6pMXNJDbwo
-         nLfO6YqbyV3BCYcy0/BJrGo0oH0osp6lBfToWwxOzMbA+9fE+cV7z08fwqh4iMgN6LU6
-         9skjU7sWzPKOUZa2CPCOegpY6mphNg7h4cKvDaEuGMrKvYvTSfdVB/3BALK+RLCtiTRP
-         ZiyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763039559; x=1763644359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BIIPN/N9Vp0LrvuR8gE94KTgdl5e+2K5VQUK3v6uGlM=;
-        b=WTUmSfxGkx1k1a0l2zYbLHj9petqrI6TmIiUGhayqHt2v57OWvFJVJjrsMCdc/QaLy
-         nxESSvSHCD2fn4QF9e3lLWtuUA753RqCbedvEEex4oc3hx+UwVsvqa7H22KLJ0lr6Sjg
-         rPvMlkLS0UeT+gqZ7vs9npT8uub198XudonJ9IP3WUSBZ29yoRuQ24NNxleMmvkmgXjP
-         /r5uWToP3e8csH+rWrkuDkH/cixDPLaL1dOPkcIw7i7BRKzr9uKhr8aMW3vVPNxKIj7u
-         LD+IlaJqBqU5DKfGxcaKJpGuw3NCfeNcHss0hCBLZA1XopneVwG+mtyPcv3FC7++JCcH
-         C1cw==
-X-Gm-Message-State: AOJu0YycSvL4O9nh8NAv1top52L/GFxouN/jSQjKzqE+aJIVJnrLi0V2
-	HE0yf24Zf5JjJKxYGNQMS17W13qR1+HqtETVB7nVzdlIl2x666qMl78h
-X-Gm-Gg: ASbGncsfDBitW5WlGNTwvPUCQBJPsR9+FRMk+3Cb2cTpvMOyaRogn/KEoSbrrBZcx4h
-	T9B7WRj+lK9rgFP/UgiUPiQOW1Cqo9A5Llveqw/dvpvEqm9yhQ/Qfp+Kyp2jdvXs/ysMKEO0bRL
-	y7CQxBuT1I5mqF9M2bmwM9nz4+QxVgUMVBIlz5zkiG2bK/VwDCWPoxf+m5yDcczs9TcuHdPBRoD
-	K7z3X0XcAbMMQmbA1rNTUFJVI5gQjP7qfUCTBwNzGu3YtU/bW1ENJIXfwCL63Ugax3zsr4ZaEDn
-	lEi4DOCH38q1jeEQq+YyHqEUatwSfU0NF62San+TEclrL6dzlqK1KSvcnwIDK3hYn8Zi1Oan1i5
-	3GOY0W6ql8gicCFw3zsZ7t+DvkmSQN5DE7bRGHg3ZXlHmuC4DiCTBq/IvwJBNTYEVgT8rL9N9d+
-	xk+VTrLVDPLQ==
-X-Google-Smtp-Source: AGHT+IHKWHFV17ns3ZpVjF2rHkOOpDusjT/d9J9zPlp7ZvaOQIJuUpu9+Z9VWrtjzQL6wybXmhMOig==
-X-Received: by 2002:a17:902:c947:b0:295:5625:7e41 with SMTP id d9443c01a7336-2984ed92e1amr84549625ad.22.1763039558775;
-        Thu, 13 Nov 2025 05:12:38 -0800 (PST)
-Received: from localhost ([2804:30c:1661:8a00:578a:911c:ac25:24a6])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2985c244e13sm25487465ad.29.2025.11.13.05.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 05:12:37 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:13:56 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: rodrigo.alencar@analog.com
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/3] iio: frequency: adf41513: driver implementation
-Message-ID: <aRXZlMsPjIGWJ_oc@debian-BULLSEYE-live-builder-AMD64>
-References: <20251110-adf41513-iio-driver-v1-0-2df8be0fdc6e@analog.com>
- <20251110-adf41513-iio-driver-v1-1-2df8be0fdc6e@analog.com>
+	s=arc-20240116; t=1763039711; c=relaxed/simple;
+	bh=6dMW8bMwTxb4FkBK6bLthIdV3ilHyTf/DTu0YvWev8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J+SWi/f4aY15Ye1rcH+EiNs2Hp/4mVRp40LZ524gVoaPxe2K1pZrGAmRyydyAcRPenq4K2+yVF4sRoHy5q/nqdUdUkXOoHw9u4tp7PMZbfb2w5pnT3L3nNk2FMVFm1Ba7Hu0xN4skCRnvpMOIBOZfVnIalc2NX/B7MW2NedDXS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c0b2be10c09211f0a38c85956e01ac42-20251113
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
+	SA_EXISTED, SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:84fc251b-f117-4269-a976-58cc5b6f035c,IP:10,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:5
+X-CID-INFO: VERSION:1.3.6,REQID:84fc251b-f117-4269-a976-58cc5b6f035c,IP:10,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:5
+X-CID-META: VersionHash:a9d874c,CLOUDID:900a97af88ae7b7aff42089cce452c64,BulkI
+	D:251113211501BVFKTKG3,BulkQuantity:0,Recheck:0,SF:17|19|66|78|102|850,TC:
+	nil,Content:0|15|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c0b2be10c09211f0a38c85956e01ac42-20251113
+X-User: sunshaojie@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <sunshaojie@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1220712474; Thu, 13 Nov 2025 21:14:57 +0800
+From: Sun Shaojie <sunshaojie@kylinos.cn>
+To: llong@redhat.com
+Cc: cgroups@vger.kernel.org,
+	chenridong@huaweicloud.com,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	mkoutny@suse.com,
+	shuah@kernel.org,
+	sunshaojie@kylinos.cn,
+	tj@kernel.org
+Subject: [PATCH v2] cpuset: relax the overlap check for cgroup-v2
+Date: Thu, 13 Nov 2025 21:14:34 +0800
+Message-Id: <20251113131434.606961-1-sunshaojie@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110-adf41513-iio-driver-v1-1-2df8be0fdc6e@analog.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Rodrigo,
+In cgroup v2, a mutual overlap check is required when at least one of two
+cpusets is exclusive. However, this check should be relaxed and limited to
+cases where both cpusets are exclusive.
 
-A couple of comments inline since this is on the mailing list.
-As mentioned in the other thread, we ought to continue the review of this internally.
+The table 1 shows the partition states of A1 and B1 after each step before
+applying this patch.
 
-On 11/10, Rodrigo Alencar via B4 Relay wrote:
-> From: Rodrigo Alencar <rodrigo.alencar@analog.com>
-> 
-> - ADF41513: 1 GHz to 26.5 GHz frequency range
-> - ADF41510: 1 GHz to 10 GHz frequency range
-> - Integer-N and fractional-N operation modes
-> - Ultra-low phase noise (-235 dBc/Hz integer-N, -231 dBc/Hz fractional-N)
-> - High maximum PFD frequency (250 MHz integer-N, 125 MHz fractional-N)
-> - 25-bit fixed modulus or 49-bit variable modulus fractional modes
-> - Programmable charge pump currents with 16x range
-> - Digital lock detect functionality
-> - Phase resync capability for consistent output phase
-> - Clock framework integration for system clock generation
-> 
-> Signed-off-by: Rodrigo Alencar <rodrigo.alencar@analog.com>
-> ---
-...
-> +
-> +static int adf41513_parse_uhz(const char *str, u64 *freq_uhz)
-> +{
-> +	u64 uhz = 0;
-> +	int f_count = ADF41513_HZ_DECIMAL_PRECISION;
-> +	bool frac_part = false;
-> +
-> +	if (str[0] == '+')
-> +		str++;
-> +
-> +	while (*str && f_count > 0) {
-> +		if ('0' <= *str && *str <= '9') {
-> +			uhz = uhz * 10 + *str - '0';
-> +			if (frac_part)
-> +				f_count--;
-> +		} else if (*str == '\n') {
-> +			if (*(str + 1) == '\0')
-> +				break;
-> +			return -EINVAL;
-> +		} else if (*str == '.' && !frac_part) {
-> +			frac_part = true;
-> +		} else {
-> +			return -EINVAL;
-> +		}
-> +		str++;
-> +	}
-> +
-> +	for (; f_count > 0; f_count--)
-> +		uhz *= 10;
-> +
-> +	*freq_uhz = uhz;
-> +
-> +	return 0;
-> +}
-didn't check the details, but can't the sub-Hz resolution be supported with
-.write_raw_get_fmt()?
-e.g.
+Table 1: Before applying the patch
+ Step                                       | A1's prstate | B1's prstate |
+ #1> mkdir -p A1                            | member       |              |
+ #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
+ #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
+ #4> mkdir -p B1                            | root         | member       |
+ #5> echo "0-3" > B1/cpuset.cpus            | root invalid | member       |
+ #6> echo "root" > B1/cpuset.cpus.partition | root invalid | root invalid |
 
-static int adf41513_write_raw_get_fmt(struct iio_dev *indio_dev,
-				    struct iio_chan_spec const *chan, long mask)
-{
-	switch (mask) {
-	case IIO_CHAN_INFO_FREQUENCY:
-		return IIO_VAL_INT_64;
-	default:
-		return IIO_VAL_INT_PLUS_MICRO;
-	}
-}
+After step #5, A1 changes from "root" to "root invalid" because its CPUs
+(0-1) overlap with those requested by B1 (0-3). However, B1 can actually
+use CPUs 2-3, so it would be more reasonable for A1 to remain as "root."
 
-static const struct iio_info adf41513_info = {
-...
-	.write_raw_get_fmt = adf41513_write_raw_get_fmt(),
-};
+This patch relaxes the exclusive cpuset check for cgroup v2 while
+preserving the current cgroup v1 behavior.
 
-...
-> +
-> +static ssize_t adf41513_write(struct iio_dev *indio_dev,
-> +			      uintptr_t private,
-> +			      const struct iio_chan_spec *chan,
-> +			      const char *buf, size_t len)
-> +{
-> +	struct adf41513_state *st = iio_priv(indio_dev);
-> +	unsigned long long readin;
-> +	unsigned long tmp;
-> +	u64 freq_uhz;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	switch ((u32)private) {
-> +	case ADF41513_FREQ:
-> +		ret = adf41513_parse_uhz(buf, &freq_uhz);
-> +		if (ret)
-> +			return ret;
-> +		ret = adf41513_set_frequency(st, freq_uhz, ADF41513_SYNC_DIFF);
-> +		break;
-> +	case ADF41513_FREQ_REFIN:
-> +		ret = kstrtoull(buf, 10, &readin);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (readin < ADF41513_MIN_REF_FREQ || readin > ADF41513_MAX_REF_FREQ) {
-Can, alternatively, this check be made with in_range() macro?
-If so, then
-#include <linux/minmax.h>
+Signed-off-by: Sun Shaojie <sunshaojie@kylinos.cn>
 
-Same question/suggestion to other similar value bounds checks throughout the driver.
+---
+v1 -> v2:
+  - Keeps the current cgroup v1 behavior unchanged
+  - Link: https://lore.kernel.org/cgroups/c8e234f4-2c27-4753-8f39-8ae83197efd3@redhat.com
+---
+ kernel/cgroup/cpuset.c                            |  9 +++++++--
+ tools/testing/selftests/cgroup/test_cpuset_prs.sh | 10 +++++-----
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 52468d2c178a..3240b3ab5998 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -592,8 +592,13 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
+  */
+ static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
+ {
+-	/* If either cpuset is exclusive, check if they are mutually exclusive */
+-	if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
++	/* If both cpusets are exclusive, check if they are mutually exclusive */
++	if (is_cpu_exclusive(cs1) && is_cpu_exclusive(cs2))
++		return !cpusets_are_exclusive(cs1, cs2);
++
++	/* In cgroup-v1, if either cpuset is exclusive, check if they are mutually exclusive */
++	if (!is_in_v2_mode() &&
++	    (is_cpu_exclusive(cs1) != is_cpu_exclusive(cs2)))
+ 		return !cpusets_are_exclusive(cs1, cs2);
+ 
+ 	/* Exclusive_cpus cannot intersect */
+diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+index a17256d9f88a..903dddfe88d7 100755
+--- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
++++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+@@ -269,7 +269,7 @@ TEST_MATRIX=(
+ 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X3:P2    .      .     0 A1:0-2|A2:3|A3:3 A1:P0|A2:P2 3"
+ 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3  X2-3:P2   .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
+ 	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:C3 .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
+-	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-3|A2:1-3|A3:2-3|B1:2-3 A1:P0|A3:P0|B1:P-2"
++	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-1|A2:1|A3:1|B1:2-3 A1:P0|A3:P0|B1:P2 2-3"
+ 	" C0-3:S+ C1-3:S+ C2-3   C4-5     .      .      .      P2    0 B1:4-5 B1:P2 4-5"
+ 	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3  X2-3:P2   P2    0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
+ 	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3 X2-3:P2:C1-3 P2  0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
+@@ -318,7 +318,7 @@ TEST_MATRIX=(
+ 	# Invalid to valid local partition direct transition tests
+ 	" C1-3:S+:P2 X4:P2  .      .      .      .      .      .     0 A1:1-3|XA1:1-3|A2:1-3:XA2: A1:P2|A2:P-2 1-3"
+ 	" C1-3:S+:P2 X4:P2  .      .      .    X3:P2    .      .     0 A1:1-2|XA1:1-3|A2:3:XA2:3 A1:P2|A2:P2 1-3"
+-	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:4-6 A1:P-2|B1:P0"
++	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:5-6 A1:P2|B1:P0 0-4"
+ 	"  C0-3:P2   .      .    C4-6 C0-4:C0-3  .      .      .     0 A1:0-3|B1:4-6 A1:P2|B1:P0 0-3"
+ 
+ 	# Local partition invalidation tests
+@@ -388,10 +388,10 @@ TEST_MATRIX=(
+ 	"  C0-1:S+  C1      .    C2-3     .      P2     .      .     0 A1:0-1|A2:1 A1:P0|A2:P-2"
+ 	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2 0-1|1"
+ 
+-	# A non-exclusive cpuset.cpus change will invalidate partition and its siblings
+-	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P0"
++	# A non-exclusive cpuset.cpus change will not invalidate partition and its siblings
++	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:3 A1:P1|B1:P0"
+ 	"  C0-1:P1   .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P-1"
+-	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P0|B1:P-1"
++	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-1|B1:2-3 A1:P0|B1:P1"
+ 
+ 	# cpuset.cpus can overlap with sibling cpuset.cpus.exclusive but not subsumed by it
+ 	"   C0-3     .      .    C4-5     X5     .      .      .     0 A1:0-3|B1:4-5"
+-- 
+2.25.1
 
-With best regards,
-Marcelo
 
