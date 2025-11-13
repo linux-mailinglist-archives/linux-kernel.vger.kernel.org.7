@@ -1,291 +1,374 @@
-Return-Path: <linux-kernel+bounces-900033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931C1C596A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:19:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12DDC5978C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9FC3A625B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:10:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D709C4EEBA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39823358D34;
-	Thu, 13 Nov 2025 18:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DD9326937;
+	Thu, 13 Nov 2025 18:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFezV8W+"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i0CbDAF6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA7A22A7E0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA89130AD1B;
+	Thu, 13 Nov 2025 18:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057438; cv=none; b=XR1l4ETTIpKEXVrVY52rcA27deRspdaSvnDCHOtxaD0UzoNlTwMdIe21u4G6s+fVQ25zrmI3NJKN4bSEzcCi9+wcuqVT04yA5UwQOYIX+awtTtE8Ct6+MHNaqfUsoUluUzJw9yDNKW7dAR81AXnxaMpjVF/5ML/L5PvYhCZu+Eg=
+	t=1763057528; cv=none; b=HOp8kKgwEUXfwDofze3OoXuwZbHM43yruUZiHMX7JAkXhapT5MVvMneCBV4CZaYNQoTZpaplGEAKOooVgzJJbDLIfkNWJPiemPJlLMYuK5zreDdzRpPBZ6QBu6/EmozEnFoJet9s27K7E4dZypgEXGiyAuTjpepBckNraZqObSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057438; c=relaxed/simple;
-	bh=0QgMRtdD83RcFucBfkLS2hJinG0DlPzvPLvSV5Q4piU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tbBl39v5hbkGifeSIr4HsVc+qZz79M95sphdbij6JKSY7Q0eMC2D2DQRr2rUypXH7STTuufwrjng/HK5w0S0ChaC3cxJLGHUlOxnXsLw4l15hZGczaYfKT71tQ9nR+FeakO2mGsrYJLRRf/ankpIylnjbwRQDEJbER3hT+hAQtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFezV8W+; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b710601e659so178991266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763057434; x=1763662234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=87BEAOUBPph3TzBH1vV5g7Ztob9f0IjgY5bWUM5E6Ww=;
-        b=MFezV8W+pt5tBxIuK/g45V+RUbRWbVTPNBLg0Ne5jnSJuOkLBbdksx0FCKLRfbExx1
-         VQ/v1VB1DRXebpofFXevV/mhJubLCJtuD15EATFBK5i/oGa5712pwTAey6Y9OdUPbQO6
-         RNmvysTfbIXdceE9dvzSyjZLLIQJQnLJ/6RXTNm2/l11qknZbfV/6My4MIk7qK36HfnB
-         +PAANYBZ0sANaIt8dRhHNh3LbqhQMdht4/U2L+fX6W1igZIK44PSPOaBHz/Or7XpGHVJ
-         gWKJ+AJZzfE1ZGwHMOj0o+2l9Ams8xDCi/1WhsY3brgXVbv85e2tXwXssS42io/BXT9H
-         QTOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763057434; x=1763662234;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=87BEAOUBPph3TzBH1vV5g7Ztob9f0IjgY5bWUM5E6Ww=;
-        b=JyoIv69Ruw7YqzlKAsYswYxkdOMypghnZDyOyGFUqtOl/4o9CmqYIFjNgrsiMwq2cL
-         jobsmHwXpL/lT+vB6XELyBV6QikMuUCUIxnXhxpfi5VB/itFtuSPlaXvHi0on1Vhf86S
-         nagpfWPM18o1k6PTVmnyWkks0FS6T1cA8k1v1IL6dveJFNyJIUB0zlmEZ+DoKOu8MoQA
-         Ef2fKVKE+2baHKT39GECG9xdab0ice+ktldRZAi2QBqoi3Hy6IIhaJnVFp8KwQHXU+u0
-         YOo4i6rhww0DTKvTgjQwZGjmo6BDubwAr6YRyzh8jeMYat1hSItd17SemqGMES+1BL9t
-         F2nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWaPmlA3AbT2a0mxTfbOLULEbiNPKj6iFgTeoMzStebRquLVJy/ZIptWUdUahLdoyLqhj0HJNCyYVXpBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzork4jjspce6dpA93C5l9LvcuqVEM0jQfUjtyzWL3u4VM/2q4o
-	m+T486nBNfT5cQEJC8HVIVvwyaRResAiTK3gDCY5E7Zc811Xtoamlp0=
-X-Gm-Gg: ASbGncsrrCeKtL+hrkBUTeNMrOmAsR4Ot+UQTgfk2R9SsyVKuX3ioZmWMrDAGq0Aa7N
-	71rMSzQYwBMiVS9kBuGLvZRdBXOOPrWVz9nhfmlNm6GuDHdAgAqwXS/8XPnJrWYZ4/r+3n+fL9p
-	0kUbyTClJXVooVvqqKiN4+X2rjBGqTkbBcndHaFM4Ls+N3rFcKV+0I9EXOGqKiYxS+hazMW6bPb
-	7EwhAaiqW64L4k7mBVIHA8QbZHl+886hAg7FGt7gFssvwc95nxkPjgre8V9whn6C6PYmfKycK2w
-	B1vOt1Sf5ThYeg/OJr7Y1IvcIBJYOhU7CbUb4lO1AAvGD/e8bGAhzAPZiQ8HLYnJJXah7g3Avk9
-	wamRJTgiM07kIR4ndrX7uqkVu2r13Yv4znTetw/7AATtT9l7Ivo62rdYQeWYgfffdAZ58gZfwjS
-	5L3hNzx+Ppfwcjplz5SebbUO0eC00zCi8OoXSXC3GEuhY1BGaMo+5jmsuVI6MWno3Qnh7l
-X-Google-Smtp-Source: AGHT+IGz29WAKXKe+U4nMt5douwl+2MqO7amrWJcnBL9iYqpI8wTmeKa4ANLVfbfh8GHVmaNVscELw==
-X-Received: by 2002:a17:907:78d:b0:b71:cec2:d54 with SMTP id a640c23a62f3a-b736796a61amr13099066b.57.1763057433996;
-        Thu, 13 Nov 2025 10:10:33 -0800 (PST)
-Received: from localhost ([2a02:810d:4a94:b300:bb0e:996a:397f:d689])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b734fd809fasm211020266b.45.2025.11.13.10.10.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:10:33 -0800 (PST)
-From: Florian Fuchs <fuchsfl@gmail.com>
-To: Geoff Levand <geoff@infradead.org>,
-	netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Masakazu Mokuno <mokuno@sm.sony.co.jp>,
-	Jeff Garzik <jeff@garzik.org>,
-	fuchsfl@gmail.com
-Subject: [PATCH net v2] net: ps3_gelic_net: handle skb allocation failures
-Date: Thu, 13 Nov 2025 19:10:00 +0100
-Message-ID: <20251113181000.3914980-1-fuchsfl@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763057528; c=relaxed/simple;
+	bh=eggkhC6mk5737Q6dXVCr1HI04S4YU8Wm2zybbQQ4foA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zd5tt+V/M5chdZdj9ZN10u6whXcCGe6/16IkgOaE4Cw4buxoUUUWSaFclx40DV3Df/XlOh8XmmTopxt9M7BXq67mGvkCf+wOMi0xqbBMpqBovSN4nCwhTCjxaXa4HDiWQgh7bduEvu7dbyivOoQcEtIcRillrgTCkL/4NZxNHzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i0CbDAF6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1763057523;
+	bh=eggkhC6mk5737Q6dXVCr1HI04S4YU8Wm2zybbQQ4foA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i0CbDAF6pCbWEMlJpLb//tNQ6Yv1i+dHQZGVPCJnVkweoEGmlw48d5tZDmSxx333M
+	 nt4GoO0PyuP0bNbEwDVNY98cz438MWKbbxMjCD7dmmefRgQpXVVnQ321Rz9W4WBxr9
+	 hD6NU3aIKykDFuGCJs028cshFoa/0CsSJCbdMtxLP+mtf94jPIFPj5LS8mnmIvR5fB
+	 VrmSy0RLe/MFKL5HKfC7rc6/pcdLWGaZinio6jRZGnk50KKHbPwVoPEHabv3b9fBOs
+	 x+gim+uMWamOOdj/T5PsKDWrMKn3cf9SwpobDBglRpuOtLPfsW2D8s5CBr4bNlbnV2
+	 BuHRmPPV7+XRQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9222917E127F;
+	Thu, 13 Nov 2025 19:12:02 +0100 (CET)
+Date: Thu, 13 Nov 2025 19:11:58 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?TG/Dr2M=?= Molinari <loic.molinari@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?B?TWlrb8WCYWo=?= Wasiak
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>, Nitin
+ Gote <nitin.r.gote@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, Christopher Healy <healych@amazon.com>,
+ Matthew Wilcox <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v8 07/11] drm/gem: Get rid of *_with_mnt helpers
+Message-ID: <20251113191158.43328c47@fedora>
+In-Reply-To: <20251113170008.79587-8-loic.molinari@collabora.com>
+References: <20251113170008.79587-1-loic.molinari@collabora.com>
+	<20251113170008.79587-8-loic.molinari@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Handle skb allocation failures in RX path, to avoid NULL pointer
-dereference and RX stalls under memory pressure. If the refill fails
-with -ENOMEM, complete napi polling and wake up later to retry via timer.
-Also explicitly re-enable RX DMA after oom, so the dmac doesn't remain
-stopped in this situation.
+On Thu, 13 Nov 2025 18:00:03 +0100
+Lo=C3=AFc Molinari <loic.molinari@collabora.com> wrote:
 
-Previously, memory pressure could lead to skb allocation failures and
-subsequent Oops like:
+> drm_gem_object_init_with_mnt() and drm_gem_shmem_create_with_mnt() can
+> be removed now that the drivers use the new drm_gem_huge_mnt_create()
+> and drm_gem_has_huge_mnt() helpers.
+>=20
+> v5:
+> - use drm_gem_has_huge_mnt() helper
+> - compile out shmem_file_setup_with_mnt() call in builds with
+>   CONFIG_TRANSPARENT_HUGEPAGE=3Dn
+>=20
+> Signed-off-by: Lo=C3=AFc Molinari <loic.molinari@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gem.c              | 38 ++++++++------------------
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 38 ++++++--------------------
+>  drivers/gpu/drm/v3d/v3d_bo.c           |  5 ----
+>  include/drm/drm_gem.h                  |  3 --
+>  include/drm/drm_gem_shmem_helper.h     |  3 --
+>  5 files changed, 20 insertions(+), 67 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index bbca2ab9e9a5..1b0b5813acef 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -171,31 +171,33 @@ drm_gem_init(struct drm_device *dev)
+>  }
+> =20
+>  /**
+> - * drm_gem_object_init_with_mnt - initialize an allocated shmem-backed G=
+EM
+> - * object in a given shmfs mountpoint
+> + * drm_gem_object_init - initialize an allocated shmem-backed GEM object
+>   *
+>   * @dev: drm_device the object should be initialized for
+>   * @obj: drm_gem_object to initialize
+>   * @size: object size
+> - * @gemfs: tmpfs mount where the GEM object will be created. If NULL, use
+> - * the usual tmpfs mountpoint (`shm_mnt`).
+>   *
+>   * Initialize an already allocated GEM object of the specified size with
+> - * shmfs backing store.
+> + * shmfs backing store. A huge mountpoint can be used by calling
+> + * drm_gem_huge_mnt_create() beforehand.
+>   */
+> -int drm_gem_object_init_with_mnt(struct drm_device *dev,
+> -				 struct drm_gem_object *obj, size_t size,
+> -				 struct vfsmount *gemfs)
+> +int drm_gem_object_init(struct drm_device *dev, struct drm_gem_object *o=
+bj,
+> +			size_t size)
+>  {
+>  	struct file *filp;
+> =20
+>  	drm_gem_private_object_init(dev, obj, size);
+> =20
+> -	if (gemfs)
+> -		filp =3D shmem_file_setup_with_mnt(gemfs, "drm mm object", size,
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	if (drm_gem_has_huge_mnt(dev))
+> +		filp =3D shmem_file_setup_with_mnt(dev->huge_mnt,
+> +						 "drm mm object", size,
+>  						 VM_NORESERVE);
+>  	else
+>  		filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
+> +#else
+> +	filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
+> +#endif
 
-	Oops: Kernel access of bad area, sig: 11 [#2]
-	Hardware name: SonyPS3 Cell Broadband Engine 0x701000 PS3
-	NIP [c0003d0000065900] gelic_net_poll+0x6c/0x2d0 [ps3_gelic] (unreliable)
-	LR [c0003d00000659c4] gelic_net_poll+0x130/0x2d0 [ps3_gelic]
-	Call Trace:
-	  gelic_net_poll+0x130/0x2d0 [ps3_gelic] (unreliable)
-	  __napi_poll+0x44/0x168
-	  net_rx_action+0x178/0x290
+I keep thinking it'd be simpler with a drm_gem_get_huge_mnt() helper:
 
-Steps to reproduce the issue:
-	1. Start a continuous network traffic, like scp of a 20GB file
-	2. Inject failslab errors using the kernel fault injection:
-	    echo -1 > /sys/kernel/debug/failslab/times
-	    echo 30 > /sys/kernel/debug/failslab/interval
-	    echo 100 > /sys/kernel/debug/failslab/probability
-	3. After some time, traces start to appear, kernel Oopses
-	   and the system stops
+static inline struct vfsmount *
+drm_gem_get_huge_mnt(struct drm_device *dev)
+{
+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+	return dev->huge_mnt;
+#else
+	return NULL;
+#endif
+}
 
-Step 2 is not always necessary, as it is usually already triggered by
-the transfer of a big enough file.
+so we can avoid those #ifdef CONFIG_TRANSPARENT_HUGEPAGE in a few other
+places.
 
-Fixes: 02c1889166b4 ("ps3: gigabit ethernet driver for PS3, take3")
-Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
----
-Changes v1->v2:
-- Rename and declare return value of gelic_descr_prepare_rx() in the top
-  of gelic_card_decode_one_descr() ret -> prepare_rx_ret
-- Invert the order of calls in gelic_card_down() run napi_disable()
-  first, then timer_delete_sync()
-- Remove useless kdoc from gelic_rx_oom_timer()
-- Fix gelic_net_poll() to reduce indentation level of success path
+For this one that would give you something like:
 
-v1: https://lore.kernel.org/linuxppc-dev/20251110114523.3099559-1-fuchsfl@gmail.com/
+	if (drm_gem_get_huge_mnt(dev))
+		filp =3D shmem_file_setup_with_mnt(drm_gem_get_huge_mnt(dev),
+						 "drm mm object", size,
+						 VM_NORESERVE);
+	else
+		filp =3D shmem_file_setup("drm mm object", size, VM_NORESERVE);
 
-Note: This change has been tested on real hardware Sony PS3 (CECHL04 PAL),
-the patch was tested for many hours, with continuous system load, high
-network transfer load and injected failslab errors.
-
- drivers/net/ethernet/toshiba/ps3_gelic_net.c | 45 +++++++++++++++-----
- drivers/net/ethernet/toshiba/ps3_gelic_net.h |  1 +
- 2 files changed, 35 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-index 5ee8e8980393..591866fc9055 100644
---- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-+++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-@@ -260,6 +260,7 @@ void gelic_card_down(struct gelic_card *card)
- 	if (atomic_dec_if_positive(&card->users) == 0) {
- 		pr_debug("%s: real do\n", __func__);
- 		napi_disable(&card->napi);
-+		timer_delete_sync(&card->rx_oom_timer);
- 		/*
- 		 * Disable irq. Wireless interrupts will
- 		 * be disabled later if any
-@@ -970,7 +971,8 @@ static void gelic_net_pass_skb_up(struct gelic_descr *descr,
-  * gelic_card_decode_one_descr - processes an rx descriptor
-  * @card: card structure
-  *
-- * returns 1 if a packet has been sent to the stack, otherwise 0
-+ * returns 1 if a packet has been sent to the stack, -ENOMEM on skb alloc
-+ * failure, otherwise 0
-  *
-  * processes an rx descriptor by iommu-unmapping the data buffer and passing
-  * the packet up to the stack
-@@ -981,16 +983,18 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
- 	struct gelic_descr_chain *chain = &card->rx_chain;
- 	struct gelic_descr *descr = chain->head;
- 	struct net_device *netdev = NULL;
--	int dmac_chain_ended;
-+	int dmac_chain_ended = 0;
-+	int prepare_rx_ret;
- 
- 	status = gelic_descr_get_status(descr);
- 
- 	if (status == GELIC_DESCR_DMA_CARDOWNED)
- 		return 0;
- 
--	if (status == GELIC_DESCR_DMA_NOT_IN_USE) {
-+	if (status == GELIC_DESCR_DMA_NOT_IN_USE || !descr->skb) {
- 		dev_dbg(ctodev(card), "dormant descr? %p\n", descr);
--		return 0;
-+		dmac_chain_ended = 1;
-+		goto refill;
- 	}
- 
- 	/* netdevice select */
-@@ -1048,9 +1052,10 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
- refill:
- 
- 	/* is the current descriptor terminated with next_descr == NULL? */
--	dmac_chain_ended =
--		be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
--		GELIC_DESCR_RX_DMA_CHAIN_END;
-+	if (!dmac_chain_ended)
-+		dmac_chain_ended =
-+			be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
-+			GELIC_DESCR_RX_DMA_CHAIN_END;
- 	/*
- 	 * So that always DMAC can see the end
- 	 * of the descriptor chain to avoid
-@@ -1062,10 +1067,11 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
- 	gelic_descr_set_status(descr, GELIC_DESCR_DMA_NOT_IN_USE);
- 
- 	/*
--	 * this call can fail, but for now, just leave this
--	 * descriptor without skb
-+	 * this call can fail, propagate the error
- 	 */
--	gelic_descr_prepare_rx(card, descr);
-+	prepare_rx_ret = gelic_descr_prepare_rx(card, descr);
-+	if (prepare_rx_ret)
-+		return prepare_rx_ret;
- 
- 	chain->tail = descr;
- 	chain->head = descr->next;
-@@ -1087,6 +1093,13 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
- 	return 1;
- }
- 
-+static void gelic_rx_oom_timer(struct timer_list *t)
-+{
-+	struct gelic_card *card = timer_container_of(card, t, rx_oom_timer);
-+
-+	napi_schedule(&card->napi);
-+}
-+
- /**
-  * gelic_net_poll - NAPI poll function called by the stack to return packets
-  * @napi: napi structure
-@@ -1099,14 +1112,22 @@ static int gelic_net_poll(struct napi_struct *napi, int budget)
- {
- 	struct gelic_card *card = container_of(napi, struct gelic_card, napi);
- 	int packets_done = 0;
-+	int work_result = 0;
- 
- 	while (packets_done < budget) {
--		if (!gelic_card_decode_one_descr(card))
-+		work_result = gelic_card_decode_one_descr(card);
-+		if (work_result != 1)
- 			break;
- 
- 		packets_done++;
- 	}
- 
-+	if (work_result == -ENOMEM) {
-+		napi_complete_done(napi, packets_done);
-+		mod_timer(&card->rx_oom_timer, jiffies + 1);
-+		return packets_done;
-+	}
-+
- 	if (packets_done < budget) {
- 		napi_complete_done(napi, packets_done);
- 		gelic_card_rx_irq_on(card);
-@@ -1576,6 +1597,8 @@ static struct gelic_card *gelic_alloc_card_net(struct net_device **netdev)
- 	mutex_init(&card->updown_lock);
- 	atomic_set(&card->users, 0);
- 
-+	timer_setup(&card->rx_oom_timer, gelic_rx_oom_timer, 0);
-+
- 	return card;
- }
- 
-diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-index f7d7931e51b7..c10f1984a5a1 100644
---- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-+++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-@@ -268,6 +268,7 @@ struct gelic_vlan_id {
- struct gelic_card {
- 	struct napi_struct napi;
- 	struct net_device *netdev[GELIC_PORT_MAX];
-+	struct timer_list rx_oom_timer;
- 	/*
- 	 * hypervisor requires irq_status should be
- 	 * 8 bytes aligned, but u64 member is
-
-base-commit: fe82c4f8a228d3b3ec2462ea2d43fa532a20ac67
--- 
-2.43.0
+> =20
+>  	if (IS_ERR(filp))
+>  		return PTR_ERR(filp);
+> @@ -204,22 +206,6 @@ int drm_gem_object_init_with_mnt(struct drm_device *=
+dev,
+> =20
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(drm_gem_object_init_with_mnt);
+> -
+> -/**
+> - * drm_gem_object_init - initialize an allocated shmem-backed GEM object
+> - * @dev: drm_device the object should be initialized for
+> - * @obj: drm_gem_object to initialize
+> - * @size: object size
+> - *
+> - * Initialize an already allocated GEM object of the specified size with
+> - * shmfs backing store.
+> - */
+> -int drm_gem_object_init(struct drm_device *dev, struct drm_gem_object *o=
+bj,
+> -			size_t size)
+> -{
+> -	return drm_gem_object_init_with_mnt(dev, obj, size, NULL);
+> -}
+>  EXPORT_SYMBOL(drm_gem_object_init);
+> =20
+>  /**
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm=
+_gem_shmem_helper.c
+> index 81f4ac7cb8f6..43a80f3fcfd9 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -50,7 +50,7 @@ static const struct drm_gem_object_funcs drm_gem_shmem_=
+funcs =3D {
+>  };
+> =20
+>  static int __drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_s=
+hmem_object *shmem,
+> -				size_t size, bool private, struct vfsmount *gemfs)
+> +				size_t size, bool private)
+>  {
+>  	struct drm_gem_object *obj =3D &shmem->base;
+>  	int ret =3D 0;
+> @@ -62,7 +62,7 @@ static int __drm_gem_shmem_init(struct drm_device *dev,=
+ struct drm_gem_shmem_obj
+>  		drm_gem_private_object_init(dev, obj, size);
+>  		shmem->map_wc =3D false; /* dma-buf mappings use always writecombine */
+>  	} else {
+> -		ret =3D drm_gem_object_init_with_mnt(dev, obj, size, gemfs);
+> +		ret =3D drm_gem_object_init(dev, obj, size);
+>  	}
+>  	if (ret) {
+>  		drm_gem_private_object_fini(obj);
+> @@ -103,13 +103,12 @@ static int __drm_gem_shmem_init(struct drm_device *=
+dev, struct drm_gem_shmem_obj
+>   */
+>  int drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obje=
+ct *shmem, size_t size)
+>  {
+> -	return __drm_gem_shmem_init(dev, shmem, size, false, NULL);
+> +	return __drm_gem_shmem_init(dev, shmem, size, false);
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_init);
+> =20
+>  static struct drm_gem_shmem_object *
+> -__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private,
+> -		       struct vfsmount *gemfs)
+> +__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool private)
+>  {
+>  	struct drm_gem_shmem_object *shmem;
+>  	struct drm_gem_object *obj;
+> @@ -129,7 +128,7 @@ __drm_gem_shmem_create(struct drm_device *dev, size_t=
+ size, bool private,
+>  		obj =3D &shmem->base;
+>  	}
+> =20
+> -	ret =3D __drm_gem_shmem_init(dev, shmem, size, private, gemfs);
+> +	ret =3D __drm_gem_shmem_init(dev, shmem, size, private);
+>  	if (ret) {
+>  		kfree(obj);
+>  		return ERR_PTR(ret);
+> @@ -150,31 +149,10 @@ __drm_gem_shmem_create(struct drm_device *dev, size=
+_t size, bool private,
+>   */
+>  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
+, size_t size)
+>  {
+> -	return __drm_gem_shmem_create(dev, size, false, NULL);
+> +	return __drm_gem_shmem_create(dev, size, false);
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_create);
+> =20
+> -/**
+> - * drm_gem_shmem_create_with_mnt - Allocate an object with the given siz=
+e in a
+> - * given mountpoint
+> - * @dev: DRM device
+> - * @size: Size of the object to allocate
+> - * @gemfs: tmpfs mount where the GEM object will be created
+> - *
+> - * This function creates a shmem GEM object in a given tmpfs mountpoint.
+> - *
+> - * Returns:
+> - * A struct drm_gem_shmem_object * on success or an ERR_PTR()-encoded ne=
+gative
+> - * error code on failure.
+> - */
+> -struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
+vice *dev,
+> -							   size_t size,
+> -							   struct vfsmount *gemfs)
+> -{
+> -	return __drm_gem_shmem_create(dev, size, false, gemfs);
+> -}
+> -EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
+> -
+>  /**
+>   * drm_gem_shmem_release - Release resources associated with a shmem GEM=
+ object.
+>   * @shmem: shmem GEM object
+> @@ -861,7 +839,7 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device=
+ *dev,
+>  	size_t size =3D PAGE_ALIGN(attach->dmabuf->size);
+>  	struct drm_gem_shmem_object *shmem;
+> =20
+> -	shmem =3D __drm_gem_shmem_create(dev, size, true, NULL);
+> +	shmem =3D __drm_gem_shmem_create(dev, size, true);
+>  	if (IS_ERR(shmem))
+>  		return ERR_CAST(shmem);
+> =20
+> @@ -909,7 +887,7 @@ struct drm_gem_object *drm_gem_shmem_prime_import_no_=
+map(struct drm_device *dev,
+> =20
+>  	size =3D PAGE_ALIGN(attach->dmabuf->size);
+> =20
+> -	shmem =3D __drm_gem_shmem_create(dev, size, true, NULL);
+> +	shmem =3D __drm_gem_shmem_create(dev, size, true);
+>  	if (IS_ERR(shmem)) {
+>  		ret =3D PTR_ERR(shmem);
+>  		goto fail_detach;
+> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+> index 3bc714ea6392..d3b68ee05dbb 100644
+> --- a/drivers/gpu/drm/v3d/v3d_bo.c
+> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
+> @@ -153,12 +153,7 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev,=
+ struct drm_file *file_priv,
+>  	struct v3d_bo *bo;
+>  	int ret;
+> =20
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	shmem_obj =3D drm_gem_shmem_create_with_mnt(dev, unaligned_size,
+> -						  dev->huge_mnt);
+> -#else
+>  	shmem_obj =3D drm_gem_shmem_create(dev, unaligned_size);
+> -#endif
+>  	if (IS_ERR(shmem_obj))
+>  		return ERR_CAST(shmem_obj);
+>  	bo =3D to_v3d_bo(&shmem_obj->base);
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index 58fa1e6b9773..75276a12208e 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -529,9 +529,6 @@ void drm_gem_object_release(struct drm_gem_object *ob=
+j);
+>  void drm_gem_object_free(struct kref *kref);
+>  int drm_gem_object_init(struct drm_device *dev,
+>  			struct drm_gem_object *obj, size_t size);
+> -int drm_gem_object_init_with_mnt(struct drm_device *dev,
+> -				 struct drm_gem_object *obj, size_t size,
+> -				 struct vfsmount *gemfs);
+>  void drm_gem_private_object_init(struct drm_device *dev,
+>  				 struct drm_gem_object *obj, size_t size);
+>  void drm_gem_private_object_fini(struct drm_gem_object *obj);
+> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shm=
+em_helper.h
+> index 589f7bfe7506..6b6478f5ca24 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -109,9 +109,6 @@ struct drm_gem_shmem_object {
+> =20
+>  int drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obje=
+ct *shmem, size_t size);
+>  struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev=
+, size_t size);
+> -struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_de=
+vice *dev,
+> -							   size_t size,
+> -							   struct vfsmount *gemfs);
+>  void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem);
+>  void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem);
+> =20
 
 
