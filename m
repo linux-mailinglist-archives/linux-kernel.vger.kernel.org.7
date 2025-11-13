@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-899536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B1DC58331
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:06:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47F7C5831C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B39421805
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F553AA085
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3F2D6620;
-	Thu, 13 Nov 2025 14:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="mbRnPLWx"
-Received: from forward205b.mail.yandex.net (forward205b.mail.yandex.net [178.154.239.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30A61EE7DC;
-	Thu, 13 Nov 2025 14:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8BE2D63F6;
+	Thu, 13 Nov 2025 14:55:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB2623E320
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763045642; cv=none; b=dIJFM6WBC49lxwGx1XHxGI7kkcpVJDScLgSNpuesQ9UJ9xxtuOaBhpdFPkcFxnjiUVbvR4SBbHnp1ZfWeGLxnUtvY/8EaP8q79ksWlvqgu8lnv2frrCr3V9yTWk/HeymurFoT8t9VJv37JdyKk5q66TIzoSSfvx1a0Xiymj86Hc=
+	t=1763045709; cv=none; b=OSh3vxOhLrv31F4WtOT3WoCooukp7eeBtBFR8r4WGZPUv/puL9RFgsEXMXFhf2O+MpqyVJLnQjDC3vNLfp09n2gmTj2gqw2GNWMw7KFNLzhR7mLyg/qTB+98eKW1kn651/3felRvt302umcxta78q4PgnKVEdpJOfODSRUEVTWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763045642; c=relaxed/simple;
-	bh=Oq9zBjtc9LiLqXOLAhgqm2wsPTFMjlFzMqtbE1osZTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OdgY/gNVZLDb4kB3oUwVrqTR9rRf4o7nVE+T/aGlSBqEkdAe3VYHbVnnieX9oxUvQDr83sGgEqBChC1MKiVzJRFbZs2i9WY6yN0FLEGOBiynsx+sQZ9fvcVVRwJfwkuKXEipM0N3jh65J2kgTe2myNeYHyVajKPA/4m5tci4nGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=mbRnPLWx; arc=none smtp.client-ip=178.154.239.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
-	by forward205b.mail.yandex.net (Yandex) with ESMTPS id 3B5CD87380;
-	Thu, 13 Nov 2025 17:46:30 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:1507:0:640:8803:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 69C63C0091;
-	Thu, 13 Nov 2025 17:46:21 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id AkRsKD1L04Y0-dkH2KxvI;
-	Thu, 13 Nov 2025 17:46:20 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1763045180;
-	bh=pqMtmNSs14Nm8CD/WmsJeS7HwoDN7nCveH+O5OEE+Kw=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=mbRnPLWxdzq6bVFYhl9opLBoQneIIqlK269Tl0k8R6MjrDJrCUpsSjpv1Wi+BmB8n
-	 EPX9Aes2gIhwyGOsKjghkOFB4F/apwoC9bgoF2WOSs96SelzAQMCQ1xJJHTUJDu5Bg
-	 UgbcuusY8jcsg5qVOK7nqDnHCmLch6TNBLSGCEHg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org
-Cc: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	yutaro.ono.418@gmail.com,
-	charmitro@posteo.net,
-	borys.tyran@protonmail.com,
-	daniel@sedlak.dev,
-	tamird@gmail.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v1] rbtree: reduce unsafe blocks on pointer derefs
-Date: Thu, 13 Nov 2025 17:45:47 +0300
-Message-ID: <20251113144547.502-1-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1763045709; c=relaxed/simple;
+	bh=O7aZvL35e5gynavjtsmr+wvU2Icvj3ys6L/6Y727Tmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3EJ2YXCEsguIJvfgjegGZYULwcxSsncpuNDKa7mVoWtER58HwQrURbJJatbkygE+kKkgtzDxaK0OJlm2yHyV6+eMUopdAWsHfmkAsVHIYOnRaStXmB1IKdz9yqoVyn2bNXKYQzu5ItM20HjgmQoJcYbeJalgevlVg042sVXLS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A81712FC;
+	Thu, 13 Nov 2025 06:54:56 -0800 (PST)
+Received: from [10.57.88.47] (unknown [10.57.88.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 539B83F66E;
+	Thu, 13 Nov 2025 06:55:01 -0800 (PST)
+Message-ID: <28d5f45e-dff0-4073-a806-f8cc6f9fd0aa@arm.com>
+Date: Thu, 13 Nov 2025 15:54:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/fair: Prefer cache locality for EAS wakeup
+To: Shubhang Kaushik OS <Shubhang@os.amperecomputing.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Shubhang Kaushik <sh@gentwo.org>,
+ Shijie Huang <Shijie.Huang@amperecomputing.com>,
+ Frank Wang <zwang@amperecomputing.com>, Christopher Lameter <cl@gentwo.org>,
+ Adam Li <adam.li@amperecomputing.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251030-b4-follow-up-v2-1-19a23c83b837@os.amperecomputing.com>
+ <CAKfTPtB25-M9sxm4vRQVaYvGkZjyoyZUh-NQ0+rZRuv3szSZ0A@mail.gmail.com>
+ <MW6PR01MB8368D97F29454BEAB677FF6DF5CDA@MW6PR01MB8368.prod.exchangelabs.com>
+Content-Language: en-GB
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+In-Reply-To: <MW6PR01MB8368D97F29454BEAB677FF6DF5CDA@MW6PR01MB8368.prod.exchangelabs.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Refactors parts of the get() and cursor_lower_bound()
-traversal logic to minimize the scope of unsafe blocks
-and avoid duplicating same safety comments.
+On 13.11.25 01:26, Shubhang Kaushik OS wrote:
+>> From your previous answer on v1, I don't think that you use
+>> heterogeneous system so eas will not be enabled in your case and even
+>> when used find_energy_efficient_cpu() will be called before
+> 
+> I agree that the EAS centric approach in the current patch is misplaced for our homogeneous systems.
+> 
+>> Otherwise you might want to check in wake_affine() where we decide
+>> between local cpu and previous cpu which one should be the target.
+>> This can have an impact especially if there are not in the same LLC
+> 
+> While wake_affine() modifications seem logical, I see that they cause performance regressions across the board due to the inherent trade-offs in altering that critical initial decision point.
 
-One of the removed comments was also misleading:
+Which testcases are you running on your Altra box? I assume it's a
+single NUMA node (80 CPUs).
 
-    // SAFETY: `node` is a non-null node...
-    Ordering::Equal => return Some(unsafe { &(*this).value }),
+For us, 'perf bench sched messaging` w/o CONFIG_SCHED_CLUSTER, so only
+PKG SD (i.e. sis() only returns prev or this CPU) gives better results
+then w/ CONFIG_SCHED_CLUSTER.
 
-as `node` should have been `this`.
+> We might need to solve the non-idle fallback within `select_idle_sibling` to ring fence the impact for preserving locality effectively.
 
-No functional changes intended; this is purely a safety
-improvement that reduces the amount of unsafe blocks
-while keeping all invariants intact.
+IMHO, the scheduler only cares about shared LLC (and shared L2 with
+CONFIG_SCHED_CLUSTER). Can you check:
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- rust/kernel/rbtree.rs | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+$ cat /sys/devices/system/cpu/cpu0/cache/index*/{type,shared_cpu_map}
+Data
+Instruction
+Unified
+Unified                                                 <-- (1)
+00000000,00000000,00000000,00000000,00000001
+00000000,00000000,00000000,00000000,00000001
+00000000,00000000,00000000,00000000,00000001
+CPU mask > 00000000,00000000,00000000,00000000,00000001 <-- (1)
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index b8fe6be6fcc4..d44f305e5161 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -384,14 +384,17 @@ pub fn get(&self, key: &K) -> Option<&V> {
-             // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-             // point to the links field of `Node<K, V>` objects.
-             let this = unsafe { container_of!(node, Node<K, V>, links) };
-+
-             // SAFETY: `this` is a non-null node so it is valid by the type invariants.
--            node = match key.cmp(unsafe { &(*this).key }) {
--                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
--                Ordering::Less => unsafe { (*node).rb_left },
--                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
--                Ordering::Greater => unsafe { (*node).rb_right },
--                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
--                Ordering::Equal => return Some(unsafe { &(*this).value }),
-+            let this_ref = unsafe { &*this };
-+
-+            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+            let node_ref = unsafe { &*node };
-+
-+            node = match key.cmp(&this_ref.key) {
-+                Ordering::Less => node_ref.rb_left,
-+                Ordering::Greater => node_ref.rb_right,
-+                Ordering::Equal => return Some(&this_ref.value),
-             }
-         }
-         None
-@@ -433,17 +436,17 @@ pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
-             let this = unsafe { container_of!(node, Node<K, V>, links) };
-             // SAFETY: `this` is a non-null node so it is valid by the type invariants.
-             let this_key = unsafe { &(*this).key };
-+
-             // SAFETY: `node` is a non-null node so it is valid by the type invariants.
--            let left_child = unsafe { (*node).rb_left };
--            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
--            let right_child = unsafe { (*node).rb_right };
-+            let node_ref = unsafe { &*node };
-+
-             match key.cmp(this_key) {
-                 Ordering::Equal => {
-                     best_match = NonNull::new(this);
-                     break;
-                 }
-                 Ordering::Greater => {
--                    node = right_child;
-+                    node = node_ref.rb_right;
-                 }
-                 Ordering::Less => {
-                     let is_better_match = match best_match {
-@@ -457,7 +460,7 @@ pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
-                     if is_better_match {
-                         best_match = NonNull::new(this);
-                     }
--                    node = left_child;
-+                    node = node_ref.rb_left;
-                 }
-             };
-         }
--- 
-2.51.2
+Does (1) exists? IMHO it doesn't.
 
+I assume your machine is quite unique here. IIRC, you configure 2 CPUs
+groups in your ACPI pptt which then form a 2 CPUs cluster_cpumask and
+since your core_mask (in cpu_coregrop_mask()) has only 1 CPU, it gets
+set to the cluster_cpumask so at the end you have a 2 CPU MC SD and no
+CLS SD plus an 80 CPU PKG SD.
+
+This CLS->MC propagation is somehow important since only then you get a
+valid 'sd = rcu_dereference(per_cpu(sd_llc, target))' in sis() so you
+not just return target (prev or this CPU).
+But I can imagine that your MC cpumask is way too small for the SIS_UTIL
+based selection of an idle CPU.
+
+[...]
 
