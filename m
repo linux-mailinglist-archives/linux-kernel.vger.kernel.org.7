@@ -1,184 +1,215 @@
-Return-Path: <linux-kernel+bounces-899231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A8EC57248
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:21:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AC1C5723C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959A13AA477
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE043BD839
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5098F33BBB0;
-	Thu, 13 Nov 2025 11:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A8C339B44;
+	Thu, 13 Nov 2025 11:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yMo0W9L3"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012009.outbound.protection.outlook.com [52.101.48.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HMuZoRh+"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2F533D6E1;
-	Thu, 13 Nov 2025 11:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032560; cv=fail; b=n+AAIEjxItx2SWqIND/KzInOfGL5Q0Uoy7/zcyaT2onFPZUTWhZXB9Ca/h/3XG4PzyXXnAw5URnBwAncdYy2lt3LuVvVl1331IdG3dYTp0LSsgUFTpVKymd4QbeYzwNzxtM+Mlhd5MEqBW194564cLnfPu2oPb6zbiVqcProCJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032560; c=relaxed/simple;
-	bh=cL7KG9mmJ9oA0usxLKjSNZTOIlX/6UiZv1ICHw8NLtc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PQCPkjwxMkLEccIUv2tZePbNcgNhD6LaBX5HnzrZRfumt+aTyE4QQrvpqagiP1bzSbHOqBbffdsfM5ijPHvBGgRM8jYvsg5tFN/p5Fr7gi8C2XH2cPd2G++H7yt3s+uQ5d8Hl0jwrAJIKirvWNvAW8QodtlD83r+lah8KzbF0P8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yMo0W9L3; arc=fail smtp.client-ip=52.101.48.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWdqYKivJqy/Abse3EBpV3C/L9S9aNKMOwuCDzTDxVD7N+g73f48olRizY/9gwTuy0S8Ubb80s6UvKpHmK6We19OSvVXCXJUkCmXh6m2sAt8p/IGjn1u+RigzepMgl2gBmHIxRLwW8qMB2c1S77evpXZiAID13wjEcMsuhmYH0PdSTDgHb4n55AE+a/nEIBZRjhWjCpDoS6Q/z+q3RSAQcnF0rwxTqxFwOP8bwJXMSwcRDzn5d3XUia0xlxLWtXsI6rVJ4W7DhBUZ5SzgyngmQlO1HMokAgLE9lM2fTpoi7Bt6ssraEJ0gcLuqtzOQ2jVDlUF1NA99yN7sSmSCPWYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qFV0B5LK9p+dI6YBYT8DX3SCEtfoMBjmekDlUBazSyY=;
- b=vrfH9uuIIx/0NfQajni7M5s8kfm4qm5yr3HG3xqYrpbh4AAy730CGvJBjKoM1mtWFrKoWg7sObS+BxGuYtWBrUiKGlVLjYWimT3UUBs0C2KkwxG7YTX2526MzXSc+0tjYPKZrPXbLzLBZmxic7+mVdluPnMuzsUXYD5uKt5VFm6pGtTX0qKaQBb+Pe9lJ8/ZQtYo2UnS9NvOEcX3seIdvWcdcc1w1YwvtLgLcQlTceVqD4QN0T7aXF5FE/qF9RIUDq96p5t67eMlZeMhM5Hl7fDsJR5hS3ZJbi99ON0iHJek5+z804OF8EUQvfZLWfr9hCQFppLs9CcMaZx3AM5qeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qFV0B5LK9p+dI6YBYT8DX3SCEtfoMBjmekDlUBazSyY=;
- b=yMo0W9L3eUwDurDrC0OI8FD5PPLWRDPGdfSwjlYzMz3s+MF6pUGxfG3DhRd0l/kHiWnXbOWzGZHs4HXW6Fp8gJQJ0STNx8o6EOvxDoRVqlW5cAOAsYPbBU3pbo8ebWa4yoBqZO/cwrobqFa3dmqmu4JagoKug/+qoGjJOBcQEMU=
-Received: from SN6PR04CA0105.namprd04.prod.outlook.com (2603:10b6:805:f2::46)
- by SJ0PR12MB6879.namprd12.prod.outlook.com (2603:10b6:a03:484::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Thu, 13 Nov
- 2025 11:15:54 +0000
-Received: from SN1PEPF0002BA4E.namprd03.prod.outlook.com
- (2603:10b6:805:f2:cafe::86) by SN6PR04CA0105.outlook.office365.com
- (2603:10b6:805:f2::46) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Thu,
- 13 Nov 2025 11:15:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002BA4E.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 11:15:53 +0000
-Received: from rric.localdomain (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
- 2025 03:15:50 -0800
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Robert Richter <rrichter@amd.com>
-Subject: [PATCH v2 3/3] cxl/region: Remove local variable @inc in cxl_port_setup_targets()
-Date: Thu, 13 Nov 2025 12:15:23 +0100
-Message-ID: <20251113111525.1291608-4-rrichter@amd.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251113111525.1291608-1-rrichter@amd.com>
-References: <20251113111525.1291608-1-rrichter@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E4433B977
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763032554; cv=none; b=TgJD3JOKcO/sa5h1dIncrmN+D45kF+cdrqGqFTWrPhwkxbFgTgEdUI+YhpKG2gZe1R+0Z8TjWU5K0wlumMDGjpgbvmMbFXxliP48I9im6gYGul6nTsGhh6T2oOiNfoldhpAP+POsEiDIWNbmqonrkrEuHLSg0HIzWLrIKVAdsg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763032554; c=relaxed/simple;
+	bh=7Dty1bsVrl3mflWypqdumDcsm+eUd6kxdLgav7xBytY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmK31DHtSJFbHGxaQcBbuastSqX0lFEg3ZATk7tn4i0AZOKVxtEw6junQTeamsg9Im6t6iFZJvlBJEsTlVig0HXvJzP0pjEesyclUHKpOZqXMhgjcipmn0zcCRYMzW9HJu+bdBh6iHjBiZI4WxFCaA3wfITT4+HF09Ld92w9JVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HMuZoRh+; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b72dad1b713so99027266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1763032550; x=1763637350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c5AzzFRZPbAyw/0U2l3vo4T8Z0AKAvwU0ttCnBP9wco=;
+        b=HMuZoRh+Jngf1OkERsVdMUw/sJ5vTIDiLbUXMxOds4Lk8Kx7L10xHWE3y/QRXqHl1W
+         dIccO+egfpUCaszzY8usa+j9cCR9W6sLDgEDXroUNfNR4Kg/ZBvkBMJ8LwC8O6hWHIiN
+         bCzii8vJ0CYVxt0hiZ2F5uzT9THnf2GsNwSFTaO/20AHT1UO5JqFGDUQFELAbujAYM+v
+         bnh1tUnXXdCfe942oOh+qY4Ig4t8bYBjNXusMzIU4/lB3F+I/iI1tJmgkiMZnQnskhsa
+         hGjojOdUCoM+cK23aJqTwGnn5FWDGwHyZ7GfcMLfcMfFtSzdJqiHtJthW8GaVAgyfcNa
+         cFmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763032550; x=1763637350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c5AzzFRZPbAyw/0U2l3vo4T8Z0AKAvwU0ttCnBP9wco=;
+        b=AL9Fc9+OtVQPTzj4Z1HtsAXuY8IGkARCqhBIviCcwqT/4f6AgLzGluqN/6+X0O7/32
+         FmOfHciYjl6S+mrroY2PYnameUoncxDZETkPjUSAEXGOQKZwcziO1L1CFelDmgQJOYgq
+         dFldNNkEbcX02B07fz0iCZJdh6YhkPkBMpgw8TvjSegGPFUlj/jgJC/tVbDRnCRvaHU9
+         4ggItrPrt/mjYtCTFB/km1yIOdM9IaeAztOgFUvdt+RPf8aQR4Xgf+GDdWSaj5OaigdE
+         cIFwRpuNy8YX3RzACpqIDXv1UR2oHdw7a7RTFRg94MhGa3mnhhTk/avAlxZBxy+IApQS
+         F3mg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1SFTwFSupM/sPP4ZnmrqHm324QoQyi6EqkoU+9vH20h3H2MDK87TZHIaZW1uyrf+PUpED5bYYh5KVTig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqPQlO0vpLEWW69uzj+e6bHR8W1AEXjNizBT/iehIiWzhCieRF
+	C0ojGyOT9VYaYp8ZLfpFuXWK0TmMfJcwfNBSHORmkdDwZmdu9dVxnj0NiYQuzKa4ERI=
+X-Gm-Gg: ASbGncurHgRDspH6NKJlxhWJ7HO4Upjf7x1xybfGRUE+btOI82V60/wQaU/D6KVZ9Sn
+	AFxyG1hNTeTqM3Ql6/WtXolUCnq/69cQbkSisqZtP/5WikNhw1X3Lc5tpx70Ks+kfFETJrXsQtO
+	DK0VOzZpO1rA2FFlxSgorcH8sscRxnj02my+BupR87RhLmBXqG/icYo6xp4iI0tW5jWHfzkdHB0
+	iRPLl7vEhV1Wjd5txR55c2YL2WuRIUc2Z24M8pqIkeouzjnQ9hSe+kUo3sOF/y14Jb/MkfjgdOr
+	JdD/6/iMPOc+YyfVTxVpTc1fk5bHsHH1lBGVfR81fhs2KLv9sS6oF3HnjyPaQWG+jYsjutdtEXx
+	ajjDHibNDvN5zwPFepHCmlsRvj/gVcHRuRhq/lvD6IAMHA2GNuYEBqXdo7NNSi2tXGHmpHEcU8E
+	S5v1Q=
+X-Google-Smtp-Source: AGHT+IExcpEGzB16h+OORPfiSc3U/Q+WA4IUJ/PrcE+hSGqVvU7uaWsum+i+r5qrKs9tVBN7TJ03IQ==
+X-Received: by 2002:a17:907:3f11:b0:b73:1baa:6424 with SMTP id a640c23a62f3a-b7331af1e06mr647068066b.55.1763032550071;
+        Thu, 13 Nov 2025 03:15:50 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fd809fasm142355066b.45.2025.11.13.03.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 03:15:49 -0800 (PST)
+Date: Thu, 13 Nov 2025 12:15:47 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sherry Sun <sherry.sun@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Derek Barbosa <debarbos@redhat.com>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH printk v1 1/1] printk: Avoid scheduling irq_work on
+ suspend
+Message-ID: <aRW9439ee0NdXuyo@pathway.suse.cz>
+References: <20251111144328.887159-1-john.ogness@linutronix.de>
+ <20251111144328.887159-2-john.ogness@linutronix.de>
+ <aRNk8vLuvfOOlAjV@pathway>
+ <87ldkb9rnl.fsf@jogness.linutronix.de>
+ <aRWqei9jA8gcM-sD@pathway.suse.cz>
+ <877bvukzs1.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4E:EE_|SJ0PR12MB6879:EE_
-X-MS-Office365-Filtering-Correlation-Id: 874d9ab3-759e-44d9-b538-08de22a602bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4psEWLSnLytiC9NphpET+JJeTq89I54pgl5LBgcgEGNMqVMXmOfD3WJV+hmM?=
- =?us-ascii?Q?dCSl5n+s02dQfdz3+uXwjDKoyus77MWrI9t+y/GfF7dtB0PwAtRW/FuaXU1Q?=
- =?us-ascii?Q?YW+E9gAWcTjFpt9vw+nVSLXzJ8B38YbtmvYReCWMRDQCWjHVLhACryBxi2Uh?=
- =?us-ascii?Q?SSPY0N3RCLrBhAXmAZIeB6k4WZRuxzuivfyi7kECLfxqe3VbVkyETcaoHQ7W?=
- =?us-ascii?Q?ohcAFsmyTDpzXqccgFN8gE+//V17YvK2vPUYTO19Wf+LVKoZhArM2Fmk/5v6?=
- =?us-ascii?Q?bmeFRqNvUTFuLYWAiNysdQA1kWMLfEjwhoxS9NgXB1uT+KTQK0pI68GVoerj?=
- =?us-ascii?Q?wERCKid2niViKoxZDRE84+Zl+6r5n3v07l9wvKKzd/INhcn+wjDgcQAf/kiS?=
- =?us-ascii?Q?3JHukbHIDLo7m42jExxVnqCntahtZEGqaZRV7DHNcsup2Zs4UrFVIDoNsyOX?=
- =?us-ascii?Q?wID1Z4V1B7wOKwjJfLPZ/zu9QCs2ZJM0LlNmPKVuiLEyOSYPx6DidjMD1imG?=
- =?us-ascii?Q?RyeVBelcEAVwHHw0zJr20dnxer4rSKKExuv+p2Px47m+5i+9s6PkIJhCoAfz?=
- =?us-ascii?Q?jRDDAmpj4pKFJC5T/1es9YztZAgqKMzA8B1uULsj4Dh3Vq2sV0JiTAs1zwqB?=
- =?us-ascii?Q?ZF6oE7+Qb9qBP/pRNiTJKh8WxM9ia0fRlqK2Utgj3UIoj/mjD0sijAz63VpK?=
- =?us-ascii?Q?UP2rvvIdPnkwAJLSxM2Z42xOWHVxaL2Kf+OQR8povcJyeAOJmhhitl57neAv?=
- =?us-ascii?Q?clnvJNbYMrhwYSS7zQqr0mSDcPZEKHilNjvCLWAm5BAYiEmjKEPywONXEdKL?=
- =?us-ascii?Q?tiLmEnMA/a3pu2tqHasxMJXQpdZjFLpfyUDbVqDJLyU+DkyT6CorS1caeYgL?=
- =?us-ascii?Q?YmcbfrqRU9/YugthATsIOZ6Ok3MZ4NwRuIFWLIKT4Zcz1seNmsGndaOLTrJf?=
- =?us-ascii?Q?y9q7X12jluNc6O/ZdnLCVlwi1Xs3XB6GDJgg0gj0OOkBblKIZvWgPdkog2it?=
- =?us-ascii?Q?AC/pszgr+vXsgwlpe+2YfrzX1HCQgQaiVKOWle5VT+uVQwUmzDPT0Z6AWwRs?=
- =?us-ascii?Q?SaF/OKJXnzNmcZufH/Q/axpmh+qOOU5kSq5FigpbjR9HYHs4yfydcSfTqBhc?=
- =?us-ascii?Q?sGzgImGc+437NE+hZEHE/SdXD9sh4sJ6u/fPr7rDx/SWUmtKYxbWdIP1Bv8B?=
- =?us-ascii?Q?kEEITfMoGk0Lx0PA/8QTQOa7Q6+OaC1egg9ZrCbz3amfCLUyMc5pYbgPgYHK?=
- =?us-ascii?Q?UAqbyxQPeTs6DmYfI8wcWBEDn+DXsd6VUkFBQwnyH9+RuSfMvATgkN+HXerk?=
- =?us-ascii?Q?Coa8xlA3t/Mc/M47zqz5WNAivVsxoTrgCM59m1X86oF6PtFKTuwUurqalAJm?=
- =?us-ascii?Q?XJkywt0gdM9FARZBQnFYR5ZnTLeHi6RLY4y9nz5IEpnswa7ubECAcecXJVW1?=
- =?us-ascii?Q?h0L0L287kVXozUnSlpuKcmn+0dCg4/YizjR8F8f27Zl+IefksWdfQMrUnLjY?=
- =?us-ascii?Q?H92sifsBRaC7/NLf7KezZbeqnekaK9yHgLrglrVfNgvp7qIWxoe12lLXTU6w?=
- =?us-ascii?Q?bSMZRikDrCrnmuN7G68=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:15:53.8434
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 874d9ab3-759e-44d9-b538-08de22a602bd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6879
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877bvukzs1.fsf@jogness.linutronix.de>
 
-Simplify the code by removing local variable @inc. The variable is not
-used elsewhere, remove it and directly increment the target number.
+On Thu 2025-11-13 11:17:42, John Ogness wrote:
+> On 2025-11-13, Petr Mladek <pmladek@suse.com> wrote:
+> >> I would prefer to keep all the printk_get_console_flush_type() changes
+> >> since it returns proper available flush type information. If you would
+> >> like to _additionally_ short-circuit __wake_up_klogd() and
+> >> nbcon_kthreads_wake() in order to avoid all possible irq_work queueing,
+> >> I would be OK with that.
+> >
+> > Combining both approaches might be a bit messy. Some code paths might
+> > work correctly because of the explicit check and some just by chance.
+> >
+> > But I got an idea. We could add a warning into __wake_up_klogd()
+> > and nbcon_kthreads_wake() to report when they are called unexpectedly.
+> >
+> > And we should also prevent calling it from lib/nmi_backtrace.c.
+> >
+> > I played with it and came up with the following changes on
+> > top of this patch:
+> >
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index 334b4edff08c..e9290c418d12 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -4637,6 +4644,21 @@ void defer_console_output(void)
+> >  	__wake_up_klogd(PRINTK_PENDING_WAKEUP | PRINTK_PENDING_OUTPUT);
+> >  }
+> >  
+> > +void printk_try_flush(void)
+> > +{
+> > +	struct console_flush_type ft;
+> > +
+> > +	printk_get_console_flush_type(&ft);
+> > +	if (ft.nbcon_atomic)
+> > +		nbcon_atomic_flush_pending();
+> 
+> For completeness, we should probably also have here:
+> 
+> 	if (ft.nbcon_offload)
+> 		nbcon_kthreads_wake();
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Reviewed-by: Gregory Price <gourry@gourry.net>
-Signed-off-by: Robert Richter <rrichter@amd.com>
----
- drivers/cxl/core/region.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Makes sense. I think that did not add it because I got scared by
+the _wake suffix. I forgot that it just queued the irq_work.
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 2b5ae5d9a4b6..e577b11bd889 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -1357,7 +1357,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
- 				  struct cxl_endpoint_decoder *cxled)
- {
- 	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
--	int parent_iw, parent_ig, ig, iw, rc, inc = 0, pos = cxled->pos;
-+	int parent_iw, parent_ig, ig, iw, rc, pos = cxled->pos;
- 	struct cxl_port *parent_port = to_cxl_port(port->dev.parent);
- 	struct cxl_region_ref *cxl_rr = cxl_rr_load(port, cxlr);
- 	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-@@ -1549,9 +1549,8 @@ static int cxl_port_setup_targets(struct cxl_port *port,
- 		cxlsd->target[cxl_rr->nr_targets_set] = ep->dport;
- 		cxlsd->cxld.target_map[cxl_rr->nr_targets_set] = ep->dport->port_id;
- 	}
--	inc = 1;
-+	cxl_rr->nr_targets_set++;
- out_target_set:
--	cxl_rr->nr_targets_set += inc;
- 	dev_dbg(&cxlr->dev, "%s:%s target[%d] = %s for %s:%s @ %d\n",
- 		dev_name(port->uport_dev), dev_name(&port->dev),
- 		cxl_rr->nr_targets_set - 1, dev_name(ep->dport->dport_dev),
--- 
-2.47.3
 
+> > +	if (ft.legacy_direct) {
+> > +		if (console_trylock())
+> > +			console_unlock();
+> > +	}
+> > +	if (ft.legacy_offload)
+> > +		defer_console_output();
+> > +}
+> > +
+> >  void printk_trigger_flush(void)
+> >  {
+> >  	defer_console_output();
+> > diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
+> > index 33c154264bfe..632bbc28cb79 100644
+> > --- a/lib/nmi_backtrace.c
+> > +++ b/lib/nmi_backtrace.c
+> > @@ -78,10 +78,10 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
+> >  	nmi_backtrace_stall_check(to_cpumask(backtrace_mask));
+> >  
+> >  	/*
+> > -	 * Force flush any remote buffers that might be stuck in IRQ context
+> > +	 * Try flushing messages added CPUs which might be stuck in IRQ context
+> >  	 * and therefore could not run their irq_work.
+> >  	 */
+> > -	printk_trigger_flush();
+> > +	printk_try_flush();
+> >  
+> >  	clear_bit_unlock(0, &backtrace_flag);
+> >  	put_cpu();
+> >
+> > How does it look, please?
+> 
+> I like this. But I think the printk_try_flush() implementation should
+> simply replace the implementation of printk_trigger_flush().
+
+Make sense.
+
+> For the arch/powerpc/kernel/watchdog.c:watchdog_timer_interrupt() and
+> lib/nmi_backtrace.c:nmi_trigger_cpumask_backtrace() sites I think it is
+> appropriate.
+
+Yup.
+
+> For the kernel/printk/nbcon.c:nbcon_device_release() site I think the
+> call should be changed to defer_console_output():
+> 
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index 558ef31779760..73f315fd97a3e 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1849,7 +1849,7 @@ void nbcon_device_release(struct console *con)
+>  			if (console_trylock())
+>  				console_unlock();
+>  		} else if (ft.legacy_offload) {
+> -			printk_trigger_flush();
+> +			defer_console_output();
+>  		}
+>  	}
+>  	console_srcu_read_unlock(cookie);
+
+Looks good.
+
+> Can I fold all that into a new patch?
+
+Go ahead.
+
+Best Regards,
+Petr
 
