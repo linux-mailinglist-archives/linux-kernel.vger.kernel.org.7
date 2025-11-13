@@ -1,172 +1,153 @@
-Return-Path: <linux-kernel+bounces-899733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF7FC58BF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:33:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA74C58C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:39:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 50EAB34A8BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:04:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D3074F9481
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391B306495;
-	Thu, 13 Nov 2025 16:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7691B358D0C;
+	Thu, 13 Nov 2025 16:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wYj7kFN0"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YixzqTrR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D28303C81
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02043587AC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049646; cv=none; b=Ai++cguzDYLW9T+LQRihluMSP605OR20iGH5j8KveXsCG3di/BpGKF77X4m6ZDpoYrY5qoyReTeDN5PDr/9CANEZovWwBVohSDoz3ZaKJdJsvEOzaEJ3DuX5JgtYSrAzH4YuJtwpsTZui7djdhXjZKXjDF9jnpFiIymyxjHrMV8=
+	t=1763049654; cv=none; b=P1fhAFJ182xRbKx/4xGqdD/E2glmIH56KwJLcdXGclP7liG4ASVzszKahdPbY/fwLbUXLj+cvJLcpJj+B9uJUptURkOdrmLN7NV/TlHX7vBaAIgZGIpCuq3rPCEL3MZrjeSXZ7yIxksq2yac5yGfikTlNVsuhYNslwCvAzLAx3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049646; c=relaxed/simple;
-	bh=GVF+/h/LJTdxRP1ZtmC621CmOgcKo6hwIwZpoupHaeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+Hvt9tFTVesCAUEOGj2THcERB5TzcwxJCyY/dCuCESVQ332bo7boJBZP/SdtnyQLgN5hzByrbSy5D6lHwhKPyoPlXgiRvF6kp2bBzo57k6RFAWVfTLBPml1ZhDSIujQdO85LbVPoI1pxYhxYYHk+ALnUxWTD07re+kf7TmlWZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wYj7kFN0; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763049641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nrP7Gp+eF5NahttnTnvgNwZULrq3e5/I28tBchxZyz4=;
-	b=wYj7kFN0sTEDAng8vbV5v/enVBVSST/zKRJ5m01CIdc6tiCAuUznFpK6DINro4Vlx1rr51
-	y4NV7WiXWN0QQFVJR4wXDybMpCVLu1hKa8Ftyk1BkgDxECVppm/5jpfBQlYz1QPgNDDXUY
-	0anLuUAiLdIBbPxTYvqHRauxZS8vcnw=
-From: Yuntao Wang <yuntao.wang@linux.dev>
-To: robh@kernel.org
-Cc: akpm@linux-foundation.org,
-	bhe@redhat.com,
-	catalin.marinas@arm.com,
-	changyuanl@google.com,
-	chenzhou10@huawei.com,
-	devicetree@vger.kernel.org,
-	geert+renesas@glider.be,
-	graf@amazon.com,
-	james.morse@arm.com,
-	linux-kernel@vger.kernel.org,
-	rppt@kernel.org,
-	saravanak@google.com,
-	takahiro.akashi@linaro.org,
-	thunder.leizhen@huawei.com,
-	yuntao.wang@linux.dev
-Subject: Re: [PATCH 00/10] of/fdt: Some bug fixes and cleanups
-Date: Fri, 14 Nov 2025 00:00:20 +0800
-Message-ID: <20251113160020.227664-1-yuntao.wang@linux.dev>
-In-Reply-To: <20251112205551.GC2155854-robh@kernel.org>
-References: <20251112205551.GC2155854-robh@kernel.org>
+	s=arc-20240116; t=1763049654; c=relaxed/simple;
+	bh=6Wmz0w28rqLi7irIOJSMbni7pKwlVDgHYwe5FMEfE44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pzWf2EbOYGWUj6yZRyGLGbp/ciGZ3h1VwhsETwZfPDhjPSmxKcI8a/luILlb+7MeWpIoJxNkbhdqKGu6bb6FRts4mAFLX1AguYa1VJlMAoy+uR/hZXwa+7dXI6Iiplv95V8vRiFLAeNNrTA1AoFftnOCM6yK3OOBK2lUAgpwixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YixzqTrR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b71397df721so119862866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:00:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1763049651; x=1763654451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0efUvnW3GMsirNYsN0z07zn/Oqcuhmed27sVsOeyKC4=;
+        b=YixzqTrRhxU6H4bTQoP78/ot3Rd8AnXwGVt4Ow8leH8Sm5uJcWDbTNpX6MCwyq9+wd
+         E8Xq2tkirChTaAE/zkeZVaf4l9NdRWi5RaAX97PKlueVe5CJPVWHmFr2GuTLHNcwgjVx
+         4CELWU0BuFCZSwCkwPmIJVe2HenyYuuX0Awoyw1/jIUhrWJGHOP6xo2KVvjVa0I/4WoT
+         BsJ/4dfdGPnhIPiVCj30o+z6jDbrvCIFG/0G51rR/b/DFD9xeja7dEQBTnVg2gxbStQA
+         UA2KnkiJjTlJ0rdtCnxbZz3zxOtIz0AvLgbPfwoLZuONbh0fwEAyQNPECWEpLCw3a2xI
+         SfLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763049651; x=1763654451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0efUvnW3GMsirNYsN0z07zn/Oqcuhmed27sVsOeyKC4=;
+        b=BoG+HnBcO2lxLwnrVDckrBDlzX6+2QQ8fTbI3gOiMgujJlxAvMRtnvDleUYexjiAyX
+         J68rjZroCWKDkTn8Q8Uk6wbVzPS9MHHcmGA7sjNJdJrm7QQbcgc+WhcY1LIGtEHx1WNA
+         wzNoxxMZXLmTs8hhSlOBV6iYGjDK4gyYOFQetVF4I3XzPZy686TpEccQ1WW3Ie7ukF/F
+         TbxATVmFc2EIGfjnfocnFWUdttoudixRHJe4Oanvghp9k0x/MgP1Bh2RLixn5Kg7zNBW
+         tr/QFKqPQWHQZxKhyh/rUlv/E7CFCcsR2J6C0arll+XfdaAAtGqEgtiMdPnYFWfCv8fS
+         Hhvg==
+X-Gm-Message-State: AOJu0YwhAF4SAP1eA6w8cfNZ9kzb/dKmEvInURxOngAZ2vxvQCm1/GKY
+	LueSsC+YlL12JzmRDVB+hc/93fxQE9tfL6I40Yf1ckXAyOit84nd2pLr/g9Y/t0Okbyefsa9aBo
+	ehCBq
+X-Gm-Gg: ASbGnct6xPBSmal5YSj7j5ywCBU+AshQl9WkHGpDqgmXk4n4UEeQGUMf7mWLlivIb8N
+	mVv4rxZxbP8DRIu0uf6Aaoz39n8ToMTEJGc0ItnMqL4jfMfyCLT8u5T34xI/iulsrMx51ns0Qwv
+	6iR8XN7eNFJpOa57EKKtOJsnXlpINjMRKFdVCsU5GHFo/b3RyKioWerSvPAvaA5c1VMSF039gF/
+	DjtkzxNF21ODpinJQjr5pNb42PgjnB75j9nenw2v2F8gY73C5mY0a2oJkXSPAlq6KsV1N5OktSX
+	GAD8ATVtLW0PntLshTbdPmwvL+l7Y0r67NF137tk6oUmarETUg8oSTibNfAzgE3/6u3md20d1c1
+	vxSPYhLMw+Yti7sp1lUpHx2o/hZwClfTF8FtflDBxN+oqy7u5kFGGF//PYBYwMlsB+WyGdrHiZ/
+	0ilLI=
+X-Google-Smtp-Source: AGHT+IHZ/2oxuZtYuT82Lm1zSTq2FAnEZ2rkLS2NxmDXzfnqzCNWyEKaV1Egj/Adc4f35fmvH0TWSQ==
+X-Received: by 2002:a17:907:d0a:b0:b5c:66ce:bfe6 with SMTP id a640c23a62f3a-b7331aec498mr811149066b.55.1763049649244;
+        Thu, 13 Nov 2025 08:00:49 -0800 (PST)
+Received: from linux ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fa81275sm191424166b.13.2025.11.13.08.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 08:00:48 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>
+Subject: [PATCH] wifi: qtnfmac: add WQ_PERCPU to alloc_workqueue users
+Date: Thu, 13 Nov 2025 17:00:35 +0100
+Message-ID: <20251113160035.376524-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On Wed, 12 Nov 2025 14:55:51 -0600, Rob Herring <robh@kernel.org> wrote:
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
+For more details see the Link tag below.
 
-> On Wed, Nov 12, 2025 at 10:35:10PM +0800, Yuntao Wang wrote:
-> > This patch series fixes several bugs related to dt_root_addr_cells and
-> > dt_root_size_cells, and performs some cleanup.
-> > 
-> > Links to the previous related patches:
-> > 
-> > https://lore.kernel.org/lkml/CAL_JsqJxar7z+VcBXwPTw5-Et2oC9bQmH_CtMtKhoo_-=zN2XQ@mail.gmail.com/
-> > 
-> > Yuntao Wang (10):
-> >   of/fdt: Introduce dt_root_addr_size_cells() and
-> >     dt_root_addr_size_bytes()
-> >   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
-> >     it
-> >   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
-> >     it
-> >   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
-> >     it
-> 
-> Your aim in writing subjects should be to write something that is unique 
-> for every commit in the past or future. Because you can never make the 
-> same change twice, right? (I'm excluding 'fix typos/spelling' type 
-> commits). Certainly the same subject in one series is never right.
-> 
-> >   of/fdt: Use dt_root_addr_size_bytes() instead of open-coding it
-> >   of/fdt: Fix the len check in early_init_dt_check_for_elfcorehdr()
-> >   of/fdt: Fix the len check in
-> >     early_init_dt_check_for_usable_mem_range()
-> >   of/fdt: Use dt_root_addr_size_bytes() instead of open-coding it
-> 
-> This is not what I meant. We have multiple copies of this where only 
-> the property name changes: 
-> 
-> 	prop = of_get_flat_dt_prop(node, "linux,elfcorehdr", &len);
-> 	if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
-> 		return;
-> 
-> 	elfcorehdr_addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
-> 	elfcorehdr_size = dt_mem_next_cell(dt_root_size_cells, &prop);
-> 
-> Instead, add a function something like this:
-> 
-> static void early_init_dt_read_address(unsigned long node, const char 
-> *prop, u64 *addr, u64*size)
-> {
->         prop = of_get_flat_dt_prop(node, prop, &len);
->         if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
->                 return;
-> 
->         *addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
->         *size = dt_mem_next_cell(dt_root_size_cells, &prop);
-> }
-> 
-> Then we only have the length checks in one place.
-> 
-> 
-> That still leaves the cases with more than 1 entry open coded. So 
-> instead, to cover that case to something like this:
-> 
-> const __be32 *of_get_flat_dt_address_prop(unsigned long node, const char 
-> *propname, int *len)
-> {
-> 	prop = of_get_flat_dt_prop(node, propname, &len);
-> 	if (!prop || (*len % (dt_root_addr_cells + dt_root_size_cells))) {
-> 		*len = 0;
-> 		return NULL;
-> 	}
-> 
-> 	*len /= (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
-> 	return prop;
-> }
-> 
-> And then a user would look something like this:
-> 
-> prop = of_get_flat_dt_address(node, "linux,usable-memory-range", &len);
-> for (i = 0; i < len; i++) {
-> 	of_read_address_idx(prop, i, &addr, &size);
-> 	...
-> }
-> 
-> Here 'len' is number of addr+size entries.
-> 
-> And the simple case of reading 1 entry could be just:
-> 
-> of_read_address_idx(of_get_flat_dt_address(node, "linux,elfcorehdr", NULL), 0, &addr, &size);
-> 
-> Rob
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Hi Rob,
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-The link to the new patch series:
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-https://lore.kernel.org/linux-devicetree/20251113155104.226617-1-yuntao.wang@linux.dev/t/
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-Thanks,
-Yuntao
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+---
+ drivers/net/wireless/quantenna/qtnfmac/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.c b/drivers/net/wireless/quantenna/qtnfmac/core.c
+index 825b05dd3271..38af6cdc2843 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/core.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/core.c
+@@ -714,7 +714,8 @@ int qtnf_core_attach(struct qtnf_bus *bus)
+ 		goto error;
+ 	}
+ 
+-	bus->hprio_workqueue = alloc_workqueue("QTNF_HPRI", WQ_HIGHPRI, 0);
++	bus->hprio_workqueue = alloc_workqueue("QTNF_HPRI",
++					       WQ_HIGHPRI | WQ_PERCPU, 0);
+ 	if (!bus->hprio_workqueue) {
+ 		pr_err("failed to alloc high prio workqueue\n");
+ 		ret = -ENOMEM;
+-- 
+2.51.1
+
 
