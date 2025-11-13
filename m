@@ -1,92 +1,126 @@
-Return-Path: <linux-kernel+bounces-899643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127F4C5876A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:45:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E25C58A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A84EE35FF32
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9AF500968
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F084352954;
-	Thu, 13 Nov 2025 15:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681D83546EC;
+	Thu, 13 Nov 2025 15:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tU5vr2gc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AgzJqop0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CukVePZv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="53dkhuGv"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EEA227BA4;
-	Thu, 13 Nov 2025 15:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB21352FB1;
+	Thu, 13 Nov 2025 15:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047775; cv=none; b=YYhULBsJrFkrGTdz/wHGyioJhZUDJ+BLwb1ab4EIx7e8LvQPtckJ8CUYkKvK6da9U9CtvsH4GJk6PRc7n+3nHSXQ7aXs1OFsu+xh6Q1Kl9MlN6YiFgR0gTeW5uvR+DqWAFTRgvx5KbYHu6weYQoVyKI+jBKI+abOkKzP/Z11pYc=
+	t=1763047806; cv=none; b=CnvVZ1o+vocaRpIVDtlytqy3ozPWffdEmW7WuuAangLYzhnuDfam30wOb+n+meJseMBIJD8M6ar7ccjLMwMbSDCkkY0qB+4YVmk+O9J0YhBpi7GAl2z/9eRDVeJ/v2WzvVc3DRGMh2o4g4vf9RUuagDw9dbjzhG0ie2vUzryqdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047775; c=relaxed/simple;
-	bh=smA20V17ZF1F2xtWy4wiqSmfxMuxp7FSVoSwrSRVQDk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ahIgIykb7iRnn0KNcsaGQOYFKEafXui2mdxqv5JkhlhRq4KM+8tvdnVBfo3wk0ta5zLdrdTDq2tiKXXWl6YrBwEWPerMC7mhU4Tu7NYHQzMHv246CwhoZCFKaJmgRXOaRXOgwWyR+zIVtSTegvtZHSgGUOLZvNlxJKRctEeD1ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tU5vr2gc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AgzJqop0; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1763047806; c=relaxed/simple;
+	bh=rN6q3FviL0YvzNBMs+YbX1D0vy6dVTbErUhvDsHxcoY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ryfasLwVxOlHViJms2IkSDX2ziivamZlVOMrzx1ARtLe9V3qESIa3/bFenUUXtJwU/cul8XVB+enfXz6QqYieaaj22GueF4nbriaz6YknnF8B4ZXO1w39+hMMn/aDQfMBQ+8L1xaDGC3GpjIanP3/4deum00vuoX6gGZqIKculY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CukVePZv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=53dkhuGv; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 13 Nov 2025 15:30:02 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763047772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020; t=1763047803;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=smA20V17ZF1F2xtWy4wiqSmfxMuxp7FSVoSwrSRVQDk=;
-	b=tU5vr2gcdFphwGWO7V259GwnrVBX/crtdTVtsc+FjI8oON/IEYNrN6Ln4FAGYRcRD1zVgg
-	R8qdalzr9RSC2pQgiikrx2CNb0lC9FO+2/NIuNbQ/7Wjw/nuFnfTSAvlMGmQN7r0/MAp+Y
-	cqGEeBcwAZru5Z84TXVp+Tb1oxVEW+fCl5fh7yR9lhbmkM3Nz4n+7pEBpaxOTN425wywkc
-	D4Bx9bqyVHVVdM4dZ1vFg1T/S/YTB/RnH6iT6NMidvHfin10NDQcGCKvZ9gFqQHzptaheT
-	s7FycTHvXEy8BSjBi1BElvV3mOJNUTR8TZxKqiXUeP5s2kPWwT9epIcb7lWkYg==
+	bh=ZgSOCqFWV8VKU9a7NEXCFWLLSHvTTPh1oxJqsOKL8iA=;
+	b=CukVePZvnTzdOZjVOM5t9ngcZAOyrManen3g2GjhKC3NOW1GQbxKCFT/HXG8tq3H7nOze3
+	wbKFHNmLYWH7hxg79qoa00Y9ws8Xjl9HDpjTYmivy9NJz1BUbDZArKhJBm/gXQL5C0Sn7g
+	T1xf80CeV+oBoDolp/XqDZ3qdlAtJgonxYy8uuCsZ2ZR5QP6PDMqcXLJiA29F1X5bGaIKd
+	7nBMSDGAN6YaWqinUszt45jB4RvBQRGVvdRZRNBsa4ediSSunwCF46EfnSh/OBJdrNfaZf
+	Hpy3h3aOOgS/Hvyt5khTqHjkSuzPAsq5wipbPmhKGtsAVeB3iXWrA4Bq+pq4SQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763047772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020e; t=1763047803;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=smA20V17ZF1F2xtWy4wiqSmfxMuxp7FSVoSwrSRVQDk=;
-	b=AgzJqop0o/OwWkx+w2MpwQXjEapM8ajgNebEaWYm11Cl121wviNTVCHimYjbW01CWDsA1m
-	shYmfzxisZxCmeAw==
-To: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
- Maulik Shah <quic_mkshah@quicinc.com>, Sudeep Holla
- <sudeep.holla@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Vincent Guittot <vincent.guittot@linaro.org>, Ben Horgan
- <ben.horgan@arm.com>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ulf
- Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v4 1/2] smp: Introduce a helper function to check for
- pending IPIs
-In-Reply-To: <20251105095415.17269-2-ulf.hansson@linaro.org>
-References: <20251105095415.17269-1-ulf.hansson@linaro.org>
- <20251105095415.17269-2-ulf.hansson@linaro.org>
-Date: Thu, 13 Nov 2025 16:29:31 +0100
-Message-ID: <874iqyc5no.ffs@tglx>
+	bh=ZgSOCqFWV8VKU9a7NEXCFWLLSHvTTPh1oxJqsOKL8iA=;
+	b=53dkhuGvQQErJju/6Rsr1Tmt/vkcWxDCtbd3QHeSp3jqtEwY5UABvFlRSyEkHpa38rNNF0
+	q6RSak6Xho5egrCA==
+From: "tip-bot2 for Andrew Donnellan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/urgent] entry: Fix ifndef around
+ arch_xfer_to_guest_mode_handle_work() stub
+Cc: Andrew Donnellan <ajd@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251105-entry-fix-ifndef-v1-1-d8d28045b627@linux.ibm.com>
+References: <20251105-entry-fix-ifndef-v1-1-d8d28045b627@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <176304780239.498.12299581343199238892.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05 2025 at 10:54, Ulf Hansson wrote:
-> When governors used during cpuidle try to find the most optimal idle state
-> for a CPU or a group of CPUs, they are known to quite often fail. One
-> reason for this is, that they are not taking into account whether there has
-> been an IPI scheduled for any of the CPUs that are affected by the selected
-> idle state.
->
-> To enable pending IPIs to be taken into account for cpuidle decisions,
-> introduce a new helper function, cpus_peek_for_pending_ipi().
->
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+The following commit has been merged into the core/urgent branch of tip:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Commit-ID:     ebd4469e7af61019daaf904fdcba07a9ecd18440
+Gitweb:        https://git.kernel.org/tip/ebd4469e7af61019daaf904fdcba07a9ecd=
+18440
+Author:        Andrew Donnellan <ajd@linux.ibm.com>
+AuthorDate:    Wed, 05 Nov 2025 14:40:32 +11:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 13 Nov 2025 16:27:56 +01:00
+
+entry: Fix ifndef around arch_xfer_to_guest_mode_handle_work() stub
+
+The stub implementation of arch_xfer_to_guest_mode_handle_work() is
+guarded by an #ifndef that incorrectly checks for the name
+arch_xfer_to_guest_mode_work instead. It seems the function was renamed
+to add "_handle" as a late change to the original patch, and the #ifndef
+wasn't updated to go with it.
+
+Change the #ifndef to match the name of the function. No users right now,
+so no need to update any architecture code.
+
+Fixes: 935ace2fb5cc4 ("entry: Provide infrastructure for work before transiti=
+oning to guest mode")
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://patch.msgid.link/20251105-entry-fix-ifndef-v1-1-d8d28045b627@li=
+nux.ibm.com
+---
+ include/linux/entry-virt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/entry-virt.h b/include/linux/entry-virt.h
+index 42c89e3..bfa7677 100644
+--- a/include/linux/entry-virt.h
++++ b/include/linux/entry-virt.h
+@@ -32,7 +32,7 @@
+  */
+ static inline int arch_xfer_to_guest_mode_handle_work(unsigned long ti_work);
+=20
+-#ifndef arch_xfer_to_guest_mode_work
++#ifndef arch_xfer_to_guest_mode_handle_work
+ static inline int arch_xfer_to_guest_mode_handle_work(unsigned long ti_work)
+ {
+ 	return 0;
 
