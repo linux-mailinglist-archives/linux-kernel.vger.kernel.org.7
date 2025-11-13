@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-898899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA83C56496
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:35:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E379EC5649C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C14684EC902
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:26:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABBC44E756A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE2E331207;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB29933121C;
 	Thu, 13 Nov 2025 08:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai/napDP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeAeo5ll"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0FF219A89
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA71330B12
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763022358; cv=none; b=WCVvl/+CVRuC4Abj7IwT9fYQp+YZyrgR27ETxk1K/YPnTkKksEFhnoS1jZNbIBTmxaAYAIIZREracEKccNJjT+YBLnfWIj9X3cYEKSo1Y/pxnmEgRejsoeGugQtNmYKs9A67ihIaySflbw0UgWmQuMLNBaZ7x74tNpFUpxHY3Fg=
+	t=1763022359; cv=none; b=PEcqJ6qUm5uDqV/k4/OybptvHNccdOHNeDWo4c73x1zhsUCoYvTSGU4KF/8VXjs/oEuOYK3lb2Bqx9ji8y6zd5z8fEDSc9fcCUVQPLyv8i/9wSEvxyZ7XffUi7Xt0QSReOQoXdSo3M6IhYjVrfTLbFNiI9TY/UUBtwHdlFhFPos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763022358; c=relaxed/simple;
-	bh=5W64rERvM797Sy01ObHAwKZTUgA4Qee/2MIM1vkyitk=;
+	s=arc-20240116; t=1763022359; c=relaxed/simple;
+	bh=Vvo09bFq8tEaP1B5nFoGfs/9TqliMjuKbCECXkO5VIQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eH4eBTeCv7PTYWqnP/J0wgL+Kv8rEKJrG4M5GdkPgqWsZbhE9U1A/J66zvh2WYHkTDVC27wwhvqFsZvFoRSVBaxaZVOxJzHyJIirj7LXZi+gs1whFgY83yJ0bAdzOPuTgfiY2rZcvGhUlJZ09B59XlE7FoMjk0W05+JPKE1iyHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai/napDP; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=M4zUBd5iAVxwzHtnRHEf0vBPZL9nsjTfkvtKL/7bBq68eHhqySH5qj8lwXL1dHKojPkw0vohLQgPBxKrYJHWepFocxVJZ3FblE6YFc7VIzZWm3y3nk+YN6g450OQryaLPyw2h52pJTGP8nm6i2Q2Az3xvIt9e+VPflsYrBljRds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeAeo5ll; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47774d3536dso4235065e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:25:56 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47754e9cc7fso3038205e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:25:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763022355; x=1763627155; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763022356; x=1763627156; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xhM4Gc7RWgkJaI5gk8mnwRyBs4NmyN/cj+R9nOFaiuU=;
-        b=ai/napDP4DS8gf7Tw5va/kPU8/VRtrX3q4NGBNAyZc1UYCeofmieB4zrOGh6J5DjOU
-         /54FG7hIthNI/UbMzy0CjjCNjH026PbtXyyWab2kJgrb0yREQK2BwH0+tzWuHIJ+qIlt
-         Bsk5XxxS4ixW5DCKLqyWW7SgInFoPsRed9cCtQ73ErgFm1l8WEW/Ec8L2I5Wcfik/Vtk
-         ZEg1/918zJf7lEughUsPCjjTEkEvffB4wTmNVHI1gJARAAxw6SikpKmH9G7kliR+0AfS
-         wcQw74FUi6Cfin/upnL5V0ml9ZE+C+vSWVU2QU2LrX8hvpqLfep4GbSHczQ1vxgG0Vwt
-         3R5A==
+        bh=fEgvbUe/SG9kBJT2lT+vOW4S6Qvv1BIswGeH2rkA3IU=;
+        b=BeAeo5llKhjTG1m+stMMWqFziKWB1dPYlN9uogyteIiKyz0F6ZROlZK7Dn0Bqyu/sn
+         i+l+KYgeubt4SlBuZctHkaZW0cQX1Ex93vxd+3VabqWk7xNjZXx0gKCQk9twbsCBSt78
+         Qve66JfBwWFaU81a755i3YyUy1XFle1fUWra6BcHEhMr1r7NFNfnVXro8wcJGY7qEtif
+         f7jWDaeGfw7rmxfgzwEbqQG+D15d9kfx8XgzSkkPPSTWSBcbgcPeGBulFlc2Qh++6pyg
+         ukB3vds0G468Zng+n2069IOPJbhEeOo8LhZa+XG6rwrSjzglSY3lw/VWoQL1rM48oC+1
+         83ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763022355; x=1763627155;
+        d=1e100.net; s=20230601; t=1763022356; x=1763627156;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xhM4Gc7RWgkJaI5gk8mnwRyBs4NmyN/cj+R9nOFaiuU=;
-        b=VRmo1KY/2n6r1E+JB2ImlUP+Y2gfz+w+0aPi/3gw0PTE4Ozrhdywe6G7xGCNhLhoPV
-         UDdzhQR7sWTzBn/tNg0wjjc7tCNpYFQrFblis+UofAzRTFbmynuyjPUZGy3RyleELjfS
-         v/CHvZa7/0molt8hO3hhECdYaHflWhqXlNVPrmjSoyMr6Qv7kfhY/bHEx2f19xEXdUkc
-         9uqmoqJSmiZsUDHPCp6HB6E1ClVrZE/Z0ad+otIhrkndV8fN4yJlX9pAvqbtMdPczx1Z
-         Wu0mGknI6cQV5HVjG1J3DCg40+DFqXrOe7ucs7FEc/MjTBHfNmL+xU09KNTiE/Z+Ptbf
-         0eXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEyTknA3Sro7+e+rXcFZKx66XYeWxDv+E+iOtQv6DHxKEGoYrrvxZlwy1GxcgwCtGDUlOkSYny3W+c6rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjFICOkmpMq4kRmhTUtYFqzm22m+i3Ld56mAzKtzsIUTVT72mf
-	VzMk+MCRJb3spIoY6FJb17hyfd4i0s/p+lolomuLg2b+ws3Ez+0S5NAI
-X-Gm-Gg: ASbGncv3hqSXK4CPS+Hw12qfVRXIQbLNPVMmO/FFpcGPxo0YhihivXZ6ZDhVka+5sP4
-	c/iZ5Ep9qbA2KLdA+m0BUavRV1s8TFTmYHGIZsVnkA4FZerFf0pLrWXjYbVeu1ygxQ1osZMX37w
-	AhkXyuT32k1eL8DGp+qbaRVEkBwSStQTvG33UCA67rq9mGcb6Zv2unUNp4TVoeP2rmvd2KA6aEY
-	MOcmCHcMgZkE/cXvbDQluKV63MnOChugrlMj1xEBwItAKKcrNZ/Mco2npRvEY2zO5niZOBziYo9
-	MG6P/jPPseVXjyeuqt4NNlC800ekmWnHtSE1fYFhhSkhkppZsFnw63aCENj4tgP+BnRX042rOgP
-	w+Qmte+ETR4JXfukcagg4nSLwRE0fXEbnF/024Sgh4eM+NnN+Z3rA4tGasDxhHKeuUtqDXXkfJZ
-	nEveBR6wXEELhKSIObe0OUqASVMMpHYZvzhHKv5cGezE7E5uSqIJicPNpYdClD
-X-Google-Smtp-Source: AGHT+IF86VzSJ33CNq2rjUllDx7DljpJCBR4tB0Qcx4dUc6YIOF4/BKvWFr5W759vjy9BI2wMO56wA==
-X-Received: by 2002:a05:600c:1e8f:b0:477:7d94:9cf0 with SMTP id 5b1f17b1804b1-4778bd7015dmr18283615e9.12.1763022354597;
-        Thu, 13 Nov 2025 00:25:54 -0800 (PST)
+        bh=fEgvbUe/SG9kBJT2lT+vOW4S6Qvv1BIswGeH2rkA3IU=;
+        b=r9oVuA5q2Vvk2JJPZsK0tGBmszUiU/QkMzaO9SIGnCfd/TV/cWXTw125NkuO2VKAbn
+         aVVeCfbPxZVZa6+gRMzuG4wZyarsu2P5yc8WsNj3ZIZ85wCERQ4YCX8qJIP4HG3o4Yq8
+         KgY/FTioHlYx5I4gPA+9IPuHn7OqE4JZG0oVDNEN4vpp+i8+GY4FdHFvwJAyHqnrahL2
+         BmN9e2/UiilCO+HkqaVUDU0YVU6nudlU0Ect+iOxq5uCjYZvPu8ALHl/0aW0NbI+ApML
+         AEdmum8c47Z7UiBS4WUS2M+wN9evyTmEC1sFK4dzipkibJPmF154RsTWCpyZCfIOSFkv
+         rpFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfql9oAn/jY6eBnSToNqk6tRi+cOhc+LYuDBDmVyxoZNURYL0VE2Jxnr5GSusxuQAiBQ+Zlr4g3l7Obok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFaW+4sglEgVeEC+ntzPW/BXWeM+vbIOYKlgslZaS5uCDwVCAi
+	pKEUN40X38K2nFsG+Tgsf5nuXVFOitEbvgKTRDXSOD0PqrOdzccu1cX/
+X-Gm-Gg: ASbGncsrKKHgco6IycMoTWtEjE8Yy5sOQkF20yaZUxkwk1H2YfYgN4W8MQHWpyBY5Bv
+	F4QEMTmLmDdc1TYBCdeJG+JouRejDK5JH+vbh7qQCzCryL/+UNMaFVaOgSgRi539ZMMkyORQMhD
+	9fvk6u6dVdZztuf6AfTBTbFyDftrkqMXOtQ/TlAx+zmSH7YUouHqXOSfyaL0ke6g76Ov8VzCi9p
+	TwIWFagohBdDGeEWULIHTMcCC7idUhV02CpY11b8+SU5PUOORiDvq43y/64R4U0ABWNGKEqneCz
+	5oEgV8MfiXb2MeQqa8xOnR8BQsj07VzK4Lbh1JjkD/dyNnaAHYH8eRvhgRvdN1PoBh6EGaGYr5a
+	gTfnplgwwtgARTzaeWEnuVO13O57WQlRA3V7Po6yayglJ3Zn9O740hdzsPcXwyuzUeqZDBCpQ0Q
+	qpmaAAQEgQgzGQrBrcb92yaqd29ar2yCjDTwLBnkblJO+qfqvcShrBmgObGRjRs6mZolpSkLs=
+X-Google-Smtp-Source: AGHT+IEh987VFOInqDaiE4dQokzyddzRnJWtVtXv0/enIYKH97ZJzm5R8OJ0GWVJzZF60mkUQh0k8A==
+X-Received: by 2002:a05:600c:4fc9:b0:477:5b0a:e616 with SMTP id 5b1f17b1804b1-47787071649mr49869865e9.5.1763022355600;
+        Thu, 13 Nov 2025 00:25:55 -0800 (PST)
 Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bb34295sm15214435e9.2.2025.11.13.00.25.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bb34295sm15214435e9.2.2025.11.13.00.25.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 00:25:54 -0800 (PST)
+        Thu, 13 Nov 2025 00:25:55 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -87,11 +87,10 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Biju Das <biju.das.au@gmail.com>,
-	stable@kernel.org,
-	Tony Tang <tony.tang.ks@renesas.com>
-Subject: [PATCH v2 1/2] ASoC: renesas: rz-ssi: Fix channel swap issue in full duplex mode
-Date: Thu, 13 Nov 2025 08:25:46 +0000
-Message-ID: <20251113082551.99595-2-biju.das.jz@bp.renesas.com>
+	stable@kernel.org
+Subject: [PATCH v2 2/2] ASoC: renesas: rz-ssi: Fix rz_ssi_priv::hw_params_cache::sample_width
+Date: Thu, 13 Nov 2025 08:25:47 +0000
+Message-ID: <20251113082551.99595-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251113082551.99595-1-biju.das.jz@bp.renesas.com>
 References: <20251113082551.99595-1-biju.das.jz@bp.renesas.com>
@@ -105,125 +104,84 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The full duplex audio starts with half duplex mode and then switch to
-full duplex mode (another FIFO reset) when both playback/capture
-streams available leading to random audio left/right channel swap
-issue. Fix this channel swap issue by detecting the full duplex
-condition by populating struct dup variable in startup() callback
-and synchronize starting both the play and capture at the same time
-in rz_ssi_start().
+The strm->sample_width is not filled during rz_ssi_dai_hw_params(). This
+wrong value is used for caching sample_width in struct hw_params_cache.
+Fix this issue by replacing 'strm->sample_width'->'params_width(params)'
+in rz_ssi_dai_hw_params(). After this drop the variable sample_width
+from struct rz_ssi_stream as it is unused.
 
 Cc: stable@kernel.org
 Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
-Co-developed-by: Tony Tang <tony.tang.ks@renesas.com>
-Signed-off-by: Tony Tang <tony.tang.ks@renesas.com>
 Reviewed-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2:
- * Improved the code logic in rz_ssi_start() by using else if
  * Collected Rb tag from Morimoto-san
 ---
- sound/soc/renesas/rz-ssi.c | 53 ++++++++++++++++++++++++++++++++------
- 1 file changed, 45 insertions(+), 8 deletions(-)
+ sound/soc/renesas/rz-ssi.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index 81b883e8ac92..86a6b4eff210 100644
+index 86a6b4eff210..b5715e7318a4 100644
 --- a/sound/soc/renesas/rz-ssi.c
 +++ b/sound/soc/renesas/rz-ssi.c
-@@ -133,6 +133,12 @@ struct rz_ssi_priv {
- 	bool bckp_rise;	/* Bit clock polarity (SSICR.BCKP) */
- 	bool dma_rt;
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
++#include <sound/pcm_params.h>
+ #include <sound/soc.h>
  
-+	struct {
-+		bool tx_active;
-+		bool rx_active;
-+		bool one_stream_triggered;
-+	} dup;
-+
- 	/* Full duplex communication support */
- 	struct {
- 		unsigned int rate;
-@@ -332,13 +338,12 @@ static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 	bool is_full_duplex;
- 	u32 ssicr, ssifcr;
+ /* REGISTER OFFSET */
+@@ -87,7 +88,6 @@ struct rz_ssi_stream {
+ 	int dma_buffer_pos;	/* The address for the next DMA descriptor */
+ 	int completed_dma_buf_pos; /* The address of the last completed DMA descriptor. */
+ 	int period_counter;	/* for keeping track of periods transferred */
+-	int sample_width;
+ 	int buffer_pos;		/* current frame position in the buffer */
+ 	int running;		/* 0=stopped, 1=running */
  
--	is_full_duplex = rz_ssi_is_stream_running(&ssi->playback) ||
--		rz_ssi_is_stream_running(&ssi->capture);
-+	is_full_duplex = ssi->dup.tx_active && ssi->dup.rx_active;
- 	ssicr = rz_ssi_reg_readl(ssi, SSICR);
- 	ssifcr = rz_ssi_reg_readl(ssi, SSIFCR);
- 	if (!is_full_duplex) {
- 		ssifcr &= ~0xF;
--	} else {
-+	} else if (ssi->dup.one_stream_triggered) {
- 		rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
- 		rz_ssi_set_idle(ssi);
- 		ssifcr &= ~SSIFCR_FIFO_RST;
-@@ -374,12 +379,18 @@ static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 			      SSISR_RUIRQ), 0);
- 
- 	strm->running = 1;
--	if (is_full_duplex)
--		ssicr |= SSICR_TEN | SSICR_REN;
--	else
-+	if (is_full_duplex) {
-+		if (ssi->dup.one_stream_triggered) {
-+			ssicr |= SSICR_TEN | SSICR_REN;
-+			rz_ssi_reg_writel(ssi, SSICR, ssicr);
-+			ssi->dup.one_stream_triggered = false;
-+		} else {
-+			ssi->dup.one_stream_triggered = true;
-+		}
-+	} else {
- 		ssicr |= is_play ? SSICR_TEN : SSICR_REN;
+@@ -217,10 +217,7 @@ static inline bool rz_ssi_is_stream_running(struct rz_ssi_stream *strm)
+ static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
+ 			       struct snd_pcm_substream *substream)
+ {
+-	struct snd_pcm_runtime *runtime = substream->runtime;
 -
--	rz_ssi_reg_writel(ssi, SSICR, ssicr);
-+		rz_ssi_reg_writel(ssi, SSICR, ssicr);
-+	}
+ 	rz_ssi_set_substream(strm, substream);
+-	strm->sample_width = samples_to_bytes(runtime, 1);
+ 	strm->dma_buffer_pos = 0;
+ 	strm->completed_dma_buf_pos = 0;
+ 	strm->period_counter = 0;
+@@ -980,9 +977,9 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
+ 				struct snd_soc_dai *dai)
+ {
+ 	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
+-	struct rz_ssi_stream *strm = rz_ssi_stream_get(ssi, substream);
+ 	unsigned int sample_bits = hw_param_interval(params,
+ 					SNDRV_PCM_HW_PARAM_SAMPLE_BITS)->min;
++	unsigned int sample_width = params_width(params);
+ 	unsigned int channels = params_channels(params);
+ 	unsigned int rate = params_rate(params);
+ 	int ret;
+@@ -1001,16 +998,14 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
  
- 	return 0;
- }
-@@ -915,6 +926,30 @@ static int rz_ssi_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	return 0;
- }
+ 	if (rz_ssi_is_stream_running(&ssi->playback) ||
+ 	    rz_ssi_is_stream_running(&ssi->capture)) {
+-		if (rz_ssi_is_valid_hw_params(ssi, rate, channels,
+-					      strm->sample_width, sample_bits))
++		if (rz_ssi_is_valid_hw_params(ssi, rate, channels, sample_width, sample_bits))
+ 			return 0;
  
-+static int rz_ssi_startup(struct snd_pcm_substream *substream,
-+			  struct snd_soc_dai *dai)
-+{
-+	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		ssi->dup.tx_active = true;
-+	else
-+		ssi->dup.rx_active = true;
-+
-+	return 0;
-+}
-+
-+static void rz_ssi_shutdown(struct snd_pcm_substream *substream,
-+			    struct snd_soc_dai *dai)
-+{
-+	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		ssi->dup.tx_active = false;
-+	else
-+		ssi->dup.rx_active = false;
-+}
-+
- static bool rz_ssi_is_valid_hw_params(struct rz_ssi_priv *ssi, unsigned int rate,
- 				      unsigned int channels,
- 				      unsigned int sample_width,
-@@ -985,6 +1020,8 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- }
+ 		dev_err(ssi->dev, "Full duplex needs same HW params\n");
+ 		return -EINVAL;
+ 	}
  
- static const struct snd_soc_dai_ops rz_ssi_dai_ops = {
-+	.startup	= rz_ssi_startup,
-+	.shutdown	= rz_ssi_shutdown,
- 	.trigger	= rz_ssi_dai_trigger,
- 	.set_fmt	= rz_ssi_dai_set_fmt,
- 	.hw_params	= rz_ssi_dai_hw_params,
+-	rz_ssi_cache_hw_params(ssi, rate, channels, strm->sample_width,
+-			       sample_bits);
++	rz_ssi_cache_hw_params(ssi, rate, channels, sample_width, sample_bits);
+ 
+ 	ret = rz_ssi_swreset(ssi);
+ 	if (ret)
 -- 
 2.43.0
 
