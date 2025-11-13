@@ -1,189 +1,217 @@
-Return-Path: <linux-kernel+bounces-898781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFB3C56034
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FB1C5603D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBC33BAAE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C553B88E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDD2321F5F;
-	Thu, 13 Nov 2025 07:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAB2322522;
+	Thu, 13 Nov 2025 07:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="TUPqQrEg"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IAywLVvM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3E531A579;
-	Thu, 13 Nov 2025 07:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2773043BD;
+	Thu, 13 Nov 2025 07:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763017764; cv=none; b=lgPB4I/G6PoLiznIInhoy4EKDu73ITDdpw072RR5LibwTJe2TjiHcn37M1ERcUxjIPQ0vV+w7G+/bmiK1vsLKrLFvYgUs3maLvHbj4gb2P34lXLXZTasiwp9G3M2L/bYI68EDRqdIg0WCMJ9hbW5fBuhvrGmDETBv9X99GHMky0=
+	t=1763017902; cv=none; b=Dr/eyO50+bWDJIYTtdcScPhOP3l/XPZEMR7RZz+2r3rah8p52KmOEdWCyUW6NAb8xfOcxFHhq4RfBELdbligFklINd4E/cKoSu7tvsFy9Y2Oi3WYDlKwHiprDzqmOvc93YGU/I2Jt/Pd2/0Ain6YkSEIMdetLyU4ygZkWecQazc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763017764; c=relaxed/simple;
-	bh=40REHCCklSt6AflWpmU6hsAu2lQyenxuwXU32WpLZ9k=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Net+v/yI4Y8TGs3USu7Nk1mjeOntRKF4WAeHW/SSTHNl3rLsH3FSNoMlKCyq5P/wASe3/Ev4Zg3/paXPfZwuTjyMB89q/Nj/ST0+L3eHKR8en/7omCjW0IlZZRQrqGg859gyTNVMfipRohlSw2/TDxpWbZdNiDnVxO1HQ87nHBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=TUPqQrEg; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=a/zUORiLYgVJvvIFDouSZHVvh8fh4Yl0V3NhiL1OspU=; b=TUPqQrEgLdDmODb5AuADy6DhB7
-	hw+HPx/o5kfORwW/2R41iZBKOhMSLy8HFaf4tDSIvDFBm5y6fFR5ZTVsftWRnhyGEruSXLsSaxWR2
-	UUOnF2kMYvX9fbjazjhUa5NwiPATab2SQWXl4Ff87gkzotuLm92aFk3mTQ1ZEglKV4VJqDGKGSJFU
-	R1GtAve/PluNCIvACBIrAnfJ9OifdChRj3/80vEoEF/X42OXv+5G8k/Y0mXr7I/9JR/AMi7/KYl1o
-	63aVH3cLWINS0VswbGNk+mtZAQKnh6Ggy1ZmF9CWeR25pEHk4G1ppqZlVkWvDEyRrdML5hIWgPjXL
-	iq/VOShQ==;
-Received: from [122.175.9.182] (port=34661 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1vJRSJ-0000000G9Ls-3fpH;
-	Thu, 13 Nov 2025 02:09:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 376581A64E3C;
-	Thu, 13 Nov 2025 12:39:08 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
- by localhost (zimbra.couthit.local [127.0.0.1]) (amavis, port 10032)
- with ESMTP id ckcJaN1Y1_X8; Thu, 13 Nov 2025 12:39:06 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id C8E841A64E3B;
-	Thu, 13 Nov 2025 12:39:06 +0530 (IST)
-X-Virus-Scanned: amavis at couthit.local
-Received: from zimbra.couthit.local ([127.0.0.1])
- by localhost (zimbra.couthit.local [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 8GR88C0sm3ek; Thu, 13 Nov 2025 12:39:06 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 9B2661A64E3C;
-	Thu, 13 Nov 2025 12:39:06 +0530 (IST)
-Date: Thu, 13 Nov 2025 12:39:06 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: afd <afd@ti.com>
-Cc: nm <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	tony <tony@atomide.com>, robh <robh@kernel.org>, 
-	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	linux-omap <linux-omap@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	danishanwar <danishanwar@ti.com>, pratheesh <pratheesh@ti.com>, 
-	j-rameshbabu <j-rameshbabu@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>, 
-	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
-	m-karicheri2 <m-karicheri2@ti.com>, parvathi <parvathi@couthit.com>
-Message-ID: <1253388251.49228.1763017746545.JavaMail.zimbra@couthit.local>
-In-Reply-To: <444398864.187812.1762422794296.JavaMail.zimbra@couthit.local>
-References: <20251103124820.1679167-1-parvathi@couthit.com> <20251103124820.1679167-3-parvathi@couthit.com> <89858ed0-58fd-4056-b8af-065c92885a10@ti.com> <444398864.187812.1762422794296.JavaMail.zimbra@couthit.local>
-Subject: Re: [PATCH v2 2/2] arm: dts: ti: Adds support for AM335x and AM437x
+	s=arc-20240116; t=1763017902; c=relaxed/simple;
+	bh=jwZV3cN+md5GWxIHrM08w4it1bCTbyUus7RjFW/i5yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VtzKoU+LfapM6rf75XqlPnPM5thHy9SWdqW6JtwtozB5ES6EGrz1VmH2nwhwKXbFq17+J1oukZzwYqBIn3z5ilBVuF/Xb2XO40URIvaG3NEvXxISLZh2sp9G7UXIv7NBzvzVrSj/VfJcDGgfAo8gCf7+e0Ie8jDXiwyMZ9lAIKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IAywLVvM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD65vuk3564018;
+	Thu, 13 Nov 2025 07:11:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JbcsyPnHmuKn4QQ8CLzN7c30DEC+8jlevi+eLhpMg9w=; b=IAywLVvMA1+pmkMn
+	NkqUpGOv/e2R5IWqf5McFqf0tWWTkLxXSTvt/jLJ5ou1Hv6l9Lx1G7TmLAV3dTfW
+	QYQ3kHrOoW1y+IEs7U8rF/hBnqy3fQCa7kuNSIbmUh5WL94l7QwXaDXzpaw2zu0R
+	Ernmz3J3frVP3EannklHM8EdvthlLqgtZcgdmgqrJ+UPMrOUFwBp9LRUj6TIdK2W
+	vcLU0b9WL2mGJFXcOoI+wfVRXywWfp9ekY+5sKiisotMDkf0G7oDZfcKb15M6kha
+	18VEXmDIyJStbuVgaknJaWgRopd3BcR+VkDhrPAAFKh4/ODngiyUd4VbTFuFvPDZ
+	eCvtww==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ad9rvg6hj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 07:11:35 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5AD7BZlc009796
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 07:11:35 GMT
+Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 12 Nov
+ 2025 23:11:31 -0800
+Message-ID: <dbea629d-5aa9-4a85-6316-25ac82a33520@quicinc.com>
+Date: Thu, 13 Nov 2025 12:41:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 9.0.0_ZEXTRAS_20240927 (ZimbraWebClient - GC138 (Linux)/9.0.0_ZEXTRAS_20240927)
-Thread-Topic: Adds support for AM335x and AM437x
-Thread-Index: 5iKEgrqd+6T7XN5cqv4nZpstY2kVHv8fMrJ2
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
+ devices
+Content-Language: en-US
+To: Eric Biggers <ebiggers@kernel.org>
+CC: <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <linux-mmc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_varada@quicinc.com>
+References: <20251111104604.2494305-1-quic_mdalam@quicinc.com>
+ <20251111205212.GA245945@sol>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20251111205212.GA245945@sol>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=XrX3+FF9 c=1 sm=1 tr=0 ts=691584a8 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KhDgJi1XJtjopTdYXVYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22 a=HhbK4dLum7pmb74im6QT:22
+ a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
+X-Proofpoint-ORIG-GUID: 5Iu9ByN6QdRwa8Q_AebwRauqJh4TQNgn
+X-Proofpoint-GUID: 5Iu9ByN6QdRwa8Q_AebwRauqJh4TQNgn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA0OSBTYWx0ZWRfX/2gMeclkLnb/
+ BCVudlpZCc1b67kGSUueBrGmWzINHXFwHfkp0gdf7Qf5ACIOvTskzSkwsRjNdb+JQaEznS+zFEl
+ uUfzWKyFmJUd/ZVm247Rs22NfGrTuKl7cNssORzXJNZ6rxtYVQSIt3vyU4g2XckQK3Uy8E5FZPo
+ nY1yDi/2tM4z4T6Sma8NPbmDy7RcNRAzgTkoh4TaBByqoxw5O7GmB7hSLKaaeoQBJcZ3p4IwwMW
+ d490clNbGeV8u4q2eRHZOfLf5GCJXZdXb5OOWyMqMvmXqRi9mEHFnXh8rFBJxzfIpdTUogW1kSy
+ WD18MsYSSDQNPdLDcaxrOJDRhqja+cpu1Dk4gfDzNzo0mRPBoBWk3Vq90CLTcUzaEISysSBTIjC
+ gqA8LcCqCBlGUBJQdp73lZwTLPNYvQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 adultscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130049
 
 Hi,
 
-> Hi,
+On 11/12/2025 2:22 AM, Eric Biggers wrote:
+> On Tue, Nov 11, 2025 at 04:16:04PM +0530, Md Sadre Alam wrote:
+>> Enable Inline Crypto Engine (ICE) support for eMMC devices that operate
+>> without Command Queue Engine (CQE).This allows hardware-accelerated
+>> encryption and decryption for standard (non-CMDQ) requests.
+>>
+>> This patch:
+>> - Adds ICE register definitions for non-CMDQ crypto configuration
+>> - Implements a per-request crypto setup via sdhci_msm_ice_cfg()
+>> - Hooks into the request path via mmc_host_ops.request
+>>
+>> With this, non-CMDQ eMMC devices can benefit from inline encryption,
+>> improving performance for encrypted I/O while maintaining compatibility
+>> with existing CQE crypto support.
 > 
->> On 11/3/25 6:47 AM, Parvathi Pudi wrote:
->>> From: Roger Quadros <rogerq@ti.com>
->>> 
->>> PRU-ICSS instance consists of two PRU cores along with various
->>> peripherals such as the Interrupt Controller (PRU_INTC), the Industrial
->>> Ethernet Peripheral(IEP), the Real Time Media Independent Interface
->>> controller (MII_RT), and the Enhanced Capture (eCAP) event module.
->>> 
->>> The TI Sitara AM335x ICE-V2 consists of single PRU-ICSS instance,
->>> This patch adds the new device tree source file in-order to use
->>> PRU-ICSS instance, along with makefile changes to add the new DTS
->>> file for PRUSS.
->>> 
->>> The TI Sitara AM437x series of devices consists of 2 PRU-ICSS instances
->>> (PRU-ICSS0 and PRU-ICSS1). This patch adds the device tree nodes for the
->>> PRU-ICSS1 instance to support DUAL-MAC mode of operation. Support for
->>> Ethernet over PRU is available only for ICSS1 instance.
->>> 
->>> am33xx-l4.dtsi, am4372.dtsi - Adds IEP and eCAP peripheral as child nodes
->>> of the PRUSS subsystem node.
->>> 
->>> am335x-icev2-prueth.dts, am437x-idk-evm.dts - Adds PRU-ICSS
->>> instance node along with PRU eth port information and corresponding
->>> port configuration. It includes interrupt mapping for packet reception,
->>> HW timestamp collection, and PRU Ethernet ports in MII mode,
->>> 
->>> GPIO configuration, boot strapping along with delay configuration for
->>> individual PRU Ethernet port and other required nodes.
->>> 
->>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->>> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
->>> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
->>> ---
->>>   arch/arm/boot/dts/ti/omap/Makefile            |   1 +
->>>   .../boot/dts/ti/omap/am335x-icev2-prueth.dts  | 533 ++++++++++++++++++
->>>   arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi      |  11 +
->>>   arch/arm/boot/dts/ti/omap/am4372.dtsi         |  11 +
->>>   arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts  | 137 ++++-
->>>   5 files changed, 692 insertions(+), 1 deletion(-)
->>>   create mode 100644 arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
->>> 
->>> diff --git a/arch/arm/boot/dts/ti/omap/Makefile
->>> b/arch/arm/boot/dts/ti/omap/Makefile
->>> index 1aef60eef671..d06dd31d0bb6 100644
->>> --- a/arch/arm/boot/dts/ti/omap/Makefile
->>> +++ b/arch/arm/boot/dts/ti/omap/Makefile
->>> @@ -100,6 +100,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
->>>   	am335x-evmsk.dtb \
->>>   	am335x-guardian.dtb \
->>>   	am335x-icev2.dtb \
->>> +	am335x-icev2-prueth.dtb \
->> 
->> This new DTB looks to be almost identical to the regular am335x-icev2.dtb, to
->> add an optional node to an existing board use DT overlay, do not clone the
->> whole board DT just to add a node. Maybe that is how we hacked around this
->> in our evil vendor tree back in 2018 but do not take our old hacks and push
->> them upstream as-is.
->> 
->> Andrew
->> 
+> This really should explain that this patch actually applies only to host
+> controllers that *do* support CQE.  Just they are using a card that
+> doesn't support CQE or CQE was explicitly disabled.  Right?
+Yes, you are absolutely correct. Thank you for pointing this out - the 
+commit message should be clearer about this important detail.
+
+This patch applies specifically to CQE-capable host controllers 
+(sdhci-msm controllers that support CQHCI) when they are operating in 
+non-CQE mode.
+This can happen in two scenarios:
+
+1. CQE-capable controller + non-CQE card: The host controller supports 
+CQE, but the eMMC card doesn't support Command Queue Engine
+2. CQE explicitly disabled: The host controller and card both support 
+CQE, but CQE has been explicitly disabled (e.g., via device tree)
+
+For the 2nd case I will post another path which will handle host side
+CQE enable/disable.
 > 
-> Understood. We will review this redundancy and revert back with an update.
+>> +static void sdhci_msm_non_cqe_ice_init(struct sdhci_host *host)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +	struct mmc_host *mmc = msm_host->mmc;
+>> +	struct cqhci_host *cq_host = mmc->cqe_private;
+>> +	u32 config;
+>> +	u32 ice_cap;
+>> +
+>> +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
+>> +	config &= ~DISABLE_CRYPTO;
+>> +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
+>> +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
+>> +	if (ice_cap & ICE_HCI_SUPPORT) {
+>> +		config = cqhci_readl(cq_host, CQHCI_CFG);
+>> +		config |= CRYPTO_GENERAL_ENABLE;
+>> +		cqhci_writel(cq_host, config, CQHCI_CFG);
+>> +	}
+>> +	sdhci_msm_ice_enable(msm_host);
+>> +}
+>> +
+>> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +	struct mmc_host *mmc = msm_host->mmc;
+>> +	struct cqhci_host *cq_host = mmc->cqe_private;
+>> +	unsigned int crypto_params = 0;
+>> +	int key_index;
+>> +	bool crypto_enable;
+>> +	u64 dun = 0;
+>> +
+>> +	if (mrq->crypto_ctx) {
+>> +		if (!msm_host->ice_init_done) {
+>> +			sdhci_msm_non_cqe_ice_init(host);
+>> +			msm_host->ice_init_done = true;
+>> +		}
 > 
+> This means sdhci_msm_ice_enable() is called only once per host
+> controller.  It looks like the existing call to sdhci_msm_ice_enable()
+> happens each time after the host controller is resumed.  So there seems
+> to be an inconsistency there.  Which way is correct?
+Thank you for highlighting this. After revisiting the code paths, I 
+believe the behavior is consistent across both CQE and non-CQE modes.
+ICE is re-enabled on every resume via the common 
+sdhci_msm_runtime_resume() → sdhci_msm_ice_resume() → qcom_ice_resume() 
+→ sdhci_msm_ice_enable() path.
+The ice_init_done flag only governs one-time initialization in 
+sdhci_msm_ice_cfg() and doesn’t interfere with the resume logic.
 
-We have created a device tree overlay file (am335x-icev2-prueth-overlay.dtso)
-that will disable CPSW nodes defined in "am335x-icev2.dts" and enables the PRUETH
-nodes at boot time depending on pin configuration. We will update the Makefile to
-merge it with the base DTS to generate a device tree binary.
+In summary:
+CQE mode: ICE enabled during sdhci_msm_cqe_enable() + every resume
+Non-CQE mode: ICE enabled on first crypto request + every resume
+> 
+>> +	} else {
+>> +		crypto_enable = false;
+>> +		key_index = 0;
+>> +		cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
+> 
+> The values assigned to 'crypto_enable' and 'key_index' are never used.
+Ok, will remove in next revision.
+> 
+>> +static void sdhci_msm_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>> +{
+> 
+> Could you leave a comment here that notes this is used only for non-CQE
+> requests and that crypto on CQE requests is handled elsewhere?
+Thank you very much — that’s a valuable suggestion. Adding a comment 
+will make the code much clearer. Will add in next revision.
 
-We will post the revised version v3 shortly.
-
-Thanks and Regards,
-Parvathi.
+Thanks,
+Alam.
 
