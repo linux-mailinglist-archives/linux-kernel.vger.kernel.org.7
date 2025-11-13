@@ -1,345 +1,120 @@
-Return-Path: <linux-kernel+bounces-899923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A598C594E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:59:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69508C59323
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21B6D4F8D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8150B4261FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C036D361DDC;
-	Thu, 13 Nov 2025 16:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF66B364020;
+	Thu, 13 Nov 2025 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FRtlNmSL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SGSoGuvz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9477D35F8CA;
-	Thu, 13 Nov 2025 16:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB00D363C41
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053011; cv=none; b=EzSnwByrWLEMDijyPBi0pucU0BlFKsl/FVmIG/QHVjWkh1pogF9DRLljYIO3QxqwWouoByRjCaSNvH7f33iG/id3P0/FOi9FzA08tOfOAn0lMiaeV59esg8BBoG3LiCjCF43pS8jpHmJ8gv6k/HG7nPTUPKavOpgurl2D1cSYBw=
+	t=1763053074; cv=none; b=Qb9GP00TrvAF7eYTYAceJzC7O2MU/0teqIBQyO4hkamzy8FsVgmTcbBS2IcueuT42Wreyopcd/UK/Ka25SjSPbqgxxdkOiSG+okea2fbQX1y211HUc2dNlNEa8u/WbpvrvytEjX28tdY4hvaKMUaMcnnuK7lCW71+D20kKrEW8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053011; c=relaxed/simple;
-	bh=1+FQxddv+Gv2SejLN2zY1r/1JVvqwZUYXTD9m8oYsAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkrv7c9TjUXox1GvgrsM1urJKzxzCyN3SqwoxPAPZ06Ux9+zH/JhGlHGHruR9dYJPp5V5lyrB7H9t8R05l+vxq0pQIN7Fr96Ostze9oPLPh4fgMgu5p8lStsegRGGGlhWsxK4H6khlO6VrH6IfOJfYezGMnZBQdxPxEUCyD+Eh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FRtlNmSL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1763053007;
-	bh=1+FQxddv+Gv2SejLN2zY1r/1JVvqwZUYXTD9m8oYsAw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FRtlNmSLHDA/2Nv2mbXWXq2mTvHGE8tGj6zoETOXwrXJdjTpd31Xl6ief8OS/Xw4W
-	 pA3FD1SGX24pFlTRJQtxD4eCRgHK77nVFLKP6M8jOjfdc/JXW04hxEGKhr63ZbmyRN
-	 XDysbkSZ3wauE8MowoZAJEnobj4x4BTyEv9EEQ543kTlq1FqyxHvUS5+jN/vvHiYIj
-	 a44S+S+VYspJmIlyCczIc86MMMwf4eRTaPIdXP2io/GNYx1aIs0o5SK8+QmJusqQCb
-	 2QLtkOqRzdRr2e/BP0w2m/TL2UM0Zs9geH7XtyuwJLaCRed2dGh9CXP2Mx2Ks6UDHt
-	 FXtlSeU/MMzoQ==
-Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B311A17E04D6;
-	Thu, 13 Nov 2025 17:56:46 +0100 (CET)
-Message-ID: <7961866c-8809-4e8f-a070-484962964f41@collabora.com>
-Date: Thu, 13 Nov 2025 17:56:46 +0100
+	s=arc-20240116; t=1763053074; c=relaxed/simple;
+	bh=jhroVY/HWo/R4pzbpVqafKrGYgd85FkipZ8zyk+lGCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/3un1n/W82OeA8KZaN7wqM4DcqBm63GD66RIqJwfC6nC9Berm+ssm4qLUJDMepoK4vkHHkEqW1ypRHuD4DoMyubCQw59J3eqOG7rvOu/vuqriY5vtYvlY6Atfw/1bp+hxG7bxu+8W6VqRB13fh/DliKKERIMV+/CbT5jwmUBjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SGSoGuvz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-295c64cb951so240335ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:57:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763053072; x=1763657872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OLxkFc80eg4XlOBCdafQkFgvYgVVVTnJl4OY+3IwY9I=;
+        b=SGSoGuvzW5zrTMTrEI7n9r6bgiOz9dGiJALl/9H4gmrwhfqe1uLGD3H+GSq7MQx5km
+         JCREYWbHR0g0hojNvRhChAeu9F2iXhka2k0MoGkNaIdQHfnAC4b47p7RujbY3GkgNSqs
+         nfbQWvp8ZPq/6Ce7+4Pxz07L9jUhdnFYyeceRNamHg22/gS0hvyUWC5i7EFFW8rM+MDT
+         qP78oRH8yea98kXQttD410atjOrzheEzS5H20a1KY6vHzaLtZQtxPQ5ukQavf+v5JO9e
+         RyRm8G44qVSOSIVsbT5YEYQ4yTAvU3Lljl6iXhvzjLuBckFozWQI4jKrmvx2JGnlPo/o
+         mCYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763053072; x=1763657872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OLxkFc80eg4XlOBCdafQkFgvYgVVVTnJl4OY+3IwY9I=;
+        b=kFlChFD+O1mfghadwlJg++/s36jkj6iQd66Q3pX5IFBq9qbXKc1pQj+HhRGiRDH+Bw
+         3yGJkqaohWyvTGkMTGCYl101iKrBKFRAEs3Scz47vfEFa1GBxhT8g17cx+rImM5tzKP6
+         oetHQFIRzoCQWpzPOC/AP8R2l0IE9yQ9g572rl2eCZ8j6e0T/M6iFifYO9fHixlYTAp6
+         1FbJCMvB0SipI3inroOGWrOuswbyNIp6HdhJ7tInULfb6jzp9ERaPPeQwp/gXMQ5l0U9
+         p3bcj/ahPas0WRQV89fh1DOFT9eSU4VpbyGoaA5JXxw6dseqSgzs76C/F1g7kIsjn/n+
+         JsMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdyTefq5GKLOp9HGMDasvdVYTkB4tvXXd3qJB97bmQF+hczfRNJVI/eIzT6+4f95Axi3+a5O0xA8Btrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrV+o5NqfLjhh29u+lRd9OKKtPtunG+d1/YBkMiVGMv6EarBiF
+	0noSWRt0xFtbCetoGhKm+vjlpfJ09ZzMuQdBClThAvReobkp24t0L8hmDkMrPmzke5yudIyl8GU
+	f1CBxA5klUuuu1zu0EXn4SEaMnESjYLI7NSaNFmIcxtLlYU0rZ4BAWeMD
+X-Gm-Gg: ASbGncsfVjhhXv5DTN/nt4xNTc0qcX4JW+k6EKTWiY2DZ8VOLcBiuAfV1LZcYzEfftk
+	iaSJIawcr2lbAUhOFsvW+ETR+NE8GYl6EomvjL/4iKojRf0aZSjt21LEyfltfbAZMZ8ZdHnNgfy
+	O26gMKVrQ9VIaLKDq1BTutAAJjOGCyfDDwbxdaIxiXPCbDAa/ADAxBu8dRS/m9r7qxN9WZzbfN7
+	5xiEw/dHObb1UA2f09b/n8KoFncoIkTnJxE9+L5XF9BKP8jx7BGaCbsirdLR236s/uBwDiDnjAE
+	VJZBxsSKnToPu/FcPZ41Aaj03g==
+X-Google-Smtp-Source: AGHT+IFGM2UC9cv0Rb69qLMLBN2AHbSi8XjPf1Y8jV3cTVxKSlzeyDyFNonfq8lFV0Khqb3WDzq3f3llEYINITYq5HM=
+X-Received: by 2002:a17:902:cec4:b0:290:cd63:e922 with SMTP id
+ d9443c01a7336-2985c444baamr4595265ad.15.1763053071802; Thu, 13 Nov 2025
+ 08:57:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/11] drm/v3d: Use huge tmpfs mountpoint helpers
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Andrew Morton <akpm@linux-foundation.org>, Al Viro
- <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
- <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
- Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
- <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Christopher Healy <healych@amazon.com>, Matthew Wilcox
- <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, kernel@collabora.com
-References: <20251110155000.2936-1-loic.molinari@collabora.com>
- <20251110155000.2936-7-loic.molinari@collabora.com>
- <20251112102507.66060e30@fedora>
-Content-Language: fr
-From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
-Organization: Collabora Ltd
-In-Reply-To: <20251112102507.66060e30@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251113160124.2695-1-ravi.bangoria@amd.com>
+In-Reply-To: <20251113160124.2695-1-ravi.bangoria@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 13 Nov 2025 08:57:40 -0800
+X-Gm-Features: AWmQ_bnYR4cOVJLHr78WOaem9eSbY6OuN58PYrF1LrkuBmsPOHOG067Ywkfi0go
+Message-ID: <CAP-5=fVNZW5EvpX+MCQOU1WJ0BeyDudk+nMp8-cAH6CfF9cE+g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] perf lock contention: Assorted fixes
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Tycho Andersen <tycho@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Santosh Shukla <santosh.shukla@amd.com>, Ananth Narayan <ananth.narayan@amd.com>, 
+	Sandipan Das <sandipan.das@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/11/2025 10:25, Boris Brezillon wrote:
-> On Mon, 10 Nov 2025 16:49:54 +0100
-> Loïc Molinari <loic.molinari@collabora.com> wrote:
-> 
->> Make use of the new drm_gem_huge_mnt_create() and
->> drm_gem_has_huge_mnt() helpers to avoid code duplication. Now that
->> it's just a few lines long, the single function in v3d_gemfs.c is
->> moved into v3d_gem.c.
->>
->> v3:
->> - use huge tmpfs mountpoint in drm_device
->> - move v3d_gemfs.c into v3d_gem.c
->>
->> v4:
->> - clean up mountpoint creation error handling
->>
->> v5:
->> - fix CONFIG_TRANSPARENT_HUGEPAGE check
->> - use drm_gem_has_huge_mnt() helper
->>
->> Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
->> ---
->>   drivers/gpu/drm/v3d/Makefile    |  3 +-
->>   drivers/gpu/drm/v3d/v3d_bo.c    |  5 ++-
->>   drivers/gpu/drm/v3d/v3d_drv.c   |  2 +-
->>   drivers/gpu/drm/v3d/v3d_drv.h   | 11 +-----
->>   drivers/gpu/drm/v3d/v3d_gem.c   | 27 ++++++++++++--
->>   drivers/gpu/drm/v3d/v3d_gemfs.c | 62 ---------------------------------
->>   6 files changed, 30 insertions(+), 80 deletions(-)
->>   delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
->>
->> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
->> index fcf710926057..b7d673f1153b 100644
->> --- a/drivers/gpu/drm/v3d/Makefile
->> +++ b/drivers/gpu/drm/v3d/Makefile
->> @@ -13,8 +13,7 @@ v3d-y := \
->>   	v3d_trace_points.o \
->>   	v3d_sched.o \
->>   	v3d_sysfs.o \
->> -	v3d_submit.o \
->> -	v3d_gemfs.o
->> +	v3d_submit.o
->>   
->>   v3d-$(CONFIG_DEBUG_FS) += v3d_debugfs.o
->>   
->> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
->> index d9547f5117b9..99c6a775d18b 100644
->> --- a/drivers/gpu/drm/v3d/v3d_bo.c
->> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
->> @@ -114,7 +114,7 @@ v3d_bo_create_finish(struct drm_gem_object *obj)
->>   	if (IS_ERR(sgt))
->>   		return PTR_ERR(sgt);
->>   
->> -	if (!v3d->gemfs)
->> +	if (!drm_gem_has_huge_mnt(obj->dev))
->>   		align = SZ_4K;
->>   	else if (obj->size >= SZ_1M)
->>   		align = SZ_1M;
->> @@ -150,12 +150,11 @@ struct v3d_bo *v3d_bo_create(struct drm_device *dev, struct drm_file *file_priv,
->>   			     size_t unaligned_size)
->>   {
->>   	struct drm_gem_shmem_object *shmem_obj;
->> -	struct v3d_dev *v3d = to_v3d_dev(dev);
->>   	struct v3d_bo *bo;
->>   	int ret;
->>   
->>   	shmem_obj = drm_gem_shmem_create_with_mnt(dev, unaligned_size,
->> -						  v3d->gemfs);
->> +						  dev->huge_mnt);
-> 
-> I thought you needed some kind of drm_gem_huge_mnt() helper to cover
-> for the fact drm_device::huge_mnt does not exist if
-> CONFIG_TRANSPARENT_HUGEPAGE=n.
+On Thu, Nov 13, 2025 at 8:03=E2=80=AFAM Ravi Bangoria <ravi.bangoria@amd.co=
+m> wrote:
+>
+> o Patch 1 resolves a segmentation fault in both "perf lock report"
+>   and "perf lock contention".
+> o Patch 2 repairs the perf-lock unit test.
 
-Ah right. For this one in v8, I've just added a temporary ifdef that 
-gets removed in the next commit while getting rif of the *_with_mnt 
-functions.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-> 
->>   	if (IS_ERR(shmem_obj))
->>   		return ERR_CAST(shmem_obj);
->>   	bo = to_v3d_bo(&shmem_obj->base);
->> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
->> index e8a46c8bad8a..30b55a00eeda 100644
->> --- a/drivers/gpu/drm/v3d/v3d_drv.c
->> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
->> @@ -107,7 +107,7 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
->>   		args->value = v3d->perfmon_info.max_counters;
->>   		return 0;
->>   	case DRM_V3D_PARAM_SUPPORTS_SUPER_PAGES:
->> -		args->value = !!v3d->gemfs;
->> +		args->value = drm_gem_has_huge_mnt(dev);
->>   		return 0;
->>   	case DRM_V3D_PARAM_GLOBAL_RESET_COUNTER:
->>   		mutex_lock(&v3d->reset_lock);
->> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
->> index 1884686985b8..99a39329bb85 100644
->> --- a/drivers/gpu/drm/v3d/v3d_drv.h
->> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
->> @@ -158,11 +158,6 @@ struct v3d_dev {
->>   	struct drm_mm mm;
->>   	spinlock_t mm_lock;
->>   
->> -	/*
->> -	 * tmpfs instance used for shmem backed objects
->> -	 */
->> -	struct vfsmount *gemfs;
->> -
->>   	struct work_struct overflow_mem_work;
->>   
->>   	struct v3d_queue_state queue[V3D_MAX_QUEUES];
->> @@ -569,6 +564,7 @@ extern const struct dma_fence_ops v3d_fence_ops;
->>   struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_queue q);
->>   
->>   /* v3d_gem.c */
->> +extern bool super_pages;
->>   int v3d_gem_init(struct drm_device *dev);
->>   void v3d_gem_destroy(struct drm_device *dev);
->>   void v3d_reset_sms(struct v3d_dev *v3d);
->> @@ -576,11 +572,6 @@ void v3d_reset(struct v3d_dev *v3d);
->>   void v3d_invalidate_caches(struct v3d_dev *v3d);
->>   void v3d_clean_caches(struct v3d_dev *v3d);
->>   
->> -/* v3d_gemfs.c */
->> -extern bool super_pages;
->> -void v3d_gemfs_init(struct v3d_dev *v3d);
->> -void v3d_gemfs_fini(struct v3d_dev *v3d);
->> -
->>   /* v3d_submit.c */
->>   void v3d_job_cleanup(struct v3d_job *job);
->>   void v3d_job_put(struct v3d_job *job);
->> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
->> index 5a180dc6c452..f316f67364d2 100644
->> --- a/drivers/gpu/drm/v3d/v3d_gem.c
->> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
->> @@ -259,6 +259,30 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
->>   	v3d_invalidate_slices(v3d, 0);
->>   }
->>   
->> +static void
->> +v3d_huge_mnt_init(struct v3d_dev *v3d)
->> +{
->> +	int err = 0;
->> +
->> +	/*
->> +	 * By using a huge shmemfs mountpoint when the user wants to
->> +	 * enable Super Pages, we can pass in mount flags that better
->> +	 * match our usecase.
->> +	 */
->> +
->> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
->> +		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
->> +
->> +	if (drm_gem_has_huge_mnt(&v3d->drm))
->> +		drm_info(&v3d->drm, "Using Transparent Hugepages\n");
->> +	else if (err)
->> +		drm_warn(&v3d->drm, "Can't use Transparent Hugepages (%d)\n",
->> +			 err);
->> +	else
->> +		drm_notice(&v3d->drm,
->> +			   "Transparent Hugepage support is recommended for optimal performance on this platform!\n");
->> +}
->> +
->>   int
->>   v3d_gem_init(struct drm_device *dev)
->>   {
->> @@ -310,7 +334,7 @@ v3d_gem_init(struct drm_device *dev)
->>   	v3d_init_hw_state(v3d);
->>   	v3d_mmu_set_page_table(v3d);
->>   
->> -	v3d_gemfs_init(v3d);
->> +	v3d_huge_mnt_init(v3d);
->>   
->>   	ret = v3d_sched_init(v3d);
->>   	if (ret) {
->> @@ -330,7 +354,6 @@ v3d_gem_destroy(struct drm_device *dev)
->>   	enum v3d_queue q;
->>   
->>   	v3d_sched_fini(v3d);
->> -	v3d_gemfs_fini(v3d);
->>   
->>   	/* Waiting for jobs to finish would need to be done before
->>   	 * unregistering V3D.
->> diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_gemfs.c
->> deleted file mode 100644
->> index bf351fc0d488..000000000000
->> --- a/drivers/gpu/drm/v3d/v3d_gemfs.c
->> +++ /dev/null
->> @@ -1,62 +0,0 @@
->> -// SPDX-License-Identifier: GPL-2.0+
->> -/* Copyright (C) 2024 Raspberry Pi */
->> -
->> -#include <linux/fs.h>
->> -#include <linux/mount.h>
->> -#include <linux/fs_context.h>
->> -
->> -#include <drm/drm_print.h>
->> -
->> -#include "v3d_drv.h"
->> -
->> -void v3d_gemfs_init(struct v3d_dev *v3d)
->> -{
->> -	struct file_system_type *type;
->> -	struct fs_context *fc;
->> -	struct vfsmount *gemfs;
->> -	int ret;
->> -
->> -	/*
->> -	 * By creating our own shmemfs mountpoint, we can pass in
->> -	 * mount flags that better match our usecase. However, we
->> -	 * only do so on platforms which benefit from it.
->> -	 */
->> -	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->> -		goto err;
->> -
->> -	/* The user doesn't want to enable Super Pages */
->> -	if (!super_pages)
->> -		goto err;
->> -
->> -	type = get_fs_type("tmpfs");
->> -	if (!type)
->> -		goto err;
->> -
->> -	fc = fs_context_for_mount(type, SB_KERNMOUNT);
->> -	if (IS_ERR(fc))
->> -		goto err;
->> -	ret = vfs_parse_fs_string(fc, "source", "tmpfs");
->> -	if (!ret)
->> -		ret = vfs_parse_fs_string(fc, "huge", "within_size");
->> -	if (!ret)
->> -		gemfs = fc_mount_longterm(fc);
->> -	put_fs_context(fc);
->> -	if (ret)
->> -		goto err;
->> -
->> -	v3d->gemfs = gemfs;
->> -	drm_info(&v3d->drm, "Using Transparent Hugepages\n");
->> -
->> -	return;
->> -
->> -err:
->> -	v3d->gemfs = NULL;
->> -	drm_notice(&v3d->drm,
->> -		   "Transparent Hugepage support is recommended for optimal performance on this platform!\n");
->> -}
->> -
->> -void v3d_gemfs_fini(struct v3d_dev *v3d)
->> -{
->> -	if (v3d->gemfs)
->> -		kern_unmount(v3d->gemfs);
->> -}
-> 
+Thanks!
+Ian
 
+> Ravi Bangoria (2):
+>   perf lock: Fix segfault due to missing kernel map
+>   perf test: Fix lock contention test
+>
+>  tools/perf/builtin-lock.c                 |  2 ++
+>  tools/perf/tests/shell/lock_contention.sh | 14 +++++++++-----
+>  2 files changed, 11 insertions(+), 5 deletions(-)
+>
+> --
+> 2.51.0
+>
 
