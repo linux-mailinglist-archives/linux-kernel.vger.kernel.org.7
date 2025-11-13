@@ -1,200 +1,168 @@
-Return-Path: <linux-kernel+bounces-899794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECC7C58E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:55:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3A0C58D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A2EA35F9A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0723BEAE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15935A95E;
-	Thu, 13 Nov 2025 16:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EE835CB8A;
+	Thu, 13 Nov 2025 16:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FXGx0vo5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GwhG7xFZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD835A15E;
-	Thu, 13 Nov 2025 16:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C2E35C1B6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050868; cv=none; b=IIxo5puebYFQkIv30DUM6WhzR4ITYviLQLPsl0JQRInXxvfK1QEZrncjEkw6oQUjGsVNi4+PoA2zmYYPmhXCABzBGYXORrlQUAyzGh6x7SyRz/At/rMUG0OIa+xpabP5N6fH2hJUe2hQ8l1RP89syrMszb5zG3JcJh9xk81yipg=
+	t=1763051241; cv=none; b=gUn7V4ED4RPHZcQlVj/iXU7usFxQB6bxV8fyqFVx6nZjNE+jpyAHPTMLd8GmP68RyQAkQhobRDVciPsdPfItv0qGorkuPOTDfitmLBhy1Rr64biU7wq1qxzOgl0JnB0cvqlWpNYl/ysVKucW+WxoFKkjlc7tJWd1Y63cr7UtZaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050868; c=relaxed/simple;
-	bh=eBWGYbEPMSvsTZJWmtZWO1t79PMxcV429zFLf0WhYQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kc6VD4UzMlKMjP4yw9RCxm/ZmFhi+SxLikIJmiCnSyxvgDPgzJb9P1arVq03t65PKCz0QMVOPAu8McGs/AFS3uO0QRnC/GvBcHqXNiDQGGKkf2qea5PLAj6QK+yKv9Hic20mWtNion0FD7k2MOS3tPTGUIcG9oELcJY0u3qdKnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FXGx0vo5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1763050864;
-	bh=eBWGYbEPMSvsTZJWmtZWO1t79PMxcV429zFLf0WhYQw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FXGx0vo55dQWrQLSZ6T5FwniDgYI8sm4cMlr4ZHSh0vV2u9jFCJsdEcRIbc7Tqdhr
-	 w/P4ldsvV+lsw6AGnXfWLgVu6XnFxaQ+J11rJiHgM8vE6bmEJs+AsfaIZUoYvZR8nh
-	 T5c7GcM+bDwbbNxRvnwst2Dr0au4OntLx9K99s3uAMbmEuJt67dgU8iyTogu4ch3MD
-	 xyYEPdMW+4+e4UgU7z0ppYQvxdtIv3Sx1eHwZFWIBZrSOv8GCYEIkyvJBVlS+ISK7F
-	 uip+yMNGWz97aCboHz61ru3EoKCProh9B/a0t23QVRJyGwwYGsEqVNkAbiuhI5c4Wx
-	 T2IyvBkxMAO/g==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:9cb8:f653:99e7:c419])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 97DB117E1341;
-	Thu, 13 Nov 2025 17:21:03 +0100 (CET)
-From: Laura Nao <laura.nao@collabora.com>
-To: daniel.lezcano@linaro.org
-Cc: andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	arnd@arndb.de,
-	bchihi@baylibre.com,
-	colin.i.king@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	frank-w@public-files.de,
-	fshao@chromium.org,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lala.lin@mediatek.com,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	nfraprado@collabora.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rui.zhang@intel.com,
-	srini@kernel.org,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH RESEND v3 4/9] thermal: mediatek: lvts: Add platform ops to support alternative conversion logic
-Date: Thu, 13 Nov 2025 17:20:53 +0100
-Message-Id: <20251113162053.281093-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
-References: <1e0545da-5d24-4ca4-863d-0d5671902d0b@linaro.org>
+	s=arc-20240116; t=1763051241; c=relaxed/simple;
+	bh=b6bHE2NWpx3/0Mi/dM/PxYqjKxh5deLzFeMeaeVZSeo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KYNVLgC+WvD0IU/1VMHUVziOpVE4baCR7dGuNUMaF8R8MIwtazrajRAy+OZn5eP1FbxwNgm2weKLN+6WhtjLow0R+mDWgHcFUBuSboqAcEeAT3bKhsuIgNWBJj5gRrfkrSfCvlxvrzUTU0qOTuyZDwRLYAFJr6cAMl1NBQr2ikQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GwhG7xFZ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763051239; x=1794587239;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=b6bHE2NWpx3/0Mi/dM/PxYqjKxh5deLzFeMeaeVZSeo=;
+  b=GwhG7xFZFwVxDapBTAJc0MONSy0HA+cQt7iYenysl3ZMF/kmLn3B1FND
+   mVAabm1ky17RDOr5fpsGWqTi65ZbX7lqjgRer15pLhxL1VAeG7LyG0Jda
+   2UBOGje6spxtvIOAE9MUpo5cz/YtnuBiKYzBKrDL4Xxb/JCMXE8zu5enF
+   Q69b9+XgKq4zPRTQaC4IHqO7YVD/z+A3inxbrSyDVkPrLTeXR4XeQptYD
+   vlNS4kDAzBDPea/wjUIM/GU3LLKQbYyRHhQgVNSuKoFR5gVruAmw+aq76
+   6mFW3+aDn5CMzC3+8ISKYDVswwcFJtZG9CaqvDU2CWvdkJIM+I8SlcQz8
+   A==;
+X-CSE-ConnectionGUID: Rccv7ZtRRjiM5GC5mxG3Ig==
+X-CSE-MsgGUID: UeEV55Y4RRmoajG2NkccGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="82767215"
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="82767215"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:27:16 -0800
+X-CSE-ConnectionGUID: Np/szchjTiq4/Ch1EPt/Dg==
+X-CSE-MsgGUID: 9n6RuKcET1SxFXRNEuApiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="190310091"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Nov 2025 08:27:15 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 6FF5B97; Thu, 13 Nov 2025 17:27:14 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Binbin Zhou <zhoubinbin@loongson.cn>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Chong Qiao <qiaochong@loongson.cn>,
+	Lee Jones <lee@kernel.org>
+Subject: [PATCH v2 1/2] mfd: ls2kbmc: Fully convert to use managed resources
+Date: Thu, 13 Nov 2025 17:22:50 +0100
+Message-ID: <20251113162713.3143777-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251113162713.3143777-1-andriy.shevchenko@linux.intel.com>
+References: <20251113162713.3143777-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Daniel,
+The mixing of managed and non-managed resources may lead to possible
+use-after-free bugs. In this driver the problematic part is the device
+functionality that may just have gone behind the functions back, e.g.,
+when interrupt is being served. Fix this by switching to managed resources
+for PCI.
 
-On 11/10/25 14:06, Daniel Lezcano wrote:
-> On 10/16/25 16:21, Laura Nao wrote:
->> Introduce lvts_platform_ops struct to support SoC-specific versions of
->> lvts_raw_to_temp() and lvts_temp_to_raw() conversion functions.
->>
->> This is in preparation for supporting SoCs like MT8196/MT6991, which
->> require a different lvts_temp_to_raw() implementation.
->>
->> Reviewed-by: Fei Shao <fshao@chromium.org>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>   drivers/thermal/mediatek/lvts_thermal.c | 27 ++++++++++++++++++++++---
->>   1 file changed, 24 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
->> index 4ef549386add..df1c0f059ad0 100644
->> --- a/drivers/thermal/mediatek/lvts_thermal.c
->> +++ b/drivers/thermal/mediatek/lvts_thermal.c
->> @@ -125,8 +125,14 @@ struct lvts_ctrl_data {
->>               continue; \
->>           else
->>   +struct lvts_platform_ops {
->> +    int (*lvts_raw_to_temp)(u32 raw_temp, int temp_factor);
->> +    u32 (*lvts_temp_to_raw)(int temperature, int temp_factor);
->> +};
->> +
->>   struct lvts_data {
->>       const struct lvts_ctrl_data *lvts_ctrl;
->> +    const struct lvts_platform_ops *ops;
->>       const u32 *conn_cmd;
->>       const u32 *init_cmd;
->>       int num_cal_offsets;
->> @@ -300,6 +306,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->>       struct lvts_ctrl *lvts_ctrl = container_of(lvts_sensor, struct lvts_ctrl,
->>                              sensors[lvts_sensor->id]);
->>       const struct lvts_data *lvts_data = lvts_ctrl->lvts_data;
->> +    const struct lvts_platform_ops *ops = lvts_data->ops;
->>       void __iomem *msr = lvts_sensor->msr;
->>       u32 value;
->>       int rc;
->> @@ -332,7 +339,7 @@ static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->>       if (rc)
->>           return -EAGAIN;
->>   -    *temp = lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor);
->> +    *temp = ops->lvts_raw_to_temp(value & 0xFFFF, lvts_data->temp_factor); 
->
-> Don't do this in each functions. It does not help for the readability.
->
-> May be something like:
->
-> int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
-> {
->     return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
-> }
->
-> or
->
-> int lvts_raw_to_temp(u32 raw_temp, const struct lvts_ctrl_data)
-> {
->     int temperature;
->
->     if (data->ops->lvts_temp_to_raw)
->         return data->ops->lvts_temp_to_raw(raw_temp, data->temp_factor);
->
->     temperature = ((s64)(raw_temp & 0xFFFF) * temp_factor) >> 14;
->         temperature += golden_temp_offset;
->
->         return temperature;
-> }
->
-> ... and get rid of all the lvts_platform_ops_v1
->
-> (btw _v1 is confusing, it suggests there multiple versions of the same SoC)
->
+Fixes: 91a3e1f5453a ("mfd: ls2kbmc: Check for devm_mfd_add_devices() failure")
+Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/ls2k-bmc-core.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-Right, the first option looks more efficient. Since temp_offset is 
-already part of lvts_data, the function would look like:
-
-int lvts_raw_to_temp(u32 raw_temp, const struct lvts_data *lvts_data)
-{
-	return lvts_data->ops->lvts_raw_to_temp(raw_temp, lvts_data->temp_factor);
-}
-
-and the same pattern applies for temp_to_raw().
-
-This change will require renaming the existing 
-lvts_raw_to_temp()/lvts_temp_to_raw()/lvts_temp_to_raw_v2() 
-implementations. I agree the current _v1 and _v2 suffixes aren’t very 
-descriptive. Since lvts_temp_to_raw_v2() version is only used by MT8196,
-it could be renamed to lvts_temp_to_raw_mt8196(), with the corresponding 
-platform ops defined as lvts_platform_ops_mt8196. The base 
-lvts_raw_to_temp()/lvts_temp_to_raw() are shared across the other SoCs,
-so they could be renamed after the first supported platform (mt7988) and 
-reused for all SoCs that share the same logic.
-
-I'll send out a v4 with the proposed changes.
-
-Thanks,
-
-Laura
-
-> [ ... ]
->
+diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+index 5f38514fa89e..1d8be9cdb3a8 100644
+--- a/drivers/mfd/ls2k-bmc-core.c
++++ b/drivers/mfd/ls2k-bmc-core.c
+@@ -464,25 +464,23 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	resource_size_t base;
+ 	int ret;
+ 
+-	ret = pci_enable_device(dev);
++	ret = pcim_enable_device(dev);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ddata = devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
+-	if (!ddata) {
+-		ret = -ENOMEM;
+-		goto disable_pci;
+-	}
++	if (!ddata)
++		return -ENOMEM;
+ 
+ 	ddata->dev = &dev->dev;
+ 
+ 	ret = ls2k_bmc_init(ddata);
+ 	if (ret)
+-		goto disable_pci;
++		return ret;
+ 
+ 	ret = ls2k_bmc_parse_mode(dev, &pd);
+ 	if (ret)
+-		goto disable_pci;
++		return ret;
+ 
+ 	ls2k_bmc_cells[LS2K_BMC_DISPLAY].platform_data = &pd;
+ 	ls2k_bmc_cells[LS2K_BMC_DISPLAY].pdata_size = sizeof(pd);
+@@ -490,23 +488,12 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 	/* Remove conflicting efifb device */
+ 	ret = aperture_remove_conflicting_devices(base, SZ_4M, "simple-framebuffer");
+-	if (ret) {
+-		dev_err(&dev->dev, "Failed to removed firmware framebuffers: %d\n", ret);
+-		goto disable_pci;
+-	}
++	if (ret)
++		return dev_err_probe(&dev->dev, ret, "Failed to remove firmware framebuffers\n");
+ 
+ 	return devm_mfd_add_devices(&dev->dev, PLATFORM_DEVID_AUTO,
+ 				    ls2k_bmc_cells, ARRAY_SIZE(ls2k_bmc_cells),
+ 				    &dev->resource[0], 0, NULL);
+-
+-disable_pci:
+-	pci_disable_device(dev);
+-	return ret;
+-}
+-
+-static void ls2k_bmc_remove(struct pci_dev *dev)
+-{
+-	pci_disable_device(dev);
+ }
+ 
+ static struct pci_device_id ls2k_bmc_devices[] = {
+@@ -519,7 +506,6 @@ static struct pci_driver ls2k_bmc_driver = {
+ 	.name = "ls2k-bmc",
+ 	.id_table = ls2k_bmc_devices,
+ 	.probe = ls2k_bmc_probe,
+-	.remove = ls2k_bmc_remove,
+ };
+ module_pci_driver(ls2k_bmc_driver);
+ 
+-- 
+2.50.1
 
 
