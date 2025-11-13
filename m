@@ -1,199 +1,132 @@
-Return-Path: <linux-kernel+bounces-899076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DDBC56B22
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:53:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616DEC56B3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C15834DBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B5D3350EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5612E03EF;
-	Thu, 13 Nov 2025 09:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5334A2DF707;
+	Thu, 13 Nov 2025 09:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBqx3iDU"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iUsMD6E3"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DE72DECA1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B302D7386;
+	Thu, 13 Nov 2025 09:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763027516; cv=none; b=hXXadbaROTsCh17oHQ7yZ74TTsqdxreu/qdH8eLTjbXlDVc0MARVISfLX0/RtWplhmiO/eEwyxyUnbL5u0IBKrxAG4lvo3KXlym5/1RdwDrlXCB82y7uUnfMgKS8gjpg7cWlWgH7nLZHMOyjt4JguR+YgX2N2tBRMkrlgotguIo=
+	t=1763027564; cv=none; b=VYV+Cq0+eX1ZvVuB7I9RWsiXAor1LDCNpqBt2fVduhAkx9OT52rJTu/EbVgbxDO4MVnEEzEGiAfWaGnGPXcM7HUwCxw0U9Sl57HT30nqtT/0Cp8fXuaSeZE2y+55qykAYUJXvlow1i8quNqsZuxx4g+1qo5M0KHF87r6aiXB7ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763027516; c=relaxed/simple;
-	bh=1oacFYY/294TkhoTBx5pVnm2MquFkmlHkFBHaMNlPfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZfRCW0ClKYHqkYZAD25eRnRh+DEYOdopKzS5dpM60hy6gK07EJaAdrAJn9PvTL8FaFWjWXG4yCfdrO5Q7YKdFJz19tWP1STComp/+cWkCzvU1BRksxSHI4GWMEZ37XB0Fuiey0P02X/eqa9oy2cQbMK5hhU/kTQyGJP4lGw04eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBqx3iDU; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b32ff5d10so1032084f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763027513; x=1763632313; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDYZngmwSRp+0NNAwoPTnkhHZW5E4BniA8duLqhYUG0=;
-        b=CBqx3iDUQC4FdMFOg5rqeoQLrvVlMD4F1JABvIRPnoED3VbaBWTxIUhETV7JWNSw7v
-         AuCDQPOG/sEjmn5swazPIDXI1dsNoBvEiYAXtQhGivdbdmK8t/aFMwZrfBF49LLC4KvE
-         arYLTbTKQzsO4k4EhfOlDM5syHRFNjdYs9tprBQ1hZ7/VUcR8PAZROYfK+ksGQOq8T6L
-         uhL4Zxa5BLxVNIAgEX5rttAflXGQgnDoy8c6OkkTXNRJfHGcVO8PylHtYl1N/9sWOrSb
-         W01xaT7rCITpfstiHtf3HbZfeTwlVR+wYxkQ78YJtquPt6s0prMg6EKWnUZlbskN3AaX
-         kCcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763027513; x=1763632313;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZDYZngmwSRp+0NNAwoPTnkhHZW5E4BniA8duLqhYUG0=;
-        b=Wgx9pAPWE2ZVPmht6itgyZplEfQ7xkHFGcRETDbW9zlWc0qUo6qNQuZXRqDBuIAJET
-         Dpeu4bpSklXQpJ43gaLO8p7wAaI93QXiQ83Vi9O3SiVR8y3ntks1rIMOnLoJjBZrfTOZ
-         u/KheRm03ZP5xZg2nU3oFZ+UiU4I8hpWOANqLp/+sdTFfdQpmPtUveI06bk2N8Dfzz0S
-         lDrNTogkbW5Yrl+/8QKkVRZI1cJUbOjhZJVTJ8OeZGWM4RDjrGIKSxofhj/jUCffr8ng
-         RPA8neiYKqp8in8ynvwgEmfLgfWgiWB9EN4E4sN4dDagImVbZ+u/7cNjEF7CS1yZZLxK
-         9XVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXo9QMZa4kW4pNLp7ddUJMxRwIWYvmGLgQnZh3Zi6cbbaaPOKrvRhWq6qDUyQno62VMpYow5lEFN2nHvNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6CJPPN53scnPVkhQF2ONOGMkwsl/1PovAVuEEbMprBkTejDlj
-	wgcMtIA0rX1/+ser7t1lnCC9X3kNSSFQHI1ndebC4lPXqHrZUE8C+7weFJ1xfvuEMHI=
-X-Gm-Gg: ASbGncsuBlt0ObDBI5rkTTx5dW8HHP1GGlHK+ExX2f3s8f3ZYEPg+ftv0HwmmrUUPZb
-	nfjr+0rE/7LfTA0v83UHAcAapR9c3YRSKkYb6+wf2dThIg2UMbdKEPS30uQwNhrFnbVtHusowDX
-	SUJkPXUQkug5/Kcwb6QtcY5Fe6HpCgRoUa7IUNXI3H+IyCaCOHD48BWQp4YOr1NdREHhfFVwfmu
-	atwaZUTgbCzGrURNxMkuiSPdbBFuoM84HVa0IxC3T30ll7jwC/WDWUA6bnAQnY+hT2E/LGG30Pc
-	87iaJXw52n3JUf6ZpK96RSAf9fCU6WbpbzZm2z6UnpV4GZJMSdEl0TYYD3k7XmFRoMA2BuYcDkY
-	TJiQr9Vrzkj58bu9VMR85K/BHRNYZqEX+6iHVPiqT9Yefg3ThDMM3hVXuSRXXwVMmI2KrtKGtRo
-	LmP9+bLb94DmH3yRC/
-X-Google-Smtp-Source: AGHT+IHZkeuEDZYJsmeqSkNhq3Bl5KYXIylnr89Ea5RYR3BcZR9jpgcLY7nN/+8jXCtmO4YuJD3daw==
-X-Received: by 2002:a05:6000:2887:b0:429:58f:26f with SMTP id ffacd0b85a97d-42b5281c40cmr2203450f8f.24.1763027512635;
-        Thu, 13 Nov 2025 01:51:52 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f1fd50sm2817519f8f.38.2025.11.13.01.51.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 01:51:52 -0800 (PST)
-Message-ID: <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
-Date: Thu, 13 Nov 2025 11:51:50 +0200
+	s=arc-20240116; t=1763027564; c=relaxed/simple;
+	bh=HawrWamy5gC7MeG4MPXBaeV9ev4dwlaRokgxvbQhRYk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
+	 References:In-Reply-To; b=XQbChfa1zKGU/RJfyXID6HGgb4YUjMb0zNcSUPJosRlUh9EZS8VQlsfOJlXWNvGD1+oWVqxa6M6wstJd3JEDXEs9nMOZ52S2zqbkR62O31CJlzPkr3SxGTX/+e2FPr6KVO6EbbM8Hwr4ZbpPDXdLiFixVRFucHZhgL34jUxwhFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iUsMD6E3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD09kSm016918;
+	Thu, 13 Nov 2025 09:52:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2EDy8i
+	Q9NPrvyh1QM0UAJKoiRuih8C1644g+NmGDrqc=; b=iUsMD6E3UbTAhi4m7kMYt7
+	xc5dw3oGE94ualt2IwlWwjehumx6qyKfUP3KSOhUm8q0bcq/f15n5KlYjk3ezQ6F
+	fdm6lxSxM51X8bZlYGPq9f9aViwkXwAyLInuwia/U4kFLyVA2yF29XTbEDHF3lCr
+	QQHojLSBPACfDnsxDf2qokE7cXqbx18Qv/6ITviELWjDfhfb3/uZUVemyqYgVjn8
+	TWpqihlMpfIPc3WdPi9tuxQH/Di5vuw6lZT5IQBlzVTFl6//cVbLZ5ev6bjx5loT
+	jJztGAxiJ8LrwuhOGQAhJW/Jeff1vf0hAXhTu95pL4UlHF48fOxyApPT/yQ3CfeA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk8f7ka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 09:52:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD8kbaq014779;
+	Thu, 13 Nov 2025 09:52:39 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpkd3h6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 09:52:39 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AD9qZKZ9109926
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 09:52:35 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 928EA2004D;
+	Thu, 13 Nov 2025 09:52:35 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6D4B120043;
+	Thu, 13 Nov 2025 09:52:35 +0000 (GMT)
+Received: from darkmoore (unknown [9.111.1.139])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Nov 2025 09:52:35 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
- <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
- <20251113-benign-macaw-of-development-dbd1f8@kuoka>
- <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
- <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 13 Nov 2025 10:52:30 +0100
+Message-Id: <DE7H3VEYBLXH.2XVJA91Q16GFB@linux.ibm.com>
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <borntraeger@de.ibm.com>, <frankja@linux.ibm.com>, <nsg@linux.ibm.com>,
+        <nrb@linux.ibm.com>, <seiden@linux.ibm.com>,
+        <schlameuss@linux.ibm.com>, <hca@linux.ibm.com>, <svens@linux.ibm.com>,
+        <agordeev@linux.ibm.com>, <gor@linux.ibm.com>, <david@redhat.com>,
+        <gerald.schaefer@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 06/23] KVM: s390: Rename some functions in gaccess.c
+X-Mailer: aerc 0.21.0
+References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+ <20251106161117.350395-7-imbrenda@linux.ibm.com>
+In-Reply-To: <20251106161117.350395-7-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX7SddIxEH0tTB
+ vqDb8kNeIRkXrXm6DM9rGQv8unoEOKqu0WbVGNunp4sLP/XfIo3dMyyPY3NtrCNMMbEZs9/QOWh
+ zTJDA4sUw01DSTQhNjM4V5QSi3lI/oB6PU9ykdyTRD7EN4HJ3pqYvPLMcxXGoR0Ip6072KGBu2P
+ EKz5kQZYdJ9jLfJsDDpaMdBMVy7UZnxcM+tJoFHZZpAd5PaPTxnQydL9ZqcnOH7+gB2huy9lV1Z
+ ovngXRuh5tYDZYkEbjWb82NygxusRBZU2HgoJPQfFBOf/so7OB3RfEbSc16/VZ+6dSHZdW193jx
+ EyzVcsUOzouyRDcHxCA64MOHnM2tahzE9CQED9PfMVvCNZayTkiPdwy5mL8IcsXAFWqjlrfJXCd
+ vSvkWfElW6yDNQVeUNhRWjt15chSVg==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6915aa68 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=bQmgN-JATwzZSvIza_4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: x1Q1VPTmynAChpd1pBLaE4JICxDiwr8o
+X-Proofpoint-GUID: x1Q1VPTmynAChpd1pBLaE4JICxDiwr8o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_01,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
+On Thu Nov 6, 2025 at 5:11 PM CET, Claudio Imbrenda wrote:
+> Rename some functions in gaccess.c to add a _gva or _gpa suffix to
+> indicate whether the function accepts a virtual or a guest-absolute
+> address.
+>
+> This makes it easier to understand the code.
+>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Reviewed-by: Steffen Eiden <seiden@linux.ibm.com>
 
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-On 11/13/25 11:35 AM, Krzysztof Kozlowski wrote:
-> On 13/11/2025 10:28, Tudor Ambarus wrote:
->>
->>
->> On 11/13/25 10:30 AM, Krzysztof Kozlowski wrote:
->>> On Wed, Nov 12, 2025 at 08:29:06AM +0000, Tudor Ambarus wrote:
->>>> Add initial support for the Samsung Exynos OTP controller. Read the
->>>> product and chip IDs from the OTP controller registers space and
->>>> register the SoC info to the SoC interface.
->>>>
->>>> The driver can be extended to empower the controller become nvmem
->>>> provider. This is not in the scope of this patch because it seems the
->>>> OTP memory space is not yet used by any consumer, even downstream.
->>>
->>> Quick look tells me you just duplicated existing Samsung ChipID driver.
->>> Even actual product ID registers and masks are the same, with one
->>> difference - you read CHIPID3... which is the same as in newer Exynos,
->>> e.g. Exynos8895.
->>
->> Yes, that's correct. It's very similar with the Samsung ChipID driver.
->>
->>>
->>> What is exactly the point of having this as separate driver? I think
->>
->> The difference is that for gs101 the chipid info is part of the OTP
->> registers. GS101 OTP has a clock, an interrupt line, a register space 
->> (that contains product and chip ID, TMU data, ASV, etc) and a 32Kbit
->> memory space that can be read/program/locked with specific commands.
->>
->> The ChipID driver handles older exynos platforms that have a dedicated
->> chipid device that references a SFR register space to get the product
->> and chip ID. On GS101 (but also for e850 and autov9 I assume) the
->> "ChipID block" is just an abstraction, it's not a physical device. The
->> ChipID info is from OTP. When the power-on sequence progresses, the OTP
->> chipid values are loaded to the OTP registers. We need the OTP clock to
->> be on in order to read them. So GS101 has an OTP device that also happens
->> to have chip ID info.
->>
->> For now I just got the chipid info and registered it to the SoC interface
->> (which is very similar to that the exynos-chipid driver does), but this
->> driver can be extended to export both its memory space and register space
-> 
-> 
-> There is no code for that now and possibility of extension is not a
-> reason to duplicate yet.
-> 
->> as nvmem devices, if any consumer needs them. Downstream GS101 drivers
->> seem to use just the chip id info and a dvfs version from the OTP
->> registers. DVFS version is not going to be used upstream as we're defining
->> the OPPs in DT. So I was not interested in extending the driver with nvmem
->> provider support, because it seems we don't need it for GS101.
->>
->> Do the above justify the point of having a dedicated driver?
-> Only partially, I asked about driver. I did not spot previously the
-> clock, so we have two differences - CHIPID3 register and clock - right?
-
-clock and interrupts, but I don't use the interrupts because I just need
-to read the OTP registers to get the chip id info.
-
-> I wonder why Exynos8895 and others, which are already supported, do not
-> use CHIPID3, but nevertheless these two differences can be easily
-> integrated into existing driver.
-
-they can be integrated, but I want to make sure we're making the best
-decision.
-
->>> this can easily be just customized chipid driver - with different
->>> implementation of exynos_chipid_get_chipid_info().
->>
->> If the answer is no to my question above, how shall I model the device
->> that binds to the existing exynos-chipid driver?
-> Just extend the existing driver.
-> 
-So you mean I shall have something like that in DT:
-
-+		chipid@10000000 {
-+			compatible = "google,gs101-chipid";
-+			reg = <0x10000000 0xf084>;
-+			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
-+			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
-+		};
-
-Maybe remove the interrupts because I don't need them for reading OTP regs.
-
-What happens in the maybe unlikely case we do want to add support for OTP
-for GS101? How will we describe that in DT?
-
-Thanks!
-ta
+> ---
+>  arch/s390/kvm/gaccess.c | 51 +++++++++++++++++++----------------------
+>  1 file changed, 24 insertions(+), 27 deletions(-)
 
