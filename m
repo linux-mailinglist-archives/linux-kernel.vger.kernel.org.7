@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-900026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09526C59659
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:13:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C6EC5981C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBC23B4976
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:07:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA8B2540E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F435BDC5;
-	Thu, 13 Nov 2025 18:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7841835C1A7;
+	Thu, 13 Nov 2025 18:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2K4FzeLW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CZd7IqWD"
 Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6D635B142
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422835B14F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057159; cv=none; b=bo1HU7Q6jrhyXvaTDBiTK3SYW0IljGk78fkjzdcLNjMMfByjkQwLLxkZdQcgqA7zKjYyLUXIIWvf5NIS2jpbbSqGJr/vGaCycXUjUIInPDQe5P7SE0NCibAGEOX/znIVSRJQjjJM4RGFsznwp7ysUOUvPVNIDtxFy8N9jT4HhGw=
+	t=1763057162; cv=none; b=ejTDQJu1/lZmMvmlsQh9fKbVP2L1FsxuucksYVKhOJIGHJCX3AbH9hgeJuXV17B7g7+8qB1/bUAf5AdQ6gmV89jVLA+TM6PMr0QKPhXdL7JaprWC8DXcfqTaNxW41IbB7DYXq5eF2jEUm1Nt5YFJUnmIOxabnOS4uX2eWjuxQp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057159; c=relaxed/simple;
-	bh=0f1TDzO6H6tB8Sqz0jVLsYxxLfA6IgKxvXEGC+7+pOU=;
+	s=arc-20240116; t=1763057162; c=relaxed/simple;
+	bh=tOCRp6q8cU4TvS3BW3hxq4YfZFgatWkJuBOP3VOz8ss=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=HrQGicJR85RysZIojxRWwN7FVGKN0CgwYl6lQKVf/IE6VfkNd7K0E9rK4fkbjHi/cuTisXG3uM00JexXt25yw3p5w2Ugs/yd/mXVqVjPPLutHFD4EfcJt7N1IuQmAViU/TNhKuZbgYe6dmH20tDFwaM24CUNclEloIqk5pGTJDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2K4FzeLW; arc=none smtp.client-ip=209.85.215.202
+	 To:Content-Type; b=ZFv5CrG7u0a/uyf9Ami8CwHYi6yIshr3bw10j4Ogv+N8TibMPmnrPWEmQh65aIfUwzGa2Hb6U8eoYb2FpZ3UBeeyR2TDaWJbSGmJvQoGZxAourn75sH1sOh1I8lLelxcvB1uZheBoyhk+w+vwuQAG2pWr5uvccyPqYuZO5+tutE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CZd7IqWD; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b9ceccbd7e8so2363853a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:57 -0800 (PST)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-bc0de474d4eso2284674a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763057157; x=1763661957; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763057159; x=1763661959; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YuP8PXUqe7Wr/8ISWkGnPVH1SBV8e8BOv5yyhohFapc=;
-        b=2K4FzeLWkayKZCudP1am8VPGfIv1ILGf6uTpjQOG64yzus2VyHDMnAQhZBZEN+oW+j
-         6NR4ocLpQ8yw4TEko6zG7gLHdxyphyGyCQSeSWgiQ/TxTY7n1AbVoXpS/LbF0/mLBP1H
-         csGoPbs0GT2RMPqdcpnKOwwM8axLTzc7O9/qxFq8rli6iLBl6oyebOIsUJgxL4/iS6EI
-         aK73wcKuzDTNCQLXIivPuTvTOcQJblKSRiD6lUk6lDfYzzww3uDifMskz4SO61BmZ3eE
-         NBDAPSZSTv7GS1DFKJQhtRjWQdXqvyyG6mOWnDC8VkXByZvLCOLixH+uLRKxSyMtBZpP
-         4yTg==
+        bh=F/LpTxscNWWRbaTmICukfm1cE/Qpboh07gAHjTodIzU=;
+        b=CZd7IqWDtAk47dGGHBRcgWmqcprLVaVozudTCTul/QirWcbSX5rofJ5TAEvFAV1PYO
+         7C0EGhPjQT90OecaxNQ9AgNv7svHvuzmT39ERFOX9ty6Vfggo9ZAOTtcimjLrp69uZQ8
+         OCMdXBQKr1ga64vRpFdZ4AkiRLiULG6VjaYH54bJuTMbT2GsV68hIUZEDwad2HuuAfOl
+         XwUtiSqiGdUb4Orv538ZENpggsiw8SZ/BJ/WT9h7rgdvd4T+X2jqPSt0fhid1fq8J4O4
+         iZQ+TgxSKUbnK7dcPGOR78fniX8Y0n8k0yZoow4bYQS8WSW7Ym4WeOrKvnayQ6GoNb5x
+         Nsag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763057157; x=1763661957;
+        d=1e100.net; s=20230601; t=1763057159; x=1763661959;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YuP8PXUqe7Wr/8ISWkGnPVH1SBV8e8BOv5yyhohFapc=;
-        b=Ecp4mU5hurUJXPbbMQU3mq/h91X8xDXwUgrKl0A+A27wvJr5M7lQFPZz86qpU8kwgw
-         TAY6TQ6ISjRtknoM7Vl/lkcpsoc5b+STKvXRft8XpDzYlsc6d23EecA/uvlYu555rtyC
-         Q/rZS7WLAC8Jn9A97j40GIfJpMDwj1KEsYpbvUxWlD+Aa0niMCSD3HSRPOtWFeFwra+O
-         y+kPDs/f7fDQrdO/yUdzs0GoQdf1mZRZkt8o3TfA7LU1e9BMgGszbVsVx9mHti++O6L9
-         wIZWJbGdwVHe5rhFfQG4YF1B1MLvLX4IQj1A8YjSnNGsSEUwRh0XEk86XvvWBerluOk9
-         Rsaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpXejE3wl2ChhSjuqkAXh5wTjyzqxwXeWkuSCbJd0YVYno3UWaPjsQjYta1rtd5CV3VPCGg4HAWTg6w8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyusbQZhzhwtjWiKBUVJi+y2wrT76YWNEHI5BuUGr33j494q0TN
-	rZ0yTpyp+68/3URUcRErxY1GsZp78l7QlIxQoDUoSWEdows9iw8c/Imebp7uYu8QpNT1o0aWGhd
-	WyoF3GTuU+w==
-X-Google-Smtp-Source: AGHT+IG4tLWQG6Nhx7yV9QcYVY05Ov9bXvi/owMeYul8P75j8HZaUm6CF2k78DeEPMIywkJ59xIfi2JtS0wT
-X-Received: from dlbbq19.prod.google.com ([2002:a05:7022:6713:b0:11b:1a9a:d2e8])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:ef0f:b0:11b:dff:7830
- with SMTP id a92af1059eb24-11b40fa3490mr182386c88.18.1763057156938; Thu, 13
- Nov 2025 10:05:56 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:05:13 -0800
+        bh=F/LpTxscNWWRbaTmICukfm1cE/Qpboh07gAHjTodIzU=;
+        b=b766F3Xz07ikUVjIUHBbKLJEwIeYnk4jAEUMFuX7tU8VQ2PdrohshXSPcYEREw6mix
+         Yb4wbBITf+Fr+nIR/QBQI3/QvwLkW6H93ZCiUMYIKylZadf5Kc91Sw0oP3n+h7Sd/fD0
+         xjpVoljZvYBwE8eLCMv9l4Qqd8WNIFzEcGuUb8DXa+Eaj4giDP2BNHHGW5WocwLD3QmU
+         ZI4NqMbW/7qQJBOQLepupgAMVcYMk4GnCOnXXFlod+Co4kR1+D+oihEey0+9f6j0mbBK
+         f+G05lPeYTB15Y5CkTnqKdQcT/iYzP+3D76JFmS0IiM1Laqu7kMf1j0cLAeSOwvq7DPQ
+         J6yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIN/2dyrTjFp2EQ/bk1vYEHeS9EX+WLATfXax9O/kUxGmOZokCUd6mrA6yBk8mcVm2O+sxXHiGLxgImk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPth6ajkuCA7H2omwUbVV4k0/NhvGSmD6ZepUTMq4RlrGr+UCY
+	TxW+SB6hs9Iyru943ajaklnTUYxNqQR/c+crSgJD8OAr40BPLPZaqwCGyF/dE2BafzO0ho76POD
+	kumt3tJU/1g==
+X-Google-Smtp-Source: AGHT+IFbMUItGVTF42dSaK9s8x3Bi3vZ2OPTsK+hudUOLg8fchArlJqAlFXzGG/D1iZ6tcyeB6nMmOxz8k9/
+X-Received: from dybma14.prod.google.com ([2002:a05:7301:168e:b0:2a4:4843:eafd])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7301:1288:b0:2a4:3592:cf6f
+ with SMTP id 5a478bee46e88-2a4abb0328cmr151599eec.19.1763057159118; Thu, 13
+ Nov 2025 10:05:59 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:05:14 -0800
 In-Reply-To: <20251113180517.44096-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251113180517.44096-1-irogers@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251113180517.44096-8-irogers@google.com>
-Subject: [PATCH v4 07/10] perf tool_pmu: More accurately set the cpus for tool events
+Message-ID: <20251113180517.44096-9-irogers@google.com>
+Subject: [PATCH v4 08/10] perf evlist: Reduce affinity use and move into
+ iterator, fix no affinity
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,106 +88,591 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The user and system time events can record on different CPUs, but for
-all other events a single CPU map of just CPU 0 makes sense. In
-parse-events detect a tool PMU and then pass the perf_event_attr so
-that the tool_pmu can return CPUs specific for the event. This avoids
-a CPU map of all online CPUs being used for events like
-duration_time. Avoiding this avoids the evlist CPUs containing CPUs
-for which duration_time just gives 0. Minimizing the evlist CPUs can
-remove unnecessary sched_setaffinity syscalls that delay metric
-calculations.
+The evlist__for_each_cpu iterator will call sched_setaffitinity when
+moving between CPUs to avoid IPIs. If only 1 IPI is saved then this
+may be unprofitable as the delay to get scheduled may be
+considerable. This may be particularly true if reading an event group
+in `perf stat` in interval mode.
+
+Move the affinity handling completely into the iterator so that a
+single evlist__use_affinity can determine whether CPU affinities will
+be used. For `perf record` the change is minimal as the dummy event
+and the real event will always make the use of affinities the thing to
+do. In `perf stat`, tool events are ignored and affinities only used
+if >1 event on the same CPU occur. Determining if affinities are
+useful is done by per-event in a new PMU benefits from affinity
+function.
+
+Fix a bug where when there are no affinities that the CPU map iterator
+may reference a CPU not present in the initial evsel. Fix by making
+the iterator and non-iterator code common.
+
+Fix a bug where closing events on an evlist wasn't closing TPEBS
+events.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/parse-events.c |  9 +++++++--
- tools/perf/util/tool_pmu.c     | 19 +++++++++++++++++++
- tools/perf/util/tool_pmu.h     |  1 +
- 3 files changed, 27 insertions(+), 2 deletions(-)
+ tools/perf/builtin-stat.c | 128 ++++++++++++++----------------
+ tools/perf/util/evlist.c  | 160 ++++++++++++++++++++++++--------------
+ tools/perf/util/evlist.h  |  26 +++++--
+ tools/perf/util/pmu.c     |  12 +++
+ tools/perf/util/pmu.h     |   1 +
+ 5 files changed, 189 insertions(+), 138 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 0c0dc20b1c13..7b2422ccb554 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -30,6 +30,7 @@
- #include "util/event.h"
- #include "util/bpf-filter.h"
- #include "util/stat.h"
-+#include "util/tool_pmu.h"
- #include "util/util.h"
- #include "tracepoint.h"
- #include <api/fs/tracing_path.h>
-@@ -227,8 +228,12 @@ __add_event(struct list_head *list, int *idx,
- 	if (pmu) {
- 		is_pmu_core = pmu->is_core;
- 		pmu_cpus = perf_cpu_map__get(pmu->cpus);
--		if (perf_cpu_map__is_empty(pmu_cpus))
--			pmu_cpus = cpu_map__online();
-+		if (perf_cpu_map__is_empty(pmu_cpus)) {
-+			if (perf_pmu__is_tool(pmu))
-+				pmu_cpus = tool_pmu__cpus(attr);
-+			else
-+				pmu_cpus = cpu_map__online();
-+		}
- 	} else {
- 		is_pmu_core = (attr->type == PERF_TYPE_HARDWARE ||
- 			       attr->type == PERF_TYPE_HW_CACHE);
-diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-index 6a9df3dc0e07..37c4eae0bef1 100644
---- a/tools/perf/util/tool_pmu.c
-+++ b/tools/perf/util/tool_pmu.c
-@@ -2,6 +2,7 @@
- #include "cgroup.h"
- #include "counts.h"
- #include "cputopo.h"
-+#include "debug.h"
- #include "evsel.h"
- #include "pmu.h"
- #include "print-events.h"
-@@ -13,6 +14,7 @@
- #include <api/fs/fs.h>
- #include <api/io.h>
- #include <internal/threadmap.h>
-+#include <perf/cpumap.h>
- #include <perf/threadmap.h>
- #include <fcntl.h>
- #include <strings.h>
-@@ -109,6 +111,23 @@ const char *evsel__tool_pmu_event_name(const struct evsel *evsel)
- 	return tool_pmu__event_to_str(evsel->core.attr.config);
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index ca1c80c141b6..947f11b8b106 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -366,22 +366,14 @@ static int read_counter_cpu(struct evsel *counter, int cpu_map_idx)
+ 	return 0;
  }
  
-+struct perf_cpu_map *tool_pmu__cpus(struct perf_event_attr *attr)
+-static int read_affinity_counters(void)
++static int read_counters_with_affinity(void)
+ {
+ 	struct evlist_cpu_iterator evlist_cpu_itr;
+-	struct affinity saved_affinity, *affinity;
+ 
+ 	if (all_counters_use_bpf)
+ 		return 0;
+ 
+-	if (!target__has_cpu(&target) || target__has_per_thread(&target))
+-		affinity = NULL;
+-	else if (affinity__setup(&saved_affinity) < 0)
+-		return -1;
+-	else
+-		affinity = &saved_affinity;
+-
+-	evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
++	evlist__for_each_cpu(evlist_cpu_itr, evsel_list) {
+ 		struct evsel *counter = evlist_cpu_itr.evsel;
+ 
+ 		if (evsel__is_bpf(counter))
+@@ -390,8 +382,6 @@ static int read_affinity_counters(void)
+ 		if (!counter->err)
+ 			counter->err = read_counter_cpu(counter, evlist_cpu_itr.cpu_map_idx);
+ 	}
+-	if (affinity)
+-		affinity__cleanup(&saved_affinity);
+ 
+ 	return 0;
+ }
+@@ -414,12 +404,18 @@ static int read_bpf_map_counters(void)
+ 
+ static int read_counters(void)
+ {
+-	if (!stat_config.stop_read_counter) {
+-		if (read_bpf_map_counters() ||
+-		    read_affinity_counters())
+-			return -1;
+-	}
+-	return 0;
++	int ret;
++
++	if (stat_config.stop_read_counter)
++		return 0;
++
++	// Read all BPF counters first.
++	ret = read_bpf_map_counters();
++	if (ret)
++		return ret;
++
++	// Read non-BPF and non-tool counters next.
++	return read_counters_with_affinity();
+ }
+ 
+ static void process_counters(void)
+@@ -760,7 +756,6 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 	const bool forks = (argc > 0);
+ 	bool is_pipe = STAT_RECORD ? perf_stat.data.is_pipe : false;
+ 	struct evlist_cpu_iterator evlist_cpu_itr;
+-	struct affinity saved_affinity, *affinity = NULL;
+ 	int err, open_err = 0;
+ 	bool second_pass = false, has_supported_counters;
+ 
+@@ -772,14 +767,6 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		child_pid = evsel_list->workload.pid;
+ 	}
+ 
+-	if (!cpu_map__is_dummy(evsel_list->core.user_requested_cpus)) {
+-		if (affinity__setup(&saved_affinity) < 0) {
+-			err = -1;
+-			goto err_out;
+-		}
+-		affinity = &saved_affinity;
+-	}
+-
+ 	evlist__for_each_entry(evsel_list, counter) {
+ 		counter->reset_group = false;
+ 		if (bpf_counter__load(counter, &target)) {
+@@ -792,49 +779,48 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 	evlist__reset_aggr_stats(evsel_list);
+ 
+-	evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
+-		counter = evlist_cpu_itr.evsel;
++	/*
++	 * bperf calls evsel__open_per_cpu() in bperf__load(), so
++	 * no need to call it again here.
++	 */
++	if (!target.use_bpf) {
++		evlist__for_each_cpu(evlist_cpu_itr, evsel_list) {
++			counter = evlist_cpu_itr.evsel;
+ 
+-		/*
+-		 * bperf calls evsel__open_per_cpu() in bperf__load(), so
+-		 * no need to call it again here.
+-		 */
+-		if (target.use_bpf)
+-			break;
++			if (counter->reset_group || !counter->supported)
++				continue;
++			if (evsel__is_bperf(counter))
++				continue;
+ 
+-		if (counter->reset_group || !counter->supported)
+-			continue;
+-		if (evsel__is_bperf(counter))
+-			continue;
++			while (true) {
++				if (create_perf_stat_counter(counter, &stat_config,
++							      evlist_cpu_itr.cpu_map_idx) == 0)
++					break;
+ 
+-		while (true) {
+-			if (create_perf_stat_counter(counter, &stat_config,
+-						     evlist_cpu_itr.cpu_map_idx) == 0)
+-				break;
++				open_err = errno;
++				/*
++				 * Weak group failed. We cannot just undo this
++				 * here because earlier CPUs might be in group
++				 * mode, and the kernel doesn't support mixing
++				 * group and non group reads. Defer it to later.
++				 * Don't close here because we're in the wrong
++				 * affinity.
++				 */
++				if ((open_err == EINVAL || open_err == EBADF) &&
++					evsel__leader(counter) != counter &&
++					counter->weak_group) {
++					evlist__reset_weak_group(evsel_list, counter, false);
++					assert(counter->reset_group);
++					counter->supported = true;
++					second_pass = true;
++					break;
++				}
+ 
+-			open_err = errno;
+-			/*
+-			 * Weak group failed. We cannot just undo this here
+-			 * because earlier CPUs might be in group mode, and the kernel
+-			 * doesn't support mixing group and non group reads. Defer
+-			 * it to later.
+-			 * Don't close here because we're in the wrong affinity.
+-			 */
+-			if ((open_err == EINVAL || open_err == EBADF) &&
+-				evsel__leader(counter) != counter &&
+-				counter->weak_group) {
+-				evlist__reset_weak_group(evsel_list, counter, false);
+-				assert(counter->reset_group);
+-				counter->supported = true;
+-				second_pass = true;
+-				break;
++				if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
++					break;
+ 			}
+-
+-			if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
+-				break;
+ 		}
+ 	}
+-
+ 	if (second_pass) {
+ 		/*
+ 		 * Now redo all the weak group after closing them,
+@@ -842,7 +828,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		 */
+ 
+ 		/* First close errored or weak retry */
+-		evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
++		evlist__for_each_cpu(evlist_cpu_itr, evsel_list) {
+ 			counter = evlist_cpu_itr.evsel;
+ 
+ 			if (!counter->reset_group && counter->supported)
+@@ -851,7 +837,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 			perf_evsel__close_cpu(&counter->core, evlist_cpu_itr.cpu_map_idx);
+ 		}
+ 		/* Now reopen weak */
+-		evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
++		evlist__for_each_cpu(evlist_cpu_itr, evsel_list) {
+ 			counter = evlist_cpu_itr.evsel;
+ 
+ 			if (!counter->reset_group)
+@@ -860,17 +846,18 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 			while (true) {
+ 				pr_debug2("reopening weak %s\n", evsel__name(counter));
+ 				if (create_perf_stat_counter(counter, &stat_config,
+-							     evlist_cpu_itr.cpu_map_idx) == 0)
++							     evlist_cpu_itr.cpu_map_idx) == 0) {
++					evlist_cpu_iterator__exit(&evlist_cpu_itr);
+ 					break;
+-
++				}
+ 				open_err = errno;
+-				if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
++				if (stat_handle_error(counter, open_err) != COUNTER_RETRY) {
++					evlist_cpu_iterator__exit(&evlist_cpu_itr);
+ 					break;
++				}
+ 			}
+ 		}
+ 	}
+-	affinity__cleanup(affinity);
+-	affinity = NULL;
+ 
+ 	has_supported_counters = false;
+ 	evlist__for_each_entry(evsel_list, counter) {
+@@ -1021,7 +1008,6 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 	if (forks)
+ 		evlist__cancel_workload(evsel_list);
+ 
+-	affinity__cleanup(affinity);
+ 	return err;
+ }
+ 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e8217efdda53..b6df81b8a236 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -358,36 +358,111 @@ int evlist__add_newtp(struct evlist *evlist, const char *sys, const char *name,
+ }
+ #endif
+ 
+-struct evlist_cpu_iterator evlist__cpu_begin(struct evlist *evlist, struct affinity *affinity)
++/*
++ * Should sched_setaffinity be used with evlist__for_each_cpu? Determine if
++ * migrating the thread will avoid possibly numerous IPIs.
++ */
++static bool evlist__use_affinity(struct evlist *evlist)
 +{
-+	static struct perf_cpu_map *cpu0_map;
-+	enum tool_pmu_event event = (enum tool_pmu_event)attr->config;
++	struct evsel *pos;
++	struct perf_cpu_map *used_cpus = NULL;
++	bool ret = false;
 +
-+	if (event <= TOOL_PMU__EVENT_NONE || event >= TOOL_PMU__EVENT_MAX) {
-+		pr_err("Invalid tool PMU event config %llx\n", attr->config);
-+		return NULL;
++	/*
++	 * With perf record core.user_requested_cpus is usually NULL.
++	 * Use the old method to handle this for now.
++	 */
++	if (!evlist->core.user_requested_cpus ||
++	    cpu_map__is_dummy(evlist->core.user_requested_cpus))
++		return false;
++
++	evlist__for_each_entry(evlist, pos) {
++		struct perf_cpu_map *intersect;
++
++		if (!perf_pmu__benefits_from_affinity(pos->pmu))
++			continue;
++
++		if (evsel__is_dummy_event(pos)) {
++			/*
++			 * The dummy event is opened on all CPUs so assume >1
++			 * event with shared CPUs.
++			 */
++			ret = true;
++			break;
++		}
++		if (evsel__is_retire_lat(pos)) {
++			/*
++			 * Retirement latency events are similar to tool ones in
++			 * their implementation, and so don't require affinity.
++			 */
++			continue;
++		}
++		if (perf_cpu_map__is_empty(used_cpus)) {
++			/* First benefitting event, we want >1 on a common CPU. */
++			used_cpus = perf_cpu_map__get(pos->core.cpus);
++			continue;
++		}
++		if ((pos->core.attr.read_format & PERF_FORMAT_GROUP) &&
++		    evsel__leader(pos) != pos) {
++			/* Skip members of the same sample group. */
++			continue;
++		}
++		intersect = perf_cpu_map__intersect(used_cpus, pos->core.cpus);
++		if (!perf_cpu_map__is_empty(intersect)) {
++			/* >1 event with shared CPUs. */
++			perf_cpu_map__put(intersect);
++			ret = true;
++			break;
++		}
++		perf_cpu_map__put(intersect);
++		perf_cpu_map__merge(&used_cpus, pos->core.cpus);
 +	}
-+	if (event == TOOL_PMU__EVENT_USER_TIME || event == TOOL_PMU__EVENT_SYSTEM_TIME)
-+		return cpu_map__online();
-+
-+	if (!cpu0_map)
-+		cpu0_map = perf_cpu_map__new_int(0);
-+	return perf_cpu_map__get(cpu0_map);
++	perf_cpu_map__put(used_cpus);
++	return ret;
 +}
 +
- static bool read_until_char(struct io *io, char e)
++void evlist_cpu_iterator__init(struct evlist_cpu_iterator *itr, struct evlist *evlist)
  {
- 	int c;
-diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
-index f1714001bc1d..ea343d1983d3 100644
---- a/tools/perf/util/tool_pmu.h
-+++ b/tools/perf/util/tool_pmu.h
-@@ -46,6 +46,7 @@ bool tool_pmu__read_event(enum tool_pmu_event ev,
- u64 tool_pmu__cpu_slots_per_cycle(void);
+-	struct evlist_cpu_iterator itr = {
++	*itr = (struct evlist_cpu_iterator){
+ 		.container = evlist,
+ 		.evsel = NULL,
+ 		.cpu_map_idx = 0,
+ 		.evlist_cpu_map_idx = 0,
+ 		.evlist_cpu_map_nr = perf_cpu_map__nr(evlist->core.all_cpus),
+ 		.cpu = (struct perf_cpu){ .cpu = -1},
+-		.affinity = affinity,
++		.affinity = NULL,
+ 	};
  
- bool perf_pmu__is_tool(const struct perf_pmu *pmu);
-+struct perf_cpu_map *tool_pmu__cpus(struct perf_event_attr *attr);
+ 	if (evlist__empty(evlist)) {
+ 		/* Ensure the empty list doesn't iterate. */
+-		itr.evlist_cpu_map_idx = itr.evlist_cpu_map_nr;
+-	} else {
+-		itr.evsel = evlist__first(evlist);
+-		if (itr.affinity) {
+-			itr.cpu = perf_cpu_map__cpu(evlist->core.all_cpus, 0);
+-			affinity__set(itr.affinity, itr.cpu.cpu);
+-			itr.cpu_map_idx = perf_cpu_map__idx(itr.evsel->core.cpus, itr.cpu);
+-			/*
+-			 * If this CPU isn't in the evsel's cpu map then advance
+-			 * through the list.
+-			 */
+-			if (itr.cpu_map_idx == -1)
+-				evlist_cpu_iterator__next(&itr);
+-		}
++		itr->evlist_cpu_map_idx = itr->evlist_cpu_map_nr;
++		return;
+ 	}
+-	return itr;
++
++	if (evlist__use_affinity(evlist)) {
++		if (affinity__setup(&itr->saved_affinity) == 0)
++			itr->affinity = &itr->saved_affinity;
++	}
++	itr->evsel = evlist__first(evlist);
++	itr->cpu = perf_cpu_map__cpu(evlist->core.all_cpus, 0);
++	if (itr->affinity)
++		affinity__set(itr->affinity, itr->cpu.cpu);
++	itr->cpu_map_idx = perf_cpu_map__idx(itr->evsel->core.cpus, itr->cpu);
++	/*
++	 * If this CPU isn't in the evsel's cpu map then advance
++	 * through the list.
++	 */
++	if (itr->cpu_map_idx == -1)
++		evlist_cpu_iterator__next(itr);
++}
++
++void evlist_cpu_iterator__exit(struct evlist_cpu_iterator *itr)
++{
++	if (!itr->affinity)
++		return;
++
++	affinity__cleanup(itr->affinity);
++	itr->affinity = NULL;
+ }
  
- bool evsel__is_tool(const struct evsel *evsel);
- enum tool_pmu_event evsel__tool_event(const struct evsel *evsel);
+ void evlist_cpu_iterator__next(struct evlist_cpu_iterator *evlist_cpu_itr)
+@@ -417,14 +492,11 @@ void evlist_cpu_iterator__next(struct evlist_cpu_iterator *evlist_cpu_itr)
+ 		 */
+ 		if (evlist_cpu_itr->cpu_map_idx == -1)
+ 			evlist_cpu_iterator__next(evlist_cpu_itr);
++	} else {
++		evlist_cpu_iterator__exit(evlist_cpu_itr);
+ 	}
+ }
+ 
+-bool evlist_cpu_iterator__end(const struct evlist_cpu_iterator *evlist_cpu_itr)
+-{
+-	return evlist_cpu_itr->evlist_cpu_map_idx >= evlist_cpu_itr->evlist_cpu_map_nr;
+-}
+-
+ static int evsel__strcmp(struct evsel *pos, char *evsel_name)
+ {
+ 	if (!evsel_name)
+@@ -452,19 +524,11 @@ static void __evlist__disable(struct evlist *evlist, char *evsel_name, bool excl
+ {
+ 	struct evsel *pos;
+ 	struct evlist_cpu_iterator evlist_cpu_itr;
+-	struct affinity saved_affinity, *affinity = NULL;
+ 	bool has_imm = false;
+ 
+-	// See explanation in evlist__close()
+-	if (!cpu_map__is_dummy(evlist->core.user_requested_cpus)) {
+-		if (affinity__setup(&saved_affinity) < 0)
+-			return;
+-		affinity = &saved_affinity;
+-	}
+-
+ 	/* Disable 'immediate' events last */
+ 	for (int imm = 0; imm <= 1; imm++) {
+-		evlist__for_each_cpu(evlist_cpu_itr, evlist, affinity) {
++		evlist__for_each_cpu(evlist_cpu_itr, evlist) {
+ 			pos = evlist_cpu_itr.evsel;
+ 			if (evsel__strcmp(pos, evsel_name))
+ 				continue;
+@@ -482,7 +546,6 @@ static void __evlist__disable(struct evlist *evlist, char *evsel_name, bool excl
+ 			break;
+ 	}
+ 
+-	affinity__cleanup(affinity);
+ 	evlist__for_each_entry(evlist, pos) {
+ 		if (evsel__strcmp(pos, evsel_name))
+ 			continue;
+@@ -522,16 +585,8 @@ static void __evlist__enable(struct evlist *evlist, char *evsel_name, bool excl_
+ {
+ 	struct evsel *pos;
+ 	struct evlist_cpu_iterator evlist_cpu_itr;
+-	struct affinity saved_affinity, *affinity = NULL;
+ 
+-	// See explanation in evlist__close()
+-	if (!cpu_map__is_dummy(evlist->core.user_requested_cpus)) {
+-		if (affinity__setup(&saved_affinity) < 0)
+-			return;
+-		affinity = &saved_affinity;
+-	}
+-
+-	evlist__for_each_cpu(evlist_cpu_itr, evlist, affinity) {
++	evlist__for_each_cpu(evlist_cpu_itr, evlist) {
+ 		pos = evlist_cpu_itr.evsel;
+ 		if (evsel__strcmp(pos, evsel_name))
+ 			continue;
+@@ -541,7 +596,6 @@ static void __evlist__enable(struct evlist *evlist, char *evsel_name, bool excl_
+ 			continue;
+ 		evsel__enable_cpu(pos, evlist_cpu_itr.cpu_map_idx);
+ 	}
+-	affinity__cleanup(affinity);
+ 	evlist__for_each_entry(evlist, pos) {
+ 		if (evsel__strcmp(pos, evsel_name))
+ 			continue;
+@@ -1338,28 +1392,14 @@ void evlist__close(struct evlist *evlist)
+ {
+ 	struct evsel *evsel;
+ 	struct evlist_cpu_iterator evlist_cpu_itr;
+-	struct affinity affinity;
+-
+-	/*
+-	 * With perf record core.user_requested_cpus is usually NULL.
+-	 * Use the old method to handle this for now.
+-	 */
+-	if (!evlist->core.user_requested_cpus ||
+-	    cpu_map__is_dummy(evlist->core.user_requested_cpus)) {
+-		evlist__for_each_entry_reverse(evlist, evsel)
+-			evsel__close(evsel);
+-		return;
+-	}
+-
+-	if (affinity__setup(&affinity) < 0)
+-		return;
+ 
+-	evlist__for_each_cpu(evlist_cpu_itr, evlist, &affinity) {
++	evlist__for_each_cpu(evlist_cpu_itr, evlist) {
++		if (evlist_cpu_itr.cpu_map_idx == 0 && evsel__is_retire_lat(evlist_cpu_itr.evsel))
++			evsel__tpebs_close(evlist_cpu_itr.evsel);
+ 		perf_evsel__close_cpu(&evlist_cpu_itr.evsel->core,
+ 				      evlist_cpu_itr.cpu_map_idx);
+ 	}
+ 
+-	affinity__cleanup(&affinity);
+ 	evlist__for_each_entry_reverse(evlist, evsel) {
+ 		perf_evsel__free_fd(&evsel->core);
+ 		perf_evsel__free_id(&evsel->core);
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 5e71e3dc6042..b4604c3f03d6 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -10,6 +10,7 @@
+ #include <internal/evlist.h>
+ #include <internal/evsel.h>
+ #include <perf/evlist.h>
++#include "affinity.h"
+ #include "events_stats.h"
+ #include "evsel.h"
+ #include "rblist.h"
+@@ -361,6 +362,8 @@ struct evlist_cpu_iterator {
+ 	struct perf_cpu cpu;
+ 	/** If present, used to set the affinity when switching between CPUs. */
+ 	struct affinity *affinity;
++	/** Maybe be used to hold affinity state prior to iterating. */
++	struct affinity saved_affinity;
+ };
+ 
+ /**
+@@ -368,22 +371,31 @@ struct evlist_cpu_iterator {
+  *                        affinity, iterate over all CPUs and then the evlist
+  *                        for each evsel on that CPU. When switching between
+  *                        CPUs the affinity is set to the CPU to avoid IPIs
+- *                        during syscalls.
++ *                        during syscalls. The affinity is set up and removed
++ *                        automatically, if the loop is broken a call to
++ *                        evlist_cpu_iterator__exit is necessary.
+  * @evlist_cpu_itr: the iterator instance.
+  * @evlist: evlist instance to iterate.
+- * @affinity: NULL or used to set the affinity to the current CPU.
+  */
+-#define evlist__for_each_cpu(evlist_cpu_itr, evlist, affinity)		\
+-	for ((evlist_cpu_itr) = evlist__cpu_begin(evlist, affinity);	\
++#define evlist__for_each_cpu(evlist_cpu_itr, evlist)			\
++	for (evlist_cpu_iterator__init(&(evlist_cpu_itr), evlist);	\
+ 	     !evlist_cpu_iterator__end(&evlist_cpu_itr);		\
+ 	     evlist_cpu_iterator__next(&evlist_cpu_itr))
+ 
+-/** Returns an iterator set to the first CPU/evsel of evlist. */
+-struct evlist_cpu_iterator evlist__cpu_begin(struct evlist *evlist, struct affinity *affinity);
++/** Setup an iterator set to the first CPU/evsel of evlist. */
++void evlist_cpu_iterator__init(struct evlist_cpu_iterator *itr, struct evlist *evlist);
++/**
++ * Cleans up the iterator, automatically done by evlist_cpu_iterator__next when
++ * the end of the list is reached. Multiple calls are safe.
++ */
++void evlist_cpu_iterator__exit(struct evlist_cpu_iterator *itr);
+ /** Move to next element in iterator, updating CPU, evsel and the affinity. */
+ void evlist_cpu_iterator__next(struct evlist_cpu_iterator *evlist_cpu_itr);
+ /** Returns true when iterator is at the end of the CPUs and evlist. */
+-bool evlist_cpu_iterator__end(const struct evlist_cpu_iterator *evlist_cpu_itr);
++static inline bool evlist_cpu_iterator__end(const struct evlist_cpu_iterator *evlist_cpu_itr)
++{
++	return evlist_cpu_itr->evlist_cpu_map_idx >= evlist_cpu_itr->evlist_cpu_map_nr;
++}
+ 
+ struct evsel *evlist__get_tracking_event(struct evlist *evlist);
+ void evlist__set_tracking_event(struct evlist *evlist, struct evsel *tracking_evsel);
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index f14f2a12d061..e300a3b71bd6 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -2410,6 +2410,18 @@ bool perf_pmu__is_software(const struct perf_pmu *pmu)
+ 	return false;
+ }
+ 
++bool perf_pmu__benefits_from_affinity(struct perf_pmu *pmu)
++{
++	if (!pmu)
++		return true; /* Assume is core. */
++
++	/*
++	 * All perf event PMUs should benefit from accessing the perf event
++	 * contexts on the local CPU.
++	 */
++	return pmu->type <= PERF_PMU_TYPE_PE_END;
++}
++
+ FILE *perf_pmu__open_file(const struct perf_pmu *pmu, const char *name)
+ {
+ 	char path[PATH_MAX];
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index 1ebcf0242af8..87e12a9a0e67 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -259,6 +259,7 @@ bool perf_pmu__name_no_suffix_match(const struct perf_pmu *pmu, const char *to_m
+  *                        perf_sw_context in the kernel?
+  */
+ bool perf_pmu__is_software(const struct perf_pmu *pmu);
++bool perf_pmu__benefits_from_affinity(struct perf_pmu *pmu);
+ 
+ FILE *perf_pmu__open_file(const struct perf_pmu *pmu, const char *name);
+ FILE *perf_pmu__open_file_at(const struct perf_pmu *pmu, int dirfd, const char *name);
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
