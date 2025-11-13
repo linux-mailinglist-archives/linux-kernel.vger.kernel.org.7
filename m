@@ -1,164 +1,129 @@
-Return-Path: <linux-kernel+bounces-898475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B981C555CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:57:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABD2C5554D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:50:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E460B3A53C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:52:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CC72348ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5604E29ACDB;
-	Thu, 13 Nov 2025 01:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A660929C33F;
+	Thu, 13 Nov 2025 01:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="l8hbQNKt"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=chenxiaosong-com.20230601.gappssmtp.com header.i=@chenxiaosong-com.20230601.gappssmtp.com header.b="AxDy0t6N"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0422F616D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB602AE70
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762998454; cv=none; b=h6gWGU7VGejaAkSnyiOcmRYNHaOCJ58bi0mHaFWVGCusdh7if1bBzUBl2mj0G5wgSAQz8VnP1cdYafOt40m336zn549Fr1+fAX5hpa52/HMAWQ76jeTB0h2KMun7ax6FUad8ThU2IjEqFowKC19sQ+GDNWqW2rIcFQ6m4zY/oZc=
+	t=1762998388; cv=none; b=HVgjN2JrNkXSvhjdXdchB8xO92yf1plChbZCNTkiCdPLq5qO6JGBxPhsZlT/P5H/71o3G9EqyvgU/2CC6THjVODZncDnu6TIQITKVZi0aqchA1ZGFre8zV3tSllwmwzy3ouDfVMtNpgD1jTECzipIeN33EoORhMSqa24eiOkbAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762998454; c=relaxed/simple;
-	bh=DpKcrTFSXMeznvqkI5iYlK6aDcUsXzIaprU9WCwGV2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wfc2vP9Caj6a/qZAXdnLHCg6ldmIVDGS9pwHfpYLI24VHiY73zXyNlGiucGUEcL+FdU8HuoYa4wz3IVIDpJbYvS3QFyDYUMT6SkAmRsp2cFbFPwKfJsLudHsKhXO2Du01VvevoBYjSc3al2+s7LgNqsGNMrcpvPrDILVcJ/lRLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=l8hbQNKt; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2955623e6faso2310185ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:47:32 -0800 (PST)
+	s=arc-20240116; t=1762998388; c=relaxed/simple;
+	bh=UobmHQ+i1qGEF8C/zTJsB2ABG1daqbuFPHpfOfzkP9M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kJn/52T3Qnq++1vmxL7ze9CjAHlfQlxMr/FlYxmeB85f/PgOWtHepnZsWn5GVHn4puqJRp+12f5J8ux/vZQMgUSfIffK7mcyTUt857t2DRL1Y2rToWYnyfkgvwvH29gY75zmZ6V8ciEj+JqScpjgUgvRNS3Hv7/TtMf+GakAPxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=none smtp.mailfrom=chenxiaosong.com; dkim=pass (2048-bit key) header.d=chenxiaosong-com.20230601.gappssmtp.com header.i=@chenxiaosong-com.20230601.gappssmtp.com header.b=AxDy0t6N; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chenxiaosong.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-bb2447d11ceso179800a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:46:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1762998452; x=1763603252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmm07HI+8fQZ9dsXPTz2+pE8ZdXEYclRtD5hDrzxz+A=;
-        b=l8hbQNKtfpr3CcUQrWA4fF+haHAk32uyKO1PUswuVflU3srHyNJ3tC/JfY6ALP6XI2
-         icRwY7+2KAl54HQIpdMlm1EJWJPZ9xiPzGLaIJPDkNcoNW69kokmfMNPHsf4FTEqQi8A
-         MT88jXftjN7p6dtpujK954AkIoMtCx+J0CzPH0KxHVwBEIM5HplMF83kT7fWPXV00HKy
-         6gOTG9wIHZ8O58ZTC15bHXAmbHEJ9S5+IniDC7mmu6lOc1eA/cJkXkzY5kgscHJjIB/Z
-         PyjTWcvHrivtlSVjCigZOVVomLonitj3oqb10Z32F/7Bgmyhr74XJQwRu/bQbFSqq8LC
-         OqDw==
+        d=chenxiaosong-com.20230601.gappssmtp.com; s=20230601; t=1762998385; x=1763603185; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d2VhFVfZP0yG3njrNawDEH+d1ecXNNX+BfE+gXR0ZA8=;
+        b=AxDy0t6NOCT1OU/vXnCNZ2OhkWkIz6wC/k/LXQDGHbk+Ge+Y3mr1gcDHCBNijmVkHo
+         Jp6hTvS0SlQ6hqwEhlDWHABjQWO1XbbD8TD3ThdpIrqw2Lh8qSkat2FeIAGS7a4RS7lZ
+         BYwZBagRINnHXhEf1D9IZ7158n+4Xgcf5lji/AUSYfFzldcM6hP3hPLIeRFP+/9AoHzz
+         0ena8OEM905YgF66TKZYemL7TXTdMe9HH1M2WiZ1xezjXgqexaDzj6zMc2yS/Y/Ezc5Y
+         PoDkxtsUJxuoYuDe545O/JVJv5GZ2y4qPCK3oUho9gudTVSug7bF1fLtQUbsXlS6Cdw/
+         CjCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762998452; x=1763603252;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hmm07HI+8fQZ9dsXPTz2+pE8ZdXEYclRtD5hDrzxz+A=;
-        b=v7WuG+aiRCnam+i8B9gr5MiSNr3KlNiqAfhlq3Qyi35KVjS5vXGm7W48+3qLbloseZ
-         saDNXoDyHu4Ct8x6qCmN+V8fdbAieU/FI9NerLnSdzBOVEaQf+f8LFwmJ3r2Z+fCSv0b
-         UDPv4+/IssvU3nEcZgzlYcEGsnRg6G7KVVtg0a/H3TxZIIB12N16rHM6OR50Htwvu8YG
-         5s3gcwVVRfBk7bUpWnWGCztmFIwD1JsmDQ9BYElV8rj8F/UQxJheZ8HipApX9pz/paJq
-         tobkCEx7e2ZAtX85VogibBwS93ac2/wwUhNAdEX/Ov9xmTmRBf6j/6/ViMwrJpzU4Y8t
-         jOhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzxjl8xKXfKh5Wbyl8klPJjH2Bdp+InUmtcng/34FAlux2Skujn/WspOk6cmuY9xJkOWBUGFRJi+naLps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdq0V4bLrz+2sIemTH+zUxjq9ifa0h9DyiJA/aJaM8dcAWeh2r
-	emyn1ZBDdu+BGVpjfdOxJLVhIKhhptluP5m7LObkt46z36bxaCuqoqtrWnt4xti192Q=
-X-Gm-Gg: ASbGncuo7lYhOmNDqDJaLVTuZLcvPFV870qqp3PUffDJ4JXXHL2jCKietlRvsH4ErvH
-	9pv/RrL1g4B14tY5J7OlDzNzGH382Ih/6WfL0fjGyOOzos9xjs81EIHsMN76m4cSxuaXbnJ3TLk
-	whf7FGiit8w8I+rgtJJbDS8+55v1X7lUvL9UIWpcW9csl4rgdaALbsYDWTCm01PSVDPU/TokmJj
-	jNY5xUBQQ0GsBqoCs3aAnU+oyd7YGKIf2RtvFXuf77Y1Sz68e9bJVIWVl74G+e2ZS0M2BosV5Na
-	RzRBzMkF+p/I729jOYhh8Ez1rqNLoN5UOhawbRKXCAx/AsxUQt4M9+i3bNuFdZgWP+VVsB2R4Wi
-	5zWLGQOEhDMGabs0wUa8rZW81G40ZFDIbRfIkYzr3r94k9YnXiNFgxB9MLVb4C6YNoqb8wulAEK
-	GTa+VdBaeFbGAThyRAhTP2pA==
-X-Google-Smtp-Source: AGHT+IHJJ32S+3DmD1CuHHRA6pREy7usForarOqF2N3irQZblubt51Eou/L7IV170eSGC/5u/UdVRQ==
-X-Received: by 2002:a17:902:e841:b0:295:86a1:5008 with SMTP id d9443c01a7336-2984edec288mr76669175ad.38.1762998452211;
-        Wed, 12 Nov 2025 17:47:32 -0800 (PST)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2ccae8sm4986485ad.98.2025.11.12.17.47.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 17:47:31 -0800 (PST)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	linux-mm@kvack.org
-Cc: devicetree@vger.kernel.org,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org,
-	Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Conor Dooley <conor@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH v3 22/22] riscv: dts: eswin: eic7700: Use physical memory ranges for DMA
-Date: Wed, 12 Nov 2025 17:45:35 -0800
-Message-ID: <20251113014656.2605447-23-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251113014656.2605447-1-samuel.holland@sifive.com>
-References: <20251113014656.2605447-1-samuel.holland@sifive.com>
+        d=1e100.net; s=20230601; t=1762998385; x=1763603185;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d2VhFVfZP0yG3njrNawDEH+d1ecXNNX+BfE+gXR0ZA8=;
+        b=YfrXr1XjJcGbW6HN7Xud8B9ISO1dOtRRjVSszc37JXELd+WxC9+J6MiS3j59tjUie6
+         SGG2UQjMWimsav49jL3MP0yKtduM6A9JRXUDNcILDSn5pzPpR5RgC6dOPCYM4Qs5umyV
+         SKMV6pPgxLousN7aorIQa86CBlCa1vnG9ApuRqgMY77KhjSsaV+5zZuYyobwRRH6XcgH
+         zg7BSbZj2Nzo5l1UKBaxmqC0uiE/+YKzLdTRBIADB3eCugLR7tO/FRFlgNH4Lpu7CnJL
+         vsD8uEW2bTYD7uacQ122cUSZiZAxr5WpHhtp7vpmj9by9c3L6pDG/BkvamZyDXqwEOP6
+         cD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUaSxYWmZjBXOTMIXF1Ex/kRdVNjSlrxHZgOiVHAH4Vl/mBK6BLzfOTXIW8N67a4tf1Z+xywa48Wlo89Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1DePhvxseEdYDrzRyaDspNEfU2P9tSAUU9AfhJsj3mq3KV2Xu
+	Dt0QbqyUf9/iPeimlxdgBD+/NvF9Yj1EyaH0ayTKJGBIVkUSf+EyykvTQCFFPAYYmHmR
+X-Gm-Gg: ASbGncsi2riJmn06pFDmwOpqd8ukTqmVZbMEwOV7TDdpEMrB0e1msOz66UsmUIT+JYj
+	G7oa7EJpyWyPK9jvc3E5RnQh/PbUCZV5GzxD9Yi6zxB+5LZNJMZ/tpOawSd3ONNkzGws1tt14zy
+	DxW/xSdlmw1daqws7IZ9g9Ps5H5uAMZ35SJ2RB4WGdAFb9TgimhRq8HBojtt4++LoWwm4Q7WMwv
+	f+cfBebmjBK6fgJxakIl//2uX3LK0X6cyUxHZLKNJnOlKueTYW7w2TodanN7f8hRzTYL//42oTg
+	AK98tSvFguO5OJ7tT294P/GRG/c4soIk495tx6tN7U439P/9SvNNk0mjvkm/LiIcYgfM4M1Grla
+	NxyOFU/DiRF+uhW5+XlXoD7uymi7vXAsr6gNFayBX5Gw5Z3dTrqFdVf6EMv/clqzGt5NmAUR5/r
+	PdoOLHdPs+9isiBAKpnHYSUOTEHFdkeQ==
+X-Google-Smtp-Source: AGHT+IHbymVR8GjScDftVTUuU4zA27Nl0y0MLi1qfG+GLQ7TTdKzfbxLqfu7VKUHAbpg/EzQzWRjMA==
+X-Received: by 2002:a17:903:2ac3:b0:298:33c9:eda1 with SMTP id d9443c01a7336-2984edddbbamr60750745ad.43.1762998384819;
+        Wed, 12 Nov 2025 17:46:24 -0800 (PST)
+Received: from [192.168.3.223] ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245f8asm5156085ad.37.2025.11.12.17.46.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 17:46:24 -0800 (PST)
+Message-ID: <fd9d8a05-32e8-4f83-8e40-a6497dde1ed5@chenxiaosong.com>
+Date: Thu, 13 Nov 2025 09:46:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Subject: Re: [PATCH v5 06/14] smb/server: remove create_durable_reconn_req
+To: Namjae Jeon <linkinjeon@kernel.org>, chenxiaosong.chenxiaosong@linux.dev
+Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
+ christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251102073059.3681026-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251102073059.3681026-7-chenxiaosong.chenxiaosong@linux.dev>
+ <CAKYAXd8o3CKcaArMzEifR+oaX2G_g3XuEjFkBtPhyO99pKQO+g@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAKYAXd8o3CKcaArMzEifR+oaX2G_g3XuEjFkBtPhyO99pKQO+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-EIC7700 provides a physical memory region which is a noncached alias of
-normal cacheable DRAM. Declare this alias in the devicetree so Linux can
-allocate noncached pages for noncoherent DMA, and M-mode firmware can
-protect the noncached alias with PMPs.
+Okay, I'll make the changes.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+Once you've applied some of the patches from this version, I'll 
+immediately send the next version.
 
-Changes in v3:
- - Fix the entry number of the paired region in the DT
+Thanks,
+ChenXiaoSong.
 
-Changes in v2:
- - New patch for v2
-
- arch/riscv/Kconfig.socs                | 2 ++
- arch/riscv/boot/dts/eswin/eic7700.dtsi | 5 +++++
- 2 files changed, 7 insertions(+)
-
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index a8950206fb75..df3ed1d322fe 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -9,6 +9,8 @@ config ARCH_ANDES
- 
- config ARCH_ESWIN
- 	bool "ESWIN SoCs"
-+	select RISCV_DMA_NONCOHERENT
-+	select RISCV_NONSTANDARD_CACHE_OPS
- 	help
- 	  This enables support for ESWIN SoC platform hardware,
- 	  including the ESWIN EIC7700 SoC.
-diff --git a/arch/riscv/boot/dts/eswin/eic7700.dtsi b/arch/riscv/boot/dts/eswin/eic7700.dtsi
-index c3ed93008bca..d566bca4e09e 100644
---- a/arch/riscv/boot/dts/eswin/eic7700.dtsi
-+++ b/arch/riscv/boot/dts/eswin/eic7700.dtsi
-@@ -5,9 +5,14 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/riscv/physical-memory.h>
-+
- / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
-+	riscv,physical-memory-regions =
-+		<0x000 0x80000000 0x00f 0x80000000 (PMA_RWXA | PMA_NONCOHERENT_MEMORY) 0x0>,
-+		<0x0c0 0x00000000 0x010 0x00000000 (PMA_RWX | PMA_NONCACHEABLE_MEMORY | PMR_ALIAS(0)) 0x0>;
- 
- 	cpus {
- 		#address-cells = <1>;
--- 
-2.47.2
+On 11/13/25 9:19 AM, Namjae Jeon wrote:
+> On Sun, Nov 2, 2025 at 4:32 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
+>>
+>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>
+>> The fields in struct create_durable_reconn_req and struct create_durable
+>> are exactly the same.
+>>
+>> The documentation references are:
+>>
+>>    - SMB2_CREATE_DURABLE_HANDLE_REQUEST   in MS-SMB2 2.2.13.2.3
+>>    - SMB2_CREATE_DURABLE_HANDLE_RECONNECT in MS-SMB2 2.2.13.2.4
+>>    - SMB2_FILEID in MS-SMB2 2.2.14.1
+>>
+>> We can give these two structs a uniform name: create_durable.
+> Please use typedef to define multiple aliases for a single struct.
+> typedef struct {
+>    ...
+> } create_durable, create_durable_reconn_req;
+> 
+> Thanks.
 
 
