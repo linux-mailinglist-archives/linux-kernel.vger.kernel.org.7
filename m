@@ -1,262 +1,141 @@
-Return-Path: <linux-kernel+bounces-898389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8E2C552E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7308CC55301
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AE234ECC4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:59:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61AD34E433F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1FA1A9F83;
-	Thu, 13 Nov 2025 00:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104E11F541E;
+	Thu, 13 Nov 2025 00:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fH1EuR1i"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012032.outbound.protection.outlook.com [40.93.195.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLRbIhCD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD981922FB;
-	Thu, 13 Nov 2025 00:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762994960; cv=fail; b=uHciTkOODFOIGg93W1MM7CPUa++ZH5PsC16NgIq2D5CZD5lSshQLq5Q2o857xkzqHeY4y9PGJgoZNx9fVfyomJMGtCD2vuT5YvRDimNZaUIH2FrztofGhbqWDRfQEf523vVMi4TYysRUdM/7qutElWniP8hqm11AV38fIjxQbX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762994960; c=relaxed/simple;
-	bh=h/Lw/hYHQ3NHqb92fAK+IZb4O4Rudn45MBdX4MqxXA4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tIBzpBJv9IV6jITYZRx0KGNnmPE3bNueYmOOWHfNrWLRl5p6lMfC8khYOFTehjMfRJ8QAFV651SlgHnK6AyLV2kRGB4GnRKHdfXlYuQyHJUtaoDLkBblvXWVQovAhqQ0e06F7/+SgG9NY7k1GANaes+V4vKQ2A+L/sGAQBbdp30=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fH1EuR1i; arc=fail smtp.client-ip=40.93.195.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=naUm1/1EMIYxo/bWrv7FZAZNazVaq3bB8j37GT6De5eZxDqVd3VIbj/wX0U/JzhEGTzE0/KSjNUXr4Hdy24P/eyX6DZuH9h63QzQKZ5T9n4VG97Oo9RNKkCwuKzbdtJaF+3ySEDcmaSZcpgFi7317EHooomaMTr8lHKi8ntb/YB+q7kEOhpI6schpeloWkjtxm6FABtnVKTLl9FoYlDRDp0KvDR05Eu2QA/9n5vpf+udr1J5E9AN3BnV+f49UDSkIOLzCZWfRU8hCEjzrB9RcBkYjxsTpqhIZ5JzaPLdN/HU9SAqEh1yR/F49qwJRVHzrEnZw6lAnC/VBu0DN5C5Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zbIK7QYhH5NTzRze6DVSCNxsuh1ls0p8hcss8D2+lGg=;
- b=F+XI1OC9G1KTy0VYomD/G+qy8vxdMMH34e89sT3m3QNaa4rh3Wv+KTWBUnSeoN90OA5iHqGN6X5MYV9VM9Z6wZQT7sJ7xFO4Eu5PJKQNBcflExbnmb+VWm7yolYYTkY/++z96pVKIJYpfLiH501NHHWeam2LRL/zpqo+2CutP5Gw5nROhAquLmXgtZZ2oxcqQRQeAyaMm1Tt6E98s4xXpMwXtGbV6oIxrNG8KuC/wqCC++NFS9E75MZI6/QRoAPH9qmN6HnBgcSncaqgaQpFwlVH691CYm0dyGRu23ginnSrfVk8bq6tVjUQaZwHiKmBP3NSrAWhnWYUPMLZ/qgoPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zbIK7QYhH5NTzRze6DVSCNxsuh1ls0p8hcss8D2+lGg=;
- b=fH1EuR1iaI+Ce83Ug3EkBtFDma+D5ny/zvjwUS4ECsac1tinyUD24MxbVkdHU5ykv6OZtH0zRcBsUxN68o2sthxuMqQFUo99yLhfMr5SbkI5nyqxR75RGN3BbZKNSkH/oJyl/3YhSE21nPeXi1dxJL5XcNlutaZXh+XV9cprIUAOZNPpstdXqB0n2RjuxyPW4HT1MgrMkthWr+6JSXlw5ViGDm3GDpOu97n6cz7byMXRIHRy77oRUlTpnuB0IotamYXyEjKtgwmxEstG0Tanam3LOI2KDLfB8f2jILw7rGwymbD+UL/x5Uk88QMzGrCqAoCuqPk6U3YFqv4/kqKp9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS0PR12MB8218.namprd12.prod.outlook.com (2603:10b6:8:f2::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
- 2025 00:49:13 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Thu, 13 Nov 2025
- 00:49:13 +0000
-Message-ID: <e909920d-904d-4527-bb7a-af1075b91bbf@nvidia.com>
-Date: Wed, 12 Nov 2025 19:49:10 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/14] gpu: nova-core: sequencer: Implement basic core
- operations
-To: Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Daniel Almeida <daniel.almeida@collabora.com>,
- nouveau@lists.freedesktop.org
-References: <3b0d776e50fc81797dec2e5d81c86390af78f848.camel@nvidia.com>
- <20251106231153.2925637-1-joelagnelf@nvidia.com>
- <20251106231153.2925637-11-joelagnelf@nvidia.com>
- <0dc481db44675ebf7801f424d7e4c2cb44f25723.camel@redhat.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <0dc481db44675ebf7801f424d7e4c2cb44f25723.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BLAPR03CA0146.namprd03.prod.outlook.com
- (2603:10b6:208:32e::31) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4D4EEBB;
+	Thu, 13 Nov 2025 00:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762995137; cv=none; b=iTqyZrOmSXQDUE9BiKJSMln7nOYvFwlCB72WNgBYcO5rWukub0hr+UTi7tEMZvQCECjzFMjS/NZewvPqqYUftEq/Z5pRJ6aBCEhHSMyx+2vtpfS+ol+wlzXnXa2A7SM93PPBuG2V3rq9SrB0skSr49rJk98AexKAvTIlHmCj+/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762995137; c=relaxed/simple;
+	bh=GhKyKGT1msMmQIs9FzohyY7HEDDj3Qc4tvlSfwYpNGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IU0JBUpbvsXSZbHLhjn+7LtKtpmR58C3+zhjOlw5AaRNITRICHTH7XcjggBlHK2TC+YPF/RSkN4fbdpAdVR2UmSUJylaIfNsDtJNy52GywZ89XooAo4eJPrd8d+YOPbpv4mtGD/fIoa2iOZnKUud64YxW6o9aZDT2tX/Ad/5IqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLRbIhCD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3CDC116B1;
+	Thu, 13 Nov 2025 00:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762995136;
+	bh=GhKyKGT1msMmQIs9FzohyY7HEDDj3Qc4tvlSfwYpNGw=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=YLRbIhCD43JO0ILd0rRv5Kh0shuoQE4u72BOM3tsnojofRMS5ivg/Pelr8GWZ0ydU
+	 3bWfA58BRMmW7fXbKhsCfzv8op6jEfHRF330qd725fsKIR0YalwvJDFGpEhq/idbEv
+	 /eFDuE5buF+dKjghB9gXF4ZjihM1Wm8lX3TFLCKuhcX5aoMRll1O1MBUYzzothnkFQ
+	 bPcDbQYgQOmAXdx7wNvVU/fqr/O2bNbHz8T1N2GBhSo34UYPNLixaNC34zxrQ2CcBT
+	 1GR2s7OnC2BSzRRG9jNNe99wVKgUkNsp0dpR7T1Re/5eIjhwz3ymVyquGodweas2Rg
+	 LxxIz1KdW/6eA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 63FE5CE0876; Wed, 12 Nov 2025 16:52:16 -0800 (PST)
+Date: Wed, 12 Nov 2025 16:52:16 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: d-tatianin@yandex-team.ru, pmladek@suse.com, john.ogness@linutronix.de,
+	sfr@canb.auug.org.au, rostedt@goodmis.org, senozhatsky@chromium.org
+Subject: [BUG -next] WARNING: kernel/printk/printk_ringbuffer.c:1278 at
+ get_data+0xb3/0x100
+Message-ID: <a2f58837-2b29-4318-9c78-5905ab2e9d3b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS0PR12MB8218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5dd25825-06da-40e3-db23-08de224e7723
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TUlvaW5lOHp1d3pYbHkxMk1UcnhIdXM1bjdMN3c0NDA3RFFqUk1TdC81RnVS?=
- =?utf-8?B?cnNwVW5VVXRlT2V5dTJUSlRiemFBNk1oam93Yi9QTDRoaXBHeE1PbkZFUEM5?=
- =?utf-8?B?NU5jV3Y2cUo4K2RkWnBXTWpXVTRoNHl1ajNESkhYT01XM3NSL0J0M2lBMGlW?=
- =?utf-8?B?UlBUYnNhQnFYS2pRTFJ5YllUalNVRVFsNlBsb1BsMUJaeG9HeVgxeDVSRjEx?=
- =?utf-8?B?cXQyS0F4U3ZjMXdBUmFVMFFlcFdNbWtrMXd0UHQzT21OUW1FKzBZanJXWXNt?=
- =?utf-8?B?QTdVMUVKaGVHS0YzU3dzT0lEdVVlRW00bGlaYU9sTW82Mi9pSnNZWmQ1V0li?=
- =?utf-8?B?ZHFrQkZEMlFJa0pSVjRScnZFY0lYYitnbEN2TGxTaTBJUXNISy9DWmdpYkxt?=
- =?utf-8?B?SHNoMkdkRHBzVFp4QlJ4WWhESUcvQ0l2QzZJemM1Ly82T1duazVDNHMzam9E?=
- =?utf-8?B?eU5ZNXRqMVBBa3prZ01sTmx2dGgxVkp4bzhZalo2cUp3OFlVa2o5MHFBRThH?=
- =?utf-8?B?cGI3T2VMd2p4NC9UNWcxMnJPN1BRZWZhQVROd3VkclVWdjg0V0tDNXNUL2h5?=
- =?utf-8?B?ZUJVNDRocWZ4WkNkd2JwMXJDeGhqU2syZ29NS0dRcVhtY0VIWittNU1idC8z?=
- =?utf-8?B?akFscVNtL2RKMkpCd0k5RjMrVmNjTm5tdk4zUkEvczBmNVlXRmFFYWZJTXZo?=
- =?utf-8?B?Y2tPRW1wdExwcGVYV0ptalJyV0plaXE0WVVYdERHT0wxWnEybnkxbmdocUNi?=
- =?utf-8?B?WGJoWENNVjJSV2pxVTlZV3cxdjdWVlY3NDJjdmlqcmhPd1VOTjZ3MHJEdVdv?=
- =?utf-8?B?WGUvMnFaZHVNc3oveXJ3dlpxdFJzQzZOWm9PaXUyN2J2UVNReVE0M2NiaGQr?=
- =?utf-8?B?Y21pMDJpdXpJbFNFNGc0WEN1aDBYWXFlOUgzSHYxazBodWNPRHEyV1BmWFZI?=
- =?utf-8?B?cm1HRm9RQVhROHM0alE2M0JGL0tqUE1zMllGZnZnamF1RGp0S1BsQUkwRy9N?=
- =?utf-8?B?b3R1YitmYStyQ242Sk9zb3lHWUc3REIxS1cvM1R2Q0s1cW9PcVFQdGVRaS9X?=
- =?utf-8?B?V3Y5dUpxTzBSaFpIaGw5a2xXanVGN1J0a2JMZk1iYnVTSGU2OXhFVFpmWUo1?=
- =?utf-8?B?N3ZKVlRlRnZRVHNVQ2MxZkF0a0ZURThYU3UxS0VncGVrSzBmamhvOE5aN2Ft?=
- =?utf-8?B?Q1RnZStrNUpDTm1WdzhBbHFPRnF0NGVqcHkvSWJFaGdFU2pVTmczM2FWNkdi?=
- =?utf-8?B?VXJmcDFwN1Exekx5YmtCaTMzMDY5enlyYVBwNUJMM2huT1pNejlJNmxmcTA3?=
- =?utf-8?B?K05hc0hhWHE2SnljMkE4bkJqRWloZjlxTHV3TWg0ZlJINUJ1M1Vpc21wRG1v?=
- =?utf-8?B?b1pVM2Z2cUh4MzlxaFZZNGRwa3cvVEdmcGViMnZFRXVjeFp5QjhLSVBjcks4?=
- =?utf-8?B?QU8yVks1bTlLMEhEM3pkdXVOWFliUGV0VFFacmxvbk1tT0hjdDV6NXIybW5j?=
- =?utf-8?B?eWJLZzBjNFVLdkpTSUxyOVg3RDFwdHFjOGo1dkVhbzNZNjZxNG9qenZhazVO?=
- =?utf-8?B?UURRNXJRVkxQbkJ2SFNQM1VwbWNERzU0eS9LcjVKMCszbVlnbHc1bmhQTHJx?=
- =?utf-8?B?YXE2NUpiZlNCcXA3a1NoaXNMK01keXZydytRQnNBbDNRbFRXSWg2aVU5OEFY?=
- =?utf-8?B?SEEzNWxES01uTWo0WDFIT1Z3VmppT29FaStQaHJjN2xSa2dxemI0K3lGRURN?=
- =?utf-8?B?SVJ0MHVKOUxnMDBxT0JpcU53cjJOQ0tVejlFUlMzanlsZzJ3NXJMbEpJenJj?=
- =?utf-8?B?bTVoTC9XMUdBZTNCQndjWDliZlRZV3c2S0xaaDJOMXhvM0tCcmt4bUluRmZB?=
- =?utf-8?B?ek5HV1ltU0tBZFlTMTg3USswNXU2OVVMQXZacjJsKzNPV2NreXR2NHRVWS9N?=
- =?utf-8?Q?kMhFjB/MYQNUklBxBPtfBty2YhWLQiS6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OHhDSno1dFZNUnpjVmd0SUZIUnZWWjUyMDVpbXI1VjV3TWxHZzNOTzdXMXB3?=
- =?utf-8?B?SEFjeUd5Q0RMY21rT1RSOCtMWW5udXpyVVFTcHFXdnNwcHd0Nkhsb0ZQK3Z1?=
- =?utf-8?B?eldHbTduUUdGcW05Mm1GTHFLSTdMeFFqeUNFc1Yva0c4a3NVK1dNOGFEUytY?=
- =?utf-8?B?RHY1UnMzWGhsclc4WlhsVkIzM1ZkdDB3eXV6ZDl1dUh0Qzl4TURNSDV2UXZM?=
- =?utf-8?B?Slo0MmNaYTExeVNrckhkRUVFNXlETTNsbFp2c0VkWlVieVo2YVRoajFtaWVW?=
- =?utf-8?B?YVl0amhTd0pySGVmUmIrY3BPR3RNazJxdGxNUzZyaG1pSksxMytTZWMzaU1O?=
- =?utf-8?B?dWh5bWtCaUpNSXpQbXZMYzQzM2lIR0ovV21SZU9QQ0R2NXFzaEtUS3RWUytx?=
- =?utf-8?B?WG1QL1ZEa0hwVzJVYkRpVnhxWE5DM2ZrbVkwMXdzemJydVFuRmZ6b0RaSm5i?=
- =?utf-8?B?OEVUV3NCYml1MHZObnhBWHF1eFBxUVlwRVNpN1NpemVxL0YrdDZrT255QWpC?=
- =?utf-8?B?OFdTWTVkcDFjM1NmV0xBUEtXMDB1cUNYR2pvdHNiaW9SdzM4NnVFUENOQTFo?=
- =?utf-8?B?MnkzQXh3UWtzMHlBcnV4dHl4dUF3ZWxZRFVvVC8zZjJSNEh5WEkzc0tjbmJT?=
- =?utf-8?B?STlaZ2o3enZiNjhaMHpvekFGc2l4RzNjenZjS3pCbU5BOWpGUUN2L09US1VY?=
- =?utf-8?B?dHhsbmM5ZFl4bmlFUzI2M01VWGRXdmN0TEI1K1ZqekU5dlhCZnlTYXhoYXpj?=
- =?utf-8?B?VFFNcXVJeHNoa1dqZTduN3lMVVo3QVRpVWVSc2tTeldubTQrTHVNN1ZUSGdP?=
- =?utf-8?B?ODBOVlRSeVdVQWYrUzd1UmxmakdNNHVIRDhPWXZpY3FKU1o0cVNIdDVaejhM?=
- =?utf-8?B?bldMazVwMlllTjdhanMvc25GYXVROERmdDZJT2lLTXhTQ3JsbE1XcHF0aTlI?=
- =?utf-8?B?U3prelFYYnFHN2R1bHpzakVhS1AwTWkrSU5xc041WHpMWlBUai9TT2MybE1n?=
- =?utf-8?B?MjdNWStONTJ4ZmsvaU9iTWRnSktVNHVmcVhqajB0V2pNSTFPRHdKcGZoeGlB?=
- =?utf-8?B?R1p4WkRVK0lEWk5KVTd2TTArdHBwNDkxYlc4WDJOaFdtNHV3UUVRbGltWHZi?=
- =?utf-8?B?emJWU0F3OFZnU1FzOXkxTUNTekNQOFFqa1BZSXVZbkl3c0FnUWFIT1d2bWQ3?=
- =?utf-8?B?MHRpZzl4alUzUGVXb1ltVjJlcEEzZC9USzM3RUFUaTlYRmJyWFp5emN0bkZP?=
- =?utf-8?B?T2NUczRLNzVCQUcyakF3aWF2QnpHM2g3WXZ4aGV0WDdkdjBZdy9sajFvM1hH?=
- =?utf-8?B?dW02UFVFT1Zka0FNSXRPOTBBV3c2cnljYW84dFpYRXNpOVVhcmRhNFFYMVNL?=
- =?utf-8?B?Q205dDJWYzdtakVNc3pJa2ViWnFYUWVqeW5UTlF0cUhSeVFoakZGdlVJTGh5?=
- =?utf-8?B?VnE1UkpkSjhUb01RdWJrTXB0TmVQTnFvN1hHQ2RIQW9KZWY2R1FZVVZ4bmh1?=
- =?utf-8?B?SGt5V1I1MWhFM012OG9lT3pZTlEwUCtRK1RGK2djazRXdENSNFI3UWZSeGc4?=
- =?utf-8?B?dzBycE5Pd052ZE5jWTlnZGF0dVFERVVxaUQyMjBVSURJYzBtT1NZT1hKUUhN?=
- =?utf-8?B?ZVVZVjI5WjZlNGEyalFrMyt0bFlOK3JoRkZnSW05Z3NJMHkzc05VSXlRRWRD?=
- =?utf-8?B?NnZNalJqSzdJbnp3RkM3TmU5SHd6WHpVcUxuUEZQUnR2dCtleE1kN3I1QWhx?=
- =?utf-8?B?OEFVQWpNSzVuUXpQWlorVGtlWWVMUGpMRytxTWxMYWtZTUNtWlJqVzZwTDd4?=
- =?utf-8?B?V21zUGNNNEhvZUZqTUxTaGR5V0Yxd2xMZk1xK3VJTkVyR2praWNwbDZyK0Js?=
- =?utf-8?B?eEhTWW5OVFFNczRQNldXalUxREFDVEhiYmV2WTNVZTNZbGgycjFwTlhUc3Mw?=
- =?utf-8?B?TkdicUFCMktyYnZDWVE0NFBKdTRtZklnQStBZmJWcWE4VkhUOHk0VEVmc2dz?=
- =?utf-8?B?WnN0dXRMZFZiRHBZVzhLZjdZQjNqVXFMODVFaFUrYUN4dkVrWkxqQStjNTZP?=
- =?utf-8?B?WDJsY3AwZHEyc05tRG1ncnI2NFlSUmdkWTlEMUtjVnQyR0VnNEpqbUNkY0o0?=
- =?utf-8?Q?weKPwHu+X1ss/UkkqiApXbt9X?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5dd25825-06da-40e3-db23-08de224e7723
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 00:49:13.6505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vupC+OWrEKdslL8kRmP3c/2mdPDN4b0Bhwhf67lPfH8zrDKOJ4ZXkUMeEn4cBgvIHfyLXlE0n/qRqiSOshRP3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8218
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hello!
 
+Some rcutorture runs on next-20251110 hit the following error on x86:
 
-On 11/11/2025 4:12 PM, Lyude Paul wrote:
-> On Thu, 2025-11-06 at 18:11 -0500, Joel Fernandes wrote:
->> These opcodes implement various falcon-related boot operations: reset,
->> start, wait-for-halt.
->>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->>  drivers/gpu/nova-core/gsp/sequencer.rs | 27 ++++++++++++++++++++++++++
->>  1 file changed, 27 insertions(+)
->>
->> diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-core/gsp/sequencer.rs
->> index 17118967a8d4..0192ac61df4c 100644
->> --- a/drivers/gpu/nova-core/gsp/sequencer.rs
->> +++ b/drivers/gpu/nova-core/gsp/sequencer.rs
->> @@ -49,6 +49,9 @@ pub(crate) enum GspSeqCmd {
->>      RegPoll(fw::GSP_SEQ_BUF_PAYLOAD_REG_POLL),
->>      DelayUs(fw::GSP_SEQ_BUF_PAYLOAD_DELAY_US),
->>      RegStore(fw::GSP_SEQ_BUF_PAYLOAD_REG_STORE),
->> +    CoreReset,
->> +    CoreStart,
->> +    CoreWaitForHalt,
->>  }
->>  
->>  impl GspSeqCmd {
->> @@ -75,6 +78,11 @@ pub(crate) fn from_fw_cmd(cmd: &fw::GSP_SEQUENCER_BUFFER_CMD) -> Result<Self> {
->>                  // SAFETY: We're using the union field that corresponds to the opCode.
->>                  Ok(GspSeqCmd::RegStore(unsafe { cmd.payload.regStore }))
->>              }
->> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_CORE_RESET => Ok(GspSeqCmd::CoreReset),
->> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_CORE_START => Ok(GspSeqCmd::CoreStart),
->> +            fw::GSP_SEQ_BUF_OPCODE_GSP_SEQ_BUF_OPCODE_CORE_WAIT_FOR_HALT => {
->> +                Ok(GspSeqCmd::CoreWaitForHalt)
->> +            }
->>              _ => Err(EINVAL),
->>          }
->>      }
->> @@ -96,6 +104,9 @@ pub(crate) fn new(data: &[u8], dev: &device::Device<device::Bound>) -> Result<Se
->>      pub(crate) fn size_bytes(&self) -> usize {
->>          let opcode_size = size_of::<fw::GSP_SEQ_BUF_OPCODE>();
->>          match self {
->> +            // Each simple command type just adds 4 bytes (opcode_size) for the header.
->> +            GspSeqCmd::CoreReset | GspSeqCmd::CoreStart | GspSeqCmd::CoreWaitForHalt => opcode_size,
->> +
->>              // For commands with payloads, add the payload size in bytes.
->>              GspSeqCmd::RegWrite(_) => opcode_size + size_of::<fw::GSP_SEQ_BUF_PAYLOAD_REG_WRITE>(),
->>              GspSeqCmd::RegModify(_) => {
->> @@ -200,6 +211,22 @@ fn run(&self, seq: &GspSequencer<'_>) -> Result {
->>              GspSeqCmd::RegPoll(cmd) => cmd.run(seq),
->>              GspSeqCmd::DelayUs(cmd) => cmd.run(seq),
->>              GspSeqCmd::RegStore(cmd) => cmd.run(seq),
->> +            GspSeqCmd::CoreReset => {
->> +                dev_dbg!(seq.dev, "CoreReset\n");
->> +                seq.gsp_falcon.reset(seq.bar)?;
->> +                seq.gsp_falcon.dma_reset(seq.bar);
->> +                Ok(())
->> +            }
->> +            GspSeqCmd::CoreStart => {
->> +                dev_dbg!(seq.dev, "CoreStart\n");
->> +                seq.gsp_falcon.start(seq.bar)?;
->> +                Ok(())
->> +            }
->> +            GspSeqCmd::CoreWaitForHalt => {
->> +                dev_dbg!(seq.dev, "CoreWaitForHalt\n");
->> +                seq.gsp_falcon.wait_till_halted(seq.bar)?;
->> +                Ok(())
-> 
-> Are we still planning on getting rid of these dev_dbg! calls?
-> 
-Yes, already done for v4 and posting soon.
+WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0xb3/0x100, CPU#0: rcu_torture_sta/63
 
-Thanks.
+This happens in about 20-25% of the rcutorture runs, and is the
+WARN_ON_ONCE(1) in the "else" clause of get_data().  There was no
+rcutorture scenario that failed to reproduce this bug, so I am guessing
+that the various .config files will not provide useful information.
+Please see the end of this email for a representative splat, which is
+usually rcutorture printing out something or another.  (Which, in its
+defense, has worked just fine in the past.)
 
+Bisection converged on this commit:
+
+67e1b0052f6b ("printk_ringbuffer: don't needlessly wrap data blocks around")
+
+Reverting this commit suppressed (or at least hugely reduced the
+probability of) the WARN_ON_ONCE().
+
+The SRCU-T, SRCU-U, and TREE09 scenarios hit this most frequently at
+about double the base rate, but are CONFIG_SMP=n builds.  The RUDE01
+scenario was the most productive CONFIG_SMP=y scenario.  Reproduce as
+follows, where "N" is the number of CPUs on your system divided by three,
+rounded down:
+
+tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*RUDE01"
+
+Or if you can do CONFIG_SMP=n, the following works, where "N" is the
+number of CPUs on your system:
+
+tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*SRCU-T"
+
+Or please tell me what debug I should enable on my runs.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+[ 1676.478083] WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0xb3/0x100, CPU#0: rcu_torture_sta/63
+[ 1676.478092] Modules linked in:
+[ 1676.478099] CPU: 0 UID: 0 PID: 63 Comm: rcu_torture_sta Not tainted 6.18.0-rc4-next-20251110-dirty #6903 PREEMPT(full)
+[ 1676.478104] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+[ 1676.478107] RIP: 0010:get_data+0xb3/0x100
+[ 1676.478110] Code: 39 cf 75 50 48 8b 76 08 48 8d 4e 07 48 83 e1 f8 48 39 ce 75 4a 83 fa 07 76 50 83 ea 08 48 83 c0 08 41 89 11 c3 cc cc cc cc 90 <0f> 0b 90 31 c0 c3 cc cc cc cc 48 c7 c0 ff ff ff ff 44 29 c2 48 d3
+[ 1676.478114] RSP: 0018:ffffb5e0c021bb98 EFLAGS: 00010006
+[ 1676.478118] RAX: 0000000000000000 RBX: ffffffffbe27c560 RCX: 0000000000000012
+[ 1676.478121] RDX: 0000000000000000 RSI: ffffffffbe342060 RDI: ffffffffbe27c590
+[ 1676.478123] RBP: ffffb5e0c021bc78 R08: ffffffffffffff98 R09: ffffb5e0c021bbd0
+[ 1676.478126] R10: 00003fffffffffff R11: ffffffffbe342058 R12: ffffb5e0c021bc60
+[ 1676.478128] R13: 00000000ffffee71 R14: 000000000000003f R15: 0000000000000400
+[ 1676.478133] FS:  0000000000000000(0000) GS:ffff9d0b605f7000(0000) knlGS:0000000000000000
+[ 1676.478136] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1676.478139] CR2: ffff9d0b0ac01000 CR3: 0000000001ed2000 CR4: 00000000000006f0
+[ 1676.478141] Call Trace:
+[ 1676.478155]  <TASK>
+[ 1676.478157]  prb_reserve_in_last+0x190/0x4d0
+[ 1676.478163]  ? vsnprintf+0x11/0x4a0
+[ 1676.478176]  vprintk_store+0x41e/0x530
+[ 1676.478191]  vprintk_emit+0x8f/0x360
+[ 1676.478199]  _printk+0x56/0x70
+[ 1676.478207]  rcu_torture_stats_print+0x2fe/0x780
+[ 1676.478218]  ? lock_release+0xc6/0x290
+[ 1676.478222]  ? __pfx_rcu_torture_stats+0x10/0x10
+[ 1676.478237]  ? __pfx_rcu_torture_stats+0x10/0x10
+[ 1676.478241]  rcu_torture_stats+0x25/0x70
+[ 1676.478245]  kthread+0x102/0x200
+[ 1676.478252]  ? __pfx_kthread+0x10/0x10
+[ 1676.478258]  ret_from_fork+0x23f/0x280
+[ 1676.478266]  ? __pfx_kthread+0x10/0x10
+[ 1676.478270]  ret_from_fork_asm+0x1a/0x30
+[ 1676.478285]  </TASK>
+[ 1676.478287] irq event stamp: 54788
+[ 1676.478289] hardirqs last  enabled at (54787): [<ffffffffbc933c3d>] __up_console_sem+0x4d/0x60
+[ 1676.478293] hardirqs last disabled at (54788): [<ffffffffbc935ecc>] vprintk_store+0x3cc/0x530
+[ 1676.478297] softirqs last  enabled at (54672): [<ffffffffbc89fb8e>] handle_softirqs+0x2ee/0x3b0
+[ 1676.478303] softirqs last disabled at (54659): [<ffffffffbc89fdb1>] __irq_exit_rcu+0xa1/0xc0
 
