@@ -1,198 +1,229 @@
-Return-Path: <linux-kernel+bounces-899162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C0BC56FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2EFC5701B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55E93BF366
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F3E3BA74B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A26332EDA;
-	Thu, 13 Nov 2025 10:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC67333421;
+	Thu, 13 Nov 2025 10:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="YgRcZuLm"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfFKJJu6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA45D33120B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72966331A7D;
+	Thu, 13 Nov 2025 10:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030555; cv=none; b=MsjiZ5b7e8PGqMKVr7dPesLEn0CeRyS3tFPjD89sFCERFzPEsPnuS2E7Z27Psv45+e+4JFI4gx9De3PcZ+SeBm9JbXjcI53XXwKDfWDsEg63q1++FW0nlzYXIiFnv4V0bBlC7tTrq0Dj5zUSZN0MUDulBxPlwC0oog3CBkM4FGU=
+	t=1763030630; cv=none; b=DmTvR575CgpwkobdawdaV0hN4kU1xpy9l8wQcJXrDi1vuHGmgumetj/HAlblyQX3+alxWWbR3Lm/F5F7aDg5DMPUs4jLlLF6ipKQOWzL8dtYCsOg6Y8QLqa4tCudtIIDva9IbiXAXNb5dF2yxljRV5pgYLiZrAUv53srIev2Bbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030555; c=relaxed/simple;
-	bh=PMmKSFKj6pzkYGzgLnVnV4jlBP4NMbJ4YiWVaQ7L768=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ATwBk/l3Xp4TJX66zl5ea4KfpfYuuX9DPt6HRm787h+Ylkqg2pgYmmdiJqssvqTPRaFmjJbGZMcBzWbv/khwQ4yB0LMQs0yY4tS/LqF9Y0Py0h6s2rRsZdgW3L90AxNbnwyPrFmjKm9le/sqy4fcW9td24MqN0yMi/TO0vobAHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=YgRcZuLm; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5840140255
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1763030548;
-	bh=WaWROQhILaIk4AODRxLJvdFvDxUCFVP6Fxty2SkZyI4=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=YgRcZuLm86cfnKM7UX2EDXrfVXVcH1g7Mf8TnnZtarKdu91czDC6BrbC3vYLgRRBM
-	 VyLumaupXBK1Uk/2VGv8993+5Y/RGuN/5BFUp0dOhf+S4lEHIN9ku8GjBD2tRDGrG4
-	 TCJj0QgRG7WKIcMzKaZhf0YYhWhtMFlh2pqcbPqMoo3dgplzXKBcmuLfNm3mI0jF2W
-	 PBgw0rnGSysHsT5sLzllM3U4Y9BYpLjjLRf5AxjjCadjKyS+84AGVuE1i2pvOSY0+C
-	 qcaTmiQKywpplVhHdBrsKu0W/GkM1bOOJ0Wyx2hd450k9VLIghw1gsYnFx8Gs9Jx+4
-	 V1melovOopT6Te1FMo+IZALYEgsLSfCFeRuKU7vRFcdbBe5t85DEoRcXUFCsG7niPJ
-	 oPtQG6hlmpmhV9YPDsUIpY/W/Mk7z/WBBQbnYYKfRRcD4aGaLC5Kd3gD0VNhmQunIt
-	 HuZnLFItLu/9zgO12WTZgdx09CSDVu4c6j9+6d5d+NKHCg+lOKxFa7OXojLQfknTKQ
-	 u5syzlvV4wEdIG3AsYCGnwd1Yg/jiEGKNbV3yHO/B/pgIPNUbVggOyFqrXwLXN+XGt
-	 oU7qzDJRUtYZezsomLqD5RI5Sc3VklJXSwv7LpxN32c2BYTPDzOaIz9oI++HojWsgL
-	 wuwmwZwYUO6oKa3j1HTYpMVU=
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b70b21e6cdbso93408866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:42:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763030547; x=1763635347;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WaWROQhILaIk4AODRxLJvdFvDxUCFVP6Fxty2SkZyI4=;
-        b=DrWRJ+f9WG3M3jAn/E9Q1SvkdiORsRvZG5+TBjjMBzIQxcuoEyYLmfH3WhzjRGCTs5
-         /viSPSwQfXgH9T2BKk9u0WNV4nXeUDMp/Dz3UMhBQtD8+MlopEHtjnC2CMKP0BSg85mn
-         MK6A5qiz4LkeAO3daWdmbDYlczaBBoMymLSl0Iyvm6OhOoZ4PSsnevDw5xfAXXT3oEWT
-         vfMRp2mz+wQZc66WOOAbvVKVZMY0VaRPmqTmumK6mDxKO2wHp65+06FPs4mfZCWB1BZS
-         rbGQpDq17FHUdyAzzKb6QUEdUMG4QPu76eSEc/Hffm3qDExf6xRyu5xlwEFP1wij6ksx
-         NHcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBsj0jXdkVeX+4FUKCWAx/11LnSBEg0Vt9EjAoqd580gvBjr5dZfDzNbzrBh0weMmDQXolQi1HnGgNwoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGm0PhTqE9jI51AuQ0mh2EQ9HOMYNDwTG6+PVIWyTrzuCIqnZc
-	Y8A3+in8JDf7ADn8fXR3NjYcbzvvfog6EtAMGMUfURM0yepUyMzYsH0kLXZV8VkmzjexaqvGEYq
-	ucckXC5B/bdx0BbLwkuN1ZNYtAcAW5MpaY5ZJ09BDD2j/2av1Dm/nEYM3++VR+QVMl3xx+RGv9M
-	2SBs0nVm0IagHLswPDTvtk629QoMtYQpkuu4VFEVJvzkDS5TK5EDO2nYaq
-X-Gm-Gg: ASbGncsObgOT5t2UaYS/bC5qEWyTO0FgnVPAGjWDLSeKlHjTFvJ4AY5jTK2afl9a+/T
-	3sh1VBrLu4Ip/0wLGTWMkhpSerBe3WMrGhsiL83NXV/h2DLD6jcYTg7M4fH0C050XLoN0cQ6yrG
-	PNpwoCcY8vtEKh4y6CvaJvT7RkoIxnfD/a4RXIhtwRRBatDCKg8dn+7g==
-X-Received: by 2002:a17:907:3e1f:b0:b72:b7cd:f59e with SMTP id a640c23a62f3a-b7348087148mr254968066b.8.1763030547564;
-        Thu, 13 Nov 2025 02:42:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFTJg98+9M8c886tFyGLEzoK9vA4EcA/KrEpft00B6n0vwqztesDMLxb4eNFEPEpnVvcr/HOe2M0PsqZg0bCHc=
-X-Received: by 2002:a17:907:3e1f:b0:b72:b7cd:f59e with SMTP id
- a640c23a62f3a-b7348087148mr254965466b.8.1763030547147; Thu, 13 Nov 2025
- 02:42:27 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Nov 2025 02:42:26 -0800
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Nov 2025 02:42:26 -0800
+	s=arc-20240116; t=1763030630; c=relaxed/simple;
+	bh=pO1LaCxbxGxU97YcM8QiLnR+asiXqGQGIHK5kqR2StQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3KCeqxkHHlq7o/1VlEhNdVv+3FgB8W9+2zP/KTlSrqdpfR/mzgSf0Df5BykQ4ZJraOlXqxIaV9lrWvMAuO9++NMHQGLuRnq/xPaIheY8TgnKQ9C2taz5KdvIdjUoMoTYRYwUTOcSAHLRCWo+JEn8gicy1stDZXbfMOerxYVEcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfFKJJu6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E320FC2BC87;
+	Thu, 13 Nov 2025 10:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763030630;
+	bh=pO1LaCxbxGxU97YcM8QiLnR+asiXqGQGIHK5kqR2StQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AfFKJJu6dEC+O5OY7p9fppV2wVQvMcWDsKcqXcyTBl61rqPLUE4/Tr8oZH1RI4ZJo
+	 JjN2SHggzBE46Gdajk8cbv03oMd38NuiAJJ1m7TI/hX3ZTuwKrpgdPVdNlWgcmDWBP
+	 VJvj5SlLCsMbtMhbXjuOWuX20fxep8mHGX+BE/X+l5k9e+SFs1SluZrqErnBtkAyzB
+	 +TeBEpmJ+ZL+QIR4J95JnTG9PbGJIMOb8n8Tfp+Vb/fZhOXmwX+cOKYVDUZ30Gp3S5
+	 0k/MT/oqOh1ehqkFPN0pNQ4hAn6pXgYmv1b3+YvUiaEUqFto2N9wp/f5y8LdgciYaQ
+	 e0xv2IGGHEb1A==
+Message-ID: <4ff4c304-fb37-4b4d-a9bc-d5cc80e0a274@kernel.org>
+Date: Thu, 13 Nov 2025 11:43:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZQ2PR01MB13076544E2136E7E7C2EEDA1E6CD2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-References: <20251107095530.114775-1-hal.feng@starfivetech.com>
- <CAJM55Z_rczBo4D3HsC90QW1=fp3NWgK-tsEo6LHTZNXEBHTDqA@mail.gmail.com> <ZQ2PR01MB13076544E2136E7E7C2EEDA1E6CD2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-User-Agent: alot/0.0.0
-Date: Thu, 13 Nov 2025 02:42:26 -0800
-X-Gm-Features: AWmQ_blOZ9S9m9Ve_xD05iTkInH_Tetx_kG4fJGOm32UTmonVLiTkEgBwiVrXdU
-Message-ID: <CAJM55Z9KyNK1n4i9FxbLor4HTQKqK8WKA2svjPVvKXihw_E+sg@mail.gmail.com>
-Subject: RE: [PATCH v2 0/8] Add support for StarFive VisionFive 2 Lite board
-To: Albert Ou <aou@eecs.berkeley.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, E Shattow <e@freeshell.de>, 
-	Hal Feng <hal.feng@starfivetech.com>, 
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
+ <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
+ <20251113-benign-macaw-of-development-dbd1f8@kuoka>
+ <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
+ <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+ <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Hal Feng (2025-11-13 04:42:05)
-> > On 12.11.25 21:54, Emil Renner Berthing wrote:
-> > Quoting Hal Feng (2025-11-07 10:55:22)
-> > > VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S
-> > > industrial SoC which can run at -40~85 degrees centigrade and up to
-> > > 1.25GHz.
-[...]
-> > Currently the JH7110 device trees are layed out like this, with a nice separation
-> > between the SoC description and board descriptions:
-> >
-> > jh7110.dtsi               # JH7110 SoC description
-> > |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
-> >    |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
-> >    |  |- <VF2 boards>     # Final VF2 board descriptions
-> >    |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
-> >    |  |- <Mars CM boards> # Final Mars CM board descriptions
-> >    |- <other boards>      # Other JH7110 board descriptions
-> >
-> > With this series it moves to
-> >
-> > jh711x.dtsi
-> > |- jh711x-common.dtsi
-> >    |- jh7110-common.dtsi
-> >    |  |- <jh7110 boards>
-> >    |- jh7110s-common.dtsi
-> >       |- <jh7110s boards>
-> >
-> > ..which I can't even give clear labels like above. In other words when new
-> > patches are sent in it would not be easy to explain exactly where each change
-> > should go and why.
-> > I'm also worried that you'll find that more of the peripherals on the JH7110S
-> > need special handling and a new jh7110s-... compatible string. Then I guess
-> > they'll need to jump from jh7110x.dtsi two levels down to jh7110{,s}-
-> > common.dtsi which then both describe SoC and board properties.
-> >
-> > If you're serious about calling this a new SoC then I'd expect something more
-> > like this:
-> >
-> > jh711x.dtsi                  # Peripherals common to both SoCs
-> > |- jh7110.dtsi               # JH7110 SoC description
-> > |  |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
-> > |     |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
-> > |     |  |- <VF2 boards>     # Final VF2 board descriptions
-> > |     |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
-> > |     |  |- <Mars CM boards> # Final Mars CM board descriptions
-> > |     |- <other boards>      # Other JH7110 board descriptions
-> > |- jh7110s.dtsi              # JH7110S SoC description
-> >    |- jh7110s-common.dtsi    # Peripherals common to all JH7110S boards
-> >       |- <JH7110S boards>    # Final JH7110S board descriptions
-> >
-> > I know this will mean some duplication in jh7110{,s}-common.dtsi, but I
-> > would prefer that to not having a clear explanation of what each file describes.
-> >
-> > Do you think this layout could work for you?
->
-> Yeah, it is clearer for developers and maintainers.
->
-> Considering Conor's suggestion, what about:
->
-> jh7110.dtsi               # JH7110 SoC description
-> |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
->    |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
->    |  |- <VF2 boards>     # Final VF2 board descriptions
->    |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
->    |  |- <Mars CM boards> # Final Mars CM board descriptions
->    |- <other boards>      # Other JH7110 board descriptions
-> |- <JH7110S boards>
->
-> Move the opp table from jh7110.dtsi to jh7110-common.dtsi.
-> Remove jh7110s-common.dtsi, because only one board uses JH7110S now.
+On 13/11/2025 10:51, Tudor Ambarus wrote:
+> 
+> 
+> On 11/13/25 11:35 AM, Krzysztof Kozlowski wrote:
+>> On 13/11/2025 10:28, Tudor Ambarus wrote:
+>>>
+>>>
+>>> On 11/13/25 10:30 AM, Krzysztof Kozlowski wrote:
+>>>> On Wed, Nov 12, 2025 at 08:29:06AM +0000, Tudor Ambarus wrote:
+>>>>> Add initial support for the Samsung Exynos OTP controller. Read the
+>>>>> product and chip IDs from the OTP controller registers space and
+>>>>> register the SoC info to the SoC interface.
+>>>>>
+>>>>> The driver can be extended to empower the controller become nvmem
+>>>>> provider. This is not in the scope of this patch because it seems the
+>>>>> OTP memory space is not yet used by any consumer, even downstream.
+>>>>
+>>>> Quick look tells me you just duplicated existing Samsung ChipID driver.
+>>>> Even actual product ID registers and masks are the same, with one
+>>>> difference - you read CHIPID3... which is the same as in newer Exynos,
+>>>> e.g. Exynos8895.
+>>>
+>>> Yes, that's correct. It's very similar with the Samsung ChipID driver.
+>>>
+>>>>
+>>>> What is exactly the point of having this as separate driver? I think
+>>>
+>>> The difference is that for gs101 the chipid info is part of the OTP
+>>> registers. GS101 OTP has a clock, an interrupt line, a register space 
+>>> (that contains product and chip ID, TMU data, ASV, etc) and a 32Kbit
+>>> memory space that can be read/program/locked with specific commands.
+>>>
+>>> The ChipID driver handles older exynos platforms that have a dedicated
+>>> chipid device that references a SFR register space to get the product
+>>> and chip ID. On GS101 (but also for e850 and autov9 I assume) the
+>>> "ChipID block" is just an abstraction, it's not a physical device. The
+>>> ChipID info is from OTP. When the power-on sequence progresses, the OTP
+>>> chipid values are loaded to the OTP registers. We need the OTP clock to
+>>> be on in order to read them. So GS101 has an OTP device that also happens
+>>> to have chip ID info.
+>>>
+>>> For now I just got the chipid info and registered it to the SoC interface
+>>> (which is very similar to that the exynos-chipid driver does), but this
+>>> driver can be extended to export both its memory space and register space
+>>
+>>
+>> There is no code for that now and possibility of extension is not a
+>> reason to duplicate yet.
+>>
+>>> as nvmem devices, if any consumer needs them. Downstream GS101 drivers
+>>> seem to use just the chip id info and a dvfs version from the OTP
+>>> registers. DVFS version is not going to be used upstream as we're defining
+>>> the OPPs in DT. So I was not interested in extending the driver with nvmem
+>>> provider support, because it seems we don't need it for GS101.
+>>>
+>>> Do the above justify the point of having a dedicated driver?
+>> Only partially, I asked about driver. I did not spot previously the
+>> clock, so we have two differences - CHIPID3 register and clock - right?
+> 
+> clock and interrupts, but I don't use the interrupts because I just need
+> to read the OTP registers to get the chip id info.
+> 
+>> I wonder why Exynos8895 and others, which are already supported, do not
+>> use CHIPID3, but nevertheless these two differences can be easily
+>> integrated into existing driver.
+> 
+> they can be integrated, but I want to make sure we're making the best
+> decision.
+> 
+>>>> this can easily be just customized chipid driver - with different
+>>>> implementation of exynos_chipid_get_chipid_info().
+>>>
+>>> If the answer is no to my question above, how shall I model the device
+>>> that binds to the existing exynos-chipid driver?
+>> Just extend the existing driver.
+>>
+> So you mean I shall have something like that in DT:
+> 
+> +		chipid@10000000 {
+> +			compatible = "google,gs101-chipid";
 
-This patchset adds 2 different boards. Has this changed?
+No. I said about driver. Why are you mixing these?
 
-Also this would mean that you're not using the starfive,jh7110s compatible or
-any other starfive,jh7110s-.. compatible strings, so effectively you're not
-treating it as a new chip, but just a board that needs a different opp table.
+In previous v1 I said that bindings are wrong, because you created two
+bindings for the same device. This was fixed and bindings look okay.
+That's done.
 
-I see now that the opp table is effectively the only difference between the two
-chips in this patchset, so if that's closer to reality then what you suggest is
-fine with me.
+We speak here ONLY about the driver.
 
-/Emil
+> +			reg = <0x10000000 0xf084>;
+> +			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
+> +			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		};
+> 
+> Maybe remove the interrupts because I don't need them for reading OTP regs.
+
+No, they must stay because hardware description must be complete.
+
+> 
+> What happens in the maybe unlikely case we do want to add support for OTP
+> for GS101? How will we describe that in DT?
+
+You add nvmem-cells to that node. You can add them even now to the
+binding to make hardware description complete, but because we do not see
+any use of that and nvmem-cells are mostly for other consumers of the
+node, it does not matter that much. Maybe mention that in commit msg,
+that you skip nvmem-cells because this OTP is not used at all as NVMEM
+anywhere in downstream, upstream and you do not see such possibility.
+
+Best regards,
+Krzysztof
 
