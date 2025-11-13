@@ -1,60 +1,93 @@
-Return-Path: <linux-kernel+bounces-899464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87861C57EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38591C57F1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B691423CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BF3AF326
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E17242D89;
-	Thu, 13 Nov 2025 13:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D859126F463;
+	Thu, 13 Nov 2025 14:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hfx+M/ag"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qYVw/Q4E"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010064.outbound.protection.outlook.com [52.101.85.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417CA23EA95
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763042348; cv=none; b=ogyMpAZpEI2BHaHDPnrDjdOD9p4T5kmZ7Z1TawsLY7eOGflt0+q+sFNBcnoZAK5F42hWktEIDiC+GjYS7LukCj22ykWVe8h3W/2PaFaXPlGbSxYmmQ1JKTYS6Vnd6ffLsMIxN9K9IKM1/WpWJcqJd/Kz5Sl4MR9HG5GBDb4HMkw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763042348; c=relaxed/simple;
-	bh=kfd3RyhY4DVWYu8nmIBTbsxRwtREU+3sF2ZT8G9U/3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvKxVOq7zXsiKuMqJg4LUhko6xzUCIGplKT1X1pbZZutlMSUeTYiCcsAOLxfJcN0P1BRi1Wlz1Lfl6rHPSGSako4AepBk9FLygT8mEjNLMhOsJUijP2Fu444w7gMNwK+E934zPKGR+qbmSgf0PxlCnNgCS0RsfGzYZhYUAH9gIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hfx+M/ag; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763042332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0MNWm6Lip8Ocum3HyzjrIKBsn/zjzGl1/AKODQ4rsM4=;
-	b=Hfx+M/agSYpYvlAwaquDtryNqbnRDrenQ3vOdWcwPWn9kCPPlQfx3+KfAJnj3C5yWw+5SY
-	GJmqz/17VpljQPZISfU5oU9AD9GYsL4TBscVVvTVquqwxUWNwdexEmXDdnnZ2Wp17eTWzW
-	FJsXvJeCmWNLWvhtMXMU5Bc9QzFgaec=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: encrypted: Replace deprecated strcpy and improve get_derived_key
-Date: Thu, 13 Nov 2025 14:58:31 +0100
-Message-ID: <20251113135831.98587-1-thorsten.blum@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C2526E6EB;
+	Thu, 13 Nov 2025 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763042898; cv=fail; b=Qv2NoXQQKPuOYgT4+Gp0nV41p2aymjaB0WYJpYFJQGr6oCPQ4TDvqD41B7WI+ADoJEYyKQPOUe/Cd4O9wT4+xXBwdLacBnZWSQUaH2j75rCao6/Kc7xRNyOGkjgoFFrrPtM/rY8ayv8+brrQ7pH9/D9f8Tz2QMT4lCejCR1m8pM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763042898; c=relaxed/simple;
+	bh=yuwLAnzaql00aWrHVzaS4g4i+9VFn7x9RN5Sw1cPf1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iuo+Zh2yJpQeNcDbvdHCwunFRalqvDypEwbaQxve6Ze+9ChhURfvhOua/CIUaFtmfncYN0roJSDXAoRCV1OMh3LWxPZjjZHNzwX3haFZt5f+0dASh721rddRJ3Om1c7jy0snJYqMvtGG+dVhcmtb8o2CXtTFaJhHG/Nt1ajG3QI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qYVw/Q4E; arc=fail smtp.client-ip=52.101.85.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=muZeXdAPQCjXMu0KdNfuGCdXFnBYmj+KGlY7d5kFTHFKS/shulUOG7orhcfs/mdpWzzDTDtgNkBMIUW0I/SI8Sn3451V2w6NLV/VH4C4BMPhUrQb/g6U4bvsV8nDHcfJ7D2DMMvpXMcY6zstkXxcMmeBD9S2bVKXSSbORjMIAHjTMxnOqzbcbH3ZgDRLM0J18HD4obj79g9BlPi4oF/M0xZHGBhpMqVGOuKpTqcD+RS9JVtqmmE41Q2DpRZabWw2MM2IuYtNdSCfzuBgttYJnNTidzIBV+MeTmlfIMKagKFYeX+FehqgJd0QNzM1gv+9xZ93D+dqYOJ3n9ACy+rUNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xtt6sDC43pOvA87OkKbQmb2XXHqBmC/TW2rqThGAozk=;
+ b=ZNRbcKO5KsPX66HqyyNLUdBaXdJpW8DgD+tU93X4hizXhqUjNHshBWl/6txiRZClnguRF7oJfVxMiee3pDNoWZubiZUVogtNX4y4Zh2WuFrmd8CgqQhnJ7W/xv1rvG6005eJoQ3sZowiAYAFNFIHjrbPbvXMoUUKL1S9z9ym7MfDTgcFg+BETk8h2LIILoh6wojdegJy5s0Dj70899XuLvTDnIrk+WQAAiJWuq4yJT3H1sg7dKuoGEmcdYEDgLfpKd4YPrCXg7He5GhDbqRA8uNwRJ/ulwKqVkharuguVI6AV5/mR+lqgVU3m3tHsGZ+pw5ORsyZUUXUGuAjdMZkCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xtt6sDC43pOvA87OkKbQmb2XXHqBmC/TW2rqThGAozk=;
+ b=qYVw/Q4EH/q3rXfg2IuWo+btqygzAC0+fkvWOgO9aG0tyxbUM+kVfw1N2Xhb9WTQ9LEjvV8dBuB8gjY18GiNYmVWx3NKJ0bg1WHT5RinrkIjX7yHEV0HJ/QO+OJhcDR+GmWDplSfaQEiqipFh9npmubMGqkh034upQ6gzM6LZYU=
+Received: from CH5P222CA0023.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::11)
+ by SJ0PR10MB4574.namprd10.prod.outlook.com (2603:10b6:a03:2dd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 14:08:12 +0000
+Received: from CH2PEPF0000009E.namprd02.prod.outlook.com
+ (2603:10b6:610:1ee:cafe::76) by CH5P222CA0023.outlook.office365.com
+ (2603:10b6:610:1ee::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
+ 13 Nov 2025 14:08:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CH2PEPF0000009E.mail.protection.outlook.com (10.167.244.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 14:08:11 +0000
+Received: from DLEE208.ent.ti.com (157.170.170.97) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:08:07 -0600
+Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:08:07 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 13 Nov 2025 08:08:07 -0600
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ADE86Qc385822;
+	Thu, 13 Nov 2025 08:08:06 -0600
+From: T Pratham <t-pratham@ti.com>
+To: <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S.
+ Miller" <davem@davemloft.net>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Manorit
+ Chawdhry" <m-chawdhry@ti.com>, Shiva Tripathi <s-tripathi1@ti.com>
+Subject: [BUG 0/2] crypto: ahash - Bugs introduced due to CRYPTO_AHASH_ALG_BLOCK_ONLY
+Date: Thu, 13 Nov 2025 19:30:11 +0530
+Message-ID: <20251113140634.1559529-1-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,70 +95,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000009E:EE_|SJ0PR10MB4574:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11646c33-9771-4e84-2511-08de22be1451
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TFPqBssm2M9aGWybZ4fAGOLhVgiekR2wzEJbK8payNpe6VrDOOpU8dmipOLy?=
+ =?us-ascii?Q?2H0gwha5hksfYVjUso9qel9073IVpIHNXWPO5Ja/I+II+4NubT2pAIFLrEnj?=
+ =?us-ascii?Q?f2WwbRxbMgMA8aresjZT0e9WdN4azdofqyiM+Bi7a0O8PpTGQut5wqW5QdiT?=
+ =?us-ascii?Q?ZbSLFdnjjui5++IRtmAMONYCo/XK2yjMPsNF7lzfdtQlChfvwsS60UZLXqhY?=
+ =?us-ascii?Q?x5QK7sTcuNXjdpXy/hqdhpaZ5ZWGpzfVgz5uOnsX/w2tPTcUtBWWOz2yfeNh?=
+ =?us-ascii?Q?VvI6kD6yZowttDB5mngMIxDbGqLZ8xx1MFXKPAH6Aw8WUXCj9r4NIGamp7Gu?=
+ =?us-ascii?Q?fyBEkapwSTOEmHv7Rqe0OT8oo7dmkjyEjWIK10Oz+NGFVroY+5xEfh/pY2cg?=
+ =?us-ascii?Q?DtPKl79ZF9SGF5j6R7i6n6AU/b4GdByYkq9y8zd4tQyKs4q4sestIGVyEIda?=
+ =?us-ascii?Q?/9KfaQvjhDjBFeTNt0yZW8vM7jWWfYhoTGSMAkuaEKkMDbsdVPEIGknQDRnz?=
+ =?us-ascii?Q?TGN3KXxLvnWUd7gRK5Rj4aRHyV83lGbkffij8+Rp9CUFTnmTJe3xR0UGy3YJ?=
+ =?us-ascii?Q?SDo5Abulgic75n3WkWeuCijvRLtHwlUgAPzj8AYHjLJi8NO150Vq1R23+odL?=
+ =?us-ascii?Q?SEKv6R1Wu9cBcvDxhJsMtTcMN7eRf/6oLuFggW6U2vzHTsX5kIa4+xa32m/Y?=
+ =?us-ascii?Q?wyj1NPKxbADSWNOb//rv7TqzHZnjatfR2V/P2D+MSkLxG+W5obnSs/79rrVt?=
+ =?us-ascii?Q?hDSk3l6/NTt0fsTSa6hY+nSUbVCSNY6d7NwtYK8XQTmaiDzzFy2yR/QZfpYT?=
+ =?us-ascii?Q?khdncmQmMJbdbMOhbWNp5erPLfE1EUwZoTKqCo1NG1aH7b19HgOMy5k+u4ax?=
+ =?us-ascii?Q?nTxoxCDulgscoNg/+4ss2LsLiE8lQunn/KPlvd6xRK8HgyK6Y89sDhojmDLD?=
+ =?us-ascii?Q?ebQ3uHD4I5kQEi1bOGoij03WREz0HnwFamAxjeeS1vRKSTipfDJJJf7tt85m?=
+ =?us-ascii?Q?DigUt0zQyxyf1jDjIhEWFZSfbv60HUbq/nZtlVQh3/Q2wtp+8mNvgVK+TxzM?=
+ =?us-ascii?Q?Rz7R9L0SJ81y8ljqBXTjPd5WukMo4qjquM+nHD20q021Y/CiuMjL66VkUh/1?=
+ =?us-ascii?Q?MIctEZW7RWhDpSW1yYEFnZiI0pjTWn4BfAOw3jT/pVtFONuU2a04RR0fSys7?=
+ =?us-ascii?Q?fEJ45IfZFsGjtfiGo89TXUi4QOmqd4txp934ovVk0XQCXpfFZ4mAQ1OjXYuW?=
+ =?us-ascii?Q?tICtWhIXfZi+s1U4awheVgYtYMPdYYB8OLRgstLu9FJDWsXWfJ6dlHKI1/s3?=
+ =?us-ascii?Q?l7Klwvxz6RCcVJM7JTOb8V3sWFAGX7c7+jSDk/0WZlHqe6mkVFSOenSAwpxu?=
+ =?us-ascii?Q?34KQufQ6O932FMR+O6xpsUhH9tcxqHKfH/chblfioa5FbxAsFrrIny7+L9L2?=
+ =?us-ascii?Q?jjJaYU0urWKoBVQO1ib3JG9se53N52eI0EVW7G9bEPPA+3nW7b9sp8WePEJL?=
+ =?us-ascii?Q?IAaxLfOzFbE0ZiEVtbM6pEYvL7vCC+jh/KM/huybgvlNUHpqEdWeAW/4DsHN?=
+ =?us-ascii?Q?JSjsoqtTzkwesSszU10=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 14:08:11.2254
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11646c33-9771-4e84-2511-08de22be1451
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000009E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4574
 
-Determine 'key_name' before allocating memory for 'derived_buf' to only
-allocate as many bytes as needed. Currently, we potentially allocate one
-more byte than necessary when 'key_name' is "ENC_KEY".
+Hi,
 
-strcpy() is deprecated and uses an additional strlen() internally; use
-memcpy() directly to copy 'key_name' since we already know its length
-and that it is guaranteed to be NUL-terminated.
+Commit 9d7a0ab1c7536 ("crypto: ahash - Handle partial blocks in API")
+introduced partial block handling for ahashes in the crypto API layer itself.
+This enables ahash algorithms to return a positive integer from the update
+function to indicate the number of bytes in the input which are not processed
+and should be buffered for next update/finup/final call to process.
 
-Also reuse 'key_name_len' when copying 'master_key' instead of calling
-strlen() again.
+I've discovered 2 bugs introduced due to the above commit:
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/encrypted-keys/encrypted.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+[Bug 1/2]: import/export fails for algs using CRYPTO_AHASH_ALG_BLOCK_ONLY
+[BUG 2/2]: testmgr false failures with CRYPTO_AHASH_ALG_BLOCK_ONLY
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index 15841466b5d4..b16a5b8b935b 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -12,6 +12,7 @@
-  */
- 
- #include <linux/uaccess.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/slab.h>
-@@ -330,23 +331,18 @@ static int get_derived_key(u8 *derived_key, enum derived_key_type key_type,
- 			   const u8 *master_key, size_t master_keylen)
- {
- 	u8 *derived_buf;
--	unsigned int derived_buf_len;
--
--	derived_buf_len = strlen("AUTH_KEY") + 1 + master_keylen;
--	if (derived_buf_len < HASH_SIZE)
--		derived_buf_len = HASH_SIZE;
-+	size_t derived_buf_len;
-+	const char *key_name;
-+	size_t key_name_len;
- 
-+	key_name = key_type ? "AUTH_KEY" : "ENC_KEY";
-+	key_name_len = strlen(key_name) + 1;
-+	derived_buf_len = max(key_name_len + master_keylen, HASH_SIZE);
- 	derived_buf = kzalloc(derived_buf_len, GFP_KERNEL);
- 	if (!derived_buf)
- 		return -ENOMEM;
--
--	if (key_type)
--		strcpy(derived_buf, "AUTH_KEY");
--	else
--		strcpy(derived_buf, "ENC_KEY");
--
--	memcpy(derived_buf + strlen(derived_buf) + 1, master_key,
--	       master_keylen);
-+	memcpy(derived_buf, key_name, key_name_len);
-+	memcpy(derived_buf + key_name_len, master_key, master_keylen);
- 	sha256(derived_buf, derived_buf_len, derived_key);
- 	kfree_sensitive(derived_buf);
- 	return 0;
+These are detailed in the following messages.
 -- 
-2.51.1
-
+Regards
+T Pratham <t-pratham@ti.com>
 
