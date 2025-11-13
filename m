@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-899804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31E4C58C95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:40:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC66C58CCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 18033363BEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52517420CEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B9D3559CD;
-	Thu, 13 Nov 2025 16:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B036A35CB84;
+	Thu, 13 Nov 2025 16:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IaFMDke3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BupXEZi+"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B848D357A2C;
-	Thu, 13 Nov 2025 16:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E035C1B5;
+	Thu, 13 Nov 2025 16:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051223; cv=none; b=cpv+rkioUg6UA3T/2Ptq7w/TPHQQ+l2K8oIGPuh/BJmsDf/EhFEt+IJZlOoZ5XyOfyfAYbyDSNHGnexArzJJFC8nQJv1J0zHl4FHO4+7rp8dsaMvIbkSsBiFxMnudrV3hyKSFWa55k9LGEsLWeB5CImUh6UHWW1eN1IUcKHdu/Q=
+	t=1763051241; cv=none; b=tYZtTxGcs/QiDM+K80PpnTIDjv4iFxg+5UBpffYkzHNjSzp2yMfzvyUFrK6mkXLkCRu32AbYgE4OTmlDEfJ7hYkBu4r7KpFVf/Y1giUIfwtsdJPVivfv2Mx6N89dvQ1ps5/OQGZFx3aV3b+3JWTYmttCMMjnr3/xPj2ZOHr8IVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051223; c=relaxed/simple;
-	bh=pP2qdP4u+ICU1JJgrdkxbA70iheGpoJDi0HzNQQbOZg=;
+	s=arc-20240116; t=1763051241; c=relaxed/simple;
+	bh=+9U8bLoG5vhDi4CT1cCak0qMkenNIeswIbFL4jpF094=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pzVx81Hs6WskGp+kzJ5Es7JZnm8DLfi3FdeaTJlqW8LZKxTuTtd2WGy4cfVFncUmB6weEkYZHeID4kgmDcIPVW6wqiLMd//GZw9W9U3BQojoggNHXm+qA0cW+pPkD0gHH6kEpfTtv9G28fPvIWyKQF1US4G0vwEK3bHqgVmV3HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IaFMDke3; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version:Content-Type; b=p12vDG8gNyT2DFF09UR+xIyH1yjw1XeopsB7cKgkvZAKTD5DtC3Ezt4iOSi4esCBAxxstFStGcDYcSwn7WrjhzNN+6mBbQl+NSg8WxtqL60SVfsxIG8VKm8j7xOvEpMsqTKVGY1hIoAm1Kt1bgyhIjp6Cyy3W/ZPe3Bh3+S5zI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BupXEZi+; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763051222; x=1794587222;
+  t=1763051239; x=1794587239;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pP2qdP4u+ICU1JJgrdkxbA70iheGpoJDi0HzNQQbOZg=;
-  b=IaFMDke3Oa5an5NYdLuBsEVdSph2ensXehKEBuGQl0TkTc6+QGYkMEmR
-   GZqRN6dmklg6keG+R6RJL9TjD1zsQdSmBmEPBnIcvOmmmgFxZI23zdn98
-   0PaYL2Cr5/JMiiKRVA6EcAZvVNWaW1cZa7GHMzK5N1wJAMW7jWTVuJENy
-   iL8kv3KJDWyVwNihBX7jyjaUHQwJAzRQ7Bv46lyAJnVXlq5HHosMmNJtz
-   +oNSpf32aRamIqco84Ap3KKA+miy/jaRTh304Q5gJsNNYQX2V/1KAnMS8
-   UuzYQM7OWy7BC2eyHhjuPoLyU3t9AdptAXurQJ6UY4FCgl4hjQo/nYG/0
-   Q==;
-X-CSE-ConnectionGUID: kAGFCe+ISGuGEBluXYbcjA==
-X-CSE-MsgGUID: +VyFH1yUQs2tzjJEHlngnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="68766578"
+  bh=+9U8bLoG5vhDi4CT1cCak0qMkenNIeswIbFL4jpF094=;
+  b=BupXEZi+dTOf99g4zj41AekIcXNFPzSTSNduEFpQPDao4kIB7o1fj59N
+   2DyFywNkKI1b8oPDo82CgTYaSBCI8dYTsCcSUaY6YKHUl7nUDFrVbeqIl
+   Wspv3JREjbouN2O6qY/LdZAIcCoTuINqljgr+RipZWzpEIsVESWLFoSCh
+   yarCjEmfaKKu/v49Qqeja5r5O02kWDJK1p3ibcGe+Iof7KBUTc3yieLby
+   FoyXGdtMUJ0fisKcLBNL5+Iyx380w5LsrYr5AKHa9D3UirjmfdAd39+5S
+   kLzW1eBoDSkWT+AvHY5xfZqrGCfKy5wO5ha9Wj+ozXwZkA5/GpiaU8pNP
+   w==;
+X-CSE-ConnectionGUID: czPvTD0XS7WdZs6gA5I9Yg==
+X-CSE-MsgGUID: oh/pBLTvRGW9QA5MDE/WWQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="68766643"
 X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="68766578"
+   d="scan'208";a="68766643"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:26:54 -0800
-X-CSE-ConnectionGUID: Ut4d6JHtRUWL2VMj1wFksA==
-X-CSE-MsgGUID: qC0+uIqVRhWYCEbRTmVR9Q==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:27:19 -0800
+X-CSE-ConnectionGUID: 5KkuisasTgW4lHbn5DQh+A==
+X-CSE-MsgGUID: ZS4+oLvyTb+mDc3Q1TU3wQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="189553797"
+   d="scan'208";a="189553864"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:26:47 -0800
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:27:12 -0800
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 To: =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
 	Simon Richter <Simon.Richter@hogyros.de>,
@@ -79,9 +79,9 @@ To: =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
 	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v2 01/11] PCI: Prevent resource tree corruption when BAR resize fails
-Date: Thu, 13 Nov 2025 18:26:18 +0200
-Message-Id: <20251113162628.5946-2-ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v2 03/11] PCI: Change pci_dev variable from 'bridge' to 'dev'
+Date: Thu, 13 Nov 2025 18:26:20 +0200
+Message-Id: <20251113162628.5946-4-ilpo.jarvinen@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251113162628.5946-1-ilpo.jarvinen@linux.intel.com>
 References: <20251113162628.5946-1-ilpo.jarvinen@linux.intel.com>
@@ -94,61 +94,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-pbus_reassign_bridge_resources() saves bridge windows into the saved
-list before attempting to adjust resource assignments to perform a BAR
-resize operation. If resource adjustments cannot be completed fully,
-rollback is attempted by restoring the resource from the saved list.
+Upcoming fix to BAR resize will store also device BAR resource in the
+saved list. Change the pci_dev variable in the loop from 'bridge' to
+'dev' as the former would be misleading with non-bridges in the list.
 
-The rollback, however, does not check whether the resources it restores were
-assigned by the partial resize attempt. If restore changes addresses of the
-resource, it can result in corrupting the resource tree.
+This is in a separate change to reduce churn in the upcoming BAR resize
+fix.
 
-An example of a corrupted resource tree with overlapping addresses:
+While it appears that the logic in the loop doing pci_setup_bridge() is
+altered as 'bridge' variable is no longer updated, a bridge should
+never appear more than once in the saved list so the if check can only
+match to the first entry. As such, the code with two distinct pci_dev
+variables better represents the intention of the check compared with the
+old code where bridge variable was reused for a different purpose.
 
-  6200000000000-6203fbfffffff : pciex@620c3c0000000
-    6200000000000-6203fbff0ffff : PCI Bus 0030:01
-      6200020000000-62000207fffff : 0030:01:00.0
-      6200000000000-6203fbff0ffff : PCI Bus 0030:02
-
-A resource that are assigned into the resource tree must remain
-unchanged. Thus, release such a resource before attempting to restore
-and claim it back.
-
-For simplicity, always do the release and claim back for the resource
-even in the cases where it is restored to the same address range.
-
-Note: this fix may "break" some cases where devices "worked" because
-the resource tree corruption allowed address space double counting to
-fit more resource than what can now be assigned without double
-counting. The upcoming changes to BAR resizing should address those
-scenarios (to the extent possible).
-
-Fixes: 8bb705e3e79d ("PCI: Add pci_resize_resource() for resizing BARs")
-Link: https://lore.kernel.org/linux-pci/67840a16-99b4-4d8c-9b5c-4721ab0970a2@hogyros.de/
-Link: https://lore.kernel.org/linux-pci/874irqop6b.fsf@draig.linaro.org/
-Reported-by: Simon Richter <Simon.Richter@hogyros.de>
-Reported-by: Alex Bennée <alex.bennee@linaro.org>
 Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/pci/setup-bus.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pci/setup-bus.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 4a8735b275e4..e6984bb530ae 100644
+index e6984bb530ae..d58f025aeaff 100644
 --- a/drivers/pci/setup-bus.c
 +++ b/drivers/pci/setup-bus.c
-@@ -2504,6 +2504,11 @@ int pbus_reassign_bridge_resources(struct pci_bus *bus, struct resource *res)
- 		bridge = dev_res->dev;
- 		i = pci_resource_num(bridge, res);
+@@ -2479,12 +2479,13 @@ int pbus_reassign_bridge_resources(struct pci_bus *bus, struct resource *res)
+ 	}
  
-+		if (res->parent) {
-+			release_child_resources(res);
-+			pci_release_resource(bridge, i);
-+		}
+ 	list_for_each_entry(dev_res, &saved, list) {
++		struct pci_dev *dev = dev_res->dev;
 +
+ 		/* Skip the bridge we just assigned resources for */
+-		if (bridge == dev_res->dev)
++		if (bridge == dev)
+ 			continue;
+ 
+-		bridge = dev_res->dev;
+-		pci_setup_bridge(bridge->subordinate);
++		pci_setup_bridge(dev->subordinate);
+ 	}
+ 
+ 	free_list(&saved);
+@@ -2500,19 +2501,19 @@ int pbus_reassign_bridge_resources(struct pci_bus *bus, struct resource *res)
+ 	/* Revert to the old configuration */
+ 	list_for_each_entry(dev_res, &saved, list) {
+ 		struct resource *res = dev_res->res;
++		struct pci_dev *dev = dev_res->dev;
+ 
+-		bridge = dev_res->dev;
+-		i = pci_resource_num(bridge, res);
++		i = pci_resource_num(dev, res);
+ 
+ 		if (res->parent) {
+ 			release_child_resources(res);
+-			pci_release_resource(bridge, i);
++			pci_release_resource(dev, i);
+ 		}
+ 
  		restore_dev_resource(dev_res);
  
- 		pci_claim_resource(bridge, i);
+-		pci_claim_resource(bridge, i);
+-		pci_setup_bridge(bridge->subordinate);
++		pci_claim_resource(dev, i);
++		pci_setup_bridge(dev->subordinate);
+ 	}
+ 	free_list(&saved);
+ 	up_read(&pci_bus_sem);
 -- 
 2.39.5
 
