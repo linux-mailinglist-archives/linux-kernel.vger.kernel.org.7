@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-898420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E5DC55406
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:27:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05517C55421
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3C73AA166
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:27:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A4D24344CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30DD26A1AC;
-	Thu, 13 Nov 2025 01:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274982877C3;
+	Thu, 13 Nov 2025 01:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9EZH2it"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WmuypgvH"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091B2673BA;
-	Thu, 13 Nov 2025 01:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F748264638;
+	Thu, 13 Nov 2025 01:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997243; cv=none; b=E3mgLQgw4E9KP5y3Cayy6ILSl0sQDdq0u4GPRSC4S0K+WZ+69g2G01jJG3oMsk78J6YVPGWy/HY00DSrE+2ps6IgmSlK9qO6+bHBNxGLMR8GVy7Rm6EpFMWlcPCGqJmueThu+Pios4Swk9/8G74IiduxswKnkmpNYjYsu3BT5bY=
+	t=1762997496; cv=none; b=exryGQYWrixI3nzjNw8a7wkYXWIV7p/EraspfJziz7tY19kxDKs3o/qoUmpITXtNEvLRj7zoq87Qu+q3Vg0T0LUP+obZl+0jvobi+cZdkobcuf0z5AhRCyTpxrNvomCoeq1XI23Fv17Gg6CrbWlkPuiBDdthC6otW+fwKPUITao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997243; c=relaxed/simple;
-	bh=TF5Nr0Z6ILPUdtsJnj/5x/ih/OKOmW3hFeReBsHZthk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1wgW7ph1I7bxIBxyWxDZn4cKX4LGHUursQn6NawFGMmxVQZ08KfwjcqK0SPt2XQUGEbD6vG0IuR6v8VqTpevyyo18UrC2HW4m3YL8i8NqLem0M/Ev99doe8kfYGfAWQQy+jSqfRC2wbTKcr7aYcC6qf4jE7hZGdYkEFWam0o0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9EZH2it; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E905BC4AF0B;
-	Thu, 13 Nov 2025 01:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762997243;
-	bh=TF5Nr0Z6ILPUdtsJnj/5x/ih/OKOmW3hFeReBsHZthk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=j9EZH2itZecujLn0J/BBW/POwZhnFbrrB7plrJIULMFOn289/jDaE6KBDiy8QUOII
-	 ncfIj4xIPZJNS2b2G52A6EF7rfMYg2wUB1sCWY9CGd199fQcSpBu60OdPVwm9WL5/z
-	 fpsZS5sTaPyuGt6y8ul+eVQrvOWPFUsAjDeLuTeGXHI7MewSLhMxIET9AjEYh1Tl2Z
-	 cv7RTUNLtfaT+EEtsWEdyyxnfQaudACiQMZEzx1dvAgB2aRGPlwujPcWZW3x+dS2va
-	 kD2YZ3HmtwaynqlRFn0Sf2RsDvKxiXqu0T0z1OKJfiK6icIGMsOaqyciq1hvzYPYLZ
-	 UmfN5Cwn5vszg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 631BFCE0876; Wed, 12 Nov 2025 17:27:22 -0800 (PST)
-Date: Wed, 12 Nov 2025 17:27:22 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Shakeel Butt <shakeel.butt@linux.dev>, Jann Horn <jannh@google.com>,
-	stable@vger.kernel.org,
-	syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm/mmap_lock: Reset maple state on lock_vma_under_rcu()
- retry
-Message-ID: <d9e181fe-e3d8-427a-8323-ea979f5a02ad@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20251111215605.1721380-1-Liam.Howlett@oracle.com>
- <2d93af49-fd76-4b05-aee7-0b4a32b1048e@lucifer.local>
- <aRUggwAQJsnQV_07@casper.infradead.org>
+	s=arc-20240116; t=1762997496; c=relaxed/simple;
+	bh=ryGkllMbqj7qBHYcr1wgNdazkSY7bg8IQDrKElhDblI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oEies4RBFrnaZojGngf2BrCGVqPCqGVjUE7xRgEZRw8v9w+L98zalspRVZ8x945UCCGFC2rtD2oQqx7Inkn60cKR+F+BVQHbHy6zEN62Zb32F/sDZygdJb+PJCYCNBErL8oONr09EAhuiu/JBbwHJhafc/DPVTPxNn3hqk/mhDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WmuypgvH; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=Qdb6cmTzMYAcnFLIkL/oulW43LiqvNLplY/sWh1QN7U=; b=WmuypgvHbeSc/FAoPa0QU8ZzT8
+	LteqXC+WAgxXI3ubjLUSxW9qKLeX66FobOyVYbhDxpmsXw5+JJeDkIlfhUrqMZl8Oz2DAx3FQhyRu
+	jhubvZtBiqzORaGKh8c+7oqXuNtEIkmuEgIIW7CFiMwHMzwVYV6gwVztFLUuOJyDa4RXKTiFED4Nm
+	W13kv7KmZv1rE8fyLi89/WHH9cOJwW2mWcSvkh7mVtNmKqPONK8d5Ny6Cw1bVoy489ln0s/VrK8XJ
+	+VqTqcWNnFmgaOeBtZL6azQXnLZYNfqMzRFoSp9hMPkwCCQBAP/DGinP7ldPwlempV6cLodZiTgeQ
+	sSmNSd/w==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJMBR-00000009iwg-2b8L;
+	Thu, 13 Nov 2025 01:31:33 +0000
+Message-ID: <1a1b0c88-e610-4851-a01d-ff16d472cb6f@infradead.org>
+Date: Wed, 12 Nov 2025 17:31:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRUggwAQJsnQV_07@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: PATCH] scripts: docs: kdoc_files.py: don't consider symlinks as
+ directories
+To: mchehab+huawei@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
+ linux-kernel@vger.kernel.org
+References: <20251112171452.Y5jX9%mchehab+huawei@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251112171452.Y5jX9%mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 13, 2025 at 12:04:19AM +0000, Matthew Wilcox wrote:
-> On Wed, Nov 12, 2025 at 03:06:38PM +0000, Lorenzo Stoakes wrote:
-> > > Any time the rcu read lock is dropped, the maple state must be
-> > > invalidated.  Resetting the address and state to MA_START is the safest
-> > > course of action, which will result in the next operation starting from
-> > > the top of the tree.
-> > 
-> > Since we all missed it I do wonder if we need some super clear comment
-> > saying 'hey if you drop + re-acquire RCU lock you MUST revalidate mas state
-> > by doing 'blah'.
-> 
-> I mean, this really isn't an RCU thing.  This is also bad:
-> 
-> 	spin_lock(a);
-> 	p = *q;
-> 	spin_unlock(a);
-> 	spin_lock(a);
-> 	b = *p;
-> 
-> p could have been freed while you didn't hold lock a.  Detecting this
-> kind of thing needs compiler assistence (ie Rust) to let you know that
-> you don't have the right to do that any more.
+[all of my copies of this email had header (at least Subject:) problems]
 
-While in no way denigrating Rust's compile-time detection of this sort
-of thing, use of KASAN combined with CONFIG_RCU_STRICT_GRACE_PERIOD=y
-(which restricts you to four CPUs) can sometimes help.
 
-> > I think one source of confusion for me with maple tree operations is - what
-> > to do if we are in a position where some kind of reset is needed?
-> > 
-> > So even if I'd realised 'aha we need to reset this' it wouldn't be obvious
-> > to me that we ought to set to the address.
+On 11/12/25 9:14 AM, mchehab+huawei@kernel.org wrote:
+> From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+> 	Jonathan Corbet <corbet@lwn.net>
+> Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+> 	linux-kernel@vger.kernel.org,
+> 	Randy Dunlap <rdunlap@infradead.org>
+> Subject: [PATCH] scripts: docs: kdoc_files.py: don't consider symlinks as directories
+> Date: Wed, 12 Nov 2025 18:14:49 +0100
+> Message-ID: <73c3450f34e2a4b42ef2ef279d7487c47d22e3bd.1762967688.git.mchehab+huawei@kernel.org>
+> X-Mailer: git-send-email 2.51.1
+> MIME-Version: 1.0
+> Content-Transfer-Encoding: 8bit
 > 
-> I think that's a separate problem.
+> As reported by Randy, currently kdoc_files can go into endless
+> looks when symlinks are used:
 > 
-> > > +++ b/mm/mmap_lock.c
-> > > @@ -257,6 +257,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
-> > >  		if (PTR_ERR(vma) == -EAGAIN) {
-> > >  			count_vm_vma_lock_event(VMA_LOCK_MISS);
-> > >  			/* The area was replaced with another one */
-> > > +			mas_set(&mas, address);
-> > 
-> > I wonder if we could detect that the RCU lock was released (+ reacquired) in
-> > mas_walk() in a debug mode, like CONFIG_VM_DEBUG_MAPLE_TREE?
+> 	$ ln -s . Documentation/peci/foo
+> 	$ ./scripts/kernel-doc Documentation/peci/
+> 	...
+> 	  File "/new_devel/docs/scripts/lib/kdoc/kdoc_files.py", line 52, in _parse_dir
+> 	    if entry.is_dir():
+> 	       ~~~~~~~~~~~~^^
+> 	OSError: [Errno 40] Too many levels of symbolic links: 'Documentation/peci/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo'
 > 
-> Dropping and reacquiring the RCU read lock should have been a big red
-> flag.  I didn't have time to review the patches, but if I had, I would
-> have suggested passing the mas down to the routine that drops the rcu
-> read lock so it can be invalidated before dropping the readlock.
+> Prevent that by not considering symlinks as directories.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Closes: https://lore.kernel.org/linux-doc/80701524-09fd-4d68-8715-331f47c969f2@infradead.org/
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-There has been some academic efforts to check for RCU-protected pointers
-leaking from one RCU read-side critical section to another, but nothing
-useful has come from this.  :-/
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-But rcu_pointer_handoff() and unrcu_pointer() are intended not only for
-documentation, but also to suppress the inevitable false positives should
-anyone figure out how to detect leaking of RCU-protected pointers.
+Thanks.
 
-							Thanx, Paul
+> ---
+>  scripts/lib/kdoc/kdoc_files.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
+> index 061c033f32da..1fd8d17edb32 100644
+> --- a/scripts/lib/kdoc/kdoc_files.py
+> +++ b/scripts/lib/kdoc/kdoc_files.py
+> @@ -49,7 +49,7 @@ class GlobSourceFiles:
+>              for entry in obj:
+>                  name = os.path.join(dirname, entry.name)
+>  
+> -                if entry.is_dir():
+> +                if entry.is_dir(follow_symlinks=False):
+>                      yield from self._parse_dir(name)
+>  
+>                  if not entry.is_file():
+
+-- 
+~Randy
 
