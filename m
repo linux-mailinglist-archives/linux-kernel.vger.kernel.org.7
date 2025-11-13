@@ -1,166 +1,158 @@
-Return-Path: <linux-kernel+bounces-898539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684C0C55802
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:02:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE818C55812
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F843AFDA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42D43B0691
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D914224D6;
-	Thu, 13 Nov 2025 03:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B64526E6FE;
+	Thu, 13 Nov 2025 03:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cas305hE"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REJHIpeQ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1B235CBC5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD08267386
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763002954; cv=none; b=A3Wfw1wiSN53Xb0ly1rCiA7aKB+Zwi/bNcZF1tio6yHYHDdubun/7sjg1HTlpSyGAwKKgb6RNNFqBPsJgL/gk5YYmpsC1E0N6orEhrVGnlx90vp6F52CenErLkrRt5Fet+O3VTsN5cLpk3rVXacCYwyhut0nNlmkIS9Dk+AwBvk=
+	t=1763003107; cv=none; b=geU4xZd4DTOB7PeECLzm49ixzrchh0atcHSh85DRkDHqoOgWNwtQuEIU8zhuPS9x0OIX0mzP6tdRQxyAws4SooM8Jxm544fPOb5uJBbIjXz3tb/LbyPw+PUyhAYF0ZafW4mX8UqPuAcLShyvLTU1nj1BAd2FnUXTBenAjY52ffQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763002954; c=relaxed/simple;
-	bh=//fsSqVwcMMj8kj2hnXE62bVqKB4thvdzGySq8e0d8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eaq3EOxuu+pwa6XekEAQjI/iACbBJTfU2lPqs/MB6sHOdEvwY5n5kCq0f90mx8FjQsWVoJ/IgUiOo5DGzcWBc5dzlT+xiBCw2sCbE61YwQa85TuSGJj4G8ulgYYuxWauy+SRrTdQoTjJpSrkX356HbNOLC0ebwWImYybkcmyhcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cas305hE; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1763003107; c=relaxed/simple;
+	bh=O9zV8bAoUVd2ZzjVizrq0aVJWNKCtlsakqD1EEwfl7I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=r0V0Euhi00kxkjixNSxmUQuG7ftMpJJ/XLDTlMAALksVNfn802eTNsSNiJihpIH1FMtODkx4CvFzxYiCBsH9aUhhi/HmC/Ap08IUW3NhBvbXwtClUeOe5Z9CcGsx9/jRu0GhFwdwTdlKxydjPKYbovBSF6hWl1pnAW42XmM/G3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REJHIpeQ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7b6dd81e2d4so290782b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:02:33 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-297cf964774so464395ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:05:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763002952; x=1763607752; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQv8xx1Duq6ZgFVf8NjZsfCCJSLzn/A1nSzNFREUl64=;
-        b=Cas305hENX3A9FBrNwq5x8E9KbkpWVRcAEt1DNYlkLVVZJIdxsjbs4wsD3SEAQmlI+
-         mCTp/gbUi4+EJx7o1nWem6helSIvTzr3z4ISACOdQJuWFmZgLK6G89j0aX1oY7ctVCAS
-         91NSsFbtov2OG7QJKfCVk178Zt0NTYDCF3RfhyUGwzfsk9qOfCpWsEI2OsF4vJxPfEn6
-         a+I30xke13yX+sJ5fsrhtT8UFBdO6D6QEkmj6IFxCbJwWyzumlcTX7B3D/y4RIfkLLNH
-         hPUMCTYiEMK2HMhF44ikXGQWiVwAGskSpjrCiEUkvykkMqJOFlcItL5cZSBkhgouqkP7
-         qNpg==
+        d=gmail.com; s=20230601; t=1763003105; x=1763607905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=79ZFMgyqh7NLEU0bjPwPQ0uTiSQzLvP0WrsYbbAHZdM=;
+        b=REJHIpeQMqCyfBtuqBxxYToslfUaJjbaFtZz5LA1BkKaq31+IeB3Jvot6lc7oTh8dp
+         N5v4UFmTRDFJx7ISkKvslA/ySRIhVewBJ8qPZk76bAgxgkQj5ATGEgEzwWVb3S3TWISb
+         evA8YWqeqgy5RO+c8aw3FK8GLXvj/xcxXQtIqpiUgKY+C2ZYDVSh8sVWfFIjPLi9UYo2
+         rAJKukHDY0JQVbtyBbmACUbHzS1KtmwLOQc6TZOEDZ77IOCUeQjSq0EVwKxXBmrRK5vJ
+         Bk1xdp9iGrjBqvP0BG6iPTRAy2LeOO5NHyELTzxS3M4OAVBWlF+PoljBx+D6BjJENoPx
+         +1iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763002953; x=1763607753;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QQv8xx1Duq6ZgFVf8NjZsfCCJSLzn/A1nSzNFREUl64=;
-        b=fknSaniUDsqecoTBfN0WQ9UfyxApvc1HkhyZsGWWa5S9bOcQu2qwAKlvcJ49t+k0Bu
-         Swm04tLd1RlIgNNmv8wvf6WqYPiGmPQq0gpqS5yf9u9ThIOaMUWvysPFqnZ6Xj+87+1k
-         q5gREo0yQOlnL3kKqbmNKyAS31O50+T9U9HG9uetuVhls+2CVh9QPVxHdv6E/fYscDOJ
-         IqpDi9iKxPsXKsq4KXqkzJM/6CD6RiqqPThwwroS+yeyLejRrL+Iw0Hllf/6EVW269kp
-         3oX2D/AsDnl16Wuax3lSzv/4Rk0SJk0f7hwBCc8kRHrWQKGSBZD9iGQfljdYK9F4Y52R
-         WNLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiKk7PqtaeXY8b54zQiuwtvpqzA5ziqCN1/70Pnc50h5tFMfYb05Qyf1nakNdAPxsRIVJWa7sES3/e+ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrfWSPnatnnKK9LiIyGz7RwhrTjQF16IX2ZK39bMIWFGGLdVm3
-	D6t9MSnm31yd1SZG5aql26V1PYnTN0d+nIuUKOmr9WvhMR5dOl3Wcz1y
-X-Gm-Gg: ASbGncuF8v6z029SZN4jQIKK4O+ByWEq4btNzWyfZarfOt0V3AIBXPK3QLs/vT8T66t
-	jJO6nsIMVuIsg6/8mPCDEDjKR9AphJSC4Txv8Al1apeAx0Q5pfVhKo0mnzAR5RWudwX+yx6PU5H
-	TpGCYUKfwEby3xCN69TNG1VgUkSrq1USV4AdBtk63t89kBtY7TS5bVB0pRJDaG/SRWpTYC5FAl6
-	QykLalYFjh1/mPpC8390QcjzWY1hjG9o/Ht73AEiEMnPfj7miDP6OVIZKxeQ0VWqD3E3REuQJ2F
-	C9O5NlRfjjHzoV6yWsCxCSAIDURiG8exD/eqQX66n74Dcq/Gumi6a+k1DZWZ83DB7tU+769iwyP
-	zUjdAnvcdwoQEWxmPv/nxi3t0NLpLdogg9ClfUpcSjiDzX+Ee22ecMC8FOeQjmYe6csdWP+jyGx
-	mH7r4Ec9L9XllyYFuDS/fLnleZlx+g406L2I8SRaQ9+4uk2Mfz
-X-Google-Smtp-Source: AGHT+IHFGM7yAAmuzYKKX9AWtV35TPZpE/Q6IPvSk5IPW4CF2y/lsD+bEHp9IHeJDSfFlJ9JMJQf9g==
-X-Received: by 2002:a05:6a20:1611:b0:334:9e5e:c2c2 with SMTP id adf61e73a8af0-3590968969amr7186139637.13.1763002952560;
-        Wed, 12 Nov 2025 19:02:32 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b927731a72sm486226b3a.50.2025.11.12.19.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 19:02:32 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <834b1518-67c0-4d8b-b607-f960a178ff2c@roeck-us.net>
-Date: Wed, 12 Nov 2025 19:02:30 -0800
+        d=1e100.net; s=20230601; t=1763003105; x=1763607905;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=79ZFMgyqh7NLEU0bjPwPQ0uTiSQzLvP0WrsYbbAHZdM=;
+        b=FdqWV++RMRka3S1ocg0/2iqbKlIkw/tu6jRMShwsYU3eXAN2yk3kyknjiGmBeoC+4g
+         9l+QCuHEATiGxxKFjJitbw71XWdMgIwzYxwKaNkyLf8hHze+WKUaA1N/VsMBQrQXlI36
+         hViNQQrR/RRfJBRfFfLEcYp2jJeXjcDogzdcZ4jmSy8ZoGaHUnEtcq3GviPs1A4lLDQt
+         tXTX9c1EPFIG7h82YCoglBMkJyNIDztPY9F5+mybAf2bg4u+x9TxeMSt+9j0ZZ0zOBwG
+         0aC6eTNpNfywTZZOHbL8elNX2bJcWkWbYGXT3EZEfdaJbIo5TLA1aff2U4D+vg5qEuzO
+         7DUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV44wkQNwXc79JxmIxQO6TFP9BCZhwWeIaYAf02qXBp0ePV7J4eJ4vwZoLKkF2jP/kkrwp+3+XyWjk8kwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnbskDCmg+S3AE6UsVSrpb1PMr+13C1RaFxQO/yCcqEE8KM4fi
+	Zqps/MNheXTDu6mExwganTj1tiXgxBaTQ6LQT1x1cXQxmJlhRjdGxzxz
+X-Gm-Gg: ASbGncs/iGZlAF/vnbXfzwuSCXsF5zW+LxBv9GdlH8mqJXY1Q33x193YyqNnYEzMpIR
+	SqQfyWb+47nq5TapHcbH/l5PYSx71qTANp+AgpnNnXDneb9jS7riFLoojgOziqLzcuguqNnI9C5
+	j5Y8rkQA5gtyJpA7UdnHtHMOquY3OHuxmdVsGubDiu55kJH7M6bTyi4fM+2v/kBm2lDXu2RKcSc
+	96hu/PyXGV2x7PZf5XfK3+9/cDRaXaTyTSZk9hsHUIsmE+wCsB66a5M3Zxuisluor0S31O9W0Ve
+	nGytU5WA9OGSOn6KadrGTUA4sMpPZUadbA8VWGFWHuZ4EpwiE73+AtXWSRh/TTewt+VqrM00Xum
+	vA1aFJXj0r5AzDnzuHY5cJNbidCNMrG6iMU66cpROe2Uj1SVgvJ0bbweqxIzBJXVtGx4a6EJaGm
+	A95ilAoqD6Zanwvq8GbWPIi37pf0lErc5hILi1T+HcZoQVjicNkLF6f4YeiyX6/g==
+X-Google-Smtp-Source: AGHT+IEw90g2Hzt/8ufbJVQWlDjtChK6HX/U5OEBYjDIouhOWonfZhzrah1NQrxITRslczO8iIzXZQ==
+X-Received: by 2002:a17:902:db04:b0:295:247c:fb7e with SMTP id d9443c01a7336-2984edfb282mr36630385ad.11.1763003105365;
+        Wed, 12 Nov 2025 19:05:05 -0800 (PST)
+Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2346dasm6739945ad.7.2025.11.12.19.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 19:05:04 -0800 (PST)
+From: Qianchang Zhao <pioooooooooip@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: gregkh@linuxfoundation.org,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org,
+	Zhitong Liu <liuzhitong1993@gmail.com>,
+	Qianchang Zhao <pioooooooooip@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ksmbd: vfs_cache: avoid integer overflow in inode_hash()
+Date: Thu, 13 Nov 2025 12:04:53 +0900
+Message-Id: <20251113030453.526393-1-pioooooooooip@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025111234-synthesis-wimp-7485@gregkh>
+References: <2025111234-synthesis-wimp-7485@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 00/40] 6.12.57-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com
-References: <20251031140043.939381518@linuxfoundation.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20251031140043.939381518@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+inode_hash() currently mixes a name-derived hash with the super_block
+pointer using an unbounded multiplication:
 
-On 10/31/25 07:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.57 release.
-> There are 40 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
->
-...
-> Steven Rostedt <rostedt@goodmis.org>
->      perf: Use current->flags & PF_KTHREAD|PF_USER_WORKER instead of current->mm == NULL
-> 
-This patch triggers a crash in one of our stress tests.
+    tmp = (hashval * (unsigned long)sb) ^
+          (GOLDEN_RATIO_PRIME + hashval) / L1_CACHE_BYTES;
 
-The problem is also seen in 6.18-rc5, so it is not LTS specific.
+On 64-bit kernels this multiplication can overflow for many inputs.
+With attacker-chosen filenames (authenticated client), overflowed
+products collapse into a small set of buckets, saturating a few chains
+and degrading lookups from O(1) to O(n). This produces second-scale
+latency spikes and high CPU usage in ksmbd workers (algorithmic DoS).
 
-Guenter
+Replace the pointer*hash multiply with hash_long() over a mixed value
+(hashval ^ (unsigned long)sb) and keep the existing shift/mask. This
+removes the overflow source and improves bucket distribution under
+adversarial inputs without changing external behavior.
+
+This is an algorithmic-complexity issue (CWE-190/CWE-407), not a
+memory-safety bug.
+
+Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
+Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+---
+ fs/smb/server/vfs_cache.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
+index dfed6fce8..ac18edf56 100644
+--- a/fs/smb/server/vfs_cache.c
++++ b/fs/smb/server/vfs_cache.c
+@@ -10,6 +10,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
++#include <linux/hash.h>
+ 
+ #include "glob.h"
+ #include "vfs_cache.h"
+@@ -65,12 +66,8 @@ static void fd_limit_close(void)
+ 
+ static unsigned long inode_hash(struct super_block *sb, unsigned long hashval)
+ {
+-	unsigned long tmp;
+-
+-	tmp = (hashval * (unsigned long)sb) ^ (GOLDEN_RATIO_PRIME + hashval) /
+-		L1_CACHE_BYTES;
+-	tmp = tmp ^ ((tmp ^ GOLDEN_RATIO_PRIME) >> inode_hash_shift);
+-	return tmp & inode_hash_mask;
++	return hash_long(hashval ^ (unsigned long)sb, inode_hash_shift) &
++		inode_hash_mask;
+ }
+ 
+ static struct ksmbd_inode *__ksmbd_inode_lookup(struct dentry *de)
+-- 
+2.34.1
 
 
