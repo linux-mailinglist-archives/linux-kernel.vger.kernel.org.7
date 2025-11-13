@@ -1,575 +1,201 @@
-Return-Path: <linux-kernel+bounces-900049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B144CC59777
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:30:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519F2C5987C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE7C034DA87
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:29:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EA634EAAAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD82359F83;
-	Thu, 13 Nov 2025 18:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9658D30C627;
+	Thu, 13 Nov 2025 18:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToqsM3k8"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OqYwJzQ8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nIrwapuh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iZTpTG3t";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ys3a/Jn1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAC73054F7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F39330B510
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763058586; cv=none; b=Jucqcs+IpNsnQUrzVrzb69yY0QJstsbsQXHBFaWoY3thK7HjvtJyx+fy7R+B7QsNPxqCfQPCG/X8fSpbVERBOZAWDQ06bYqG1ZDxrvLjpYPLWUXNgxWM89FuV1OSJ+bO3MWF6DI/AOAknSpDhWlCYIcpw0RDT01NdPwMH3gavyI=
+	t=1763058676; cv=none; b=neIYYkt/JKKxTldD/1pcaJ8CloDfrJoGwlWn5qOsJ8jjJYYDROfeQSjSeL4o8JBBK2wwKDd6VHoTm7cYJIN4LaQkiuBbhUYVaUiA9XJD+bM5YlUUPo3FerDT1AJYmVMSKjMoRvLmiOr0UCjitN/9L/PcLlgSQ0xf6+FpBgW9wPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763058586; c=relaxed/simple;
-	bh=gxVTe6wapHcxHJzeMHGKcV+8LlGzGQhS2ogjCiOnqdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ditKYpL+KGb06CoR/ZzwinBzyL+nCpALURrFbqq8KhGtyggnFna9Do2tpaTquPEKsb6QfAaeBUg1reRPob8O2uErPub8EuRIMmJ7pwBNdkCuHZl/YOa0SuRCFrZJ8Fo8P3v8ZY6bBWe2iHirVI5G84nm5ZYQVe/yAnYkLG5lzYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToqsM3k8; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so13153945e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763058582; x=1763663382; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/k263nSEDRDxaQiDUHQpujaUVS40wxd9xH4PYYY29fE=;
-        b=ToqsM3k8qKxL6y6hTbH8Dl5joTU1qAmW3UrNKSerdaFSF8UpeyP20PMfKvgz/M1UtN
-         wfW7R7Km/CJRyc6DDq/8WUwMd/8SayXIkD/Q9ho2GFS6xmmXQwkT9kEbXa2lMimc5Lml
-         HFC3shEu9TFdrGhQbYnJ8seeao0JcsghdBA0dacrNDwwF07PG4CDCNxtbjRAWZn6GR5x
-         Dxt3+1vc9ve3q36cmp7eg3wbgOO1mGq+K4GAFaeVAZ8X0xVqVWEPM3CNdO93coN2wtOB
-         DfCauuuws13rnGwf7zuQ0KNSWnFZKL3IPVqO9ZzthAQBBXlXOeOOFQGMyi5vUGtsmujh
-         Majw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763058582; x=1763663382;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/k263nSEDRDxaQiDUHQpujaUVS40wxd9xH4PYYY29fE=;
-        b=QJP+tYgNVijc5vWjVwMeqAB/ZJKeTAuU6kosYH0HM/Awt0kFokb3bQkarEf8559Nxh
-         fZmzlaV0jVWFCZhVAjP8Ovw5UszWAweVCt+jS7yNOE83UgigGpMKbrDHtnna/hp/kApU
-         suvZZIqizpc8SRj9nTzSH8jF2QmEbQEUnCs9Y9QPnrCjd54LcJeras5Zdkde45oSB9SQ
-         ma9EdpyjUzy6he6+kf+4oajaHQ97G44oU8BKyE6+Ff6gMzNcfKlBsLC5AQ2OTwGj2X2p
-         sjosaU+jSU4JnOZWKA82GoIjP2xgCQVMJqCk25Ff+lIDJE2N8n6Fg9paXB7+50nab/66
-         +udw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu1RqNZv+zDccZE2DIXpzo2/Iud0w5Q/6BpWuhLpbQYaqtj0tXGTYgEMRV3itN4ouLCqibSHR5iJP0ZwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWUgA2PRAZo2RRolTbseTa3siC3wiq1jCQIvzKq8b8usEM/udc
-	Yg+jfLzQR5uvGaiQQARpPmiVAEMiN9OvXcA4PsDAJ7lufEYll419InlB
-X-Gm-Gg: ASbGnctj+Z++tqq5btTUF5cVZJKOq47ZvOaAUs3Asd+6Re3YFH5ClCFfeGIx9yk0KJw
-	5wn0/u5JEc5uHvGtNDwb6iYbQ1rVvz0bt1ycO8B8TBiGeB1kgHElM5BvAmJrh78aKiRIiaur8ci
-	jwqm/zGDij+/ItdORguAy6gy4vsthi/J/Nm3v7wwJn4v/mJlRftMcLDUf7NqLZLQU5VGrBwmZws
-	yggnBwn4I68nXhnbSj8t9UNEiyB1yyAHlFLjUfG62WOqxP15AImzPHkvO+Qcly0Bl8cA+VFn6ed
-	ign7Q0DAmrtzX2m2abKEqioqT77Rx0x8I/xDiCEf5ZCqoCd3mfqtmATP/kRmqc1Ec9139qCZUB+
-	LhogiqyI9PsE3UzghZb7iEdlfYOptOCg+jhL/KadY8vYDm1dQ64f0Uns2hOHa3jOpG497DAy/wH
-	3HMIgRy7VRf4YM511w/zwrjUsuXnMfWggzsMYOAu1bbF2y
-X-Google-Smtp-Source: AGHT+IGWOwXLsXQM1cc3iFMhaERJhkH8upgtiuuKhWlUX4ZQDdGrcpVEqb9GKAEnSS+TE2dDORFYuQ==
-X-Received: by 2002:a05:600c:c493:b0:477:7b9a:bb07 with SMTP id 5b1f17b1804b1-4778feabc40mr5134955e9.35.1763058581750;
-        Thu, 13 Nov 2025 10:29:41 -0800 (PST)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c88c068sm47292975e9.9.2025.11.13.10.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 10:29:40 -0800 (PST)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 93E03BE2EE7; Thu, 13 Nov 2025 19:29:39 +0100 (CET)
-Date: Thu, 13 Nov 2025 19:29:39 +0100
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Naman Jain <namjain@linux.microsoft.com>,
-	John Starks <jostarks@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Long Li <longli@microsoft.com>, Tianyu Lan <tiala@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Morrow <pdmorrow@gmail.com>
-Cc: 1120602@bugs.debian.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [REGRESSION 6.12.y] hyper-v: BUG: kernel NULL pointer dereference,
- address: 00000000000000a0: RIP: 0010:hv_uio_channel_cb+0xd/0x20
- [uio_hv_generic]
-Message-ID: <aRYjk4JBqHvVl-wN@eldamar.lan>
+	s=arc-20240116; t=1763058676; c=relaxed/simple;
+	bh=GT87SYOB+mPiUsyqjajU+pB2Admy50bQfeQbX8GAoDQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=OSeOM8qGdMwFppgl7htvwRZYer4Fc1CbIZYxvrm4L5Z0mTfQBJlpOihakKuavdIxB0IzI79ZSsyoa72BLCTZ6ltT4NNnkqP/eB1ye9DEyFb6vEbD7GgbY0bS/4JGCagwgQ+2tGeFLWVhZ+R1frxLShUCSutaoO8QJAbXQzBVe2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OqYwJzQ8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nIrwapuh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iZTpTG3t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ys3a/Jn1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E5E992116E;
+	Thu, 13 Nov 2025 18:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763058673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=mqo3HW2K7b9s9SB1ThItRPXoJR+FPNGVcSNqKObf4iI=;
+	b=OqYwJzQ8hzZpe99OMVLPxbqFRz5NX63exN4dF+LEW0A+mtF9g8GwfKkAMIl6zGYNCE4L6v
+	8BEp2QIqxdGTSnOJBQQbxtziNQBHQKv/f4BPu8aAT7b8sL58TlSy7WtENQQIdeMXGmwzCI
+	G4/DK+rcJw4F5L6PKBTmrg+R73E9sLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763058673;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=mqo3HW2K7b9s9SB1ThItRPXoJR+FPNGVcSNqKObf4iI=;
+	b=nIrwapuhRQoF+M5ujD7ROtJuOKsFifjKiVnX0AUlZWHnDLZDm2xksy0KRRLihcEkldRkc4
+	S1OqfZYPEDhB3JDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iZTpTG3t;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Ys3a/Jn1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763058672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=mqo3HW2K7b9s9SB1ThItRPXoJR+FPNGVcSNqKObf4iI=;
+	b=iZTpTG3tQpv8D/dtd6snSnBvJ5/s+UZsVQ4WDOm9WxhB6IvzbCGwCDpHdgH6/BpGmtr/jx
+	vZPg90hGMZy3022dxOFv1WdmenzkRINw1HOcv6FcijlShjXlHWTd/sUonlIc/blu6ddqRw
+	bYCsr0/XnPGBh8syA0vYl07lpY4zVgw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763058672;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=mqo3HW2K7b9s9SB1ThItRPXoJR+FPNGVcSNqKObf4iI=;
+	b=Ys3a/Jn1l66wRy3qzmAkPcWqCv2g5gwOtJWVb8QJAKItFybp8ep0W9h7Q4cbWRpJfDbEry
+	8r5kSFoUQrKmBNDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D12DC3EA61;
+	Thu, 13 Nov 2025 18:31:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id q8u3MvAjFmmpEQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 13 Nov 2025 18:31:12 +0000
+Message-ID: <4e7cd56d-0696-4c73-af65-ef86862cdf87@suse.cz>
+Date: Thu, 13 Nov 2025 19:31:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [GIT PULL] slab fix for 6.18-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
+ Christoph Lameter <cl@gentwo.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Tytus Rogalewski <tytanick@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: E5E992116E
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux-foundation.org,oracle.com,google.com,gentwo.org,linux.dev,kvack.org,vger.kernel.org,kernel.org,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-Peter Morrow reported in Debian a regression, reported in
-https://bugs.debian.org/1120602 . The regression was seen after
-updating, to 6.12.57-1 in Debian, but details on the offending commit
-follows.
+Hi Linus,
 
-His report was as follows:
+please pull the latest slab fixes from:
 
-> Dear Maintainer,
->=20
-> I'm seeing a kernel crash quite soon after boot on a debian trixie based
-> system running 6.12.57+deb13-amd64, unfortunately the kernel panics before
-> I can access the system to gather more information. Thus I'll provide det=
-ails
-> of the system using a previously known good version. The panic is happeni=
-ng
-> 100% of the time unfortunately. I have access to the serial console howev=
-er
-> so can enable any required verbose logging during boot if necessary.
->=20
-> Crucially the crash is not seen with kernel version 6.12.41+deb13-amd64 w=
-ith the
-> same userspace. We had pinned to that version until very recently to in o=
-rder
-> to work around https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1109676
->=20
-> I'm running a dpdk application here (VPP) on Azure, VM form factor is a
-> "Standard DS3 v2 (4 vcpus, 14 GiB memory)".
->=20
-> The only relevant upstream commit in this area (as far as I can see) is:
->=20
-> https://lore.kernel.org/linux-hyperv/1bb599ee-fe28-409d-b430-2fc086268936=
-@linux.microsoft.com/
->=20
-> The comment regarding avoiding races at start adds a bit more weight behi=
-nd this
-> hunch, though it's only a hunch as I am most definitely nowhere near an e=
-xpert
-> in this area.
->=20
-> -- Package-specific info:
->=20
-> [   19.625535] BUG: kernel NULL pointer dereference, address: 00000000000=
-000a0
-> [   19.628874] #PF: supervisor read access in kernel mode
-> [   19.630841] #PF: error_code(0x0000) - not-present page
-> [   19.632788] PGD 0 P4D 0=20
-> [   19.633905] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
-> [   19.635586] CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted 6.12.57+d=
-eb13-amd64 #1  Debian 6.12.57-1
-> [   19.640216] Hardware name: Microsoft Corporation Virtual Machine/Virtu=
-al Machine, BIOS Hyper-V UEFI Release v4.1 09/28/2024
-> [   19.644514] RIP: 0010:hv_uio_channel_cb+0xd/0x20 [uio_hv_generic]
-> [   19.646994] Code: 02 00 00 5b 5d e9 53 98 69 e9 0f 1f 00 90 90 90 90 9=
-0 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 48 8b 47 10 <=
-48> 8b b8 a0 00 00 00 f0 83 44 24 fc 00 e9 51 6f fa ff 90 90 90 90
-> [   19.654377] RSP: 0018:ffffb15ac01a4fa8 EFLAGS: 00010046
-> [   19.656385] RAX: 0000000000000000 RBX: 0000000000000015 RCX: 000000000=
-0000015
-> [   19.659240] RDX: 0000000000000001 RSI: ffffffffffffffff RDI: ffff8ff69=
-c759400
-> [   19.662168] RBP: ffff8ff548790200 R08: ffff8ff548790200 R09: 00fca7515=
-0b080e9
-> [   19.665239] R10: 0000000000000000 R11: ffffb15ac01a4ff8 R12: ffff8ff87=
-1dc1480
-> [   19.668193] R13: ffff8ff69c759400 R14: ffff8ff69c7596a0 R15: ffffffffc=
-106e160
-> [   19.671106] FS:  0000000000000000(0000) GS:ffff8ff871d80000(0000) knlG=
-S:0000000000000000
-> [   19.674281] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   19.676533] CR2: 00000000000000a0 CR3: 0000000100ba6003 CR4: 000000000=
-03706f0
-> [   19.679385] Call Trace:
-> [   19.680361]  <IRQ>
-> [   19.681181]  vmbus_isr+0x1a5/0x210 [hv_vmbus]
-> [   19.682916]  __sysvec_hyperv_callback+0x32/0x60
-> [   19.684991]  sysvec_hyperv_callback+0x6c/0x90
-> [   19.686665]  </IRQ>
-> [   19.687509]  <TASK>
-> [   19.688366]  asm_sysvec_hyperv_callback+0x1a/0x20
-> [   19.690262] RIP: 0010:pv_native_safe_halt+0xf/0x20
-> [   19.692067] Code: 09 e9 c5 08 01 00 0f 1f 44 00 00 90 90 90 90 90 90 9=
-0 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d e5 3b 31 00 fb f4 <=
-c3> cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
-> [   19.699119] RSP: 0018:ffffb15ac0103ed8 EFLAGS: 00000246
-> [   19.701412] RAX: 0000000000000003 RBX: ffff8ff5403b1fc0 RCX: ffff8ff54=
-c64ce30
-> [   19.704328] RDX: 0000000000000000 RSI: 0000000000000003 RDI: 000000000=
-001f894
-> [   19.706910] RBP: 0000000000000003 R08: 000000000bb760d9 R09: 00fca7515=
-0b080e9
-> [   19.709762] R10: 0000000000000003 R11: 0000000000000001 R12: 000000000=
-0000000
-> [   19.712510] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000=
-0000000
-> [   19.715173]  default_idle+0x9/0x20
-> [   19.716846]  default_idle_call+0x29/0x100
-> [   19.718623]  do_idle+0x1fe/0x240
-> [   19.720045]  cpu_startup_entry+0x29/0x30
-> [   19.721595]  start_secondary+0x11e/0x140
-> [   19.723080]  common_startup_64+0x13e/0x141
-> [   19.725222]  </TASK>
-> [   19.726387] Modules linked in: isofs cdrom uio_hv_generic uio binfmt_m=
-isc intel_rapl_msr intel_rapl_common intel_uncore_frequency_common isst_if_=
-mbox_msr isst_if_common rpcrdma skx_edac_common nfit sunrpc libnvdimm crct1=
-0dif_pclmul ghash_clmulni_intel sha512_ssse3 sha256_ssse3 rdma_ucm ib_iser =
-sha1_ssse3 rdma_cm aesni_intel iw_cm gf128mul crypto_simd libiscsi cryptd i=
-b_umad ib_ipoib scsi_transport_iscsi ib_cm rapl sg hv_utils hv_balloon evde=
-v pcspkr joydev mpls_router ip_tunnel ramoops configfs pstore_blk efi_pstor=
-e pstore_zone nfnetlink vsock_loopback vmw_vsock_virtio_transport_common hv=
-_sock vmw_vsock_vmci_transport vsock vmw_vmci efivarfs ip_tables x_tables a=
-utofs4 overlay squashfs dm_verity dm_bufio reed_solomon dm_mod loop ext4 cr=
-c16 mbcache jbd2 crc32c_generic mlx5_ib ib_uverbs ib_core mlx5_core mlxfw p=
-ci_hyperv pci_hyperv_intf hyperv_drm drm_shmem_helper sd_mod drm_kms_helper=
- hv_storvsc scsi_transport_fc drm scsi_mod hid_generic hid_hyperv hid serio=
-_raw hv_netvsc hyperv_keyboard scsi_common hv_vmbus
-> [   19.726466]  crc32_pclmul crc32c_intel
-> [   19.765771] CR2: 00000000000000a0
-> [   19.767524] ---[ end trace 0000000000000000 ]---
-> [   19.800433] RIP: 0010:hv_uio_channel_cb+0xd/0x20 [uio_hv_generic]
-> [   19.803170] Code: 02 00 00 5b 5d e9 53 98 69 e9 0f 1f 00 90 90 90 90 9=
-0 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 48 8b 47 10 <=
-48> 8b b8 a0 00 00 00 f0 83 44 24 fc 00 e9 51 6f fa ff 90 90 90 90
-> [   19.811041] RSP: 0018:ffffb15ac01a4fa8 EFLAGS: 00010046
-> [   19.813466] RAX: 0000000000000000 RBX: 0000000000000015 RCX: 000000000=
-0000015
-> [   19.816504] RDX: 0000000000000001 RSI: ffffffffffffffff RDI: ffff8ff69=
-c759400
-> [   19.819484] RBP: ffff8ff548790200 R08: ffff8ff548790200 R09: 00fca7515=
-0b080e9
-> [   19.822625] R10: 0000000000000000 R11: ffffb15ac01a4ff8 R12: ffff8ff87=
-1dc1480
-> [   19.825569] R13: ffff8ff69c759400 R14: ffff8ff69c7596a0 R15: ffffffffc=
-106e160
-> [   19.828804] FS:  0000000000000000(0000) GS:ffff8ff871d80000(0000) knlG=
-S:0000000000000000
-> [   19.832214] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   19.834709] CR2: 00000000000000a0 CR3: 0000000100ba6003 CR4: 000000000=
-03706f0
-> [   19.837976] Kernel panic - not syncing: Fatal exception in interrupt
-> [   19.841825] Kernel Offset: 0x28a00000 from 0xffffffff81000000 (relocat=
-ion range: 0xffffffff80000000-0xffffffffbfffffff)
-> [   19.896620] ---[ end Kernel panic - not syncing: Fatal exception in in=
-terrupt ]---
->=20
->=20
-> lspci output:
->=20
-> Collected from a system that is not crashing (6.12.41+deb13-amd64 #1 SMP =
-PREEMPT_DYNAMIC Debian 6.12.41-1 (2025-08-12) x86_64 GNU/Linux)...
->=20
-> $ sudo lspci -v
-> 2f22:00:02.0 Ethernet controller: Mellanox Technologies MT27710 Family [C=
-onnectX-4 Lx Virtual Function] (rev 80)
->         Subsystem: Mellanox Technologies Device 0190
->         Physical Slot: 3
->         Flags: bus master, fast devsel, latency 0, NUMA node 0
->         Memory at fe0100000 (64-bit, prefetchable) [size=3D1M]
->         Capabilities: [60] Express Endpoint, IntMsgNum 0
->         Capabilities: [9c] MSI-X: Enable+ Count=3D8 Masked-
->         Kernel driver in use: mlx5_core
->         Kernel modules: mlx5_core
->=20
-> 52f7:00:02.0 Ethernet controller: Mellanox Technologies MT27710 Family [C=
-onnectX-4 Lx Virtual Function] (rev 80)
->         Subsystem: Mellanox Technologies Device 0190
->         Physical Slot: 2
->         Flags: bus master, fast devsel, latency 0, NUMA node 0
->         Memory at fe0000000 (64-bit, prefetchable) [size=3D1M]
->         Capabilities: [60] Express Endpoint, IntMsgNum 0
->         Capabilities: [9c] MSI-X: Enable+ Count=3D8 Masked-
->         Kernel driver in use: mlx5_core
->         Kernel modules: mlx5_core
->=20
-> 7852:00:02.0 Ethernet controller: Mellanox Technologies MT27710 Family [C=
-onnectX-4 Lx Virtual Function] (rev 80)
->         Subsystem: Mellanox Technologies Device 0190
->         Physical Slot: 4
->         Flags: bus master, fast devsel, latency 0, NUMA node 0
->         Memory at fe0200000 (64-bit, prefetchable) [size=3D1M]
->         Capabilities: [60] Express Endpoint, IntMsgNum 0
->         Capabilities: [9c] MSI-X: Enable+ Count=3D8 Masked-
->         Kernel driver in use: mlx5_core
->         Kernel modules: mlx5_core
->=20
-> dmidecode output:
->=20
-> $ sudo dmidecode=20
-> # dmidecode 3.6
-> Getting SMBIOS data from sysfs.
-> SMBIOS 3.1.0 present.
-> Table at 0x3FF82000.
->=20
-> Handle 0x0000, DMI type 0, 26 bytes
-> BIOS Information
->         Vendor: Microsoft Corporation
->         Version: Hyper-V UEFI Release v4.1
->         Release Date: 05/13/2024
->         ROM Size: 64 kB
->         Characteristics:
->                 BIOS characteristics not supported
->                 ACPI is supported
->                 Targeted content distribution is supported
->                 UEFI is supported
->                 System is a virtual machine
->         BIOS Revision: 4.1
->=20
-> Handle 0x0001, DMI type 1, 27 bytes
-> System Information
->         Manufacturer: Microsoft Corporation
->         Product Name: Virtual Machine
->         Version: Hyper-V UEFI Release v4.1
->         Serial Number: 0000-0010-5437-9499-5225-4477-46
->         UUID: 925315af-4af4-4d42-915a-1516b5a1fe5c
->         Wake-up Type: Power Switch
->         SKU Number: None
->         Family: Virtual Machine
->=20
-> Handle 0x0002, DMI type 3, 24 bytes
-> Chassis Information
->         Manufacturer: Microsoft Corporation
->         Type: Desktop
->         Lock: Not Present
->         Version: Hyper-V UEFI Release v4.1
->         Serial Number: 2466-9316-1078-9783-6078-7718-80
->         Asset Tag: 7783-7084-3265-9085-8269-3286-77
->         Boot-up State: Safe
->         Power Supply State: Safe
->         Thermal State: Safe
->         Security Status: Unknown
->         OEM Information: 0x00000000
->         Height: Unspecified
->         Number Of Power Cords: Unspecified
->         Contained Elements: 0
->         SKU Number: Virtual Machine
->=20
-> Handle 0x0003, DMI type 2, 17 bytes
-> Base Board Information
->         Manufacturer: Microsoft Corporation
->         Product Name: Virtual Machine
->         Version: Hyper-V UEFI Release v4.1
->         Serial Number: 0000-0010-4737-0707-0684-2660-76
->         Asset Tag: None
->         Features:
->                 Board is a hosting board
->         Location In Chassis: Virtual Machine
->         Chassis Handle: 0x0002
->         Type: Motherboard
->         Contained Object Handles: 0
->=20
-> Handle 0x0004, DMI type 4, 48 bytes
-> Processor Information
->         Socket Designation: None
->         Type: Central Processor
->         Family: Unknown
->         Manufacturer: None
->         ID: 00 00 00 00 00 00 00 00
->         Version: None
->         Voltage: Unknown
->         External Clock: Unknown
->         Max Speed: Unknown
->         Current Speed: Unknown
->         Status: Unpopulated
->         Upgrade: Other
->         L1 Cache Handle: Not Provided
->         L2 Cache Handle: Not Provided
->         L3 Cache Handle: Not Provided
->         Serial Number: None
->         Asset Tag: None
->         Part Number: None
->         Core Count: 4
->         Core Enabled: 4
->         Thread Count: 1
->         Characteristics: None
->=20
-> Handle 0x0005, DMI type 11, 5 bytes
-> OEM Strings
->         String 1: [MS_VM_CERT/SHA1/9b80ca0d5dd061ec9da4e494f4c3fd1196270c=
-22]
->         String 2: None
->         String 3: To be filled by OEM
->=20
-> Handle 0x0006, DMI type 16, 23 bytes
-> Physical Memory Array
->         Location: System Board Or Motherboard
->         Use: System Memory
->         Error Correction Type: None
->         Maximum Capacity: 0 bytes
->         Error Information Handle: Not Provided
->         Number Of Devices: 3
->=20
-> Handle 0x0007, DMI type 17, 92 bytes
-> Memory Device
->         Array Handle: 0x0006
->         Error Information Handle: Not Provided
->         Total Width: Unknown
->         Data Width: Unknown
->         Size: 26 MB
->         Form Factor: Unknown
->         Set: None
->         Locator: M0001
->         Bank Locator: None
->         Type: Unknown
->         Type Detail: Unknown
->         Speed: Unknown
->         Manufacturer: Microsoft Corporation
->         Serial Number: None
->         Asset Tag: None
->         Part Number: None
->         Rank: Unknown
->         Configured Memory Speed: Unknown
->         Minimum Voltage: Unknown
->         Maximum Voltage: Unknown
->         Configured Voltage: Unknown
->         Memory Technology: <OUT OF SPEC>
->         Memory Operating Mode Capability: None
->         Firmware Version: Not Specified
->         Module Manufacturer ID: Unknown
->         Module Product ID: Unknown
->         Memory Subsystem Controller Manufacturer ID: Unknown
->         Memory Subsystem Controller Product ID: Unknown
->         Non-Volatile Size: None
->         Volatile Size: None
->         Cache Size: None
->         Logical Size: None
->=20
-> Handle 0x0008, DMI type 19, 31 bytes
-> Memory Array Mapped Address
->         Starting Address: 0x00000000000
->         Ending Address: 0x00001A003FF
->         Range Size: 26625 kB
->         Physical Array Handle: 0x0006
->         Partition Width: 0
->=20
-> Handle 0x0009, DMI type 20, 35 bytes
-> Memory Device Mapped Address
->         Starting Address: 0x00000000000
->         Ending Address: 0x00001A003FF
->         Range Size: 26625 kB
->         Physical Device Handle: 0x0007
->         Memory Array Mapped Address Handle: 0x0008
->         Partition Row Position: Unknown
->=20
-> Handle 0x000A, DMI type 17, 92 bytes
-> Memory Device
->         Array Handle: 0x0006
->         Error Information Handle: Not Provided
->         Total Width: Unknown
->         Data Width: Unknown
->         Size: 948 MB
->         Form Factor: Unknown
->         Set: None
->         Locator: M0002
->         Bank Locator: None
->         Type: Unknown
->         Type Detail: Unknown
->         Speed: Unknown
->         Manufacturer: Microsoft Corporation
->         Serial Number: None
->         Asset Tag: None
->         Part Number: None
->         Rank: Unknown
->         Configured Memory Speed: Unknown
->         Minimum Voltage: Unknown
->         Maximum Voltage: Unknown
->         Configured Voltage: Unknown
->         Memory Technology: <OUT OF SPEC>
->         Memory Operating Mode Capability: None
->         Firmware Version: Not Specified
->         Module Manufacturer ID: Unknown
->         Module Product ID: Unknown
->         Memory Subsystem Controller Manufacturer ID: Unknown
->         Memory Subsystem Controller Product ID: Unknown
->         Non-Volatile Size: None
->         Volatile Size: None
->         Cache Size: None
->         Logical Size: None
->=20
-> Handle 0x000B, DMI type 19, 31 bytes
-> Memory Array Mapped Address
->         Starting Address: 0x00004C00000
->         Ending Address: 0x000400003FF
->         Range Size: 970753 kB
->         Physical Array Handle: 0x0006
->         Partition Width: 0
->=20
-> Handle 0x000C, DMI type 20, 35 bytes
-> Memory Device Mapped Address
->         Starting Address: 0x00004C00000
->         Ending Address: 0x000400003FF
->         Range Size: 970753 kB
->         Physical Device Handle: 0x000A
->         Memory Array Mapped Address Handle: 0x000B
->         Partition Row Position: Unknown
->=20
-> Handle 0x000D, DMI type 17, 92 bytes
-> Memory Device
->         Array Handle: 0x0006
->         Error Information Handle: Not Provided
->         Total Width: Unknown
->         Data Width: Unknown
->         Size: 13 GB
->         Form Factor: Unknown
->         Set: None
->         Locator: M0003
->         Bank Locator: None
->         Type: Unknown
->         Type Detail: Unknown
->         Speed: Unknown
->         Manufacturer: Microsoft Corporation
->         Serial Number: None
->         Asset Tag: None
->         Part Number: None
->         Rank: Unknown
->         Configured Memory Speed: Unknown
->         Minimum Voltage: Unknown
->         Maximum Voltage: Unknown
->         Configured Voltage: Unknown
->         Memory Technology: <OUT OF SPEC>
->         Memory Operating Mode Capability: None
->         Firmware Version: Not Specified
->         Module Manufacturer ID: Unknown
->         Module Product ID: Unknown
->         Memory Subsystem Controller Manufacturer ID: Unknown
->         Memory Subsystem Controller Product ID: Unknown
->         Non-Volatile Size: None
->         Volatile Size: None
->         Cache Size: None
->         Logical Size: None
->=20
-> Handle 0x000E, DMI type 19, 31 bytes
-> Memory Array Mapped Address
->         Starting Address: 0x00100000000
->         Ending Address: 0x004400003FF
->         Range Size: 13 GB
->         Physical Array Handle: 0x0006
->         Partition Width: 0
->=20
-> Handle 0x000F, DMI type 20, 35 bytes
-> Memory Device Mapped Address
->         Starting Address: 0x00100000000
->         Ending Address: 0x004400003FF
->         Range Size: 13 GB
->         Physical Device Handle: 0x000D
->         Memory Array Mapped Address Handle: 0x000E
->         Partition Row Position: Unknown
->=20
-> Handle 0x0010, DMI type 32, 11 bytes
-> System Boot Information
->         Status: No errors detected
->=20
-> Handle 0xFEFF, DMI type 127, 4 bytes
-> End Of Table
+  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18-rc6
 
-The offending commit appers to be the backport of b15b7d2a1b09
-("uio_hv_generic: Let userspace take care of interrupt mask") for
-6.12.y.
+Thanks,
+Vlastimil
 
-Peter confirmed that reverting this commit on top of 6.12.57-1 as
-packaged in Debian resolves indeed the issue. Interestingly the issue
-is *not* seen with 6.17.7 based kernel in Debian.
+======================================
 
-#regzbot introduced: 37bd91f22794dc05436130d6983302cb90ecfe7e
-#regzbot monitor: https://bugs.debian.org/1120602
+* Fix memory leak of objects from remote NUMA node when bulk freeing to a
+  cache with sheaves (Harry Yoo)
 
-Thank you already!
+----------------------------------------------------------------
+Harry Yoo (1):
+      mm/slub: fix memory leak in free_to_pcs_bulk()
 
-Regards,
-Salvatore
+ mm/slub.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
