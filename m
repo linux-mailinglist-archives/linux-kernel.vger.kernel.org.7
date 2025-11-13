@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-898752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779C2C55ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:31:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3DFC55EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C460C3A575B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:31:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B58F4E2AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6F5320CAC;
-	Thu, 13 Nov 2025 06:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D9C320CAE;
+	Thu, 13 Nov 2025 06:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ma8VLPZe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="rIUar83v"
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D00E299957;
-	Thu, 13 Nov 2025 06:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081E72D3A72;
+	Thu, 13 Nov 2025 06:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763015474; cv=none; b=MUYUwcMdmXQ2IX5emEmXb7uprBW4XBAY75Ztylu26LLQKPU8H5VxXx3TC5TvZfMMrisZl2TwPn4pkNhnSxp8R9PAV6RADNveklqYFtHWjXK9iHMe73DAvZrQd0WmkThJ6TVbe7ws572vN9by2mxB/HJGdoNaZPGcspevyk7r/T8=
+	t=1763015634; cv=none; b=RQHVx1khtbBHA140MmoVy8ZWZESK5sWKhrWadW38mD8tI5ZyGSNAadtmoedepG9F8XKCaMb0xS0k0ptC+V8z8nWCU96j30ModdwzIyszeUlxbW5yB+H2XZj1pddia9Aihf16YjMIAM/6cJlFU3s7VQS3Ee0ycDD67N7hOX42R/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763015474; c=relaxed/simple;
-	bh=KTrdF0oN78I/0/ajkgQRubzWWqyEYegoWh0yFiFiDOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrv0HwsH2YTH7cKU2hvSO8HPw0QCMYBOxNfVCHvHOTka5hmbczev1Z2jOS0AqcN6lakASJiVNTuhhe+HP70HvvHJBARnLdqE8wVhmW10giQ0MxzMGKH/3y3eJYhk5EVvF03j4HrOePEtASFlUM6S4MGlXRj//xcDNkGspX0DJx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ma8VLPZe; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763015473; x=1794551473;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KTrdF0oN78I/0/ajkgQRubzWWqyEYegoWh0yFiFiDOE=;
-  b=Ma8VLPZeNSciQrYAIOKC2nC/zt1Ger62BKVsXvaEMZwMWr40tyYvJ8Qz
-   K0maNkIFUF6FEzmQVnwyzgm/DN/6HZOhr9ArDX7yUaOYXmwfBBEd1evf6
-   4MU0pFb4tydlIMyhI5pfj+o0fhwfy0a99NP6OuCy5MqxmmYWnzd18Y+4o
-   PST3RB6C32wm4cCR13bFcUdeeyQy6OBciDy3Fgn4st2+hebH6Y3tApSkn
-   AZ5fEkro25ENyP+5PBKbBUedzZ32zdilXn75946K9LfHnBt8WKWX06xRf
-   E4Yvwjkyce0j9RlwlTQAJce8cFwdVS6EKe/dPB56kPi8saSNHw7lbBGz5
-   w==;
-X-CSE-ConnectionGUID: MXTNAD2kThOEKIN6c3M7sw==
-X-CSE-MsgGUID: wkiO0o6IQkKFTUfMqqwg9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="87733524"
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="87733524"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:31:11 -0800
-X-CSE-ConnectionGUID: f4Al0sQYSWCeg4XI9lC06A==
-X-CSE-MsgGUID: R/7lys7xSAWvOlYx8I0N0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="189268442"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.89])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:31:07 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 6EB12121796;
-	Thu, 13 Nov 2025 08:31:04 +0200 (EET)
-Date: Thu, 13 Nov 2025 08:31:04 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, hariconscious@gmail.com,
-	cezary.rojewski@intel.com, liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev, perex@perex.cz, tiwai@suse.com,
-	amadeuszx.slawinski@linux.intel.com, khalid@kernel.org,
-	shuah@kernel.org, david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: Intel: avs: Fix potential buffer overflow by
- snprintf()
-Message-ID: <aRV7KMU_I13osYbE@kekkonen.localdomain>
-References: <20251112181851.13450-1-hariconscious@gmail.com>
- <2025111239-sturdily-entire-d281@gregkh>
- <18bac943-6420-439c-91dc-643277850f69@sirena.org.uk>
+	s=arc-20240116; t=1763015634; c=relaxed/simple;
+	bh=rCLe+hr2Yusg3D9SBfWtSb9zi44W4nHl8ejnPsndC0E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vBHVTEZYx2WDSI15DwcsXDMNfM9Wncpnu+2PTSekTB/fe+Rmgur3O4eBbzWHxrQyqE0S5nOy+ftZoqV7kpr8zY6twM86YV6z+nGSVfFvFYi5CRcIlopXEY7MAUTRnxfJZw58xQao2h69afGIoQdVaa7cERbImL3MFg8bCiUJ/X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=rIUar83v; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD0Xp1f4073532;
+	Wed, 12 Nov 2025 22:33:29 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=CK9qGSXpWvfZuDgGicN0rtlYZMBHXlyWGYkxgH85G2g=; b=
+	rIUar83vqWyAXG8ZSCt2ZB/DPBqN/+U/vAbRf34EaYfhD4Dw+0sj+FZMNwMoM4Ic
+	/vDW/LYwdKXOG16dL6/GkagLEBubP8OVjpO2DCqsBJ48X1Eo3E8NQwRTy427cWK4
+	iL055KXu16laQQH9gZth6+54HxICXmHYqTeDrxXApYjUCOB/K32JEa8WfDUM4LEl
+	Px93/Mn9hscRNgyamXdvaJmSY2BVxVFpZkdZnL0EpRvr0V5UGyjaZJkdZ64MSiR1
+	vQHNDbteMrjZGSOXIqg4soERAk/hgFhatCT8mOgMVuIos17orblrxpZjJzvAtw0l
+	RDROQhL+PC2i0+dAiiHs0g==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4aa2136sqm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 12 Nov 2025 22:33:29 -0800 (PST)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.61; Wed, 12 Nov 2025 22:33:28 -0800
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
+ 15.1.2507.61 via Frontend Transport; Wed, 12 Nov 2025 22:33:26 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lizhi.xu@windriver.com>
+CC: <dan.carpenter@linaro.org>, <davem@davemloft.net>, <edumazet@google.com>,
+        <horms@kernel.org>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V4] netrom: Preventing the use of abnormal neighbor
+Date: Thu, 13 Nov 2025 14:33:25 +0800
+Message-ID: <20251113063325.1138331-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251029025904.63619-1-lizhi.xu@windriver.com>
+References: <20251029025904.63619-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18bac943-6420-439c-91dc-643277850f69@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA0MyBTYWx0ZWRfX31wMgDQZ78gZ
+ +G/QlkeQfhrCKQEA4aYpRhlGPxN0eZUrppG9wl24HVTXpdwVo53z8LwcvfCMYOaWOlwGlUxHy6j
+ obMs6tSpRvFmt//LysnoynM1sj+zWs6oJhmyQ9iqwl2rHQpXuAyBwjHQ/S0xm2qt2v0PEY9NSo9
+ tC6AQEGq8DczsShQjmiAE0zReYDGGQpy2J9yBbThqlq2rEGPzekbIPs9JJ2kBmsQJf13toY6pQH
+ Uh1C58t2pZPboFyV9hmCb6J7c61bxyojYx/gzmruj9lGIT9scMjUJ9rXm0DZX/U2z6Qng4st6WP
+ 5nzYW2sGPj92qxhtnWk7LSXoIHIyQmnsvh5xlyuH6jDvWfWLjOeegxsRGSzq3xF36eCQd1rru/3
+ mPuarR9CuRZOw1EKVyOIU3lWevqReA==
+X-Proofpoint-ORIG-GUID: FbHNTj-2p3VHIkuMwxWdA5NdTSBoVSUX
+X-Authority-Analysis: v=2.4 cv=XPA9iAhE c=1 sm=1 tr=0 ts=69157bb9 cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=t7CeM3EgAAAA:8 a=dZbOZ2KzAAAA:8
+ a=f1zZ7Z5adhlBXb41_NkA:9 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: FbHNTj-2p3VHIkuMwxWdA5NdTSBoVSUX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0 bulkscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130043
 
-On Wed, Nov 12, 2025 at 07:33:51PM +0000, Mark Brown wrote:
-> On Wed, Nov 12, 2025 at 02:20:19PM -0500, Greg KH wrote:
+On Wed, 29 Oct 2025 10:59:04 +0800, Lizhi Xu wrote:
+> > > The root cause of the problem is that multiple different tasks initiate
+> > > SIOCADDRT & NETROM_NODE commands to add new routes, there is no lock
+> > > between them to protect the same nr_neigh.
+> > >
+> > > Task0 can add the nr_neigh.refcount value of 1 on Task1 to routes[2].
+> > > When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
+> > > release the neighbour because its refcount value is 1.
+> > >
+> > > In this case, the following situation causes a UAF on Task2:
+> > >
+> > > Task0					Task1						Task2
+> > > =====					=====						=====
+> > > nr_add_node()
+> > > nr_neigh_get_dev()			nr_add_node()
+> > > 					nr_node_lock()
+> > > 					nr_node->routes[2].neighbour->count--
+> > > 					nr_neigh_put(nr_node->routes[2].neighbour);
+> > > 					nr_remove_neigh(nr_node->routes[2].neighbour)
+> > > 					nr_node_unlock()
+> > > nr_node_lock()
+> > > nr_node->routes[2].neighbour = nr_neigh
+> > > nr_neigh_hold(nr_neigh);								nr_add_node()
+> > > 											nr_neigh_put()
+> > > 											if (nr_node->routes[2].neighbour->count
+> > > Description of the UAF triggering process:
+> > > First, Task 0 executes nr_neigh_get_dev() to set neighbor refcount to 3.
+> > > Then, Task 1 puts the same neighbor from its routes[2] and executes
+> > > nr_remove_neigh() because the count is 0. After these two operations,
+> > > the neighbor's refcount becomes 1. Then, Task 0 acquires the nr node
+> > > lock and writes it to its routes[2].neighbour.
+> > > Finally, Task 2 executes nr_neigh_put(nr_node->routes[2].neighbour) to
+> > > release the neighbor. The subsequent execution of the neighbor->count
+> > > check triggers a UAF.
+> > 
+> > I looked at the code quite a bit and I think this could possibly avoid
+> > the above mentioned race, but this whole area looks quite confusing to me.
+> > 
+> > I think it would be helpful if you could better describe the relevant
+> > scenario starting from the initial setup (no nodes, no neighs).
+> OK. Let me fill in the origin of neigh.
 > 
-> > Also please do not wrap lines of fixes tags.
+> Task3
+> =====
+> nr_add_node()
+> [146]if ((nr_neigh = kmalloc(sizeof(*nr_neigh), GFP_ATOMIC)) == NULL)
+> [253]nr_node->routes[2].neighbour = nr_neigh;
+> [255]nr_neigh_hold(nr_neigh);
+> [256]nr_neigh->count++;
 > 
-> Someone probably ought to teach checkpatch about that one, it moans
-> about long lines without checking for Fixes: IIRC.
+> neigh is created on line 146 in nr_add_node(), and added to node on
+> lines 253-256. It occurs before all Task0, Task1, and Task2.
+> 
+> Note:
+> 1. [x], x is line number.
+> 2. During my debugging process, I didn't pay attention to where the node
+> was created, and I apologize that I cannot provide the relevant creation
+> process.
+Hi everyone, 
+Today is my last day at WindRiver. Starting tomorrow, my email address
+lizhi.xu@windriver.com will no longer be used;
+I will use eadavis@qq.com thereafter.
 
-I can recall this issue, too... I checked how to reproduce and fix this but
-it seems it's already done: I couldn't reproduce it. I'm getting this for
-breaking a Fixes: line:
-
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' - ie: 'Fixes: ...
-
-It basically now checks the subject matches with the quoted string.
-
-So all is well!
-
--- 
-Sakari Ailus
+BR,
+Lizhi
 
