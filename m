@@ -1,189 +1,270 @@
-Return-Path: <linux-kernel+bounces-898434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F56C5547E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:41:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EECC554ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5B21F346F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:41:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A2B3B4071
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BB029A9FE;
-	Thu, 13 Nov 2025 01:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE3C2D8768;
+	Thu, 13 Nov 2025 01:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwva+Hir"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DIcVa6yj"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012045.outbound.protection.outlook.com [52.101.53.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A7F2264CA;
-	Thu, 13 Nov 2025 01:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762998083; cv=none; b=dxtWrzvbsoaam5lW/Wm6hqL4FAUj9D6aVzZRj4+iwBKzPN+NhStIijN+tA4v/aWswoC0tBFbXpJZhXup91Q/LMyIZY+3vRSVufd1tbWWhhd1xc02ba8FM6fAQgvbZfl6/5lV4JWMbEeWiGSS5rNSlapU8q5NlJTEkYcDVAb/cAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762998083; c=relaxed/simple;
-	bh=SPIS5zJSAoavwXl0daXbgthoApNiCSmNvl8So/zRaX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sw/EZ3f+uRMf6lPlSK0p6503qhWNV0MolEfx6VAP7H2yPlG+Ay+2GWCOScBzXE8TukQjduNRAJoQyw2SgJwge0wGEUPRWQZsDMUJMCphMk3j2qwDDdKLxT4tmt9cB4hcLzjR7i7+MPOvcz/o1wUvYzLDSr3+RpXveziIFrZTyio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwva+Hir; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762998081; x=1794534081;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SPIS5zJSAoavwXl0daXbgthoApNiCSmNvl8So/zRaX0=;
-  b=hwva+Hir3Bwp7WVLn4Oro3IlWAiqAmNVKVWSVh4cqb3xQcSUZGjFFYo7
-   /Pqjlm/iRazarZsxy3NYC6NkRcRRdOgFHkEnuDcfPCfj/uk1b2u3E1pOA
-   KvLLtr3Fi3zSB+qxoxXmMnpzRvJKKnK2Kx09OPWlR7KVdKUp3UwConAcc
-   aXKUyQgTL/W+jIm0eILhuCJfBm9NVhz/INiTzCqwmiMCArT25UReYtNFE
-   RRoxiiete7wSmym6oEMHUh9W2DuXBLuPjYriSypkdJnU/d9iN+ZDkfsBX
-   wMdiOvLkT2udY+NB0opAgfmVuKIFj0MUu9SJ+2hrBx4/PBDj3a0DynV0E
-   Q==;
-X-CSE-ConnectionGUID: +0PjTJlWTJm1uhc9jwYalg==
-X-CSE-MsgGUID: tNwQgqOESvyTj82QCsnuWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="52634728"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="52634728"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 17:41:20 -0800
-X-CSE-ConnectionGUID: 1v3oDMBsS4CvtYHzowD35A==
-X-CSE-MsgGUID: 3GrdR2jjTb66S5gACvs+nw==
-X-ExtLoop1: 1
-Received: from spandruv-desk.jf.intel.com ([10.54.55.20])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2025 17:41:20 -0800
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: corbet@lwn.net,
-	linux-pm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] Documentation: thermal: Add documentation for thermal throttle
-Date: Wed, 12 Nov 2025 17:41:14 -0800
-Message-ID: <20251113014116.196638-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CC62D46B6;
+	Thu, 13 Nov 2025 01:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762998104; cv=fail; b=CMc7Kuzv3FCAKiPekZ8M4gSDhkF24rsSNOE3tNCQOSRHEylCMnJsbPEh99KvL4fik6kF591hPtKkXldtWrouTMNi5gV59n8tQMidWToIks+NLTeNB78tuKfWbDBh8VyvVVCsbzpJD/0mdFOQVjutaS4P1wdX9oWoJmU09y0RZgQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762998104; c=relaxed/simple;
+	bh=eLagbJEpXkxzxbUh03FTcHvEPbfyOGTgo60DQN2fvaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rwXR7ehuwYmiCeWW4SrxN6/EtNNJWCADkONWZN4qAYVueY5ErDDYAk3GPmmBlUbkAtN1WMhpHy7UEgGFRI3bgRQS+SXP2mC3aXYDa5VfsnYYbKfuWhB1RnOhtQsUV5RE4OQFYXBEOduxRrWP6O+91Z4SFf6B9RkJwVALRq5XAKk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DIcVa6yj; arc=fail smtp.client-ip=52.101.53.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fNpR+KFOicaIsvp4BXjWaURw3GaHoLgwOX8RufNIVC1m+SFhcWSmRR1hcQU546LGitL/PZwyyd0IvQR079ZH3gJ/B5gIiWkG63qIHqGkpEJVyCgY+mySlAMFcLSU7NEBIysNEbOOOjLU7VoXseeAbcOrJvPmF2AYrOtLfgD19KMCP3x/U1g9tJNXVpUnG26iZfeapokJUcFS0vOxwJu3x8Wh/ez9D5W5UuPC6Izm4/LirFonmBykzqy/CjesbkupmtX1LrOEENoPl2UZbMWmU++EyXGokl3H+1Or5Y9uDC0vTeR1F7S+/0d1luKXNRoG3j4rB2t9hOmmTaq+JL57Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=igiluqk0XUlv+f3LRdGTq6kmxq2YzbffhW7QC1nMqh8=;
+ b=CbO32Sj4CgayO1G53WQQBow/DWSQfn4Ypo/tO6MujD3+W91leAZwD3ZIZ/klXTiygPOE+BtApnuGvwA1gJN9lKVoeRkHrIjYO1xix7+/Eplxo7x8uyWZU6Q0VQGi5yrUh4xYh7VPY5OPzhl5kkHtY5LqBflK20yO64lCKROlYgnpLcKbr5gVfvBH5ftIhnKFhtEv6q+fVN14JUQinjZf9Dxutb3rMG/A2RyXy/2ucptUk12hZCFEntfk8uspqroC8OsZBacE576h9Y4ZXTyeHMO60foWsq6vPAeTlLQJsuVSIqdHcAyvAfbr1pcCxS80Odr0g7c9tv20s6nERx1ehQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=igiluqk0XUlv+f3LRdGTq6kmxq2YzbffhW7QC1nMqh8=;
+ b=DIcVa6yjy9BcivN0ucxS3Bm7c9ul2xE7nSFyVuvAEQtohB3ROdGGAs8GK5Jkxg28MdSqomvQwdklRC0b6kWDY2GrM/AF6zijJoPcGYECZ2vNADrPG+4EMB2mgF4JeXqGiOOPJp/Q4PpnMmC4ZjYnDUuG2IAT7rFRGO1n/PI6WEODccau5EwHKQZTpfna6vroSEoK4hsUbxZ1S2howXNaZ0zi8Z22qwQKd7r7DdY7HsiQ9ptNzJO3YTsdPKypAd2XkKK6U6sX0yE7tT8M5AK8hNbfYxzB+r325kA4mSJgt81jhC+/uinCZiVycvUs1+5u5BwtGPdKYv8gvTb+q3HDzg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
+ by SA5PPFD8C5D7E64.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e3) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Thu, 13 Nov
+ 2025 01:41:37 +0000
+Received: from PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6]) by PH7PR12MB8056.namprd12.prod.outlook.com
+ ([fe80::5682:7bec:7be0:cbd6%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 01:41:37 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: [PATCH v4 09/13] gpu: nova-core: sequencer: Add delay opcode support
+Date: Wed, 12 Nov 2025 20:41:15 -0500
+Message-Id: <20251113014119.1286886-10-joelagnelf@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251113014119.1286886-1-joelagnelf@nvidia.com>
+References: <20251113014119.1286886-1-joelagnelf@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LV3P220CA0017.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:234::6) To PH7PR12MB8056.namprd12.prod.outlook.com
+ (2603:10b6:510:269::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB8056:EE_|SA5PPFD8C5D7E64:EE_
+X-MS-Office365-Filtering-Correlation-Id: e21c95a4-9208-43c0-2d6c-08de2255c8fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hIwJXnA1nDI6o4NWpdn6Rfn6R5a3pXY/vT7aKHRIfIBi77G8r908kn+z7mEK?=
+ =?us-ascii?Q?w4psXk34h6AeWFe8UaEocNfVqhpHIM6dAJVSkX3/7B720/K9sC7uXKfhlGEP?=
+ =?us-ascii?Q?fcYKVt9wxGhavRujBQy58H663520ienScZLKBeLwAUu1cv5hkO/3Yq2bZigK?=
+ =?us-ascii?Q?bnYLLdXXN5ENIrkKz+qj5ug4jBGRHhxM4XM+/M2pjdgoAT5Dd0ypAlYTUWsw?=
+ =?us-ascii?Q?xc4yJiba+T+0OcNR8TVE5Yf6ZYtb2CAlN+i0dxdjSDPTNN3d0Zccr9lBVgkC?=
+ =?us-ascii?Q?H3t1T3deZ2xwJD99gAZKZA0CMTegOD5Rv4v9jUjOw9vDDWqR7Q7hFS/boKW2?=
+ =?us-ascii?Q?CmvVF/N6nfCe7E9/TqXYRoymN7WfKg896FSMmRjuEyCanv2YI29jrqoxZLxN?=
+ =?us-ascii?Q?u2KznihUx5chZizEoLVyApr3zknFX4X8uzGV2UExjGwZwz6aY1oDltLuF4lx?=
+ =?us-ascii?Q?zpGykGKZ6kkWa8QX4qu+eerrz7/gaA1r0WEWySzEHAit1OzoQ5rstJdfSRsx?=
+ =?us-ascii?Q?pyMvZHQtZW46skroJVAt6qKQzGMMAAqVF0zjv1oAFLQWyZdKBGVUZ0O5NRdw?=
+ =?us-ascii?Q?y91gMoHTB+Z8NvQxW9kN3dfF7CR8JnkjB+fd23qdI1n4UAJGSCw1EoiH/lkK?=
+ =?us-ascii?Q?d8mKHGh37+Zrr/yglHKVbDcGW9mu+ZzTNnOf9udrv+E+eyF2+CvHAFgwypqr?=
+ =?us-ascii?Q?kWhODICG7qLjbWuoL7f4aTb38xe7H83P75o1GgNiqFHKPWJ+QqLCbsI5IabC?=
+ =?us-ascii?Q?qfgfdq6NpWJe8PIcvDH7T37H9pMBbE8hFQeP+Y5mENF9Qr1FJsVHowEpRHF7?=
+ =?us-ascii?Q?mfNtOEwWi4DXy1fBesJ6+uomsDMM26Wyknv9ZENlYwkybLnvmYQKr+avuF3R?=
+ =?us-ascii?Q?gA4goMZXKaTtJbN7/b3rQ6PsKSV4hJNXiSCXuOBr1LEnQrzUDS9CCJdiCVlF?=
+ =?us-ascii?Q?+KxHhPtztk/JELia1pzRV3m6lIRbXXv7nCledFvMH8XKyOPwE7LqoOY6hOy7?=
+ =?us-ascii?Q?REu9ctIe5k8UWUkfMU4cu0758x2xaLVPVvrRBfHjak2xsxIaubjkHyBzaJq1?=
+ =?us-ascii?Q?w7x+JNWHP+YxJMbyzOLC4+MQdeeIOexxzrK6c+H11XsY2EPWdhbST0uWrGLA?=
+ =?us-ascii?Q?KfmKKQqsR56C2oTFhKU9dTl845in4lprAbMVd8S/7w9listwp24PXxZ44yqU?=
+ =?us-ascii?Q?gJWFwdn4n+yRwt7mm202R4F8ISND1C/bzbif9+hnnmM3AO/R6bf3NpBHd1w0?=
+ =?us-ascii?Q?jYw45vEupMgPFYoDkR139410Ge4c3vG3eg1iFtKZe92yHBv+uoVzJfK/+2gf?=
+ =?us-ascii?Q?QQQ2TEfKKUAFPGjF++LsJkJ/Q28g4bOBtMS8MArDK6zIBluVks1z55in9BzN?=
+ =?us-ascii?Q?XarSTWcJi6cOYSZOGUn+d0G/5Q9P9EMzyxBR/MYts9PTzppBYtoERtGI/29p?=
+ =?us-ascii?Q?6BzwxNPNYpVw+p2pjzasa6vZW+Sqz/tL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GlmYCU0XmRA5T0PG7YFcnUwXgjguDf9MqK0fPYhIPfWHwGRgcSp+J4pcy1J5?=
+ =?us-ascii?Q?c8lrbnlbQa/W1j3nghXHO/aoIw7XOnIQH2eO1dEq0GFACmX7UYiL6dI6xaoa?=
+ =?us-ascii?Q?yP04FK7kptwMemHSOttDo8hbPe3XoP3ejMDERub1hNOXSEL9ct7QfAH4GMaG?=
+ =?us-ascii?Q?r+CmZT0JmNriFg/619JdeNfF7RAKG+ICOac1G7yArMj96gIS4LBAia98qgd2?=
+ =?us-ascii?Q?V77H1sgFlBeYIEVA7ervHCsT4hhLnoJ07Hlc71rtri/rk6Yufe5+5xpb/ZhG?=
+ =?us-ascii?Q?tBUYknLdwqr8aJ+0pjVefje0dh/hLEJhTU8HPtCf1izsYZf49B/78BGXOA3w?=
+ =?us-ascii?Q?fARqY/aMwxfyfCWAd/gLjCazXMpikJEP5bLQbPhhBbwnOhD3p48QGUw0v/Mh?=
+ =?us-ascii?Q?H4WIK+JcoCkpC/EDbIKvAVK1LDvffN6xPDH3JAMEZOAoplqub/Gqzme2vhMl?=
+ =?us-ascii?Q?h4ZF4REl529ACcWMy2hzX/I2TU9HIjkih7EJCz+QdjvA0j5k1gi9pUom1rXe?=
+ =?us-ascii?Q?TzuFwGonAmnrqfqwvPe4orGQ2AZWzL8+WGFi7dyTGvd68R+gJwFvw6HGBotn?=
+ =?us-ascii?Q?Mr8g5kgGHjAbtJIasHxfSQTo2cU5vZGxcDYAVRDniSEOFWlWE5VWYQAq8EbW?=
+ =?us-ascii?Q?IH+H2dnciuSeg8RPzwsdjyBpX86Zg67r7b4lVKsDjsLTeqT/gbo8STZB/lsH?=
+ =?us-ascii?Q?nlmvjChl9QyHUzC1w553tIoGpozDCwt26QPYJnmsduqGH8tQ7Bp6tHZsSxur?=
+ =?us-ascii?Q?y4B7nkgJXf4K/T8CwvkivgDRYHd0UAKS6ezVa8GLIt4EnfC/+oTrMrv7WmEK?=
+ =?us-ascii?Q?xdx34pYkmLCm4iIroXD2MC8srCqisAY255xG/bc5bZcJoFp6Gyr4pomzUmuq?=
+ =?us-ascii?Q?aw0KMf4DwpV7JRkp7STqWOd6Ktdj9fZ+z0w1pw769rRgUgQi3rpzYFTaWYm2?=
+ =?us-ascii?Q?fg5hMgn4/PTek1UEywQTXoENmULShtLEWIee6kRqM9tEMJAn7HoYcQX3LkBM?=
+ =?us-ascii?Q?6ortZ9b2RyqwVq5sn6Uwv0/80J/m0nF1gS+2dwuB7hOHRqUG6PR4boFxqkw2?=
+ =?us-ascii?Q?GrDU+c10UuoL7B2tLkNt94ihqat6I4BObiiG7GCpPGN/6cldhCK1n43jDvsK?=
+ =?us-ascii?Q?hMEpaR9Q961TrRAJ8fslChU+DZmrsLweJlbJcDBjL1v5qMETHPHA0RMhSQmr?=
+ =?us-ascii?Q?rrO8ct0frjZIV+vHgJHdTz2KE8pIT0oqRCbL1ejPw+5wRPsA0LxCgO70UBex?=
+ =?us-ascii?Q?YkLVK4CTTCK5mC/eh054SHcyhXz+3YreQ8vYkssUuSaxPSHiVThqs+AoVgtb?=
+ =?us-ascii?Q?aBT1KaethY94BAOfeuj0WPfSRsvaSfyyIuw9ojkC7Dv0jmjPeMpRitx/IVmv?=
+ =?us-ascii?Q?uwDhjkCK5YS7uRqc2868uTU6HdIok2iPyT+FOmP1zdUr79xG/nPReUzUlwhA?=
+ =?us-ascii?Q?VjM+CoYlmps+V3f/LZ96Xcmhj2JHy9+t7fEuHUVUZjxdUisxoVnQ+CBmPZmW?=
+ =?us-ascii?Q?3ZVxlx7JZZpHp/wX+L/ASKilVhPtzu72YNNdvGKr7P2sTenDWO+nDfwgCoxO?=
+ =?us-ascii?Q?nQygTvgiGcutjJIGuMPmm9BAYtItl3vaTG2fwiFn?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e21c95a4-9208-43c0-2d6c-08de2255c8fc
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8056.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 01:41:37.4275
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ttWg5GqdNBm74T7tRR29Qy0u2wcxizfLPTeDrvJLxPrGPoruenNghiGwc9ikOrIJ0Ta/yIwYp87AtAA6WATQ2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFD8C5D7E64
 
-Add documentation for Intel thermal throttling reporting events.
+Implement a sequencer opcode for delay operations.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 ---
- Documentation/admin-guide/thermal/index.rst   |  1 +
- .../admin-guide/thermal/thermal_throttle.rst  | 84 +++++++++++++++++++
- 2 files changed, 85 insertions(+)
- create mode 100644 Documentation/admin-guide/thermal/thermal_throttle.rst
+ drivers/gpu/nova-core/gsp/fw.rs        |  2 --
+ drivers/gpu/nova-core/gsp/sequencer.rs | 21 +++++++++++++++++++--
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/thermal/index.rst b/Documentation/admin-guide/thermal/index.rst
-index 193b7b01a87d..2e0cafd19f6b 100644
---- a/Documentation/admin-guide/thermal/index.rst
-+++ b/Documentation/admin-guide/thermal/index.rst
-@@ -6,3 +6,4 @@ Thermal Subsystem
-    :maxdepth: 1
+diff --git a/drivers/gpu/nova-core/gsp/fw.rs b/drivers/gpu/nova-core/gsp/fw.rs
+index 4717c12a8666..538bec7d7c2f 100644
+--- a/drivers/gpu/nova-core/gsp/fw.rs
++++ b/drivers/gpu/nova-core/gsp/fw.rs
+@@ -473,7 +473,6 @@ unsafe impl AsBytes for RegPollPayload {}
+ #[derive(Copy, Clone)]
+ pub(crate) struct DelayUsPayload(r570_144::GSP_SEQ_BUF_PAYLOAD_DELAY_US);
  
-    intel_powerclamp
-+   thermal_throttle
-diff --git a/Documentation/admin-guide/thermal/thermal_throttle.rst b/Documentation/admin-guide/thermal/thermal_throttle.rst
-new file mode 100644
-index 000000000000..ab146ffdffca
---- /dev/null
-+++ b/Documentation/admin-guide/thermal/thermal_throttle.rst
-@@ -0,0 +1,84 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: <isonum.txt>
+-#[expect(unused)]
+ impl DelayUsPayload {
+     /// Returns the delay value in microseconds.
+     pub(crate) fn val(&self) -> u32 {
+@@ -514,7 +513,6 @@ unsafe impl AsBytes for RegStorePayload {}
+ #[repr(transparent)]
+ pub(crate) struct SequencerBufferCmd(r570_144::GSP_SEQUENCER_BUFFER_CMD);
+ 
+-#[expect(unused)]
+ impl SequencerBufferCmd {
+     /// Returns the opcode as a `SeqBufOpcode` enum, or error if invalid.
+     pub(crate) fn opcode(&self) -> Result<SeqBufOpcode> {
+diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-core/gsp/sequencer.rs
+index b011609c6804..787db395dd2f 100644
+--- a/drivers/gpu/nova-core/gsp/sequencer.rs
++++ b/drivers/gpu/nova-core/gsp/sequencer.rs
+@@ -29,9 +29,12 @@
+     device,
+     io::poll::read_poll_timeout,
+     prelude::*,
+-    time::Delta,
++    time::{
++        delay::fsleep,
++        Delta, //
++    },
+     transmute::FromBytes,
+-    types::ARef, //
++    types::ARef,
+ };
+ 
+ use crate::{
+@@ -85,6 +88,7 @@ pub(crate) enum GspSeqCmd {
+     RegWrite(fw::RegWritePayload),
+     RegModify(fw::RegModifyPayload),
+     RegPoll(fw::RegPollPayload),
++    DelayUs(fw::DelayUsPayload),
+     RegStore(fw::RegStorePayload),
+ }
+ 
+@@ -110,6 +114,11 @@ pub(crate) fn new(data: &[u8], dev: &device::Device) -> Result<(Self, usize)> {
+                 let size = opcode_size + size_of_val(&payload);
+                 (GspSeqCmd::RegPoll(payload), size)
+             }
++            fw::SeqBufOpcode::DelayUs => {
++                let payload = fw_cmd.delay_us_payload()?;
++                let size = opcode_size + size_of_val(&payload);
++                (GspSeqCmd::DelayUs(payload), size)
++            }
+             fw::SeqBufOpcode::RegStore => {
+                 let payload = fw_cmd.reg_store_payload()?;
+                 let size = opcode_size + size_of_val(&payload);
+@@ -197,6 +206,13 @@ fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+     }
+ }
+ 
++impl GspSeqCmdRunner for fw::DelayUsPayload {
++    fn run(&self, _sequencer: &GspSequencer<'_>) -> Result {
++        fsleep(Delta::from_micros(i64::from(self.val())));
++        Ok(())
++    }
++}
 +
-+=======================================
-+Intel thermal throttle events reporting
-+=======================================
-+
-+:Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-+
-+Introduction
-+------------
-+
-+Intel processors have built in automatic and adaptive thermal monitoring mechanisms
-+that force the processor to reduce its power consumption in order to operate within
-+predetermined temperature limits.
-+
-+Refer to section "THERMAL MONITORING AND PROTECTION" in the "Intel® 64 and IA-32
-+Architectures Software Developer’s Manual Volume 3 (3A, 3B, 3C, & 3D): System
-+Programming Guide" for more details.
-+
-+In general, there are two mechanisms to control the core temperature of the processor.
-+They are called "Thermal Monitor 1 (TM1) and Thermal Monitor 2 (TM2)".
-+
-+The status of the temperature sensor that triggers the thermal monitor (TM1/TM2) is
-+indicated through the "thermal status flag" and "thermal status log flag" in the
-+IA32_THERM_STATUS MSR for core level and IA32_PACKAGE_THERM_STATUS for package level.
-+
-+Thermal Status flag, bit 0 — When set, indicates that the processor core temperature
-+is currently at the trip temperature of the thermal monitor and that the processor power
-+consumption is being reduced via either TM1 or TM2, depending on which is enabled. When
-+clear, the flag indicates that the core temperature is below the thermal monitor trip
-+temperature. This flag is read only.
-+
-+Thermal Status Log flag, bit 1 — When set, indicates that the thermal sensor has tripped
-+since the last power-up or reset or since the last time that software cleared this flag.
-+This flag is a sticky bit; once set it remains set until cleared by software or until a
-+power-up or reset of the processor. The default state is clear.
-+
-+It is possible that when user reads IA32_THERM_STATUS or IA32_PACKAGE_THERM_STATUS,
-+TM1/TM2 is not active. In this case, "Thermal Status flag" will read "0" and the
-+"Thermal Status Log flag" will be set to show any previous "TM1/TM2" activation. But
-+since it needs to be cleared by software, it can't show the number of occurrences of
-+"TM1/TM2" activations.
-+
-+Hence, Linux provides counters of how many times the "Thermal Status flag" was set. Also
-+presents how long the "Thermal Status flag" was active in milliseconds. Using these counters,
-+users can check if the performance was limited because of thermal events. It is recommended
-+to read from sysfs instead of directly reading MSRs as the "Thermal Status Log flag" is reset
-+by the driver to implement rate control.
-+
-+Sysfs Interface
-+---------------
-+
-+Thermal throttling events are presented for each CPU under
-+"/sys/devices/system/cpu/cpuX/thermal_throttle/", where "X" is the CPU number.
-+
-+All these counters are read-only. They can't be reset to 0. So, they can potentially
-+overflow after reaching the maximum 64 bit unsigned integer.
-+
-+``core_throttle_count``
-+	This shows how many times "Thermal Status flag" changed from 0 to 1
-+	for this CPU. This is a 64 bit counter.
-+
-+``package_throttle_count``
-+	This shows how many times "Thermal Status flag" changed from 0 to 1
-+	for this package. Package status is broadcast to all CPUs; all CPUs in
-+	the package increment this count. This is a 64-bit counter.
-+
-+``core_throttle_max_time_ms``
-+	This shows the maximum amount of time "Thermal Status flag" was set to 1
-+	for this CPU for core level flag.
-+
-+``package_throttle_max_time_ms``
-+	This shows the maximum amount of time "Thermal Status flag" was set to 1
-+	for this CPU for package level flag.
-+
-+``core_throttle_total_time_ms``
-+	This shows the cumulative time "Thermal Status flag" was set to 1 for this
-+	CPU for core level flag.
-+
-+``package_throttle_total_time_ms``
-+	This shows the cumulative time "Thermal Status flag" was set to 1 for this
-+	CPU for package level flag.
-+
+ impl GspSeqCmdRunner for fw::RegStorePayload {
+     fn run(&self, sequencer: &GspSequencer<'_>) -> Result {
+         let addr = self.addr() as usize;
+@@ -214,6 +230,7 @@ fn run(&self, seq: &GspSequencer<'_>) -> Result {
+             GspSeqCmd::RegWrite(cmd) => cmd.run(seq),
+             GspSeqCmd::RegModify(cmd) => cmd.run(seq),
+             GspSeqCmd::RegPoll(cmd) => cmd.run(seq),
++            GspSeqCmd::DelayUs(cmd) => cmd.run(seq),
+             GspSeqCmd::RegStore(cmd) => cmd.run(seq),
+         }
+     }
 -- 
-2.43.0
+2.34.1
 
 
