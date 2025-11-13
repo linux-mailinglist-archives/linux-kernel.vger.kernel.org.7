@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-900071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FB2C59855
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:39:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E1EC59891
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CECB3341128
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 609B13ABD5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671A8311C1B;
-	Thu, 13 Nov 2025 18:39:39 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B332E31282B;
+	Thu, 13 Nov 2025 18:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KgyqBj7U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A897262D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F0631283B;
+	Thu, 13 Nov 2025 18:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059179; cv=none; b=u9H+qppg3mgxXqs7WryMj4mI1LmYx+cInDbKyAqQXLpcnfq1NdcR0+ERtA/ci5eVQTFSzCiFAB0iHZ7BEcHDf+AUsnZfzgktrpzrakHIsSiiMRVpGPvWJkLlyecCh5gXQepLma/P3H7wa+J8B43zNnUsReiG9Q13erwSrgNDu4k=
+	t=1763059211; cv=none; b=p7zwVom4V7j3xVNjysGRayuqTQbjcgvnJcWyzBNsJzj0w0X7spRvK3aKb3gch6IW132YNpVNYI7BXsCJyMt5tb6FuqzsFsNgdDBOviYYNeIkTa3n9fZ/fDETZoA+GG+1v192bnsl54C6qeCYQ2grCVcKQU5EQdhUyY4uBmtrDk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059179; c=relaxed/simple;
-	bh=3c0sAkDQu1qBVzE7td1x+QSCl8WUFk7pNS0yIvPZ3RM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lcYyS/+kNR8BQlrf7zEgVEm+oUIv/4voCRhAyehpoturYkyCY4cMTrh1KrRxIksPkJR6+kifPorJkUahTIfeUQBopbsz18LDZoyk1sbX4o+C16+1AZthIKpJWtRm/6RuLyDvJXjA+3AZutaVNiy4GZHJrWj94KsL7HMcWy3xl5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5d61f261ebfso418689137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:39:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059176; x=1763663976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fn33ddPk9bS9PgY509eYuCfPPBWfLh0ylYRDGrpE/Zo=;
-        b=WO/aAdQ9NnOg/ZoPG5Joa51oWlzDxuw6PJlZ7fL263HfxnY2trGdj+C+reRMORt0bg
-         h+eYHZlYYFOEOdh8I/SKUeafJQHjEkojHCnlP59KdwHmIieDpVA5V13Ms1DZD2M0xGFD
-         md5+Bj8ti6Y7juPem80Yh3aSGlJAI5gwrbfUjRf5mKfC31N3n0y5JAFGsm4WZ7tTZanH
-         wuaNs2G6Dahn+m4m9tuT6ZZoPaC5VoxB73XdX/JSsQXRcxyNLEsPPGkXw0YBqblLoafL
-         HKbW/86PZFqXPdbXgy0AyiBkdP6QwSuVfaLnF9kyhq1s5sspwMHp1PHJBGtKYWmtx/iJ
-         rNqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW3hlDp7pbLZmUSmrpTZyS/s05ydK8ZEHq0hfvuNz7NXex2aaFiJKAleZ28TDMzEgP+xOWhghphQRbk98=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/dS4+wz2Px79st2ongMV2ehV7wA+z3sl8qAi4zuAyYoohwSns
-	XIvJM4/8BY/k5HBF8XKknwo7QV3nLBkU5NzQlkWw9asWqyNSX1ynVNXcQAx7ZOiZzyY=
-X-Gm-Gg: ASbGnctVO1tr+TBs7WYsPbB4EWXSTAfjynhGWf27WDr4k/xsi+ECHYiVOZnYAocMBtM
-	chrHLFMuRiba9z5MD0cNka8E5MOt187jSNJ1SVbvfGrW3UFmDYvw0kWzQzQGQFdeK92Ti6KoSEN
-	8hXNjINWd+l52/XkdCGUI/KFAX9NoLPU6A9Q2YDIxutsyM5i6Z9aJ1KS9X3JrD1nTOoKHjUiRkI
-	RNjGmHaDA0LufD3/YprRmVz4uVk1/usltxbve4A4G9IgGXqrmGDkrU/RjLEyf2Am9e69YdFDxzM
-	jKIulL8vOZfWycmJn0IxxBaxzQGYRI5wDWqk/+zyuqCN1DaBKqs/X2ZfxxXBCG2CUC4cgNQRUGu
-	qpSyKURrPpjCulbTKC9MaWqJsDAE6MXRnYF4APJF4dOiUXr9CFEzOUNMOQgZLlfsLK5+bVEpXTS
-	YptKvqBOEQE+YbGUXZM8zuqLHQW9RB1x3fSYQWmw==
-X-Google-Smtp-Source: AGHT+IEs8r4aAqnjilut3Hs3+1wjd4vorbup6qSa5yuSS2eLaYjy5UcLjHryAQWzpgXDd/oCRGQTPQ==
-X-Received: by 2002:a05:6102:3583:b0:5dd:85b8:d82b with SMTP id ada2fe7eead31-5dfc5546b3dmr375752137.14.1763059176104;
-        Thu, 13 Nov 2025 10:39:36 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f4426a5sm918683e0c.12.2025.11.13.10.39.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:39:35 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5ddc5a5edfdso405508137.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:39:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXPiQhpSB8cdobQB96oy7nnBrMV/icVnkmmldd7f2wzesIGokDLXOPzXT3ljjS0eFWTuKUyT7o8RSJfjdw=@vger.kernel.org
-X-Received: by 2002:a05:6102:4b88:b0:5db:eeb6:812c with SMTP id
- ada2fe7eead31-5dfc5b96e0amr374019137.43.1763059175404; Thu, 13 Nov 2025
- 10:39:35 -0800 (PST)
+	s=arc-20240116; t=1763059211; c=relaxed/simple;
+	bh=+Ne3SxEQZ0e7ifJvSloZvmCrhShAy1ufN1zIKGdvkeM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sxwn7+MPo+5/vKxG/rma6g5J0yRRYyeGieHCOeGiwH+TBfsRZSBuLaA/r2Q4eJL85b/564DAGNypN+jBbwDX/U1+k+HJdJiKcuf2HlK9r3TJBrCZAtWia4Ex66YRS2EzmfNEuXOu3W1i4JBdtw1+y86lzFZbX9Kf0zOw14+68O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KgyqBj7U; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763059206; x=1794595206;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+Ne3SxEQZ0e7ifJvSloZvmCrhShAy1ufN1zIKGdvkeM=;
+  b=KgyqBj7Um7bwZ8nzobWi3OKE9EIhEqhUgE6P573T2t1msNAc3SpMnCga
+   KqbEYukrnftAaeFH5jPN/aovtQ852ttW/Ks2yZBfwC58rEpXJmmO5KrFD
+   Yrh2UJRWOrY05e+WjVJfidyEwQFfRAOGR4v/K2knm1I2rek2NQsNZhR4w
+   k82QIOeH9KPpVqHSrTcRneDXu4WZdkQCxZipZjE2rWiihyGe+8bOtLmOM
+   XCjM51B5UiYiBcWmejVXm/VP4/rUM2t8Kg5aqCT6QeHUFyDwt/IY5ohUP
+   MFZEx1AtrIpSu+gtsOPYhpBnPYMNOBnaiVM8VLavIgkOYCWASdnJIphsz
+   g==;
+X-CSE-ConnectionGUID: Hmi1uqU4Q7q9WQt+1v18bg==
+X-CSE-MsgGUID: Xish5XmRTCi4fHthnvy8QQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="52716818"
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="52716818"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:40:03 -0800
+X-CSE-ConnectionGUID: aoViX2W1SNevObtdRtKOAw==
+X-CSE-MsgGUID: olb58ucZTLC8RiiD+a6M/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="188850488"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.136]) ([10.125.108.136])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:40:03 -0800
+Message-ID: <d97e33e0-0b23-4f58-b1a4-5e171defe732@intel.com>
+Date: Thu, 13 Nov 2025 10:40:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105104151.1489281-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251105104151.1489281-2-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251105104151.1489281-2-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Nov 2025 19:39:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXEjnPWzwLF49ryooEUPNeLtXEuHDipcCMq=wsXN=zD_Q@mail.gmail.com>
-X-Gm-Features: AWmQ_blsF688r-SQvCXnNFqKgHzgSK8u69yJh9wFop3IkqSYjXU8VHfHFzFl3OY
-Message-ID: <CAMuHMdXEjnPWzwLF49ryooEUPNeLtXEuHDipcCMq=wsXN=zD_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 01/14] clk: renesas: r9a09g077: add SPI module clocks
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-spi@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86_64: inline csum_ipv6_magic()
+To: Eric Dumazet <edumazet@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel
+ <linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, netdev@vger.kernel.org,
+ Eric Dumazet <eric.dumazet@gmail.com>
+References: <20251113154545.594580-1-edumazet@google.com>
+ <c6020af6-83d0-46c9-aad9-2187b7f07cbe@intel.com>
+ <CANn89iJzcb_XO9oCApKYfRxsMMmg7BHukRDqWTca3ZLQ8HT0iQ@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CANn89iJzcb_XO9oCApKYfRxsMMmg7BHukRDqWTca3ZLQ8HT0iQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Cosmin,
+On 11/13/25 10:18, Eric Dumazet wrote:
+> So it would seem the patch saves 371 bytes for this config.
+> 
+>> Or, is there a discrete, measurable performance gain from doing this?
+> IPv6 incoming TCP/UDP paths call this function twice per packet, which is sad...
+> One call per TX packet.
+> 
+> Depending on the cpus I can see csum_ipv6_magic() using up to 0.75 %
+> of cpu cycles.
+> Then there is the cost in the callers, harder to measure...
 
-On Wed, 5 Nov 2025 at 11:43, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
-> peripherals, each with their own clock divider, which divides PLL4 by
-> either 24, 25, 30 or 32, similar to the SCI peripheral.
->
-> The dividers feed into the usual module clocks.
->
-> Add them all.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Oh, wow. That's more than I was expecting. But it does make sense.
+Thanks for the info. I'll stick this in the queue to apply in a month or
+so after the next -rc1, unless it needs more urgency.
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-> @@ -54,6 +54,11 @@
->  #define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
->  #define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
->
-> +#define DIVSPI0ASYNC   CONF_PACK(SCKCR3, 0, 2)
-> +#define DIVSPI1ASYNC   CONF_PACK(SCKCR3, 2, 2)
-> +#define DIVSPI2ASYNC   CONF_PACK(SCKCR3, 4, 2)
-> +#define DIVSPI3ASYNC   CONF_PACK(SCKCR2, 16, 2)
-
-I'll move these up while applying, so all SCKCR2 and SCKCR3 definitions
-are grouped and sorted.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
