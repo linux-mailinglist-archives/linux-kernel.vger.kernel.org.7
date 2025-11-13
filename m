@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-898933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47750C56599
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6EFC5659C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 962B54E7CA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:41:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33624E79F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C379A332EA4;
-	Thu, 13 Nov 2025 08:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57EF33123E;
+	Thu, 13 Nov 2025 08:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pSAt6uXD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PPGw9FDM"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FE32F74B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89F332F74B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763023260; cv=none; b=Nkwo61vwma0/PA4QrInId8bLUwwRBc9Ec/YK3tSSIyW3h4PVnTyZPxxyq40x3nzOm8kls5DXnGlcKbHTm3AjK7PhzJyIpUL1UyV1qW5B+Nh/SOpuxsm0cESh+2J/4OV/RdFs2w5FAN7L3iDVUn4pYuC7ObDQPcgMAnQrWLYMX+E=
+	t=1763023268; cv=none; b=oBwl8sN4N5t2gruHmdvghsTd024mj4Vc+aXM9riciAceVlcQ+IDQxh7oSAfJAbfHQakdxqCuljKxI2gdwo4xrAW38fE7wb8y4J8h1aY5V4/pAgLtPrNF6ICFgqd7VBrIkUllu+4V+k8OReLcmw1C7i24PjycJmADPcY7rOOEDe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763023260; c=relaxed/simple;
-	bh=WyMkx2kTLz5v44kEossbyjUr4nkyF0rQkvz2CEaj/fs=;
+	s=arc-20240116; t=1763023268; c=relaxed/simple;
+	bh=wbnSfifTTr+KlNdbADNWCuAJSxJvOgHlhLJJuY337YI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hPSofpE7zEwCiVlpjcnkuE6l2IygMm6DuHi0ZvnCgBzdGn28Xk6/qj2KrHtsQpAvSVt7UsEVDRLA75m8RT5E6cFiH+E4hLrK/SMaaSOMsSXMRFYKETipXILp3nwTQtrO69T9lUmpTSosJrr9bUGPG6OR1q4lZ1lTE3p8q+y9TD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pSAt6uXD; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=EHwBRdesiXkpi/emukbky/+nP0nT3Yc9l5om0w7QXk2ms8KBrfUvSCyMBYJWtoLOnw+QaIvqQJBFoO+haz+lNb9P+NlBD6HNmU6XcX/HON8G0GJtZ51zleSefvwkdHUTRqO6msfajKJASI5xCSfqn2hiXB+5UuJQ+1dR3B8PpNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PPGw9FDM; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=8Bi/XPLfLPitz3QFgeWKraJXa3JEmVmi80D2Ta/Izrs=; b=pSAt6uXDuV54wYKSjed0vjd2l0
-	Ow3XeFxH55qemFo4LisNTpjDSMqYRHyiKJFN0tN5MPyRtpOtvAaKDhLa3ADkSACzqW3Ydgv9Q2AjE
-	PW1VJGNcFEyFqt5VtNWeFAvNpSsv2QGN2YeWJHptkrncTNGSpHQ7r3jcMpmxXpdUvuYdIfv3De629
-	H9n8ZM+obWkoXZC4aPnJcZ6jUrxd8M7nsiYkFKV2KIHJbpoT5a/EdO7RniUh18WmuQ/XFIoi+rgXl
-	G2O9CFV41dEGE9WyvbUWFzQRLjSUbSuBegagFiCwXFb9iIZVKOb3KJMUatT97i0UwU3D2TFF7PfRy
-	zHdCSH8A==;
+	bh=SLSX4DOJ24jpmL8C+rE9YIq14cjiu43POZtmTFc1PVY=; b=PPGw9FDMf0vYmOdiobYSpS9GCq
+	wR9JkNMm5buGTM52RbeybuVyEp00+w6XATsRCb/CEfI+/JLyTYpI/CjPBzn/IMZ1cObYFJK1HXXT5
+	HpKcJiejW80K2epHLAr8R+ewdvRabW6TFtyJ2EAfJVqNCHcmpoKxiEO+UbqtrDNH+m314PnIP8g9d
+	hQ2gTaBpe/Vx0tc6w9vouxD7qnzpN0PvVVd55fVZQ4PUA3+4LDMn1PPoCStT+mCgUQn+ASSMh8aqC
+	ds9UDfYEvQjDcZmn88bFkQtlHg0hk7Jty8tNlwG/joWTiXTxX7zYEnAJJHAJFqoAl+RxqkSkZqU4b
+	fI0s49Cg==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJSsx-0000000A7Qj-1Vux;
-	Thu, 13 Nov 2025 08:40:55 +0000
+	id 1vJSt5-0000000A7Re-1Smj;
+	Thu, 13 Nov 2025 08:41:03 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -58,9 +58,9 @@ Cc: Christoph Lameter <cl@gentwo.org>,
 	Eric Biggers <ebiggers@kernel.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/11] mempool: add error injection support
-Date: Thu, 13 Nov 2025 09:39:45 +0100
-Message-ID: <20251113084022.1255121-5-hch@lst.de>
+Subject: [PATCH 05/11] mempool: factor out a mempool_adjust_gfp helper
+Date: Thu, 13 Nov 2025 09:39:46 +0100
+Message-ID: <20251113084022.1255121-6-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251113084022.1255121-1-hch@lst.de>
 References: <20251113084022.1255121-1-hch@lst.de>
@@ -73,67 +73,59 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a call to should_fail_ex that forces mempool to actually allocate
-from the pool to stress the mempool implementation when enabled through
-debugfs.  By default should_fail{,_ex} prints a very verbose stack trace
-that clutters the kernel log, slows down execution and triggers the
-kernel bug detection in xfstests.  Pass FAULT_NOWARN and print a
-single-line message notating the caller instead so that full tests
-can be run with fault injection.
+Add a helper to better isolate and document the gfp flags adjustments.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/mempool.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ mm/mempool.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/mm/mempool.c b/mm/mempool.c
-index 1f4701713203..5cf59779cc3d 100644
+index 5cf59779cc3d..a0718a35c34f 100644
 --- a/mm/mempool.c
 +++ b/mm/mempool.c
-@@ -9,7 +9,7 @@
-  *  started by Ingo Molnar, Copyright (C) 2001
-  *  debugging by David Rientjes, Copyright (C) 2015
-  */
--
-+#include <linux/fault-inject.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/highmem.h>
-@@ -20,6 +20,15 @@
- #include <linux/writeback.h>
- #include "slab.h"
+@@ -380,6 +380,19 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
+ }
+ EXPORT_SYMBOL(mempool_resize);
  
-+static DECLARE_FAULT_ATTR(fail_mempool_alloc);
-+
-+static int __init mempool_faul_inject_init(void)
++/*
++ * Adjust the gfp flags for mempool allocations, as we never want to dip into
++ * the global emergency reserves or retry in the page allocator.
++ *
++ * The first pass also doesn't want to go reclaim, but the next passes do, so
++ * return a separate subset for that first iteration.
++ */
++static inline gfp_t mempool_adjust_gfp(gfp_t *gfp_mask)
 +{
-+	return PTR_ERR_OR_ZERO(fault_create_debugfs_attr("fail_mempool_alloc",
-+			NULL, &fail_mempool_alloc));
++	*gfp_mask |= __GFP_NOMEMALLOC | __GFP_NORETRY | __GFP_NOWARN;
++	return *gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
 +}
-+late_initcall(mempool_faul_inject_init);
 +
- #ifdef CONFIG_SLUB_DEBUG_ON
- static void poison_error(mempool_t *pool, void *element, size_t size,
- 			 size_t byte)
-@@ -404,9 +413,15 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
- 	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
+ /**
+  * mempool_alloc - allocate an element from a memory pool
+  * @pool:	pointer to the memory pool
+@@ -398,20 +411,14 @@ EXPORT_SYMBOL(mempool_resize);
+  */
+ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ {
++	gfp_t gfp_temp = mempool_adjust_gfp(&gfp_mask);
+ 	void *element;
+ 	unsigned long flags;
+ 	wait_queue_entry_t wait;
+-	gfp_t gfp_temp;
  
+ 	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+ 	might_alloc(gfp_mask);
+ 
+-	gfp_mask |= __GFP_NOMEMALLOC;	/* don't allocate emergency reserves */
+-	gfp_mask |= __GFP_NORETRY;	/* don't loop in __alloc_pages */
+-	gfp_mask |= __GFP_NOWARN;	/* failures are OK */
+-
+-	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
+-
  repeat_alloc:
-+	if (should_fail_ex(&fail_mempool_alloc, 1, FAULT_NOWARN)) {
-+		pr_info("forcing mempool usage for %pS\n",
-+				(void *)_RET_IP_);
-+		element = NULL;
-+	} else {
-+		element = pool->alloc(gfp_temp, pool->pool_data);
-+	}
- 
--	element = pool->alloc(gfp_temp, pool->pool_data);
--	if (likely(element != NULL))
-+	if (likely(element))
- 		return element;
- 
- 	spin_lock_irqsave(&pool->lock, flags);
+ 	if (should_fail_ex(&fail_mempool_alloc, 1, FAULT_NOWARN)) {
+ 		pr_info("forcing mempool usage for %pS\n",
 -- 
 2.47.3
 
