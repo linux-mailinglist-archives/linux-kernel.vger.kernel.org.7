@@ -1,49 +1,39 @@
-Return-Path: <linux-kernel+bounces-899861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3529C59110
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 875A6C59025
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72333B7E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3332A4A5FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B4C3590CF;
-	Thu, 13 Nov 2025 16:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="rOqI9L1T";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="dMGNyJQi"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AE63BB40
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6809E3590B5;
+	Thu, 13 Nov 2025 16:43:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1538B35BDBD;
+	Thu, 13 Nov 2025 16:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052240; cv=none; b=KG0gor7NBONufQwQ7xviUPxMjgG5WHxhjp8hGFjFlPt+t1N013Z2hX3RtbsQ4gp8j5qfE+ts7NHO/64BzUt19SQeCq7u0aR22M8oox9fSVu91/+NeBmhDiSIa2SfKCs6q7hg79G++tCYI9d/wci7/y57SF/R0y0ofXDkE8TGeXA=
+	t=1763052222; cv=none; b=awfgBAZCC0IdLgmOyx9NL4vvbcMtKysIeB/bJG2D78KT7kd5X/x5DnMsf7XzfpiDHZsbSlrTlVEzcnUE9K10vlA7nJ4J1ZNbIWuut6hlSa8O71Jq4oAd4ht5gM7DnKnR/ovwmbR8isc6fKetwtGLJeLToVlyWztLvVaQOaRtG1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052240; c=relaxed/simple;
-	bh=M9YTZ3lmop9V3/WkTQGpF6a3OMeldw3nz0ErLVNMkiU=;
+	s=arc-20240116; t=1763052222; c=relaxed/simple;
+	bh=GHQOpJYa5/IyTTpclv+sW3rljuGZIDmlDGPYC9RvjRU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxO2RAC8FjKpTZ5OhW26hgrQY3UJ4qG3jmPljGWZJPoUJpVlV6IodMizTQworbSQp4jUvmBiSd+Hg0OkujAhfLRlw6Sr1yPNFmKEw1z1gmLBuBe72Hb/nj7sqv2FwdTaSyFYv9ME+adRGYjmKI8I77YSl+dySVmnGU1RlFOoPnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=rOqI9L1T; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=dMGNyJQi; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1763052209; bh=NJSnPkVvH7xY6kY2ZZ7qcZ0
-	QmyJLiVtggX4UglWKEzc=; b=rOqI9L1T/zsxT2GprcbxfTD760Dihdk9Grf11UsOGPfg45K/eJ
-	5nv11jZwvqbISzpVO669YOHaE4ZjfrHiAAClCsLLlu94GPXeym03kDvaY8lxaOaIDCSm7XC2ntZ
-	dE/wFf6OrNlgreSv6Qietbp7Gk2o53qvb9AOTpTyKtTKbhUUqSbml1maPeL0EIdcinr/NtApJ0r
-	10QI+1WEZWSal/W5C2lE20w9XWFcG7rAxloksldPyrH9+oDEC0Q7C4gYNz8FQrKkT9ES12EQxPI
-	flQNFrh/E7DTPKRPn8inBiDNTAMpedzYhHYe0zQriaa6wBLg4p9VtUln08l3n3TFTKw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1763052209; bh=NJSnPkVvH7xY6kY2ZZ7qcZ0
-	QmyJLiVtggX4UglWKEzc=; b=dMGNyJQip1hx78aX9Td42fdPum8wK8yjb0/wrVx7FE/h6lYWbC
-	MjgLMTSmFGbIFiazgb0jahI2M08Yv6uZtpDA==;
-Message-ID: <e9b84f62-f4e4-4c11-a1df-d429f0135cab@damsy.net>
-Date: Thu, 13 Nov 2025 17:43:28 +0100
+	 In-Reply-To:Content-Type; b=uYAoC8q+TBkrhLhXvgOIaGPx8ap977iKu8VogxOxHB1MWCREsY/rdY+0sb5xf200Ku4+Acg2nSesGzme5lZGsUgkC2kfqqPSOdQDfOoscDwYeeeA9t7cf7qrmiyoIMACQO9crjZK2v88zm9ZQQBCG+yN1gtX1uuw2HXG8W672dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48D6412FC;
+	Thu, 13 Nov 2025 08:43:31 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 405C93F63F;
+	Thu, 13 Nov 2025 08:43:34 -0800 (PST)
+Message-ID: <0b4e74a8-6a8a-429d-92a7-35df8ef04e9c@arm.com>
+Date: Thu, 13 Nov 2025 16:43:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,152 +41,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] drm/amdgpu: increment sched score on entity
- selection
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251107090425.23199-1-pierre-eric.pelloux-prayer@amd.com>
- <20251107090425.23199-2-pierre-eric.pelloux-prayer@amd.com>
- <5717c024-0200-4b23-a25b-681ef0937d6f@amd.com>
- <9950dd13-d5c1-4b34-b3f9-2528a1ffb989@igalia.com>
+Subject: Re: [PATCH 14/33] arm_mpam: Probe hardware to find the supported
+ partid/pmg values
+To: Fenghua Yu <fenghuay@nvidia.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ gregkh@linuxfoundation.org, gshan@redhat.com, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-15-ben.horgan@arm.com>
+ <90c483a2-a7e0-4c87-a3da-8643bec63879@nvidia.com>
+From: Ben Horgan <ben.horgan@arm.com>
 Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <9950dd13-d5c1-4b34-b3f9-2528a1ffb989@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <90c483a2-a7e0-4c87-a3da-8643bec63879@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Hi Fenghua,
 
-
-Le 07/11/2025 à 11:39, Tvrtko Ursulin a écrit :
+On 11/13/25 03:50, Fenghua Yu wrote:
+> Hi, Ben and James,
 > 
-> On 07/11/2025 10:26, Christian König wrote:
->> On 11/7/25 10:04, Pierre-Eric Pelloux-Prayer wrote:
->>> For hw engines that can't load balance jobs, entities are
->>> "statically" load balanced: on their first submit, they select
->>> the best scheduler based on its score.
->>> The score is made up of 2 parts:
->>> * the job queue depth (how much jobs are executing/waiting)
->>> * the number of entities assigned
->>>
->>> The second part is only relevant for the static load balance:
->>> it's a way to consider how many entities are attached to this
->>> scheduler, knowing that if they ever submit jobs they will go
->>> to this one.
->>>
->>> For rings that can load balance jobs freely, idle entities
->>> aren't a concern and shouldn't impact the scheduler's decisions.
->>>
->>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->>> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 22 +++++++++++++++++-----
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
->>>   2 files changed, 18 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/ 
->>> amdgpu/amdgpu_ctx.c
->>> index afedea02188d..4d91cbcbcf25 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->>> @@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
->>> u32 hw_ip,
->>>       struct amdgpu_ctx_entity *entity;
->>>       enum drm_sched_priority drm_prio;
->>>       unsigned int hw_prio, num_scheds;
->>> +    struct amdgpu_ring *aring;
->>>       int32_t ctx_prio;
->>>       int r;
->>> @@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
->>> *ctx, u32 hw_ip,
->>>               goto error_free_entity;
->>>       }
->>> -    /* disable load balance if the hw engine retains context among dependent 
->>> jobs */
->>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
->>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
->>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
->>> -        hw_ip == AMDGPU_HW_IP_UVD) {
->>> +    sched = scheds[0];
->>> +    aring = container_of(sched, struct amdgpu_ring, sched);
->>> +
->>> +    if (aring->funcs->engine_retains_context) {
->>> +        /* Disable load balancing between multiple schedulers if the hw
->>> +         * engine retains context among dependent jobs.
->>> +         */
->>>           sched = drm_sched_pick_best(scheds, num_scheds);
->>>           scheds = &sched;
->>>           num_scheds = 1;
->>> @@ -258,6 +261,12 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
->>> *ctx, u32 hw_ip,
->>>       if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
->>>           goto cleanup_entity;
->>> +    if (aring->funcs->engine_retains_context) {
->>> +        aring = container_of(sched, struct amdgpu_ring, sched);
->>> +        entity->sched_score = aring->sched_score;
->>> +        atomic_inc(entity->sched_score);
->>> +    }
->>> +
->>>       return 0;
->>>   cleanup_entity:
->>> @@ -514,6 +523,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
->>>               if (!ctx->entities[i][j])
->>>                   continue;
->>> +            if (ctx->entities[i][j]->sched_score)
->>> +                atomic_dec(ctx->entities[i][j]->sched_score);
->>> +
->>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
->>>           }
->>>       }
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/drm/amd/ 
->>> amdgpu/amdgpu_ctx.h
->>> index 090dfe86f75b..f7b44f96f374 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
->>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
->>>       uint32_t        hw_ip;
->>>       uint64_t        sequence;
->>>       struct drm_sched_entity    entity;
->>> +    atomic_t        *sched_score;
->>
->> I would rather prefer to not have that additional member here.
->>
->> Additional to that we are messing with the internals of the scheduler here and 
->> should probably have two clean functions to increase/decrease the score.
+> On 11/7/25 04:34, Ben Horgan wrote:
+>> From: James Morse <james.morse@arm.com>
+> [SNIP]
+> 
+>> +static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
+>> +                           u8 ris_idx)
+>> +{
+>> +    int err;
+>> +    struct mpam_msc_ris *ris;
+>> +
+>> +    lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +    if (!test_bit(ris_idx, &msc->ris_idxs)) {
+>> +        err = mpam_ris_create_locked(msc, ris_idx, MPAM_CLASS_UNKNOWN,
+>> +                         0, 0);
+>> +        if (err)
+>> +            return ERR_PTR(err);
+>> +    }
+>> +
+>> +    list_for_each_entry(ris, &msc->ris, msc_list) {
+>> +        if (ris->ris_idx == ris_idx)
+>> +            return ris;
+>> +    }
+>> +
+>> +    return ERR_PTR(-ENOENT);
+>> +}
+>> +
+>>   static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>>   {
+>>       u64 idr;
+>> +    u16 partid_max;
+>> +    u8 ris_idx, pmg_max;
+>> +    struct mpam_msc_ris *ris;
+>>       struct device *dev = &msc->pdev->dev;
+>>         lockdep_assert_held(&msc->probe_lock);
+>> @@ -464,6 +564,40 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>>           return -EIO;
+>>       }
+>>   +    /* Grab an IDR value to find out how many RIS there are */
+>> +    mutex_lock(&msc->part_sel_lock);
+>> +    idr = mpam_msc_read_idr(msc);
+>> +    mutex_unlock(&msc->part_sel_lock);
+>> +
+>> +    msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
+>> +
+>> +    /* Use these values so partid/pmg always starts with a valid
+>> value */
+>> +    msc->partid_max = FIELD_GET(MPAMF_IDR_PARTID_MAX, idr);
+>> +    msc->pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
+>> +
+>> +    for (ris_idx = 0; ris_idx <= msc->ris_max; ris_idx++) {
+>> +        mutex_lock(&msc->part_sel_lock);
+>> +        __mpam_part_sel(ris_idx, 0, msc);
+>> +        idr = mpam_msc_read_idr(msc);
+>> +        mutex_unlock(&msc->part_sel_lock);
+>> +
+>> +        partid_max = FIELD_GET(MPAMF_IDR_PARTID_MAX, idr);
+>> +        pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
+>> +        msc->partid_max = min(msc->partid_max, partid_max);
+>> +        msc->pmg_max = min(msc->pmg_max, pmg_max);
+>> +
+>> +        mutex_lock(&mpam_list_lock);
+>> +        ris = mpam_get_or_create_ris(msc, ris_idx);
+>> +        mutex_unlock(&mpam_list_lock);
+>> +        if (IS_ERR(ris))
+>> +            return PTR_ERR(ris);
+> 
+> It's better to destroy ris's that were previously created before this
+> failed ris? Otherwise, there is a memory leak for those allocated ris's?
 
-The problem of exposing a function to cleanly inc/dec the score, is that it 
-requires entity->rq to never be set to NULL.
-
-So I'd rather keep the current code / workaround in amdgpu. Or, I could modify 
-the next one to do something like this:
-
-if (entity->inc_score_on_add)
-    atomic_inc(rq->sched->score);
-
-= keeping the existing logic in the scheduler, but making it opt-in instead of 
-the default behavior.
-
-Pierre-Eric
-
+This should be handled by mpam_disable() which is run on probe failure.
 
 > 
-> Don't forget it is a driver owned atomic_t so I think it is fine driver 
-> manipulates it on its own.
+> Thanks.
 > 
-> Regards,
-> 
-> Tvrtko
-> 
-> 
->> Regards,
->> Christian.
->>
->>>       struct dma_fence    *fences[];
->>>   };
->>
+> -Fenghua
+
+
+Thanks,
+
+Ben
 
 
