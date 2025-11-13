@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-898835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD45C561D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:51:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC020C561F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30C9B4E3A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FA33A3355
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39F32F740;
-	Thu, 13 Nov 2025 07:51:18 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10432F773;
+	Thu, 13 Nov 2025 07:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2zO7Kb6H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="raNwaiay"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CA132E72B;
-	Thu, 13 Nov 2025 07:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0932ED5C;
+	Thu, 13 Nov 2025 07:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763020278; cv=none; b=OQP4dZ1KX+SP6ACg8dnU6+7AiL8ATbjb51UDqLVfssZvy3KJo2CL/tbmfCyMxbNfUHQiq5S19mBtIw+L2FX8HVd6TVBhee1fcvR8Yxr71k3EE8YfhNTsho8DPB1BGwFXH5sZomQNxE5WVUnU48i2mTUdufuTf1Xzn4aEYypLcS0=
+	t=1763020440; cv=none; b=aEhEUoe9t22MYjT7b9yqGLwHjsdI6BO+hATiv66Bvu5Kp4Beryh366b2FzdeoJ3EfrAK+DT0Y6tFX9AWfJCuHcWauEUfds/WyfvGNxa0cpk9z10IuCrf6JFe+d0wx86FmkS09rhhBEhUNoFflxwmNBiJdVn9nWexxo4grrJFbSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763020278; c=relaxed/simple;
-	bh=H1qOcA6eFMFqHCEyCVcEkZ+J9Tlx0VvtvRNodVjvXIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RxGYmu62Tm9fNpjLD4YLv/AotJG/YKyOfEw9yVqJesQsVjKr9Xd5BucDIcs6E8TYahauiLTRLACwyTDBZgXDQddgaGvSw2aBDRCwAwx0QN3pR8SL/tcDgw2/yNg3sRri2bAcQTssqmsXnKeldnTcLEGPwgmm5a+CUefpJ8Zw3Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowADnr3DvjRVp8daWAA--.40885S2;
-	Thu, 13 Nov 2025 15:51:12 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] crypto: sa2ul: Add error handling for DMA metadata retrieval
-Date: Thu, 13 Nov 2025 15:51:04 +0800
-Message-ID: <20251113075104.1396-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1763020440; c=relaxed/simple;
+	bh=j9SVr6gZ60YqOjZOAhosgYpfqSz/7BFA8DxTHq+L4tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbIMTo9QGsX8QN+so1b7RhMrjb3/46w2uUAhu+weFNijPfdcVsjEg8zssT6zh/+AHD1fV9XPYKjOBShAodDRKy+MM393e3yKHKA2UNTE6GXq182gxf9FxMpv8P66SkxJ9dqoh9shdhVzSfv4PBTpQyaWqL818sYPmREq1iOprSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2zO7Kb6H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=raNwaiay; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Nov 2025 08:53:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763020437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K9YbaZNB6x8UhGDqOj74UHtc/rqj9lXFJRRsaQbnDCw=;
+	b=2zO7Kb6HllX554b6pUsVqHO0rUe9ua4tWkp4cK9BO8vn8OK1s+tGBElX/Bhn3zidHXkfJ4
+	xD+DpjpOY27DFfBLxMFbuaTKocuyNYs6YIBgQwFW3P65/mUluYGSjLWJTue1ZCRbbbgdJW
+	TWjtGm7deXCaCm76ptuBIoFsgn2NG3MTxOBdWuVqjf9rA/g0z7XafOghOectSX81xOi8/E
+	3W3YauTQarxXnCDCgDfK+JjIARy6y+7KWyP64qKPIRRrUrE2UqoLs4dnAHJJXgJo1j9YCk
+	Tfu6ObBoO/FMK2s2AmWD3hE4B+kRwaCb6UOk7lTFZQWwwlYuJSFz53jLA39opA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763020437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K9YbaZNB6x8UhGDqOj74UHtc/rqj9lXFJRRsaQbnDCw=;
+	b=raNwaiay/WDYcuDyZjmAJKAG+em+dPgaUf56xUw++Lwr1hE6ua6GLEtchyivq9/pTJri/f
+	4HrDxfMebv/0qoAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <llong@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Chen Ridong <chenridong@huawei.com>, Pingfan Liu <piliu@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [cgroup/for-6.19 PATCH] cgroup/cpuset: Make callback_lock a
+ raw_spinlock_t
+Message-ID: <20251113075356.Ix4N-p8X@linutronix.de>
+References: <20251112035759.1162541-1-longman@redhat.com>
+ <20251112085124.O5dlZ8Og@linutronix.de>
+ <318f1024-ba7a-4d88-aac5-af9040c31021@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnr3DvjRVp8daWAA--.40885S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxurW7Jw4UCF47XF1Uur18AFb_yoW5Ar1Upa
-	yrWay2y398JFZ7JrW3J3W3Ar45ur93Wa43C39rGF1xuw15WF18KF4UC34rXF1jyas5ta43
-	JrZrWa43uwn8tFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUSNtxUUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0FA2kVJ-uQ-wABsD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <318f1024-ba7a-4d88-aac5-af9040c31021@redhat.com>
 
-The SA2UL driver calls dmaengine_desc_get_metadata_ptr() in AES, SHA and
-AEAD DMA paths without checking for error pointers. If the metadata
-retrieval fails, these functions may dereference an ERR_PTR value,
-leading to kernel crashes or undefined behavior.
+On 2025-11-12 13:21:12 [-0500], Waiman Long wrote:
+> On 11/12/25 3:51 AM, Sebastian Andrzej Siewior wrote:
+> > On 2025-11-11 22:57:59 [-0500], Waiman Long wrote:
+> > > The callback_lock is a spinlock_t which is acquired either to read
+> > > a stable set of cpu or node masks or to modify those masks when
+> > > cpuset_mutex is also acquired. Sometime it may need to go up the
+> > > cgroup hierarchy while holding the lock to find the right set of masks
+> > > to use. Assuming that the depth of the cgroup hierarch is finite and
+> > > typically small, the lock hold time should be limited.
+> > We can't assume that, can we?
+> We can theoretically create a cgroup hierarchy with many levels, but no sane
+> users will actually do that. If this is a concern to you, I can certainly
+> drop this patch.
 
-Add proper IS_ERR() checks after each dmaengine_desc_get_metadata_ptr()
-call, log the failure, clean up the DMA state, and complete the crypto
-request with an error.
+Someone will think this is sane and will wonder. We usually don't impose
+limits but make sure things are preemptible so it does not matter.
 
-Fixes: 7694b6ca649f ("crypto: sa2ul - Add crypto driver")
-Fixes: 2dc53d004745 ("crypto: sa2ul - add sha1/sha256/sha512 support")
-Fixes: d2c8ac187fc9 ("crypto: sa2ul - Add AEAD algorithm support")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/crypto/sa2ul.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> > > Some externally callable cpuset APIs like cpuset_cpus_allowed() and
+> > cpuset_cpus_allowed() has three callers in kernel/sched/ and all use
+> > GFP_KERNEL shortly before invoking the function in question.
+> The current callers of these APIs are fine. What I am talking is about new
+> callers that may want to call them when holding a raw_spinlock_t.
 
-diff --git a/drivers/crypto/sa2ul.c b/drivers/crypto/sa2ul.c
-index fdc0b2486069..eaec284b5e4b 100644
---- a/drivers/crypto/sa2ul.c
-+++ b/drivers/crypto/sa2ul.c
-@@ -1051,6 +1051,13 @@ static void sa_aes_dma_in_callback(void *data)
- 	if (req->iv) {
- 		mdptr = (__be32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl,
- 							       &ml);
-+		if (IS_ERR(mdptr)) {
-+			dev_err(rxd->ddev, "Failed to get AES RX metadata pointer: %ld\n",
-+				PTR_ERR(mdptr));
-+			sa_free_sa_rx_data(rxd);
-+			skcipher_request_complete(req, PTR_ERR(mdptr));
-+			return;
-+		}
- 		result = (u32 *)req->iv;
- 
- 		for (i = 0; i < (rxd->enc_iv_size / 4); i++)
-@@ -1272,6 +1279,12 @@ static int sa_run(struct sa_req *req)
- 	 * crypto algorithm to be used, data sizes, different keys etc.
- 	 */
- 	mdptr = (u32 *)dmaengine_desc_get_metadata_ptr(tx_out, &pl, &ml);
-+	if (IS_ERR(mdptr)) {
-+		dev_err(pdata->dev, "Failed to get TX metadata pointer: %ld\n",
-+			PTR_ERR(mdptr));
-+		ret = PTR_ERR(mdptr);
-+		goto err_cleanup;
-+	}
- 
- 	sa_prepare_tx_desc(mdptr, (sa_ctx->cmdl_size + (SA_PSDATA_CTX_WORDS *
- 				   sizeof(u32))), cmdl, sizeof(sa_ctx->epib),
-@@ -1367,6 +1380,14 @@ static void sa_sha_dma_in_callback(void *data)
- 	authsize = crypto_ahash_digestsize(tfm);
- 
- 	mdptr = (__be32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl, &ml);
-+	if (IS_ERR(mdptr)) {
-+		dev_err(rxd->ddev, "Failed to get SHA RX metadata pointer: %ld\n",
-+			PTR_ERR(mdptr));
-+		sa_free_sa_rx_data(rxd);
-+		skcipher_request_complete(req, PTR_ERR(mdptr));
-+		return;
-+	}
-+
- 	result = (u32 *)req->result;
- 
- 	for (i = 0; i < (authsize / 4); i++)
-@@ -1677,6 +1698,13 @@ static void sa_aead_dma_in_callback(void *data)
- 	authsize = crypto_aead_authsize(tfm);
- 
- 	mdptr = (u32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl, &ml);
-+	if (IS_ERR(mdptr)) {
-+		dev_err(rxd->ddev, "Failed to get AEAD RX metadata pointer: %ld\n",
-+			PTR_ERR(mdptr));
-+		sa_free_sa_rx_data(rxd);
-+		skcipher_request_complete(req, PTR_ERR(mdptr));
-+		return;
-+	}
- 	for (i = 0; i < (authsize / 4); i++)
- 		mdptr[i + 4] = swab32(mdptr[i + 4]);
- 
--- 
-2.50.1.windows.1
+No, please don't proactive do these changes like this which are not
+fixes because something was/ is broken.
 
+> > > cpuset_mems_allowed() acquires callback_lock with irq disabled to ensure
+> > This I did not find. But I would ask to rework it somehow that we don't
+> > need to use raw_spinlock_t as a hammer that solves it all.
+> 
+> OK.
+> 
+> Cheers,
+> Longman
+
+Sebastian
 
