@@ -1,167 +1,193 @@
-Return-Path: <linux-kernel+bounces-899441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFA2C57C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:46:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356FFC57D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1056C35A859
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A094A2127
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1146A2253B0;
-	Thu, 13 Nov 2025 13:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B2E1C32FF;
+	Thu, 13 Nov 2025 13:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="H+aRAHoM"
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byrY5wbf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B17D15ADB4;
-	Thu, 13 Nov 2025 13:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB91199931;
+	Thu, 13 Nov 2025 13:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041218; cv=none; b=tmUyoHzDxtD1sNW/mRug33Z6OrULQX3Z2pHqG82//EOglia5g/wqP5z1DxL4LOhnau5DXnjZ9egLapAWf3sjvIy2mR9/JM7DR0wBkJT99JQ5xgFdA+qUSupMLkJnHRy9/G5xza1H/iFdl3ePsdhdgiNayZ3xMqlXxGgjuEHuvfY=
+	t=1763041295; cv=none; b=lq7nLh5B8HJcPbFrELIqNxFlHIblWvaTE/QQnsIPoRiKbJ1aJFxZOJWYmKqcHrVg/zLZVHcS/tFAIuBP5PDfwrd++u2bNdOhzvaZGhKwXuu5vu/xqYGGKLvURa1C+JB7CUMH5LVsMPq6IcYaTPOUefVnAaQtAqsmAuB8ZuAaU+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041218; c=relaxed/simple;
-	bh=84aL3+kZbBPlzQqkOBZk58B+tuWMXK9oPenXKhou29E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lbf750YL2+V0J3rrd4SJsG8T10PUDeiaCMgteTN77R0YAUxBzOPmdZo07bUJqFtfwsGTiBhoNudwFGlx/zVa/YMNy2CdaFveFTxyhN18OqnagUJQ5ztYZw9oFqZKn5NPlI84njsFWuUdAn0NwkSqmrlZBOCQnuPDwBqLHNJtXJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=H+aRAHoM; arc=none smtp.client-ip=91.103.66.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1763041213;
-	bh=UgaaNIIdEX1iWMXTquk64k8u/ArECzWZoVmNB09qjKs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=H+aRAHoM0yCJg2E1f+L0rDS80xdkmBtnzkIS4nbOrOtMxDKTojmKDpVOJJkKdF8mv
-	 JK8B8BAlsVV0gLijGDCrnF9HAObbUUQUvYADj4PyLKvMUrcpfEnUmbpb5F0SodfzFU
-	 2PfDn24wTRKjVYjWv6LDw325PtpKaSPjnGzoq4WYzr76jj4UgD+IQ1S9I5yyWGE6wU
-	 XC8d1/tQsoXeR04rAiQmRnXvBYanmTQfzD6aFYrimGNSG+dXQ9uakpI9fJJX1sXqXO
-	 LqgH2IDr63LUtLpDhgJ9GpCLSFppak3a2LLQv32NkcnhTPi4nlGJjzU2qXVZYWhFK3
-	 HjOneFW7E8s9w==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 729013E2675;
-	Thu, 13 Nov 2025 16:40:13 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id B82DC3E4618;
-	Thu, 13 Nov 2025 16:40:10 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
- 2025 16:40:10 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Inochi Amaoto
-	<inochiama@gmail.com>, Quentin Schulz <quentin.schulz@cherry.de>, Joe Hattori
-	<joe@pf.is.s.u-tokyo.ac.jp>, Rayagond Kokatanur <rayagond@vayavyalabs.com>,
-	Giuseppe CAVALLARO <peppe.cavallaro@st.com>, <netdev@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net] net: stmmac: add clk_prepare_enable() error handling
-Date: Thu, 13 Nov 2025 16:40:07 +0300
-Message-ID: <20251113134009.79440-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763041295; c=relaxed/simple;
+	bh=0oPmjX7i+4dV5SIthOu1LFMeA79wevcnzEIBElFpTmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLoPH3TZZRekrZ4BmCY0sSciNIxuASoGEgxe2pD3XIaz4W2aVh1Axou30+4/2KZuYivDFp7mNkutCQYEDnaPsEF3+hhpZ8zbR0+4QlT6yZppkGy1KBBrOb7ZZajAKlHlM0xtNAyurjzmcap9C3eWeN1ZrPNjT83N6TrEdFX9j6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byrY5wbf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A76C16AAE;
+	Thu, 13 Nov 2025 13:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763041295;
+	bh=0oPmjX7i+4dV5SIthOu1LFMeA79wevcnzEIBElFpTmg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=byrY5wbfZMZ+z2ZUFglfbQogR4lorOu40Lgb2ePAXgriuMiAdxdS0HYu3CoGYvqeg
+	 eubvmiAD5gg60yAG5y14vAZ+jienPvSnd9/eJV4zpVH94xVjBOOW8HrUkTiJOj40jK
+	 F9LQaIyXTzzak6XgAbJm5FRFf/55BBqbIj/veydPdDKJ6fVEYhwwb0zGYP7wtP3GOu
+	 HFNwI+vc8NIcatnQy4Mav8fy2oHnAV/bIE3lx4I8LXzjqhM41mvRi5l2jGj7dPXUM4
+	 b8iSjxUny+nV4tUE+Msvrix1G9en6qWCOj5SAuwWuT1Xsn45MvQ3MPb0HV0wsaVgKK
+	 CofdSAAGe5G8w==
+Message-ID: <9b9796e9-414d-4af3-bcf0-40eda370ec31@kernel.org>
+Date: Thu, 13 Nov 2025 14:41:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/13/2025 13:24:51
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 198052 [Nov 13 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 76 0.3.76
- 6aad6e32ec76b30ee13ccddeafeaa4d1732eef15
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:7.1.1,5.0.1;kaspersky.com:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/13/2025 13:26:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/13/2025 11:57:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/13 09:15:00 #27919685
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] Enable FPGA Manager support for Agilex5
+To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>,
+ Xu Yilun <yilun.xu@linux.intel.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
+ "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
+ "Rabara, Niravkumar Laxmidas" <nirav.rabara@altera.com>,
+ "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1763008269.git.khairul.anuar.romli@altera.com>
+ <aRV0UCZD6fwnfWUE@yilunxu-OptiPlex-7050>
+ <a0214340-d0dd-4689-9692-d934f3a80c40@kernel.org>
+ <cdd2d579-65a3-4e1f-b8e8-45b30a6d9848@altera.com>
+ <00d09e4a-2bcb-4158-803a-d298aad33a95@kernel.org>
+ <c3ae06f0-e4d0-48ed-a589-fb6fef3fe68d@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c3ae06f0-e4d0-48ed-a589-fb6fef3fe68d@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The driver previously ignored the return value of 'clk_prepare_enable()'
-for both the CSR clock and the PCLK in 'stmmac_probe_config_dt()' function.
+On 13/11/2025 10:38, Romli, Khairul Anuar wrote:
+> On 13/11/2025 5:10 pm, Krzysztof Kozlowski wrote:
+>> On 13/11/2025 10:07, Romli, Khairul Anuar wrote:
+>>> On 13/11/2025 3:13 pm, Krzysztof Kozlowski wrote:
+>>>> On 13/11/2025 07:01, Xu Yilun wrote:
+>>>>> On Thu, Nov 13, 2025 at 12:43:54PM +0800, Khairul Anuar Romli wrote:
+>>>>>> This patch series adds device tree bindings, driver support, and DTS
+>>>>>> updates to enable FPGA Manager functionality for Intel Agilex5 SoC.
+>>>>>>
+>>>>>> These changes are intended to enable FPGA programming and management
+>>>>>> capabilities on Agilex5-based platforms.
+>>>>>>
+>>>>>> ---
+>>>>>> Notes:
+>>>>>> Patch #3 depends on  "arm64: dts: intel: Add Agilex5 SVC node with memory
+>>>>>
+>>>>> There is no patch #3 now. Should be Patch #2 ?
+>>>>>
+>>>>>> region" from
+>>>>>> https://lore.kernel.org/all/3381ef56c1ff34a0b54cf76010889b5523ead825.1762387665.git.khairul.anuar.romli@altera.com/
+>>>>>>
+>>>>>> This patch series is applied on socfpga maintainer's tree
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=socfpga_dts_for_v6.19
+>>>>>
+>>>>> Given that, @Dinh Nguyen could you take the series if you are good?
+>>>>
+>>>> This was never tested, so series cannot be taken.
+>>>>
+>>>> NAK, Altera should test the code BEFORE sending it to upstream, not
+>>>> after we say it was not tested.
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> If you are referring to the code being tested on the Agilex5, it was
+>>> tested. I even take the measure to add the debug print the in init to
+>>> see if the fallback is working, which it did.
+>>>
+>>> Of course I took clock manager patch from Dinh's clock manager driver
+>>> for Agilex5 have local defconfig instead of using default defconfig for
+>>> testing the code.
+>>>
+>>> https://lore.kernel.org/all/9326ee66cb8e33c0fe83a24e9a1effc8da252ff2.1760396607.git.khairul.anuar.romli@altera.com/
+>>>
+>>> Are you referring to different kind of test?
+>>
+>> Yes, test by tools, because you certainly do not want to engage
+>> reviewers if computers do the job fine.
+>>
+>> see any DT talk (there where like four last years!) or
+>> Documentation/devicetree/bindings/writing-schema.rst or
+>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Thanks, I can see the error with make -j48 CHECK_DTBS=y
+> DT_SCHEMA_FILES=intel,stratix10-soc-fpga-mgr.yaml
+> intel/socfpga_agilex5_socdk.dtb;
+> 
+> If i revert back without adding "intel,agilex-soc-fpga-mgr"", the tool
+> is able to pass without any issue. But we need the driver entry to make
+> it able to load as it compare the entry from dts and the compatible
+> entry in the driver.
+> 
+> Should we add back the entry in the driver like in the v1? Or, shall we
+> defer the driver changes for now?
 
-Add 'clk_prepare_enable()' return value checks.
+You ask now about basics of DT, so sorry but doing homework is your
+task. Maybe the beginners DTS talk from this year's OSSEU will be
+helpful here. Or one of many other resources...
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: bfab27a146ed ("stmmac: add the experimental PCI support")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 27bcaae07a7f..042d542b9c65 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -632,7 +632,9 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 			dev_warn(&pdev->dev, "Cannot get CSR clock\n");
- 			plat->stmmac_clk = NULL;
- 		}
--		clk_prepare_enable(plat->stmmac_clk);
-+		rc = clk_prepare_enable(plat->stmmac_clk);
-+		if (rc < 0)
-+			dev_warn(&pdev->dev, "Cannot enable CSR clock: %d\n", rc);
- 	}
-
- 	plat->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
-@@ -640,7 +642,11 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 		ret = plat->pclk;
- 		goto error_pclk_get;
- 	}
--	clk_prepare_enable(plat->pclk);
-+	rc = clk_prepare_enable(plat->pclk);
-+	if (rc < 0) {
-+		dev_err(&pdev->dev, "Cannot enable pclk: %d\n", rc);
-+		goto error_pclk_get;
-+	}
-
- 	/* Fall-back to main clock in case of no PTP ref is passed */
- 	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
---
-2.43.0
-
+Best regards,
+Krzysztof
 
