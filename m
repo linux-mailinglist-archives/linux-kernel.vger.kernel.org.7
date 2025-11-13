@@ -1,119 +1,163 @@
-Return-Path: <linux-kernel+bounces-899789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD59C58E9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9710DC58D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28CCC35C6AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DE62504A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C141D30595C;
-	Thu, 13 Nov 2025 16:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B20635A15B;
+	Thu, 13 Nov 2025 16:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="THPvzLqh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b/q/Zr9E"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3BB2F5316;
-	Thu, 13 Nov 2025 16:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C919730BB81
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050811; cv=none; b=ScMRuh7O/XuNcXHR95aRDPGj5CDC1Dpzczy8dG68HeNtnsgC4zD+1x9m7SjOjNJHy0I5CJwx3KHaiDQxf62FXOgQllJ13eT1xgefLtvi1Zyy3nQHyaqu8jDDapsIYINsQEheVVcbgH4YuUUMnsBTcSTDUlUyG2PhGnAbLil0Nrw=
+	t=1763050843; cv=none; b=hAdB/c5lkAkUoN6392rgT7yXMRKUhMhDfptkUmR/2IhhUQyqjFHLlJMdw/AcpqewpOsvPIKuEsd7iM3OXw/tORdLZKnT9jc3LjruONE4JmChyOccjQ6C4CHIJKQdKjP8AUvMoVsd8MaNtnh2PvSQkuw+xDMm8+iIasNXTe+zC7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050811; c=relaxed/simple;
-	bh=iju4UxEjC6Er8r/XHnOtVmZHRm/BGYvhT4UITzxjpng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKWz/uXdNWUqJlj89shqdYVEZyVaNpiK3eTCLZn1GI1hGY2hr02riGd/fLWblC2H5311i5y1TU0riIFlAw7ZS9PDbZcbBjYzPVfYfbaRqzf7Aa94L6f8qYuGt3F9ZB1qkjq1yT8KXpqdknEYkUdDcX4cYJwcJ0llZQ2y9vpPGV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=THPvzLqh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CFE2E40E022E;
-	Thu, 13 Nov 2025 16:20:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lDaDVhbwhSWZ; Thu, 13 Nov 2025 16:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1763050800; bh=Brp04zwnPVYxaZ0H/+uagz7v1Dnnya1p0aoJs22dp1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=THPvzLqhPkn3Wt23XC2uI3hZGvvRgIv3UyS6fOAsoha+bU+Q+u1jF1b/USaruVPC6
-	 d2hkGzv4jOAzcnAtOobIWNsEhrmHZc7wz5bP37PnFbmSJ8JLoHlSufZUZprIebzBHf
-	 BivaqLNzINTNmIgZD2tJ23UlmowLAI0HWXHVj+aejUF9KXWlXyI4rqySXwWBzVntii
-	 ePZV2GYT1ZO39IP5RYZZibHI1qQbYobGpknY0jOYK2IKD7p8TSojy+1YQqykIMaOby
-	 QRXVs91tNvzpQ4elB9HT0sE8XFDCnwTAsh4bgc6DIcIu846ziIIrMYiEH9QQMdJHzO
-	 7eIPRX7GhlvPsBU9WgNabBOaEme2plVzOQGyxClmn2CghBuVivD7hTG/BRkKvrpm0k
-	 XLnfx/uly+JdaeimJvYulHRTw+BRTPaEGJOAlRBnwRXUPTcyq959IEnT3Ttk3zumBK
-	 rlrYAWJola05IJ4IPw0G+SDxboE8QOvjac32hRy4BiugrK+OtNDkW0Mi6MGu8Qmytl
-	 BEbhXHjy+VrxgQdGMQOpuR0DJQSQKcb2+ynPnTRf08MpexodWp67ua3Wg5EQ+3FNpl
-	 9inu/0DUL8farDMYp/u4qhKCQsSLb4Wet1njmST1hj05jgFHEr5bbIDWtFaNZvJXb2
-	 c5zlZiGR8jpOoNUEIZddz7uA=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E30A040E0216;
-	Thu, 13 Nov 2025 16:19:50 +0000 (UTC)
-Date: Thu, 13 Nov 2025 17:19:44 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 5/8] x86/bugs: KVM: Move VM_CLEAR_CPU_BUFFERS into SVM
- as SVM_CLEAR_CPU_BUFFERS
-Message-ID: <20251113161944.GDaRYFIFXihcRSSBkU@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-6-seanjc@google.com>
- <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
- <aRX7UDGm3LHFnPAg@google.com>
+	s=arc-20240116; t=1763050843; c=relaxed/simple;
+	bh=35rAosLmASCxkDu1QiQXtPeKjmJ3k4mGMeBMYmKH6EQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j0C2Con+noswbiWQHVaJcF47q/cMvB/XtIG9pkR6p51U9QTS57w6vuHy6tL78Nq26uZlIc1fUclBcDnMfeUI9gIe7soSisbLvRb1jjJIO0l3b8vjWO6yq9BGuL/YbyjTwzYrD02ZoyLD8et9HnKMGBGVKm35xNPt+f4qnpE+A28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b/q/Zr9E; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477632cc932so4903645e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:20:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1763050840; x=1763655640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xazDthsRCUcKnLYdHaH8ru5Cm7jJ2pThAeDqyEpzeU=;
+        b=b/q/Zr9EYHqZs2oSdtQi85H5wnTZ1nM6yh20vUt3PsQ0sqKsNFB/ngoLTTxelK1M/h
+         wJ9IN2bTa6422d8PsxfpK1aX5pfRD2tyAXcmru/koJ4Fr9nXvtD69esQJNxOXenKMGUj
+         EtCxptw0mr8nIyJdeHr+OCz0qkp9mYft3FWTCtdtsFe1LE97nk7heivfKZbCBOqUsDxS
+         5DcoYqsicvD0vHRYJ8oRfjMwAtyAl6ngzGDXoOMqSJIiC9BhaUXgH+Jx9p5TZBcwGK20
+         bEnHiX8pgpIiCgnuR5AKZzHN7Jaqb8txG+4YTQEtErrGu1tgxbN0I89DOO+l7wOrIqED
+         OwEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763050840; x=1763655640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7xazDthsRCUcKnLYdHaH8ru5Cm7jJ2pThAeDqyEpzeU=;
+        b=qeJlowVewrXBvlwAnbmgwvpm0LE6gKWcFVZ1dRVnrtIAmzZ0l5/mVasdFVx+OW/4pr
+         VClZhAWHgJ78k6pjjLUV7zVTsnMPoC2oaPEgHnqNZvzb26vPBqeVZqd7u28pGYxX/sA9
+         0Gn0MqcWHT3aFP2WY7nPirjXofL99FWmH70ghTtpXK9XlOQp5rnjbon01dYTojDTznds
+         AmNKZYoKTxZ7AGHyzrlZYLlX2RrIqYjLMtmbJtidhUP4aXGGXgAAMjEI92aQs4JySbzZ
+         sqbu/xUhlzwD6xP3wEO+ktffl8MIwi0L/765FOFMmTpZmma1lJsrBZex4S+GA/kKGWnO
+         OgmQ==
+X-Gm-Message-State: AOJu0YzuUsS6oGlM1t9s8UcX88yIZaIDQKqexJ4L0U8iZCvzKV3gadwv
+	fwHuEflJUHUXLCcCAplgO9f3VgaPjQ3eq5g7I1lLWsH3bICtMPkfguRKfB/a8E3RMPQ6TffUsL3
+	5R4vK
+X-Gm-Gg: ASbGncuNPekNcqEb2ilCNdmVyL479eqCrJRaKqtaOQurIf8wDi10iLpnIx2MDVy6TZr
+	kp6G2Q9EKlRQH9Yywqk+gySY+WZki/9LdkA/z9Lew13QoJ8iLXqWTENhsrtQtl8OzJiMYWLT+Ss
+	Phgp0ZjZZrVE2aafoxdkNMJ61gVSOfLSb4sbCdItHr7J+LRN6L6SVXdemfVViilu/hmFOWgc5G8
+	7xk6vdFwJ4u8hIdcC4tanyeTXwVttPeJ/I5QuOzZVdmAEbe1htG/zHoH3CSgDP9X7cVM/Lc5JFD
+	7rHagIrBCu+X3/RjFBMA8ZWWu8lvFAhg1uxX3IzpbFAesIs71ziSWPt3BpU8NBIzqLqIrwv2noj
+	tNAe+L0/84Qzqw3RNWxV1nqv8ezNxB073zOmH1RNN8e5C426GWiD4KBPq5jYmD0dqttw26gVyBL
+	foYknup/T4WxpL8Z2vbaF/vgdn
+X-Google-Smtp-Source: AGHT+IFVDrqcYEKVBCodWQj3q2o1v8pmbkPO3/UGmJ1Qg1Sz2D+w7euXqOTQbqbGEXDjlG1IUdJCWQ==
+X-Received: by 2002:a05:600c:45c4:b0:477:5c45:8117 with SMTP id 5b1f17b1804b1-4778febac95mr335065e9.41.1763050839756;
+        Thu, 13 Nov 2025 08:20:39 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f203afsm4680578f8f.39.2025.11.13.08.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 08:20:39 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>
+Subject: [PATCH 0/3] replace system_unbound_wq, add WQ_PERCPU to alloc_workqueue
+Date: Thu, 13 Nov 2025 17:20:29 +0100
+Message-ID: <20251113162032.394804-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aRX7UDGm3LHFnPAg@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 07:37:52AM -0800, Sean Christopherson wrote:
-> On Thu, Nov 13, 2025, Borislav Petkov wrote:
-> > On Thu, Oct 30, 2025 at 05:30:37PM -0700, Sean Christopherson wrote:
-> > > Now that VMX encodes its own sequency for clearing CPU buffers, move
-> > 
-> > Now that VMX encodes its own sequency for clearing CPU buffers, move
-> > Unknown word [sequency] in commit message.
-> > Suggestions: ['sequence',
-> > 
-> > Please introduce a spellchecker into your patch creation workflow. :)
-> 
-> I use codespell, but it's obviously imperfect.  Do you use something fancier?
+Hi,
 
-Fancy? no.
+=== Current situation: problems ===
 
-Homegrown and thus moldable as time provides? Yeah:
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/tree/.tip/bin/vp.py?h=vp&id=880f7f0393ae7d10643aeab32234086ee253687a#n815
+This leads to different scenarios if a work item is scheduled on an
+isolated CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
 
-That's my patch checker.
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
 
-I also have enabled spellchecking in vim when I write the commit message.
+        schedule_delayed_work(, 1);
 
-But meh, typos will slip from time to time regardless...
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistency cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2] WQ_PERCPU to alloc_workqueue()
+
+    Add a new WQ_PERCPU flag to explicitly request alloc_workqueue() to be
+	per-cpu when WQ_UNBOUND has not been specified.
+
+1) [P 3]  Replace uses of system_unbound_wq
+
+    system_unbound_wq is to be used when locality is not required.
+
+	Switch to using system_dfl_wq because system_unbound_wq is going away as
+	part of a workqueue restructuring.
+
+
+Thanks!
+
+Marco Crivellari (3):
+  ath6kl: add WQ_PERCPU to alloc_workqueue users
+  cw1200: add WQ_PERCPU to alloc_workqueue users
+  wifi: replace use of system_unbound_wq with system_dfl_wq
+
+ drivers/net/wireless/ath/ath6kl/usb.c | 2 +-
+ drivers/net/wireless/st/cw1200/bh.c   | 5 +++--
+ net/wireless/core.c                   | 4 ++--
+ net/wireless/sysfs.c                  | 2 +-
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.51.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
