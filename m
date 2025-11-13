@@ -1,135 +1,87 @@
-Return-Path: <linux-kernel+bounces-899831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546A0C58E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:56:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388C6C58D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9264C35C2D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4530B3BBD8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DC93659FF;
-	Thu, 13 Nov 2025 16:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4930335292F;
+	Thu, 13 Nov 2025 16:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQ4NzblF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JN24s2zn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060F5351FAC;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793F2FA0DF;
+	Thu, 13 Nov 2025 16:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051468; cv=none; b=rbcpJa/LuAtB6xso5s10jHzVGYANEHp6OLlxWjm2tzMUU1xrBpfZmP0G8FBAOVgn5Wn4bpe0Br07Jnut0ddhPOSq7KKDkgs1OxhE0+hq9hSUtgFRBbpGHJMnolC7bXWm+nMbibEhARh7ywlXkOvY4r+YzQTW4sOGGyxqbP+UMGQ=
+	t=1763051501; cv=none; b=J2re6KXr2X34U20iWI2PXngG1tiOQmX1LV1X/Pmeky7GtT6hekwWumT44q2RKhP36Tp1aBJYKqdxOEZK6AhfiRWZYITr+3ydlaL/D0xTzfr00LWSQE2LW/qjFMa7o9rG/7Z3wpai1haNzbdaQyYdU8Yxv9wGPDxzYMjd2QPgXsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051468; c=relaxed/simple;
-	bh=0WO/jZHmjEuOWBwtHgbc9wuEqlLbCiO8pWpnq7ErWxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nczkxbkueaJJA88OR1/mpsMNwAv9WzHBZPespXkjrF3uPF6+Hy8Xh/sf/Q2uSrslD+R9c9K5IXzs/tJgXUTNmGn9wiI1PG0NinIKWh8z3tTUxaLGtDFr+k7FoPGrDap2KCAPQ5G3tqbZ6Q8TE23rtjG+6CbE3W1s1I3bEcsq+jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQ4NzblF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 64E29C2BCB7;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
+	s=arc-20240116; t=1763051501; c=relaxed/simple;
+	bh=kF+kWxPyVh+z5FgM0Q2Did65oYs/q684yfo71ZgaTCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=thNklratBun+CGAWHDcdma8dMB6v+XVPqYjaoqJhoO0m/OYaHp1nNV/IbpDWxXEOp1c5KFqQKQMfMnmOdCwviYy5WwZxMLuqf522LquidzARchXr6CQ317fTfXcyVrpx+F/G8k8FQ8HM4l6A8aDEoq539u0F3fgQd4O2wnxCznY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JN24s2zn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0B2C4CEF7;
+	Thu, 13 Nov 2025 16:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051467;
-	bh=0WO/jZHmjEuOWBwtHgbc9wuEqlLbCiO8pWpnq7ErWxY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LQ4NzblFPh/c5yI1lHr7LHNuAIuEuKwnQxYXyN6vCUlF6AXO6whHC2tclTFIs9iMv
-	 cfiCwFduKz6uIe1fBgWwB6doW0mBcbtdHF5p1m0i1/e+OzYxSM0snb1cY1aEaC4fuz
-	 EuoV39KnI65UJA1f0c6ztcCPUK+XbQsClrwlFCmPhiM6+kdDN2ydKOR/yQR7GmycRa
-	 rl0WbnT9z+6AGIcQm8BWMGw0y7Mdj2iu/54Mry9z7tw8X4Jleh/3moE4DIcNMgofzJ
-	 b5iavnXJj0A9IsxpChiL+YFGaM+Qn2+SebpnA0Fkep16Rlg9TFqLIbIw41E7fBkfrd
-	 vnI1d5xP8wQEA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A73CD8CA8;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 13 Nov 2025 17:31:02 +0100
-Subject: [PATCH v6 6/7] Input: synaptics-rmi4 - read product ID on
- aftermarket touch ICs
+	s=k20201202; t=1763051501;
+	bh=kF+kWxPyVh+z5FgM0Q2Did65oYs/q684yfo71ZgaTCs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JN24s2znNS9vkkaUXTdz1pdutkLld2c5PDgdWXBdkz2Sq7e0VfZMaGPaKYRr6g9En
+	 8BwUWrJ+dgCAngShttKvv0IfksPk3gEcUk2w9LHgz68KiHXhkKtQTitBdJWhoRMOJa
+	 je8OIXGsKp2GgcN/cNlB9qPqt2cs64AVkAd/LMydq41j0Mkjs7qI+GNBh/yMRJgdqg
+	 ZrYPAGRNOsSDSvZOF+BO7v4WFUtdCK67Z53aQDtIpV6yyEVIr/LzeEcZUVapieylXM
+	 KFGENpjL0KYOOdn9OOa4+Bv5/zbglcL75Dsd97o3pVw81bC/Uuj29t0mI0XrGoWds3
+	 7vWSg/gQhbpEw==
+Date: Thu, 13 Nov 2025 06:31:40 -1000
+From: Tejun Heo <tj@kernel.org>
+To: ying chen <yc1082463@gmail.com>
+Cc: corbet@lwn.net, jiangshanlai@gmail.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, laoar.shao@gmail.com
+Subject: Re: [PATCH] workqueue: add workqueue.mayday_initial_timeout
+Message-ID: <aRYH7NwIEdC2kM8Q@slm.duckdns.org>
+References: <CAN2Y7hwttMyUn0qsEcSBbrQ1h+aSzNpHMhgAxEbqJZn4vf5hBw@mail.gmail.com>
+ <aROfRBGmglPgcPVf@slm.duckdns.org>
+ <CAN2Y7hwUmdFMM=mwYq7gsBpbSEBq6n0nXzmES4_=p3fDV=S+Ag@mail.gmail.com>
+ <aRSvxyoWiqzcBj-N@slm.duckdns.org>
+ <CAN2Y7hzDZxt5tBPeqwKwNNwwGXgmhj_uYDMkxx5_QtoqV97v1A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-synaptics-rmi4-v6-6-d9836afab801@ixit.cz>
-References: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
-In-Reply-To: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
- Vincent Huang <vincent.huang@tw.synaptics.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Casey Connolly <casey.connolly@linaro.org>, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1203; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=fdg+12tEzxS7iHUQg0vbJynpAJ6kRapCVogkHxp+sbM=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFgfJJSUY09P6h/jPNxdHSCu3ss2AzYgdLsAQf
- 40kLo686jaJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYHyQAKCRBgAj/E00kg
- cqsOD/9THOF3+00OTbZkhaH5F7LZR7lng7MGQ59Ew3D+EuiaZ7sTjIWBF/om2rwFDqOS7ZsFzf7
- mKWEI68HbXO5R5M38cOzsyolTb6Q+xdfp7MCUNKHNaCGn7tfrlSWFOYjb66PwZxUD4wTlpDFXL6
- DAuhi73YTgp+Du2n9QiwRojTH0cZFicStU4l5aFS/efxUkAeKOYZEpa/FZMRUrLWPiUhGnuswee
- pdVizwYMloQKq+3+ziueGRPNSkySNFm9uuCY++zTIzyLbJWD0/bJzhUBF/ypvCMe3LlnHcGtq3J
- TU0IBXUi46h8y6GR9ocBlC30p1yreB2yXHTioYQSPOqSSDan6EIo0Gl1HBA5gEvVY0Nbl1y2udR
- bU0OWwuTdTQACXbL3XUZwmmOTGBXPMimsQkrflx3EtyctOPXdGIleMBr9EnNRW5MNXNIq8nPYIm
- qKdBqx78dHSqJAjEIxkHEK5jG/0DNsHBQkPWwIH37L5ANGUXA2NWyvEA7hsy8JVwwUjZPjHPiW4
- dX+vBsXgUEdTFuMih5JJK0nZiYwys7rM9W3sg3/JbtFH93jkM9BkPX2jBN6YnWyGEzO2V3AyY9k
- 2Onxkmot4F3riXdRmIhIUdyWjTEMwyz4MvsqECpHEp3X2B1vGVMxuLyAck+5Bawiz+EX9mz3GtV
- nt3lTNcrD3oXYpQ==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAN2Y7hzDZxt5tBPeqwKwNNwwGXgmhj_uYDMkxx5_QtoqV97v1A@mail.gmail.com>
 
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Hello,
 
-Some replacement displays include third-party touch ICs which do not
-report the product ID correctly unless we read directly from the
-product ID register. Add a check and a fallback read to handle this.
+On Thu, Nov 13, 2025 at 10:34:43AM +0800, ying chen wrote:
+> Processing work items one-by-one is indeed an excellent solution.
+> However, wouldn't it also be necessary to provide a method for
+> adjusting the mayday initial timeout?
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- drivers/input/rmi4/rmi_f01.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Adding an interface like that isn't difficult but I'm not sure what that
+would achieve. A rescuer is there to guarantee forward progress when the
+system is under memory pressure and processing work items of the workqueue
+may be required to free up memory. IOW, when that workqueue not making
+forward progress can lead to system deadlock.
 
-diff --git a/drivers/input/rmi4/rmi_f01.c b/drivers/input/rmi4/rmi_f01.c
-index 47be64284b25e..2278e9b6a9207 100644
---- a/drivers/input/rmi4/rmi_f01.c
-+++ b/drivers/input/rmi4/rmi_f01.c
-@@ -250,6 +250,20 @@ static int rmi_f01_read_properties(struct rmi_device *rmi_dev,
- 		}
- 	}
- 
-+	/*
-+	 * Some aftermarket ICs put garbage into the product id field unless
-+	 * we read directly from the product id register.
-+	 */
-+	if (props->product_id[0] < 0x20) {
-+		ret = rmi_read_block(rmi_dev, query_base_addr + 11,
-+				       props->product_id, RMI_PRODUCT_ID_LENGTH);
-+		if (ret) {
-+			dev_err(&rmi_dev->dev,
-+				"Failed to read product id: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	return 0;
- }
- 
+As such, this doesn't have that much system performance implications (aside
+from the serialization effect that you raised). If rescuer is needed, the
+system is in tatters anyway, especially in terms of latency response, so I'm
+not sure what fine-tuning rescuer response time would help with.
+
+Thanks.
 
 -- 
-2.51.0
-
-
+tejun
 
