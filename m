@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-898640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A97DC55A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:23:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C36BC55A41
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504923B172C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:23:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C42F2349FEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095482DC348;
-	Thu, 13 Nov 2025 04:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F0D2DECBA;
+	Thu, 13 Nov 2025 04:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O3xh80Kp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="hOE5YBNL"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD992BE629;
-	Thu, 13 Nov 2025 04:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622CE2BE629
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763007802; cv=none; b=ZTseamLUltojbqW9Z3hy8bhSniGxjPbuLKeiAB3Nhq7Luc1PU47LQQOHTUkAEytued7xKraPwuRsJ5jEDf7xaxSZPAkFbFeEtCqGWJ2GJx7nTtNt+3Tzb8B1AHtIKgKwYb7nFj/cSeZdjqR3OVrPw6of6gbOhn+68pYb3Vhr3Hs=
+	t=1763007878; cv=none; b=XPedvSjps0xiJkyxYFg4g5XMOGBJhKNogtWRvyWxXDT9La/mvqoj1AoKgN0qPq2JIiAkOzgNxT5ViofG0lhWgN3pvKBPDT1pH+wo04SkEgDF+srOgGltIc44R3H8ZZ0yk8mnruSVni1JrRZKqFkxkq5U2w7p3I+xwTxEIseV3tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763007802; c=relaxed/simple;
-	bh=Xvz+Xuc7Y+vhCg3WuET9Z7ozRM61Lmu5lT4vf+qo6G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R6K5K21T22IOksNAciEQtjkqcpUKKpRBfnM2tVu0KkLx4qltD8xAaXs59yHppoH/S+XDLVgQMc1gh0EdAOVjx+gXFrKqIk938WkvTzCJ+cNBA7mi8gqVomqvoYZTh+3Ddke1LER5vtAvaHflPTCuDu8dS1tv7SyaqiDsQzWMOlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O3xh80Kp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1763007797;
-	bh=rkSKirlfJNrKqmdM7JkvP4+6DlB0RhjRgSCJwL6W+04=;
-	h=Date:From:To:Cc:Subject:From;
-	b=O3xh80KpylT7ozWwEpv3kO3cAva0J6sa4cEGjIj/NamaHO3d4V+JJqLtWpCUJPba8
-	 Jw5fjzbj6AwPaRV0+DuONt11z0mDrHqQwICVhN89ZE8XW0siGeVIqdjuhh+LH45T6p
-	 B1ukzMJSJBr3WUJF8LIzFWFFWlgaHEWh+Lqt8plH0KQ8fNx3lVBwiD8LrNQeiLghW2
-	 Sra7pQhj3/3eG8WQxDBiEY6vsB2dkgN/UvSLWjLD2iYe7HtfzIDy89LqILRjkPz/Ld
-	 ZhzHExYMI6y9Fys28kBh9mnlFDYC8NzoV62JzbX5rtwdRF1FVXQ3sDR6iSHvg0eSCt
-	 Nl+Rc33wkRJtQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d6Rw52282z4wBD;
-	Thu, 13 Nov 2025 15:23:17 +1100 (AEDT)
-Date: Thu, 13 Nov 2025 15:23:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the kvm-x86 tree
-Message-ID: <20251113152316.7f7e9e50@canb.auug.org.au>
+	s=arc-20240116; t=1763007878; c=relaxed/simple;
+	bh=cz9fUZd9C+zcNxpFo+3ei8tZ/Fv8mnTUymh+Lr7UieA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GOfWKfo+M/mHSKWZUJQAoGRuVgPs57jylkBySp7NuyYpx1aj3Kur0nOcCXpHifYqsZAtdsydCB6/tsk01JBmnNtesk23ST18iGtuRM7bQQeL1fG/REsDnySqiY9A5X6lU7H2Yt88ntUHbTfbeVQ4d0EWyHO63IeIyjyS/5RQIuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=hOE5YBNL; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id JMOUvQAVJVCBNJOspvGfM6; Thu, 13 Nov 2025 04:24:31 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id JOsovtabRMoIXJOsovri2o; Thu, 13 Nov 2025 04:24:31 +0000
+X-Authority-Analysis: v=2.4 cv=R7wDGcRX c=1 sm=1 tr=0 ts=69155d7f
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=7/VZz1X9DKOdr39w8NKiLQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10
+ a=nZAuQRfsK3Kgxp-xzsIA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cz9fUZd9C+zcNxpFo+3ei8tZ/Fv8mnTUymh+Lr7UieA=; b=hOE5YBNLv9Pzty45Ab6fzepcbk
+	+7it13+t4mlR59HDxIYkjcTzKHD8tR7ydlw67jIpoXxOwVozG1VnHNBwSna83QIiBWLkc1xgUrv1W
+	u1zbSAWzG9DPc2L5oNImWpprHNn62rX7+qrH2/ACpnvBlx4AN2/5Vd1zpRhiacHA4z3sxnnLJ6Ans
+	fg1XsBSTG0DufErH/18xmbPoGSkRTallPxQ4E8dmO1VUAzFlVjQNmi8/G9S3dGRAVTXsUq2/FDCvV
+	carmSg/7h/iRf/f3ETsZx4ZM6agFsK2N4nwoL1XGHu8JzTYV7jx/kPFyRMebhOFHPaAkTV9WjxzlX
+	jP0aO8zQ==;
+Received: from [61.251.99.134] (port=3385 helo=[10.28.115.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1vJOsn-00000003FES-3msd;
+	Wed, 12 Nov 2025 22:24:30 -0600
+Message-ID: <fbef561c-c470-47d0-9bc0-c565e10b2856@embeddedor.com>
+Date: Thu, 13 Nov 2025 13:24:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_+6ntTY=hoCvGRMjomjXjXn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] bcache: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Coly Li <colyli@fnnas.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-bcache@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aRHFchrO3BmVMH5c@kspp>
+ <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6>
+ <a956504a-55af-4c2c-95a0-15663435624a@embeddedor.com>
+ <7zweggwc6mkksyhxzbdsphachjj5pzlaebli6xitryfl4yiqdj@eziyaibeuhza>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <7zweggwc6mkksyhxzbdsphachjj5pzlaebli6xitryfl4yiqdj@eziyaibeuhza>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 61.251.99.134
+X-Source-L: No
+X-Exim-ID: 1vJOsn-00000003FES-3msd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.28.115.44]) [61.251.99.134]:3385
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNaF6MMyMe3zdR+bMWAMov2dbenXm/LOykGdclWXbyJ8nbdKBoEurUPWV8mxFGIHMKmBx1zjd60BtvjVnpjAkvxUrFWdR/vcPsnNsRNcTr8W1Ufpr7fT
+ rESFOyUxsLi4//QlG2yJ04L9Vrjk+emQWZlhy6JgQfQyR2n0kPWEDadGQbR2XgCNEgiUvA5bEEQFroVCGTaxrQ74JUHdH9m1wKsmouPtgY2F6pJrWEBugK5U
 
---Sig_/_+6ntTY=hoCvGRMjomjXjXn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+> I see. I take this patch, with the above complain...
 
-Commit
+Thanks, Coly.
 
-  a4551f2b4d9c ("KVM: TDX: Take MMU lock around tdh_vp_init()")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_+6ntTY=hoCvGRMjomjXjXn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkVXTQACgkQAVBC80lX
-0GwRDgf/V/fhPWHIc9QOXDz0bj9CP52yBLO4r4kxpybrJsQjuLvHK2IzjGmVmfNe
-BGolTzkl0u/0qWOePv2m4P6O0mVtrWVSn6TwbgCrtcNWe3bb+f6yvkI1rC19A2k1
-UBIKrvbd6X8ftm34wl61nyow+65d73kSZp2meF7VGvuuAIlH54SDwpwqjknU0MwL
-n4chIVe7CIy7c2XevWNrNxTMOOxMxHoIZM8Aq4dgooD5TuY8atiZkDFXydFH4jaC
-5BiXIFbUMhOuouY1gyafginZMBCzlEpCrxrye2KKnA/QpQSNqRpFK0cOxuX8glGm
-08iSFWvOQdXT8rbd6OqGJmremJXo+w==
-=D+Jx
------END PGP SIGNATURE-----
-
---Sig_/_+6ntTY=hoCvGRMjomjXjXn--
+-Gustavo
 
