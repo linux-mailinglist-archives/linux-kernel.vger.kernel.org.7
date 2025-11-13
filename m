@@ -1,82 +1,97 @@
-Return-Path: <linux-kernel+bounces-899055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F26C56AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:46:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C03CC56A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020554223CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:37:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA92734A283
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5617F320CA0;
-	Thu, 13 Nov 2025 09:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD91330B0B;
+	Thu, 13 Nov 2025 09:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhbrFdG+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="l3AYlvul"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BD72D5C6C;
-	Thu, 13 Nov 2025 09:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B7432255D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763026643; cv=none; b=eCsucY51Tu0CKqAt7QoIMnb/4bI8XJfJbH0tqAObcfbu0lhCwmteIsDiDP+9tEwfbqmcc6RkoOZ0g1sY8A10BTnpPOcNaDgmjx7xGB1m/sgnauTLaj+lvdWtD5EJC0+tnXB83Ul41sWVVhyMuwUb8LTECxDM+8pjCYWgPI2nHBc=
+	t=1763026735; cv=none; b=DyfM1s+C3qzJY+l6RbCp6snVAxOg4/RSc+hhsz/h39PLnqtKdBbjd0mwbQbmx0ouqRSLHcOmhjWHV04wTwLE6qf8QlrtJ1xMCxdvi6fua+yi1HB4t3BJ2vcO4Wr7r0OYVyjP4ZMZjPUvkRGwzPxYnLcuuQXSONhghRyiSlvwP0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763026643; c=relaxed/simple;
-	bh=W+Occ+lPWQ5GksQNwGHSfjb/mZ5LU2KL0XKNFsf7F5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rO7MfttbgltaBN3Kvc4rVxQggMPt1hRvNl6//uZIwk+JunMUITFpecoNgIe3ld5UhpAsnea7xufo1rThcmOmmXlU0COw5IJOGPhvdIx2s68/VozlQvQpMXiyKD7A9wQ5b1kIIOvJWErOhZBpI1fh5c8mAPAigtn80rMbak4jmkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhbrFdG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AF7C4CEF1;
-	Thu, 13 Nov 2025 09:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763026641;
-	bh=W+Occ+lPWQ5GksQNwGHSfjb/mZ5LU2KL0XKNFsf7F5Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OhbrFdG+KnN2X63zoTMJ+fW5N4UGnRsP9yMgDhhl7FeDYwgNq4Ac0TrRFsI5jyIkc
-	 vWfMuI8AgWgtCdxjZi0ng6IYAQ2+eBj7W8zTM0QYlmkgs94kFSH6ny/iISX0icjeJf
-	 YXGEhqITjvYgviszXZ9JVHa5L1ggc0iYlkzg4TX8DzSt1H6VoYVO44AxwSyh9r1dTO
-	 ca2CG/AGDgiDpg6/i1wBIdXOOknJgaKsAK0NdGOgRB3ktMhuj1sLfOBR4c+MoaR7u3
-	 FhMKTpQsQxHyASsp+BJgZMgdZU9of6jFXfG9/i8aAxhMfm06k+CTnwGvndosEhrIf0
-	 IPQzJy1gDrPIA==
-Message-ID: <72850fb4-a808-4cb7-98dd-b7d280f575ad@kernel.org>
-Date: Thu, 13 Nov 2025 09:37:17 +0000
+	s=arc-20240116; t=1763026735; c=relaxed/simple;
+	bh=EdPs4juy62ccnbqwisb9WZ/DrX2JL18pTQunI2hiDLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VCGpwmCvqzH2SItXA/byhtYHPn40ViBgiMIZZ7grWrfhYvCkCoDI7Opm6FTCX5Q2Sp8S2QBdeCLwcBZ3V5LwDSJAFppk51X5wqxbu+81Zo9lTYOlXa/1iD9+HsyX7n7ce158TF5LokjLvPs4ZhD7eN4zDWNDLkStl43RCWkAv8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=l3AYlvul; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ede6b5cad7so2694471cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:38:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1763026733; x=1763631533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nP5WgxtbS89E28gAoqSP0cIIjeJeCmahXVnlmty8cBU=;
+        b=l3AYlvulAIbwKljzbmh9+9dS2jgRudxl1y/fDQOvVRkVhYb/7YmAyQNH9sPgpGHFff
+         C/e4NtvFMIgC8YhFW9pqeF7cbb3GkicWnL8TVX/7dhjaSdhpOUB8IvMHqcghSFUNnK9a
+         nPcBaRIlv2nd5JDE4s5UexH7kHw74vWaehdRg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763026733; x=1763631533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nP5WgxtbS89E28gAoqSP0cIIjeJeCmahXVnlmty8cBU=;
+        b=bkHUb6JvSYFVDwAa11SVMgLmKBZ7sjCLpLFi60vzU0FaNkPxps8xcLKaVmMZkb2NgM
+         480RWLdL8dLrZBH9reN/hLbHrvt3rwcblOZCbQQfr+IzjiBEYsihmP0wFj7r5VHB7ywb
+         dbmBQDS798VrN+yEnurHJpLu/aW7NvWsyScB7F0ulcFRZ7eJwz+sa1DsogPPeYlV+0Ip
+         BxweGQBqPP6aEbuewrqslQrFovzxGHcJSso61zCmjL7QuKmqgsmJVOWFvoP/z9TS9RqC
+         qo+TpsB5yVzgE1aADThTJfo0+WNPRSLux6vMuzGSL0nleFt6J5tZtiuIlnvCq4/VAH51
+         Myrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzLWZvMLugLpiN2VlMyLQvdGbjr8puDv47f/cRm1R+8kesHyF++J3x0I5bjk0Y67rqtDU7vE8k0VUnKig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwitbPphm8jA8mSpp/kEEd30oVu3iaQS+hrChtMdKR/ZyIcXFUN
+	ecVSnrJLY119rhN6NnqVVJAmwunnUSpAtlSAc9JAZd2patJ0OzVOAxmF666sMrEwlu2MSCIW/z7
+	KZXXztlp7D/CbRXTWWxxrNOllurZTNQU97lPfE7+osw==
+X-Gm-Gg: ASbGnctnFWJLN5hHcsBwliV8/xNlUyQ6zbTw/aNdIv2x49Wi/hUrMkRd0s+6YMzLhnN
+	0EdKhyrhAdxSEhoRex2hSCdLkjXnIPkm549De7/6nrr3OqfZ8QhlNmRgDf+PYb9Rf/KAxqhgDrx
+	O1jAXBD78jtfxvdw0FKJlhNItqVt1sGywDV7OyGTGRci45hf/XprmKONsvMl1zCf8Agpuzm1tx6
+	ag1vEsWe4gyOZKG9dR6x+ixdxqDzr4sRlHkqtkJPSlCsBVnxpfczqJCje8i
+X-Google-Smtp-Source: AGHT+IFLA6qK67emnI3r/+0K97kMNI5gwxD1/rhmSygkn8geJv98fYFwYjHwP7mxFNoiS+2kmbVw/huQnP93tRr0CCQ=
+X-Received: by 2002:ac8:5d0f:0:b0:4ed:b83f:7896 with SMTP id
+ d75a77b69052e-4eddbd77352mr74696081cf.49.1763026732674; Thu, 13 Nov 2025
+ 01:38:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] media: qcom: iris: Improve crop_offset handling
- for encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- quic_qiweil@quicinc.com, quic_renjiang@quicinc.com
-References: <20251110-iris_encoder_enhancements-v5-0-1dbb19968bd5@oss.qualcomm.com>
- <NjNnj7HS_VfMp-8fvYYx__VlM1bXwiS6QZO3i5fEU3Sx2C3dQL0CEbGkY0j5PGP2RtpOBvCaM9dDqAjKXzuxeQ==@protonmail.internalid>
- <20251110-iris_encoder_enhancements-v5-2-1dbb19968bd5@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251110-iris_encoder_enhancements-v5-2-1dbb19968bd5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250929130246.107478-1-mssola@mssola.com>
+In-Reply-To: <20250929130246.107478-1-mssola@mssola.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 13 Nov 2025 10:38:41 +0100
+X-Gm-Features: AWmQ_blm3OU1lrWKh6moqo6AjuEBiygoCRZ2c9tWVqcvk8C0yMuYS2IyumsP348
+Message-ID: <CAJfpegtOMPM1ewvySr8d15rCCWVXGPYhSutF7_UGfE++6D7QWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] fs: fuse: use strscpy instead of strcpy
+To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/11/2025 10:23, Wangao Wang wrote:
-> The setting of HFI_PROP_CROP_OFFSETS for the OUTPUT port is correct,
-> but on the CAPTURE port it is used to inform the firmware about the
-> ROI, so crop_offset needs to be handled accordingly.
+On Mon, 29 Sept 2025 at 15:03, Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.=
+com> wrote:
+>
+> Changes in v2:
+>   - Add a commit to rename 'namelen' to 'namesize', as suggested by Miklo=
+s
+>     Szeredi.
 
-What is ROI ?
+Applied, thanks.
 
-Please define this term in your commit log.
-
----
-bod
+Miklos
 
