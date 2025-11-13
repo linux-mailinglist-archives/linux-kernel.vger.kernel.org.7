@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-900085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB13C5996E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 20:00:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59413C59936
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 529534E63E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:52:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 148D5342A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4357731618E;
-	Thu, 13 Nov 2025 18:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A031618E;
+	Thu, 13 Nov 2025 18:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GbuNqQTM"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGtumTY5"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E6D3112BC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549FD2D7397
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059961; cv=none; b=gUwfBuMD3THqZlRt9FA4oqnLkw3XkWCwUGkRFfiYLSI8C8PpmQZKVaZa/xJbmYBEznOLrlK+8E+aBQ4umzK94wgLb7KicpCNFtZg+N8V79NwCmqOWYhsnL9ZLyG9lmZaGhKOAuCeZVHYZS7qo7b4qwZKi7+BxbNyXbCYV73B6lU=
+	t=1763060052; cv=none; b=r5AHCB9QPJdP1JzA8Y7VYLCOZe12r7JCYmw9QiJqAHjAA1pnNy+IyF5oswZnkaRTw3geU6YrNBA9BARlXcWasTW/Nu3rncU/8JBj1CU7jjSIXqRjr1fzksT3WoxWj//pg5Sstl47glzGEOni1+uw/+/y6tJSIO7dSRCAM8NNVXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059961; c=relaxed/simple;
-	bh=tY+LqcJi+t4vC6sC8QoxXUZexC4HaIVQqUDXfk6E/Gk=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=oVdIoGnWIy2FfetLg43zLGOZ9mG7UdxSQ8xV0UFw5wUxtqxTqC6XvMKXR5eJKPjk2jzpEB9hTtp87qPInPHUOZiXSJT0YihrWAICE/8M4nx2gXex9ljCYbGBEF0ruBOr/5whpmk78U+GA+SATgCvN3WRuVAt2g5Um2bEAtZsy3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GbuNqQTM; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-940d327df21so41901539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:52:39 -0800 (PST)
+	s=arc-20240116; t=1763060052; c=relaxed/simple;
+	bh=ImyLRSldVokJNTwxQD8uL+Aad8g9eoYs7zgGRDjZ8Ww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lRQLphcTBHvgIOI7d1n/akmfP6zuHOdYWs1ZeCakc6W8K84mjeb+Jx2HY/ZGDsnQvYWIEAlm15oQRRpDjyKKQn1+0TQByPeYbgtQTIQc7RcvcMzumJRCCZ4VT/X/gmW5NZdGnSUSaX+gWH+sCou+i/++5mUjCpaRUAobUCq79VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGtumTY5; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b387483bbso960005f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1763059959; x=1763664759; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1KVDNdeiUNjeLgJncmsFihjy0/HtaAIfwMHOw6agH2w=;
-        b=GbuNqQTMV+XQVndGd3Kh0vtc8WgKtJq3hL6KfmKdqZ0VIA6L6+dRZpZClklr99v74e
-         2TONNAyAqeNeg29RpBIsa57qShxTZthwFzradSqY90fwDmVdYuoAQJpZ78zDN6DSBT5r
-         9Jc4+pM4Y/biE5C3gJIqeOSWGoRut/QGJJ3C0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059959; x=1763664759;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1763060049; x=1763664849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1KVDNdeiUNjeLgJncmsFihjy0/HtaAIfwMHOw6agH2w=;
-        b=bZ4+jPls1nX/cx/fsP1gI07kdnnKiT5Jfugrv6iJJmRXdiwQz3AegaFbBvIEQKfOsY
-         D5Zu2IGvonWwVXuEDHqKWmlvcKvXxeXhTDE0jiY9tdyTaBrBERRqU7f2nl8FQe9nYgjB
-         puqDhqZCrMHSLiNw/QtwMUt9SRe57rSZDpGmUf9f0isUovrmPIA1yL0HQa06rbo+u7fh
-         9YxRcwhFuRPF7FYecYbaezxh/354L/ZV9pt+yN540D+UMyI4rkK4E1wmc1/+GFwRkBuJ
-         Qd6B0uFctWOTXptH710qw9SFD+ar8R7QxTRtG97oArqDC7NpAuFa2u4DDNZ0NWti8PXC
-         4VpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7tXQbrZIKNbjiP4HQpLS/MmV9kCk4Yn2T4R3XJF3/z5FD2/HGLLI/ouf9PW2Jo43J4Ab1PWJhFwnMpWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2LbmA/DuKI2SNfZWOPkvH2cUE+rcD7AR5XLJUMRh7RSNhgrEM
-	ehzLO2zs8wi23AaTH+i+I3iDCczMzSxSGHn9SaccClbVOgiRVHTclEMxVXDmcfk0T6s=
-X-Gm-Gg: ASbGnctW8yRxpQgXsfIggWE1gJSwI4ud2t/G20g0i1DUc6tl7F5jBq2ireE0t8bo2LQ
-	uUrvT8u7rsG3XpUtThdjmr88QRqlnVj6NQt2ubOOYbINGg3VqFsi6ZAaaqMeWHGiVT2J/b4+gQ9
-	N57mlFQZ7odG5SraqkQ9A+/jweksHMY9Vpg6OYcy8bMLmfh1brVFuPtTV4xuYlBEaVUpUumHJsp
-	GUrzPxoRaZRHKcYjKSb/6cuQY038FAySj0uPCV2Y41w+ZT83cBZioUYAS5gpfAZQxJ2wUcSzcqU
-	TwxdGfgCcAldtyPLJbaRMpcbx07xtl9JASH/Eh1V1XjsNGcMdMHbm4TCqr0gyFrVNEP5A9Sepn9
-	EaGojBvYBNBgVq/T7tq3m7Bt23oLLHmvm+wsYcBc2GX1vd/zjYKmMP1hnJX8yVq+RZcfvquHcL+
-	ki2XLR6XQ1e9kqg5FVw/Z7mHQ=
-X-Google-Smtp-Source: AGHT+IF2/bU+eSqXeVfXjfHWK1jKW4KR7t0Or1eO+izL08nGbvipHvjs8ExWqQyzio3nvcGrkZAjVw==
-X-Received: by 2002:a05:6602:b8e:b0:886:e168:e087 with SMTP id ca18e2360f4ac-948e0d9843cmr63168639f.13.1763059958939;
-        Thu, 13 Nov 2025 10:52:38 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-948d2b75865sm93549939f.5.2025.11.13.10.52.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:52:38 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------DzRij7SNZ0lc7eB07u15O7aG"
-Message-ID: <e7557516-343b-4dcf-920c-c0d46cde822b@linuxfoundation.org>
-Date: Thu, 13 Nov 2025 11:52:37 -0700
+        bh=0za6nc+aCXQm8KF/y6TMG9+/t9XbwHnz+7+385lRJ0w=;
+        b=WGtumTY5f+hp9Jl3OH7Dr9fDE3PVEL2vqCA5IFMUthmdMZ2vAzPHHqsd1JZjizwKFA
+         rLWbMfuOOm/+XU84wemFDsiDbDGvXzgi8dzao4F1xQEcGo+yKLdXWOmQ7Z1dF3+WT6Sg
+         v/Sz1xfR+nbHFtcSzfhr5vI0WG7pjkt0LMp/GR6DSj029wleELq6OasX49G0XN4cfhza
+         OgCQFCS0CTgT1kW3PouAC40a84om8KE6fqtXEUNZPXZuru02BsByFPiyi/Xh2fNpzhGe
+         JksTmgfTe2ahBOfOqYcP/ZNK8MRMivML32XeqKUaIq+W3sEspz6IXNWyg7g/yE3w7Tl5
+         9K0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763060049; x=1763664849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0za6nc+aCXQm8KF/y6TMG9+/t9XbwHnz+7+385lRJ0w=;
+        b=PTdwC7OK5Qgg7RBiXgo+S1Wu8f3zMyZycDWHspcoYmRh0ubJFRNGsQ2+AQrIvxS1Zd
+         ltcQYputowCmwJ/sBICyrEIirhQqAgpNPdGb3U9ZFx/5wvJWnIVvDNgGTtJfbmYbn8mM
+         aKZi15OxeGHSIWOO9LoMIiI/mIbgf/GnfQN8dxlZomTnX+C9Wjf8eLLYOrOqbk4IodgO
+         I0mJcmkwvZaRhzq5PglZMz0ftvnTkIvzurt0jOGG0+/wv+I8S0Xui8j38mUjjFdClMmW
+         o5+qJED+FPLcJLWE8WEyTrCw/xaH7yCCydC0hNiaKvqcL9vQwN1mduL+v4i2pZ0df6TC
+         RHQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpkVubFoABj8W9XSK3pyoHSZ9gbvS1UX1oP8Z/ZQNK5UgmfkjKclpTHclKvI9SoZ8Ua8gCBcihisItwAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7JQRsTKpCr0SCxqPp7nIIxxq2tBHlzL58pMwzhtL6FzVHY4gi
+	CIZmbusf/R2ERoLC1Xi9TdNxyFmQDAB3FrTguj2kF2wMqUKKi+8qtOErM+ux5ccoXhc9Td17j/u
+	iXjIhVwnXvdGoV1W87ogM6DTFYS9dVkM=
+X-Gm-Gg: ASbGncsolIZ1954e35kGHXVNAyEG5wHwahPTG0wOrMXnORqpghd5GdZK9+VyWV40ajC
+	y3wR5RsKyVY7Jw/oJvisLRzW/k9i+rLDtSMuVQq6hrdTZkrr/bZB+5+3q50YgUlu7nyUsbFjRTA
+	QjtE/tPvNLDB+r6Qnegf7FEqbfVjHobEJ06sTW0K+SAMoQ4Td5bm1VobZTDMNF3AdA0vtx4jUKn
+	zSCqFDYM/qxOWZwYc5QmPpi8a8oOwvx5pHhZgs56IZaD5/RE9R8oCQNkXt49A==
+X-Google-Smtp-Source: AGHT+IGTSBrTIDYDjncilT4tzbDR8Dtp04aGMzl96p2G9sbZioO58z/jxSqd5HKBnz20COtjN+8hMikzMSLxwBPwrho=
+X-Received: by 2002:a05:6000:26c3:b0:42b:5448:7ae8 with SMTP id
+ ffacd0b85a97d-42b59372315mr442629f8f.29.1763060048361; Thu, 13 Nov 2025
+ 10:54:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] kselftest fixes update for Linux 6.18-rc6
+References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251112201937.1336854-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <de098757-2088-4b34-8a9a-407f9487991c@lunn.ch>
+In-Reply-To: <de098757-2088-4b34-8a9a-407f9487991c@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Nov 2025 18:53:41 +0000
+X-Gm-Features: AWmQ_bmzRimk8gYF_4YjJuq9mGlvR6GBPwMMkQlI3Mtuob5q5ystweObvaU2JrE
+Message-ID: <CA+V-a8vgJcJ+EsxSwQzQbprjqhxy-QS84=wE6co+D50wOOOweA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: net: pcs: renesas,rzn1-miic:
+ Add renesas,miic-phylink-active-low property
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------DzRij7SNZ0lc7eB07u15O7aG
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Andrew,
 
-Hi Linus,
+On Wed, Nov 12, 2025 at 8:58=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Nov 12, 2025 at 08:19:36PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add the boolean DT property `renesas,miic-phylink-active-low` to the RZ=
+N1
+> > MIIC binding schema. This property allows configuring the active level
+> > of the PHY-link signals used by the Switch, EtherCAT, and SERCOS III
+> > interfaces.
+> >
+> > The signal polarity is controlled by fields in the MIIC_PHYLINK registe=
+r:
+> >   - SWLNK[3:0]: configures the Switch interface link signal level
+> >       0 - Active High
+> >       1 - Active Low
+> >   - CATLNK[6:4]: configures the EtherCAT interface link signal level
+> >       0 - Active Low
+> >       1 - Active High
+> >   - S3LNK[9:8]: configures the SERCOS III interface link signal level
+> >       0 - Active Low
+> >       1 - Active High
+> >
+> > When the `renesas,miic-phylink-active-low` property is present, the
+> > PHY-link signal is configured as active-low. When omitted, the signal
+> > defaults to active-high.
+>
+> Sorry, but i asked in a previous version, what is phy-link? You still
+> don't explain what this signal is. phylib/phylink tells you about the
+> link state, if there is a link partner, what link speed has been
+> negotiated, duplex, pause etc. What does this signal indicate?
+>
 
-Please pull this kselftest fixes update for Linux 6.18-rc6
+                                   +----> Ethernet Switch -------->
+GMAC (Synopsys IP)
+                                    |
+                                    |
+MII Converter ----------+
+                                    |
+                                   +----> EtherCAT Slave Controller
+                                   |
+                                   |
+                                   +----> SERCOS Controller
 
-Fixes event-filter-function.tc tracing test failure caused when a first
-run to sample events triggers kmem_cache_free which interferes with the
-rest of the test. Fix this calling sample_events twice to eliminate the
-kmem_cache_free related noise from the sampling.
+Each of these IPs has its own link status pin as an input to the SoC:
 
-diff is attached.
+SWITCH_MII_LINK: Switch PHY link status input
+S3_MII_LINKP: SERCOS III link status from PHY
+CAT_MII_LINK: EtherCAT link status from PHY
 
-thanks,
--- Shuah
+The above architecture is for the RZ/N1 SoC. For RZ/T2H SoC we dont
+have a SERCOS Controller. So in the case of RZ/T2H EVK the
+SWITCH_MII_LINK status pin is connected to the LED1 of VSC8541 PHY.
 
-----------------------------------------------------------------
-The following changes since commit 920aa3a7705a061cb3004572d8b7932b54463dbf:
+The PHYLNK register [0] (section 10.2.5 page 763) allows control of
+the active level of the link.
+0: High active (Default)
+1: Active Low
 
-   selftests: cachestat: Fix warning on declaration under label (2025-10-22 09:23:18 -0600)
+For example the SWITCH requires link-up to be reported to the switch
+via the SWITCH_MII_LINK input pin.
 
-are available in the Git repository at:
+[0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-g=
+roup-users-manual-r-engine-and-ethernet-peripherals?r=3D1054561
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.18-rc6
-
-for you to fetch changes up to dd4adb986a86727ed8f56c48b6d0695f1e211e65:
-
-   selftests/tracing: Run sample events to clear page cache events (2025-11-10 18:00:07 -0700)
-
-----------------------------------------------------------------
-linux_kselftest-fixes-6.18-rc6
-
-Fixes event-filter-function.tc tracing test failure caused when a first
-run to sample events triggers kmem_cache_free which interferes with the
-rest of the test. Fix this calling sample_events twice to eliminate the
-kmem_cache_free related noise from the sampling.
-
-----------------------------------------------------------------
-Steven Rostedt (1):
-       selftests/tracing: Run sample events to clear page cache events
-
-  tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc | 4 ++++
-  1 file changed, 4 insertions(+)
-----------------------------------------------------------------
---------------DzRij7SNZ0lc7eB07u15O7aG
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux_kselftest-fixes-6.18-rc6.diff"
-Content-Disposition: attachment;
- filename="linux_kselftest-fixes-6.18-rc6.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2Z0cmFjZS90ZXN0LmQvZmls
-dGVyL2V2ZW50LWZpbHRlci1mdW5jdGlvbi50YyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3Rz
-L2Z0cmFjZS90ZXN0LmQvZmlsdGVyL2V2ZW50LWZpbHRlci1mdW5jdGlvbi50YwppbmRleCBj
-NjIxNjVmYWJkMGMuLmNmYTE2YWExZjM5YSAxMDA2NDQKLS0tIGEvdG9vbHMvdGVzdGluZy9z
-ZWxmdGVzdHMvZnRyYWNlL3Rlc3QuZC9maWx0ZXIvZXZlbnQtZmlsdGVyLWZ1bmN0aW9uLnRj
-CisrKyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2Z0cmFjZS90ZXN0LmQvZmlsdGVyL2V2
-ZW50LWZpbHRlci1mdW5jdGlvbi50YwpAQCAtMjAsNiArMjAsMTAgQEAgc2FtcGxlX2V2ZW50
-cygpIHsKIGVjaG8gMCA+IHRyYWNpbmdfb24KIGVjaG8gMCA+IGV2ZW50cy9lbmFibGUKIAor
-IyBDbGVhciBmdW5jdGlvbnMgY2F1c2VkIGJ5IHBhZ2UgY2FjaGU7IHJ1biBzYW1wbGVfZXZl
-bnRzIHR3aWNlCitzYW1wbGVfZXZlbnRzCitzYW1wbGVfZXZlbnRzCisKIGVjaG8gIkdldCB0
-aGUgbW9zdCBmcmVxdWVudGx5IGNhbGxpbmcgZnVuY3Rpb24iCiBlY2hvID4gdHJhY2UKIHNh
-bXBsZV9ldmVudHMK
-
---------------DzRij7SNZ0lc7eB07u15O7aG--
+Cheers,
+Prabhakar
 
