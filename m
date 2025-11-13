@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-899335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF22C576FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:35:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C3CC576F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0B7E234C2C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:34:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7BE94E520B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646C34DCDF;
-	Thu, 13 Nov 2025 12:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09A1342534;
+	Thu, 13 Nov 2025 12:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOp/uNGL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TfI7PuAP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9782435979;
-	Thu, 13 Nov 2025 12:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FF62D94A3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037269; cv=none; b=ND73IWODeRgk/0JnrsLoTalqAwXjAZZW12uMREkITrKiqglrZn+qZCVTMMIEi1fWhVFrcPfb5Gmzynruq1u+wpcaa7HjDR7H8WqEejJLGAMTm20qJFe+IYn1eMRJgNcgQ5CFjEc+520YquoEAdetjT2m29pEmPvLxBuan1mxQII=
+	t=1763037315; cv=none; b=jejPKyVrY0naQI/vA8cL9YJnlWfM7Y60oitPiyJRoSYC1oNIjkb5Mdad4+bUxP6JDjKnXSske+5HFZxOIs3jkLHI1tleR+Uw5czhvliKFQX3EXlNwnRoify31/J7zdtHrxHl9L98CqRAdTgiv4d9tOQZlpyFBvztzZjnxvRvf9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037269; c=relaxed/simple;
-	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qZ7k2dnf6qFEtUZrvWCDqqivuKl4+p+2tTs8xewhXErHgK/qsFoksVQBp+eDiJfeu6ouBcb/8rwNRQ/BdEApqF3Ps/x/yHnaP6v+WurXjyzKlBUs8JqVEv/38D9guXzZ8KCEMnNy/PwqL/RbOPEJs3GLN5emUO6KdKUT80ujDeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOp/uNGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A64C4CEF8;
-	Thu, 13 Nov 2025 12:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763037269;
-	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EOp/uNGLEJX2/o1A0Oqqre+Il30QU6+REZ6YFDPWH0Meu5sP92HduOMkUe8kYKDAB
-	 VdMLglbLi+06rRrPRmZtPa85qJJEDgpngLeHOzUgN1sNS8CURZ8cVUCHj7//ChyqxF
-	 VuOuLY62yswpDC7bqM25vTrSPw6RUWv/LeQgStQLbLM2OrQuNcrt/3iInfvUmER6AV
-	 Nc+T6QelxZUkCLsxA1HPvQevv9ZkT7AKrzBRgRHmpmiBzB/hsqvjQmmfHqp2ZR80oO
-	 H3l+CR6hjebnQdqloBIy7TOa2FcbeyT4jGxT7OutE15lQOo+L85dtISsLNkHoQJUIp
-	 agdcL9uWkwFxQ==
-Message-ID: <13db54a4-5f02-4b57-8ff9-6298c2c4b8d3@kernel.org>
-Date: Thu, 13 Nov 2025 13:34:22 +0100
+	s=arc-20240116; t=1763037315; c=relaxed/simple;
+	bh=z7Tt8b1VSXUMC0z5DvrE/AP42l5aJLVRZ1SAJmVtOFs=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=i9HrLNpVJpZu1J0xNuFtUAgXiTeMScJOB4IXAtLAKzEd1fBHT0tjamUJb8AGLFKhQZ2UZIA+kTz3QuCIeN76o7Rx2OuI59RqEH5v/hMHkwEcpeFTfb/nlKpR9xy9ZySNyMy83OYZfAniyYqUwkDrkLd9uNefR9iIFMhxANvB/o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TfI7PuAP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763037313; x=1794573313;
+  h=date:from:to:cc:subject:message-id;
+  bh=z7Tt8b1VSXUMC0z5DvrE/AP42l5aJLVRZ1SAJmVtOFs=;
+  b=TfI7PuAPLTxga2etf4YKZhUCeHbcnVfOvOY0JxrWfysN6EuvXLbiwUwH
+   RO4n0hP+iiecqc6189FSFf27l/hnQgAB0DjEqHu4QKNd3VZN21jWzlLU3
+   qQYbOBPq3HIxDRW0q7M9uKgKwsT5GneI3QKBNfHqrT0uKrKys13IJ6Ose
+   +Ry245aXhhQealU8GI/+do85zxwIPYahsw+3X9qu9HLOehM21hFBVvFsG
+   SW3xq6j+H9BuU6/HloCGuHjFbOlGZZ3crSTgD2r2j3FVhZGqw/kg3tQa4
+   VjTN+xfE4UriRIgKFiKhmdKrU+EvPepWgr8FCub9fcL34mYgnklM4WiJX
+   Q==;
+X-CSE-ConnectionGUID: TsRiKUN5RRyrNjqDkD0Vhg==
+X-CSE-MsgGUID: zOW3n/zXRnOvzEhHzqJZCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="90589655"
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="90589655"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 04:35:12 -0800
+X-CSE-ConnectionGUID: 52nhxV42S02ZWM20j9UwBw==
+X-CSE-MsgGUID: BnPzx2+JQUa3WgDKXfTi6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="189919769"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 13 Nov 2025 04:35:11 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJWXd-0005KF-19;
+	Thu, 13 Nov 2025 12:35:09 +0000
+Date: Thu, 13 Nov 2025 20:35:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ 9929dffce5ed7e2988e0274f4db98035508b16d9
+Message-ID: <202511132057.uYMOfBhq-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/8] mm: Add PG_atomic
-To: Matthew Wilcox <willy@infradead.org>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
- ritesh.list@gmail.com, john.g.garry@oracle.com, tytso@mit.edu,
- dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, jack@suse.cz,
- nilay@linux.ibm.com, martin.petersen@oracle.com, rostedt@goodmis.org,
- axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <cover.1762945505.git.ojaswin@linux.ibm.com>
- <5f0a7c62a3c787f2011ada10abe3826a94f99e17.1762945505.git.ojaswin@linux.ibm.com>
- <aRSuH82gM-8BzPCU@casper.infradead.org>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <aRSuH82gM-8BzPCU@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 12.11.25 16:56, Matthew Wilcox wrote:
-> On Wed, Nov 12, 2025 at 04:36:05PM +0530, Ojaswin Mujoo wrote:
->> From: John Garry <john.g.garry@oracle.com>
->>
->> Add page flag PG_atomic, meaning that a folio needs to be written back
->> atomically. This will be used by for handling RWF_ATOMIC buffered IO
->> in upcoming patches.
-> 
-> Page flags are a precious resource.  I'm not thrilled about allocating one
-> to this rather niche usecase.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+branch HEAD: 9929dffce5ed7e2988e0274f4db98035508b16d9  perf/x86/intel: Fix and clean up intel_pmu_drain_arch_pebs() type use
 
-Fully agreed.
+elapsed time: 1495m
 
--- 
-Cheers
+configs tested: 2
+configs skipped: 124
 
-David
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386    allnoconfig    gcc-14
+x86_64  allnoconfig    clang-20
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
