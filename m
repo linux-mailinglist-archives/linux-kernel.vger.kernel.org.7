@@ -1,106 +1,228 @@
-Return-Path: <linux-kernel+bounces-898680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669B2C55BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:01:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC40C55BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 518A14E5AF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:58:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D2F8343A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDF9303A15;
-	Thu, 13 Nov 2025 04:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1865309F02;
+	Thu, 13 Nov 2025 05:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PH16gCAQ"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKgetDj7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE672FFDE3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1264E1EDA3C;
+	Thu, 13 Nov 2025 05:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763009900; cv=none; b=Z4OdJLsJWKKajbmX2vBKxQay+VRMksYf6MnqVelac7JP34n6rYNqf0W+N6K6KW+Su01rqy+CKYOqWake7LBg9/xcr/gPTaeb/+RxSVyOjWdBkNq8FhUQ/h80Mh+wbXXPFts85e3IDkDVQYDLTHaJ7qemBA8ubkIeCUvVlUeZOSk=
+	t=1763010067; cv=none; b=KTc+m4Y9AP82Kh5mTKqgwP6m/HAyofyLNVzUWC08OEo0KwmItJ3MNRcO3739xNWVCjUjVatuu33epFAb6mmTKj0GGrOGoDYhbj35u4nxbQUavieA1tNLdOqbm64FvYEylv8LFTc4LYZvISl5R9hQNVVzRjQFCJxQb7XvRnkOhns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763009900; c=relaxed/simple;
-	bh=JXEQ94gC8AKcwEqd0xnmXVsYbCNVVJOdtzUbRtiW0OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KhMZ+PuLguYMpiB3ZxXInUFS5r5fz9/AP8RSd27gt9G/rqzObgGR/b+IeeYjOQDVMd8SECv7HZhUlbMCfYCkKG1J7wTjmmnZOiVOM2MB3FqCLtkNUc3Ow3xrmfOy7nxHYTNor98n0q6pnhNkmc0vVM3Q611F5qibHu+Ee/QSVLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PH16gCAQ; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1763009895; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=+MkJwqqWw91q4/ackBiFDAnwT9h6GJR0xtDRL8ERyWE=;
-	b=PH16gCAQBZRR9dnEVZp89ZvLPCdM8nGVJo2N4dXpG6g7K2F30GRygSPq/89WWT2wH1N1E2S12pOFCQQMsGJm8HtaiOlWycKfYja45+idg18Z573XVVPO7a6CPC5z0Z8bxVsfZXbEtf/CNTCEnokGRsOqmZ9YPuARwRMn0fWnPpQ=
-Received: from 30.246.165.27(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WsIBh2L_1763009894 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Nov 2025 12:58:15 +0800
-Message-ID: <f4a17ceb-06cc-4ef9-93cf-430b60cb7599@linux.alibaba.com>
-Date: Thu, 13 Nov 2025 12:58:13 +0800
+	s=arc-20240116; t=1763010067; c=relaxed/simple;
+	bh=elbIHIxtHN/iHCWls82TyqD3OxlbCSrevgrw2dpxzBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gUpJ/VV1jDuaAydRqKxl407oRvgHnW72cnm7ePtLugmR6iQM9VDIrlH8LoPWGswymRxfi7bmu2CzvpE+aLQDUQwwkbmlCXjGdGrxzW0iMwB/OtazgPBR+1vFq2iMTKVBlfza3d/tvH/Vqt0ZY3cAtzodWcNVdB/HlYsPgO29izI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKgetDj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA76C19424;
+	Thu, 13 Nov 2025 05:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763010066;
+	bh=elbIHIxtHN/iHCWls82TyqD3OxlbCSrevgrw2dpxzBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DKgetDj7dRR9Tfdf7Vr3zTxqI/ZLzKWaMpV2ow4x0puNQVtVelNfSdUZ2RKjLTROg
+	 e1ci46SxX8QhyVvhq42cupyaLkqn5pSKQoZRm+zuYjmTGQS9oQOyxVGMOTWXVnqrqn
+	 kjF7uVCwbDXPS6dQ6ApjXrMoVlW3PmSAH2QB7+QzqoumRp0gcINGgIIRsvXyfyRRGR
+	 BtkronFgRDPcwh0yq/Rs8VWiEK/+rFeER34DXNzZWI6Zu8vXPXH9wjXc2SOeGJG89p
+	 xQ9MWkqJ0cmkhd7IeyQOOEAHVlMrI6o8oy3DiXMdXyw5HVS4BzlVEFeIHR2Pnqxg24
+	 RGy9fx6Mj6eSA==
+Date: Thu, 13 Nov 2025 10:30:42 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Hans de Goede <hansg@kernel.org>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	"Derek J. Clark" <derekjohn.clark@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH 7/9] dt-bindings: connector: Add PCIe M.2 Mechanical Key
+ E connector
+Message-ID: <qiwgnela4b6gbwuuq7xaqjong47c2ix6caagjl6ryqukzqkswn@6l7rvkf4dfyx>
+References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
+ <20251112-pci-m2-e-v1-7-97413d6bf824@oss.qualcomm.com>
+ <aRS/3OTerCBGlmBm@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3-iommufd: Allow attaching nested
- domain for GBPA cases
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, will@kernel.org
-Cc: robin.murphy@arm.com, joro@8bytes.org, kevin.tian@intel.com,
- praan@google.com, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org, skolothumtho@nvidia.com
-References: <20251103172755.2026145-1-nicolinc@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20251103172755.2026145-1-nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aRS/3OTerCBGlmBm@lizhi-Precision-Tower-5810>
 
-
-
-在 2025/11/4 01:27, Nicolin Chen 写道:
-> A vDEVICE has been a hard requirement for attaching a nested domain to the
-> device. This makes sense when installing a guest STE, since a vSID must be
-> present and given to the kernel during the vDEVICE allocation.
+On Wed, Nov 12, 2025 at 12:11:56PM -0500, Frank Li wrote:
+> On Wed, Nov 12, 2025 at 08:15:19PM +0530, Manivannan Sadhasivam wrote:
+> > Add the devicetree binding for PCIe M.2 Mechanical Key E connector defined
+> > in the PCI Express M.2 Specification, r4.0, sec 5.1.2. This connector
+> > provides interfaces like PCIe or SDIO to attach the WiFi devices to the
+> > host machine, USB or UART+PCM interfaces to attach the Bluetooth (BT)
+> > devices along with additional interfaces like I2C for NFC solution. At any
+> > point of time, the connector can only support either PCIe or SDIO as the
+> > WiFi interface and USB or UART as the BT interface.
+> >
+> > The connector provides a primary power supply of 3.3v, along with an
+> > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
+> > 1.8v sideband signaling.
+> >
+> > The connector also supplies optional signals in the form of GPIOs for fine
+> > grained power management.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++++++++
+> >  MAINTAINERS                                        |   1 +
+> >  2 files changed, 155 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..91cb56b1a75b7e3de3b9fe9a7537089f96875746
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml
+> > @@ -0,0 +1,154 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/connector/pcie-m2-e-connector.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: PCIe M.2 Mechanical Key E Connector
+> > +
+> > +maintainers:
+> > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > +
+> > +description:
+> > +  A PCIe M.2 E connector node represents a physical PCIe M.2 Mechanical Key E
+> > +  connector. Mechanical Key E connectors are used to connect Wireless
+> > +  Connectivity devices including combinations of Wi-Fi, BT, NFC to the host
+> > +  machine over interfaces like PCIe/SDIO, USB/UART+PCM, and I2C.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: pcie-m2-e-connector
+> > +
+> > +  vpcie3v3-supply:
+> > +    description: A phandle to the regulator for 3.3v supply.
+> > +
+> > +  vpcie1v8-supply:
+> > +    description: A phandle to the regulator for VIO 1.8v supply.
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +    description: OF graph bindings modeling the interfaces exposed on the
+> > +      connector. Since a single connector can have multiple interfaces, every
+> > +      interface has an assigned OF graph port number as described below.
+> > +
+> > +    properties:
+> > +      port@0:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: PCIe/SDIO interface
 > 
-> But, when CR0.SMMUEN is disabled, VM doesn't really need a vSID to program
-> the vSMMU behavior as GBPA will take effect, in which case the vSTE in the
-> nested domain could have carried the bypass or abort configuration in GBPA
-> register. Thus, having such a hard requirement doesn't work well for GBPA.
 > 
-> Skip vmaster allocation in arm_smmu_attach_prepare_vmaster() for an abort
-> or bypass vSTE. Note that device on this attachment won't report vevents.
+> PCIe and SDIO is difference signal at key E. why combine to one port? The
+> similar case is USB2.0/UART
 > 
-> Update the uAPI doc accordingly.
+
+They will be defined as separate endpoints in the next version.
+
+> > +
+> > +      port@1:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: USB 2.0/UART interface
+> > +
+> > +      port@2:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: PCM/I2S interface
+> > +
+> > +      port@3:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: I2C interface
+> > +
+> > +    oneOf:
+> > +      - required:
+> > +          - port@0
+> > +
+> > +  clocks:
+> > +    description: 32.768 KHz Suspend Clock (SUSCLK) input from the host system to
+> > +      the M.2 card. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.1 for
+> > +      more details.
+> > +    maxItems: 1
 > 
-> Tested-by: Shameer Kolothum <skolothumtho@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
+> Do we need add pciref clock here?
+> 
+> > +
+> > +  w_disable1-gpios:
+> 
+> use "-"
+> 
+> w-disable1-gpios
+> 
 
-I've tested this patch and can confirm it resolves the GBPA hwpt
-attachment issue.
+I just went with the spec that defines the signal as W_DISABLE.
 
-Without this patch, IOMMUFD fails to attach bypass hwpt with the
-following error:
+> > +    description: GPIO controlled connection to W_DISABLE1# signal. This signal
+> > +      is used by the system to disable WiFi radio in the M.2 card. Refer, PCI
+> > +      Express M.2 Specification r4.0, sec 3.1.12.3 for more details.
+> > +    maxItems: 1
+> > +
+> > +  w_disable2-gpios:
+> > +    description: GPIO controlled connection to W_DISABLE2# signal. This signal
+> > +      is used by the system to disable BT radio in the M.2 card. Refer, PCI
+> > +      Express M.2 Specification r4.0, sec 3.1.12.3 for more details.
+> > +    maxItems: 1
+> > +
+> > +  led1-gpios:
+> > +    description: GPIO controlled connection to LED_1# signal. This signal is
+> > +      used by the M.2 card to indicate the card status via the system mounted
+> > +      LED. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.2 for more
+> > +      details.
+> > +    maxItems: 1
+> > +
+> > +  led2-gpios:
+> > +    description: GPIO controlled connection to LED_2# signal. This signal is
+> > +      used by the M.2 card to indicate the card status via the system mounted
+> > +      LED. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.2 for more
+> > +      details.
+> > +    maxItems: 1
+> > +
+> > +  viocfg-gpios:
+> > +    description: GPIO controlled connection to IO voltage configuration
+> > +      (VIO_CFG) signal. This signal is used by the M.2 card to indicate to the
+> > +      host system that the card supports an independent IO voltage domain for
+> > +      the sideband signals. Refer, PCI Express M.2 Specification r4.0, sec
+> > +      3.1.15.1 for more details.
+> > +    maxItems: 1
+> > +
+> > +  uim_power_src-gpios:
+> 
+> property use -
+> 
 
-   smmu_reset_exit
-   qemu-system-aarch64: [iommufd=303] error attach 0008:01:00.0 (304) to id=6: No such file or directory
-   Failed to attach GBPA hwpt id 6 for dev id 1
+Again, this is as per the spec. If DT maintainers object to it, I'll change it.
 
-With this patch applied, the attachment succeeds:
+- Mani
 
-   smmu_reset_exit
-   iommufd_cdev_attach_ioas_hwpt  [iommufd=303] Successfully attached device 0008:01:00.0 (304) to id=6
-
-Testing was performed on top of Shameer's vSMMU v5 series:
-
-   https://patchew.org/QEMU/20251031105005.24618-1-skolothumtho@nvidia.com/
-
-Tested-by: Shuai Xue  <xueshuai@linux.alibaba.com>
-
-Thanks.
-Shuai
+-- 
+மணிவண்ணன் சதாசிவம்
 
