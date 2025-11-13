@@ -1,247 +1,370 @@
-Return-Path: <linux-kernel+bounces-899472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3918BC57E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:21:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0695BC57D2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B74424A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:08:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7A934E5A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EE127280A;
-	Thu, 13 Nov 2025 14:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145DB26E702;
+	Thu, 13 Nov 2025 14:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OK11rXwX"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010069.outbound.protection.outlook.com [52.101.201.69])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WRUqFKRE";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pjhdw2I9"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4319826F2AC;
-	Thu, 13 Nov 2025 14:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5E3262D0B;
+	Thu, 13 Nov 2025 14:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763042910; cv=fail; b=RJobB6EPIbN9hQF9B7AqPFPnxipaXsHjXKj1jYRuNgZIesY+kftoEnHyr/BlvOUZOSeutAhgwde4S7R4WhUoV9pmCKpW5oSiwI8hsjQvzxxcgfD9wIXcu65G7XZVGfqdI9bwWvOlnWmGmSyYEaQj6T+o0VJyhjraiIhiH5s12Tg=
+	t=1763042530; cv=fail; b=IVW/Df+Ns+vIGOTfcZiDPiNRXIb8MKQgeU57W27sgHt73H8hBj+gI72rwBVHRHTxZk3DzsL3hgwxL76QWvGrRGgubkzTllCg6HFj2xZUBLEu+yYmDSrt7ba2wMLzWXMeH4tqaFogVs8mAxrSJGzl7c30S5KW/W1al2mkRjyg+gc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763042910; c=relaxed/simple;
-	bh=bijiED3waRnrfhEn1OXomHEVmGfmd9CKZImKLpXToMU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iKIEwFMKP1jiKGP3Ddpjg1GcgB1I0Kz06QsSW9kOrrmFoMFi3mLXdwq6ZfFjA21/6g7y0UTowKBH7Hi1u+cqcWpQ4e8BqmTeStLhHxCjoYzT+L0vUDYRYT8mWV4mN2yTORfgL6lQJ/DSmETOJV86crh4h4WvPh5OmHLXzJfj8a0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OK11rXwX; arc=fail smtp.client-ip=52.101.201.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1763042530; c=relaxed/simple;
+	bh=4FTXxJIbcuWMa7r1QylTT892nOUeHeOUO+L0Q4PQjUI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=phSTrzr2otgjtl32eIQK9HWSD3DyH8yfpGRjwD0K6vz0bfiHkiU9pqWOlNIO6HtXrpeXkXDYwDQpDJ/uELzw+8PzSUDXc1KbDdvfNLDn1RX2uoudBfO1HCyfE2IJ4FF2+hz4ypuxu8wGxU55qQySAJ38Udzyqc4K+plMUUFCkfs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WRUqFKRE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pjhdw2I9; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADCefUd031441;
+	Thu, 13 Nov 2025 14:01:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=0BISTYP1aujiZvsNinDzpFFCgrDxEG2sCdPp14yCdgQ=; b=
+	WRUqFKREE6ugNZ5IIR0tm/SRS6DQT8UOO/eV5YpxqboRdltM4qXgFCj/VFu38IRP
+	6/UefxkzsJywW3KkxlaEs3Sg4mdJ5O9F6DeEVxlj6mx3110t1pdbawJynbIjuGW6
+	FLoasVsrd1sGt/SCgYnPHd6gux61gs/WSddj51JqLVQREzrzbLlnWUttN62CSvnM
+	Eo+GiTLeyqJYpKx8dnQwngeHnXJFgY/Z8CN3VsSixq2OokvJwQDIa8UFYxPxoxXu
+	f3OyVzZuSR2iLBtbvg3uj58jKL703zz7MDUpOMEKeVfvmWT7j3Q49nJhyAkXFF62
+	WTyZ9/VJlm0TjjrXbhSxLA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acyra9rms-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 14:01:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADBuAKO010946;
+	Thu, 13 Nov 2025 14:01:34 GMT
+Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010006.outbound.protection.outlook.com [52.101.85.6])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vanx4r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 14:01:34 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R6iOn9GYZlt98vW8tc3pj1kJO1PL1rZhVzfxrLWsbWvjfEGZeYa3tYCHtHvQdlLh6ro9pRsJ3Wm3LsoF6l37cARWxFHVajxbw/pwhQ4/rceVGz+sPvA9+fzRt4UOAhDKJRSSwu7jHEX8oWLxrDiiI6ZNRq8JojbyGCwv7PjcpwAHAqg31Wx2PC091l7aDhAUuIpp/x2qyPttsq0mUSMKEaIKpjrPeVGJcRMsrpQ+L+qaK2bD8xN0nNd+lMyV7r6evGuGG5Vtng/KMyaDnq3fyQrO1vBHB6v6Yf+ouf9btIX/sryCZ4mEPTZjWOUehWgyI3Eg+RR/ZJiDhsIjD4U0wA==
+ b=wEPY6YytaJ+kh7J05PGOh/sUEczVGWbnxOfgZlc0ZyrG416k5wWsZtFovD4JwDnS+q4hrquwAbIhbnCu0pTGaQ20k5hlP+w8ZFnAX3z+n5J6BY4x3FiInVgErco+rmR2B8i602ZuTu1zCI5ljPcTpSJUTgRo3KJNHbHnFn070ul4FPw4Y2ySnEYE5XSzGSofPVYjBp8qsUdU3zCnKzQpLnL+AONo/A1ACV4HP6aKVmQVK/9tOxCi3SIo9o+QmqBBeGmTXbHESRLZm1ykwkOPKZCEjxkWIqamAIhj6P0gsXfE6euHMVuNLW9i8cWbN/FIwgTXlgjXTD/pJEXZLOx8JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=51L8M/eKotKFaYQ2OxK48bJTGQmL0j6+hH0lQYIZ4FY=;
- b=kcopPZnafC13zLg3BTaD6puvEyzgXcYu7vmkZvd3pSgp5VEIxz1Fg+HefTV9xjlVuh7GR2Hbi+jI4UgpG7h2IgiH6/mtdBlemlEv2IJaZPhUe+UWnCcuD/Rckjm/febsNK4ACAP9qIufE1w4bNXy1k6Wk2Nt/h6760oMJk9t84mwy7LS5KSd3YXslmh0gMjlkpOcisVy7eCrZH6t62rn3TyvLtl1P/CUe1W2aeRIvuFS4Q+ETpCB88so9lCcS4aWO1lq63DBcilk3aLHMo8xlXYotU5+/QzOwFn2Zkos6cwIOa1Yd/tNpV2p/XcSZxXwcHvKEbHeq7o7DmY0ADKwLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=0BISTYP1aujiZvsNinDzpFFCgrDxEG2sCdPp14yCdgQ=;
+ b=YLq4L5wGbmbv+1esQz7jQxQiA9pjbU1c9wVZWnUiJ0jemD7qZLjgE8XFEwpz564+4wu5fz3tNOlJnvh65muLP8fybErlDXnEqe8DxJ54VhSdABhE4EtVcpLxKBDCnQxI7T58FzH1ilgMrzW7Hao0FA3TkapSrMWlbO0AGdMivOnXD49r39PJ3zMbzDhtprL5kTub/TL8WYOMaHFuOhBeCjbSZz6xr1xdcZEKWwRQa6vCJ8VPtK8rORAc8is/s4OUFoef6eii08q9Fg/4rfJXHW/nyMlfJ0UFpUv+f0NUVyJeP741v9uTWfQn4mh5+Rd3Sck88hM4nw9z8ROBi3Y2BQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=51L8M/eKotKFaYQ2OxK48bJTGQmL0j6+hH0lQYIZ4FY=;
- b=OK11rXwXTYb4i0lLJn2BP8LQeoSphXYHxIk/8PJZa7NR8W1fyZVz+LnhXu9bjTbfLcQhht8bromv9dN0x1CciaVM04FhEWjuJ0b+dCAZIs6D84QPlgjXMbNQ/MiVcJmPJeHG1DPUVyhKQStHzMTMwa9hTgXwBj+NQyD6qlSbT+Q=
-Received: from DS7PR03CA0254.namprd03.prod.outlook.com (2603:10b6:5:3b3::19)
- by MW4PR10MB5750.namprd10.prod.outlook.com (2603:10b6:303:18e::19) with
+ bh=0BISTYP1aujiZvsNinDzpFFCgrDxEG2sCdPp14yCdgQ=;
+ b=pjhdw2I9zvmRN6CpcRuh2/Qyd1mPaQ/K8k789F75caI4z0kqKRNYtU+fpVPO2k0NCQ117PZ/iH1SrTaaiLyzgJLRVCB+jjVdkR51G+1yw4qVOssK54iMEJ2rvQzkUuzYHX0XrUkU0SVI0CKdv9/ddAOyKjEH3FUaMsC1Qf6TZg0=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by SJ0PR10MB6328.namprd10.prod.outlook.com (2603:10b6:a03:44e::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 14:08:24 +0000
-Received: from DS2PEPF00003445.namprd04.prod.outlook.com
- (2603:10b6:5:3b3:cafe::2) by DS7PR03CA0254.outlook.office365.com
- (2603:10b6:5:3b3::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Thu,
- 13 Nov 2025 14:08:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- DS2PEPF00003445.mail.protection.outlook.com (10.167.17.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 14:08:22 +0000
-Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 08:08:17 -0600
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE211.ent.ti.com
- (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 08:08:16 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 13 Nov 2025 08:08:16 -0600
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ADE8Fmt344544;
-	Thu, 13 Nov 2025 08:08:15 -0600
-From: T Pratham <t-pratham@ti.com>
-To: <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S.
- Miller" <davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Manorit
- Chawdhry" <m-chawdhry@ti.com>, Shiva Tripathi <s-tripathi1@ti.com>
-Subject: [BUG 2/2] crypto: ahash - testmgr false failures with CRYPTO_AHASH_ALG_BLOCK_ONLY
-Date: Thu, 13 Nov 2025 19:30:13 +0530
-Message-ID: <20251113140634.1559529-3-t-pratham@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251113140634.1559529-1-t-pratham@ti.com>
-References: <20251113140634.1559529-1-t-pratham@ti.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Thu, 13 Nov
+ 2025 14:01:29 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.9298.010; Thu, 13 Nov 2025
+ 14:01:28 +0000
+Message-ID: <0d77853e-7201-47c4-991c-bb492a12dd29@oracle.com>
+Date: Thu, 13 Nov 2025 09:01:26 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/6] net/handshake: Define handshake_sk_destruct_req
+To: Alistair Francis <alistair23@gmail.com>
+Cc: hare@kernel.org, kernel-tls-handshake@lists.linux.dev,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-nfs@vger.kernel.org, kbusch@kernel.org, axboe@kernel.dk,
+        hch@lst.de, sagi@grimberg.me, kch@nvidia.com, hare@suse.de,
+        Alistair Francis <alistair.francis@wdc.com>
+References: <20251112042720.3695972-1-alistair.francis@wdc.com>
+ <20251112042720.3695972-3-alistair.francis@wdc.com>
+ <49bbe54a-4b55-48a7-bfb4-30a222cb7d4f@oracle.com>
+ <CAKmqyKN4SN6DkjaRMe4st23Xnc3gb6DcqUGHi72UTgaiE9EqGw@mail.gmail.com>
+Content-Language: en-US
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <CAKmqyKN4SN6DkjaRMe4st23Xnc3gb6DcqUGHi72UTgaiE9EqGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CH0PR13CA0022.namprd13.prod.outlook.com
+ (2603:10b6:610:b1::27) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003445:EE_|MW4PR10MB5750:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17867920-deaa-44d8-5a8b-08de22be1ad2
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SJ0PR10MB6328:EE_
+X-MS-Office365-Filtering-Correlation-Id: b16ca88c-5dd3-47ee-9d1b-08de22bd245b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FjobrQFLkHtDXGZNHmj9dRuOqqVKGXTc+swVs9dgljngVgxCs8lcY+mVirbz?=
- =?us-ascii?Q?gLTPobOs67+9h+cIGYTTMp6U0CInJJsSoqIgYeVcqWr+asfzoZ1dbxabdjS3?=
- =?us-ascii?Q?mRmLRCdcFsWc6OSLKtqNX/2hZyiIUjcm3vKJVlw3FEnrCQloph7iIFmcYXl+?=
- =?us-ascii?Q?NjBiJCmerAqarskwePb+DR+mT88m/zW7qX7IBvVjpj5QhONwfsdjOQ8h9QzX?=
- =?us-ascii?Q?OJdQ7ZNoApOg7Mr69th8CMRMqkubuAzwrL3gtc6wu9sZvtrnY+bL/qolDmjh?=
- =?us-ascii?Q?c67DfgXXogxKHfT4PRYNwrzsKoSIPbd0FSkCuLePaR699ZaGhFsmQZ0XAgdr?=
- =?us-ascii?Q?Xt6PKGN344Ucxn3YPof6Muf3EiCZveCvd7/vwdc934IFc40v/pbLwfj4oT1z?=
- =?us-ascii?Q?KlyuZ6m3h2wrk+PedjD8N29K6E2D5ABvqxGJ1QnenZBSXM35UWvBZsQYHyPx?=
- =?us-ascii?Q?8rkpghy+1PWXKxg5DU5boSFGZPnJnKemGxGHeIu86N1I7QLLdi0b+4u8qj9W?=
- =?us-ascii?Q?Dh1mbxnUDhSn1NA1pKn//6zx3yne210IE2Y4KuOcR3YlYVGaIQiT1sKrutgm?=
- =?us-ascii?Q?68gWuCMY8jBYcI17tMY4cAu6UFj0PSSDl795Lr/Q7uc/Cjkn7t//+TfXfgO9?=
- =?us-ascii?Q?N41I9thbvQtic+kxO4DZMhxWgkcn/rEAM5BZ1p2W7HOHq21TXvunKhewNC1f?=
- =?us-ascii?Q?tQobCeE7JxVYF1QhwHn/KDJhga6kYRjrCBfLu2UdK1ZO4IfHsHmGzPK595Bv?=
- =?us-ascii?Q?ShGmRF0FUlgZoNRcXrktu6C73V0q2fO2LcieVert4uW1oDKBFcXbJFooSsTo?=
- =?us-ascii?Q?3ZyoNH26zs4ckn8iyZEmuuPHbD29/cMwxUfW4e93eLbjmAxbJboknDccyd01?=
- =?us-ascii?Q?heyd9hJN5JRe+Oj7oQ1Vd6pbmRih45XykzXsxEMsS5ELJLtWk96jJ/oM8bc2?=
- =?us-ascii?Q?HiUBpnfQE689JqEMnFMkoV00Jk8H7Z9KwjNEAeMeVubdArnwWsJxdFv0Uvsu?=
- =?us-ascii?Q?Ev62N1yrOWj79FPjbIh4CT0iae4+JtFQHugXldGr7LX9GnraIBoKRV0NSkLp?=
- =?us-ascii?Q?GjJawkw4Q0/AhNkMh4n+3PJT8sFYm2849c+ujc3PkCLD05QXLCQBvCjZqYNf?=
- =?us-ascii?Q?lMqKaJXiXRwdoqhNomsRcG/6+XCLg+LD4oYLMn8Af4YbDsl1+QfOequwGsoe?=
- =?us-ascii?Q?VTQkhda48nSuzTQ3gNgI5uLK1re7b6fuDkmjJeMjsUOFjD7++QvNeUFM2Phr?=
- =?us-ascii?Q?eidj/ckObY0DBXRGeY9dHtD6Gsj5Clv8ScNLy/zPmwJ5HV64PfUYMU0p9vAu?=
- =?us-ascii?Q?nF/lJaq5oQb2gK7ZotUKDUFghccWGb41Etgx3XTlpukkSiiKLSKtUC3z1++1?=
- =?us-ascii?Q?v+eiiEApIMfE1jR2zZcHJYDy4Rt29oaPSaKSmOf2ye9qpLe1L9PdcmIy/aJL?=
- =?us-ascii?Q?6afIRA05unW8YuSGCRFBGlhGjLFWXwJ4LhjNsFqTo6Xu9BwpG6TK35dVZ1Hm?=
- =?us-ascii?Q?1/XA0s/6lpuoZZP39KjRt2JuGnrai91f2wJ7hWF7l6/n9AQJAt37UhzxUrly?=
- =?us-ascii?Q?bKoTz06JAb3IevcLue4=3D?=
+	=?utf-8?B?WmRxM1h1Vi9rNkxyYUJNTDQzdzJER3ZJaENjbWJmZ3NINER2YTBpdm1ldWF2?=
+ =?utf-8?B?MzlIdWtVYzFIMVRWa3hOTkFObkphaDlLVW1uSmozd3JzZXVXOVlYR2NlUVVK?=
+ =?utf-8?B?bnp1clBrMTNoUXU5ZnlXbkhUSWxNc3RWc3ovN1dGKzZiY0sxTHA3dWR4ajRU?=
+ =?utf-8?B?dmNMcEV6ZzIxdkJWbldTRU43eFlqaEo0cWRMYWZPVy9xUjNYOEJsN0x0dkF5?=
+ =?utf-8?B?bG53VWJMa09uSzlHSFo5c3BKNVJXU2d1YTEyYWxCdEtMRjNwUnJGL0c5NDFx?=
+ =?utf-8?B?ampTU004SW4rakZ1S0NJQVIva0VpbDllMmlrY004REZXRWptdC9kR1JKc1ls?=
+ =?utf-8?B?K2c2KzhnN1o2OWJhaGlzWlBNaU9TbU1FaTd5LytObHdGdE5rOTJqY01WZ3Mv?=
+ =?utf-8?B?MmFhaTdpTTRBdGhxQngvdzdyRHlJN2FCOUk3bWRvUDhWcDdKRWdNVituV3FN?=
+ =?utf-8?B?czlYTmNEM0o0TXFKcXdzaW1OclJ1WFJjUmZKTWVISVVQRzBRL2F5SWFSVDZB?=
+ =?utf-8?B?V2ViZ3JId1BaZ1B4YTdETUhIZEk2MVJTWWRXVWtGSmtMeDdUNGRLTE5tYWFk?=
+ =?utf-8?B?LzhTTm1NSjJPVS9QNXRWQXBRdm9COGR4RXQzV2dwQ2RJN3M2c01TUzcwdSto?=
+ =?utf-8?B?VmpBSlo3dlJ2ak9SU1dHK2dmbkYxaHdhNmJIU0V4aFhKTWd3MXh1U29HZEYv?=
+ =?utf-8?B?S0YwQlJPSktDaXd5MjJpek5ZdjdsbkhVZUpKNTdOVXNrY2piM3dWcEN5YXlo?=
+ =?utf-8?B?aUVQalpjU0ZvbVpVMDVUc2YzUE9OTzhQT2JVUkg2MnpoaWJNRFFDb0Z0d0RB?=
+ =?utf-8?B?SC9objRQSnlCZnVqbVp4SjE1Nk1rRUliUy96YU1wcU5ORkQwaUpQSmNDV3k3?=
+ =?utf-8?B?SUdabnBOVHJMZTFWOHBEKzRldGFVb3dka3lMdkNRRW53UjBJb0EwN1BNUXN5?=
+ =?utf-8?B?RHBiQ2NhR1JxdWMvK3pwZ1JWd0RVeEorRmtuSlpUWER2SDVDZUNTMzhkOTJj?=
+ =?utf-8?B?UVYvTXZEejluNEFiSnMxbXVlZ29RQnNncExDYmkvc0pTREZPNTlKL0pBUXhp?=
+ =?utf-8?B?cG8zTktyczFIVmI0c3lmQTVYZUZZdHhFaVJmQ3M1NXJGeXZ1dk4zTlFDTjNk?=
+ =?utf-8?B?d3liVkx2NHBqVDNqL3QwU3JsN3IxR1hCaHVYRmltSFlaTnNGTTQ2bDhiUDlD?=
+ =?utf-8?B?eGg1LzEvN3hVNVV4YU1maXFVelN5MVZ1ZlVRc2xKaXVPMy9hZzZ4UUhURG84?=
+ =?utf-8?B?UWxxSnpuRG1jYldyeitOMkQxZElHTHV5Zkc5SlhjdlQxNVZGMDZSNzBtVm0z?=
+ =?utf-8?B?Yy9EOXcrVHJMWVI4RTk3dUxuNXNhR2dGNnpQQVlxM3NkQS9mVmVKSUVwMXRa?=
+ =?utf-8?B?aDRQc2o4bTVtYW55YWxkMmY0NGI5TkhxblAvY2RzcDJaUlJJUXFFd2prK0lY?=
+ =?utf-8?B?YTd3cmxSQjBuN3JpR0x4d1pPY2dTdHowL3ZETlNDZUpzVWgyR2RtMlQxSm9F?=
+ =?utf-8?B?bnl5blpUaXA3WFBRVkRDcC9vK3RweUVJVGVDdm5aNEczUEZWMkJVUGhkNjFw?=
+ =?utf-8?B?dWxqdHBnSjJzYi9oTVBGU2s1Rms5Qm51UWNJMFNFL1c2MzZPRXR4anMxT3hi?=
+ =?utf-8?B?TkJISCtmNGlpcG1GamhaTng0ZDNyWTZDWEVrOFgzbTEwZ1c4M1Y0VFFINmNB?=
+ =?utf-8?B?Z3dNanpnVnRmU2dpZXZaTDl4QmpkVmJaMjNkUTVtQVhsTEVyQUNwUmp1SjhR?=
+ =?utf-8?B?MDFGc09aYlN6Q0VvNHBNTzhhRVZYUmdMaG5Ic1JNczB3UWQ2TTR6ZkdnOXM1?=
+ =?utf-8?B?UHJHTVFKbFNQZWhHUlNINVBWeXZVV0xUVWppUXhmSjBqaHZmOVEvUTE4bWRk?=
+ =?utf-8?B?K0RRVGRUejhyM3FWYVVzZGcvQ0dVclFObElLUzBuLzdHNklGdUFZRnJrK29y?=
+ =?utf-8?Q?TRbOgsaNO/NB6mrq7k2eTWKE65bbnyO6?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 14:08:22.1496
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bGRBNjJRalFqdENCR1B4OG13VmFFL0xkRVp4UnYyYmpsK2M3bDlMcHRzOWow?=
+ =?utf-8?B?ODcrUmtiVC9BdUJKZXpNUXFPL3JNdzBZZWIyTlRMS25HVURacUNJNkEwMWIv?=
+ =?utf-8?B?ZHdYRm1xUFh4YUJqaUFhcTV1UHV6ZEJ1OFg4dDhKZk1LWlBjRzBscmxhbHdt?=
+ =?utf-8?B?MmdsTGlVM28zZEdsam5TZGY0d2F3QmJFNGx2S0hWMnlhdFRxZkdJSzRYOTBE?=
+ =?utf-8?B?alFmdCszSDZhV3NQVXMxaGpnSnF5M2pibUhIMlZwZ3NNQWJiU0cyM2dvNGtU?=
+ =?utf-8?B?SENvNzJKL2kxaUV1cGdvR0ZaaG05UGNLcWh2c0RzWkVySnIvWVZaekp1VXpC?=
+ =?utf-8?B?aUJlMHkvQjN0M0Z0QlhDeHZQZlBLNEx6cFRvK2xRV3RJRU9MZ2Jxbm05OHls?=
+ =?utf-8?B?SmhTcVcvZTA0MWtETERpSnF5ekErcy81Zjc5SjBoby9qdTk4RGhVc09kWDUw?=
+ =?utf-8?B?Um4zWFRGM3ViMXBhVTk1MU42L0xSZlFOcWNidm1jYncza01WbzZEREYwUmdH?=
+ =?utf-8?B?UTMrTWlWZTN0WlRaaGxpYUkwOEMrSitHcW1MM3RNeHM3ZGFtOFBHTHJFK1N3?=
+ =?utf-8?B?VmxuUjZ5TzgvTHlPZGZGejB1a1VFVkY3bmQrcm1qRjJXYXpsNzI2Z3FOU1Ix?=
+ =?utf-8?B?bVVlaHkwK3RuTFNKYTkyK2VWQ0xaN2E2cmZTelJ0R3ZoMW50eitKOTBBdTE5?=
+ =?utf-8?B?eXE0ZVRrT05PeFBqK0pPR0p3ZnE1VXd4amd1UVVmYWpMNS83K0tlWTJndEVN?=
+ =?utf-8?B?LzJCRjhlV21UV1Ewc2VsTkgxSlA0OHlaZTUwS2gyaWM4VDA1WjRTd3dWYzVP?=
+ =?utf-8?B?SDZ2WXpGZHZVMXE3Zm5VNTZrc3YvL1U4OG1mZ3g4QkZ4QzI0RHlBelpUY1FS?=
+ =?utf-8?B?b2s1ZWdFUGF5SEl3eVFZcnliV0VRdUJhTnI5dHBUZWdoa1RxSWJPSkJxNkdl?=
+ =?utf-8?B?U0Q1aTRRWXZaMFpmcE5hcER2eUhpK1pTa2RxcEhwWktKZlpkbG1iNXZpdXZk?=
+ =?utf-8?B?MUxFbjJsQkFrSjBoUkdtTmZOUm9sZjNoVTZaRWl2aVV1OVdkLytSZEpwSWxm?=
+ =?utf-8?B?clV4cnZuSm5OMUQ4VmllUUVxTHJjL3Z3L3pBVzFjMFgxUlM1YlZxNVQ2bkRV?=
+ =?utf-8?B?eG9tdzB3dU9UeTJpVndWM3NNSWpoQjc4MGZaRU12T0wyOEdkMEhTMFNLWFV6?=
+ =?utf-8?B?bGtIeHlWNjhhT01NT3hZdmFFOHBMU1htVzF0Tk5uUDdMUnBtWlZaNlpGMFdO?=
+ =?utf-8?B?MU1UMXRDdkdTOWlFQ0t4cGdsWHFPQ0RzNkwyUjg2TnNLR242bHhVb2Rrc1FW?=
+ =?utf-8?B?V25QVnU3NTJMS1E3SE9SRFRscy81NUdJbEZzSGxVOVFNZDU1UGNoZ1RhSldt?=
+ =?utf-8?B?TWdZZ0hBRnM2TkhLbjZtUzlpTFJPbVQrdFVGL2Y1ZDRmNWJxNUh0dXE1K1Rz?=
+ =?utf-8?B?UkgrZHZJVWwwelVVWFdPR24weEZMdzNUS3kybUhSZDY5SnBDR2hsdkhCaGY0?=
+ =?utf-8?B?ZExJTEJnblJ4TGdxd0hRbkhiVVdxdUI3d0JYenpubTJCT1NHMFdzZjYxS2t4?=
+ =?utf-8?B?MDFiTVNld3ExT2pzNzJRanlSV1l4UmkxN0pqeEN2ekY0OVF4cldXczUwZWxF?=
+ =?utf-8?B?YVhPTEM5UjFJaEEzR3d3YVA0b2kvTzA5MzFqUENCM0RsVE1BWnlGUnppRGQ4?=
+ =?utf-8?B?TEMrSXY4Tk0wODhPZXpuWnFVUzV5UXpNUlVaYTVFcWkrRm00M1Nyd2NoMFcr?=
+ =?utf-8?B?SzZDYVNPZHdDNHE0aFczMEw5VU1kMFBYL21Lczl1azZzOElTWUp5ZXJzOTRs?=
+ =?utf-8?B?UzRGbElXdnpTQjJ5Q2cxcERpMzJaaG54blJlcnJXazhUY2Y3NGlHRnd3NzFN?=
+ =?utf-8?B?OTRFamtZUjVybThUL0Rjb2FzWDBmZnppTDRlN3hUWmN3dGFQOWZxenMzQ1ZZ?=
+ =?utf-8?B?QXVBak9Ja0RtL1UwV2lNTzZCcVdzZzhraDQvNTJ4UXdlejNZMUJaU0NiNzE1?=
+ =?utf-8?B?NFR5R1NWKzdWK1hxQnh6YXJHdFdNMmdBOXhRMEgyNUdaemgrMitvL25XbG9k?=
+ =?utf-8?B?L296cUF0YTgzOGNyZE40QmVnNVdNVzhjS0VEWnJSM1NkcWxua1hsMjBBMUpH?=
+ =?utf-8?B?S2ZsN0hHN2tmQ3p2Qm4wVXZtMTBnVGNwSDJKWjRydmpnL2JWRWhDQkF3TEJj?=
+ =?utf-8?B?WWc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	/wfrV1ZjV3uwQHXj1iZ4v61pi7E+hgJjWGFoNOaedgUEZkUp1JD+YeL5LknJAN02VpAb20BA++DUOS4mcGcWpBzeewYoMGQWEG6+274izSgu30yIHDfKIiJ5Fk07YRaR4hL6p7TaxZSAPqcYsesIfv6LSZzr01dNWr4DxKXzDOC+1ho0zcHaI+Q3LlIROR+E0wm96iA7jFEHg1Ph67c047H59+TxPj96ZCgWJk3MudiX8ZalmaxvErg1h5sBnoMNOKiu4ivvAR9fHuf+YcsFlqRbyz3j/J92g4kGnlnolXnO7BwhUANCexA4Ko+1SIaWJ1Bzv2apELRbQ6WAMACFpGj5k8+iIqsjyl7oWCtPCMVzibvXZ5XX8uZYqK69BzyRewQqTkJveA6wrUhOAWnKitLcSV06jW3IjiJl/ExyaTWc90xQZKU347xbSWiEAQqdC5gfdIqcw95R7mkqtntafxycMQXVz9vCBpUYwg6LulCVem3EqmVtpiHVrFF4LlubUKa9wW2LiZlQKj9j+228KIGDAR4IVnWRFmksr475RXiCf5P2TcKU4t666anokmPETO2R9ys7t+fK5aK3vnh+nTlBJm5TrvrBSSlAz87cr6Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b16ca88c-5dd3-47ee-9d1b-08de22bd245b
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 14:01:28.8685
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17867920-deaa-44d8-5a8b-08de22be1ad2
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003445.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5750
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8RbeYk7jJg6oGnL9OQ/JXaB5ijUMuDrXTqQl6m543UJH8stDWcazdIbLT2Y5NHhVRsRkKaPfzA23odhQ70V9EQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6328
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511130107
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE1MSBTYWx0ZWRfX5AR0CuoLRwcd
+ +hExxudCrLl4l+UTkHbiMay/vDHytxcyD+8YdJb98zzCTaaUSY/SeoyO/BOR1Z7h7zgqE2ED0jH
+ jIEbHbomMm9ToMzbd0AOUvHAX5CudYbJj1MOGvxAAUQNyuPz8uveQaq5xQromtHqzMrCVLfCCCB
+ ZjygOCmUNcNjlUka6rL3p4othYOb/K5p7kKVFIHp01Q48pBT/uB6r2gj9uuzGuFxxhQkl/WCt+F
+ 2LQyvNeFNdlU/UHCm1BRksIoDjTgnOawnPn3MjKQj0h+IzQXQkjmEWlSc2UhmdswyJrmvgKBJI/
+ 8dKWN3QE5k0u+vzFsInGzPEsKXsYPXUxuVS3A1LQTRVZeLs6wXt1DfuErL3q9g=
+X-Proofpoint-GUID: oyoY-LYlXTpd3DFOzBzwRcX5gLKzJnHv
+X-Authority-Analysis: v=2.4 cv=ILgPywvG c=1 sm=1 tr=0 ts=6915e4bf b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=JF9118EUAAAA:8 a=o8qdKif7_mud3cy4cRsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=xVlTc564ipvMDusKsbsT:22 cc=ntf
+ awl=host:12100
+X-Proofpoint-ORIG-GUID: oyoY-LYlXTpd3DFOzBzwRcX5gLKzJnHv
 
-Hi,
+On 11/13/25 5:19 AM, Alistair Francis wrote:
+> On Thu, Nov 13, 2025 at 1:47 AM Chuck Lever <chuck.lever@oracle.com> wrote:
+>>
+>> On 11/11/25 11:27 PM, alistair23@gmail.com wrote:
+>>> From: Alistair Francis <alistair.francis@wdc.com>
+>>>
+>>> Define a `handshake_sk_destruct_req()` function to allow the destruction
+>>> of the handshake req.
+>>>
+>>> This is required to avoid hash conflicts when handshake_req_hash_add()
+>>> is called as part of submitting the KeyUpdate request.
+>>>
+>>> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+>>> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>>> ---
+>>> v5:
+>>>  - No change
+>>> v4:
+>>>  - No change
+>>> v3:
+>>>  - New patch
+>>>
+>>>  net/handshake/request.c | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/net/handshake/request.c b/net/handshake/request.c
+>>> index 274d2c89b6b2..0d1c91c80478 100644
+>>> --- a/net/handshake/request.c
+>>> +++ b/net/handshake/request.c
+>>> @@ -98,6 +98,22 @@ static void handshake_sk_destruct(struct sock *sk)
+>>>               sk_destruct(sk);
+>>>  }
+>>>
+>>> +/**
+>>> + * handshake_sk_destruct_req - destroy an existing request
+>>> + * @sk: socket on which there is an existing request
+>>
+>> Generally the kdoc style is unnecessary for static helper functions,
+>> especially functions with only a single caller.
+>>
+>> This all looks so much like handshake_sk_destruct(). Consider
+>> eliminating the code duplication by splitting that function into a
+>> couple of helpers instead of adding this one.
+>>
+>>
+>>> + */
+>>> +static void handshake_sk_destruct_req(struct sock *sk)
+>>
+>> Because this function is static, I imagine that the compiler will
+>> bark about the addition of an unused function. Perhaps it would
+>> be better to combine 2/6 and 3/6.
+>>
+>> That would also make it easier for reviewers to check the resource
+>> accounting issues mentioned below.
+>>
+>>
+>>> +{
+>>> +     struct handshake_req *req;
+>>> +
+>>> +     req = handshake_req_hash_lookup(sk);
+>>> +     if (!req)
+>>> +             return;
+>>> +
+>>> +     trace_handshake_destruct(sock_net(sk), req, sk);
+>>
+>> Wondering if this function needs to preserve the socket's destructor
+>> callback chain like so:
+>>
+>> +       void (sk_destruct)(struct sock sk);
+>>
+>>   ...
+>>
+>> +       sk_destruct = req->hr_odestruct;
+>> +       sk->sk_destruct = sk_destruct;
+>>
+>> then:
+>>
+>>> +     handshake_req_destroy(req);
+>>
+>> Because of the current code organization and patch ordering, it's
+>> difficult to confirm that sock_put() isn't necessary here.
+>>
+>>
+>>> +}
+>>> +
+>>>  /**
+>>>   * handshake_req_alloc - Allocate a handshake request
+>>>   * @proto: security protocol
+>>
+>> There's no synchronization preventing concurrent handshake_req_cancel()
+>> calls from accessing the request after it's freed during handshake
+>> completion. That is one reason why handshake_complete() leaves completed
+>> requests in the hash.
+> 
+> Ah, so you are worried that free-ing the request will race with
+> accessing the request after a handshake_req_hash_lookup().
+> 
+> Ok, makes sense. It seems like one answer to that is to add synchronisation
+> 
+>>
+>> So I'm thinking that removing requests like this is not going to work
+>> out. Would it work better if handshake_req_hash_add() could recognize
+>> that a KeyUpdate is going on, and allow replacement of a hashed
+>> request? I haven't thought that through.
+> 
+> I guess the idea would be to do something like this in
+> handshake_req_hash_add() if the entry already exists?
+> 
+>     if (test_and_set_bit(HANDSHAKE_F_REQ_COMPLETED, &req->hr_flags)) {
+>         /* Request already completed */
+>         rhashtable_replace_fast(...);
+>     }
+> 
+> I'm not sure that's better. That could possibly still race with
+> something that hasn't yet set HANDSHAKE_F_REQ_COMPLETED and overwrite
+> the request unexpectedly.
+> 
+> What about adding synchronisation and keeping the current approach?
+> From a quick look it should be enough to just edit
+> handshake_sk_destruct() and handshake_req_cancel()
 
-Commit 9d7a0ab1c7536 ("crypto: ahash - Handle partial blocks in API")
-introduced partial block handling for ahashes in the crypto API layer itself.
-This enables ahash algorithms to return a positive integer from the update
-function to indicate the number of bytes in the input which are not processed
-and should be buffered for next update/finup/final call to process.
+Or make the KeyUpdate requests somehow distinctive so they do not
+collide with initial handshake requests.
 
-It appears that the testmgr is not updated to handle this positive return value
-from update(). As a result, self-tests fail (falsely) for such ahash
-algorithms. Below are dmesg logs from my (work-in-progress) TI dthev2 hash
-driver:
 
-[   12.933924] alg: ahash: sha256-dthev2 update() failed with err 62 on test vector 4, cfg="init+update+final aligned buffer"
-[   12.951212] alg: self-tests for sha256 using sha256-dthev2 failed (rc=62)
-[   13.008108] alg: self-tests for sha256 using sha256-dthev2 failed (rc=62)
-[   13.361625] alg: ahash: sha512-dthev2 update() failed with err 126 on test vector 5, cfg="init+update+final aligned buffer"
-[   13.376311] alg: self-tests for sha512 using sha512-dthev2 failed (rc=126)
-[   13.388088] alg: self-tests for sha512 using sha512-dthev2 failed (rc=126)
-[   13.389503] alg: ahash: md5-dthev2 update() failed with err 15 on test vector 6, cfg="init+update+final aligned buffer"
-[   13.421488] alg: self-tests for md5 using md5-dthev2 failed (rc=15)
-[   13.478062] alg: self-tests for md5 using md5-dthev2 failed (rc=15)
+> Alistair
+> 
+>>
+>>
+>> As always, please double-check my questions and assumptions before
+>> revising this patch!
+>>
+>>
+>> --
+>> Chuck Lever
 
-Note: the driver works completely fine on a TI internal v6.12 LTS tree where
-this buffering is being handled by the driver itself.
-
-Now, while debugging the issue, this messy fixup in testmgr code works fine and
-my ahash driver passes.
-
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 6a490aaa71b9a..523507e79f760 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -34,6 +34,7 @@
- #include <crypto/kpp.h>
- #include <crypto/acompress.h>
- #include <crypto/sig.h>
-+#include <crypto/internal/hash.h>
- #include <crypto/internal/cipher.h>
- #include <crypto/internal/simd.h>
- 
-@@ -1571,9 +1572,16 @@ static int test_ahash_vec_cfg(const struct hash_testvec *vec,
-                                                pending_len);
-                        err = do_ahash_op(crypto_ahash_update, req, &wait,
-                                          divs[i]->nosimd);
--                       err = check_nonfinal_ahash_op("update", err,
--                                                     result, digestsize,
--                                                     driver, vec_name, cfg);
-+                       if ((crypto_ahash_alg(tfm)->halg.base.cra_flags &
-+                           CRYPTO_AHASH_ALG_BLOCK_ONLY) &&
-+                           err >= 0)
-+                               err = check_nonfinal_ahash_op("update", 0,
-+                                                             result, digestsize,
-+                                                             driver, vec_name, cfg);
-+                       else
-+                               err = check_nonfinal_ahash_op("update", err,
-+                                                             result, digestsize,
-+                                                             driver, vec_name, cfg);
-                        if (err)
-                                return err;
-                        pending_sgl = NULL;
-@@ -1614,8 +1622,14 @@ static int test_ahash_vec_cfg(const struct hash_testvec *vec,
-        if (cfg->finalization_type == FINALIZATION_TYPE_FINAL) {
-                /* finish with update() and final() */
-                err = do_ahash_op(crypto_ahash_update, req, &wait, cfg->nosimd);
--               err = check_nonfinal_ahash_op("update", err, result, digestsize,
--                                             driver, vec_name, cfg);
-+               if ((crypto_ahash_alg(tfm)->halg.base.cra_flags &
-+                   CRYPTO_AHASH_ALG_BLOCK_ONLY) &&
-+                   err >= 0)
-+                       err = check_nonfinal_ahash_op("update", 0, result, digestsize,
-+                                                     driver, vec_name, cfg);
-+               else
-+                       err = check_nonfinal_ahash_op("update", err, result, digestsize,
-+                                                     driver, vec_name, cfg);
-                if (err)
-                        return err;
-                err = do_ahash_op(crypto_ahash_final, req, &wait, cfg->nosimd);
-
-While I have not tested any shash code with CRYPTO_AHASH_ALG_BLOCK_ONLY, it is
-highly possible that testmgr will report a false negative there as well.
-
-I can send a fix for ahash. Let me know if it is better to just add a separate
-check in the testmgr (in which case, I'll cleanup the above diff and send as a
-separate patch), or should we modify the crypto_ahash_update() function in
-crypto/ahash.c to return 0 as it handles all the buffer management inside
-itself. The callers of crypto_ahash_update() anyway don't expect a non-zero
-positive value on success as far as I can see. 
 
 -- 
-Regards
-T Pratham <t-pratham@ti.com>
-
-
+Chuck Lever
 
