@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-899439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267A5C57C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:45:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37470C57C4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69CB734B589
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:40:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22A51356DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C221FDA61;
-	Thu, 13 Nov 2025 13:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C11F4168;
+	Thu, 13 Nov 2025 13:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Jbw+/R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SBzd9611"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD313BB48;
-	Thu, 13 Nov 2025 13:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2231C32FF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041195; cv=none; b=do+Wn6kttnO/ScrdZIJ43FuSSMCESrx67voUgWs4muTxVEyCOYFp5eYNZKskzuGbAGV7MrPWRE65JKYbdBBouiUiXEx7ZGlhewszHHuUNOVssb3fjqunfIWU574JIDRgEe/ln5S0IpF6GqX5eU5oduoEZ1knV3ICUwyJHcIVHvo=
+	t=1763041279; cv=none; b=EqQszUDCSyAYvJ2pKusm/CyCoAofhfTGpBan/Z6SehEkZaxAuthS/PF6MDHkKNNVqkeOAh9l+nqbB3cct1e8JA20RmCFLPXnY1Lq4HnPQQ+eewLStEyLSkPfcC1huyiKKc8CxUUoSwUzSA1VJeC0+67WUr4Z26yvuGVtOcqa6rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041195; c=relaxed/simple;
-	bh=qZNTS+SsKyGq5cJUoJdNddEpiS/NdktIA7Wmi47YSI0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iZDQ2WwUJhBTJuRiceIuRzlvJuevjRZZWnJFllJ5idAwyCaXq9r0RaJh3FNGcxozm/wKF+0HJMisFiMj1MVH7DvJZtznqC8vUW8f1vEJRllljqiBx9edPTHyGSyu1Tv6F4OC9BSeyWtnDxifuDKGEq2Hr+PY2jql7iwjxR5uxZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4Jbw+/R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED7C116D0;
-	Thu, 13 Nov 2025 13:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763041195;
-	bh=qZNTS+SsKyGq5cJUoJdNddEpiS/NdktIA7Wmi47YSI0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=A4Jbw+/R6bIUOmh0jqAwRGsgWCRKFxO621Q7LcuzoqI95D9gOWCq0i7jLqALA9eKw
-	 3pDvyLMVjs+tFz72NZ7yrLPUVFG/dkNvZiZlOC8Wb7IBDeuXzjU4n0Db9VvRUospVJ
-	 34PXNkYqCZEk3L8FaNtWm+nSQcd+86h6+jzaVlGG6CI3lk9T4boNvVj10y3+sxPxwI
-	 Bvtl/SJH/8JVRELMIF1VQFIs5TouKlYTVZ6fMAlmL+pWnRDNNivWbrTlBg37UEWx5z
-	 ykRTsgmqW2ZbETjDOHlxN3sDkflRjEnngr0g9Uv/wc71ZJmUkP0uJjBlr82LF1w8CV
-	 Ge8RBzRYY6BGg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vJXYG-00000004t5r-3WS5;
-	Thu, 13 Nov 2025 13:39:52 +0000
-Date: Thu, 13 Nov 2025 13:39:52 +0000
-Message-ID: <86ldkat5jr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Mark\
- Rutland" <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J.\
- Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	"Saravana\
- Kannan" <saravanak@google.com>,
-	Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau
-	<j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark
-	<james.clark@linaro.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	"Alexandru\
- Elisei" <alexandru.elisei@arm.com>
-Subject: Re: [PATCH v4 17/26] genirq: Add request_percpu_irq_affinity() helper
-In-Reply-To: <20251112182735.00001363@huawei.com>
-References: <20251020122944.3074811-1-maz@kernel.org>
-	<20251020122944.3074811-18-maz@kernel.org>
-	<20251112182735.00001363@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1763041279; c=relaxed/simple;
+	bh=xRVLeggvTFpxhmDMhe6RFRSWS0nSpHS/MwOalgoq1Ho=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QiK3EFMCmsWYCJ5wkBrxpM65Hx+5GnHeNttrITJMin6gmNTYxxxj3gQERB8TlFseF6rmedvKQ04kXUAdBedK1Bs2ZCSSGgBMVZuE2z+j9pxod8dOm6U/IviRXU4bHM29aV3Bpm+e6PvjzzOuen1xSq2q8lPQoNZWZ5HzjGbYJzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SBzd9611; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1763041272; bh=yncWPINDR52pv1d4G/0cf1imkpwN4ckdlyrwN55xFuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SBzd9611oZqmP855waMRaatSMd+o6l9+GOK2/f9QU8guHb5wAnp5z0Ek6DeSNZDjv
+	 QODrAOGGc1wzKIXYGqOYsXloxf2jjkL6lMAW/hi3eAn8PCo46oiJv9cjT3YN49ZxRB
+	 So09S7jA6qKTm/s5MGSoCJO8GruA6e4RRvuYIslg=
+Received: from cjz-VMware-Virtual-Platform ([110.176.66.153])
+	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
+	id 9F72569E; Thu, 13 Nov 2025 21:39:55 +0800
+X-QQ-mid: xmsmtpt1763041195t2zcvgezd
+Message-ID: <tencent_27A546C0D8ACEF4B7DEE94D65FD805769809@qq.com>
+X-QQ-XMAILINFO: MDbayGdXPuoeQywFlMHCgen52JUQLc1cmq2dV28SszkRuGBqVKM7Cjf/40tDG8
+	 bRJME2qqMhvfI5ygmbW1mPOv1PRrakSmUQ35T/GwhUfF20TJdsdlpJ8Bl3SrFDZdQUGMiOHLDuyt
+	 qKpgUIT/cdDeh3ChhYINPf8STcL0tkFVs7+Xnd5l0bh+fumoO4h1S7d7ew4dcil4o0Y/xVE1W89n
+	 6Aym1Kjw9uH7hZQolbsQt4UuGQc5XLFee4VXMvUQRRSe2HtDrlJJ/c5jPMCF5NiacEH/94AWiLfM
+	 v6YbCfX7qSBFLwVtJbZ3298+thQMw9bQH2aH/8h1dmBTH1WKlswgbt5XGWga7usUcOPbUl9Hq40D
+	 6sDQGbrbWUMHX1WXHu6jq1fdgP+LOVPIKpF/pD5VpN5+XDYlGtFDKqZB9kAlgvWc/7Mtwf9MkD38
+	 b6nRbD15McDQs0HBgaHv7UzI0/73Q4mWN+yU0g+6lF8DAm0rMHZMusmVBvxruJthWSnvWaIthhMI
+	 FDJKCpdglTjeSwgUo5T2/qvluoJitYNfRSq+ukr3Lede+mMfLiC5JGqFjmq7eXy0eO4mN9hga9b0
+	 WrYDmhm/siFdLZTfQSzVVp/wbiyC4pz1tqvE+9TJIscNcBfz/S++fdkvgN9W4mS9aX1HcUPTBJb1
+	 YjMzmB/xB4dGYqq4t+1XUfQLbVeXEs+uZMwGqnIaooun+PncygTN5nBbxzX1kFJBJP6Xb+T3z9GG
+	 zRDzw448GFwLdkudnKJD7ibUZzjELFo5nKu6P7W0t85bOBDshE7HRh3qvPhYatXumkRHWGIAVygZ
+	 vSy6efJBndOhps7miQSuwaVdzwSb/Y1u7UZcZrj2TGcvpm4bt1ZRDY2wSieNsWTI9fQPii79B3uQ
+	 ta7g2aX0TJdx8+8vUSi5P7XTS/Z8LzWG8O1SsGFJUyOXhw/cmRak3CWFrKFmW/+QUlMd9FGQYkhz
+	 cZnRAmDY0VAMjW2d9nqutya34vXJd0OCV6gpwgdnNN3ScUegC9gwBz3+f067SLhZCC9AGfyylUzO
+	 7NUzATjM24buqs1Y7i17Bi8PvHuVw=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+Date: Thu, 13 Nov 2025 21:39:54 +0800
+From: cjz_VM <guagua210311@qq.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: outreachy@lists.linux.dev, Vaibhav Agarwal <vaibhav.sr@gmail.com>,
+	Mark Greer <mgreer@animalcreek.com>,
+	Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, guagua210311@qq.com
+Subject: Re: [PATCH] staging: greybus: audio_manager_module: make envp array
+ static const
+X-OQ-MSGID: <aRXfqoWn71fqbv6P@cjz-VMware-Virtual-Platform>
+References: <tencent_7710B04B6BEE52903BA2F56376DB9D18A907@qq.com>
+ <2025111341-attendee-ferment-262b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org, ruanjinjie@huawei.com, alexandru.elisei@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025111341-attendee-ferment-262b@gregkh>
 
-On Wed, 12 Nov 2025 18:27:35 +0000,
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
-> 
-> On Mon, 20 Oct 2025 13:29:34 +0100
-> Marc Zyngier <maz@kernel.org> wrote:
-> 
-> > While it would be nice to simply make request_percpu_irq() take
-> > an affinity mask, the churn is likely to be on the irritating side
-> > given that most drivers do not give a damn about affinities.
-> 
-> Only 37 instances. I'd have been tempted to do it anyway :)
+Hi Greg,
 
-I'm leaving this as an exercise for people who enjoy cross-subsystem
-patch series!
+Thanks for reviewing my patch!
 
-> 
-> > 
-> > So take the more innocuous path to provide a helper that parallels
-> > request_percpu_irq(), with an affinity as a bonus argument.
-> > 
-> > Yes, request_percpu_irq_affinity() is a bit of a mouthful.
-> > 
-> > Tested-by: Will Deacon <will@kernel.org>
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+For sending twice: I apologize for the duplicate. After the first send, I realized I had missed some greybus-specific maintainers, so I resent to include them all.
 
-Thanks,
+For the indentation: You're right to ask about it. When I changed the declaration from 'char *envp[]' to 'static const char * const envp[]', the opening bracket moved to the right due to the longer declaration. I added tabs to keep the array elements aligned with the opening bracket, following the kernel coding style rule that parameters should align with the opening parenthesis.
 
-	M.
+If this alignment approach is not preferred, I'm happy to adjust it to whatever style you recommend.
 
--- 
-Without deviation from the norm, progress is not possible.
+Thanks again for your time and guidance!
+
+Best regards,
+Chang JunzhengFrom: cjz_VM <guagua210311@qq.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: outreachy@lists.linux.dev, Vaibhav Agarwal <vaibhav.sr@gmail.com>, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, guagua210311@qq.com
+Subject: Re: [PATCH] staging: greybus: audio_manager_module: make envp array static const
+Reply-To: 
+In-Reply-To: <2025111341-attendee-ferment-262b@gregkh>
+
+Hi Greg,
+
+Thanks for reviewing my patch!
+
+For sending twice: I apologize for the duplicate. After the first send, I realized I had missed some greybus-specific maintainers, so I resent to include them all.
+
+For the indentation: You're right to ask about it. When I changed the declaration from 'char *envp[]' to 'static const char * const envp[]', the opening bracket moved to the right due to the longer declaration. I added tabs to keep the array elements aligned with the opening bracket, following the kernel coding style rule that parameters should align with the opening parenthesis.
+
+If this alignment approach is not preferred, I'm happy to adjust it to whatever style you recommend.
+
+Thanks again for your time and guidance!
+
+Best regards,
+Chang Junzheng
+
 
