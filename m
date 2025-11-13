@@ -1,148 +1,224 @@
-Return-Path: <linux-kernel+bounces-898992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8323AC5683A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:12:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0957AC56843
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7605434F5E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:05:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D743934639F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7227027F163;
-	Thu, 13 Nov 2025 09:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB16D27E1C5;
+	Thu, 13 Nov 2025 09:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ETK0wmAc"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u8l2oz26"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010041.outbound.protection.outlook.com [52.101.201.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046942D5A14
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763024717; cv=none; b=Ag1SZIPM2FgA8HIBVRA59pdTdZ1DxtHNkWnUqxG6y4LmBnpVeui94sKp7T1EqU0X/vIVzAqQf0B/+1MXIQdOEFcGw8CykIB6zgQYJW4tie2QV2Qna8Rd3QURcIz97ULrOur8Lcsjam1+c+0xfBd1K+L238C1XatDFuJWtB7fz74=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763024717; c=relaxed/simple;
-	bh=3UjOMsFb9kbRymmKpTR/5HYw4uxQJJRFpFEQGX6ehQ0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CEU/UU0qu3vaoszj9HbxlyqywjH1OiuPBSr31mlCdthiyCRjozSQPTDUeh1q3C9NT+9MthpiOUOfRqIr3nWnKcEW3udfGbSqSAnjurKN1PoZCLy8jm6QFHUY0CLmgqvyPL6f4XDFYhaCRLXIz4AoLtprVKB8gZxwQYCJ9fku3rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ETK0wmAc; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47754e9cc7fso3285725e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763024713; x=1763629513; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3UjOMsFb9kbRymmKpTR/5HYw4uxQJJRFpFEQGX6ehQ0=;
-        b=ETK0wmAcq4nSLOjQOFfUeAkCIIl+h1s2voNEnzZWznsB18q5WDplOTjpXFmyueQIco
-         Ohwhi3N86hVSztcZyWD2OVGTIZ8fAYs3zh/jcXjRaVzboD+cpV58BWFnxj2cCpV2isjG
-         rzONsJPUaHwS0T6YsTT7icw9ggCIuCiYNmKwVroxnaIdiwRsON3fDMvMqwDSMDLA1FFU
-         tHtDGeEBz2BUcaZ+GSYtjo1kBAq85rIvvRWvARVRyi1OrhfswUww7M5t8z4ApORijDkD
-         yhdMdJliL5FhXjxUaQSiqT9nyDjq8t4ALjFV5Q4SRvLZPHoL4Uu5Mw5mvMGSeNJlOUFw
-         bdNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763024713; x=1763629513;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3UjOMsFb9kbRymmKpTR/5HYw4uxQJJRFpFEQGX6ehQ0=;
-        b=CmlmszdeLV4+f64UugiXncou5lbqedE/BfG2mT9DRbvaUzbWsAXlThidG9Wn0qghtp
-         MVmb6lqlHT9jwLdE11arfgUrtnA1y8EK9xlEXqQP9fw0WLOUiGiHP5N/ftvUTZC3a+6r
-         Y3AsVjL8pS52Ztxl9dtZLUsnMCQ2MmlYFGh8smu5l0LpspF3ELG2c6avLKj+FsWp+ORG
-         cgdsAC8Vq3sNz5CHt3ru/JVrTy71R38EtuaI6svm1bXkgCTmU6Y6r290aFChlRqEr7PJ
-         jJbvz4AQRuhEbD4j+4LkLwpeLJ17o7bq5A2Px3VaaTClbUr3G2pIdsuEZWHR5jQZ5c2Y
-         H+fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT+RxKbRnSgXtkbZnWJtS+fr0ioj/kaembDL7CGFdAiVTxC5aro5RB5+4jNbcdGr5UH0V3OoD3gbAvnwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1lnQoLM+Zc1NcXJ1qrI+hGjvcnjDlvZATC+xPqWLZj6Ba084A
-	SvFvYwNaKeWgVlCczgWvsfpaIs27q+vcTczZ+J1+bvJnmq1hbfFl+kmQm3K4OSziJW8=
-X-Gm-Gg: ASbGncsdMBJX+hJpSdMvP6o3sWSPkX2/VwVqUCJP4an8eJsdgCbgYM5m9amneVJr2rv
-	nPUW/lLeSSJSwMDWhF90HlQ1COSxh1RSZwZI39MfuF/7+yFmUcOx//i00OGiggpm7/pMvJauZCd
-	JiX/RBoxr+mUNYywiRcMrZNvX1TbSHfgw3OS6pgvFVhBE1iSGZckg5NVsfdZp3UpqMn21J/BMnt
-	j1ZTX4wW4cSQbh4gJmP4oeuFZkbBtxz/qhuXOuoQWwIo94T7Cx5D8UovdDuw1GaW5eqfad6b0Sv
-	CJ8GDjgEKwq/KpH28mbqNMD9WCHLaoWJQX5oPM9hBdngHph/NuuurpF12kTVVs8Ksn04abhCGCd
-	L5cV6GxN9xG3WdL/qXTMtaUbFtSCp2T8pCQkAQ9XQILBIBVLGdsw/LDO6DfIIcoylN2SmgbYo9o
-	trOqH0
-X-Google-Smtp-Source: AGHT+IEtWoaffuaVTqHh20HuWI5Dpw76dp6as3Uhkrib83c8uxD8cJiQ4F+dYLKDixdUDUaZQUzkpA==
-X-Received: by 2002:a05:600c:4455:b0:477:7bca:8b34 with SMTP id 5b1f17b1804b1-47787071919mr61751085e9.6.1763024713192;
-        Thu, 13 Nov 2025 01:05:13 -0800 (PST)
-Received: from [10.1.1.59] ([212.129.72.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f203afsm2532796f8f.39.2025.11.13.01.05.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 01:05:12 -0800 (PST)
-Message-ID: <27a5521cd7ddbed0e870ac416dc829722f1b36a5.camel@linaro.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: nvmem: add google,gs101-otp
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Srinivas Kandagatla	
- <srini@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski	 <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter
- Griffin	 <peter.griffin@linaro.org>
-Cc: semen.protsenko@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Thu, 13 Nov 2025 09:05:10 +0000
-In-Reply-To: <20251112-gs101-otp-v2-1-bff2eb020c95@linaro.org>
-References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
-	 <20251112-gs101-otp-v2-1-bff2eb020c95@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB11EB9E3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763024777; cv=fail; b=EBnRidHBKweowdj/w/QtUMH+9liZmnX0GMePlin6b1Y/+Wv+7WlojsHsCtICrMu6GCIHSBc2wVQicWabySwAuigPTnt5yK5KCFlkAke1k2sq41XGgIrxBg4lqQzo7OMVkNGFxQa+OESZLUTGTG/HLPe5DMM0vN2anaVIIny09zE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763024777; c=relaxed/simple;
+	bh=iJ85wuPzMtIK37feGFqUTzY1S8XvyXGNOygQPSOa4y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m0khcWAGYRfFNAPbydDxg+04X6ZKH6hR3/cnc3uOGmVoNGCf4LjRB8pIflE9aUmgi7++zn8sWCzzP1UHDGBDDBUa4hrsJ8LSpBK6ERJ5wXYgeKjaTtNM1gcJDtcFQEIvoaZJZBijCxOzRooxcwRiR/TOZ9AlWtKFLV7UsDnfuKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u8l2oz26; arc=fail smtp.client-ip=52.101.201.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IVbxUiS9vO+kxgz6+WMnQJJFv0mXzqi1kUir7UK82Jj2Qu378enUGrLxR4VvfVGkpUrP/v8nAjWvQWq5e9KQtvqL9bAQwnGUE23tYuyiibPPxCiwRhWr6KRQc5ZourNgzaFhV304gPXygbmWUm/uivEOFy3ndfQvtorFO1g0/MV8ThEik64mKpMBoVzraOSZPO2xFBIoTbAsfztXvgcpXYWPw98+fhpHZ2TLXkJ35k1x8BGbmGjaES6jtvuDMNJJ2rpZy3lutzZTzV4nrbx4U2gRvBXuIQz+1UOh8mU2nZQdV1l/PDVtByWFC5M8jIlFCND4YdhnOSj8UTvEwEpGtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RrjBKb7oQQhr3g2NPODEKvlA7MT/63Uee4JL3cbgEns=;
+ b=UqtsG1mHUHS4Cv7dumAJIJumbB+IClvy7eCfhtNFRJGaUHh0B9DPpZ3wpuYzhDgxucE6I0e4YyHnBru5b84Bk4Zg0Zm0xOy6fdevZ3YrdHBJnAH6T4SQrOOuLPdYmWGqwboEvCkHbrZ1nrmj4UD5Ydq58oCN3Xeapk3512orNrjU9oUjAVFTFLz+5AKVIOfUtBRd1cgBmlVVOc5lMG8BPkYd3szuVZOm+2JrREUVNHdBsWdxd7NbdzkvBmq/cDsF2vZccNEXghIthNClSOsfvQ7lrVbeUJ/pWfiWeXQg296RVwCXA3QqdJQid8E0GdOknZiTqBtg+dxVK9Q4++reWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RrjBKb7oQQhr3g2NPODEKvlA7MT/63Uee4JL3cbgEns=;
+ b=u8l2oz260i1FJRYUz2+B4rwNgGwH/yjZLfxbRwZGAAEPCiMCVUmJ76Zm5WjV7PGPbNh7wK4l2IAlH0axKHaA5rhl2qI7ZbigwheW4P5yT92Yd4cvaDeM/mZvvTNRyBcnXtRjTmz5085LUaYoT2FPF2jsuaVOzFaN9/1ngRQuCPE=
+Received: from PH8PR07CA0037.namprd07.prod.outlook.com (2603:10b6:510:2cf::17)
+ by DS0PR10MB7364.namprd10.prod.outlook.com (2603:10b6:8:fe::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.15; Thu, 13 Nov 2025 09:06:04 +0000
+Received: from SN1PEPF000397B3.namprd05.prod.outlook.com
+ (2603:10b6:510:2cf:cafe::7) by PH8PR07CA0037.outlook.office365.com
+ (2603:10b6:510:2cf::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
+ 13 Nov 2025 09:06:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SN1PEPF000397B3.mail.protection.outlook.com (10.167.248.57) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 09:06:03 +0000
+Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 03:05:59 -0600
+Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 03:05:58 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 13 Nov 2025 03:05:58 -0600
+Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AD95r7p4163503;
+	Thu, 13 Nov 2025 03:05:53 -0600
+Message-ID: <edff9c4a-c4ba-44b7-86d4-a070ee57d49c@ti.com>
+Date: Thu, 13 Nov 2025 14:35:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/bridge: sii902x: Fix HDMI detection with
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+	<s-jain1@ti.com>, <s-wang12@ti.com>, <r-donadkar@ti.com>, <h-shenoy@ti.com>,
+	<dmitry.baryshkov@oss.qualcomm.com>, <dri-devel@lists.freedesktop.org>,
+	<jani.nikula@intel.com>, <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+	<airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>
+References: <20251030151635.3019864-1-devarsht@ti.com>
+ <138857f0-969d-4e99-aafd-d0c4e9aefb66@ideasonboard.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <138857f0-969d-4e99-aafd-d0c4e9aefb66@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B3:EE_|DS0PR10MB7364:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b5c681a-ab4c-4a9e-29a9-08de2293df88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SGFCamRyQ25WNkw5ckVNRGMyMFVVV3R0bXhPbm5Td2Y1cG0vOTJRNzlZWTJu?=
+ =?utf-8?B?Y0VDMTJzMWZLVHVNVjg2NGlpeGE3V1cwMSt4aWhrR05EQXZtTUxmS0xZT1JZ?=
+ =?utf-8?B?WloyVTdpS0FDTm5FS0k1akgyenJJZ2hJOVV0Wi9jOVo3dzV1TXZtdFVrNmk3?=
+ =?utf-8?B?enlCZ1NMUDVIQXhjdHBhclRyVVBLeVkzUWxwOHcvTVpDdll6WTBWa0ROMWRC?=
+ =?utf-8?B?YXNMVHM3R2M1QURURW1BVlJZR1llMFlGTERkcS8zWFphK3EySVVSMVV2cnpL?=
+ =?utf-8?B?NjhQdi8zQ0o5ZktybjBlbTB5by9mbzVrTXgvckhpa2dlR1A3OVl1cVhLQW9w?=
+ =?utf-8?B?bzNRem1FZWpZeWNpN0JESVV0Y0xDOENrVUlqTHRXWXF3WnkxVkxLZ0R6R1F5?=
+ =?utf-8?B?NGwydWFaN0pLSWFrQkRCazBKdlQ1dGVWeTBYa0paUU8rL08xSEFmWTEreVR2?=
+ =?utf-8?B?L0oyRmpTc3pMbE5QUXhwNjlPVXBzdFRuWlhwRlplMEVpU1hwckNKcWZEdEJC?=
+ =?utf-8?B?UU1kUG9EMnZtNXN6Ym1zVkcxVjhSczNEc250SExYUFZrSWhMTzQ0aFAxODZD?=
+ =?utf-8?B?NGxtYWsvU2ZubDZ4ZW1ZeVNTU1JhREdETzIxbXM3THIzc21TV1B2bUEvVXhZ?=
+ =?utf-8?B?UFVxRi9ZQmw3TVozb3k5VVljeVBISGtjcVY2STRNa2ZwZEwxMm9vY2c5ckR0?=
+ =?utf-8?B?ODczYjF0RC80ZXRlTVF5QU1OZmhPeGRKUWJMR01SWUQ2dGQ1MWlOWGhsZmNE?=
+ =?utf-8?B?UjhqTnBaeUNucm9ZMTVlalJ0V29FZDBlK1R0bTlVMXFEVUFqMjVLQVc5YWxh?=
+ =?utf-8?B?cUxUZGVzR0haeU9UZXRkQk1ZZVlmMHdNc3lhSzNQWmE5eWo3elZvRXRYRldK?=
+ =?utf-8?B?QWNBRXR5TFQ3UXBremtSU1dhRjIzVUF2dGw2bSs3ZGcyZXZ3QmU3QXN6bkFt?=
+ =?utf-8?B?enhYVHR0NlpOdHFWd2FMSzNIYlhqc2dYNHplSS8yQ3VZakpVRUZPMmduakJo?=
+ =?utf-8?B?cDNxUVFiV0pQc1ZKeXE0bExKcjgzcEF3N0JCQjNvMkM2VDVjK25hMkw4T3VB?=
+ =?utf-8?B?MDEvTnRIWWIrQyt1OEEyRzdUdEhlWlc5ODhwVVR1RkxMY2NWWVZsVDNNWEpS?=
+ =?utf-8?B?MjhTOGpNQTRGSWc1UWZ2Zkdrc1ptMDd3ejFsWEhQQnBMelVLeHUvT0ZON2kz?=
+ =?utf-8?B?VVYwOTZWRy80V012YlpDb3JDVm9UcEwraDNBZWF1NEpsYUo1bVhkRW5iVG5y?=
+ =?utf-8?B?bEFSYTN0THNSTTh2c3FlMkt1N2tEL2Z3a1BNWU9vNU9CQ0F6ZDUyd3h1QkxQ?=
+ =?utf-8?B?MGR2Z3l6UUtuZmdFNW5VdkpLazBRRnZZTWl4S2JSQlZ6M25MWUNGZnNoM2tP?=
+ =?utf-8?B?NElEOURaSDVqL2hnLzFvQWt3Y3RzRFlsWXppeHFPZTNOT2UrVGkzS3BHRVha?=
+ =?utf-8?B?TmRGelV0ZVE0SlVyaGE3THlseWVXdXgyRXVLNk81YkJKMDVqQWMrWlNmeGh6?=
+ =?utf-8?B?WnUxN1N5aWNNQ00rRUtHZHJ5b2tTei9IZVRYR1ZMQU4vTEs2dzZDLzBENnU1?=
+ =?utf-8?B?VDNTSVpXVkovQnErV0MzSHBqTTBTd3ZwZFRQOFlEbnEyR1lDVzFxWk1PYUh2?=
+ =?utf-8?B?OHMzWjJNSDljazZrREt0T2hhRFUrTlRUT1FVQmJQdEdyTU5xVDNJdGNrVWht?=
+ =?utf-8?B?U005elRoV2ZBYUlaTWk4RGgrazZmaVp2U0lVaWhkRHZsbktMM3VRdHlRQW8y?=
+ =?utf-8?B?SEdodlhhNkdTWURLeTBjSHZsSlpibXpFa0VGS2pWV1VLN1VDbWZNKzFxbU9l?=
+ =?utf-8?B?TGlzenNQMXdvUWNFYUt5cjZ2WklzQ1RJZEFYa1UzdGIvNzJwalNYK0lWTVkw?=
+ =?utf-8?B?YjRMOHZ4Mmp5Rk45OVovWGgwTVBtUURwcWk0QzFyS1hDdk04YXhPQ2tla0xN?=
+ =?utf-8?B?WC9XRXZrOVh3RUdxY3VOcTJWQSs4ajVlendxM2Z5akJuK29DRm9kUkVmYnpx?=
+ =?utf-8?B?Zmk5U3hMUnljcmZ2VVg2YjJjNnhCMUhrWEdUZUhmVkY2aW9tSVAwRnl0aWFR?=
+ =?utf-8?B?dWZKaE5SOVBFUUlHT1A1bExjSkZlcUFVZHNWMUNLenFFNGhJQitQUitKd3RZ?=
+ =?utf-8?Q?IAXA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 09:06:03.8567
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b5c681a-ab4c-4a9e-29a9-08de2293df88
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7364
 
-On Wed, 2025-11-12 at 08:29 +0000, Tudor Ambarus wrote:
-> Add binding for the OTP controller found on Google GS101.
->=20
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
-> =C2=A0.../bindings/nvmem/google,gs101-otp.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 56 ++++++++++++++++++++++
-> =C2=A01 file changed, 56 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yam=
-l b/Documentation/devicetree/bindings/nvmem/google,gs101-
-> otp.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ea87216761dbab9a7a5cecd87=
-a553a6a2a1783f7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/nvmem/google,gs101-otp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google GS101 OTP Controller
-> +
-> +maintainers:
-> +=C2=A0 - Tudor Ambarus <tudor.ambarus@linaro.org>
-> +
-> +description: |
-> +=C2=A0 OTP controller drives a NVMEM memory where system or user specifi=
-c data
-> +=C2=A0 can be stored. The OTP controller register space if of interest a=
-s well
+Hi Neil, Andrzej, Robert
 
-If there's another version:
+On 31/10/25 20:40, Tomi Valkeinen wrote:
 
--> if of interest
--> is of interest
+> Hi,
+> 
+> On 30/10/2025 17:16, Devarsh Thakkar wrote:
+>> The sii902x driver was caching HDMI detection state in a sink_is_hdmi field
+>> and checking it in mode_set() to determine whether to set HDMI or DVI
+>> output mode. This approach had two problems:
+>>
+>> 1. With DRM_BRIDGE_ATTACH_NO_CONNECTOR (used by modern display drivers like
+>> TIDSS), the bridge's get_modes() is never called. Instead, the
+>> drm_bridge_connector helper calls the bridge's edid_read() and updates the
+>> connector itself. This meant sink_is_hdmi was never populated, causing the
+>> driver to default to DVI mode and breaking HDMI audio.
+>>
+>> 2. The mode_set() callback doesn't receive atomic state or connector
+>> pointer, making it impossible to check connector->display_info.is_hdmi
+>> directly at that point.
+>>
+>> Fix this by moving the HDMI vs DVI decision from mode_set() to
+>> atomic_enable(), where we can access the connector via
+>> drm_atomic_get_new_connector_for_encoder(). This works for both connector
+>> models:
+>>
+>> - With DRM_BRIDGE_ATTACH_NO_CONNECTOR: Returns the drm_bridge_connector
+>>    created by the display driver, which has already been updated by the
+>> helper's call to drm_edid_connector_update()
+>>
+>> - Without DRM_BRIDGE_ATTACH_NO_CONNECTOR (legacy): Returns the connector
+>>    embedded in sii902x struct, which gets updated by the bridge's own
+>> get_modes()
+>>
+>> Fixes: 3de47e1309c2 ("drm/bridge: sii902x: use display info is_hdmi")
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V4: Shift HDMI detection to atomic_enable() and remove sink_is_hdmi caching
+>> V3: Use drm_edid_connector_update without edid NULL check
+>> V2: Use drm_edid_connector_update to detect HDMI
+>>
+<snip>
 
-In any case:
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> 
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+I wanted to follow up on this patch which fixes HDMI audio for the 
+sii902x bridge driver when used with DRM_BRIDGE_ATTACH_NO_CONNECTOR. The 
+patch has been reviewed by Tomi Valkeinen and addresses a real bug where 
+HDMI audio is broken when using modern display drivers like TIDSS.
 
-Cheers,
-Andre
+Could you please let me know if there are any concerns or if this can
+be pulled in ?
+
+Regards
+Devarsh
 
