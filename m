@@ -1,368 +1,226 @@
-Return-Path: <linux-kernel+bounces-899349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98093C5779F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:46:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EC5C57763
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6104214C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D146B3B9BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20A2350A13;
-	Thu, 13 Nov 2025 12:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B7434FF55;
+	Thu, 13 Nov 2025 12:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSO5ic0R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ES56M6pI";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BWq5IwsI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1ED834DCEC;
-	Thu, 13 Nov 2025 12:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626B34D92E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037610; cv=none; b=FMMVCWeHaLa39ct28+JfU4Ez/9ppLzONMFNZ9IsUdVbHrJeiHukgEz8LlSbG599zewrk0IrLujXUfBjxzPMcj5iq5hWFg5ZFvKibp2+AY6pHVD+9nZ8BYO/2u/dJklkqVdlKbJOFruIBoYcWSlCPq4rvfs8T7Rq3Lolg6vLMxho=
+	t=1763037496; cv=none; b=Rcx3Ws3xaIITuNd59lI2oEuaUkOazK6E1GgsygXr9MrMGpskE942+BZ9jNoNT2dmxXpkuwJo28VeFLtEgN1Gc0kNFDxyl8d1FaUv2W2Lb5GJMA+RQNHEKgMjBVbElU4zMY3tn82FhtmGDvx4eSjPNVYOD/6Y8o89wk+ehw8LGzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037610; c=relaxed/simple;
-	bh=V8rBOjZtmXBB00DGUlrm6sAahh/cFbuz8mzbSTjRzGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oKTzg3Pe62sOmWdwJCS58IUxHQ2isHwb90gzsYxa5146F/o50vy1r+newZ0NyZx6ApdqQZCT87hflxiDDqP7h4pc6McJv6OSotbkLhCinWg2NYLZv4a5WB72WJw9fukmF4OJXoPkrQ3yk0dGDxLEpKwi2qhDQ1PQcTNqmyY6ACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSO5ic0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94666C2BCB1;
-	Thu, 13 Nov 2025 12:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763037608;
-	bh=V8rBOjZtmXBB00DGUlrm6sAahh/cFbuz8mzbSTjRzGY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jSO5ic0R/xIUoJCmsp0tUZM/yX21oAUjRG+MQ+WQ8qVm8kEI3EnBmX9nh5jMAhhZO
-	 Fs3tRs2SgF/gkbJALZLhEE2eExORaLi/N7T+oy+FuahFufWx7WGV4NPNkn5hZdFccD
-	 vpWeeO80GCioi/stn0dhV5mdCChcPpB94V9cixQf5zrHzZ4pC9vwiLrgQWWoS/Z3gi
-	 B/MjZkXXmc6kSvagpE58Ly8I4LRrjpeRQdrz8d5tQAHwVGC5+kpQyYXfZaOv/yyFNw
-	 RYKiX5IULET3BrTZXbthSRyjWC+7cHhrFGxKPVPIobGtISb3PndrDhLnZ1L+u39ZRu
-	 2t1lF3DfwXLdQ==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>,
-	Florent Revest <revest@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>,
-	Song Liu <song@kernel.org>
-Subject: [PATCHv2 bpf-next 8/8] bpf, x86: Use single ftrace_ops for direct calls
-Date: Thu, 13 Nov 2025 13:37:50 +0100
-Message-ID: <20251113123750.2507435-9-jolsa@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251113123750.2507435-1-jolsa@kernel.org>
-References: <20251113123750.2507435-1-jolsa@kernel.org>
+	s=arc-20240116; t=1763037496; c=relaxed/simple;
+	bh=9elVzQ7mj77HKCWZYVJOcXXu5o8wH0/C9oI2JgD/UFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WN2NrNmsS/ZoJg+cKeHLFYgyE/4ShRi9qvGxaTI4AM86YjT1iJ6JpzA1uwrcbXD4FTK61PoU0XsOV/LyyxXJA8LQcMH0TsRVu/cof299Odsz1alO/qiKG6QJszoeDOadMWUpGOT7VGDbLApDCSWvUN6yU8eYHb+U3NZ5keg8bL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ES56M6pI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BWq5IwsI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD65hfq3563304
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=; b=ES56M6pIRZfroTGw
+	5C3QBjap7rARk/2HKLQQaT2LMjM/5G9thrQy8MUfGqtwRE0DQ/ai2LlLYkl/sKAA
+	pvXdxjG6orAJntwfcRT7HjQSFKgybU8AxEcziNtXfZtwv5FdS2lmbVHng2DjSeaZ
+	Q+PxXLbbmewPEkGJOAwBdu+oxRv0ucBFMOxK7Vxtx/B5k1PGQiwdEDnpYmmsDh15
+	roSmjaGVHM1+GjiotwWdZ8NJZTXTVO1T/jSL87texxLL7pYFtcbVumPtZtatI+fc
+	OoT1x7mOzjUHPgEqdHx2h1Nvm4xH4eNO8eXEAtccOn39mmoUZmWdI0LdqemXYuob
+	ukPj0g==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ad9rvh4tu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:12 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297df5c10ffso2891885ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:38:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763037492; x=1763642292; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=;
+        b=BWq5IwsIZ6uqxBRxynlu6HEPkVJFlrs0VFW6yskvQhw3np8gAJQtJzWzOOpQ8lL4JM
+         CQdUo1/f1iL6IIDhsCvKOuhLNp7L+AdhJaea2w0MiKeWs2/OMASxjBmMTnNiT7o/GLAh
+         WfOrUdIitAaXfnfkSytAHj7J2WCIdggQnYDafxwu+E05tFN3hnuPCp0hjoqwFm6xMDto
+         Y0cNt4eFPoPPuNf6LrGHhgQ6R/vtQH3zYppSOiIWZUacqbW6iTA4bIFVWiu8Z0dyIEMF
+         K+1CDY9IPZy7YLj4CFZwnoJn+xk0biPf1OaQaAXvXQ0YT+raFziGVh+ntrDdrHJkbvfP
+         qSCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763037492; x=1763642292;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=;
+        b=gtSwkGvdty1RoyFexjGDeBnZMJoOqCc694rYlLIfk+JROGvBKmjvOtjubFAfvp9LC+
+         0eJd+ge4C/RduaECETb0TRT9a4valderYIrPt1RW7D+UFN9I5dRpbISjyIYtZJk24/9g
+         +JuWUEPlE4RaVoK+1e+dEDVLwGdVk32HgxwglWBc5rmEDP3KRmep0fbktFWbC+y0gMYx
+         txKHErvQhqakw+Ff7x9+2hJ/arMwtXJ4/n+fug9R/KxEwrLurezDmQVgFzpcKY6/2rHX
+         ljkOaghlx+5SobzjkcgVbhEzxK+xLzZDJ8ddpQ/iTs1VKgYIAnP4fmGDZoHXdy31rvph
+         HCSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQloP6pcD9UqybcRe9LegdBD67FXI+c6Z7bF1fk2I/uLYjq5+Oew9QS2xOGTsiiiiZPuKwnV46kdsxXD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6SZ3q67OY9t7EDLVUl5+abwOIbnhpM7lpl/MGTMKK26FDdMcd
+	VKQUfuWbny8DyUvs0VtXd1/d2X4bw5PPix5cIbu3zZV8Pq7KOpvFPu7VWis1qG3kXsDM43Vf0fg
+	MZmpqsc2VC3rLyO7b2p3nOVq+pERR+DsD4v2Cc+lW3c9jGKpkOl58IAaaZ6txzYJpTm8=
+X-Gm-Gg: ASbGncuFzQew7OxojXh5G2o3auM+U/CVL22P4AILgJeWe8PFSdmvAe3qCCQhIwK80fr
+	Goi/GnnA/hPOTN5yMASORxgM7Ke9evCNPI7PoSd4N87xyU0aMLmtTxWOx0OMMkiNbxOzhU42Al8
+	FwNHTHtir+mUs/jCcIJI2mCn7lQVCs9s+1Zlf0lF9/V2Cc1RROYZXvwMUsg5t2kZp8MPVZWH5AZ
+	gl26zr8IZF7ZAtPyYw6PkkksFpRBy5S/tDLVF1vdAHrXGdNjOIFrmF/Aw3BXhfSWe4SXj4Fv0TL
+	GT1iXov8IiDE909q1YrItUusPVRBDqWLEe4igzwlrwXyyxFbPxVpfZNyiXBZTkO03cskdXKc5R3
+	MHFjxzjXNy+C0bMCI3fu6dQ==
+X-Received: by 2002:a17:902:da90:b0:295:2cab:dbc2 with SMTP id d9443c01a7336-2984edd4be8mr48491895ad.6.1763037492095;
+        Thu, 13 Nov 2025 04:38:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGmiRvv1bAO43hwnywK6aLTI273kvGCPDpDB6tE28lZlIwLwScGnHFybsark2D2NJEdA5iRFQ==
+X-Received: by 2002:a17:902:da90:b0:295:2cab:dbc2 with SMTP id d9443c01a7336-2984edd4be8mr48491645ad.6.1763037491596;
+        Thu, 13 Nov 2025 04:38:11 -0800 (PST)
+Received: from [10.253.73.240] ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245f21sm24521815ad.35.2025.11.13.04.38.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 04:38:11 -0800 (PST)
+Message-ID: <5a8d75a3-b20e-4de4-b15d-a56af503324d@oss.qualcomm.com>
+Date: Thu, 13 Nov 2025 20:38:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Enable Bluetooth support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        stable@vger.kernel.org, cheng.jiang@oss.qualcomm.com,
+        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
+        quic_shuaz@quicinc.com
+References: <20251110055709.319587-1-wei.deng@oss.qualcomm.com>
+ <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
+ <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
+ <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
+Content-Language: en-US
+From: Wei Deng <wei.deng@oss.qualcomm.com>
+In-Reply-To: <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=XrX3+FF9 c=1 sm=1 tr=0 ts=6915d134 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=1x_t3JyoWHe2diQJI2EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 5B2alaJWwn_EcrC2Ff3tAlUSbiiFZzag
+X-Proofpoint-GUID: 5B2alaJWwn_EcrC2Ff3tAlUSbiiFZzag
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA5NSBTYWx0ZWRfX23sFjKCYI2xW
+ iIgq8l2QdLOUuz9oWeXBXeinaIFrbEbtXXq3myJLgfEENZ1c4hUXet/c9X4CMopOgYyB8a7p2y0
+ Z3a5vTMbPJF2gVIqdEeL47Tl16U00Y2kdpMWtj/camyew/rxGe1dLJuwIN8qKXXYxyvKz1nLXzI
+ Xg9eHarMq6A6MpaWBBcfK+iTd6hq7EXTpmizCq4Stwhch9dKbpulEc+th6/Q0ni49RtTqJRKQ2w
+ STWmANc5hUReK+AnW20qUJ9n998XRpWUuzMABCCTqMUmvQRcaUyKcWIkoqevDtKXV4v/vFJWLeJ
+ 0kb2OKKzxFcdD0DREE9tsdSL0FuNePWOo2SQzDgb4QiJv+N98na2myMxG6MZRoZfdciKHMpCGGJ
+ Fgtp3sZcxlN/+uF2pLN7/Skf9Z1e8Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 adultscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130095
 
-Using single ftrace_ops for direct calls update instead of allocating
-ftrace_ops object for each trampoline.
+Hi Konrad，
+Thanks for your comments.
 
-With single ftrace_ops object we can use update_ftrace_direct_* api
-that allows multiple ip sites updates on single ftrace_ops object.
+On 11/12/2025 5:49 PM, Konrad Dybcio wrote:
+> On 11/11/25 1:24 PM, Wei Deng wrote:
+>> Hi Konrad,
+>>
+>> Thanks for your comments.
+>>
+>> On 11/10/2025 7:49 PM, Konrad Dybcio wrote:
+>>> On 11/10/25 6:57 AM, Wei Deng wrote:
+>>>> There's a WCN6855 WiFi/Bluetooth module on an M.2 card. To make
+>>>> Bluetooth work, we need to define the necessary device tree nodes,
+>>>> including UART configuration and power supplies.
+>>>>
+>>>> Since there is no standard M.2 binding in the device tree at present,
+>>>> the PMU is described using dedicated PMU nodes to represent the
+>>>> internal regulators required by the module.
+>>>>
+>>>> The 3.3V supply for the module is assumed to come directly from the
+>>>> main board supply, which is 12V. To model this in the device tree, we
+>>>> add a fixed 12V regulator node as the DC-IN source and connect it to
+>>>> the 3.3V regulator node.
+>>>>
+>>>> Signed-off-by: Wei Deng <wei.deng@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>>  &apps_rsc {
+>>>> @@ -627,6 +708,22 @@ &qupv3_id_2 {
+>>>>  	status = "okay";
+>>>>  };
+>>>>  
+>>>> +&qup_uart17_cts {
+>>>> +	bias-disable;
+>>>> +};
+>>>> +
+>>>> +&qup_uart17_rts {
+>>>> +	bias-pull-down;
+>>>> +};
+>>>> +
+>>>> +&qup_uart17_tx {
+>>>> +	bias-pull-up;
+>>>> +};
+>>>> +
+>>>> +&qup_uart17_rx {
+>>>> +	bias-pull-down;
+>>>> +};
+>>>
+>>> This is notably different than all other platforms' bluetooth pin
+>>> settings - for example pulling down RX sounds odd, since UART signal
+>>> is supposed to be high at idle
+>>>
+>>> see hamoa.dtsi : qup_uart14_default as an example
+>>>
+>>
+>> I followed the qup_uart17 settings from lemans-ride-common.dtsi. Since these configurations are not required for Bluetooth functionality. I will remove this configuration in the next patch.
+> 
+> This feels like you're essentially saying you don't know/care why you
+> did this before and don't know why you're changing it again. This
+> doesn't give me a lot of confidence. Are you testing your changes on
+> real hw, running an upstream kernel with some distro userland?
+> 
 
-Adding HAVE_SINGLE_FTRACE_DIRECT_OPS config option to be enabled on
-each arch that supports this.
+We add qup_uart17 config followed the changes referenced in the below 
+link and validated them on the hardware platform. Bluetooth functionality
+works fine before and after the removal.
+https://lore.kernel.org/all/20250509090443.4107378-1-quic_vdadhani@quicinc.com/
 
-At the moment we can enable this only on x86 arch, because arm relies
-on ftrace_ops object representing just single trampoline image (stored
-in ftrace_ops::direct_call). Ach that do not support this will continue
-to use *_ftrace_direct api.
+> Konrad
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- arch/x86/Kconfig        |   1 +
- kernel/bpf/trampoline.c | 166 ++++++++++++++++++++++++++++++++++++----
- kernel/trace/Kconfig    |   3 +
- kernel/trace/ftrace.c   |   7 +-
- 4 files changed, 160 insertions(+), 17 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index fa3b616af03a..65a2fc279b46 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -332,6 +332,7 @@ config X86
- 	select SCHED_SMT			if SMP
- 	select ARCH_SUPPORTS_SCHED_CLUSTER	if SMP
- 	select ARCH_SUPPORTS_SCHED_MC		if SMP
-+	select HAVE_SINGLE_FTRACE_DIRECT_OPS	if X86_64 && DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index 26887a0db955..436d393591a5 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -33,12 +33,40 @@ static DEFINE_MUTEX(trampoline_mutex);
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- static int bpf_trampoline_update(struct bpf_trampoline *tr, bool lock_direct_mutex);
- 
-+#ifdef CONFIG_HAVE_SINGLE_FTRACE_DIRECT_OPS
-+static struct bpf_trampoline *direct_ops_ip_lookup(struct ftrace_ops *ops, unsigned long ip)
-+{
-+	struct hlist_head *head_ip;
-+	struct bpf_trampoline *tr;
-+
-+	mutex_lock(&trampoline_mutex);
-+	head_ip = &trampoline_ip_table[hash_64(ip, TRAMPOLINE_HASH_BITS)];
-+	hlist_for_each_entry(tr, head_ip, hlist_ip) {
-+		if (tr->ip == ip)
-+			goto out;
-+	}
-+	tr = NULL;
-+out:
-+	mutex_unlock(&trampoline_mutex);
-+	return tr;
-+}
-+#else
-+static struct bpf_trampoline *direct_ops_ip_lookup(struct ftrace_ops *ops, unsigned long ip)
-+{
-+	return ops->private;
-+}
-+#endif /* CONFIG_HAVE_SINGLE_FTRACE_DIRECT_OPS */
-+
- static int bpf_tramp_ftrace_ops_func(struct ftrace_ops *ops, unsigned long ip,
- 				     enum ftrace_ops_cmd cmd)
- {
--	struct bpf_trampoline *tr = ops->private;
-+	struct bpf_trampoline *tr;
- 	int ret = 0;
- 
-+	tr = direct_ops_ip_lookup(ops, ip);
-+	if (!tr)
-+		return -EINVAL;
-+
- 	if (cmd == FTRACE_OPS_CMD_ENABLE_SHARE_IPMODIFY_SELF) {
- 		/* This is called inside register_ftrace_direct_multi(), so
- 		 * tr->mutex is already locked.
-@@ -137,6 +165,122 @@ void bpf_image_ksym_del(struct bpf_ksym *ksym)
- 			   PAGE_SIZE, true, ksym->name);
- }
- 
-+#ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-+#ifdef CONFIG_HAVE_SINGLE_FTRACE_DIRECT_OPS
-+/*
-+ * We have only single direct_ops which contains all the direct call
-+ * sites and is the only global ftrace_ops for all trampolines.
-+ *
-+ * We use 'update_ftrace_direct_*' api for attachment.
-+ */
-+struct ftrace_ops direct_ops = {
-+	.ops_func = bpf_tramp_ftrace_ops_func,
-+};
-+
-+static int direct_ops_alloc(struct bpf_trampoline *tr)
-+{
-+	tr->fops = &direct_ops;
-+	return 0;
-+}
-+
-+static void direct_ops_free(struct bpf_trampoline *tr) { }
-+
-+static struct ftrace_hash *hash_from(unsigned long ip, void *addr)
-+{
-+	struct ftrace_hash *hash;
-+
-+	ip = ftrace_location(ip);
-+	if (!ip)
-+		return NULL;
-+	hash = alloc_ftrace_hash(FTRACE_HASH_DEFAULT_BITS);
-+	if (!hash)
-+		return NULL;
-+	if (!add_hash_entry_direct(hash, ip, (unsigned long) addr)) {
-+		free_ftrace_hash(hash);
-+		return NULL;
-+	}
-+	return hash;
-+}
-+
-+static int direct_ops_add(struct ftrace_ops *ops, unsigned long ip, void *addr)
-+{
-+	struct ftrace_hash *hash = hash_from(ip, addr);
-+	int err = -ENOMEM;
-+
-+	if (hash)
-+		err = update_ftrace_direct_add(ops, hash);
-+	free_ftrace_hash(hash);
-+	return err;
-+}
-+
-+static int direct_ops_del(struct ftrace_ops *ops, unsigned long ip, void *addr)
-+{
-+	struct ftrace_hash *hash = hash_from(ip, addr);
-+	int err = -ENOMEM;
-+
-+	if (hash)
-+		err = update_ftrace_direct_del(ops, hash);
-+	free_ftrace_hash(hash);
-+	return err;
-+}
-+
-+static int direct_ops_mod(struct ftrace_ops *ops, unsigned long ip, void *addr, bool lock_direct_mutex)
-+{
-+	struct ftrace_hash *hash = hash_from(ip, addr);
-+	int err = -ENOMEM;
-+
-+	if (hash)
-+		err = update_ftrace_direct_mod(ops, hash, lock_direct_mutex);
-+	free_ftrace_hash(hash);
-+	return err;
-+}
-+#else
-+/*
-+ * We allocate ftrace_ops object for each trampoline and it contains
-+ * call site specific for that trampoline.
-+ *
-+ * We use *_ftrace_direct api for attachment.
-+ */
-+static int direct_ops_alloc(struct bpf_trampoline *tr)
-+{
-+	tr->fops = kzalloc(sizeof(struct ftrace_ops), GFP_KERNEL);
-+	if (!tr->fops)
-+		return -ENOMEM;
-+	tr->fops->private = tr;
-+	tr->fops->ops_func = bpf_tramp_ftrace_ops_func;
-+	return 0;
-+}
-+
-+static void direct_ops_free(struct bpf_trampoline *tr)
-+{
-+	if (tr->fops) {
-+		ftrace_free_filter(tr->fops);
-+		kfree(tr->fops);
-+	}
-+}
-+
-+static int direct_ops_add(struct ftrace_ops *ops, unsigned long ip, void *addr)
-+{
-+	ftrace_set_filter_ip(ops, (unsigned long)ip, 0, 1);
-+	return register_ftrace_direct(ops, (long)addr);
-+}
-+
-+static int direct_ops_del(struct ftrace_ops *ops, unsigned long ip, void *addr)
-+{
-+	return unregister_ftrace_direct(ops, (long)addr, false);
-+}
-+
-+static int direct_ops_mod(struct ftrace_ops *ops, unsigned long ip, void *addr, bool lock_direct_mutex)
-+{
-+	if (lock_direct_mutex)
-+		return modify_ftrace_direct(ops, (long)addr);
-+	return modify_ftrace_direct_nolock(ops, (long)addr);
-+}
-+#endif /* CONFIG_HAVE_SINGLE_FTRACE_DIRECT_OPS */
-+#else
-+static void direct_ops_free(struct bpf_trampoline *tr) { }
-+#endif /* CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
-+
- static struct bpf_trampoline *bpf_trampoline_lookup(u64 key, unsigned long ip)
- {
- 	struct bpf_trampoline *tr;
-@@ -155,14 +299,11 @@ static struct bpf_trampoline *bpf_trampoline_lookup(u64 key, unsigned long ip)
- 	if (!tr)
- 		goto out;
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
--	tr->fops = kzalloc(sizeof(struct ftrace_ops), GFP_KERNEL);
--	if (!tr->fops) {
-+	if (direct_ops_alloc(tr)) {
- 		kfree(tr);
- 		tr = NULL;
- 		goto out;
- 	}
--	tr->fops->private = tr;
--	tr->fops->ops_func = bpf_tramp_ftrace_ops_func;
- #endif
- 
- 	tr->key = key;
-@@ -187,7 +328,7 @@ static int unregister_fentry(struct bpf_trampoline *tr, void *old_addr)
- 	int ret;
- 
- 	if (tr->func.ftrace_managed)
--		ret = unregister_ftrace_direct(tr->fops, (long)old_addr, false);
-+		ret = direct_ops_del(tr->fops, tr->ip, old_addr);
- 	else
- 		ret = bpf_arch_text_poke(ip, BPF_MOD_CALL, old_addr, NULL);
- 
-@@ -201,10 +342,7 @@ static int modify_fentry(struct bpf_trampoline *tr, void *old_addr, void *new_ad
- 	int ret;
- 
- 	if (tr->func.ftrace_managed) {
--		if (lock_direct_mutex)
--			ret = modify_ftrace_direct(tr->fops, (long)new_addr);
--		else
--			ret = modify_ftrace_direct_nolock(tr->fops, (long)new_addr);
-+		ret = direct_ops_mod(tr->fops, tr->ip, new_addr, lock_direct_mutex);
- 	} else {
- 		ret = bpf_arch_text_poke(ip, BPF_MOD_CALL, old_addr, new_addr);
- 	}
-@@ -226,8 +364,7 @@ static int register_fentry(struct bpf_trampoline *tr, void *new_addr)
- 	}
- 
- 	if (tr->func.ftrace_managed) {
--		ftrace_set_filter_ip(tr->fops, (unsigned long)ip, 0, 1);
--		ret = register_ftrace_direct(tr->fops, (long)new_addr);
-+		ret = direct_ops_add(tr->fops, tr->ip, new_addr);
- 	} else {
- 		ret = bpf_arch_text_poke(ip, BPF_MOD_CALL, NULL, new_addr);
- 	}
-@@ -863,10 +1000,7 @@ void bpf_trampoline_put(struct bpf_trampoline *tr)
- 	 */
- 	hlist_del(&tr->hlist_key);
- 	hlist_del(&tr->hlist_ip);
--	if (tr->fops) {
--		ftrace_free_filter(tr->fops);
--		kfree(tr->fops);
--	}
-+	direct_ops_free(tr);
- 	kfree(tr);
- out:
- 	mutex_unlock(&trampoline_mutex);
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index d2c79da81e4f..4bf5beb04a5b 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -50,6 +50,9 @@ config HAVE_DYNAMIC_FTRACE_WITH_REGS
- config HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- 	bool
- 
-+config HAVE_SINGLE_FTRACE_DIRECT_OPS
-+	bool
-+
- config HAVE_DYNAMIC_FTRACE_WITH_CALL_OPS
- 	bool
- 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 03948ec81434..e223fc196567 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2605,8 +2605,13 @@ unsigned long ftrace_find_rec_direct(unsigned long ip)
- static void call_direct_funcs(unsigned long ip, unsigned long pip,
- 			      struct ftrace_ops *ops, struct ftrace_regs *fregs)
- {
--	unsigned long addr = READ_ONCE(ops->direct_call);
-+	unsigned long addr;
- 
-+#ifdef CONFIG_HAVE_SINGLE_FTRACE_DIRECT_OPS
-+	addr = ftrace_find_rec_direct(ip);
-+#else
-+	addr = READ_ONCE(ops->direct_call);
-+#endif
- 	if (!addr)
- 		return;
- 
 -- 
-2.51.1
+Best Regards,
+Wei Deng
 
 
