@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-899715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B8EC58A6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:17:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6DAC58A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6CAC4EFD16
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F134232E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2513557F2;
-	Thu, 13 Nov 2025 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JlCWmwV6"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F524306B2D;
+	Thu, 13 Nov 2025 15:50:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302C73559EC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038FD30149D;
+	Thu, 13 Nov 2025 15:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049193; cv=none; b=kgFEk7rxl3FqjquMpQjOQOukczI9E1hTIWbQQnW0VUmJAApup9eWwoPiudzDoBqex49556XOUhVEQDSopGx49XZc0qG8K9c8KTjcSWngS0sCUWXqrO3cl4YTpu98cCwr0Xsn7Nrzfen/yozCsjfHSgr7DTuY8ovpFiZrB1cHoeY=
+	t=1763049059; cv=none; b=jr3pahq8arGqtt5NZaDaTf3G57G0eTwfiuhe+SEZ1DduyXYntwKvkppNeBudO8yvGPgiKLS0gZcrEpE0TjfKpaQ3GxS/1d2T0I5rizwIti9JWUILPGbifsIkicdhVUmMWUUzV6HX/seEYbgObtbVrayv5wW8rJzeKSXwVTrX5RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049193; c=relaxed/simple;
-	bh=h0I4DiDc6GNRbFsL/Gt4N1M9ywNyj1x0U7W30l0Ik28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bMR2jUbR7faw1tsq2lRtYahoWahX8uY1N6207cm0jrsYLb4JmM8ddQ/oKMbGnGACtRyrYfQSJZqnoamVh7ixqfFGqempV5XrOL4tSy9iWSjG99cTHIMOtS+tmRVbOTitWWU9a9DQiIIrZZ0Wshat94655v9DM8b/iKG6rp7U8N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JlCWmwV6; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763049190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pShwBBnHbUhZjtMedCnDarjH+85reRacRSdZz081jWs=;
-	b=JlCWmwV6LNHVwM35IYShejrxG9OpkFm7eSFGRK/PQRfeyKvrIL6nq7ONQTALg1D8NnmXmA
-	eKJK0iTYF8y4TxH73SIIb71XGFhJaGDkouvQndOVfQrq+0nRvbHPaNJdHAQ+kJ1IR2fwSz
-	pfbQC9yAifND6ZNZ4qxy3v+KqB++rSM=
-From: Yuntao Wang <yuntao.wang@linux.dev>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Baoquan He <bhe@redhat.com>,
-	Zhen Lei <thunder.leizhen@huawei.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geoff Levand <geoff@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Alexander Graf <graf@amazon.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuntao Wang <yuntao.wang@linux.dev>
-Subject: [PATCH v2 7/7] of/reserved_mem: Simplify the logic of fdt_scan_reserved_mem_reg_nodes()
-Date: Thu, 13 Nov 2025 23:51:04 +0800
-Message-ID: <20251113155104.226617-8-yuntao.wang@linux.dev>
-In-Reply-To: <20251113155104.226617-1-yuntao.wang@linux.dev>
-References: <20251113155104.226617-1-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1763049059; c=relaxed/simple;
+	bh=PwkVRKaMSLAcyP6zL/aun5R8mjLMLdMTMJono8Dtbak=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U2Z50ULFrdoQqloqYE8OoDM4NzVLwNmyDELdM37SqNpkvJ1G5UY8HxHmcMgy7fCa40hvq/WOizcW/ZdXNCplj1j6az/3iDQ/a6rhUeSYS8aeSURb7ilekSaBD+OD+Rd/GczUZ5Ytf/O10daUokqnSdHHpZW6G/RbOQQb8y96wmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 428EB160A83;
+	Thu, 13 Nov 2025 15:50:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 26D771A;
+	Thu, 13 Nov 2025 15:50:51 +0000 (UTC)
+Date: Thu, 13 Nov 2025 10:51:06 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com, Yongliang Gao
+ <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251113105106.4270f6ac@gandalf.local.home>
+In-Reply-To: <20251113153508.9mYBNQlL@linutronix.de>
+References: <20251113000252.1058144-1-leonylgao@gmail.com>
+	<20251113073420.yko6jYcI@linutronix.de>
+	<CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
+	<20251113141515.iZSIDK0T@linutronix.de>
+	<20251113100524.5c5f6bdc@gandalf.local.home>
+	<20251113151729.4Zky6d-t@linutronix.de>
+	<20251113102445.3e70c1ec@gandalf.local.home>
+	<20251113153508.9mYBNQlL@linutronix.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 8pmdubdjr6feomb6b6bihm5d38tjq3kt
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 26D771A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/34RX2m2UlryiZHnR60z+yTRgqGR5lXYY=
+X-HE-Tag: 1763049051-983190
+X-HE-Meta: U2FsdGVkX19hlj42w6I3HMGRpy6h/Vu/YglqDpXeWrCKeoqb8o7Dg4pgeBKHIOTkQxjJaZ9M+rxT0pKEJAyoqf5O5nE7a8KcVKORLNlob7ed2wTwdXPdb3RGEVDjjCanYRdaqyxZ61Ez0864zvHUquTHFkDZpSpm/8HA+ORAFPPsjH+K5+jQEPQODQYr01Lz2A3x883qdZgcVUcnG5jOmUroiGspZPJrg9OX+8H+u5MzVxJ4ivXWxR4/gXOhL7otNy4s38TRQ/0dZ5KB8Vxbdarzq+h82eqPVLEqzomENJiYIO/Wmrad/xi8Ram6xoJG
 
-Use the existing helper functions to simplify the logic of
-fdt_scan_reserved_mem_reg_nodes()
+On Thu, 13 Nov 2025 16:35:08 +0100
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
----
- drivers/of/of_reserved_mem.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index b8527f3e335e..96771ab073c0 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -226,12 +226,9 @@ static void __init __rmem_check_for_overlap(void);
-  */
- void __init fdt_scan_reserved_mem_reg_nodes(void)
- {
--	int t_len = (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
- 	const void *fdt = initial_boot_params;
- 	phys_addr_t base, size;
--	const __be32 *prop;
- 	int node, child;
--	int len;
- 
- 	if (!fdt)
- 		return;
-@@ -253,28 +250,16 @@ void __init fdt_scan_reserved_mem_reg_nodes(void)
- 	fdt_for_each_subnode(child, fdt, node) {
- 		const char *uname;
- 
--		prop = of_get_flat_dt_prop(child, "reg", &len);
--		if (!prop)
--			continue;
- 		if (!of_fdt_device_is_available(fdt, child))
- 			continue;
- 
--		uname = fdt_get_name(fdt, child, NULL);
--		if (len && len % t_len != 0) {
--			pr_err("Reserved memory: invalid reg property in '%s', skipping node.\n",
--			       uname);
-+		if (!of_fdt_get_addr_size(child, "reg", &base, &size))
- 			continue;
--		}
--
--		if (len > t_len)
--			pr_warn("%s() ignores %d regions in node '%s'\n",
--				__func__, len / t_len - 1, uname);
- 
--		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
--		size = dt_mem_next_cell(dt_root_size_cells, &prop);
--
--		if (size)
-+		if (size) {
-+			uname = fdt_get_name(fdt, child, NULL);
- 			fdt_reserved_mem_save_node(child, uname, base, size);
-+		}
- 	}
- 
- 	/* check for overlapping reserved regions */
--- 
-2.51.0
+> > A couple of issues. One, the chunks are fully used. There's no place to put
+> > a "rcu_head" in them. Well, we may be able to make use of them.  
+> 
+> This could be the first (16?) bytes of the memory chunk.
+
+Yes, but this will make things more complex.
+
+> 
+> > Second, if there's a lot of tasks exiting and forking, we can easily run
+> > out of chunks that are waiting to be "freed" via call_rcu().  
+> 
+> but this is a general RCU problem and not new here. The task_struct and
+> everything around it (including stack) is RCU freed.
+
+But this doesn't happen under memory pressure. Allocations are not
+performed if a chunk is not available. If a chunk isn't available, then we
+just stop tracing the filtered task. Hmm, it currently silently fails.
+Perhaps I need to add a printk when this happens.
+
+
+> > > This adding/ add-on-fork, removing and remove-on-exit is the only write
+> > > side?  
+> > 
+> > That and manual writes to the set_ftrace_pid file.  
+> 
+> This looks like minimal. I miss understood then that context switch can
+> also contribute to it.
+
+sched_switch is only a reader, not a writer.
+
+> And the callers of trace_pid_list_is_set() are always in the RCU read
+> section then? I assume so, since it wouldn't make sense otherwise.
+
+Yes, because they are only tested in sched_switch and fork and exit tracepoints.
+
+Although, this was written when tracepoint callbacks were always called
+under preempt disable. Perhaps we need to change that call to:
+
+	tracepoint_synchronize_unregister()
+
+Or add a preempt_disable() around the callers.
+
+I'm very nervous about using RCU here. It will add a lot more corner cases
+that needs to be accounted for. The complexity doesn't appear to be worth
+it. I'd rather just keep the raw spin locks than to convert it to RCU.
+
+The seqcount makes sense to me. It's simple and keeps the same paradigm as
+what we have. What's wrong with using it?
+
+-- Steve
 
 
