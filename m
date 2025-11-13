@@ -1,95 +1,44 @@
-Return-Path: <linux-kernel+bounces-898794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BEEC56095
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:23:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913FCC5608F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E6E4E33CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1CE3A6260
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5DC289811;
-	Thu, 13 Nov 2025 07:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mFX1Ro8v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CBNccGxT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ngHRWq0q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bS6ha2zm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7429322740;
+	Thu, 13 Nov 2025 07:22:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905F426CE39
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5BE29CEB;
+	Thu, 13 Nov 2025 07:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018471; cv=none; b=qJn3szwkY1RbtA9DB1iBVte86LqZC87DiticD9PS04bYScgWLPS835D0HpIXUXAjBKSqaDemv6RyrAzimV97sHHsQoHTo3rbfJAf55MWW7Y4sdv7F1JdFeJcgIY5vCSE1kIOLXCfghuMSlWoLem1+qzayeLAGX6QP+/gQdExoBw=
+	t=1763018575; cv=none; b=AvUmemO2PS0fvUL5GKcZa/12F/P5ZxeUKGwCSlrI/UjcHk30wCHe2fSgQz7CZzZjd+2EIjRJtI2sK0/uOdQkrO22X5HyR03kkzzQIa2zJRl+69fQp73ioEHx4KoqTHprbYUQ4A3oMm/opAuhSV2u74kVpuBBwDC1Spjh53Lt/QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018471; c=relaxed/simple;
-	bh=+e5vyuZtNunYpnjO09KC3VxITCJoLOIfNhP9xGTZhkE=;
+	s=arc-20240116; t=1763018575; c=relaxed/simple;
+	bh=9uzDul7xU+IYfDVHTobYR5OBReoUp+7YXwn8iZMNyVA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMaKSKucozPjYhTMxpfeR+ujzNvofPOdHs0gNk04w3FgmZg1hD+6C1lfoN12R8z2PajmdrOeVz9E02dKFLW7ACdM6VH7KNKdAeRAujthJmmLZ29MIEcqd7+qopcVw2kT+bijrNQ+57cRPTJPg9fCuUpUabNXY2lLwTO4VxLGkP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mFX1Ro8v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CBNccGxT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ngHRWq0q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bS6ha2zm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E2FD21F45A;
-	Thu, 13 Nov 2025 07:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763018467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
-	b=mFX1Ro8vHqtsDiUajsAj3tbAzeoME9+D7GjgaEqJ2M+cFlaX/1Agx7kcnGfH/PDx/rfzMf
-	agJkL8l49BbsamMzclFcQ1zNqu1IXaTw0w41pwz51UYGUqRLcJ8tpBCyV6W/Kf9aXz0Lal
-	vRjzm0DmBvrYpvbaLPLQ9FDqN9QUIuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763018467;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
-	b=CBNccGxT2DGuDlwUJdT6i5bvqubAxp4zxRAtd6zTm/v+iQP4WK8mq32qr18/VFIxehar2l
-	zBYaYejGGncUpuBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ngHRWq0q;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bS6ha2zm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763018466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
-	b=ngHRWq0qxgRCLr8Imp7mmcNkr9APxHxI62ZQNeSqz9OdBEAxd20ygLk7GjT2VqzzIH+3Ln
-	vsjJJR+vASYETp+1WqANlxSEfOhJh42etlO+E+3buYBvYu/Aiq6nvVXkTnXa/m5UQU+jRp
-	0JxH4C+2w5332GkNtKIslQeJPqxJWTk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763018466;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
-	b=bS6ha2zm6f46pAaAlZGb6+NFPfS/gM+h6Yd7s6j9lqUxcWzVDMPdGZxOZPaRpeILtFt3PE
-	tEIB7dAe6W8boNDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84A613EA61;
-	Thu, 13 Nov 2025 07:21:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DssjHeKGFWkFcwAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 13 Nov 2025 07:21:06 +0000
-Message-ID: <2019e372-c079-4230-97ba-a3299ced0474@suse.de>
-Date: Thu, 13 Nov 2025 08:21:06 +0100
+	 In-Reply-To:Content-Type; b=uXj/7qedck8myWVoF+br59jq9WfH4/gybO4skg/aXEmIg6rZeStrpY4FPy1Kd7kHdvTFv6BNskZnHqPTaST2IoS0A3Ni7+6QWhYu8djqAbPAW3OD8B5qhx1HCoQO3oyQZtlrV6KrlaUJEIrNzMcPVegkk75PtReMK9QmqZoDS2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d6Wtm3GYGzKHMcn;
+	Thu, 13 Nov 2025 15:22:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 33DEA1A15C4;
+	Thu, 13 Nov 2025 15:22:43 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgCnBXxChxVp8tVQAg--.5581S2;
+	Thu, 13 Nov 2025 15:22:43 +0800 (CST)
+Message-ID: <34aae8cd-fc41-46ef-875f-84d0cdafeca7@huaweicloud.com>
+Date: Thu, 13 Nov 2025 15:22:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,113 +46,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] nvme: Expose the tls_configured sysfs for secure
- concat connections
-To: Alistair Francis <alistair23@gmail.com>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
- kch@nvidia.com, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
-References: <20251111234519.3467440-1-alistair.francis@wdc.com>
- <20251111234519.3467440-4-alistair.francis@wdc.com>
- <caadfcbb-8964-4447-a93d-8e49b4c14c7e@suse.de>
- <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 06/22] cpuset: introduce partition_update()
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <20251025064844.495525-7-chenridong@huaweicloud.com>
+ <91e163ac-4379-4875-9f08-bddebb1e616c@redhat.com>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <91e163ac-4379-4875-9f08-bddebb1e616c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E2FD21F45A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email,wdc.com:email]
-X-Spam-Score: -4.51
+X-CM-TRANSID:Syh0CgCnBXxChxVp8tVQAg--.5581S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45Xw1rGFyDJF4DGr13twb_yoWrXFW7pF
+	ykJFW3JayUKr1fu34aqFs7CrWrKws7t3Wqyrn7XF18JFy2yw10qr1j93s0gr4UXrZ3Gr1U
+	ZF1qgrsF9F17ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1Ha0DUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 11/13/25 03:08, Alistair Francis wrote:
-> On Wed, Nov 12, 2025 at 5:08 PM Hannes Reinecke <hare@suse.de> wrote:
+
+
+On 2025/11/13 4:58, Waiman Long wrote:
+> On 10/25/25 2:48 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
 >>
->> On 11/12/25 00:45, alistair23@gmail.com wrote:
->>> From: Alistair Francis <alistair.francis@wdc.com>
->>>
->>> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
->>> ---
->>> v2:
->>>    - New patch
->>>
->>>    drivers/nvme/host/sysfs.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
->>> index 29430949ce2f..6d10e12136d0 100644
->>> --- a/drivers/nvme/host/sysfs.c
->>> +++ b/drivers/nvme/host/sysfs.c
->>> @@ -838,7 +838,7 @@ static umode_t nvme_tls_attrs_are_visible(struct kobject *kobj,
->>>            !ctrl->opts->tls && !ctrl->opts->concat)
->>>                return 0;
->>>        if (a == &dev_attr_tls_configured_key.attr &&
->>> -         (!ctrl->opts->tls_key || ctrl->opts->concat))
->>> +         !ctrl->opts->concat)
->>>                return 0;
->>>        if (a == &dev_attr_tls_keyring.attr &&
->>>            !ctrl->opts->keyring)
+>> Introduce partition_update() to centralize updates to key cpuset structures
+>> during a partition update, including:
+>> - effective_xcpus
+>> - exclusive_cpus
 >>
->> ??
+>> Key operations performed:
+>> - Adding and removing exclusive CPUs via partition_xcpus_add()/del()
+>> - Synchronizing the effective exclusive CPUs mask
+>> - Updating the exclusive CPUs mask when modification is required
+>> - Triggering necessary system updates and workqueue synchronization
+>> - Updating the partition's exclusive flag
+>> - Sending partition change notifications
 >>
->> How can you have a configured TLS Key for secure concatenation?
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 47 ++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 47 insertions(+)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 4a79db1cdec1..3e414e19ae31 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1604,6 +1604,53 @@ static void partition_disable(struct cpuset *cs, struct cpuset *parent,
+>>       notify_partition_change(cs, old_prs);
+>>   }
+>>   +/**
+>> + * partition_update - Update an existing partition configuration
+>> + * @cs: The cpuset to update
+>> + * @prs: Partition root state (must be positive)
+>> + * @xcpus: New exclusive CPUs mask for the partition (NULL to keep current)
+>> + * @excpus: New effective exclusive CPUs mask
+>> + * @tmp: Temporary masks
+>> + *
+>> + * Updates partition-related fields. The tmp->addmask is the CPU mask that
+>> + * will be added to the subpartitions_cpus and removed from parent's
+>> + * effective_cpus, and the tmp->delmask vice versa.
+>> + */
+>> +static void partition_update(struct cpuset *cs, int prs, struct cpumask *xcpus,
+>> +                  struct cpumask *excpus, struct tmpmasks *tmp)
+>> +{
+>> +    bool isolcpus_updated;
+>> +    bool excl_updated;
+>> +    struct cpuset *parent;
+>> +    int old_prs;
+>> +
+>> +    lockdep_assert_held(&cpuset_mutex);
+>> +    WARN_ON_ONCE(!cpuset_v2());
+>> +    WARN_ON_ONCE(prs <= 0);
+>> +
+>> +    parent = is_remote_partition(cs) ? NULL : parent_cs(cs);
+>> +    old_prs = cs->partition_root_state;
+>> +    excl_updated = !cpumask_empty(tmp->addmask) ||
+>> +               !cpumask_empty(tmp->delmask);
+> Should partition_update() only be called if at least one of addmask/delmask is not empty? If they
+> are both empty, no update is really needed. Right?
+
+Right, it can return directly.
+
+>> +
+>> +    spin_lock_irq(&callback_lock);
+>> +    isolcpus_updated = partition_xcpus_add(prs, parent, tmp->addmask);
+>> +    isolcpus_updated |= partition_xcpus_del(prs, parent, tmp->delmask);
 > 
-> I'm not sure I follow
+> I see now that there is no adding and deleting boolean flags to indicate if the cpumasks are empty
+> or not, so you have to add the empty cpumask check in those helpers. Please state that in your patch 2.
 > 
-> `ctrl->opts->tls_key` is directly set at the end of the
-> `nvme_auth_secure_concat()` function, so it will be set for secure
-> concatenation.
+
+Will update.
+
+>> +    /*
+>> +     * Need to update effective_xcpus and exclusive_cpus now as
+>> +     * update_sibling_cpumasks() below may iterate back to the same cs.
+>> +     */
+>> +    cpumask_copy(cs->effective_xcpus, excpus);
+>> +    if (xcpus)
+>> +        cpumask_copy(cs->exclusive_cpus, xcpus);
+>> +    spin_unlock_irq(&callback_lock);
+>> +    update_unbound_workqueue_cpumask(isolcpus_updated);
+>> +    if (excl_updated)
+>> +        cpuset_force_rebuild();
+>> +    update_partition_exclusive_flag(cs, prs);
+>> +    notify_partition_change(cs, old_prs);
+>> +}
+>> +
+>>   /*
+>>    * prstate_housekeeping_conflict - check for partition & housekeeping conflicts
+>>    * @prstate: partition root state to be checked
 > 
-Right, sorry. Of course you are right.
 
-But I'm still a bit unsure about the interface here; just writing
-anything into it doesn't feel like the correct way of doing it.
-
-I would rather modify the interface to allow a key serial number (or 0).
-That would allow us to modify the configured key, which currently is
-fixed for the lifetime of the connection.
-And writing '0' would reset the configured key, reverting to automatic
-key selection.
-Having such an interface would actually be beneficial, as it would
-remove some limitations from the current interface.
-
-Hmm?
-
-Cheers,
-
-Hannes
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Best regards,
+Ridong
+
 
