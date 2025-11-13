@@ -1,142 +1,241 @@
-Return-Path: <linux-kernel+bounces-899418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC920C57A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:30:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D401CC57DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 46A9C355AA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B7D3ACF15
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244A35292B;
-	Thu, 13 Nov 2025 13:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742F635292A;
+	Thu, 13 Nov 2025 13:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pqBNYNH8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nb3H8O3W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575A733F8D2;
-	Thu, 13 Nov 2025 13:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BF93491E1;
+	Thu, 13 Nov 2025 13:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040533; cv=none; b=KLb2sonratekC4uVNurCXabN3OYj4vFgGx2VuxTf8XvefQPi3R3pLLo6vm9yHWNpj4V3PgBNdmpQS53lEfUc5UQfJI10VhdoXbw14070PMGLVsQ4st2gQh5T1Tvb1TG4aQ2PeOoY4avXH+vwp1PyApRm9wA+gd1+E3PjN6aiwlU=
+	t=1763040595; cv=none; b=XnsQA4ul17vDJGJydEbB5ioz/BmQ0A1CuA1sOBHIoXTRu5GCGmdU51FakZ2sWVgLiI74YT7ALua33Uk5Z41gOeJ2rfflUwfUe9q5GmmcL4ovnDLi4Omlt4LTqZJ0k1dkLE17onhCiHkUxzRmt2o2zJSLwOJtc6mhUWdeMJAiPLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040533; c=relaxed/simple;
-	bh=d1S6EXhuajmdeR7g4lfZh2Y4Mab0D3MUxG1o04pb/Rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3hb1r0UmFaR+Np6H06xwg0XvzgKgi0kY6K90sYjTdptT/06YLVkOcCwXbsWUGhI7D0u1BVY581TS1ETpBf1xT80HFlyPW8jxJ7XdOvWJteOQ67rq+ILv/kLuXKtCOaVXGrTO8Mh+Pr2tcPjJakoIr7lavBKNklNE4QiWClFnGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pqBNYNH8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC0FC4CEF5;
-	Thu, 13 Nov 2025 13:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1763040532;
-	bh=d1S6EXhuajmdeR7g4lfZh2Y4Mab0D3MUxG1o04pb/Rs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqBNYNH8/BIfoX/TrzoEjwLZDxdxVbfbQ+cHttzzxvvz0Kkz+Fv4p0ifL5XAQ9hG3
-	 plIcQgkNonNx3etrLAl7wnYbgu24yeTNdEAZ3wo6hpjASn23oneq/KlhkNK4ZbJwLl
-	 TZf3WjvciP6u9O/D/cHIyR8UXfdK6LmePt6vFAVo=
-Date: Thu, 13 Nov 2025 08:28:50 -0500
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jie Deng <dengjie03@kylinos.cn>
-Cc: mathias.nyman@linux.intel.com, sakari.ailus@linux.intel.com,
-	stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: core: fix NULL dereference in usb_ifnum_to_if()
- during device removal
-Message-ID: <2025111342-chummy-preppy-e3e6@gregkh>
-References: <20251113114411.1410343-1-dengjie03@kylinos.cn>
+	s=arc-20240116; t=1763040595; c=relaxed/simple;
+	bh=A5x+83PnDTgNAEyAE1p8cNUzLQ6NIflPP4lgbqDUSPg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=XaE/txjImoG2I+O3OOj0GVsZYsAQ9rA/mAJT+AO7bMdA+JsbGGOGTiUNvAto1YYPtSzBJ7oeCIFsn6Ckgja9Hk6ZUb02M1jiuUVkfLzE732DMuq/AgTfe4yJalAkwRF0GjMcGCoN4fUliyqVJCvsgwWb9c6FGeiiOM1zE0tguBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nb3H8O3W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9F9C4CEF8;
+	Thu, 13 Nov 2025 13:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763040595;
+	bh=A5x+83PnDTgNAEyAE1p8cNUzLQ6NIflPP4lgbqDUSPg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Nb3H8O3W84yfg9a30QMKTOVcfdaDiF9LT9HyvaOEaPElvS1MhYctzoBjmANb1xbO1
+	 4l4/TGoz8mWlkg01RjAfYpfZZ2VylBUDeaLCZp8hEeJup8frK3NTN14wx2pA+/BiQA
+	 LbcOysJVwxbr70rkfwjX5sGAO5RYFy3tUySX1+YnlYJPSuktCNJPZiR2e/mVeWzho2
+	 KB0JnQCgx/CzO3uyaPl2ZxEqVc3qqj8Gw6gsVRvl3x5fodwpRcSLp9tI9cvJC8ebKk
+	 Su1Rz/WabCHkV3sZ8I+86w8L26n3lH0hMaNzYHGPphMGSOb+YZ6ZpG3CNqzkArDtmt
+	 PA2UO6LDsJBvg==
+Date: Thu, 13 Nov 2025 07:29:53 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113114411.1410343-1-dengjie03@kylinos.cn>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-stm32@st-md-mailman.stormreply.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Patrice Chotard <patrice.chotard@foss.st.com>
+In-Reply-To: <20251112-upstream_update_led_nodes-v1-0-f6c77739113c@foss.st.com>
+References: <20251112-upstream_update_led_nodes-v1-0-f6c77739113c@foss.st.com>
+Message-Id: <176304044264.4031532.14638465015514612185.robh@kernel.org>
+Subject: Re: [PATCH 00/16] Led update for STMicrolectronics boards
 
-On Thu, Nov 13, 2025 at 07:44:11PM +0800, Jie Deng wrote:
-> During USB device hot-unplug, in the time window between when
-> usb_disconnect() calls usb_disable_device() to set
-> dev->actconfig->interface[i] to NULL but before dev->actconfig
-> is set to NULL.At this point, outside the kernel, usb_ifnum_to_if()
-> is called through usb_set_interface(), and usb_ifnum_to_if() continues
-> to access interface[i]->altsetting[i], triggering a null pointer.
 
-I do not understand, sorry.  What do you mean by "outside the kernel"?
-
-> kernel log:
-> [ 9518.779148][ 1] [ T4650] pc : usb_ifnum_to_if+0x34/0x50
-> [ 9518.784360][ 1] [ T4650] lr : usb_hcd_alloc_bandwidth+0x260/0x348
-
-What is the [TXXX] stuff?
-
-> [ 9518.790439][ 1] [ T4650] sp : ffffffa25a6c79d0
-> [ 9518.794868][ 1] [ T4650] x29: ffffffa25a6c79d0 x28: 0000000040045613
-> [ 9518.801294][ 1] [ T4650] x27: 0000000000000000 x26: 0000000000000000
-> [ 9518.807720][ 1] [ T4650] x25: ffffffa2e1597408 x24: ffffffa2e1597408
-> [ 9518.814146][ 1] [ T4650] x23: ffffffa2e15974f8 x22: 0000000000000000
-> [ 9518.820572][ 1] [ T4650] x21: ffffffa2e9acc000 x20: ffffffa2e6712000
-> [ 9518.826998][ 1] [ T4650] x19: ffffffa2e6a8a800 x18: 0000000000000000
-> [ 9518.833423][ 1] [ T4650] x17: 0000007fbb91b4b0 x16: ffffffc01016a170
-> [ 9518.839849][ 1] [ T4650] x15: 0000000000000000 x14: 0845c02202702800
-> [ 9518.846275][ 1] [ T4650] x13: 0000000000000001 x12: 0000000000000000
-> [ 9518.852700][ 1] [ T4650] x11: 0000000000000400 x10: ffffffff89e5d720
-> [ 9518.859126][ 1] [ T4650] x9 : 0000000000000000 x8 : 0000000000000000
-> [ 9518.865551][ 1] [ T4650] x7 : ffffffa2fff1e440 x6 : ffffffa28175c900
-> [ 9518.871977][ 1] [ T4650] x5 : 0000000000000060 x4 : ffffffa2e9bc54b0
-> [ 9518.878403][ 1] [ T4650] x3 : ffffffa2e9bc54a0 x2 : ffffffa2e9bc54a0
-> [ 9518.884828][ 1] [ T4650] x1 : 0000000000000001 x0 : 0000000000000000
-> [ 9518.891254][ 1] [ T4650] Call trace:
-> [ 9518.894817][ 1] [ T4650]  usb_ifnum_to_if+0x34/0x50
-> [ 9518.899681][ 1] [ T4650]  usb_set_interface+0x108/0x3c8
-> [ 9518.904898][ 1] [ T4650]  uvc_video_stop_streaming+0x3c/0x90 [uvcvideo]
-> [ 9518.911500][ 1] [ T4650]  uvc_stop_streaming+0x24/0x90 [uvcvideo]
-> [ 9518.917583][ 1] [ T4650]  __vb2_queue_cancel+0x44/0x458 [videobuf2_common]
-> [ 9518.924444][ 1] [ T4650]  vb2_core_streamoff+0x20/0xb8 [videobuf2_common]
-> [ 9518.931221][ 1] [ T4650]  vb2_streamoff+0x18/0x60 [videobuf2_v4l2]
-> [ 9518.937390][ 1] [ T4650]  uvc_queue_streamoff+0x30/0x50 [uvcvideo]
-> [ 9518.943557][ 1] [ T4650]  uvc_ioctl_streamoff+0x40/0x68 [uvcvideo]
-> [ 9518.949724][ 1] [ T4650]  v4l_streamoff+0x20/0x28
-> [ 9518.954415][ 1] [ T4650]  __video_do_ioctl+0x17c/0x3e0
-> [ 9518.959540][ 1] [ T4650]  video_usercopy+0x1d8/0x558
-> [ 9518.964490][ 1] [ T4650]  video_ioctl2+0x14/0x1c
-> [ 9518.969094][ 1] [ T4650]  v4l2_ioctl+0x3c/0x58
-> [ 9518.973526][ 1] [ T4650]  do_vfs_ioctl+0x374/0x7b0
-> [ 9518.978304][ 1] [ T4650]  ksys_ioctl+0x78/0xa8
-> [ 9518.982734][ 1] [ T4650]  sys_ioctl+0xc/0x18
-> [ 9518.986991][ 1] [ T4650]  __sys_trace_return+0x0/0x4
-> [ 9518.991943][ 1] [ T4650] Code: eb04005f 54000100 f9400040 91002042 (f9400003)
-> [ 9518.999153][ 1] [ T4650] ---[ end trace f7c7d3236806d9a4 ]---
+On Wed, 12 Nov 2025 15:40:17 +0100, Patrice Chotard wrote:
+> This series adds/updates LED nodes for STMicroelectronics boards by
+> adding new LED nodes and function/color properties.
 > 
-> To resolve this issue, a null pointer check for config->interface[i]
-> can be added in the usb_ifnum_to_if() function.
+> On STM32 MCUs boards (F4/F7 and H7 series) green LED is
+> used as heartbeat.
 > 
-> Signed-off-by: Jie Deng <dengjie03@kylinos.cn>
+> On STM32MP1/2, blue LED is used as heartbeat.
+> 
+> On STM32MP1, red LED is used as status LED.
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 > ---
->  drivers/usb/core/usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Patrice Chotard (16):
+>       ARM: dts: stm32: reorder nodes for stm32429i-eval
+>       ARM: dts: stm32: Update LED nodes for stm32429i-eval
+>       ARM: dts: stm32: Update LED nodes for stm32f429-disco
+>       ARM: dts: stm32: Update LED nodes for stm32f469-disco
+>       ARM: dts: stm32: Update LED node for stm32f746-disco
+>       ARM: dts: stm32: Update LED nodes for stm32f769-disco
+>       ARM: dts: stm32: Update LED nodes for stm32746g-eval
+>       ARM: dts: stm32: Add LED support for stm32h743i-disco
+>       ARM: dts: stm32: Add LED support for stm32h743i-eval
+>       ARM: dts: stm32: Update LED nodes for stm32h747i-disco
+>       ARM: dts: stm32: Add red LED for stm32mp135f-dk board
+>       ARM: dts: stm32: Add red LED for stm32mp157c-ed1 board
+>       ARM: dts: stm32: Update LED node for stm32mp15xx-dkx board
+>       arm64: dts: st: Add green and orange LED for stm32mp235f-dk
+>       arm64: dts: st: Add green and orange LED for stm32mp257f-dk
+>       arm64: dts: st: Add green and orange LED for stm32mp235f-dk
 > 
-> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-> index e740f7852bcd..85dcda06a838 100644
-> --- a/drivers/usb/core/usb.c
-> +++ b/drivers/usb/core/usb.c
-> @@ -355,7 +355,7 @@ struct usb_interface *usb_ifnum_to_if(const struct usb_device *dev,
->  	if (!config)
->  		return NULL;
->  	for (i = 0; i < config->desc.bNumInterfaces; i++)
-> -		if (config->interface[i]->altsetting[0]
-> +		if (config->interface[i] && config->interface[i]->altsetting[0]
+>  arch/arm/boot/dts/st/stm32429i-eval.dts    | 65 +++++++++++++++++-------------
+>  arch/arm/boot/dts/st/stm32746g-eval.dts    |  6 +++
+>  arch/arm/boot/dts/st/stm32f429-disco.dts   |  6 ++-
+>  arch/arm/boot/dts/st/stm32f469-disco.dts   |  6 +++
+>  arch/arm/boot/dts/st/stm32f746-disco.dts   |  3 ++
+>  arch/arm/boot/dts/st/stm32f769-disco.dts   |  5 +++
+>  arch/arm/boot/dts/st/stm32h743i-disco.dts  | 27 +++++++++++++
+>  arch/arm/boot/dts/st/stm32h743i-eval.dts   | 18 +++++++++
+>  arch/arm/boot/dts/st/stm32h747i-disco.dts  |  6 +++
+>  arch/arm/boot/dts/st/stm32mp135f-dk.dts    |  6 +++
+>  arch/arm/boot/dts/st/stm32mp157c-ed1.dts   |  6 +++
+>  arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi  | 10 ++++-
+>  arch/arm64/boot/dts/st/stm32mp235f-dk.dts  | 10 +++++
+>  arch/arm64/boot/dts/st/stm32mp257f-dk.dts  | 10 +++++
+>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 23 +++++++++++
+>  15 files changed, 176 insertions(+), 31 deletions(-)
+> ---
+> base-commit: 53c18dc078bb6d9e9dfe2cc0671ab78588c44723
+> change-id: 20251112-upstream_update_led_nodes-30e8ca390161
+> 
+> Best regards,
+> --
+> Patrice Chotard <patrice.chotard@foss.st.com>
+> 
+> 
+> 
 
-Are you sure this is not just papering over a race?  What prevents this
-from changing right after you check it?
 
-And what is causing this to happen now?  What commit broke this to
-require this change?
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-thanks,
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-greg k-h
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: 53c18dc078bb6d9e9dfe2cc0671ab78588c44723 (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/st/' for 20251112-upstream_update_led_nodes-v1-0-f6c77739113c@foss.st.com:
+
+Error: arch/arm/boot/dts/st/stm32429i-eval.dts:131.13-22 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm/boot/dts/st/stm32429i-eval.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm/boot/dts/st] Error 2
+make[2]: Target 'arch/arm/boot/dts/st/stm32429i-eval.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: st/stm32429i-eval.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'st/spear310-evb.dtb' not remade because of errors.
+make: Target 'st/spear300-evb.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-dk2.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-icore-stm32mp1-edimm2.2.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-ev1.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-lxa-tac-gen3.dtb' not remade because of errors.
+make: Target 'st/stm32mp135f-dhcor-dhsbc.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-odyssey.dtb' not remade because of errors.
+make: Target 'st/stih407-b2120.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-codina.dtb' not remade because of errors.
+make: Target 'st/stm32h747i-disco.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-codina-tmo.dtb' not remade because of errors.
+make: Target 'st/ste-hrefv60plus-tvk.dtb' not remade because of errors.
+make: Target 'st/stm32mp151a-dhcor-testbench.dtb' not remade because of errors.
+make: Target 'st/stih410-b2120.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-phycore-stm32mp1-3.dtb' not remade because of errors.
+make: Target 'st/stm32h750i-art-pi.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-dhcom-picoitx.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-lxa-fairytux2-gen2.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-dhcom-pdk2.dtb' not remade because of errors.
+make: Target 'st/spear320-hmi.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-ed1.dtb' not remade because of errors.
+make: Target 'st/ste-nomadik-s8815.dtb' not remade because of errors.
+make: Target 'st/ste-hrefprev60-tvk.dtb' not remade because of errors.
+make: Target 'st/spear320-evb.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-lxa-fairytux2-gen1.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-dhcor-drc-compact.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-skomer.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-microgea-stm32mp1-microdev2.0.dtb' not remade because of errors.
+make: Target 'st/stih418-b2264.dtb' not remade because of errors.
+make: Target 'st/stm32f769-disco-mb1166-reva09.dtb' not remade because of errors.
+make: Target 'st/stm32f429-disco.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-microgea-stm32mp1-microdev2.0-of7.dtb' not remade because of errors.
+make: Target 'st/stm32mp151a-prtt1a.dtb' not remade because of errors.
+make: Target 'st/ste-hrefv60plus-stuib.dtb' not remade because of errors.
+make: Target 'st/stm32746g-eval.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-dk1-scmi.dtb' not remade because of errors.
+make: Target 'st/stm32mp151c-mect1s.dtb' not remade because of errors.
+make: Target 'st/ste-href520-tvk.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-stinger96.dtb' not remade because of errors.
+make: Target 'st/stih418-b2199.dtb' not remade because of errors.
+make: Target 'st/ste-snowball.dtb' not remade because of errors.
+make: Target 'st/stm32f469-disco.dtb' not remade because of errors.
+make: Target 'st/stm32h743i-eval.dtb' not remade because of errors.
+make: Target 'st/stm32f769-disco.dtb' not remade because of errors.
+make: Target 'st/ste-nomadik-nhk15.dtb' not remade because of errors.
+make: Target 'st/stm32429i-eval.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-dhcor-avenger96.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-mecio1r1.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-ultra-fly-sbc.dtb' not remade because of errors.
+make: Target 'st/stm32mp151a-prtt1s.dtb' not remade because of errors.
+make: Target 'st/spear1340-evb.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-icore-stm32mp1-ctouch2-of10.dtb' not remade because of errors.
+make: Target 'st/stm32mp151a-prtt1c.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-golden.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-osd32mp1-red.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-dk1.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-kyle.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-janice.dtb' not remade because of errors.
+make: Target 'st/stm32mp153c-dhcom-drc02.dtb' not remade because of errors.
+make: Target 'st/spear600-evb.dtb' not remade because of errors.
+make: Target 'st/stm32mp157f-dk2.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-emsbc-argon.dtb' not remade because of errors.
+make: Target 'st/stm32f746-disco.dtb' not remade because of errors.
+make: Target 'st/stm32mp151c-plyaqm.dtb' not remade because of errors.
+make: Target 'st/stm32mp133c-prihmb.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-iot-box.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-lxa-mc1.dtb' not remade because of errors.
+make: Target 'st/stm32mp135f-dk.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-lxa-tac-gen2.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-ev1-scmi.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-avenger96.dtb' not remade because of errors.
+make: Target 'st/ste-ux500-samsung-gavini.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-ed1-scmi.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-lxa-tac-gen1.dtb' not remade because of errors.
+make: Target 'st/stih410-b2260.dtb' not remade because of errors.
+make: Target 'st/stm32mp151c-mecio1r0.dtb' not remade because of errors.
+make: Target 'st/spear1310-evb.dtb' not remade because of errors.
+make: Target 'st/stm32h743i-disco.dtb' not remade because of errors.
+make: Target 'st/stm32mp157a-icore-stm32mp1-ctouch2.dtb' not remade because of errors.
+make: Target 'st/ste-hrefprev60-stuib.dtb' not remade because of errors.
+make: Target 'st/stm32mp157c-dk2-scmi.dtb' not remade because of errors.
+
+
+
+
+
 
