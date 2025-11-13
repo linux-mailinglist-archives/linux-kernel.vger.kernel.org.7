@@ -1,184 +1,170 @@
-Return-Path: <linux-kernel+bounces-899542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00DFC5819B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:58:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9199C581A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73E084E612A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:58:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F03A4E2006
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9821DF74F;
-	Thu, 13 Nov 2025 14:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01092E5415;
+	Thu, 13 Nov 2025 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T8vElxvm"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SxBq4UZF"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7723D7D2;
-	Thu, 13 Nov 2025 14:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E09A2E1F06
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763045886; cv=none; b=pJpzZX0OBvJ5DwLCj03Xp+QMzx+riVRe8wc5/21WiVwGz8sDX8+sIj0/45aJLPsz/Zw4in2r+q9wIXkf8PiMfxmxQ7xcQEnHdyEUC/KvH3w0YpZLy+YCfqkl+nmLS2DxKi4EwEU+2ETcjGA9jZAQAmpdt316I+dd2T2YFjzAOUA=
+	t=1763046021; cv=none; b=oWmNOeso1a8rXURlQgc53NU+Aq8RxyaUP7J18uvV0ahRRhnZIBYGFqyVIhtcU+Bi4tnxrxu9x8B3Y5CysFevFrDesfec5IzLvqIBkovOONYVXpVqpgvs1sN5ptS8ZxoUs9QHE7KNoFJ49pL652gT6WG7PTnTvolFcAJ6Ehri7w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763045886; c=relaxed/simple;
-	bh=3Uu21/c6Hbs21uxpxbmZo7JhKjwRedtSvTBuDxAnxMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=bnoZm8SBNOZsSdawEKekpcm89RPqcM6qCt4lQL1o0R3wobLYkGCgwwNg16R/aSLxGSY9/7GT7fbd404fK77bfUVYtGDyqnGdjop0PTlxMt1Jy49YeN+ZlLsT6wHIDYWKOZoH5j1aPRF6ejAO5TcWtdS5RVVqoaYXjamilF1qyE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T8vElxvm; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012;
-	Thu, 13 Nov 2025 14:57:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763045879;
-	bh=ogp7tQuY4ykhbwHIKUJTRYSar7oRQokZNx6TlxIJ+5c=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=T8vElxvmkwwSu1Wl5s0VXj6iVdl2A5s7iYFjmFeFPouxsJm1ZPkAuL/pj3v38TcxU
-	 /xoPUpVOskKRLjECmF0grhpoxv/PVum1bvXNYzG6n+Owrs/cxRuPbe4zkZQdEvAzaI
-	 PFjnHtKU80hgiAFcv2hYlDM5zIbRHGRMVNt0srsQ=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093~3mOLC8LIJ0576905769eucas1p1J;
-	Thu, 13 Nov 2025 14:57:58 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251113145757eusmtip2959d20c844dc6203e206300997e642d0~3mOJlt2ga3124231242eusmtip2e;
-	Thu, 13 Nov 2025 14:57:57 +0000 (GMT)
-Message-ID: <e1696331-1271-46a8-adb6-9fed4521f22b@samsung.com>
-Date: Thu, 13 Nov 2025 15:57:57 +0100
+	s=arc-20240116; t=1763046021; c=relaxed/simple;
+	bh=uzaf6Evj711B9QYw/7gXMBS3bnaZlmZILwfOFV6p5+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBXUleWwoYJkFWiEgc8SpqJZXAaEVbUD72Ck47nIJ2aDIhj9Z7+3xn58ZTucWQJIs8xIz9grM2+gP+7LftbEw0+XlXPZDJNKRj8HWym90A39AQpNl+dfJHZhV2YSkSm82x3klGij04EVuaKIWQaPFXZlk1yLa571lTV0XoGt9Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SxBq4UZF; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 13 Nov 2025 14:59:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763046012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sk7LczTG/IQm+4uN1QQxImg0cq/uLnlhPZ9Mr9f9U00=;
+	b=SxBq4UZFv3BhbD4++7+ZRWTKf5mcxW6QdYZk9HL8uQCpZhUq6Dw+66Ohfp0OYmq65ZZ2Wr
+	x72BOIh12oere1jbzhQZ5/N4XUZ9E5lB7I00pfMtoUI3nx2XMzFDz3mFfMCNgXir/mQtSm
+	zjhxRoHfdkrEtUS5HYGk0wQeOdl/ORo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Shivansh Dhiman <shivansh.dhiman@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Kevin Cheng <chengkev@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 12/14] x86/svm: Cleanup LBRV tests
+Message-ID: <66tns2r4rgrugltijbrxoqyvrpxy6udebpod2udcjnuu6qhsj7@roagtke7znaq>
+References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
+ <20251110232642.633672-13-yosry.ahmed@linux.dev>
+ <1f39d5a3-e728-4b2b-a9c6-50cbc4fffd17@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display
- subsystem
-To: Conor Dooley <conor@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
-	<hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
-	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
-	Abraham I <kishon@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
-	Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Philipp
-	Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Icenowy Zheng <uwu@icenowy.me>, Maud Spierings
-	<maudspierings@gocontroll.com>, Andy Yan <andyshrk@163.com>, Heiko Stuebner
-	<heiko@sntech.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20251111-matriarch-diocese-b314e7bdaf81@spud>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
-	<20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
-	<20251110-clang-baking-b8b27730356e@spud>
-	<00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
-	<20251111-footing-eclair-332f5f0769f2@spud>
-	<20251111-matriarch-diocese-b314e7bdaf81@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f39d5a3-e728-4b2b-a9c6-50cbc4fffd17@amd.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 11/11/25 19:37, Conor Dooley wrote:
-> On Tue, Nov 11, 2025 at 06:14:48PM +0000, Conor Dooley wrote:
->> On Tue, Nov 11, 2025 at 04:33:28PM +0100, Michal Wilczynski wrote:
->>>
->>>
->>> On 11/10/25 20:35, Conor Dooley wrote:
->>>> On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
->>>>> This series enables the display subsystem on the StarFive JH7110 SoC.
->>>>> This hardware has a complex set of dependencies that this series aims to
->>>>> solve.
->>>>>
->>>>> I believe this is a PHY tuning issue that can be fixed in the new
->>>>> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
->>>>> I plan to continue debugging these modes and will submit follow up fixes
->>>>> as needed.
->>>>>
->>>>> The core architectural plumbing is sound and ready for review.
->>>>>
->>>>> Notes:
->>>>> - The JH7110 does not have a centralized MAINTAINERS entry like the
->>>>>   TH1520, and driver maintainership seems fragmented. I have therefore
->>>>>   added a MAINTAINERS entry for the display subsystem and am willing to
->>>>>   help with its maintenance.
->>>>
->>>> Yeah, bunch of different folks wrote the drivers, so lots of entries.
->>>> Pretty much all as you've done here, authors are responsible for the
->>>> individual components and Emil is the platform maintainer but
->>>> responsible for most drivers.
->>>>
->>>> Do you need any feedback dt wise on the RFC, or is it too likely that
->>>> we'll both waste our breath if the DRM folks don't approve of your
->>>> approach for the rest of this series?
->>>
->>> Hi Conor,
->>>
->>> Thank you for your response.
->>>
->>> That's a fair point about the risk of the DRM approach being rejected.
->>> While I can't be certain, I'm hopeful that part is relatively
->>> straightforward, as it primarily integrates other recently reviewed
->>> (though not yet merged) components like the inno-hdmi bridge and dc8200
->>> drivers.
->>>
->>> To be honest, I was more concerned that the DT part of the series would
->>> be more problematic. Given that, I would find it very helpful to get
->>> your feedback on the DT aspects now, if you have the time.
->>
->> Right. You'll definitely want some actual DRM people to weigh in though
->> before making changes, I am really not familiar enough with this type of
->> hardware to know if the breakdown is correct.
+On Thu, Nov 13, 2025 at 05:28:11PM +0530, Shivansh Dhiman wrote:
+> Hi Yosry,
 > 
-> It looks generally sane to me chief, but as I said I am not really
-> familiar enough with this sort of hardware to have a real take on it.
-> Sorry, you'll need to get your affirmation about how you've laid stuff
-> out elsewhere :/
+> I tested this on EPYC-Turin and found that some tests seem to be a bit flaky.
+> See below.
 
-Thanks for the look, Conor.
+Which ones? I was also running the tests on EPYC-Turin.
 
-I appreciate the sanity check on the DT side. I'll focus on getting the
-necessary feedback from the DRM maintainers regarding the architectural
-breakdown before spinning a v2.
+> 
+> On 11-11-2025 04:56, Yosry Ahmed wrote:
+> > @@ -3058,55 +3041,64 @@ u64 dbgctl;
+> >  
+> >  static void svm_lbrv_test_guest1(void)
+> >  {
+> > +	u64 from_ip, to_ip;
+> > +
+> >  	/*
+> >  	 * This guest expects the LBR to be already enabled when it starts,
+> >  	 * it does a branch, and then disables the LBR and then checks.
+> >  	 */
+> > +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> > +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
+> 
+> This TEST_EXPECT_EQ is run when LBR is enabled, causing it to change last
+> branch. I tried to move it below wrmsr(MSR_IA32_DEBUGCTLMSR, 0) and it works
+> fine that way.
 
-[Adding Dmitry Baryshkov and highlighting Maxime, Heiko, and Robert]
+It shouldn't matter though because we execute the branch we care about
+after TEST_EXPECT_EQ(), it's DO_BRANCH(guest_branch0) below. Is it
+possible that the compiler reordered them for some reason?
 
-Could you folks take a brief look at the driver split in this series?
+I liked having the check here because it's easier to follow when the
+checks are done at their logical place rather than delayed after
+wrmsr().
 
-Conor has reviewed the DT bindings and they look sane to him, but we
-need to verify that the architectural split between the
-phy-jh7110-inno-hdmi and the DRM bridge driver is acceptable for this
-Innosilicon IP.
+> 
+> >  
+> >  	DO_BRANCH(guest_branch0);
+> >  
+> > -	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> > +	/* Disable LBR before the checks to avoid changing the last branch */
+> >  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);> +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> > +	TEST_EXPECT_EQ(dbgctl, 0);
+> >  
+> > -	if (dbgctl != DEBUGCTLMSR_LBR)
+> > -		asm volatile("ud2\n");
+> > -	if (rdmsr(MSR_IA32_DEBUGCTLMSR) != 0)
+> > -		asm volatile("ud2\n");
+> > +	get_lbr_ips(&from_ip, &to_ip);
+> > +	TEST_EXPECT_EQ((u64)&guest_branch0_from, from_ip);
+> > +	TEST_EXPECT_EQ((u64)&guest_branch0_to, to_ip);
+> >  
+> > -	GUEST_CHECK_LBR(&guest_branch0_from, &guest_branch0_to);
+> >  	asm volatile ("vmmcall\n");
+> >  }
+> >  
+> >  static void svm_lbrv_test_guest2(void)
+> >  {
+> > +	u64 from_ip, to_ip;
+> > +
+> >  	/*
+> >  	 * This guest expects the LBR to be disabled when it starts,
+> >  	 * enables it, does a branch, disables it and then checks.
+> >  	 */
+> > -
+> > -	DO_BRANCH(guest_branch1);
+> >  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> > +	TEST_EXPECT_EQ(dbgctl, 0);
+> >  
+> > -	if (dbgctl != 0)
+> > -		asm volatile("ud2\n");
+> > +	DO_BRANCH(guest_branch1);
+> >  
+> > -	GUEST_CHECK_LBR(&host_branch2_from, &host_branch2_to);
+> > +	get_lbr_ips(&from_ip, &to_ip);
+> > +	TEST_EXPECT_EQ((u64)&host_branch2_from, from_ip);
+> > +	TEST_EXPECT_EQ((u64)&host_branch2_to, to_ip);
+> >  
+> >  	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+> >  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> > +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
+> 
+> Same thing here as well.
+> 
+> > +
+> >  	DO_BRANCH(guest_branch2);
+> >  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
+> >  
+> > -	if (dbgctl != DEBUGCTLMSR_LBR)
+> > -		asm volatile("ud2\n");
+> > -	GUEST_CHECK_LBR(&guest_branch2_from, &guest_branch2_to);
+> > +	get_lbr_ips(&from_ip, &to_ip);
+> > +	TEST_EXPECT_EQ((u64)&guest_branch2_from, from_ip);
+> > +	TEST_EXPECT_EQ((u64)&guest_branch2_to, to_ip);
+> >  
+> >  	asm volatile ("vmmcall\n");
+> >  }
+> Reviewed-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
+> 
+> Other tests look good to me, and work fine.
+> 
+> Tested-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
 
-I am particularly interested if the current handling of the PHY tuning
-parameters (as described in the cover letter) fits the modern DRM
-bridge/PHY paradigm, or if this should be modeled differently given the
-similarities to Rockchip implementations.
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Thanks!
+> 
 
