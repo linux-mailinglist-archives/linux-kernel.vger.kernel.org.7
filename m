@@ -1,198 +1,110 @@
-Return-Path: <linux-kernel+bounces-899682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FD6C5891C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:06:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB591C588B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6CB84F2AE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:46:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E5A4D36270B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC5935292C;
-	Thu, 13 Nov 2025 15:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39EA2F5A0A;
+	Thu, 13 Nov 2025 15:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B3Xs9nHp"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="O+O8RiMb"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C723235292A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048408; cv=none; b=foQhurbcKzIaCVp9ico6huiUXSAGrFyhbCe3jPDKzVU/4vEvh1ED779ovfRPvmaEwgVEDyHWuOKWPMEC1OzKLfhvRrSk/PghbKfcEJoZv9mS1/H2p43ctgi/jVMojWVPE1UUeHz5iGmxJcs7zccvKNKoJVE6HAReo+c8bIbqezM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048408; c=relaxed/simple;
-	bh=ySJ3Uw/C+Sp36BKE5wBmEZ7l8GO7vzVoDDbnX9U4zjM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U493z1Z4vOOvyqFViLMB7KfHxox4IZk0PNkbJtkq7M6SaLj1Cd1jh92hd+IXB1OwnX7xEZi45Eeb10Fq9xZ5wJWMVQzHQcCO4MgCdseMx/0OABRjp/VkqhXET+TrDUNGi+s8Qp+tPV9Eg9QpN7q6UjjUMB6/6WMTrzM5yQma2RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B3Xs9nHp; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763048404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0l9GVobIiEBn4MKLKhEtp6ycgP49YnylFS2/m8/fMf4=;
-	b=B3Xs9nHpJHYCK2793e3NaaWGuc+DE2BZHqsnJ8Lg2r7I9fFOs3Fgg/SHT2+Tz2BDHSNPjm
-	dn8HIvieEFVLoiTUSVSiZX4h6Js+rTfjvcQtIpDV9onGjDxaF1yme3wWvDgevLowwdQdvU
-	gsBGQKzoRR9cQcOGt0nKXjsGU3vs8G8=
-From: Dawei Li <dawei.li@linux.dev>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev,
-	set_pte_at@outlook.com,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v3 3/3] rpmsg: char: Rework exception handling of rpmsg_eptdev_add()
-Date: Thu, 13 Nov 2025 23:39:09 +0800
-Message-Id: <20251113153909.3789-4-dawei.li@linux.dev>
-In-Reply-To: <20251113153909.3789-1-dawei.li@linux.dev>
-References: <20251113153909.3789-1-dawei.li@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71046351FA2;
+	Thu, 13 Nov 2025 15:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763048429; cv=pass; b=Vl+ORBaB34V11y6fdm1SOZ1JtmHWZRaJRZ+uG2xMvs2E0O97BBa/E/NNan+5chMS/8++BoqIh92vVzSlwYqJGUE/lq3P6k2ke+gxz3Zs/X0X8+MgRpgwFswmXrMK8IjT/RbkWm4nzOqXDNw9mOe9gsV5CjnOeBiWJU90sA4tPn0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763048429; c=relaxed/simple;
+	bh=4fCKpLICjk4fw3t90InQG4ReeV3U8XAuF/jebYZ0WAM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YrpIaZJFb0J24TBEKZl5QkM4Grhx1c8pX2LUV85MFfYvZKCWBdtLAQSvppEcANTMriBPANQyLFhWaul1Dtqc+6CHGyOujdsw8FfgEvUQ1ddjoS0kAizPrdj4R3pcqLI5MQ4TeuYeagpNA/jMN0zC0vi+3BFTEBrIlmuoG2pnfRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=O+O8RiMb; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1763048398; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UNPr05+3rQh/UX8A79WkVE3XBsOWQP3yPWzrXpjH8uXAO6VYGfco9truRuNCJiU89S6PI8j3C9/faqIDz7XeG9HwC+tQ1tnnJ/NaCZIttRDFg4LPXEgGHwqKkaNiFNLbaZlPabhD1fW6tigFh4GMiB4Zff7puNtdc0+Xb5Us3hA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1763048398; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4fCKpLICjk4fw3t90InQG4ReeV3U8XAuF/jebYZ0WAM=; 
+	b=Zv74+CsFskvWeG5gxXcFtH16LGVr8oim8hmGWniEh5pXCcv4aZz0/voktwkcg1AU8KR4JaNa/K1oiG7WIzqsIE6CpVFJNBRhYnpRtZ4y0cAHaah/sYMHex/kRSt+xxd+GzrR+btbW0jDkYucLRrYz8BLI/hMT1alT5OAEqtL+QQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1763048398;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=4fCKpLICjk4fw3t90InQG4ReeV3U8XAuF/jebYZ0WAM=;
+	b=O+O8RiMbN3SSMtvLRz4S4WI6l2OK8qbQtKSMnptUwB+I2GEsR4m4ffWqr+XLIdIZ
+	mNWrcRYE2cskC/7zxd1qo/YthVEOWKj+vuzW9HV1SMVfWLsoA1a9fGRKhVHF8aUXrQm
+	DoDY8nS53KB4W+93qDMp8OFqNlR1vRvsf223HJ9GUSvW1SHk0rognsKb6yUol9gfSoY
+	ZVGYDSakWdmTNHq2egBATXcMbEaooPHUOtfGR4wUoApR/jkEz+IX/PDkSepn8WR2Ckz
+	hnEZg5mHgvsPsTr09JRbrDW4WUiVJvCbUH19NMpCRNYf06Tn9V1jtowzUKTd04yEDFB
+	sfFdHN3BSA==
+Received: by mx.zohomail.com with SMTPS id 1763048395696100.40154822714373;
+	Thu, 13 Nov 2025 07:39:55 -0800 (PST)
+Message-ID: <af984cf6b76fb4cd30f12fbb9ddd889a5e73d036.camel@icenowy.me>
+Subject: Re: [PATCH v2 1/2] dt-bindings: riscv: starfive: add Orange Pi RV
+ board compatible
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Emil Renner Berthing <kernel@esmil.dk>, Albert Ou
+ <aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley
+ <conor+dt@kernel.org>, Drew Fustini <drew@beagleboard.org>, E Shattow
+ <e@freeshell.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Zhu
+ <michael.zhu@starfivetech.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Yao Zi
+ <ziyao@disroot.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 13 Nov 2025 23:39:45 +0800
+In-Reply-To: <CANBLGcxoD5w7ApN9mNHWym2oo5XscV7B0rrU5MF68wiS52Eecw@mail.gmail.com>
+References: <20250930100318.2131968-1-uwu@icenowy.me>
+	 <CANBLGcxoD5w7ApN9mNHWym2oo5XscV7B0rrU5MF68wiS52Eecw@mail.gmail.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ZohoMailClient: External
 
-Rework  error handling of rpmsg_eptdev_add() and its callers, following
-rule of "release resource where it's allocated".
+=E5=9C=A8 2025-11-13=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 02:55 -0800=EF=BC=
+=8CEmil Renner Berthing=E5=86=99=E9=81=93=EF=BC=9A
+> Quoting Icenowy Zheng (2025-09-30 12:03:17)
+> > Orange Pi RV is a newly released JH7110 board by Xunlong.
+> >=20
+> > Add a compatible string to the starfive platform DT binding.
+> >=20
+> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+>=20
+> Hi Icenowy,
+>=20
+> Thanks for the patches! Now that E's patch is in Conor's
+> riscv-dt-for-next branch
+> will you be sending a v3? Also please add a cover letter when you do.
 
-Fixes: 2410558f5f11 ("rpmsg: char: Implement eptdev based on anonymous inode")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPi6gPZE2_ztOjIW@stanley.mountain/
+I will do this when I have time.
 
-Signed-off-by: Dawei Li <dawei.li@linux.dev>
----
- drivers/rpmsg/rpmsg_char.c | 60 +++++++++++++++++++++-----------------
- 1 file changed, 33 insertions(+), 27 deletions(-)
+BTW, your this mail gets DMARC quarantined by my mail provider.
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 0919ad0a19df..92c176e9b0e4 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -460,44 +460,34 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
- 
- 	eptdev->chinfo = chinfo;
- 
--	if (cdev) {
--		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
--		if (ret < 0)
--			goto free_eptdev;
--
--		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
--	}
--
- 	/* Anonymous inode device still need device name for dev_err() and friends */
- 	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
- 	if (ret < 0)
--		goto free_minor_ida;
-+		return ret;
- 	dev->id = ret;
- 	dev_set_name(dev, "rpmsg%d", ret);
- 
--	ret = 0;
--
- 	if (cdev) {
-+		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-+		if (ret < 0) {
-+			ida_free(&rpmsg_ept_ida, dev->id);
-+			return ret;
-+		}
-+
-+		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-+
- 		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
--		if (ret)
--			goto free_ept_ida;
-+		if (ret) {
-+			ida_free(&rpmsg_ept_ida, dev->id);
-+			ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-+			return ret;
-+		}
- 	}
- 
- 	/* We can now rely on the release function for cleanup */
- 	dev->release = rpmsg_eptdev_release_device;
- 
--	return ret;
--
--free_ept_ida:
--	ida_free(&rpmsg_ept_ida, dev->id);
--free_minor_ida:
--	if (cdev)
--		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
--free_eptdev:
--	dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
--	kfree(eptdev);
--
--	return ret;
-+	return 0;
- }
- 
- static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-@@ -509,12 +499,17 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
- 			       struct rpmsg_channel_info chinfo)
- {
- 	struct rpmsg_eptdev *eptdev;
-+	int ret;
- 
- 	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
- 	if (IS_ERR(eptdev))
- 		return PTR_ERR(eptdev);
- 
--	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-+	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-+	if (ret)
-+		kfree(eptdev);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
- 
-@@ -545,6 +540,12 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
- 
- 	ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
- 	if (ret) {
-+		dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-+		/*
-+		 * Avoid put_device() or WARN() will be triggered due to absence of
-+		 * device::release(), refer to device_release().
-+		 */
-+		kfree(eptdev);
- 		return ret;
- 	}
- 
-@@ -572,6 +573,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
- 	struct rpmsg_channel_info chinfo;
- 	struct rpmsg_eptdev *eptdev;
- 	struct device *dev = &rpdev->dev;
-+	int ret;
- 
- 	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
- 	chinfo.src = rpdev->src;
-@@ -590,7 +592,11 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
- 	 */
- 	eptdev->default_ept->priv = eptdev;
- 
--	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-+	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-+	if (ret)
-+		kfree(eptdev);
-+
-+	return ret;
- }
- 
- static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
--- 
-2.25.1
+Thanks,
+Icenowy
+
+>=20
+> /Emil
 
 
