@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-898948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626B7C56647
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:55:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E273BC565A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8EFBF34AFA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FAEB3B6906
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B590331A45;
-	Thu, 13 Nov 2025 08:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C891330316;
+	Thu, 13 Nov 2025 08:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="01BSfI+s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yB3kJO9c";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="01BSfI+s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yB3kJO9c"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ecYx6JBV";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8uEiwxq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC84330B01
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA8D26AEC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763023735; cv=none; b=V06r6PjFVJ13Rrj+yejrqaJ5TdVgY1TTNx3bcn1au6fDK50MFOGyuLRUOXHtPI4qJjbwkRojTGx4/uYFrziPqATSZxVIJbhnJgRcTBA7jVgy+2UjcTDmW18k4RgDuDMjN6T23h+EAWvVuSu8Ga7jjaTDKLipYKjpORgTrl1W3B0=
+	t=1763023778; cv=none; b=Q4b+Hmy4Sva29QxuRF2MKlwOwYEAs6fV3ly3Qw4ees18LaSDDf+En12Euu4Q++BLRbalzzLxn57nlAiU3QkJlJsRolouD2hgsdrqpDVKRAB2vOoN06aazokHD/rsWKzVqVUokfjEwEBGaNomaacZF+rRqqHveMivhlf+gJ2EE6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763023735; c=relaxed/simple;
-	bh=QpRZSgRYd4rH/Xz6ygaw4c+/Y6fFLVpilRKRT4EasCk=;
+	s=arc-20240116; t=1763023778; c=relaxed/simple;
+	bh=3ClZSRwKg6h2JUvk1lfL/Ef52AZNj5csT+dOuK9K3pI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpOkWwWW1hZKymrTu6FvPHzR01CHy6jRvIGwL4o0tCW7sL4PyzMW2c9gS5V6cOjeBoUkWmTYRcJeqb3bQdVBHKCYWEEeoXiq1EoiYA0mzCyfS9k0b0M10oQnlhyNjOYUnlAR16JgK6lr/aDz+R4BZpvY9V12GvAmevWER9POOKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=01BSfI+s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yB3kJO9c; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=01BSfI+s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yB3kJO9c; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5675F216DF;
-	Thu, 13 Nov 2025 08:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763023732;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrK3+c0wkJq7ksUnfd+feZqLeQAgO3OBTC93Ac5KhrIyXZJR48mmo1v6CZmo5sYerQdKhnd9BcMeOvFa5qvD6ULXLOnFbm8Mh0BkNmEOC9TasBSFwPqyjFf2wmfK/Ia+dTox50FY63Yi5BHiC1Jf+HgxJ1BRSwrC2riUcDVXCSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ecYx6JBV; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8uEiwxq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763023776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Sx93JUcv4qcmATAOJy9CUY8HmA2rQg/uUrgQFTjoQzc=;
-	b=01BSfI+sq1wZ8KBFWMyZBVpp+XT48vzzdfIi+dmPEkzaGY9CKu65GZChEVyrOKbYlPNQ+v
-	JAF1PcIJ3fydBwOoBdM0P3OA30nG7WZWdq+7fpVj+tC0BG2OYUj8XeCAFaxz6prvke56EI
-	PpS0v0lqcuxvJQQe3TBwxicu00tuKu4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763023732;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sx93JUcv4qcmATAOJy9CUY8HmA2rQg/uUrgQFTjoQzc=;
-	b=yB3kJO9c+HOn9AX84X0NRkpNPR8ZCtGR7944MubFBhZFgVmmmbPYRJfcT5TDqBMHKvxwEN
-	XUPicfBdOl9PDsAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=01BSfI+s;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=yB3kJO9c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763023732;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sx93JUcv4qcmATAOJy9CUY8HmA2rQg/uUrgQFTjoQzc=;
-	b=01BSfI+sq1wZ8KBFWMyZBVpp+XT48vzzdfIi+dmPEkzaGY9CKu65GZChEVyrOKbYlPNQ+v
-	JAF1PcIJ3fydBwOoBdM0P3OA30nG7WZWdq+7fpVj+tC0BG2OYUj8XeCAFaxz6prvke56EI
-	PpS0v0lqcuxvJQQe3TBwxicu00tuKu4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763023732;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sx93JUcv4qcmATAOJy9CUY8HmA2rQg/uUrgQFTjoQzc=;
-	b=yB3kJO9c+HOn9AX84X0NRkpNPR8ZCtGR7944MubFBhZFgVmmmbPYRJfcT5TDqBMHKvxwEN
-	XUPicfBdOl9PDsAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46D583EA61;
-	Thu, 13 Nov 2025 08:48:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tWUfEXSbFWl3SwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 13 Nov 2025 08:48:52 +0000
-Date: Thu, 13 Nov 2025 09:48:47 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Gladyshev Ilya <foxido@foxido.dev>
-Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 6/8] btrfs: simplify cleanup via scoped_guard()
-Message-ID: <20251113084847.GH13846@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1762972845.git.foxido@foxido.dev>
- <b483e6140d82a068c332b3f15fc6ef11dd438695.1762972845.git.foxido@foxido.dev>
+	bh=p+z22V+mQXu1nf5PZ2QEjbDMajJwQynoOz1yV7a6Q5o=;
+	b=ecYx6JBV/kBkP8nvZ9LWwLcd6JsNnYEEpgtUGoY7XbcUeyLBS+0IX/XV/Gl4bgjBa1B4Di
+	F1m7tURIzwxsb4RyArqddoVkQjPJ8Ocxx3URmsrLorUiwT5KJgdoolciG/gLcBdpuBFfcK
+	RGbeK43t2H8Mvry2JsFrKU/KQF50a0I=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-lhS1voJ6PLavlpDC3azZNA-1; Thu, 13 Nov 2025 03:49:32 -0500
+X-MC-Unique: lhS1voJ6PLavlpDC3azZNA-1
+X-Mimecast-MFC-AGG-ID: lhS1voJ6PLavlpDC3azZNA_1763023771
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47111dc7c5dso2685155e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:49:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1763023771; x=1763628571; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+z22V+mQXu1nf5PZ2QEjbDMajJwQynoOz1yV7a6Q5o=;
+        b=a8uEiwxqD2DI4BC2KdJ6Y7svMM6qTDyPRlzI8DGf+W/tN3chbKheW8wQq52fiVejKf
+         UKdQvVQtG7jm+jDNLjwPc7cRDcNiL4IVFFabtxgg7IKP6v2X179LYEDxkHZ4l3jk66lz
+         eKvkZ35uL1QSd5xeNDS6JO6ylbBI0u6IrJNXIBmL6rFTk4EqRaBf9ZSgpIqC+ZWrFhUC
+         4ULrJEpKy5palsTOXEPE1cc1htKOu6aka+R8Cve9ZiDzLxUcVCZe3IXvVye1/a7u5s1w
+         pZV3swsmyqZlhEaAUrALgIqniBIY58TJNuWonzfl2Mt8zR9Hn0X7BSxOKH1yehXnxZbQ
+         vJXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763023771; x=1763628571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p+z22V+mQXu1nf5PZ2QEjbDMajJwQynoOz1yV7a6Q5o=;
+        b=VlBqMVaEvkwc2Y5WZ6WkvtGrjOunHMXACDN30xQdCI7UCjQwLfdm6+6F019+UEkibu
+         WybSzGVHyPcZv8pX9MUJqWeRFCn3K0a+zp5Z08OXmWEAlSBEOkzyh4ZYKKx2aD3riu5t
+         8kw1YxDFcpiM9H3Twc2XKsNmjJh9D1DVl23cKhSxdD20sd1/fHWINj/TSqF/8FSMyPAI
+         /H0Su3+MJ7rj9gs4BJhkJwONWbXKHOLeQgJqmw8gxFSjRAUYNrVzTsm9DRn87q3SiOJ6
+         M8JNs0/XOJqEBXlUYxQuiWfm2N7n+x3pj5qp0pEAVhzWEZ4yYCWtF+v5Y6oJ0i/D0gIn
+         svXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSTlr/fpeB1EBXQftZrsoilyHHwfTUdJKZpEWEHIFwACa/4LSINSWwkfcxB43cQl82CLwcyBUoz9/lx8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLDpL2pXR3ARlSqXC/iFds8y8ehmlU6gwNsD9znKfBkPRrvvUF
+	2shTxsmanbpGVmZj4DZoiNw82IGREdZa8U6m7w8gF2Nv9hD21AzIXulxUBqe/AKjTzz/RjdE3lx
+	8YPv+16u4TTElwhy0Ctb+neCs7oGOIExaXgqPc3JkXpeIy+HTZW32qnMoa15rg7RYQQ==
+X-Gm-Gg: ASbGncu4rPrfMh2h+R/Y6a92hrGk2U5GnlhaFl49E/lriqobnYYYJEZxE39MQl8/LfH
+	csyGgQlHrzBcbyHrMRljf5s+opBf7OnMEkcJueVE4eh6HPNBPtFt0nf61gZHmVASVXo8OxU1aZY
+	4WWyqP6mv7MaLIOSCgckC0HiJ08OxxQg3Ju9g+C0E1drZ41czjsCxZCMDrTVbSXxwP/s7Gg5QY0
+	EEO0kLdqEQT0JE9cMPrMLnRFvDzXgAi6lUhRwYrf0PMMVPYk+ItKZSfkJEIMF7lv3v7TQ7Ddw20
+	iMOsD+LlFwshksE7j5KRAKR21q2NDHr+uddSwU6WcyVv+OLYvjQ2p/Edeg2gQJVdkIbeJrDyJ+D
+	QSGaZhCxqMp+yJhwY15A=
+X-Received: by 2002:a05:600c:2e0c:b0:46f:b42e:e363 with SMTP id 5b1f17b1804b1-4778bd3c9d3mr12295625e9.20.1763023771339;
+        Thu, 13 Nov 2025 00:49:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG45gCQVBXnCfVUnX5RAwHFpjHJLZDprccGjGKuZEJPutU0CB1G4S4/9nDPL6TE+hr7KwP6dA==
+X-Received: by 2002:a05:600c:2e0c:b0:46f:b42e:e363 with SMTP id 5b1f17b1804b1-4778bd3c9d3mr12295425e9.20.1763023770818;
+        Thu, 13 Nov 2025 00:49:30 -0800 (PST)
+Received: from redhat.com (IGLD-80-230-39-63.inter.net.il. [80.230.39.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f2a7ddsm2605263f8f.47.2025.11.13.00.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 00:49:30 -0800 (PST)
+Date: Thu, 13 Nov 2025 03:49:27 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jason Wang <jasowang@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of Linus' tree
+Message-ID: <20251113031422-mutt-send-email-mst@kernel.org>
+References: <20251113125537.0d08e5ce@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,66 +109,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b483e6140d82a068c332b3f15fc6ef11dd438695.1762972845.git.foxido@foxido.dev>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5675F216DF
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5]
-X-Spam-Score: -4.21
+In-Reply-To: <20251113125537.0d08e5ce@canb.auug.org.au>
 
-On Wed, Nov 12, 2025 at 09:49:42PM +0300, Gladyshev Ilya wrote:
-> Simplify cases with multiple unlock paths like
+On Thu, Nov 13, 2025 at 12:55:37PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> spin_lock(&lock);
-> if (something) {
->         spin_unlock(&lock);
->         goto faraway; // or return
-> }
-> spin_unlock(&lock);
+> Today's linux-next build (htmldocs) produced these warnings:
 > 
-> with scoped_guards() to improve readability and robustness.
+> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:174 duplicate section name 'Return'
+> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:184 duplicate section name 'Return'
+> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:190 duplicate section name 'Return'
 > 
-> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
-> ---
->  fs/btrfs/block-group.c      | 20 +++++-------
->  fs/btrfs/compression.c      | 13 ++++----
->  fs/btrfs/extent-tree.c      |  8 ++---
->  fs/btrfs/extent_io.c        | 33 +++++++++----------
->  fs/btrfs/free-space-cache.c | 63 +++++++++++++++----------------------
->  fs/btrfs/qgroup.c           | 38 +++++++++++-----------
->  fs/btrfs/send.c             | 37 ++++++++++------------
->  fs/btrfs/tree-log.c         | 13 +++-----
+> Introduced by commit
+> 
+>   bee8c7c24b73 ("virtio: introduce map ops in virtio core")
+> 
+> but is probably a bug in our scripts as those lines above have "Returns:"
+> in them, not "Return:".
+> 
+> These have turned up now since a bug was fixed that was repressing a
+> lot of warnings.
 
-This is probably the best example of the worst case of the conversions.
-8 files changed, many of them likely target of future fixes that would
-need to be backported, churn in many lines besides locking, code flow
-and error handling is supposed to be improved but each instance needs to
-be verified anyway. So this is quite costly cleanup.
+Indeed. But the rest of header says Returns ... without : so I will just
+fix this one to do the same. I also fixed other issues in the comments
+in this header while I was at it. Will post shortly.
+
+
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
 
