@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-899003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A982FC5681F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:11:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D84C5689D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC7C3B8093
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:11:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5C75345754
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F6B2D73B4;
-	Thu, 13 Nov 2025 09:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580DE3161A6;
+	Thu, 13 Nov 2025 09:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddwA9E2Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js1Xtar+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ACC29ACC6;
-	Thu, 13 Nov 2025 09:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D4729ACC6;
+	Thu, 13 Nov 2025 09:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763025072; cv=none; b=Iniy1quywgeQTcipgOu5j73Bdj9WrVY+oIC3DNJ/S41Ps/0WXm3gSPC9KQ+b2aFrTA/9EwQ6QxMnZP4ODi176o/vQYRp91xM9gaEO8ll7+vRCkflMXaWEWG63cCGcDJCj3b3z63N4viyB7oce0TcxGkp3+kRx5xY6SNtp2K28K4=
+	t=1763025174; cv=none; b=N/koSe17EfYxs//atk8KEInN+I0sbsabdcpi4aqYlGt6JMyDv73X4OmI4WBYbcL0Y7LspobO1jKOND+MkKtiN6kcLdbDcxxntPhuTJ1UCzCTG8bjAWtIfk9FDdgRaDKWMMj16vdr77yAej4ZTtQz5pyQsqyhurwy743qyMf5lik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763025072; c=relaxed/simple;
-	bh=F4vYXnO4KOazwQtNvDE7fR44gVvY4KjI/Ci2Vw+Yv2M=;
+	s=arc-20240116; t=1763025174; c=relaxed/simple;
+	bh=Z5sCgPCZvSjgs/rZdisIFqpHsRyOQUvFSlrjPGt7aks=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=urWF5kK/fesugeAj5NW9f6kVPLLpWMIcqGSIzG3RwT/jW5XjO6y2BKdXJGzc7h7tsAyMxOGW9t21tJV+h7Zx0rB6kUeqLrr00/SkyCOU4H56w5MjEkUIRYX1jcKfZGd3QUPwPASESbeIM1VK0/ndjWd2DEbUAuPbmBBf3ZzQI9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddwA9E2Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFECC113D0;
-	Thu, 13 Nov 2025 09:11:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dT2q4+SjXr1RuwdQnZJTGQW7Cdo5Sz+VMc0O5JkrzA0tvlvi1GKmKYFNPIvZyhVn2r3gf8JsqgxHzc/6eD+/jMPF8zqpKSESuEjJPCSbnK2CDkqJIAysvm4xWYzJ6ErWhLyVWhZwnar8kljeZuqegsUbFMVYHGICWLEl8E0Z1lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js1Xtar+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8961FC116D0;
+	Thu, 13 Nov 2025 09:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763025071;
-	bh=F4vYXnO4KOazwQtNvDE7fR44gVvY4KjI/Ci2Vw+Yv2M=;
+	s=k20201202; t=1763025174;
+	bh=Z5sCgPCZvSjgs/rZdisIFqpHsRyOQUvFSlrjPGt7aks=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ddwA9E2QrvNU4TnFFDeOkvE5tN0i+t1ENd+jjyP8VkeLFFtninOl8oSqGhZ70KV++
-	 /UufdD7KbdnZmwd9awbPuu1TTcAIBYHqKL7/mTxS3+9Y1Oj8a4tGMuyWR1XaCTdUm2
-	 p68yCGyAIADKRraJ13myIQO4sqgOOqMZg8KvLJZpWJP0UhVd91m28aaZ7e5swKJuGE
-	 kgKOzRoT7tDqCkroU0i2h2cLIqnuce5AM48c40sgcU4pk89pxg+x0WHlcUBe6kAlfT
-	 2YAn1aSa7nv2niWsCsmHSNsC7a85dDmTb119FUyk2sVwfiKHHLPBGJH2z8TJGDlEd4
-	 PRaIM8luDOgpg==
-Message-ID: <a84afd6d-a9ec-48f2-b681-7ad6f6e428cb@kernel.org>
-Date: Thu, 13 Nov 2025 10:11:06 +0100
+	b=js1Xtar+fTSewmsuYTUDV0A10GwT1XwZRx6McGr5fuhCLx+B/K0lhzeuyv2ODyQ8j
+	 dzVDfodH2T1lzzzR+sFgCLZDevpZObzcriZtoI2WR99HzwPJaIBpMEy0AQ1VAcaxnj
+	 XfTge17udmZjuUktYV9iuV0hSYSgEVXueTxrPeZqNNaQLR6cqlcvzCoOULt5ArEyDx
+	 JyFojC1d1oVWBv7fI8DH7ghzws40fd9jgrwPycRAhHLKNg+ve3zsz3TZjloj6gTN3a
+	 NgQgsLYZx8Lcy8GkXyUAdfQKWPPpbV6+ue2pFBnhjlF7/Fev2DyP/9AiVG4/t6rcRt
+	 1fgoxerYV/+WA==
+Message-ID: <4f302c55-b0a2-46c0-8cd3-0eb7bb9bac86@kernel.org>
+Date: Thu, 13 Nov 2025 10:12:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: agilex5: add fpga-region and fpga-mgr
- nodes
-To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>,
- Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
- Tom Rix <trix@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
- "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
- "Rabara, Niravkumar Laxmidas" <nirav.rabara@altera.com>,
- "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1763008269.git.khairul.anuar.romli@altera.com>
- <9a4ce6b2470328b9326402a2f00ff285be1793c3.1763008269.git.khairul.anuar.romli@altera.com>
- <aRVyvjCny/I/rElC@yilunxu-OptiPlex-7050>
- <c7470b9e-5c8f-4498-a752-9c986de8aca2@kernel.org>
- <59344226-be4f-4c90-b7dc-8c2a5a471d80@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <59344226-be4f-4c90-b7dc-8c2a5a471d80@altera.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net v5 0/3] mptcp: Fix conflicts between MPTCP and sockmap
+Content-Language: en-GB, fr-BE
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Christoph Paasch <cpaasch@apple.com>, Florian Westphal <fw@strlen.de>,
+ Peter Krystad <peter.krystad@linux.intel.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20251111060307.194196-1-jiayuan.chen@linux.dev>
+ <cf035c68-fe96-49e0-acdb-bf813ae71d57@kernel.org>
+ <20251112182349.281a6a11@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20251112182349.281a6a11@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/11/2025 10:09, Romli, Khairul Anuar wrote:
-> On 13/11/2025 3:12 pm, Krzysztof Kozlowski wrote:
->> On 13/11/2025 06:55, Xu Yilun wrote:
->>> On Thu, Nov 13, 2025 at 12:43:56PM +0800, Khairul Anuar Romli wrote:
->>>> The Intel Agilex 5 SoC contains a programmable FPGA region that requires
->>>> proper device tree description to enable FPGA manager support in the Linux
->>>> kernel. Without the 'fpga-region' and 'fpga-mgr' nodes, the kernel cannot
->>>> detect or manage the FPGA hardware correctly.
->>>>
->>>> This patch adds a 'fpga-region' node with compatible = "fpga-region", along
->>>> with appropriate #address-cells and #size-cells properties, to describe the
->>>> FPGA region layout.
->>>>
->>>> Also defines specific compatible string for Agilex5 and add Agilex string
->>>> as fallback for stratix10-soc driver initialization.
->>>>
->>>> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
->>>
->>> Reviewed-by: Xu Yilun <yilun.xu@intel.com>
->>
->> How this can be reviewed if it is completely wrong and obviously not
->> matching the bindings from this patchset?
->>
->> Best regards,
->> Krzysztof
+Hi Jakub,
+
+On 13/11/2025 03:23, Jakub Kicinski wrote:
+> On Tue, 11 Nov 2025 11:35:04 +0100 Matthieu Baerts wrote:
+>> I think this series can be applied directly in 'net', if that's OK for
+>> both of you.
 > 
-> Could you point out which part that I need to fix?
->
+> Also no preference here, Martin mentioned he will take it via bpf
+> tomorrow. 
+> 
+> Please let us know on the off chance that you have anything that may
+> conflict queued up. These will likely need a week of travel before 
+> they reach net in this case.
 
-Why? Tools tell you that. Why are you expecting the community to do the
-job of compiler/toolchain/toolset? We have better things to do.
+No problem for me, this can go to bpf-net first. We don't have pending
+patches modifying these parts.
 
-Best regards,
-Krzysztof
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
