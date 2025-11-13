@@ -1,171 +1,136 @@
-Return-Path: <linux-kernel+bounces-899489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B629EC57E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBB2C57E61
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 877B4354945
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:19:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15A69352E80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842AE28642A;
-	Thu, 13 Nov 2025 14:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F9C29B795;
+	Thu, 13 Nov 2025 14:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="IephhnrP"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CMQdT9nS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B923184F;
-	Thu, 13 Nov 2025 14:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4788C283FCF;
+	Thu, 13 Nov 2025 14:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043583; cv=none; b=GjYRhqcKEYfP8mRHhznZenlGY98N2+k88xdzlvHj+AiC3+M+wdm8Dd4qODmtPnA+NmzW6jUpYpQF++J+XVWrlo22PAlpvR/jXjXDB/8YfngV9sLBKH1FWyPRFOltt44FDaccwJX/lW364Cet7hki2VdkQA+WU6kAMNb+VwYzZWU=
+	t=1763043636; cv=none; b=UMtynqANIP6M0fpHYVQ/OGElEChqp0LANpTV2UMjoMwpumd5psBlDGnMhklGk3B1Vi0nJQZDYC3o37dFW3uDrr4qBAEZgCidZUmVUomuF85M3kNGAr7wOMclsu/7/yktNZTj9XhIWs1rn/C/iUM3v7rx/aX4e0r/2dLPkyHp1v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043583; c=relaxed/simple;
-	bh=bs2hLzYFkAifyPHun/4f2kG/5n36uHbTEXjb3QbpsOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kb94KdEwAJmOlfzmYhSSeVSurk5U2OJKZjfMSzi5RIL0ar5Hk2P/Gdm32sSddrZwr/I2ER7EevDvcom7O4bu6kLzmjoZrKOwDhNMlrsEy9v+jOd/3c0KGd3/X5txznr0mNP73MMI3aLzbN4+ru9T5CmQapIGzhK9fN0kPitudnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=IephhnrP; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=lbaeXo4KE9yMfmuYX6R1L5QpV2vTC1shul/jR3qCbUY=;
-	b=IephhnrPjI3WgO4hXW6woAtfholMSI/VQ4vQlLE/hp99p/ay01ajxwAx1BuC2ukiL3J+T+L05
-	s73Ob+3z5xfYsdxmiCtyqlKZEUO6+GfkoSL2WopLoIRsjxEzeNkv2X0+meo3uF7TUEY1a+oiEQv
-	wdRXrTozJdaCb7nNal9dcVQ=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d6j6C3sltz1prLD;
-	Thu, 13 Nov 2025 22:17:55 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 618A0180B65;
-	Thu, 13 Nov 2025 22:19:36 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 13 Nov 2025 22:19:36 +0800
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 13 Nov 2025 22:19:35 +0800
-Message-ID: <017956b9-cb91-4068-b9d0-b54f93d83eeb@huawei.com>
-Date: Thu, 13 Nov 2025 22:19:34 +0800
+	s=arc-20240116; t=1763043636; c=relaxed/simple;
+	bh=Ez21oCeR/D7jOAfKfYGFyt8PVi8WJ2ggvy6jPsX1oMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1McEc0tfY7+AiNxPHLTh+aIUxbLEHw/9tn8iOgKb5n0VnyziiIeh3hybPip5uqxumvtmDVUuN7hV852JnIZJdBiwodCIrfjbrS9dmhRsTYcmlPonMjhHSnTYCuKkkdLhw7iBIBXoNIKTiL9NG4XwIfSCseCsEP0y1O7MVt4JOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CMQdT9nS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 570E040E016E;
+	Thu, 13 Nov 2025 14:20:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fGZ6EuzSPpOF; Thu, 13 Nov 2025 14:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1763043617; bh=yBzDk8Y1rtJ2oZzF/4QRQXF4ByKuuVzrVG5wq9b+gAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CMQdT9nStbhDl+Fg4qKoojRC8T5/QoDz6Gfw49dSrU1chL+ZyoUgeFxTwI4a9alau
+	 VhT7l/fPm5TvbTKmzr5hzmHvakmiKS7bHDuBVb+znxOUPQpgWDWMV4puVCz4+hCQM6
+	 mEE8XT95I2HYZ9yldSZBKCl2K8vXIIzAyTlNDgJvcIptJWyRwPig54NfkhoE6oOhgs
+	 +iJm/l8luYk8adDIMnnul3xgFOYVakMkw+JvhHG9OSeWS4QHd5DUKfJdxORv03wKUK
+	 s0lBEBwY+NAXmLkRKpq4HGw4NNZOmFMwW0ODgHsEwefPz4g6Mh2wro6QGIHXPcOwlJ
+	 YcYVWrpMmbphWqss6jLXlcJID53iea/SIAQdYGQQeza+vKRCJFSnaooFSK9Q49HGJO
+	 7g2FKJjoRt18TC+zhwqt5NY4hJ/tZIolUl5Q5gmBSi4/9StAPEHIiiXX7puugx3hao
+	 gTPISERwFQQCzwNRHEv5HesEv11W0SJdc1jkytFX06+y1jWaFddsgWzvJjmwVBtxUD
+	 pTRnmPIj0DByt7gfaCMtx2HdRSSxggpXJLriBzmep9kRCWZbzSKzfVcF+L6yu0D27X
+	 HT7czSgttzUwp1lbsuIMUD5UmflCw8Q01Xp9SwiHmyPIOJP5AbF/t5T31Gm6X1q247
+	 MMuvvBhFclDB/mHIWbRe/wjk=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C13B740E0219;
+	Thu, 13 Nov 2025 14:20:07 +0000 (UTC)
+Date: Thu, 13 Nov 2025 15:20:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
+ assembly via ALTERNATIVES_2
+Message-ID: <20251113142000.GAaRXpEKHh1oQgN65e@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-5-seanjc@google.com>
+ <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+ <aRTAlEaq-bI5AMFA@google.com>
+ <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
+ <aRTubGCENf2oypeL@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 4/4] arm64/io: Add {__raw_read|__raw_write}128 support
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <arnd@arndb.de>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<akpm@linux-foundation.org>, <anshuman.khandual@arm.com>,
-	<ryan.roberts@arm.com>, <andriy.shevchenko@linux.intel.com>,
-	<herbert@gondor.apana.org.au>, <linux-kernel@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-crypto@vger.kernel.org>, <linux-api@vger.kernel.org>,
-	<fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
-	<qianweili@huawei.com>
-References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
- <20251112015846.1842207-5-huangchenghai2@huawei.com>
- <aRR9UesvUCFLdVoW@J2N7QTR9R3>
-From: huangchenghai <huangchenghai2@huawei.com>
-Content-Language: en-US
-In-Reply-To: <aRR9UesvUCFLdVoW@J2N7QTR9R3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aRTubGCENf2oypeL@google.com>
 
+On Wed, Nov 12, 2025 at 12:30:36PM -0800, Sean Christopherson wrote:
+> They're set based on what memory is mapped into the KVM-controlled page tables,
+> e.g. into the EPT/NPT tables, that will be used by the vCPU for that VM-Enter.
+> root->has_mapped_host_mmio is per page table.  vcpu->kvm->arch.has_mapped_host_mmio
+> exists because of nastiness related to shadow paging; for all intents and purposes,
+> I would just mentally ignore that one.
 
-在 2025/11/12 20:28, Mark Rutland 写道:
-> On Wed, Nov 12, 2025 at 09:58:46AM +0800, Chenghai Huang wrote:
->> From: Weili Qian <qianweili@huawei.com>
->>
->> Starting from ARMv8.4, stp and ldp instructions become atomic.
-> That's not true for accesses to Device memory types.
->
-> Per ARM DDI 0487, L.b, section B2.2.1.1 ("Changes to single-copy atomicity in
-> Armv8.4"):
->
->    If FEAT_LSE2 is implemented, LDP, LDNP, and STP instructions that load
->    or store two 64-bit registers are single-copy atomic when all of the
->    following conditions are true:
->    • The overall memory access is aligned to 16 bytes.
->    • Accesses are to Inner Write-Back, Outer Write-Back Normal cacheable memory.
->
-> IIUC when used for Device memory types, those can be split, and a part
-> of the access could be replayed multiple times (e.g. due to an
-> intetrupt).
->
-> I don't think we can add this generally. It is not atomic, and not
-> generally safe.
->
-> Mark.
-Thanks for your correction. I misunderstood the behavior of LDP and
-STP instructions. So, regarding device memory types, LDP and STP
-instructions do not guarantee single-copy atomicity.
+And you say they're very dynamic because the page table will ofc very likely
+change before each VM-Enter. Or rather, as long as the fact that the guest has
+mapped host MMIO ranges changes. Oh well, I guess that's dynamic enough...
 
-For devices that require 128-bit atomic access, is it only possible
-to implement this functionality in the driver?
+> Very lightly tested at this point, but I think this can all be simplified to
+> 
+> 	/*
+> 	 * Note, ALTERNATIVE_2 works in reverse order.  If CLEAR_CPU_BUF_VM is
+> 	 * enabled, do VERW unconditionally.  If CPU_BUF_VM_MMIO is enabled,
+> 	 * check @flags to see if the vCPU has access to host MMIO, and do VERW
+> 	 * if so.  Else, do nothing (no mitigations needed/enabled).
+> 	 */
+> 	ALTERNATIVE_2 "",									  \
+> 		      __stringify(testl $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, WORD_SIZE(%_ASM_SP); \
+> 				  jz .Lskip_clear_cpu_buffers;					  \
+> 				  VERW;								  \
+> 				  .Lskip_clear_cpu_buffers:),					  \
 
-Chenghai
->
->> Currently, device drivers depend on 128-bit atomic memory IO access,
->> but these are implemented within the drivers. Therefore, this introduces
->> generic {__raw_read|__raw_write}128 function for 128-bit memory access.
->>
->> Signed-off-by: Weili Qian <qianweili@huawei.com>
->> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->> ---
->>   arch/arm64/include/asm/io.h | 21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
->> index 83e03abbb2ca..80430750a28c 100644
->> --- a/arch/arm64/include/asm/io.h
->> +++ b/arch/arm64/include/asm/io.h
->> @@ -50,6 +50,17 @@ static __always_inline void __raw_writeq(u64 val, volatile void __iomem *addr)
->>   	asm volatile("str %x0, %1" : : "rZ" (val), "Qo" (*ptr));
->>   }
->>   
->> +#define __raw_write128 __raw_write128
->> +static __always_inline void __raw_write128(u128 val, volatile void __iomem *addr)
->> +{
->> +	u64 low, high;
->> +
->> +	low = val;
->> +	high = (u64)(val >> 64);
->> +
->> +	asm volatile ("stp %x0, %x1, [%2]\n" :: "rZ"(low), "rZ"(high), "r"(addr));
->> +}
->> +
->>   #define __raw_readb __raw_readb
->>   static __always_inline u8 __raw_readb(const volatile void __iomem *addr)
->>   {
->> @@ -95,6 +106,16 @@ static __always_inline u64 __raw_readq(const volatile void __iomem *addr)
->>   	return val;
->>   }
->>   
->> +#define __raw_read128 __raw_read128
->> +static __always_inline u128 __raw_read128(const volatile void __iomem *addr)
->> +{
->> +	u64 high, low;
->> +
->> +	asm volatile("ldp %0, %1, [%2]" : "=r" (low), "=r" (high) : "r" (addr));
->> +
->> +	return (((u128)high << 64) | (u128)low);
->> +}
->> +
->>   /* IO barriers */
->>   #define __io_ar(v)							\
->>   ({									\
->> -- 
->> 2.33.0
->>
->>
+And juse because that label is local to this statement only, you can simply
+call it "1" and reduce clutter even more.
+
+> 		      X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO,					  \
+> 		      __stringify(VERW), X86_FEATURE_CLEAR_CPU_BUF_VM
+> 
+> 	/* Check if vmlaunch or vmresume is needed */
+> 	testl $VMX_RUN_VMRESUME, WORD_SIZE(%_ASM_SP)
+> 	jz .Lvmlaunch
+
+Yap, that's as nice as it gets. Looks much more straight-forward and
+contained.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
