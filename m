@@ -1,136 +1,210 @@
-Return-Path: <linux-kernel+bounces-899491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBB2C57E61
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:22:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9A4C57E58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15A69352E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:20:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 754C035161C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F9C29B795;
-	Thu, 13 Nov 2025 14:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B4F285CA9;
+	Thu, 13 Nov 2025 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CMQdT9nS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="hxiaim13"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4788C283FCF;
-	Thu, 13 Nov 2025 14:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59C273D6D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043636; cv=none; b=UMtynqANIP6M0fpHYVQ/OGElEChqp0LANpTV2UMjoMwpumd5psBlDGnMhklGk3B1Vi0nJQZDYC3o37dFW3uDrr4qBAEZgCidZUmVUomuF85M3kNGAr7wOMclsu/7/yktNZTj9XhIWs1rn/C/iUM3v7rx/aX4e0r/2dLPkyHp1v4=
+	t=1763043633; cv=none; b=WsHlkKXq2IWr75HJyjV8ZxMYAsKwjXat2XywyobdPZolEdA7fzS2IseqqQIjvG8Mpzmf1fZsARRqisuHHjQMMlWvjEMNacknrBGr65w9YBcGK5wn08jLXBUkdxugtwlx9XbszItCpcrSW3VUAr6eRh40qemB5LHa62sFi1pkID0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043636; c=relaxed/simple;
-	bh=Ez21oCeR/D7jOAfKfYGFyt8PVi8WJ2ggvy6jPsX1oMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1McEc0tfY7+AiNxPHLTh+aIUxbLEHw/9tn8iOgKb5n0VnyziiIeh3hybPip5uqxumvtmDVUuN7hV852JnIZJdBiwodCIrfjbrS9dmhRsTYcmlPonMjhHSnTYCuKkkdLhw7iBIBXoNIKTiL9NG4XwIfSCseCsEP0y1O7MVt4JOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CMQdT9nS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 570E040E016E;
-	Thu, 13 Nov 2025 14:20:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fGZ6EuzSPpOF; Thu, 13 Nov 2025 14:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1763043617; bh=yBzDk8Y1rtJ2oZzF/4QRQXF4ByKuuVzrVG5wq9b+gAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CMQdT9nStbhDl+Fg4qKoojRC8T5/QoDz6Gfw49dSrU1chL+ZyoUgeFxTwI4a9alau
-	 VhT7l/fPm5TvbTKmzr5hzmHvakmiKS7bHDuBVb+znxOUPQpgWDWMV4puVCz4+hCQM6
-	 mEE8XT95I2HYZ9yldSZBKCl2K8vXIIzAyTlNDgJvcIptJWyRwPig54NfkhoE6oOhgs
-	 +iJm/l8luYk8adDIMnnul3xgFOYVakMkw+JvhHG9OSeWS4QHd5DUKfJdxORv03wKUK
-	 s0lBEBwY+NAXmLkRKpq4HGw4NNZOmFMwW0ODgHsEwefPz4g6Mh2wro6QGIHXPcOwlJ
-	 YcYVWrpMmbphWqss6jLXlcJID53iea/SIAQdYGQQeza+vKRCJFSnaooFSK9Q49HGJO
-	 7g2FKJjoRt18TC+zhwqt5NY4hJ/tZIolUl5Q5gmBSi4/9StAPEHIiiXX7puugx3hao
-	 gTPISERwFQQCzwNRHEv5HesEv11W0SJdc1jkytFX06+y1jWaFddsgWzvJjmwVBtxUD
-	 pTRnmPIj0DByt7gfaCMtx2HdRSSxggpXJLriBzmep9kRCWZbzSKzfVcF+L6yu0D27X
-	 HT7czSgttzUwp1lbsuIMUD5UmflCw8Q01Xp9SwiHmyPIOJP5AbF/t5T31Gm6X1q247
-	 MMuvvBhFclDB/mHIWbRe/wjk=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C13B740E0219;
-	Thu, 13 Nov 2025 14:20:07 +0000 (UTC)
-Date: Thu, 13 Nov 2025 15:20:00 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251113142000.GAaRXpEKHh1oQgN65e@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
- <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
- <aRTAlEaq-bI5AMFA@google.com>
- <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
- <aRTubGCENf2oypeL@google.com>
+	s=arc-20240116; t=1763043633; c=relaxed/simple;
+	bh=pEtsXEYDUVwFnZGZDZwf6LQ8RdbFl0B6scfu0LRUXU4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LiFxLIwKkPoiM/GBzN8tly5Zi8FkTPcFzV4yF5G7HskNejwF3+tUgy1h8FhI0MUliv8qeLtQ7DbYTlhPf/ItefVlVqW/Xh8mIpbJB81qktsskIyEw5rauaW2fD6WY8Yo5mJbmqebRkbapR7HmwnpOvYGApTjunSRM6LfWFNda1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=hxiaim13; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 94FBC240027
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:20:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1763043629; bh=adBBVnRsn7HOZmzACpymK40j8Veheszabl7lrdMc79A=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:OpenPGP:From;
+	b=hxiaim13XwzrRzvQbESQJXjOvYQ/Dic4Lb1HI7/lgpMEOXn023bOb+Rgq1pbsnvky
+	 FDKMKtmBETr8DQEnih94rJ6G6BJ21BF8wLCW8LF8A3mwv5USD/j2wI8mQvV7sxM2bj
+	 KHPQLVOiMEGCH2nUROZLiWZ1qDOoJlEnrCOSeRjuq5hbnXkME4PNSc/NoinnFWHrSF
+	 Iirv/PglOPT4ykloyPcd5Ow+FGj2S6SbKqCEXu4xewPzmwal/ZHjC8ZjRHwk7PwZ1O
+	 Fl2phDovweFVepue48y9ypQhwCwvtBUj/YQB1wmCULEkLbn5Ad/3sRKa8DOWzN2IMU
+	 iZhv9aHXeHlWQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4d6j961Yhdz9rxN;
+	Thu, 13 Nov 2025 15:20:26 +0100 (CET)
+Message-ID: <bf4192fd466571f798023b70c3e83e19448d8149.camel@posteo.de>
+Subject: Re: [PATCH v7 0/2] rust: leds: add led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda
+	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich
+	 <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones
+	 <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+  Leon Romanovsky	 <leon@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, 	bjorn3_gh@protonmail.com, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross	 <tmgross@umich.edu>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 13 Nov 2025 14:20:28 +0000
+In-Reply-To: <20251027200547.1038967-1-markus.probst@posteo.de>
+References: <20251027200547.1038967-1-markus.probst@posteo.de>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ R3rOFHA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aRTubGCENf2oypeL@google.com>
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Wed, Nov 12, 2025 at 12:30:36PM -0800, Sean Christopherson wrote:
-> They're set based on what memory is mapped into the KVM-controlled page tables,
-> e.g. into the EPT/NPT tables, that will be used by the vCPU for that VM-Enter.
-> root->has_mapped_host_mmio is per page table.  vcpu->kvm->arch.has_mapped_host_mmio
-> exists because of nastiness related to shadow paging; for all intents and purposes,
-> I would just mentally ignore that one.
+On Mon, 2025-10-27 at 20:06 +0000, Markus Probst wrote:
+> This patch series has previously been contained in
+> https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.pro=
+bst@posteo.de/T/#t
+> which added a rust written led driver for a microcontroller via i2c.
+>=20
+> As the reading and writing to the i2c client via the register!
+> macro has not been implemented yet [1], the patch series will only
+> contain the additional abstractions required.
+>=20
+> [1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@ker=
+nel.org/
+>=20
+> The following changes were made:
+> * add abstraction to convert a device reference to a bus device
+>   reference for use in class device callbacks
+>=20
+> * add basic led classdev abstractions to register and unregister leds
+>=20
+> Changes since v6:
+> * fixed typos
+> * improved documentation
+>=20
+> Changes since v5:
+> * rename `IntoBusDevice` trait into `AsBusDevice`
+> * fix documentation about `LedOps::BLOCKING`
+> * removed dependency on i2c bindings
+> * added `AsBusDevice` implementation for `platform::Device`
+> * removed `device::Device` fallback implementation
+> * document that `AsBusDevice` must not be used by drivers and is
+>   intended for bus and class device abstractions only.
+>=20
+> Changes since v4:
+> * add abstraction to convert a device reference to a bus device
+>   reference
+> * require the bus device as parent device and provide it in class device
+>   callbacks
+> * remove Pin<Vec<_>> abstraction (as not relevant for the led
+>   abstractions)
+> * fixed formatting in `led::Device::new`
+> * fixed `LedOps::BLOCKING` did the inverse effect
+>=20
+> Changes since v3:
+> * fixed kunit tests failing because of example in documentation
+>=20
+> Changes since v2:
+> * return `Devres` on `led::Device` creation
+> * replace KBox<T> with T in struct definition
+> * increment and decrement reference-count of fwnode
+> * make a device parent mandatory for led classdev creation
+> * rename `led::Handler` to `led::LedOps`
+> * add optional `brightness_get` function to `led::LedOps`
+> * use `#[vtable]` instead of `const BLINK: bool`
+> * use `Opaque::cast_from` instead of casting a pointer
+> * improve documentation
+> * improve support for older rust versions
+> * use `&Device<Bound>` for parent
+>=20
+> Changes since v1:
+> * fixed typos noticed by Onur =C3=96zkan
+>=20
+> Markus Probst (2):
+>   rust: Add trait to convert a device reference to a bus device
+>     reference
+>   rust: leds: add basic led classdev abstractions
+>=20
+> Markus Probst (2):
+>   rust: Add trait to convert a device reference to a bus device
+>     reference
+>   rust: leds: add basic led classdev abstractions
 
-And you say they're very dynamic because the page table will ofc very likely
-change before each VM-Enter. Or rather, as long as the fact that the guest has
-mapped host MMIO ranges changes. Oh well, I guess that's dynamic enough...
+Hi,
 
-> Very lightly tested at this point, but I think this can all be simplified to
-> 
-> 	/*
-> 	 * Note, ALTERNATIVE_2 works in reverse order.  If CLEAR_CPU_BUF_VM is
-> 	 * enabled, do VERW unconditionally.  If CPU_BUF_VM_MMIO is enabled,
-> 	 * check @flags to see if the vCPU has access to host MMIO, and do VERW
-> 	 * if so.  Else, do nothing (no mitigations needed/enabled).
-> 	 */
-> 	ALTERNATIVE_2 "",									  \
-> 		      __stringify(testl $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, WORD_SIZE(%_ASM_SP); \
-> 				  jz .Lskip_clear_cpu_buffers;					  \
-> 				  VERW;								  \
-> 				  .Lskip_clear_cpu_buffers:),					  \
+So you know in advance, I will add a 3. patch for multicolor led
+classdev abstractions (drivers/leds/led-class-multicolor.c,
+include/linux/led-class-multicolor.h) to this patch series.
 
-And juse because that label is local to this statement only, you can simply
-call it "1" and reduce clutter even more.
+In the atmega1608 led driver (the user of these abstractions) there are
+leds with different colors that share the same slot.
+Technically "drivers/leds/rgb/leds-group-multicolor.c" could be used in
+combination with single color leds instead, but then hardware
+accelerated blinking wouldn't be supported. I think it would make more
+sense to directly implement it in the driver.
 
-> 		      X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO,					  \
-> 		      __stringify(VERW), X86_FEATURE_CLEAR_CPU_BUF_VM
-> 
-> 	/* Check if vmlaunch or vmresume is needed */
-> 	testl $VMX_RUN_VMRESUME, WORD_SIZE(%_ASM_SP)
-> 	jz .Lvmlaunch
+The existing 2 patches shouldn't change, so feel free to review them.
 
-Yap, that's as nice as it gets. Looks much more straight-forward and
-contained.
+Thanks
+- Markus Probst
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>=20
+>  rust/kernel/auxiliary.rs |   7 +
+>  rust/kernel/device.rs    |  33 ++++
+>  rust/kernel/led.rs       | 375 +++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs       |   1 +
+>  rust/kernel/pci.rs       |   7 +
+>  rust/kernel/platform.rs  |   7 +
+>  rust/kernel/usb.rs       |   6 +
+>  7 files changed, 436 insertions(+)
+>  create mode 100644 rust/kernel/led.rs
 
