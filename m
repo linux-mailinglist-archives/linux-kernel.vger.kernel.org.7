@@ -1,140 +1,231 @@
-Return-Path: <linux-kernel+bounces-899803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBEFC59233
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:26:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE2BC5902E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68B484F9764
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:32:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29CFB5425AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D643559CE;
-	Thu, 13 Nov 2025 16:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198A735C18C;
+	Thu, 13 Nov 2025 16:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ve+1lulG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ycdd7mnP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD95135771E;
-	Thu, 13 Nov 2025 16:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1135C194;
+	Thu, 13 Nov 2025 16:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051180; cv=none; b=U52p2oyBn78Wp9BfwuDWSTKP49Ltda0/5gaiATByPr/oAAEHwUjKAIKVelEBKzTjUUIfrfZ5GsA/nUy7CVSwiwyMgF7gCVLOaq9ApBIAfkvPcrE+UVsLfxzXOOzhoJ1KQ51xDe+WksmRSJh7ltve+rpOkCWkXzJ8Lk2hY1M7MPo=
+	t=1763051229; cv=none; b=j9ltkUJAKEKY7TJaBuhyJe1hq1qYBgsEHvWrEdqf485l+FmwcmoHzrQyLA1Rhd9lSMlPY2SPHbrA1oP/DP69SzEVRdcLKJDRL0hOr1HT2F/krLjwHA6gWEXv6JGKQFBOnKtuRTWBQkeu6Z/MKYi4qEkP7+PObAO0UnAr0GyI/Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051180; c=relaxed/simple;
-	bh=koIDzhpdWGtj+z4XVu0jYTqnTrs0kQ9D0VEJ+JnMhtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l5N7Fm3E2XjLR8Ujk1kikF/hyRiSGymwZPCqkZyKxX/BBntAtJYJ64nAudhM112hboYWjNu7XmgwVW5rgoTIuQRyzaSG4m6mBi4bfKOc07XXbo1rsc8XTy7KJK3JBbxGDYSBUIwO+QjztoHwMXNnjU1juGkz4BbQcqeiLqe8qfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ve+1lulG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1763051229; c=relaxed/simple;
+	bh=eXY9NGXcwRMx1xvaKvqt9qvpIBzUTXZuSwBZqc+Vd8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rrOSEaiu51jm3hm4AOyyMPOnrLAQjQQBU8ynzIgHY+jTzTvOalKwgCDc5O3SzWfdC0wH8QgmD+FxzM9/+GCOZAdwPOVuYzvUvXFZD6Bdzmhz3A5VOMkoIsYaxHo/rYPsub1t8RMG77bWCM1evWDX5XTXdLK7/Uh2eoyeizp+l4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ycdd7mnP; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763051179; x=1794587179;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=koIDzhpdWGtj+z4XVu0jYTqnTrs0kQ9D0VEJ+JnMhtg=;
-  b=Ve+1lulGzggoEX8jkxcPUpuh5uSulc8H6dpfAWKEmBpufpG+bE1ErtZb
-   XiuHDxZgvf/DR0EuorJoeNlyFTQCOrDDkViyueu9CizzKDEe1+yimY/py
-   PWuKTmltz2Lykx0kCDgOZTdC9wW7VEy4aNrbwys8IXjrI2zzu/cOiknlg
-   yqh8c5UpJvoiEaIAiK9vRQrTycTsfzopE7uWnTxcVPJLbBud36flW/DDI
-   /27inCaovz9vt2IoocqIJU3LygKVlrCV86Y35JwZ0qmKyOLoWW2FKVEXk
-   NeOkwyT0zsuEVI1TrT+X2AcyqYq8zzJ0lauSlmE8GJ8mFWY0L/FacdJfA
-   A==;
-X-CSE-ConnectionGUID: QBjaWxGaQYaK5UcOHQ4M6g==
-X-CSE-MsgGUID: 1J42AyEpS0yncu8A9po+2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="75816912"
+  t=1763051227; x=1794587227;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=eXY9NGXcwRMx1xvaKvqt9qvpIBzUTXZuSwBZqc+Vd8I=;
+  b=Ycdd7mnPM46jxDge4+qqBQWvAdNSSS22aGKaS7NiszCbh/Ng+1eONZ8H
+   PlZeyXevP0uqDarQia6EAy2kX9+d3qwhbDBQh1gBbB2LKLhrienfRxqt9
+   drtIOKRZDriezgmTjz4sgcmAJhCVGh/dBaPEUrTfdfCtkdsAkoHb2c0o+
+   R9a+n/c1thb8KZm06Ms+666EDiE7D0Id9DGMVSgBb0ScOCt2FxFjHKHxg
+   1mKnsxI4baBIFrNxxlRluuhlruibWC/1Dkl3ptmK9suko03tujDYaTcc7
+   lZNNfNftB9n8Ejx08VjssQQZbue1GJQa9TdLrNqXJrn76SEmI7jwWaG21
+   w==;
+X-CSE-ConnectionGUID: e+l/GPS3TfaLlhhZPAaFAg==
+X-CSE-MsgGUID: deD9iqdUQWOeuWCxqDj/2w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="68766616"
 X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="75816912"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:26:16 -0800
-X-CSE-ConnectionGUID: WBjbCfj0RHyK/FADIW98QQ==
-X-CSE-MsgGUID: ONRZl7ICT5WzcnlcLaa3EQ==
+   d="scan'208";a="68766616"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:27:07 -0800
+X-CSE-ConnectionGUID: UPI+Qi84Rr+aHEhkQ6DphA==
+X-CSE-MsgGUID: vMO03pLcRGmHlXEzSYk55A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="220186218"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.80]) ([10.125.108.80])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:26:15 -0800
-Message-ID: <c6020af6-83d0-46c9-aad9-2187b7f07cbe@intel.com>
-Date: Thu, 13 Nov 2025 08:26:14 -0800
+   d="scan'208";a="189553826"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 08:27:00 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Simon Richter <Simon.Richter@hogyros.de>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	David Airlie <airlied@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	linux-pci@vger.kernel.org,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v2 02/11] PCI/IOV: Adjust ->barsz[] when changing BAR size
+Date: Thu, 13 Nov 2025 18:26:19 +0200
+Message-Id: <20251113162628.5946-3-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251113162628.5946-1-ilpo.jarvinen@linux.intel.com>
+References: <20251113162628.5946-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86_64: inline csum_ipv6_magic()
-To: Eric Dumazet <edumazet@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H . Peter Anvin" <hpa@zytor.com>, "David S . Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
- netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-References: <20251113154545.594580-1-edumazet@google.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251113154545.594580-1-edumazet@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/13/25 07:45, Eric Dumazet wrote:
-> Inline this small helper.
-> 
-> This reduces register pressure, as saddr and daddr are often
-> back to back in memory.
-> 
-> For instance code inlined in tcp6_gro_receive() will look like:
+pci_rebar_set_size() adjusts BAR size for both normal and IOV BARs. The
+struct pci_srvio keeps a cached copy of BAR size in unit of resource_size_t
+in ->barsz[] which is not adjusted by pci_rebar_set_size() but by
+pci_iov_resource_set_size(). pci_iov_resource_set_size() is called also
+from pci_resize_resource_set_size().
 
-Could you please double check what the code growth is for this across
-the tree? There are 80-ish users of csum_ipv6_magic().
+The current arrangement is problematic once BAR resize algorithm starts to
+roll back changes properly in case of a failure. The normal resource
+fitting algorithm rolls back resource size using the struct
+pci_dev_resource easily but also calling pci_resize_resource_set_size() or
+pci_iov_resource_set_size() to roll back BAR size would be an extra burden,
+whereas combining ->barsz[] update with pci_rebar_set_size() naturally
+rolls back it when restoring the old BAR size on a different layer of the
+BAR resize operation.
 
-Or, is there a discrete, measurable performance gain from doing this?
+Thus, rework pci_rebar_set_size() to also update ->barsz[].
+
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/iov.c       | 15 ++++-----------
+ drivers/pci/pci.c       |  4 ++++
+ drivers/pci/pci.h       |  5 ++---
+ drivers/pci/setup-res.c | 10 ++++------
+ 4 files changed, 14 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+index 77dee43b7858..04b675e90963 100644
+--- a/drivers/pci/iov.c
++++ b/drivers/pci/iov.c
+@@ -158,8 +158,7 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
+ 	return dev->sriov->barsz[pci_resource_num_to_vf_bar(resno)];
+ }
+ 
+-void pci_iov_resource_set_size(struct pci_dev *dev, int resno,
+-			       resource_size_t size)
++void pci_iov_resource_set_size(struct pci_dev *dev, int resno, int size)
+ {
+ 	if (!pci_resource_is_iov(resno)) {
+ 		pci_warn(dev, "%s is not an IOV resource\n",
+@@ -167,7 +166,8 @@ void pci_iov_resource_set_size(struct pci_dev *dev, int resno,
+ 		return;
+ 	}
+ 
+-	dev->sriov->barsz[pci_resource_num_to_vf_bar(resno)] = size;
++	resno = pci_resource_num_to_vf_bar(resno);
++	dev->sriov->barsz[resno] = pci_rebar_size_to_bytes(size);
+ }
+ 
+ bool pci_iov_is_memory_decoding_enabled(struct pci_dev *dev)
+@@ -1340,7 +1340,6 @@ EXPORT_SYMBOL_GPL(pci_sriov_configure_simple);
+ int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int size)
+ {
+ 	u32 sizes;
+-	int ret;
+ 
+ 	if (!pci_resource_is_iov(resno))
+ 		return -EINVAL;
+@@ -1355,13 +1354,7 @@ int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int size)
+ 	if (!(sizes & BIT(size)))
+ 		return -EINVAL;
+ 
+-	ret = pci_rebar_set_size(dev, resno, size);
+-	if (ret)
+-		return ret;
+-
+-	pci_iov_resource_set_size(dev, resno, pci_rebar_size_to_bytes(size));
+-
+-	return 0;
++	return pci_rebar_set_size(dev, resno, size);
+ }
+ EXPORT_SYMBOL_GPL(pci_iov_vf_bar_set_size);
+ 
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index b14dd064006c..7dfc58b0e55e 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3803,6 +3803,10 @@ int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size)
+ 	ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
+ 	ctrl |= FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
+ 	pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
++
++	if (pci_resource_is_iov(bar))
++		pci_iov_resource_set_size(pdev, bar, size);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 4492b809094b..bf1a577e9623 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -808,8 +808,7 @@ void pci_iov_update_resource(struct pci_dev *dev, int resno);
+ resource_size_t pci_sriov_resource_alignment(struct pci_dev *dev, int resno);
+ void pci_restore_iov_state(struct pci_dev *dev);
+ int pci_iov_bus_range(struct pci_bus *bus);
+-void pci_iov_resource_set_size(struct pci_dev *dev, int resno,
+-			       resource_size_t size);
++void pci_iov_resource_set_size(struct pci_dev *dev, int resno, int size);
+ bool pci_iov_is_memory_decoding_enabled(struct pci_dev *dev);
+ static inline u16 pci_iov_vf_rebar_cap(struct pci_dev *dev)
+ {
+@@ -851,7 +850,7 @@ static inline int pci_iov_bus_range(struct pci_bus *bus)
+ 	return 0;
+ }
+ static inline void pci_iov_resource_set_size(struct pci_dev *dev, int resno,
+-					     resource_size_t size) { }
++					     int size) { }
+ static inline bool pci_iov_is_memory_decoding_enabled(struct pci_dev *dev)
+ {
+ 	return false;
+diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+index c3ba4ccecd43..3d0b0b3f60c4 100644
+--- a/drivers/pci/setup-res.c
++++ b/drivers/pci/setup-res.c
+@@ -450,12 +450,10 @@ static void pci_resize_resource_set_size(struct pci_dev *dev, int resno,
+ 	resource_size_t res_size = pci_rebar_size_to_bytes(size);
+ 	struct resource *res = pci_resource_n(dev, resno);
+ 
+-	if (!pci_resource_is_iov(resno)) {
+-		resource_set_size(res, res_size);
+-	} else {
+-		resource_set_size(res, res_size * pci_sriov_get_totalvfs(dev));
+-		pci_iov_resource_set_size(dev, resno, res_size);
+-	}
++	if (pci_resource_is_iov(resno))
++		res_size *= pci_sriov_get_totalvfs(dev);
++
++	resource_set_size(res, res_size);
+ }
+ 
+ int pci_resize_resource(struct pci_dev *dev, int resno, int size)
+-- 
+2.39.5
+
 
