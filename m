@@ -1,239 +1,401 @@
-Return-Path: <linux-kernel+bounces-899186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA6AC57096
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8719EC570AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C5B3BB648
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFDBB3BEA89
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D88A3375A3;
-	Thu, 13 Nov 2025 10:52:12 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023108.outbound.protection.outlook.com [52.101.127.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769CD334396;
+	Thu, 13 Nov 2025 10:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUEAdvHt"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD21331A6D;
-	Thu, 13 Nov 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763031131; cv=fail; b=OaTWdlshcWSZg8AdK3Lu553w50h1P5cQU0S/DgcT8mK6Exlf+axXAEFXbdrjdihhYwLstsE+Q2MHci18ULNqwAYTGrUbkuTWSqrIWU3IbpO9onpBq2atn2flFtMsCRVGyyK97g0xN12JFBD2Uv3Gflo2wvxVhJ2o2/Y8qDvU6qM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763031131; c=relaxed/simple;
-	bh=uwS7SHK8bekkiID8pR3JiuZAmrkzPFKl2Kj3ePWrl84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZiDE2rwVEwcIZmm4NrD3zV/LgE13krD5rDkxxTO1S5I6VmK1T6UgpmI2KcsOu1I2V2P/AasQ6AdZEh/W10MrWRnWzaN3sIO5t3MzsfsT97orQA9rWjytUuGcxlzSISNk/jfwZ1dcvoJVseJTwYyqUPnlfohkK9gVuwCk98SMjhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mQiwIhCgz62fdfoIqM/du8vEJHMxXUaNJaR1/58SkGhGk/zwUk/g6NDB8djfX6q19DR/LI1y270KbMul7O51Dx8ClHGSHTxiPO+4/EqUsb6O4SpZ8LkVyABcTnKr+zxdm99abbLDVtnKlXoBDAZoY5YU0U2VUL4gNhiInYqn6o1yud1bS6i+b6jwD311kmAEs2Oa/rz4XP2m/qUjvvw+DHBnsMDoBJXqJi2OXeijP/c7gG4xE40OzI/6yR58Aeveq9Wx6eyZ2vubVD0PgVO66tx4kt7YZyH1V2wqR8tZh2+ZT5uPkn0wMSoFwwaVItEOP5/R+/btcl4j8rvGGiS79g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vm39iNR6dNotxR7n77foxtOdlkiTgJfxOdRsnvxB1C0=;
- b=bdzSxA2kmEEpoltsy+LeXr9wLL1DmrUn+sDhHpWm3L89NclbTTCU5AlBLuWXckr/UE2x8NctDhfZolFQRmsiAZd8G+SJ3NbmOQapAobdliZJ0qd0CSVVV5hdK+AQo1VN2h2aynOjS+TG3DA+1wHvrX9iw+5/6K/swc/gEGLtjPfxGDCJ9EAUUhYyiOhmAC9H0rL23U+kQJHA2FWA8+FCSn7i9B4lf8y11btkRuJ90WDDzgvZCfpCcOOOmCLxCvldbWJm2Y+rpR4Wnsx0zeiVOorbP0tG8O650wVdNJivd5p0BQCtXES8jB4gWuXM1A3J1N7NOVoqbPXEo5k1aIzSuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arndb.de smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from PS2PR01CA0054.apcprd01.prod.exchangelabs.com
- (2603:1096:300:57::18) by TYUPR06MB6194.apcprd06.prod.outlook.com
- (2603:1096:400:346::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.15; Thu, 13 Nov
- 2025 10:52:02 +0000
-Received: from TY2PEPF0000AB8A.apcprd03.prod.outlook.com
- (2603:1096:300:57:cafe::57) by PS2PR01CA0054.outlook.office365.com
- (2603:1096:300:57::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
- 13 Nov 2025 10:52:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB8A.mail.protection.outlook.com (10.167.253.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 10:52:01 +0000
-Received: from [172.16.96.116] (unknown [172.16.96.116])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 760A341604E0;
-	Thu, 13 Nov 2025 18:52:00 +0800 (CST)
-Message-ID: <d53942f3-fa4e-4d9b-bcf0-5d58eb6bf739@cixtech.com>
-Date: Thu, 13 Nov 2025 18:51:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E83321D0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763031177; cv=none; b=sdb/0mnpC+MoVweUngMnaeXPwiMSj//cRYIzeJQ09XtM9fzJAO4PK4F3RFEOVF1SHJ1xa4oOlDY77u+v/uaEKfYO7QQmYWOHyORMcM1H+qkFEI6h+Z+SnuQwRuqZDGlCh267RL97si84qoWRx7jceQvLc2Pv2AL3jshyr0Mo9Xw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763031177; c=relaxed/simple;
+	bh=ptjnN+kV6KtL9cjMx1i4vilb0N1AN7KTugMe4NyA6zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oYEB+eWHx5gyaCJy5OWrNRTQ0y79/9oL7wXwPjk0UxM/dttZM90cs8aiY+u3LnPIB+ZEoy4VB/G4TL+UZuGBBQI+cBVPOh5sShv933b3qTnD+EkQsLgZeilJMpUVkhSZaJPhOYMCgZw9vvoPlEPs3810TyDOhXHG+BCaUsTyf2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUEAdvHt; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3437ea05540so667447a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:52:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763031174; x=1763635974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OrLY1Uohp4fNrpBoSywOsXuTx3rqnDqEt2AlKMMSpE=;
+        b=WUEAdvHtk39Ef92MgKvBDjyB91pInZlKhkChZhKq72cQha3UFIbikQdlykmF9J4HKb
+         0yjfXuOeFUWwWnTvsD//wkWZJLF/suCzzCeiV+s2aPt8LUvybIozBNC/j4rGkmOcATf0
+         N5/OAf+XDReo/c8KuvPVs7gGi6RIgQ2B5qswtQEbwYh6RjNCOaNEy74WaGUlL7GnXIRb
+         97XgEdMzS9QU41H9aP0MXCxbe/Z02RIY2pXoFe+Px+x5S5rGvK+vuEXcsmFZvPuG9cw2
+         +1qaCBqPtnaQQ5JCdU0zFJr/RRb51CbuKKoIt8XGNDnPVzKsw71wwxjtPkpBC8lPqjVb
+         oPpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763031174; x=1763635974;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3OrLY1Uohp4fNrpBoSywOsXuTx3rqnDqEt2AlKMMSpE=;
+        b=o4Xmu2XqqA/LGIzAhASbRjpw07GctUcq+GtC9NnpZ1nuzvK8r/CbxrBRWCVKMC17fH
+         XF/XYd3D5XA7Nf3kBEcvaZsvYGXuoc2TRg8wphyyiecDFG2rmkqlmlGdIQCCluojh+kZ
+         qyZRWScAZ0TWyvknAV3n2sZ0yMmwpoAByKML7Eeq1gki2p/FbIWtgE+WJaIlHFCw9Gtt
+         oRO/4VCS7mUdPGFoDCZYU++Ds6/iii/SS3+xRnIFZd8ECaLR766zcxJsvo8G9K1V1Ffl
+         RrBTgoRXqk9v2WsR+w1R4YjrxQC3+r2P6gf5izCX31+PGk6zkyc6ersYvBlCQ13JFHbf
+         pG8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJDIyYjkk0ZweqAaXRWubLz6MjLiYLgRJKo2pTFGYin84em3cml7VO5GDXvbfAUaPc9i956tG66TeiAsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM12DUii+GCV90Wj8N7Z6fGlEtEXqgIKqIrg7dt7oX4ZYxhp/E
+	aE21oAMNhioYzXtgm4BrDzTKImbY8alm2E0z1Yx0xfev1x3zwqJkoNwJ
+X-Gm-Gg: ASbGncs5krcBt7eOhXzKQRKIbLfS60vfhNvJBYbnWGLXr81qhV/H5ORhfoGINKiPeL7
+	J4Mf56SAIbeiOOtjr98k1t3mufGA7gOZUl5IPbLTVVLfzEKLRsd0G2anz32bGPmpZTYiXDIS9zK
+	2z60cXAgK+rY0xuWNHmjrxnwKKlWWHZzWbOKRcPACs5FCCrHoOTAjJOrWh2d+n8Aaf1kQlU0k5b
+	0kG6V1dU4YXZgrSZnwnWKRjCwzVjcBDk2Peh+1mNXbDp738Qt+dPIPCfFITwAPo/uvSEiB6ebb/
+	i9GVKBtWLgU9JE2E0cpckqCmMrs0jxVGrfZ3Hx1pbfFvUT+kAREFrRUtCxBhLwqgUqAoXANY6sc
+	M/760N8VPawBTJJfuQwJVsL7q7jGNnHwFKOe6KHGz7yBHZ4jROPIxxpLaOZ7mRj8BFNOtQKN1k3
+	FJXWruwMV9P4fBI6jLRf2wxXYv3iw4Vs4qoZA=
+X-Google-Smtp-Source: AGHT+IHzp6UCtl35V4whLnPDL/LSjb2HQjwqo7fMEKu5Lo9MkJ9BX0nvNUtMKAS1HyvsK3oZoUW6iA==
+X-Received: by 2002:a17:90a:fc50:b0:343:a631:28a8 with SMTP id 98e67ed59e1d1-343dded5123mr8338802a91.37.1763031173562;
+        Thu, 13 Nov 2025 02:52:53 -0800 (PST)
+Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343ed4c939dsm2139616a91.6.2025.11.13.02.52.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 02:52:52 -0800 (PST)
+From: Xie Yuanbin <qq570070308@gmail.com>
+To: tglx@linutronix.de,
+	riel@surriel.com,
+	segher@kernel.crashing.org,
+	david@redhat.com,
+	peterz@infradead.org,
+	hpa@zytor.com,
+	osalvador@suse.de,
+	linux@armlinux.org.uk,
+	mathieu.desnoyers@efficios.com,
+	paulmck@kernel.org,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	davem@davemloft.net,
+	andreas@gaisler.com,
+	luto@kernel.org,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	james.clark@linaro.org,
+	anna-maria@linutronix.de,
+	frederic@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com,
+	qq570070308@gmail.com,
+	thuth@redhat.com,
+	brauner@kernel.org,
+	arnd@arndb.de,
+	sforshee@kernel.org,
+	mhiramat@kernel.org,
+	andrii@kernel.org,
+	oleg@redhat.com,
+	jlayton@kernel.org,
+	aalbersh@redhat.com,
+	akpm@linux-foundation.org,
+	david@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	baolin.wang@linux.alibaba.com,
+	max.kellermann@ionos.com,
+	ryan.roberts@arm.com,
+	nysal@linux.ibm.com,
+	urezki@gmail.com
+Cc: x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	llvm@lists.linux.dev,
+	will@kernel.org
+Subject: [PATCH v3 0/3] Optimize code generation during context switching
+Date: Thu, 13 Nov 2025 18:52:24 +0800
+Message-ID: <20251113105227.57650-1-qq570070308@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: cadence: Kconfig: change PCIE_CADENCE configs from
- tristate to bool
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
- kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
- bhelgaas@google.com, unicorn_wang@outlook.com, kishon@kernel.org
-Cc: arnd@arndb.de, stable@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- srk@ti.com
-References: <20251113092721.3757387-1-s-vadapalli@ti.com>
- <da56386a-b6ac-4034-a063-811cd7d71fa5@cixtech.com>
- <d0516a4c5b9e5b04df25220a32c259cce89f7d1b.camel@ti.com>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <d0516a4c5b9e5b04df25220a32c259cce89f7d1b.camel@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB8A:EE_|TYUPR06MB6194:EE_
-X-MS-Office365-Filtering-Correlation-Id: b53b4633-d441-4d69-8cea-08de22a2acf0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013|32650700017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UFpnSk5pQUlsRTlCSUN1SFQwYmV2V2xnQWdNcmhyRllUM0VBRSswZDdYSHN3?=
- =?utf-8?B?SEtDZTZVNi9ST3VLRGxyYlNlOWhmR3BsYU5uMjgxR2Job0ttSVl0eTBTM1ZR?=
- =?utf-8?B?bHo4UVljc3RsYTBTZDUzcXBtdHdTZUtMeEtaOGJWV0RucnVyU2M0WXY1b1BI?=
- =?utf-8?B?emN2NkQ4OXc1NDBFTHd5WFNWNEpPZ1VpR3U2d0RFNlljSVRvNFQyT0trYVdq?=
- =?utf-8?B?a1JJSys4S2RkaWhzbURHMld6dFNrVFRQQTJGbkNWRHY4MzhZNGhJdDBwK1Zq?=
- =?utf-8?B?cS9TK05qNGlBYUFpQWN4WkNVZTJpRkZrOENmSWhaWXdXRUtqYk9ueUNzNjVm?=
- =?utf-8?B?Y3BWckhldmF1SGhrNUNuRmxJMkttYVlhRTliN2cwUzJWMkcwRG1yN1NSNTJ6?=
- =?utf-8?B?bWNVZjJlRjJuWVUxVWU3MUFScTdVUTJaUm03bUxpRFh4TDBnV1VyZ1A1Z2NY?=
- =?utf-8?B?QldCTFB5cTBTV3dPY0VMVENJNzRsTTgvRElldlAwS2lsMEFuMHhDK2t3ME1U?=
- =?utf-8?B?K0lhaGxyYzVoN2dwZWYvMnJzOVBZOG4yeEthVUJxSi8wS2VZa1J0ai9IeXRD?=
- =?utf-8?B?YzFydWZFMmlMTHlpTGlobFlBOEdXcGhtdzhhWlJmTDlvYlh0WkFlcTcrdEtO?=
- =?utf-8?B?cmlGUzhteEQxOXNSYkNJZmg0bTVGVTU2ckJFVWwrbldkMDk3cjZnY3VWVEtt?=
- =?utf-8?B?ZFlhdzdwQ09LNC9tK21OaEpXb1ZqRm5hbjBQL3ovQW5KanczbUR0aWRVU0tK?=
- =?utf-8?B?VEhTYWZZMW9EV0dEY2F0MjVOL2RtMFN0YmRwbUxlRFJVeHhZRkl4MXFJR1hB?=
- =?utf-8?B?ZHBCVUQ3dzV4YW04NGowdmtYaWo1L0lYNU05SVpJQ3VjQUhEMFBJeEppeXpO?=
- =?utf-8?B?cW53NExSVklUd2lwTzlJcjRNN3ROVGs4VXFNcDVsa0Z6L09ySHVCTkIxSFlJ?=
- =?utf-8?B?bi85ZFRPM09UUUpLNmswNkxhOVRqNnBnR1FwVkJFMDY1U3Q1NXBRK3cwMWFw?=
- =?utf-8?B?MjN4bVVQVDhxWGh2Z1Iwc0NEc3g3YVJhOGg0eFl2SHB4NzF4OVprc1R6dUgw?=
- =?utf-8?B?N2hkOGRzYUFVQzJXdUVaWmJ3OHZCbHZmK1BUUkM5UGtpaFM5Yk0xUS9PWEVa?=
- =?utf-8?B?Z3JHQXFHZHQrOXFlOWQySVJsNDlsSmppelA2NDV2YnBONnBqb2N2dSs5OUxj?=
- =?utf-8?B?Z3dpNEF0S1h0bTVtUHl5dDVxWVZqSzkrL3haSGFuZzZJL0tuMjRleGpoS28x?=
- =?utf-8?B?aS9sMTZMODZZNHdsbUppYmNheXNGZFlVSWlUblBsMFk3WEpGaUQyN2F0YkM4?=
- =?utf-8?B?VjJvcFFxd3NtbngycXBIZlB5MFBhRzNLZWZiTnNmMldYMUlWYkZoWDhzOGxX?=
- =?utf-8?B?a2hUWTgvbjFxVlRHYzlTQWo4eUp4ZFlTVXlwQzZsWDVuU0ZKa2xvZEZ2aXlF?=
- =?utf-8?B?TkpsSHZSRzVZUDZnN2VybGlqdEdzZlBFdzZkYkg0S0ZpTmRZV3hnellSS280?=
- =?utf-8?B?VmxteklTOVhObkxFN09sdVpoWjJMSHFCV2Z4WkJYV3V4cjJablB1TEN6R1Bx?=
- =?utf-8?B?YWthdndYVUZiR1NtdnFQek50N0h1eFZxdmpLZk1WUnVWREJ5UFpvZVA3RVdE?=
- =?utf-8?B?dW1CMkF5dnRDNHMvYjk5UHdiOFJ1RzBFK25mVlpIbUlRS1ZXajIxZmNDT3lv?=
- =?utf-8?B?OEM5T3VhcEc0MUs0T25OQVRMSDhQQkY5Zm81OGVhR1d2MkoxdXdiNWJEeUNp?=
- =?utf-8?B?dS9WK1lqc0xKUE5yd042dXlIV0Y0NVdXQW5zTXpOenAyd3dzei9xcTh6OEFM?=
- =?utf-8?B?bnNnSGhDWHRqdzEzTW5GdExSQy9NenBTYzZDbG1NRTdtaVNYV2NERW02ZFlC?=
- =?utf-8?B?cjkxYUFBaU0vYVdraG1XcE1QL2U0VW1XMUFDcHdqSm45dW10YmhTbk1aRnBT?=
- =?utf-8?B?dXlPcGpwZ0owZ2dWMGQ5elBIY1V0VnIxNjAxV0NzNmZGSHhKb2F1TGRHTC83?=
- =?utf-8?B?QnJMcEV4bjU3SWVzeG51WW02SHhYMU1DemdPRTBHVDRvUjFGR1piUlc3K3Ba?=
- =?utf-8?B?d3l0UmJsQlYxRncwbjRmZkpvSjFaN2dkZjlwcjhOK0pUK1BNUC91bzduUU5Z?=
- =?utf-8?Q?Fi2CDnK1iTCSoi3Rd6L20yniK?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013)(32650700017);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 10:52:01.2682
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b53b4633-d441-4d69-8cea-08de22a2acf0
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB8A.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6194
+Content-Transfer-Encoding: 8bit
+
+The purpose of this series of patches is to optimize the performance of
+context switching. It does not change the code logic, but only modifies
+the inline attributes of some functions.
+
+It is found that `finish_task_switch` is not inlined even in the O2 level
+optimization. This may affect performance for the following reasons:
+1. It is in the context switching code, which is a hot code path.
+2. Because of the modern CPU mitigations for vulnerabilities, inside
+switch_mm, the instruction pipeline and cache may be cleared.
+finish_task_switch is right after that, so the performance is greatly
+affected by function calls and branch jumps.
+3. The __schedule function has __sched attribute, which makes it be
+placed in the ".sched.text" section, while finish_task_switch does not,
+which causes their distance to be very far in binary, aggravating the
+above performance degradation.
+
+This series of patches mainly does the following things:
+1. Make enter_lazy_tlb inline on x86.
+2. Make raw_spin_rq_unlock inline.
+3. Let the finish_task_switch function be called inline during context
+switching.
+4. Set the subfunctions called by finish_task_switch to be inline:
+After finish_task_switch is changed to an inline function, the number of
+calls to the subfunctions (called by finish_task_switch) increases in
+this translation unit due to the inline expansion of finish_task_switch.
+For example, the finish_lock_switch function originally had only one
+calling point in core.o (in finish_task_switch func), but because the
+finish_task_switch was inlined, the calling points become two.
+Due to compiler optimization strategies, these functions may transition
+from inline functions to non inline functions, which can actually lead to
+performance degradation.
+Make the subfunctions of finish_task_stwitch inline to prevent
+degradation.
+
+Performance test data for these patches:
+Time spent on calling finish_task_switch (unit: rdtsc):
+ | compiler && appended cmdline | without patches | with patches  |
+ | gcc + NA                     | 13.93 - 13.94   | 12.39 - 12.44 |
+ | gcc + "spectre_v2_user=on"   | 24.69 - 24.85   | 13.68 - 13.73 |
+ | clang + NA                   | 13.89 - 13.90   | 12.70 - 12.73 |
+ | clang + "spectre_v2_user=on" | 29.00 - 29.02   | 18.88 - 18.97 |
+
+Note: I use x86 for testing here. Different architectures have different
+cmdlines for configuring mitigations. For example, on arm64, spectre v2
+mitigation is enabled by default, and it should be disabled by adding
+"nospectre_v2" to the cmdline.
+
+Test info:
+1. kernel source:
+linux-next
+commit 9c0826a5d9aa4d52206d ("Add linux-next specific files for 20251107")
+2. test machine:
+cpu: intel i5-8300h@4Ghz
+mem: DDR4 2666MHz
+Bare-metal boot, non-virtualized environment
+3. compiler:
+gcc: gcc version 15.2.0 (Debian 15.2.0-7) with
+GNU ld (GNU Binutils for Debian) 2.45
+clang: Debian clang version 21.1.4 (8) with
+Debian LLD 21.1.4 (compatible with GNU linkers)
+4. config:
+base on default x86_64_defconfig, and setting:
+CONFIG_HZ=100
+CONFIG_DEBUG_ENTRY=n
+CONFIG_X86_DEBUG_FPU=n
+CONFIG_EXPERT=y
+CONFIG_MODIFY_LDT_SYSCALL=n
+CONFIG_CGROUPS=n
+CONFIG_BLK_DEV_NVME=y
+5. test method:
+Use rdtsc (cntvct_el0 can be use on arm64/arm) to obtain timestamps
+before and after finish_task_switch calling point, and created multiple
+processes to trigger context switches, then calculated the average
+duration of the finish_task_switch call.
+Note that using multiple processes rather than threads is recommended for
+testing, because this will trigger switch_mm (where spectre v2 mitigations
+may be performed) during context switching.
+The test code is attached at the end of the mail.
 
 
+I also tested the impact on bzImage size, which may affect
+embedded devices:
+1. kernel source && compiler: same as above
+2. config:
+base on default x86_64_defconfig, and setting:
+CONFIG_SCHED_CORE=y
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+CONFIG_NO_HZ_FULL=y
 
-On 11/13/2025 6:43 PM, Siddharth Vadapalli wrote:
-> EXTERNAL EMAIL
-> 
-> On Thu, 2025-11-13 at 18:38 +0800, Hans Zhang wrote:
->> Hi Siddharth,
->>
->>
->> Your patch repeats this part.
-> 
-> I am not sure I understand the "repetition" that you are referring to. The
-> patch below is updating:
-> PCIE_CADENCE_PLAT, PCIE_CADENCE_PLAT_HOST and PCIE_CADENCE_PLAT_EP
-> from 'bool' to 'tristate'.
-> 
-> The current patch is updating:
-> PCIE_CADENCE, PCIE_CADENCE_HOST and PCIE_CADENCE_EP
-> [No 'PLAT' in the configs]
-> from 'tristate' to 'bool'.
-> 
-Hi Siddharth,
+bzImage size:
+ | compiler | without patches | with patches  |
+ | clang    | 13722624        | 13722624      |
+ | gcc      | 12596224        | 12596224      |
 
-Sorry, I was mistaken.
+No size changes were found on bzImage.
 
-Best regards,
-Hans
+testing code:
+kernel(just for testing, not a commit):
+```c
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 8a4ac4841be6..5a42ec008620 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -395,6 +395,7 @@
+ 468	common	file_getattr		sys_file_getattr
+ 469	common	file_setattr		sys_file_setattr
+ 470	common	listns			sys_listns
++471	common	sched_test		sys_sched_test
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 81cf8452449a..d7e2095aeb7d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5195,6 +5195,36 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
+ 	calculate_sigpending();
+ }
+ 
++static DEFINE_PER_CPU(uint64_t, start_time);
++static DEFINE_PER_CPU(uint64_t, total_time);
++static DEFINE_PER_CPU(uint64_t, total_count);
++
++static __always_inline uint64_t test_rdtsc(void)
++{
++    register uint64_t rax __asm__("rax");
++    register uint64_t rdx __asm__("rdx");
++
++    __asm__ __volatile__ ("rdtsc" : "=a"(rax), "=d"(rdx));
++    return rax | (rdx << 32);
++}
++
++static __always_inline void test_start(void)
++{
++	raw_cpu_write(start_time, test_rdtsc());
++}
++
++static __always_inline void test_end(void)
++{
++	const uint64_t end_time = test_rdtsc();
++	const uint64_t cost_time = end_time - raw_cpu_read(start_time);
++
++	raw_cpu_add(total_time, cost_time);
++	if (unlikely(raw_cpu_inc_return(total_count) % (1 << 20) == 0)) {
++		pr_emerg("cpu %d total_time %llu\n", raw_smp_processor_id(), raw_cpu_read(total_time));
++		raw_cpu_write(total_time, 0);
++	}
++}
++
+ /*
+  * context_switch - switch to the new MM and the new thread's register state.
+  */
+@@ -5264,7 +5294,10 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 	switch_to(prev, next, prev);
+ 	barrier();
+ 
+-	return finish_task_switch(prev);
++	test_start();
++	rq = finish_task_switch(prev);
++	test_end();
++	return rq;
+ }
+ 
+ /*
+@@ -10861,3 +10894,18 @@ void sched_change_end(struct sched_change_ctx *ctx)
+ 		p->sched_class->prio_changed(rq, p, ctx->prio);
+ 	}
+ }
++
++static struct task_struct *wait_task;
++
++SYSCALL_DEFINE0(sched_test)
++{
++	preempt_disable();
++	while (1) {
++		if (likely(wait_task))
++			wake_up_process(wait_task);
++		wait_task = current;
++		set_current_state(TASK_UNINTERRUPTIBLE);
++		__schedule(SM_NONE);
++	}
++	return 0;
++}
+```
 
->>
->>
->> https://patchwork.kernel.org/project/linux-pci/patch/20251108140305.1120117-2-hans.zhang@cixtech.com/
->>
->> Best regards,
->> Hans
->>
->> On 11/13/2025 5:27 PM, Siddharth Vadapalli wrote:
->>> EXTERNAL EMAIL
->>>
->>> The drivers associated with the PCIE_CADENCE, PCIE_CADENCE_HOST AND
->>> PCIE_CADENCE_EP configs are used by multiple vendor drivers and serve as a
->>> library of helpers. Since the vendor drivers could individually be built
->>> as built-in or as loadable modules, it is possible to select a build
->>> configuration wherein a vendor driver is built-in while the library is
->>> built as a loadable module. This will result in a build error as reported
->>> in the 'Closes' link below.
->>>
->>> Address the build error by changing the library configs to be 'bool'
->>> instead of 'tristate'.
->>>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://lore.kernel.org/oe-kbuild-all/202511111705.MZ7ls8Hm-lkp@intel.com/
->>> Fixes: 1c72774df028 ("PCI: sg2042: Add Sophgo SG2042 PCIe driver")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->>> ---
->>>    drivers/pci/controller/cadence/Kconfig | 6 +++---
->>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
->>> index 02a639e55fd8..980da64ce730 100644
->>> --- a/drivers/pci/controller/cadence/Kconfig
->>> +++ b/drivers/pci/controller/cadence/Kconfig
->>> @@ -4,16 +4,16 @@ menu "Cadence-based PCIe controllers"
->>>           depends on PCI
->>>
->>>    config PCIE_CADENCE
->>> -       tristate
->>> +       bool
->>>
->>>    config PCIE_CADENCE_HOST
->>> -       tristate
->>> +       bool
->>>           depends on OF
->>>           select IRQ_DOMAIN
->>>           select PCIE_CADENCE
->>>
->>>    config PCIE_CADENCE_EP
->>> -       tristate
->>> +       bool
->>>           depends on OF
->>>           depends on PCI_ENDPOINT
->>>           select PCIE_CADENCE
->>> --
->>> 2.51.1
->>>
->>>
-> 
-> Regards,
-> Siddharth.
+User program:
+```c
+int main()
+{
+	cpu_set_t mask;
+	if (fork())
+		sleep(1);
+
+	CPU_ZERO(&mask);
+	CPU_SET(5, &mask); // Assume that cpu5 exists
+	assert(sched_setaffinity(0, sizeof(mask), &mask) == 0);
+	syscall(471);
+	// unreachable
+	return 0;
+}
+```
+
+Usage:
+1. set core5 as isolated cpu: add "isolcpus=5" to cmdline
+2. run user programe
+3. wait for kernel print
+
+v2->v3: https://lore.kernel.org/20251108172346.263590-1-qq570070308@gmail.com
+  - Fix building error in patch 1
+  - Simply add the __always_inline attribute to the existing function,
+    Instead of adding the always inline version functions
+
+v1->v2: https://lore.kernel.org/20251024182628.68921-1-qq570070308@gmail.com
+  - Make raw_spin_rq_unlock inline
+  - Make __balance_callbacks inline
+  - Add comments for always inline functions
+  - Add Performance Test Data
+
+Xie Yuanbin (3):
+  Make enter_lazy_tlb inline on x86
+  Make raw_spin_rq_unlock inline
+  Make finish_task_switch and its subfuncs inline in context switching
+
+ arch/arm/include/asm/mmu_context.h      |  2 +-
+ arch/riscv/include/asm/sync_core.h      |  2 +-
+ arch/s390/include/asm/mmu_context.h     |  2 +-
+ arch/sparc/include/asm/mmu_context_64.h |  2 +-
+ arch/x86/include/asm/mmu_context.h      | 23 ++++++++++++++++++++++-
+ arch/x86/include/asm/sync_core.h        |  2 +-
+ arch/x86/mm/tlb.c                       | 21 ---------------------
+ include/linux/perf_event.h              |  2 +-
+ include/linux/sched/mm.h                | 10 +++++-----
+ include/linux/tick.h                    |  4 ++--
+ include/linux/vtime.h                   |  8 ++++----
+ kernel/sched/core.c                     | 19 +++++++------------
+ kernel/sched/sched.h                    | 24 ++++++++++++++----------
+ 13 files changed, 60 insertions(+), 61 deletions(-)
+
+-- 
+2.51.0
 
 
