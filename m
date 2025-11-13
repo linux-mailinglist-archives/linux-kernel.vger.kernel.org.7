@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-899676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F0BC58B00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:25:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0517CC58A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8132B3B6C6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:44:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F4424EDF59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8BD342CAD;
-	Thu, 13 Nov 2025 15:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE6B2EBBB5;
+	Thu, 13 Nov 2025 15:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oIhh1LHF"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y78R7zn4"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FD2342C9E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D1B2E8DFD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048197; cv=none; b=Oo/iT5Bssvfc9yhdmO8+8lnd+E5ltdcSvDdxrfy+r7cUM1bykdcnymOQnZiprOjNZgBLvEPfES7/cqtcJ+5PSf8F94XXBrcjLlVG8xBAhT3ZVQ0uaT3Io+g6ohh1b/V1Eh6RhuYqxi/Cuacw5VxgU1pbgvMf2Bq0n0xIam11RXI=
+	t=1763048276; cv=none; b=BlbsLVl0JWCoIG3T6JnUloGzyLNnTPRmv1nEB25/HoIrsytGI5r0vMS4/5zX3SbjukP45dIDMh5XmICSXp6FS1z0a9a/34D/8/UqOvM/+GAmYNknxG8MwJt3S4R0EKqoowKrzHi9cBpdp40Ln3c0T0A6VJxQI0A/PEchqTk2p08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048197; c=relaxed/simple;
-	bh=ybqmvAvkOdq3mt/0uWkQ93BnzLh9klGY7XvZKnM9zgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d/9IgjWyW7rZsNrO3syuJhthAZ2oR2Vd05BXlcs8tIUGHrCZu0rvD2ccyT7radkivoojYlqox7DfL95KnBCy701ll0XrS0h8v0r4XPNACgUrgq+Td6XrnA+NMGANbx1CcB4/lGkBpbu8LR0vZTmmJw/Jew0FauxuWHWhv0rwDJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oIhh1LHF; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d16af3e8-3ca1-4676-9112-32f7e33bd6df@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763048193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eO08yAJL2+iPpYzeNmwM0YR9k1khw+2M2/QRkBIoq5I=;
-	b=oIhh1LHFeqonkNSOYHAXCoLgDnrY1+uIzi2hOrkYeLDlncR4E6OEb+aqzoqlYsTf/wtn26
-	imrnsA93QYD/88N2T5n+nQylXmnmwy6WLpgfDx8wyz37Q8ZrP4HvCBC9AHtPfa2H66hSLQ
-	/YLAW8o4aSam0hefdlgrRsivjV6w+i4=
-Date: Thu, 13 Nov 2025 10:36:12 -0500
+	s=arc-20240116; t=1763048276; c=relaxed/simple;
+	bh=PVs3QA3h39OY8vELwwmKD90SEduWln4ioXy+TQYmBGI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nT/Z3RBwHTHh8q3iU/Oz4UAoJk0TTAeB4hiR+jxjsHnYuet4qjNYZtH30lHniNgaMJ8B7cs48x6S9goLVWNA61zyHzwYYpkZplbyCHFvzcv9RzDhS1PN0P++Yhyehge8yHqwFBsZ6HIfQs7OVxIJG0w3SgQ63S6FhxSMihB+Pc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y78R7zn4; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3416dc5754fso1346564a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:37:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763048274; x=1763653074; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NanmVyWm2Vvsyfpfmbn7rPVld+ao1K4xNTswIeS43GE=;
+        b=y78R7zn4VaU+R6rl5aRF9e00YJYEMbzqtwHAuWmUadXNKiMdIzMcW2SCOs8fES5HEv
+         /8sV0oMasDZV9Fg/2EY/dCmSTEZSmt+HtBKQ7Gs2+zRsE3v5/+0rpxE+GU/V5qMkWdm8
+         3S8RzhzIg++pHsbhr+MEEtIRaIIUFBBEXZ9LqRlTPX8JQPkur/fy7EyOUhrWKYNuurIg
+         smgVzy7j73SubJRafQDMQMwvCil4f3bsRwmn8iBCrftQKdltWJb8ZtpjJro8nzq89/iR
+         2JLDVTx0k2HOv2wlQOHskgjigVEGb+57iivFZF8bHZ8CWt7gDbeIEsHyNi9rKRaOPkhU
+         HITw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763048274; x=1763653074;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NanmVyWm2Vvsyfpfmbn7rPVld+ao1K4xNTswIeS43GE=;
+        b=EZDU8Wd+LkgMKfKbn+JfYReaKD/5RVDuAx+97+LubKXfWaaEb9SwJorMFurVAn8Z50
+         C2P6KGKXd0sIVgxKBBljWHU2GofY2zeNpDac7gq16g2Wj8hep9zoL45QKtcrtrZNh13E
+         T5OmlZuVjwlStpKKz0K4BHbwdDcENMWZ3eDegbBDu57rSG4TTm37Y0Z9M+E81gXfzqD8
+         S7piV1dC+y30I587egfpFsS0tEhnQAD6n365Eh1BezITUCUtYJgNhAomeNdJweJHHlq2
+         jV4u743W+/2ke6k14BTOdXJGHIqG1iiBibIYrSE8kHXzSZ0ggsQPjkmO9PkcjY6ocDvd
+         GWMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG5CW6QnzxV3306ioOjhzQTyWOPvtYu/vY8jOodxYDUY+UNMoSd/kTGASy5JUqw4yrL+Yxqu4OTKGmz6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlOhwsNNGDJKqOvxeQ1EDeacJbjQegQhVmbJZRoDP9tKvYUce/
+	B5F9fV11ToUkBG4RzuWnz2fdbY5Xid/DWKvzoAwf4C4us2eh2Xr9Pt8Mt6O6sMkaKAtrySPtpYU
+	IKHL5sA==
+X-Google-Smtp-Source: AGHT+IHIeIOOLKjhH3nqJ8YUm1oSm40kZ4brG0JoCv7HEZPEvkLRythN5HOIeCIHT9qYrlTwuCspcZ1TEZ0=
+X-Received: from pjbsf3.prod.google.com ([2002:a17:90b:51c3:b0:340:be60:931c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:b88:b0:343:e461:9022
+ with SMTP id 98e67ed59e1d1-343e46191admr4812531a91.24.1763048274260; Thu, 13
+ Nov 2025 07:37:54 -0800 (PST)
+Date: Thu, 13 Nov 2025 07:37:52 -0800
+In-Reply-To: <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dp: Support DRM_FORMAT_XRGB8888
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Mike Looijmans <mike.looijmans@topic.nl>, dri-devel@lists.freedesktop.org,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-Cc: David Airlie <airlied@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.fb98a918-329e-4536-a0a5-a99b22ba0120@emailsignatures365.codetwo.com>
- <20250627145058.6880-1-mike.looijmans@topic.nl>
- <a8f0de1d-07e8-4e48-8495-9cafa0febcf5@linux.dev>
- <d2759f7e-23a5-4d68-b50f-4c510540bcdd@linux.dev>
- <6d17761f-c2c5-422c-a14f-0e560676c21f@ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <6d17761f-c2c5-422c-a14f-0e560676c21f@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-6-seanjc@google.com>
+ <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
+Message-ID: <aRX7UDGm3LHFnPAg@google.com>
+Subject: Re: [PATCH v4 5/8] x86/bugs: KVM: Move VM_CLEAR_CPU_BUFFERS into SVM
+ as SVM_CLEAR_CPU_BUFFERS
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/12/25 04:31, Tomi Valkeinen wrote:
-> Hi,
+On Thu, Nov 13, 2025, Borislav Petkov wrote:
+> On Thu, Oct 30, 2025 at 05:30:37PM -0700, Sean Christopherson wrote:
+> > Now that VMX encodes its own sequency for clearing CPU buffers, move
 > 
-> On 11/11/2025 23:09, Sean Anderson wrote:
->> On 11/4/25 16:53, Sean Anderson wrote:
->>> On 6/27/25 10:50, Mike Looijmans wrote:
->>>> XRGB8888 is the default mode that Xorg will want to use. Add support
->>>> for this to the Zynqmp DisplayPort driver, so that applications can use
->>>> 32-bit framebuffers. This solves that the X server would fail to start
->>>> unless one provided an xorg.conf that sets DefaultDepth to 16.
->>>>
->>>> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->>>> ---
->>>>
->>>>  drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
->>>> index 80d1e499a18d..501428437000 100644
->>>> --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
->>>> +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
->>>> @@ -312,6 +312,11 @@ static const struct zynqmp_disp_format avbuf_gfx_fmts[] = {
->>>>  		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
->>>>  		.swap		= true,
->>>>  		.sf		= scaling_factors_888,
->>>> +	}, {
->>>> +		.drm_fmt	= DRM_FORMAT_XRGB8888,
->>>> +		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
->>>> +		.swap		= true,
->>>> +		.sf		= scaling_factors_888,
->>>>  	}, {
->>>>  		.drm_fmt	= DRM_FORMAT_RGBA8888,
->>>>  		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_ABGR8888,
->>>
->>> Tested-by: Sean Anderson <sean.anderson@linux.dev>
->>>
->>> I can confirm that this provides a nice performance boost :)
->> 
->> Actually, I think a better fix would be to make the "video" plane the
->> primary one. That plane supports XRGB8888 natively, and then the
->> graphics plane can be used as an overlay for e.g. windows or cursors.
-> True, but I think usually the overlay plane is the video plane, which
-> supports YUV formats. If we use the video plane as the root plane, then
-> that one is reserved and there's no "real" video overlay plane.
-
-But you can't use it as an overlay anyway unless you enable colorkey.
-Otherwise it's always an "underlay". So you can't actually have e.g. the
-video layer display a decoded video in a window because that would
-require userspace to "carve out" the window in the graphics alpha layer.
-But as discussed earlier in this thread, the alpha channel is always
-disabled by this driver! So the video layer is completely unusable in
-the current driver anyway.
-
-> Did you check my recent reply to the thread? I didn't have too much time
-> to debug all the combinations and what exactly the userspace does. I'm
-> inclined to just merge this one which should improve the user experience
-> quite a bit, even if there are still unclear parts to this. The related
-> code can be improved later if we figure out the details.
+> Now that VMX encodes its own sequency for clearing CPU buffers, move
+> Unknown word [sequency] in commit message.
+> Suggestions: ['sequence',
 > 
-> Any objections?
+> Please introduce a spellchecker into your patch creation workflow. :)
 
-I object to this because it solidifies the current state of affairs
-where the alpha channel of the graphics layer can't be used. I will
-submit a series later today to change the primary plane and enable the
-alpha channel.
-
---Sean
+I use codespell, but it's obviously imperfect.  Do you use something fancier?
 
