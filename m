@@ -1,77 +1,106 @@
-Return-Path: <linux-kernel+bounces-898499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D2BC55696
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:19:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6615DC556BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A4644E18B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA373ADBC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5652F6911;
-	Thu, 13 Nov 2025 02:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF1918D636;
+	Thu, 13 Nov 2025 02:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uU9S3G0S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="B6TsU7WV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B892C181;
-	Thu, 13 Nov 2025 02:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763000342; cv=none; b=ZDIpEHUpMTbAUnr3PkO14mR228DPF0LEK/unTxQUL5jH9PKTV0zUqh1f0hBQFlxtgD4CV39WbRr37ftJK4s6BI/JBsyUlEigZADYFEfOXZE1S3wWyHsVy1PkKEHxu2LaHawxpaFjzXM+6Qp7JaA3ZMCNeBbVS0JFkYEDxb9u1xw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763000342; c=relaxed/simple;
-	bh=msztFxay1oMVA/+ICSOB8YjjJ+xlYUvgd9APiNUfgyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EM1W0FaDodO5ormZdcDlkRfFs/4pGxkw6ZUGTPxHMpsGveLve+MQ86QM4HnhJfjKjr2oe3WsnDzE9j+AATZGHsWGQutwSYk9bZzSQ2i6K7tSbCJxQ1P3R590d19EijSfRMi2s2deGUhf1++Y8rJEfbgqENROq079urNQt9992ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uU9S3G0S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6DFC4CEF5;
-	Thu, 13 Nov 2025 02:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763000342;
-	bh=msztFxay1oMVA/+ICSOB8YjjJ+xlYUvgd9APiNUfgyo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uU9S3G0SwkTw4XJ4jjDr5fc91SDYZDo8teQl2YKnFSdKASFAZReqlSHagnINZYsSk
-	 kGYtEopSCK4+RSkOq6yXF71NAYMyJpPGyNGU9KWdwz9KdwyoNw1hz4Dol4+JYxSnkQ
-	 AFt/Ofu3vPqve+YWcxZAei2SGqhScaAiJgaZZdfBE3qvy/BwkEzv6hbT+RCIgYH4t7
-	 Wr9sDekdEI8zmPuql+92RG8kHEuucMaLCYZBta/ZExL+t9sixrkfk0ti9D/HVUNIKw
-	 rCMgOC/51WMRl5p8wSci+MD+CL0eMB7qkpH0ThpOYwv7h40FJyeOiD37Nvvw0ro4uK
-	 2T/D0u/T5WYAw==
-Date: Wed, 12 Nov 2025 18:19:00 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, Doug Berger <opendmb@gmail.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Antoine
- Tenart <atenart@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, Yajun
- Deng <yajun.deng@linux.dev>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 1/2] net: ethernet: Allow disabling pause on
- panic
-Message-ID: <20251112181900.56e3ce27@kernel.org>
-In-Reply-To: <9109c963-4544-4c4b-8d75-3293d8173cd5@broadcom.com>
-References: <20251107002510.1678369-1-florian.fainelli@broadcom.com>
-	<20251107002510.1678369-2-florian.fainelli@broadcom.com>
-	<20251110171036.733aa203@kernel.org>
-	<9109c963-4544-4c4b-8d75-3293d8173cd5@broadcom.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41FC2F6563
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763000433; cv=pass; b=oMcnOr9jDd1XaIb6N3jzC1VBsolgNJqssNuCkMbGz1LpiYxPCa//6wEt0nAhVTzmHapjqD9POnW1Wz1jgcqVqIp9rtuBHks8OJCf4ATob8qWa9o8RMaUgaEh/Qo/XJl4OY/RIGnF8edDxSY20Y0TWzGIeYJhAs58+c/zjuF4EEM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763000433; c=relaxed/simple;
+	bh=HqOdbn19raCLnfIYLJqhZBbMpFYjRxv54iPmZyG9sL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NOYvFQ5Uq+7PV110eBcQVwXwEsRuImzCwB4GwSdHEpoz5+R7o9pIGLi4NnXwDV2GQspB6BwlXPA+BrRwFmhGqeIr9+OoLjSM7FtZ+qHw0/NsqxngwZAdsgzem6fsDqJ4e4mFMCVOVU0OezR2BxB1FhYimM6k56PjyxMm+ILuY84=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=B6TsU7WV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1763000408; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LSZ6LEO1NqTQQ8wn6RID77+aUyvkfdEi/nD/Hs+PhvX44sOI+Y5wcy27ozk9SiUJRikt60phuQs4G/uBNU9m2Q/b2MBv7XApM4lLnuFDtKxwZeaeVFERKo38S0hZLR7oOJVzr1CSgthpoKzJ5d8laBFN99v6IpddxCEgiYF8w8c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1763000408; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=yHrOo7Ig/iyo6ppLbPkyZ8m21XafQfUqYyXwsyWUUhU=; 
+	b=Zoc7zmHwMQXxoFWevZedsRvwHBPNo7oj31vIpN6M+hYH+aIFFELcZdA4fpNtAUUM72SNCRhiRlzVGxxPxWTULN72JlaO1twLmW23PYWNygJEA3j75RNE8v/SofbyoBpiemMQEF0zejwp/0YzzJGtFX0bpfdnMy1iXydvtxWQQ+U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1763000408;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=yHrOo7Ig/iyo6ppLbPkyZ8m21XafQfUqYyXwsyWUUhU=;
+	b=B6TsU7WVwFTP8eHwOg4CkgwSsjDk/cV0g3MG2PFeyz4R+IaulaalppdqX6Tkqvqu
+	ApJHu/JiZodo6vz4nKph6ZfAsmNtQTKZM2y3ICA++drFmAZmWiUreJ7swzoY1ZZUfIJ
+	NyfaFrNg3DmAGMIRZdf+KFVN0bHGD60QSxL3szLk=
+Received: by mx.zohomail.com with SMTPS id 1763000406300353.34661766299405;
+	Wed, 12 Nov 2025 18:20:06 -0800 (PST)
+Message-ID: <e89054b7-1914-4b06-b36b-bb7a3b03ba34@collabora.com>
+Date: Thu, 13 Nov 2025 05:20:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/virtio: support VIRTIO_GPU_F_BLOB_ALIGNMENT
+To: Sergio Lopez Pascual <slp@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20251110125213.12633-1-slp@redhat.com>
+ <20251110125213.12633-2-slp@redhat.com>
+ <855ebbf1-0b02-45b5-8fa9-b50c05793e19@collabora.com>
+ <CAAiTLFUbJ-YpV8+05PofXpmgOu=gNmUh9L6xgj_w80_mf7z8Tw@mail.gmail.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAAiTLFUbJ-YpV8+05PofXpmgOu=gNmUh9L6xgj_w80_mf7z8Tw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Wed, 12 Nov 2025 14:53:51 -0800 Florian Fainelli wrote:
-> > please no sysfs for something as niche as this feature  
+On 11/12/25 19:49, Sergio Lopez Pascual wrote:
+> Dmitry Osipenko <dmitry.osipenko@collabora.com> writes:
 > 
-> Would you prefer ethtool in that case?
+>> On 11/10/25 15:52, Sergio Lopez wrote:
+>>> +	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_BLOB_ALIGNMENT)) {
+>>> +		vgdev->has_blob_alignment = true;
+>>> +		virtio_cread_le(vgdev->vdev, struct virtio_gpu_config,
+>>> +				blob_alignment, &blob_alignment);
+>>> +		vgdev->blob_alignment = blob_alignment;
+>>
+>> Shouldn't blob_alignment be max(guest_alignment, host_alignment)?
+> 
+> virtio_gpu_config is the minimum alignment required by the device/host.
+> If the guest requires a higher alignment than the device/host, I would
+> expect that to be found by a different mechanism, as it would happen on
+> gpu drivers other than virtio-gpu.
 
-Yes, no strong preference where exactly but somewhere within ethtool
-would be better.
+Alright, perhaps that will work.
+
+-- 
+Best regards,
+Dmitry
 
