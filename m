@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-898755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07F1C55EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:35:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A92C55F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D331934E6FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:34:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A453534C81C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEE3320A24;
-	Thu, 13 Nov 2025 06:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5AC320A34;
+	Thu, 13 Nov 2025 06:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="P5ZqKQ9r"
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pU+LVcP/"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1593203A5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F2C3009F1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763015663; cv=none; b=VapGB8g7rhgFM55rJEBSdraxLpCd7r8fSe4eyh4ol9WJdwOZVMkmUnorWuwFfEmBU4NvsUpgqtLg/eY56KJsCr0qEZ0HUMhymLCh7BpgoMyf4zsseGgA2kDMbvjqBX+ndiKbgFmwVfcTDGIzuDwsJf2DyYxEh4OfO3L8JqPsF1c=
+	t=1763016019; cv=none; b=jw0bpFKcno50Syh6fHwmZwao6xZz8QadJUfgFLjQtvBuOUDUA7z1S6NsxiC0KxcAmgeyJklzq0i8fAaPAqq+KniP623bj0Vxex92bwzPhf7Ke0vXqoS2lxW4rUaRuFmEsZio5ugK3Ky62f8R93ke1C9dsZryDgMt7gD/ZhsXTks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763015663; c=relaxed/simple;
-	bh=cRsgvm0G1O7+5bYptmQ08SL1ws55YK1M5C4w97Pxg50=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TZqBZu/4j5g89T0A7NjnRwDcTh3bqUuZ3hlXxzWpf/hYz2Mh9awHwsKQpUTrVsksNJtHlq97la4yIBpLbZsd5WTkALeHATFisb08SXiuQB8tdceamLm/Wi1+18I3XGZtP5n7/F2nnrgMmBZ9q101A3xCqgCicPZqlpqJ0iwKd1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=P5ZqKQ9r; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 296eb3989;
-	Thu, 13 Nov 2025 14:34:08 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: jani.nikula@linux.intel.com
-Cc: joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	andi.shyti@linux.intel.com,
-	mikolaj.wasiak@intel.com,
-	krzysztof.karas@intel.com,
-	krzysztof.niemiec@intel.com,
-	nitin.r.gote@intel.com,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH v2] drm/i915: Use symmetric free for vma resources
-Date: Thu, 13 Nov 2025 06:34:05 +0000
-Message-Id: <20251113063405.116845-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1763016019; c=relaxed/simple;
+	bh=QcWs+IGmRoflPOk02kprhwK54ytqFiMJKgzVWIWFYrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hHJqB+CF5vFt2sP83T365StLoWh57Ca+GbGIg+X9fWnbEiK/mJtjNsGZ6ttaLlOJcwgNbhIRapSHA8Oc0AsXxBrdUopZf77o0EigSo2EL/DhfbxaP3VZ0JQqa9ZjXsrmZChXmJ+ytMJw/FsCZoyZLUpxYIsXMqSE6A4osY9+gkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pU+LVcP/; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <698ecc2f-0c19-4a9a-a493-f675dc14ec5e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763016004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KaalMo1Owx+Fe0sQv3alWRupfxtG4rkZLE81bZTGHkI=;
+	b=pU+LVcP/8FVdfs6CV5GwZsQjqR4BjvPq6xl+O/UWYcUCPMOluYOoJp5Fj+esjV+BR82TUP
+	D5sNZ9p4nA03Rg4n+TcrKTpNEcsUob6E0nxhNir+460mGRDnt1IXIPPVEZSXdflLhsS+/T
+	QbIbeIJMpKfnDXfjMxi6/Ik0ooWVvFw=
+Date: Thu, 13 Nov 2025 14:39:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v2 1/3] dm-pcache: allow built-in build and rename flush
+ helper
+To: Li Chen <me@linux.beauty>, dm-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Zheng Gu <cengku@gmail.com>
+References: <20251111121337.1063443-1-me@linux.beauty>
+ <20251111121337.1063443-2-me@linux.beauty>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+In-Reply-To: <20251111121337.1063443-2-me@linux.beauty>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a7bebe2ac03a1kunm32325a7311214d
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGhlPVhgaTRpOGkpOTU0eGFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=P5ZqKQ9rz1kEVvGKZ+XRtsZtVa8yDePzV24qvIJpzzCzY2tYwFUnpaAM6la7IS1Pbx0xVdAmCfnxYuj+wO/3nXAaOGEZkGb80CHraNCB9k1SA0dHixTVkEagfQun0JHpy8c3vF2p7qx2N9ORplOZjrhytdRHQ7vuqql0hnM9t7A=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=ZSj4l+iI7JKR3Z396kPA7kl8a4f1l9OPjhSTji8cqHE=;
-	h=date:mime-version:subject:message-id:from;
+X-Migadu-Flow: FLOW_OUT
 
-The error paths in reserve_gtt_with_resource() and
-insert_gtt_with_resource() use kfree() to release a vma_res object
-that was allocated with i915_vma_resource_alloc().
 
-While kfree() can handle slab-allocated objects, it is better practice
-to use the symmetric free function.
+在 11/11/2025 8:13 PM, Li Chen 写道:
+> From: Li Chen <chenl311@chinatelecom.cn>
+>
+> CONFIG_BCACHE is tristate, so dm-pcache can also be built-in.
+> Switch the Makefile to use obj-$(CONFIG_DM_PCACHE) so the target can be
+> linked into vmlinux instead of always being a loadable module.
+>
+> Also rename cache_flush() to pcache_cache_flush() to avoid a global
+> symbol clash with sunrpc/cache.c's cache_flush().
+>
+> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
 
-Replace kfree() with the specific i915_vma_resource_free() helper to
-improve readability and ensure the alloc/free pairing is explicit.
 
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
-Changes in v2:
-- Reword commit message to describe this as a readability change.
-- Drop the Fixes tag.
----
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by： Dongsheng Yang <dongsheng.yang@linux.dev>
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-index 7ab4c4e60264..16e72ef57bed 100644
---- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-@@ -1524,7 +1524,7 @@ static int reserve_gtt_with_resource(struct i915_vma *vma, u64 offset)
- 		i915_vma_resource_init_from_vma(vma_res, vma);
- 		vma->resource = vma_res;
- 	} else {
--		kfree(vma_res);
-+		i915_vma_resource_free(vma_res);
- 	}
- 	mutex_unlock(&vm->mutex);
- 
-@@ -1704,7 +1704,7 @@ static int insert_gtt_with_resource(struct i915_vma *vma)
- 		i915_vma_resource_init_from_vma(vma_res, vma);
- 		vma->resource = vma_res;
- 	} else {
--		kfree(vma_res);
-+		i915_vma_resource_free(vma_res);
- 	}
- 	mutex_unlock(&vm->mutex);
- 
--- 
-2.34.1
-
+> ---
+>   drivers/md/dm-pcache/Makefile    | 2 +-
+>   drivers/md/dm-pcache/cache.c     | 2 +-
+>   drivers/md/dm-pcache/cache.h     | 2 +-
+>   drivers/md/dm-pcache/cache_req.c | 6 +++---
+>   4 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/md/dm-pcache/Makefile b/drivers/md/dm-pcache/Makefile
+> index 86776e4acad2..cedfd38854f6 100644
+> --- a/drivers/md/dm-pcache/Makefile
+> +++ b/drivers/md/dm-pcache/Makefile
+> @@ -1,3 +1,3 @@
+>   dm-pcache-y := dm_pcache.o cache_dev.o segment.o backing_dev.o cache.o cache_gc.o cache_writeback.o cache_segment.o cache_key.o cache_req.o
+>   
+> -obj-m += dm-pcache.o
+> +obj-$(CONFIG_DM_PCACHE) += dm-pcache.o
+> diff --git a/drivers/md/dm-pcache/cache.c b/drivers/md/dm-pcache/cache.c
+> index d8e92367d947..d516d4904227 100644
+> --- a/drivers/md/dm-pcache/cache.c
+> +++ b/drivers/md/dm-pcache/cache.c
+> @@ -411,7 +411,7 @@ void pcache_cache_stop(struct dm_pcache *pcache)
+>   {
+>   	struct pcache_cache *cache = &pcache->cache;
+>   
+> -	cache_flush(cache);
+> +	pcache_cache_flush(cache);
+>   
+>   	cancel_delayed_work_sync(&cache->gc_work);
+>   	flush_work(&cache->clean_work);
+> diff --git a/drivers/md/dm-pcache/cache.h b/drivers/md/dm-pcache/cache.h
+> index 1136d86958c8..27613b56be54 100644
+> --- a/drivers/md/dm-pcache/cache.h
+> +++ b/drivers/md/dm-pcache/cache.h
+> @@ -339,7 +339,7 @@ void cache_seg_put(struct pcache_cache_segment *cache_seg);
+>   void cache_seg_set_next_seg(struct pcache_cache_segment *cache_seg, u32 seg_id);
+>   
+>   /* cache request*/
+> -int cache_flush(struct pcache_cache *cache);
+> +int pcache_cache_flush(struct pcache_cache *cache);
+>   void miss_read_end_work_fn(struct work_struct *work);
+>   int pcache_cache_handle_req(struct pcache_cache *cache, struct pcache_request *pcache_req);
+>   
+> diff --git a/drivers/md/dm-pcache/cache_req.c b/drivers/md/dm-pcache/cache_req.c
+> index 27f94c1fa968..7854a30e07b7 100644
+> --- a/drivers/md/dm-pcache/cache_req.c
+> +++ b/drivers/md/dm-pcache/cache_req.c
+> @@ -790,7 +790,7 @@ static int cache_write(struct pcache_cache *cache, struct pcache_request *pcache
+>   }
+>   
+>   /**
+> - * cache_flush - Flush all ksets to persist any pending cache data
+> + * pcache_cache_flush - Flush all ksets to persist any pending cache data
+>    * @cache: Pointer to the cache structure
+>    *
+>    * This function iterates through all ksets associated with the provided `cache`
+> @@ -802,7 +802,7 @@ static int cache_write(struct pcache_cache *cache, struct pcache_request *pcache
+>    * the respective error code, preventing the flush operation from proceeding to
+>    * subsequent ksets.
+>    */
+> -int cache_flush(struct pcache_cache *cache)
+> +int pcache_cache_flush(struct pcache_cache *cache)
+>   {
+>   	struct pcache_cache_kset *kset;
+>   	int ret;
+> @@ -827,7 +827,7 @@ int pcache_cache_handle_req(struct pcache_cache *cache, struct pcache_request *p
+>   	struct bio *bio = pcache_req->bio;
+>   
+>   	if (unlikely(bio->bi_opf & REQ_PREFLUSH))
+> -		return cache_flush(cache);
+> +		return pcache_cache_flush(cache);
+>   
+>   	if (bio_data_dir(bio) == READ)
+>   		return cache_read(cache, pcache_req);
 
