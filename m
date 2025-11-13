@@ -1,153 +1,225 @@
-Return-Path: <linux-kernel+bounces-898426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E185C55457
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:39:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF36FC55436
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C40494E381B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:36:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08A52345FE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA0B296BBF;
-	Thu, 13 Nov 2025 01:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AB9288C2B;
+	Thu, 13 Nov 2025 01:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESTeipE0"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h5NvD/Rs"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010045.outbound.protection.outlook.com [52.101.84.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138C53B1BD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997801; cv=none; b=m62kwpwsvKrNLWQt10kk9FzRtK2w/5TTM/E+zjjEpD1k23GO972VIWHyAhhYT6QMKl3t2SmOm0h1DGBmaVJEUveRSOPgLlYILIFs0HcJhI5ZBxiJTK1n0l/Yi/H9dDDWBCSioREg4uXYhcLqXf22s2E5yFM+tccHaieUV7ECR0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997801; c=relaxed/simple;
-	bh=bMdDBLNj03OoDLCv+IHb3i9hv5R5kNipckjW1y7Fk14=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kvfzTaWy59l9Q1yRZd7Qlvyc6R6EJ7UXrnwKgcQivG6gmFFIRFaolRCYuWpJgmcVs/qIvpOhxCRhAoUjteUeaFfll0uqH4QXR0XyGLNs+XTZhSm+qm+H9gSR8DjOJ2bBosxn6pfF/0pekhsA//NPX21Hjdb8lcORVb6U5Nq2Nvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESTeipE0; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-657230e45e8so243777eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:36:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762997799; x=1763602599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
-        b=ESTeipE09Ouw4aTYaFw3XMRaJHgmimxe7+5EfWsKO0aQ3Ei1YroLbVQm0wYXTc2aBf
-         OG/0Z1XGaC5sAFfy5jM4qeHymMrmsSl1I5kU7zcgNHwXFPSA3MtoQdzfduFkn7Dioocg
-         X81tFxOJMOP61XPZwkPDKDSd5fYegg9jN4N1d+HAZ85nNuQ1jWbgOFKGgnbsOlH88oiO
-         ZCGRLg2V/mqtEfUekuwioi1Flaa1D2pgG0opmqNk40I6G3JP3QzXIGl0PbdzqtJLxy2n
-         WflAqpGt9WTEF1BfiFFEilGgcue0KWSjtCRIEP+KMx8N6hKwOTVZ6zhLjiqdNQ4/7Ynf
-         jjTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762997799; x=1763602599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
-        b=PjU38GN53ONAcwKXnS71ShF6y2UeP7S/0qQ/YmbR/lht/yqOc5J4HwSyfM7zlktMre
-         yt1ods/i/x/8R+Ru7qfpnumWL8gdFN+S6GBTCqHLFcCK6U31IT9txs0garmEV5Yuh0/9
-         W/qAUdLqlHsw4ocxiow78+t4PFVQSz6SIgJOoq6SxhtZ+guklgJMlRx5a7s3WpBvFY84
-         LN3vVg1L+mfBBf4aGADyQvR92ENKSKRqXVdkxJvNHtA2FhN2qv+ULFnAB1GkLGS95l9l
-         78cjOIfHM7s0+uM+2DSK+1DSgs9bSUhoaBUijO4bx7Gqx75rcVY53EbcfMSa+SkZJUaZ
-         NTww==
-X-Forwarded-Encrypted: i=1; AJvYcCVMx6RIFdCmbt0tbKIYE5YsqKAdtmD+yR5FL7dUVdQJoOALeg9dQ4BB2EWkSw5jxc501ZQIvRni9CrvjyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm5zsFnTPjYLXL88+HkxoRvam9sFWGyFUqAmlYP7/okfzpqnOB
-	ywAksCgB6Ml2Al34/cUY+WlcOEW2IwbwS+kphKkOfQlx3DagGmT5ioGI
-X-Gm-Gg: ASbGncvy4psbSZGpXwc1Jk3NM4HoeH8tUMETsI4JI+DOgz0eOpjMGo82KgwS/bkRNZF
-	5n0rYsL+HHbXacZU2iTgxIggcwjdrQpNacq0CLBClFSLFIG1OThhiuFBdZNfALJm0EFQ8T/4Rqf
-	RPCXuri30jpEgI66j9SyIG501Ah3C7yP2inV8IEE7ZRdAInWKt9OAKY6BLywCI1FyEL2w1yQobx
-	tpA6N8g+AWOrCryCZqscc5RaUDOaN7dNZjUIZ5bP6Ez9LXFxGv2cLq8hCCKtcYmPWKf/kOPxdsg
-	537gAzTkl1TA3xB3dG+yOtd+Em1TEP8e65hXBQ20bIHafFu864GVQwjPTxM3//ovUo0h/vPaJ+N
-	dCLGjGfhZ1GRD8eWeUWWSHgTsZssOnnJiLVw8citniCmXTgvowvEckgWB/qJjB4a8r1dYc3TW3h
-	XA6PPNUYcVck0q9Eg7UP+R8rFlJ+bQdYjyrhTI4dymr52PU6giHzWt8+m6tO4vkMbdci0LOmo9X
-	nTOfpMEEgmv0+QZOfxeSevAMN8T
-X-Google-Smtp-Source: AGHT+IENjRfB0Wr8Tt+t2GzNl6io0GJSBGW6XHcXIqQoB6ahGHC1gEyI5aGELtUaPn+tkI9HjmtyHA==
-X-Received: by 2002:a05:6870:247:b0:314:faa7:931b with SMTP id 586e51a60fabf-3e84c6ffc66mr1042812fac.25.1762997799104;
-        Wed, 12 Nov 2025 17:36:39 -0800 (PST)
-Received: from uacde259c55d655.ant.amazon.com (syn-071-040-000-058.biz.spectrum.com. [71.40.0.58])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e852058dcesm486754fac.9.2025.11.12.17.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 17:36:38 -0800 (PST)
-From: jayxu1990@gmail.com
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jayxu1990@gmail.com,
-	rdlee.upstream@gmail.com,
-	avnerkhan@utexas.edu
-Subject: [PATCH] fs: optimize chown_common by skipping unnecessary ownership changes
-Date: Thu, 13 Nov 2025 09:34:49 +0800
-Message-Id: <20251113013449.3874650-1-jayxu1990@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7A428FFF6;
+	Thu, 13 Nov 2025 01:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762997749; cv=fail; b=YQHlc4UjHTvSbqrwUGilA/jZbR035a7WZislihqZyvq3YWucDma+dMcjF1tV7hscXGgxRgJkk1bBbXTvEZmdNali4Dvb4dxo5vW5EpG6ayTAtJbjs1eeJTH25hFvKUxsujJclVim53Xh0SX661cXnenAs2oZKkOA24Lwl1Ndygs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762997749; c=relaxed/simple;
+	bh=kJtSWyI0D7twv3fgQQp+ITWUz4x4lFmND1kkNn9hpAQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=En5vAv+xjsDPkg9ATCfZUz7zgiWDLelTYIAJQAsHQJa93z/lAHHwvljmbycsazlS09ui2hZdN887/9qv19zuR/yHNalg97hCAg7VhuWlqUhx8rpKB5hjEqyhKFO7QTh/wmln4K1JW5pDAhLfilUDj0L93gngtN0GFA48ynth940=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h5NvD/Rs; arc=fail smtp.client-ip=52.101.84.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DpVqXCdAhxsVUFxj0rBCjzcFpYThGcFI6/AgH/64vav7zO8QotE+HbhSd7LbUpN7QwZ8mu/MTbq0YXQtcZrg2pTMrR8AjWz1vU+8YqAX1QsGHj0Jo3MvJ/Lij8H8WKpakJSzPOfClHoBWAFlTN6vvDHEVT31E2cFqlPEH5HSDV7wdGAFAWmpMMEXOYIIsIpL8By7ZswzOf3aC6AX4qa2YSSUj279pqKNagfNj5+zrb/QoqbcqfNJVGmDJ7FCk/wZvC9QfIqgXdpZuG0JTNFWvLR21WoNcnRG9k/Ia12+GsrAiemiNRP/53zMzUwIPQt8SBNwCYvIzybOq5Fq5D5bTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tl6uGiX//KKgECOCk9V/diQSfMoHKcFbkPfq3X74FRQ=;
+ b=Qk6/WhPk96a0r6rxbgzRnruBABf0Q5kWNedLiy6ZfvsxKBugszA1KNdwMVKktnkL6dLxgAxEL6I6z0lf5L8E4u37DPkuyaNskvahCAgeprhyWNO1ZXX1UdrNyG7TTILW8e1v+Mnxag7ASRHPcAqyN7vmwlGofZl/+tkT+Jdi95WQMT/PDwMnrJPERhi4p2lce5tMyplj+nR4vGwl9KnYFVempVBGwqO4Co+3Tx9KHDn3fgZorRRTdm9Aqm5ZF1ib4lCsllHhEa+kOn5nVQAyPuRSZQ/1F0B26OTmRsYJM5KKoxqFoptB3z6IUTMq98IIHD9CTUrtshIZyT2j8yBumA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tl6uGiX//KKgECOCk9V/diQSfMoHKcFbkPfq3X74FRQ=;
+ b=h5NvD/Rscc691Gphe4H8eMfoooribVCEisZU8HWbwUuYmjNSXtr5vVYn9q2EltH+ACdFnFRWNudUjKXBlG9x53W0Fu6DwnMgHyiYEQOrO2XC0JRi0VxtwFZQIVY808mYh3EQoVfil0BkWQH7IjCcDjncEhT5cYberS4dpdTMUfRvWx1tncqAln+blziq+hnPM8CeTp+5f2frfnfSgE/MYBvVtX7EYp5zhEC+WRxD5mzZ/jhFvgDrlAEswNs/aCudqchRAKJbwSlFuX4zj6ETICRlE+rMmTCrOB1vfEUvb8XBzVhNgLUJJrJd4y69E2tThb/LxRfO/FLIwYir6BhXww==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AS8PR04MB8564.eurprd04.prod.outlook.com (2603:10a6:20b:423::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
+ 2025 01:35:42 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 01:35:41 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"eric@nelint.com" <eric@nelint.com>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next 1/5] net: fec: remove useless conditional
+ preprocessor directives
+Thread-Topic: [PATCH net-next 1/5] net: fec: remove useless conditional
+ preprocessor directives
+Thread-Index: AQHcUvIFMn6oL/NXRUSshE/9ChqG07Tve6gAgABY1FA=
+Date: Thu, 13 Nov 2025 01:35:40 +0000
+Message-ID:
+ <PAXPR04MB85104CA04EA6BE1DFFFE7E7588CDA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20251111100057.2660101-1-wei.fang@nxp.com>
+ <20251111100057.2660101-2-wei.fang@nxp.com>
+ <28badd8f-8c76-4e88-bcb2-49ed5026c1af@lunn.ch>
+In-Reply-To: <28badd8f-8c76-4e88-bcb2-49ed5026c1af@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB8564:EE_
+x-ms-office365-filtering-correlation-id: e9b14ef6-22ec-4cb2-3f7d-08de2254f4d7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|19092799006|7416014|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?GuaY6WukFOwp8HCNZRI9UXyVvkxAGquf8yIxWn8bx371OlBGujfxjo96tOrB?=
+ =?us-ascii?Q?T8NbPf6kjhy0oJceQiwaN9ka+wBveBG21qnhVKDNSDa0GGKqKBulStef5CCX?=
+ =?us-ascii?Q?IwE9iOhwOJCcqtNfwK/JoDasN+QdQhzFSGYWBymxnK0ozbyThd1amyoWpoWr?=
+ =?us-ascii?Q?68/J/fO8dINiw0R7oqVh0Mz9gGJtaHeTcAcfGu5NFZrLfh4lTkovBGGrZMky?=
+ =?us-ascii?Q?A5jaBq24u6nESdXT+0nUGqQdKJ18HLPWRKOj+cT7XlBtGmqVW81cC9rB2uST?=
+ =?us-ascii?Q?dRMyws8LMex/7VEAtxmNOw11+T0NEGlMEFWUcRBgbCRM/IBsA7+d1SUcrYhK?=
+ =?us-ascii?Q?g5FciPu3QJkRZKzSbnVYBHYLb0DtvPswU23a3MMHrg4DQwZqqakgrTxDcxHm?=
+ =?us-ascii?Q?zMwgubsB3kyuxtjuGplizajuEzwhj+3m7dL5LghIz69LR9OMplpcwm4J/gKV?=
+ =?us-ascii?Q?8wAUHD5vGngjVao7sBVvNT6hMZJ+0PaguI10INnnKyQPRqTQe2nXoCEieN8Z?=
+ =?us-ascii?Q?4o1IOYmtj4OKjjUX4wcBP1PyIEgjtfO/v97IRYM/uHGdAfrsrhalJNAKy7JZ?=
+ =?us-ascii?Q?p+bSZ4HjSu8qPAr7FpC7tYhUwjJMNAG7tV+iQz9SjWzBDg0WTpW77lwD0n2G?=
+ =?us-ascii?Q?BXxUdUx/4iKUrYmMWvDSCSpZhXRt66zkdjeFCYjh3OTHWAH97Of9mgt+0PRD?=
+ =?us-ascii?Q?NZCvtVLzdVudBYPAK9B5Byd3S2asiwo+qDGZGHfGet6xeJ//lrWMOiuj8kuw?=
+ =?us-ascii?Q?RkL+jtHaOUxIJ73xAfct35elLtzS6f2guyd8YhrQ49ZRHcBKb+M78SCbo3M9?=
+ =?us-ascii?Q?KvyevBr2eaJRhTVbOXZBOidCvEDZiD2AC14ztqSyzec8L6uXq+Hwg9Vla+aZ?=
+ =?us-ascii?Q?z8ZBezL5PjLqS1vHu0J/QKRcTsvZyRLXc66FNYc6+8QCinnqcLFbMnkOC+4X?=
+ =?us-ascii?Q?glkV8HeSgSp40axlpRSuQGvfbP17GrAEk3xeQZv5KDeMJQx5wEu8CoMzFOAx?=
+ =?us-ascii?Q?Ngreq6UzSStCB14/Kj89EutZ37nPtoRLXyPSmFTCyC+rQeDisNSsKTC61GFH?=
+ =?us-ascii?Q?CAibPdSL55h77MWcQlh86mIFKdqRNhVKTUnIsMqhqqdDY1KCbr8B7JOjlDeB?=
+ =?us-ascii?Q?q02sx7/5Rmkgv0dglvg9UFLLHufCe4RNLz5U1e/XUl3ptPYkoMMvt0fVXioS?=
+ =?us-ascii?Q?H6SQz7+DZfXbOoWT4y8WedEK0lKOk8gcKW0mbF6iLno3Cg9aTvFv4+RqkZd+?=
+ =?us-ascii?Q?yKS5AZYpmNBpPRlnwUfoQDfiFsIlfa2znae0HFpCHitUnflp0AWMoJW0RCHQ?=
+ =?us-ascii?Q?GXICLU7LvJpEoN5l2myfz7fovwh+64G18QWtESPT1GL3hyKanuL//vKBFpdO?=
+ =?us-ascii?Q?n1hJZXKBwkU5pLk8WVgHhM2+KiRRQpB3S0stEox1b2IVmGQjnyHnAMDgmojL?=
+ =?us-ascii?Q?kXUNPA3km6/lhvDeOZRHNcduEWXsznfQcPrSXmaiYvxyKMpDTjn1hujcJfs6?=
+ =?us-ascii?Q?2ldqGtg89jCd2SWMPCLNK49+BaAgEegUuNsj?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?0GIdeEDVvNycFktWbCuWSpC+D2LKIz9Pbis8ZUsTAi0Pq8FVGhbP7LM7Lt6p?=
+ =?us-ascii?Q?4kcgx7s0xc2ivDc1fUBdl6YWMzg6iVgEdnU0FGvMmsGdawJ6Bt4GrrgHjSqN?=
+ =?us-ascii?Q?Wt6cQhLiXfKlwy/W9EUNy8M9vPnI69OVC74nXT7VMpQ/55x5uf/LIqmEKwwf?=
+ =?us-ascii?Q?k9QlNgEV6z81iB1UYTHlfDaqAJdlmtOkLCvi/x/Jl1gusjKziD7qf35WFzPF?=
+ =?us-ascii?Q?d58l0qJwjNy8nEU0mD0zgMJDcTND7srAMfAcYAsmHc1h+YpkhrqM/pMhfLhA?=
+ =?us-ascii?Q?aDIA70RLBhpOcktiUl65z1jvsyFkBdpiqe+51x+fsz2mFKFl7v2+lpNtLqXJ?=
+ =?us-ascii?Q?Dmf53opxpg8uOQVC7ZwIBfADkYOmNbu6G8AG/E/wl+JM06YNMe+Bgw664qCo?=
+ =?us-ascii?Q?esFbBwykI5meFEe2+HLzmli6LFpepmP24mZdOtWmnjGK6wMihiDVYwkuThev?=
+ =?us-ascii?Q?RXcCrkkDql7Edvh0spQbAiEk55GEDKOIWVmuwuBmQD+pdHrImtmZQi1xhlID?=
+ =?us-ascii?Q?yfDVjptkCjnLJ4wuVEkE9hStOT1avV4ax6bi64+Ottmm6D9/ZOhOYZVb1vXf?=
+ =?us-ascii?Q?D+Ec3kmcMD0mjTPVS1YNdysAlw3Nl99uImxEC7Whr1GLROXMpjsL+Rd9pgth?=
+ =?us-ascii?Q?kbCB+uNJubPjW7ZSaTUeQRU2vXxC7NXjHu3fqt2aNE93Ah/asacQEJ+qfIkb?=
+ =?us-ascii?Q?gJSTG/FqaTnk4emwq+EJtwVkQkNAGADwR38cFjTJ1RChq2kZAvfC2HT6LbeM?=
+ =?us-ascii?Q?4zBs5u4aZ0tYzRFjN/rNqFubVS4db98vEcDlSdlW7XVTd5v3Wf7xbTN5VPBR?=
+ =?us-ascii?Q?WCGeJRcrlHOaZJLrFixHNbvLY0ICs7+ifMyLDZMuvMPmaKLZr0ioVbakeh/n?=
+ =?us-ascii?Q?zqDk4wdeYS0l0o5rQpg8roQUTNFklMjSSA17dBidAfx5yGASFR7IvUF7qlwf?=
+ =?us-ascii?Q?+CUV41Sbm8v/5C9cOpFFjco2ToiiVwHJtRfZK6pCwUR/MMg/NlPqnapv2I79?=
+ =?us-ascii?Q?kBq8XAWPVUl+2LmeJeTnZi0aJPPQTMPCRKLVRaDWoHJOLUq0+63NwjJUxpZc?=
+ =?us-ascii?Q?wGUgAX39uff8yqh3HTIy3dl8Uusy4U9HeI3TRecRZASUZ4sOnrksSr0OAWkS?=
+ =?us-ascii?Q?wuDjgL5GpfFcj6WB3auMCNzqMERpLn+WYYB5mj9/OX8UXEzG44qYRdLsMSkV?=
+ =?us-ascii?Q?e9PIPEp9bqxP2KXyMY1UVsr4SOaHzzRYAshOv1+7BI7a9V4+DuKvCh6WM4La?=
+ =?us-ascii?Q?b8xIDG3D9PX4n4UHXlUA75XvJQ6y3WCOXZdfqS6maZxLd0b1m1uA5noqgpuX?=
+ =?us-ascii?Q?lJq1NgEi5J/Wk5kCWDH/EwdTSOsq/8ZmkQV6BbV8ygcKF5e785lkfEY/xJIo?=
+ =?us-ascii?Q?b6qVdAevJKUowGuqd2d0AIrj1N6750DHRez4YQapL+H1EEbfp6KgBsyqmjk/?=
+ =?us-ascii?Q?1FVpPrssQXenaQ6p/tANlncK+o1mpMFNVP6IiVRycieMlcbz4vgjCmcro1UX?=
+ =?us-ascii?Q?ug5S3Z6q+rycDsmcRJHkCUprwQ3Mbgs8F+j5a7a6ZraISUSKmXYS7C+Gq0RH?=
+ =?us-ascii?Q?CtdXGFvIGDkbVmtob3Y=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9b14ef6-22ec-4cb2-3f7d-08de2254f4d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2025 01:35:41.2931
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: syaJE8c1AoQzRGH3K7dQ6ZJ7eE8dpYxWoGGrgWeu4jZeMnUFtz7SG8pym7v+/F3suUVd5OF3CAEDi6Z3T/vniQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8564
 
-From: Jay Xu <jayxu1990@gmail.com>
+> On Tue, Nov 11, 2025 at 06:00:53PM +0800, Wei Fang wrote:
+> > The conditional preprocessor directive "#if !defined(CONFIG_M5272)" was
+> > added due to build errors on MCF5272 platform, see commit d13919301d9a
+> > ("net: fec: Fix build for MCF5272"). The compilation error was caused b=
+y
+> > some register macros not being defined on the MCF5272 platform. However=
+,
+> > this preprocessor directive is not needed in some parts of the driver.
+> > First, removing it will not cause compilation errors. Second, these par=
+ts
+> > will check quirks, which do not exist on the MCF7527 platform. Therefor=
+e,
+> > we can safely delete these useless preprocessor directives.
+>=20
+> > @@ -2515,9 +2513,7 @@ static int fec_enet_mii_probe(struct net_device
+> *ndev)
+> >  		phy_set_max_speed(phy_dev, 1000);
+> >  		phy_remove_link_mode(phy_dev,
+> >  				     ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
+> > -#if !defined(CONFIG_M5272)
+> >  		phy_support_sym_pause(phy_dev);
+> > -#endif
+> >  	}
+>=20
+> I think the explanation could be better.
+>=20
+> I assume the M5272 only supported Fast Ethernet, so fep->quirks &
+> FEC_QUIRK_HAS_GBIT was never true?
 
-Add early return optimization to chown_common() when the requested
-uid/gid already matches the current inode ownership. This avoids
-calling notify_change() and associated filesystem operations when
-no actual change is needed.
+From the driver, ColdFire platforms do not have the quirks, so it is
+never be true for these platforms.
 
-The check is performed after acquiring the inode lock to ensure
-atomicity and uses the kernel's uid_eq()/gid_eq() functions for
-proper comparison.
+>=20
+> >  	else
+> >  		phy_set_max_speed(phy_dev, 100);
+> > @@ -4400,11 +4396,9 @@ fec_probe(struct platform_device *pdev)
+> >  	fep->num_rx_queues =3D num_rx_qs;
+> >  	fep->num_tx_queues =3D num_tx_qs;
+> >
+> > -#if !defined(CONFIG_M5272)
+> >  	/* default enable pause frame auto negotiation */
+> >  	if (fep->quirks & FEC_QUIRK_HAS_GBIT)
+> >  		fep->pause_flag |=3D FEC_PAUSE_FLAG_AUTONEG;
+> > -#endif
+>=20
+> Same here?
+>=20
+> Maybe the commit message should actually say that M5272 only supported
+> Fast Ethernet, so these conditions cannot be true, and so the #ifdef
+> guard can be removed.
+>=20
 
-This optimization provides several benefits:
-- Reduces unnecessary filesystem metadata updates and journal writes
-- Prevents redundant storage I/O when files are on persistent storage
-- Improves performance for recursive chown operations that encounter
-  files with already-correct ownership
-- Avoids invoking security hooks and filesystem-specific setattr
-  operations when no change is required
+Yeah, I will improve the commit message in v2.
 
-Signed-off-by: Jay Xu <jayxu1990@gmail.com>
----
- fs/open.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/fs/open.c b/fs/open.c
-index 3d64372ecc67..82bde70c6c08 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -761,6 +761,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	struct iattr newattrs;
- 	kuid_t uid;
- 	kgid_t gid;
-+	bool needs_update = false;
- 
- 	uid = make_kuid(current_user_ns(), user);
- 	gid = make_kgid(current_user_ns(), group);
-@@ -779,6 +780,17 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 	error = inode_lock_killable(inode);
- 	if (error)
- 		return error;
-+
-+	/* Check if ownership actually needs to change */
-+	if ((newattrs.ia_valid & ATTR_UID) && !uid_eq(inode->i_uid, uid))
-+		needs_update = true;
-+	if ((newattrs.ia_valid & ATTR_GID) && !gid_eq(inode->i_gid, gid))
-+		needs_update = true;
-+
-+	if (!needs_update) {
-+		inode_unlock(inode);
-+		return 0;
-+	}
- 	if (!S_ISDIR(inode->i_mode))
- 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
- 				     setattr_should_drop_sgid(idmap, inode);
--- 
-2.34.1
-
+>=20
+> ---
+> pw-bot: cr
 
