@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-898432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB3EC554CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:41:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A3CC5545D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC7D54E6BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:39:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C02F346CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E9298CD5;
-	Thu, 13 Nov 2025 01:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EzpoUoRU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE2B29B795
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E59029AB11;
+	Thu, 13 Nov 2025 01:39:17 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0610296BB7;
+	Thu, 13 Nov 2025 01:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997959; cv=none; b=fsBtPHe+iCd9jjty5LeWOdQUWs2r1gbk1nyU5UmpmmK53RBFDgTsYk+qVYfPhmKS1xqewcV8P4qhAy/aXvpv0y78U8Bp+wwBleWsxOAY34h51Go0xfClL5z0TrvGV32VPUpPkHpP5iqq5PRWOmwA3fAGYZVaYMqN4sqrGEY9tN0=
+	t=1762997957; cv=none; b=eU1KK/IHoUPspa/VyzEiUtsj93Tk/t0lyGlOjOzFXCwHeeDPkwfQQXeyiCMscIZFjpwqCJP8XXX54uG2TjvSSdQaH4rdym4UzsX3K4eRazwlIVWzuXtSZemDHIOlRote94gJLQvqmkhQxT9ubIbXqmzNOqzLBX6TPDSdmDw+PXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997959; c=relaxed/simple;
-	bh=nTaC2MXKVwUNrsqMVxHeDZJeAIpAEmr1Yb7c4yWjDC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CnWXlg4mQDCe3DvRdqA+U83sjvalNIRNSa4m8zOb1qCY6w8y9l9RsQrYqpa13H60GFiToy43nxGOGbH+Iomy//R5ATXBOs5Lor7WzrNeUFI7W/y+04nyCT43Cy+Uplg5zBbGZ9S2fgWeTsjAWQGfhgOPJcdUvlII9yTePSQ3ZZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EzpoUoRU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762997956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YE3L5VAgzoQWOHqB3Rk/jnMG/XnJ1XD/9vBp3BPJiDk=;
-	b=EzpoUoRUnyC30/5MHR6L6WKOdMl6RJzmE9WjbkLQAM9dwFBgRTd3pgd6yjmycmSzWbq3op
-	gCK2yyitejRKAMJcxla/+kub3WPqVVTK1/NgZmJg5SIbYnwytyWOoL0zb6ygDL9R/zLLq2
-	uy4c974zPHHoSLVAjSYRUUSwyThIdQA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-222-fUfLTIZSPE24s4BrvPuQOA-1; Wed,
- 12 Nov 2025 20:39:14 -0500
-X-MC-Unique: fUfLTIZSPE24s4BrvPuQOA-1
-X-Mimecast-MFC-AGG-ID: fUfLTIZSPE24s4BrvPuQOA_1762997952
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43DEE18007F2;
-	Thu, 13 Nov 2025 01:39:10 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.134])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 753CF30044E0;
-	Thu, 13 Nov 2025 01:39:01 +0000 (UTC)
-Date: Thu, 13 Nov 2025 09:38:56 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: "Guo, Wangyang" <wangyang.guo@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	virtualization@lists.linux-foundation.org,
-	linux-block@vger.kernel.org, Tianyou Li <tianyou.li@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Dan Liang <dan.liang@intel.com>
-Subject: Re: [PATCH RESEND] lib/group_cpus: make group CPU cluster aware
-Message-ID: <aRU2sC5q5hCmS_eM@fedora>
-References: <20251111020608.1501543-1-wangyang.guo@intel.com>
- <aRKssW96lHFrT2ZN@fedora>
- <b94a0d74-0770-4751-9064-2ef077fada14@intel.com>
- <aRMnR5DRdsU8lGtU@fedora>
- <a101fe80-ca0b-4b4b-94b1-f08db1b164fc@intel.com>
+	s=arc-20240116; t=1762997957; c=relaxed/simple;
+	bh=JygIpOvdjkfAndQJfh4E4L0cPtNT12MMpZX4gntrBFQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=f3HppIgxmzdzjsDg6+9swN2+zxknTZRtMkllMo6YFpWYV0unpYXcZ8AfZMhdraK3ijCHexEQN54OEn05pV2kLtiMI300YICv+y+D+eLNLVsVV8wkmoCFuRlb5+j3PRKJCKmrfIR6lm2qTmDgtamAhztTeBOdLoqJeQEJyduzCuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgBXmay5NhVpTCt7AA--.40662S2;
+	Thu, 13 Nov 2025 09:39:06 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev,
+	bmasney@redhat.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v8 3/3] MAINTAINERS: Add entry for ESWIN EIC7700 clock driver
+Date: Thu, 13 Nov 2025 09:39:02 +0800
+Message-Id: <20251113013902.1277-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
+References: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a101fe80-ca0b-4b4b-94b1-f08db1b164fc@intel.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-CM-TRANSID:TQJkCgBXmay5NhVpTCt7AA--.40662S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF4UZF4rGw13AFW5CrW5Awb_yoWDJFc_Gr
+	4xCayxXFyrWF4ak3ykZF93JFyYkw4xJr4jganFkw4av34jvr1DKFWDXwn2vw47Gr43GryU
+	WFyrKF9FgF17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbhAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOEfODUUUU
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Wed, Nov 12, 2025 at 11:02:47AM +0800, Guo, Wangyang wrote:
-> On 11/11/2025 8:08 PM, Ming Lei wrote:
-> > On Tue, Nov 11, 2025 at 01:31:04PM +0800, Guo, Wangyang wrote:
-> > > On 11/11/2025 11:25 AM, Ming Lei wrote:
-> > > > On Tue, Nov 11, 2025 at 10:06:08AM +0800, Wangyang Guo wrote:
-> > > > > As CPU core counts increase, the number of NVMe IRQs may be smaller than
-> > > > > the total number of CPUs. This forces multiple CPUs to share the same
-> > > > > IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
-> > > > > performance penalty can be observed on some platforms.
-> > > > 
-> > > > Can you add details why/how CPU cluster isn't aligned with IRQ
-> > > > affinity? And how performance penalty is caused?
-> > > 
-> > > Intel Xeon E platform packs 4 CPU cores as 1 module (cluster) and share the
-> > > L2 cache. Let's say, if there are 40 CPUs in 1 NUMA domain and 11 IRQs to
-> > > dispatch. The existing algorithm will map first 7 IRQs each with 4 CPUs and
-> > > remained 4 IRQs each with 3 CPUs each. The last 4 IRQs may have cross
-> > > cluster issue. For example, the 9th IRQ which pinned to CPU32, then for
-> > > CPU31, it will have cross L2 memory access.
-> > 
-> > 
-> > CPUs sharing L2 usually have small number, and it is common to see one queue
-> > mapping includes CPUs from different L2.
-> > 
-> > So how much does crossing L2 hurt IO perf?
-> We see 15%+ performance difference in FIO libaio/randread/bs=8k.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-As I mentioned, it is common to see CPUs crossing L2 in same group, but why
-does it make a difference here? You mentioned just some platforms are
-affected.
+Add Yifeng Huang and myself as maintainer of ESWIN EIC7700 clock driver.
 
-> > They still should share same L3 cache, and cpus_share_cache() should be
-> > true when the IO completes on the CPU which belong to different L2 with the
-> > submission CPU, and remote completion via IPI won't be triggered.
-> Yes, remote IPI not triggered.
+Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-OK, in my test on AMD zen4, NVMe performance can be dropped to 1/2 - 1/3 if
-remote IPI is triggered in case of crossing L3, which is understandable.
-
-I will check if topo cluster can cover L3, if yes, the patch still can be
-simplified a lot by introducing sub-node spread by changing build_node_to_cpumask()
-and adding nr_sub_nodes.
-
-
-Thanks,
-Ming
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ddecf1ef3bed..61f9f77385fd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9246,6 +9246,14 @@ T:	git https://github.com/eswincomputing/linux-next.git
+ F:	Documentation/devicetree/bindings/riscv/eswin.yaml
+ F:	arch/riscv/boot/dts/eswin/
+ 
++ESWIN EIC7700 CLOCK DRIVER
++M:	Xuyang Dong <dongxuyang@eswincomputing.com>
++M:	Yifeng Huang <huangyifeng@eswincomputing.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
++F:	drivers/clk/eswin/
++F:	include/dt-bindings/clock/eswin,eic7700-clock.h
++
+ ET131X NETWORK DRIVER
+ M:	Mark Einon <mark.einon@gmail.com>
+ S:	Odd Fixes
+-- 
+2.43.0
 
 
