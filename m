@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-898551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8DFC5585E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:23:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923F7C55867
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DB624E2A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:22:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3BF634DF57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F1A2882A9;
-	Thu, 13 Nov 2025 03:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F324330147C;
+	Thu, 13 Nov 2025 03:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tco07iOb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lkAxgWDQ"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D11A2FF644
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22193002C3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763004068; cv=none; b=nEFqmYSTVnSSiRZRPn4e1z3Dn3Qcueu1N8Q9Fpl8KkLQwgpxmHp4o2mVlOHq3B7bCa9dDFVpym2xXgeMT8IoNkXt+HSz4SfIoheWHz9q24dETEBaSVy+nhGVflXyu/MH81s7qA5WhOlqtzrp2Oidvaa5r9cgdAQ3/rRhm15cdGU=
+	t=1763004070; cv=none; b=o0Pr/uOUo1tn07/4XZZLrnf5+807MwdI/G29SAvel61xHtWE/Jbn7TdDntemDed28yb7kZdzIwnRL/XCzWmhCgYLsLs/pZHBoIkrFAnvit7LIlRhqrF53sL+9nzAEWDFNf4SOEBuLGV6mOJ6BYswW/VZjtpi+N+yS5NHxM6NuN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763004068; c=relaxed/simple;
-	bh=ZVqmyB6OSryveZQXvh1Xn2qAe2+tRfiieZ2LkO2RQZ4=;
+	s=arc-20240116; t=1763004070; c=relaxed/simple;
+	bh=T+Bc4OsVOS3h+Fg86cIAtcZE/zq9BYJ0yLEN5fPA08o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=QrpjTDG+y9JQubrPIipKYJFnLpcAP2lZXErbJsho45b/MNjoAfVX78TLg5wlWX5IZUto2RytqlJcmV7gLSyaPmixGrM+576TGAOH8kC+KS7dUGjxRtN7hEvx/WcveNfFB75LmNLjWxz8sgNy+2c3e5iRWy9bHgjMK1PhYLHGans=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tco07iOb; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=iRyL5r1KgC2nIRozt0GXOVbgPINEYfurk/Zv3hQwmpClchltmEIceTN5nkwIyNiWSt3IUPZ/WMEZWq1uFPhBvSLWxKazI5rdspjCl/Yy9nIUtD/vsxUcz6GB71Y1OLKc7Sty3m7z9H5cPmFmmcS3yKtPlILuKTI2gnLZGXc6KzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lkAxgWDQ; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2956a694b47so4202785ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:21:06 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297dabf9fd0so4710075ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:21:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763004066; x=1763608866; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763004068; x=1763608868; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HZtMwfOFV/dtSsF90vpb0DLWSRxMS8PqbqLlwx+J+Pg=;
-        b=tco07iObFyGIviRj5DZVYVfgjqmgP6dkyo6jOBqtcbI3J1cExxD6ojGpBGxh74E6Qd
-         jI/vgkcIvBWCi1fttUzb7mnJFj7bhVBwROUGzYX3TxO9wI6/71buw0Tfev1SWVKrdRZy
-         LXvLrVfj2+uy/EQXFkNAPoDZwRODlU/TQfVGZ9eewWPhWPp34pJgDAa56kNSlrt9Z4/I
-         oEA+Xjh2yrK+jKAvDHQ3h9yKklTWxrQ2dERE5hJjUuVe5rn55LiEQ2qJFngCfVb0C6Bg
-         lKokffvFPtWk0pzuRmB72fAwkNqXLaXkxzidivbJJpQPJ6EV7rjRcEhK2WD4MzbOZ9Bl
-         ZYuw==
+        bh=gBfDq6eqFsQT5D4yMoogLb7F1RwV4rQJFP30ACTlIWs=;
+        b=lkAxgWDQ8EhiEbUc6P7gFLt/SEiyjOisnIrt/UQMH8aK74ZJk69/xqgBRCPM72FYhQ
+         cw/ZlEgKMWxcOu9gwtvpJT/X+t0DEBwt4uoazZILGK9JrnVLqoTlj/o2IbC5oMwfj4wQ
+         1F8xR2UsXQmrIbTIkL4zV0c0RidKuiZk0AM6BejDUkA7cmRUfzzn+fj6TlPTAKcHLsOC
+         mZPjB5dQs8bCWdkPNxHGqBBoMDtjTv9q77NKcmNZohiKIweCsRGhsZDplLscElhyomzD
+         zwfSN57kZGadxAwtsajNx+1eU5tqsTYHIhkanU9Go6xp/RUoF2sV2ZACIIVAv/KqprEv
+         7f4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763004066; x=1763608866;
+        d=1e100.net; s=20230601; t=1763004068; x=1763608868;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZtMwfOFV/dtSsF90vpb0DLWSRxMS8PqbqLlwx+J+Pg=;
-        b=sHDSpOrqIDJWGuzOHdVyVigDfKRKFNEqes0gqbd/fnDfmNotukQEeVDvCfbPmBCGTV
-         df6Q7v7tIjbW1EqBHx12xqn5rwKXLvuHdMC+7FQgilOshjdgnCjjeST7MW3fVSTvmRoV
-         HyFMUyOZPrzzNqYeu30IeDkiPF4SAIvHhDLOo/Xjt+ZiJWzbr2CHfHQ453glzNIHmf/+
-         0obhPF8Xtr8htq1vwn9xa528d5w+iEDNmJHIIJehQtZYSZK1msJU+0ZV77ylRgJziK/W
-         rF2/kR5cTHn/gWNpe2wiOzd8wVTojxOX6i2KN55/BHCA95zHNUj/llH9K/SRe827vUST
-         4HhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUI8ozlomJ1nSoA8sbiiusrDKZsttWH6sNHFyg2stQEeRioy/p71zU6acwnfcNtYN+jRc49kbmGtz+OR5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK3+vNl7u6MW2pmG196QQjylaQ2uNBL3NcWvnGX4AVaJu2UMz0
-	lBax/lngjYDl0e17GH5rbaJgLe19VjTIfJw/+sWn5rqPQmQQ5Tba8NWzDVtJ9EH2A2otNwTaJU0
-	XkGs/QHl50g==
-X-Google-Smtp-Source: AGHT+IGzfXPPP0XRZIc++oBFeMBvFwsuQtL64YrTHwxXng9XAgKCleeZUqQdWE8DaNvnw3K6l1Acy5B4Jc7l
-X-Received: from dykh11.prod.google.com ([2002:a05:7300:570b:b0:2a4:7587:4d39])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d54c:b0:295:56da:62a4
- with SMTP id d9443c01a7336-2984ee03b56mr65760445ad.45.1763004066230; Wed, 12
- Nov 2025 19:21:06 -0800 (PST)
-Date: Wed, 12 Nov 2025 19:19:54 -0800
+        bh=gBfDq6eqFsQT5D4yMoogLb7F1RwV4rQJFP30ACTlIWs=;
+        b=qTe3TXxFn39R+xscqYAKsYvDU5AcHEfeXPWLBrE4QzpAS/3mFL0Ra3DGPt3dHumyNf
+         cYHXarx2NyCGmJx6rQQLH8CiDt9PJ/W83asAKxTVtJloaYjOd832QfrBtVlWbLvzxcY+
+         I+xmQeFuTc4WaHnw66fYiIuwJBWEhUfZVzpqoU8FeyVCNaWinkeox6AgXEjXnX5KlfME
+         4Ltt3rkMd6MLJAk1Bx4geg0FgqcbqD4ZPRwh00rD5vCzi21aj1LQtuiRFBUCXJWPBicf
+         yJI7PwwUYL6PwtqfwX5KQyapewVTn9a9bfZmZcbpOZdr3ND+mhp6kHgbNEGM+BKU6rii
+         gMCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWaUtroTshrDt+LA1xmUCcK+t84Pov/uCEA+65kU/x7bnly6hx/LIoWxaQwZPsBK1DKRTUG03txR8Fi10=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCNJzaBNRrH+rfhnsNGsnMPnkXX9Sb/e5IYCle0lqypEvAZnvE
+	WngnQdynbVcb5DmnxracZJN4gyv/IVG3iDni41AlI1KYZrOn9ynnC8mbnTtrCUUdbPyoMS7AyjW
+	XaVEo4/DXJw==
+X-Google-Smtp-Source: AGHT+IGICDwsioyeKBJpVyDXuXAso+fW9k0PVPWo+9oPf8S/CudYtjVap1hns6KrAFAPbrKTqY7lRdaY2/JJ
+X-Received: from dycpw12.prod.google.com ([2002:a05:7300:de4c:b0:2a4:61a6:6c])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:286:b0:295:fbc7:d282
+ with SMTP id d9443c01a7336-2984ed494aamr69919175ad.27.1763004068058; Wed, 12
+ Nov 2025 19:21:08 -0800 (PST)
+Date: Wed, 12 Nov 2025 19:19:55 -0800
 In-Reply-To: <20251113032040.1994090-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251113032040.1994090-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251113032040.1994090-7-irogers@google.com>
-Subject: [PATCH v8 06/52] perf jevents: Allow metric groups not to be named
+Message-ID: <20251113032040.1994090-8-irogers@google.com>
+Subject: [PATCH v8 07/52] perf jevents: Support parsing negative exponents
 From: Ian Rogers <irogers@google.com>
 To: Adrian Hunter <adrian.hunter@intel.com>, 
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
@@ -90,30 +90,44 @@ To: Adrian Hunter <adrian.hunter@intel.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-It can be convenient to have unnamed metric groups for the sake of
-organizing other metrics and metric groups. An unspecified name
-shouldn't contribute to the MetricGroup json value, so don't record
-it.
+Support negative exponents when parsing from a json metric string by
+making the numbers after the 'e' optional in the 'Event' insertion fix
+up.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/metric.py | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/pmu-events/metric.py      | 2 +-
+ tools/perf/pmu-events/metric_test.py | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/pmu-events/metric.py b/tools/perf/pmu-events/metric.py
-index 1de4fb72c75e..847b614d40d5 100644
+index 847b614d40d5..31eea2f45152 100644
 --- a/tools/perf/pmu-events/metric.py
 +++ b/tools/perf/pmu-events/metric.py
-@@ -455,7 +455,8 @@ class Metric:
+@@ -573,7 +573,7 @@ def ParsePerfJson(orig: str) -> Expression:
+   # a double by the Bison parser
+   py = re.sub(r'0Event\(r"[xX]([0-9a-fA-F]*)"\)', r'Event("0x\1")', py)
+   # Convert accidentally converted scientific notation constants back
+-  py = re.sub(r'([0-9]+)Event\(r"(e[0-9]+)"\)', r'\1\2', py)
++  py = re.sub(r'([0-9]+)Event\(r"(e[0-9]*)"\)', r'\1\2', py)
+   # Convert all the known keywords back from events to just the keyword
+   keywords = ['if', 'else', 'min', 'max', 'd_ratio', 'source_count', 'has_event', 'strcmp_cpuid_str']
+   for kw in keywords:
+diff --git a/tools/perf/pmu-events/metric_test.py b/tools/perf/pmu-events/metric_test.py
+index ee22ff43ddd7..8acfe4652b55 100755
+--- a/tools/perf/pmu-events/metric_test.py
++++ b/tools/perf/pmu-events/metric_test.py
+@@ -61,6 +61,10 @@ class TestMetricExpressions(unittest.TestCase):
+     after = before
+     self.assertEqual(ParsePerfJson(before).ToPerfJson(), after)
  
-   def AddToMetricGroup(self, group):
-     """Callback used when being added to a MetricGroup."""
--    self.groups.add(group.name)
-+    if group.name:
-+      self.groups.add(group.name)
- 
-   def Flatten(self) -> Set['Metric']:
-     """Return a leaf metric."""
++    before = r'a + 3e-12 + b'
++    after = before
++    self.assertEqual(ParsePerfJson(before).ToPerfJson(), after)
++
+   def test_IfElseTests(self):
+     # if-else needs rewriting to Select and back.
+     before = r'Event1 if #smt_on else Event2'
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
