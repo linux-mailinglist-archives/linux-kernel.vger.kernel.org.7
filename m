@@ -1,75 +1,57 @@
-Return-Path: <linux-kernel+bounces-899442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37470C57C4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:47:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EDDC57C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22A51356DE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 667EA35A525
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C11F4168;
-	Thu, 13 Nov 2025 13:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D085E21FF47;
+	Thu, 13 Nov 2025 13:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SBzd9611"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="i74f6ftU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2231C32FF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7A21CC62;
+	Thu, 13 Nov 2025 13:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041279; cv=none; b=EqQszUDCSyAYvJ2pKusm/CyCoAofhfTGpBan/Z6SehEkZaxAuthS/PF6MDHkKNNVqkeOAh9l+nqbB3cct1e8JA20RmCFLPXnY1Lq4HnPQQ+eewLStEyLSkPfcC1huyiKKc8CxUUoSwUzSA1VJeC0+67WUr4Z26yvuGVtOcqa6rk=
+	t=1763041210; cv=none; b=pGVW+pv9ogsQksqml6DPYET2er669SbuyL6mWFRjGEGarhE7/j/4dbvrZDtttCtYT+ZSxHEjqq/0ESARBHJBg98+3rIoNhoJtnBCHqEsy2QBSUHotB/QIHVKUuos/MKcRGhcRO+8Os1g1/cTOe8x78l2Un3N2e72GX9UGisSd2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041279; c=relaxed/simple;
-	bh=xRVLeggvTFpxhmDMhe6RFRSWS0nSpHS/MwOalgoq1Ho=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QiK3EFMCmsWYCJ5wkBrxpM65Hx+5GnHeNttrITJMin6gmNTYxxxj3gQERB8TlFseF6rmedvKQ04kXUAdBedK1Bs2ZCSSGgBMVZuE2z+j9pxod8dOm6U/IviRXU4bHM29aV3Bpm+e6PvjzzOuen1xSq2q8lPQoNZWZ5HzjGbYJzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SBzd9611; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1763041272; bh=yncWPINDR52pv1d4G/0cf1imkpwN4ckdlyrwN55xFuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SBzd9611oZqmP855waMRaatSMd+o6l9+GOK2/f9QU8guHb5wAnp5z0Ek6DeSNZDjv
-	 QODrAOGGc1wzKIXYGqOYsXloxf2jjkL6lMAW/hi3eAn8PCo46oiJv9cjT3YN49ZxRB
-	 So09S7jA6qKTm/s5MGSoCJO8GruA6e4RRvuYIslg=
-Received: from cjz-VMware-Virtual-Platform ([110.176.66.153])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id 9F72569E; Thu, 13 Nov 2025 21:39:55 +0800
-X-QQ-mid: xmsmtpt1763041195t2zcvgezd
-Message-ID: <tencent_27A546C0D8ACEF4B7DEE94D65FD805769809@qq.com>
-X-QQ-XMAILINFO: MDbayGdXPuoeQywFlMHCgen52JUQLc1cmq2dV28SszkRuGBqVKM7Cjf/40tDG8
-	 bRJME2qqMhvfI5ygmbW1mPOv1PRrakSmUQ35T/GwhUfF20TJdsdlpJ8Bl3SrFDZdQUGMiOHLDuyt
-	 qKpgUIT/cdDeh3ChhYINPf8STcL0tkFVs7+Xnd5l0bh+fumoO4h1S7d7ew4dcil4o0Y/xVE1W89n
-	 6Aym1Kjw9uH7hZQolbsQt4UuGQc5XLFee4VXMvUQRRSe2HtDrlJJ/c5jPMCF5NiacEH/94AWiLfM
-	 v6YbCfX7qSBFLwVtJbZ3298+thQMw9bQH2aH/8h1dmBTH1WKlswgbt5XGWga7usUcOPbUl9Hq40D
-	 6sDQGbrbWUMHX1WXHu6jq1fdgP+LOVPIKpF/pD5VpN5+XDYlGtFDKqZB9kAlgvWc/7Mtwf9MkD38
-	 b6nRbD15McDQs0HBgaHv7UzI0/73Q4mWN+yU0g+6lF8DAm0rMHZMusmVBvxruJthWSnvWaIthhMI
-	 FDJKCpdglTjeSwgUo5T2/qvluoJitYNfRSq+ukr3Lede+mMfLiC5JGqFjmq7eXy0eO4mN9hga9b0
-	 WrYDmhm/siFdLZTfQSzVVp/wbiyC4pz1tqvE+9TJIscNcBfz/S++fdkvgN9W4mS9aX1HcUPTBJb1
-	 YjMzmB/xB4dGYqq4t+1XUfQLbVeXEs+uZMwGqnIaooun+PncygTN5nBbxzX1kFJBJP6Xb+T3z9GG
-	 zRDzw448GFwLdkudnKJD7ibUZzjELFo5nKu6P7W0t85bOBDshE7HRh3qvPhYatXumkRHWGIAVygZ
-	 vSy6efJBndOhps7miQSuwaVdzwSb/Y1u7UZcZrj2TGcvpm4bt1ZRDY2wSieNsWTI9fQPii79B3uQ
-	 ta7g2aX0TJdx8+8vUSi5P7XTS/Z8LzWG8O1SsGFJUyOXhw/cmRak3CWFrKFmW/+QUlMd9FGQYkhz
-	 cZnRAmDY0VAMjW2d9nqutya34vXJd0OCV6gpwgdnNN3ScUegC9gwBz3+f067SLhZCC9AGfyylUzO
-	 7NUzATjM24buqs1Y7i17Bi8PvHuVw=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-Date: Thu, 13 Nov 2025 21:39:54 +0800
-From: cjz_VM <guagua210311@qq.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: outreachy@lists.linux.dev, Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-	Mark Greer <mgreer@animalcreek.com>,
-	Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, guagua210311@qq.com
-Subject: Re: [PATCH] staging: greybus: audio_manager_module: make envp array
- static const
-X-OQ-MSGID: <aRXfqoWn71fqbv6P@cjz-VMware-Virtual-Platform>
-References: <tencent_7710B04B6BEE52903BA2F56376DB9D18A907@qq.com>
- <2025111341-attendee-ferment-262b@gregkh>
+	s=arc-20240116; t=1763041210; c=relaxed/simple;
+	bh=JEh1zkh7hOzw6gi7KEdKjkaIXmlV945hmzkSyTuqegg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RG8QSNXalXgv7uczRF57g7bNNLhh4pWamLRxrKICv/xlKOJHtXlsqEMoq6B0k+qYJAbw5riRpQ+qlTL/fXfC8I3FqUNUp0k+t8sC1/1Y+qkwSkVZO0pqyBM/fo99BFPaBDK2dIgqcG41McHTXUri+00oKFV8bkLCvELy8SHaUoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=i74f6ftU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7JDjDnn0/n6b0DrD6JRdrARjLe1CJ2scpDbnmxp5PoQ=; b=i74f6ftUqKMmNRVfeGTBtUMYNP
+	tGbpLBRr+rrrf6um/nP2lzGruLVku7sunrQ16asIkKsV34FT3Qxxb5oBRSvJfLz/3AlU5vSMXssIU
+	n5lzT8wio8Z3g1JxaGZH39bbvk31YGPmCPGL8EAa6+yUz8wLXbL08JlGfPBkgZzj+ZLc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vJXYM-00DrtJ-Bn; Thu, 13 Nov 2025 14:39:58 +0100
+Date: Thu, 13 Nov 2025 14:39:58 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+Cc: piergiorgio.beruto@gmail.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] Add SQI and SQI+ support for OATC14
+ 10Base-T1S PHYs and Microchip T1S driver
+Message-ID: <7e3ccf4d-f046-427e-8ad8-85cfc850a3cc@lunn.ch>
+References: <20251113115206.140339-1-parthiban.veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,41 +60,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025111341-attendee-ferment-262b@gregkh>
+In-Reply-To: <20251113115206.140339-1-parthiban.veerasooran@microchip.com>
 
-Hi Greg,
+On Thu, Nov 13, 2025 at 05:22:04PM +0530, Parthiban Veerasooran wrote:
+> This patch series adds Signal Quality Indicator (SQI) and enhanced SQI+
+> support for OATC14 10Base-T1S PHYs, along with integration into the
+> Microchip T1S PHY driver. These changes enable higher-layer drivers and
+> diagnostic tools to assess link quality more accurately.
 
-Thanks for reviewing my patch!
+Higher-layer drivers? I don't know of any examples at the moment.  Are
+you thinking of a new bond mode, where it will do active-backup based
+on the best SQI values?
 
-For sending twice: I apologize for the duplicate. After the first send, I realized I had missed some greybus-specific maintainers, so I resent to include them all.
-
-For the indentation: You're right to ask about it. When I changed the declaration from 'char *envp[]' to 'static const char * const envp[]', the opening bracket moved to the right due to the longer declaration. I added tabs to keep the array elements aligned with the opening bracket, following the kernel coding style rule that parameters should align with the opening parenthesis.
-
-If this alignment approach is not preferred, I'm happy to adjust it to whatever style you recommend.
-
-Thanks again for your time and guidance!
-
-Best regards,
-Chang JunzhengFrom: cjz_VM <guagua210311@qq.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: outreachy@lists.linux.dev, Vaibhav Agarwal <vaibhav.sr@gmail.com>, Mark Greer <mgreer@animalcreek.com>, Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, guagua210311@qq.com
-Subject: Re: [PATCH] staging: greybus: audio_manager_module: make envp array static const
-Reply-To: 
-In-Reply-To: <2025111341-attendee-ferment-262b@gregkh>
-
-Hi Greg,
-
-Thanks for reviewing my patch!
-
-For sending twice: I apologize for the duplicate. After the first send, I realized I had missed some greybus-specific maintainers, so I resent to include them all.
-
-For the indentation: You're right to ask about it. When I changed the declaration from 'char *envp[]' to 'static const char * const envp[]', the opening bracket moved to the right due to the longer declaration. I added tabs to keep the array elements aligned with the opening bracket, following the kernel coding style rule that parameters should align with the opening parenthesis.
-
-If this alignment approach is not preferred, I'm happy to adjust it to whatever style you recommend.
-
-Thanks again for your time and guidance!
-
-Best regards,
-Chang Junzheng
-
+	Andrew
 
