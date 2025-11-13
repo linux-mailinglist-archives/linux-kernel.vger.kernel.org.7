@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-900003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A1CC5965C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:13:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2529BC5968D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF97C4FDCD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:59:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60ACA500A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1AA35CB87;
-	Thu, 13 Nov 2025 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABD359FB2;
+	Thu, 13 Nov 2025 17:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6BbOrdq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtGWwWjq"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93835A12D;
-	Thu, 13 Nov 2025 17:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BC2338F54
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763056664; cv=none; b=CNqB0qakhfaHQimP73EX3jzMI1SE4L30dBiebJZgC/SdfSSEwptl/GKd3chYdBK7EJBUuIpEsCAmhQRMMuPGRaR0UKXwAq47eKOfIoJDHS7V3ZIS4Y39b1a10JVeEQxT/6OKT8YHHZeaEttj92O6/lYJngrmQ4vgsJhPhtT0GQE=
+	t=1763056742; cv=none; b=STO4MhptZBPfrDfODeu1Z/svOrzRwnq/jEtr43paar8Z6TWbMVn+5qzzSXzUverqeZyPOh3llC+Rfhqsq6Ifg7gvVChkIziXe5q9hlJ4tZxphX5AHuomm3SNxeZx0la3XYFAILhrXT5bCowsZM7DUCnCua7qZW+aWefE1b9puX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763056664; c=relaxed/simple;
-	bh=sx3FdITHyUsho2TuXz9tyb+nFy6gs9cRfJfgUm1fuoE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iLs3Bm2FJsKU7kFxTIDVwul8CJ7+7IEJO1MJBOk3JfNfygGmh9sduZkZCYzT2EigOtVyS9OdEpkZOKAebtZads8zHXwGypPgpzteF0pE8/iKe7pRqkPS54Mb8PD9ZNPzwct3iOSfEd5xMsro0RWc14QkyNpI4m4jLWjp/aEJlYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6BbOrdq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C65ADC2BCB4;
-	Thu, 13 Nov 2025 17:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763056663;
-	bh=sx3FdITHyUsho2TuXz9tyb+nFy6gs9cRfJfgUm1fuoE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=F6BbOrdqfcx3UNwYBBT7zJ5VVW/geZS3gxKpVsJ4GPbamufhvf9/6hJwH+vAkDJxn
-	 G0xY7whTbF4Ev9510Ujil5bjtYtpLYjHtmhEvk6f9vENNmswrKVrENYbBPhs7zoClS
-	 hoCpX8gYqry+XDZcCWam5iGn4Xw4tB9r7vsoDhc4htkAC3kDTaRfHKx9RAnw8LnhEN
-	 xCuHEg2fPlZUVV2yH/2wmZ2AfDUB8TJ8weStmgBsekwFpK69IjAEMy5OtLrsWt0f7z
-	 fKGBi/i5mgDMoB5bGitXqFpkFmxv0qpmD6TeqbxEtJIrWvjukgqMh87dV6Yf4csgmI
-	 xDFVhQ1M8G5bA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF595CD98C4;
-	Thu, 13 Nov 2025 17:57:43 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 13 Nov 2025 18:57:46 +0100
-Subject: [PATCH v2 12/12] drm/panel: sofef00: Non-continuous mode and video
- burst are supported
+	s=arc-20240116; t=1763056742; c=relaxed/simple;
+	bh=tzAHs/NW8hzxVyE7YgViwF3ICFGUKDmj3FMEsxS6U1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aWR4h+9xrmojvY4mQKURog4o8HllrHac+0c0EjTBAYxQcdDRR+9RLtQivGnPCruwTK5k68C3guLOlCC/OQ5e3PKfXiPyuLcDb6rwz1BGXFX1yBlbUzQerlwehiNrplk1GWeqmwmV5lzOV1NeTYLeSmHpXQP3V9FCWIveS5bTPvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtGWwWjq; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477549b3082so9991105e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763056737; x=1763661537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
+        b=FtGWwWjqZFjpPt47P6Ju8vQUDh2w77wo3rilojDASBwiLmhr+U4TBZdbK0/XZLsJEL
+         XGryyTvMkwp5vDHs7uV3O8qOa5KjDnn1rRAgIsxCFzc5khwhoVDYtzeeiwDWPaP9HQdw
+         b50QahjM2tWnlynEOd2xg15yRJ30W/HacQOEV8cpeqG5vcE0Ivt33Nxz8b2GOO9dunN4
+         eASNN5elj7l+mKhEu9RnRUsEaQup7Dm9Ejo1lEqZwRPSGRIY9wCZqzb53z5LN4fNzZfk
+         OBNUbzA08oIv9Ud3pxIBrFgrUW24KGwEwzhZMvIDSCd7Evq1uMhyswb3sboH6TPkpB0d
+         kfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763056737; x=1763661537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
+        b=Zh+S99MGSRILoEcl2jJ7wYBZg34+JeN320ihwAsW6U5WmXwAccNZxD4mptMyJmPO0f
+         Z96VYUosjTtaS9gi6RKieNwP8wxAxtwqjLWyinZaKncRVv6sa37PsVC49bRnOdw8d+ng
+         iCrnVfq/Q/2d+tbA0vY3fZ8f0H2nYNTBIIgNENGqTfw3mFUB0pmQLNmoWYGTgpbLtHJS
+         TDfAp1J6D0/cZxTwLenC2KmMgKh/l60Wl2JXrSEvqe3CM4K2eq+2RZjQ3Pp3/jM/ECBb
+         gNPOT8h++Ge94DGpPXvcEAQhwWaERElXHiutWXkTsaLVxvmK9V6T+vZLZrVKPkfBW6W0
+         WHFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6/PuBJytOnf8xCHAx+ioRYW18O9bqkoMxGv+zf0vfLOcVyE2MOBegSc/H8iIvb6ML02/YHupjsoc7ljQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6sgKglT1nheY6cmd1QEI5qmJjhA6DgeyWWgMb0XuEk0GivzSC
+	nNN6+x4XKXiU/72TTYQPXQBpIrDjlhi8MsQJuQijXE4+ObM+8AP5PSXK
+X-Gm-Gg: ASbGncv46fQ3i0LSk4Ue0LX3ZzLFJ895GzPo75eAqjC11bpAvt/yF0StGMs4aResTQJ
+	t+mA7N2ZtAFwNRZ6FU6KNEqtvu7e/iljQGfk+r4KUVd19Z5iySnwgmwYozSdmVZgt0DNF+y8y/g
+	jln+g70QsekXXOx21ZBnIrAc6GJ93BRIsfXefAhAwOZAcqE6Spb/2mt700jq4v99eaIISxhDNgH
+	wBkc9NjLxzwuMkj1E8oJeYmGyCexhhIeN4KuGsD8xLFwR1umMzJqskz1TB/mp3i2U6YBcwO0tFp
+	PIVJocJYu+bu6UYM8ozoPWvp2uGruHb8++2Zy+BumjaM/rQFTeWrq0hq1YBWVZRYywI9YnOdOAY
+	kP4bvWeh5FFKFcJowURUrZiFNrbfZBDf6FYX6RNrTVZLgBexIIfcbhwmJz+Jnlm28g9WcZ5G950
+	vY+YslC9m+Pz2Ifnxh1KtOUUXwXAh61643jGdBgc54PQXFpoQv
+X-Google-Smtp-Source: AGHT+IHaYkfhslit1+bZ6h2bKwMphvfyMMNqhnEV5TKWd6eJOYYn+BKKgD1tVDFC16Scxd44ybfeUg==
+X-Received: by 2002:a05:600c:3104:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-4778fea6cf6mr3947605e9.33.1763056736734;
+        Thu, 13 Nov 2025 09:58:56 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm98888575e9.12.2025.11.13.09.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 09:58:56 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org,
+	jlayton@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3 1/2] filelock: use a consume fence in locks_inode_context()
+Date: Thu, 13 Nov 2025 18:58:50 +0100
+Message-ID: <20251113175852.2022230-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-sofef00-rebuild-v2-12-e175053061ec@ixit.cz>
-References: <20251113-sofef00-rebuild-v2-0-e175053061ec@ixit.cz>
-In-Reply-To: <20251113-sofef00-rebuild-v2-0-e175053061ec@ixit.cz>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Casey Connolly <casey.connolly@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=802; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=OE1UAGoiypb8yw70x3xMaGL61XZlHwmG/9vzbFRjYK8=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFhwVlzxcTH43qFIgD1KeqqVc+hIM0YBZcnxct
- +/4Os9eYZuJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYcFQAKCRBgAj/E00kg
- cpu6EADNb3oMH/dyM3eFqfmZwlMVEwrACCIRZysVcIzs9Exj+pK1EtPklFvQtPe51Zy8cq6+BoV
- I/VWjBWU61WgHNTRk3u+pPMnJPM1iEBs6NbhH7XiGNHR5nZqQu7HTmMDDyU7q4PoNeXz74m5MaT
- j8GF8GhLkQodcCQ3VMKSzbNMQij8xJu8ZmxOMF3J9rbN1qQjlGnioxlKS5Qi7IJnhSJFxkYFdhC
- hVbnvErRCiap/Lf+r3AQ9JujZiYRhtE78vDaRcGkwVdFMCiQ1UJfApoh9r2pZ3//E4T5H9S0Wbk
- xIDN17ni2z58jGF00iFOOetDX2BhA0/9agxUUL3Yo6hQiizXX/lujDNf0FLDLEU6FTIiFPp4JZT
- VaVeWi4nzJkEfRC9awIxeKWdFtbdO7Yl5cIfnEh1TTlZ+yI9tzHEmeDxO/2fh4TZSSkMY8Lg3TV
- BKXBal4GfW/C/oniamNbZRmLp9P0bzOOjBFGGcqrUtS7uYXNlpsQfmBlmcU/Qq76etBkhkI1kI4
- aj6SjOCd4ncoaE131T8vGCmgyKGhRbPzTT0Sh7Mj/GjrzmKjZD9ZVsdYktAQpmixQMZKDHPtyLw
- K28YEkBQaNwODnumgKKmDl9YwYD0rmvJqE/y/Gs0DtdBbLk+ffzMOsH+yhmGZ8pPqWxcTdaHVUe
- qwQUmeS+ZPhuq6w==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 8bit
 
-From: David Heidelberg <david@ixit.cz>
+Matches the idiom of storing a pointer with a release fence and safely
+getting the content with a consume fence after.
 
-The panel supports both modes.
+Eliminates an actual fence on some archs.
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- drivers/gpu/drm/panel/panel-samsung-sofef00.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/filelock.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-samsung-sofef00.c b/drivers/gpu/drm/panel/panel-samsung-sofef00.c
-index 8286cad385738..b330c4a1ad19d 100644
---- a/drivers/gpu/drm/panel/panel-samsung-sofef00.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-sofef00.c
-@@ -236,7 +236,8 @@ static int sofef00_panel_probe(struct mipi_dsi_device *dsi)
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 54b824c05299..dc15f5427680 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -241,7 +241,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
+ static inline struct file_lock_context *
+ locks_inode_context(const struct inode *inode)
+ {
+-	return smp_load_acquire(&inode->i_flctx);
++	/*
++	 * Paired with the fence in locks_get_lock_context().
++	 */
++	return READ_ONCE(inode->i_flctx);
+ }
  
- 	dsi->lanes = 4;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
--	dsi->mode_flags = MIPI_DSI_MODE_LPM;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_CLOCK_NON_CONTINUOUS | MIPI_DSI_MODE_LPM;
- 
- 	ctx->panel.prepare_prev_first = true;
- 
-
+ #else /* !CONFIG_FILE_LOCKING */
 -- 
-2.51.0
-
+2.48.1
 
 
