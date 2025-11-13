@@ -1,450 +1,203 @@
-Return-Path: <linux-kernel+bounces-899600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD45C586CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:38:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F07C5879D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19FE44F5E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:25:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96EAA4F2A0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB27354ADA;
-	Thu, 13 Nov 2025 15:15:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A44529D26E;
-	Thu, 13 Nov 2025 15:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B739D3590D9;
+	Thu, 13 Nov 2025 15:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=freeshell.de header.i=@freeshell.de header.b="hXL+fFSt"
+Received: from freeshell.de (freeshell.de [116.202.128.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739BE2EB853;
+	Thu, 13 Nov 2025 15:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046955; cv=none; b=e7dhhF2bZY5myA10jpPpX9/da3x2ADwXP4nF12Hdu8g5yLnK/QRxYO2hDnc9YIDp+o/J1wmIKPRZnXmUVjHw3TgObN3ZlFfNHE/aLMh5nT6bNaXwjI0Evh/TeBb2gKaTnO9Gu+0WstFO7wwT4/qr99bSkTcKhv9ojc4T72AizZE=
+	t=1763047038; cv=none; b=qukigK5Pt9vWPwMftohGSZpN4rEHUqMfVwEIC8yK9UM69vGZcgbOzQGd2kGORJ05HWiPVdhtFFEGXKpWama6IxSXqpKoxhjQ/3FO/eAmC45ZItROaNQAi3SjjpCmIrS5lQogfKL4ef2DhSy7g1WegtQGi5FpS/7O6rXERKNRz2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046955; c=relaxed/simple;
-	bh=b2qgVXhlTqI+ms4L6K/w37wAIrhIfLu5uz7+Fp58pio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqTUWlK1izF2yjzwf7MVhl2JTHIpr9LqIVwlHkWOEvfcrcQqTqxVwZo0V+sF/5tGmalXNoVSoRCMJe8jlJHWz9+ahzqC9WpHW96r8iT+1bYebKQyBCYYAowaWtFYq+ea0n27aYbrirl8thnQhUlAfisyX3hF4TDpjmSQKzHIsVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FE6A12FC;
-	Thu, 13 Nov 2025 07:15:45 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 983693F66E;
-	Thu, 13 Nov 2025 07:15:52 -0800 (PST)
-Date: Thu, 13 Nov 2025 15:15:47 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, lenb@kernel.org,
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com,
-	zhenglifeng1@huawei.com, rdunlap@infradead.org, ray.huang@amd.com,
-	gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, zhanjie9@hisilicon.com,
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, nhartman@nvidia.com,
-	bbasu@nvidia.com
-Subject: Re: [PATCH v4 8/8] cpufreq: CPPC: add autonomous mode boot parameter
- support
-Message-ID: <aRX2Iz9+3oMZpX2K@arm.com>
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-9-sumitg@nvidia.com>
+	s=arc-20240116; t=1763047038; c=relaxed/simple;
+	bh=T3n7uGsXw8/exc2MdTHyFvaIfrDg+W4gycMLUTTp62k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cgStd5F11ZcsVSyE2ciq75yMUhUtJLkwuqXiXJlNOpW8iQeKu4U3RGqymc1csu2uOAGDw/WO4Lsro7pCEJcVJG+YFNoLO2Iu5EQZS6OCTuLY59iONn6pUy37dZlttHXWqkFLV2di5PCsl2blAgOCUbwMVBb1hofd4eoqHhomDl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; dkim=pass (2048-bit key) header.d=freeshell.de header.i=@freeshell.de header.b=hXL+fFSt; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freeshell.de;
+	s=s2025; t=1763046978;
+	bh=5AGNvaURvHGKAavyDt3SYJlevQsgOCQzedVhKN3nGVw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hXL+fFSt1lF8fqaJhdWEA3T+ShmM5u/Xbf2lHvu3gDBmJqfAIZnz90g8kW1bkujvH
+	 px5RxeqKofIflhoz0eTfbb9T5DxdtDorPZFcXz9FS3JKdz71pKojqBBaVOIxRyGjwH
+	 lCNjQVnpwYI6vPbmUiH1wKlm91jOCWG3uAvOwn90fw4uSS7EJHp84vp4p0MWm7I1O6
+	 LncojllfI5h8FEhShvcfF/nCceH0btWwhhkd2m6Uw2mGwqKZnPFE4dHYCh0AUk4cUN
+	 jT1stvHhQkdvhp9/fzCc0pX229Tp8PlDHqKeBSoCpw/8aEIzf9WuFdXfD5oZXncwd9
+	 j9t+Ab9nUJqTw==
+Received: from [192.168.2.54] (unknown [74.244.53.222])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id AFF95B2202BC;
+	Thu, 13 Nov 2025 16:16:14 +0100 (CET)
+Message-ID: <4a55301a-ef7e-4b47-8151-621cfba36ddd@freeshell.de>
+Date: Thu, 13 Nov 2025 07:16:12 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105113844.4086250-9-sumitg@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Add support for StarFive VisionFive 2 Lite board
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor+dt@kernel.org>, Hal Feng <hal.feng@starfivetech.com>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251107095530.114775-1-hal.feng@starfivetech.com>
+ <CAJM55Z_rczBo4D3HsC90QW1=fp3NWgK-tsEo6LHTZNXEBHTDqA@mail.gmail.com>
+ <ZQ2PR01MB13076544E2136E7E7C2EEDA1E6CD2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+ <CAJM55Z9KyNK1n4i9FxbLor4HTQKqK8WKA2svjPVvKXihw_E+sg@mail.gmail.com>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <CAJM55Z9KyNK1n4i9FxbLor4HTQKqK8WKA2svjPVvKXihw_E+sg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-As an overall comment, there are now various functions that modify the
-autonomous selection configuration in various degrees:
-cppc_cpufreq_update_autosel_config, cppc_cpufreq_update_auto_select,
-cppc_cpufreq_set_epp_autosel_allcpus.
 
-Are these all really necessary? Some seem single use functions that
-make the intention very confusing through the use of several bool
-parameters. I think a lot of this complexity can be avoided, so
-I'd recommend to re-think the software design a bit.
+On 11/13/25 02:42, Emil Renner Berthing wrote:
+> Quoting Hal Feng (2025-11-13 04:42:05)
+>>> On 12.11.25 21:54, Emil Renner Berthing wrote:
+>>> Quoting Hal Feng (2025-11-07 10:55:22)
+>>>> VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S
+>>>> industrial SoC which can run at -40~85 degrees centigrade and up to
+>>>> 1.25GHz.
+> [...]
+>>> Currently the JH7110 device trees are layed out like this, with a nice separation
+>>> between the SoC description and board descriptions:
+>>>
+>>> jh7110.dtsi               # JH7110 SoC description
+>>> |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
+>>>    |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
+>>>    |  |- <VF2 boards>     # Final VF2 board descriptions
+>>>    |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
+>>>    |  |- <Mars CM boards> # Final Mars CM board descriptions
+>>>    |- <other boards>      # Other JH7110 board descriptions
+>>>
+>>> With this series it moves to
+>>>
+>>> jh711x.dtsi
+>>> |- jh711x-common.dtsi
+>>>    |- jh7110-common.dtsi
+>>>    |  |- <jh7110 boards>
+>>>    |- jh7110s-common.dtsi
+>>>       |- <jh7110s boards>
+>>>
+>>> ..which I can't even give clear labels like above. In other words when new
+>>> patches are sent in it would not be easy to explain exactly where each change
+>>> should go and why.
+>>> I'm also worried that you'll find that more of the peripherals on the JH7110S
+>>> need special handling and a new jh7110s-... compatible string. Then I guess
+>>> they'll need to jump from jh7110x.dtsi two levels down to jh7110{,s}-
+>>> common.dtsi which then both describe SoC and board properties.
+>>>
+>>> If you're serious about calling this a new SoC then I'd expect something more
+>>> like this:
+>>>
+>>> jh711x.dtsi                  # Peripherals common to both SoCs
+>>> |- jh7110.dtsi               # JH7110 SoC description
+>>> |  |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
+>>> |     |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
+>>> |     |  |- <VF2 boards>     # Final VF2 board descriptions
+>>> |     |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
+>>> |     |  |- <Mars CM boards> # Final Mars CM board descriptions
+>>> |     |- <other boards>      # Other JH7110 board descriptions
+>>> |- jh7110s.dtsi              # JH7110S SoC description
+>>>    |- jh7110s-common.dtsi    # Peripherals common to all JH7110S boards
+>>>       |- <JH7110S boards>    # Final JH7110S board descriptions
+>>>
+>>> I know this will mean some duplication in jh7110{,s}-common.dtsi, but I
+>>> would prefer that to not having a clear explanation of what each file describes.
+>>>
+>>> Do you think this layout could work for you?
+>>
+>> Yeah, it is clearer for developers and maintainers.
+>>
+>> Considering Conor's suggestion, what about:
+>>
+>> jh7110.dtsi               # JH7110 SoC description
+>> |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
+>>    |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
+>>    |  |- <VF2 boards>     # Final VF2 board descriptions
+>>    |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
+>>    |  |- <Mars CM boards> # Final Mars CM board descriptions
+>>    |- <other boards>      # Other JH7110 board descriptions
+>> |- <JH7110S boards>
+>>
 
-I've added more details below (and I've skipped review of the previous
-patch).
+JH-7110 and JH-7110I reference docs are listed (not any JH-7110S) at:
+https://doc-en.rvspace.org/Doc_Center/datasheet_0.html
 
-On Wednesday 05 Nov 2025 at 17:08:44 (+0530), Sumit Gupta wrote:
-> Add kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable CPPC
-> autonomous performance selection at system startup. When autonomous mode
-> is enabled, the hardware automatically adjusts CPU performance based on
-> workload demands using Energy Performance Preference (EPP) hints.
+Does the JH-7110I use the OPP table for JH-7110 or JH-7110S?
+
+>> Move the opp table from jh7110.dtsi to jh7110-common.dtsi.
+>> Remove jh7110s-common.dtsi, because only one board uses JH7110S now.
 > 
-> This parameter allows to configure the autonomous mode on all CPUs
-> without requiring runtime sysfs manipulation if the 'auto_sel' register
-> is present.
+> This patchset adds 2 different boards. Has this changed?
 > 
-> When auto_sel_mode=1:
-> - All CPUs are configured for autonomous operation during module init
-> - EPP is set to performance preference (0x0) by default
-> - Min/max performance bounds use defaults
-> - CPU frequency scaling is handled by hardware instead of OS governor
+> Also this would mean that you're not using the starfive,jh7110s compatible or
+> any other starfive,jh7110s-.. compatible strings, so effectively you're not
+> treating it as a new chip, but just a board that needs a different opp table.
 > 
-> For Documentation/:
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  12 ++
->  drivers/cpufreq/cppc_cpufreq.c                | 197 +++++++++++++++---
->  2 files changed, 182 insertions(+), 27 deletions(-)
+> I see now that the opp table is effectively the only difference between the two
+> chips in this patchset, so if that's closer to reality then what you suggest is
+> fine with me.
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index b8f8f5d74093..048f84008a7e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -929,6 +929,18 @@
->  			Format:
->  			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
->  
-> +	cppc_cpufreq.auto_sel_mode=
-> +			[CPU_FREQ] Enable ACPI CPPC autonomous performance selection.
-> +			When enabled, hardware automatically adjusts CPU frequency
-> +			on all CPUs based on workload demands. In Autonomous mode,
-> +			Energy Performance Preference(EPP) hints guide hardware
-> +			toward performance(0x0) or energy efficiency (0xff).
-> +			Requires ACPI CPPC autonomous selection register support.
-> +			Format: <bool>
-> +			Default: 0 (disabled)
-> +			0: use cpufreq governors
-> +			1: enable if supoorted by hardware
-> +
->  	cpuidle.off=1	[CPU_IDLE]
->  			disable the cpuidle sub-system
->  
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index d1b44beaddda..0a55ab011317 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -28,8 +28,12 @@
->  #include <acpi/cppc_acpi.h>
->  
->  static struct cpufreq_driver cppc_cpufreq_driver;
-> +
->  static DEFINE_MUTEX(cppc_cpufreq_update_autosel_config_lock);
->  
-> +/* Autonomous Selection */
-> +static bool auto_sel_mode;
-> +
->  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->  static enum {
->  	FIE_UNSET = -1,
-> @@ -272,8 +276,13 @@ static int cppc_cpufreq_set_target(struct cpufreq_policy *policy,
->  	freqs.old = policy->cur;
->  	freqs.new = target_freq;
->  
-> +	/*
-> +	 * In autonomous selection mode, hardware handles frequency scaling directly
-> +	 * based on workload and EPP hints. So, skip the OS frequency set requests.
-> +	 */
->  	cpufreq_freq_transition_begin(policy, &freqs);
-> -	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> +	if (!cpu_data->perf_caps.auto_sel)
-> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> /Emil
 
-"When Autonomous Selection is enabled, it is not necessary for OSPM to assess
-processor workload performance demand and convey a corresponding performance
-delivery request to the platform via the Desired Register. If the Desired
-Performance Register exists, OSPM may provide an explicit performance
-requirement hint to the platform by writing a non-zero value."
+Are we now re-visiting Hal's suggestion then (during code review for
+Milk-V Mars CM and Mars CM Lite) to split out the OPP tables and make
+them per-board, as before introduction of the StarFive VisionFive 2 Lite
+board(s) ?
 
-Therefore I believe it's up to the platform to decide if it wants to use
-the software hint.
+Can we then do as from where we are now before this series:
 
->  	cpufreq_freq_transition_end(policy, &freqs, ret != 0);
->  
->  	if (ret)
-> @@ -565,6 +574,12 @@ static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
->  		goto free_mask;
->  	}
->  
-> +	ret = cppc_get_perf(cpu, &cpu_data->perf_ctrls);
-> +	if (ret) {
-> +		pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, ret);
-> +		goto free_mask;
-> +	}
-> +
+- Move "the JH-7110" OPP table into jh7110-common-opp-1500.dtsi
 
-This belongs to patch 2/8.
+- Each board jh7110-{deepcomputing,milkv,pine64,starfive}*.dts includes
+said OPP dtsi file.
 
->  	return cpu_data;
->  
->  free_mask:
-> @@ -666,11 +681,81 @@ static int cppc_cpufreq_update_autosel_val(struct cpufreq_policy *policy, bool a
->  	return 0;
->  }
->  
-> +static int cppc_cpufreq_update_epp_val(struct cpufreq_policy *policy, u32 epp)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	unsigned int cpu = policy->cpu;
-> +	int ret;
-> +
-> +	pr_debug("cpu%d, epp curr:%u, new:%u\n", cpu, cpu_data->perf_ctrls.energy_perf, epp);
-> +
-> +	guard(mutex)(&cppc_cpufreq_update_autosel_config_lock);
-> +
-> +	ret = cppc_set_epp(cpu, epp);
-> +	if (ret) {
-> +		pr_warn("failed to set energy_perf for cpu:%d (%d)\n", cpu, ret);
-> +		return ret;
-> +	}
-> +	cpu_data->perf_ctrls.energy_perf = epp;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * cppc_cpufreq_update_autosel_config - Update Autonomous selection configuration
-> + * @policy: cpufreq policy for the CPU
-> + * @min_perf: minimum performance value to set
-> + * @max_perf: maximum performance value to set
-> + * @auto_sel: autonomous selection mode enable/disable (also controls min/max perf reg updates)
-> + * @epp_val: energy performance preference value
-> + * @update_epp: whether to update EPP register
-> + * @update_policy: whether to update policy constraints
-> + *
-> + * Return: 0 on success, negative error code on failure
-> + */
-> +static int cppc_cpufreq_update_autosel_config(struct cpufreq_policy *policy,
-> +					      u64 min_perf, u64 max_perf, bool auto_sel,
-> +					      u32 epp_val, bool update_epp, bool update_policy)
-> +{
-> +	const unsigned int cpu = policy->cpu;
-> +	int ret;
-> +
-> +	/*
-> +	 * Set min/max performance registers and update policy constraints.
-> +	 *   When enabling: update both registers and policy.
-> +	 *   When disabling: update policy only.
-> +	 * Continue even if min/max are not supported, as EPP and autosel
-> +	 * might still be supported.
-> +	 */
-> +	ret = cppc_cpufreq_set_min_perf(policy, min_perf, auto_sel, update_policy);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		return ret;
-> +
-> +	ret = cppc_cpufreq_set_max_perf(policy, max_perf, auto_sel, update_policy);
-> +	if (ret && ret != -EOPNOTSUPP)
-> +		return ret;
-> +
-> +	if (update_epp) {
-> +		ret = cppc_cpufreq_update_epp_val(policy, epp_val);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = cppc_cpufreq_update_autosel_val(policy, auto_sel);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pr_debug("Updated autonomous config [%llu-%llu] for CPU%d\n", min_perf, max_perf, cpu);
-> +
-> +	return 0;
-> +}
+and for this series:
 
-I think cppc_cpufreq_update_auto_select() can be removed and
-cppc_cpufreq_update_autosel_config() used in its place. 
+- Drop the adding of a new compatible
 
-cppc_cpufreq_update_autosel_config() would not even need min/max as
-arguments as they can be obtained from perf_caps (low/nominal range)
-or perf_ctrls (current min/max). This would also simplify
-cppc_cpufreq_cpu_init().
+- Add "the JH-7110S" OPP table into jh7110-common-opp-1250.dtsi
 
-> +
->  static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  {
->  	unsigned int cpu = policy->cpu;
->  	struct cppc_cpudata *cpu_data;
->  	struct cppc_perf_caps *caps;
-> +	u64 min_perf, max_perf;
->  	int ret;
->  
->  	cpu_data = cppc_cpufreq_get_cpu_data(cpu);
-> @@ -734,11 +819,31 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
->  	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
->  
-> -	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> -	if (ret) {
-> -		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-> -			 caps->highest_perf, cpu, ret);
-> -		goto out;
-> +	if (cpu_data->perf_caps.auto_sel) {
-> +		ret = cppc_set_enable(cpu, true);
+- Use existing jh7110-* prefix for "JH-7110S" board dtsi and dts,
+include jh7110-common.dtsi as usual, and include jh7110-common-opp-1250.dtsi
 
-Isn't auto-sel enabled at this point? Also, if the auto-sel is
-ACPI_TYPE_INTEGER, cppc_set_enable() will return an error,
-isn't it?
+The exact filename pattern for the OPP tables I suggest here are
+approximations, however that idea is my suggestion if we're just doing a
+breakout of the tables and not a new compatible.
 
-> +		if (ret) {
-> +			pr_err("Failed to enable CPPC on cpu%d (%d)\n", cpu, ret);
-> +			goto out;
+I am positive on having the 1250MHz OPP tables split out into dtsi
+instead of stuffing them into the VisionFive 2 Lite common dtsi. That's
+all it is?
 
-Do you really want to bail out of the rest of the cpufreq CPU
-initialisation, if only auto-select configuration fails?
-
-> +		}
-> +
-> +		min_perf = cpu_data->perf_ctrls.min_perf ?
-> +			   cpu_data->perf_ctrls.min_perf : caps->lowest_nonlinear_perf;
-> +		max_perf = cpu_data->perf_ctrls.max_perf ?
-> +			   cpu_data->perf_ctrls.max_perf : caps->nominal_perf;
-> +
-> +		ret = cppc_cpufreq_update_autosel_config(policy, min_perf, max_perf, true,
-> +							 CPPC_EPP_PERFORMANCE_PREF, true, false);
-> +		if (ret) {
-> +			cppc_set_enable(cpu, false);
-> +			goto out;
-> +		}
-> +	} else {
-> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> +		if (ret) {
-> +			pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-> +				 caps->highest_perf, cpu, ret);
-> +			goto out;
-> +		}
->  	}
->  
->  	cppc_cpufreq_cpu_fie_init(policy);
-> @@ -910,7 +1015,6 @@ static int cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
->  	struct cppc_perf_caps *caps = &cpu_data->perf_caps;
->  	u64 min_perf = caps->lowest_nonlinear_perf;
->  	u64 max_perf = caps->nominal_perf;
-> -	int ret;
->  
->  	if (enable) {
->  		if (cpu_data->perf_ctrls.min_perf)
-> @@ -919,26 +1023,8 @@ static int cppc_cpufreq_update_auto_select(struct cpufreq_policy *policy, bool e
->  			max_perf = cpu_data->perf_ctrls.max_perf;
->  	}
->  
-> -	/*
-> -	 * Set min/max performance registers and update policy constraints.
-> -	 *   When enabling: update both registers and policy.
-> -	 *   When disabling: update policy only.
-> -	 * Continue even if min/max are not supported, as EPP and autosel
-> -	 * might still be supported.
-> -	 */
-> -	ret = cppc_cpufreq_set_min_perf(policy, min_perf, enable, true);
-> -	if (ret && ret != -EOPNOTSUPP)
-> -		return ret;
-> -
-> -	ret = cppc_cpufreq_set_max_perf(policy, max_perf, enable, true);
-> -	if (ret && ret != -EOPNOTSUPP)
-> -		return ret;
-> -
-> -	ret = cppc_cpufreq_update_autosel_val(policy, enable);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return 0;
-> +	return cppc_cpufreq_update_autosel_config(policy, min_perf, max_perf, enable,
-> +						  0, false, true);
->  }
->  
->  static ssize_t store_auto_select(struct cpufreq_policy *policy, const char *buf, size_t count)
-> @@ -1146,13 +1232,61 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
->  	.name = "cppc_cpufreq",
->  };
->  
-> +static int cppc_cpufreq_set_epp_autosel_allcpus(bool auto_sel, u64 epp)
-> +{
-> +	int cpu, ret;
-> +
-> +	for_each_present_cpu(cpu) {
-> +		ret = cppc_set_epp(cpu, epp);
-> +		if (ret) {
-> +			pr_warn("Failed to set EPP on CPU%d (%d)\n", cpu, ret);
-> +			goto disable_all;
-> +		}
-> +
-> +		ret = cppc_set_auto_sel(cpu, auto_sel);
-> +		if (ret) {
-> +			pr_warn("Failed to set auto_sel on CPU%d (%d)\n", cpu, ret);
-> +			goto disable_all;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_all:
-> +	pr_warn("Disabling auto_sel for all CPUs\n");
-> +	for_each_present_cpu(cpu)
-> +		cppc_set_auto_sel(cpu, false);
-> +
-> +	return -EIO;
-> +}
-> +
->  static int __init cppc_cpufreq_init(void)
->  {
-> +	bool auto_sel;
->  	int ret;
->  
->  	if (!acpi_cpc_valid())
->  		return -ENODEV;
->  
-> +	if (auto_sel_mode) {
-> +		/*
-> +		 * Check if autonomous selection is supported by testing CPU 0.
-> +		 * If supported, enable autonomous mode on all CPUs.
-> +		 */
-> +		ret = cppc_get_auto_sel(0, &auto_sel);
-> +		if (!ret) {
-> +			pr_info("Enabling auto_sel_mode (autonomous selection mode)\n");
-> +			ret = cppc_cpufreq_set_epp_autosel_allcpus(true, CPPC_EPP_PERFORMANCE_PREF);
-> +			if (ret) {
-> +				pr_warn("Disabling auto_sel_mode, fallback to standard\n");
-> +				auto_sel_mode = false;
-> +			}
-> +		} else {
-> +			pr_warn("Disabling auto_sel_mode as not supported by hardware\n");
-> +			auto_sel_mode = false;
-> +		}
-> +	}
-> +
-
-Why not check at cppc_cpufreq_cpu_init? In the unlikely case that one
-CPU does not support it, I would recommend to issue a warning, rather
-than disable auto-sel on all the other CPUs. It is possible that some
-CPUs support auto-sel and they have it enabled by default without
-exposing that control to the OS. 
-
->  	cppc_freq_invariance_init();
->  	populate_efficiency_class();
->  
-> @@ -1165,10 +1299,19 @@ static int __init cppc_cpufreq_init(void)
->  
->  static void __exit cppc_cpufreq_exit(void)
->  {
-> +	int cpu;
-> +
-> +	for_each_present_cpu(cpu)
-> +		cppc_set_auto_sel(cpu, false);
-> +	auto_sel_mode = false;
-> +
->  	cpufreq_unregister_driver(&cppc_cpufreq_driver);
->  	cppc_freq_invariance_exit();
->  }
->  
-> +module_param(auto_sel_mode, bool, 0000);
-> +MODULE_PARM_DESC(auto_sel_mode, "Enable Autonomous Performance Level Selection");
-> +
->  module_exit(cppc_cpufreq_exit);
->  MODULE_AUTHOR("Ashwin Chaugule");
->  MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
-> -- 
-> 2.34.1
-> 
+-E
 
