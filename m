@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-898697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A375EC55CBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:22:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC20EC55CA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BFB34E260D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:21:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E59D34CA46
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C23265CBE;
-	Thu, 13 Nov 2025 05:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D560E3081D2;
+	Thu, 13 Nov 2025 05:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WbWZkh1p"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVuiyaYu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C127230BDF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0400E219A89;
+	Thu, 13 Nov 2025 05:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763011309; cv=none; b=EUYMeNBOFipLaWcaDjxtMTj6ZGxEljxCJrymeRsVcYJJ4V/nF45ZVQoGN09bqTIA6nLBT4vZjqGFfFrfLDAgMzG1mFj9ma56uNA3timdKVeZkVnCbejP7UBigFTwSrBBMX83w9Uej8vtH/ShBB1tvwX00QKU/iSnQeQpb8gYvn4=
+	t=1763010960; cv=none; b=KHsschAlHNVnS6sDRbUyuwTIFCWxyZKCInQi3cnWAlkFhRN7s+9nrevrmBtWlvzrDJZF/VAs3EMVZO93JhGLHNvG1ixugVoUwyggUT9raN6T5i4H4H2b2BFUXA/aRx4sxLw/1Ld2/uwIf35rgs1pBmo8VfZP17jvLDWjhh33gRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763011309; c=relaxed/simple;
-	bh=WQbvpfRXVaZhZ9fABl0EBrhCW18hjliCX22Xt5Hnog0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=BvEIXyEM9AHFkQPgMfdhgOTcWzzruOLsjp3ltajBwt4hdlpsePVvsG22OKdY5qUuJOwGm/ZaUIIPuxH1KpDCByNcb3w4HC+BhyZRvWNImjHFIbXDnHOB8cYiohGJiX1olzi8m4TSEBsQlVGzGyaix/L5Hv6LLE50uc3tJKRy5os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WbWZkh1p; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251113052145epoutp017665f02a3d2fe735f4cd2836995f9fb6~3eXD7VIpv3168031680epoutp018
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:21:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251113052145epoutp017665f02a3d2fe735f4cd2836995f9fb6~3eXD7VIpv3168031680epoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763011305;
-	bh=WQbvpfRXVaZhZ9fABl0EBrhCW18hjliCX22Xt5Hnog0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WbWZkh1p9Lb+mJptkrpVVa+BrzPEAkeMZaYmnc19T7uqkxYt4jSAVNvCDHVgyjEAs
-	 Lt0c6n6gXoqx/VSD/6PZRQGPMkFYVEUOQmDOkpfLlY8ciCUiCLpInqkSHvR3vwQtNG
-	 +hJAbxNvByQ2wZh3KKFAAtZBiyBBKAg5tmL9tf4E=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20251113052144epcas5p4bc5888e8a6819e90b99cdfc500d83ec6~3eXDkz3800320803208epcas5p4v;
-	Thu, 13 Nov 2025 05:21:44 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4d6TCX3ZWmz6B9mG; Thu, 13 Nov
-	2025 05:21:44 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251113052041epcas5p4e8be496d4f6dfe193bdebd02844a42a1~3eWI7EWs40471504715epcas5p4N;
-	Thu, 13 Nov 2025 05:20:41 +0000 (GMT)
-Received: from node122.. (unknown [109.105.118.122]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251113052041epsmtip2aac8e003f50dcdb810bc5a38a37bc79b~3eWId12_l1722617226epsmtip2j;
-	Thu, 13 Nov 2025 05:20:41 +0000 (GMT)
-From: Xue He <xue01.he@samsung.com>
-To: yukuai@fnnas.com
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re:[PATCH] lib/sbitmap: add an helper of sbitmap_find_bits_in_word
-Date: Thu, 13 Nov 2025 05:15:09 +0000
-Message-Id: <20251113051509.182557-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251107054243.42628-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1763010960; c=relaxed/simple;
+	bh=kYF+v51HiH8f+oyjLD8Cw6AcWEWsC5LFA5+wU5FAo20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkXxB17mRAiUVtGu+2hyCgxl4JbBORy+G6HhB0GxdSKHPW7UtvKST8tGrtCaXVlaWJd7whw4lUctp49SjQvafY6yF5K1ZriTntS71bCELkkH7akddFVmvqnxaRK27s0mk2IIucM482pAq2bMJyK7YnLHWgVjjyIuguGfTgf9DlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVuiyaYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E95C19422;
+	Thu, 13 Nov 2025 05:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763010959;
+	bh=kYF+v51HiH8f+oyjLD8Cw6AcWEWsC5LFA5+wU5FAo20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iVuiyaYucSNIVgvOzygjjmNpCJS2H3qyavnx2/sxZyLzQNuRHoJfMdE/OkjRuCDb4
+	 nCOg1PyrQ+PVf9pL6W7aGVVQcSXk7WkNBJmT4FAfJDda5LY2PmCQYi3Ugt5LqSdmD7
+	 /+3Jtl5cLtmvFA/0R0P5+9/ODBh26PWd27j1OOa2mR+9tfjM+5L1y4oennPlbqcAhD
+	 xht3cTQQ2YvguLhoIVJEHLA7MqL2UVmaivbvsadrid7nX59htdpThCWWaPWyvRdI6e
+	 rZO/VbDWV9E0Xw/fFRmamCh0ojFU29uvsXovnGgyg5ws+Z8nZ/osM2174EEcN99tsS
+	 56tWpHi+YVTFQ==
+Date: Thu, 13 Nov 2025 10:45:35 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH 1/9] serdev: Convert to_serdev_device() and
+ to_serdev_controller() helpers to macros
+Message-ID: <vajsqzw2z5jljmlys6gk3eltj3b2fr4xymyv252idk57lk3wm3@gfff56nn25is>
+References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
+ <20251112-pci-m2-e-v1-1-97413d6bf824@oss.qualcomm.com>
+ <CAL_Jsq+dZOUCosma1QJ-aqtjWs4NDLRkAdB3Aaro=8_Ep7Y0Rg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251113052041epcas5p4e8be496d4f6dfe193bdebd02844a42a1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251113052041epcas5p4e8be496d4f6dfe193bdebd02844a42a1
-References: <20251107054243.42628-1-xue01.he@samsung.com>
-	<CGME20251113052041epcas5p4e8be496d4f6dfe193bdebd02844a42a1@epcas5p4.samsung.com>
+In-Reply-To: <CAL_Jsq+dZOUCosma1QJ-aqtjWs4NDLRkAdB3Aaro=8_Ep7Y0Rg@mail.gmail.com>
 
-Hi, sorry I didn't notice you changed your email address, here is new patch.
+On Wed, Nov 12, 2025 at 03:13:54PM -0600, Rob Herring wrote:
+> On Wed, Nov 12, 2025 at 8:45 AM Manivannan Sadhasivam via B4 Relay
+> <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
+> >
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> >
+> > If these helpers receive the 'const struct device' pointer, then the const
+> > qualifier will get dropped, leading to below warning:
+> >
+> > warning: passing argument 1 of ‘to_serdev_device_driver’ discards 'const'
+> > qualifier from pointer target type [-Wdiscarded-qualifiers]
+> >
+> > This is not an issue as of now, but with the future commits adding serdev
+> > device based driver matching, this warning will get triggered. Hence,
+> > convert these helpers to macros so that the qualifier get preserved.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  include/linux/serdev.h | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+> > index 34562eb99931d808e885ce5022b8aa4577566885..ab185cac556380dfa3cdf94b7af6ee168b677587 100644
+> > --- a/include/linux/serdev.h
+> > +++ b/include/linux/serdev.h
+> > @@ -49,10 +49,7 @@ struct serdev_device {
+> >         struct mutex write_lock;
+> >  };
+> >
+> > -static inline struct serdev_device *to_serdev_device(struct device *d)
+> > -{
+> > -       return container_of(d, struct serdev_device, dev);
+> 
+> See container_of_const()
+> 
+
+Ah, didn't know about it. Will use it in v2.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
