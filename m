@@ -1,152 +1,173 @@
-Return-Path: <linux-kernel+bounces-898412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616BCC553D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1CBC553E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 473FA3461E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:21:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B416343837
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DE6267B07;
-	Thu, 13 Nov 2025 01:21:46 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90F526B742;
+	Thu, 13 Nov 2025 01:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WlCTKE4m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF1925A33F;
-	Thu, 13 Nov 2025 01:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6614225A33F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762996906; cv=none; b=L+DJF2Sz+cJMLIs2Gi4LuwMwlUD1BZB2WRzNEPmzcI+FMeDdFeZSMlQVBjgMr+Xw6JtWuFRd75pidZxMPRfI/bCFYJbiIzBhtjJLxmznlgCAAXA4G6DMeZhl078ORHKSW3eGpI8CqOlo6ArAEPp8PTStAitgrhEKwFYleHFwdZU=
+	t=1762996920; cv=none; b=OBJoSRRNbuxsqiShq+BKff9aXOXDwOD6gq9y7HU6V5FtcXN1Njz93H7xRFIAEj7YE9EktiA67YlvGm4sCcqAPP4Sk6uxzAVdlqY44BnGxZo3ki7JBAEe9iM9+dKNpC0X1+C2hEJfrr1+VEj4ywMWpYFrvM3ckZpBWCZxmaYZgn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762996906; c=relaxed/simple;
-	bh=MvRL7rpYLgibW2DCccoXSo/lpnB5jFWoYIQwGKLtd5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fjor6p9FiY1bFN/FawM/WoS7pvpEClX6rlDDqzwnurzR7/oQ7nr/FxNFprwo1RT3YDUMIiKzyC9XC59Tq7QL0BHoUDmDLGQMVMcOZHOw37ni0YAVsJ9Eh6TuG8/pB4Vr/H7f2VsGN9cUfoKL7i9t6EOrvVHPATTt5zFrzr9uiAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d6MtB19VCzKHMVh;
-	Thu, 13 Nov 2025 09:21:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 83CAE1A1B1C;
-	Thu, 13 Nov 2025 09:21:40 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgC3E3qiMhVpGGMzAg--.47040S2;
-	Thu, 13 Nov 2025 09:21:40 +0800 (CST)
-Message-ID: <975bf7c2-aa47-4ec2-b71f-d3e31644947d@huaweicloud.com>
-Date: Thu, 13 Nov 2025 09:21:38 +0800
+	s=arc-20240116; t=1762996920; c=relaxed/simple;
+	bh=VCU/UpThEEuUSJvH8oUai1bQrxsdrYWG4fWskAwTNYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4dwTbB/eP9vw1/kc+tcQqUBQwpvMeN2ViewDj8FtirRhADukD3Vo+O0ojOdR+MGrFnjdexn82aOI5KH5wqTsCsKSn3seGdqW44ErWvbcyTg+rlhK03NUBwUvvfxMI/sFzi30Oid4g5GeBOG94cGLSVg4zx20mZtLXbzu79b8Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WlCTKE4m; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762996917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EgETUmOyvY3UMMPLegrObzK3nipblxlLivW6LyEucSY=;
+	b=WlCTKE4mPww1w3gRMjBtTCqccM0SivVzgKT9pjlt4FXYCipVfI1hWG9+MhnUu5fINcT7ha
+	cMmTf+M483gWDnW7i/KblDrzXj7VjLSUMOzBj4jt59s68QZinMX4F0zPiLDIv8uPesbP6z
+	tl+PIqYeCqTkZAAftAtQtlB9qkRlF6k=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-_fY0jWUGNbGBk0Lg9Dsjmg-1; Wed,
+ 12 Nov 2025 20:21:54 -0500
+X-MC-Unique: _fY0jWUGNbGBk0Lg9Dsjmg-1
+X-Mimecast-MFC-AGG-ID: _fY0jWUGNbGBk0Lg9Dsjmg_1762996913
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 438921956050;
+	Thu, 13 Nov 2025 01:21:52 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.134])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DD591955F1A;
+	Thu, 13 Nov 2025 01:21:46 +0000 (UTC)
+Date: Thu, 13 Nov 2025 09:21:41 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Uday Shankar <ushankar@purestorage.com>,
+	Stefani Seibold <stefani@seibold.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 01/27] kfifo: add kfifo_alloc_node() helper for NUMA
+ awareness
+Message-ID: <aRUypQzcovGikrV0@fedora>
+References: <20251112093808.2134129-1-ming.lei@redhat.com>
+ <20251112093808.2134129-2-ming.lei@redhat.com>
+ <20251112112914.459baa16c4e9117d67f53011@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
-To: Waiman Long <llong@redhat.com>, Sun Shaojie <sunshaojie@kylinos.cn>
-Cc: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, shuah@kernel.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <b9dce00a-4728-4ac8-ae38-7f41114c7c81@redhat.com>
- <20251112094610.386299-1-sunshaojie@kylinos.cn>
- <85f438b2-5131-4794-bb2d-09ca611fb246@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <85f438b2-5131-4794-bb2d-09ca611fb246@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgC3E3qiMhVpGGMzAg--.47040S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFW8Zw4UCw15KF4UtFWrZrb_yoW5tryxpF
-	WDKF4Yyan5W342kwsFqwn7Xr4rta97uFsrJr15Jr1xCrW5uF1vyrs0ywsIgFy5W3yrJ34Y
-	vrWqqwn3ZF1qyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112112914.459baa16c4e9117d67f53011@linux-foundation.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-
-
-On 2025/11/13 2:05, Waiman Long wrote:
-> On 11/12/25 4:46 AM, Sun Shaojie wrote:
->> Hi Ridong,
->>
->> Thank you for your response.
->>
->>  From your reply "in case 1, A1 can also be converted to a partition," I
->> realize there might be a misunderstanding. The scenario I'm addressing
->> involves two sibling cgroups where one is an effective partition root and
->> the other is not, and both have empty cpuset.cpus.exclusive. Let me
->> explain the intention behind case 1 in detail, which will also illustrate
->> why this has negative impacts on our product.
->>
->> In case 1, after #3 completes, A1 is already a valid partition root - this
->> is correct.After #4, B1 was generated, and B1 is no-exclusive. After #5,
->> A1 changes from "root" to "root invalid". But A1 becoming "root invalid"
->> could be unnecessary because having A1 remain as "root" might be more
->> acceptable. Here's the analysis:
->>
->> As documented in cgroup-v2.rst regarding cpuset.cpus: "The actual list of
->> CPUs to be granted, however, is subjected to constraints imposed by its
->> parent and can differ from the requested CPUs". This means that although
->> we're requesting CPUs 0-3 for B1, we can accept that the actual available
->> CPUs in B1 might not be 0-3.
->>
->> Based on this characteristic, in our product's implementation for case 1,
->> before writing to B1's cpuset.cpus in #5, we check B1's parent
->> cpuset.cpus.effective and know that the CPUs available for B1 don't include
->> 0-1 (since 0-1 are exclusively used by A1). However, we still want to set
->> B1's cpuset.cpus to 0-3 because we hope that when 0-1 become available in
->> the future, B1 can use them without affecting the normal operation of other
->> cgroups.
->>
->> The reality is that because B1's requested cpuset.cpus (0-3) conflicts with
->> A1's exclusive CPUs (0-1) at that moment, it destroys the validity of A1's
->> partition root. So why must the current rule sacrifice A1's validity to
->> accommodate B1's CPU request? In this situation, B1 can clearly use 2-3
->> while A1 exclusively uses 0-1 - they don't need to conflict.
->>
->> This patch narrows the exclusivity conflict check scope to only between
->> partitions. Moreover, user-specified CPUs (including cpuset.cpus and
->> cpuset.cpus.exclusive) only have true exclusive meaning within effective
->> partitions. So why should the current rule perform exclusivity conflict
->> checks between an exclusive partition and a non-exclusive member? This is
->> clearly unnecessary.
+On Wed, Nov 12, 2025 at 11:29:14AM -0800, Andrew Morton wrote:
+> On Wed, 12 Nov 2025 17:37:39 +0800 Ming Lei <ming.lei@redhat.com> wrote:
 > 
-> As I have said in the other thread, v2 exclusive cpuset checking follows the v1 rule. However, the
-> behavior of setting cpuset.cpus differs between v1 and v2. In v1, setting cpuset.cpus can fail if
-> there is some conflict. In v2, users are allow to set whatever value they want without failure, but
-> the effective CPUs granted will be subjected to constraints and differ from cpuset.cpus. So in that
-> sense, I think it makes sense to relax the exclusive cpuset check for v2, but we still need to keep
-> the current v1 behavior. Please update your patch to do that.
+> > Add __kfifo_alloc_node() by refactoring and reusing __kfifo_alloc(),
+> > and define kfifo_alloc_node() macro to support NUMA-aware memory
+> > allocation.
+> > 
+> > The new __kfifo_alloc_node() function accepts a NUMA node parameter
+> > and uses kmalloc_array_node() instead of kmalloc_array() for
+> > node-specific allocation. The existing __kfifo_alloc() now calls
+> > __kfifo_alloc_node() with NUMA_NO_NODE to maintain backward
+> > compatibility.
+> > 
+> > This enables users to allocate kfifo buffers on specific NUMA nodes,
+> > which is important for performance in NUMA systems where the kfifo
+> > will be primarily accessed by threads running on specific nodes.
 > 
-> Cheers,
-> Longman
+> I was about to ask "please don't add infrastructure without users", but
+> I see a "01/27" there.  I wander over to lkml but I can't find 02-27
+> there either.  Maybe something went wrong.
+
+It can be found in lore:
+
+https://lore.kernel.org/all/20251112093808.2134129-1-ming.lei@redhat.com/
+
 > 
+> I prefer to be cc'ed on the entire series, please.
 
-Hi, Longman.
+OK.
 
-It did not fail to set cupset.cpus, but invalidated the sibling cpuset partition.
+> 
+> > --- a/include/linux/kfifo.h
+> > +++ b/include/linux/kfifo.h
+> > @@ -369,6 +369,30 @@ __kfifo_int_must_check_helper( \
+> >  }) \
+> >  )
+> >  
+> > +/**
+> > + * kfifo_alloc_node - dynamically allocates a new fifo buffer on a NUMA node
+> > + * @fifo: pointer to the fifo
+> > + * @size: the number of elements in the fifo, this must be a power of 2
+> > + * @gfp_mask: get_free_pages mask, passed to kmalloc()
+> > + * @node: NUMA node to allocate memory on
+> > + *
+> > + * This macro dynamically allocates a new fifo buffer with NUMA node awareness.
+> > + *
+> > + * The number of elements will be rounded-up to a power of 2.
+> > + * The fifo will be release with kfifo_free().
+> > + * Return 0 if no error, otherwise an error code.
+> > + */
+> > +#define kfifo_alloc_node(fifo, size, gfp_mask, node) \
+> > +__kfifo_int_must_check_helper( \
+> > +({ \
+> > +	typeof((fifo) + 1) __tmp = (fifo); \
+> > +	struct __kfifo *__kfifo = &__tmp->kfifo; \
+> > +	__is_kfifo_ptr(__tmp) ? \
+> > +	__kfifo_alloc_node(__kfifo, size, sizeof(*__tmp->type), gfp_mask, node) : \
+> > +	-EINVAL; \
+> > +}) \
+> > +)
+> 
+> Well this is an eyesore.  Do we really need it?  It seems to be here so
+> we can check for a programming bug?  Well, don't add programming bugs!
+> 
+> I'm actually not enjoying the existence of __is_kfifo_ptr() at all. 
+> What  is it all doing?  It's a FIFO for heck's sake, why is this so hard.
 
-If we relax this rule, we should consider:
+It is basically a clone of existing kfifo_alloc().
 
-  What I want to note is this: what if we run echo root > /sys/fs/cgroup/B1/cpuset.cpus.partition
-after step #5? There’s no conflict check when enabling the partition.
+Do we need to clean kfifo_alloc() first? Otherwise I'd keep the same
+pattern with existing definitions.
 
--- 
-Best regards,
-Ridong
+> 
+> > @@ -902,6 +926,9 @@ __kfifo_uint_must_check_helper( \
+> >  extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
+> >  	size_t esize, gfp_t gfp_mask);
+> >  
+> > +extern int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
+> > +	size_t esize, gfp_t gfp_mask, int node);
+> > +
+> 
+> Nit: please align things like this:
+> 
+> extern int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
+> 			      size_t esize, gfp_t gfp_mask, int node);
+
+OK.
+
+Thanks,
+Ming
 
 
