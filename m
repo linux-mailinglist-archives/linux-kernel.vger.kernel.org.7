@@ -1,150 +1,100 @@
-Return-Path: <linux-kernel+bounces-899234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204A5C57299
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:25:11 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0732C57254
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9443B92EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:20:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDA0234A2FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2EE33B96F;
-	Thu, 13 Nov 2025 11:20:18 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E033A028;
+	Thu, 13 Nov 2025 11:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdZSjTkW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E746633ADAF;
-	Thu, 13 Nov 2025 11:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B967821B9F1;
+	Thu, 13 Nov 2025 11:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032818; cv=none; b=AjPrIH2Up1ao3pgC255KOvwB2tuUc44cT+yZQPZu9lyTnxj+sYKGvlZW9V2zwsNpa5LXmuaDj34F1xEmfu9WaYzCIRPpXAyfYESNhjrHfRZmxa50/cuARnlruE5WYVkDyQtHyGGsfav+qKMX8Xca17UwrrgG/8UzEksfh332quI=
+	t=1763032858; cv=none; b=LJ6TBv28wrbW431n8pGatF/nBBFztG7j55LX+A7NxgKnXYNCepkH9zO8pwQ4Ad5sSh1xcBXZJSOGtbVcgRpL/aQyxzUFPef1bg3wG/960jYp4exyNUQzNrIlFoeyS3xKN5H/USbQul8iXRAl/HHfYBfw6imOcshPSumlF7Guvz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032818; c=relaxed/simple;
-	bh=6sh4gEpzZka45KBSDUYPPELbNhlKK57QS4xAYVbgdCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=awkLGvAvPmuNMuO7WwXDwzqJSZN6yQ3McKXHIfTt4E9UMOq1mgp+XhDIdW+E74pLoCLjvd76f3dBrzAa2ckhuk1eO6dAMkvzxkBqBowvdwaCxE8E3BO+xzZj89LImqZdVjgoZjxpoZwpHM8I9OEG4v9kz0ah6HCJzE6lFH+sMnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 40BE4201C28;
-	Thu, 13 Nov 2025 12:20:15 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C630201477;
-	Thu, 13 Nov 2025 12:20:15 +0100 (CET)
-Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CEC91180009C;
-	Thu, 13 Nov 2025 19:20:13 +0800 (+08)
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [PATCH] hwmon: (lm75) Add software-based alarm support for NXP P3T1750/P3T1755
-Date: Thu, 13 Nov 2025 16:50:11 +0530
-Message-Id: <20251113112011.28909-1-lakshay.piplani@nxp.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1763032858; c=relaxed/simple;
+	bh=vtBK544FRyKS1BOwji0xiD0d+JWv6PGkNg7wpRHpRxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wr9E2I+Kw57EpZBLGRqgMYXEJguHefcmrbWs7GaV7amurNQQ1Hvdn4revhMgvW2jEs4b3J8Gt4bzsbSqgjHJPdCcMrqjOoCI65iat5spCtC0zWNVAAvH8Px9Z9jMk1EF7SHH0RyIVGF/PPzmRW6Txe4/r81fydodUzPZqHpOkQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdZSjTkW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A567C19423;
+	Thu, 13 Nov 2025 11:20:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763032858;
+	bh=vtBK544FRyKS1BOwji0xiD0d+JWv6PGkNg7wpRHpRxw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SdZSjTkWNvwUE1+1q/Y6z8HApEWYFKsQV8J/3ylVYTDbNqnvBz7bG0SCIRZKkbdjI
+	 Z55GKxjAUlXxLEhLhEJ8tNLn7z5utLBkz0NJdjszJlRHqklQG6oUDMtnH4jAr9v3kp
+	 PF1ae0rWtMcdERLd9X/i7FUmM/8RUPh0AwTIv4rW0MAGZdVO9LBL25cqmCM//0NvyO
+	 /GoQ/Fvi4ERBN1bRVCbVcr2Wfx7iOlOax9b20NI152XAseZyyRRqcICufQqoKmTqbV
+	 Q8gpRLUCvhnbbqUM95+tU+M8TGVgTZcahtMAmsV5zM+BF7xQN+j3Xn+Giv3iQmpiM9
+	 /fIFBV//4KDQg==
+Date: Thu, 13 Nov 2025 11:20:52 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomer Maimon <tmaimon77@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
+	joel@jms.id.au, venture@google.com, yuenn@google.com,
+	benjaminfair@google.com, andrew@codeconstruct.com.au,
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] spi: dt-bindings: nuvoton,npcm-fiu: Convert to DT
+ schema
+Message-ID: <9a175890-bfb9-43d7-bf19-5e2f5ca00f41@sirena.org.uk>
+References: <20251112173314.1751671-1-tmaimon77@gmail.com>
+ <20251113-loose-seahorse-of-endeavor-5d216e@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="c70ftPtkFe0Y8++O"
+Content-Disposition: inline
+In-Reply-To: <20251113-loose-seahorse-of-endeavor-5d216e@kuoka>
+X-Cookie: An idle mind is worth two in the bush.
 
-NXP P3T1750/P3T1755 does not provide readable alarm/status bits. To support
-the standard tempX_alarm attribute, implement the comparator mode threshold
-checks in the software using THIGH and TLOW registers.
 
-Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
----
- drivers/hwmon/lm75.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+--c70ftPtkFe0Y8++O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
-index 3c23b6e8e1bf..b25c19de05d4 100644
---- a/drivers/hwmon/lm75.c
-+++ b/drivers/hwmon/lm75.c
-@@ -116,6 +116,7 @@ struct lm75_data {
- 	const struct lm75_params	*params;
- 	u8				reg_buf[1];
- 	u8				val_buf[3];
-+	bool				alarm_state;
- };
- 
- /*-----------------------------------------------------------------------*/
-@@ -229,6 +230,7 @@ static const struct lm75_params device_params[] = {
- 		.default_sample_time = 55,
- 		.num_sample_times = 4,
- 		.sample_times = (unsigned int []){ 28, 55, 110, 220 },
-+		.alarm = true,
- 	},
- 	[p3t1755] = {
- 		.clr_mask = 1 << 1 | 1 << 7,	/* disable SMBAlert and one-shot */
-@@ -236,6 +238,7 @@ static const struct lm75_params device_params[] = {
- 		.default_sample_time = 55,
- 		.num_sample_times = 4,
- 		.sample_times = (unsigned int []){ 28, 55, 110, 220 },
-+		.alarm = true,
- 	},
- 	[pct2075] = {
- 		.default_resolution = 11,
-@@ -407,6 +410,49 @@ static int lm75_read(struct device *dev, enum hwmon_sensor_types type,
- 			case tmp112:
- 				*val = (regval >> 13) & 0x1;
- 				break;
-+
-+			case p3t1750:
-+			case p3t1755: {
-+				unsigned int temp_raw, thigh_raw, tlow_raw;
-+				s16 temp, thigh, tlow;
-+
-+				err = regmap_read(data->regmap, LM75_REG_TEMP, &temp_raw);
-+				if (err)
-+					return err;
-+
-+				err = regmap_read(data->regmap, LM75_REG_MAX, &thigh_raw);
-+				if (err)
-+					return err;
-+
-+				err = regmap_read(data->regmap, LM75_REG_HYST, &tlow_raw);
-+				if (err)
-+					return err;
-+
-+				temp = (s16)temp_raw;
-+				thigh = (s16)thigh_raw;
-+				tlow = (s16)tlow_raw;
-+
-+				/*
-+				 * Implement software-based alarm logic for P3T1750/P3T1755.
-+				 *
-+				 * These devices do not provide readable alarm bits in hardware.
-+				 * To comply with hwmon ABI and to support standard 'tempX_alarm'
-+				 * attribute, check the current temperature against THIGH and TLOW
-+				 * thresholds:
-+				 *
-+				 * - If temp >= thigh, set alarm = 1 (over-temperature condition).
-+				 * - If temp < tlow, clear alarm = 0 (clear alarm).
-+				 * - If temp is between tlow and thigh, keep previous alarm state
-+				 *   to provide hysteresis behavior similar to hardware.
-+				 */
-+				if (!data->alarm_state && temp >= thigh)
-+					data->alarm_state = true;
-+				else if (data->alarm_state && temp < tlow)
-+					data->alarm_state = false;
-+
-+				*val = data->alarm_state;
-+				break;
-+			}
- 			default:
- 				return -EINVAL;
- 			}
--- 
-2.25.1
+On Thu, Nov 13, 2025 at 09:51:47AM +0100, Krzysztof Kozlowski wrote:
 
+> Anyway, address space is rarely optional, so I have doubts you would
+> have proper justification for this change.
+
+IIRC I have seen some of the controllers with memory mapped flash
+support where the address range for the memory mapping was optional
+since it could be configured out of the IP when wiring it into the
+platform.  No idea if that's what's going on here.
+
+--c70ftPtkFe0Y8++O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkVvw0ACgkQJNaLcl1U
+h9Ac1wf+LU21wucZkPrUikGhqSauz0L9PAoNweBaHggildDs6G+y/dxG67+ucIZb
+qNKB2x26bwrysd0AM9nenCcdSd72zNrsb5/lxYxLIYkRbHwTqGDshxn8CEjHYU8u
+0tF9panGf6fGeS0cWP2vDNk2288cIGEJ3oSFbPjJaWJIleja2O8vhT3WYzDXF6h/
+vNkYKl3kmStqr69F10KTad5IyExU5QhsvzYrhRcKWim9uSc5E+4Ip4Uqz5fwEnWC
+oz1/qp2ZZiMWYsUi8gnY8qKtzocJ5muMbXyS80uZQlF8mYE2JJIPMgY4OrpdSypL
++dwe6cAI15iM2MiNhjv2BFinMda4Og==
+=OfFS
+-----END PGP SIGNATURE-----
+
+--c70ftPtkFe0Y8++O--
 
