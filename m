@@ -1,131 +1,156 @@
-Return-Path: <linux-kernel+bounces-898604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8BDC5592F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:42:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3266FC55939
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D70944E931B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:35:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8B734E383C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BAB1D9A54;
-	Thu, 13 Nov 2025 03:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hPjChoR+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646A2FDC39;
+	Thu, 13 Nov 2025 03:34:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CE2F9DBB;
-	Thu, 13 Nov 2025 03:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2F226A1C4;
+	Thu, 13 Nov 2025 03:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763004765; cv=none; b=mGn+A8a6mc2FqiX/Rje7Opm68NKSe7GxchAnpSJAPamdUdI3He4UatAV25AyIqT7YtAvR0xnaX38ifKJXWRef3o9W1n1iTdh+fCcAgGdJHaToRrgpOUacOir21gIZARzeVyCwQ8b42bSCJnw2yVye20FOAVcIq3nXz564fMI5BI=
+	t=1763004840; cv=none; b=kmzm6Xcy7ofMBeFFzQ8X+n9jrSDxA+PYgkRWwMbfQE7ULVNOOEYU1xCnRNtq0RvuxPLQuXWUGfPyGfLKQNal2epgeoVLQvijL1ChUGYnljkssIxgGyx0BWe1ZpszzsxywGYkUsUPsG1hyvQnRuZOtgTgWempInanXzfX2hG85f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763004765; c=relaxed/simple;
-	bh=nW8dYWJRACfO9SxIG8/7eN3wi1ZlRG3WcV3UoKJDPTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHxAOuys1mqeeGDuiI42KVSJAEIIWu1iOXfnbTXTs9wfacuc9mtUI0x2AqE+oI1U3nRsrBUcdSUtgDvUPuIBplYNozBtiuxDkXQOI3b7Mm3L2BX4EpPWoztcZ9oKUXpU+XZCr9zkbETM5DtTvvQE122IKlc0GhiMhzu8LG/23xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hPjChoR+; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763004762; x=1794540762;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nW8dYWJRACfO9SxIG8/7eN3wi1ZlRG3WcV3UoKJDPTM=;
-  b=hPjChoR+bB1cTwcgZkkxGQkeTDkEg7xrGO5hE50J+dUkPusF/ftqHYhK
-   Gnk86Rc9PU3Ivj0iyiReNcz79P/SeRdz10bawA10xgA8jZqo7npI0FymA
-   G6Sa6doCen5Y0Aym81MfsWhiPqLUGmbSG/n8krpIVoC125SbzlMxsPWJJ
-   JX2xBbNpCikEZWzfxzpjF67RYkTA0ViwUubauaieNOD+aMiqcBe8k2vZz
-   AnED/shpSNysLOxNuVWdhleKDi1jt+ENM574PytC4PM+s9pNmajuq9gq+
-   y23SQGBLFm+gVepjKT3xKfxH8TqnxJHWKRmty4WttsjvX1UWcmtB/gFX4
-   Q==;
-X-CSE-ConnectionGUID: Z+vkHmRzRCaCX0UH8XQ1dw==
-X-CSE-MsgGUID: fXev3YbCTHa+0MUBETB3Rw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="68943556"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="68943556"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 19:32:41 -0800
-X-CSE-ConnectionGUID: O1uxeBX2Sa+cL9lsKqBhsA==
-X-CSE-MsgGUID: s7OouAHqR/OR+ATVTBdb+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="193512952"
-Received: from unknown (HELO [10.238.2.7]) ([10.238.2.7])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 19:32:38 -0800
-Message-ID: <2ca29d50-88c4-4f4a-afc6-4b79700004e3@intel.com>
-Date: Thu, 13 Nov 2025 11:32:34 +0800
+	s=arc-20240116; t=1763004840; c=relaxed/simple;
+	bh=1lz50uhiAgQq3i2dzjHKoezuauuoFa923Yl7yx8RnH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SW3WJ2qOqZ3ZNXSmch5zGaY1hMc3Sda3W4j8oA2BbCK4UhaGumUOUZ71EbsCqT6BXoOra20C89MuG7PzOU/wDoSV2OPmxFL/kScmVW3dKqvH5D2ufArudSDtrBlEyyi830uYJK55iwGTxnoGgGgu/qAsY8scQIrjDB29CNTtzpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8c017c84c04111f0a38c85956e01ac42-20251113
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:6e3acb6c-6b76-4c86-9752-9a0490c8b2a6,IP:20,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:15
+X-CID-INFO: VERSION:1.3.6,REQID:6e3acb6c-6b76-4c86-9752-9a0490c8b2a6,IP:20,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:15
+X-CID-META: VersionHash:a9d874c,CLOUDID:bb1ed2f2e0d1bfd4aac28d672924011c,BulkI
+	D:251112113325GOOOY919,BulkQuantity:9,Recheck:0,SF:17|19|38|64|66|78|80|81
+	|82|83|102|841|850,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:n
+	il,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,
+	BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 8c017c84c04111f0a38c85956e01ac42-20251113
+X-User: sunshaojie@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <sunshaojie@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 622887929; Thu, 13 Nov 2025 11:33:40 +0800
+From: Sun Shaojie <sunshaojie@kylinos.cn>
+To: chenridong@huaweicloud.com,
+	longman@redhat.com
+Cc: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	shuah@kernel.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
+Date: Thu, 13 Nov 2025 11:33:22 +0800
+Message-Id: <20251113033322.431859-1-sunshaojie@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <b9dce00a-4728-4ac8-ae38-7f41114c7c81@redhat.com>
+References: <b9dce00a-4728-4ac8-ae38-7f41114c7c81@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] lib/group_cpus: make group CPU cluster aware
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, virtualization@lists.linux-foundation.org,
- linux-block@vger.kernel.org, Tianyou Li <tianyou.li@intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>, Dan Liang <dan.liang@intel.com>
-References: <20251111020608.1501543-1-wangyang.guo@intel.com>
- <aRKssW96lHFrT2ZN@fedora> <b94a0d74-0770-4751-9064-2ef077fada14@intel.com>
- <aRMnR5DRdsU8lGtU@fedora> <a101fe80-ca0b-4b4b-94b1-f08db1b164fc@intel.com>
- <aRU2sC5q5hCmS_eM@fedora>
-Content-Language: en-US
-From: "Guo, Wangyang" <wangyang.guo@intel.com>
-In-Reply-To: <aRU2sC5q5hCmS_eM@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 11/13/2025 9:38 AM, Ming Lei wrote:
-> On Wed, Nov 12, 2025 at 11:02:47AM +0800, Guo, Wangyang wrote:
->> On 11/11/2025 8:08 PM, Ming Lei wrote:
->>> On Tue, Nov 11, 2025 at 01:31:04PM +0800, Guo, Wangyang wrote:
->>>> On 11/11/2025 11:25 AM, Ming Lei wrote:
->>>>> On Tue, Nov 11, 2025 at 10:06:08AM +0800, Wangyang Guo wrote:
->>>>>> As CPU core counts increase, the number of NVMe IRQs may be smaller than
->>>>>> the total number of CPUs. This forces multiple CPUs to share the same
->>>>>> IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
->>>>>> performance penalty can be observed on some platforms.
->>>>>
->>>>> Can you add details why/how CPU cluster isn't aligned with IRQ
->>>>> affinity? And how performance penalty is caused?
->>>>
->>>> Intel Xeon E platform packs 4 CPU cores as 1 module (cluster) and share the
->>>> L2 cache. Let's say, if there are 40 CPUs in 1 NUMA domain and 11 IRQs to
->>>> dispatch. The existing algorithm will map first 7 IRQs each with 4 CPUs and
->>>> remained 4 IRQs each with 3 CPUs each. The last 4 IRQs may have cross
->>>> cluster issue. For example, the 9th IRQ which pinned to CPU32, then for
->>>> CPU31, it will have cross L2 memory access.
->>>
->>>
->>> CPUs sharing L2 usually have small number, and it is common to see one queue
->>> mapping includes CPUs from different L2.
->>>
->>> So how much does crossing L2 hurt IO perf?
->> We see 15%+ performance difference in FIO libaio/randread/bs=8k.
+On 2025/11/13 09:21, Chen Ridong wrote:
+>
+>Hi, Longman.
+>
+>It did not fail to set cupset.cpus, but invalidated the sibling cpuset partition.
+>
+>If we relax this rule, we should consider:
+>
+>  What I want to note is this: what if we run echo root > /sys/fs/cgroup/B1/cpuset.cpus.partition
+>after step #5? There’s no conflict check when enabling the partition.
+>
+>-- 
+>Best regards,
+>Ridong
+
+Hi, Ridong.
+
+I understand your concern, and there is a conflict check when enabling 
+partitions. Below, I will use two tables to show the partition states of A1
+and B1 before applying this patch and after applying it.(All the steps in 
+the table are by default under the path /sys/fs/cgroup)
+
+Table 1: Before applying the patch
+                                            | A1's prstate | B1's prstate |
+ #1> mkdir -p A1                            | member       |              |
+ #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
+ #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
+ #4> mkdir -p B1                            | root         | member       |
+ #5> echo "0-3" > B1/cpuset.cpus            | root invalid | member       |
+ #6> echo "root" > B1/cpuset.cpus.partition | root invalid | root invalid |
+
+Table 2: After applying the patch
+                                            | A1's prstate | B1's prstate |
+ #1> mkdir -p A1                            | member       |              |
+ #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
+ #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
+ #4> mkdir -p B1                            | root         | member       |
+ #5> echo "0-3" > B1/cpuset.cpus            | root         | member       |
+ #6> echo "root" > B1/cpuset.cpus.partition | root         | root invalid |
+
+As shown in Table 2, after step #6, B1's partition state becomes "root 
+invalid". This confirms that conflict checks are performed when enabling 
+partitions, and clearly, the check did not pass in this case. This is the 
+expected result, since the CPUs (0-3) that B1 attempts to use exclusively 
+conflict with those used by A1 (0-1).
+
+The reviewer mentioned they couldn't see my original patch, so I'm 
+re-quoting the key changes below for clarity:
+
+>diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>index 52468d2c178a..e0d27c9a101a 100644
+>--- a/kernel/cgroup/cpuset.c
+>+++ b/kernel/cgroup/cpuset.c
+>@@ -586,14 +586,14 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
+>  * Returns: true if CPU exclusivity conflict exists, false otherwise
+>  *
+>  * Conflict detection rules:
+>- * 1. If either cpuset is CPU exclusive, they must be mutually exclusive
+>+ * 1. If both cpusets are exclusive, they must be mutually exclusive
+>  * 2. exclusive_cpus masks cannot intersect between cpusets
+>  * 3. The allowed CPUs of one cpuset cannot be a subset of another's exclusive CPUs
+>  */
+> static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
+> {
+>-	/* If either cpuset is exclusive, check if they are mutually exclusive */
+>-	if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
+>+	/* If both cpusets are exclusive, check if they are mutually exclusive */
+>+	if (is_cpu_exclusive(cs1) && is_cpu_exclusive(cs2))
+> 		return !cpusets_are_exclusive(cs1, cs2);
 > 
-> As I mentioned, it is common to see CPUs crossing L2 in same group, but why
-> does it make a difference here? You mentioned just some platforms are
-> affected.
+> 	/* Exclusive_cpus cannot intersect */
 
-We observed the performance difference in Intel Xeon E platform which 
-has 4 physical CPU cores as 1 module (cluster) sharing the same L2 
-cache. For other platforms like Intel P-core or AMD, I think it's hard 
-to show performance benefit with L2 locality, because:
-1. L2 cache is only shared within 2 logic core when HT enabled
-2. If IRQ pinned to corresponding HT core, the L2 cache locality is 
-good, but other aspects like retiring maybe affected since they are 
-sharing the same physical CPU resources.
+Here are the main changes, where the conflict check for step #6 in Table 2 
+is performed. And these changes have no effect on cgroup v1.
 
-BR
-Wangyang
+Thanks,
+Sun Shaojie
 
