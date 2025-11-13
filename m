@@ -1,77 +1,88 @@
-Return-Path: <linux-kernel+bounces-899873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F8AC58FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:06:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513D6C5949D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DE99F35F9FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:55:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49A9B4E4E36
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AD135A15E;
-	Thu, 13 Nov 2025 16:48:25 +0000 (UTC)
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0169A35A95F;
+	Thu, 13 Nov 2025 16:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FEPnpg/p"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0F1271A7C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F70271A7C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052504; cv=none; b=awYgyWgSgkTql0/3PDd5LD17HQKEiYW+HxUCvsyEWCNKN2cX815YOEtGW69OpphUHFxSARPO6SEKes+nVfSa3aCL0YkIMY1mS2SLWLoz7KW+qg/6nP1Fxge56osd3jC2yVnvMjBB5rkS3oUF8prdTRKYp5/BZ2OfnwaQuJJAoJQ=
+	t=1763052526; cv=none; b=SIaPSkCTL0dTjSs8gGu9FaA3mQOoGv2BwcFSlnq3wHtRpuf6gGiDVYu/uAYmiZjw2xvqs5JH4O9+xFX222nC1Zlaxm+PECxHO5DPlSM8a7EgAkUHLJE4h8jbZKdLRW06rmNel1zviBDFlEGCiEYadpznCaLhhF6NXtmSJkvtsnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052504; c=relaxed/simple;
-	bh=Sum4+JVeXPfizys9pdpiHbOuRRQLqk+dWSvyWk6OJtU=;
+	s=arc-20240116; t=1763052526; c=relaxed/simple;
+	bh=GcQCJjua/D8mklX/rr0KMH+1XU9pj8X0cJnaIhN8pj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fA2pW8Q9KQYa20bDXyHECNEFdZ4+vnmujsHtypFib8HR0zCdhKGZdDqlplO7HMZgwCz0XiB2leyo/6ArkdxiZcNgDZHJoV5Wl0UEsxervfPK4rQa0Ca1ZW2T5z1RZ1B0ic3F4B3zj0HG+4dokH8Rj1mCus5/vpy5T+qNdHLhGu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbgIbTAmNjE7ScSYmQ6WpEsH6IvlzLDuq7+BNimbRcu5UqvSAkQn/cxWmYKNjvbT1lOTalFPAjFkaQvxCj6EG13lwffixdF1L01yW+616FSaoQjzxNf1k9SErCUHf3zICJhkyJNUq5B4MdxlS6Z71fPTt2c6bRv3/uP97yRD450=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FEPnpg/p; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-44fa4808c15so160513b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:48:22 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-298039e00c2so12686115ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:48:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763052524; x=1763657324; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KtBw2QaKFUcY/ykNwr991VNkMXbEXUIubxDUCz9u1I8=;
+        b=FEPnpg/pUq/k0NHUPUm1AzoL6AaGcGtyrMWXGKfAThMIFW+y1laBf6c0S61YqZ3jM+
+         1d7skEaGMBQuHPLlyzV39p8bEtuwVT7rRVYV8sbytY6qT1WfJI79K8/M+ZSZOmjU1M6m
+         7EbQHG4IxDGK+Ure+H+wpQ+IDgmZ9Qpi1BP9oYAk3LbVZL5fWA7zkknevljXpwmgBZez
+         AbXqvnZaQApjXCa53OFy/SIfjl/PHAtS+egtMQ0k924ZzEZ4whoiwjWgjDZHOHkc1HQL
+         Gn3kC/RziP2JKT5EHEvD+eTqPM4ZGwwGCTSb4EWEnTHBjgBK+BU5XBdQKKqCfHEZOlBQ
+         6fmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763052502; x=1763657302;
+        d=1e100.net; s=20230601; t=1763052524; x=1763657324;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sum4+JVeXPfizys9pdpiHbOuRRQLqk+dWSvyWk6OJtU=;
-        b=JpJJZB9g/QZn/O+KnlbbWKhxQjodJpPjsDqpKI91+Vi2jqc3HaFGCDT/p3c+Ypg/B9
-         MQ8b+AdwFRgnQA/pAev/Th/6FL0PQk0MTubmSeE2KBDMjBKVoZMP75Ju/SJoA/Jf8Vn7
-         UmLpDZy9BpiI+L5yuq96096i94bHlwUgoPVCdmeNuYlwE6QwCtbOPmtmUksbR1BdoXrd
-         n4y/c4PV+HCYuaCLiBzypmcSRGU0zeCW/D7quqkuJM2wHKLs5Z0XavG0TCY8io6ioaz+
-         SmTjQkV/4PwVFxGglEZtmZXfMXYXH117uBJgsvsxuYLhn8MnIC5+RQ4K8nOvntWj8SWe
-         MXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+kB1yH/pbPKN27I3KcB8LlUr/4oL/tV3GQPCpPwMzuQIGudAUrtTsEmfh/lbd3w+eetOTQ+nsoSssz+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5H6fjxeJA1VSkGEXkX2ncnuAIHY0lCaXFG44EZbt6Y8gDc1HC
-	up9WaEMaNIrfqBdUzkKYGLZfDt1kOjU7QXKtlwrYxNz+eAXCWlvu3WAT
-X-Gm-Gg: ASbGncsyBeT5WVpcuGl+/ajep0GUol+43gdND5tqawBYnqS37Vsq2o6PUY4lJeBnplY
-	JB6wBSdxM+auaPtzaCjn9AyUQ9DjWJfSWd+cJNjL/Ukg/Oq/ZWBR7aiU5ghloNuIQ3x7Jj2ivWg
-	KOeIu/x9jwPUUZW3nA4ts8SS9mLQ8Xb3QQKkQY6yMb4itrdxsUMYoCrsyr6LW+8VWbrtDBGRgHo
-	siKSCmkn2joWZ8LPOe0JxlNpu7Eq3SJzrzuFGeBXRNlMqqyw3a6NG33XTyT0FhPMf3plBl5202P
-	DZgQxg/m83ZzgEMKYo6AKzCmZAx94LmJgghnqFAuVFmpUhJrW3ozypg4t0j64nbIviZOTdjemNN
-	0AbKE65FhiKuFR0qVcxA+bnwdJfR80O3EkNf45lYZye/40ckgZbN7e6jc+1WE9WculpQmsiwjlP
-	2Js6q6A1eE8tV0cA==
-X-Google-Smtp-Source: AGHT+IG9TDGsXXH71ZlSYsT4b04gTMVdrIDzUOCAbUC+AwdHftVnv0Uodlv7OFGiel08iPesDyqhlA==
-X-Received: by 2002:a05:6808:228b:b0:44f:e7bd:274b with SMTP id 5614622812f47-450745acef7mr3902165b6e.55.1763052502220;
-        Thu, 13 Nov 2025 08:48:22 -0800 (PST)
-Received: from gmail.com ([2a03:2880:10ff:5d::])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4508a2e4af5sm1261843b6e.0.2025.11.13.08.48.21
+        bh=KtBw2QaKFUcY/ykNwr991VNkMXbEXUIubxDUCz9u1I8=;
+        b=pPq1eWhB/SoPpQ39fDS7jGZajrYkEl7NHmt1exgkn1ErEJEjqAcsDcxTvb3bYXnBIg
+         YvrNDtAav4WtJoDwVlcA35rgBquYdx/K+uMfSMD7rSUuVGM4adurOGlaIwyJBiLo1gv7
+         k1Og4qehWKadIjBFD10V9YRmPgWYLXqzzlqfPfGZxvGw9GLiUpDDGi/0XYzTmNHzmIy7
+         iioJ6SFOwQgDMsjM/m1AWrHCwtNclg20CuY1MTBiz+ZUn1fXk2c6mfbh+2hNdShJ95sC
+         4dMhmN6Y8xWUKoL/fficIwW2eOiwF5lusAt+9Wtt43S9ED4WoZ+ngueh9Wk9/+BA01Em
+         A9kw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4twPHWXiC2BJB0Lby4jAjDiXmRI74GIwyP0tzyOTcsQCAzOwY0cC2Q8QV8/VFLklUs4Ig4MZ389m+N6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKXqjYuc1L5MBtebGmCkwnJTHpKLfDhURvt7MLRk+SCwHgsb6/
+	3xv6XPPX3HYRQSkaCI1w/aLu0xss4bmSgLFClNFzgOWkb60lmU9eOAUh
+X-Gm-Gg: ASbGncuWClu5lkC8whvT1god+gKq2ZDnaSKG70NPKo8yv+5U39qIw7d0UKqXe9Iab17
+	4ji4WJ4n6BhHZQkyKimotY+O56m9gKy9RsYqbTKa6eKIvTpBEN5W+Lc1WxhxghIqa9IIg8VJuu5
+	UhvwyQATTP/jpOUwk45oqQln8nTCdt5cs4uMjQZpHF4TCD8hatRPKfSz/p6xSFqrX7fJQZZ2Vbs
+	KrITRNFKg+YG+zB6iXTs1mpB9mkNRZtYtYKiTq7Ouapz78ByyNDpkIQkpQkUQQ1RnVPKZPiKzbB
+	LArlHezE7KelZRRQeK5aPygf7vQ8imp6Ylh8C2Te2H3TK5dCnKFNFW3SXWrH0n08KApEfSZbS0d
+	oUgoUsRFYYRy9N1T3rnwa98+8vR4eaHBuiNOIbh0YiZuVLqUWnXlOn3nDFHGFbF4ddUB4BuSpB0
+	S3uj7LEVy5eFhpOXy395qP9QjjhPMOSWR3
+X-Google-Smtp-Source: AGHT+IHeub5aNCvnanVAkTfvVdmm0rKNrZXKV+kknwHxz7AyPMKPAPWmPtn/96i7E7eHSTeZ/nnwWQ==
+X-Received: by 2002:a17:902:d551:b0:295:82d0:9ba2 with SMTP id d9443c01a7336-2984ed7a01cmr100922265ad.1.1763052524113;
+        Thu, 13 Nov 2025 08:48:44 -0800 (PST)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2bed2esm30948585ad.81.2025.11.13.08.48.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:48:21 -0800 (PST)
-Date: Thu, 13 Nov 2025 08:48:20 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 0/2] net: mlx: migrate to new get_rx_ring_count ethtool
- API
-Message-ID: <lto3b6lf2ic6ajph74ljo2ibpmoltkgpswfbvcprx5pr3iqfoi@67u4olbyq4km>
-References: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
+        Thu, 13 Nov 2025 08:48:43 -0800 (PST)
+Date: Thu, 13 Nov 2025 08:48:41 -0800
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: akpm@linux-foundation.org, bpf@vger.kernel.org, hch@infradead.org,
+	hch@lst.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: make vmalloc gfp flags usage more apparent
+Message-ID: <aRYL6XVX5pfhLqBX@fedora>
+References: <20251112185834.32487-1-vishal.moola@gmail.com>
+ <69158bb1.a70a0220.3124cb.001e.GAE@google.com>
+ <aRXeK_C44xGb3ovg@milan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,13 +91,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
+In-Reply-To: <aRXeK_C44xGb3ovg@milan>
 
-On Thu, Nov 13, 2025 at 08:46:02AM -0800, Breno Leitao wrote:
-> This series migrates the mlx4 and mlx5 drivers to use the new
-> .get_rx_ring_count() callback introduced in commit 84eaf4359c36 ("net:
-> ethtool: add get_rx_ring_count callback to optimize RX ring queries").
+On Thu, Nov 13, 2025 at 02:33:31PM +0100, Uladzislau Rezki wrote:
+> On Wed, Nov 12, 2025 at 11:41:37PM -0800, syzbot ci wrote:
+> > syzbot ci has tested the following series
+> > 
+> > [v2] make vmalloc gfp flags usage more apparent
+> > https://lore.kernel.org/all/20251112185834.32487-1-vishal.moola@gmail.com
+> > * [PATCH v2 1/4] mm/vmalloc: warn on invalid vmalloc gfp flags
+> > * [PATCH v2 2/4] mm/vmalloc: Add a helper to optimize vmalloc allocation gfps
+> > * [PATCH v2 3/4] mm/vmalloc: cleanup large_gfp in vm_area_alloc_pages()
+> > * [PATCH v2 4/4] mm/vmalloc: cleanup gfp flag use in new_vmap_block()
+> > 
+> > and found the following issue:
+> > WARNING: kmalloc bug in bpf_prog_alloc_no_stats
+> > 
+> > Full report is available here:
+> > https://ci.syzbot.org/series/46d6cb1a-188d-4ff5-8fab-9c58465d74d3
+> > 
+> > ***
+> > 
+> > WARNING: kmalloc bug in bpf_prog_alloc_no_stats
+> > 
+> > tree:      linux-next
+> > URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+> > base:      b179ce312bafcb8c68dc718e015aee79b7939ff0
+> > arch:      amd64
+> > compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > config:    https://ci.syzbot.org/builds/3449e2a5-35e0-4eac-86c6-97ca0ec741d7/config
+> > 
+> > ------------[ cut here ]------------
+> > Unexpected gfp: 0x400000 (__GFP_ACCOUNT). Fixing up to gfp: 0xdc0 (GFP_KERNEL|__GFP_ZERO). Fix your code!
+> > WARNING: mm/vmalloc.c:3938 at vmalloc_fix_flags+0x9c/0xe0, CPU#1: syz-executor/6079
+> > Modules linked in:
+> >
+> Again bpf :)
+> 
+> GFP_KERNEL_ACCOUNT? I saw there have been __GFP_HARDWALL added already,
+> IMO it is worth to replace it by "high level flag", which is GFP_USER.
 
-This is "net-next" material. I will update and resend with the proper
-"net-next" tag.
+Yeah I'll replace __GFP_HARDWALL with GFP_USER, and add
+GFP_KERNEL_ACCOUNT. At this point I'll just add GFP_NOFS and GFP_NOIO
+as well so its easier to understand the mask.
 
