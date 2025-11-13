@@ -1,179 +1,253 @@
-Return-Path: <linux-kernel+bounces-899862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF34EC59031
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170B4C5946D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A47A74268E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:52:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E4724EAD10
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F29302156;
-	Thu, 13 Nov 2025 16:44:36 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2A6BE49;
+	Thu, 13 Nov 2025 16:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ghjxyIz3"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012031.outbound.protection.outlook.com [40.107.209.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275C6264638
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052275; cv=none; b=EmvHSP7BhVcUDM/5csnYUylWxLE1YaZvafGBtXrJHL7PD7LNpYl6k/U5vriILOs2oavh6S6BihKT8x31v8IKf9lZTctdzVh2ZjhWDSD3I1PNAqCTpyKoBDK/GPd+ViR8cmcuhsU0l9+Phrhb38krzjQnRM0f16AEJ2u49aZTspM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052275; c=relaxed/simple;
-	bh=Rb/r9qORZ0p4+buSqlPGhVhIHiba8wIgHkZ/KFORVos=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AmfwcSqpFU+Hkm4mErlVEGxYrDzP37uoI4fHyw8H0amy0SblA2bAkQFH4iR1RgkJnaGHaVldHxBV2TVb5/LNqBWa7itW83Cng4lqVAU6x5ByFc7BAB6CsxqSxMAJ3RpXLwJbCXRuLWrVnZFuUylttFP+sDMMntrFjADuRgVELbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-43373024b5eso12600535ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:44:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763052273; x=1763657073;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4hWwj6fy0/rB4RTGq3xc0Fnf3TBZ5FQ1+cI6MAHTftw=;
-        b=UFDS9oGpvGjKYOM3DDaWYZ7E1gM7as012pZJBH4b7mBG5+dtfIdvicXiLB5IISN098
-         ++ptZxZFd4aUZZ5u6stGeGtYsIs63dgnl+CH8ahqLCQ8CdybLPmNIr00kuNCQ+FBThOQ
-         oxubNs2MtN1iKDgp7rDIltFVhmNmjh6rj0tAO0FLSeRM/ZZrBRZYncbKOIQfzyAdwzMy
-         aF29oeVglC1bI5RHWOpXhV4K+1xY7MOu2oqsNF22EpYjW+tjnb5X05W9arorsUFHB9Fw
-         EOuO/AjhLdjcS0h8P6RtS0RUpV+be0G4gN/cqPRsBbVMcN3sQgsV19GeLNlyEeNu7KXX
-         oC4A==
-X-Forwarded-Encrypted: i=1; AJvYcCW10RVNNIGuiFUXng3fZKT0u6RCpDP/56wJ0wx7OUYW1tis8RHNy0kY0+chQXvJEPwK622NF9F82uYPjbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS9+OuWUeoyoTfCrsCxXNbyCdxul8MGlGcBHEX0pY+BfHgceG3
-	GXxdO8+XFysgJYXF9AXUz0rkhIeHcKpWDAxdE9fL5XzkSDze/MoaTUAVsi76IbEkfs5O/1qmj48
-	9K8530okZ/FQvEL5R03Q3SA5ws/sn73A3x1qbKGe4TUEmAvBcrcCHbW8ZmnM=
-X-Google-Smtp-Source: AGHT+IHre4HCgG9GhvCzJ0gFY0mlLiuN0+e+eYoIL2GvRl8FPVjZMC7Eur1YKvNmwVrxt2BFGjOPilXW+o48jPUq2OZKPCwspRhH
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E50264FB5;
+	Thu, 13 Nov 2025 16:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763052303; cv=fail; b=azWKrZTP5ZGaBbfCnmDnw4gc0q26QEEgd3VY637loIbf33ymHORwYtRrgff7Il6evmWsR7tTC6vN7zTWktRJ3HUcSuL/5ZXAXqnLtEjcIixrenxhnIJceX3K6eiSJb4/9iPcLWPtiGjiuVihd+dNRpkKheZqXfuoHzBKdAtHOpI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763052303; c=relaxed/simple;
+	bh=8ZEqW1AMZx6QE915UTzHjEqLr3DY5yfVJqgd14vuv9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RW2gpRgC68nsXnIOi7rdhwtxQA/YiBseOhg40QBbliEyKgEesJdeYZkQcaekAiAnfSbhN3eHndsJhUTKoSkqZ3K/gHDZh3G4H065GCcFfjji3MxrUw7/Tv2nbZL0CD46sM85f24MQi6LdTLhMA5DhU+n3953uvnlfU5w/TRjX/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ghjxyIz3; arc=fail smtp.client-ip=40.107.209.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kpsGGrQItrdcMjk39vHwL3xA6AVUwgYF4JzXpTgZWyBMOHEY9C3Hou7q+gTDDH+iekc01BgXei3GQ3MMSxlp4oRF42JQh82XKbzKL76G4UwjZAgTrBxk5gwaZ7IYuJobUXntJXAMdnoyKJkkarkR6vyCKYwXx3uRw+cFvZdhHvqy7Cdp8umqTgyT76LmTEzDzDCb3IcyAOBlLJ5Unj0cjW51JcjGfwxSYsVE5msFgxDow8nJ0hvTh2F2ZKPxOQZk1fhtk8BHQ1wbPlnf476EedPpQ4PXBFZsMpVkrdG2hKcV5x2Z8Z85bivSEtNqT1+e5laCcTVb5HX7KEqNv1hFxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mdBLE8JTyKFSBYMzgeNEvAyEqFROy7AP/yg3zKAz/Z8=;
+ b=umyP7cyP50px+7CDS6hFNwY+51H5Jkrrgp/d4EYTjbl4oI9HFAEy6No2M+AeQ81L6hZ2s56vRuE9XiqyYqDAsgw7LPXOjje3kz8syAN9KheMa2QGTqfxPsZZpps3UI8U2Zef8BRyX3fJhtJZAJ3tSHDByzIkp2HrNQoukUAb2kwtrLR5BlEEsOg0hfLE/K/7RQH/ywo7f6WFKeA8wTiJ6xwRp06y5dTRWCPiOhaFJ14SXCbGDV74B3nqpnMvz7+CkSRorShlTw/9r2pAT3amDgsFbZcjdg2iUkaCpgARQmjPtBZafKjNzAzTEYGOZNaKjAltt2blfTjU1diA6W8qfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mdBLE8JTyKFSBYMzgeNEvAyEqFROy7AP/yg3zKAz/Z8=;
+ b=ghjxyIz38oMdgAU6U/dtO+ckIjdSIw4EdwCTHlNxydL6sXsTUZ+zeragP9KSz+0TvMkItGTaDjELHwKzgIs4Ns+YzeJagjuuopEryQ08Pa8R4qRUPXsSj5SXvMQHAV0I8hZnJyMEXiOYTMotHEdOo3XPKOFrEo9v9OK+p/GOyTA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DM4PR12MB8450.namprd12.prod.outlook.com (2603:10b6:8:188::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Thu, 13 Nov
+ 2025 16:44:58 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 16:44:58 +0000
+Date: Thu, 13 Nov 2025 17:45:26 +0100
+From: Robert Richter <rrichter@amd.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH 0/3] CXL updates for v6.19
+Message-ID: <aRYLJmjBsggjzA99@rric.localdomain>
+References: <20251112205105.1271726-1-rrichter@amd.com>
+ <db9e4d27-057f-4bf1-9d74-008ffeb0dbc8@intel.com>
+ <aRW6h127k5Tzns8R@rric.localdomain>
+ <f0285498-810f-44aa-8577-e28641e97d56@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0285498-810f-44aa-8577-e28641e97d56@intel.com>
+X-ClientProxiedBy: FR4P281CA0089.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::18) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a61:b0:433:6c42:1817 with SMTP id
- e9e14a558f8ab-4348c878307mr2690715ab.6.1763052273319; Thu, 13 Nov 2025
- 08:44:33 -0800 (PST)
-Date: Thu, 13 Nov 2025 08:44:33 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69160af1.050a0220.3565dc.002d.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in __page_table_check_ptes_set (3)
-From: syzbot <syzbot+18d274a59b87cf80e86d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, pasha.tatashin@soleen.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM4PR12MB8450:EE_
+X-MS-Office365-Filtering-Correlation-Id: bad5d7f0-df55-4080-2cc5-08de22d3fb04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yte/6YMSWF4R0RarD8UAslOXSc47ADYOWpZQlboKOmLV3ZIMxiI5ciGqxE0h?=
+ =?us-ascii?Q?ckBvPmhc1T/qm/R9rF5mVDjj+jr2MpGwcpa0mPvqHgY73lK/aZs5sr5vDBEh?=
+ =?us-ascii?Q?DNBxXfY4+zRWolxkX8ULFjY9pQ3it5rENbnr7BFjbZjj4DhhPVAbm3Kj7xtw?=
+ =?us-ascii?Q?L8umqS0ynmPbEjKUttXTPUxUmcQUIKx0D6esf5c7dkSQi1b3ELeZ2DRqPl9/?=
+ =?us-ascii?Q?zdljeBootND1te0ZBEkFFZOkogr5uqACUOPNPm1uv42bxlB/Z7e1jMQL8sps?=
+ =?us-ascii?Q?AbPPaq7YdJu16gL+gC61c+9bbMlQbbSM+rzSxJk2MQnjfmHGj6fCxQWDYSSh?=
+ =?us-ascii?Q?oE8tnEz95qOOpb2w/qTNgsXj5013gCfoHT+EuTihu6wNdK6HdW9W6uIaDmXv?=
+ =?us-ascii?Q?hb7hwpqKCFHSGso7rPzunUc7GJtUD5CZyZ39FCidhNl5gaGuCiTeb9CzOK0c?=
+ =?us-ascii?Q?cpYuwX0gl1Zieu20YdaoJFeHztHld4G1CSD/mTiBB7sryzwGBXXKghgXuhhW?=
+ =?us-ascii?Q?nv5e+9lw9lkPQJFFzJIUZ0n1TIGTVQaOtICVHuOQa8NBy0JwvUxgFmHwXCPT?=
+ =?us-ascii?Q?L7MUJgBq9riVSMTpGVO1mJQkfmthS+3vckGnxnrYDfG7vE+9RiLuo9X/b/LH?=
+ =?us-ascii?Q?U2TgR11IBj8RJiGh53lQ0m8Bzcmv8GuECzMpXitqFoM1Y2WqdPJpSO+THXFZ?=
+ =?us-ascii?Q?SBGc8LIbwlREhbisRBge49Z3Y1qrdrv92NCeiCWHrM3BL4HfNjy5RTzfKeC8?=
+ =?us-ascii?Q?NcMG+C8YG+duBg/HMiQ44lYHgzjWKyTvC6pGgOWgVFr3OpRraCp4iKT2sbUM?=
+ =?us-ascii?Q?zF1HGshANAIdxKcRfY1X/xeK5MCpeb/py38Wph1TFEathWAAtuy1SzUV0umd?=
+ =?us-ascii?Q?FAVdGkZRuVpKwHGBBt92BQBjmtrz+5+CaKWutCjS/F7RpXELk60TcC0GPDr3?=
+ =?us-ascii?Q?7aT9WIG7C5gziIUhVFtzWLzk2DhSItHs8ucWNARpeaKA3TdHLg1D/Q1iwzP3?=
+ =?us-ascii?Q?iNuWZAb8oiCTdgDcv6IRSWqzh5f7Mk6nqfRH6c9G1xotFmUAcERkI6uAbRbr?=
+ =?us-ascii?Q?FNJ1+GRrzJY9linblJ4kxTqKQh0cuBY6prx5p2vE7LioPBIygUZt92Y7pZBV?=
+ =?us-ascii?Q?GR5Ap4eCnj/vsYUyt8/Z50OfQVz5hzQwHzgDc8THGzQQow1nTYs7tNhPQOe7?=
+ =?us-ascii?Q?O3QGNkoEn2W1OYGFl7GNGEfRZwjgXPoizJEbj1BKvul+pzuT2YD28w43rBNt?=
+ =?us-ascii?Q?Gyu1mxTTsPqRnYzOM3GBzb+OYhXlISmpggxgC24FlHjPKrcCJ3qJgBJ+3Iup?=
+ =?us-ascii?Q?t//f1fvUxR/9r5g85FJ9NdvjkMG7A8jmBRD2C6BrLFX5TzrOMFiR0UthfosL?=
+ =?us-ascii?Q?NCL5Arf3Yw4dzGWj2hm7oagcvpIaTBGZlOmhl3W74oInY7ke/rvJLxRsAxS5?=
+ =?us-ascii?Q?1he+DDpibs7brsiO1F1SgqlB54ZHSJGU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?f5UqP5rJ75VNcBln/128UDHb8SSu+2rQxms/tkMI9+ocrLbbjAZzdxt9TcfG?=
+ =?us-ascii?Q?mtXVIYUnKax4OQm/ngNeFlu914H4Comr4W5dbkHWecY3IgRoLZSE2KfecysR?=
+ =?us-ascii?Q?tRI1ai32jfC9B02uY0w7W5b3fIs0HYhAyQOV7wC56056+YA2I2jUaYKKNZin?=
+ =?us-ascii?Q?HMczCdzcqi6qGsUouv/WAzxnn1QUae68KIqIGbImuvjF4QFfFJE2D3edA++E?=
+ =?us-ascii?Q?RouwlHIxkRgVgqKdHhmFENxgQcfpkCGSeL7v6mx6Kmz67xKE7EGwJs2JIDNa?=
+ =?us-ascii?Q?uGdP5KoapN6X/8zAcgb9C1mVgLhRUUkwfMdSHsgOdBJ4+QKp3vU/NPbEXA52?=
+ =?us-ascii?Q?5NBbj0y6J3WWVNXESDJ177yQoxEkAKI7R2awVuvKrLA+IPwJIQaJ9DO234Wc?=
+ =?us-ascii?Q?/qz+aT8lPTmWz/Bfo4xhiWu9MGMTdB3jl/3VLtJvf3WjzC+q4P5sS0MW01Jy?=
+ =?us-ascii?Q?wpwWftT4PFgENNLNZA/8zbb3cz9WW8EZ+Qx2NRTX+q/AnbumNNsJMqefPEUh?=
+ =?us-ascii?Q?bu6o7WDGEtTGg07oOBjhT3dIPFbHQXVgUXawRrgtXs7suNVQrO63UC4yV8cT?=
+ =?us-ascii?Q?jNuhneyYRGtW08crc23kVso1Np8O3mwVLei20+rtuAlIXP+BHCvN31msd0tu?=
+ =?us-ascii?Q?BjflN+Fa1RqVrUXNSkYZ1dOmXvnESg++9B4AfCluhsPZ2GwvYgiGf+y/Pr/o?=
+ =?us-ascii?Q?Z4hhhSA6at8k6S0WwUYqghLpCRkZ5d7SZ3so1j+GMEiKxkDQsvgzbdbAEH3x?=
+ =?us-ascii?Q?xVjY52qrg/YxZ+2xLgZg1fRCph7MgEvZghMX9C7xJOmQSnT0TqghmLw0i7yQ?=
+ =?us-ascii?Q?t68F6/ukX9FSNWtLWBzSzqUETagYeCqk1Vu/36v5VOpSoujaur30Z91Sadqo?=
+ =?us-ascii?Q?ikvip92HYkRp+Vqr2yjcCIxZaiO3oW2muytWyEsv5G5D6KiRQ+fWYVvTtyNF?=
+ =?us-ascii?Q?h72bF/1Pv31UdrG8CV5plFg91LnTQ/HLP7/OOw5uQ6FCrLmOf0mWtAG+T03D?=
+ =?us-ascii?Q?e5DufWtln+xVZ1VHJ4nmUJ5AmsW6MjhoIGG1tE4JzyyvHIbB17WQyZFQVGis?=
+ =?us-ascii?Q?76roseaNJ8GqJkUyelVcYXmwZ569yT1bpJYkr5SZnqcnhvOTuLo68PcbwpKV?=
+ =?us-ascii?Q?xjolVS+FItb+rENIw/uK5CXhWGTazpT9bA6lo1R2+DgBo+/gH3UpD3iTpPwp?=
+ =?us-ascii?Q?p1PgfJDE+bQ3SWKH8Bk4joibJCIu/A/GI64nABjDDSRHZuxMKAj5LKaABJ1x?=
+ =?us-ascii?Q?96BVo5LnhboMgvBUVgCMubKjsu4S4tGbJmlgst2edURYkQhLTGcZRYRaqqR2?=
+ =?us-ascii?Q?5rXFLdRY6Qqm+/pnpTT19I9UvAFmyduVt7aWpfmfXw4C71bS1xAht6O1NhDl?=
+ =?us-ascii?Q?hPg12S+suTzmBgWzwz/7cjkhbcT1WG/ua9oxkXjp1FcJBgcrwGJ3BhWO8EXe?=
+ =?us-ascii?Q?3Kz5uh1u/bWqKzSr+n9Ssl9m35c8mjPfgqPGmXiE9uE5HTtO5GW+Qjd6Iq18?=
+ =?us-ascii?Q?lEjK4Xnc9QlbpdyGPxCMIEpTLCC2zxhR8aGMTvc8TW88eX/Ev1yz/MZMlIcG?=
+ =?us-ascii?Q?6gk+q9D4nmZu9TfbK5hTvsi96wVVM3r3CQKvR7g0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bad5d7f0-df55-4080-2cc5-08de22d3fb04
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:44:57.9611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YhlYNpm3gyOI9RLbCem6jzxl0JH3h2eymze8JfTGhsKNHoBT+6aCT2AA1PA5ilcclJmLn9JfZR9dRU+qNjFr1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8450
 
-Hello,
+On 13.11.25 08:20:59, Dave Jiang wrote:
+> 
+> 
+> On 11/13/25 4:01 AM, Robert Richter wrote:
+> > On 12.11.25 14:45:28, Dave Jiang wrote:
+> >>
+> >>
+> >> On 11/12/25 1:51 PM, Robert Richter wrote:
+> >>> Sending optional and rather independent patches from v5 of the CXL
+> >>> address translation series [1] separately in this series. The patches
+> >>> could be applied together with early pick up candidates from the
+> >>> address translation series (namely patch #1 to #4 or #5).
+> >>>
+> >>> [1] https://patchwork.kernel.org/project/cxl/cover/20251112203143.1269944-1-rrichter@amd.com/
+> >>>
+> >>> Robert Richter (3):
+> >>>   cxl: Simplify cxl_rd_ops allocation and handling
+> >>>   cxl/acpi: Group xor arithmetric setup code in a single block
+> >>>   cxl/region: Remove local variable @inc in cxl_port_setup_targets()
+> >>>
+> >>>  drivers/cxl/acpi.c        | 15 ++++-----------
+> >>>  drivers/cxl/core/region.c | 25 +++++++------------------
+> >>>  drivers/cxl/cxl.h         |  2 +-
+> >>>  3 files changed, 12 insertions(+), 30 deletions(-)
+> >>>
+> >>
+> >> Hi Robert, I'm having issues applying to 6.18-rc4.
+> >>
+> >> Applying: cxl: Simplify cxl_rd_ops allocation and handling
+> >> Patch failed at 0001 cxl: Simplify cxl_rd_ops allocation and handling
+> >> error: patch failed: drivers/cxl/core/region.c:2958
+> >> error: drivers/cxl/core/region.c: patch does not apply
+> > 
+> > You need to apply it on cxl/next. There are conflicts otherwise.
+> 
+> Hi Robert,
 
-syzbot found the following issue on:
+> I actually need a series that cleanly applies to 6.18-rc4. I'll
+> attempt to resolve the conflicts when I merge that branch to
+> cxl/next. Of course a resolved public branch somewhere as guidance
+> would be appreciated as well. Patches should not be based on
+> cxl/next. Otherwise it gets really messy when I have to drop some
+> changes due to issues.
 
-HEAD commit:    439fc29dfd3b Merge tag 'drm-fixes-2025-11-09' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15484412580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=18d274a59b87cf80e86d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
+This conflict resolution was not trivial as code was moved around and
+then modified. It will be error prone and time consuming if someone
+else does the conflict resolution.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+In the cxl tree the conflict resolution is most of the time done in
+merges which causes a headache when rebasing patches again on top of
+each other or when forward-porting patches to that tree. The merges
+basically hide the actual resolution and the patches that are involved
+in the conflict. Recreation of trees with merges is also not trival.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/87634fccbb6c/disk-439fc29d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4d7897eed027/vmlinux-439fc29d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/388814b7d484/bzImage-439fc29d.xz
+Compared to conflict resolution when doing a (hopefully rare) rebase
+of the cxl tree, it would be much cleaner if patches are on top of
+each other. There are no conflicts once rebased and you don't carry
+them around any longer. I don't see much benefit else. Also, the
+author should resolve the conflicts who best knows the code.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+18d274a59b87cf80e86d@syzkaller.appspotmail.com
+If you prefer merges, how about this: Have separate branches as long
+as there are no conflicts with mainline and merge them in. If there is
+a conflict with one or more branches, base new patches on top of that
+branch or create a merge point to port the patches on top of that.
+That branch with the patches in can then be merged into mainline, but
+there are no conflicts then.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 23212 at mm/page_table_check.c:191 page_table_check_pte_flags mm/page_table_check.c:191 [inline]
-WARNING: CPU: 0 PID: 23212 at mm/page_table_check.c:191 __page_table_check_ptes_set+0x13e/0x2f0 mm/page_table_check.c:204
-Modules linked in:
-CPU: 0 UID: 0 PID: 23212 Comm: syz.0.4613 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:page_table_check_pte_flags mm/page_table_check.c:191 [inline]
-RIP: 0010:__page_table_check_ptes_set+0x13e/0x2f0 mm/page_table_check.c:204
-Code: b8 00 00 00 00 00 00 00 70 49 39 c7 74 21 48 b8 00 00 00 00 00 00 00 6c 49 39 c7 75 1d e8 3a 29 8f ff eb 10 e8 33 29 8f ff 90 <0f> 0b 90 eb 10 e8 28 29 8f ff 90 0f 0b 90 eb 05 e8 1d 29 8f ff 31
-RSP: 0000:ffffc9000fd27990 EFLAGS: 00010287
-RAX: ffffffff8230ea9d RBX: 00000000397c2c67 RCX: 0000000000080000
-RDX: ffffc9000c8da000 RSI: 00000000000042d3 RDI: 00000000000042d4
-RBP: 0000000000000001 R08: ffffea0000e5f087 R09: 1ffffd40001cbe10
-R10: dffffc0000000000 R11: fffff940001cbe11 R12: 0000000000000001
-R13: 00000000397c2c67 R14: ffff8880525baff0 R15: ffff88801a05ab00
-FS:  0000000000000000(0000) GS:ffff88812613b000(0063) knlGS:00000000f54bdb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000080ffe000 CR3: 0000000077a7e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- page_table_check_ptes_set include/linux/page_table_check.h:76 [inline]
- set_ptes include/linux/pgtable.h:292 [inline]
- do_swap_page+0x5248/0x5b20 mm/memory.c:4970
- handle_pte_fault mm/memory.c:6180 [inline]
- __handle_mm_fault+0xe55/0x5400 mm/memory.c:6318
- handle_mm_fault+0x40a/0x8e0 mm/memory.c:6487
- do_user_addr_fault+0xa7c/0x1380 arch/x86/mm/fault.c:1336
- handle_page_fault arch/x86/mm/fault.c:1476 [inline]
- exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0023:0xf70ef1f0
-Code: 50 6a 00 e8 c2 10 14 00 8b 5c 24 2c 8b 4c 24 28 83 c4 20 8b 55 40 89 03 03 11 85 f6 74 18 31 c0 8d b4 26 00 00 00 00 8d 76 00 <89> 02 83 c0 01 83 c2 04 39 c6 75 f4 83 c4 1c 89 f8 5b 5e 5f 5d c3
-RSP: 002b:00000000f54bd540 EFLAGS: 00010202
-RAX: 0000000000000800 RBX: 00000000800000c0 RCX: 0000000080000000
-RDX: 0000000080ffdfff RSI: 0000000000000efe RDI: 0000000000000008
-RBP: 0000000080000140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	50                   	push   %rax
-   1:	6a 00                	push   $0x0
-   3:	e8 c2 10 14 00       	call   0x1410ca
-   8:	8b 5c 24 2c          	mov    0x2c(%rsp),%ebx
-   c:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
-  10:	83 c4 20             	add    $0x20,%esp
-  13:	8b 55 40             	mov    0x40(%rbp),%edx
-  16:	89 03                	mov    %eax,(%rbx)
-  18:	03 11                	add    (%rcx),%edx
-  1a:	85 f6                	test   %esi,%esi
-  1c:	74 18                	je     0x36
-  1e:	31 c0                	xor    %eax,%eax
-  20:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  27:	8d 76 00             	lea    0x0(%rsi),%esi
-* 2a:	89 02                	mov    %eax,(%rdx) <-- trapping instruction
-  2c:	83 c0 01             	add    $0x1,%eax
-  2f:	83 c2 04             	add    $0x4,%edx
-  32:	39 c6                	cmp    %eax,%esi
-  34:	75 f4                	jne    0x2a
-  36:	83 c4 1c             	add    $0x1c,%esp
-  39:	89 f8                	mov    %edi,%eax
-  3b:	5b                   	pop    %rbx
-  3c:	5e                   	pop    %rsi
-  3d:	5f                   	pop    %rdi
-  3e:	5d                   	pop    %rbp
-  3f:	c3                   	ret
+> > 
+> > Additionally, patch 3/3 (@inc variable change) of this series also
+> > depends on patch 02/11 of v5 (store root decoder in in struct
+> > cxl_region). If you chose to pickup some patches from v5 first on top
+> > of cxl/next, then all this 3 patches should apply cleanly.
+> > 
+> > Since 02/11 is one of the first patches and it sounded to me some of
+> > them will be applied as well, I would prefer that order to avoid
+> > rebasing and resubmitting a v6 for that. Let me know if you want to
+> > handle this differently.
 
+> Hmmm....maybe I should just take the entire series hopefully next
+> cycle when it's ready given all the dependencies?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Patches apply cleanly on top of each other, there is nothing that
+blocks.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Let me know how to move forward.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks,
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-Robert
 
