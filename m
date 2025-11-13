@@ -1,141 +1,240 @@
-Return-Path: <linux-kernel+bounces-898532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0C9C557AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:51:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C80C5578F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D07014E2B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:49:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 36211347A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F0A267386;
-	Thu, 13 Nov 2025 02:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="To9xIUMj"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594D7265CA8;
+	Thu, 13 Nov 2025 02:50:01 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679FC1D5ADE;
-	Thu, 13 Nov 2025 02:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1AA1D5ADE;
+	Thu, 13 Nov 2025 02:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763002186; cv=none; b=JBV9DoMYToUaxZUj0XYcMis4mBbK3iIvGLOsruY/n6T2FgzW9M6OQpoBQdoixwjgGqRat1b5kC1GYP9e4iun+FVKDg3VCXAuiB/zydrmq+D+wL9kNKbXF6ZmWmwwapAccVV6EAM2FQneQfgYonNotXR5Aw1uVNs/g1BaMH6am+Y=
+	t=1763002200; cv=none; b=M/AI4TC16fTPOcyb6lidCyLa3pdiyL2Girx80n+8EJN4x9lEy/eEx/BSf3kEZupkSY/6a7N9R0zR4c/vaoo3+FYdIuTwTG53H6DHSOON7IP5PoXh8t3mb4SQFc/AM53sAl6oyV46dlr5fprDAwbaGQQs8Bx4xYy1aiVESZ0gmGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763002186; c=relaxed/simple;
-	bh=/c+avxruh8h/OrnvBEwq83/XuSDUHqcB5A6CPqmqSWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XRVuZYe7MVUN+kxonO9j1/Sw06BVDOfXnseK4Da4q9ouYXCcSxJb29C8OpQHBe1WHIolBR17smZ5R8K19LtkXfIjSsIKJZS4XpOI/64bH/CDhLOaROS3Bt56GGRR85p+RMv9hbnVqRteDXZB2ISLsayE4fhuX6jQ67a5T/TgcwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=To9xIUMj; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD1hqIk024490;
-	Thu, 13 Nov 2025 02:47:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=1hbXIsieHg1sfwARxTpyr3g/zskwHyICMbxlp5TLLpQ=; b=
-	To9xIUMjKR89UGNKt6UKFAms4ojKGetVeEXEyH+d8E+NupeQLRfhIceJuR0T+igL
-	A1kZO/aHVF2dnonPxZGkWs5aF3s1zHab0SqwBR6IabZKBjJNX9m7/9alOw7qOxIZ
-	/PQcyQDkT24XKInIuoa3hiiT+S2HPXamsHx/wmQGMAgZMuWp3nkcimKC0QaASxug
-	7BElmKO5+pexIH9X8hBRfUraOZpTOFutjgxO4QanQ0fafKc7/ehYuf2LgxkdVubI
-	N/xV7Kj3mtZ8JU60EDO5m3BUH9Hf6P2HPAUrdJSbhBhF6DpsiGoNgStW7C6OfohD
-	P0Ia6ZaX6RNygelnt+Qo+A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acxpngvww-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 02:47:33 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD0603j029091;
-	Thu, 13 Nov 2025 02:47:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vafjy8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 02:47:32 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AD2lWkK011620;
-	Thu, 13 Nov 2025 02:47:32 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a9vafjy87-1;
-	Thu, 13 Nov 2025 02:47:31 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: linux-kernel@vger.kernel.org,
-        Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Guixin Liu <kanie@linux.alibaba.com>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
-        Sheng Yang <sheng@yasker.org>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, Allen Pais <apais@linux.microsoft.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] scsi: target: tcm_loop: fix segfault in tcm_loop_tpg_address_show()
-Date: Wed, 12 Nov 2025 21:47:27 -0500
-Message-ID: <176283044352.2802267.12286632671055690228.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <1762370746-6304-1-git-send-email-hamzamahfooz@linux.microsoft.com>
-References: <1762370746-6304-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+	s=arc-20240116; t=1763002200; c=relaxed/simple;
+	bh=xCebPx/DTTumY++I8/5MsUa5fN4CVr48wYQ7/7nwxIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXpZ15wTBzCJor5meVCBUGQUFdCRZYj+Jb44fGkpcApNEFMsRuAJm3ggLjUJ2DDKoz0DJRtA+PVGk73WzrvsSr8YQO4mggv8WVhcwe/3h/eFw4qaGAHEAoDX6Q0kb61vFn+9e3iH0QW+G5N0cTbflvs2fe2TZS6ePzGBPIH/5yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d6Pqz5GpPzKHMWr;
+	Thu, 13 Nov 2025 10:49:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 32BDD1A13E6;
+	Thu, 13 Nov 2025 10:49:54 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP4 (Coremail) with SMTP id gCh0CgBXf1xQRxVpsWU6Ag--.29421S2;
+	Thu, 13 Nov 2025 10:49:54 +0800 (CST)
+Message-ID: <47c20c78-9f7f-4134-8835-3c4f5bff4c30@huaweicloud.com>
+Date: Thu, 13 Nov 2025 10:49:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 10/22] cpuset: introduce local_partition_enable()
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <20251025064844.495525-11-chenridong@huaweicloud.com>
+ <71121d12-0cb2-4ffe-92e5-caf25bf4596e@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <71121d12-0cb2-4ffe-92e5-caf25bf4596e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=617 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510240000 definitions=main-2511130017
-X-Authority-Analysis: v=2.4 cv=Criys34D c=1 sm=1 tr=0 ts=691546c5 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=-InAOOrJVH8xrQRU4hgA:9 a=QEXdDO2ut3YA:10 cc=ntf
- awl=host:13634
-X-Proofpoint-GUID: pHjVsohMbl6VjerWT9a_Nl812TfkbCES
-X-Proofpoint-ORIG-GUID: pHjVsohMbl6VjerWT9a_Nl812TfkbCES
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0MSBTYWx0ZWRfX5VYRh26xB23e
- gQi/hVMJs9UAXs+owWW3n4umqvAMT8plhEeHxsfWbwQ3QWx5V89V8OdF77gZyEnXuTbMaD7b02K
- q9vUvU+KpbVUXck3AcakZsk4Qipg13rqhhNLEP1UJntWqzzuaZU/oA49bKSY9XCrMfKwAahB26y
- qsyCQ5Sx9QfeP5YUDAFk1ZIi1rkD6en+0gF7l8TVQfodHZSUB3HbtcL1KofLmBMfks3S6okgjVo
- 7H2t/VtWYkTCGgpG5b9fWiSymfgt7eaS5Us0IIpWIhxAJR9V7zIx3KQN+8qCRpfvHlimCKuDGBb
- WPQkncaasZHoLGLN56iv6Vn+ajfeIap2gz09DzoNuzW8kuOHNBWnQRYpYveR45RGTIHvj1bf2wS
- kR57pxOrRSS1qzl/qkhcfedlkuyK+s9Ry5YA9OphlGgpRJDcyH4=
+X-CM-TRANSID:gCh0CgBXf1xQRxVpsWU6Ag--.29421S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFy7ArWfAr4UKF4kCr1rWFg_yoWxKw15pF
+	1kJrWUJrWUJr1rC347JFnrGryrGw4DJ3WDtw1kX3WrXr17Ar10gr1jq3yqgr1UJrWkJr15
+	Xr1UXrsruF13ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Wed, 05 Nov 2025 11:25:46 -0800, Hamza Mahfooz wrote:
 
-> If the allocation of tl_hba->sh fails in tcm_loop_driver_probe() and we
-> attempt to dereference it in tcm_loop_tpg_address_show() we will get a
-> segfault, see below for an example. So, check tl_hba->sh before
-> dereferencing it.
+
+On 2025/11/13 5:47, Waiman Long wrote:
+> On 10/25/25 2:48 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> The partition_enable() function introduced in the previous patch can be
+>> reused to enable local partitions.
+>>
+>> The local_partition_enable() function is introduced, which factors out the
+>> local partition enablement logic from update_parent_effective_cpumask().
+>> After passing local partition validation checks, it delegates to
+>> partition_enable() to complete the partition setup.
+>>
+>> This refactoring creates a clear separation between local and remote
+>> partition operations while maintaining code reuse through the shared
+>> partition_enable() infrastructure.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 94 ++++++++++++++++++++++++++----------------
+>>   1 file changed, 59 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 5b57c5370641..b308d9f80eef 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1822,6 +1822,61 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>>       remote_partition_disable(cs, tmp);
+>>   }
+>>   +/**
+>> + * local_partition_enable - Enable local partition for a cpuset
+>> + * @cs: Target cpuset to become a local partition root
+>> + * @new_prs: New partition root state to apply
+>> + * @tmp: Temporary masks for CPU calculations
+>> + *
+>> + * This function enables local partition root capability for a cpuset by
+>> + * validating prerequisites, computing exclusive CPUs, and updating the
+>> + * partition hierarchy.
+>> + *
+>> + * Return: 0 on success, error code on failure
+>> + */
+>> +static int local_partition_enable(struct cpuset *cs,
+>> +                int new_prs, struct tmpmasks *tmp)
+>> +{
+>> +    struct cpuset *parent = parent_cs(cs);
+>> +    enum prs_errcode part_error;
+>> +    bool cpumask_updated = false;
+>> +
+>> +    lockdep_assert_held(&cpuset_mutex);
+>> +    WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
+>> +
+>> +    /*
+>> +     * The parent must be a partition root.
+>> +     * The new cpumask, if present, or the current cpus_allowed must
+>> +     * not be empty.
+>> +     */
+>> +    if (!is_partition_valid(parent)) {
+>> +        return is_partition_invalid(parent)
+>> +            ? PERR_INVPARENT : PERR_NOTPART;
+>> +    }
+>> +
+>> +    /*
+>> +     * Need to call compute_excpus() in case
+>> +     * exclusive_cpus not set. Sibling conflict should only happen
+>> +     * if exclusive_cpus isn't set.
+>> +     */
+>> +    if (compute_excpus(cs, tmp->new_cpus))
+>> +        WARN_ON_ONCE(!cpumask_empty(cs->exclusive_cpus));
+>> +
+>> +    part_error = validate_partition(cs, new_prs, tmp->new_cpus);
+>> +    if (part_error)
+>> +        return part_error;
+>> +
+>> +    cpumask_updated = cpumask_andnot(tmp->addmask, tmp->new_cpus,
+>> +                     parent->effective_cpus);
 > 
->   Unable to allocate struct scsi_host
->   BUG: kernel NULL pointer dereference, address: 0000000000000194
->   #PF: supervisor read access in kernel mode
->   #PF: error_code(0x0000) - not-present page
->   PGD 0 P4D 0
->   Oops: 0000 [#1] PREEMPT SMP NOPTI
->   CPU: 1 PID: 8356 Comm: tokio-runtime-w Not tainted 6.6.104.2-4.azl3 #1
->   Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 09/28/2024
->   RIP: 0010:tcm_loop_tpg_address_show+0x2e/0x50 [tcm_loop]
-> ...
->   Call Trace:
->    <TASK>
->    configfs_read_iter+0x12d/0x1d0 [configfs]
->    vfs_read+0x1b5/0x300
->    ksys_read+0x6f/0xf0
-> ...
+> What is the purpose of this cpumask_andnot() operation? Is it just to create the cpumask_updated
+> boolean? At this point, cpumask_updated should always be true. If not, we have to add validation
+> check to return an error.
 > 
-> [...]
+> Cheers,
+> Longman
+> 
 
-Applied to 6.18/scsi-fixes, thanks!
+I want to support switching the root partition’s state between "root" and "isolated"—for example, an
+isolated partition switching to root without changing its CPU mask.
 
-[1/1] scsi: target: tcm_loop: fix segfault in tcm_loop_tpg_address_show()
-      https://git.kernel.org/mkp/scsi/c/e6965188f84a
+Adding a comment to clarify this behavior would be helpful.
+
+>> +    partition_enable(cs, parent, new_prs, tmp->new_cpus);
+>> +
+>> +    if (cpumask_updated) {
+>> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
+>> +        update_sibling_cpumasks(parent, cs, tmp);
+>> +    }
+>> +    return 0;
+>> +}
+>> +
+>>   /**
+>>    * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
+>>    * @cs:      The cpuset that requests change in partition root state
+>> @@ -1912,34 +1967,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>         nocpu = tasks_nocpu_error(parent, cs, xcpus);
+>>   -    if ((cmd == partcmd_enable) || (cmd == partcmd_enablei)) {
+>> -        /*
+>> -         * Need to call compute_excpus() in case
+>> -         * exclusive_cpus not set. Sibling conflict should only happen
+>> -         * if exclusive_cpus isn't set.
+>> -         */
+>> -        xcpus = tmp->delmask;
+>> -        if (compute_excpus(cs, xcpus))
+>> -            WARN_ON_ONCE(!cpumask_empty(cs->exclusive_cpus));
+>> -        new_prs = (cmd == partcmd_enable) ? PRS_ROOT : PRS_ISOLATED;
+>> -
+>> -        part_error = validate_partition(cs, new_prs, xcpus);
+>> -        if (part_error)
+>> -            return part_error;
+>> -        /*
+>> -         * This function will only be called when all the preliminary
+>> -         * checks have passed. At this point, the following condition
+>> -         * should hold.
+>> -         *
+>> -         * (cs->effective_xcpus & cpu_active_mask) ⊆ parent->effective_cpus
+>> -         *
+>> -         * Warn if it is not the case.
+>> -         */
+>> -        cpumask_and(tmp->new_cpus, xcpus, cpu_active_mask);
+>> -        WARN_ON_ONCE(!cpumask_subset(tmp->new_cpus, parent->effective_cpus));
+>> -
+>> -        deleting = true;
+>> -    } else if (cmd == partcmd_disable) {
+>> +    if (cmd == partcmd_disable) {
+>>           /*
+>>            * May need to add cpus back to parent's effective_cpus
+>>            * (and maybe removed from subpartitions_cpus/isolated_cpus)
+>> @@ -3062,14 +3090,10 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>            * If parent is valid partition, enable local partiion.
+>>            * Otherwise, enable a remote partition.
+>>            */
+>> -        if (is_partition_valid(parent)) {
+>> -            enum partition_cmd cmd = (new_prs == PRS_ROOT)
+>> -                           ? partcmd_enable : partcmd_enablei;
+>> -
+>> -            err = update_parent_effective_cpumask(cs, cmd, NULL, &tmpmask);
+>> -        } else {
+>> +        if (is_partition_valid(parent))
+>> +            err = local_partition_enable(cs, new_prs, &tmpmask);
+>> +        else
+>>               err = remote_partition_enable(cs, new_prs, &tmpmask);
+>> -        }
+>>       } else if (old_prs && new_prs) {
+>>           /*
+>>            * A change in load balance state only, no change in cpumasks.
+> 
 
 -- 
-Martin K. Petersen
+Best regards,
+Ridong
+
 
