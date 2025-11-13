@@ -1,50 +1,95 @@
-Return-Path: <linux-kernel+bounces-899590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED48C5869B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A171C58750
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851E83A3806
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB234A3A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5733433E359;
-	Thu, 13 Nov 2025 15:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40F53563D6;
+	Thu, 13 Nov 2025 15:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="hRVIADyT"
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnmetsOF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC1433D6F8;
-	Thu, 13 Nov 2025 15:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EDA3557F5;
+	Thu, 13 Nov 2025 15:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046777; cv=none; b=GXily2k7xOR31mZNCdJVd65PgGEYvJpKM/4UAvtt6AHRiNPG2emnqP9eZ3xwwModdDa2C13YOPnijH7BsKZ8EXDRPzEUa1oxxdp9RXU8VHlsxDQCrTCDG+wBWQw6MUQoNNv2lRuWuV+LMaEpSVnty8UIfZNMREt6UlnJAEfOCQ8=
+	t=1763046980; cv=none; b=hoKwg1Hz43nromqhrDhss/7khIfAzMSx2tcn9WYFwFXNRHhcf2ggIVDpQuE1q+T63z6ytgRVocaT79aBpgV6vuqBbO3s1PgF6KDO8P0hwaxAwV2Cl9Ala0fJEFIdDgk1Fh3grRuVhn2BOHrEZpIEWZOAV/nJqM4x1cgTg1B+emI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046777; c=relaxed/simple;
-	bh=mVe85YN/6UgnEJRflaix0KfQKJ7qA5DKNuAhgd5KeKE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=STcuoIQIeBwrLi3OvKJgnSbnhYiGfQtFTSf7A2lGheIlTlTEsHoZO7I+ho3/857SULOP99x2nXCZ1liEu+feso8W765r/6+jVS6futAQ8voW7bH/oMox99/4X91HZi9nEX/ZWdsn7CPU8Dv6dL98zRS/5LK5Xy9jsvjr8SAWqA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=hRVIADyT; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 297e69aa1;
-	Thu, 13 Nov 2025 23:12:50 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: njavali@marvell.com
-Cc: GR-QLogic-Storage-Upstream@marvell.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1763046980; c=relaxed/simple;
+	bh=YgPrha/FWL+rx0Hr+rnyQmwA7SuU4BQbCsM9ur+PqQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iio+cqmXCM++Y07aqVmmyT9t/Zh+lM3FjwTp1jv174r5eteKCylHadPq+mrJVJX0VywS+BaIQNvcKH6eaxljZeX+hUwdN3kAc+U+iXt20wNJJFEw9penZHbmQqLNS49v2Sl5DZ9kpGaZM1/5zMVn9zL4cs1PfhQvOUx8S42fkys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnmetsOF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763046978; x=1794582978;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YgPrha/FWL+rx0Hr+rnyQmwA7SuU4BQbCsM9ur+PqQ4=;
+  b=EnmetsOFkrMhnjqsZFPawIS8LrNbGsq6CEo6fLmzBbSQuXy0BzQJTklE
+   kgduaTuFf5Nlv70+V4hNVh8w4+kQwNbhwfNzOJlwQL2+k4hNIH7qBtAme
+   LpAmVQYz0KrU+FNMcJMXa58r4g3dx7qHXiqbbAOsbF5aC/NOMKLDkebDP
+   hlHxZ2a7cuQ0dPmOt/xtYBttlf5n0C4IiWe0DEZ0pmtKWfwPHrRdeXlIk
+   zGYHfzdEQerLZFVca2teih6+LYv6O9H84CDRmKp18v2rzq4UrsRaUQpod
+   d6ZdE6R+LYdQFNv2RLeu5wJADKSgFYy7l3y4Mm1F1QF/gW/cBna5Q/+g1
+   w==;
+X-CSE-ConnectionGUID: Xtr1oeDOTt6IrASZofrMjA==
+X-CSE-MsgGUID: HdlVYgJDSvuYRamaF8arww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="75809634"
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="75809634"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:16:11 -0800
+X-CSE-ConnectionGUID: bviZ6KxzTBKFZEORJuB7qA==
+X-CSE-MsgGUID: VwK7v3k3SYeEve+g81JZqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="194684640"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa005.jf.intel.com with ESMTP; 13 Nov 2025 07:16:05 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id AE7A996; Thu, 13 Nov 2025 16:16:04 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Vinod Koul <vkoul@kernel.org>,
+	Thomas Andreatta <thomasandreatta2000@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] scsi: qla2xxx: Fix improper freeing of purex item
-Date: Thu, 13 Nov 2025 15:12:46 +0000
-Message-Id: <20251113151246.762510-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org
+Cc: Olivier Dautricourt <olivierdautricourt@gmail.com>,
+	Stefan Roese <sr@denx.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Brian Xu <brian.xu@amd.com>,
+	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 00/13] dmaengine: introduce sg_nents_for_dma() and convert users
+Date: Thu, 13 Nov 2025 16:12:56 +0100
+Message-ID: <20251113151603.3031717-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,53 +97,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a7dc6c6d903a1kunm6ad063bd14a79b
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSh8YVk4eTUtMH0sZSxhDQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVU
-	tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=hRVIADyTI852FDAiRYwCE79FHX9OSXuBnGwa0vrvy1kKL5WySER+QAIuv1MnxHAXt4u7cx71z5A08HTzIebKQGvgOnZorIVcVDTqXuIrd6KqVZG/nvlTympIP0xGPpnk6+SbUZHmzmDppl4YoyeJsI+SAocn36HISGpC6z7WDR4=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=oHlscegUSxTGy0gMUpyhgX+Wzcidm9ihl9c1V4/l+9M=;
-	h=date:mime-version:subject:message-id:from;
 
-In qla2xxx_process_purls_iocb(), an item is allocated via
-qla27xx_copy_multiple_pkt(), which internally calls
-qla24xx_alloc_purex_item().
+A handful of the DMAengine drivers use same routine to calculate the number of
+SG entries needed for the given DMA transfer. Provide a common helper for them
+and convert.
 
-The qla24xx_alloc_purex_item() function may return a pre-allocated item
-from a per-adapter pool for small allocations, instead of dynamically
-allocating memory with kzalloc().
+I left the new helper on SG level of API because brief grepping shows potential
+candidates outside of DMA engine, e.g.:
 
-An error handling path in qla2xxx_process_purls_iocb() incorrectly uses
-kfree() to release the item. If the item was from the pre-allocated pool,
-calling kfree() on it is a bug that can lead to memory corruption.
+  drivers/crypto/chelsio/chcr_algo.c:154:  nents += DIV_ROUND_UP(less, entlen);
+  drivers/spi/spi-stm32.c:1495:  /* Count the number of entries needed */
 
-Fix this by using the correct deallocation function,
-qla24xx_free_purex_item(), which properly handles both dynamically
-allocated and pre-allocated items.
+Changelog v3:
+- added missed EXPORT_SYMBOL() (Bjorn)
+- left the return type as signed int (as agreed with Bjorn)
+- collected tags (Bjorn)
 
-Fixes: 875386b988578 ("scsi: qla2xxx: Add Unsolicited LS Request and Response Support for NVMe")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/scsi/qla2xxx/qla_nvme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
-index 316594aa40cc..42eb65a62f1f 100644
---- a/drivers/scsi/qla2xxx/qla_nvme.c
-+++ b/drivers/scsi/qla2xxx/qla_nvme.c
-@@ -1292,7 +1292,7 @@ void qla2xxx_process_purls_iocb(void **pkt, struct rsp_que **rsp)
- 		a.reason = FCNVME_RJT_RC_LOGIC;
- 		a.explanation = FCNVME_RJT_EXP_NONE;
- 		xmt_reject = true;
--		kfree(item);
-+		qla24xx_free_purex_item(item);
- 		goto out;
- 	}
- 
+Changelog v2:
+- dropped outdated patches (only 9 years passed :-)
+- rebased on top of the current kernel
+- left API SG wide It might
+
+v1: https://patchwork.kernel.org/project/linux-dmaengine/patch/20161021173535.100245-1-andriy.shevchenko@linux.intel.com/
+
+Andy Shevchenko (13):
+  scatterlist: introduce sg_nents_for_dma() helper
+  dmaengine: altera-msgdma: use sg_nents_for_dma() helper
+  dmaengine: axi-dmac: use sg_nents_for_dma() helper
+  dmaengine: bcm2835-dma: use sg_nents_for_dma() helper
+  dmaengine: dw-axi-dmac: use sg_nents_for_dma() helper
+  dmaengine: k3dma: use sg_nents_for_dma() helper
+  dmaengine: lgm: use sg_nents_for_dma() helper
+  dmaengine: pxa-dma: use sg_nents_for_dma() helper
+  dmaengine: qcom: adm: use sg_nents_for_dma() helper
+  dmaengine: qcom: bam_dma: use sg_nents_for_dma() helper
+  dmaengine: sa11x0: use sg_nents_for_dma() helper
+  dmaengine: sh: use sg_nents_for_dma() helper
+  dmaengine: xilinx: xdma: use sg_nents_for_dma() helper
+
+ drivers/dma/altera-msgdma.c                   |  5 ++--
+ drivers/dma/bcm2835-dma.c                     | 19 +-------------
+ drivers/dma/dma-axi-dmac.c                    |  5 +---
+ .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    |  6 ++---
+ drivers/dma/k3dma.c                           |  9 ++-----
+ drivers/dma/lgm/lgm-dma.c                     |  9 ++-----
+ drivers/dma/pxa_dma.c                         |  5 ++--
+ drivers/dma/qcom/bam_dma.c                    |  9 ++-----
+ drivers/dma/qcom/qcom_adm.c                   |  9 +++----
+ drivers/dma/sa11x0-dma.c                      |  6 ++---
+ drivers/dma/sh/shdma-base.c                   |  5 ++--
+ drivers/dma/xilinx/xdma.c                     |  6 ++---
+ include/linux/scatterlist.h                   |  2 ++
+ lib/scatterlist.c                             | 26 +++++++++++++++++++
+ 14 files changed, 52 insertions(+), 69 deletions(-)
+
 -- 
-2.34.1
+2.50.1
 
 
