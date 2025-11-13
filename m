@@ -1,288 +1,321 @@
-Return-Path: <linux-kernel+bounces-898543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D2BC55843
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DFEC55849
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA8FC34C0AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:18:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7B52A345781
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99776285CB8;
-	Thu, 13 Nov 2025 03:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E07C280336;
+	Thu, 13 Nov 2025 03:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNIoSE1/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ooV+WcKu"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38AC26AEC;
-	Thu, 13 Nov 2025 03:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763003908; cv=fail; b=c26egKalYJXTdkfMrMF/OQdnvbNqDYxzFkuzHg+ovdq4v5u8inxlEkOeEAOrspm1cyivgT9NhDImAe700LuV0n9Mvw4W/7MsHaIzb0LKAs+8Gw/Q+Sa1ArSEJf27VmTqn0TqLgpuexELEE7m6u/LQZk+ymfx5Ax6U4+NBeEsQzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763003908; c=relaxed/simple;
-	bh=JFRvCepSGcZhBzIeyvGRduKXMx0HfE13cpAsvATkDg0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jqQZun8ZIlQZsKrdUtUam366e4GjB6V+drIeXTLfIj9CdXwJ6Z/sAmU+yHbn/eaZQDbLawAD53gwdCpprUzrAnM9pTWs7tugdVyqdg1g+BWjlW1wL8Dh+rM+fEUT78BfPFGKiObhlvpoim1kaZqL+3y5Ils+Pdi4xSkHN2CVg08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNIoSE1/; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763003907; x=1794539907;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=JFRvCepSGcZhBzIeyvGRduKXMx0HfE13cpAsvATkDg0=;
-  b=MNIoSE1/WsbB/x5nPwuiHuoFDqfuorUxsSUbLomRzBHlCgVD+WvvyO95
-   Xw9dLOy0hE5vAPpFRYo5sQbIy0pcP+2caL5sxwltlQaGOY0T/24ECOqPl
-   0lDU5JCj/0Wqy1YEQce69qKvPW69JgCdUw3VBvKuShmbBQvNJrPY7n7RM
-   HnF7VcTXvbCrodgoXcQVz5lfZKN9DkSCFTJUXPzN5KwmK4VWWfg9Ge5h+
-   1bHqGF94Lg+jcSigQowxGD0/tfCp+DPAJV4wOd4Wnx2qi3TzrLW8Ao3eM
-   1H7lsXln60dYrtUo/+b2Nlj5OPdWEH5NEhQfGlhJSrlrV9dQIiIxFrjli
-   w==;
-X-CSE-ConnectionGUID: Op6+rDvnQ4C9vUrv84RE8Q==
-X-CSE-MsgGUID: g+7a09xLS3y3FdkAw6TZ3Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="68942147"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="68942147"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 19:18:26 -0800
-X-CSE-ConnectionGUID: 1pPF+ts/Q0SG/za8IxIwFA==
-X-CSE-MsgGUID: ylSr6LzTSmqeka1gwpP2/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="188635748"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 19:18:26 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 12 Nov 2025 19:18:25 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 12 Nov 2025 19:18:25 -0800
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.5) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 12 Nov 2025 19:18:25 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YKVQffLBh6bJs3/DCu8L8DtVTLS8W4I54Q3w72RHZ8gM/mxQ8JuF+mzSp4khfa8XQFAlWb6WaW9muBRaV2ceP3ERbhVBbmZ0hGARyPTwCOjD++LV0LC7fTWKdTA5W9ZHPJvh3Avd1b9qYHNTHVFNR/dgfLWCx6FRgvxqp9tWwZ7yM2O+loEnGUkk9+s29bZtqgJ3aPOW72kIEnClchd/KOcdw4bpEIVhFqyRf7jOakuMPmLDNetFYX06NkF4qC/G0uJUgMWoQ+3LoF+OXe2TgOm0rjZs0qa/+ONcb7F5XgsFZvN9HkWmhmbATb6CMexgHPZyTz359bUIXjXDKWSX0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KX5B5K/B5WkGltWQa7Jt+kTQwfapdwbY4Ebphe4ollU=;
- b=amJjKAAxZF1qpwSl6aCQeDdmbr6EFa3S9yhOxGi+2AtBHYVb3+FknY6aEb6yp4evxCZLs5hYOxD9qVQccNaB12JLlwStQ3aTh/uDE6JryFZqZNni3ysEaswcIUaBQALcrXTaJW7RNClR98fztctVyRAXulJcrfX5t32Kx26K9Ir+CZpACtwd0jN16HVz3kkSKEGHioNDHdAQ/+NNadRu65XyNi39l8QmpG3si6RmBR98CiljIE0hK2iReLZZa0vdY3zcGMKbVGp7+7KctLEOapNqJlVALHMTjrKhyFyXCO6TeRjs+D8pVBtzMTw3lXCGX+59KpzvWcQhm4lxFFuo8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- CH3PR11MB8211.namprd11.prod.outlook.com (2603:10b6:610:15f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 03:18:23 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.9298.012; Thu, 13 Nov 2025
- 03:18:23 +0000
-Date: Thu, 13 Nov 2025 11:16:18 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Li,
- Xiaoyao" <xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "kas@kernel.org"
-	<kas@kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"Peng, Chao P" <chao.p.peng@intel.com>, "Annapurve, Vishal"
-	<vannapurve@google.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"Miao, Jun" <jun.miao@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"pgonda@google.com" <pgonda@google.com>
-Subject: Re: [RFC PATCH v2 09/23] KVM: x86/tdp_mmu: Add split_external_spt
- hook called during write mmu_lock
-Message-ID: <aRVNggcp4Gr078ha@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
- <20250807094320.4565-1-yan.y.zhao@intel.com>
- <40651a97d837bc2f2e11c3d487edb4b4e3941a97.camel@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <40651a97d837bc2f2e11c3d487edb4b4e3941a97.camel@intel.com>
-X-ClientProxiedBy: TP0P295CA0028.TWNP295.PROD.OUTLOOK.COM (2603:1096:910:5::8)
- To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCC26FA67
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763004058; cv=none; b=ds4iqO/uPAGuZgxZqjWlGWbr2ASaFOJD2N18tT6QLukub7oFqKlTQ96wbRSC4+7RYG4a8wbAsuJaBvC/38vthYxgJYOGlKVE/PuL29/g8RogJ8HuH2ta+ObpVCLAYXQKPBPG4G2JvdFpyLLFXIHYMiWbrKe7Ter2QsCmHdMfnTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763004058; c=relaxed/simple;
+	bh=oNNG+k4thlyehnxsCWGT1ub0+0JOn/z/u7lhmi952r0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=WVJUQ3s5s1U1WVWMqshmJtxRWIIgeLKMczEgFJErzBMYN2C9f7qs/h9Zx2SzgL05W220gA0IgpJ4OUtzqwY4sV89dNc0Imnx7nt+O61kDQooURGgF0uYIhfZHDvBbBzA0IBOhS8S3HWcZlyQH0eym5eLgGdmfrtZFUywCb/cydA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ooV+WcKu; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2982b47ce35so3988535ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:20:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763004055; x=1763608855; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1p0zWLHf4xDlGwHzwKuqecNFfCAmC0YDXEuqKtnw9SM=;
+        b=ooV+WcKu3ougsUShU3jYbixp3l2iyN60gj9QJQuRdWlHhkbsv7fVNv8blZ+xyV2MFn
+         D2d+jsRs20GhU8LtUW2Ez62DRYFRmmYydGpd7EgrcwOYjzW8qBuuUx0/vwYbkOXmhYKi
+         n1oucKYLIGr/4ywyLYw7cro3g/473MlHWokJAI2IoubKOQHNSXpgFsZUuV39LjEVrRXx
+         taFt671oDo6db/38IQtkfyDISdWnCUn8iqE24rCZKozirBo1GzcBpTNs/DbdzdTWfH+0
+         eEor/yyR5Fx0S7nd2zYhzNzsB3qO1y42KDRICQK1iPz9J3gtfOMMf9MCoBLwSXn/xBYK
+         5rUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763004055; x=1763608855;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1p0zWLHf4xDlGwHzwKuqecNFfCAmC0YDXEuqKtnw9SM=;
+        b=jn2n7jujMGh9ufpr4lA2VDnT4ZRUz97178PmLrSrFl9pk1x/c+Kj8HEuB1Z5ssAorn
+         c2lkVYVDpJCXMLu4SJto6TtoEr044nGKB+Dm3JSr1cixePn7QZdiNIlcbz0xcItMbAcw
+         ZGlLJUzVQZCPp9NixR3Jp/4VZTj8nn65DXT4Tsa2BA+LrCjJUHJDC5B9aCSggBVTHCsw
+         WvjjmWWJDPGgCMW2Un8n9EYeD1wETcTPJAJNwdoLPtuBB0UO7dcgk/O9YZME5q4KytqW
+         q/lh5qiMoamqNPsHKUMlcMTdQTB5+GxReo1yXo0hY7KdKANIPqx9DUO2W0pgrEDIP91k
+         cK+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWjdA37qAND/NMsVPaPmsGyKiHbrQyoPT1dj7YZ1VsL+NWAVjPPJbbsEE+xlq3kT5kguelijvRcJz2t8Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1gn+6lJSEMu1/j+L7pwRgHRU9wD9iFceNYtH7GdCfPgZkYAI+
+	riKaICjNt87DmFNRyVfbw8Ek5QvkA+N2pUzjDM5zbWDJIeL9OSZxbzibq96vM4PKHSJKKzdle4G
+	dI83G8X6/Gg==
+X-Google-Smtp-Source: AGHT+IED9mKXLSyXD7LDZi2AxRROnjmSNGImJk5wdsMbH28XGHCXGHEd/x6/kS3x4oImdN9/xVQcqAw7H8Ja
+X-Received: from dlbpt5.prod.google.com ([2002:a05:7022:e805:b0:119:b185:ea69])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1211:b0:24c:7b94:2f53
+ with SMTP id d9443c01a7336-2984ed247b8mr65742505ad.6.1763004055478; Wed, 12
+ Nov 2025 19:20:55 -0800 (PST)
+Date: Wed, 12 Nov 2025 19:19:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CH3PR11MB8211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0347f16f-ee35-4191-9b3e-08de22634d7b
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7TD/mrRymUbtMKidOupMAcYQgTcMFcWy5wNvQpzBXIzbLBFqDf7UxQy+vPH6?=
- =?us-ascii?Q?dbPjkWOzZgN/FOtPIpuLfje6bXx5j1Mevc4tnKyylkpPeJBXE1HJBQQHpE83?=
- =?us-ascii?Q?VDLRKF3Iy4VRVXbgxyNlpHn5W7l4HKaJXZrr+xvot1n23qjCpkcM1uzfcXlL?=
- =?us-ascii?Q?5ufOmdbbHr5/vMw1g26XGnOf1lWEnz9B6YiNpav44xRxRfbiWjwTC39YUW7Y?=
- =?us-ascii?Q?vgfU1Pp+yzc67JL63h8xZBbGqsRaz92SBxj91Ma6A4JSHKgvie6eKMCoEE+O?=
- =?us-ascii?Q?dVYxpWfKbY+8BlwlPiQYIwca7/xvuA/gDgz5ecT7oXHtkNC+Ncj0nOqmoqmH?=
- =?us-ascii?Q?cKwurkVGhEUY773PdBMmCSRveZGB23R594P5Gvl/6CkqWA+XNaGtRdrMwt0K?=
- =?us-ascii?Q?G9E9R7cvCp7exUIHyt3NGFFBxEI8liAbAqmTt4vO7TGBY803KzSu5uQGI3tS?=
- =?us-ascii?Q?R5McWcrPKS/zUIdle73cAWbfTN+j/nMqtDYOqA6JGgZ+afqQguDBMK3MkZph?=
- =?us-ascii?Q?bhopEhtKHGnOVM9DpFOXnB2mwjXT9o/0EMFQ3KItZvRYAXQbYxWixfUBnDA6?=
- =?us-ascii?Q?KTxtcnyqEng1p0hVVRwQxHoSiWJ96p72M9rnds7QWdByzj7dnBdmauflJDlF?=
- =?us-ascii?Q?k7JlmiDBq9GzeEHVn5k0RyPJ+VgaJ+Mk3UyvoCzCszLC8Y49ZYGuyvq3a0f2?=
- =?us-ascii?Q?dlC3DBKcO+5lIl6l2q8BYQ0sEQBUHefBEKxYu/vl5BX4wtnyJMI7CxkzQZp0?=
- =?us-ascii?Q?VF//3dQox4Ts1EpqFLgDLZKjeqguuG0YdFJzqwi+aiNzHUSmxUkzpf9cKOPM?=
- =?us-ascii?Q?LfXzgDXY8ilOwz4py82B44/oIBOKtUUW4iCzGj3b1W/EeOPygLjQeGGSerym?=
- =?us-ascii?Q?MIc0GcmB6mId4jpxKjuZotgrXMBZOwFVfsT4WhgF5vStBRcIk9C4F7oayuYd?=
- =?us-ascii?Q?5AByTmIeTXcmCzLoGN3UMETeh5iAmbg4x7nMdXiRvdELjgjyzjLzrRMfLAWH?=
- =?us-ascii?Q?6cbVy2l7SYUkeNECsIo7fdgg4e+D165GSc5ga/6sUOTsDWP93XVMdJAkgGRv?=
- =?us-ascii?Q?TMZwUNO+T3qaeOZhxGk1ZyHYDpcnELxO5mB4fnpY78YNKbRTnPW8lO4kdr2y?=
- =?us-ascii?Q?gP0E0FW9fMxUzcNB7HBWi65nUsdswI7mXYWbqq5wvjE7MiFY5QleDQ6GTKDl?=
- =?us-ascii?Q?H5Z3Ses7MreA8o1AOMze2p9m1ZYfmjDjSgY6u0MUgb49na2i29l5AU9sM6ce?=
- =?us-ascii?Q?U/wsPfEhHG8B5L5AvFL4aikXyrGDUqi0P9Fh+6g9BMwnpCEGcMNXyY1Y0Jj9?=
- =?us-ascii?Q?MdWaZQdQ5JsrP3XhUoCmF12bDXEUJRocmhCHFkoJm5aPnHoiFU2P9MOOQJnG?=
- =?us-ascii?Q?qePERFaAeEympI2ozylNoJGNejZQLQABTESW6eKYoLxO9YWUoek1SdLqYPdS?=
- =?us-ascii?Q?rYo7/hok6Bb9+/IuuNXOXbglu0yu7Rtt?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?OgoZ6wk3xXOvWui7Nd26gWxXzSsSz3dNR1mMdEH/JztYKaaHkqwqozTI5a4B?=
- =?us-ascii?Q?z0wLG69WPFCDUYx6mf7D9VqKnjsuOX4rnsR4l0u5w2TIQJ+840s6qMyvAYJV?=
- =?us-ascii?Q?FSGtUxCr91Q6YOuuaKFM+FquIURYw0kFM7KMs/7QOVvIEHXsT8EVPlseHtSA?=
- =?us-ascii?Q?f9wRy1AvUg6EMT1CPNv441zN7ZGGrF6rIKcbh4f8SXPfSk/tJPQMJluom5Bm?=
- =?us-ascii?Q?7cHwlFh72+hdCyZ8FvDMXn9jeEuObCPTA5WwF2OZT8RQzDTBjSWLDTpunxGP?=
- =?us-ascii?Q?X4LVV0VJadtuoJxCotlNa6OCHtQoHw9uZN4rY+yJwKhpDu3FNiNroAq8aoZU?=
- =?us-ascii?Q?PgZCVc68I3x1D9MWAUn5qCjpNBDZ453ug9cbGRPKfWXI+z5f34Y3NFpYKLHm?=
- =?us-ascii?Q?FkmRnZlD8V0JUez1tOHU6S8aGXL67Lg1F+T3jWDVxGlViVOorcWz3I37/hb3?=
- =?us-ascii?Q?uXlkXDz7sCarA/vTTFln2ZyIuyZ9t/wr1d4n3XFHxLXXR1W52dWuir5+Sbl9?=
- =?us-ascii?Q?RxmzQ+Hl5IrqIx7CHN9RgnVNrV3kWeHhe+ajT7w9SkoLrroD6JlOgSHn0+60?=
- =?us-ascii?Q?GFk6+vVmiAv2znlu1iuQp4JWeXbXLksygV7AdcIH+fL2B9+1pGF28byqsSKy?=
- =?us-ascii?Q?s2BxheOs8LLiVVeou03q7f5kXjSlUlasfGMx+PMLgi21LggZixhvRkHQZMW7?=
- =?us-ascii?Q?oxwYVTwaOsQczdxQgBIJxKX2hyeQuHXEY4j06MMJtE8e4YxZ455zHOq5Or/+?=
- =?us-ascii?Q?RSkgxnJUoya977eyKW/JFQe7LIMIXOCfM4IG6AuscLIwNyW9AZiGt6nznRly?=
- =?us-ascii?Q?bE7oUIcAQjtvKbu7GUTlx3rzeC5wwnZnhylPp7ghA9MRzXH7p6VYRcbB8EDc?=
- =?us-ascii?Q?ub5t5i/VFOw0ecIGJZ82p0YcHDnCPn9E6foBBEdMImBjiOyl+R0frEl1rcOM?=
- =?us-ascii?Q?4x/SNkRcljIfzKg13PU0C3lMkdUbuJdBhhvSRap4swqfJlrW1pgadkk7EHVx?=
- =?us-ascii?Q?extJikHwCO5pFIJkxgMnNen+Lte0NScnii4HozWxWrXhk/n/g7IbaA8Zqlp6?=
- =?us-ascii?Q?wdgxFLdTboxSzxsGdYpXijspkHKdUfhuk8YJ3ll2Erl+JmCW06D51UKfEQYI?=
- =?us-ascii?Q?8nPTAPDNG9icDX0AoWCUE1hYMd95Y2DMT90Ch8vWCHPH0rzI2F+RPkSEbbJr?=
- =?us-ascii?Q?9rn6zk8SB9uFiSs/BlOEoBj1Y7ZmS2RSqwlwiiToQkPXk79AxLtibU4r3w/J?=
- =?us-ascii?Q?9+76WK58A8JU7Rm3Ei0LmKbTOp9rlwHogn5QR+2p2JPdvwwxQ1z1cJwfJq+X?=
- =?us-ascii?Q?u1rQdh4UyCTQ3+HFalkp/xLIu6iXbnRRkuH488cN8mo0841743fX5c+gSfDP?=
- =?us-ascii?Q?dCrJG2rW2toUK4XlZIiOty/vcSemaeWZzcAyZisPp5XLbk71e8TdiChCr4eV?=
- =?us-ascii?Q?YP0JH/GKn5dcqWBiQVnePj7KdIw/mjMEnDLL8A0X3PnI2Fbgr90pjILcw0Ho?=
- =?us-ascii?Q?KbsyWbyE7V9qiBQgjnZVh5AhDn2F6fVIE625o35pgkKPXid76Qn0JYAQSo8y?=
- =?us-ascii?Q?lJrw3L2Re9MoHVrBpZh4QN0fADKGepHLWxV3fC19?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0347f16f-ee35-4191-9b3e-08de22634d7b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 03:18:23.2597
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w5Z67DmwhHrcKy1xC3bl/YAdZ4yLJgxXDR7X300uMqHLkXBqZXhJPJC62m8Y9ELDbXnHUnT3e4pKBdqqNwwPEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8211
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251113032040.1994090-1-irogers@google.com>
+Subject: [PATCH v8 00/52] AMD, ARM, Intel metric generation with Python
+From: Ian Rogers <irogers@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Benjamin Gray <bgray@linux.ibm.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>, Edward Baker <edward.baker@intel.com>, 
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Clark <james.clark@linaro.org>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
+	Jiri Olsa <jolsa@kernel.org>, John Garry <john.g.garry@oracle.com>, Leo Yan <leo.yan@arm.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Perry Taylor <perry.taylor@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Samantha Alt <samantha.alt@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 11, 2025 at 06:06:47PM +0800, Huang, Kai wrote:
-> On Thu, 2025-08-07 at 17:43 +0800, Yan Zhao wrote:
-> > Introduce the split_external_spt hook and call it within tdp_mmu_set_spte()
-> > for the mirror page table.
-> 
-> Nit: I think you need to use split_external_spt() since it's a function,
-> even you already mentioned it is a hook.
-Makes sense.
+Metrics in the perf tool come in via json. Json doesn't allow
+comments, line breaks, etc. making it an inconvenient way to write
+metrics. Further, it is useful to detect when writing a metric that
+the event specified is supported within the event json for a
+model. From the metric python code Event(s) are used, with fallback
+events provided, if no event is found then an exception is thrown and
+that can either indicate a failure or an unsupported model. To avoid
+confusion all the metrics and their metricgroups are prefixed with
+'lpm_', where LPM is an abbreviation of Linux Perf Metric. While extra
+characters aren't ideal, this separates the metrics from other vendor
+provided metrics.
 
-> > tdp_mmu_set_spte() is invoked for SPTE transitions under write mmu_lock.
-> > For the mirror page table, in addition to the valid transitions from a
-> > shadow-present entry to !shadow-present entry, introduce a new valid
-> > transition case for splitting and propagate the transition to the external
-> > page table via the hook split_external_spt.
-> 
-> Ditto: split_external_spt()
-Will update. 
+* The first 14 patches introduce infrastructure and fixes for the
+  addition of metrics written in python for Arm64, AMD Zen and Intel
+  CPUs. The ilist.py and perf python module are fixed to work better
+  with metrics on hybrid architectures.
 
-> [...]
-> 
-> >  static struct kvm_mmu_page *tdp_mmu_alloc_sp_for_split(bool mirror);
-> > +static void *get_external_spt(gfn_t gfn, u64 new_spte, int level);
-> 
-> Is it possible to get rid of such declarations, e.g., by ...
-I think so.
+* The next 13 patches generate additional metrics for AMD zen.  Rapl
+  and Idle metrics aren't specific to AMD but are placed here for ease
+  and convenience. Uncore L3 metrics are added along with the majority
+  of core metrics.
 
-Will drop this declaration by moving split_external_spt() after
-get_external_spt() but before set_external_spte_present() and
-tdp_mmu_set_spte().
+* The next 20 patches add additional metrics for Intel. Rapl and Idle
+  metrics aren't specific to Intel but are placed here for ease and
+  convenience. Smi and tsx metrics are added so they can be dropped
+  from the per model json files. There are four uncore sets of metrics
+  and eleven core metrics. Add a CheckPmu function to metric to
+  simplify detecting the presence of hybrid PMUs in events. Metrics
+  with experimental events are flagged as experimental in their
+  description.
 
-Thanks for this suggestion.
+* The next 2 patches add additional metrics for Arm64, where the
+  topdown set decomposes yet further. The metrcs primarily use json
+  events, where the json contains architecture standard events. Not
+  all events are in the json, such as for a53 where the events are in
+  sysfs. Workaround this by adding the sysfs events to the metrics but
+  longer-term such events should be added to the json.
 
-> >  static void tdp_account_mmu_page(struct kvm *kvm, struct kvm_mmu_page *sp)
-> >  {
-> > @@ -384,6 +385,18 @@ static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
-> >  	KVM_BUG_ON(ret, kvm);
-> >  }
-> >  
-> > +static int split_external_spt(struct kvm *kvm, gfn_t gfn, u64 old_spte,
-> > +			      u64 new_spte, int level)
-> > +{
-> > +	void *external_spt = get_external_spt(gfn, new_spte, level);
-> > +	int ret;
-> > +
-> > +	KVM_BUG_ON(!external_spt, kvm);
-> > +
-> > +	ret = kvm_x86_call(split_external_spt)(kvm, gfn, level, external_spt);
-> > +
-> > +	return ret;
-> > +}
-> 
-> ... moving split_external_spt() somewhere else, e.g., after
-> set_external_spte_present() (which calls get_external_spt())?
-> 
-> Since ...
-> 
-> >  /**
-> >   * handle_removed_pt() - handle a page table removed from the TDP structure
-> >   *
-> > @@ -765,12 +778,20 @@ static u64 tdp_mmu_set_spte(struct kvm *kvm, int as_id, tdp_ptep_t sptep,
-> >  	handle_changed_spte(kvm, as_id, gfn, old_spte, new_spte, level, false);
-> >  
-> >  	/*
-> > -	 * Users that do non-atomic setting of PTEs don't operate on mirror
-> > -	 * roots, so don't handle it and bug the VM if it's seen.
-> > +	 * Propagate changes of SPTE to the external page table under write
-> > +	 * mmu_lock.
-> > +	 * Current valid transitions:
-> > +	 * - present leaf to !present.
-> > +	 * - present non-leaf to !present.
-> > +	 * - present leaf to present non-leaf (splitting)
-> >  	 */
-> >  	if (is_mirror_sptep(sptep)) {
-> > -		KVM_BUG_ON(is_shadow_present_pte(new_spte), kvm);
-> > -		remove_external_spte(kvm, gfn, old_spte, level);
-> > +		if (!is_shadow_present_pte(new_spte))
-> > +			remove_external_spte(kvm, gfn, old_spte, level);
-> > +		else if (is_last_spte(old_spte, level) && !is_last_spte(new_spte, level))
-> > +			split_external_spt(kvm, gfn, old_spte, new_spte, level);
-> > +		else
-> > +			KVM_BUG_ON(1, kvm);
-> >  	}
-> > 
-> 
-> ... split_external_spt() is only called here in tdp_mmu_set_spte() which is
-> way after set_external_spte_present() AFAICT.
+* The final patch validates that all events provided to an Event
+  object exist in a json file somewhere. This is to avoid mistakes
+  like unfortunate typos.
+
+This series has benefitted from the input of Leo Yan
+ <leo.yan@arm.com>, Sandipan Das <sandidas@amd.com>, Thomas Falcon
+ <thomas.falcon@intel.com> and Perry Taylor <perry.taylor@intel.com>.
+
+v8. Combine the previous 4 series for clarity. Rebase on top of the
+    more recent legacy metric and event changes. Make the python more
+    pep8 and pylint compliant.
+
+Foundations:
+v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
+    Das <sandidas@amd.com>) which didn't alter the generated json.
+    https://lore.kernel.org/lkml/20250904043208.995243-1-irogers@google.com/
+
+v5. Rebase on top of legacy hardware/cache changes that now generate
+    events using python:
+    https://lore.kernel.org/lkml/20250828205930.4007284-1-irogers@google.com/
+    the v5 series is:
+    https://lore.kernel.org/lkml/20250829030727.4159703-1-irogers@google.com/
+
+v4. Rebase and small Build/Makefile tweak
+    https://lore.kernel.org/lkml/20240926173554.404411-1-irogers@google.com/
+
+v3. Some code tidying, make the input directory a command line
+    argument, but no other functional or output changes.
+    https://lore.kernel.org/lkml/20240314055051.1960527-1-irogers@google.com/
+
+v2. Fixes two type issues in the python code but no functional or
+    output changes.
+    https://lore.kernel.org/lkml/20240302005950.2847058-1-irogers@google.com/
+
+v1. https://lore.kernel.org/lkml/20240302005950.2847058-1-irogers@google.com/
+
+AMD:
+v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
+    Das <sandidas@amd.com>) which didn't alter the generated json.
+    https://lore.kernel.org/lkml/20250904044047.999031-1-irogers@google.com/
+
+v5. Rebase. Add uop cache hit/miss rates patch. Prefix all metric
+    names with lpm_ (short for Linux Perf Metric) so that python
+    generated metrics are clearly namespaced.
+    https://lore.kernel.org/lkml/20250829033138.4166591-1-irogers@google.com/
+
+v4. Rebase.
+    https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google.com/
+
+v3. Some minor code cleanup changes.
+    https://lore.kernel.org/lkml/20240314055839.1975063-1-irogers@google.com/
+
+v2. Drop the cycles breakdown in favor of having it as a common
+    metric, suggested by Kan Liang <kan.liang@linux.intel.com>.
+    https://lore.kernel.org/lkml/20240301184737.2660108-1-irogers@google.com/
+
+v1. https://lore.kernel.org/lkml/20240229001537.4158049-1-irogers@google.com/
+
+Intel:
+v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
+    Das <sandidas@amd.com>) which didn't alter the generated json.
+    https://lore.kernel.org/lkml/20250904044653.1002362-1-irogers@google.com/
+
+v5. Rebase. Fix description for smi metric (Kan). Prefix all metric
+    names with lpm_ (short for Linux Perf Metric) so that python
+    generated metrics are clearly namespaced. Kan requested a
+    namespace in his review:
+    https://lore.kernel.org/lkml/43548903-b7c8-47c4-b1da-0258293ecbd4@linux.intel.com/
+    The v5 series is:
+    https://lore.kernel.org/lkml/20250829041104.4186320-1-irogers@google.com/
+
+v4. Experimental metric descriptions. Add mesh bandwidth metric. Rebase.
+    https://lore.kernel.org/lkml/20240926175035.408668-1-irogers@google.com/
+
+v3. Swap tsx and CheckPMU patches that were in the wrong order. Some
+    minor code cleanup changes. Drop reference to merged fix for
+    umasks/occ_sel in PCU events and for cstate metrics.
+    https://lore.kernel.org/lkml/20240314055919.1979781-1-irogers@google.com/
+
+v2. Drop the cycles breakdown in favor of having it as a common
+    metric, spelling and other improvements suggested by Kan Liang
+    <kan.liang@linux.intel.com>.
+    https://lore.kernel.org/lkml/20240301185559.2661241-1-irogers@google.com/
+
+v1. https://lore.kernel.org/lkml/20240229001806.4158429-1-irogers@google.com/
+
+ARM:
+v7. Switch a use of cycles to cpu-cycles due to ARM having too many
+    cycles events.
+    https://lore.kernel.org/lkml/20250904194139.1540230-1-irogers@google.com/
+
+v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
+    Das <sandidas@amd.com>) which didn't alter the generated json.
+    https://lore.kernel.org/lkml/20250904045253.1007052-1-irogers@google.com/
+
+v5. Rebase. Address review comments from Leo Yan
+    <leo.yan@arm.com>. Prefix all metric names with lpm_ (short for
+    Linux Perf Metric) so that python generated metrics are clearly
+    namespaced. Use cpu-cycles rather than cycles legacy event for
+    cycles metrics to avoid confusion with ARM PMUs. Add patch that
+    checks events to ensure all possible event names are present in at
+    least one json file.
+    https://lore.kernel.org/lkml/20250829053235.21994-1-irogers@google.com/
+
+v4. Tweak to build dependencies and rebase.
+    https://lore.kernel.org/lkml/20240926175709.410022-1-irogers@google.com/
+
+v3. Some minor code cleanup changes.
+    https://lore.kernel.org/lkml/20240314055801.1973422-1-irogers@google.com/
+
+v2. The cycles metrics are now made common and shared with AMD and
+    Intel, suggested by Kan Liang <kan.liang@linux.intel.com>. This
+    assumes these patches come after the AMD and Intel sets.
+    https://lore.kernel.org/lkml/20240301184942.2660478-1-irogers@google.com/
+
+v1. https://lore.kernel.org/lkml/20240229001325.4157655-1-irogers@google.com/
+
+Ian Rogers (52):
+  perf python: Correct copying of metric_leader in an evsel
+  perf ilist: Be tolerant of reading a metric on the wrong CPU
+  perf jevents: Allow multiple metricgroups.json files
+  perf jevents: Update metric constraint support
+  perf jevents: Add descriptions to metricgroup abstraction
+  perf jevents: Allow metric groups not to be named
+  perf jevents: Support parsing negative exponents
+  perf jevents: Term list fix in event parsing
+  perf jevents: Add threshold expressions to Metric
+  perf jevents: Move json encoding to its own functions
+  perf jevents: Drop duplicate pending metrics
+  perf jevents: Skip optional metrics in metric group list
+  perf jevents: Build support for generating metrics from python
+  perf jevents: Add load event json to verify and allow fallbacks
+  perf jevents: Add RAPL event metric for AMD zen models
+  perf jevents: Add idle metric for AMD zen models
+  perf jevents: Add upc metric for uops per cycle for AMD
+  perf jevents: Add br metric group for branch statistics on AMD
+  perf jevents: Add software prefetch (swpf) metric group for AMD
+  perf jevents: Add hardware prefetch (hwpf) metric group for AMD
+  perf jevents: Add itlb metric group for AMD
+  perf jevents: Add dtlb metric group for AMD
+  perf jevents: Add uncore l3 metric group for AMD
+  perf jevents: Add load store breakdown metrics ldst for AMD
+  perf jevents: Add ILP metrics for AMD
+  perf jevents: Add context switch metrics for AMD
+  perf jevents: Add uop cache hit/miss rates for AMD
+  perf jevents: Add RAPL metrics for all Intel models
+  perf jevents: Add idle metric for Intel models
+  perf jevents: Add CheckPmu to see if a PMU is in loaded json events
+  perf jevents: Add smi metric group for Intel models
+  perf jevents: Mark metrics with experimental events as experimental
+  perf jevents: Add tsx metric group for Intel models
+  perf jevents: Add br metric group for branch statistics on Intel
+  perf jevents: Add software prefetch (swpf) metric group for Intel
+  perf jevents: Add ports metric group giving utilization on Intel
+  perf jevents: Add L2 metrics for Intel
+  perf jevents: Add load store breakdown metrics ldst for Intel
+  perf jevents: Add ILP metrics for Intel
+  perf jevents: Add context switch metrics for Intel
+  perf jevents: Add FPU metrics for Intel
+  perf jevents: Add Miss Level Parallelism (MLP) metric for Intel
+  perf jevents: Add mem_bw metric for Intel
+  perf jevents: Add local/remote "mem" breakdown metrics for Intel
+  perf jevents: Add dir breakdown metrics for Intel
+  perf jevents: Add C-State metrics from the PCU PMU for Intel
+  perf jevents: Add local/remote miss latency metrics for Intel
+  perf jevents: Add upi_bw metric for Intel
+  perf jevents: Add mesh bandwidth saturation metric for Intel
+  perf jevents: Add collection of topdown like metrics for arm64
+  perf jevents: Add cycles breakdown metric for arm64/AMD/Intel
+  perf jevents: Validate that all names given an Event
+
+ tools/perf/.gitignore                   |    5 +
+ tools/perf/Makefile.perf                |    2 +
+ tools/perf/pmu-events/Build             |   51 +-
+ tools/perf/pmu-events/amd_metrics.py    |  711 ++++++++++++++
+ tools/perf/pmu-events/arm64_metrics.py  |  187 ++++
+ tools/perf/pmu-events/common_metrics.py |   19 +
+ tools/perf/pmu-events/intel_metrics.py  | 1129 +++++++++++++++++++++++
+ tools/perf/pmu-events/jevents.py        |    7 +-
+ tools/perf/pmu-events/metric.py         |  256 ++++-
+ tools/perf/pmu-events/metric_test.py    |    4 +
+ tools/perf/python/ilist.py              |    8 +-
+ tools/perf/util/evsel.c                 |    1 +
+ tools/perf/util/python.c                |   82 +-
+ 13 files changed, 2408 insertions(+), 54 deletions(-)
+ create mode 100755 tools/perf/pmu-events/amd_metrics.py
+ create mode 100755 tools/perf/pmu-events/arm64_metrics.py
+ create mode 100644 tools/perf/pmu-events/common_metrics.py
+ create mode 100755 tools/perf/pmu-events/intel_metrics.py
+
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
+
 
