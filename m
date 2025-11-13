@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-898809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D44FC56122
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:35:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B403C5611C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DB094E67D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:31:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BCE8B342EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18078326D4D;
-	Thu, 13 Nov 2025 07:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADB232937D;
+	Thu, 13 Nov 2025 07:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RWBe60xv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi2blkGl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C897130E83A;
-	Thu, 13 Nov 2025 07:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ED4328B45
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763019056; cv=none; b=OKn59Xlz6aV57aI5Sgt+TXltLrYV4/7R6XCKN8M2SHJ90CPwRQk4EZGYdne8mBalDg8GBBvEI6budDX5jxYuGCqVbFp9rnLZwDitydH0RSoo4TF4PgH5ciBKuC5gmhM5P9h2A9gN4rfiQEe/3rmkus3B1DHeDc9iszb9honIC54=
+	t=1763019144; cv=none; b=OCpTfq5SbqpVYt1RIlipGM4PZ0dTjYu/7dIr+M8J1CnKG0m4+/0AbocHyxiQwS3UVgfRO7sUVuGhnaInrsMDXuiU0LGxFUhmKGi/isaC5DWf0N27FTnTzbtjOVgfaoRbQSFWrey9dij3VjPpzOzmBEyfUL6mH6l357OMda18jxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763019056; c=relaxed/simple;
-	bh=GzIg5amColquUoTMfwOgoFFIoLUisEfS5Vm7rZSUjWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tY9pZOOJCQZ9Ir1nGjI9mLmbiClNFP94fHT7cwsJKTECDBCexsyuot8vidALWnyIXErWVuehxEErBxeUFUg9ujpZ+IP76inaTH1SqM6WOsaXuoR+5qDQylBmwQrpO8UT7/TLVB6YnR9AKlxjdJAIUM/sloqqSNMcjNFtMa8C/1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RWBe60xv; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763019046; x=1794555046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GzIg5amColquUoTMfwOgoFFIoLUisEfS5Vm7rZSUjWo=;
-  b=RWBe60xvmdSDxfVHY+Gj5WU8lc5hyAGXDVePvx0ZTxU4Wa9PlJGdjHLq
-   KomZleZq9rqALNrJbrOAMq1ZME60RFFUf+9kjvRUKaO9s855mRui3/1it
-   +4PDpUGLebRaG+hH33i8aWNAz/4zKQ1AHMwIGuTF3TWF+zNWJDbhFphJT
-   g3AnA4+IP3mwyaWq3RE6UM0yu5CZzIgibaMVlCeqKhSe04NhdRmxfy9Ji
-   nk7y8zH0l0Opu1RAQkwFeW5gGnIGElzCZzszN1faum4aBYF9ajq+qvgt7
-   53aKbltuJ9ajYAvSmkS7P+5Lh62OPlmwvRByjXcPiC6dUd5IlF/KMW4ye
-   Q==;
-X-CSE-ConnectionGUID: DWg9Gz8NQyOqbVDvtSWWGA==
-X-CSE-MsgGUID: waPdV/KZReyOpgHO/4oOJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76437988"
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="76437988"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 23:30:39 -0800
-X-CSE-ConnectionGUID: WW3GQ4FnQOugtCfe4hw6Zg==
-X-CSE-MsgGUID: d7e/EL1MQNSVnXMXiUQEFQ==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2025 23:30:36 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJRms-00051f-0B;
-	Thu, 13 Nov 2025 07:30:34 +0000
-Date: Thu, 13 Nov 2025 15:30:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, horms@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
-	vikas.gupta@broadcom.com,
-	Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: Re: [net-next 06/12] bng_en: Add support to handle AGG events
-Message-ID: <202511131515.DHkaAel4-lkp@intel.com>
-References: <20251111205829.97579-7-bhargava.marreddy@broadcom.com>
+	s=arc-20240116; t=1763019144; c=relaxed/simple;
+	bh=6+s4EmAJUO31C3E6m+fUKs8Q2v9rA00c27ndUGZWmew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bMwL2cH2UzorTDdfTPEB/Tq8BXS2oyIxRXHejrkJZjkHYKG3LvljRp3xx7UBzXReTgE7SvMGLllp1mMeQC8EMDjnfMyFGadPIsvC5Z8OIGx9Umz/ypS8byeiEtNvItLR0DNHJei9OQMeu+NiGxZ2Dyye1qcuoAkOeghM0W5on70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bi2blkGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F56BC4CEF7;
+	Thu, 13 Nov 2025 07:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763019142;
+	bh=6+s4EmAJUO31C3E6m+fUKs8Q2v9rA00c27ndUGZWmew=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bi2blkGlg81MeUhv5K542nJxO+2kxzMA7Zp1I77pGmaKBzagsy9OIkW8yJIuOpBkk
+	 z1oZ0X/oXTqaHgJeksOr2aHFFeWzlp2ys7jBs74xNaMjIqLBdG3TfyuSvUozgkZlN+
+	 1isSDCtOyMmuRSiPOUdWl0DN/sOrx6pGv2HPGbFJBo/UzvoIXDp3ueDaMXwK3c/c4F
+	 3ocikKixQH0Bb6JF90QB2Tk1U7lQA/aBd8SjVBXrgqzXQt7uRleP01YEonLDVKbng+
+	 A/PvFgbGE3AQuJ9CqgnBlmbXiS8BXO1wkGvejjVMM9RBVA+ZEdNSvR6NLONwE6CsiT
+	 CHX67KQjezRvw==
+Message-ID: <b02a9217-f2d9-4005-b7ed-6f4198670ba3@kernel.org>
+Date: Thu, 13 Nov 2025 08:32:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111205829.97579-7-bhargava.marreddy@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: softleaf device private fixes in
+ remove_migration_pmd()
+To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>
+References: <20251112044634.963360-1-balbirs@nvidia.com>
+ <20251112044634.963360-2-balbirs@nvidia.com>
+ <4e6286a6-721d-45cd-a4ea-e79e90e14fc7@kernel.org>
+ <a9c8fd41-66c6-4cb4-a033-4138be701b3f@nvidia.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <a9c8fd41-66c6-4cb4-a033-4138be701b3f@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bhargava,
+On 13.11.25 06:03, Balbir Singh wrote:
+> On 11/12/25 22:37, David Hildenbrand (Red Hat) wrote:
+>> On 12.11.25 05:46, Balbir Singh wrote:
+>>> commit a6ca2ba46390 ("mm: replace pmd_to_swp_entry() with softleaf_from_pmd()")
+>>
+>> So should this be squashed into Lorenzo patch, or incorporated in his series in case he has to resend?
+>>
+>>> does not work with device private THP entries. softleaf_is_migration_young()
+>>> asserts that the entry be a migration entry, but in the current code, the
+>>> entry might already be replaced by a device private entry by the time the
+>>> check is made. The issue exists with commit
+>>> 7385dbdbf841 ("mm/rmap: extend rmap and migration support device-private entries")
+>>>
+>>
+>> Because this confuses me. If it's already a problem in the commit-to-go-upstream-first, it should be fixed in that commit?
+>>
+> 
+> Not sure how to handle this, because that would break rebase of mm/mm-new
+> or I'd have to send a replacement patch for the original patch from Lorenzo
+> (which does not seem right).
 
-kernel test robot noticed the following build warnings:
+Yes, to be expected. Maybe Andrew can figure out how do address the 
+rebase, or we can give him a helping hand :)
 
-[auto build test WARNING on net-next/main]
+> 
+> I'll post a simpler patch, but it needs to be on top of the series
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhargava-Marreddy/bng_en-Query-PHY-and-report-link-status/20251112-050616
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20251111205829.97579-7-bhargava.marreddy%40broadcom.com
-patch subject: [net-next 06/12] bng_en: Add support to handle AGG events
-config: arc-randconfig-r122-20251113 (https://download.01.org/0day-ci/archive/20251113/202511131515.DHkaAel4-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251113/202511131515.DHkaAel4-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511131515.DHkaAel4-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/net/ethernet/broadcom/bnge/bnge_txrx.c:931:11: sparse: sparse: symbol 'bnge_lhint_arr' was not declared. Should it be static?
-   drivers/net/ethernet/broadcom/bnge/bnge_txrx.c: note: in included file (through drivers/net/ethernet/broadcom/bnge/bnge_resc.h, drivers/net/ethernet/broadcom/bnge/bnge.h):
->> drivers/net/ethernet/broadcom/bnge/bnge_netdev.h:524:34: sparse: sparse: marked inline, but without a definition
-
-vim +524 drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-
-   515	
-   516	u16 bnge_cp_ring_for_rx(struct bnge_rx_ring_info *rxr);
-   517	u16 bnge_cp_ring_for_tx(struct bnge_tx_ring_info *txr);
-   518	void bnge_fill_hw_rss_tbl(struct bnge_net *bn, struct bnge_vnic_info *vnic);
-   519	int bnge_alloc_rx_data(struct bnge_net *bn, struct bnge_rx_ring_info *rxr,
-   520			       u16 prod, gfp_t gfp);
-   521	inline int bnge_alloc_rx_page(struct bnge_net *bn,
-   522				      struct bnge_rx_ring_info *rxr,
-   523				      u16 prod, gfp_t gfp);
- > 524	inline u16 bnge_find_next_agg_idx(struct bnge_rx_ring_info *rxr, u16 idx);
+Agreed, thanks.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers
+
+David
 
