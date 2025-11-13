@@ -1,116 +1,152 @@
-Return-Path: <linux-kernel+bounces-899415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268C8C57A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:26:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F44DC57A55
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06D25342252
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:26:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80A3E4E6F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E21A35292B;
-	Thu, 13 Nov 2025 13:26:23 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E748352929;
+	Thu, 13 Nov 2025 13:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KE1k7jlP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8093446AA;
-	Thu, 13 Nov 2025 13:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6131E2FF14F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040382; cv=none; b=V8N7R2Q+R7GpwRVCppEhHtEJUwBAOusdqIXRBm2WK00gBRu1Vh/TKEyGvORu2NIS0XosjMOVo80WOppyWO+U1Z8N43wYceCUCEnuQWT5rh7rURJq87FIzmnsrE3hpfj7x98y/ivBbqTJSfkvsWSazu7rRqUTfVi2PoBx7ihewg8=
+	t=1763040412; cv=none; b=CrmAD3ODJpig6l+uX5q+cP7hzrat2lPCTnGfocUN49K4eQ7h5HdodRipiai538u0dpGAwtlRh9FWUSZvp8QchVWbIsfJCsEzj/W99DqRdnLbu0TRrx151LHPIqcdn/P7/KAHijQ78GX7ojs0mKoE9rre+3GTtNnCma9dAnXr7yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040382; c=relaxed/simple;
-	bh=Rh3bzVGApBGQbzZkTO2BFKFs3NSxoPrIjQ2As0xPEjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b2kiqgTLE2DHbbrqFwRFNw0aEDx53ouZUdI3cHz4ICVSPKEYtSCfOxCWhOeRDQQG7I9nsV3Ka8gMDHoUhJ6j8q9Qz0vG1dAuV9aQAbYFjyGevyT0WlkN9+80fFFNLbgiRwJsRKsxPfh7d1TlJdO+5EfsgBEU1ntatYCPSypgNSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [192.168.7.227] (54-240-197-234.amazon.com [54.240.197.234])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 7BF1A40C10;
-	Thu, 13 Nov 2025 13:26:11 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 54.240.197.234) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[192.168.7.227]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <43aa4ed3-d9c0-4f60-b850-d345cb85fe41@arnaud-lcm.com>
-Date: Thu, 13 Nov 2025 13:26:10 +0000
+	s=arc-20240116; t=1763040412; c=relaxed/simple;
+	bh=N6rVmwErvVdIpQNDNvw4j71KK5RNwrquC4TU8Yj6zzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jaz6xirJujJyXNzru5c1oeRXqr/ORFQ9e3VMAm1BIJIOFNCu797GhPalGHBLA921XDR79Qx3Fu7r6yds15kXS+Ucxc6+UraH4+csCFlM4XkNrhw4g4CQC9srdVwW3RC+tGIE99vcWZuZ9aZ1OUBBuz9Zy+aUaVhkOZcz0mzKZ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KE1k7jlP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1A4C19424
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763040412;
+	bh=N6rVmwErvVdIpQNDNvw4j71KK5RNwrquC4TU8Yj6zzs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KE1k7jlPSOpFpOQKnYI+lja3yNNjNaFJQe3H2Y7Tmr6cH4HHhjs/s4QBdmv+oh3lh
+	 kdhK7C+lqXc56owKyfR9VFztiVo9T1Lg8CDnHYJOrxYHjNF//LU5pmjJ2PXNHImXlP
+	 Hx6ugAC0TomgIGShfTheFmHaUQk1/1Hp5/YE2Xjxh479OYoExGx+sJ5sYKe3M9/plj
+	 mEHYSFbjC9UksviQI7BSpTNgLx7EGUy41nIkyKQo7kuaWY76jS1ZuYeo9sC5aFiFf3
+	 y3S0DQz/xefP1yksDHjYhV6Iri3x7Z61UN/iFGXm6pz23bOre9eTQ/JjRDt0EuPqHG
+	 +mWVA14s1Ppgg==
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-45045024527so305485b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:26:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUmF53p2qTcvfDU0/flthCw0dxrs/UiB6HvMtyNTBdJVgt/5117RXvZBPBw0/Snl7/aAbjalqUW+nULPXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdLSFHtHZnEofZVn/OgXk86cEX9z5uUD6l5B20nkVJt5kGJwAN
+	o1HVUFFcJovxpIsX55gU3qXxDHt9OqCnRFglae0gHJHE/6vypBSLpdZ14clB5SUx4BIxsqQABbB
+	QnBXsda05ceBM6/SBC5kKsSBDtAWCcAE=
+X-Google-Smtp-Source: AGHT+IHpptsHcS6CKJ5mYtEDDybIMZJ3kpl5I7fAr1CDEkp0cz83cBO2yqJBYWMErR65pI6nKOJTZiCQ9FyoHV5WJPg=
+X-Received: by 2002:a05:6808:4495:b0:44f:ef44:9cc4 with SMTP id
+ 5614622812f47-45086724901mr1739590b6e.32.1763040411260; Thu, 13 Nov 2025
+ 05:26:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack to
- fix OOB write
-To: Brahmajit Das <listout@listout.xyz>
-Cc: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com, andrii@kernel.org,
- ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
- eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
- song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
- <20251111081254.25532-1-listout@listout.xyz>
- <3f79436c-d343-46ff-8559-afb7da24a44d@arnaud-lcm.com>
- <kjjn3mvfp2gf5iyeyukthgluayrkefonfmqbugrsreeeqfwde5@rxrzxrsobt54>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: <kjjn3mvfp2gf5iyeyukthgluayrkefonfmqbugrsreeeqfwde5@rxrzxrsobt54>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <176304037239.10917.10498323386673519218@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+References: <4701737.LvFx2qVVIh@rafael.j.wysocki> <5035693.GXAFRqVoOG@rafael.j.wysocki>
+ <1dc4934f-a3ce-4ead-a43c-0a80987364b6@arm.com> <CAJZ5v0h5PkU5t=uPVO2Evq0gNrX4vYkAJFVDPLsqzCGKXnb+_w@mail.gmail.com>
+ <CAJZ5v0hzuHd9MjHdovFZZwf=wHAQQsVKKbtkHCNtX5M+vZck3g@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hzuHd9MjHdovFZZwf=wHAQQsVKKbtkHCNtX5M+vZck3g@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Nov 2025 14:26:39 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0giKy-Jm6eXAwvToJhAaWVa1jFU6s_aixCU8BzmPR4+cw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmV2GE0jkFfRhqK0R5cvi_iMjzpArgMqNQmxhMZM1N_CWQZyqsk0uehqvY
+Message-ID: <CAJZ5v0giKy-Jm6eXAwvToJhAaWVa1jFU6s_aixCU8BzmPR4+cw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] cpuidle: governors: teo: Drop incorrect target
+ residency check
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Reka Norman <rekanorman@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 13/11/2025 12:49, Brahmajit Das wrote:
-> On 12.11.2025 08:40, 'Lecomte, Arnaud' via syzkaller-bugs wrote:
->> I am a not sure this is the right solution and I am scared that by
->> forcing this clamping, we are hiding something else.
->> If we have a look at the code below:
->> ```
->>
->> |
->>
->> 	if (trace_in) {
->> 		trace = trace_in;
->> 		trace->nr = min_t(u32, trace->nr, max_depth);
->> 	} else if (kernel && task) {
->> 		trace = get_callchain_entry_for_task(task, max_depth);
->> 	} else {
->> 		trace = get_perf_callchain(regs, kernel, user, max_depth,
->> 					crosstask, false, 0);
->> 	} ``` trace should be (if I remember correctly) clamped there. If not, it
->> might hide something else. I would like to have a look at the return for
->> each if case through gdb. |
-> Hi Arnaud,
-> So I've been debugging this the reproducer always takes the else branch
-> so trace holds whatever get_perf_callchain returns; in this situation.
+On Thu, Nov 13, 2025 at 12:47=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
 >
-> I mostly found it to be a value around 4.
+> On Thu, Nov 13, 2025 at 12:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> >
+> > On Thu, Nov 13, 2025 at 12:32=E2=80=AFPM Christian Loehle
+> > <christian.loehle@arm.com> wrote:
+> > >
+> > > On 11/12/25 16:22, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > When the target residency of the current candidate idle state is
+> > > > greater than the expected time till the closest timer (the sleep
+> > > > length), it does not matter whether or not the tick has already
+> > > > been stopped or if it is going to be stopped.  The closest timer
+> > > > will trigger anyway at its due time, so it does not make sense to
+> > > > select an idle state with target residency above the sleep length.
+> > > >
+> > > > Accordingly, drop the teo_state_ok() check done in that case and
+> > > > let the governor use the teo_find_shallower_state() return value
+> > > > as the new candidate idle state index.
+> > > >
+> > > > Fixes: 21d28cd2fa5f ("cpuidle: teo: Do not call tick_nohz_get_sleep=
+_length() upfront")
+> > > > Cc: All applicable <stable@vger.kernel.org>
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  drivers/cpuidle/governors/teo.c |    7 ++-----
+> > > >  1 file changed, 2 insertions(+), 5 deletions(-)
+> > > >
+> > > > --- a/drivers/cpuidle/governors/teo.c
+> > > > +++ b/drivers/cpuidle/governors/teo.c
+> > > > @@ -458,11 +458,8 @@ static int teo_select(struct cpuidle_dri
+> > > >        * If the closest expected timer is before the target residen=
+cy of the
+> > > >        * candidate state, a shallower one needs to be found.
+> > > >        */
+> > > > -     if (drv->states[idx].target_residency_ns > duration_ns) {
+> > > > -             i =3D teo_find_shallower_state(drv, dev, idx, duratio=
+n_ns, false);
+> > > > -             if (teo_state_ok(i, drv))
+> > > > -                     idx =3D i;
+> > > > -     }
+> > > > +     if (drv->states[idx].target_residency_ns > duration_ns)
+> > > > +             idx =3D teo_find_shallower_state(drv, dev, idx, durat=
+ion_ns, false);
+> > > >
+> > > >       /*
+> > > >        * If the selected state's target residency is below the tick=
+ length
+> > > >
+> > > >
+> > > >
+> > >
+> > > AFAICT this check was to not be stuck in a shallow state when tick is=
+ already disabled.
+> > > There might be a timer armed in t+500us but that might still get canc=
+elled, which
+> > > is why we didn't think a below TICK_NSEC 'shallow' state is acceptabl=
+e?
+> >
+> > This is all about hrtimers which are not expected to be canceled too
+> > often and real energy is wasted here by going too deep if the timer is
+> > not canceled.
 >
-> In some case the value would exceed to something 27 or 44, just after
-> the code block
->
-> 	if (unlikely(!trace) || trace->nr < skip) {
-> 		if (may_fault)
-> 			rcu_read_unlock();
-> 		goto err_fault;
-> 	}
->
-> So I'm assuming there's some race condition that might be going on
-> somewhere.
-Which value ? trace->nr ?
-> I'm still debugging bug I'm open to ideas and definitely I could be
-> wrong here, please feel free to correct/point out.
+> Overall, both teo and menu assume that the timers reported by
+> tick_nohz_get_sleep_length() will trigger.  Otherwise, calling it
+> would be kind of pointless ...
 
-I should be able to have a look tomorrow evening as I am currently a bit 
-overloaded
-with my work.
+Anyway, I've sent a v2 of the $subject patch with a more elaborate changelo=
+g:
 
-Thanks,
-Arnaud
+https://lore.kernel.org/linux-pm/5955081.DvuYhMxLoT@rafael.j.wysocki/
 
+Hopefully, it is more convincing.
 
