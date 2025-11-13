@@ -1,157 +1,145 @@
-Return-Path: <linux-kernel+bounces-899215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F29C571D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:13:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDA4C571DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2E83C34A516
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA0F3B4A10
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7D33B949;
-	Thu, 13 Nov 2025 11:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A5433AD9B;
+	Thu, 13 Nov 2025 11:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NimiYNc1"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="wkgAbgOj"
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1914233892C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC4338F26;
+	Thu, 13 Nov 2025 11:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032249; cv=none; b=oqXkhd3bh3gKyKBiFeYrJt4/hr1LCn5+xwQwX+xWVvYoNY7LyGwWlB7jEpZvnMuJN+BTua5PGV29oRZF+CO8Ejnvbpsfvwp4iX7KfUEtIBQX/fzzMtvgRRQxkIQkHASn47lHrKLD2S3IUr94n6HVrl8IORZS7hkf8jgMk6Hejes=
+	t=1763032264; cv=none; b=loKkzvoJ9R+ez66wetbdDbW5ZPAQZwtfgY3yD9VvKJviT+zMluvR0DdDeNHPfyq/7DFjk5cw80O6b3duYgTXJdouF4vGhhrH6J93MElkQCNAvLVkNxK3tkaWRegoVHSdDCcuE7jN1Ory5jnCeJh6l3VIqjNyWniLtR/ZnrktgIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032249; c=relaxed/simple;
-	bh=so546Z28Y0ozfRF4Kux5DxMbZgVLjZKYR340NOkaPTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f1JevUQqddwgH5HGRq/+gNeryY/5yJr78dGD81A8S7GxhhVHwLdDP8Hbw863WC3VLPx7Q9KZ1s0UPWnrbB6jmhhCLz4SGsg9RD/+JKzr8gfTM7UBIrl6i9eRpcCgwuYQ9nqX/lCUeCP0sbVJeKLJ0z8D3pr8CEEgHoNtT481Bbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NimiYNc1; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1763032244; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=lAttCcXeOxPRYUKvCBkOyAH/Ei+jFUOesij4DVKlHXA=;
-	b=NimiYNc1QLAaoLG4hyzt20gP/6j7zyrTqHbYvKPaERqpkBul5wyrbc0sTRtMSS82Id42EJnFj5DUyNByOrBFqYCDKiDObsQ5/UGZhRbDPvQHO+UAe6FoTDNYJi9bUu5GPR+iTGmXv0EIB7Dcw9MaBF8MBBiqBmEmmCpBZnlWq1w=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WsJMVsJ_1763032242 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Nov 2025 19:10:42 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org
-Cc: Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH v2 4/4] sys_info: add a default kernel sys_info mask
-Date: Thu, 13 Nov 2025 19:10:39 +0800
-Message-Id: <20251113111039.22701-5-feng.tang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20251113111039.22701-1-feng.tang@linux.alibaba.com>
-References: <20251113111039.22701-1-feng.tang@linux.alibaba.com>
+	s=arc-20240116; t=1763032264; c=relaxed/simple;
+	bh=urH1pHnaK/uaQl/yo8yiCGx+iorwpacltUVK/RqwjKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SDr1b4hf2WNimT2xugrtodl9pxtoJSkTyECgpR1QWh2+TQMqSPXQSV34Nw12h1T7MeAsvnJ9E3tKOY9PiR05rWwgsf6/sNTpqa5Y3gewDxz2hnqy10D8TAKxbzKcpaxqFg+TCRzpT5X6osnfRVUgMZCdM4mXIUUbywcVbKfXXUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=wkgAbgOj; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=sYdX7jPld9MHxC/2N/BdveINDqwOk1bdDkzTmhtgkOU=;
+	b=wkgAbgOj/Uyjk7TB32BI8+jld98422LU2nbkIaBXSanzYHVi6qJph7P+LYaPeIHyxTIgLssdk
+	NQu5KsJuHwWmg2eHARW+n+NAqI8UehAXAc67lMDLPw4XFhrBllr1+6vcAwL6U9EC1JXIXpDVMd7
+	26SAoBvKW98bxHl/K+3zxXw=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6cwR1YknzKm5S;
+	Thu, 13 Nov 2025 19:09:11 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id F095D180044;
+	Thu, 13 Nov 2025 19:10:51 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Nov 2025 19:10:51 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 13 Nov 2025 19:10:51 +0800
+Message-ID: <fb2412cd-7417-4d65-9dea-d166a3bd146f@huawei.com>
+Date: Thu, 13 Nov 2025 19:10:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/4] io-128-nonatomic: introduce
+ io{read|write}128_{lo_hi|hi_lo}
+To: Ben Dooks <ben.dooks@codethink.co.uk>, <arnd@arndb.de>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <akpm@linux-foundation.org>,
+	<anshuman.khandual@arm.com>, <ryan.roberts@arm.com>,
+	<andriy.shevchenko@linux.intel.com>, <herbert@gondor.apana.org.au>,
+	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+	<linux-api@vger.kernel.org>
+CC: <fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
+	<qianweili@huawei.com>
+References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
+ <20251112015846.1842207-4-huangchenghai2@huawei.com>
+ <59f8bc30-c1c6-4f07-87dd-cd2893ae87f7@codethink.co.uk>
+From: huangchenghai <huangchenghai2@huawei.com>
+Content-Language: en-US
+In-Reply-To: <59f8bc30-c1c6-4f07-87dd-cd2893ae87f7@codethink.co.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-Which serves as a global default sys_info mask. When users want the
-same system information for many error cases (panic, hung, lockup ...),
-they can chose to set this global knob only once, while not setting up
-each individual sys_info knobs.
 
-This just adds a 'lazy' option, and doesn't change existing kernel
-behavior as the mask is 0 by default.
+在 2025/11/12 22:48, Ben Dooks 写道:
+> On 12/11/2025 01:58, Chenghai Huang wrote:
+>> From: Weili Qian <qianweili@huawei.com>
+>>
+>> In order to provide non-atomic functions for io{read|write}128.
+>> We define a number of variants of these functions in the generic
+>> iomap that will do non-atomic operations.
+>>
+>> These functions are only defined if io{read|write}128 are defined.
+>> If they are not, then the wrappers that always use non-atomic operations
+>> from include/linux/io-128-nonatomic*.h will be used.
+>>
+>> Signed-off-by: Weili Qian <qianweili@huawei.com>
+>> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+>> ---
+>>   include/linux/io-128-nonatomic-hi-lo.h | 35 ++++++++++++++++++++++++++
+>>   include/linux/io-128-nonatomic-lo-hi.h | 34 +++++++++++++++++++++++++
+>>   2 files changed, 69 insertions(+)
+>>   create mode 100644 include/linux/io-128-nonatomic-hi-lo.h
+>>   create mode 100644 include/linux/io-128-nonatomic-lo-hi.h
+>>
+>> diff --git a/include/linux/io-128-nonatomic-hi-lo.h 
+>> b/include/linux/io-128-nonatomic-hi-lo.h
+>> new file mode 100644
+>> index 000000000000..b5b083a9e81b
+>> --- /dev/null
+>> +++ b/include/linux/io-128-nonatomic-hi-lo.h
+>> @@ -0,0 +1,35 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _LINUX_IO_128_NONATOMIC_HI_LO_H_
+>> +#define _LINUX_IO_128_NONATOMIC_HI_LO_H_
+>> +
+>> +#include <linux/io.h>
+>> +#include <asm-generic/int-ll64.h>
+>> +
+>> +static inline u128 ioread128_hi_lo(const void __iomem *addr)
+>> +{
+>> +    u32 low, high;
+>
+> did you mean u64 here?
+>
+Thank you for your reminder, I made a rookie mistake.
 
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
----
- Documentation/admin-guide/sysctl/kernel.rst |  9 ++++++
- lib/sys_info.c                              | 31 ++++++++++++++++++++-
- 2 files changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 176520283f1a..239da22c4e28 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -521,6 +521,15 @@ default), only processes with the CAP_SYS_ADMIN capability may create
- io_uring instances.
- 
- 
-+kernel_sys_info
-+===============
-+A comma separated list of extra system information to be dumped when
-+soft/hard lockup is detected, for example, "tasks,mem,timers,locks,...".
-+Refer 'panic_sys_info' section below for more details.
-+
-+It serves as the default kernel control knob, which will take effect
-+when a kernel module calls sys_info() with parameter==0.
-+
- kexec_load_disabled
- ===================
- 
-diff --git a/lib/sys_info.c b/lib/sys_info.c
-index 323624093e54..f32a06ec9ed4 100644
---- a/lib/sys_info.c
-+++ b/lib/sys_info.c
-@@ -24,6 +24,13 @@ static const char * const si_names[] = {
- 	[ilog2(SYS_INFO_BLOCKED_TASKS)]		= "blocked_tasks",
- };
- 
-+/*
-+ * Default kernel sys_info mask.
-+ * If a kernel module calls sys_info() with "parameter == 0", then
-+ * this mask will be used.
-+ */
-+static unsigned long kernel_si_mask;
-+
- /* Expecting string like "xxx_sys_info=tasks,mem,timers,locks,ftrace,..." */
- unsigned long sys_info_parse_param(char *str)
- {
-@@ -110,9 +117,26 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 	else
- 		return sys_info_read_handler(&table, buffer, lenp, ppos, ro_table->data);
- }
-+
-+static const struct ctl_table sys_info_sysctls[] = {
-+	{
-+		.procname	= "kernel_sys_info",
-+		.data		= &kernel_si_mask,
-+		.maxlen         = sizeof(kernel_si_mask),
-+		.mode		= 0644,
-+		.proc_handler	= sysctl_sys_info_handler,
-+	},
-+};
-+
-+static int __init sys_info_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", sys_info_sysctls);
-+	return 0;
-+}
-+subsys_initcall(sys_info_sysctl_init);
- #endif
- 
--void sys_info(unsigned long si_mask)
-+static void __sys_info(unsigned long si_mask)
- {
- 	if (si_mask & SYS_INFO_TASKS)
- 		show_state();
-@@ -135,3 +159,8 @@ void sys_info(unsigned long si_mask)
- 	if (si_mask & SYS_INFO_BLOCKED_TASKS)
- 		show_state_filter(TASK_UNINTERRUPTIBLE);
- }
-+
-+void sys_info(unsigned long si_mask)
-+{
-+	__sys_info(si_mask ? : kernel_si_mask);
-+}
--- 
-2.43.5
+Chenghai
 
+>> +    high = ioread64(addr + sizeof(u64));
+>> +    low = ioread64(addr);
+>> +
+>> +    return low + ((u128)high << 64);
+>> +}
+>> +
+>> +static inline void iowrite128_hi_lo(u128 val, void __iomem *addr)
+>> +{
+>> +    iowrite64(val >> 64, addr + sizeof(u64));
+>> +    iowrite64(val, addr);
+>> +}
+>> +
+>
 
