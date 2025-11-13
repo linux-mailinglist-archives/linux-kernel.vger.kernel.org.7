@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-899952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B620C59398
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:41:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18813C591BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2713B9A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:18:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2404343FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48FF2F0C68;
-	Thu, 13 Nov 2025 17:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A010B3596F6;
+	Thu, 13 Nov 2025 17:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bv8M1sdP"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJ9567t9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162552FBDEA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E519B2877FA;
+	Thu, 13 Nov 2025 17:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053659; cv=none; b=CB08YZuPyDC3YLNfAiM4l7F+8lDAymxf6oUh1zV7Okhd2GkXZ6y6plbWj+muqNvuL3yWXcLUAjIsNOuLlKoFUEQQKBylIrH8t7g7SFkgLco4ZGHmxjRLXh7LM8rb3NZYeziLjJO5y8MakTHaREc7Jquxo1B9h9iTr5BEZChCghY=
+	t=1763053705; cv=none; b=aDr2PThovf+22YY3Gd5NYml23BogYnnfFShjn8MN9Z/xlc8t+DU7CwxlK5T+A4irP55aG+kym33QrBjkWvZvCochDq2piIjgO6or9yAm/c4r/lh+GC6asSSQdzx7hqK8RRKNC2xynfJu/6R7LemjOGrJKJN2JyVF6L4mRIeEgi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053659; c=relaxed/simple;
-	bh=3wHzdTnzv/9koblQs4sk6PY2OUVV0EFT9zAT0iA+YQU=;
+	s=arc-20240116; t=1763053705; c=relaxed/simple;
+	bh=VaN/Uzv+luxCc8nrlRCto4s7AqsMNKrYTytzQNxFrzw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mz/Lg4b0E6O5wHkWYEpjwfG4JiGnQz0u7Q/psGXq3FGo2udEZLWAIJXaN+YJjerPrAKRziBMNM5dT/o9n4BiSKlZmqFcOXMR07xSlqxI4WatxklLBQOa5VgpXM777sIKt48HzeS3cnDUO/LHuKgKhlyhnAo2q+//MZqdv5xjY5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bv8M1sdP; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47778704516so5867805e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:07:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763053655; x=1763658455; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJwtOPWKmmTBRwvu3K3EIMtulS3eBFOLsMuoPcJT6P4=;
-        b=bv8M1sdPv9k28oZt7NxnZh8yQ8JaHVqhx1lnLNb2BqCHU2JFNpAsrWi98GuW0VRHlS
-         0vfV9gWXmN5ghLZrutVLjEZLAE3W2O4dnAFRII6fabQ45fHxrV/JqYa6trTeq2ZZh7Hb
-         oZDA+8a9590BfSHIDVpTTLX/gRFXSvyiYqh8devGZtpnMXDsLbeCsVTgYBiU4yP8OUKz
-         0pty2mr0yHspYF06nM3zwBiqiLWLhwR5x+NMquWtK3AIpNzMNA9LK9zgT2EGMZNLIHOS
-         /c5ep+jEJEPsz4Ep6Q1VLaHxW8ZS4El4r0mgF7u6VJbEAAFzSJ//VZ0KIKVo+UX2zt63
-         s7eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763053655; x=1763658455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJwtOPWKmmTBRwvu3K3EIMtulS3eBFOLsMuoPcJT6P4=;
-        b=cpyaqaNwCX2pARpWpBY3nFCvbG4M2iVfuTUDg8LpBubnZ5WVMVAzHninjffdeJfcFD
-         yhmZPKF9cWamnbw8EEaRXOiMgVZ4xbJb+fQ3QJT65rX3H0vuFZeRkqveva1Grw9+okIg
-         ZJlCqs0O9iYc2tvzFSluA23n0S+HoV9vWsm2tsJzL9W9Stv6SkU+PdlkZ2bKTorBI2OC
-         kali4SWLwrrrTqGwTMLPIkyAAcoF5O0OlvQasksXwns/1YYrZ47HcS0kn3x9Cs100xTR
-         DMjwyhbGHqmfKA+6C2jOGdvClx0+B05GgUpl7AVdUFi9S8XFP8ZEQ38Tqxir6/O3bw92
-         mDkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4bkfQEiLDWXQc7WEDfks8q64gw43XZXTBLS+V8T1gu2PF+Fq7+EyxKyxXwzDeWR1dpoV4RjxWziHR6cE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymFxwcCdTuYY6ugnNxEBqjT4RLa/ct0QRy2rP7PrdybGSQ9pm9
-	wM36htjEZ0M5YmzgFyHfe125JR/sR1Bxn99Ejp/YiF2EvcHzOulc7WUMlX5P4haJhyo=
-X-Gm-Gg: ASbGncujlrmCja4gqkyiWUS2Jwllzi0Lkgh6nHkJlPKtaSf/x3XsSy+2ABFL0IZublb
-	diVqKV89QfyEmGHueLEVjSGvhh1jr0PrFIB4ifj5sE3C431HUH18wuwGBMNsg0+RTQes0JjZatt
-	eBFvlWhU/XqSQ9d/DGBrZaIWzowV57RXtu7mrTou7dYNDmFUHoD1cr8Z+Szgn7xtf2WuRUAPNSU
-	gy9ImnbZYP7X7meVEnikUnv1I2vnX/fwRvLlSqPQhqYR/w0OlAOTvvheZ9Pi2fl4IXxRErpTcbG
-	CC4g80S0pxQwpROabbJgEqd3qAXc1hWAicyhVU4c9CfhD4NXwNn/Bawb0JqkapMGijrzVROvbuK
-	pJ6oZkReQkXkjcO6D4/7sahHofkYcZC6KXHfCkE09if+hvQr6ehqnJbBleSK83dZIiIclQdy00s
-	xGNX6pZ+B46hkWoBXtrgdG
-X-Google-Smtp-Source: AGHT+IGEwb65FvPJGLb66aSr9nqC7poeWs9ugZLSftaq0Hld+3M0XPCgYNsTqP6hCKw35URKMlz8sQ==
-X-Received: by 2002:a05:600c:4f07:b0:477:63b5:6f3a with SMTP id 5b1f17b1804b1-4778fead9a4mr1762145e9.27.1763053655325;
-        Thu, 13 Nov 2025 09:07:35 -0800 (PST)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e442c2sm106055695e9.7.2025.11.13.09.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 09:07:35 -0800 (PST)
-Date: Thu, 13 Nov 2025 18:07:33 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Sun Shaojie <sunshaojie@kylinos.cn>
-Cc: llong@redhat.com, cgroups@vger.kernel.org, chenridong@huaweicloud.com, 
-	hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	shuah@kernel.org, tj@kernel.org
-Subject: Re: [PATCH v2] cpuset: relax the overlap check for cgroup-v2
-Message-ID: <lhfcykirz5afdzdc6wnroubsdhasww4gsfri4dxpzagiejjbep@322rtmyvwiyd>
-References: <20251113131434.606961-1-sunshaojie@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWJceYsTQYDijKW+dic7egQsgMKaZFmGhNZerkRCTigXjbP7J3YidX27A9GTfMmo8ByT8jinJHcF+BxLJlnxEUskr5BvrR5uk5mbKFltuTf2EcRWRW1HZlHcAnI1dfiyK4NnatARxTR7ffJp/OW3AZuKKXVBDnowQaSbn0HCHNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJ9567t9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F1BC4CEF8;
+	Thu, 13 Nov 2025 17:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763053704;
+	bh=VaN/Uzv+luxCc8nrlRCto4s7AqsMNKrYTytzQNxFrzw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RJ9567t9JOy3iz4MU9JfnRat9ocmmInbEyeQJVvSNv3iLhKUFKnK47RsXzdhUlgAT
+	 jdJWv1Z2L8sfKt647pBVjYxi5w5lmKZGycqn9nZU/PRi54av1LjzjJ5bZuprF9fMQz
+	 TyCrffNcWvc4vvHyp7oTn8tkxxzvbkoaV805RkaYWAmFkRm03Btzc5g94/hM/Fwyj/
+	 Yw0O3oHcozhill/CY86IcB9urrwJgRADbW5bzTdX2XaNpxbjUbNUMnkf7sqnRzfh5G
+	 o+EC4BgG7rms9pFTsWf6xVY8/WznUDEZ8IjQLPvF24de6tXi7CRGuEiZ73GI11/Wq6
+	 XBsOiQbixdyRg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1vJao1-0000000BX2g-39Xb;
+	Thu, 13 Nov 2025 18:08:21 +0100
+Date: Thu, 13 Nov 2025 18:08:21 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org, 
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] scripts: docs: kdoc_files.py: don't consider symlinks as
+ directories
+Message-ID: <xrekus333iar5zod65ffvcv5fz2rf657dmqbl6npc5jyff4iro@6cdqfudzlbdp>
+References: <73c3450f34e2a4b42ef2ef279d7487c47d22e3bd.1763027622.git.mchehab+huawei@kernel.org>
+ <878qg9ucmx.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7h7ewfrvbadf2ean"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251113131434.606961-1-sunshaojie@kylinos.cn>
+In-Reply-To: <878qg9ucmx.fsf@trenco.lwn.net>
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+On Thu, Nov 13, 2025 at 09:21:26AM -0700, Jonathan Corbet wrote:
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > As reported by Randy, currently kdoc_files can go into endless
+> > looks when symlinks are used:
+> >
+> > 	$ ln -s . Documentation/peci/foo
+> > 	$ ./scripts/kernel-doc Documentation/peci/
+> > 	...
+> > 	  File "/new_devel/docs/scripts/lib/kdoc/kdoc_files.py", line 52, in _parse_dir
+> > 	    if entry.is_dir():
+> > 	       ~~~~~~~~~~~~^^
+> > 	OSError: [Errno 40] Too many levels of symbolic links: 'Documentation/peci/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo/foo'
+> >
+> > Prevent that by not considering symlinks as directories.
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Closes: https://lore.kernel.org/linux-doc/80701524-09fd-4d68-8715-331f47c969f2@infradead.org/
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> 
+> This looks the same as yesterday's version?
 
---7h7ewfrvbadf2ean
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] cpuset: relax the overlap check for cgroup-v2
-MIME-Version: 1.0
+I haven't changed it (but I was assuming yesterday's version was not sent). I had some bugs related to smtp proxy at the office....
 
-Hello.
+> 
+> Applied, anyway, thanks.
 
-On Thu, Nov 13, 2025 at 09:14:34PM +0800, Sun Shaojie <sunshaojie@kylinos.c=
-n> wrote:
-> In cgroup v2, a mutual overlap check is required when at least one of two
-> cpusets is exclusive. However, this check should be relaxed and limited to
-> cases where both cpusets are exclusive.
->=20
-> The table 1 shows the partition states of A1 and B1 after each step before
-> applying this patch.
->=20
-> Table 1: Before applying the patch
->  Step                                       | A1's prstate | B1's prstate=
- |
->  #1> mkdir -p A1                            | member       |             =
- |
->  #2> echo "0-1" > A1/cpuset.cpus            | member       |             =
- |
->  #3> echo "root" > A1/cpuset.cpus.partition | root         |             =
- |
->  #4> mkdir -p B1                            | root         | member      =
- |
->  #5> echo "0-3" > B1/cpuset.cpus            | root invalid | member      =
- |
->  #6> echo "root" > B1/cpuset.cpus.partition | root invalid | root invalid=
- |
->=20
-> After step #5, A1 changes from "root" to "root invalid" because its CPUs
-> (0-1) overlap with those requested by B1 (0-3). However, B1 can actually
-> use CPUs 2-3, so it would be more reasonable for A1 to remain as "root."
+Thanks!
+> 
+> jon
 
-I remember there was the addition of cgroup_file_notify() for the
-cpuset.cpus.partition so that such changes can be watched for.
-
-I may not be seeing whole picture, so I ask -- why would it be "more
-reasonable" for A1 to remain root. From this description it looks like
-you'd silently convert B1's effective cpus to 2-3 but IIUC the code
-change that won't happen but you'd reject the write of "0-3" instead.
-
-Isn't here missing Table 2: After applying the patch? I'm asking because
-of the number 1 but also because it'd make the intention clearer
-;-), perhaps with a column for cpuset.cpus.effective.
-
+-- 
 Thanks,
-Michal
-
---7h7ewfrvbadf2ean
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaRYQTBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AhD4AEA/GWWlwm3wrl5ni3OWMly
-l1jxes5Q5f9YIl+tVi4awEQBALGU4JhCDZ5CMZflO9yIUuFRu7zXymMjo3Zgx7Wf
-1OAH
-=gUoG
------END PGP SIGNATURE-----
-
---7h7ewfrvbadf2ean--
+Mauro
 
