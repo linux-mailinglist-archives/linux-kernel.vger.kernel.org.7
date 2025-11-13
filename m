@@ -1,199 +1,181 @@
-Return-Path: <linux-kernel+bounces-899807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D12C58CB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:42:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697B8C58DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273AA3BDBC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:33:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA60B507186
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1D03587D2;
-	Thu, 13 Nov 2025 16:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCDB35295C;
+	Thu, 13 Nov 2025 16:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KT4euzXT"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012064.outbound.protection.outlook.com [52.101.66.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vj5+eFPg"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678E135C1A5;
-	Thu, 13 Nov 2025 16:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051240; cv=fail; b=BpvSy97MrJXkHnaeAwu7/5XCj/MRn9WPvEj1KGdYhxGRH39KqEWLMV4yuHlj2cRYz6z/Hh5EbrB9CQyFwrzp0Q6v1kA9oVK15wEZmTb92Bp1ykwvbIbdHNyrNU86K4nlcCxavtUSe/4hpEzNJEZ1mpzwikQtcimHFxyyQVRu/KQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051240; c=relaxed/simple;
-	bh=8opysdOsBGsAu+RgUebHsK7FWvCEuSb3dLcPBgH+XWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EM770js5gGdapRaxIdwHyDBHL5D555teWXivPL0cdkg2X8sfR+Yf8/1rsjZbjZKkE4wUJoaDwwRTp7tutLzsgHnp59auTw2M2RpgHrQ1mwgAHP9dAgx2ohYtyeJ35K9P6JZ2a560F9rHgBzAaj61/4/2EEQieWLff9NW0Pw7Ad0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KT4euzXT; arc=fail smtp.client-ip=52.101.66.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=joqMhOPeFXGZ9T7eKPosFA+MrHNN7IWitWWe5xY9garuVKdZZVaDSM8LlQbzOWau3+Meom1xR3+5LNW4bbSgk1OBF9Cq4i9JpJzgXLHR1C7eL/LX5g+DZtvQj+G9jI6dJmGVQlogeU3G1rJXa0y02m71jbtHgzxDDRjGp9KD3S7TZ9sDy/+ItI4PQ8FwbE2SAoX2F1n3FmqhRhIj9i5OoMjkKrQru41xcyN18MlyC9FqczAmtr7a0roqoKzwAViT6lPrrs/RxIXWt1K/oFyCWo3CPPDLHkh2b7VXPnkqJB68CTWJoRhQt3HCQ6ouKvPpBvOVOFtglYhWuE9SyU6NkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/oX+Cfr7euQRZWAWhF3L+lXZ9nSxJdDVWg8jXc8IFzw=;
- b=ePeLuHw6atqarYbhXT+QA+/V7SvNH/Bgmpmi1ivo66QsAIwHRmzYHLOFtMeAYYOTNtYO7inXggQ1KjMwWIokPiwiE6LzMnp/99sioLDXMCHLooDfH21feY5eNRwgKJw+1cgtrSy7S4O02seOf/F8UDGJTtZugyucuj06EH6fmz53djFiksSjazjthyIGll77w/W7C9ZKtHcuhigF9ek7E6CKc+mRtC5Sog8TYf3lnjpg96y68LV5p3XiFq/hhh5FeEH1RK5g9E0Y7Vmb6KJKxWUsVxR1oKCq3KcTBdnLKjdoj55S1bulkZR+SkfTdwoiGZetTJb+ZyZrZpi08Qknow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/oX+Cfr7euQRZWAWhF3L+lXZ9nSxJdDVWg8jXc8IFzw=;
- b=KT4euzXTL5Tti8urP792uFhAW6XV9Kldrikp1dm5jG+5OPV14eaBj1boZhYBRwNdzzR7Y6ko3HOx/y/kH4e0eAfPWBOwe8n1jDpA4F+9MCx8kloVNg1IuGXPdMquRzV4wQzDp3KiW1MVGuDYszAiNG2hbsvYXUYmssMAh5jBVilJEEXQbOwERgeRJ088SF8fgl+rbpjWy/G08V3pzb01GwnS/vX+Jqvm2V9BWbgiWnlQ09c1OZnO1jmE/ylpfamGK6byRWGe3mA3wHtxHjoFf0byhIUOjGlt0rTt9tr5112mdqe9WlD+65YcU42zaQi8c28sxneXkEU7bvMkWL4i3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM8PR04MB7762.eurprd04.prod.outlook.com (2603:10a6:20b:241::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 16:27:14 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 16:27:13 +0000
-Date: Thu, 13 Nov 2025 11:27:05 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"eric@nelint.com" <eric@nelint.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 2/5] net: fec: simplify the conditional
- preprocessor directives
-Message-ID: <aRYG2YqpeOr3U3XS@lizhi-Precision-Tower-5810>
-References: <20251111100057.2660101-1-wei.fang@nxp.com>
- <20251111100057.2660101-3-wei.fang@nxp.com>
- <aRO3nMEu/D/kw/ja@lizhi-Precision-Tower-5810>
- <AS8PR04MB8497494755B820A2D33ED39488CCA@AS8PR04MB8497.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB8497494755B820A2D33ED39488CCA@AS8PR04MB8497.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: PH8PR07CA0007.namprd07.prod.outlook.com
- (2603:10b6:510:2cd::23) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF8414C5B0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051431; cv=none; b=o6tBRPKcp9xu8wFD3qqoB/qKmqIU1CEm8vQCN2PHmj2IVSLimCb9fOQTy18iAt892a/YdfIpE0rlNwL/2XFZnK4MQlGgNg4RddIl0exSe0P6FsA1w3cWrAnhplDBtVPetrG+CXSUB4/2N32+4jj6MPiWo1th6wpjDNpzXM3ci1Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051431; c=relaxed/simple;
+	bh=3uJv23fu88Wl6Y9vqlscvKEphTQsHPu/VBDgliM5sz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4ocLjCMP4n1wx7a59NJ3wJoq0ChrLUPGf8MMqLZl+VZUuhbwwrJiOUcgnFkZZY1NJX1OWk6Eea1dlQO9+JUennVzxwLdMMK46u35nv9ZAShT8V4s9Nsw7TaXhTwo/Yqk85cPSDIGpY1PobIeYU6ZGrd++FPfmav5pjzSqb/okw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vj5+eFPg; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4777af7c382so493505e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763051428; x=1763656228; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3r73UQNqtdeIQLhnX35BjU0Y880UTPCnGX02EQHqjc=;
+        b=Vj5+eFPgJ3qp74Qc1RPvx7c7rSCr1igYktl5S4cj9GL+REI/d7Zz3uUqhK0BwddxFB
+         7VSXpd0VSmGGdXQ3eJ5wTNMCV9cbPePTcB0nH+pbT+gtUinCyIjsKtU2JqWN9MpcKVJN
+         69nquMKhJ72ZxunCQq4PiWujql1x54oACTIrBWbS87w6n0roOi7+r0CpiqHnIuAjDdzW
+         6lpPnSnfJECb16ajDcrqt7wCU72R944tttZCfxtYucUNc5iK0leJuAMM/2C+E1Z13+aG
+         Ej6RTqQLZkOGGlPIeQ6/XL17KXntHOshx+Z/YhG1J/xPDgMHp0Ziw1Vnvg/3DZVLwGFH
+         qlaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763051428; x=1763656228;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r3r73UQNqtdeIQLhnX35BjU0Y880UTPCnGX02EQHqjc=;
+        b=TJpuAP2xDfnd7mrnemz2BRswkvyK/C/6ooGZrCsgbAUS+uAkjC3UwtwGcG3ue49TpO
+         MY5cnhUijoWoMidx0zxNguT33hkUQrT2LZcjiWC1CCmE8oiFlh5/hI2AZvnDJMpBy1Y6
+         c9eSbQQCe3knHUSmKffQVhpKMDK9ilZEqEhaV7QYgZzjwM5qiXlJhzcbbwskeDZglp68
+         RQ+91ffjqsYxDrAgQoeO0k3s66KO44npyARbNXAFHKeBBMn28Q4Qzebbt/p+3+ivgQxo
+         wjDMunSkMg6Dcm+qN0bxkqvbUdwAbBB+mmJ4TAeg4L3HSoGNiwLsBBeeDGi8rsBKB0HK
+         qa8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXYp0fLSi3tOgdHvR+Es+aeVDTT7YnzZDj8dR5xYJvPSX2LzNnVnSErVyqiNAxKWDxhrf4O2LLkVtKY4N8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyeWgHJyUGI7eiiAmtYsovPJP4S426W7ujWMIBvaKkVVPWsaVE
+	bsOq8G4UKK+i+Lwhr4ISWyeXjkALe+VJX8c7d8rKLH2WJi/ikXG5c9NQ
+X-Gm-Gg: ASbGnctgRLoBfV37tpiBx1MmADuPWLSy2utJ1Kd73sdS4b3yopVZ/d017Lyghs2g5Tx
+	qkgmUXMHLHf34FYgLSerzLlUFHeMSMWSGFc2B4vOgpU44QLE2UOsHDzkId204RnB7tr6Ad9vnNP
+	ph8ayJz5GhQraDxqULSKb06y4wbjas30WHsqFjsHQogtEcNfJauYGdlbl4bTkVgHrMtakGeaCZ3
+	WSXBKn6X6WcJ78w9MfUjV2JRHnD2WA1AGIJQwdbt3TkYxyB5NE36wTN0ufw3Q95093fLQeMjOsm
+	ZTrenDSOJzgmHLhKzUxQHdeMqTYeY/xXhE4nnQW/ypK7T9ptJ4eZiIpQNT1Z21+1gHiXBtuyxms
+	+L25VbJIcOz8HR75vMtIaasnaF9r0PJvHczHwMESRwGTNDLiV1igFSNabldtlF18yE4qdfuuRKU
+	FVh8A=
+X-Google-Smtp-Source: AGHT+IGgh7OmYpsm5WrF/6yqCl9whZpB9vMZS5weAAxXcUVQKGVt3MFL8OrudG1F7orP2JILXBJkAA==
+X-Received: by 2002:a05:600c:45c4:b0:477:79a0:515 with SMTP id 5b1f17b1804b1-4778fef6feamr205505e9.8.1763051427422;
+        Thu, 13 Nov 2025 08:30:27 -0800 (PST)
+Received: from skbuf ([2a02:2f04:d503:6f00:5125:db14:ba9d:8fdd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7b074sm4605741f8f.7.2025.11.13.08.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 08:30:26 -0800 (PST)
+Date: Thu, 13 Nov 2025 18:30:23 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, vkoul@kernel.org,
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH 0/2] phy: microchip: lan966x: Allow to invert N and P
+ signals
+Message-ID: <20251113163023.syl6nxq2mqkxpz4z@skbuf>
+References: <20251110110536.2596490-1-horatiu.vultur@microchip.com>
+ <20251110114216.r6zdgg4iky7kasut@skbuf>
+ <20251111095016.42byrgj33lp4bouo@DEN-DL-M31836.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM8PR04MB7762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2051d790-00e9-4ad2-e946-08de22d18096
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HoL4CfQls6nOW/sdgvKVlEfee5iysAym/QObsJzyew3q3oz6KBvFLFbRWJvB?=
- =?us-ascii?Q?M8iJhTTw4FhKXDM8hFzftn+gMZkEEyWDjkIs0FRJ4U9Br6Ar/BEs92ncCvAi?=
- =?us-ascii?Q?Ftls2Wqq+HWePnjf1INe865lgf45RHeK5mUlZD6nehb/fNNnFlNvezEuUHtS?=
- =?us-ascii?Q?gyQWXLVrkRmC6mgbAhe4P1LdeHKb/14U01JqK9/ZwJwHTKn6H7wJ7Z7mdnfv?=
- =?us-ascii?Q?1ZytTQg/CVwl7JhUpawsz8u/8Aa39AzDCaGVrLqBZofKho1OpcANR5uk7z42?=
- =?us-ascii?Q?3ZB1Z/WmgNwqSjbM46adBH57B7VUu2XJke6ApnuHmdMsitqtjHrdTvnxKtRv?=
- =?us-ascii?Q?A2NEPam4kPeXGpqtb9XdgZJ2xmnUPJ4M8xCHCXwQAERJbPiVqVTuWALqy3j+?=
- =?us-ascii?Q?fIN01jQMKziqGKNkJUYnjoCoDmzVc244IP9qrpeJN/k9ipWhIZC7EonJvX30?=
- =?us-ascii?Q?QviOGilOYtUlt11YjUhSdweMim7silOoIOqdAVQmFpbAsZNDd5W/AI3shdHE?=
- =?us-ascii?Q?yIG91uMQOLTWqxtVoXY1K036rR7EV3DVA0aZWhiGzMRzvsYTfadWJ8WO/s+F?=
- =?us-ascii?Q?0YvOvbACBZ6yKMHRTaRMrfftZ1S3nx3SUGuidQACDuH6CIIt9Y3fy76WV6L2?=
- =?us-ascii?Q?JaC/Nf3DQqCa7R9zrJJgZr9utMo9c+9oHccXy6vY0gXTWci3dCx+K3Ojh65z?=
- =?us-ascii?Q?9+j5pzjbFaQEA905TbNWVQK8RaNnkG4RKSG4VLmmvcvu7ynJIHZeEjVW5EtE?=
- =?us-ascii?Q?xx2ch0CYkOVYzFkTr9qodaxjYUoACkekEDrNjqzZUuojBCoQNuJzL6FUx3sE?=
- =?us-ascii?Q?djOWlU7Tgf3rK7qf+hzmKrp0s7dCIHA+lvnQ2TLOl+cqZW2eRd3TJQX4v1i+?=
- =?us-ascii?Q?pSpS63wHhGCaDgbmVJ6Xv7FWePsKEQALFzzG3IbYSWWnFjJak7sYQYO3ol54?=
- =?us-ascii?Q?9lpcQMNAAt5XbPHLkPe9FVpsGZOiHCpHpqGUgs3oqgV0ehVBTD+uVzmp7I6R?=
- =?us-ascii?Q?Nm1eU+vjoWXJQ2AFRN4a77AtzYiVj3CqohwZ9Q6UjT8lSKhUlpXEyYLKCPY6?=
- =?us-ascii?Q?IaD/64TY+ie6/R/BR6wbWHVZjZ4mzhnTI140EkxADntBbWEb8JHqR/ib/7/P?=
- =?us-ascii?Q?GFhjfHweTZTLL+4Gw7WZEWOjwF9Fr5DEZG9oDB/HEfDBdkCnnck+ddaZnNm4?=
- =?us-ascii?Q?MqKKDFvTOh8A8BgEvi7s/FQ+BNo8QlPsMvdzcGIJ5MOAQ29mXUIPbNSeMAZr?=
- =?us-ascii?Q?m1m1BAjNtgk+sJk8keAMWl9cvH64eo71E/zgbCJ2C30pWT6sgJbOBB2qq1AE?=
- =?us-ascii?Q?74F/HjufGQM98re1JRb15ycYmp4+xg/5//jnI8TDbNW8qlKb2yrOOI2pC6Qx?=
- =?us-ascii?Q?pRyvmJnotHzDwnw3gN1qlPumNoMe6/pyHNQ7rIeqhGIjimjkNpwpa3jYwvkQ?=
- =?us-ascii?Q?OLVL0WVQ53hCL6BWSwl7IVwqdlxfwH+46ju+ZKC0lttafL3SYDZ6a1iPnkRY?=
- =?us-ascii?Q?rmGZ9xZW16zYryD9aBCK+8V1VvuAuj6dhnhP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uJorF9cT53Ap2Zll839fZixXUmv5isrCk/k7B3fyB17XQi7HUTioonUBgS9f?=
- =?us-ascii?Q?p5T6z0ktGgjkE9NPv3Y3949ytQVcgxqOMfyQVh66kNbwkuNp00mx5nmG/2wQ?=
- =?us-ascii?Q?qzw1Z0dTOHBflw0Tc9iTXVsc82Ng+YcyPEFc63KBcOnf/AWvcW40Gok33xD4?=
- =?us-ascii?Q?Fm4f1ovhsMV4lPwKpXTNXroHeWGYx5ya2a6VkOicHi0+EYWexEZso6Sk3alY?=
- =?us-ascii?Q?3QAAbn/ggBdT/O9PTU5q4Vo7K7CWTXLhOXUISVJrysc1UvbIxAMPHfwwB4RZ?=
- =?us-ascii?Q?WYT7UpYoTK/8YaGE8xsCQ4vApjUmTQhvQhGo7JFHR55OLwY76jLn61m+2rv5?=
- =?us-ascii?Q?yJvZH2WVkT8AG35KY3PKVe/9VyZmmjGnRKm3viYh6ufMPiIEs+w/SsNHskR5?=
- =?us-ascii?Q?mzRwgGu12q+hdqNn5mzjbhTCCtHyHwFuHc5tdm6UO+KQrQuj+b6fk9Sne35u?=
- =?us-ascii?Q?yWNQqvW3NRx0jx9aPFBM43PRAmcWNmX4OuycN2jdwXF5HhkSgm27c/fCNd7r?=
- =?us-ascii?Q?UQMwS+QI2IQ83TzVKn+Nb8iTgMea1+X6lxGp+vbpirtCnoCpz5alZbTLDkGV?=
- =?us-ascii?Q?g4VdUEhd/WBU6hcd0/M4DYRjnSF7tuensZovsRDZ55ADxYsQTxIetxOoITiH?=
- =?us-ascii?Q?eLg5y22bnNak7v70//MRa1++PULjy0fr7RumDFLWJikknWyfw3nVwOgFc1ja?=
- =?us-ascii?Q?Gp2P29Dq3UAXO0IZtwFCw71rCMDnl+jQDRfVL6WxkF+x8klZeW+3Cytll2Gd?=
- =?us-ascii?Q?LfzxaCihrWtSSWq29A+VyxyadPAjz1RnIlZjEPECiATAm1wJIrScDlMj7+Xv?=
- =?us-ascii?Q?JTRJTcmy9V4uCLmOOIILIalGt/z1gJTlJkWkeE4fG/ujJs1ZPUaDO5yKRlwD?=
- =?us-ascii?Q?VkkeldgT4/Ulnue3mPRcFF/lHqo2+dML6+A5NHpGhOgv0ixlRdVlskhbi+KL?=
- =?us-ascii?Q?fjXhOKzPCk0RvW5bEo5DxRpQ/e/RnSsn+LmOQ9mGC+O3k66FemMjvSNFwS/x?=
- =?us-ascii?Q?PA9eYInm9AHqPeSloQNlHU2Nzf9LhiyZNI6pUJGkW4HApyYqy/6LZJNi7ET5?=
- =?us-ascii?Q?amelz68NuMdD/A6n/yeMVQPSCkz57A2gDbDf2uJBYrAfdejlPKtklFxPgVKz?=
- =?us-ascii?Q?vc0p182C4Ydv+uFIrqspu5bBeESwLSlDhoaC/H19Sa1Z3T0omgXdaYXuKfuS?=
- =?us-ascii?Q?PCkaSQGzNXhp0goBka4GKh5Ek3VYSEzP4buaxXiX4Gdltwv8qLYdSGMUP16R?=
- =?us-ascii?Q?R0HS/Ore/2dsqDh5++rr+DUyR8B7DEy5mxEZ3+kqbI3/NWA2jaVMp9SkkC5M?=
- =?us-ascii?Q?3t1d9yLSLeu/Xi0Mi/cWYKO/2DBlMgFiLnBykgxw5HwJpTYbe1Ay63bMk1ak?=
- =?us-ascii?Q?DHRvjewBwXYgRWeM3YLNCoMLF3xVK1Om4e9urjZf43T9xusX8UxcOcNgshMH?=
- =?us-ascii?Q?bKibF8hXxK0nJwDgKEiF8JUfsLJS/wZtKJvc7/kGCxghdbTRT5N1xiqNjMcH?=
- =?us-ascii?Q?JYPoagkJUGtzZxhBKwx+GGb4OGXXdQV0ZY7F39GF7pzvK86uSvMRU2ANPZ9O?=
- =?us-ascii?Q?5wV+BF7IBBs6TwcTNPD5EVZ7XCtmSDLD2DUoq+4+?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2051d790-00e9-4ad2-e946-08de22d18096
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:27:13.7904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D9TpTrqX5vl6OzaLi3DfIGb4YeM/lIktqDrbOHmCPYj/ZjVEmlYC9iI1jTSex+b5Va86m3i8ShJT1ZI8qxKUBQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7762
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111095016.42byrgj33lp4bouo@DEN-DL-M31836.microchip.com>
 
-On Wed, Nov 12, 2025 at 01:53:15AM +0000, Wei Fang wrote:
-> > > -	if (!of_machine_is_compatible("fsl,imx6ul")) {
-> > > -		reg_list = fec_enet_register_offset;
-> > > -		reg_cnt = ARRAY_SIZE(fec_enet_register_offset);
-> > > -	} else {
-> > > +
-> > > +#if !defined(CONFIG_M5272) || defined(CONFIG_COMPILE_TEST)
-> > > +	if (of_machine_is_compatible("fsl,imx6ul")) {
-> >
-> > There are stub of_machine_is_compatible(), so needn't #ifdef here.
-> >
->
-> fec_enet_register_offset_6ul is not defined when CONFIG_M5272 is
-> enabled, so we still need it here.
+Hi Horatiu,
 
-Is it possible to remove ifdef for fec_enet_register_offset_6ul?
-
-Frank
->
-> > >  		reg_list = fec_enet_register_offset_6ul;
-> > >  		reg_cnt = ARRAY_SIZE(fec_enet_register_offset_6ul);
-> > >  	}
-> > > -#else
-> > > -	/* coldfire */
-> > > -	static u32 *reg_list = fec_enet_register_offset;
-> > > -	static const u32 reg_cnt = ARRAY_SIZE(fec_enet_register_offset);
-> > >  #endif
-> > >  	ret = pm_runtime_resume_and_get(dev);
-> > >  	if (ret < 0)
+On Tue, Nov 11, 2025 at 10:50:16AM +0100, Horatiu Vultur wrote:
+> The 11/10/2025 13:42, Vladimir Oltean wrote:
+> > 
+> > Hi Horatiu,
+> 
+> Hi Vladimir,
+> 
+> > 
+> > On Mon, Nov 10, 2025 at 12:05:34PM +0100, Horatiu Vultur wrote:
+> > > Allow to invert the N and P signals of the Serdes for both RX and TX. This
+> > > is used to allow the board designer to trace more easily the signals.
+> > >
+> > > Horatiu Vultur (2):
+> > >   phy: microchip: lan966x: Add support for inverting the rx/tx lanes
+> > >   dt-bindings: phy: lan966x: Add optional microchip,sx-tx/rx-inverted
+> > >
+> > >  .../phy/microchip,lan966x-serdes.yaml         | 24 +++++++++++++++++++
+> > >  drivers/phy/microchip/lan966x_serdes.c        | 23 ++++++++++++++++++
+> > >  2 files changed, 47 insertions(+)
+> > >
 > > > --
 > > > 2.34.1
-> > >
+> > 
+> > For context, I am trying to describe the lane polarity property
+> > generically, and I've already blocked Daniel Golle's attempt to
+> > introduce the similar in intent "maxlinear,rx-inverted" and
+> > "maxlinear,tx-inverted".
+> > https://lore.kernel.org/netdev/20251028000959.3kiac5kwo5pcl4ft@skbuf/
+> > 
+> > I am trying to find out all there is to know in order about this
+> > feature, and I just noticed your patch, so I have to ask some questions
+> > in order to understand, had a generic property existed, whether you
+> > would have used it.
+> 
+> Yes, if there was something generic that would fit, I would like to use it.
+> 
+> > 
+> > So I see that you don't have OF nodes for individual SerDes lanes, so
+> > this makes your device tree structure incompatible with simple
+> > "tx-polarity"/"rx-polarity" properties. Are those something you're not
+> > willing to introduce? 
+> 
+> Do you propose to change the device tree to describe each SerDes lane
+> individualy?
+> Apparently in the lan966x_serdes we have also the port muxing which I am
+> not sure it should be there as it should be in the switch. I have done
+> it this way because I have use the phy-ocelot-serdes.c as an example.
+> If I change the device tree to describe each lane, then first I need to
+> take the port muxing which is fine for me. But there might be a problem,
+> if someone will use a newer kernel with an older device tree, it would
+> break the things?
+> 
+> > What about other stuff that's in
+> > Documentation/devicetree/bindings/phy/transmit-amplitude.yaml?
+> > You also won't be able to make use of the existing device tree
+> > properties if you don't have OF node containers for each lane.
+> 
+> To be honest, I haven't look at transmit-amplitude.yaml yet.
+> 
+> -- 
+> /Horatiu
+> 
+
+ffs :-/
+
+The radioactive piece of #### that is my work inbox moved your reply to
+the Junk folder, _even though_ you were already in the list of safe
+senders and domains. I just checked this thread to see what was going on
+and why you didn't respond...
+
+Yeah, the device tree binding I want to propose is per lane, so there
+needs to be an OF node for each lane.
+
+I can't easily parse the lan966x_serdes_muxes[] macros, assuming this is
+what you are talking about.
+
+Would it be possible to leave the SerDes muxing alone (with its
+#phy-cells = <2>) and just add the lane OF nodes as an extra? You can
+add new support for phys = <&phandle_directly_to_lane>, but that
+wouldn't remove the existing support.
 
