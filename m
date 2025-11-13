@@ -1,122 +1,76 @@
-Return-Path: <linux-kernel+bounces-898610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98060C55974
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:51:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E54C55977
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B90684E7709
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:48:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734544E2CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDB2296BDB;
-	Thu, 13 Nov 2025 03:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oXdIpCao"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695622877DC;
+	Thu, 13 Nov 2025 03:49:10 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD3C274B23;
-	Thu, 13 Nov 2025 03:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCC274B23
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763005698; cv=none; b=k5cq8hYkX/X3w2Ot64e3Tsdv8bNEoa1gnWO0TXuTRnApCLB6oMIP2tZ92BtAzqRcIvn3PnW1RMzbl4grusWD77xPH6uQ+guP+13jpgt5tfOjoN/HZ8Dskmc5BHwnAg/CWcvIXADRZ/i2WIc4gWCEi4k3x/99RpMWVX8Lo2uxBq0=
+	t=1763005750; cv=none; b=SN6XYIyOKmNc51vS7cQGJi1rZYoIy7yOK5UUeAPdY/uxKUXv+BAH2f+HPZXNsQMmPgCHSRVS/emV2HV+6nlqDVxoFtBl0iqSmRa2oea+omyiFiaiyuqbiB+kzIH3Sh+XeY38+l18/MOWH1N2auuWT3CycrWanSkyBhfXw8oOR8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763005698; c=relaxed/simple;
-	bh=/pGO0fdusEy8QxI603Svb6mphEh80MlylAtLpdXdDPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+IHcryfOTkNzd6fZhfon3ZDeUaxGq1b+669CAwPEZn/kT4UTIgeYI0XmYU5K75t7Tj5qnsPBw7kmFbz890BT4OJA5ZpheZ4FeRxgRBcxGFFLPq1oFNS75i7VRDyBjQpxjs8Zy0Y3RNbdxJLeygmR3vUd+rKXK9ZBe0eMgJ0A3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oXdIpCao; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1763005687; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=NQ0cb143Fk6+kUWaeT8PET+2Q8tlg6Zp5AevuF4vT2M=;
-	b=oXdIpCaok8o64rgHN9BMuepstqP9QIRy9Ffq5EXx7/qR66Goo4yS73wtpcwZFWTpPNZLTPAcDHh/WR1D9199cNnNAjO3OqKBvOvPXUso7cdAEsKsTkPYkbQBX4WCRXB3dRhw75dPSkKH4wGL/Yp064Nl3tBiku4NdTzwGjLkcRE=
-Received: from 30.180.123.14(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WsI3wdv_1763005686 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 13 Nov 2025 11:48:07 +0800
-Message-ID: <e1d26f84-7ea2-46de-8ab9-31e49b485832@linux.alibaba.com>
-Date: Thu, 13 Nov 2025 11:48:05 +0800
+	s=arc-20240116; t=1763005750; c=relaxed/simple;
+	bh=BRkGrLQrNSh8R9z5Glb4y5FFkCpIsIQK4TzAzzM+zTM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eSETBUPU3FBxAXpvYAxQ+vyIqirIRcsYXsVo3cZ9RYn3I7TTl/DwgOOcq3xhPjG4ob5rxaVU/Rc0qMQ9jLG0HDUkPSdXHddxdJskgqcUK46JEueDxH+TmoOZE4T6F2Fn67E73L+dALy5UdVekPadEC1Wgx+fJHlG+Bn4ZbHqUak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43329b607e0so6637315ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:49:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763005746; x=1763610546;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRkGrLQrNSh8R9z5Glb4y5FFkCpIsIQK4TzAzzM+zTM=;
+        b=eCyPKK20E0GewCwSEasUkOiot815zSyKZa0HWwCMLwsGr5bDE6c7zrQtuhctrneGyY
+         /kh1Om0BMTYp6+BwwijwhBhw39QJ1SUjBs0uzxsdFQiL8887IFtsghk1CQvi68hsWZal
+         XNO8zp1Ztqw+H2+5QBDzJmEVca8oNbU39wBlCgLAlFg/9RPPJmuL/+QabBisPCH59Vv9
+         2KjZ4w3eUiAuFj+RIQsHkKP1w+vAHynEqc46mYO5rDcscnqdbx1k72PKPYhKejQHLdsb
+         Sgon/ceXsaKtm6EyziEco9mdHx2/nyue6DPu2qgkLkvizDqRSt+9dCgW4et2IN4AI1mH
+         RuDA==
+X-Gm-Message-State: AOJu0YzlmnQmdRq7FopirUgwqjrQwnl1lWp5KwqK/LAZR7pm2phnN7jR
+	ldDCy/NVeXd/MuRMMfBlHY46h2WRxcJhyBn5yt0bq21ud6g9ReaGvDzoj2dNtsycOvMaYL8/FOs
+	g4X8L/1f7GMzqK0d/EkmQIiqMbwZ/dP/cU9TDi6kYPlfX3h+2hX+nuAhK3ns=
+X-Google-Smtp-Source: AGHT+IH2nkNU9nJBktqU9EomF7NWD6cuRDMlCr4fWsHjpaw7xUUEEGISck2wSGjD6ttl6cWhpyOym6y2WawOPKIsSqrmqumMFi0P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] make vmalloc gfp flags usage more apparent
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc: Uladzislau Rezki <urezki@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20251112185834.32487-1-vishal.moola@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20251112185834.32487-1-vishal.moola@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1705:b0:433:7d04:55da with SMTP id
+ e9e14a558f8ab-43473de79b1mr69423835ab.31.1763005745765; Wed, 12 Nov 2025
+ 19:49:05 -0800 (PST)
+Date: Wed, 12 Nov 2025 19:49:05 -0800
+In-Reply-To: <67c72724.050a0220.38b91b.0244.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69155531.a70a0220.3124cb.0014.GAE@google.com>
+Subject: Forwarded: test fix
+From: syzbot <syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On 2025/11/13 02:58, Vishal Moola (Oracle) wrote:
-> We should do a better job at enforcing gfp flags for vmalloc. Right now, we
-> have a kernel-doc for __vmalloc_node_range(), and hope callers pass in
-> supported flags. If a caller were to pass in an unsupported flag, we may
-> BUG, silently clear it, or completely ignore it.
-> 
-> If we are more proactive about enforcing gfp flags, we can making sure
-> callers know when they may be asking for unsupported behavior.
-> 
-> This patchset lets vmalloc control the incoming gfp flags, and cleans up
-> some hard to read gfp code.
-> 
-> ---
-> Linked rfc [1] and rfc v2[2] for convenience.
+***
 
-Just FYI, I hit this warning when booting today's mm-new branch.
+Subject: test fix
+Author: rpthibeault@gmail.com
 
-[    1.238451] ------------[ cut here ]------------
-[    1.238453] Unexpected gfp: 0x400000 (__GFP_ACCOUNT). Fixing up to 
-gfp: 0xdc0 (GFP_KERNEL|__GFP_ZERO). Fix your code!
-[    1.249347] WARNING: CPU: 27 PID: 338 at mm/vmalloc.c:3937 
-__vmalloc_noprof+0x74/0x80
-[    1.249352] Modules linked in:
-[    1.249354] CPU: 27 UID: 0 PID: 338 Comm: (journald) Not tainted 
-6.18.0-rc5+ #55 PREEMPT(none)
-[    1.249357] RIP: 0010:__vmalloc_noprof+0x74/0x80
-[    1.249359] Code: 00 5d e9 6f f8 ff ff 89 d1 49 89 e0 48 8d 54 24 04 
-89 74 24 04 81 e1 e0 ad 11 00 48 c7 c7 68 b0 75 82 89 0c 24 e8 7c bf ce 
-ff <0f> 0b 8b 14 24 eb ab e8 f0 61 a5 00 90
-  90 90 90 90 90 90 90 90 90
-[    1.249360] RSP: 0018:ffffc90000bebe08 EFLAGS: 00010286
-[    1.249362] RAX: 0000000000000000 RBX: 0000000000001000 RCX: 
-ffffffff82fdee68
-[    1.249363] RDX: 000000000000001b RSI: 0000000000000000 RDI: 
-ffffffff82a5ee60
-[    1.249364] RBP: 0000000000001000 R08: 0000000000000000 R09: 
-ffffc90000bebcb8
-[    1.249364] R10: ffffc90000bebcb0 R11: ffffffff8315eea8 R12: 
-ffff88810aac98c0
-[    1.249365] R13: 0000000000000000 R14: ffffffff8141abe0 R15: 
-fffffffffffffff3
-[    1.249368] FS:  00007fbc9436ee80(0000) GS:ffff88bec00e1000(0000) 
-knlGS:0000000000000000
-[    1.249370] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    1.249371] CR2: 0000562248eda010 CR3: 00000001028a8005 CR4: 
-0000000000770ef0
-[    1.249371] PKRU: 55555554
-[    1.249372] Call Trace:
-[    1.249373]  <TASK>
-[    1.249374]  bpf_prog_alloc_no_stats+0x37/0x250
-[    1.249377]  ? __pfx_seccomp_check_filter+0x10/0x10
-[    1.249379]  bpf_prog_alloc+0x1a/0xa0
-[    1.249381]  bpf_prog_create_from_user+0x51/0x130
-[    1.249385]  seccomp_set_mode_filter+0x117/0x410
-[    1.249387]  do_syscall_64+0x5b/0xda0
-[    1.249390]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[    1.249392] RIP: 0033:0x7fbc94f4c9cd
-
+#syz test
 
