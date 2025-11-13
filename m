@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-899409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68338C57C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:46:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8354C57A28
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51273501C7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:24:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A7F93553C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3B2351FDF;
-	Thu, 13 Nov 2025 13:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A9F351FDA;
+	Thu, 13 Nov 2025 13:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DMoxs1wk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDUmRthq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B9346A16;
-	Thu, 13 Nov 2025 13:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDB43446AA;
+	Thu, 13 Nov 2025 13:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040256; cv=none; b=X4xKnm6Fvf6ewGTwjhtGrBbB6QM1tQ12uc1sTeNZQedAxRTT5OsYBXXe3d22XoyWmSq73GH9gB4b3jeUtRp/abKelJSPM/dJ1brpcbMjbyLupJ/mZJnbvFyUhjEAPph/RmYK67aLRoaN/jJYuRSs4+gwn5wQLQHzlHK2MpRiBhE=
+	t=1763040276; cv=none; b=C27PrbZYVc2BxlcSyB+twEc20BvWeed9ozUqO4kOtJpS2O899bpqXxXN2ZahnFfBp5qbjzevpWKpxwYhA/Z3xVaLtb7qi9gECipZruZssCcFAWVMT2PqtF9hpnU1xkczmdwYX1aZbI/s1DM2X8ljuvX1oXHXP4oZa/prBkDRI4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040256; c=relaxed/simple;
-	bh=8MEvE85ASs8TWT1DKTYjn3gNwdHSLFIkIMQR4I4pw6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uI3IuZsBNQti9xqz48ndwVBsKyh/exae8spAxlLF19b3/ArTz+VJJViYqvoRR6dZOkMBtbg04CYMi0YmAgLCFvFG5L2n1QZDo2m58UMs35IYi3vNswbFxVe4xQbytqlZRx5rfh43THX35Ezujtbt/+jlGpMKzblbrlAKXIwpzdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DMoxs1wk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379BDC116D0;
-	Thu, 13 Nov 2025 13:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1763040256;
-	bh=8MEvE85ASs8TWT1DKTYjn3gNwdHSLFIkIMQR4I4pw6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DMoxs1wkyxu7gUQKIKtD+IFA3JWQsWrDLT6LUY7zJRTr+RtZdn0i52yunOBPH99xE
-	 yQPn67kI7GAgWzfHHdMghQHgLl+9HOidVPNIhUgyWhNl/r5Qn5MNvJ7BI68+aE25Yb
-	 7/vXOM4i+iZxJcL/aWsKWsJ663VZ3gGvRrr7RIJs=
-Date: Thu, 13 Nov 2025 08:24:14 -0500
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Cezary Rojewski <cezary.rojewski@intel.com>
-Cc: liam.r.girdwood@linux.intel.com, peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com,
-	kai.vehmanen@linux.intel.com, pierre-louis.bossart@linux.dev,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	amadeuszx.slawinski@linux.intel.com, sakari.ailus@linux.intel.com,
-	khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, hariconscious@gmail.com
-Subject: Re: [PATCH v2] ASoC: Intel: avs: Fix potential buffer overflow by
- snprintf()
-Message-ID: <2025111313-submerge-strength-ada6@gregkh>
-References: <20251112181851.13450-1-hariconscious@gmail.com>
- <2025111239-sturdily-entire-d281@gregkh>
- <bc479d42-af01-466f-b066-1da9a99b29bb@intel.com>
+	s=arc-20240116; t=1763040276; c=relaxed/simple;
+	bh=OVlfDob210xkBYPcrnR/Kfy4T4yeohtxEqflJ1gh0rw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eE+zk8glJ7vsUDqPFKj7GmFZMhjV43j75YN5w/wBVyLYWhvML5Ec0hRmUk9mVRa+KF7vkHIMrTxDcjmvW9lAA+67cCvU0XXE1V0JC9kz1do/COaKJrxeCAoeiVwwEP0+Y6eJrKEgFRTJJBfxzNOFvRe+DIGfVwBZq44zBd7cnYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDUmRthq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A165C4CEFB;
+	Thu, 13 Nov 2025 13:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763040275;
+	bh=OVlfDob210xkBYPcrnR/Kfy4T4yeohtxEqflJ1gh0rw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EDUmRthqMCW49fs/aqdy1TYnjLXr/3cQveQtaZ637a6Zb8064y0oOc75Mf5clyBkK
+	 H2Flzt99PQ+qAeY+3xms3zdc209/qgd4XjBaoIlmoDSB8tIvOHa57UHrg600S3gOJM
+	 wDKmzGadGGbz6KSnXQXNHSoh8cE1uPuCGsMY489O5JWRiJzFuQq/U0nQ7tHYvjpUyX
+	 0tUNPI8KIllS+UQ0E/wRJT0lwOO6frDo/GMFGIBNLauCslZ6Wis4L3UwFs9x6YWQUR
+	 CPdyspYkATs2jPzC/AnsamcJfnTc7UWVsVkcrRdSeinWTxsAreC3hlBebntGxzZXEm
+	 qUDtii7kf62sQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Christian Loehle <christian.loehle@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
+Subject:
+ [PATCH v2 1/4] cpuidle: governors: teo: Drop misguided target residency check
+Date: Thu, 13 Nov 2025 14:24:31 +0100
+Message-ID: <5955081.DvuYhMxLoT@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5035693.GXAFRqVoOG@rafael.j.wysocki>
+References:
+ <4701737.LvFx2qVVIh@rafael.j.wysocki> <5035693.GXAFRqVoOG@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc479d42-af01-466f-b066-1da9a99b29bb@intel.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 13, 2025 at 09:46:12AM +0100, Cezary Rojewski wrote:
-> On 2025-11-12 8:20 PM, Greg KH wrote:
-> > On Wed, Nov 12, 2025 at 11:48:51PM +0530, hariconscious@gmail.com wrote:
-> > > From: HariKrishna Sagala <hariconscious@gmail.com>
-> > > 
-> > > snprintf() returns the would-be-filled size when the string overflows
-> > > the given buffer size, hence using this value may result in a buffer
-> > > overflow (although it's unrealistic).
-> > 
-> > unrealistic == impossible
-> > 
-> > So why make this change at all?
-> 
-> The problem will never occur in production-scenario given the AudioDSP
-> firmware limitation - max ~10 probe-point entries so, the built string will
-> be far away from 4K_SZ bytes.
-> 
-> If the verdict is: ignore the recommendation as the problem is unrealistic,
-> I'm OK with that. Typically though I'd prefer to stick to the
-> recommendations.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-That's fine, but don't claim that it fixes a buffer overflow when that
-is NOT what this is doing at all.
+When the target residency of the current candidate idle state is
+greater than the expected time till the closest timer (the sleep
+length), it does not matter whether or not the tick has already been
+stopped or if it is going to be stopped.  The closest timer will
+trigger anyway at its due time, so if an idle state with target
+residency above the sleep length is selected, energy will be wasted
+and there may be excess latency.
 
-> > > This patch replaces it with a safer version, scnprintf() for papering
-> > > over such a potential issue.
-> > 
-> > Don't "paper over", actually fix real things.
-> > 
-> > 
-> > > Link: https://github.com/KSPP/linux/issues/105
-> > > 'Fixes: 5a565ba23abe ("ASoC: Intel: avs: Probing and firmware tracing
-> > > over debugfs")'
-> > 
-> > No, this is not a "fix".
-> 
-> The patch isn't worded well, that's clear.
-> While the patch is an outcome of static-analysis, isn't it good to have
-> 'Fixes:' to point out the offending commit regardless?
+Of course, if the closest timer were canceled before it could trigger,
+a deeper idle state would be more suitable, but this is not expected
+to happen (generally speaking, hrtimers are not expected to be
+canceled as a rule).
 
-No, it is not "fixing" anything.  Please don't claim that it does.  It
-is "just" a code transformation to get rid of an api that some people do
-not like.
+Accordingly, the teo_state_ok() check done in that case causes energy to
+be wasted more often than it allows any energy to be saved (if it allows
+any energy to be saved at all), so drop it and let the governor use the
+teo_find_shallower_state() return value as the new candidate idle state
+index.
 
-thanks,
+Fixes: 21d28cd2fa5f ("cpuidle: teo: Do not call tick_nohz_get_sleep_length() upfront")
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-greg k-h
+v1 -> v2: Subject and changelog modifications
+
+---
+ drivers/cpuidle/governors/teo.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -458,11 +458,8 @@ static int teo_select(struct cpuidle_dri
+ 	 * If the closest expected timer is before the target residency of the
+ 	 * candidate state, a shallower one needs to be found.
+ 	 */
+-	if (drv->states[idx].target_residency_ns > duration_ns) {
+-		i = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
+-		if (teo_state_ok(i, drv))
+-			idx = i;
+-	}
++	if (drv->states[idx].target_residency_ns > duration_ns)
++		idx = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
+ 
+ 	/*
+ 	 * If the selected state's target residency is below the tick length
+
+
+
 
