@@ -1,259 +1,219 @@
-Return-Path: <linux-kernel+bounces-899832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D751EC591AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:23:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DD9C59013
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 197EA560870
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D4095610F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910F1365A0B;
-	Thu, 13 Nov 2025 16:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E995C3587A4;
+	Thu, 13 Nov 2025 16:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjxCpYfr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cPNdSBhC"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010017.outbound.protection.outlook.com [52.101.61.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D7D363C42;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051468; cv=none; b=bt5Fr+fwpGn7NINJMuywi4rpmZ8TGgDJTlNe877ga3GHL1+MwqSk8bPOrrAE9LvRTS//zNeKjv7V8hSOBr8CGM1roZea7fNukHTOCTEwExGxWR2aDTktfBHreyfG7PfwSbisIafw1rl1RQBVtbQvwEgJTONBpLxUa+3i2nsFQJM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051468; c=relaxed/simple;
-	bh=ImsBrSsWCbftesE+Cb1PYnzgguu50ch+W6P48qu+dUI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZjCwsc/1MNKdFe/4P5nlTD1x5MG1zFE1vJm8eoodC0O0tfyKPGcf5YI/9qoeeGFBIOpqP4mQeym8oljoH/5UP0oDNgDl4f+9LTmhih1tv81kf3a/tzXK2okEOK8ynWX9mrM7SCAWuSuPAHb4GWUpu9CX4Ey5Wv3y47C68Ocy6Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjxCpYfr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 87BA8C2BCC4;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051467;
-	bh=ImsBrSsWCbftesE+Cb1PYnzgguu50ch+W6P48qu+dUI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qjxCpYfrA+jv9Cs/yv229WgXJxRN+0rlmD69yl8QvZ+mQZUWi7J9/5KxAT//fNUpu
-	 Xqax7/rVDSDd372Dy60R8t+3UMZhlNTT7hNVug1DlxJLcsuvj7Se96Q4aE4M3eEhQn
-	 4yo4wxAUEckApMesXY7cBeilI7CCmoemizq7I6Mo9fdGq3CnLxRWVSk059BjsOmQ3Y
-	 nW3FdeyKjLcKwvSEloJVp2RxBAgvCmi4yGycATT43pX1Ee4ftH4S+focUvYR9Q+LIO
-	 ks33tthtdECLMINZTMb3FOUzsvrkIFFeXitKbySepsCDjcWbh0QVMjiwoHKVasDp21
-	 RATVEsFBFzg9Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59690CD8CA7;
-	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 13 Nov 2025 17:31:03 +0100
-Subject: [PATCH v6 7/7] Input: synaptics-rmi4 - support fallback values for
- PDT descriptor bytes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555AA357A55;
+	Thu, 13 Nov 2025 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051508; cv=fail; b=CPZugGJV6z7bxJFGSeW0iFH9185e/tcuQ/NMAkNACoubkGqHSQajRoND8n3hxAf+IG3fn8PN0jx8ZTZUY4OJWuU7iySwc0/L6brX6kD5ff/0QQxHikcr7HpOZ74roegxYl4QtzFAx/uCFbWyB69v7Mt7ow4thVZiwVe/NyB8eug=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051508; c=relaxed/simple;
+	bh=VLwrEk9sTry7zO426W5BMd/MAFppZePgk92WFQFS4Zo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s8Pctbj8igU9NHes98RzGxW1fk3XQaF42C61Zi18Nr5hrff7Y5+flL3WGDH9P9p2ryN0SCf71QN/RmcJkiRkegI3T24XEjtdLpdpLRwVkcYdEASrL1isluylaEjseoYSAzfXKOYHRxKF7mX5DXNMvNbDiOMeKxI+Eq6AdhjWf5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cPNdSBhC; arc=fail smtp.client-ip=52.101.61.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r8i4vO0SIqbEb/BR4S57SORh+nVa3SNtAiszl6sl35F1aFLNhCRu0Tgjmxc0UoRs1V0Q29HBRSHynwLdq3YqSQcmV47WzTpcXwkbBk1eaC5GtIzy3hBlIjnKQtDy4nDVBh3m6TjsibJXmi0NV7+VH6j059WpE48PP3fwAWudSwhWeTE5xaOKtIc95kzuu28J/jWSAKTzL0fuh9ipFKPeHvGni8ZtdYlQ7rBYs1DXAvtw5lBKT1/s5h+0x7QOVKxSh9kXWSENfnz5WLFYrrT+OQJrUmLUVlQPtz8ie43gJ2I3iHhG2hsa2Yu5WwOv78FXcAwDSRHWwmNyc3yjyza6ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
+ b=wvCmKXZiYofkXne3NNQQYEl2ZuHvWBKFQDnBxDB8rZD4BOd9am4V+4C6Ck4+Ci4BDwVa+g5ItHSnrverl1NSfKziWFEAqF/4URjz6tnfnfd6nFB8UXZxn85I2XuF/QCCWNNVol1ft6ujUT7wyJsXy+QisUhUmCfGDEC0oga7shljRkDRt2KlMtPDDcTFDZiKNbrwerm4IL+NI8cHW+EhnTkkv5HQDbFCmSRq1mNCIFMe2m4tGStaS5D7+SOmfnAZb/mNM9GLKn+Qat+jpksCQQ29qs61QDCDu91SJBUuNGgyJslR40WB0ugwY3lgeUCc9hSg6armMyk+uraOWrexXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
+ b=cPNdSBhCyTcoo0fxAggYu7tYwZZrNp87qCtEMlsqJRFfTLDdhzksaaCmZiN+H+gJNXNLnOm4TYXXSIS05X1LjiUvrGutSq5w69MOv0D1HuoaFDz5K5FCueshJ26h2uf3zvpbRzd5ISYuRyal4shqyAlsccsRU7ikUuS24C+PEJ/ymDcXmAikLnu+2OGQE9KTRGh3BE85RjXl4uRQ+r6NKzvtrWjaIrKvlyoY8RUCE05dCYbUzCDQroduDvY+pU1iQchw/hb11HDLLMfuQSyywjQrT05AKiil92SjkJUg4k7XxGBXCaxnunH5Yd+IN2tuaaXO1mh/zR+t7h2aNO6abg==
+Received: from SJ0PR03CA0131.namprd03.prod.outlook.com (2603:10b6:a03:33c::16)
+ by SA3PR12MB7879.namprd12.prod.outlook.com (2603:10b6:806:306::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 16:31:40 +0000
+Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c:cafe::f) by SJ0PR03CA0131.outlook.office365.com
+ (2603:10b6:a03:33c::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
+ 13 Nov 2025 16:31:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 16:31:40 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:31:17 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
+ 2025 08:31:17 -0800
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Thu, 13 Nov 2025 08:31:14 -0800
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <pshete@nvidia.com>, <nhartman@nvidia.com>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <kkartik@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Fix GPIO name collisions for Tegra410
+Date: Thu, 13 Nov 2025 22:01:12 +0530
+Message-ID: <20251113163112.885900-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-synaptics-rmi4-v6-7-d9836afab801@ixit.cz>
-References: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
-In-Reply-To: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
- Vincent Huang <vincent.huang@tw.synaptics.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Casey Connolly <casey.connolly@linaro.org>, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5650; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=WDxThFuTW5xe6P2WYsbevC4RS4y/BvA9+hBHQwKvAJE=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFgfJZS4oQt3CYBKaahhk76Gf+LJqmETicSXSh
- LQs/aKqEFaJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYHyQAKCRBgAj/E00kg
- cvTED/9o0xvCKweql1jKRZ1ltYvYsDJWnYgxmZAlbO0XL5K0kgJX4xvJ0w+7KZKwSJmREszyjMX
- uw4wiFyMxn3lSEJD1NEEbfk0qF8gvUv0rKCTzRTY3yx/gO1BLEMcTvxuLdqrQNAv9WI8xEGpGel
- HE9kS/SUf9sS+DNLRVsLn7eAfYzqBL+BCjqJrDA7Zs/CBh81ab0Wwvg33V8y0F/i6cX2lt5QpgW
- NcvwAtFqoJzPhrqupY929bQIdfCI2yOVyuRxmbqWOQmzBXr6U5bTDtiYupfqkIPgKr908J9JapP
- d0h+4SduEnHHrsN9yFdqU98I7skD9mNREUutvzedrAgG1V6QQsW4JpX+vHvLcKPJ5fXylXWlRs1
- UKwVn7dd+6WuJtPydTizVEOykj2kdJ64/niTfW4OUbuJDRTaPS3gDhGt8eRLT903vtkW76JduQ6
- 9FYtjYimVc+Lh5VX7iHe0KaDZEsRii37wveTvUkdtuyVEOUqr75hXZSEHIlS0d3t8Bji9ZON21G
- Bo0oSBbn1lDKKoHs30i6G7j5bAVTHC/CS3N2yr06V/ltR2rIQF7raNI4EzXlfJSquXUElmbdeqT
- lX2yA5V0lsSpSp0V3plDF6vzv7YfsZbE7PXjtXy9tmwmn2RKA12WykfEmsWVy10kSfmyMay3ya6
- Z/3zn38+y8pZZvw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|SA3PR12MB7879:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e926c76-e074-4462-c395-08de22d21fba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?I4IP63rUkjd7cduICucilmeBFSa1F63prPfM3pGfyh84MwVfb2zHVS9WyJQ0?=
+ =?us-ascii?Q?z05G3AGQIpOhppuhr83gxKcgZV8akwUMXKo+uob6G250o3TtQXlbiysUzXnJ?=
+ =?us-ascii?Q?OtdCcqZIbXn5M7BfgGm4DDeFWO4oqHgQvJQrq2peBNiZypMkPz9l8gc6mNeg?=
+ =?us-ascii?Q?XEzUfVQqh3BcopzpRNmDwxkXT5jzXaAftrteaIWY8e2RpH4M1LB4AsduWXag?=
+ =?us-ascii?Q?GrqXffAfJnC4dq4RhuLj61ut+8r94SgiesJycsj7sy/n26j+hJNtI+XEI4rE?=
+ =?us-ascii?Q?NPjPK5sPC4VuJPIAvKXWfUu2Iq0s5NeeFfpGNt5noRgcK04PY5uO5iQNhsS9?=
+ =?us-ascii?Q?bGn1Tqr0WoodNyDY+PE0EgBrEuWOufhMSSlLiOl0nnAH4cELsYbpaqdEZ+N8?=
+ =?us-ascii?Q?nPTi83yEXoRERjzDzlhiUIBEE7E3dUPQV7BCRL7okxIBttf2T6yAZVG/x6ib?=
+ =?us-ascii?Q?PcUo6q5UEplnMecHpQmujvn9KW/vbmyKuV6tRftSfTMOZ6dAO4tqdCMljJ2/?=
+ =?us-ascii?Q?4WYEaVVgLiSqkqC/52ws/Wx7T7aUyV3kcQKcAfi8lhsXgx6lTjsdV+1ZuJ2L?=
+ =?us-ascii?Q?7DtCEb8pQSsSGUOreNk9yuZc7gYjMZTb0EPi1uPqbXJFWTXQy4g1fCcU7TnZ?=
+ =?us-ascii?Q?/QDwebA9Aoohb6Zn70LlPBqQznppJuhxZWG01MnNoJ5+yRxnFvc5Z0jL8E2B?=
+ =?us-ascii?Q?Wh6g7zaLuNmNcm0h1LkigM2bNz/vzDoAXL7voopPqk7Al+VlBys1t3LDXOUx?=
+ =?us-ascii?Q?arffNvCGq3NoaFs+Zh5PB5ZR0gEEm/k1upqj2KQFf2spXrmUvFukgYRBAfUg?=
+ =?us-ascii?Q?/dCM0/xJo/s0C+L60CxEz3MdDVAHt2reQZJPWCHpRK4vOIFxLyf2RnGhWxNv?=
+ =?us-ascii?Q?eA5EcxZzGTPswJUkN4/ouLr/iEBCgjCR0ZSb4xIPqNXGHwGng9KpMA2IGkAf?=
+ =?us-ascii?Q?voHW6zelxKXb+Bt8/iGBDJMMCYOLdomP1KgX8GCJ8uddlj0Km++MzfY911nt?=
+ =?us-ascii?Q?Xmsg+mBmqCio+5lY3Ft6WPYjt52zroRWeFLFKf6yDTWUA7q+1MNgvSxrBLGg?=
+ =?us-ascii?Q?lznorczklwq/VUWf89Qv7y8svaxXUHK2GdkxSK2rwPlVnSYb9ANBXbPGvZjO?=
+ =?us-ascii?Q?lbwGDIfoDntZwjexaXDx436IsPpW6+y3IUM9icGaww7ecg6fZPuC8Zmx03ty?=
+ =?us-ascii?Q?euxP4rl7WrqXBhP3NF3neXvlku+6EEXe+K0Ccr7xep3cMhMT3GguugkVFT3G?=
+ =?us-ascii?Q?d3qnUl16YeSKw6zbTNhepARWLPYzQepvtIof6eBwuMVerGqx+icLAXr92ymy?=
+ =?us-ascii?Q?KoMq5ll0wE4CLjwOHWs8CuKS8M/OmNxiJgtaI/dSF7cwcsdtdD/8n2x30FUH?=
+ =?us-ascii?Q?Bu5f+VWJ7J9NLpOeDA22bmSqlIcOBO7dUke5LMBMpSwtm/sfCF05aGUBUWAW?=
+ =?us-ascii?Q?+hVsbBh/bwL6SSiCm5kNFE/z8SsHHodwwQDyx6xG5tIsvO6N/9xoiFxyM8CQ?=
+ =?us-ascii?Q?DV96CBkgeGTpvFQ52ZsBw3JA4n+AmAXgozqPfgNcprNj6xvDaSz/mEOPBHRM?=
+ =?us-ascii?Q?4WkX5dAsssyFEEQqNiA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:31:40.2623
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e926c76-e074-4462-c395-08de22d21fba
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002319.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7879
 
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
+On Tegra410, Compute and System GPIOs have same port names. This
+results in the same GPIO names for both Compute and System GPIOs
+during initialization in `tegra186_gpio_probe()`, which results in
+following warnings:
 
-Some replacement displays include third-party touch ICs which do not
-expose the function number and the interrupt status in its PDT entries.
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.00'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.01'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.02'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.00'
+  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.01'
+  ...
 
-OnePlus 6 (original touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2b 22 0d 06 01 01)
+Add GPIO name prefix in the SoC data and use it to initialize the GPIO
+name.
 
-OnePlus 6 (aftermarket touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2c 23 0d 06 00 00)
+Port names remain unchanged for previous SoCs. On Tegra410, Compute
+GPIOs are named COMPUTE-P<PORT>.GPIO, and System GPIOs are named
+SYSTEM-P<PORT>.GPIO.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-[codeflow adjustments, checkpatch fixes, wording]
-Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
-Co-developed-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Fixes: 9631a10083d8 ("gpio: tegra186: Add support for Tegra410")
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 ---
- drivers/input/rmi4/rmi_driver.c | 62 +++++++++++++++++++++++++++++++++++------
- drivers/input/rmi4/rmi_driver.h |  2 ++
- include/linux/rmi.h             |  3 ++
- 3 files changed, 59 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-tegra186.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index 93a190e333c66..bb1db5bbb3abb 100644
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -462,9 +462,10 @@ static int rmi_driver_reset_handler(struct rmi_device *rmi_dev)
- 	return 0;
- }
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 83ecdc876985..b1498b59a921 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -109,6 +109,7 @@ struct tegra_gpio_soc {
+ 	const struct tegra_gpio_port *ports;
+ 	unsigned int num_ports;
+ 	const char *name;
++	const char *prefix;
+ 	unsigned int instance;
  
--static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
--			      struct pdt_entry *entry, u16 pdt_address)
-+static int rmi_read_pdt_entry(struct rmi_device *rmi_dev, struct pdt_entry *entry,
-+			      struct pdt_scan_state *state, u16 pdt_address)
- {
-+	const struct rmi_device_platform_data *pdata = rmi_get_platform_data(rmi_dev);
- 	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int error;
+ 	unsigned int num_irqs_per_bank;
+@@ -940,8 +941,12 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 		char *name;
  
-@@ -475,6 +476,21 @@ static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
- 		return error;
- 	}
+ 		for (j = 0; j < port->pins; j++) {
+-			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
+-					      "P%s.%02x", port->name, j);
++			if (gpio->soc->prefix)
++				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
++						      gpio->soc->prefix, port->name, j);
++			else
++				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
++						      port->name, j);
+ 			if (!name)
+ 				return -ENOMEM;
  
-+	if (pdata->pdt_fallback_size > state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1) {
-+		/* Use the description bytes from the driver */
-+		buf[5] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS];
-+		buf[4] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1];
-+
-+		error = rmi_read_block(rmi_dev, pdt_address, buf,
-+				RMI_PDT_ENTRY_SIZE - 2);
-+		if (error) {
-+			dev_err(&rmi_dev->dev,
-+					"Read PDT entry at %#06x failed, code: %d.\n",
-+					pdt_address, error);
-+			return error;
-+		}
-+	}
-+
- 	entry->page_start = pdt_address & RMI4_PAGE_MASK;
- 	entry->query_base_addr = buf[0];
- 	entry->command_base_addr = buf[1];
-@@ -547,7 +563,7 @@ static int rmi_scan_pdt_page(struct rmi_device *rmi_dev,
- 	int retval;
- 
- 	for (addr = pdt_start; addr >= pdt_end; addr -= RMI_PDT_ENTRY_SIZE) {
--		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, addr);
-+		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, state, addr);
- 		if (error)
- 			return error;
- 
-@@ -1024,9 +1040,13 @@ static int rmi_driver_remove(struct device *dev)
- }
- 
- #ifdef CONFIG_OF
--static int rmi_driver_of_probe(struct device *dev,
--				struct rmi_device_platform_data *pdata)
-+static const u8 rmi_s3706_fallback_pdt[] = {34, 41, 01, 01, 12, 01};
-+
-+static int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+			       struct rmi_device_platform_data *pdata)
- {
-+	struct device *dev = rmi_dev->xport->dev;
-+	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int retval;
- 
- 	retval = rmi_of_property_read_u32(dev, &pdata->reset_delay_ms,
-@@ -1034,11 +1054,37 @@ static int rmi_driver_of_probe(struct device *dev,
- 	if (retval)
- 		return retval;
- 
-+	/*
-+	 * In some aftermerket touch ICs, the first PDT entry is empty and
-+	 * the function number register is 0. If so, the driver
-+	 * may have provide backup PDT entries.
-+	 */
-+
-+	retval = rmi_read_block(rmi_dev, PDT_START_SCAN_LOCATION,
-+			buf, RMI_PDT_ENTRY_SIZE);
-+	if (retval) {
-+		dev_err(dev, "Read PDT entry at %#06x failed, code: %d.\n",
-+			PDT_START_SCAN_LOCATION, retval);
-+		return retval;
-+	}
-+
-+	if (!RMI4_END_OF_PDT(buf[5]))
-+		return 0;
-+
-+	/* List of known PDT entries per compatible. */
-+	if (of_device_is_compatible(dev->of_node, "syna,rmi4-s3706b")) {
-+		pdata->pdt_fallback_desc = rmi_s3706_fallback_pdt;
-+		pdata->pdt_fallback_size = ARRAY_SIZE(rmi_s3706_fallback_pdt);
-+	} else {
-+		dev_err(dev, "First PDT entry is empty and no backup values provided.\n");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- #else
--static inline int rmi_driver_of_probe(struct device *dev,
--					struct rmi_device_platform_data *pdata)
-+static inline int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+				      struct rmi_device_platform_data *pdata)
- {
- 	return -ENODEV;
- }
-@@ -1159,7 +1205,7 @@ static int rmi_driver_probe(struct device *dev)
- 	pdata = rmi_get_platform_data(rmi_dev);
- 
- 	if (rmi_dev->xport->dev->of_node) {
--		retval = rmi_driver_of_probe(rmi_dev->xport->dev, pdata);
-+		retval = rmi_driver_of_probe(rmi_dev, pdata);
- 		if (retval)
- 			return retval;
- 	}
-diff --git a/drivers/input/rmi4/rmi_driver.h b/drivers/input/rmi4/rmi_driver.h
-index a4ae2af93ce3a..b931f428713bf 100644
---- a/drivers/input/rmi4/rmi_driver.h
-+++ b/drivers/input/rmi4/rmi_driver.h
-@@ -31,6 +31,8 @@
- #define RMI_PDT_FUNCTION_VERSION_MASK   0x60
- #define RMI_PDT_INT_SOURCE_COUNT_MASK   0x07
- 
-+#define RMI_OF_PDT_DESC_CELLS 2
-+
- #define PDT_START_SCAN_LOCATION 0x00e9
- #define PDT_END_SCAN_LOCATION	0x0005
- #define RMI4_END_OF_PDT(id) ((id) == 0x00 || (id) == 0xff)
-diff --git a/include/linux/rmi.h b/include/linux/rmi.h
-index ab7eea01ab427..4ba2cefac8558 100644
---- a/include/linux/rmi.h
-+++ b/include/linux/rmi.h
-@@ -214,6 +214,9 @@ struct rmi_device_platform_data {
- 	int reset_delay_ms;
- 	int irq;
- 
-+	unsigned int pdt_fallback_size;
-+	const u8 *pdt_fallback_desc;
-+
- 	struct rmi_device_platform_data_spi spi_data;
- 
- 	/* function handler pdata */
-
+@@ -1306,6 +1311,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
+ 	.ports = tegra410_compute_ports,
+ 	.name = "tegra410-gpio-compute",
++	.prefix = "COMPUTE",
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
+@@ -1335,6 +1341,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+ 	.num_ports = ARRAY_SIZE(tegra410_system_ports),
+ 	.ports = tegra410_system_ports,
+ 	.name = "tegra410-gpio-system",
++	.prefix = "SYSTEM",
+ 	.num_irqs_per_bank = 8,
+ 	.instance = 0,
+ };
 -- 
-2.51.0
-
+2.43.0
 
 
