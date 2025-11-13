@@ -1,128 +1,192 @@
-Return-Path: <linux-kernel+bounces-899087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25082C56BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D25C56BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C35FE4E7D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:02:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C0434E8B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575D35CBD6;
-	Thu, 13 Nov 2025 10:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628F7283C83;
+	Thu, 13 Nov 2025 10:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FFz+VPhT"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PGtK9514"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4452773F4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562082773F4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763028147; cv=none; b=YYNBzgPbkhCTn4ANl50tj9B0CiXkV5+KfIAO3W+3NolMcE6Hrql/PgpNvCEiBN8iO5tb7/r6131oZjRP0XAZZHN2oGYfVmeNBEOfHHs0OHmWln43pl0ldVGRZtNxnjAyw8DHgT0UfzUsDni858iknSI1Ze8Cfzp4P97Gako9ryk=
+	t=1763028167; cv=none; b=tIiftYm8QMwHgTZt+cYZVyeEfdUwe+AMxofYF4iHma16RTvdFDUhzmK1bPOvr67bBI3cvgpmi5QJGi49ioYWVwIKV21MTCWEszuGyvunABduTqs1t2blqXnVxuuaDAW0BwP2dKguhD+CbYH+xQiUhuz/kTvqnUyBHsxFGl/NaPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763028147; c=relaxed/simple;
-	bh=347InnF7w0TQGwF3LKDpkxoBP63o1pAQwc45OEGOOng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RL1X+oTS+d7FlPjD0aBj/AKiD7z/nRZcx6rSxuOsnlxKIjhSoZPDJtjnM31mJaaqSAnpPS3ovXDhimQpph259MOJQVE4S/FU/mpBe0CF6w+W8eXgPiwGmNHvXdJVSslCc6j6MROzBojWdmP7YqrbxP05U6XNUz7kt2UNMnNK3t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FFz+VPhT; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-37b95f87d4eso5251741fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:02:25 -0800 (PST)
+	s=arc-20240116; t=1763028167; c=relaxed/simple;
+	bh=39ntxjF7HM0Qr5kxQfS+FwVbyjKPp5niiblHmTNcCT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IYY9bmbf7C0AeVkTD09h1u0yyejuLjpVevc1TEvUnC7vwKymiZN21QZ12jZQpxr8vu7sJ5x6GmZ31b86ygLxVlmTehr/9ImD8yJs3HFwwGwDGtXJGwTY85rh2lzTYpsgx0usHlC3HH+6pTT2kGHtUOfZJiib9C2jdNgJz5zTDXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PGtK9514; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-b7277324054so78006966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:02:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763028144; x=1763632944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=347InnF7w0TQGwF3LKDpkxoBP63o1pAQwc45OEGOOng=;
-        b=FFz+VPhTnQolSJSmG4FCu3Xt4fES5kBKLCd+GhIneSTYDKRGfPN8zyn3eUMQLuodD/
-         H2z3dbJ9PxXXRjIXTypnTv7fD5q3Rd/ke6LsB+xiLQUaKflb+Wnx1eYs1wITzu/OVP9b
-         aiQMqhgD8S012hXS5cNwQrhvYHpCByonyFcXG3j7AOXGG6rN+GampPrA0sRvyyGO/3vz
-         zjd8sdAl75JUdv+8J4VnsuXD3OZ/I0yGFVt/xMOhgUO+SwPyJp5Y8RUtnSDToJOGyxYb
-         XKLGpelNvpUjvGQhJA54sg7e1sOfozlMiFDTN9BV6FpwmJcpSPfww6fSimPKkmYoJLsd
-         p9uA==
+        d=suse.com; s=google; t=1763028163; x=1763632963; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MJ4GxbkUghftUZgz8LHIpmZo8o/kmvfsJg9H+9W9+nY=;
+        b=PGtK9514sc4uqUopGnaEDdZssNsJZ0NB7p/uJGHNEZOlhrmCuw2gPENxSXG4Ik1hop
+         BYIoeMyt9LM7Ozx95CWUEy9InJdJXQnkCMmsQRcQARVa3AIQnynoRjhH1nh6TBTWC3nr
+         eNHAUi4HyupuKdEwe+uiIirRlgIf123OrdZipxGXBn6T8tWJhJoaaVEBxy2jfAwD8nJq
+         z6N5xUr6l9R/9rfZM/CA436eKP4wkskhuWu7awTCmDvI6lIEShu1EBIGKOUeKoJ6/3kL
+         pWJvqjvffOzjdT5lcVf7Ydo3YjAlljqecq/4C/ly3SgsQjiBgvZcb6NwEJVLefCgtrtD
+         Sb2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763028144; x=1763632944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=347InnF7w0TQGwF3LKDpkxoBP63o1pAQwc45OEGOOng=;
-        b=Zvn14oH9Qrgo/3nyZ2Ia5Vl/3OxTS7GPZksNFjHL5Tw+l8cIVF7HXGtrtnlah4sBYs
-         GY5VpJLU/GAU87AWx2rN0KbTWlowh294oqWJnujp9jDXWV31rpDrSA5534dgt/F6iC3K
-         ljjkpDHWFzKNdmRkaSu+5VqQPGRCZZb8HVeWEni+ew0dtummVkcSLYxeXBc3rdxLpLQq
-         jiRour5oW4cIXA+Ch5i3tW/fBrPxK08BVxLQD78nvZ1fYQnyx2L+jQYwHNWdH3q1lgOQ
-         nJrokUwNg+WJS24zKhaHnxLYwSg2Ri2KHviXVFW4NdZyyZNFrHB5QQCbNYSkmq6V0y0W
-         ueqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV2qgkqdRoPAhipR5HBl1Af8OgW+5hfQZ8eEhOvAmISTK2+bfMam8OSIfDO0LciG/oUQIjkYwbLQPUdbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOsQ5hlGXxmt81/QaaENdfF5p1AxgjtTl5KN067GVE6ivuqUAA
-	IVq+nM6U0U/rofszoWXbMXaNtww20WH4QSe9exqqIyoZHnQGQA+HYeFPsBlWKBU3isZCNckDlyk
-	hAx68VG6QCA5WMLkrvfoLn48LjcS3nVqIOEq61URaYA==
-X-Gm-Gg: ASbGncvSKB7ravhdT1u0q5dsZ4NbJuflZjyBpfc7BOF654ntlIuzi43mE8Gj+yFwohY
-	fqoptch2Xj3wuzrjRXJ4ayLEXOz6EoDw9+DAcGtu17ebAbESn0r4JAdeAdvpxClQKzyTDDANse2
-	3pN4DfMIjUcKWyXIdj6FONoz4yQ+OyJUgKv1iTYC7obUcDG4PeiRTn55c2r0rW6f9xARX7PAzaG
-	WiJHxjYq9hNzAMgCr7y3VGVgJXDnSWyk0M0biVo4btwj25SNXuKPr7XUv+55Uq45rsoGTS04lNx
-	9W0MvzeFwVjiUxan3PlEL+XmtsQ=
-X-Google-Smtp-Source: AGHT+IF80BtPctM9eC4e7ij+kECyiSMuMR8eaI6A5q1UsvTkOe0o1G32eF/kAIX8FZ3UAPGxB2FJF3dPMAqvlpNwJF4=
-X-Received: by 2002:a05:651c:4191:b0:378:e055:3150 with SMTP id
- 38308e7fff4ca-37b8c2e1512mr16366071fa.5.1763028143794; Thu, 13 Nov 2025
- 02:02:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763028163; x=1763632963;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MJ4GxbkUghftUZgz8LHIpmZo8o/kmvfsJg9H+9W9+nY=;
+        b=QUfk9SLGfApCEfpj+V1eyq6LRtBUPjaTojvRD3yNqIUx9m0ZlIzzU230XsbB9n2bqM
+         NT8AwTp0f1J57m5lmGNp1cEzMEICVDD/B56Z89pDx/TsC4tDbpEub+xJPIVJTMk92mTb
+         BzaRm0mxBv9wkHvo5CXjmGK0MLrZPlaTrQM5I7jbXM4dSFOqkn5YXCgqzs52yDI2F5LQ
+         2VvaJfl80aJLW7HBuZtC7fSu9MNmrdFqY9bG4rRY2L8OvToHlsc9uk1fhTtgpiV+/6Nx
+         MyWRpF46CVWgH6n9Ye4Y/ofBabrl9e7WvodH8TRttiePx3wTZjcl0c2lDZnA4NLsWSLW
+         Wd7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcgoagWgHmX3/oKV/+indXo+2yOCC5wwofYZOi3Z7lxml9GwjESJe6j7GezvVrQ3n8WGY+rZxcXcVsShs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAWAw8b0kzDie+eR+/3xWvP3pDRGMBeTbi9iPfJhnWwNgRerBO
+	9ee8duRvHcwWHsz+ZFH5CuiA7IUwDTl/f7O8PUn2I8JqmSAg6kHI9NeNkCVeSqymBGY=
+X-Gm-Gg: ASbGncvR09OepWNY7BotU2Anltuedk9xHzSvQxHZHwQ5CahoKf48kQu1ioOyOvGyxHJ
+	Kry529VB1OTTpxSmWTDQQKAekvO2g1ZGY8QP6QHN17COUuRajJJAptz7+9rDjVL/2VGCXYMDd+0
+	C2cVpRN+F4QoezmjPK49D9UxIBc0PcTUuX+1EQnId65lFq1sTPHSShGsJK4tIMsuKmBWQGUHEtQ
+	ALZGOqPLYEL4YQ+e+mZqyEsS3Zsa+lQ8MIHrqSV1uOKCfzCZEZAl1toA/80fSiMlf8uVlkjukSF
+	yIq+1pbmc4lmNZ5S6tRido2nSEWpRaf+y6ZBkcgiaN2pWBwJNxgvy5Q2ZoQndoWdk/4k77rarId
+	v7o+L05fBUQmZrjBoajN1wFYj1K4T6GLeZPgl3BLjnaRswm92Zwo+pc9bIVt6z8Cs68E0ux4PrE
+	rRkc3dBbL7yn7Nl5h97WVk3Yjx
+X-Google-Smtp-Source: AGHT+IHzMgr8IXl+lxvWL/AmsNusVkAzjm9LLmMgRR0v6716of7tCRPkKpAGaASPUUXN6pEg5IRywA==
+X-Received: by 2002:a17:907:848:b0:b73:4fbb:37a6 with SMTP id a640c23a62f3a-b734fbb40b4mr169500766b.64.1763028163438;
+        Thu, 13 Nov 2025 02:02:43 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fa81223sm133331466b.4.2025.11.13.02.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 02:02:42 -0800 (PST)
+Date: Thu, 13 Nov 2025 11:02:41 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/vmscan: skip increasing kswapd_failures when
+ reclaim was boosted
+Message-ID: <aRWswVgIaAqJEvQB@tiehlicka>
+References: <20251024022711.382238-1-jiayuan.chen@linux.dev>
+ <e5bdgvhyr6ainrwyfybt6szu23ucnsvlgn4pv2xdzikr4p3ka4@hyyhkudfcorw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106-qcom-qce-cmd-descr-v8-0-ecddca23ca26@linaro.org>
- <20251106-qcom-qce-cmd-descr-v8-1-ecddca23ca26@linaro.org> <xozu7tlourkzuclx7brdgzzwomulrbznmejx5d4lr6dksasctd@zngg5ptmedej>
-In-Reply-To: <xozu7tlourkzuclx7brdgzzwomulrbznmejx5d4lr6dksasctd@zngg5ptmedej>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Nov 2025 11:02:11 +0100
-X-Gm-Features: AWmQ_bk-LstuhQR3H10ukwySBYZfpE2zb40DoLXgGCclIQAg4lhk-Zsk676Qpb0
-Message-ID: <CAMRc=MdC7haZ9fkCNGKoGb-8R5iB0P2UA5+Fap8Svjq-WdE-=w@mail.gmail.com>
-Subject: Re: [PATCH v8 01/11] dmaengine: Add DMA_PREP_LOCK/DMA_PREP_UNLOCK flags
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Udit Tiwari <quic_utiwari@quicinc.com>, 
-	Daniel Perez-Zoghbi <dperezzo@quicinc.com>, Md Sadre Alam <mdalam@qti.qualcomm.com>, 
-	dmaengine@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5bdgvhyr6ainrwyfybt6szu23ucnsvlgn4pv2xdzikr4p3ka4@hyyhkudfcorw>
 
-On Tue, Nov 11, 2025 at 1:30=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> On Thu, Nov 06, 2025 at 12:33:57PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Some DMA engines may be accessed from linux and the TrustZone
-> > simultaneously. In order to allow synchronization, add lock and unlock
-> > flags for the command descriptor that allow the caller to request the
-> > controller to be locked for the duration of the transaction in an
-> > implementation-dependent way.
->
-> What is the expected behaviour if Linux "locks" the engine and then TZ
-> tries to use it before Linux has a chance to unlock it.
->
+On Fri 07-11-25 17:11:58, Shakeel Butt wrote:
+> On Fri, Oct 24, 2025 at 10:27:11AM +0800, Jiayuan Chen wrote:
+> > We encountered a scenario where direct memory reclaim was triggered,
+> > leading to increased system latency:
+> > 
+> > 1. The memory.low values set on host pods are actually quite large, some
+> >    pods are set to 10GB, others to 20GB, etc.
+> > 2. Since most pods have memory protection configured, each time kswapd is
+> >    woken up, if a pod's memory usage hasn't exceeded its own memory.low,
+> >    its memory won't be reclaimed.
+> 
+> Can you share the numa configuration of your system? How many nodes are
+> there?
+> 
+> > 3. When applications start up, rapidly consume memory, or experience
+> >    network traffic bursts, the kernel reaches steal_suitable_fallback(),
+> >    which sets watermark_boost and subsequently wakes kswapd.
+> > 4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
+> >    triggered by watermark_boost, the maximum priority is 10. Higher
+> >    priority values mean less aggressive LRU scanning, which can result in
+> >    no pages being reclaimed during a single scan cycle:
+> > 
+> > if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+> >     raise_priority = false;
+> 
+> Am I understanding this correctly that watermark boost increase the
+> chances of this issue but it can still happen?
+> 
+> > 
+> > 5. This eventually causes pgdat->kswapd_failures to continuously
+> >    accumulate, exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops
+> >    working. At this point, the system's available memory is still
+> >    significantly above the high watermark — it's inappropriate for kswapd
+> >    to stop under these conditions.
+> > 
+> > The final observable issue is that a brief period of rapid memory
+> > allocation causes kswapd to stop running, ultimately triggering direct
+> > reclaim and making the applications unresponsive.
+> > 
+> > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> > 
+> > ---
+> > v1 -> v2: Do not modify memory.low handling
+> > https://lore.kernel.org/linux-mm/20251014081850.65379-1-jiayuan.chen@linux.dev/
+> > ---
+> >  mm/vmscan.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 92f4ca99b73c..fa8663781086 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -7128,7 +7128,12 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+> >  		goto restart;
+> >  	}
+> >  
+> > -	if (!sc.nr_reclaimed)
+> > +	/*
+> > +	 * If the reclaim was boosted, we might still be far from the
+> > +	 * watermark_high at this point. We need to avoid increasing the
+> > +	 * failure count to prevent the kswapd thread from stopping.
+> > +	 */
+> > +	if (!sc.nr_reclaimed && !boosted)
+> >  		atomic_inc(&pgdat->kswapd_failures);
+> 
+> In general I think not incrementing the failure for boosted kswapd
+> iteration is right. If this issue (high protection causing kswap
+> failures) happen on non-boosted case, I am not sure what should be right
+> behavior i.e. allocators doing direct reclaim potentially below low
+> protection or allowing kswapd to reclaim below low. For min, it is very
+> clear that direct reclaimer has to reclaim as they may have to trigger
+> oom-kill. For low protection, I am not sure.
 
-Are you asking about the actual behavior on Qualcomm platforms or are
-you hinting that we should describe the behavior of the TZ in the docs
-here? Ideally TZ would use the same synchronization mechanism and not
-get in linux' way. On Qualcomm the BAM, once "locked" will not fetch
-the next descriptors on pipes other than the current one until
-unlocked so effectively DMA will just not complete on other pipes.
-These flags here however are more general so I'm not sure if we should
-describe any implementation-specific details.
+Our current documention gives us some room for interpretation. I am
+wondering whether we need to change the existing implemnetation though.
+If kswapd is not able to make progress then we surely have direct
+reclaim happening. So I would only change this if we had examples of
+properly/sensibly configured systems where kswapd low limit breach could
+help to reuduce stalls (improve performance) while the end result from
+the amount of reclaimed memory would be same/very similar.
 
-We can say: "The DMA controller will be locked for the duration of the
-current transaction and other users of the controller/TrustZone will
-not see their transactions complete before it is unlocked"?
-
-Bartosz
+This specific report is an example where boosting was not low limit
+aware and I agree that not accounting kswapd_failures for boosted runs
+is reasonable thing to do. I am not yet sure this is a complete fix but
+it is certainly a good direction.
+-- 
+Michal Hocko
+SUSE Labs
 
