@@ -1,198 +1,255 @@
-Return-Path: <linux-kernel+bounces-898913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E4AC56518
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7D6C564FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8DE74EB217
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:34:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E1D84EAE82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEA4331A71;
-	Thu, 13 Nov 2025 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95D53161A6;
+	Thu, 13 Nov 2025 08:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N2MAcATh"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013058.outbound.protection.outlook.com [40.93.201.58])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eKjZZ7oc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2A82DC78F;
-	Thu, 13 Nov 2025 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763022820; cv=fail; b=nPWhiP+jrZlBetZj4ABbcpD3rU2WRVQWW9oK6cHj/zKX/vVxnTNbU7GtMNO8iPtuGaT4lcC2PK2Fk2sBHlSVZVo8mz6Nj6OFJnTXFbJCzYTFHf7/q5PbD2YQgX/3XPnZhy465aUKcT09Xb9vdaYD9sYYCNKDIQNlaX3U1RxLCQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763022820; c=relaxed/simple;
-	bh=UKzN8sWZcuuf6d3vzwOeK8nPkpR317JEtHZzmq6/jYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tv/rHQHvaQkkGfIYvKtxiM9ZsHX3kl7Ki4urHOjfAER4hKEqGhOiiMpoh+W9pp6pGizMkXQfRih8Hx8lk2kDY3iBIXmXa71BfzbawiJHju5rCHhf8HBnQV+YhFHfLq5CCb+qY1JgYM8nJqB+d+PlIEVgF1lpEuxQDL1TrVcTKI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N2MAcATh; arc=fail smtp.client-ip=40.93.201.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dJi0sepfcsmObxR+CNP7Y7/EpdAWZcXhcBKUaDgm4Jm1ykLKdgKczpZMtRh7GmouD9rZgjXye2BEn7j0eSIbnpHi8LcUV/IfFv4PPfe7vDY3JYd0jRs7DrKhMp8ip23Dsd9gpjHMOV8Sl+QbGByW4NSzTT5dn8oteYNitH8OXTHo8VVIJABZ1P5pk1eEK4CDx+NhIJnB1Ta1rkW2LITj5VZXmBPf1RME2emTHSrxX0gSvzlh553O48v1Dr5q0oo0r0hFwG/UBfRnXeT4N0WvXqjCZcJloI/oyCVAkIWj8f27+a6LgcdnUkuobUCCwKKAAB2fYWkOWiMIhuk8RE1U5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=raIMbGNO5XDJVqET35IfP3nmH98Blv4kxKAOPLGgcnI=;
- b=pve6W8MEAcGAEcA7Xd73rLtg8sskzuaMed+oC+KRKYEQMcNUJBnSxRFrOOX7DQj/hS4F3dNsJtkW7PcsE0X/Z14unRYya3yCMZVXjIMbJ7d5ENlF8cLibqKfD97UnUEY1DOsLJqWeA3ITp54BwXzdnbRw2j9xPy2VGJSZK14ew+S763VEqvoC2cMKSFUOdAsqRrcWAPPMd3ZQVEjMZKIL90zMO/MGVgJhixTfmw1wuTo/f1FL6b7pgU43DOR91GNmzj+aNQa08Taow4UU9qYmplp+ghfi5gxSsSyGNgFIuDFhBK9oDFkBm+HzG8DPQt/cNW/PM15Y5HK9I2V5JelMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raIMbGNO5XDJVqET35IfP3nmH98Blv4kxKAOPLGgcnI=;
- b=N2MAcAThrDHclT8Gcthq+xA4I0q0j5EltwrvMEQy+Kc6nv8YJjR89lGRWGPS3MppGNOqUtKWW881v0Cx+6CBk4RFTc3aDdpfdE4mtOa1w85cMZSRtk/QBIgujB8+/0MLTJD7fh4JqRNvIW4j2cLqj7O0P8NdheY2CcDPjZOHh2W1xgA40JoCt6TRT1vOe0AMUMekJRGTPfqWJ3/kUNYYslB7w98mDY8RUYWN+Wpq/VLdxcDA7dE2muovcgwz6EkWd4rEb/wW14DdViNZnbtG5A6PCUKcGHDX1AYMe6i8pVzRYLxppYakCxXuBDHZjSfHNWeO/eH82h0L/BWqfFq2FA==
-Received: from SJ0PR03CA0101.namprd03.prod.outlook.com (2603:10b6:a03:333::16)
- by CH1PPF2C6B99E0C.namprd12.prod.outlook.com (2603:10b6:61f:fc00::609) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 08:33:32 +0000
-Received: from SJ5PEPF000001EE.namprd05.prod.outlook.com
- (2603:10b6:a03:333:cafe::5d) by SJ0PR03CA0101.outlook.office365.com
- (2603:10b6:a03:333::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
- 13 Nov 2025 08:33:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001EE.mail.protection.outlook.com (10.167.242.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 08:33:32 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 00:33:17 -0800
-Received: from [10.242.158.93] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 00:33:12 -0800
-Message-ID: <d751e671-9b73-42ce-acce-c98947b632c2@nvidia.com>
-Date: Thu, 13 Nov 2025 10:33:09 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC452857FC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763022818; cv=none; b=ELUqOk1HtxDCdRUE7f07NVi9AV82codiVRyN9NtjrOKk+En/ree3cdTrUwJAcODtg9zvNhTSwzewSGrbx2J1O0YCYGNRucBxJlUpBr1dMO/gx68E4N7006e5Zr9NvVdudsmE9CLi9bQmI0ZuqxWhoiuQk/oR0Th1QFIrH1l2Nv4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763022818; c=relaxed/simple;
+	bh=AOuXQqwlAhUpVy/qr3VAa6AN4KRSI+KG5DDkAbu5ZQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MCTbNeXgd91wi4w64peB04+k412ly4NPwQGVeDO2cbSZ/Ea4l/eYEV3IaOCK/eLaZPNGzsgZM78xJA5818i23iA8US7biqdSvQvIUm0LCdWpQPZGfIMj6VA5OVuxhbVWEabhGH+8OJkc5+s56ozJP9e41R02/R4PYP3f73Fn7Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eKjZZ7oc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763022815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cpj8su2ZCh1Qm74GOjFAQU4SNEl6HSRV7m71VjCOIkU=;
+	b=eKjZZ7ocyo7FpBmOEkWO16pJMuTr5IvaJgm2+Gbc/oKerX4OWysjReBDZEYeeUAEyKfb7D
+	nqDrUTsxzJ9fNrOrOosk07cQ+tyWRScUQ58HYzbBTlpYM955sdy2Wmjuz899n2SwY37ZIX
+	Um0InbDrmLm/73vS2drKPWiav2NjVMU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-500--kBiGXgUPdKshFkZNLdzJg-1; Thu,
+ 13 Nov 2025 03:33:33 -0500
+X-MC-Unique: -kBiGXgUPdKshFkZNLdzJg-1
+X-Mimecast-MFC-AGG-ID: -kBiGXgUPdKshFkZNLdzJg_1763022812
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F1E71956094;
+	Thu, 13 Nov 2025 08:33:32 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.44.32.78])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67ECE1800451;
+	Thu, 13 Nov 2025 08:33:28 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v15 0/7] timers: Exclude isolated cpus from timer migration
+Date: Thu, 13 Nov 2025 09:33:17 +0100
+Message-ID: <20251113083324.33490-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] devlink: rate: Unset parent pointer in
- devl_rate_nodes_destroy
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-CC: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Jiri Pirko <jiri@resnulli.us>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Mark Bloch <mbloch@nvidia.com>, Gal Pressman
-	<gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, Cosmin Ratiu
-	<cratiu@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>, Jiri Pirko
-	<jiri@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>
-References: <1762863279-1092021-1-git-send-email-tariqt@nvidia.com>
- <20251112181248.190415f7@kernel.org>
-Content-Language: en-US
-From: Shay Drori <shayd@nvidia.com>
-In-Reply-To: <20251112181248.190415f7@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EE:EE_|CH1PPF2C6B99E0C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9382af23-9d36-4d0b-262c-08de228f546a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vk9KTytFb1ZubDRFRS9JWHh2SUhXV3JuR1drREE4eFZoZlY2RVMxQ253K1ll?=
- =?utf-8?B?VnliV2toM24ycVdJQTQ1VmptbDI0L0xabWVPNkcvaGlYaG5yTXdBaGVzakc3?=
- =?utf-8?B?UnQ5RVZ5RDllcmU2citsTTc4S0lGWUpUcVRSTHhFZnBWaElCTlBHQkFBLzFq?=
- =?utf-8?B?ckZxRTQzOU9nTWs2dHNqYUk5anZYRGt5cUU1a000cEgzdDFENVZXUXdUTG4w?=
- =?utf-8?B?aDcrNFdOQWx2dkYwb0lmMDVYeVlncnJwWFYwRFhzSVo2ZDI0cElGZGtjSXUv?=
- =?utf-8?B?NEVxSlRsZ2tIckV5Ykp1VkVSQXFnN3VJRG8vSlpESkdmbndQTmZDVHZjTFRE?=
- =?utf-8?B?QUhRMzJEZDNuZmQ3ZHNpNnVXQXhSdHd1U0oxbElZc0thbnp1ZFhQalJmSUdK?=
- =?utf-8?B?RDZhVjY3NThVS0VWczUyNjVHTU9GLytmcHE0OUlGMmNzMUljUEQ1ZWR4c1Rh?=
- =?utf-8?B?Nm14aWhFNGJxcVpYdzFCYW1VbUlCVlZ2ampVYjFZbXBwMWN2aEpETk1OOVUr?=
- =?utf-8?B?ZXQ0NUF2QVZqK1V3ZldiemZpVTFTSzhhSUFuWUIwcGNXaWJFUmQ1aVBOQkJi?=
- =?utf-8?B?c3c4ZEhyMmd3TDVFaHFDdzhta0lNbFd6aTRvMGw3THVpNlhMbW1WcFFsVFd2?=
- =?utf-8?B?QUdJandCSVdRLzJDSFk2RC82S0tXK2d3WVViU051eUg3U3RtcGZTLy95NGlL?=
- =?utf-8?B?dW1DSUZWV09PK2FLUUtKSEkvQThTNGsvaW1iMkM4UVBOSmxCM2N1K2Y0dXpL?=
- =?utf-8?B?SjdVeTd4Z0FIaDcrNU05L04veW1IcVBDQ0lKMGFHTWt3azJEYmRQTjNJWVJi?=
- =?utf-8?B?NXlaNzVMU2dpVVU3WnpGWHpySUx0Qmw0VDluRThzTnJXUFgwMlkwbldyZ3JU?=
- =?utf-8?B?VHB1L1MweGZiS2dHRDVJRkdiNVBCRXlmZTI1aHdnNS8wZXZpU2J2VWRzenh0?=
- =?utf-8?B?eEFsVE9JbkpwOVVVWldrZHRsMVBZb0RyREg1ZVJJZHdZTzFOYWFpeWoxWnJz?=
- =?utf-8?B?eUV1SUlSSVdCU2JiaTlvei9rU1RiMVh3SmI3UVJpTkNkUStJWjZ0eDlTdXZP?=
- =?utf-8?B?SHhPV05VWHFVclJjbURIVUt2c3hwckhueTVSbHVqNXBEelRUTjgrVmpsTmEx?=
- =?utf-8?B?UklVbDNPYVpITW5BdUtRbGYrL3lwaDRxWHNBOWE1dXYrSGozMXNMMXhLMDkz?=
- =?utf-8?B?YytuQWdBVHRlTDhyWVc3Zm5OdjFndUVOWXFKSjJlZmpVaVhsNE9sUnY0RlBm?=
- =?utf-8?B?ZEdXUGxScHdZUDNuZ0toZjVmSFlnN1AwR0FIQWhtMnIzT3hON3lvci9JbERo?=
- =?utf-8?B?cGdPZWNLM3VucVMyOVErRTVhcU9zdGJPSzd6TFp5VHhjc05UQ1VKYkpqbzBW?=
- =?utf-8?B?blYvMVIwN1hId3d3SU1EOGF4R3hqT2dYQU9nNFJqdUhXTERRQUF2QWFuRi9o?=
- =?utf-8?B?bVBPQndtcVNmZzBabU1VQTBsbGZGQzJZYSs4KzJ4SVFWVml6MEdEZ1RjZ3Ay?=
- =?utf-8?B?L2tybWh5UElINXZKMmlXVjZyazBzSEYyWFh0L2dpREJXZWpVVEg1TW8xeTVh?=
- =?utf-8?B?SllSOGZ1bHpWVStVelE4Wi9pb3JvaFlCVlVwZUdCVm9iektDNHF0b0htbVhu?=
- =?utf-8?B?U1ZCcjZaNEhaY0pNcHRROFZ0RGNjMHRraER2ZHI1ZlZxRDh2ZU9heWZVRnBk?=
- =?utf-8?B?S0gvOUFKd0x0eDRUN0FGc3EvREZLa0pzTi90MW5mTFBLTmhuaDJwb2RxM0sy?=
- =?utf-8?B?NER5clRRUVJndzV3WGdOSm5jVXY4QjdKaktRdHZBTXU3MWNhT0NTaXgzNEcz?=
- =?utf-8?B?V2wzakhRT3RDWG50dTVFd0NjQlJjZTdNWTloS3FIUmQ1WXBRdThndFNSeUNi?=
- =?utf-8?B?RWQ2VVhQblNINXlDZklOaTcydkRYL3RlT2dMcHFCaTJ6Z09kS2FEcy9nTkps?=
- =?utf-8?B?ZlpRQ3RFVjJPRS9UOVhLUTl4eUVNcEtjdDJSU1hXZXc0cFBwNHhpSG1sZ1lK?=
- =?utf-8?B?UGlaMmRYMnkvQVJWT3dDbEZDMm8xQ0drR0M5SU5yb3hUazluUmhjeUpFY1ow?=
- =?utf-8?B?LzBEa0FuWlpVU29WWGI5ZnVWR0VrcTFzKzJYb1lYSGJLalh3YTU0bWt2S0tZ?=
- =?utf-8?Q?4gUs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 08:33:32.4838
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9382af23-9d36-4d0b-262c-08de228f546a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001EE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF2C6B99E0C
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+
+The timer migration mechanism allows active CPUs to pull timers from
+idle ones to improve the overall idle time. This is however undesired
+when CPU intensive workloads run on isolated cores, as the algorithm
+would move the timers from housekeeping to isolated cores, negatively
+affecting the isolation.
+
+Exclude isolated cores from the timer migration algorithm, extend the
+concept of unavailable cores, currently used for offline ones, to
+isolated ones:
+* A core is unavailable if isolated or offline;
+* A core is available if non isolated and online;
+
+A core is considered unavailable as isolated if it belongs to:
+* the isolcpus (domain) list
+* an isolated cpuset
+Except if it is:
+* in the nohz_full list (already idle for the hierarchy)
+* the nohz timekeeper core (must be available to handle global timers)
+
+CPUs are added to the hierarchy during late boot, excluding isolated
+ones, the hierarchy is also adapted when the cpuset isolation changes.
+
+Due to how the timer migration algorithm works, any CPU part of the
+hierarchy can have their global timers pulled by remote CPUs and have to
+pull remote timers, only skipping pulling remote timers would break the
+logic.
+For this reason, prevent isolated CPUs from pulling remote global
+timers, but also the other way around: any global timer started on an
+isolated CPU will run there. This does not break the concept of
+isolation (global timers don't come from outside the CPU) and, if
+considered inappropriate, can usually be mitigated with other isolation
+techniques (e.g. IRQ pinning).
+
+This effect was noticed on a 128 cores machine running oslat on the
+isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+and the CPU with lowest count in a timer migration hierarchy (here 1
+and 65) appears as always active and continuously pulls global timers,
+from the housekeeping CPUs. This ends up moving driver work (e.g.
+delayed work) to isolated CPUs and causes latency spikes:
+
+before the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:     1203 10 3 4 ... 5 (us)
+
+after the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:      10 4 3 4 3 ... 5 (us)
+
+The same behaviour was observed on a machine with as few as 20 cores /
+40 threads with isocpus set to: 1-9,11-39 with rtla-osnoise-top.
+
+The first 4 patches are preparatory work to change the concept of
+online/offline to available/unavailable, keep track of those in a
+separate cpumask cleanup the setting/clearing functions and change a
+function name in cpuset code.
+
+Patch 5 adapt isolation to prevent domain isolated and nohz_full from
+covering all CPUs not leaving any housekeeping one. This can lead to
+problems with the changes introduced in this series because no CPU would
+remain to handle global timers.
+(The corresponding change for cpuset was removed from this version of
+the series and is present in [2]).
+
+Patch 7 extends the unavailable status to domain isolated CPUs, which
+is the main contribution of the series.
+
+Changes since v14:
+* Rebase on tip/timers/core, rename one more ->online field
+* Mark the static key as static
+* Share code between tmigr_init_isolation and tmigr_isolated_exclude_cpumask
+
+Changes since v13:
+* Remove tmigr late initialisation and restore late isolation (as in v8 [1])
+* Use workqueues in initialisation just like tmigr_available_cpumask()
+* Use static key for tmigr_exclude_isolated
+* Remove cpuset patch checking for HK conflict (included in [2])
+* Rename cpuset helper to update_isolation_cpumasks as in [2]
+
+Changes since v12:
+* Pick and adapt patch by Yury Norov to initialise cpumasks
+* Reorganise accesses to tmigr_available_cpumask to avoid races
+
+Changes since v11:
+* Rename isolcpus_nohz_conflict() to isolated_cpus_can_update()
+* Move tick_nohz_cpu_hotpluggable() check to tmigr_is_isolated()
+* Use workqueues in tmigr_isolated_exclude_cpumask() to avoid sleeping
+  while atomic
+* Add cpumask initialiser to safely use cpumask cleanup helpers
+
+Changes since v10:
+* Simplify housekeeping conflict condition
+* Reword commit (Frederic Weisbecker)
+
+Changes since v9:
+* Fix total housekeeping enforcement to focus only on nohz and domain
+* Avoid out of bound access in the housekeeping array if no flag is set
+* Consider isolated_cpus while checking for nohz conflicts in cpuset
+* Improve comment about why nohz CPUs are not excluded by tmigr
+
+Changes since v8 [1]:
+* Postpone hotplug registration to late initcall (Frederic Weisbecker)
+* Move main activation logic in _tmigr_set_cpu_available() and call it
+  after checking for isolation on hotplug and cpusets changes
+* Call _tmigr_set_cpu_available directly to force enable tick CPU if
+  required (this saves checking for that on every hotplug change).
+
+Changes since v7:
+* Move tmigr_available_cpumask out of tmc lock and specify conditions.
+* Initialise tmigr isolation despite the state of isolcpus.
+* Move tick CPU check to condition to run SMP call.
+* Fix descriptions.
+
+Changes since v6 [3]:
+* Prevent isolation checks from running during early boot
+* Prevent double (de)activation while setting cpus (un)available
+* Use synchronous smp calls from the isolation path
+* General cleanup
+
+Changes since v5:
+* Remove fallback if no housekeeping is left by isolcpus and nohz_full
+* Adjust condition not to activate CPUs in the migration hierarchy
+* Always force the nohz tick CPU active in the hierarchy
+
+Changes since v4 [4]:
+* use on_each_cpu_mask() with changes on isolated CPUs to avoid races
+* keep nohz_full CPUs included in the timer migration hierarchy
+* prevent domain isolated and nohz_full to cover all CPUs
+
+Changes since v3:
+* add parameter to function documentation
+* split into multiple straightforward patches
+
+Changes since v2:
+* improve comments about handling CPUs isolated at boot
+* minor cleanup
+
+Changes since v1 [5]:
+* split into smaller patches
+* use available mask instead of unavailable
+* simplification and cleanup
+
+[1] - https://lore.kernel.org/lkml/20250714133050.193108-9-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20251104013037.296013-1-longman@redhat.com
+[3] - https://lore.kernel.org/lkml/20250530142031.215594-1-gmonaco@redhat.com
+[4] - https://lore.kernel.org/lkml/20250506091534.42117-7-gmonaco@redhat.com
+[5] - https://lore.kernel.org/lkml/20250410065446.57304-2-gmonaco@redhat.com
+
+Gabriele Monaco (6):
+  timers: Rename tmigr 'online' bit to 'available'
+  timers: Add the available mask in timer migration
+  timers: Use scoped_guard when setting/clearing the tmigr available
+    flag
+  cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+    update_isolation_cpumasks()
+  sched/isolation: Force housekeeping if isolcpus and nohz_full don't
+    leave any
+  timers: Exclude isolated cpus from timer migration
+
+Yury Norov (1):
+  cpumask: Add initialiser to use cleanup helpers
+
+ include/linux/cpumask.h                |   2 +
+ include/linux/timer.h                  |   9 ++
+ include/trace/events/timer_migration.h |   4 +-
+ kernel/cgroup/cpuset.c                 |  15 +-
+ kernel/sched/isolation.c               |  23 +++
+ kernel/time/timer_migration.c          | 213 +++++++++++++++++++++----
+ kernel/time/timer_migration.h          |   2 +-
+ 7 files changed, 232 insertions(+), 36 deletions(-)
 
 
-
-On 13/11/2025 4:12, Jakub Kicinski wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Tue, 11 Nov 2025 14:14:39 +0200 Tariq Toukan wrote:
->> The function devl_rate_nodes_destroy is documented to "Unset parent for
->> all rate objects". However, it was only calling the driver-specific
->> `rate_leaf_parent_set` or `rate_node_parent_set` ops and decrementing
->> the parent's refcount, without actually setting the
->> `devlink_rate->parent` pointer to NULL.
->>
->> This leaves a dangling pointer in the `devlink_rate` struct, which is
->> inconsistent with the behavior of `devlink_nl_rate_parent_node_set`,
->> where the parent pointer is correctly cleared.
->>
->> This patch fixes the issue by explicitly setting `devlink_rate->parent`
->> to NULL after notifying the driver, thus fulfilling the function's
->> documented behavior for all rate objects.
-> 
-> What is the _real_ issue you're solving here? If the function destroys
-> all nodes maybe it doesn't matter that the pointer isn't cleared.
-> --
-> pw-bot: cr
-
-The problem is a leaf which have this node as a parent, now pointing to
-invalid memory. When this leaf will be destroyed, in
-devl_rate_leaf_destroy, we can get NULL-ptr error, or refcount error.
-
-Is this answer your question?
-
-
+base-commit: ba14500e4bfcab5e841fbf8d7fcbbc80e98d6b9e
+-- 
+2.51.1
 
 
