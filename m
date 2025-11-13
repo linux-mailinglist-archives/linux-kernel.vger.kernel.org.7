@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-899882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E6DC590F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:17:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25CDC590CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A742427449
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:57:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2888A35F7B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0AA364024;
-	Thu, 13 Nov 2025 16:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4120736403E;
+	Thu, 13 Nov 2025 16:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CRTyErWU"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GYwn5bAV"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FC0363C6F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8E364025
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052590; cv=none; b=DwObwtHgkAgQQB8eUj/EyGKurjvQyro7wCrXBYjJFLVKxDVKrwR+V4N9KzXzMHxSZ1ElPh4sOIHHX8WumM/5R/K/xJbrhz88VMZXdUXuosMmGf9ml6pSaBMll3764SRx50IVg/j15Y0liYipahBlPhohQsi17G5wWhwwX0EV7p0=
+	t=1763052593; cv=none; b=VZH/tljIRT2XFSZ3/WY/1aLwzDG1ZwF8D4yvMbQi8Ox3uxz3hcomz3l+KR+6gr4lHVhlnCCsdWvWxf15WzbkbRuTufx981djCTrVP+UjUAl+Y05lGQo+gReNYstIpbfofjNi2nsIVSYHzoirkP8oFWC+8b9yJo/qoe1Dug46PaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052590; c=relaxed/simple;
-	bh=pC2WAUV+iU0LWoW084h3U8rs1dj6nF7sKXuysdtnOkM=;
+	s=arc-20240116; t=1763052593; c=relaxed/simple;
+	bh=XHxubh2Ex6f1fNjOHyxSKBBVuRAcupgCiMdiGQQ8YlM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SNksZQIAP4KsL4IDot0Lr8JOLRXv/yaNJEMr3krEFTDbqeGriygZxJbsMg2pRufsSpnXMPELAXExZjQWfDt0o7TutpUyG6B02ML5K244bnC913+EXTyRd96FbhGoN9usRqtKvfMkULembUyyl0wqNhw0GuUfVU9ZK71yR9Yf6xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CRTyErWU; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=qBT4vlgUCbaGNxXBSGULNvQaDm2cE7bQ5NiQnpDnTPVcE/W+PCN13TErqtI5FsXS6bNULaDvtL8Vbx5kUDpQwmHPZ159YYMmHe8ycbzMlLd7DtHm1k/DXckHlAdg0x82XQ/uPF4O33rIa/6wBC6V2paa/FTKd3khizYvobx13Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GYwn5bAV; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADEA222014886;
-	Thu, 13 Nov 2025 16:49:40 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADEA2SR005967;
+	Thu, 13 Nov 2025 16:49:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=9902H
-	Q+6qpXwpG+/+fELpIj/HjoLqWNfspd3VuptgbM=; b=CRTyErWUFP+E7qgPr180g
-	KgI4NJvmuH+IGntOx1MJeZnw7UA9A020Z4ZSXjpwa4mFhGUiO66WRNWkpjGwFK5B
-	ZxR3KJFWfORtXom+G6rwRrx1zPe+hKIsjrrEE+JmJTiSraQx74GW4ca4WRi2Ysx0
-	hvtlXpOFNMGci2QiI2qHP3Mtxg8RvZzUrmEzTNWKS7mo8jmODXoeYsCUc02y4ppB
-	mvN3iu/F/UMA41MsRUYYbYS2a8WmsffXQ/uYeqo4qEt7ka3WPR5rcyRR4XgnvF57
-	J4kzBln3vaugDPidi7lo0RiAj+CEwZaltCmDF+PQEU4IE95+MfHzAxx+/G3lUh9b
-	Q==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=C8PDU
+	hjr06wv8rRe2HDeqvlGwH4SkM+T43NMmoaRcYQ=; b=GYwn5bAVlswGjJJ/lpS0t
+	AidyF14jnXWt/5XkvH7HCYAkv94zYbmDV0HiGYYKAHHKv3o4ogtPhp0cR4bIxOOZ
+	NYptxsJo/bZ2jWUVYed0NwNHgh/mMTpd+dx9WvBF1H3Nlj58wpPwvzn7Wuz/Ikql
+	dJFqFB7B9zTQ2Eqc3B3x1K9vhf69FhxFKGZmAwffH5+Fmm7CClsTfjDHxECmXlWn
+	ztq/VQFWf00FGRBaWFRbnLCXlbMEvLfHo0KEqZU8MsKClR//B8yJ0ESMH1DNO9Ra
+	ykCzsoWQnK9TXzDuj6jDQbqoRayDzujihTVoSe8jjlbox5LSRFKySa3OeyfM+JnR
+	g==
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acxwq27t8-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acyraa67d-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:49:39 +0000 (GMT)
+	Thu, 13 Nov 2025 16:49:42 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADG9QWs038522;
-	Thu, 13 Nov 2025 16:49:39 GMT
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADG9gSR039287;
+	Thu, 13 Nov 2025 16:49:41 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacc3gb-1
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacc3h3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 16:49:39 +0000
+	Thu, 13 Nov 2025 16:49:41 +0000
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ADGnKA7008288;
-	Thu, 13 Nov 2025 16:49:38 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ADGnKA9008288;
+	Thu, 13 Nov 2025 16:49:40 GMT
 Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-154-172-143.vpn.oracle.com [10.154.172.143])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacc38f-12;
-	Thu, 13 Nov 2025 16:49:38 +0000
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacc38f-13;
+	Thu, 13 Nov 2025 16:49:40 +0000
 From: Alexandre Chartre <alexandre.chartre@oracle.com>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org,
         peterz@infradead.org
 Cc: alexandre.chartre@oracle.com
-Subject: [PATCH v4 11/28] objtool: Trace instruction state changes during function validation
-Date: Thu, 13 Nov 2025 17:49:00 +0100
-Message-ID: <20251113164917.2563486-12-alexandre.chartre@oracle.com>
+Subject: [PATCH v4 12/28] objtool: Improve register reporting during function validation
+Date: Thu, 13 Nov 2025 17:49:01 +0100
+Message-ID: <20251113164917.2563486-13-alexandre.chartre@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20251113164917.2563486-1-alexandre.chartre@oracle.com>
 References: <20251113164917.2563486-1-alexandre.chartre@oracle.com>
@@ -84,230 +84,137 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 m
  adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
  phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2510240000 definitions=main-2511130130
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE0MSBTYWx0ZWRfXy+1R9a1EonjH
- BQfZIf36e3WgOeMalJsgQyDyNhlF8jNmSmBhgY1vLGDDY1CBU1AESpQjrtsf0oxjiz+vkgMBqDq
- /A4FKRm4nfpahwKhifdygmdBJeeLbDEaGqFbWTStm6RTOf6Yq2cWjMrvCzssn1zisdkrsQQl0zT
- gM/nYFQcCzA6miGzuK6GFYjTlCkOXRG2yOA4lsVjVr5F2edwuBecvXbV5V28wK4rVGlipom0f7Z
- zMhogW2RZrZIzw2TPpTIQjPhMnqgpAO4KLhRaQ1uCZJt/HZHLt2pfzxgf9VZL5i9UARgQxvQ6I+
- QRLCI2uxgTWEUaPKm/J++T1n3ZGJFBa+QeBPo9bOsmc+aGJgGBy/7UaRElp3J10qd4Nm12xA9zP
- eMC76gm/E4OvaOXpB/3qNZbSbdWhrw==
-X-Proofpoint-ORIG-GUID: dDw6cacN8LjCpdtFPaWWxE-WKgEQla19
-X-Authority-Analysis: v=2.4 cv=RrjI7SmK c=1 sm=1 tr=0 ts=69160c24 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE1MSBTYWx0ZWRfX2wafvWf6kH3z
+ DvUf+Lxr9OyLswUYiMyCj2b/xOLZ5N6rPppCPU5BTconW/tjHp4al4JgaZZBAheuK9NbvKeqwmt
+ 22U5pInus/w/xeaoXZodKAPxJs3adR3xVLRjAJn/QtWdf469KtQgCA3aaoFUrbRmpx8xfkHEDFB
+ 7ICtzwOiGFnVuPVj8nkd4wCv4nDyqIzZhIM72ib+xdocN5k5zH/OzhNLeF1lJ93J+WdCXeGtiJm
+ IJdyDkqnO/uKcuCmHNs77Qa6xNjgMj3myODmA9Q5GTnV6IQ4RVEDkk5nGHBnp2Y5/yRR1Yk8SUH
+ AY9Gc/258xfFRVVwRI5x9IhBVbm0tlroaL/v3KlbitfO3XYzqE/HQIbDNV0XGNKuTuRRLLkNk0d
+ 0pNCpnZ+EjOnQZd6tlKCXgJ7XzRaAA==
+X-Proofpoint-GUID: TAkL7dfu3G-zxUaGhumdi7brw8-sG2qk
+X-Authority-Analysis: v=2.4 cv=ILgPywvG c=1 sm=1 tr=0 ts=69160c26 cx=c_pps
  a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
  a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=n0rf_ozDEmcaLxr6z3oA:9
-X-Proofpoint-GUID: dDw6cacN8LjCpdtFPaWWxE-WKgEQla19
+ a=SYeOCZSjma0EYi-zULIA:9
+X-Proofpoint-ORIG-GUID: TAkL7dfu3G-zxUaGhumdi7brw8-sG2qk
 
-During function validation, objtool maintains a per-instruction state,
-in particular to track call frame information. When tracing validation,
-print any instruction state changes.
+When tracing function validation, instruction state changes can
+report changes involving registers. These registers are reported
+with the name "r<num>" (e.g. "r3"). Print the CPU specific register
+name instead of a generic name (e.g. print "rbx" instead of "r3"
+on x86).
 
 Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
- tools/objtool/check.c                 |   8 +-
- tools/objtool/include/objtool/trace.h |  10 ++
- tools/objtool/trace.c                 | 133 ++++++++++++++++++++++++++
- 3 files changed, 150 insertions(+), 1 deletion(-)
+ tools/objtool/arch/loongarch/decode.c | 11 +++++++++++
+ tools/objtool/arch/powerpc/decode.c   | 12 ++++++++++++
+ tools/objtool/arch/x86/decode.c       |  8 ++++++++
+ tools/objtool/include/objtool/arch.h  |  2 ++
+ tools/objtool/trace.c                 |  7 +++++++
+ 5 files changed, 40 insertions(+)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index e047cf12f0ddb..26682ac0185ec 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3558,6 +3558,8 @@ static int validate_insn(struct objtool_file *file, struct symbol *func,
- 			 struct instruction *prev_insn, struct instruction *next_insn,
- 			 bool *dead_end)
+diff --git a/tools/objtool/arch/loongarch/decode.c b/tools/objtool/arch/loongarch/decode.c
+index 7645409918f5b..2c1a6cb61f76f 100644
+--- a/tools/objtool/arch/loongarch/decode.c
++++ b/tools/objtool/arch/loongarch/decode.c
+@@ -8,6 +8,17 @@
+ #include <linux/objtool_types.h>
+ #include <arch/elf.h>
+ 
++const char *arch_reg_name[CFI_NUM_REGS] = {
++	"zero", "ra", "tp", "sp",
++	"a0", "a1", "a2", "a3",
++	"a4", "a5", "a6", "a7",
++	"t0", "t1", "t2", "t3",
++	"t4", "t5", "t6", "t7",
++	"t8", "u0", "fp", "s0",
++	"s1", "s2", "s3", "s4",
++	"s5", "s6", "s7", "s8"
++};
++
+ int arch_ftrace_match(char *name)
  {
-+	/* prev_state is not used if there is no disassembly support */
-+	struct insn_state prev_state __maybe_unused;
- 	struct alternative *alt;
- 	u8 visited;
- 	int ret;
-@@ -3667,7 +3669,11 @@ static int validate_insn(struct objtool_file *file, struct symbol *func,
- 	if (skip_alt_group(insn))
- 		return 0;
+ 	return !strcmp(name, "_mcount");
+diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
+index 9c3f49c455871..74d1a8603535a 100644
+--- a/tools/objtool/arch/powerpc/decode.c
++++ b/tools/objtool/arch/powerpc/decode.c
+@@ -10,6 +10,18 @@
+ #include <objtool/builtin.h>
+ #include <objtool/endianness.h>
  
--	if (handle_insn_ops(insn, next_insn, statep))
-+	prev_state = *statep;
-+	ret = handle_insn_ops(insn, next_insn, statep);
-+	TRACE_INSN_STATE(insn, &prev_state, statep);
++const char *arch_reg_name[CFI_NUM_REGS] = {
++	"r0",  "sp",  "r2",  "r3",
++	"r4",  "r5",  "r6",  "r7",
++	"r8",  "r9",  "r10", "r11",
++	"r12", "r13", "r14", "r15",
++	"r16", "r17", "r18", "r19",
++	"r20", "r21", "r22", "r23",
++	"r24", "r25", "r26", "r27",
++	"r28", "r29", "r30", "r31",
++	"ra"
++};
 +
-+	if (ret)
- 		return 1;
- 
- 	switch (insn->type) {
-diff --git a/tools/objtool/include/objtool/trace.h b/tools/objtool/include/objtool/trace.h
-index ea0904a0ce001..5b8abdb9b09fb 100644
---- a/tools/objtool/include/objtool/trace.h
-+++ b/tools/objtool/include/objtool/trace.h
-@@ -30,6 +30,12 @@ extern int trace_depth;
- 	}							\
- })
- 
-+#define TRACE_INSN_STATE(insn, sprev, snext)			\
-+({								\
-+	if (trace)						\
-+		trace_insn_state(insn, sprev, snext);		\
-+})
-+
- static inline void trace_enable(void)
+ int arch_ftrace_match(char *name)
  {
- 	trace = true;
-@@ -53,10 +59,14 @@ static inline void trace_depth_dec(void)
- 		trace_depth--;
- }
+ 	return !strcmp(name, "_mcount");
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index 7bd874871c31b..d651d8921ab47 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -24,6 +24,14 @@
+ #include <objtool/builtin.h>
+ #include <arch/elf.h>
  
-+void trace_insn_state(struct instruction *insn, struct insn_state *sprev,
-+		      struct insn_state *snext);
++const char *arch_reg_name[CFI_NUM_REGS] = {
++	"rax", "rcx", "rdx", "rbx",
++	"rsp", "rbp", "rsi", "rdi",
++	"r8",  "r9",  "r10", "r11",
++	"r12", "r13", "r14", "r15",
++	"ra"
++};
 +
- #else /* DISAS */
+ int arch_ftrace_match(char *name)
+ {
+ 	return !strcmp(name, "__fentry__");
+diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
+index 2bd7a76f053d9..5bcd0df5d8b61 100644
+--- a/tools/objtool/include/objtool/arch.h
++++ b/tools/objtool/include/objtool/arch.h
+@@ -103,6 +103,8 @@ unsigned long arch_pc_relative_offset(struct instruction *insn,
+ unsigned int arch_reloc_size(struct reloc *reloc);
+ unsigned long arch_jump_table_sym_offset(struct reloc *reloc, struct reloc *table);
  
- #define TRACE(fmt, ...)
- #define TRACE_INSN(insn, fmt, ...)
-+#define TRACE_INSN_STATE(insn, sprev, snext)
++extern const char *arch_reg_name[CFI_NUM_REGS];
++
+ #ifdef DISAS
  
- static inline void trace_enable(void) {}
- static inline void trace_disable(void) {}
+ #include <bfd.h>
 diff --git a/tools/objtool/trace.c b/tools/objtool/trace.c
-index bc3113ba72fdb..f45ae3e88d428 100644
+index f45ae3e88d428..ef9250d4646bb 100644
 --- a/tools/objtool/trace.c
 +++ b/tools/objtool/trace.c
-@@ -7,3 +7,136 @@
- 
- bool trace;
- int trace_depth;
-+
-+/*
-+ * Macros to trace CFI state attributes changes.
-+ */
-+
-+#define TRACE_CFI_ATTR(attr, prev, next, fmt, ...)		\
-+({								\
-+	if ((prev)->attr != (next)->attr)			\
-+		TRACE("%s=" fmt " ", #attr, __VA_ARGS__); 	\
-+})
-+
-+#define TRACE_CFI_ATTR_BOOL(attr, prev, next)			\
-+	TRACE_CFI_ATTR(attr, prev, next,			\
-+		       "%s", (next)->attr ? "true" : "false")
-+
-+#define TRACE_CFI_ATTR_NUM(attr, prev, next, fmt)		\
-+	TRACE_CFI_ATTR(attr, prev, next, fmt, (next)->attr)
-+
-+#define CFI_REG_NAME_MAXLEN   16
-+
-+/*
-+ * Return the name of a register. Note that the same static buffer
-+ * is returned if the name is dynamically generated.
-+ */
-+static const char *cfi_reg_name(unsigned int reg)
-+{
-+	static char rname_buffer[CFI_REG_NAME_MAXLEN];
-+
-+	switch (reg) {
-+	case CFI_UNDEFINED:
-+		return "<undefined>";
-+	case CFI_CFA:
-+		return "cfa";
-+	case CFI_SP_INDIRECT:
-+		return "(sp)";
-+	case CFI_BP_INDIRECT:
-+		return "(bp)";
-+	}
-+
-+	if (snprintf(rname_buffer, CFI_REG_NAME_MAXLEN, "r%d", reg) == 1)
-+		return NULL;
-+
-+	return (const char *)rname_buffer;
-+}
-+
-+/*
-+ * Functions and macros to trace CFI registers changes.
-+ */
-+
-+static void trace_cfi_reg(const char *prefix, int reg, const char *fmt,
-+			  int base_prev, int offset_prev,
-+			  int base_next, int offset_next)
-+{
+@@ -34,6 +34,7 @@ int trace_depth;
+ static const char *cfi_reg_name(unsigned int reg)
+ {
+ 	static char rname_buffer[CFI_REG_NAME_MAXLEN];
 +	const char *rname;
-+
-+	if (base_prev == base_next && offset_prev == offset_next)
-+		return;
-+
-+	if (prefix)
-+		TRACE("%s:", prefix);
-+
-+	rname = cfi_reg_name(reg);
-+
-+	if (base_next == CFI_UNDEFINED) {
-+		TRACE("%1$s=<undef> ", rname);
-+	} else {
-+		TRACE(fmt, rname,
-+		      cfi_reg_name(base_next), offset_next);
-+	}
-+}
-+
-+static void trace_cfi_reg_val(const char *prefix, int reg,
-+			      int base_prev, int offset_prev,
-+			      int base_next, int offset_next)
-+{
-+	trace_cfi_reg(prefix, reg, "%1$s=%2$s%3$+d ",
-+		      base_prev, offset_prev, base_next, offset_next);
-+}
-+
-+static void trace_cfi_reg_ref(const char *prefix, int reg,
-+			      int base_prev, int offset_prev,
-+			      int base_next, int offset_next)
-+{
-+	trace_cfi_reg(prefix, reg, "%1$s=(%2$s%3$+d) ",
-+		      base_prev, offset_prev, base_next, offset_next);
-+}
-+
-+#define TRACE_CFI_REG_VAL(reg, prev, next)				\
-+	trace_cfi_reg_val(NULL, reg, prev.base, prev.offset,		\
-+			  next.base, next.offset)
-+
-+#define TRACE_CFI_REG_REF(reg, prev, next)				\
-+	trace_cfi_reg_ref(NULL, reg, prev.base, prev.offset,		\
-+			  next.base, next.offset)
-+
-+void trace_insn_state(struct instruction *insn, struct insn_state *sprev,
-+		      struct insn_state *snext)
-+{
-+	struct cfi_state *cprev, *cnext;
-+	int i;
-+
-+	if (!memcmp(sprev, snext, sizeof(struct insn_state)))
-+		return;
-+
-+	cprev = &sprev->cfi;
-+	cnext = &snext->cfi;
-+
-+	disas_print_insn(stderr, objtool_disas_ctx, insn,
-+			 trace_depth - 1, "state: ");
-+
-+	/* print registers changes */
-+	TRACE_CFI_REG_VAL(CFI_CFA, cprev->cfa, cnext->cfa);
-+	for (i = 0; i < CFI_NUM_REGS; i++) {
-+		TRACE_CFI_REG_VAL(i, cprev->vals[i], cnext->vals[i]);
-+		TRACE_CFI_REG_REF(i, cprev->regs[i], cnext->regs[i]);
+ 
+ 	switch (reg) {
+ 	case CFI_UNDEFINED:
+@@ -46,6 +47,12 @@ static const char *cfi_reg_name(unsigned int reg)
+ 		return "(bp)";
+ 	}
+ 
++	if (reg < CFI_NUM_REGS) {
++		rname = arch_reg_name[reg];
++		if (rname)
++			return rname;
 +	}
 +
-+	/* print attributes changes */
-+	TRACE_CFI_ATTR_NUM(stack_size, cprev, cnext, "%d");
-+	TRACE_CFI_ATTR_BOOL(drap, cprev, cnext);
-+	if (cnext->drap) {
-+		trace_cfi_reg_val("drap", cnext->drap_reg,
-+				  cprev->drap_reg, cprev->drap_offset,
-+				  cnext->drap_reg, cnext->drap_offset);
-+	}
-+	TRACE_CFI_ATTR_BOOL(bp_scratch, cprev, cnext);
-+	TRACE_CFI_ATTR_NUM(instr, sprev, snext, "%d");
-+	TRACE_CFI_ATTR_NUM(uaccess_stack, sprev, snext, "%u");
-+
-+	TRACE("\n");
-+
-+	insn->trace = 1;
-+}
+ 	if (snprintf(rname_buffer, CFI_REG_NAME_MAXLEN, "r%d", reg) == 1)
+ 		return NULL;
+ 
 -- 
 2.43.5
 
