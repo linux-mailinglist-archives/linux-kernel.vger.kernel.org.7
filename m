@@ -1,142 +1,195 @@
-Return-Path: <linux-kernel+bounces-899263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952E5C573DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:42:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04FC1C573AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE4F3A1647
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:37:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734114E5CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB854340263;
-	Thu, 13 Nov 2025 11:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A225C2D0C9D;
+	Thu, 13 Nov 2025 11:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="GV07T8Mb"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvbMGTc+"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F52E33FE2C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55135337BB5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033823; cv=none; b=E5SvqS5UMah2cSzBOrHRclps8H8AlhNeQgFR9TwwK4uKJ37ArfJZLpADly/r+X+5EAIy9bjKeEriuqtK5bAPQ5V/OLRxGSN5Luq3WgnsT8sHUjA/doEDN5z/wCUMrQWzYxVWVudM57AE7PcI3dzDm0BLV3tLgHgrBaHiAOXDuZ8=
+	t=1763033906; cv=none; b=UfnStA3jxSsAy9H7fGm0ck/aRSethTSuS0erY9+5RtqUi379j1cTJw3Ra+2lquTfS+Irlgb2XKcBS4XNpH3VM9aUSUDgX45d5E9aKaGKbgZysEupGbjf7Yg3zQpAQIzy6ypsYZxIo/Ou0ZEFhHHeE4MY+HIIXMMWQlX54baC3p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033823; c=relaxed/simple;
-	bh=8jU+1vZz6L5NkscxLfIh4Ckz53MdUb69WF1JC6kXM9E=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6yrUt7CjhRcjpJPWIxeskWWHMMm4bFTYruZ5B0IFdi1KuGQdQOTS59L8ay45fAa1aSRaOiaIjih7+5jxukWigfEQ8JhPTf0sliysUZdehOQc5Ys1A4uAQNMD3fpMcmS+c8aq95y5NoxndgK5F7S1ianmZquMk+qymcG9Rnlqig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=GV07T8Mb; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0776740253
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:36:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1763033819;
-	bh=tTwKrtkcxeUpwMZkfKhEnePnSBMcVeHgD2kHZ7V4Ido=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=GV07T8MbzsOMInsAxBFTsdgQzX4ikSfo35e/6Nu4mF8+3w8DLegQ7j+1UfV8agvsA
-	 5dr40oRWZX4FE4q3cRJF9ekU9kU+p881YxKnJhQXQ20wFU/X33MLeYS14Hlya34w57
-	 Buh3vezCd3l60k5MKU8skdMKGCrSs4bWTmm8Ug3BoIJ2bz96dPuknVfMA/hBJwC8Yp
-	 TdC/w4eN+X2/Pewr87UhLLIunsl2ixWYJnnPu9VZowXHrbbIhVjLasOSE8Vcu5XnD5
-	 oKcD9r6/pmAjNPTMnRjZfehidtljb9RByF8TFdqOHy5ndorYjHeZA69HuR6FebW/Av
-	 nnYngw7ghXmMALrsTAXZ31DATID84jgOfSYZ4G9PEO1QsBv7oGrxhJygeZoDSRz79w
-	 KIHjWW8DeQvqh4rjMJs1pzxRsHNmJG7n9BaXbAtK9G1QqfK4kCFUAPG51YchuV37Uc
-	 YS3cSZfRPijtP2NV7zMOl22Cil/cDKiGn1KfovzQEhb6XLafyC5oJtKtvhxpT9Mr5W
-	 8JSyTFNR91JqwZmmauF69BZdQZpZJ/x+TnYEXNxXjg7QXlYEHfF6y4JcphZzRtsGwF
-	 VsRpfkLQgGSqD9kXZvKkgVhg2HszJTPcvF8+cFq4TGpzrFMu+jmaYFw0HbS7XJkl7p
-	 Wj2JOI4kyoqzpCBOY3Ztj4ls=
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b7270cab7eeso51652566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:36:59 -0800 (PST)
+	s=arc-20240116; t=1763033906; c=relaxed/simple;
+	bh=ELnE8IV2Py/JdIKniMjJbWE3lX2i5Fc3ho84PTNS0jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fI6oPGkV0RvuyVR6cL3NWiDcEekHSkI8j6EMq0tUdTf7Dt1pi9S99zHA635Ha2RIq8XxWc7EmZ0a7JMQWrukQQrZXfhnt2vyqDkbmUgNR5w5Z7FzZNhqsyXIMZ5fLIgw1qpFLyqPwQFDe/e2jk6bri34GBBfbuI7e8rV5KyxUX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvbMGTc+; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88057f5d041so7680186d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:38:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763033904; x=1763638704; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pgP9WNWvxV4SyeMxufc+beHNpMEnN2n4g+p2ssHNpfM=;
+        b=fvbMGTc+LwLhaHnuFA2e8J4tnLk9j4Hfczvt55mCkluwv5t+fzibKxRnhIio81XJWb
+         kFoHomqQrYq0vsy4sdiBRvDlHFwQolPLCeSIEpMTgAaxqw80qNP7TYq3zJJk4J4tPHem
+         7d62t4AlE1LgMS5tKHlQuXCMovPc3D0ZHbAz0Yn7r8Zw6saL6eAEbxAME/ZhtZzk6nkB
+         wEBcUMO9Pzs5lVYbkRn2w3WvSblkr6uIIu21IdgmZD3eaSGHLj9JDfY/yVECfWxcJiUe
+         TPui/PDd9ahdcftTbnACdA03GxQBo85BlbHAe2O5ZdFaA41F3MluAKXIPjCEpeZKCO6z
+         6X7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763033817; x=1763638617;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tTwKrtkcxeUpwMZkfKhEnePnSBMcVeHgD2kHZ7V4Ido=;
-        b=Ud9me2YK2HbeATtMVbHzMkPDf4hd6vOeTZ3xwtlXoJBEXAz4LFZl05HdGT94RlhZl4
-         mT+sM9TpoOj+duo2PUFmfBmp95wvDmIuFuw3354QcbfFAoY6nYa7AYbyrrObXTQc+dWE
-         OFObpuMpfm21n0yE73eYDfrKqCrNBCvFJLMhaSD+UTu2Z9AXTeY/BGg78voWehYfEnYT
-         ZkLkXHnJdKM+Rn9aBNb8jyDkn4PQYefUp5MdZSxBQEJl5YM9A9ppQjIM83avIeeBeVm5
-         wdsK0BuhwbHGkNFUUyk4OGnFIhH3c052TmXwtFK6+ssctjQaOFYltJkT2q5EujMZa/qx
-         /3tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4aLFr1ZE7hOXSUt4ccbyARYeorULMkSmekFkuMg/Ua544gyn/hmQdscyvJmmS3HbY5wcd5fMSudWLT3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX0T8/a9n3D+hqf9pQf0ihsvrZQtxVsc1Z0ngoLasE17m13BL2
-	Lq5IcQej1mc9i0EMbKRvRHkB65fHmnhZFcGBjTZkvE/5v13ezgJ5NN34m1UdFtDx9sYQYM2fugv
-	0DDfoiAXgSgz8oQP7ts5mS9DthcN167SRhPF9xsVZBQqdD3JthcblxYOcuKUZSIlYF9fJA8iSn1
-	bn+WtHhdMgLCg1X9qHYQvqYxQ1Fxtei/+C1tOJadEdI5Ye7yM8Y/gnesfJ
-X-Gm-Gg: ASbGncsdbmk/+trNON0L5pHLeQxeG+BJs06vYQBNvpY35/eAGcEscizCMzdH8BXPK8U
-	RfBMxSUmNIZ3qnrUcEiv2ztirBUV63GESw4taCu9anqR3nX1j6P6A4DjfIweULTjSNyqUSnaGN+
-	SMb0js6Ky9wigfjDUr4+yqxGawNyu/ubPmXLI80NCRBSKjhdz5xFzx2Q==
-X-Received: by 2002:a17:907:720a:b0:b73:54b8:3321 with SMTP id a640c23a62f3a-b7354b83da9mr175919666b.17.1763033817020;
-        Thu, 13 Nov 2025 03:36:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFH2rdITPXdMg5eNmeFWEtQ5puXeuB9CHsjZH+fXibndce/rG2EHRDWwbl7C/WqpLJAwgnsHwB3V3VYGkY6nnI=
-X-Received: by 2002:a17:907:720a:b0:b73:54b8:3321 with SMTP id
- a640c23a62f3a-b7354b83da9mr175917266b.17.1763033816572; Thu, 13 Nov 2025
- 03:36:56 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Nov 2025 03:36:55 -0800
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Nov 2025 03:36:55 -0800
+        d=1e100.net; s=20230601; t=1763033904; x=1763638704;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pgP9WNWvxV4SyeMxufc+beHNpMEnN2n4g+p2ssHNpfM=;
+        b=Ug/Wrle6YZALmwfGKXJuq1F7fstK0/CVpuU1DUstWL/BIa5++pDOQiDlDAPHh0k9Ae
+         1A5rYWquMWqeCpZvTHkHUUXHsDGv+0jI2f8eLwGxfYEma+GZup7q1r9rT6BaWImkHZ8o
+         5F/Ok+oocqt3ZXDB04Q8OyMwSy8j5chxfM4DVEahm272toFFv9e0YnEr3EXJRvG5eTM2
+         yRf1XX3Db9Jz31iqLM3GXsSParFzO3zSVvykeqtNunb5086KDt/ct4XJRyPMUOI6lEdP
+         OWS262okhrR+6UKqpH0M65s7PbFhAF3Mh3mfVBRv2qa2GeTqDu00ZJ1PXADTynxculGc
+         KvPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXof7N3rBXYiSD+yzb3xIxysTRQqkmwzo2s67/D3W3ieKHO5wO6eWfkCDNYadypVFjPETycdjoC68qO3go=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw80hxR96U9Eni5VXsbHu6B+VkWWBBGt7AbLASCeSv+wR4jTu6J
+	A3pfCqkghu6iyXolXBpP7kSRoIIyIqtWu65oD6e6buqEKN7kx6gRXxo3l4K0bEhE7EeaeyUH/mg
+	fhp4y/y4LJjTUIAfBBY5Exjd+uDW9PR4=
+X-Gm-Gg: ASbGncsy+QCVSI2qyiDEPQXWwMHDISAkn/I/L+S3cQcJYKXg339OzJq514//+DDEzis
+	ZthoPNwE2PWZhL9//Rc/CDu3JzZgvcY63eSPvI919MMCN2mjkohGr1D+W4Wh9x9uW/qxh9k8tZF
+	kfBSjWjscTEq0C4+rvcw0+X40YjT0E+1pKJpbQvPEduj7/x3KcT51qq1S7wGFRc7JFrqYJA/7lm
+	h2VyWOqNJdOzzmaqAvbI8O9GQqw+vMDLpsFj424FY7AZpkpS1IYrtYiq87X
+X-Google-Smtp-Source: AGHT+IFpLYzC3G5p9JQBS3rFphYbIEod4J5L5q0HiHlacwQQ7uFiNr3fLSmpcneuiRUvEsG67H4xiktWPd4IgVb8lI8=
+X-Received: by 2002:ad4:5d47:0:b0:880:4ac3:fbdb with SMTP id
+ 6a1803df08f44-88271922123mr96370946d6.23.1763033904000; Thu, 13 Nov 2025
+ 03:38:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3951551f-02e9-41a3-8212-ac1cbaecc69a@kernel.org>
-References: <20250930142212.521925-1-emil.renner.berthing@canonical.com> <3951551f-02e9-41a3-8212-ac1cbaecc69a@kernel.org>
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-User-Agent: alot/0.0.0
-Date: Thu, 13 Nov 2025 03:36:55 -0800
-X-Gm-Features: AWmQ_blgdQiy89oEkISH9ivslIUhSWgwxrtxxrZTErLd-hvw-g1OiCf3_NwkAG4
-Message-ID: <CAJM55Z8te25nDEW9hGT9rRzSwwKzkEBJPLfCpwgMwxvUzu+5Yw@mail.gmail.com>
-Subject: Re: [PATCH v1] nvmem: core: update cell->bytes after shifting bits
-To: Srinivas Kandagatla <srini@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Samuel Holland <samuel@sholland.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <CAAsfc_ry+u771V_dTQMiXpaz2iGbQOPmZfhwnyF56pM+FjXdsw@mail.gmail.com>
+ <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
+ <CAAsfc_pa=AwaaN6Fy2jU6nPwnGET0oZgWZtSc3LtQ9_oJ6supA@mail.gmail.com> <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com>
+In-Reply-To: <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com>
+From: liequan che <liequanche@gmail.com>
+Date: Thu, 13 Nov 2025 19:38:11 +0800
+X-Gm-Features: AWmQ_bmWIj-YyDux4f-p0e4dDonjgLkEi59TnpDIlgAdPp0GJH4xj-vG4i-IhZY
+Message-ID: <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
+Subject: [PATCH v2] bcache: fix UAF in cached_dev_free and safely flush/destroy
+To: Coly Li <colyli@fnnas.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache <linux-bcache@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Quoting Srinivas Kandagatla (2025-11-10 09:32:08)
->
->
-> On 9/30/25 3:22 PM, Emil Renner Berthing wrote:
-> > When support for bit offsets of more than one byte was added it
-> > unfortunately left the cell->bytes value at the number of bytes read
-> > including the offset. Make sure to update it to the proper number of
-> > meaningful bytes in the returned data.
-> Sorry somehow I missed this patch.
->
-> If the number of bytes are different to the bytes that are part of cell
-> then the parsing code seems to have missed some cases, which is the
-> right place to fix.
->
-> Can you share more details on the values that you pass as part of the
-> cell definition.
+stop writeback thread and rate-update work exactly once across teardown paths,
+- Add STOP_THREAD_ONCE() and use it at all three places that stop
+  dc->writeback_thread: cached_dev_detach_finish(), cached_dev_free(),
+  and the bch_cached_dev_attach() error path.
+- In cached_dev_detach_finish(), also clear WB_RUNNING and cancel the
+  periodic writeback-rate delayed work to avoid a UAF window after
+  detach is initiated.
+- Keep the per-dc writeback workqueue flush/destroy in the writeback
+  thread exit tail, avoiding double-destroy.
+Signed-off-by: cheliequan <cheliequan@inspur.com>
+---
+ drivers/md/bcache/bcache.h    | 11 +++++++++++
+ drivers/md/bcache/super.c     | 14 ++++++--------
+ drivers/md/bcache/writeback.c |  7 +++++--
+ 3 files changed, 22 insertions(+), 10 deletions(-)
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 1d33e40d26ea..66dc5dca5c20 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -961,6 +961,17 @@ static inline void wait_for_kthread_stop(void)
+        }
+ }
 
-Yes, the node effectively looks like this:
++/*
++ * Stop a kthread exactly once by taking ownership of the pointer.
++ * Safe against concurrent callers and against already-stopped threads.
++ */
++#define STOP_THREAD_ONCE(dc, member)                                    \
++       do {                                                             \
++               struct task_struct *t__ = xchg(&(dc)->member, NULL);     \
++               if (t__ && !IS_ERR(t__))                                 \
++               kthread_stop(t__);                                       \
++       } while (0)
++
+ /* Forward declarations */
 
-sid: efuse@3006000 {
-        compatible = "allwinner,sun20i-d1-sid";
-        reg = <0x3006000 0x1000>;
-        #address-cells = <1>;
-        #size-cells = <1>;
+ void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1492c8552255..b4da0a505d4a 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1143,8 +1143,7 @@ static void cached_dev_detach_finish(struct
+work_struct *w)
+                cancel_writeback_rate_update_dwork(dc);
 
-        ths_calib: ths-calib@14 {
-                reg = <0x14 0x4>;
-        };
+        if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
+-               kthread_stop(dc->writeback_thread);
+-               dc->writeback_thread = NULL;
++               STOP_THREAD_ONCE(dc, writeback_thread);
+        }
 
-        bg_trim: bg-trim@28 {
-                reg = <0x28 0x4>;
-                bits = <16 8>;
-        };
-};
+        mutex_lock(&bch_register_lock);
+@@ -1308,8 +1307,9 @@ int bch_cached_dev_attach(struct cached_dev *dc,
+struct cache_set *c,
+                 * created previously in bch_cached_dev_writeback_start()
+                 * have to be stopped manually here.
+                 */
+-               kthread_stop(dc->writeback_thread);
+-               cancel_writeback_rate_update_dwork(dc);
++               if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
++                       cancel_writeback_rate_update_dwork(dc);
++               STOP_THREAD_ONCE(dc, writeback_thread);
+                pr_err("Couldn't run cached device %pg\n", dc->bdev);
+                return ret;
+        }
+@@ -1349,10 +1349,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
+        if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
+                cancel_writeback_rate_update_dwork(dc);
 
-/Emil
+-       if (!IS_ERR_OR_NULL(dc->writeback_thread))
+-               kthread_stop(dc->writeback_thread);
+-       if (!IS_ERR_OR_NULL(dc->status_update_thread))
+-               kthread_stop(dc->status_update_thread);
++       STOP_THREAD_ONCE(dc, writeback_thread);
++       STOP_THREAD_ONCE(dc, status_update_thread);
+
+        mutex_lock(&bch_register_lock);
+
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 302e75f1fc4b..50e67a784acd 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -741,6 +741,7 @@ static int bch_writeback_thread(void *arg)
+        struct cached_dev *dc = arg;
+        struct cache_set *c = dc->disk.c;
+        bool searched_full_index;
++       struct workqueue_struct *wq = NULL;
+
+        bch_ratelimit_reset(&dc->writeback_rate);
+
+@@ -832,8 +833,10 @@ static int bch_writeback_thread(void *arg)
+                }
+        }
+
+-       if (dc->writeback_write_wq)
+-               destroy_workqueue(dc->writeback_write_wq);
++       wq = xchg(&dc->writeback_write_wq, NULL);
++       if (wq) {
++           destroy_workqueue(wq);
++        }
+
+        cached_dev_put(dc);
+        wait_for_kthread_stop();
+-- 
+2.25.1
 
