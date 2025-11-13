@@ -1,145 +1,175 @@
-Return-Path: <linux-kernel+bounces-899218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDA4C571DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:13:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7064C571F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA0F3B4A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:11:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E38B350DEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A5433AD9B;
-	Thu, 13 Nov 2025 11:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FB033B6E8;
+	Thu, 13 Nov 2025 11:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="wkgAbgOj"
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="TRCJCCoT";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="TRCJCCoT"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC4338F26;
-	Thu, 13 Nov 2025 11:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9473133B6D9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032264; cv=none; b=loKkzvoJ9R+ez66wetbdDbW5ZPAQZwtfgY3yD9VvKJviT+zMluvR0DdDeNHPfyq/7DFjk5cw80O6b3duYgTXJdouF4vGhhrH6J93MElkQCNAvLVkNxK3tkaWRegoVHSdDCcuE7jN1Ory5jnCeJh6l3VIqjNyWniLtR/ZnrktgIo=
+	t=1763032297; cv=none; b=ooyNESxD6xe30vInN5ZWOBWb+R3DooWcgImm2WaWMvbxiEhGAss8NYpU3GpF53I31HjgXB32nyu/GPyEClqXGvvUCO7DwuHY9l9RVlCI0+bkVPSrZhA/rEoralsNWjjptJM+iacfZwfaOW1pTHyoVuT6seHJwO8YFgBaI6Qte0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032264; c=relaxed/simple;
-	bh=urH1pHnaK/uaQl/yo8yiCGx+iorwpacltUVK/RqwjKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SDr1b4hf2WNimT2xugrtodl9pxtoJSkTyECgpR1QWh2+TQMqSPXQSV34Nw12h1T7MeAsvnJ9E3tKOY9PiR05rWwgsf6/sNTpqa5Y3gewDxz2hnqy10D8TAKxbzKcpaxqFg+TCRzpT5X6osnfRVUgMZCdM4mXIUUbywcVbKfXXUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=wkgAbgOj; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=sYdX7jPld9MHxC/2N/BdveINDqwOk1bdDkzTmhtgkOU=;
-	b=wkgAbgOj/Uyjk7TB32BI8+jld98422LU2nbkIaBXSanzYHVi6qJph7P+LYaPeIHyxTIgLssdk
-	NQu5KsJuHwWmg2eHARW+n+NAqI8UehAXAc67lMDLPw4XFhrBllr1+6vcAwL6U9EC1JXIXpDVMd7
-	26SAoBvKW98bxHl/K+3zxXw=
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6cwR1YknzKm5S;
-	Thu, 13 Nov 2025 19:09:11 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id F095D180044;
-	Thu, 13 Nov 2025 19:10:51 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 13 Nov 2025 19:10:51 +0800
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 13 Nov 2025 19:10:51 +0800
-Message-ID: <fb2412cd-7417-4d65-9dea-d166a3bd146f@huawei.com>
-Date: Thu, 13 Nov 2025 19:10:50 +0800
+	s=arc-20240116; t=1763032297; c=relaxed/simple;
+	bh=1/FPQVsnQzjrhTBdNlAXMKIfkauK1gmj7sm/TRh4/0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TIn//dTdCC6DsRYuyYbKM7AlVuWo7BSND29gvCkbbYX1L5MjwNMwLjaHIzN0thUK1lm9NSbVlSZa3ehTY/28RTe8va6cgYWVhjTXzw0gstkCIZ38H+B4R6DBOy6d40mZ7wilVEffkfaU/tNWjROYZigFk6KKP/7unweckeUp1tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=TRCJCCoT; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=TRCJCCoT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 706F11F894;
+	Thu, 13 Nov 2025 11:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1763032287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1I9SGJKsb/GK/Y/jlbo+QZ+I4rf+T9CoVcsICkpyoJk=;
+	b=TRCJCCoT0AXPBYCCD2mTyJDuS0Wp8ssfjYRrI8wEWRSw153B9MswJCahHWfryfRY8JBR6r
+	dKrejh8LeEjIC5agiBzlr+USVQEMQgQ/qiNbyfx+9DtoNgOYBfCEZfbp/VXrNf5aPnWmNJ
+	a9P63WGJUw/Z5cZU4WYaoPqTzGlSgUQ=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=TRCJCCoT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1763032287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1I9SGJKsb/GK/Y/jlbo+QZ+I4rf+T9CoVcsICkpyoJk=;
+	b=TRCJCCoT0AXPBYCCD2mTyJDuS0Wp8ssfjYRrI8wEWRSw153B9MswJCahHWfryfRY8JBR6r
+	dKrejh8LeEjIC5agiBzlr+USVQEMQgQ/qiNbyfx+9DtoNgOYBfCEZfbp/VXrNf5aPnWmNJ
+	a9P63WGJUw/Z5cZU4WYaoPqTzGlSgUQ=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 18ECE3EA61;
+	Thu, 13 Nov 2025 11:11:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LzazA9+8FWllWgAAD6G6ig
+	(envelope-from <nik.borisov@suse.com>); Thu, 13 Nov 2025 11:11:27 +0000
+From: Nikolay Borisov <nik.borisov@suse.com>
+To: Yazen.Ghannam@amd.com
+Cc: bp@alien8.de,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikolay Borisov <nik.borisov@suse.com>
+Subject: [PATCH] RAS/AMD/ATL: Remove bitwise_xor_bits
+Date: Thu, 13 Nov 2025 13:11:25 +0200
+Message-ID: <20251113111125.823960-1-nik.borisov@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] io-128-nonatomic: introduce
- io{read|write}128_{lo_hi|hi_lo}
-To: Ben Dooks <ben.dooks@codethink.co.uk>, <arnd@arndb.de>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <akpm@linux-foundation.org>,
-	<anshuman.khandual@arm.com>, <ryan.roberts@arm.com>,
-	<andriy.shevchenko@linux.intel.com>, <herbert@gondor.apana.org.au>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
-	<linux-api@vger.kernel.org>
-CC: <fanghao11@huawei.com>, <shenyang39@huawei.com>, <liulongfang@huawei.com>,
-	<qianweili@huawei.com>
-References: <20251112015846.1842207-1-huangchenghai2@huawei.com>
- <20251112015846.1842207-4-huangchenghai2@huawei.com>
- <59f8bc30-c1c6-4f07-87dd-cd2893ae87f7@codethink.co.uk>
-From: huangchenghai <huangchenghai2@huawei.com>
-Content-Language: en-US
-In-Reply-To: <59f8bc30-c1c6-4f07-87dd-cd2893ae87f7@codethink.co.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+X-Rspamd-Queue-Id: 706F11F894
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:mid,suse.com:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
+The name of the function is somewhat misleading, it's not just XORing
+bits, but is calculating the parity of the passed in value. There's
+already a compiler builtin function for this - __builtin_parity. Just
+use it. No functional changes.
 
-在 2025/11/12 22:48, Ben Dooks 写道:
-> On 12/11/2025 01:58, Chenghai Huang wrote:
->> From: Weili Qian <qianweili@huawei.com>
->>
->> In order to provide non-atomic functions for io{read|write}128.
->> We define a number of variants of these functions in the generic
->> iomap that will do non-atomic operations.
->>
->> These functions are only defined if io{read|write}128 are defined.
->> If they are not, then the wrappers that always use non-atomic operations
->> from include/linux/io-128-nonatomic*.h will be used.
->>
->> Signed-off-by: Weili Qian <qianweili@huawei.com>
->> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->> ---
->>   include/linux/io-128-nonatomic-hi-lo.h | 35 ++++++++++++++++++++++++++
->>   include/linux/io-128-nonatomic-lo-hi.h | 34 +++++++++++++++++++++++++
->>   2 files changed, 69 insertions(+)
->>   create mode 100644 include/linux/io-128-nonatomic-hi-lo.h
->>   create mode 100644 include/linux/io-128-nonatomic-lo-hi.h
->>
->> diff --git a/include/linux/io-128-nonatomic-hi-lo.h 
->> b/include/linux/io-128-nonatomic-hi-lo.h
->> new file mode 100644
->> index 000000000000..b5b083a9e81b
->> --- /dev/null
->> +++ b/include/linux/io-128-nonatomic-hi-lo.h
->> @@ -0,0 +1,35 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _LINUX_IO_128_NONATOMIC_HI_LO_H_
->> +#define _LINUX_IO_128_NONATOMIC_HI_LO_H_
->> +
->> +#include <linux/io.h>
->> +#include <asm-generic/int-ll64.h>
->> +
->> +static inline u128 ioread128_hi_lo(const void __iomem *addr)
->> +{
->> +    u32 low, high;
->
-> did you mean u64 here?
->
-Thank you for your reminder, I made a rookie mistake.
+Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+---
+ drivers/ras/amd/atl/umc.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/ras/amd/atl/umc.c b/drivers/ras/amd/atl/umc.c
+index 6e072b7667e9..7ff4a5a1c5da 100644
+--- a/drivers/ras/amd/atl/umc.c
++++ b/drivers/ras/amd/atl/umc.c
+@@ -49,18 +49,6 @@ static u8 get_coh_st_inst_id_mi300(struct atl_err *err)
+ 	return i;
+ }
+ 
+-/* XOR the bits in @val. */
+-static u16 bitwise_xor_bits(u16 val)
+-{
+-	u16 tmp = 0;
+-	u8 i;
+-
+-	for (i = 0; i < 16; i++)
+-		tmp ^= (val >> i) & 0x1;
+-
+-	return tmp;
+-}
+-
+ struct xor_bits {
+ 	bool	xor_enable;
+ 	u16	col_xor;
+@@ -250,17 +238,17 @@ static unsigned long convert_dram_to_norm_addr_mi300(unsigned long addr)
+ 		if (!addr_hash.bank[i].xor_enable)
+ 			continue;
+ 
+-		temp  = bitwise_xor_bits(col & addr_hash.bank[i].col_xor);
+-		temp ^= bitwise_xor_bits(row & addr_hash.bank[i].row_xor);
++		temp  = (u16)__builtin_parity(col & addr_hash.bank[i].col_xor);
++		temp ^= (u16)__builtin_parity(row & addr_hash.bank[i].row_xor);
+ 		bank ^= temp << i;
+ 	}
+ 
+ 	/* Calculate hash for PC bit. */
+ 	if (addr_hash.pc.xor_enable) {
+-		temp  = bitwise_xor_bits(col  & addr_hash.pc.col_xor);
+-		temp ^= bitwise_xor_bits(row  & addr_hash.pc.row_xor);
++		temp  = (u16)__builtin_parity(col & addr_hash.pc.col_xor);
++		temp ^= (u16)__builtin_parity(row & addr_hash.pc.row_xor);
+ 		/* Bits SID[1:0] act as Bank[5:4] for PC hash, so apply them here. */
+-		temp ^= bitwise_xor_bits((bank | sid << NUM_BANK_BITS) & addr_hash.bank_xor);
++		temp ^= (u16)__builtin_parity((bank | sid << NUM_BANK_BITS) & addr_hash.bank_xor);
+ 		pc   ^= temp;
+ 	}
+ 
+-- 
+2.51.1
 
-Chenghai
-
->> +    high = ioread64(addr + sizeof(u64));
->> +    low = ioread64(addr);
->> +
->> +    return low + ((u128)high << 64);
->> +}
->> +
->> +static inline void iowrite128_hi_lo(u128 val, void __iomem *addr)
->> +{
->> +    iowrite64(val >> 64, addr + sizeof(u64));
->> +    iowrite64(val, addr);
->> +}
->> +
->
 
