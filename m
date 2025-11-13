@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-898544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DFEC55849
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:21:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C066C5584C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7B52A345781
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:21:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 117714E1289
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E07C280336;
-	Thu, 13 Nov 2025 03:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB0F28EA72;
+	Thu, 13 Nov 2025 03:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ooV+WcKu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s5LgEgwg"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCC26FA67
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A352749DC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763004058; cv=none; b=ds4iqO/uPAGuZgxZqjWlGWbr2ASaFOJD2N18tT6QLukub7oFqKlTQ96wbRSC4+7RYG4a8wbAsuJaBvC/38vthYxgJYOGlKVE/PuL29/g8RogJ8HuH2ta+ObpVCLAYXQKPBPG4G2JvdFpyLLFXIHYMiWbrKe7Ter2QsCmHdMfnTo=
+	t=1763004059; cv=none; b=IU7JVKUNzKF8OCaGb9KSshNMKd79IVCqWUxqBs7FzrPIrohvQOtPhpNQbpp+eudRQZyhljk6UPGs3wclXxR3hDl04zYIQaHWIp5vS8tM0oOAueEG8MjlT5D4TDmtdZVSsc0VkhYGaIILt8Qico22arWCAVUHZF7yiU+c9q/fgvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763004058; c=relaxed/simple;
-	bh=oNNG+k4thlyehnxsCWGT1ub0+0JOn/z/u7lhmi952r0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=WVJUQ3s5s1U1WVWMqshmJtxRWIIgeLKMczEgFJErzBMYN2C9f7qs/h9Zx2SzgL05W220gA0IgpJ4OUtzqwY4sV89dNc0Imnx7nt+O61kDQooURGgF0uYIhfZHDvBbBzA0IBOhS8S3HWcZlyQH0eym5eLgGdmfrtZFUywCb/cydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ooV+WcKu; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1763004059; c=relaxed/simple;
+	bh=/wEuwYJacbKKFlQbisK53qhhUkEk1l0aXnBlIihbh9U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=BY9chxIA1tVnBgwnabJUZB9WBQdvr9t/NuelbXu5Wj7PRVuwdgGD35maxWPu2Ctx91gKiGxNrlKDQJMWZXwy8NrL50Qt/5g3Ut75P/ZyDy0XyFTKrNh7PzBkyObpgoAmyZ6gNIiK7vMnzHZZ5JddBhkA/JXzCQygHqDcn/u3c4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s5LgEgwg; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2982b47ce35so3988535ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:20:56 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297b35951b7so4376115ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:20:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763004055; x=1763608855; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1p0zWLHf4xDlGwHzwKuqecNFfCAmC0YDXEuqKtnw9SM=;
-        b=ooV+WcKu3ougsUShU3jYbixp3l2iyN60gj9QJQuRdWlHhkbsv7fVNv8blZ+xyV2MFn
-         D2d+jsRs20GhU8LtUW2Ez62DRYFRmmYydGpd7EgrcwOYjzW8qBuuUx0/vwYbkOXmhYKi
-         n1oucKYLIGr/4ywyLYw7cro3g/473MlHWokJAI2IoubKOQHNSXpgFsZUuV39LjEVrRXx
-         taFt671oDo6db/38IQtkfyDISdWnCUn8iqE24rCZKozirBo1GzcBpTNs/DbdzdTWfH+0
-         eEor/yyR5Fx0S7nd2zYhzNzsB3qO1y42KDRICQK1iPz9J3gtfOMMf9MCoBLwSXn/xBYK
-         5rUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763004055; x=1763608855;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1763004057; x=1763608857; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1p0zWLHf4xDlGwHzwKuqecNFfCAmC0YDXEuqKtnw9SM=;
-        b=jn2n7jujMGh9ufpr4lA2VDnT4ZRUz97178PmLrSrFl9pk1x/c+Kj8HEuB1Z5ssAorn
-         c2lkVYVDpJCXMLu4SJto6TtoEr044nGKB+Dm3JSr1cixePn7QZdiNIlcbz0xcItMbAcw
-         ZGlLJUzVQZCPp9NixR3Jp/4VZTj8nn65DXT4Tsa2BA+LrCjJUHJDC5B9aCSggBVTHCsw
-         WvjjmWWJDPGgCMW2Un8n9EYeD1wETcTPJAJNwdoLPtuBB0UO7dcgk/O9YZME5q4KytqW
-         q/lh5qiMoamqNPsHKUMlcMTdQTB5+GxReo1yXo0hY7KdKANIPqx9DUO2W0pgrEDIP91k
-         cK+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWjdA37qAND/NMsVPaPmsGyKiHbrQyoPT1dj7YZ1VsL+NWAVjPPJbbsEE+xlq3kT5kguelijvRcJz2t8Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1gn+6lJSEMu1/j+L7pwRgHRU9wD9iFceNYtH7GdCfPgZkYAI+
-	riKaICjNt87DmFNRyVfbw8Ek5QvkA+N2pUzjDM5zbWDJIeL9OSZxbzibq96vM4PKHSJKKzdle4G
-	dI83G8X6/Gg==
-X-Google-Smtp-Source: AGHT+IED9mKXLSyXD7LDZi2AxRROnjmSNGImJk5wdsMbH28XGHCXGHEd/x6/kS3x4oImdN9/xVQcqAw7H8Ja
-X-Received: from dlbpt5.prod.google.com ([2002:a05:7022:e805:b0:119:b185:ea69])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1211:b0:24c:7b94:2f53
- with SMTP id d9443c01a7336-2984ed247b8mr65742505ad.6.1763004055478; Wed, 12
- Nov 2025 19:20:55 -0800 (PST)
-Date: Wed, 12 Nov 2025 19:19:48 -0800
+        bh=OdnvPjUnvOTc/khADHyjd22NHmjVe0GcMSDru3c6rsg=;
+        b=s5LgEgwg7/kEdIH5YM8+it5Rd0TkC6gKEoRd6CXxxiMGJ/1veWoxHeAy0JEnUlUWWs
+         OWwEOAjODbhxImWB6Dm8NGwojfhls5S+sLpDXZXstowiX0QYilj+36HVxIX5OQ/2ABfJ
+         8z8q+v0lj9p1+loNQ1ppwmpzqsDIa4GFHPOFi7cbgE0U154z+sKOoFM64s3CVeR0ZIdg
+         wdq+8hI4YaBpU6abm6O1Znz/4bgLzW0T9GkEvQPZSNd0iHTF8seLapX63HmvyVlWE+R8
+         x8GFwQPW2ZdPb9x+n4Gvq75tSrfo2RKuQTdiwENPCW6c9Kly/PblI3TfvlGXHW+BXgCV
+         OqWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763004057; x=1763608857;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OdnvPjUnvOTc/khADHyjd22NHmjVe0GcMSDru3c6rsg=;
+        b=DCiQOz/5ICCgckqRlxV27l3SkqeFqe6Qj7ETBPIlGlt7tIWuT4Lrm25/+BthDt4rFA
+         loPZyUXvr2O+99tickk2lPjaztOLN4xwX3yirBOyCbIq2jXpyrlZVtBb4IN1wwVpOqWS
+         WY19VH1GZfnvYI3yCyBStNZvmMLFCBE597KJTjIPx1oC86DKkd12tvVodvvrNtusshYt
+         yDZXdOOOtnWVCfpJ0jKPsFBA6C8bzMKGsoPGtNjrxAGKPzW5Qr66ulC+9OFL42C7KjUz
+         +yQK7cAdEMr32JhqzhMNg6pWJjtIkOjFdJnV1BVGhebOlmFHzKBAsy1ERAbf38/pP+YG
+         rFrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcETQgqqhNsfEZVF+XpUepikw751iO+ank5cM7AveJUVeQ3ELgUo0nj9/UIru1nwfcohxgqgvokEAykwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybjT0Og9CESr8JIiGhlYgUhXX1m0Ty3hp0u3Ae7l11DeLR1Fod
+	WLyVFEkaZ3jiaZjwEpz4PMV7BaFahOI8BmsY3sFiPBUy+jVM4UoIvxxJjuTJy3Q9LVNI9givTKz
+	bwjBwwfrolw==
+X-Google-Smtp-Source: AGHT+IENUSd+lkjoZsq3X/mgYxckQizMTyTN+FLUqohdc7ToQ3zhL9b20/x+B5CLRvZiyi/W8aKKHcX7dAct
+X-Received: from dybli13.prod.google.com ([2002:a05:7301:128d:b0:2a4:7052:5652])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c46:b0:295:560a:e474
+ with SMTP id d9443c01a7336-2984edacbedmr63481055ad.32.1763004057211; Wed, 12
+ Nov 2025 19:20:57 -0800 (PST)
+Date: Wed, 12 Nov 2025 19:19:49 -0800
+In-Reply-To: <20251113032040.1994090-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251113032040.1994090-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251113032040.1994090-1-irogers@google.com>
-Subject: [PATCH v8 00/52] AMD, ARM, Intel metric generation with Python
+Message-ID: <20251113032040.1994090-2-irogers@google.com>
+Subject: [PATCH v8 01/52] perf python: Correct copying of metric_leader in an evsel
 From: Ian Rogers <irogers@google.com>
 To: Adrian Hunter <adrian.hunter@intel.com>, 
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
@@ -87,234 +90,171 @@ To: Adrian Hunter <adrian.hunter@intel.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Metrics in the perf tool come in via json. Json doesn't allow
-comments, line breaks, etc. making it an inconvenient way to write
-metrics. Further, it is useful to detect when writing a metric that
-the event specified is supported within the event json for a
-model. From the metric python code Event(s) are used, with fallback
-events provided, if no event is found then an exception is thrown and
-that can either indicate a failure or an unsupported model. To avoid
-confusion all the metrics and their metricgroups are prefixed with
-'lpm_', where LPM is an abbreviation of Linux Perf Metric. While extra
-characters aren't ideal, this separates the metrics from other vendor
-provided metrics.
+Ensure the metric_leader is copied and set up correctly. In
+compute_metric determine the correct metric_leader event to match the
+requested CPU. Fixes the handling of metrics particularly on hybrid
+machines.
 
-* The first 14 patches introduce infrastructure and fixes for the
-  addition of metrics written in python for Arm64, AMD Zen and Intel
-  CPUs. The ilist.py and perf python module are fixed to work better
-  with metrics on hybrid architectures.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/evsel.c  |  1 +
+ tools/perf/util/python.c | 82 +++++++++++++++++++++++++++++-----------
+ 2 files changed, 61 insertions(+), 22 deletions(-)
 
-* The next 13 patches generate additional metrics for AMD zen.  Rapl
-  and Idle metrics aren't specific to AMD but are placed here for ease
-  and convenience. Uncore L3 metrics are added along with the majority
-  of core metrics.
-
-* The next 20 patches add additional metrics for Intel. Rapl and Idle
-  metrics aren't specific to Intel but are placed here for ease and
-  convenience. Smi and tsx metrics are added so they can be dropped
-  from the per model json files. There are four uncore sets of metrics
-  and eleven core metrics. Add a CheckPmu function to metric to
-  simplify detecting the presence of hybrid PMUs in events. Metrics
-  with experimental events are flagged as experimental in their
-  description.
-
-* The next 2 patches add additional metrics for Arm64, where the
-  topdown set decomposes yet further. The metrcs primarily use json
-  events, where the json contains architecture standard events. Not
-  all events are in the json, such as for a53 where the events are in
-  sysfs. Workaround this by adding the sysfs events to the metrics but
-  longer-term such events should be added to the json.
-
-* The final patch validates that all events provided to an Event
-  object exist in a json file somewhere. This is to avoid mistakes
-  like unfortunate typos.
-
-This series has benefitted from the input of Leo Yan
- <leo.yan@arm.com>, Sandipan Das <sandidas@amd.com>, Thomas Falcon
- <thomas.falcon@intel.com> and Perry Taylor <perry.taylor@intel.com>.
-
-v8. Combine the previous 4 series for clarity. Rebase on top of the
-    more recent legacy metric and event changes. Make the python more
-    pep8 and pylint compliant.
-
-Foundations:
-v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
-    Das <sandidas@amd.com>) which didn't alter the generated json.
-    https://lore.kernel.org/lkml/20250904043208.995243-1-irogers@google.com/
-
-v5. Rebase on top of legacy hardware/cache changes that now generate
-    events using python:
-    https://lore.kernel.org/lkml/20250828205930.4007284-1-irogers@google.com/
-    the v5 series is:
-    https://lore.kernel.org/lkml/20250829030727.4159703-1-irogers@google.com/
-
-v4. Rebase and small Build/Makefile tweak
-    https://lore.kernel.org/lkml/20240926173554.404411-1-irogers@google.com/
-
-v3. Some code tidying, make the input directory a command line
-    argument, but no other functional or output changes.
-    https://lore.kernel.org/lkml/20240314055051.1960527-1-irogers@google.com/
-
-v2. Fixes two type issues in the python code but no functional or
-    output changes.
-    https://lore.kernel.org/lkml/20240302005950.2847058-1-irogers@google.com/
-
-v1. https://lore.kernel.org/lkml/20240302005950.2847058-1-irogers@google.com/
-
-AMD:
-v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
-    Das <sandidas@amd.com>) which didn't alter the generated json.
-    https://lore.kernel.org/lkml/20250904044047.999031-1-irogers@google.com/
-
-v5. Rebase. Add uop cache hit/miss rates patch. Prefix all metric
-    names with lpm_ (short for Linux Perf Metric) so that python
-    generated metrics are clearly namespaced.
-    https://lore.kernel.org/lkml/20250829033138.4166591-1-irogers@google.com/
-
-v4. Rebase.
-    https://lore.kernel.org/lkml/20240926174101.406874-1-irogers@google.com/
-
-v3. Some minor code cleanup changes.
-    https://lore.kernel.org/lkml/20240314055839.1975063-1-irogers@google.com/
-
-v2. Drop the cycles breakdown in favor of having it as a common
-    metric, suggested by Kan Liang <kan.liang@linux.intel.com>.
-    https://lore.kernel.org/lkml/20240301184737.2660108-1-irogers@google.com/
-
-v1. https://lore.kernel.org/lkml/20240229001537.4158049-1-irogers@google.com/
-
-Intel:
-v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
-    Das <sandidas@amd.com>) which didn't alter the generated json.
-    https://lore.kernel.org/lkml/20250904044653.1002362-1-irogers@google.com/
-
-v5. Rebase. Fix description for smi metric (Kan). Prefix all metric
-    names with lpm_ (short for Linux Perf Metric) so that python
-    generated metrics are clearly namespaced. Kan requested a
-    namespace in his review:
-    https://lore.kernel.org/lkml/43548903-b7c8-47c4-b1da-0258293ecbd4@linux.intel.com/
-    The v5 series is:
-    https://lore.kernel.org/lkml/20250829041104.4186320-1-irogers@google.com/
-
-v4. Experimental metric descriptions. Add mesh bandwidth metric. Rebase.
-    https://lore.kernel.org/lkml/20240926175035.408668-1-irogers@google.com/
-
-v3. Swap tsx and CheckPMU patches that were in the wrong order. Some
-    minor code cleanup changes. Drop reference to merged fix for
-    umasks/occ_sel in PCU events and for cstate metrics.
-    https://lore.kernel.org/lkml/20240314055919.1979781-1-irogers@google.com/
-
-v2. Drop the cycles breakdown in favor of having it as a common
-    metric, spelling and other improvements suggested by Kan Liang
-    <kan.liang@linux.intel.com>.
-    https://lore.kernel.org/lkml/20240301185559.2661241-1-irogers@google.com/
-
-v1. https://lore.kernel.org/lkml/20240229001806.4158429-1-irogers@google.com/
-
-ARM:
-v7. Switch a use of cycles to cpu-cycles due to ARM having too many
-    cycles events.
-    https://lore.kernel.org/lkml/20250904194139.1540230-1-irogers@google.com/
-
-v6. Fix issue with '\-' escape not being '\\-' (reported-by Sandipan
-    Das <sandidas@amd.com>) which didn't alter the generated json.
-    https://lore.kernel.org/lkml/20250904045253.1007052-1-irogers@google.com/
-
-v5. Rebase. Address review comments from Leo Yan
-    <leo.yan@arm.com>. Prefix all metric names with lpm_ (short for
-    Linux Perf Metric) so that python generated metrics are clearly
-    namespaced. Use cpu-cycles rather than cycles legacy event for
-    cycles metrics to avoid confusion with ARM PMUs. Add patch that
-    checks events to ensure all possible event names are present in at
-    least one json file.
-    https://lore.kernel.org/lkml/20250829053235.21994-1-irogers@google.com/
-
-v4. Tweak to build dependencies and rebase.
-    https://lore.kernel.org/lkml/20240926175709.410022-1-irogers@google.com/
-
-v3. Some minor code cleanup changes.
-    https://lore.kernel.org/lkml/20240314055801.1973422-1-irogers@google.com/
-
-v2. The cycles metrics are now made common and shared with AMD and
-    Intel, suggested by Kan Liang <kan.liang@linux.intel.com>. This
-    assumes these patches come after the AMD and Intel sets.
-    https://lore.kernel.org/lkml/20240301184942.2660478-1-irogers@google.com/
-
-v1. https://lore.kernel.org/lkml/20240229001325.4157655-1-irogers@google.com/
-
-Ian Rogers (52):
-  perf python: Correct copying of metric_leader in an evsel
-  perf ilist: Be tolerant of reading a metric on the wrong CPU
-  perf jevents: Allow multiple metricgroups.json files
-  perf jevents: Update metric constraint support
-  perf jevents: Add descriptions to metricgroup abstraction
-  perf jevents: Allow metric groups not to be named
-  perf jevents: Support parsing negative exponents
-  perf jevents: Term list fix in event parsing
-  perf jevents: Add threshold expressions to Metric
-  perf jevents: Move json encoding to its own functions
-  perf jevents: Drop duplicate pending metrics
-  perf jevents: Skip optional metrics in metric group list
-  perf jevents: Build support for generating metrics from python
-  perf jevents: Add load event json to verify and allow fallbacks
-  perf jevents: Add RAPL event metric for AMD zen models
-  perf jevents: Add idle metric for AMD zen models
-  perf jevents: Add upc metric for uops per cycle for AMD
-  perf jevents: Add br metric group for branch statistics on AMD
-  perf jevents: Add software prefetch (swpf) metric group for AMD
-  perf jevents: Add hardware prefetch (hwpf) metric group for AMD
-  perf jevents: Add itlb metric group for AMD
-  perf jevents: Add dtlb metric group for AMD
-  perf jevents: Add uncore l3 metric group for AMD
-  perf jevents: Add load store breakdown metrics ldst for AMD
-  perf jevents: Add ILP metrics for AMD
-  perf jevents: Add context switch metrics for AMD
-  perf jevents: Add uop cache hit/miss rates for AMD
-  perf jevents: Add RAPL metrics for all Intel models
-  perf jevents: Add idle metric for Intel models
-  perf jevents: Add CheckPmu to see if a PMU is in loaded json events
-  perf jevents: Add smi metric group for Intel models
-  perf jevents: Mark metrics with experimental events as experimental
-  perf jevents: Add tsx metric group for Intel models
-  perf jevents: Add br metric group for branch statistics on Intel
-  perf jevents: Add software prefetch (swpf) metric group for Intel
-  perf jevents: Add ports metric group giving utilization on Intel
-  perf jevents: Add L2 metrics for Intel
-  perf jevents: Add load store breakdown metrics ldst for Intel
-  perf jevents: Add ILP metrics for Intel
-  perf jevents: Add context switch metrics for Intel
-  perf jevents: Add FPU metrics for Intel
-  perf jevents: Add Miss Level Parallelism (MLP) metric for Intel
-  perf jevents: Add mem_bw metric for Intel
-  perf jevents: Add local/remote "mem" breakdown metrics for Intel
-  perf jevents: Add dir breakdown metrics for Intel
-  perf jevents: Add C-State metrics from the PCU PMU for Intel
-  perf jevents: Add local/remote miss latency metrics for Intel
-  perf jevents: Add upi_bw metric for Intel
-  perf jevents: Add mesh bandwidth saturation metric for Intel
-  perf jevents: Add collection of topdown like metrics for arm64
-  perf jevents: Add cycles breakdown metric for arm64/AMD/Intel
-  perf jevents: Validate that all names given an Event
-
- tools/perf/.gitignore                   |    5 +
- tools/perf/Makefile.perf                |    2 +
- tools/perf/pmu-events/Build             |   51 +-
- tools/perf/pmu-events/amd_metrics.py    |  711 ++++++++++++++
- tools/perf/pmu-events/arm64_metrics.py  |  187 ++++
- tools/perf/pmu-events/common_metrics.py |   19 +
- tools/perf/pmu-events/intel_metrics.py  | 1129 +++++++++++++++++++++++
- tools/perf/pmu-events/jevents.py        |    7 +-
- tools/perf/pmu-events/metric.py         |  256 ++++-
- tools/perf/pmu-events/metric_test.py    |    4 +
- tools/perf/python/ilist.py              |    8 +-
- tools/perf/util/evsel.c                 |    1 +
- tools/perf/util/python.c                |   82 +-
- 13 files changed, 2408 insertions(+), 54 deletions(-)
- create mode 100755 tools/perf/pmu-events/amd_metrics.py
- create mode 100755 tools/perf/pmu-events/arm64_metrics.py
- create mode 100644 tools/perf/pmu-events/common_metrics.py
- create mode 100755 tools/perf/pmu-events/intel_metrics.py
-
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 989c56d4a23f..0918afe5c009 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -538,6 +538,7 @@ struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig)
+ #endif
+ 	evsel->handler = orig->handler;
+ 	evsel->core.leader = orig->core.leader;
++	evsel->metric_leader = orig->metric_leader;
+ 
+ 	evsel->max_events = orig->max_events;
+ 	zfree(&evsel->unit);
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index fa5e4270d182..cc1019d29a5d 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -1340,27 +1340,48 @@ static int prepare_metric(const struct metric_expr *mexp,
+ 	struct metric_ref *metric_refs = mexp->metric_refs;
+ 
+ 	for (int i = 0; metric_events[i]; i++) {
+-		char *n = strdup(evsel__metric_id(metric_events[i]));
++		struct evsel *cur = metric_events[i];
+ 		double val, ena, run;
+-		int source_count = evsel__source_count(metric_events[i]);
+-		int ret;
++		int ret, source_count = 0;
+ 		struct perf_counts_values *old_count, *new_count;
++		char *n = strdup(evsel__metric_id(cur));
+ 
+ 		if (!n)
+ 			return -ENOMEM;
+ 
++		/*
++		 * If there are multiple uncore PMUs and we're not reading the
++		 * leader's stats, determine the stats for the appropriate
++		 * uncore PMU.
++		 */
++		if (evsel && evsel->metric_leader &&
++		    evsel->pmu != evsel->metric_leader->pmu &&
++		    cur->pmu == evsel->metric_leader->pmu) {
++			struct evsel *pos;
++
++			evlist__for_each_entry(evsel->evlist, pos) {
++				if (pos->pmu != evsel->pmu)
++					continue;
++				if (pos->metric_leader != cur)
++					continue;
++				cur = pos;
++				source_count = 1;
++				break;
++			}
++		}
++
+ 		if (source_count == 0)
+-			source_count = 1;
++			source_count = evsel__source_count(cur);
+ 
+-		ret = evsel__ensure_counts(metric_events[i]);
++		ret = evsel__ensure_counts(cur);
+ 		if (ret)
+ 			return ret;
+ 
+ 		/* Set up pointers to the old and newly read counter values. */
+-		old_count = perf_counts(metric_events[i]->prev_raw_counts, cpu_idx, thread_idx);
+-		new_count = perf_counts(metric_events[i]->counts, cpu_idx, thread_idx);
+-		/* Update the value in metric_events[i]->counts. */
+-		evsel__read_counter(metric_events[i], cpu_idx, thread_idx);
++		old_count = perf_counts(cur->prev_raw_counts, cpu_idx, thread_idx);
++		new_count = perf_counts(cur->counts, cpu_idx, thread_idx);
++		/* Update the value in cur->counts. */
++		evsel__read_counter(cur, cpu_idx, thread_idx);
+ 
+ 		val = new_count->val - old_count->val;
+ 		ena = new_count->ena - old_count->ena;
+@@ -1392,6 +1413,7 @@ static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+ 	struct metric_expr *mexp = NULL;
+ 	struct expr_parse_ctx *pctx;
+ 	double result = 0;
++	struct evsel *metric_evsel = NULL;
+ 
+ 	if (!PyArg_ParseTuple(args, "sii", &metric, &cpu, &thread))
+ 		return NULL;
+@@ -1404,6 +1426,7 @@ static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+ 
+ 		list_for_each(pos, &me->head) {
+ 			struct metric_expr *e = container_of(pos, struct metric_expr, nd);
++			struct evsel *pos2;
+ 
+ 			if (strcmp(e->metric_name, metric))
+ 				continue;
+@@ -1411,20 +1434,24 @@ static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+ 			if (e->metric_events[0] == NULL)
+ 				continue;
+ 
+-			cpu_idx = perf_cpu_map__idx(e->metric_events[0]->core.cpus,
+-						    (struct perf_cpu){.cpu = cpu});
+-			if (cpu_idx < 0)
+-				continue;
+-
+-			thread_idx = perf_thread_map__idx(e->metric_events[0]->core.threads,
+-							  thread);
+-			if (thread_idx < 0)
+-				continue;
+-
+-			mexp = e;
+-			break;
++			evlist__for_each_entry(&pevlist->evlist, pos2) {
++				if (pos2->metric_leader != e->metric_events[0])
++					continue;
++				cpu_idx = perf_cpu_map__idx(pos2->core.cpus,
++							    (struct perf_cpu){.cpu = cpu});
++				if (cpu_idx < 0)
++					continue;
++
++				thread_idx = perf_thread_map__idx(pos2->core.threads, thread);
++				if (thread_idx < 0)
++					continue;
++				metric_evsel = pos2;
++				mexp = e;
++				goto done;
++			}
+ 		}
+ 	}
++done:
+ 	if (!mexp) {
+ 		PyErr_Format(PyExc_TypeError, "Unknown metric '%s' for CPU '%d' and thread '%d'",
+ 			     metric, cpu, thread);
+@@ -1435,7 +1462,7 @@ static PyObject *pyrf_evlist__compute_metric(struct pyrf_evlist *pevlist,
+ 	if (!pctx)
+ 		return PyErr_NoMemory();
+ 
+-	ret = prepare_metric(mexp, mexp->metric_events[0], pctx, cpu_idx, thread_idx);
++	ret = prepare_metric(mexp, metric_evsel, pctx, cpu_idx, thread_idx);
+ 	if (ret) {
+ 		expr__ctx_free(pctx);
+ 		errno = -ret;
+@@ -1996,6 +2023,17 @@ static PyObject *pyrf_evlist__from_evlist(struct evlist *evlist)
+ 			else if (leader == NULL)
+ 				evsel__set_leader(pos, pos);
+ 		}
++
++		leader = pos->metric_leader;
++
++		if (pos != leader) {
++			int idx = evlist__pos(evlist, leader);
++
++			if (idx >= 0)
++				pos->metric_leader = evlist__at(&pevlist->evlist, idx);
++			else if (leader == NULL)
++				pos->metric_leader = pos;
++		}
+ 	}
+ 	metricgroup__copy_metric_events(&pevlist->evlist, /*cgrp=*/NULL,
+ 					&pevlist->evlist.metric_events,
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
