@@ -1,197 +1,102 @@
-Return-Path: <linux-kernel+bounces-899203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19A5C5714B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:04:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6300C57145
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD1B234A73F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DDB93BC622
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E82337BB5;
-	Thu, 13 Nov 2025 11:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A590337BA4;
+	Thu, 13 Nov 2025 11:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XprYqLZl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgbaE14Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCD82DC33B;
-	Thu, 13 Nov 2025 11:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717FC299A87;
+	Thu, 13 Nov 2025 11:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763031636; cv=none; b=cWQPgm6yKHQsi6m13JwYoSmWDgVYVhxlXCTIyaNycNhSVRIA6YVBMPdW4jxZ2hRETLWt66yo5y/KiDuKwX5QoSvrb10AEFsOzArxgDHbInXwY1ewui0kDQYY6KEuPVWxHtY6KXW/o/LfJvDwU2lAsUbNXf276k2ba7d4I6H+TXw=
+	t=1763031646; cv=none; b=oSxmVWSeIlhPwUcApKW/bLYSi/1Q6LjekYRF+V9zkPseywA2N4zazEVcxTPI1vVB1oot5SK4DCmiDsC4K3GoBtEKSEK+1naNaU+p99CYm4e8548w+3v7KtPhfl4pKdJfTi+V/R9xfh+eRDd00drG8Ro+qYEubfJOmWJ9pBvDDtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763031636; c=relaxed/simple;
-	bh=60CqqKZhKyJWhvXbxjipGwZaOFWeYx8t/B7NuToA0qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWELDcjF+NOqYK7s66ny9xqqkhFqLM+MgsSNVHUC7+qIClzP86xd3n7lRJCaTzh8qwuSTXv1MyjQbA2iIcvBXgFaeO+X9S1oGYuyWcqWgduI6f6kMgffFocJ5ASLVsSzG0OqQRepLSzo+EHtl1m2H6Cr4arZvKNnnn0/XpDVaOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XprYqLZl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830DAC4CEF8;
-	Thu, 13 Nov 2025 11:00:32 +0000 (UTC)
+	s=arc-20240116; t=1763031646; c=relaxed/simple;
+	bh=qvfSEw0SZ1CotusoJoW15C/btkq0zHfMym0GQa+pRNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RReczfM/XpCQ5WvCJFCiCncIAS3D4MHwXz5xD00/Utg6a6q2DcO0IovZYOvZgwp1SJezFh0rrlgj0kwoLe9OYJxY81n6+8tOdpveddeOSf7skQotJKGcqVvjbLjSTAy2YXWWUgbH9YTerjRLzMWPfE+IGKOs/sPggPfkYntHk/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgbaE14Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071FFC4CEF5;
+	Thu, 13 Nov 2025 11:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763031636;
-	bh=60CqqKZhKyJWhvXbxjipGwZaOFWeYx8t/B7NuToA0qM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XprYqLZl0n7S0uKqVe+CWa2LIB6Ck69UtfeF/nby7RAfR2gTWAOCSYAmCXZIkD9NY
-	 p2b9pRk1jOsaovvn4m6GLJ+x1SjWdmxEKkCfo0FZ5rcyfQGOM+Qax1yjUkhljKcjJE
-	 hGFz/mD/buVOCxa4jhShkdYg+2z99ADEx1QIbeg5p/n2pFuEPBeU1gp8YcfYhfHgM4
-	 j5Q+OXwo5qXd8x40MMLMJYQ3tWpSjIYpQUF+O1etquIVAEgFN6dvwAppS4x1bRWBTo
-	 9XmBVzGwaYs+I8qHma7t9haazKdJdjfIRXfpdbmZ0mCTV6jTDFr5ACh2Gt3XXV0deI
-	 aIf2OK9jhTnUA==
-Date: Thu, 13 Nov 2025 11:00:29 +0000
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-mm@kvack.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, corbet@lwn.net, joro@8bytes.org,
-	robin.murphy@arm.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	surenb@google.com, mhocko@suse.com, jackmanb@google.com,
-	hannes@cmpxchg.org, ziy@nvidia.com, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, Qinxin Xia <xiaqinxin@huawei.com>
-Subject: Re: [PATCH v2 3/4] drivers/iommu-debug-pagealloc: Track IOMMU pages
-Message-ID: <aRW6Tf_G2ObR__vE@willie-the-truck>
-References: <20251106163953.1971067-1-smostafa@google.com>
- <20251106163953.1971067-4-smostafa@google.com>
+	s=k20201202; t=1763031646;
+	bh=qvfSEw0SZ1CotusoJoW15C/btkq0zHfMym0GQa+pRNQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QgbaE14QnTozsvEBU7FVTkbPEM6NyX8PomKSBUMcYneL3OWSHi2jESEAZBVB/LVCu
+	 gGpraKE7y/9rA4aRfO9pY5GJ1br7RaSoFFwUiDfoTrLeQe8ka/pKRqu/ouAbtEF3oq
+	 IDBUt/iIjn6E/YuSdVQd/FlD9DqXwgbET9ltJmgecT/uHR2qd8hqbLcG0CEM4TfQFL
+	 /o/LPn4/BCis+uFdfTzN+ab0ttgPQvbc1Is5MTg3yeMM/RRnDjwfCOpQjywj9iGjVn
+	 qBzjFWi62i728MSfSIePrDk07sCrwYOyako3RiPhGSUj+4J+NuQv7iug+1Nibss/eA
+	 X7k/0VBTmKFDw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1vJV4G-0000000B63n-08gs;
+	Thu, 13 Nov 2025 12:00:44 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Jani Nikula" <jani.nikula@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: Makefile: update SPHINXDIRS documentation
+Date: Thu, 13 Nov 2025 12:00:32 +0100
+Message-ID: <683469813350214da122c258063dd71803ff700b.1763031632.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106163953.1971067-4-smostafa@google.com>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Thu, Nov 06, 2025 at 04:39:52PM +0000, Mostafa Saleh wrote:
-> Using the new calls, use an atomic refcount to track how many times
-> a page is mapped in any of the IOMMUs.
-> 
-> For unmap we need to use iova_to_phys() to get the physical address
-> of the pages.
-> 
-> We use the smallest supported page size as the granularity of tracking
-> per domain.
-> This is important as it possible to map pages and unmap them with
-> larger sizes (as in map_sg()) cases.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> Tested-by: Qinxin Xia <xiaqinxin@huawei.com>
-> ---
->  drivers/iommu/iommu-debug-pagealloc.c | 74 +++++++++++++++++++++++++++
->  1 file changed, 74 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommu-debug-pagealloc.c b/drivers/iommu/iommu-debug-pagealloc.c
-> index a6a2f844b09d..0e14104b971c 100644
-> --- a/drivers/iommu/iommu-debug-pagealloc.c
-> +++ b/drivers/iommu/iommu-debug-pagealloc.c
-> @@ -27,16 +27,90 @@ struct page_ext_operations page_iommu_debug_ops = {
->  	.need = need_iommu_debug,
->  };
->  
-> +static struct page_ext *get_iommu_page_ext(phys_addr_t phys)
-> +{
-> +	struct page *page = phys_to_page(phys);
-> +	struct page_ext *page_ext = page_ext_get(page);
-> +
-> +	return page_ext;
-> +}
-> +
-> +static struct iommu_debug_metadate *get_iommu_data(struct page_ext *page_ext)
-> +{
-> +	return page_ext_data(page_ext, &page_iommu_debug_ops);
-> +}
-> +
-> +static void iommu_debug_inc_page(phys_addr_t phys)
-> +{
-> +	struct page_ext *page_ext = get_iommu_page_ext(phys);
-> +	struct iommu_debug_metadate *d = get_iommu_data(page_ext);
-> +
-> +	WARN_ON(atomic_inc_return(&d->ref) <= 0);
 
-Is it worth dumping some information about the page in addition to the
-WARN_ON()? That way, you might be able to benefit from other debug
-options (e.g. PAGE_OWNER) if they are enabled.
+Since the beginning, SPHINXDIRS was meant to be used by any
+subdirectory inside Documentation/ that contains a file named
+index.rst on it. The typical usecase for SPHINXDIRS is help
+building subsystem-specific documentation, without needing to
+wait for the entire building (with can take 3 minutes with
+Sphinx 8.x and above, and a lot more with older versions).
 
-> +	page_ext_put(page_ext);
-> +}
-> +
-> +static void iommu_debug_dec_page(phys_addr_t phys)
-> +{
-> +	struct page_ext *page_ext = get_iommu_page_ext(phys);
-> +	struct iommu_debug_metadate *d = get_iommu_data(page_ext);
-> +
-> +	WARN_ON(atomic_dec_return(&d->ref) < 0);
+Yet, the documentation for such feature was written back in
+2016, where almost all index.rst files were at the first
+level (Documentation/*/index.rst).
 
-nit: I can't see why you need memory ordering guarantees for the refcount,
-so you could use the relaxed variants for the inc/dec operations.
+Update the documentation to reflect the way it works.
 
-> +	page_ext_put(page_ext);
-> +}
-> +
-> +/*
-> + * IOMMU page size might not match the CPU page size, in that case, we use
-> + * the smallest IOMMU page size to refcount the pages in the vmemmap.
-> + * That is important as both map and unmap has to use the same page size
-> + * to update the refcount to avoid double counting the same page.
-> + * And as we can't know from iommu_unmap() what was the original page size
-> + * used for map, we just use the minimum supported one for both.
-> + */
-> +static size_t iommu_debug_page_size(struct iommu_domain *domain)
-> +{
-> +	return 1UL << __ffs(domain->pgsize_bitmap);
-> +}
-> +
->  void __iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size_t size)
->  {
-> +	size_t off;
-> +	size_t page_size = iommu_debug_page_size(domain);
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Since this is a debug feature, is it worth checking other properties of
-the arguments too? For example, that phys is non-zero and that phys +
-size doesn't overflow?
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index d514ab6761dc..c66df29cf0a3 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -104,7 +104,9 @@ dochelp:
+ 	@echo  '  cleandocs       - clean all generated files'
+ 	@echo
+ 	@echo  '  make SPHINXDIRS="s1 s2" [target] Generate only docs of folder s1, s2'
+-	@echo  '  valid values for SPHINXDIRS are: $(_SPHINXDIRS)'
++	@echo  '  top level values for SPHINXDIRS are: $(_SPHINXDIRS)'
++	@echo  '  you may also use a subdirectory like SPHINXDIRS=userspace-api/media,'
++	@echo  '  provided that there is an index.rst file at the subdirectory.'
+ 	@echo
+ 	@echo  '  make DOCS_THEME={sphinx-theme} selects a different Sphinx theme.'
+ 	@echo
+-- 
+2.51.1
 
-> +	for (off = 0 ; off < size ; off += page_size) {
-> +		if (!pfn_valid(__phys_to_pfn(phys + off)))
-> +			continue;
-> +		iommu_debug_inc_page(phys + off);
-> +	}
->  }
->  
->  void __iommu_debug_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
->  {
-> +	size_t off;
-> +	size_t page_size = iommu_debug_page_size(domain);
-> +
-> +	for (off = 0 ; off < size ; off += page_size) {
-> +		phys_addr_t phys = iommu_iova_to_phys(domain, iova + off);
-> +
-> +		if (!phys || !pfn_valid(__phys_to_pfn(phys + off)))
-> +			continue;
-
-Hmm, it looks weird to add 'off' to both 'iova' _and_ the resulting
-physical address. Is that correct?
-
-> +		iommu_debug_dec_page(phys);
-> +	}
->  }
->  
->  void __iommu_debug_remap(struct iommu_domain *domain, unsigned long iova, size_t size)
->  {
-> +	size_t off;
-> +	size_t page_size = iommu_debug_page_size(domain);
-> +
-> +	for (off = 0 ; off < size ; off += page_size) {
-> +		phys_addr_t phys = iommu_iova_to_phys(domain, iova + off);
-> +
-> +		if (!phys || !pfn_valid(__phys_to_pfn(phys + off)))
-> +			continue;
-> +
-> +		iommu_debug_inc_page(phys);
-> +	}
-
-You can make the bulk of this code common with the unmap function.
-
-Will
 
