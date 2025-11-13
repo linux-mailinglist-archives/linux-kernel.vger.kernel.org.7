@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-900089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E141C5994B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:56:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102C6C59945
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6307C3425CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5613B39DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2DA3164D5;
-	Thu, 13 Nov 2025 18:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZl7JiVn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB59316910;
+	Thu, 13 Nov 2025 18:54:59 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B51314D16;
-	Thu, 13 Nov 2025 18:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7574131618E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763060097; cv=none; b=AXEeqmwBumjF2pyraIxf4KNVZyvNNPk27Te2zb+LVoPP/K18Q9Pgrv8n6YI3Aao2cyP9i1PjuB9Xf9Dko7kmZgVgTri4Fzko3KBaohO98Rqjuval90fPo7V7+7b5pOuZgt19Tzc6fGzgmU0Oh1eZcs2UzQAxgKKMYxI90gmOSPo=
+	t=1763060099; cv=none; b=MDOfC5jSeLSuslJ8IByZzLjhx5dhlTj9xJfVg0BzBdykYh/9yvKDwpDfFjnfYom38JP8f73Mv/1Oedo9UrFRlal3O1t7DtWQz6Y8mNBqIRjNfaQDvJgPeZc2CCzdpqOPwk0zfJjNBOLm224pMZE3+D0YByy5KU+ePWiJG8BhOvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763060097; c=relaxed/simple;
-	bh=SSkHv0qP9RdS8oYA1m3MhHgCknWNy+M/+MDNO5dnI4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkMiDX3qbft8/GJSXHg+meOxnz9gjRdy8E9OUO0RWeWwSRDuao4BSUdLbphNTAHD8RjTHquMGs/WIS5eWzQM07tst43B9F1y4dR49VHAI3/JYjdY6d1G7y4SEPlm5xChP7OxDapoMFHCD8kcVMxVcw7nYVklCsHhYPSaC8JDlpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZl7JiVn; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763060096; x=1794596096;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SSkHv0qP9RdS8oYA1m3MhHgCknWNy+M/+MDNO5dnI4c=;
-  b=KZl7JiVnHZs+jsATvco0HMg5zS0hMmx5NvR6ByLGFyTQG1oarA/lwnIm
-   YIR/fhLmO51XBNmuYp3ptGaaBuwuDB8ly864zeuH8Cj6/6UHzDOL0OysN
-   kug6rr5RGf3OTF6+SzKCZeHGsF+0ATu3AA+5gORXViRcMeVdv61IYplEe
-   L6YH2iEB+NVC5WXJes9txc2Ro06kPHq71kN4dGZFWG/C6lGt1RVG0qiam
-   Dh2yFcxXq090PMnv4WsCcHYjmAJ+jeJsG8NFaH+fBhTHMkCaclvmnzE/j
-   yIi+Amzzp0sMY693im9ESwGMkOn+kSfMHK9Lb2qQ7LCpHeosbqZEODuFu
-   w==;
-X-CSE-ConnectionGUID: /OYbNDCpTd+HupKFJqfsKA==
-X-CSE-MsgGUID: LY5TR+33TsakQijhDYC5ug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="75466972"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="75466972"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 10:54:56 -0800
-X-CSE-ConnectionGUID: E6m4jWTPQbGFAjAz/UV9pQ==
-X-CSE-MsgGUID: ZJuAYNZeQpirrP47L4i+Jw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="194560564"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Nov 2025 10:54:54 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJcT5-0005lf-1n;
-	Thu, 13 Nov 2025 18:54:51 +0000
-Date: Fri, 14 Nov 2025 02:54:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haotian Zhang <vulab@iscas.ac.cn>, herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Haotian Zhang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH] crypto: sa2ul: Add error handling for DMA metadata
- retrieval
-Message-ID: <202511140226.Czi6K1Kj-lkp@intel.com>
-References: <20251113075104.1396-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1763060099; c=relaxed/simple;
+	bh=aTL/CvYlXBXlKqttDnMbVw2A6aaApMbe0Ys8TkKMMFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DkqGgOzFcUrAxum4j7N6iHozD9fGmXyMpwtre1lXZS6iFjZzF1rzy/DvNVSjQvw4Q0mtkykHquiWtdrXRRopsXnJovhurICNFu91GaHOC9oXSkxn/+zVGlX0vIJ7OjxKMgZUoepb4DcXFHdSZJkS16+5XVOTiaaDtUmNRJ3FC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5dbd2b7a7e3so824237137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763060096; x=1763664896;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4/YE8T+hus+YJz4kOdEnC5RNNB3F9EQPBk/to49jz4A=;
+        b=mu1bNtNL97+AXvcgtKaSFR6Tbw6ZKxzrQNF4x3txIk8Je4STQz5Rha3FimX+/36Lu0
+         ZqTAEtTOvfj0i3/s0pVDjaEfGlhniGyiCyb+JP8jQHy0RAhbtvdM1bwH2NdCzRV3TOr9
+         Flm5o2So/1i9uDVIkRo/YZRhrECceesvDw0P1iloZ7vFJj3ev+xK4FqMEj/a8iFfyRNj
+         m0xauwPc4hX/RPKLjHbENm+E7gHrHGR/B9wIJ59PRxSVvr9PrvmCZmn2FdUjZZa6MsNA
+         xpO9UjWaoMxbEAfrwzvfH2rsnjoT8VIze4ZB/cHfw6KpQh02/PBwKPUunPY1fUZ76069
+         43Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCX9h61clfHg4IWCVNIx7QRv3IqADu5NK3mWph3mSDrHlX62UiJaGkBzxKVqTnMgBcJ/GwzI3KNcjJ4uSFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHyjTnja59NdaCEO+UswTtCLM5WiFszfKUD73TMnNJrYFuY+mg
+	9oWMae/9RYV6wkrQjZVDf4X1BsCoQuXzQP+De8AVuYamWkIb/bBY77x8oCpeOq4TJY8=
+X-Gm-Gg: ASbGncta8woreTRtat6g40EuBcerpMOTqFtDulOAoPAzZ+nl7yazACJQQ1mxv9LMykm
+	9wLtOyxQB9pCfgYJNzJXTU9i1N1rGELok3cA0LweFVol0DW/SCllfCvzgsvVsO1km5XwGakIQL3
+	5UBPJAuWr77jhN6GbKfW3eMYT0DjYTB0lnLruU7WOOD/FGnjFs9H/jupujsjloMQh5hyUxf5xAD
+	S8VUXCoyu7zE55OKiFmIwRmA/tTGncGnM/tnFo7wiuElizy75N8FWCKWF8SxTNVtiiaaIHRjnyz
+	gJcqygRbKE/PbO0w7G3qCdGY1m2G7SmBxPKM9kOadarM2hiTgFI7+ZA66DAUSPWWUuII5BVMgM6
+	FfPiJbD8iuo2hNxX+itFII8Pg/8AEZ7DfPBchkiRSPfICIPFEgle6CTtkhQPbkoCyhdd1VvAhL3
+	4XVL21ifv1gOca8jMeInDsvB8ECYFw9mrky47rFYKfsw==
+X-Google-Smtp-Source: AGHT+IG5YFXtz3JPo95UP0nAgCAI9HHO4c6KJaT81oJiVINnDnUYaHSitcEvaxjQNbgayOp6gbOvJA==
+X-Received: by 2002:a05:6102:e0a:b0:5db:ef3f:6c7d with SMTP id ada2fe7eead31-5dfc5556bf8mr458310137.14.1763060096109;
+        Thu, 13 Nov 2025 10:54:56 -0800 (PST)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f499dc9sm928129e0c.23.2025.11.13.10.54.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 10:54:55 -0800 (PST)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-559836d04f6so785635e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVwWk82asQ/OpBORD1H9DVZikYdvvasx61BQTHlLx056DWW+rdaRQx027UbEqc9agXuWGmuJZ22gVU2wjo=@vger.kernel.org
+X-Received: by 2002:a05:6102:4487:b0:5dd:c3ec:b5b with SMTP id
+ ada2fe7eead31-5dfc5b72883mr385433137.31.1763060094990; Thu, 13 Nov 2025
+ 10:54:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113075104.1396-1-vulab@iscas.ac.cn>
+References: <20251105070526.264445-1-claudiu.beznea.uj@bp.renesas.com> <20251105070526.264445-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20251105070526.264445-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 19:54:44 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX6jBKuQ+7bkVwXDmHS+9gUqtHVofyH-WuSS-Rnp939rA@mail.gmail.com>
+X-Gm-Features: AWmQ_bltKghBsZLySw-l2vh9sgIT7XEySbfTSJhtupfmI0PXdUgVSCq0B2b-psM
+Message-ID: <CAMuHMdX6jBKuQ+7bkVwXDmHS+9gUqtHVofyH-WuSS-Rnp939rA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] soc: renesas: r9a09g056-sys: Populate max_register
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: magnus.damm@gmail.com, john.madieu.xa@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Haotian,
+On Wed, 5 Nov 2025 at 08:05, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Populate max_register to avoid external aborts.
+>
+> Fixes: 2da2740fb9c8 ("soc: renesas: rz-sysc: Add syscon/regmap support")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.19.
 
-[auto build test ERROR on herbert-cryptodev-2.6/master]
-[also build test ERROR on herbert-crypto-2.6/master linus/master v6.18-rc5 next-20251113]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Gr{oetje,eeting}s,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haotian-Zhang/crypto-sa2ul-Add-error-handling-for-DMA-metadata-retrieval/20251113-155200
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20251113075104.1396-1-vulab%40iscas.ac.cn
-patch subject: [PATCH] crypto: sa2ul: Add error handling for DMA metadata retrieval
-config: microblaze-randconfig-r073-20251113 (https://download.01.org/0day-ci/archive/20251114/202511140226.Czi6K1Kj-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251114/202511140226.Czi6K1Kj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511140226.Czi6K1Kj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/crypto/sa2ul.c: In function 'sa_sha_dma_in_callback':
->> drivers/crypto/sa2ul.c:1387:29: error: passing argument 1 of 'skcipher_request_complete' from incompatible pointer type [-Werror=incompatible-pointer-types]
-      skcipher_request_complete(req, PTR_ERR(mdptr));
-                                ^~~
-   In file included from drivers/crypto/sa2ul.c:28:
-   include/crypto/internal/skcipher.h:94:71: note: expected 'struct skcipher_request *' but argument is of type 'struct ahash_request *'
-    static inline void skcipher_request_complete(struct skcipher_request *req, int err)
-                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/crypto/sa2ul.c: In function 'sa_aead_dma_in_callback':
-   drivers/crypto/sa2ul.c:1705:29: error: passing argument 1 of 'skcipher_request_complete' from incompatible pointer type [-Werror=incompatible-pointer-types]
-      skcipher_request_complete(req, PTR_ERR(mdptr));
-                                ^~~
-   In file included from drivers/crypto/sa2ul.c:28:
-   include/crypto/internal/skcipher.h:94:71: note: expected 'struct skcipher_request *' but argument is of type 'struct aead_request *'
-    static inline void skcipher_request_complete(struct skcipher_request *req, int err)
-                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-   cc1: some warnings being treated as errors
-
-
-vim +/skcipher_request_complete +1387 drivers/crypto/sa2ul.c
-
-  1365	
-  1366	static void sa_sha_dma_in_callback(void *data)
-  1367	{
-  1368		struct sa_rx_data *rxd = data;
-  1369		struct ahash_request *req;
-  1370		struct crypto_ahash *tfm;
-  1371		unsigned int authsize;
-  1372		int i;
-  1373		size_t ml, pl;
-  1374		u32 *result;
-  1375		__be32 *mdptr;
-  1376	
-  1377		sa_sync_from_device(rxd);
-  1378		req = container_of(rxd->req, struct ahash_request, base);
-  1379		tfm = crypto_ahash_reqtfm(req);
-  1380		authsize = crypto_ahash_digestsize(tfm);
-  1381	
-  1382		mdptr = (__be32 *)dmaengine_desc_get_metadata_ptr(rxd->tx_in, &pl, &ml);
-  1383		if (IS_ERR(mdptr)) {
-  1384			dev_err(rxd->ddev, "Failed to get SHA RX metadata pointer: %ld\n",
-  1385				PTR_ERR(mdptr));
-  1386			sa_free_sa_rx_data(rxd);
-> 1387			skcipher_request_complete(req, PTR_ERR(mdptr));
-  1388			return;
-  1389		}
-  1390	
-  1391		result = (u32 *)req->result;
-  1392	
-  1393		for (i = 0; i < (authsize / 4); i++)
-  1394			result[i] = be32_to_cpu(mdptr[i + 4]);
-  1395	
-  1396		sa_free_sa_rx_data(rxd);
-  1397	
-  1398		ahash_request_complete(req, 0);
-  1399	}
-  1400	
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
