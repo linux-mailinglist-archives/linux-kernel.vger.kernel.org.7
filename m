@@ -1,146 +1,202 @@
-Return-Path: <linux-kernel+bounces-899859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36935C5947F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:55:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3529C59110
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E8604F8FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72333B7E82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E50F35BDBA;
-	Thu, 13 Nov 2025 16:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B4C3590CF;
+	Thu, 13 Nov 2025 16:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZKdt2vU"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="rOqI9L1T";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="dMGNyJQi"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7952DECA5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AE63BB40
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052187; cv=none; b=C9pH7zXUfpx9CJmh46BWMa0oReaYxV9FVJ4KVtLxMwCN/DR96gzRpbpQa3AHezA8vgVtd1KdS8Qf/Xqn4JEkMxPgWdgvEQAGircNU1d8rHviGHh20yrFNCrLK5AWd2He7BgaYGsAizSrXG11NFpkyVN9JTbxMW4bbfnV82ykQxs=
+	t=1763052240; cv=none; b=KG0gor7NBONufQwQ7xviUPxMjgG5WHxhjp8hGFjFlPt+t1N013Z2hX3RtbsQ4gp8j5qfE+ts7NHO/64BzUt19SQeCq7u0aR22M8oox9fSVu91/+NeBmhDiSIa2SfKCs6q7hg79G++tCYI9d/wci7/y57SF/R0y0ofXDkE8TGeXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052187; c=relaxed/simple;
-	bh=e4wpLmy7vbQbRC0XLoLpa5gIrMdKSclGn19Wnlg9avQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ua70ta3ATuTrzDW0fkOFmgIs0p+maO4xlBMBogynyvRQqW/nCaZNhnMH78hCltM2OEfU6+/IrP2PW4suAtfO+os7Oo9yGyZoLTDsYtV3zoPWe4jzTGKo7K7XXJT11G5HLDS3mjXSsha+byHund0k/48B0T0ilt7bydXr8fW1Ve0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZKdt2vU; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b2e9ac45aso743375f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763052184; x=1763656984; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8de/CFnWO3IGxpSS3xw4ysFyF7Uiqg4MfqIR5613CyQ=;
-        b=FZKdt2vU5l2zdvp23iy9lONsvqaXvfKpbetvBZaixTS1boAtNI7uBeHcBnoAmCqsJo
-         hSYqWiKYV62+tzfdeLceUjufrGVCjx0On0Uuh2JTuOYBX3UGcmYyRJDHJ1sdhociVuLz
-         a7jADwp6clDKNa6ZcHvl9mtUBumUlMKFVZ+aoDFvpkMcdRUGHIfXiPuSwfiSKPBOFO7u
-         bmatcHkAXjrxm7uQCG/XhscQq+bilo3Kmh95c4kBaHYyjyJAV3DA4kzxa/LZyKejjeMF
-         0IugupU25rlgZZAu2yhi2gqB+l3lan2M6R/RP71DiMcevBHj+/cMsCn46wWaux3Ug/Uo
-         33Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763052184; x=1763656984;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8de/CFnWO3IGxpSS3xw4ysFyF7Uiqg4MfqIR5613CyQ=;
-        b=Q+Cm0vDz11wKU8lFMcnerhKq8hwSuH6wawgAErEX7qjiP/UpME8FrUwz48ApCCiQNn
-         h9AMhrR83D8J8kk6QdbTXYSP7nGVwjl/0lt/f2szfrPJA50b2s680W4DqMs05dFbnUT0
-         ImWY95QfbOievnWbQ37Wd8smTKJph46nzIn6rvbHn+DgHHpbgJ/peNzAXY33nd2LHghK
-         dIJ34SUuAVpe00JWUcWUHOwZ1sJewoUDFyVDTiY8A2FmbDpLjz34F7GRut32Yxa8BZeb
-         IaVR7YcEy9YmB7awNCA1N9qmpKG1aCMmn1lEa6VpiBwU570X+2lGd1939lDsXKXTkiiV
-         yf2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVCiqb4N/dLmQI4QGUYOfdm1D59tCO9mCsKLl6yp5PAweGHvssmYcrW/V7PL4thDAtpKrGO2TwZjbjvgMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEG2oa6AbwuGZsElSx++SovKc+tbpK4jBK5+4r9ksZHDF0Gv/C
-	nB8Duk7rW0OzRLAsQf77xpTXOaOyAErux4UpG/YpY/WHV2pnwhECtOOR
-X-Gm-Gg: ASbGnctgsHwOkjvbA/ndj4vFfQYwahJa60FyAyHhzculHxVwWNO42gtvllO/q3iVC22
-	TCppnB0wpcaq9Qs2i4rR3d+pCOBzZX9/H5ENbjxmObq6GHQuruHthJ9xswVdlI5QHf/H+8giQ4c
-	TazQ6Xss4PUt7i8S/WweuNHamPKdV7vMtA33caa3IbGaPiO9K1YqS3ycVWeamc7mEVPRcHaHCuY
-	wG/VJoanbVNZW+rjOnB3Nhq3dFgk7MqmDefldxRWVVcppBR2r4yjgPXG3AEaS2qd2aRqd7Y6EgE
-	ZhwS54F0aVMvtUwKbctluJcrnFrL/T09q4PtV/sxn/yV5ZmjpTrq1x18NjsMJqxxFNlg994Qnwp
-	rokM0OQGGwefQXItXdFx2CNDOrDVVnY5zdlx+rKPdinKzmwzJJ0MzR2o7aR6W1pnyl78q94hiXW
-	zkP9bBKRJD8+TGSJln70YdOloTgxfBMeOLbUsuigNjWvLrwH9S6VE=
-X-Google-Smtp-Source: AGHT+IE/hFbQQQKhQlmQzt/n0bY/OxlEju2Z4LaA3//8LQTjh5HN/tkbw2eY2czeTiAKeKUY5nE69A==
-X-Received: by 2002:a05:600c:a06:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4778fe5ece9mr1671475e9.5.1763052184093;
-        Thu, 13 Nov 2025 08:43:04 -0800 (PST)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4778c8a992bsm45289725e9.16.2025.11.13.08.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:43:03 -0800 (PST)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Thu, 13 Nov 2025 17:42:52 +0100
-Subject: [PATCH] clk: qcom: use different Kconfig prompts for APSS
- IPQ5424/6018 drivers
+	s=arc-20240116; t=1763052240; c=relaxed/simple;
+	bh=M9YTZ3lmop9V3/WkTQGpF6a3OMeldw3nz0ErLVNMkiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XxO2RAC8FjKpTZ5OhW26hgrQY3UJ4qG3jmPljGWZJPoUJpVlV6IodMizTQworbSQp4jUvmBiSd+Hg0OkujAhfLRlw6Sr1yPNFmKEw1z1gmLBuBe72Hb/nj7sqv2FwdTaSyFYv9ME+adRGYjmKI8I77YSl+dySVmnGU1RlFOoPnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=rOqI9L1T; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=dMGNyJQi; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1763052209; bh=NJSnPkVvH7xY6kY2ZZ7qcZ0
+	QmyJLiVtggX4UglWKEzc=; b=rOqI9L1T/zsxT2GprcbxfTD760Dihdk9Grf11UsOGPfg45K/eJ
+	5nv11jZwvqbISzpVO669YOHaE4ZjfrHiAAClCsLLlu94GPXeym03kDvaY8lxaOaIDCSm7XC2ntZ
+	dE/wFf6OrNlgreSv6Qietbp7Gk2o53qvb9AOTpTyKtTKbhUUqSbml1maPeL0EIdcinr/NtApJ0r
+	10QI+1WEZWSal/W5C2lE20w9XWFcG7rAxloksldPyrH9+oDEC0Q7C4gYNz8FQrKkT9ES12EQxPI
+	flQNFrh/E7DTPKRPn8inBiDNTAMpedzYhHYe0zQriaa6wBLg4p9VtUln08l3n3TFTKw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1763052209; bh=NJSnPkVvH7xY6kY2ZZ7qcZ0
+	QmyJLiVtggX4UglWKEzc=; b=dMGNyJQip1hx78aX9Td42fdPum8wK8yjb0/wrVx7FE/h6lYWbC
+	MjgLMTSmFGbIFiazgb0jahI2M08Yv6uZtpDA==;
+Message-ID: <e9b84f62-f4e4-4c11-a1df-d429f0135cab@damsy.net>
+Date: Thu, 13 Nov 2025 17:43:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-clk-qcom-apss-ipq-prompt-v1-1-b62cf2142609@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIsKFmkC/x3MTQqEMAxA4atI1gZMRZG5yuDCqVGDP43NIIJ4d
- 4vLb/HeBcZR2OCTXRD5EJOwJVCegZ+6bWSUPhlc4SoiKtEvM+4+rNipGYruqDGs+seB6qr+FY1
- zvoGUa+RBznf9be/7ARUtBfNqAAAA
-X-Change-ID: 20251113-clk-qcom-apss-ipq-prompt-f1656b0822c8
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] drm/amdgpu: increment sched score on entity
+ selection
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251107090425.23199-1-pierre-eric.pelloux-prayer@amd.com>
+ <20251107090425.23199-2-pierre-eric.pelloux-prayer@amd.com>
+ <5717c024-0200-4b23-a25b-681ef0937d6f@amd.com>
+ <9950dd13-d5c1-4b34-b3f9-2528a1ffb989@igalia.com>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <9950dd13-d5c1-4b34-b3f9-2528a1ffb989@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Both the IPQ_APSS_5424 and IPQ_APSS_6018 symbols are using the same
-prompt which complicates to see that which option corresponds to which
-driver.
 
-Add a prefix to both prompts to make it easier to differentiate the
-two options.
 
-While at it, also fix a typo in the help text of the IPQ_APSS_5424
-symbol.
+Le 07/11/2025 à 11:39, Tvrtko Ursulin a écrit :
+> 
+> On 07/11/2025 10:26, Christian König wrote:
+>> On 11/7/25 10:04, Pierre-Eric Pelloux-Prayer wrote:
+>>> For hw engines that can't load balance jobs, entities are
+>>> "statically" load balanced: on their first submit, they select
+>>> the best scheduler based on its score.
+>>> The score is made up of 2 parts:
+>>> * the job queue depth (how much jobs are executing/waiting)
+>>> * the number of entities assigned
+>>>
+>>> The second part is only relevant for the static load balance:
+>>> it's a way to consider how many entities are attached to this
+>>> scheduler, knowing that if they ever submit jobs they will go
+>>> to this one.
+>>>
+>>> For rings that can load balance jobs freely, idle entities
+>>> aren't a concern and shouldn't impact the scheduler's decisions.
+>>>
+>>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+>>> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>>> ---
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 22 +++++++++++++++++-----
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
+>>>   2 files changed, 18 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/ 
+>>> amdgpu/amdgpu_ctx.c
+>>> index afedea02188d..4d91cbcbcf25 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>>> @@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
+>>> u32 hw_ip,
+>>>       struct amdgpu_ctx_entity *entity;
+>>>       enum drm_sched_priority drm_prio;
+>>>       unsigned int hw_prio, num_scheds;
+>>> +    struct amdgpu_ring *aring;
+>>>       int32_t ctx_prio;
+>>>       int r;
+>>> @@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
+>>> *ctx, u32 hw_ip,
+>>>               goto error_free_entity;
+>>>       }
+>>> -    /* disable load balance if the hw engine retains context among dependent 
+>>> jobs */
+>>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+>>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+>>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+>>> -        hw_ip == AMDGPU_HW_IP_UVD) {
+>>> +    sched = scheds[0];
+>>> +    aring = container_of(sched, struct amdgpu_ring, sched);
+>>> +
+>>> +    if (aring->funcs->engine_retains_context) {
+>>> +        /* Disable load balancing between multiple schedulers if the hw
+>>> +         * engine retains context among dependent jobs.
+>>> +         */
+>>>           sched = drm_sched_pick_best(scheds, num_scheds);
+>>>           scheds = &sched;
+>>>           num_scheds = 1;
+>>> @@ -258,6 +261,12 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
+>>> *ctx, u32 hw_ip,
+>>>       if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
+>>>           goto cleanup_entity;
+>>> +    if (aring->funcs->engine_retains_context) {
+>>> +        aring = container_of(sched, struct amdgpu_ring, sched);
+>>> +        entity->sched_score = aring->sched_score;
+>>> +        atomic_inc(entity->sched_score);
+>>> +    }
+>>> +
+>>>       return 0;
+>>>   cleanup_entity:
+>>> @@ -514,6 +523,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
+>>>               if (!ctx->entities[i][j])
+>>>                   continue;
+>>> +            if (ctx->entities[i][j]->sched_score)
+>>> +                atomic_dec(ctx->entities[i][j]->sched_score);
+>>> +
+>>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
+>>>           }
+>>>       }
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/drm/amd/ 
+>>> amdgpu/amdgpu_ctx.h
+>>> index 090dfe86f75b..f7b44f96f374 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
+>>>       uint32_t        hw_ip;
+>>>       uint64_t        sequence;
+>>>       struct drm_sched_entity    entity;
+>>> +    atomic_t        *sched_score;
+>>
+>> I would rather prefer to not have that additional member here.
+>>
+>> Additional to that we are messing with the internals of the scheduler here and 
+>> should probably have two clean functions to increase/decrease the score.
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/clk/qcom/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The problem of exposing a function to cleanly inc/dec the score, is that it 
+requires entity->rq to never be set to NULL.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 78a3038426136e018e346bad0e10e1caa26ee6b7..2190979b6e7b66cb3901ff53dbb1af39571e4267 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -215,16 +215,16 @@ config IPQ_APSS_PLL
- 	  devices.
- 
- config IPQ_APSS_5424
--	tristate "IPQ APSS Clock Controller"
-+	tristate "IPQ5424 APSS Clock Controller"
- 	select IPQ_APSS_PLL
- 	default y if IPQ_GCC_5424
- 	help
--	  Support for APSS Clock controller on Qualcom IPQ5424 platform.
-+	  Support for APSS Clock controller on Qualcomm IPQ5424 platform.
- 	  Say Y if you want to support CPU frequency scaling on ipq based
- 	  devices.
- 
- config IPQ_APSS_6018
--	tristate "IPQ APSS Clock Controller"
-+	tristate "IPQ6018 APSS Clock Controller"
- 	select IPQ_APSS_PLL
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
- 	depends on QCOM_SMEM
+So I'd rather keep the current code / workaround in amdgpu. Or, I could modify 
+the next one to do something like this:
 
----
-base-commit: 682921ab33129ec46392b27e9dafcb206c2a08dd
-change-id: 20251113-clk-qcom-apss-ipq-prompt-f1656b0822c8
+if (entity->inc_score_on_add)
+    atomic_inc(rq->sched->score);
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+= keeping the existing logic in the scheduler, but making it opt-in instead of 
+the default behavior.
+
+Pierre-Eric
+
+
+> 
+> Don't forget it is a driver owned atomic_t so I think it is fine driver 
+> manipulates it on its own.
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+> 
+>> Regards,
+>> Christian.
+>>
+>>>       struct dma_fence    *fences[];
+>>>   };
+>>
 
 
