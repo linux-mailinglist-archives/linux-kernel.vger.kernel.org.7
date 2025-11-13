@@ -1,148 +1,133 @@
-Return-Path: <linux-kernel+bounces-898849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BA9C56257
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:03:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 008E5C56263
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0659B345399
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:02:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B2E13435D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FBF33033F;
-	Thu, 13 Nov 2025 08:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8871330B3B;
+	Thu, 13 Nov 2025 08:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvngG+gP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="qzPyreZY";
+	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="0wdO3dBu"
+Received: from m.foxido.dev (m.foxido.dev [81.177.217.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66265289811;
-	Thu, 13 Nov 2025 08:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F5289811;
+	Thu, 13 Nov 2025 08:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.177.217.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763020852; cv=none; b=aC+G/BVmA7y9m2dRHBPDt2VzEsYZPPH75D6ZuCalBR2tHkUH4wyU+yeMRcf+bvK+2/x//nIklwVTAPiY53bLr4uMpc4SzTkJX8lpZXkErdM2DC/Wd3eU8rxBjKlJKSq0Jq1kacR6bC/IlMAdwzT8j8bPaZpup744b7KlOK2E7vE=
+	t=1763020889; cv=none; b=NwrjwckUPir4NVrRziyJLI55+hSVeTJFonjKv6WeuVwY7YnudUCf65nta2hZWHQ1v7T+Ac5d7S+Fr3qLs4wCCBohT/1s3e+cpEGdZvlj7IhYW9A2KzeYxkkeantUMvaslb6+w6LDkMvvqQA+NPpApypepPdVEkGRUxI8jSS/CGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763020852; c=relaxed/simple;
-	bh=WmqkW3UkMPxJ2hqmmHl3aY1fYJJukh2KzhzojgxvCVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoFpHHG7TubqtrMH5u3QQ9v4XZleqmLIV+YcDPU/xCu3MhYVR3qna0w2T/Z3btS3tKzeD8ufwOaM4eljEkrU6sm5rH5Vqez7pqzOawWkX2MS9iR6Y7E6GozQ8mxreb9HuVh6ZHe0ETPUBewcnrzCFvKlJoA6tyUED//i6YFRufQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvngG+gP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D933C4CEF8;
-	Thu, 13 Nov 2025 08:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763020851;
-	bh=WmqkW3UkMPxJ2hqmmHl3aY1fYJJukh2KzhzojgxvCVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MvngG+gP69SHM63Z5iI4/xBcHcRs5CX3CfTI4J8cHRSjueLzf1e79gBMCBFR16cDe
-	 pW0tfxhuQ9L76KNMppP5d6rV1Vl5AjD1q2qhwkSoLbHEqj6OC3R27NLlZEqXJzyV0X
-	 yc4nRv7c4ySqJKX4+z/EVNbxvMlPHMZerq8edYClXV1ka6zr7npFiBQWJGaIFmGiQr
-	 YK62ZoCZu9cXjNk6cUzPSKAUh9nJQ65kNcp7PgOslvJDq0oYMKh5nYXJLizxnxrhxH
-	 5Wk1hoq7bTIePtEoeYN6Mzy1J0YbKpIN9KOo+ZMScmRR2K9DYCkXrpPZDYPrHpDscU
-	 VF5xF+BI5UbOg==
-Date: Thu, 13 Nov 2025 09:00:49 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: bmc-sw@aspeedtech.com, benh@kernel.crashing.org, joel@jms.id.au, 
-	andi.shyti@kernel.org, jk@codeconstruct.com.au, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
-	andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, linux-i2c@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v22 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-Message-ID: <20251113-waxbill-of-awesome-fame-8a84d1@kuoka>
-References: <20251112085649.1903631-1-ryan_chen@aspeedtech.com>
- <20251112085649.1903631-2-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1763020889; c=relaxed/simple;
+	bh=g2LbOhUwqSwiWbQJrtcUdsYDcEz2zE/fSkGL/O1Hg9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WqVoyDBK4C9EiYfMtkQzUt8cU4pW9JMmkCrZDvi0jV5KSzfDSPK5Rail+J6VthvmBGRydRBAgEW+f8eGy9qKKkyoJwYKhIi+HpIeVjzWBwFhTVk+ex9eNAcavaKv7yUq7KGFjlpV9pUZk0WdaWg+KINaOvdh0UBKCcfErm1CKMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=foxido.dev; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=qzPyreZY; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=0wdO3dBu; arc=none smtp.client-ip=81.177.217.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxido.dev
+DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1763020876; bh=VrikCNq8J0aRng6bbkTwcBM
+	z+jW/3xa7sTs49VEz1TQ=; b=qzPyreZYsrW8NYj4n4Lps/fgTLam7kROMN2plVj12KW9Hs0wq7
+	7ooTCBecPO/7gGKhB5nYVHsxxxmq+WFCksknhYJgkrqGVwTHYp9ZvU4LWn7Rw5pXSnERTnrqKP+
+	rbPhjFXZYx/K431r1vdUQdPGRzBcoeKHW7HOzUtL8M/CK2m6v+RqZGK7DBKhW//nC3NGqyNqFJQ
+	ResY+36gGb7DOJfKS9sOADbw1HIrkJdMy9uQkRHnHulVUJtQkE5G9kOwODinC16b/076QGcLlp9
+	LaMPkF82ZsE+JTvZkTsQP40U22ChZksk0yx/Iv8U7O1dxbtNuKiEwjNBq08XjzAz+sA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1763020876; bh=VrikCNq8J0aRng6bbkTwcBM
+	z+jW/3xa7sTs49VEz1TQ=; b=0wdO3dBuZSkx51yX6hO3dWfhQ4VqFi3mgfjZriSZKYEXpdfYK9
+	ct96VVu39MUTH4Ombz6RIZWyjR5Ji+3ltpAg==;
+Message-ID: <39aedcbd-aca9-4963-8131-a3cdb7a4289a@foxido.dev>
+Date: Thu, 13 Nov 2025 11:01:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251112085649.1903631-2-ryan_chen@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/8] use cleanup.h in btrfs
+To: Qu Wenruo <wqu@suse.com>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1762972845.git.foxido@foxido.dev>
+ <31b5e88c-0979-44cc-9e7a-1cb3320caf39@suse.com>
+Content-Language: en-US
+From: Gladyshev Ilya <foxido@foxido.dev>
+In-Reply-To: <31b5e88c-0979-44cc-9e7a-1cb3320caf39@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 04:56:46PM +0800, Ryan Chen wrote:
-> The AST2600 I2C controller introduces a completely new register
-> map and Separate control/target register sets, unlike the mixed
-> layout used in AST2400/AST2500.
+On 11/12/25 23:55, Qu Wenruo wrote:
+> 在 2025/11/13 05:19, Gladyshev Ilya 写道:
+>> This series represents my experimentation with refactoring with
+>> cleanup guards. In my opinion, RAII-style locking improves readability
+>> in most cases and also improves code robustness for future code changes,
+>> so I tried to refactor simple cases that really benefits from lock 
+>> guards.
 > 
-> In addition, at new AST2600 configuration registers and transfer
-> modes require new DT properties, which are incompatible with
-> existing bindings. Therefore, this creates a dedicated binding
-> file for AST2600 to properly describe these new hardware
-> capabilities.
+> Although I totally agree with the guard usages, it's not yet determined 
+> we will fully embrace guard usages.
 > 
-> A subsequent change will modify this new binding to properly
-> describe the AST2600 hardware.
+>>
+>> However readability is a subjective concept, so you can freely disagree
+>> and reject any of those changes, I won't insist on any. Please note that
+>> patches 1-3 can be useful even without lock guards.
+>>
+>> I didn't know how to split this series, mostly because it's just a lot of
+>> small changes... so I tried to split it by types of transformation:
 > 
-> The example section updated to reflect the actual AST2600 SoC
-> register layout and interrupt configuration.
-> Reference: aspeed-g6.dtsi (lines 885-897)
+> And even if we're determined to go guard path, I doubt if it should be 
+> done in such a rushed way.
 > 
-> -I2C bus and buffeset address offsets
->  - AST2600 I2C controller register base starts from 0x80, and the
->    buffer region is located at 0xc00, as defined in AST2600 SOC
->    register map.
+> There are already some cases where scope based auto-cleanup conversion 
+> led to some regressions, no matter how trivial they seem.
+> Thankfully they are all caught early, but we have to ask one critical 
+> question:
 > 
-> -Interrupt configuration
->  - AST2600 U2C controller are connected to ARM GIC interrupt
->    controller rather than the legacy internal interrupt controller.
+>    Have you run the full fstest test cases?
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../bindings/i2c/aspeed,ast2600-i2c.yaml      | 67 +++++++++++++++++++
->  .../devicetree/bindings/i2c/aspeed,i2c.yaml   |  3 +-
->  2 files changed, 68 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml b/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
-> new file mode 100644
-> index 000000000000..e6ed84c53639
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i2c/aspeed,ast2600-i2c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ASPEED I2C on the AST26XX SoCs
-> +
-> +maintainers:
-> +  - Ryan Chen <ryan_chen@aspeedtech.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/i2c/i2c-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - aspeed,ast2600-i2c-bus
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-> +    description:
-> +      The first region covers the controller registers.
-> +      The optional second region covers the controller's buffer space.
+> If not, please run it first. Such huge change is not really that easy to 
+> review.
 
-1. List the items instead. We discussed this already and this had
-correct format in the past and now it is getting to some odd style. Why?
+No, because it's RFC only [however I tried to verify that no locking 
+semantics/scopes changed and I tried not to touch any really complex 
+scenarios.]
+> Although I love the new scope based auto cleanup, I still tend to be 
+> more cautious doing the conversion.
+> 
+> Thus my recommendation on the conversion would be:
+> 
+> - Up to the author/expert on the involved field
+>    E.g. if Filipe wants to use guards for send, he is 100% fine to
+>    send out dedicated patches to do the conversion.
+> 
+>    This also ensures reviewablity, as such change will only involve one
+>    functionality.
+> 
+> - During other refactors of the code
+>    This is pretty much the same for any code-style fixups.
+>    We do not accept dedicated patches just fixing up whitespace/code-
+>    style errors.
+>    But if one is refactoring some code, it's recommended to fix any code-
+>    style related problems near the touched part.
 
-2. How region can be optional? Device either has it or does not have it.
-Please explain me how one, same SoC has optional IO address space? I
-asked to explain WHY this is flexible.
+Personally I don't like this approach for correctness-sensitive 
+refactoring. When it's something dedicated and standalone, it's easier 
+to focus and verify that all changes are valid
 
-You never replied.
+> So I'm afraid we're not yet at the stage to accept huge conversions yet.
 
-NAK, we are discussing same over and over again. I am not reviewing the
-rest. Go to previous versions and read the feedback again.
+I would be surprised if such patchset would be accepted as one thing, 
+honestly) For now, it's only purpose is to show how code _can_ be 
+refactored in theory [not _should_]. And then, for example, if there is 
+positive feedback on scoped guards, but not on full-function guards, I 
+will send smaller, fully tested patch with only approved approaches.
 
-Best regards,
-Krzysztof
-
+Probably I should've been more clear on that in the cover letter, sorry...
 
