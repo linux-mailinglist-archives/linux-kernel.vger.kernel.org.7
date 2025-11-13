@@ -1,158 +1,331 @@
-Return-Path: <linux-kernel+bounces-899867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACB4C58F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:03:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBD3C5905E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D6142487A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:53:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE8404F00EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C7F35A13A;
-	Thu, 13 Nov 2025 16:46:17 +0000 (UTC)
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5686C358D0D;
+	Thu, 13 Nov 2025 16:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p5ZMHSEO"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012015.outbound.protection.outlook.com [52.101.53.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20591359F9E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052376; cv=none; b=mU9vA2kIB/7ajyq5Gg6ylYeCeVfGX2pUrZZRQIpFjRIpSoGXaipxWSdNy6mIESsca/YpYskHFiGb2uZj4IFV3YGUGtlY8dmNQaTLf58Cd4aMegvSkqT/NbtJSh5RtKf6hYiikOf36oMYA618cQokq6ebngts6bhN5QzOg0YGiXM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052376; c=relaxed/simple;
-	bh=RJ6nsg4wuWJH6h/QyKbbPd0OvBVyOjvlKFeZqEdONLY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OeLvFbvcGgPvbJgDLF+NbPx7QQv/ePH4IzgW5gB/VWU0/Myzo/RQdjAX7Pdl/nDXQJY16QL9GCE3xbthGd+ivDjxhHn5jDm0ppxMmzE5Tm+6Y1npGjVdP1rFU4k1/BxrKn4zTX3lV5W8GegpF1nKugkmAakoucYfYVSrNBOkcZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7c6d2ec149eso698265a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:46:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763052374; x=1763657174;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OBN2WZm/+dOU7IJxKWOSEg+NlxGX9+nctR5VlBcbo74=;
-        b=fYBc65IBnTr67soWP2sakwYZl01esW8yCwhPFveAHIqbQ8WTW53t6EGlNaynnwNlK0
-         A/hYhnkOQQubDDAMumq8H/QjmdsDWw3i+7D1Jm0GMmJGHo29npF6PbYFGWrXDH3G4X6R
-         RR1ZWmuyIbwJZp7NVvDe3vM9BLaNo5aA5g1NwmSnXldqYcasUZHa+zz1wqX3BAmXH5cp
-         vNq8Cmdapd+9uLLY6n8PaU+sTcYV02WbTP7TFkhokPICXEMoYpZgxkDm2QNh1IJazejR
-         z77j/njV3N7MmEs+aSwn7780TPVjVhKZCgyY7DZD/OgCjxX6wmC4B3IBg/ez3a1SUvzs
-         jsjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNSEgc+fHBWzuvPSPWA3+VHNRxgo8x1Qwv4Xry2p+JpZy0Hy6OLtu6y9hbOFmLtExd+lmo3hsVd8OMtGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFyBub8YIAUADeMbq7qa5m+vl/SNov69ePIWHOpbv1qhQloxoH
-	vdT5Sx0Yk67EfxBTvXo+Q3F8W+odYsMvCdt60qf86pP5g0DavWk0OZZZ
-X-Gm-Gg: ASbGncvVUwavsI5SdbUEa1eNtO0p5mtJYI0CEzREpBCdSXkbJhmBLUiwXK0fEOi7FY1
-	qCwBqXivE2KUEPwS+QkvXhHt0StCqVQ6fKuF4m/ba/jZ0sMTOK7EfjAXXMvQZxDC2QyG1Takuqe
-	0QZfWdkQmWfzHWYZmNNXyDYJrDFoF2v6Yh2CUWQ8NhH14xqttFaQ2D0l2oM7TVZiPrm+Gmpgi3c
-	Yk15NSqkP4eJe/BzyTqe9tHudGt/ZfJUYuYZkzOuB5LUGbGsT5A1cqCqsHu3C18faDEOEFxWqHV
-	QAowjthqMkg/uk06BAtGszb9g6rrMVLdRsJEyaJHU58uQlCTCb430ryR5Dsg1bJCbxrvUw2AWEA
-	sJN9dQn/cbLkBzGDm+ijDpNz91b2oRe2IHDyitH87282CJ11GQ+8RbjnjyV3GUM+QfmzYVDkd6k
-	qwQvs=
-X-Google-Smtp-Source: AGHT+IEPG52Tne7U0YrRACo1Z+TeE3WGnQbb/AUFnv2POhqkyIWHi24LZi3+2U8QJIzPuCpVZmi3Iw==
-X-Received: by 2002:a9d:6163:0:b0:7c7:e3b:4860 with SMTP id 46e09a7af769-7c743dbe729mr151477a34.10.1763052374092;
-        Thu, 13 Nov 2025 08:46:14 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:53::])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c73a283b3asm1512345a34.4.2025.11.13.08.46.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:46:13 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 13 Nov 2025 08:46:03 -0800
-Subject: [PATCH 1/2] mlx4: extract GRXRINGS from .get_rxnfc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D03A2FA0C4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763050177; cv=fail; b=nW9wgVWZLelAAACtu0jI55VOg7o3QJ8keZlbEgvsJK356damw+PxeCfNYkLaCHn4KZ4G6/zqUQf29D4QGHKFW58ENAeOrN3TLhbA1r4pnHnBVakEgJDEXaEYaOYAbX6lxrSk0l6RRNe8+Z92USyXDIYOWs2d/pA7hh4p5w0ICCU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763050177; c=relaxed/simple;
+	bh=rF3lswUMicbYvL3ZN6hLQ15OUNK0mmDUaiF3JGwRHsI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sH2r+Ng1uA/s0z+AUi39xEGZdg7vXomNSsR3IHH+Mv01vgTcBSK3+B7VKmzW9/TDU6Iy06c5xNJ7TtZsyEyD8rb0HYRElAG+5dYbJdkaSQYG0pkAecZEGZNKlb4mTN7ZFvVlewLroWBJFb3X3iotGU4maZ0PS43rqwmvjrsWmtI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p5ZMHSEO; arc=fail smtp.client-ip=52.101.53.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gTtQP9El0hCLESzSYCc7b2LR4e6FNEaeWgW+wG5l01QZFRA9RRq/Q3cmGKZZ+P3nSuwJLVNuZJcc+4apJeEJOXBFPoUYUvp/lX09vdWlPE+x64Tj2F4M63z11SkrbcUTklrUm/b8A0EAUYB60cTYrSvrWpzK9Z9QkzgIpOqmG6iRBXvp7q7h3F+gYl18L0pvV0e2MlBkEzbkzDSSATjxt1q7O51zJEBHMY0S0fPNiK/N2qGmU6iQxLcW2I65oLrv2dYh6yxEUrXoJEzAObkT7CueDdtYfzGtNF2zEWhSVcRugK/lWuJaz+JPkXh2mkU1/9eKUxCNCki9bHoMTDvEwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g7pXmJ0944i1lBp1TIZciLkSnvufgVg0r9jhMkc4Plc=;
+ b=BnLGqQNTCFHYkcBZJ8OslVyxJBh9S4ToBN/fsti07/PBz3mTvh+tmDkN9cl3jcBuhHUHmxr56ps0GWcPgAYtbpMJDtlRjWtesKiqnOSg0QvPpZbiNkeav5DB/MHbWzICoeg5VPOk46b6VmGqItSoVwPovQwDzxpqqc4iT2VDg+cOgeRkhRNiVq5mSAidk4T+Smvmyt6sgKtu33bIqtgbbX0qU5NqgGbI8/xcz+1mN6bBBDpPko37m++z35FkHebeaFHyIzCA7JTCHSxlrl6YoO8pIyW/kKu03loklKo5MVdYSkx5aGVDTukZrX3KXzn6w9gu0h4fojI/TM2fh8BP1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g7pXmJ0944i1lBp1TIZciLkSnvufgVg0r9jhMkc4Plc=;
+ b=p5ZMHSEOnYF5pMDSWihahSN/Nb5R3ha69xKk+KCvnYPQutLHv2NRv175LguoVYZpF55gHnPDVsDLE6fYx6IPRu4HCG35siOO29Ia7jFQ83g8dX10Dry2BceUY8GjfQXnEkCHvez7JgUrRJrTpbdGjSdsfVGofiS6j6ubuS5Iz4Q=
+Received: from CH5PR05CA0020.namprd05.prod.outlook.com (2603:10b6:610:1f0::13)
+ by IA0PR12MB8303.namprd12.prod.outlook.com (2603:10b6:208:3de::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 16:09:32 +0000
+Received: from CH1PEPF0000A346.namprd04.prod.outlook.com
+ (2603:10b6:610:1f0:cafe::f0) by CH5PR05CA0020.outlook.office365.com
+ (2603:10b6:610:1f0::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.7 via Frontend Transport; Thu,
+ 13 Nov 2025 16:09:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH1PEPF0000A346.mail.protection.outlook.com (10.167.244.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 16:09:31 +0000
+Received: from FRAPPELLOUX01-WSLPUB.amd.com (10.180.168.240) by
+ satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 13 Nov 2025 08:09:30 -0800
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Felix Kuehling
+	<Felix.Kuehling@amd.com>
+CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 08/20] drm/amdgpu: allocate multiple move entities
+Date: Thu, 13 Nov 2025 17:05:49 +0100
+Message-ID: <20251113160632.5889-9-pierre-eric.pelloux-prayer@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251113160632.5889-1-pierre-eric.pelloux-prayer@amd.com>
+References: <20251113160632.5889-1-pierre-eric.pelloux-prayer@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-mlx_grxrings-v1-1-0017f2af7dd0@debian.org>
-References: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
-In-Reply-To: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
-To: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
- Leon Romanovsky <leon@kernel.org>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
- kernel-team@meta.com
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1920; i=leitao@debian.org;
- h=from:subject:message-id; bh=RJ6nsg4wuWJH6h/QyKbbPd0OvBVyOjvlKFeZqEdONLY=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFgtU20ui1SM7ldzsOfYh0RKNbAMgtZmV2SUFc
- AuLbQXyFFqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRYLVAAKCRA1o5Of/Hh3
- bdjtEAClpuKcPUAu9a1yuZm7LxJseq0LrfszVEFz8iGSZM0uPe/VHHXL3T9x/Wg6n3VG7FgfDM/
- RL3oxzVzdv+n2zTIrfY25r9T2axgewm0F8qDO1stjDHRpG5+xlmDg7Z+AD7S4VftN9AFGIec5PD
- lS7yXl9ozqtU+o83TOFPpGnybbz9Y/5dw8Joc1Un40poXxyx1EDNLMkr7Ip8cQJYehbJXOf2HA+
- nGCo5xAhU3ruHZGibwzrGOrj97+kIRdN5n5wwoElVffIWonsAEZiICbNhbKvPUVYlRvIrVuReUY
- BWBB8+5txOqJbVkbalRahMGz8IIvjFwTuTi9Uwh5IpN+8RoJRo7VA9F24jvGYNF0jJyNUg24lU6
- kjyW+SP05peWwELwiywdWRpSdNR4oV600iqZdiDJp3ap2jovORUw7+hnO2spkMUnRr46Qk72Zfh
- PVzcS5Vw4Qw9z4mkm7hdHo2TqpX5BaGbSxmkgEdyl5qseRHMfFeVkzCpH+W3WwqgIc3BLnWG187
- nDItNBYB/guoxTmU9uocKOi4q91hhyJtSU57FxXjwWUMKe3BZ9eF4MilsWhp7JZg7ieYIXu4wT9
- zuxFNSNGyNboZFsNl9badt/3I5nNakhMaTENvDSoX2Wzhp8evyH8WGBYX6zF61wr6bjhYBGAsLy
- MV2bfl3+4A1bb+Q==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A346:EE_|IA0PR12MB8303:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20988e6f-b804-4b5e-a14a-08de22cf07f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DTVS2g72wx5kxglN4jLQVVD66mkRIdDYPSmGdCd2DV7YQ2Zzn+iIyjhzA8hM?=
+ =?us-ascii?Q?55TkvIDXK1IWEhk1WgvdgIGSppluPkRGMX9VNfWEaxxY7GJg4SPrz02suhxI?=
+ =?us-ascii?Q?gg0au6E5VFFt3HnoyUr4mW1oDk972ZaBkfbvHxIT/VcgUlNYLkuuqrmXOgdz?=
+ =?us-ascii?Q?yqWi+E6x1+W7lmP/ARqQrJ8oEF0GLBS9w+IDIK9MFRQi9LLNkqEGzD/sn6tA?=
+ =?us-ascii?Q?cPlb9856TKnJ8Rgl+oUWxlNo8x11gJq9dUqDrxuYlNrPJDlNXTr0SkFVduwY?=
+ =?us-ascii?Q?2QhihwKqFX+gTlWGtBp4JJPcCekE3ql6rm1QFuYQci8eLxoRStQbTmJObkU+?=
+ =?us-ascii?Q?7RpQIilUsAqnGSeFD40gohatWUN8IYs7nSa2s3msi2RzqLhPzh+1Rote05+H?=
+ =?us-ascii?Q?cczSoJw1IAfBjqq0ZOglEUaDX4zf+wxCKGhlhL1SUpakNtnnqG6vBQDiS3Bs?=
+ =?us-ascii?Q?EecN4My/Or4jimKNoSAnSGl/yC9qWXWQDbBdOhVFyV4dNabyLm/ppyx0miyn?=
+ =?us-ascii?Q?TsRHfVdheTQrenMSrd/sWKN7KeuuojsA/EXkOgjDCs7zoCC9Tn4GWVJ6S6Pp?=
+ =?us-ascii?Q?0IreMxynzMj2BMbX8bTb5lzanf2XSDmfJgxRjwdJhQ5VYy1++X23xNtCXltK?=
+ =?us-ascii?Q?dpOYj0RyCsrnr/MhxyaD26XwJojtc2CfYROuIKLxxAfp/Be31LxgpUP0mkKT?=
+ =?us-ascii?Q?YDIXK3zbU99MrD1c9OmvsxofPcMfagMRMjla6NRqo2XvA6LZJzODVrQ6l7c2?=
+ =?us-ascii?Q?g/vNp8MFVlLsByq6p/071CT+AaPSjZaolUOZKvvv0qgu1IGNjfc72kP6AxEw?=
+ =?us-ascii?Q?VKX0waZ+xc5xe/YDSL9EjMfjy5XTppuRCyp6ZZ0GkyoNlyRaGkKQfVpNdR19?=
+ =?us-ascii?Q?Iaks0MrEyNJ99PJAc2YaL4v6iPxAFv3yp5awB903hWMCET4hFyYFtB+CLym2?=
+ =?us-ascii?Q?zYtsL0v41qbPzDT771DXM+9fFRmitIovnahr5DDVzofEaDnBr2gGetDCqOOZ?=
+ =?us-ascii?Q?u3DqTCFdkVP7H9Efx59TjkH6LK6/Ln3y7+mBjrZuKIVu1LH5IsrXMKVdGVAP?=
+ =?us-ascii?Q?ZIeFd6xNJ4p2bJZTW+pSYUmJauVUCxeJ2UB/cUv+153Vg/hAf6aeUTl5KauJ?=
+ =?us-ascii?Q?I4Boe37aVyCRH44o2rDclPgEzy+454cWBCHWLIqS+ZwMRI+bmSpdL+2o35FW?=
+ =?us-ascii?Q?GAa/47GmRiJKHAFVKPvh2kyKVp6HsutwFZ5REWmOnb8ARVyVzTW9zXUkC7Lf?=
+ =?us-ascii?Q?4nk3Fye5m0zukhCTe4Q91218JHZonuu4Ykc7bRIRGP4qjyOQEWKgkTDMSBgl?=
+ =?us-ascii?Q?+4b5s9RHAu6eyvgcv3dl2LxuIJ9vIN73PhcPAuPdGI1Lb5HdOLV18h/PmI8S?=
+ =?us-ascii?Q?9YvIBTUUpu7cvArZ9G5OCFQ/+pBrxhk8s2efI2ghbFQITl4Aw+JCEyZ1VoAM?=
+ =?us-ascii?Q?5HgaP5ix4r9cNZDTGid0FjPvf6HrX4cWGYsPs2zVsgYxP1auk2pFe7TvAU8m?=
+ =?us-ascii?Q?fsVJexPRTVISGD6HuMx+8VziqMZdo2H72PcBm4ZwWT0vfCZv6LA7OqIVZBfy?=
+ =?us-ascii?Q?jlx0FJQ5m7PXNMDt1IA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:09:31.9768
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20988e6f-b804-4b5e-a14a-08de22cf07f5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A346.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8303
 
-Commit 84eaf4359c36 ("net: ethtool: add get_rx_ring_count callback to
-optimize RX ring queries") added specific support for GRXRINGS callback,
-simplifying .get_rxnfc.
+No functional change for now, as we always use entity 0.
 
-Remove the handling of GRXRINGS in .get_rxnfc() by moving it to the new
-.get_rx_ring_count().
-
-This simplifies the RX ring count retrieval and aligns mlx4 with the new
-ethtool API for querying RX ring parameters. This is compiled tested
-only.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c  |  9 +++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c  | 48 +++++++++++++++---------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h  |  3 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_migrate.c |  2 +-
+ 4 files changed, 39 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-index a68cd3f0304c..ad6298456639 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -1727,6 +1727,13 @@ static int mlx4_en_get_num_flows(struct mlx4_en_priv *priv)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+index e73dcfed5338..2713dd51ab9a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+@@ -686,9 +686,10 @@ void amdgpu_gmc_flush_gpu_tlb(struct amdgpu_device *adev, uint32_t vmid,
+ 	 * translation. Avoid this by doing the invalidation from the SDMA
+ 	 * itself at least for GART.
+ 	 */
+-	mutex_lock(&adev->mman.move_entity.gart_window_lock);
+ 	for (i = 0; i < adev->mman.num_clear_entities; i++)
+ 		mutex_lock(&adev->mman.clear_entities[i].gart_window_lock);
++	for (i = 0; i < adev->mman.num_move_entities; i++)
++		mutex_lock(&adev->mman.move_entities[i].gart_window_lock);
+ 	r = amdgpu_job_alloc_with_ib(ring->adev, &adev->mman.default_entity.base,
+ 				     AMDGPU_FENCE_OWNER_UNDEFINED,
+ 				     16 * 4, AMDGPU_IB_POOL_IMMEDIATE,
+@@ -701,7 +702,8 @@ void amdgpu_gmc_flush_gpu_tlb(struct amdgpu_device *adev, uint32_t vmid,
+ 	job->ibs->ptr[job->ibs->length_dw++] = ring->funcs->nop;
+ 	amdgpu_ring_pad_ib(ring, &job->ibs[0]);
+ 	fence = amdgpu_job_submit(job);
+-	mutex_unlock(&adev->mman.move_entity.gart_window_lock);
++	for (i = 0; i < adev->mman.num_move_entities; i++)
++		mutex_unlock(&adev->mman.move_entities[i].gart_window_lock);
+ 	for (i = 0; i < adev->mman.num_clear_entities; i++)
+ 		mutex_unlock(&adev->mman.clear_entities[i].gart_window_lock);
  
- }
+@@ -711,7 +713,8 @@ void amdgpu_gmc_flush_gpu_tlb(struct amdgpu_device *adev, uint32_t vmid,
+ 	return;
  
-+static u32 mlx4_en_get_rx_ring_count(struct net_device *dev)
-+{
-+	struct mlx4_en_priv *priv = netdev_priv(dev);
-+
-+	return priv->rx_ring_num;
-+}
-+
- static int mlx4_en_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
- 			     u32 *rule_locs)
- {
-@@ -1743,9 +1750,6 @@ static int mlx4_en_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
- 		return -EINVAL;
+ error_alloc:
+-	mutex_unlock(&adev->mman.move_entity.gart_window_lock);
++	for (i = 0; i < adev->mman.num_move_entities; i++)
++		mutex_unlock(&adev->mman.move_entities[i].gart_window_lock);
+ 	for (i = 0; i < adev->mman.num_clear_entities; i++)
+ 		mutex_unlock(&adev->mman.clear_entities[i].gart_window_lock);
+ 	dev_err(adev->dev, "Error flushing GPU TLB using the SDMA (%d)!\n", r);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 2f305ad32080..e1f0567fd2d5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -401,7 +401,7 @@ static int amdgpu_move_blit(struct ttm_buffer_object *bo,
+ 	dst.offset = 0;
  
- 	switch (cmd->cmd) {
--	case ETHTOOL_GRXRINGS:
--		cmd->data = priv->rx_ring_num;
--		break;
- 	case ETHTOOL_GRXCLSRLCNT:
- 		cmd->rule_cnt = mlx4_en_get_num_flows(priv);
- 		break;
-@@ -2154,6 +2158,7 @@ const struct ethtool_ops mlx4_en_ethtool_ops = {
- 	.set_ringparam = mlx4_en_set_ringparam,
- 	.get_rxnfc = mlx4_en_get_rxnfc,
- 	.set_rxnfc = mlx4_en_set_rxnfc,
-+	.get_rx_ring_count = mlx4_en_get_rx_ring_count,
- 	.get_rxfh_indir_size = mlx4_en_get_rxfh_indir_size,
- 	.get_rxfh_key_size = mlx4_en_get_rxfh_key_size,
- 	.get_rxfh = mlx4_en_get_rxfh,
-
+ 	r = amdgpu_ttm_copy_mem_to_mem(adev,
+-				       &adev->mman.move_entity,
++				       &adev->mman.move_entities[0],
+ 				       &src, &dst,
+ 				       new_mem->size,
+ 				       amdgpu_bo_encrypted(abo),
+@@ -414,7 +414,7 @@ static int amdgpu_move_blit(struct ttm_buffer_object *bo,
+ 	    (abo->flags & AMDGPU_GEM_CREATE_VRAM_WIPE_ON_RELEASE)) {
+ 		struct dma_fence *wipe_fence = NULL;
+ 
+-		r = amdgpu_fill_buffer(&adev->mman.move_entity,
++		r = amdgpu_fill_buffer(&adev->mman.move_entities[0],
+ 				       abo, 0, NULL, &wipe_fence,
+ 				       AMDGPU_KERNEL_JOB_ID_MOVE_BLIT);
+ 		if (r) {
+@@ -2167,10 +2167,11 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
+ 	struct ttm_resource_manager *man = ttm_manager_type(&adev->mman.bdev, TTM_PL_VRAM);
+ 	uint64_t size;
+ 	int r, i, j;
+-	u32 num_clear_entities, windows, w;
++	u32 num_clear_entities, num_move_entities, windows, w;
+ 
+ 	num_clear_entities = adev->sdma.num_instances;
+-	windows = adev->gmc.is_app_apu ? 0 : (2 + num_clear_entities);
++	num_move_entities = MIN(adev->sdma.num_instances, TTM_NUM_MOVE_FENCES);
++	windows = adev->gmc.is_app_apu ? 0 : (2 * num_move_entities + num_clear_entities);
+ 
+ 	if (!adev->mman.initialized || amdgpu_in_reset(adev) ||
+ 	    adev->mman.buffer_funcs_enabled == enable || adev->gmc.is_app_apu)
+@@ -2186,20 +2187,25 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
+ 					  DRM_SCHED_PRIORITY_KERNEL, &sched,
+ 					  1, NULL);
+ 		if (r) {
+-			dev_err(adev->dev,
+-				"Failed setting up TTM BO eviction entity (%d)\n",
++			dev_err(adev->dev, "Failed setting up entity (%d)\n",
+ 				r);
+ 			return 0;
+ 		}
+ 
+-		r = drm_sched_entity_init(&adev->mman.move_entity.base,
+-					  DRM_SCHED_PRIORITY_NORMAL, &sched,
+-					  1, NULL);
+-		if (r) {
+-			dev_err(adev->dev,
+-				"Failed setting up TTM BO move entity (%d)\n",
+-				r);
+-			goto error_free_entity;
++		adev->mman.num_move_entities = num_move_entities;
++		for (i = 0; i < num_move_entities; i++) {
++			r = drm_sched_entity_init(&adev->mman.move_entities[i].base,
++						  DRM_SCHED_PRIORITY_NORMAL, &sched,
++						  1, NULL);
++			if (r) {
++				dev_err(adev->dev,
++					"Failed setting up TTM BO move entities (%d)\n",
++					r);
++				for (j = 0; j < i; j++)
++					drm_sched_entity_destroy(
++						&adev->mman.move_entities[j].base);
++				goto error_free_entity;
++			}
+ 		}
+ 
+ 		adev->mman.num_clear_entities = num_clear_entities;
+@@ -2214,6 +2220,9 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
+ 						  DRM_SCHED_PRIORITY_NORMAL, &sched,
+ 						  1, NULL);
+ 			if (r) {
++				for (j = 0; j < num_move_entities; j++)
++					drm_sched_entity_destroy(
++						&adev->mman.move_entities[j].base);
+ 				for (j = 0; j < i; j++)
+ 					drm_sched_entity_destroy(
+ 						&adev->mman.clear_entities[j].base);
+@@ -2225,9 +2234,11 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
+ 		/* Statically assign GART windows to each entity. */
+ 		w = 0;
+ 		mutex_init(&adev->mman.default_entity.gart_window_lock);
+-		adev->mman.move_entity.gart_window_id0 = w++;
+-		adev->mman.move_entity.gart_window_id1 = w++;
+-		mutex_init(&adev->mman.move_entity.gart_window_lock);
++		for (i = 0; i < num_move_entities; i++) {
++			adev->mman.move_entities[i].gart_window_id0 = w++;
++			adev->mman.move_entities[i].gart_window_id1 = w++;
++			mutex_init(&adev->mman.move_entities[i].gart_window_lock);
++		}
+ 		for (i = 0; i < num_clear_entities; i++) {
+ 			/* Clearing entities don't use id0 */
+ 			adev->mman.clear_entities[i].gart_window_id1 = w++;
+@@ -2236,7 +2247,8 @@ u32 amdgpu_ttm_set_buffer_funcs_status(struct amdgpu_device *adev, bool enable)
+ 		WARN_ON(w != windows);
+ 	} else {
+ 		drm_sched_entity_destroy(&adev->mman.default_entity.base);
+-		drm_sched_entity_destroy(&adev->mman.move_entity.base);
++		for (i = 0; i < num_move_entities; i++)
++			drm_sched_entity_destroy(&adev->mman.move_entities[i].base);
+ 		for (i = 0; i < num_clear_entities; i++)
+ 			drm_sched_entity_destroy(&adev->mman.clear_entities[i].base);
+ 		for (i = 0; i < TTM_NUM_MOVE_FENCES; i++) {
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+index 797f851a4578..9d4891e86675 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+@@ -72,9 +72,10 @@ struct amdgpu_mman {
+ 	struct mutex				gtt_window_lock;
+ 
+ 	struct amdgpu_ttm_buffer_entity default_entity; /* has no gart windows */
+-	struct amdgpu_ttm_buffer_entity move_entity;
+ 	struct amdgpu_ttm_buffer_entity *clear_entities;
+ 	u32 num_clear_entities;
++	struct amdgpu_ttm_buffer_entity move_entities[TTM_NUM_MOVE_FENCES];
++	u32 num_move_entities;
+ 
+ 	struct amdgpu_vram_mgr vram_mgr;
+ 	struct amdgpu_gtt_mgr gtt_mgr;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+index bc47fc362a17..943c3438c7ee 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+@@ -136,7 +136,7 @@ svm_migrate_copy_memory_gart(struct amdgpu_device *adev, dma_addr_t *sys,
+ 	u64 size;
+ 	int r;
+ 
+-	entity = &adev->mman.move_entity;
++	entity = &adev->mman.move_entities[0];
+ 
+ 	mutex_lock(&entity->gart_window_lock);
+ 
 -- 
-2.47.3
+2.43.0
 
 
