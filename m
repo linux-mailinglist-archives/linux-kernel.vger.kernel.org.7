@@ -1,72 +1,90 @@
-Return-Path: <linux-kernel+bounces-899058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF4AC56A5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 708EFC56A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7890134C60B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:39:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A72E349EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DDA23ED6A;
-	Thu, 13 Nov 2025 09:39:50 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2812D0C9D;
+	Thu, 13 Nov 2025 09:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i2OcYL/0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HLCfmX9D"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CE226B96A;
-	Thu, 13 Nov 2025 09:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43B32C327A;
+	Thu, 13 Nov 2025 09:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763026789; cv=none; b=YGf78Q86z7SwRxnM7jFNpf0wlmkRSIraCTq10o3M6wB+flY7uBDArxUM/JOFcKxcFbidljZf3hP0tTEtCmABIltuAsbBZyNLeTF7t/7GgaPNnQf7iEY4bLmWfp0eXoYXL2MnvNuZ9wesGmkWJ8gM3yb8KVG2PWh0Gr3ZwuPArAE=
+	t=1763026841; cv=none; b=K4aJ+aj/ZD7h3HiCFWP+l4USACgQmJzlXFrUscDtorLPpKW3Kin1ZEP9AvwCnM6LqA/FDkkhVUYPJH9rUsuo0kN50fnPcV4aI91Z4ojmJdfX+wMXxfEHbm4ZftVtG2o4vIE6jNWeKmFEqio/L+Xnkt+See52TqFHeVJHvFC4h0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763026789; c=relaxed/simple;
-	bh=JyOs83ES5xDEb+WWNZwFA2NK/2lJXpxI/KUuI3yL6Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adXQO5n6WZI1hIa2JpoawleSfj29k0AoWManjpxSjmyN0OhMeNxohn+keKflpLYe/DuQ/KwOAVjbtxLGi/cVvMyiyQ6S51bNoXLKYKulj5uSHTm2GOsTvStTm/ATyV/rbohh4e/o+ztbvfYu6Y1nsGUQyOLS4gEsdDnwXumkkks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384
-	 client-signature ECDSA (secp384r1) client-digest SHA384)
-	(Client CN "*.hostsharing.net", Issuer "GlobalSign GCC R6 AlphaSSL CA 2025" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id AE61C20083DA;
-	Thu, 13 Nov 2025 10:39:44 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A8CDB1217A; Thu, 13 Nov 2025 10:39:44 +0100 (CET)
-Date: Thu, 13 Nov 2025 10:39:44 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Johnny Chang <Johnny-CC.Chang@mediatek.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Digits_Upstream_Group@mediatek.com
-Subject: Re: [PATCH] PCI: Mark Nvidia GB10 to avoid bus reset
-Message-ID: <aRWnYCI6Ax14XNJq@wunner.de>
-References: <20251113084441.2124737-1-Johnny-CC.Chang@mediatek.com>
+	s=arc-20240116; t=1763026841; c=relaxed/simple;
+	bh=IkgqqnXk5PmNq5RMYlC3L++CSmxPv0rYo3MTnQtThVI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mLitsu6Es3TmQUW56n/QhSpCjFMnmJhlSW3tryt651pZljxEbMJm/JJYkWiHu3B2FA2NmkpibC2UOVhubZhlQasNzTgZu5u5RPQNQBdHqcAxoErMWDnzIO97yhsIh6pK15B5RD+ip6RTlKaJgt0yHGHZfZbQfqDJm1m9lQCm6fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i2OcYL/0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HLCfmX9D; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763026837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VU8hU3Pos79bAWucqZLoNJdgDrQIvlXKx3SEWOXiE9E=;
+	b=i2OcYL/0yU//MaEu9ci362cLND+GZp0hxZZkT/1hFy5kMs2GsR+TyuYXcxJlyrB3Wsf/GL
+	jt2AF8YVLHtxAObzbF8w/N9qohaZALehuA8TEZZDhGKE9f0i7L3RNkdP3pWjrw3qjprAZS
+	ZBlz83nQrWI60HqnWNm0kG/6hXdf2GAJjLckOToBvdsVOrwSAqE/sh1zmGxpt6uKMTqe1X
+	nRwLETncKNTwjbqnlQC6jkdJ9qYU0QNdM6XNEpPZALSSq7SMQ0g/WUmMXgUZBp48wyE576
+	y151T81y9Q/L/h+oXZpO5KIaiW3BeOZoGywE15niiPqHU4LuEsaKP9TCRDd+9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763026837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VU8hU3Pos79bAWucqZLoNJdgDrQIvlXKx3SEWOXiE9E=;
+	b=HLCfmX9D/NWjAMgLMB5otMjf3HFks2Lc2WtzEZlRWok1atftT5Rvto/g6WAK7VkQvdEfp1
+	s5RYlZdF2wrrkXAA==
+To: Luigi Rizzo <lrizzo@google.com>, Marc Zyngier <maz@kernel.org>, Luigi
+ Rizzo <rizzo.unipi@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Sean Christopherson
+ <seanjc@google.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo
+ <lrizzo@google.com>
+Subject: Re: [PATCH 2/6] genirq: soft_moderation: add base files, procfs hooks
+In-Reply-To: <20251112192408.3646835-3-lrizzo@google.com>
+References: <20251112192408.3646835-1-lrizzo@google.com>
+ <20251112192408.3646835-3-lrizzo@google.com>
+Date: Thu, 13 Nov 2025 10:40:36 +0100
+Message-ID: <87y0oaclt7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113084441.2124737-1-Johnny-CC.Chang@mediatek.com>
+Content-Type: text/plain
 
-On Thu, Nov 13, 2025 at 04:44:06PM +0800, Johnny Chang wrote:
-> Nvidia GB10 PCIe hosts will encounter problem occasionally
-> after SBR(secondary bus reset) is applied.
+On Wed, Nov 12 2025 at 19:24, Luigi Rizzo wrote:
+> Add the main core files that implement soft_moderation, limited to static
+> moderation, plus related small changes to include/linux/interrupt.h,
+> kernel/irq/Makefile, and kernel/irq/proc.c
+>
+> - include/linux/irq_moderation.h has the two main struct, prototypes
+>   and inline hooks
 
-Could you elaborate what kinds of problems occur, how often they occur, etc?
+And none of this should be in a global visible header. All of that is
+only relevant to the core interrupt code, so that want's to be a core
+local header file.
 
 Thanks,
 
-Lukas
+        tglx
 
