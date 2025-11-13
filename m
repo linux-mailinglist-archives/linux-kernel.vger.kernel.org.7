@@ -1,235 +1,358 @@
-Return-Path: <linux-kernel+bounces-899730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9645BC58E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C15C9C58D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD5134EB7BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:03:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06EAB505EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69712355046;
-	Thu, 13 Nov 2025 16:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E118935770B;
+	Thu, 13 Nov 2025 16:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAFvYIks"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hU3caXdw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5E3355034
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EA83570C5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049615; cv=none; b=eOWzJCalP7xuHVClwcfTIYXOKWgKUmrbxte7cevfwb8WZNxLbTB/j+sx4nCewaxbWiW762uJ24ZoVThWABuuPY6jntgQMJgl7iI16IjUxkzEMAjYp8TWzZlg10IkSveK2ZF27dCxxF2fzZ3MndgPkBRaYQJSeM8RQ7Cox6gYYmk=
+	t=1763049626; cv=none; b=f8q4OyXqqCIwShCka575cCSY4mJ93DJArooSiGwv2wJ3z8tRbKf0Sz5gk/gqI42m81OpSsPdgzlkuqyLItOhpcv1C804KS4pJrwaADtefH8i+t/gNZMLMyzSDBkXvTd47qEmJcKnrAWL7N6R4Y4zqj0Ww/vlqIKOnvZdo5TPgKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049615; c=relaxed/simple;
-	bh=Bk2Yi8IlMVkK5Th/TKv8hz5GIBxMcnyGwmnSkYoCwfw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0vniSf8lG2wntXY3zYUG1GzHSIIf+pezoih5ctPswPJpOCI6QIh6n3n/gMQsHRBcsWG2OORB1TGOQ9TnyPjPC/01DCqsIl+anjrgXSIfKTdrSwoS71EMnxhY0nABBlPGs7+rNW5Sk2CeY1MbKvY9s5UbMiU/iJHNaSkhc0yIBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAFvYIks; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64165cd689eso3535756a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:00:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763049612; x=1763654412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gzb4D1GabgQR1ju/bq7TjXAWkIanxQvrQtrf25MzCcs=;
-        b=RAFvYIksFbTcUElygENb+Rgi/N0hwx9HIVP71lQAko8IjJtyIMOnWhmNIZ5NhbChgv
-         R5yIGtSRkfczmDEsT0LzriM7tby5CY+yriDqWoI1I1NHOc7Wi5zmdfdOhf2c1D1ZEONz
-         NigaCZ3q55/AojXH8pQiQGKTrjHsAU91shyPbTfkWJyuxvCTarPGsVaTlerywzAC6PC1
-         3IJFaKPDjQN9P/GcHp4Vb11GC9zKf2HTHxEAzEfzNUoHQbVsofM1vLcT1uzGy6G/yWug
-         l6yEkYl/mqZLvznZ+wAvz2WuyHAWhQaYcSr6+e03bnu05v3HL7/Mw6b3lDUGCVkG6j+r
-         +dSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763049612; x=1763654412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gzb4D1GabgQR1ju/bq7TjXAWkIanxQvrQtrf25MzCcs=;
-        b=ORFhWr7V8DrRNfxhzY0Jr3rpJpaJJxuRXQ7xaP+t3776/eHjusmqLfk26/QQO5qO/d
-         aaV4CwmR3AAqJRXZm4zdtEy4KQMnTAB03KM1MmzHB4n7u57bNHwsSjTsAx6nUHyG7eoX
-         1P/4KDU09hB49X7tRbNJVQJbpj83zZLeVY+zXnqFhMLQtFl2PIamXc6GxkpwRuvwFpFF
-         M8UCzNMooFzPY3/bdaiqjee+MOBKsU6ftM16RX98xum0Ner+3ucJgIqCq87v7EJucQ9i
-         muNajxKzvsdD/2adnczHkjIoeykZ1RoobXD1ZxojF7UGyv81i4TF4AvknlEOZe5mZQpR
-         qJDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvFPxah1KgLRcYYzHgiLLsbuMH8XOg1jdumasB9JS4HiEgQ8HkJAqmhx/ZVVYf/7IyhOIGXxtK3DrCscM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7alRAO9CE5dmBcRMKEKQvSOPlfpQljIyJkBW7ZWZkREcBGR4u
-	Ar5QFC0Br4AtqA6+YoKCHnUrICIoLFU3MmQ0+II+NFXxAZeaX1c3Ag9H
-X-Gm-Gg: ASbGncsetpz2mlJdsWxBREJCjMwxurN18/2QQxRYLDg5/d26WyOC6H0mrGdISFr/78y
-	6pru5n60Q5V3cYsz8HqcSUb+kV/OJKWtO02wtGFs5KSmyAa1GLFo7CDOOSN9/o5g2+JW+VTyOcI
-	kJ1WLRMBsX+loS9bHiu/KdV4bLH9stU8rljDmB4hB5hjJ8xyGx3hrZPKsXWWeYsuQI6Gzf9En7+
-	WYxq3GPadH1Oq2cg+xDOQutUwLRgCOJBuELlVKdBegOEV3GKfm09KNou2BVbVpEz8pxjjHEypHR
-	X4xNevpKgYDbqIwkrKIrvnDjVeh0zjfjSbVeJO3i7Ikrl12B+Itjc/8xN/P6aSDMQDCvmD9/7YY
-	LqZfbXfa1l/y4RobGYgbtO6WKHMt3ucQT63VJbjd2XYXSqDQXHAathuA7XNy6iCdjfMyCcs0Ofb
-	g78gsMVD7AktS3I3+uOIzhUbQ=
-X-Google-Smtp-Source: AGHT+IHUg8m5nO6prqhXXrSop0u0iR1DdBAnMZvxLkNNj0vJkvj5xpmWgf1HYEe7mOE2U9QwaFpzYw==
-X-Received: by 2002:a05:6402:4544:b0:640:9bed:85a5 with SMTP id 4fb4d7f45d1cf-6434f82b24dmr70380a12.8.1763049611134;
-        Thu, 13 Nov 2025 08:00:11 -0800 (PST)
-Received: from krava (37-188-200-155.red.o2.cz. [37.188.200.155])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a3d8775sm1729153a12.5.2025.11.13.08.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:00:10 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 13 Nov 2025 17:00:04 +0100
-To: bot+bpf-ci@kernel.org
-Cc: rostedt@kernel.org, revest@google.com, mark.rutland@arm.com,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, menglong8.dong@gmail.com,
-	song@kernel.org, martin.lau@kernel.org, eddyz87@gmail.com,
-	yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
-Subject: Re: [PATCHv2 bpf-next 5/8] ftrace: Add update_ftrace_direct_mod
- function
-Message-ID: <aRYAhDqGsOHZzTL-@krava>
-References: <20251113123750.2507435-6-jolsa@kernel.org>
- <c3260fe9e3d8ad79c75a6e8281f9fae5580beb3fcdd08e2015f417e11ec0a1b2@mail.kernel.org>
+	s=arc-20240116; t=1763049626; c=relaxed/simple;
+	bh=fs36cOUypsIqmEjTN9WQnd6FnP2OpxpQiVkKChc/Ea0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FKShkPYGpxzJGdbcvYKOv9PIs7BHzObW0ij/6tx69zeMSXyNezPcp+FLrxpXEx5vH9YIpkF765lqJO5w16MAeF6RcLrza+YUmi+XU1KQWdz8lZDnDUnT/QKV08bp0u3ya3n4EtZGWNU5uHE7yiZaLwntCnLzUH70+5Nz7q2hFtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hU3caXdw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763049623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vtuJ5WPRJ3+NyETDt+F7wACsMcYGnlc4oGOkyHDP0jc=;
+	b=hU3caXdw8tX7EijmFRW8NhnFKBKxZXzEUBhTTqeHUX1oKMPUDcx4pm7OYq4apZn7cor9e+
+	IFaJM3eKM3gbRPtXsKNyOgVXHyebpiDzpIzfxRXnrA/7LIMdVZ0lKak31r9vATVO/1zf+W
+	7RTdZ7jiBNnhLm1jr8IqIDmUJJH0se4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-380-MdG0uWS1NU-OOh4dFPbTUg-1; Thu,
+ 13 Nov 2025 11:00:20 -0500
+X-MC-Unique: MdG0uWS1NU-OOh4dFPbTUg-1
+X-Mimecast-MFC-AGG-ID: MdG0uWS1NU-OOh4dFPbTUg_1763049618
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A32A1956095;
+	Thu, 13 Nov 2025 16:00:18 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.44.33.100])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 27E54300018D;
+	Thu, 13 Nov 2025 16:00:15 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.18-rc6
+Date: Thu, 13 Nov 2025 17:00:09 +0100
+Message-ID: <20251113160009.177530-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3260fe9e3d8ad79c75a6e8281f9fae5580beb3fcdd08e2015f417e11ec0a1b2@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 13, 2025 at 01:02:17PM +0000, bot+bpf-ci@kernel.org wrote:
-> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > index 433c36c3a..bacb6d9ab 100644
-> > --- a/include/linux/ftrace.h
-> > +++ b/include/linux/ftrace.h
-> > @@ -544,6 +544,7 @@ int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned long addr);
-> >
-> >  int update_ftrace_direct_add(struct ftrace_ops *ops, struct ftrace_hash *hash);
-> >  int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash);
-> > +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock);
-> >
-> >  void ftrace_stub_direct_tramp(void);
-> >
-> > @@ -581,6 +582,11 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
-> >  	return -ENODEV;
-> >  }
-> >
-> > +int modify_ftrace_direct_hash(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> The stub function name doesn't match the declaration. Should this be
-> update_ftrace_direct_mod() instead of modify_ftrace_direct_hash()?
+Hi Linus!
 
-it should, my bad
+The following changes since commit c2c2ccfd4ba72718266a56f3ecc34c989cb5b7a0:
 
-> 
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +
-> 
-> [ ... ]
-> 
-> > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > index 345f3fdd2..627d05b57 100644
-> > --- a/kernel/trace/ftrace.c
-> > +++ b/kernel/trace/ftrace.c
-> > @@ -6445,6 +6445,74 @@ int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_hash *hash)
-> >  	return err;
-> >  }
-> >
-> > +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_hash *hash, bool do_direct_lock)
-> > +{
-> > +	struct ftrace_hash *orig_hash = ops->func_hash->filter_hash;
-> > +	struct ftrace_func_entry *entry, *tmp;
-> > +	static struct ftrace_ops tmp_ops = {
-> > +		.func		= ftrace_stub,
-> > +		.flags		= FTRACE_OPS_FL_STUB,
-> > +	};
-> > +	unsigned long size, i;
-> > +	int err;
-> > +
-> > +	if (!hash_count(hash))
-> > +		return 0;
-> > +	if (check_direct_multi(ops))
-> > +		return -EINVAL;
-> > +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
-> > +		return -EINVAL;
-> > +	if (direct_functions == EMPTY_HASH)
-> > +		return -EINVAL;
-> > +
-> > +	if (do_direct_lock)
-> > +		mutex_lock(&direct_mutex);
-> > +
-> > +	/* Enable the tmp_ops to have the same functions as the direct ops */
-> > +	ftrace_ops_init(&tmp_ops);
-> > +	tmp_ops.func_hash = ops->func_hash;
-> > +
-> > +	err = register_ftrace_function_nolock(&tmp_ops);
-> > +	if (err)
-> > +		goto unlock;
-> > +
-> > +	/*
-> > +	 * Call __ftrace_hash_update_ipmodify() here, so that we can call
-> > +	 * ops->ops_func for the ops. This is needed because the above
-> > +	 * register_ftrace_function_nolock() worked on tmp_ops.
-> > +	 */
-> > +	err = __ftrace_hash_update_ipmodify(ops, orig_hash, orig_hash, true);
->                                                                         ^^^^
-> Does __ftrace_hash_update_ipmodify() accept a fourth argument? The
-> function signature shows it only takes three parameters (ops, old_hash,
-> new_hash). This looks like a compilation error.
+  Merge tag 'net-6.18-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-11-06 08:52:30 -0800)
 
-the whole patchset is based on bpf-next/master plus Song's livepatch
-fixes which change modify_ftrace_direct_hash function, it's mentioned
-in the cover letter
+are available in the Git repository at:
 
-> 
-> > +	if (err)
-> > +		goto out;
-> 
-> [ ... ]
-> 
-> > +
-> > +out:
-> > +	/* Removing the tmp_ops will add the updated direct callers to the functions */
-> > +	unregister_ftrace_function(&tmp_ops);
->          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Can this deadlock when do_direct_lock is true? Looking at the code:
-> 
->   update_ftrace_direct_mod() with do_direct_lock=true
->     -> mutex_lock(&direct_mutex)
->     -> register_ftrace_function_nolock(&tmp_ops) succeeds
->     -> __ftrace_hash_update_ipmodify() fails
->     -> goto out (still holding direct_mutex)
->     -> unregister_ftrace_function(&tmp_ops)
->        -> cleanup_direct_functions_after_ipmodify()
->           -> mutex_lock(&direct_mutex) /* deadlock */
-> 
-> The unregister path tries to reacquire direct_mutex that we're already
-> holding.
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.18-rc6
 
-I don't think this can happen because tmp_ops does not have
-FTRACE_OPS_FL_IPMODIFY flag set
+for you to fetch changes up to 94909c53e442474a432c57c96b99d99357ac3593:
 
-thanks,
-jirka
+  Merge branch 'hsr-send-correct-hsrv0-supervision-frames' (2025-11-13 15:55:06 +0100)
 
-> 
-> > +
-> > +unlock:
-> > +	if (do_direct_lock)
-> > +		mutex_unlock(&direct_mutex);
-> > +	return err;
-> > +}
-> > +
-> >  #endif /* CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
-> 
-> 
-> ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-> 
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19332026793
+----------------------------------------------------------------
+Including fixes from Bluetooth and Wireless. No known outstanding
+regressions.
+
+Current release - regressions:
+
+  - eth: bonding: fix mii_status when slave is down
+
+  - eth: mlx5e: fix missing error assignment in mlx5e_xfrm_add_state()
+
+Previous releases - regressions:
+
+  - sched: limit try_bulk_dequeue_skb() batches
+
+  - ipv4: route: prevent rt_bind_exception() from rebinding stale fnhe
+
+  - af_unix: initialise scc_index in unix_add_edge()
+
+  - netpoll: fix incorrect refcount handling causing incorrect cleanup
+
+  - bluetooth: don't hold spin lock over sleeping functions
+
+  - hsr: Fix supervision frame sending on HSRv0
+
+  - sctp: prevent possible shift out-of-bounds
+
+  - tipc: fix use-after-free in tipc_mon_reinit_self().
+
+  - dsa: tag_brcm: do not mark link local traffic as offloaded
+
+  - eth: virtio-net: fix incorrect flags recording in big mode
+
+Previous releases - always broken:
+
+  - sched: initialize struct tc_ife to fix kernel-infoleak
+
+  - wifi:
+    - mac80211: reject address change while connecting
+    - iwlwifi: avoid toggling links due to wrong element use
+
+  - bluetooth: cancel mesh send timer when hdev removed
+
+  - strparser: fix signed/unsigned mismatch bug
+
+  - handshake: fix memory leak in tls_handshake_accept()
+
+Misc:
+
+  - selftests: mptcp: fix some flaky tests
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Akiva Goldberger (1):
+      mlx5: Fix default values in create CQ
+
+Aksh Garg (2):
+      net: ethernet: ti: am65-cpsw-qos: fix IET verify/response timeout
+      net: ethernet: ti: am65-cpsw-qos: fix IET verify retry mechanism
+
+Alexander Sverdlin (1):
+      selftests: net: local_termination: Wait for interfaces to come up
+
+Benjamin Berg (1):
+      wifi: mac80211: skip rate verification for not captured PSDUs
+
+Breno Leitao (4):
+      net: netpoll: fix incorrect refcount handling causing incorrect cleanup
+      selftest: netcons: refactor target creation
+      selftest: netcons: create a torture test
+      selftest: netcons: add test for netconsole over bonded interfaces
+
+Buday Csaba (1):
+      net: mdio: fix resource leak in mdiobus_register_device()
+
+Carolina Jubran (1):
+      net/mlx5e: Fix missing error assignment in mlx5e_xfrm_add_state()
+
+Chuang Wang (1):
+      ipv4: route: Prevent rt_bind_exception() from rebinding stale fnhe
+
+Cosmin Ratiu (1):
+      net/mlx5e: Trim the length of the num_doorbell error
+
+D. Wythe (1):
+      net/smc: fix mismatch between CLC header and proposal
+
+Eric Dumazet (2):
+      sctp: prevent possible shift-out-of-bounds in sctp_transport_update_rto
+      net_sched: limit try_bulk_dequeue_skb() batches
+
+Felix Maurer (2):
+      hsr: Fix supervision frame sending on HSRv0
+      hsr: Follow standard for HSRv0 supervision frames
+
+Gal Pressman (4):
+      docs: netlink: Couple of intro-specs documentation fixes
+      net/mlx5e: Fix maxrate wraparound in threshold between units
+      net/mlx5e: Fix wraparound in rate limiting for values above 255 Gbps
+      net/mlx5e: Fix potentially misleading debug message
+
+Horatiu Vultur (1):
+      net: phy: micrel: lan8814 fix reset of the QSGMII interface
+
+Ilan Peer (1):
+      wifi: mac80211_hwsim: Fix possible NULL dereference
+
+Jakub Kicinski (5):
+      Merge branch 'fix-iet-verification-implementation-for-cpsw-driver'
+      Merge branch 'net-netpoll-fix-memory-leak-and-add-comprehensive-selftests'
+      Merge tag 'for-net-2025-11-11' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      Merge branch 'selftests-mptcp-join-fix-some-flaky-tests'
+      Merge tag 'wireless-2025-11-12' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
+
+Johannes Berg (4):
+      wifi: mac80211: reject address change while connecting
+      Merge tag 'ath-current-20251110' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath
+      wifi: iwlwifi: mvm: fix beacon template/fixed rate
+      Merge tag 'iwlwifi-fixes-2025-11-12' of https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next
+
+Jonas Gorski (1):
+      net: dsa: tag_brcm: do not mark link local traffic as offloaded
+
+Junjie Cao (1):
+      wifi: iwlwifi: fix aux ROC time event iterator usage
+
+Kriish Sharma (1):
+      ethtool: fix incorrect kernel-doc style comment in ethtool.h
+
+Kuniyuki Iwashima (2):
+      tipc: Fix use-after-free in tipc_mon_reinit_self().
+      af_unix: Initialise scc_index in unix_add_edge().
+
+Luiz Augusto von Dentz (2):
+      Bluetooth: hci_conn: Fix not cleaning up PA_LINK connections
+      Bluetooth: hci_event: Fix not handling PA Sync Lost event
+
+Matthieu Baerts (NGI0) (6):
+      selftests: mptcp: connect: fix fallback note due to OoO
+      selftests: mptcp: join: rm: set backup flag
+      selftests: mptcp: join: endpoints: longer transfer
+      selftests: mptcp: join: userspace: longer transfer
+      selftests: mptcp: connect: trunc: read all recv data
+      selftests: mptcp: join: properly kill background tasks
+
+Max Chou (1):
+      Bluetooth: btrtl: Avoid loading the config file on security chips
+
+Miri Korenblit (1):
+      wifi: iwlwifi: mld: always take beacon ies in link grading
+
+Nate Karstens (1):
+      strparser: Fix signed/unsigned mismatch bug
+
+Nicolas Dichtel (1):
+      bonding: fix mii_status when slave is down
+
+Nicolas Escande (1):
+      wifi: ath11k: zero init info->status in wmi_process_mgmt_tx_comp()
+
+Paolo Abeni (3):
+      Merge branch 'net-sched-initialize-struct-tc_ife-to-fix-kernel-infoleak'
+      Merge branch 'mlx5e-misc-fixes-2025-11-09'
+      Merge branch 'hsr-send-correct-hsrv0-supervision-frames'
+
+Pauli Virtanen (6):
+      Bluetooth: MGMT: cancel mesh send timer when hdev removed
+      Bluetooth: 6lowpan: reset link-local header on ipv6 recv path
+      Bluetooth: 6lowpan: fix BDADDR_LE vs ADDR_LE_DEV address type confusion
+      Bluetooth: L2CAP: export l2cap_chan_hold for modules
+      Bluetooth: 6lowpan: Don't hold spin lock over sleeping functions
+      Bluetooth: 6lowpan: add missing l2cap_chan_lock()
+
+Pawel Dembicki (1):
+      wifi: mwl8k: inject DSSS Parameter Set element into beacons if missing
+
+Ranganath V N (2):
+      net: sched: act_connmark: initialize struct tc_ife to fix kernel leak
+      net: sched: act_ife: initialize struct tc_ife to fix KMSAN kernel-infoleak
+
+Raphael Pinsonneault-Thibeault (1):
+      Bluetooth: btusb: reorder cleanup in btusb_disconnect to avoid UAF
+
+Victor Nogueira (2):
+      net/sched: Abort __tc_modify_qdisc if parent is a clsact/ingress qdisc
+      selftests/tc-testing: Create tests trying to add children to clsact/ingress qdiscs
+
+Wei Fang (1):
+      net: fec: correct rx_bytes statistic for the case SHIFT16 is set
+
+Xuan Zhuo (1):
+      virtio-net: fix incorrect flags recording in big mode
+
+Zahari Doychev (1):
+      tools: ynl: call nested attribute free function for indexed arrays
+
+Zilin Guan (1):
+      net/handshake: Fix memory leak in tls_handshake_accept()
+
+ .../userspace-api/netlink/intro-specs.rst          |   4 +-
+ drivers/bluetooth/btrtl.c                          |  24 +-
+ drivers/bluetooth/btusb.c                          |  13 +-
+ drivers/infiniband/hw/mlx5/cq.c                    |  11 +-
+ drivers/net/bonding/bond_main.c                    |   5 +-
+ drivers/net/ethernet/freescale/fec_main.c          |   2 +
+ drivers/net/ethernet/mellanox/mlx5/core/cq.c       |  23 +-
+ drivers/net/ethernet/mellanox/mlx5/core/devlink.c  |   2 +-
+ .../ethernet/mellanox/mlx5/core/en_accel/ipsec.c   |   3 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_dcbnl.c |  33 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   1 -
+ .../net/ethernet/mellanox/mlx5/core/fpga/conn.c    |  15 +-
+ .../mellanox/mlx5/core/steering/hws/send.c         |   7 -
+ .../mellanox/mlx5/core/steering/sws/dr_send.c      |  28 +-
+ drivers/net/ethernet/ti/am65-cpsw-qos.c            |  51 ++-
+ drivers/net/phy/mdio_bus.c                         |   5 +-
+ drivers/net/phy/micrel.c                           |  12 +-
+ drivers/net/virtio_net.c                           |  16 +-
+ drivers/net/wireless/ath/ath11k/wmi.c              |   3 +
+ drivers/net/wireless/intel/iwlwifi/mld/link.c      |   7 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c  |  13 +-
+ .../net/wireless/intel/iwlwifi/mvm/time-event.c    |  14 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/utils.c     |  12 +-
+ drivers/net/wireless/marvell/mwl8k.c               |  71 +++-
+ drivers/net/wireless/virtual/mac80211_hwsim.c      |  14 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c                  |   6 +-
+ include/linux/ethtool.h                            |   2 +-
+ include/linux/mlx5/cq.h                            |   1 +
+ include/net/bluetooth/hci.h                        |   5 +
+ net/bluetooth/6lowpan.c                            | 105 ++++--
+ net/bluetooth/hci_conn.c                           |  33 +-
+ net/bluetooth/hci_event.c                          |  56 ++--
+ net/bluetooth/hci_sync.c                           |   2 +-
+ net/bluetooth/l2cap_core.c                         |   1 +
+ net/bluetooth/mgmt.c                               |   1 +
+ net/core/netpoll.c                                 |   7 +-
+ net/dsa/tag_brcm.c                                 |   6 +-
+ net/handshake/tlshd.c                              |   1 +
+ net/hsr/hsr_device.c                               |   5 +-
+ net/hsr/hsr_forward.c                              |  22 +-
+ net/ipv4/route.c                                   |   5 +
+ net/mac80211/iface.c                               |  14 +-
+ net/mac80211/rx.c                                  |  10 +-
+ net/sched/act_connmark.c                           |  12 +-
+ net/sched/act_ife.c                                |  12 +-
+ net/sched/sch_api.c                                |   5 +
+ net/sched/sch_generic.c                            |  17 +-
+ net/sctp/transport.c                               |  13 +-
+ net/smc/smc_clc.c                                  |   1 +
+ net/strparser/strparser.c                          |   2 +-
+ net/tipc/net.c                                     |   2 +
+ net/unix/garbage.c                                 |  14 +-
+ tools/net/ynl/pyynl/ynl_gen_c.py                   |  12 +
+ tools/testing/selftests/drivers/net/Makefile       |   1 +
+ .../testing/selftests/drivers/net/bonding/Makefile |   2 +
+ tools/testing/selftests/drivers/net/bonding/config |   4 +
+ .../drivers/net/bonding/netcons_over_bonding.sh    | 361 +++++++++++++++++++++
+ .../selftests/drivers/net/lib/sh/lib_netcons.sh    |  78 ++++-
+ .../selftests/drivers/net/netcons_torture.sh       | 130 ++++++++
+ .../selftests/net/forwarding/local_termination.sh  |   2 +
+ tools/testing/selftests/net/mptcp/mptcp_connect.c  |  18 +-
+ tools/testing/selftests/net/mptcp/mptcp_connect.sh |   2 +-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh    |  90 ++---
+ tools/testing/selftests/net/mptcp/mptcp_lib.sh     |  21 ++
+ .../tc-testing/tc-tests/infra/qdiscs.json          |  44 +++
+ 65 files changed, 1202 insertions(+), 312 deletions(-)
+ create mode 100755 tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh
+ create mode 100755 tools/testing/selftests/drivers/net/netcons_torture.sh
 
 
