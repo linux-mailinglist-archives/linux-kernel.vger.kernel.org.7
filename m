@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-899825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99600C58FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFAC5929F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ECB75488B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:39:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05B1E4F4958
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86800363C47;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE65F36404B;
 	Thu, 13 Nov 2025 16:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLT7dhxJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfKn135R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8665033BBCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05073431F2;
 	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051467; cv=none; b=HDUuy4bKapmodCi0pppWh1hRwCMRoswKGXmQm4dO1l4iJoFpq8OFMcN7FjKIkewzriGakInqDzdjw7LdBxN6p3B4ewA8hQ6AjT9LOVtfa9Bgw8+UBfjEJGjASFrYen0cygscQ7fjkXGwo7kbk4lQu5cFOeaBuh1OU076+kebRog=
+	t=1763051467; cv=none; b=ZYMIb7IqalQYpYBs+BrMzFrGYOIOmrN4oOOHmNKBjvNXH+l1T4epDJbH7s3iLEk9lZnsV4Ji48u5yRljJmY8zOnZIb6YqRNOy1j3Zs094w8N3xQwhrVONZoXUM5+yXWcoDlWI3Iq9SN1ErovY25guhmrFJiPxuRrGBr3mDI0aoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763051467; c=relaxed/simple;
-	bh=zuMj9RMEudcE2kQnfLdF/50q8kfhTWUDSl/uQKepk8M=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QqL8k0BBMT+C1wQn0IGbjJL+si5u5m47QXQtdz9AyUEnZdsx4QxO71sOjqz6ktlRZ1BhfR16HYD2cY2/NwLAffjNrl0bTxKmzteEQ+NGiZ0Sje5rbznYJk2SLntbTK4ARl00ZNA1SbX9OvqASE2GSGeTvBmdwynPGKZbXR0lCYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLT7dhxJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8F28C2BCAF;
-	Thu, 13 Nov 2025 16:31:06 +0000 (UTC)
+	bh=b5gXFqN7f5GJJUwhRPlPi7ZdTCLQZtsq3U/PN4qzOJQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cP3u3/DiI4wEqqxcQAKE7nL/zPRM+E6VnDRKl5r/sclrKfd9whx3xDe75ntuhqClG/n0AqPKczpZm6T8oyIV96qhdkPP0UPyZK70Np6bOP7vdPTzI+lsmro+5rhyhuDTVEAiezkFMCSVQydlxvZwryOERPTg2BpKSdLa/m/MNzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfKn135R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3D94DC2BC86;
+	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1763051467;
-	bh=zuMj9RMEudcE2kQnfLdF/50q8kfhTWUDSl/uQKepk8M=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=WLT7dhxJ+NGmfUa+kjb9GFV12bmVWaq80Ofhyec6nxAymNl6u3oEBXrfZ57o06l7J
-	 xsLJFuXjmqVFBaIpYcKfKfUV8VJQRfnjlTAQE2PIP7lSILcLxIHGqSu+OD7O8qch6s
-	 Tr5UcZey++/Io0CaFuGXIf30wFB2TAlaKF/20g2YjiakLw84u9rCZu5tq1lpMchPBW
-	 3PtGTO3PV3lGSg0GFQndwbMzOD/FYuT7zbDIO8EujQfSmN7u+LrC30eMCssDBq11dl
-	 Bzw6s3SGNBS4GuhQ/7pr0YNw1cWppq1Cu4E3oeC279pLV1+hMJYq9UyWKbgJBocp4J
-	 qBGjL0cHp6Y1Q==
+	bh=b5gXFqN7f5GJJUwhRPlPi7ZdTCLQZtsq3U/PN4qzOJQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=hfKn135RXFnMH+kfjbqZa3sGBaAi4fBNPGOkFSRG9lVQtyrYWKtT5URSHQj/iTQ6R
+	 8Edl6tDjAoiSX/l+9c75c/4TIHHFlRpkVw7BjDbpsI4gJhr/JWlhZvPxqWX1j2p36c
+	 xbdh0CDaj8pUdE0w6y+shWRVKJMHzcU5VAZiMN6nKudPCafl6FfNjfpZCuz+G61KfC
+	 BGLnf4GdrKf/WrKi3lNwJz+Xo1EjeqLgEfA2XF9KqCuhMQBsnruAGK7918Nai8MqZG
+	 gFE4WDFS47f16SKgfOHyflIYH+z3WNL/24w+YY7Sza30dPjuThwbFiQl7CCiLbtvVC
+	 cBDE6/Fn0/9/w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB9CD8C94;
-	Thu, 13 Nov 2025 16:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EA7CD8C9E;
+	Thu, 13 Nov 2025 16:31:07 +0000 (UTC)
 From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Subject: [PATCH v6 0/7] Input: synaptics-rmi4 - add quirks for third party
- touchscreen controllers
-Date: Thu, 13 Nov 2025 17:30:56 +0100
-Message-Id: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
+Date: Thu, 13 Nov 2025 17:30:59 +0100
+Subject: [PATCH v6 3/7] Input: synaptics-rmi4 - f12: use hardcoded values
+ for aftermarket touch ICs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMAHFmkC/3XMTQ6CMBCG4auYrq0p05YfV97DuKBlkFkIpCUNS
- Li7hQ0aYmb1TfK8M/PoCD27nmbmMJCnro0jPZ+Ybcr2iZyquBkI0EKKnPupLfuBrOfuRYrbXIK
- BOpMWDYuod1jTuAXvj7gb8kPnpq0f5Pr9mwqSCw6JriRmkBcl3Gik4WLfbA0FtWMl4IBVxIkxh
- Y6HOlW/WH/hRBywjtiolYs6y02x42VZPoQLJkkkAQAA
-X-Change-ID: 20250308-synaptics-rmi4-c832b2f73ceb
+Message-Id: <20251113-synaptics-rmi4-v6-3-d9836afab801@ixit.cz>
+References: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
+In-Reply-To: <20251113-synaptics-rmi4-v6-0-d9836afab801@ixit.cz>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
  Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -68,123 +66,227 @@ To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Vincent Huang <vincent.huang@tw.synaptics.com>
 Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Casey Connolly <casey.connolly@linaro.org>, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+ phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4429; i=david@ixit.cz;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6187; i=david@ixit.cz;
  h=from:subject:message-id;
- bh=zuMj9RMEudcE2kQnfLdF/50q8kfhTWUDSl/uQKepk8M=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFgfIRc6yH3o3Jkil7PH1g1sm6uaUiWHGsbBvE
- rnJakh0t8qJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYHyAAKCRBgAj/E00kg
- cnnPEACGwMZirsxaVrrEOKYt+D9/QuiLLFqGUGpr/FK8C6ASBiB0FxI1+eC2AggVsXP3UqhdlMK
- xfIXepYyY6mnVMb6ACQxahw6Wr/AglFBPobs4jBTBsvVNDbRRaoiBlKHY5aLZhN+oV+6jAo2zUl
- LH1F+30VXhdncBF1Q1Vr/BUOnz2wxbmIO+dmE/6b4SkQrC5j5tjvFY09lRybcPoZ4gEsYeVZyrC
- AJSFgJ9EAki8obPbyDhzp+3UMrgapaCHs8As5IEifPvs23YaGDHvTJ05HeMFPRsjmkz8ygMqvvB
- fmGfeGylgGHKUe3kWe2d2MOgvT+YJ1LldTaDbyiHgCoE+SE7YMNOGUiolNmPvPpVSwarlKgWxYc
- E4frVRbvJe5H35+rKyVB1xzLn3b2plu80LMei3+p6pieBNwiv6I2MpucZZ1TdzxFPNpYgz2Mg3o
- JCVtBITvQJE2A+PtPjFCfKBhUFc8VLHMfFgYnVKt+o1Lw3KS7mkR5Je2vJBN+W63f7ju5mSgPrt
- mLzI3lS5gzNxL6XF2TsbjXoZfEt3Yxn/6cPSpBi8h9vqk5b0Yl0J2T5JpPv7ED/d7/HEjvzCFmf
- T5bxYSvbZN548pfl4XB9mUUE0L64lrOJpWyiiSBM3uGptg1+dDfoGuHx4fLp3TpGnVxhcoTK/j1
- RFuWzqngZ4cVgvw==
+ bh=z4vNak61Csdv72X5cclFvPznjgvEQ7qek08VaFKSy5o=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFgfJ9RsTOGL/7aFP5DJDkQrF+bmdhMZEK+sGR
+ RcvervwciGJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYHyQAKCRBgAj/E00kg
+ cjh1D/9Pb7gtmsTwUgxCAGahj44SIELknRsDnTicsYeU/blo7RxBcJhWiq9aipUPbm3D53J7QAq
+ ZAvLN093RGqY40qm49u+Csez+DK0wpwknJ3nMqGh1U162DokO94nBTxBalnyJE/uQu8UOmOBRmI
+ rzgs+LaSTEjgmkQL2Xadxv3GZeOJTLZaU8R/D2tRbQROplisvjsFmrekRhzqtBzb91VR5pUNyJb
+ aJNmEppB1u6VlBGqdvH/5KzocMRFK2DZr4P0oYI2INUGBYJtBVfxDGRO1PcqVBiPqoPJX2ljTRo
+ DRP+aOWloyJnOUoOuF3RwXOPtUnP5ZwUajbHo3FB4RfFWxpDW9+3GqatPfVDsTl4Qg5DBVCDfHj
+ NUI93B2SnJaE1Voi3LNa9xknTYutkC3oNjjaCOjJBQ4f5J5w5PmL3WG/dBfkpE7V1kvR40bwMKR
+ 2zekYlD/+43lbUNUw6uSXg5id92EM6f7SU6/gDGLz1HG68phMfC7z6NwR4Z+ceZRdngDmhOGLVj
+ Xgpc54fMrMW1VncR8F0AOOkPxPJ/exFHGFQ70KhNkYCPiD/IUN+Vx69Md3caMkRw5Rb91k61vhA
+ /Hbk0i05uRRktF/OJ4lZ6VF9vSFjxXSQYuOhgijKzbzz4J/fgIpvMuuJgityts/bSBiMde+QKlA
+ HkNX8sDR2e2httw==
 X-Developer-Key: i=david@ixit.cz; a=openpgp;
  fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
 X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
 X-Original-From: David Heidelberg <david@ixit.cz>
 Reply-To: david@ixit.cz
 
-With the growing popularity of running upstream Linux on mobile devices,
-we're beginning to run into more and more edgecases. The OnePlus 6 is a
-fairly well supported 2018 era smartphone, selling over a million units
-in it's first 22 days. With this level of popularity, it's almost
-inevitable that we get third party replacement displays, and as a
-result, replacement touchscreen controllers.
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-The OnePlus 6 shipped with an extremely usecase specific touchscreen
-driver, it implemented only the bare minimum parts of the highly generic
-rmi4 protocol, instead hardcoding most of the register addresses.
-  
-As a result, the third party touchscreen controllers that are often
-found in replacement screens, implement only the registers that the 
-downstream driver reads from. They additionally have other restrictions
-such as heavy penalties on unaligned reads.
+Some replacement displays include third-party touch ICs which are
+devoid of register descriptors. Create a fake data register descriptor
+for such ICs and provide hardcoded default values.
+
+It isn't possible to reliably determine if the touch IC is original or
+not, so these fallback values are offered as an alternative to the error
+path when register descriptors aren't available.
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+[changes for readability / codeflow, checkpatch fixes]
+Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ drivers/input/rmi4/rmi_f12.c | 117 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 91 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
+index 8246fe77114bb..1a103cc5f2235 100644
+--- a/drivers/input/rmi4/rmi_f12.c
++++ b/drivers/input/rmi4/rmi_f12.c
+@@ -218,6 +218,41 @@ static void rmi_f12_process_objects(struct f12_data *f12, u8 *data1, int size)
+ 		rmi_2d_sensor_abs_report(sensor, &sensor->objs[i], i);
+ }
  
-This series attempts to implement the necessary workaround to support  
-some of these chips with the rmi4 driver. Although it's worth noting
-that at the time of writing there are other unofficial controllers in
-the wild that don't work even with these patches.
++static void rmi_f12_set_hardcoded_desc(struct rmi_function *fn, struct f12_data *f12)
++{
++	struct rmi_2d_sensor *sensor = &f12->sensor;
++	struct rmi_register_desc_item *reg_desc;
++
++	/* We have no f12->data_reg_desc, so the pkt_size is 0, override it with
++	 * a somewhat sensible default (this corresponds to 10 fingers).
++	 */
++	sensor->pkt_size = 88;
++
++	/*
++	 * There are no register descriptors to get these values from.
++	 * We set them to high values to either be overwritten by the clip
++	 * properties from devicetree, or to just not get in the way.
++	 */
++	sensor->max_x = 65535;
++	sensor->max_y = 65535;
++
++	/*
++	 * Create the Data1 register descriptor so that touch events
++	 * can work properly.
++	 */
++	reg_desc = devm_kcalloc(&fn->dev, 1,
++			sizeof(struct rmi_register_desc_item), GFP_KERNEL);
++	reg_desc->reg = 1;
++	reg_desc->reg_size = 80;
++	reg_desc->num_subpackets = 10;
++
++	f12->data1 = reg_desc;
++	f12->data1_offset = 0;
++	sensor->nbr_fingers = reg_desc->num_subpackets;
++	sensor->report_abs = 1;
++	sensor->attn_size += reg_desc->reg_size;
++}
++
+ static irqreturn_t rmi_f12_attention(int irq, void *ctx)
+ {
+ 	int retval;
+@@ -338,6 +373,40 @@ static int rmi_f12_config(struct rmi_function *fn)
+ 	return 0;
+ }
  
-We have been shipping these patches in postmarketOS for the last several
-years, and they are known to not cause any regressions on the OnePlus
-6/6T (with the official Synaptics controller), however I don't own any
-other rmi4 hardware to further validate this.
++static int rmi_f12_sensor_init(struct rmi_function *fn, struct f12_data *f12)
++{
++	struct rmi_2d_sensor *sensor = &f12->sensor;
++
++	sensor->fn = fn;
++	f12->data_addr = fn->fd.data_base_addr;
++
++	/* On quirky devices that don't have a data_reg_desc we hardcode the packet
++	 * in rmi_f12_set_hardcoded_desc(). Make sure not to set it to 0 here.
++	 */
++	if (!sensor->pkt_size)
++		sensor->pkt_size = rmi_register_desc_calc_size(&f12->data_reg_desc);
++
++	sensor->axis_align =
++		f12->sensor_pdata.axis_align;
++
++	sensor->x_mm = f12->sensor_pdata.x_mm;
++	sensor->y_mm = f12->sensor_pdata.y_mm;
++	sensor->dribble = f12->sensor_pdata.dribble;
++
++	if (sensor->sensor_type == rmi_sensor_default)
++		sensor->sensor_type =
++			f12->sensor_pdata.sensor_type;
++
++	rmi_dbg(RMI_DEBUG_FN, &fn->dev, "%s: data packet size: %d\n", __func__,
++		sensor->pkt_size);
++
++	sensor->data_pkt = devm_kzalloc(&fn->dev, sensor->pkt_size, GFP_KERNEL);
++	if (!sensor->data_pkt)
++		return -ENOMEM;
++
++	return 0;
++}
++
+ static int rmi_f12_probe(struct rmi_function *fn)
+ {
+ 	struct f12_data *f12;
+@@ -351,6 +420,7 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 	struct rmi_driver_data *drvdata = dev_get_drvdata(&rmi_dev->dev);
+ 	u16 data_offset = 0;
+ 	int mask_size;
++	bool hardcoded_desc_quirk = false;
+ 
+ 	rmi_dbg(RMI_DEBUG_FN, &fn->dev, "%s\n", __func__);
+ 
+@@ -365,9 +435,9 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 	++query_addr;
+ 
+ 	if (!(buf & BIT(0))) {
+-		dev_err(&fn->dev,
+-			"Behavior of F12 without register descriptors is undefined.\n");
+-		return -ENODEV;
++		rmi_dbg(RMI_DEBUG_FN, &fn->dev,
++			"No register descriptors defined for F12, using fallback\n");
++		hardcoded_desc_quirk = true;
+ 	}
+ 
+ 	f12 = devm_kzalloc(&fn->dev, sizeof(struct f12_data) + mask_size * 2,
+@@ -375,6 +445,8 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 	if (!f12)
+ 		return -ENOMEM;
+ 
++	dev_set_drvdata(&fn->dev, f12);
++
+ 	f12->abs_mask = (unsigned long *)((char *)f12
+ 			+ sizeof(struct f12_data));
+ 	f12->rel_mask = (unsigned long *)((char *)f12
+@@ -393,6 +465,18 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 		f12->sensor_pdata = pdata->sensor_pdata;
+ 	}
+ 
++	sensor = &f12->sensor;
++
++	if (hardcoded_desc_quirk) {
++		rmi_f12_set_hardcoded_desc(fn, f12);
++
++		ret = rmi_f12_sensor_init(fn, f12);
++		if (ret)
++			return ret;
++
++		goto skip_register_desc;
++	}
++
+ 	ret = rmi_read_register_desc(rmi_dev, query_addr,
+ 					&f12->query_reg_desc);
+ 	if (ret) {
+@@ -423,29 +507,9 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 	}
+ 	query_addr += 3;
+ 
+-	sensor = &f12->sensor;
+-	sensor->fn = fn;
+-	f12->data_addr = fn->fd.data_base_addr;
+-	sensor->pkt_size = rmi_register_desc_calc_size(&f12->data_reg_desc);
+-
+-	sensor->axis_align =
+-		f12->sensor_pdata.axis_align;
+-
+-	sensor->x_mm = f12->sensor_pdata.x_mm;
+-	sensor->y_mm = f12->sensor_pdata.y_mm;
+-	sensor->dribble = f12->sensor_pdata.dribble;
+-
+-	if (sensor->sensor_type == rmi_sensor_default)
+-		sensor->sensor_type =
+-			f12->sensor_pdata.sensor_type;
+-
+-	rmi_dbg(RMI_DEBUG_FN, &fn->dev, "%s: data packet size: %d\n", __func__,
+-		sensor->pkt_size);
+-	sensor->data_pkt = devm_kzalloc(&fn->dev, sensor->pkt_size, GFP_KERNEL);
+-	if (!sensor->data_pkt)
+-		return -ENOMEM;
+-
+-	dev_set_drvdata(&fn->dev, f12);
++	ret = rmi_f12_sensor_init(fn, f12);
++	if (ret)
++		return ret;
+ 
+ 	ret = rmi_f12_read_sensor_tuning(f12);
+ 	if (ret)
+@@ -543,6 +607,7 @@ static int rmi_f12_probe(struct rmi_function *fn)
+ 		data_offset += item->reg_size;
+ 	}
+ 
++skip_register_desc:
+ 	/* allocate the in-kernel tracking buffers */
+ 	sensor->tracking_pos = devm_kcalloc(&fn->dev,
+ 			sensor->nbr_fingers, sizeof(struct input_mt_pos),
 
-The series is also available (until merged) at
-  https://gitlab.com/sdm845/sdm845-next/-/commits/b4/synaptics-rmi4
-
----
-Changes in v6:
-- Rebased on top of next-20251113.
-- No other change since the Rob Herring comment.
-- Link to v5: https://lore.kernel.org/r/20250410-synaptics-rmi4-v5-0-b41bb90f78b9@ixit.cz
-
-Changes in v5:
-- Removed -i2c suffix from rmi4-s3706b-i2c (Krzysztof).
-- Link to v4: https://lore.kernel.org/r/20250402-synaptics-rmi4-v4-0-1bb95959e564@ixit.cz
-
-Changes in v4:
-- Replaced patch "dt-bindings: input: syna,rmi4: document syna,pdt-fallback-desc"
-  with patch documenting specific touchscreen model used in OnePlus 6 and 6T.
-- Fixed zero electrode return code (Dmitry).
-- Switched the duplicate detection algo to bitmap (Dmitry).
-- Optimized rmi_device_platform_data struct to avoid unnecessary
-  padding.
-- Changed fallback_size from int to unsigned int.
-- Changed SoB from nickname and old address (methanal <baclofen@tuta.io>) to
-  Kaustabh Chakraborty <kauschluss@disroot.org>.
-  Verified ownership through the sdm845 chatroom on Matrix.
-- Link to v3: https://lore.kernel.org/r/20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz
-
-Changes in v3:
-- reworded dt-bindings property description
-- fixed the rmi_driver_of_probe definition for non device-tree builds.
-- fixed some indentation issues reported by checkpatch
-- change rmi_pdt_entry_is_valid() variable to unsigned 
-- Link to v2: https://lore.kernel.org/all/20230929-caleb-rmi4-quirks-v2-0-b227ac498d88@linaro.org
-
-Changes in v2:
-- Improve dt-bindings patch (thanks Rob)
-- Add missing cast in patch 5 to fix the pointer arithmetic
-- Link to v1: https://lore.kernel.org/r/20230929-caleb-rmi4-quirks-v1-0-cc3c703f022d@linaro.org
-
----
-Casey Connolly (1):
-      Input: synaptics-rmi4 - handle duplicate/unknown PDT entries
-
-David Heidelberg (1):
-      dt-bindings: input: syna,rmi4: Document syna,rmi4-s3706b
-
-Kaustabh Chakraborty (5):
-      Input: synaptics-rmi4 - f12: use hardcoded values for aftermarket touch ICs
-      Input: synaptics-rmi4 - f55: handle zero electrode count
-      Input: synaptics-rmi4 - don't do unaligned reads in IRQ context
-      Input: synaptics-rmi4 - read product ID on aftermarket touch ICs
-      Input: synaptics-rmi4 - support fallback values for PDT descriptor bytes
-
- .../devicetree/bindings/input/syna,rmi4.yaml       |  11 +-
- drivers/input/rmi4/rmi_driver.c                    | 124 +++++++++++++++++----
- drivers/input/rmi4/rmi_driver.h                    |  10 ++
- drivers/input/rmi4/rmi_f01.c                       |  14 +++
- drivers/input/rmi4/rmi_f12.c                       | 117 ++++++++++++++-----
- drivers/input/rmi4/rmi_f55.c                       |   5 +
- include/linux/rmi.h                                |   3 +
- 7 files changed, 234 insertions(+), 50 deletions(-)
----
-base-commit: 6d7e7251d03f98f26f2ee0dfd21bb0a0480a2178
-change-id: 20250308-synaptics-rmi4-c832b2f73ceb
-
-Best regards,
 -- 
-David Heidelberg <david@ixit.cz>
+2.51.0
 
 
 
