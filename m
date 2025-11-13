@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-900025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4B6C59786
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:31:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09526C59659
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E74D508EDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBC23B4976
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC32535B14E;
-	Thu, 13 Nov 2025 18:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F435BDC5;
+	Thu, 13 Nov 2025 18:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yHpnY4+Y"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2K4FzeLW"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693A335A134
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6D635B142
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057157; cv=none; b=FAanttEejZ3f/7PpdixZ6nnO5MGMTubfj1QQ+AQH+0dY5hxktkMTXLZi0Hk5g8s7mB2XtWl8pxOVqNzlwwgC1aqBMpWaFE7rop8qIRY17dEWMefPwCRQpGeeEav71ihQ1FAmK8vl5YTQbOGP6S6UT5x0iC+Wnlt6YTWsGwuYf/Y=
+	t=1763057159; cv=none; b=bo1HU7Q6jrhyXvaTDBiTK3SYW0IljGk78fkjzdcLNjMMfByjkQwLLxkZdQcgqA7zKjYyLUXIIWvf5NIS2jpbbSqGJr/vGaCycXUjUIInPDQe5P7SE0NCibAGEOX/znIVSRJQjjJM4RGFsznwp7ysUOUvPVNIDtxFy8N9jT4HhGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057157; c=relaxed/simple;
-	bh=fEvoaHFmoaJ+2+tIFCMQtgnwukgReVbMkmGkb5xkpR4=;
+	s=arc-20240116; t=1763057159; c=relaxed/simple;
+	bh=0f1TDzO6H6tB8Sqz0jVLsYxxLfA6IgKxvXEGC+7+pOU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=MPLod9xZOzZe3zQClbzREa117S3OvH59pf2GdZq3vETwmea2zX/KeYm2quCk6Esu8WVB9d6AmuENQOiMrwlr4FqOR8+gS+UgOMceH3dR/BzbSnkD3KaWbkI2UuG2nPO4iLYDeYau1rwZV/2kR/ekLaqAJISLyyA6iBLmfG4hvEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yHpnY4+Y; arc=none smtp.client-ip=209.85.215.201
+	 To:Content-Type; b=HrQGicJR85RysZIojxRWwN7FVGKN0CgwYl6lQKVf/IE6VfkNd7K0E9rK4fkbjHi/cuTisXG3uM00JexXt25yw3p5w2Ugs/yd/mXVqVjPPLutHFD4EfcJt7N1IuQmAViU/TNhKuZbgYe6dmH20tDFwaM24CUNclEloIqk5pGTJDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2K4FzeLW; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b9b9e8b0812so2479654a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:55 -0800 (PST)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b9ceccbd7e8so2363853a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763057155; x=1763661955; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1763057157; x=1763661957; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=41JzJBl0/lQZ4jR+Z1Nm/tB7c9vLw1945nKhgQp8mD0=;
-        b=yHpnY4+YmmyuMkG0W1JSEgqpmvUjwuMo418YfPm9tP3zKa3CSWr7pe1PHh4ooR+io8
-         V4xneKqiTk6Bn277+rETQtdciZuB7X7A336lJlpB9dSLu1CHxoQM9Ohr1+5fjjGk1nCi
-         FHuX/hlBZIEcfPBRezZscRky2SOJ2eG91e88sS36mW5lx2gpxGVtVjxNqWJ3nGRSdSlv
-         TH6k1IiiyeMz+CxMkJ3wbzsT4t0UAJBTRDSDsy6jO0Vyvnp64O+BvifW9pnefJp6WjJa
-         /Nt9KK6P4vv0ASMs5xbzuOk8hAOU0CNQLHpD16zW2uhULCg44pU40XRptoYFw6H83EMp
-         Gf0A==
+        bh=YuP8PXUqe7Wr/8ISWkGnPVH1SBV8e8BOv5yyhohFapc=;
+        b=2K4FzeLWkayKZCudP1am8VPGfIv1ILGf6uTpjQOG64yzus2VyHDMnAQhZBZEN+oW+j
+         6NR4ocLpQ8yw4TEko6zG7gLHdxyphyGyCQSeSWgiQ/TxTY7n1AbVoXpS/LbF0/mLBP1H
+         csGoPbs0GT2RMPqdcpnKOwwM8axLTzc7O9/qxFq8rli6iLBl6oyebOIsUJgxL4/iS6EI
+         aK73wcKuzDTNCQLXIivPuTvTOcQJblKSRiD6lUk6lDfYzzww3uDifMskz4SO61BmZ3eE
+         NBDAPSZSTv7GS1DFKJQhtRjWQdXqvyyG6mOWnDC8VkXByZvLCOLixH+uLRKxSyMtBZpP
+         4yTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763057155; x=1763661955;
+        d=1e100.net; s=20230601; t=1763057157; x=1763661957;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41JzJBl0/lQZ4jR+Z1Nm/tB7c9vLw1945nKhgQp8mD0=;
-        b=oPvwBxyFY4ad9x4Q/q+DtbHVOVeVMmtEuPZgx/psC/LeKs+639pzcP21UAxfbdYIH0
-         nfZIHnnNEAEFcwETeGKzXGRtuL3ggu8brqFg4GByBEmM+Z1HwhPWgmfZEtfvfFbadCTc
-         nREJhgwUYs5nR6KP+9fuSREStrZShfQXPejF9jzC6Al0Ndo2gUJlz/mP81WzSlgJljMu
-         vEGoHioim78EVybIYy2mnP9FYPa+Dhf20vT9zBPMqj2r7XRJtmVPQFJuwdkWI6N7SNoS
-         sDgrUn3uaeYr7+bezizxh7c0X1vk5qckHwvNc9swURZs/qcMyncF4B5om4pqWSQ0LMPF
-         6nEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhl2dEUx1blHzGaCswwGCIwi3Yoq5lvQblRgD4B8Evg47L3XjGomSgb9bIKC8iN7tB6vmdvh3x9CVt8OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMIaV1l0T2B2C40J7nMES64t4YJukGEQJwGZstLBO2E9p5fAyJ
-	okRZYVlb2vyxTx76CpJKmORzLiyVkDCMjfEQa6zRClj5kfFkfkDGFv20QvWETIBMhqE9J6MlQn0
-	Z927G19LgCw==
-X-Google-Smtp-Source: AGHT+IHhm5PLUXvrIrKLsniSTSgeWCsqDeSP0Hg/Mc9l08DaMLq5jjeBC+yyy63MuLZMHCRAJ2hL1QDSthUq
-X-Received: from dlbbs44.prod.google.com ([2002:a05:7022:92c:b0:119:9f33:34a9])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:7e07:b0:119:e56c:189e
- with SMTP id a92af1059eb24-11b40f9ee6dmr162862c88.6.1763057154836; Thu, 13
- Nov 2025 10:05:54 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:05:12 -0800
+        bh=YuP8PXUqe7Wr/8ISWkGnPVH1SBV8e8BOv5yyhohFapc=;
+        b=Ecp4mU5hurUJXPbbMQU3mq/h91X8xDXwUgrKl0A+A27wvJr5M7lQFPZz86qpU8kwgw
+         TAY6TQ6ISjRtknoM7Vl/lkcpsoc5b+STKvXRft8XpDzYlsc6d23EecA/uvlYu555rtyC
+         Q/rZS7WLAC8Jn9A97j40GIfJpMDwj1KEsYpbvUxWlD+Aa0niMCSD3HSRPOtWFeFwra+O
+         y+kPDs/f7fDQrdO/yUdzs0GoQdf1mZRZkt8o3TfA7LU1e9BMgGszbVsVx9mHti++O6L9
+         wIZWJbGdwVHe5rhFfQG4YF1B1MLvLX4IQj1A8YjSnNGsSEUwRh0XEk86XvvWBerluOk9
+         Rsaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpXejE3wl2ChhSjuqkAXh5wTjyzqxwXeWkuSCbJd0YVYno3UWaPjsQjYta1rtd5CV3VPCGg4HAWTg6w8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyusbQZhzhwtjWiKBUVJi+y2wrT76YWNEHI5BuUGr33j494q0TN
+	rZ0yTpyp+68/3URUcRErxY1GsZp78l7QlIxQoDUoSWEdows9iw8c/Imebp7uYu8QpNT1o0aWGhd
+	WyoF3GTuU+w==
+X-Google-Smtp-Source: AGHT+IG4tLWQG6Nhx7yV9QcYVY05Ov9bXvi/owMeYul8P75j8HZaUm6CF2k78DeEPMIywkJ59xIfi2JtS0wT
+X-Received: from dlbbq19.prod.google.com ([2002:a05:7022:6713:b0:11b:1a9a:d2e8])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:ef0f:b0:11b:dff:7830
+ with SMTP id a92af1059eb24-11b40fa3490mr182386c88.18.1763057156938; Thu, 13
+ Nov 2025 10:05:56 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:05:13 -0800
 In-Reply-To: <20251113180517.44096-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251113180517.44096-1-irogers@google.com>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251113180517.44096-7-irogers@google.com>
-Subject: [PATCH v4 06/10] perf stat: Reduce scope of walltime_nsecs_stats
+Message-ID: <20251113180517.44096-8-irogers@google.com>
+Subject: [PATCH v4 07/10] perf tool_pmu: More accurately set the cpus for tool events
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,150 +87,106 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-walltime_nsecs_stats is no longer used for counter values, move into
-that stat_config where it controls certain things like noise
-measurement.
+The user and system time events can record on different CPUs, but for
+all other events a single CPU map of just CPU 0 makes sense. In
+parse-events detect a tool PMU and then pass the perf_event_attr so
+that the tool_pmu can return CPUs specific for the event. This avoids
+a CPU map of all online CPUs being used for events like
+duration_time. Avoiding this avoids the evlist CPUs containing CPUs
+for which duration_time just gives 0. Minimizing the evlist CPUs can
+remove unnecessary sched_setaffinity syscalls that delay metric
+calculations.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-stat.c       | 16 ++++++++--------
- tools/perf/tests/parse-metric.c |  2 --
- tools/perf/tests/pmu-events.c   |  2 --
- tools/perf/util/config.c        |  2 ++
- tools/perf/util/stat-shadow.c   |  7 -------
- tools/perf/util/stat.h          |  2 --
- 6 files changed, 10 insertions(+), 21 deletions(-)
+ tools/perf/util/parse-events.c |  9 +++++++--
+ tools/perf/util/tool_pmu.c     | 19 +++++++++++++++++++
+ tools/perf/util/tool_pmu.h     |  1 +
+ 3 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index d6f4c84f7d7e..ca1c80c141b6 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -239,7 +239,7 @@ static inline void diff_timespec(struct timespec *r, struct timespec *a,
- static void perf_stat__reset_stats(void)
- {
- 	evlist__reset_stats(evsel_list);
--	perf_stat__reset_shadow_stats();
-+	memset(stat_config.walltime_nsecs_stats, 0, sizeof(*stat_config.walltime_nsecs_stats));
- }
- 
- static int process_synthesized_event(const struct perf_tool *tool __maybe_unused,
-@@ -455,8 +455,8 @@ static void process_interval(void)
- 			pr_err("failed to write stat round event\n");
- 	}
- 
--	init_stats(&walltime_nsecs_stats);
--	update_stats(&walltime_nsecs_stats, stat_config.interval * 1000000ULL);
-+	init_stats(stat_config.walltime_nsecs_stats);
-+	update_stats(stat_config.walltime_nsecs_stats, stat_config.interval * 1000000ULL);
- 	print_counters(&rs, 0, NULL);
- }
- 
-@@ -988,14 +988,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	if (interval && stat_config.summary) {
- 		stat_config.interval = 0;
- 		stat_config.stop_read_counter = true;
--		init_stats(&walltime_nsecs_stats);
--		update_stats(&walltime_nsecs_stats, t1 - t0);
-+		init_stats(stat_config.walltime_nsecs_stats);
-+		update_stats(stat_config.walltime_nsecs_stats, t1 - t0);
- 
- 		evlist__copy_prev_raw_counts(evsel_list);
- 		evlist__reset_prev_raw_counts(evsel_list);
- 		evlist__reset_aggr_stats(evsel_list);
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 0c0dc20b1c13..7b2422ccb554 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -30,6 +30,7 @@
+ #include "util/event.h"
+ #include "util/bpf-filter.h"
+ #include "util/stat.h"
++#include "util/tool_pmu.h"
+ #include "util/util.h"
+ #include "tracepoint.h"
+ #include <api/fs/tracing_path.h>
+@@ -227,8 +228,12 @@ __add_event(struct list_head *list, int *idx,
+ 	if (pmu) {
+ 		is_pmu_core = pmu->is_core;
+ 		pmu_cpus = perf_cpu_map__get(pmu->cpus);
+-		if (perf_cpu_map__is_empty(pmu_cpus))
+-			pmu_cpus = cpu_map__online();
++		if (perf_cpu_map__is_empty(pmu_cpus)) {
++			if (perf_pmu__is_tool(pmu))
++				pmu_cpus = tool_pmu__cpus(attr);
++			else
++				pmu_cpus = cpu_map__online();
++		}
  	} else {
--		update_stats(&walltime_nsecs_stats, t1 - t0);
-+		update_stats(stat_config.walltime_nsecs_stats, t1 - t0);
- 		update_rusage_stats(&stat_config.ru_data);
- 	}
- 
-@@ -2167,7 +2167,7 @@ static int process_stat_round_event(const struct perf_tool *tool __maybe_unused,
- 	process_counters();
- 
- 	if (stat_round->type == PERF_STAT_ROUND_TYPE__FINAL)
--		update_stats(&walltime_nsecs_stats, stat_round->time);
-+		update_stats(stat_config.walltime_nsecs_stats, stat_round->time);
- 
- 	if (stat_config.interval && stat_round->time) {
- 		tsh.tv_sec  = stat_round->time / NSEC_PER_SEC;
-@@ -2975,7 +2975,7 @@ int cmd_stat(int argc, const char **argv)
- 		}
- 
- 		if (!interval) {
--			if (WRITE_STAT_ROUND_EVENT(walltime_nsecs_stats.max, FINAL))
-+			if (WRITE_STAT_ROUND_EVENT(stat_config.walltime_nsecs_stats->max, FINAL))
- 				pr_err("failed to write stat round event\n");
- 		}
- 
-diff --git a/tools/perf/tests/parse-metric.c b/tools/perf/tests/parse-metric.c
-index 66a5275917e2..7ca0b0791677 100644
---- a/tools/perf/tests/parse-metric.c
-+++ b/tools/perf/tests/parse-metric.c
-@@ -40,8 +40,6 @@ static void load_runtime_stat(struct evlist *evlist, struct value *vals)
- 		count = find_value(evsel->name, vals);
- 		evsel->supported = true;
- 		evsel->stats->aggr->counts.val = count;
--		if (evsel__name_is(evsel, "duration_time"))
--			update_stats(&walltime_nsecs_stats, count);
- 	}
+ 		is_pmu_core = (attr->type == PERF_TYPE_HARDWARE ||
+ 			       attr->type == PERF_TYPE_HW_CACHE);
+diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+index 6a9df3dc0e07..37c4eae0bef1 100644
+--- a/tools/perf/util/tool_pmu.c
++++ b/tools/perf/util/tool_pmu.c
+@@ -2,6 +2,7 @@
+ #include "cgroup.h"
+ #include "counts.h"
+ #include "cputopo.h"
++#include "debug.h"
+ #include "evsel.h"
+ #include "pmu.h"
+ #include "print-events.h"
+@@ -13,6 +14,7 @@
+ #include <api/fs/fs.h>
+ #include <api/io.h>
+ #include <internal/threadmap.h>
++#include <perf/cpumap.h>
+ #include <perf/threadmap.h>
+ #include <fcntl.h>
+ #include <strings.h>
+@@ -109,6 +111,23 @@ const char *evsel__tool_pmu_event_name(const struct evsel *evsel)
+ 	return tool_pmu__event_to_str(evsel->core.attr.config);
  }
  
-diff --git a/tools/perf/tests/pmu-events.c b/tools/perf/tests/pmu-events.c
-index f40a828c9861..a99716862168 100644
---- a/tools/perf/tests/pmu-events.c
-+++ b/tools/perf/tests/pmu-events.c
-@@ -872,8 +872,6 @@ static int test__parsing_callback(const struct pmu_metric *pm,
- 	evlist__alloc_aggr_stats(evlist, 1);
- 	evlist__for_each_entry(evlist, evsel) {
- 		evsel->stats->aggr->counts.val = k;
--		if (evsel__name_is(evsel, "duration_time"))
--			update_stats(&walltime_nsecs_stats, k);
- 		k++;
- 	}
- 	evlist__for_each_entry(evlist, evsel) {
-diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
-index cc0746f494f4..e0219bc6330a 100644
---- a/tools/perf/util/config.c
-+++ b/tools/perf/util/config.c
-@@ -37,6 +37,8 @@
- 
- #define METRIC_ONLY_LEN 20
- 
-+static struct stats walltime_nsecs_stats;
++struct perf_cpu_map *tool_pmu__cpus(struct perf_event_attr *attr)
++{
++	static struct perf_cpu_map *cpu0_map;
++	enum tool_pmu_event event = (enum tool_pmu_event)attr->config;
 +
- struct perf_stat_config stat_config = {
- 	.aggr_mode		= AGGR_GLOBAL,
- 	.aggr_level		= MAX_CACHE_LVL + 1,
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index cb7c741a1ebb..69f09db0c945 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -17,13 +17,6 @@
- #include "util/hashmap.h"
- #include "tool_pmu.h"
- 
--struct stats walltime_nsecs_stats;
--
--void perf_stat__reset_shadow_stats(void)
--{
--	memset(&walltime_nsecs_stats, 0, sizeof(walltime_nsecs_stats));
--}
--
- static bool tool_pmu__is_time_event(const struct perf_stat_config *config,
- 				   const struct evsel *evsel, int *tool_aggr_idx)
++	if (event <= TOOL_PMU__EVENT_NONE || event >= TOOL_PMU__EVENT_MAX) {
++		pr_err("Invalid tool PMU event config %llx\n", attr->config);
++		return NULL;
++	}
++	if (event == TOOL_PMU__EVENT_USER_TIME || event == TOOL_PMU__EVENT_SYSTEM_TIME)
++		return cpu_map__online();
++
++	if (!cpu0_map)
++		cpu0_map = perf_cpu_map__new_int(0);
++	return perf_cpu_map__get(cpu0_map);
++}
++
+ static bool read_until_char(struct io *io, char e)
  {
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 055b95d18106..f986911c9296 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -129,8 +129,6 @@ static inline void init_stats(struct stats *stats)
- struct evsel;
- struct evlist;
+ 	int c;
+diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
+index f1714001bc1d..ea343d1983d3 100644
+--- a/tools/perf/util/tool_pmu.h
++++ b/tools/perf/util/tool_pmu.h
+@@ -46,6 +46,7 @@ bool tool_pmu__read_event(enum tool_pmu_event ev,
+ u64 tool_pmu__cpu_slots_per_cycle(void);
  
--extern struct stats walltime_nsecs_stats;
--
- enum metric_threshold_classify {
- 	METRIC_THRESHOLD_UNKNOWN,
- 	METRIC_THRESHOLD_BAD,
+ bool perf_pmu__is_tool(const struct perf_pmu *pmu);
++struct perf_cpu_map *tool_pmu__cpus(struct perf_event_attr *attr);
+ 
+ bool evsel__is_tool(const struct evsel *evsel);
+ enum tool_pmu_event evsel__tool_event(const struct evsel *evsel);
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
