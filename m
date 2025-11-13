@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-899677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0517CC58A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E13EC58901
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F4424EDF59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:45:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DB434F7175
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE6B2EBBB5;
-	Thu, 13 Nov 2025 15:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612E4346A10;
+	Thu, 13 Nov 2025 15:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y78R7zn4"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="itzfM3rT"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D1B2E8DFD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A0346778
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048276; cv=none; b=BlbsLVl0JWCoIG3T6JnUloGzyLNnTPRmv1nEB25/HoIrsytGI5r0vMS4/5zX3SbjukP45dIDMh5XmICSXp6FS1z0a9a/34D/8/UqOvM/+GAmYNknxG8MwJt3S4R0EKqoowKrzHi9cBpdp40Ln3c0T0A6VJxQI0A/PEchqTk2p08=
+	t=1763048382; cv=none; b=oQabe/ZWzFN39ZRLSewfLiTkqFKlfz2GX5zBvdtC23kJW2hcqkGKumNeVfKcMeG+XrePzJcGCE5zK8CSe6FrolhaCc1+kp771VXGFErMiRhP1u13dn9nSenxdiiqheVgFftc9FSq3M3l929SUBaexgjSNiPbG9jd3aX0cV/F2jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048276; c=relaxed/simple;
-	bh=PVs3QA3h39OY8vELwwmKD90SEduWln4ioXy+TQYmBGI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nT/Z3RBwHTHh8q3iU/Oz4UAoJk0TTAeB4hiR+jxjsHnYuet4qjNYZtH30lHniNgaMJ8B7cs48x6S9goLVWNA61zyHzwYYpkZplbyCHFvzcv9RzDhS1PN0P++Yhyehge8yHqwFBsZ6HIfQs7OVxIJG0w3SgQ63S6FhxSMihB+Pc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y78R7zn4; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3416dc5754fso1346564a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763048274; x=1763653074; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NanmVyWm2Vvsyfpfmbn7rPVld+ao1K4xNTswIeS43GE=;
-        b=y78R7zn4VaU+R6rl5aRF9e00YJYEMbzqtwHAuWmUadXNKiMdIzMcW2SCOs8fES5HEv
-         /8sV0oMasDZV9Fg/2EY/dCmSTEZSmt+HtBKQ7Gs2+zRsE3v5/+0rpxE+GU/V5qMkWdm8
-         3S8RzhzIg++pHsbhr+MEEtIRaIIUFBBEXZ9LqRlTPX8JQPkur/fy7EyOUhrWKYNuurIg
-         smgVzy7j73SubJRafQDMQMwvCil4f3bsRwmn8iBCrftQKdltWJb8ZtpjJro8nzq89/iR
-         2JLDVTx0k2HOv2wlQOHskgjigVEGb+57iivFZF8bHZ8CWt7gDbeIEsHyNi9rKRaOPkhU
-         HITw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763048274; x=1763653074;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NanmVyWm2Vvsyfpfmbn7rPVld+ao1K4xNTswIeS43GE=;
-        b=EZDU8Wd+LkgMKfKbn+JfYReaKD/5RVDuAx+97+LubKXfWaaEb9SwJorMFurVAn8Z50
-         C2P6KGKXd0sIVgxKBBljWHU2GofY2zeNpDac7gq16g2Wj8hep9zoL45QKtcrtrZNh13E
-         T5OmlZuVjwlStpKKz0K4BHbwdDcENMWZ3eDegbBDu57rSG4TTm37Y0Z9M+E81gXfzqD8
-         S7piV1dC+y30I587egfpFsS0tEhnQAD6n365Eh1BezITUCUtYJgNhAomeNdJweJHHlq2
-         jV4u743W+/2ke6k14BTOdXJGHIqG1iiBibIYrSE8kHXzSZ0ggsQPjkmO9PkcjY6ocDvd
-         GWMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG5CW6QnzxV3306ioOjhzQTyWOPvtYu/vY8jOodxYDUY+UNMoSd/kTGASy5JUqw4yrL+Yxqu4OTKGmz6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlOhwsNNGDJKqOvxeQ1EDeacJbjQegQhVmbJZRoDP9tKvYUce/
-	B5F9fV11ToUkBG4RzuWnz2fdbY5Xid/DWKvzoAwf4C4us2eh2Xr9Pt8Mt6O6sMkaKAtrySPtpYU
-	IKHL5sA==
-X-Google-Smtp-Source: AGHT+IHIeIOOLKjhH3nqJ8YUm1oSm40kZ4brG0JoCv7HEZPEvkLRythN5HOIeCIHT9qYrlTwuCspcZ1TEZ0=
-X-Received: from pjbsf3.prod.google.com ([2002:a17:90b:51c3:b0:340:be60:931c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:b88:b0:343:e461:9022
- with SMTP id 98e67ed59e1d1-343e46191admr4812531a91.24.1763048274260; Thu, 13
- Nov 2025 07:37:54 -0800 (PST)
-Date: Thu, 13 Nov 2025 07:37:52 -0800
-In-Reply-To: <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
+	s=arc-20240116; t=1763048382; c=relaxed/simple;
+	bh=rPDGirdNX7egxsQQCFOPloEeBzb80gdFa4+7RU1D6gk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T1OJTlgn0Iz57kNYg+NhsUhnaIRy57NXvzcFrE7Hq+LvS0rLS7Jzw1WyZ7wM84wiu3tfX9yN18BK5KW4jJSX/3+bbMd2G6ZIopRX/2sB6SrQYJ2hkK94BbOs3293MZhaJThk+8uGza8UsQNLWs/zLTdZ5Zh8QiE9kiWFiGkxZ1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=itzfM3rT; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763048377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VsSo0rHruUYZUSRInyxcyCIV2SApYNLgLqp/uhMcd54=;
+	b=itzfM3rTNRenebQwm+O2xoQPz+w2sJQcLcsGGiKHPoOVKyLL8OmRZkNh6vzwqPlMyscxhq
+	qBLToCimsI4idMU7ycNWx22mEjVyaQURtcy1qwfU+Hn13bfIOK1Ru+bODhjs+3LDP6axYU
+	ueJTceI6ZYNGz8EwwMXykwDfwCQzEOU=
+From: Dawei Li <dawei.li@linux.dev>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dawei.li@linux.dev,
+	set_pte_at@outlook.com
+Subject: [PATCH v3 0/3] Fix and rework of rpmsg_eptdev_add()
+Date: Thu, 13 Nov 2025 23:39:06 +0800
+Message-Id: <20251113153909.3789-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-6-seanjc@google.com>
- <20251113150309.GCaRXzLS0X5lvy7Xlb@fat_crate.local>
-Message-ID: <aRX7UDGm3LHFnPAg@google.com>
-Subject: Re: [PATCH v4 5/8] x86/bugs: KVM: Move VM_CLEAR_CPU_BUFFERS into SVM
- as SVM_CLEAR_CPU_BUFFERS
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Nov 13, 2025, Borislav Petkov wrote:
-> On Thu, Oct 30, 2025 at 05:30:37PM -0700, Sean Christopherson wrote:
-> > Now that VMX encodes its own sequency for clearing CPU buffers, move
-> 
-> Now that VMX encodes its own sequency for clearing CPU buffers, move
-> Unknown word [sequency] in commit message.
-> Suggestions: ['sequence',
-> 
-> Please introduce a spellchecker into your patch creation workflow. :)
+Hi,
 
-I use codespell, but it's obviously imperfect.  Do you use something fancier?
+This series fixes bug introduced by anonymous inode eptdev code and
+rework the exception handing paths. 
+
+And it tries to address a long suffering issue which may be backported
+to stable kernels. 
+
+Change for v3:
+- Split it into 3 patches:
+  1/3: Fix legacy bug.
+  2/3: Fix new bug introduced by anonymous eptdev code.
+  3/3: Rework error handling code.
+Link to v2:
+https://lore.kernel.org/all/20251112150108.49017-1-dawei.li@linux.dev/
+
+Change for v2:
+- Add put_device() when __rpmsg_eptdev_open() failed.
+Link to v1:
+https://lore.kernel.org/all/20251112142813.33708-1-dawei.li@linux.dev/
+
+Dawei Li (3):
+  rpmsg: char: Remove put_device() in rpmsg_eptdev_add()
+  rpmsg: char: Fix UAF and memory leak in
+    rpmsg_anonymous_eptdev_create()
+  rpmsg: char: Rework exception handling of rpmsg_eptdev_add()
+
+ drivers/rpmsg/rpmsg_char.c | 61 +++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 27 deletions(-)
+
+-- 
+2.25.1
+
 
