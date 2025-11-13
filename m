@@ -1,205 +1,197 @@
-Return-Path: <linux-kernel+bounces-898886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABACDC56403
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:25:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192CFC56406
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6779C4E51A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4D33BE1F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650D7331200;
-	Thu, 13 Nov 2025 08:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CD032ED35;
+	Thu, 13 Nov 2025 08:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzoyXe3i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SVlXkbb5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0W7E+xt7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C9B2857FC;
-	Thu, 13 Nov 2025 08:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A54F27EFEF;
+	Thu, 13 Nov 2025 08:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763021769; cv=none; b=aRe6HeXHRiwXFQLheJAjqWhzZP+onk/z6tdodUwzLii6jY8ycD+MCypC7xnxrh91bCE2hbaPpnHsFKZWLv11VSbq4ohCJuA/oH7POOZkhA5ka9XM2GzjLtJNAPU5SIYqjUZo8R8X3FAMlK/aa6jtDHKk603k0MR6p6qUyKV77ig=
+	t=1763021884; cv=none; b=H80dVHMYh7ZYhkefU3OX77FbnR3YJSO1bXpK5GRjpKTTWOx/WPM9csmyyDZzG9twdYa8+WtiqD3h/kwtXO5iQW5sJWogCRCCjzOnIwSgWNNUb5EhXzLTOKUra/G2P87i65VaMN4e57kYr60wQyfJPjAeGkvdRoI+BgDqW3elUzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763021769; c=relaxed/simple;
-	bh=xHII4kaV5Ac0Nsi6t6sb1osgqOjFd+XeNQg+bEWMCdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rdxYZapZUX8kvrchCLepP1AdW4M+6L0EMIRMFtN5Huc1DCXeg7q5cUYaPqbY8V9+TNl8raJLC8W4AZzpd3dfXc/EFm64V5JfkFJMDnql6C1jfQNSCMg8V4C1J87KDjEaEuOLDXV8ZGtjgdb6sttLqjZGW19zjKcQj16M4s8yrpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzoyXe3i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A66C113D0;
-	Thu, 13 Nov 2025 08:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763021769;
-	bh=xHII4kaV5Ac0Nsi6t6sb1osgqOjFd+XeNQg+bEWMCdI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fzoyXe3ideJkqXzUmB3mi3TPLsYLArz+SLJnjsgDNqdcRbLwKHR0AiemKwsIRazDk
-	 XjK3NdCRijaQo1e99GUl1HnNDG/WJzMF0PHjumnI0g3loUyrNMV+by0ZXm+RehxSLe
-	 ywb3TTwkB8LqrDJ5aGJKxsfYs1XqEl2OSjzSfQKeFruxRzqjcyYWWejAKYKriZQclH
-	 O2Fy+FrswG0WKHdGl7H4+8A+uoYIlUv9OfVM/ycShEol7+3tBoy2PeBFvRXHAxebfC
-	 rTRoFWumwoSCuDzxP+t44dMpIQof1RUgKW7LtDRBiqKE4SjECfDo6hNmYI8PWeEg7+
-	 4KFL+jov8/xlg==
-Date: Thu, 13 Nov 2025 09:16:04 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Jason Wang <jasowang@redhat.com>, "Michael S.
- Tsirkin" <mst@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of Linus' tree
-Message-ID: <20251113091604.0a02f3bc@foz.lan>
-In-Reply-To: <20251113125537.0d08e5ce@canb.auug.org.au>
-References: <20251113125537.0d08e5ce@canb.auug.org.au>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1763021884; c=relaxed/simple;
+	bh=QJL05NASSqmKJM2ZAvuRynf14G6yPqZKrBziwLJTDMA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aEikUwu0a/woUK09h4QuA+7UCnAgml3ATFxV9zol7eQDq2ETmpgmIxF2FwOndJOO0xHL9ssewDn3lqtj86vcD/gxJ9xSzDMZb9aL6GvYfH38pJqyivzTmpMDMTJszPR9AanVuSPU6EUdzb9vVAmQWFaMKURD7Ebez/WE+1+LzFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SVlXkbb5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0W7E+xt7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763021880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p9c+8hT5tm38HSr4+wd1+1TCOohy6SvD8YlE+riwipc=;
+	b=SVlXkbb5fGgJGUgIIIEugCE/vHVj02AvZSlFLGXXxomVDISJ7bspACB8NpMIHc+lCJ5Rn7
+	NVTrmr8d63EgJ6OVv8XFCGB8/31FJyrTT4N9LkmhS5lJ6I1e/UxWJOWuvIziRFuMUJ4O9C
+	lWWqbI7ha8fy31A2FjhimpBKrJIuvkGLZ0aKoW+67Jpca01wcqr26X1KipT2tZPBqybyqJ
+	S6+VqAn58bpzrCcExMcUyuJPJE/rRzcuWASigYW1Mt9FtfSq0nXKMj0EjMYbZ9zynOMmGB
+	+BcBQjEeAdt5Jnt4sHb8d7tN+bR7zjXiZPl8GGv80TYJe5Fi8KRRa6+nn6PjhA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763021880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p9c+8hT5tm38HSr4+wd1+1TCOohy6SvD8YlE+riwipc=;
+	b=0W7E+xt73HyzWMaKAGee39shXVvkN8XYmnYZEbpYtRtf4hzwPVN5c1FkWL2l+TQsueUH9p
+	MSDdlnejr/2C4GAw==
+To: Luigi Rizzo <lrizzo@google.com>, Marc Zyngier <maz@kernel.org>, Luigi
+ Rizzo <rizzo.unipi@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Sean Christopherson
+ <seanjc@google.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo
+ <lrizzo@google.com>
+Subject: Re: [PATCH 1/6] genirq: platform wide interrupt moderation:
+ Documentation, Kconfig, irq_desc
+In-Reply-To: <20251112192408.3646835-2-lrizzo@google.com>
+References: <20251112192408.3646835-1-lrizzo@google.com>
+ <20251112192408.3646835-2-lrizzo@google.com>
+Date: Thu, 13 Nov 2025 09:17:59 +0100
+Message-ID: <875xbee47c.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Em Thu, 13 Nov 2025 12:55:37 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+On Wed, Nov 12 2025 at 19:24, Luigi Rizzo wrote:
+> Platform wide software interrupt moderation ("soft_moderation" in this
+> patch series) specifically addresses a limitation of platforms from many
 
-> Hi all,
-> 
-> Today's linux-next build (htmldocs) produced these warnings:
-> 
-> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:174 duplicate section name 'Return'
-> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:184 duplicate section name 'Return'
-> WARNING: /home/sfr/kernels/next/next/include/linux/virtio_config.h:190 duplicate section name 'Return'
-> 
-> Introduced by commit
-> 
->   bee8c7c24b73 ("virtio: introduce map ops in virtio core")
-> 
-> but is probably a bug in our scripts as those lines above have "Returns:"
-> in them, not "Return:".
+"in this patch series" becomes meaningless when this is actually merged
+into git.
 
-It is not a mistake. What happens is that, when kernel-doc detects
-something like:
+> vendors whose I/O performance drops significantly when the total rate of
+> MSI-X interrupts is too high (e.g 1-3M intr/s depending on the platform).
+>
+> Conventional interrupt moderation operates separately on each source,
+> hence the configuration should target the worst case. On large servers
+> with hundreds of interrupt sources, keeping the total rate bounded would
+> require delays of 100-200us; and adaptive moderation would have to reach
+> those delays with as little as 10K intr/s per source. These values are
+> unacceptable for RPC or transactional workloads.
+>
+> To address this problem, this code measures efficiently the total and
+> per-CPU interrupt rates, so that individual moderation delays can be
+> adjusted based on actual global and local load. This way, the system
+> controls both global interrupt rates and individual CPU load, and
+> tunes delays so they are normally 0 or very small except during actual
+> local/global overload.
+>
+> Configuration is easy and robust. System administrators specify the
+> maximum targets (moderation delay; interrupt rate; and fraction of time
+> spent in hardirq), and per-CPU control loops adjust actual delays to try
+> and keep metrics within the bounds.
+>
+> There is no need for exact targets, because the system is adaptive; the
+> defaults delay_us=100, target_irq_rate=1000000, hardirq_frac=70 intr/s,
+> are good almost everywhere.
+>
+> The system does not rely on any special hardware feature except from
+> MSI-X Pending Bit Array (PBA), a mandatory component of MSI-X
+>
+> Boot defaults are set via module parameters (/sys/module/irq_moderation
+> and /sys/module/${DRIVER}) or at runtime via /proc/irq/moderation, which
+> is also used to export statistics.  Moderation on individual irq can be
+> turned on/off via /proc/irq/NN/moderation .
+>
+> The system does not rely on any special hardware feature except from
+> MSI-X Pending Bit Array (PBA), a mandatory component of MSI-X
 
-	/**
+You said that 8 lines above already, but I can't see where the PBA
+dependency actually is.
+
+> This initial patch adds Documentation, Kconfig option, two fields in
+
+git grep 'This patch' Documentation/process/
+
+> struct irq_desc, and prototypes in include/linux/interrupt.h
+
+Please do not describe trivial implementation details in the change log.
+
+> No functional impact.
+>
+> Enabling the option will just extend struct irq_desc with two fields.
+>
+> CONFIG_SOFT_IRQ_MODERATION=y
+> ---
+
+Clearly lacks a 'Signed-off-by' as all the other patches do.
+
+The patch submission rules are well documented.
+
+  https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+and please also read and follow:
+
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
+
+> +#ifdef CONFIG_IRQ_SOFT_MODERATION
+> +
+> +void irq_moderation_percpu_init(void);
+> +void irq_moderation_init_fields(struct irq_desc *desc);
+> +/* add/remove /proc/irq/NN/soft_moderation */
+> +void irq_moderation_procfs_entry(struct irq_desc *desc, umode_t umode);
+> +
+> +#else   /* empty stubs to avoid conditional compilation */
+
+The canonical format is:
+
+#else /* CONFIG_IRQ_SOFT_MODERATION */
 ...
-	 * return: something
-...
-	 *    returns: else
-...
-	 */
+#endif /* !CONFIG_IRQ_SOFT_MODERATION */
 
-we have a duplicated section. The regular expression that pick sections
-is:
+But that aside, what's the point of adding these prototypes and stubs
+without an implementation?
 
-	known_section_names = 'description|context|returns?|notes?|examples?'
-	known_sections = KernRe(known_section_names, flags = re.I)
-	doc_sect = doc_com + \
-	    KernRe(r'\s*(@[.\w]+|@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
-	           flags=re.I, cache=False)
+>  /*
+>   * We want to know which function is an entrypoint of a hardirq or a softirq.
+>   */
+> diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
+> index fd091c35d5721..4eb05bc456abe 100644
+> --- a/include/linux/irqdesc.h
+> +++ b/include/linux/irqdesc.h
+> @@ -112,6 +112,11 @@ struct irq_desc {
+>  #endif
+>  	struct mutex		request_mutex;
+>  	int			parent_irq;
+> +#ifdef CONFIG_IRQ_SOFT_MODERATION
+> +	/* mode: 0: off, 1: disable_irq_nosync() */
+> +	u8			moderation_mode; /* written in procfs, read on irq */
+> +	struct list_head	ms_node;	/* per-CPU list of moderated irq_desc */
 
-So, basically, it seeks, inside a kernel-doc comment, in case-insensitive
-mode, for:
+Don't use tail comments and document the members in the exisiting struct
+documentation. It's not that hard to keep something consistent.
 
-	"\sreturns?:"
+Again. What's the point of adding this without usage?
 
-In this specific case, virtio_map_ops is using this pattern multiple
-times:
+You can also avoid the #ifdeffery by doing:
 
-	/**
-	 * struct virtio_map_ops - operations for mapping buffer for a virtio device
-	 * Note: For transport that has its own mapping logic it must
-	 * implements all of the operations
-	 * @map_page: map a buffer to the device
-	 *      map: metadata for performing mapping
-	 *      page: the page that will be mapped by the device
-	 *      offset: the offset in the page for a buffer
-	 *      size: the buffer size
-	 *      dir: mapping direction
-	 *      attrs: mapping attributes
-	 *      Returns: the mapped address
-(first occurrence)
-	...
-	 * @alloc: alloc a coherent buffer mapping
-	 *      map: metadata for performing mapping
-	 *      size: the size of the buffer
-	 *      map_handle: the mapping address to sync
-	 *      gfp: allocation flag (GFP_XXX)
-	 *      Returns: virtual address of the allocated buffer
-(second occurrence, others follow)
-
-As result, it strips "returns" from members output:
-
-	  **Members**
-
-	  ``map_page``
-	    map a buffer to the device
-	    map: metadata for performing mapping
-	    page: the page that will be mapped by the device
-	    offset: the offset in the page for a buffer
-	    size: the buffer size
-	    dir: mapping direction
-	    attrs: mapping attributes
-
-	  ``unmap_page``
-	...
-
-
-And creates a return section with each returns: appended:
-
-	**Return**
-
-	the mapped address
-
-	virtual address of the allocated buffer
-
-	whether the buffer needs synchronization
-
-	the maximum buffer size that can be mapped
-
-which is not what it is expected. Such behavior is there since the Perl
-version (and the warning), but a patch for the old version disabled
-such warning by default (probably because it was too verbose on that
-time).
-
-Btw, if you see struct virtio_config_ops, there instead of "Returns: foo"
-they use "Returns foo", which produces the desired output:
-
-	  **Members**
-...
-	  ``generation``
-	    config generation counter (optional)
-	    vdev: the virtio_device
-	    Returns the config generation counter
-
-
-So, probably the quickest fix would be do to:
-
-	sed s,Returns:,Returns, -i include/linux/virtio_config.h
-
-> These have turned up now since a bug was fixed that was repressing a
-> lot of warnings.
-
-The change actually disabled the warning-suppression logic that
-was ported from the Perl script, where a lot of real problems at the
-kernel-doc markup were ignored. E.g. those command line arguments:
-
-  -Wreturn, --wreturn   Warns about the lack of a return markup on functions.
-  -Wshort-desc, -Wshort-description, --wshort-desc
-                        Warns if initial short description is missing
-  -Wcontents-before-sections, --wcontents-before-sections
-                        
-                        Warns if there are contents before sections (deprecated).
-                        
-                        This option is kept just for backward-compatibility, but it does nothing,
-                        neither here nor at the original Perl script.
-  -Wall, --wall         Enable all types of warnings
-
-are now ignored, so it outputs as if -Wall was passed to it.
-
-
-Thanks,
-Mauro
+#ifdef CONFIG_IRQ_SOFT_MODERATION
+struct irq_desc_mod {
+       ....
+       ....
+};
+#else
+struct irq_desc_mod { };
+#endif
 
