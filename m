@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-899407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C14C57C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68338C57C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE81A5015C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51273501C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A83351FDF;
-	Thu, 13 Nov 2025 13:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3B2351FDF;
+	Thu, 13 Nov 2025 13:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s31vn1qa"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DMoxs1wk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1C4351FAB;
-	Thu, 13 Nov 2025 13:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B9346A16;
+	Thu, 13 Nov 2025 13:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040210; cv=none; b=c9YQQHk5ROQVm2aIuM46OghN/0vz4C3P07n6VNIcoPGiMaTOB4/8OkpEhO0ThluJqaC9hKJDVOKUDc7vJlyW//7qzTlxJW1401mjtml/b57jalycPBUYwxYttAqyZ5HhxW9eeMiThNFbBY6BhAc2MgDeaZFE1sKucWZcQrwdX0k=
+	t=1763040256; cv=none; b=X4xKnm6Fvf6ewGTwjhtGrBbB6QM1tQ12uc1sTeNZQedAxRTT5OsYBXXe3d22XoyWmSq73GH9gB4b3jeUtRp/abKelJSPM/dJ1brpcbMjbyLupJ/mZJnbvFyUhjEAPph/RmYK67aLRoaN/jJYuRSs4+gwn5wQLQHzlHK2MpRiBhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040210; c=relaxed/simple;
-	bh=qiW0pz1GrmI8AZc0MHtKcKY51Pj/YYEFQcx1IzO2BW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jnd2zZBYzFwjaEpQTJuUDV3OBPpC3sEYE+8eFFZupVaQ3pVThpMDi+aJ2Srizvi3l2V8yPXnNM3yVmRbKmjbTx+/QVftzlOngILHGobox5QQGkZBiSwvmwLBt/U2xAM6sxE5GuVV9MUTXnFgE9HO5KX2LL1YA55RdZmDRHKQNWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s31vn1qa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB78FC16AAE;
-	Thu, 13 Nov 2025 13:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763040209;
-	bh=qiW0pz1GrmI8AZc0MHtKcKY51Pj/YYEFQcx1IzO2BW4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s31vn1qaTTW4JISshaWZikRA11uQqdpgnIbaNZKSdp3uCdFM4/Q2xWFw2Ciw51LPr
-	 feZY6bswtgGTt9tbHrTr8BampDRQ/c/4hSVNzEQoXeGRScvdRTp393B0sYGLns1SOI
-	 NP+p0rm2DowagxDeVW5OYjuGo/+vwR7f9SHFQoDRrs6jGribZdT89JzrIQPorPZnzV
-	 VuyzZjFwPcIJ9dZByoydJEmkfSjo6TQ8hI8AgvNmMfdXOnomeWg4q/G8Z+VXpBcofQ
-	 SSWB0rMnt4VFNLUuZK299DO+l3TiXCOY5Xa5lyHMID7Ekj3duZ4vnHJLyTGL14I1yX
-	 Wl4JXlyOWiBFw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch up predicts in path lookup
-Date: Thu, 13 Nov 2025 14:23:24 +0100
-Message-ID: <20251113-schob-gigant-c67723684e5e@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105150630.756606-1-mjguzik@gmail.com>
-References: <20251105150630.756606-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1763040256; c=relaxed/simple;
+	bh=8MEvE85ASs8TWT1DKTYjn3gNwdHSLFIkIMQR4I4pw6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uI3IuZsBNQti9xqz48ndwVBsKyh/exae8spAxlLF19b3/ArTz+VJJViYqvoRR6dZOkMBtbg04CYMi0YmAgLCFvFG5L2n1QZDo2m58UMs35IYi3vNswbFxVe4xQbytqlZRx5rfh43THX35Ezujtbt/+jlGpMKzblbrlAKXIwpzdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DMoxs1wk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379BDC116D0;
+	Thu, 13 Nov 2025 13:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1763040256;
+	bh=8MEvE85ASs8TWT1DKTYjn3gNwdHSLFIkIMQR4I4pw6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DMoxs1wkyxu7gUQKIKtD+IFA3JWQsWrDLT6LUY7zJRTr+RtZdn0i52yunOBPH99xE
+	 yQPn67kI7GAgWzfHHdMghQHgLl+9HOidVPNIhUgyWhNl/r5Qn5MNvJ7BI68+aE25Yb
+	 7/vXOM4i+iZxJcL/aWsKWsJ663VZ3gGvRrr7RIJs=
+Date: Thu, 13 Nov 2025 08:24:14 -0500
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+Cc: liam.r.girdwood@linux.intel.com, peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com, pierre-louis.bossart@linux.dev,
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	amadeuszx.slawinski@linux.intel.com, sakari.ailus@linux.intel.com,
+	khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, hariconscious@gmail.com
+Subject: Re: [PATCH v2] ASoC: Intel: avs: Fix potential buffer overflow by
+ snprintf()
+Message-ID: <2025111313-submerge-strength-ada6@gregkh>
+References: <20251112181851.13450-1-hariconscious@gmail.com>
+ <2025111239-sturdily-entire-d281@gregkh>
+ <bc479d42-af01-466f-b066-1da9a99b29bb@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1219; i=brauner@kernel.org; h=from:subject:message-id; bh=qiW0pz1GrmI8AZc0MHtKcKY51Pj/YYEFQcx1IzO2BW4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSK3j7jw9LHmP/v5iSV+x3m/H6tJ+KcPk7v2JMz+a6nq 6+wW65GRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQO32Zk2M3bcMP68NOoJz8t 3APEFn1R7JaVXFmn0ji9azHv7CajPEaG/5Hy13altbbM6851Sbyx+kw9y+byg769NwX277GcasT EBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc479d42-af01-466f-b066-1da9a99b29bb@intel.com>
 
-On Wed, 05 Nov 2025 16:06:30 +0100, Mateusz Guzik wrote:
-> Rationale:
-> - ND_ROOT_PRESET is only set in a condition already marked unlikely
-> - LOOKUP_IS_SCOPED already has unlikely on it, but inconsistently
->   applied
-> - set_root() only fails if there is a bug
-> - most names are not empty (see !*s)
-> - most of the time path_init() does not encounter LOOKUP_CACHED without
->   LOOKUP_RCU
-> - LOOKUP_IN_ROOT is a rarely seen flag
+On Thu, Nov 13, 2025 at 09:46:12AM +0100, Cezary Rojewski wrote:
+> On 2025-11-12 8:20 PM, Greg KH wrote:
+> > On Wed, Nov 12, 2025 at 11:48:51PM +0530, hariconscious@gmail.com wrote:
+> > > From: HariKrishna Sagala <hariconscious@gmail.com>
+> > > 
+> > > snprintf() returns the would-be-filled size when the string overflows
+> > > the given buffer size, hence using this value may result in a buffer
+> > > overflow (although it's unrealistic).
+> > 
+> > unrealistic == impossible
+> > 
+> > So why make this change at all?
 > 
-> [...]
+> The problem will never occur in production-scenario given the AudioDSP
+> firmware limitation - max ~10 probe-point entries so, the built string will
+> be far away from 4K_SZ bytes.
+> 
+> If the verdict is: ignore the recommendation as the problem is unrealistic,
+> I'm OK with that. Typically though I'd prefer to stick to the
+> recommendations.
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+That's fine, but don't claim that it fixes a buffer overflow when that
+is NOT what this is doing at all.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> > > This patch replaces it with a safer version, scnprintf() for papering
+> > > over such a potential issue.
+> > 
+> > Don't "paper over", actually fix real things.
+> > 
+> > 
+> > > Link: https://github.com/KSPP/linux/issues/105
+> > > 'Fixes: 5a565ba23abe ("ASoC: Intel: avs: Probing and firmware tracing
+> > > over debugfs")'
+> > 
+> > No, this is not a "fix".
+> 
+> The patch isn't worded well, that's clear.
+> While the patch is an outcome of static-analysis, isn't it good to have
+> 'Fixes:' to point out the offending commit regardless?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+No, it is not "fixing" anything.  Please don't claim that it does.  It
+is "just" a code transformation to get rid of an api that some people do
+not like.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+thanks,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/1] fs: touch up predicts in path lookup
-      https://git.kernel.org/vfs/vfs/c/030e86dfdaa7
+greg k-h
 
