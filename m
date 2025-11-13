@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-900086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59413C59936
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:55:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949E3C5992D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 148D5342A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:54:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429C23ABEDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A031618E;
-	Thu, 13 Nov 2025 18:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED08C31281C;
+	Thu, 13 Nov 2025 18:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGtumTY5"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wI8zZZW/"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549FD2D7397
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD46313522
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763060052; cv=none; b=r5AHCB9QPJdP1JzA8Y7VYLCOZe12r7JCYmw9QiJqAHjAA1pnNy+IyF5oswZnkaRTw3geU6YrNBA9BARlXcWasTW/Nu3rncU/8JBj1CU7jjSIXqRjr1fzksT3WoxWj//pg5Sstl47glzGEOni1+uw/+/y6tJSIO7dSRCAM8NNVXQ=
+	t=1763060061; cv=none; b=gGt9at495JFjBM0e/HnN5Ywavgm83b/53qoI5q905vQslvejMnLbzvQyXOrtwPvO13aNhTiUkS3hcIsC1f6tbJk+Y97i8FskQ51UUmPIWfk2zym8foMtn60wt1KRbCplEJ8fC+h4P3auYKAeAnd2li7ir9hICg4rkxaJ2HZTwSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763060052; c=relaxed/simple;
-	bh=ImyLRSldVokJNTwxQD8uL+Aad8g9eoYs7zgGRDjZ8Ww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lRQLphcTBHvgIOI7d1n/akmfP6zuHOdYWs1ZeCakc6W8K84mjeb+Jx2HY/ZGDsnQvYWIEAlm15oQRRpDjyKKQn1+0TQByPeYbgtQTIQc7RcvcMzumJRCCZ4VT/X/gmW5NZdGnSUSaX+gWH+sCou+i/++5mUjCpaRUAobUCq79VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGtumTY5; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b387483bbso960005f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:10 -0800 (PST)
+	s=arc-20240116; t=1763060061; c=relaxed/simple;
+	bh=FMPyLvuUt/PZ/G5WxsY1vXR+Y88MXaoP25kSbGbbODI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RCXtQr2IyE2xqPwKVp4y04Pk67vE9uPXQ8nN6kFGkl0hG6NpOjOmyuPlAnmKzqvf6dmmXiKmN8Jgf4bCLdhGnZDS+yZOowImLroNlMNM5UeKX1vuMy1etLNs6kM2Bn//fTy7EmxJYi+n2oT0tUTaPry1MQwM4R9jh+shoyjMTvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wI8zZZW/; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297df52c960so27747645ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:54:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763060049; x=1763664849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0za6nc+aCXQm8KF/y6TMG9+/t9XbwHnz+7+385lRJ0w=;
-        b=WGtumTY5f+hp9Jl3OH7Dr9fDE3PVEL2vqCA5IFMUthmdMZ2vAzPHHqsd1JZjizwKFA
-         rLWbMfuOOm/+XU84wemFDsiDbDGvXzgi8dzao4F1xQEcGo+yKLdXWOmQ7Z1dF3+WT6Sg
-         v/Sz1xfR+nbHFtcSzfhr5vI0WG7pjkt0LMp/GR6DSj029wleELq6OasX49G0XN4cfhza
-         OgCQFCS0CTgT1kW3PouAC40a84om8KE6fqtXEUNZPXZuru02BsByFPiyi/Xh2fNpzhGe
-         JksTmgfTe2ahBOfOqYcP/ZNK8MRMivML32XeqKUaIq+W3sEspz6IXNWyg7g/yE3w7Tl5
-         9K0A==
+        d=google.com; s=20230601; t=1763060058; x=1763664858; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8n1/s9RaZEcOt9m3QKGZKQE6sB/YqrRhU3punAll4EM=;
+        b=wI8zZZW/VF8Oqchn4RmT5CMgfJc7cIhrIaP5VP04ocNyNIp/6fdsjQMxoglbZpcc+T
+         QCMrPhRiwmjUALSNFoWp9hdMPTEKMt7E5J5LQiOpm+7oEnCMqCLfzOfSIdj1uWF3FZcq
+         DuxY1rmn1dGoj2BtpBGXMS6xpPBNSGDi9u7TbaQ4D/8Il868LHgZVGKIuP74/oTp4M5R
+         49RWsHRpk1cCqroalz2R3tb9YE16d2N5F0HxbRhb/8rrirVxXWawj+hxmdffvL6v9J3f
+         2bR8Gyrfh5dvz24OJM5Sz3Og3+0bfqAc+225RX3ePc1h4uypR81DHPoOl95YocGfZ8iO
+         B8kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763060049; x=1763664849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0za6nc+aCXQm8KF/y6TMG9+/t9XbwHnz+7+385lRJ0w=;
-        b=PTdwC7OK5Qgg7RBiXgo+S1Wu8f3zMyZycDWHspcoYmRh0ubJFRNGsQ2+AQrIvxS1Zd
-         ltcQYputowCmwJ/sBICyrEIirhQqAgpNPdGb3U9ZFx/5wvJWnIVvDNgGTtJfbmYbn8mM
-         aKZi15OxeGHSIWOO9LoMIiI/mIbgf/GnfQN8dxlZomTnX+C9Wjf8eLLYOrOqbk4IodgO
-         I0mJcmkwvZaRhzq5PglZMz0ftvnTkIvzurt0jOGG0+/wv+I8S0Xui8j38mUjjFdClMmW
-         o5+qJED+FPLcJLWE8WEyTrCw/xaH7yCCydC0hNiaKvqcL9vQwN1mduL+v4i2pZ0df6TC
-         RHQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpkVubFoABj8W9XSK3pyoHSZ9gbvS1UX1oP8Z/ZQNK5UgmfkjKclpTHclKvI9SoZ8Ua8gCBcihisItwAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7JQRsTKpCr0SCxqPp7nIIxxq2tBHlzL58pMwzhtL6FzVHY4gi
-	CIZmbusf/R2ERoLC1Xi9TdNxyFmQDAB3FrTguj2kF2wMqUKKi+8qtOErM+ux5ccoXhc9Td17j/u
-	iXjIhVwnXvdGoV1W87ogM6DTFYS9dVkM=
-X-Gm-Gg: ASbGncsolIZ1954e35kGHXVNAyEG5wHwahPTG0wOrMXnORqpghd5GdZK9+VyWV40ajC
-	y3wR5RsKyVY7Jw/oJvisLRzW/k9i+rLDtSMuVQq6hrdTZkrr/bZB+5+3q50YgUlu7nyUsbFjRTA
-	QjtE/tPvNLDB+r6Qnegf7FEqbfVjHobEJ06sTW0K+SAMoQ4Td5bm1VobZTDMNF3AdA0vtx4jUKn
-	zSCqFDYM/qxOWZwYc5QmPpi8a8oOwvx5pHhZgs56IZaD5/RE9R8oCQNkXt49A==
-X-Google-Smtp-Source: AGHT+IGTSBrTIDYDjncilT4tzbDR8Dtp04aGMzl96p2G9sbZioO58z/jxSqd5HKBnz20COtjN+8hMikzMSLxwBPwrho=
-X-Received: by 2002:a05:6000:26c3:b0:42b:5448:7ae8 with SMTP id
- ffacd0b85a97d-42b59372315mr442629f8f.29.1763060048361; Thu, 13 Nov 2025
- 10:54:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763060058; x=1763664858;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8n1/s9RaZEcOt9m3QKGZKQE6sB/YqrRhU3punAll4EM=;
+        b=UPXmQOulIVThjxWQ2DcuCD5HrYCvrcE77BbbhcybLm7yoL6qf5fOBQgJr3d+wIdQjg
+         ycuz0AI1qhP0HbAdKtcscI71nBipN/h/Glbc6EwaFdPietHb4QD4q2RVn1+jAR7lXd9p
+         ns167qf6hgGz0ptidaE9DbCcUi40DTla2aVqe1BMKIKsHZx468mD7UcutmdGrX34znuN
+         cPFQHxNPAZQLhbkDiOBJXxc38+1O59ERaezdXiCQcFV7hFFETRgiur4kyOA/D7g5IvKW
+         ugNYmqFRX+iq+x+lYSXSbspVHXt2X7N9aJfdQh8iufr0Z3WtU6pDOxCAbPOgjfv4tiaP
+         TbEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs7mVfzaFJ652myjAc5h1aPZSTpZUueOuP0/wAmV2xBscXtaQ5w4aCNrWiCdIKkt5+S90MHM74zFhXryA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzULXb+7UoprrQjtDpXYYMU3CxJd9YE+4DpX0E4lZE6Qv1Scvff
+	CRQhxFYGvgpNLlteTbOa3CLtHqhAaVS1PjBk46XdgcIrMIWq/6y/qbhHA5CQ7+95DA7MIp74Fml
+	7ouk2cQ==
+X-Google-Smtp-Source: AGHT+IEvsarrirvmCeHl1ineeicRUqdZYmQTIKm6UrYT7suNIHa17FzvX/dSYhupzGO5pgYCgT7nAj0KE/M=
+X-Received: from plbkw15.prod.google.com ([2002:a17:902:f90f:b0:290:bd15:24ab])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1107:b0:297:e1e1:beb1
+ with SMTP id d9443c01a7336-2986a6d684bmr712255ad.16.1763060058279; Thu, 13
+ Nov 2025 10:54:18 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:54:16 -0800
+In-Reply-To: <cover.1761593631.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251112201937.1336854-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <de098757-2088-4b34-8a9a-407f9487991c@lunn.ch>
-In-Reply-To: <de098757-2088-4b34-8a9a-407f9487991c@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Nov 2025 18:53:41 +0000
-X-Gm-Features: AWmQ_bmzRimk8gYF_4YjJuq9mGlvR6GBPwMMkQlI3Mtuob5q5ystweObvaU2JrE
-Message-ID: <CA+V-a8vgJcJ+EsxSwQzQbprjqhxy-QS84=wE6co+D50wOOOweA@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: pcs: renesas,rzn1-miic:
- Add renesas,miic-phylink-active-low property
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <cover.1761593631.git.thomas.lendacky@amd.com>
+Message-ID: <aRYpWLUn5IABs1Vx@google.com>
+Subject: Re: [PATCH v4 0/4] SEV-SNP guest policy bit support updates
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-crypto@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Andrew,
+On Mon, Oct 27, 2025, Tom Lendacky wrote:
+> This series aims to allow more flexibility in specifying SEV-SNP policy
+> bits by improving discoverability of supported policy bits from userspace
+> and enabling support for newer policy bits.
 
-On Wed, Nov 12, 2025 at 8:58=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Wed, Nov 12, 2025 at 08:19:36PM +0000, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add the boolean DT property `renesas,miic-phylink-active-low` to the RZ=
-N1
-> > MIIC binding schema. This property allows configuring the active level
-> > of the PHY-link signals used by the Switch, EtherCAT, and SERCOS III
-> > interfaces.
-> >
-> > The signal polarity is controlled by fields in the MIIC_PHYLINK registe=
-r:
-> >   - SWLNK[3:0]: configures the Switch interface link signal level
-> >       0 - Active High
-> >       1 - Active Low
-> >   - CATLNK[6:4]: configures the EtherCAT interface link signal level
-> >       0 - Active Low
-> >       1 - Active High
-> >   - S3LNK[9:8]: configures the SERCOS III interface link signal level
-> >       0 - Active Low
-> >       1 - Active High
-> >
-> > When the `renesas,miic-phylink-active-low` property is present, the
-> > PHY-link signal is configured as active-low. When omitted, the signal
-> > defaults to active-high.
->
-> Sorry, but i asked in a previous version, what is phy-link? You still
-> don't explain what this signal is. phylib/phylink tells you about the
-> link state, if there is a link partner, what link speed has been
-> negotiated, duplex, pause etc. What does this signal indicate?
->
+...
 
-                                   +----> Ethernet Switch -------->
-GMAC (Synopsys IP)
-                                    |
-                                    |
-MII Converter ----------+
-                                    |
-                                   +----> EtherCAT Slave Controller
-                                   |
-                                   |
-                                   +----> SERCOS Controller
+> Tom Lendacky (4):
+>   KVM: SEV: Consolidate the SEV policy bits in a single header file
+>   crypto: ccp - Add an API to return the supported SEV-SNP policy bits
+>   KVM: SEV: Publish supported SEV-SNP policy bits
+>   KVM: SEV: Add known supported SEV-SNP policy bits
+> 
+>  arch/x86/include/uapi/asm/kvm.h |  1 +
+>  arch/x86/kvm/svm/sev.c          | 45 ++++++++++++++++++++-------------
+>  arch/x86/kvm/svm/svm.h          |  3 ---
+>  drivers/crypto/ccp/sev-dev.c    | 37 +++++++++++++++++++++++++++
+>  include/linux/psp-sev.h         | 39 ++++++++++++++++++++++++++++
+>  5 files changed, 105 insertions(+), 20 deletions(-)
 
-Each of these IPs has its own link status pin as an input to the SoC:
-
-SWITCH_MII_LINK: Switch PHY link status input
-S3_MII_LINKP: SERCOS III link status from PHY
-CAT_MII_LINK: EtherCAT link status from PHY
-
-The above architecture is for the RZ/N1 SoC. For RZ/T2H SoC we dont
-have a SERCOS Controller. So in the case of RZ/T2H EVK the
-SWITCH_MII_LINK status pin is connected to the LED1 of VSC8541 PHY.
-
-The PHYLNK register [0] (section 10.2.5 page 763) allows control of
-the active level of the link.
-0: High active (Default)
-1: Active Low
-
-For example the SWITCH requires link-up to be reported to the switch
-via the SWITCH_MII_LINK input pin.
-
-[0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-g=
-roup-users-manual-r-engine-and-ethernet-peripherals?r=3D1054561
-
-Cheers,
-Prabhakar
+Looks good overall, just the one minor nit.  Given that this adds new KVM uAPI,
+and the CCP changes are fairly minor in the grand scheme, my preference would be
+to take the entire series through kvm-x86 (with Acks as appropriate).
 
