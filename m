@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-899006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0871C5686D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EE4C56888
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F12F3AE2C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854B93AE7B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0F62D7394;
-	Thu, 13 Nov 2025 09:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9467D305044;
+	Thu, 13 Nov 2025 09:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IPwhSTpJ"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="aU6k2/W/"
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B2D2D23B6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EF30217C;
+	Thu, 13 Nov 2025 09:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763025262; cv=none; b=iV8TW1CsCtdkCHhvTK0y+iYxRxDoLyyDggvi5JfvYJJcDhSHiNt/keZmyMiNWRv/Sovyfn0CX+FLKUcW0uUrAnAuoU9FFIkCFZfiZgDIk1+HMlCS0xWe/5ZMN73JMhMUdlce5uCliyt4vcjbQqVyqUaL979ASUTDNf2p5JtdKh8=
+	t=1763025306; cv=none; b=GU8eRX9lfDbNTwgUQmdB2fe9+Fjn+MLTmm9nqfOxhZBjwbvK6WD2pMaImUHrPZ+449BfaOhXgpVCl/NX5ggpfXNm18lp98IO5AR9cAZXwJb3YtCZd8sarecRyfWwkW3F6b5AciqoaF4oMM6z4FffcO/TSiILPmn9P5ozSn+1EVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763025262; c=relaxed/simple;
-	bh=ixMIOZhD0/70JnbtzbP6Xma0+jz+MweJQXVsIXaeEkg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TRrtVuTcBH7fpDAVuIUHBbKnfFWzkmU8+W/5NMY8sknlTgXCwz1SRZYciomQTCfuvKeiOfjH2/IAauVQ1gPihQYdrO5zSc1v1UoyzkHS/GGBCcxhIhbCVYi7zZZKslfumFVXAYV2i0XKd12OGCUXqQT138nkCMEUtgaDYntsJLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IPwhSTpJ; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-42b3339cab7so306162f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:14:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763025259; x=1763630059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ixMIOZhD0/70JnbtzbP6Xma0+jz+MweJQXVsIXaeEkg=;
-        b=IPwhSTpJ4h9CBul70I0nCXAHS5/QCsuJrsCqmEaFt+muovAfLMJk2wi6h+3uEgAHA/
-         LeTOhgPLaX49QjQFO+Mfmii3iHQmlI9R7rMgwu6/7WmH2QNxfyTfWaL32ft8Mbn7IOzL
-         ccHaIzGtgUnfOtOmFVAO4fl11LL6mODb+UOybhGdlQPX/AH0WEf//6OriCY7m0V1Uby7
-         1D+oHQNmj4krqRxjshvp3ALsrME/3u7f15isEd0Al3SY3ZsW3T5A21aAGHFBapGQkSrx
-         dAJYR0Sv7/LJ/fMFQPHqvejz4fqHj9VRhU7rLNlwJv7YeP7K/s9AFfKIYW4F2/0313/q
-         G/Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763025259; x=1763630059;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ixMIOZhD0/70JnbtzbP6Xma0+jz+MweJQXVsIXaeEkg=;
-        b=bwcYBAhVGqX4rEEEdaqmod1J0IAL6ATTQquRRGZynb1j39G6NfqQ+zFk/BGLn1zL6Y
-         A4vO+ufX7gr+ccEYdWDJM6a4Q2jnpNURAIS8atWBeUr/8Q/7vMIdSwSsWx9hhKpp7VnY
-         uVvT148kSYMTo9M8ZNKu+nZ7JGkzVGp0LQasXvnqdE/jt6yp1tWePh868IVJDT211Tlg
-         V85oWzDnmfaVEj8HsScNby5qu/7KOXMagYKmBd+gORhO8bXPm2EbmEPqr67e9MZCvC21
-         oe9eI1VUzzH0ylB+kfYq5wS+CxtuCMlCyl3fU4eKYfQGGS27S9Fle9hAsciYFz2Q5AUx
-         pokA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIlc4vf6EHZ8YyL1ePek864L/8aF0kptbicbHahYrB6XPjEwISVEGOtfxrPatEq+NViYkI9uB+IvK9A+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPOn18j0knC8SIW7y7Eg+sdhrONnfIZ8GQLpL5U2hGq8qHGltF
-	QN0XFSr1y8EQ+evVZZnH/a7/hJPokiJQuTwRvwzg+OQt+ovmr/SQdhXMhlkKvrnNOMS9C1tiKTx
-	e1WsmS1/61Gs7dcI1gQ==
-X-Google-Smtp-Source: AGHT+IFW/uK7rukH8lOhBTxny9oRqQsJbj1R6wN/AoqVDmx+yvVrDe0Qkq27CvYv7nilaGtcLciqMLlKNMvRLUs=
-X-Received: from wrtp18.prod.google.com ([2002:a5d:4e12:0:b0:42b:3a01:7810])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2086:b0:42b:4247:b07e with SMTP id ffacd0b85a97d-42b4bd90a34mr5310747f8f.25.1763025259157;
- Thu, 13 Nov 2025 01:14:19 -0800 (PST)
-Date: Thu, 13 Nov 2025 09:14:18 +0000
-In-Reply-To: <CANiq72najqKYQGWpc9UuOnDzPELiFB3hmFYmX-7pk8Eh7zA+Rw@mail.gmail.com>
+	s=arc-20240116; t=1763025306; c=relaxed/simple;
+	bh=OcT8ud378Gs2Qtdn2sEJs0owXjt4K6jRZVdemqrew5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tQGo2eUXzU/J2kpfu47TyNpQDzRije5Dg9U5LwZqT/uI7oEnxlQ2yUBMt9coIo6mAomFHGLU06x9BZT7po84UZl5Lrk2cgYzm8uBT637YoHcGVDigSQef/FX9Ssd3yANG+cjpbTFlFdD1Wk8LfIvn/V6Yzq/mE2ZnvoNI8P6RWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=aU6k2/W/; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=gVaVlDillLGy1hBjaeaiITckggxoDozYZ3Fwd0ya8ro=;
+	b=aU6k2/W/0X0YAQTxoNgi3Yjd+5ihhQRoRYYtZHTtIE/wbqb6O8oGnip8pEOue/9ZMme62pyrv
+	WhxIEX35KkB564H9PhdjfXASuA/a/L4UjVYZUfFC+A4SrsjK7NC+MsGoQSXrDL8aP3aVVDOUT1B
+	X1Og7IR5sfjdoWg6Yhd1LWw=
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d6ZLr0V10znTVv;
+	Thu, 13 Nov 2025 17:13:24 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id E929B1400CB;
+	Thu, 13 Nov 2025 17:14:54 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 13 Nov
+ 2025 17:14:53 +0800
+Message-ID: <c244379f-71c8-4ce7-af87-1bfa6507af28@huawei.com>
+Date: Thu, 13 Nov 2025 17:14:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
- <20251112-binder-bitmap-v5-6-8b9d7c7eca82@google.com> <aRTbX6RPsFf0NW48@yury>
- <aRUZq0Fo6T1f3lOD@google.com> <CANiq72najqKYQGWpc9UuOnDzPELiFB3hmFYmX-7pk8Eh7zA+Rw@mail.gmail.com>
-Message-ID: <aRWhakNj7_DGZDYC@google.com>
-Subject: Re: [PATCH v5 6/6] rust_binder: use bitmap for allocation of handles
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+Content-Language: en-GB
+To: Theodore Ts'o <tytso@mit.edu>
+CC: <linux-ext4@vger.kernel.org>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	Baokun Li <libaokun@huaweicloud.com>, "Darrick J. Wong" <djwong@kernel.org>
+References: <20251112040220.GO2988753@mit.edu>
+ <21efa577-a577-48ce-a82b-bce446539fba@huawei.com>
+ <20251112152933.GC3131573@mit.edu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251112152933.GC3131573@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Thu, Nov 13, 2025 at 09:32:10AM +0100, Miguel Ojeda wrote:
-> On Thu, Nov 13, 2025 at 12:35=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >
-> > Although we should never hit this codepath in real code, I don't think
-> > we need to kill the kernel. We can treat the r/b tree as source of trut=
-h
-> > and adjust the bitmap when mismathces are detected.
-> >
-> > I could add a kernel warning, though. That shouldn't kill an Android
-> > device.
->=20
-> I guess you mean warning in the sense of `pr_warn!` instead of
-> `warn_on!`, right?
+On 2025-11-12 23:29, Theodore Ts'o wrote:
+> On Wed, Nov 12, 2025 at 02:27:19PM +0800, Baokun Li wrote:
+>> Darrick’s reply in another thread has already made a similar change,
+>> so we can apply that patch first for testing.
+> I'll give that a try when I have a chance.  For now, here's a test run
+> using a version of my test appliance which excludes the way group for
+> the config ext4/lbs, and which has a modified e2fsprogs (built from
+> the latest e2fsprogs git repo) which suppresses both warnings when
+> using large block sizes if the kernel has the blocksize_gt_pagesize
+> feature detected.
+>
+> ext4/lbs: 595 tests, 6 failures, 101 skipped, 6656 seconds
+>   Failures: ext4/033 generic/620 generic/759 generic/760
+>   Flaky: generic/251: 60% (3/5)   generic/645: 40% (2/5)
+> Totals: 619 tests, 101 skipped, 25 failures, 0 errors, 6291s
+>
+> Fixing all of these filures is not a blocker for getting this patchset
+> upstream, but it would be nice for us to figure out the root cause for
+> them, so we can decide whether it's better to exclude the tests for
+> now, or whether there's an easy fix.
 
-I was thinking of warn_on!. There is already a pr_err call.
+Thank you for your testing! I have analyzed the above failing cases, and
+they are basically unrelated to this patch set. My analysis is as follows:
 
-> If so, could you please add as well a `debug_assert!(false)` on that path=
-?
->=20
-> Thanks!
->=20
-> I will create a first issue for the combination, since I hope we can
-> use it more and more.
->=20
-> Cheers,
-> Miguel
+# generic/759 generic/760
+Require CONFIG_HUGETLB_PAGE and CONFIG_HUGETLBFS enabled.
+
+# generic/620
+vdc needs at least 33G. Passed after replacing with a 2T disk. Suggest
+putting this test case into exclude.
+
+# ext4/033
+1. With 64k block size, inodes_per_group=$((blksz*8)) does not hold;
+2. Creating a 400+T snapshot and formatting it as a 64k ext4 filesystem
+    requires more than 1T of disk space just for metadata;
+3. With 64k block size ext4, when orphan file is enabled by default,
+    it fails because orphan file size exceeds 8 << 20. Fixed in [1].
+    [1]:
+https://lore.kernel.org/r/20251113090122.2385797-1-libaokun@huaweicloud.com
+After resolving the above issues, the test passes with a 2T disk. However,
+since the inode number overflow is unrelated to block size, suggest putting
+this test case into exclude.
+
+# generic/645
+This test checks that idmapped mounts behave correctly with complex user
+namespaces. On my side the reproduction rate is very low, about 1/100.
+Even before the code was merged, occasional failures also appeared in the
+4k tests. Based on the test content, I think it is unrelated to LBS.
+
+
+Cheers,
+Baokun
+
+
 
