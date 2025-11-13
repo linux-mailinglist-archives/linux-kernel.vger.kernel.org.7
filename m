@@ -1,101 +1,163 @@
-Return-Path: <linux-kernel+bounces-899255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A579EC57349
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:34:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDE3C573AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:39:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E29044E59A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:33:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 419E3354685
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2926D33CEA0;
-	Thu, 13 Nov 2025 11:32:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771C2EE607;
-	Thu, 13 Nov 2025 11:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECE9340A4A;
+	Thu, 13 Nov 2025 11:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XIm7wIYq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fb5YATRG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XIm7wIYq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fb5YATRG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452CE33EB11
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033567; cv=none; b=M2Xc0nlj1CODgnhPghOozq7rSToT8JJml1e8+4226CG3fhmMk3wquK+P96YpiYg/EW7x6V0NPPZjO7OR+ymFntnbgQaeY4clQRAHvvUtSe3449e9VGL28oQcpoYrjbtTZODGRIeO2lLmsj5FJRWQJ3t0sQIKvc3ytaBFhCkTvDU=
+	t=1763033577; cv=none; b=Iq7LI8l2hn277sdMfSAge1pZuRnStbZN/QUkMjyywKjBVaVfZwcjc/FyEmOHfwa652xHIkpW2bu3ZV5fDuI/UfOmz5aMADMsQ4tXrlm801xUEiwOrMUYeqdqTxdrwurxwUReEBUElrKvBLgD5oNjlhwZBtTSYzx25vhj0ff2HKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033567; c=relaxed/simple;
-	bh=gsE04yxtQUqCAg9Uv0wf+vQtEfwTWll6x+wXBOPmv+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IqDeTLTe3/r72/BT+CmhUEsga/ILynKvERYyMb62epjMy1ys5/JJpfqDuAsRoUlMDuryx9qboI/iJv+AyMtwDTxX6gqJLayOMdN7Qo2cLJVkMYEHsSgCBzH17bxv9Rs7L2J2RLTbgp0i8HJQwb7s1QOSn3gQ7ufaRg42MJG5o6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1FD112FC;
-	Thu, 13 Nov 2025 03:32:37 -0800 (PST)
-Received: from [10.1.28.59] (e127648.arm.com [10.1.28.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2B6D3F66E;
-	Thu, 13 Nov 2025 03:32:44 -0800 (PST)
-Message-ID: <1dc4934f-a3ce-4ead-a43c-0a80987364b6@arm.com>
-Date: Thu, 13 Nov 2025 11:32:42 +0000
+	s=arc-20240116; t=1763033577; c=relaxed/simple;
+	bh=Mmy8HLsN+9VTkIrCOYAzOVEqpjJvJEr3CCWRr17FEf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WT/0CFwV8VYNog1fVfGU53UOxKB77RbGhZspG2/eVucWCnn88y6+j6o9gxCvUBXUk7kqdTDuFkgr4xD0RH8rvALIu3QhJj0d+NKYLRG1hnRizBu/q9Y54VYl+sNZ2Zuupl8FLMYvS9qk4VclIWr0gM0Mi1e0HtLc+AxfF/Jjw3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XIm7wIYq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fb5YATRG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XIm7wIYq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fb5YATRG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6A0041F451;
+	Thu, 13 Nov 2025 11:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763033572;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5l5U7SdpWG8xXJCR9IManqkHn3AloOjl5uiAAiDPM=;
+	b=XIm7wIYqj7OMtO+jrdioOdAavhgbd+zWnpG5ZW+9XORVP35AnyzEnwMbssUje6rqCP8T3c
+	3yyCvYgBK4XwQ0kML9Qzw6D/Pu0wPMo+4Lzr7M3ieV9R3reu1XjBG+plAyroX/JhpGn451
+	/mBgw/r6xgqAJ37EvbCYO4zh0eLn//c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763033572;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5l5U7SdpWG8xXJCR9IManqkHn3AloOjl5uiAAiDPM=;
+	b=Fb5YATRGC/md0+94fjO34M2U1hw20L4+ECWFiF2pZU9OBZiUNT1XmuGt+Hq/sOiyIJ+7Zu
+	9MCCebXFupO2KQCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XIm7wIYq;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Fb5YATRG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763033572;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5l5U7SdpWG8xXJCR9IManqkHn3AloOjl5uiAAiDPM=;
+	b=XIm7wIYqj7OMtO+jrdioOdAavhgbd+zWnpG5ZW+9XORVP35AnyzEnwMbssUje6rqCP8T3c
+	3yyCvYgBK4XwQ0kML9Qzw6D/Pu0wPMo+4Lzr7M3ieV9R3reu1XjBG+plAyroX/JhpGn451
+	/mBgw/r6xgqAJ37EvbCYO4zh0eLn//c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763033572;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc5l5U7SdpWG8xXJCR9IManqkHn3AloOjl5uiAAiDPM=;
+	b=Fb5YATRGC/md0+94fjO34M2U1hw20L4+ECWFiF2pZU9OBZiUNT1XmuGt+Hq/sOiyIJ+7Zu
+	9MCCebXFupO2KQCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C22F3EA61;
+	Thu, 13 Nov 2025 11:32:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NMhpEuTBFWmKcAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 13 Nov 2025 11:32:52 +0000
+Date: Thu, 13 Nov 2025 12:32:51 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Nick Terrell <terrelln@fb.com>, David Sterba <dsterba@suse.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] crypto: zstd - Annotate struct zstd_ctx with __counted_by
+Message-ID: <20251113113251.GO13846@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20251108120740.149799-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] cpuidle: governors: teo: Drop incorrect target
- residency check
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
-References: <4701737.LvFx2qVVIh@rafael.j.wysocki>
- <5035693.GXAFRqVoOG@rafael.j.wysocki>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <5035693.GXAFRqVoOG@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251108120740.149799-2-thorsten.blum@linux.dev>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6A0041F451
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -4.21
 
-On 11/12/25 16:22, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sat, Nov 08, 2025 at 01:07:40PM +0100, Thorsten Blum wrote:
+> Add the __counted_by() compiler attribute to the flexible array member
+> 'wksp' to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
-> When the target residency of the current candidate idle state is
-> greater than the expected time till the closest timer (the sleep
-> length), it does not matter whether or not the tick has already
-> been stopped or if it is going to be stopped.  The closest timer
-> will trigger anyway at its due time, so it does not make sense to
-> select an idle state with target residency above the sleep length.
+> Use struct_size(), which provides additional compile-time checks for
+> structures with flexible array members (e.g., __must_be_array()), for
+> the allocation size for a new 'zstd_ctx' while we're at it.
 > 
-> Accordingly, drop the teo_state_ok() check done in that case and
-> let the governor use the teo_find_shallower_state() return value
-> as the new candidate idle state index.
-> 
-> Fixes: 21d28cd2fa5f ("cpuidle: teo: Do not call tick_nohz_get_sleep_length() upfront")
-> Cc: All applicable <stable@vger.kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/teo.c |    7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -458,11 +458,8 @@ static int teo_select(struct cpuidle_dri
->  	 * If the closest expected timer is before the target residency of the
->  	 * candidate state, a shallower one needs to be found.
->  	 */
-> -	if (drv->states[idx].target_residency_ns > duration_ns) {
-> -		i = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
-> -		if (teo_state_ok(i, drv))
-> -			idx = i;
-> -	}
-> +	if (drv->states[idx].target_residency_ns > duration_ns)
-> +		idx = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
->  
->  	/*
->  	 * If the selected state's target residency is below the tick length
-> 
-> 
-> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-AFAICT this check was to not be stuck in a shallow state when tick is already disabled.
-There might be a timer armed in t+500us but that might still get cancelled, which
-is why we didn't think a below TICK_NSEC 'shallow' state is acceptable?
+Reviewed-by: David Sterba <dsterba@suse.com>
+
+As this is crypto/zstd.c there's no need to sync with upstream zstd code
+so it can go via the crypto tree.
 
