@@ -1,114 +1,211 @@
-Return-Path: <linux-kernel+bounces-899122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37887C56DAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:30:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372F0C56D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81BFF4E8EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:26:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54129351D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D78F2E11D7;
-	Thu, 13 Nov 2025 10:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C482329C45;
+	Thu, 13 Nov 2025 10:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2dtIEjpw"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dpl7fpkX"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7510A2857F6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579B320CAE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763029586; cv=none; b=TeNSfBpvA52ePvvKKchxcugqtN7i2ckQMARN67qZF/XUrsvkmMtZ5aBaJvKMFXF/I5dqGZ93YY7a2gvTf3zdskr+z3t71ApIpVTGcNNnNSxsRwELpA8+8TjdamaluBeXv2rHxgpMoczMuRi0lyKp7sLQGxjoSDFl7SBvncVoSk0=
+	t=1763029599; cv=none; b=BXzy9Gf/F2zuMLNs+GAGM9+39HZK/nRMrLMwPh9+Q1WmTXbg5xeQwUg+tUxtYyIREKqEtL4A6emoF4OF5lzNwacK3aQ7ONEyvOPWXeInbmkLUtDk3z0vv+52IV/XRAybFXc62tjf679ok6JqbrneTrGf7s+pV3w3Iu2ShQ3Q1js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763029586; c=relaxed/simple;
-	bh=y6pEkKmQUrDvPxt44l7tHq8+XpLO4nw6MEi1Gb1kcGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W/CvB4nKUyp7XT/ggXU7hWnbwMArcfEY5rt19dMzGdTK/Q7PpeWjZxsZTGHLtSkkUSRSX1LrACAz+zUAtuFHse323x5vQ7peULIbd6NuZIYuvF9mskqHbHP97zWcj7WJnxqcWsFp+jHHqgZRoXBpGgbW+juovKcKqjGa77Z09tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2dtIEjpw; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-59583505988so19677e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:26:25 -0800 (PST)
+	s=arc-20240116; t=1763029599; c=relaxed/simple;
+	bh=ZCFF04RJ9CJCCxVRA1yz9U8VC4BnDMiI7a/ozJ4Gsyw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=brv2xS8gqY65/xFmv/GWQWne33LKkgNjTWTUAxvfPfP5pKxC+bOcFiOdasQSX2zyXyWb/xVLhtgI7KLHZHSd6L3RqhbS4E+AWlhwwp6nybbFh7YADNJPWScyl1sJvQowpCB9LAMfMEQIBY3WmfF+9be2btUXwTj0cnJ1GEw+XRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dpl7fpkX; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b3c5defb2so415181f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:26:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763029584; x=1763634384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y6pEkKmQUrDvPxt44l7tHq8+XpLO4nw6MEi1Gb1kcGw=;
-        b=2dtIEjpwiNbMUp8AZbKJSgnT9yMeRacX4NcpcYG81Oa5M5Nnvd7rnwNiGv+mZJwACP
-         RMEGaVQ/0+Np3BEXipQt2op57p+v5B6cAUqD1jQLnFrjG6bWfwvFZwSvekAnfpdE5DuR
-         a3l8Rcrph4uec9OhuV/JYYPKCjsq3nAayFwBur8/sTMBnHTxAtf2l+g+fOLt0adkPrNL
-         biegb8Jqhw7C8XS5QBaGyQD7Mc6ZPe72IFXyZPOZidjVZ1kqKzBx6lzMjX0mjMWBK66L
-         bRPXWTJEGUQMI6TynH0pv/9wurwU0C5j7II7sHJJ+J7OtFU+i3Yv5GMSYtU+FFVrLvnX
-         yOIA==
+        d=linaro.org; s=google; t=1763029596; x=1763634396; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v8GhrcAyMh3A+V43CTkvvT8Jy87HXinsSZJMcVDG3s0=;
+        b=Dpl7fpkXF0gkobSFHf7scS5hTiYA3Phb2KISMxQhISZdJwWqpX4PR5Y5rcSmmfMLo+
+         l6HO1l4GiuSmzym5hv+H7QXd362GlKGj/AP/N/TGPD/crZYyIvzvZ/1am8Cu0NyWlwUg
+         7k/xgszsuJKLy55vRK0M0WIe/eUbtbCsRNC8BC/GB3Wsd28mWqtisUeKPFNQ60lprpce
+         xHK1RtURMlL+ZJb+SWH5vfrA8ts2Dhj2pho/SNvLW+Jdz9Yoeab4hC5InmXnqJFqbCRS
+         XHw7BJl4RADFY3sm4ldIjewGF3OdMFfdcdcAcbnSQu+onp8G9brFGBrMFwyEKdecIl5q
+         Wbzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763029584; x=1763634384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=y6pEkKmQUrDvPxt44l7tHq8+XpLO4nw6MEi1Gb1kcGw=;
-        b=ieUn3IjWW1dJ5SDXnYMyia+bZczpG7V8Hn5khvIUYBVJ5un2vL+hW6ED4TX39s4FtH
-         yKAUARPqrWiEOcBwBpee+e+Q6oYVix7ntpjjhdj2uW0+QQQiSoGhL49KQI7ajHaHx9kI
-         JwXS1DFr2a7tgOJ6lOYBvzk5cKC4ttDXFKOzzO5XI56qN6Ch4L7fozgE3RcwVfhA6fzD
-         9uaq18e2BmDansGzVMrBxn2eGTWmViCt/lImdSHozcaJQqFONNFQIND4MjcyobFMonUd
-         4HW0Wkk81K4CUvuU/8bRlPeHYr/Rf0owDeitRZ9Yp4B0tHSWUHlys4WCjLvS7arAdNLS
-         I1dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFY6E9mZYQ0TuPIIRIqrj7RJAiUxdzBZV2Hk+DHqGjpb3JM3qYBcri/oSgoUvdRXiPdGsRuIFrY6cwzQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2TSmib2NNB2Z+pB/jmyIeWce5mPeBgLD/Vaqd+naXeGEGASXl
-	6EgnCif75SFBFAoeahYENOpJVu4YiPPSB6LpJl5yEmOv4LBa/YjR8oLXCql7aXCJ1zVbhgYL/cy
-	27qLiW2eMnP2crzfbrSF3V6GpGcR7vMTJP/uKTakiQw==
-X-Gm-Gg: ASbGncuMreAyoIsIsDFboJRfOYO1sllEfSNuytMFUeHiEdaV1dl4hiX6yFZxVZoLYkp
-	CrK8YNrJC8pE9/6Wa8R5CfW5VFEAt8mpZZ1e5MJI2ccMqBS6nBKBnE48aHaq7P2RyCsqNCTpAE3
-	V4n+bT+zg7+CeHWIW6xByTIMoZHzXA4iXIHB3O5nloRYx0Macmbu7azmqAILscRN2s6u+ZjwLvy
-	nnc4/fXZdAg4U3KrEvyYA0mUny4zfjm5EF/jiwFIwvKTgP4HmyS5oh54MbwDYBmcPBkk1R/xk5T
-	vERc+JplROZ45SSM
-X-Google-Smtp-Source: AGHT+IEWBz0+be0FB+wLbE+7QTcc/OUWq0TgJqUkR7RRmlidFEPDPpiNSaVnc53Ovz4tW1nSH3J0cHCpYlG2Y5YBezE=
-X-Received: by 2002:a05:6512:ba3:b0:594:1279:dfc0 with SMTP id
- 2adb3069b0e04-5957ecc4170mr718381e87.18.1763029583635; Thu, 13 Nov 2025
- 02:26:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763029596; x=1763634396;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8GhrcAyMh3A+V43CTkvvT8Jy87HXinsSZJMcVDG3s0=;
+        b=cWaqnIZRLJ13AAI41VAPN/ryv5C1GUqHLs6R0f5jDDwQdGnsttvwmIy5qLwc6II1Ij
+         iNfm0Dr2IC2v6r782dJ7N+UxIjpB/szhRSUjG/Gi+o2LsQPuV5KyMuinbc6R3nlJ2FcD
+         og9sNus3L9Sct21pa5qR0QuNwKiJuZanuqzrCScwBQwE4hrRlkJgnXE5E1mARHeMUmE1
+         RF81pvIn9rsgJOP6gNCt+AXa/92HGq9XMMPT8ZRkDAsBtEhKmA0NcZDFc2E61qgHfZwx
+         RH73jsVLAUvNN0iBQRZ03tEYM9c85flDmnmR/ytWKSt5yZWcRAPMy6mD4qns4avzPVtF
+         5Z1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVGXOUdnZWRhGTf0ANa3bFe04k1+F6qAD3lAwMiSPlKJBzn8tLqQ3V1rp4B0Y8m3jNE5++Fbtadaa1RyIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNoM1z1NtIZcC3aLxzhYNGEiiaMT/9zcN5t9xfQ7pdRqitznEG
+	1t51OcFYNnd6+Aa0am9Pdv0WA5Hshz8qBVxkaqWj/yVH1+aaGDESjy8fALy0XleFG7M=
+X-Gm-Gg: ASbGncsP003DQK8bAl4mFFdM7lCR5FLJFgZfcDJdD8c9PEvG3vdIeGCuR3BrDtW9FLC
+	CzhdRAkvK7vBANnx6BswKotialka0IEn47EndD6/x2I1pdPAlQUt0gNd4zZsthmoZcl8mM0H1+f
+	byLj5gElCkGjfkDnchY05SEq+CuP3SfBblIjj6PRzBjDB3HloxdWkqXir1Pem88ARYUxOmd7N7E
+	vTc8ItZwl3CjJnABtpmHR0qffEKdzVhnRzq7tZty75D7vq6wJtCCGmoqrAuMRXlFjc4UdsgEgkf
+	tHOW0E7XV7pkIIJJL7O8ujs9i51bzYJEPywWwUdIa7X13AAmJ07tYjN13YES9+o/wBS0GV0Y3Zz
+	dWgR0hWPbNqqrAphhifUyjQJBgfpY4Ynx5PCfP41ATCyy1xy+g60TcPdWKj2Bj4xyXfEf4AjY/K
+	njFhyqVg==
+X-Google-Smtp-Source: AGHT+IFappH0cJvSx4iLsRJxGuedr9FOAfOnQi4qZr3vNlHJHTAAZOTa3M8ohns19ObiXS0otCFe/Q==
+X-Received: by 2002:a5d:5848:0:b0:42b:3dfb:6436 with SMTP id ffacd0b85a97d-42b4bdaeacbmr6137389f8f.60.1763029595613;
+        Thu, 13 Nov 2025 02:26:35 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b57asm3088931f8f.27.2025.11.13.02.26.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 02:26:35 -0800 (PST)
+Message-ID: <62bb6c08-a1d0-4dba-a431-0d6ce49d66b2@linaro.org>
+Date: Thu, 13 Nov 2025 12:26:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106-qcom-bam-dma-refactor-v1-0-0e2baaf3d81a@linaro.org>
- <20251106-qcom-bam-dma-refactor-v1-3-0e2baaf3d81a@linaro.org> <rrw7q7cmkaykng5mnyqk5oxsjednptx3yvjilh3tf5uub4nxzh@p5a4sbgbaha2>
-In-Reply-To: <rrw7q7cmkaykng5mnyqk5oxsjednptx3yvjilh3tf5uub4nxzh@p5a4sbgbaha2>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Nov 2025 11:26:11 +0100
-X-Gm-Features: AWmQ_bkPrLo5fkHZmAca_a3y1ZYvX0iZcUyH4co_j7LpID1i-okvegYKSrVQn6Y
-Message-ID: <CAMRc=Me1DA8ajey++S6_gTP38oDfJKv5CzZbgL5trDC=zT0NYA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dmaengine: qcom: bam_dma: convert tasklet to a workqueue
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
+ <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
+ <20251113-benign-macaw-of-development-dbd1f8@kuoka>
+ <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
+ <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+ <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+Content-Language: en-US
+In-Reply-To: <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 5:15=E2=80=AFPM Bjorn Andersson <andersson@kernel.o=
-rg> wrote:
->
-> On Thu, Nov 06, 2025 at 04:44:52PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > There is nothing in the interrupt handling that requires us to run in
-> > atomic context so convert the tasklet to a workqueue.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
->
-> I like the patch, getting off the tasklet is nice. But reading the
-> patch/driver spawned some additional questions (not (necessarily)
-> feedback to this patch).
->
 
-Thanks, I can look into it once the locking and these changes are in next.
 
-Bart
+On 11/13/25 11:51 AM, Tudor Ambarus wrote:
+> 
+> 
+> On 11/13/25 11:35 AM, Krzysztof Kozlowski wrote:
+>> On 13/11/2025 10:28, Tudor Ambarus wrote:
+>>>
+>>>
+>>> On 11/13/25 10:30 AM, Krzysztof Kozlowski wrote:
+>>>> On Wed, Nov 12, 2025 at 08:29:06AM +0000, Tudor Ambarus wrote:
+>>>>> Add initial support for the Samsung Exynos OTP controller. Read the
+>>>>> product and chip IDs from the OTP controller registers space and
+>>>>> register the SoC info to the SoC interface.
+>>>>>
+>>>>> The driver can be extended to empower the controller become nvmem
+>>>>> provider. This is not in the scope of this patch because it seems the
+>>>>> OTP memory space is not yet used by any consumer, even downstream.
+>>>>
+>>>> Quick look tells me you just duplicated existing Samsung ChipID driver.
+>>>> Even actual product ID registers and masks are the same, with one
+>>>> difference - you read CHIPID3... which is the same as in newer Exynos,
+>>>> e.g. Exynos8895.
+>>>
+>>> Yes, that's correct. It's very similar with the Samsung ChipID driver.
+>>>
+>>>>
+>>>> What is exactly the point of having this as separate driver? I think
+>>>
+>>> The difference is that for gs101 the chipid info is part of the OTP
+>>> registers. GS101 OTP has a clock, an interrupt line, a register space 
+>>> (that contains product and chip ID, TMU data, ASV, etc) and a 32Kbit
+>>> memory space that can be read/program/locked with specific commands.
+>>>
+>>> The ChipID driver handles older exynos platforms that have a dedicated
+>>> chipid device that references a SFR register space to get the product
+>>> and chip ID. On GS101 (but also for e850 and autov9 I assume) the
+>>> "ChipID block" is just an abstraction, it's not a physical device. The
+>>> ChipID info is from OTP. When the power-on sequence progresses, the OTP
+>>> chipid values are loaded to the OTP registers. We need the OTP clock to
+>>> be on in order to read them. So GS101 has an OTP device that also happens
+>>> to have chip ID info.
+>>>
+>>> For now I just got the chipid info and registered it to the SoC interface
+>>> (which is very similar to that the exynos-chipid driver does), but this
+>>> driver can be extended to export both its memory space and register space
+>>
+>>
+>> There is no code for that now and possibility of extension is not a
+>> reason to duplicate yet.
+>>
+>>> as nvmem devices, if any consumer needs them. Downstream GS101 drivers
+>>> seem to use just the chip id info and a dvfs version from the OTP
+>>> registers. DVFS version is not going to be used upstream as we're defining
+>>> the OPPs in DT. So I was not interested in extending the driver with nvmem
+>>> provider support, because it seems we don't need it for GS101.
+>>>
+>>> Do the above justify the point of having a dedicated driver?
+>> Only partially, I asked about driver. I did not spot previously the
+>> clock, so we have two differences - CHIPID3 register and clock - right?
+> 
+> clock and interrupts, but I don't use the interrupts because I just need
+> to read the OTP registers to get the chip id info.
+> 
+>> I wonder why Exynos8895 and others, which are already supported, do not
+>> use CHIPID3, but nevertheless these two differences can be easily
+>> integrated into existing driver.
+> 
+> they can be integrated, but I want to make sure we're making the best
+> decision.
+> 
+>>>> this can easily be just customized chipid driver - with different
+>>>> implementation of exynos_chipid_get_chipid_info().
+>>>
+>>> If the answer is no to my question above, how shall I model the device
+>>> that binds to the existing exynos-chipid driver?
+>> Just extend the existing driver.
+>>
+> So you mean I shall have something like that in DT:
+> 
+> +		chipid@10000000 {
+> +			compatible = "google,gs101-chipid";
+> +			reg = <0x10000000 0xf084>;
+> +			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
+> +			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		};
+> 
+> Maybe remove the interrupts because I don't need them for reading OTP regs.
+> 
+> What happens in the maybe unlikely case we do want to add support for OTP
+> for GS101? How will we describe that in DT?
+> 
+
+Ah, I guess you meant to keep the node as I described it in patch 3/5,
+an efuse node with a google,gs101-otp compatible, that will bind to the
+existing exynos-chipid driver. Then if/when we add OTP support, move
+everything to a new OTP driver. That can work, yes. Unless I add some
+OTP support now, to justify the new driver. Both shall be okay, right?
+
+Thanks,
+ta
+
+
 
