@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-899361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECE5C57811
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A0DC57845
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB63E3AA66E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C2D421401
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76A434F479;
-	Thu, 13 Nov 2025 12:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF55350283;
+	Thu, 13 Nov 2025 12:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbP7JPSn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pDFSpkhG"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A634E350A1B;
-	Thu, 13 Nov 2025 12:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98612FE58F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038365; cv=none; b=hzohrSrL/kgi8U+cUvuGMmz11VK7BbKSOlWmfXfbrdMyRzTV8xUJt3wYcHfA2s3IcH4PZagJQ6L+TB38fG/+B4odRjLbSq3cU1RQpbyyiC+GwcRPEv34CFgOZWf5MqBAAzMe14UKQm1wNdOColf/5d1+KiTO68VlM3H9+30y5nU=
+	t=1763038459; cv=none; b=pB8OvYCCjmQYN5ZZ5AyZBj9CbMCl/gFN7UC1NKtKQhtqWO7w+cfsVOz+5zSBiv1iiNWtxPNotA6lxoZ+JRAuTlixS4/6gVzL7REFT04ZU8TdMqLNmNFnFNYaYp1lZHugD9JHQMeSjmYAUF1GDa8EyZZbpu9BVeFvUhiFX23ZMyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038365; c=relaxed/simple;
-	bh=YO38BrRO3WpSWJadE4XGRbaNi9pExHE9ouW+qph/cF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sVIvMiigRTP0pGd/Adq2u1XF57lg3z4SNmt6ofHyruUP02E6nixtGLH7WCv3op7v1qaUIKDGI5qU9VWVP8EiNXwE5noS8CBmPDoft3xKgJNKJEMiIzFy3vLgQaXulnu7dhgnohHdohPcZLkqvAF3uPdR3Qg7T6uuWWr+A88hErc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbP7JPSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B932C113D0;
-	Thu, 13 Nov 2025 12:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763038364;
-	bh=YO38BrRO3WpSWJadE4XGRbaNi9pExHE9ouW+qph/cF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lbP7JPSnqZktjCaFY1/UyCjj2YMhZoijMt1Ag0R9fExG4RR/Q8CoKPJ72ztygNNRK
-	 vEOirNPKf7u0fx4n3AZXzTcckYeYJO/CaEIwJaZadJv/cPbVrvxUOd5y+wr2iti4eo
-	 paT0n4nS0bpK4J+yDLfmypsfg3rSUtG9kaS6aDQxGX9dX9rf/27edTjQwDpyZZFLWn
-	 YTp6unOe/TsaHoWsgMH03UpYvjJROahYyfe8PhTN1B6luyom8PC2ZdsjQNjceLrbzC
-	 RgjrElIejnHoL2SQnz/HTw92lnvMDu02yAq219asuwIzqP3lIuxVQvFVQexk8E5Xvw
-	 SNhnTNTq7xvPQ==
-Date: Thu, 13 Nov 2025 09:52:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Falcon <thomas.falcon@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: write bpf_prog (infos|btfs)_cnt to data file
-Message-ID: <aRXUmEfApr9UTfsY@x1>
-References: <20251107173150.135037-1-thomas.falcon@intel.com>
- <aRO6z1Q76852Ig6n@google.com>
+	s=arc-20240116; t=1763038459; c=relaxed/simple;
+	bh=sOv3gpVFSUTOf8qccBUFlmorrQlW6YAkct0+Z3bQd3Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=rHXjC6kCWDpVbfRDb05+EmwcdWuOhAjBzIPaR13U1wdLw2JnKyFrFzZxz+Zq2uM/XMEp1YsZcqfVrZ0Jo5Vc6C6+KnXkb7THEPrYSqAJaOdvSA6LxHXJOFkbqrzeu4gOZV2V8XCd0qjsfUdUjSfjaXKFzDV5znYd7GIn/uo/yHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pDFSpkhG; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1763038447; bh=/GQTtJfCoEQKgTxPit1J56QLlgdP/pwagyLI+EW9z0I=;
+	h=From:To:Cc:Subject:Date;
+	b=pDFSpkhGrwU56CzdRuc/UKskuLMIb9VM04e5wU5yZYVDo7wHpNkvV2yZ3JZosEIR8
+	 fzrpv2xThIcaJgh86QMMCv6tRjvbOAJg1G1jTpNkVnKad/ytdv2Fcw4BrXl3UzSots
+	 9ZDcb0WN0xQFTkiihibdg9+SZDtggye4LWjFpnFU=
+Received: from cjz-VMware-Virtual-Platform ([110.176.66.153])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id D393A6E6; Thu, 13 Nov 2025 20:52:57 +0800
+X-QQ-mid: xmsmtpt1763038377towqfyh7c
+Message-ID: <tencent_67481983755837947ADD1DAD8BB36FEF880A@qq.com>
+X-QQ-XMAILINFO: MvUAcPkRmFBfRVa3KPbA1xUSqTPMJ44CrUz1iwiZsKDSpzjyo2Sr6sDvcPYZJm
+	 3BCS7uVdl9iraSveiOzE24J4FEXP6h9eKDUWhHCK8JQWzJq5K9umCDt53NxJm3+CGnRUB5UA7CDt
+	 OrCakPxHrv+iMXSznNA668OUpiBXzV54l97536ivDu803QZ2NpUi1KFu0FhMeAhowc+l71fONuzD
+	 7MvPhZXcmakgsjq1HPg8mNiGpCn/d0ImziZlXh9v2/Np07jcRlCr42aNvw1YU5QlGvg/lmOsRaDn
+	 kRpcbAvu7n+MQUrVaNQCtgYltagMKOqaN9dFhWJcjYv8l5JRTi4tDVsMAYF/LzcVdBm3yL5LoR9m
+	 MNkeqlD5cKIZtJ+1XaujN0car7jyFZNAAYapo0k4wkwErrN6DBrH+zxjrPuvmh3nj5QRTrrEkzX0
+	 oTvPXHrQ24XUkIij/zdPORFYYON/BpkSYO5tqBO+FRPPwTcy2B9fYlUGQBRxwt/jmQm4LfcnMrci
+	 z4yeD7IwQ0PbsuOQbJsHBhmWcRUXt9ilH1Q9S9mkXegDt4vwB6TpBsDRUxE2dFInUmgUtNYQha+3
+	 wpOqKpfoaejUEe0OhAjDTbrgaKwMKpouz7Oe+hQV++FsN/xV5wh53fAsG+qjAxIZPXrMEuZNJ304
+	 rjQDPGtvZEpOopV08vIf2dcTxR1q6TCrxHB00FGz6bxXnWqaafpVD9Ra8gIlpPrQZwpsTJNowgs4
+	 /ZVxLLuo9uDAjwlLfPvjuP2Giz6xQvYbl/ClNWqTsFnaZ8UVIWWs2viwrAjBiaaC7nSwx6/90LWB
+	 E3DpoII47GmesnuhG2JuWc8tyKznCRbn9gaAwu2fzYsIooLoHlo+P9H19z0nkOKcjvRiaeH5bDDr
+	 rpyFavu58U6mlSYcaM11VH0tYJ4h0FbLSRLl7/+lQGD3VAHPu7sh70iOU6av8bfLSTN51iLJeFRr
+	 Wr8ccLMZkxGRW7lifrAoCz6zHdn46nfKllWRlr5URMLSoRn+GGq2amUZZfWOfb51mcULlx42+GA2
+	 6V4xZbvgxp48AzW7Bs
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Chang Junzheng <guagua210311@qq.com>
+To: outreachy@lists.linux.dev
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	guagua210311@qq.com,
+	Chang Junzheng <guagua210311@outlook.com>
+Subject: [PATCH] staging: greybus: audio_manager_module: make envp array static const
+Date: Thu, 13 Nov 2025 20:52:52 +0800
+X-OQ-MSGID: <20251113125253.72693-1-guagua210311@qq.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRO6z1Q76852Ig6n@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 02:38:07PM -0800, Namhyung Kim wrote:
-> On Fri, Nov 07, 2025 at 11:31:50AM -0600, Thomas Falcon wrote:
-> > With commit f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF
-> > info"), the write_bpf_( prog_info() | btf() ) functions exit
-> > without writing anything if env->bpf_prog.(infos| btfs)_cnt is zero.
-> > 
-> > process_bpf_( prog_info() | btf() ), however, still expect a "count"
-> > value to exist in the data file. If btf information is empty, for
-> > example, process_bpf_btf will read garbage or some other data as the
-> > number of btf nodes in the data file. As a result, the data file will
-> > not be processed correctly.
-> > 
-> > Instead, write the count to the data file and exit if it is zero.
-> 
-> Oh, I'm afraid it'd create a compatibility problem.  But I think this is
-> a right behavior and it's should be fine if it goes to the stable soon.
-> 
-> Arnaldo, can you please take this into perf-tools tree for v6.18?
+From: Chang Junzheng <guagua210311@outlook.com>
 
-Ok, agreed, I'm taking your request as an Acked-by, ok?
+The envp array in send_add_uevent() function is declared as a non-const
+local array, which triggers the following checkpatch.pl warning:
 
-- Arnaldo
+WARNING: char * array declaration might be better as static const
+
+Change the declaration to 'static const char * const' to improve code
+safety by making the array read-only and allow for better compiler
+optimization. This follows the kernel coding style recommendations.
+
+Signed-off-by: Chang Junzheng <guagua210311@qq.com>
+---
+ drivers/staging/greybus/audio_manager_module.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/greybus/audio_manager_module.c b/drivers/staging/greybus/audio_manager_module.c
+index 4a4dfb42f50f..ca6a2cd0bc4f 100644
+--- a/drivers/staging/greybus/audio_manager_module.c
++++ b/drivers/staging/greybus/audio_manager_module.c
+@@ -159,14 +159,14 @@ static void send_add_uevent(struct gb_audio_manager_module *module)
+ 	char ip_devices_string[64];
+ 	char op_devices_string[64];
  
-> Thanks,
-> Namhyung
-> 
-> > 
-> > Fixes: f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF info")
-> > Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> > ---
-> >  tools/perf/util/header.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> > index db2ad19fa50d..54968881481c 100644
-> > --- a/tools/perf/util/header.c
-> > +++ b/tools/perf/util/header.c
-> > @@ -1022,12 +1022,9 @@ static int write_bpf_prog_info(struct feat_fd *ff,
-> >  
-> >  	down_read(&env->bpf_progs.lock);
-> >  
-> > -	if (env->bpf_progs.infos_cnt == 0)
-> > -		goto out;
-> > -
-> >  	ret = do_write(ff, &env->bpf_progs.infos_cnt,
-> >  		       sizeof(env->bpf_progs.infos_cnt));
-> > -	if (ret < 0)
-> > +	if (ret < 0 || env->bpf_progs.infos_cnt == 0)
-> >  		goto out;
-> >  
-> >  	root = &env->bpf_progs.infos;
-> > @@ -1067,13 +1064,10 @@ static int write_bpf_btf(struct feat_fd *ff,
-> >  
-> >  	down_read(&env->bpf_progs.lock);
-> >  
-> > -	if (env->bpf_progs.btfs_cnt == 0)
-> > -		goto out;
-> > -
-> >  	ret = do_write(ff, &env->bpf_progs.btfs_cnt,
-> >  		       sizeof(env->bpf_progs.btfs_cnt));
-> >  
-> > -	if (ret < 0)
-> > +	if (ret < 0 || env->bpf_progs.btfs_cnt == 0)
-> >  		goto out;
-> >  
-> >  	root = &env->bpf_progs.btfs;
-> > -- 
-> > 2.47.3
-> > 
+-	char *envp[] = {
+-		name_string,
+-		vid_string,
+-		pid_string,
+-		intf_id_string,
+-		ip_devices_string,
+-		op_devices_string,
+-		NULL
++	static const char * const envp[] = {
++						name_string,
++						vid_string,
++						pid_string,
++						intf_id_string,
++						ip_devices_string,
++						op_devices_string,
++						NULL
+ 	};
+ 
+ 	snprintf(name_string, 128, "NAME=%s", module->desc.name);
+-- 
+2.43.0
+
 
