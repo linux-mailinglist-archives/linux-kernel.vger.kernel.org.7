@@ -1,333 +1,140 @@
-Return-Path: <linux-kernel+bounces-899075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA24C56B58
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD61C56B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:56:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212BD3BB628
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A20A3ACFC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD0A2DFA2F;
-	Thu, 13 Nov 2025 09:50:58 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DCF2DEA68;
-	Thu, 13 Nov 2025 09:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2466C2E06EA;
+	Thu, 13 Nov 2025 09:50:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518F12D73B4;
+	Thu, 13 Nov 2025 09:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763027458; cv=none; b=FugmkR5nDCFGZBPpT2SlJtMUmT7FFWemNFq3ycjmMIlQZ+MC25dPZw4mAZbV/fs2DEWS6Dj6AeyXrwwLytAIGSQOYFpDkxLwGE+cP5ittWSGnhfmPkW9LufzMpESrxJiwbvZuuQtEuNElOpNKlmf7Mxv6Ly1+rmm5yvdVF+2xuM=
+	t=1763027413; cv=none; b=fJkMgiAt3qC/pschuMaXaVeOZWLbBQPgAfREIoFn49S9RWOiu4xaRprRXL9zdaw0S5r8210trehL96LtFIv3syl5YwiwAdshwc3paO8dclQ+QPZcpeV5wFT1tdcgpTrg3YUrhEbDkK/a8KOJR+PVjoYGF9bVRRYus0z0H6TOhBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763027458; c=relaxed/simple;
-	bh=q9mFL8RiAZj6RMExwmFVyoj5ShrrswYQK5SmpeJxjKY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TLUQNny/htwtZO1igA7iL/4hqrKYQZs8Dv1doXQzQC3JJJMOrfjC2jxmCPlAZzyYmZHSDXUDuyEvruYwyzEb/iaccbUFbHnl0ca6ArnHMWsXHn2StF7NICqh/gvoGDxYTHmw4YBhJRmW5CTS6QHQOxL4j74+JAXuMcHWdHjJyRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 389b3ddec07611f0a38c85956e01ac42-20251113
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
-	SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:bae591e1-cddb-4d2a-aadc-b87fd6a85652,IP:10,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-INFO: VERSION:1.3.6,REQID:bae591e1-cddb-4d2a-aadc-b87fd6a85652,IP:10,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:re
-	lease,TS:15
-X-CID-META: VersionHash:a9d874c,CLOUDID:d1fd8e5c04717b0a002828b5f9deddca,BulkI
-	D:2511131750462U230LTH,BulkQuantity:0,Recheck:0,SF:19|38|66|72|78|102|850,
-	TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 389b3ddec07611f0a38c85956e01ac42-20251113
-X-User: zhangguopeng@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <zhangguopeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 358271896; Thu, 13 Nov 2025 17:50:43 +0800
-From: Guopeng Zhang <zhangguopeng@kylinos.cn>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	shuah@kernel.org,
-	cgroups@vger.kernel.org
-Cc: mkoutny@suse.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guopeng Zhang <zhangguopeng@kylinos.cn>
-Subject: [PATCH] selftests/cgroup: conform test to TAP format output
-Date: Thu, 13 Nov 2025 17:50:25 +0800
-Message-Id: <20251113095025.2811205-1-zhangguopeng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1763027413; c=relaxed/simple;
+	bh=vnpgERAXA13Nli6g2gHDQ3S7eRBRkQiSbM9EinmQVd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZmY0hZcYBoS6QcA52A2dDMI6xfdexdzgOXkqyl47MSqV++x1H2Mkc0MoLDSkJLYrYnDnm9odNNZZjjF+EJdVZXKxYw7/YTZk9N6VT9VP2IHA3oEc/sw/DemOh/6ev16yUGQ4FhQRQ7TPCJQdXTXsb9tUPMgV7IKi5Cc4KSk6W1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E89CC12FC;
+	Thu, 13 Nov 2025 01:49:57 -0800 (PST)
+Received: from [10.57.40.163] (unknown [10.57.40.163])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5B913F66E;
+	Thu, 13 Nov 2025 01:49:59 -0800 (PST)
+Message-ID: <953f1aaa-d8bd-4091-9bf6-9538ccdd3bfa@arm.com>
+Date: Thu, 13 Nov 2025 09:50:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/11] powercap: dtpm: Simplify with
+ of_machine_get_match_data()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Saravana Kannan <saravanak@google.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Maximilian Luz <luzmaximilian@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-pm@vger.kernel.org,
+ Chen-Yu Tsai <wens@kernel.org>, Yangtao Li <tiny.windzz@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Hans de Goede <hansg@kernel.org>
+References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
+ <20251112-b4-of-match-matchine-data-v2-9-d46b72003fd6@linaro.org>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20251112-b4-of-match-matchine-data-v2-9-d46b72003fd6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Conform the layout, informational and status messages to TAP.  No
-functional change is intended other than the layout of output messages.
 
-Signed-off-by: Guopeng Zhang <zhangguopeng@kylinos.cn>
----
- tools/testing/selftests/cgroup/test_core.c       | 7 ++++---
- tools/testing/selftests/cgroup/test_cpu.c        | 7 ++++---
- tools/testing/selftests/cgroup/test_cpuset.c     | 7 ++++---
- tools/testing/selftests/cgroup/test_freezer.c    | 7 ++++---
- tools/testing/selftests/cgroup/test_kill.c       | 7 ++++---
- tools/testing/selftests/cgroup/test_kmem.c       | 7 ++++---
- tools/testing/selftests/cgroup/test_memcontrol.c | 7 ++++---
- tools/testing/selftests/cgroup/test_zswap.c      | 7 ++++---
- 8 files changed, 32 insertions(+), 24 deletions(-)
 
-diff --git a/tools/testing/selftests/cgroup/test_core.c b/tools/testing/selftests/cgroup/test_core.c
-index 5e5b8c4b8c0e..102262555a59 100644
---- a/tools/testing/selftests/cgroup/test_core.c
-+++ b/tools/testing/selftests/cgroup/test_core.c
-@@ -923,8 +923,10 @@ struct corecg_test {
- int main(int argc, char *argv[])
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), &nsdelegate)) {
- 		if (setup_named_v1_root(root, sizeof(root), CG_NAMED_NAME))
- 			ksft_exit_skip("cgroup v2 isn't mounted and could not setup named v1 hierarchy\n");
-@@ -946,12 +948,11 @@ int main(int argc, char *argv[])
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
- 	cleanup_named_v1_root(root);
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
-index 7d77d3d43c8e..c83f05438d7c 100644
---- a/tools/testing/selftests/cgroup/test_cpu.c
-+++ b/tools/testing/selftests/cgroup/test_cpu.c
-@@ -796,8 +796,10 @@ struct cpucg_test {
- int main(int argc, char *argv[])
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 
-@@ -814,11 +816,10 @@ int main(int argc, char *argv[])
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_cpuset.c b/tools/testing/selftests/cgroup/test_cpuset.c
-index 8094091a5857..c5cf8b56ceb8 100644
---- a/tools/testing/selftests/cgroup/test_cpuset.c
-+++ b/tools/testing/selftests/cgroup/test_cpuset.c
-@@ -247,8 +247,10 @@ struct cpuset_test {
- int main(int argc, char *argv[])
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 
-@@ -265,11 +267,10 @@ int main(int argc, char *argv[])
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_freezer.c b/tools/testing/selftests/cgroup/test_freezer.c
-index 714c963aa3f5..97fae92c8387 100644
---- a/tools/testing/selftests/cgroup/test_freezer.c
-+++ b/tools/testing/selftests/cgroup/test_freezer.c
-@@ -1488,8 +1488,10 @@ struct cgfreezer_test {
- int main(int argc, char *argv[])
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-@@ -1501,11 +1503,10 @@ int main(int argc, char *argv[])
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_kill.c b/tools/testing/selftests/cgroup/test_kill.c
-index a4dd326ced79..c8c9d306925b 100644
---- a/tools/testing/selftests/cgroup/test_kill.c
-+++ b/tools/testing/selftests/cgroup/test_kill.c
-@@ -274,8 +274,10 @@ struct cgkill_test {
- int main(int argc, char *argv[])
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-@@ -287,11 +289,10 @@ int main(int argc, char *argv[])
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_kmem.c b/tools/testing/selftests/cgroup/test_kmem.c
-index 005a142f3492..ca38525484e3 100644
---- a/tools/testing/selftests/cgroup/test_kmem.c
-+++ b/tools/testing/selftests/cgroup/test_kmem.c
-@@ -421,8 +421,10 @@ struct kmem_test {
- int main(int argc, char **argv)
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 
-@@ -446,11 +448,10 @@ int main(int argc, char **argv)
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-index 2e9d78ab641c..4e1647568c5b 100644
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@ -1650,8 +1650,10 @@ struct memcg_test {
- int main(int argc, char **argv)
- {
- 	char root[PATH_MAX];
--	int i, proc_status, ret = EXIT_SUCCESS;
-+	int i, proc_status;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 
-@@ -1685,11 +1687,10 @@ int main(int argc, char **argv)
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
-diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
-index ab865d900791..64ebc3f3f203 100644
---- a/tools/testing/selftests/cgroup/test_zswap.c
-+++ b/tools/testing/selftests/cgroup/test_zswap.c
-@@ -597,8 +597,10 @@ static bool zswap_configured(void)
- int main(int argc, char **argv)
- {
- 	char root[PATH_MAX];
--	int i, ret = EXIT_SUCCESS;
-+	int i;
- 
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(tests));
- 	if (cg_find_unified_root(root, sizeof(root), NULL))
- 		ksft_exit_skip("cgroup v2 isn't mounted\n");
- 
-@@ -625,11 +627,10 @@ int main(int argc, char **argv)
- 			ksft_test_result_skip("%s\n", tests[i].name);
- 			break;
- 		default:
--			ret = EXIT_FAILURE;
- 			ksft_test_result_fail("%s\n", tests[i].name);
- 			break;
- 		}
- 	}
- 
--	return ret;
-+	ksft_finished();
- }
--- 
-2.25.1
+On 11/12/25 10:28, Krzysztof Kozlowski wrote:
+> Replace open-coded getting root OF node, matching against it and getting
+> the match data with new of_machine_get_match_data() helper.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Depends on the first OF patch.
+> ---
+>   drivers/powercap/dtpm.c | 16 +---------------
+>   1 file changed, 1 insertion(+), 15 deletions(-)
+> 
+> diff --git a/drivers/powercap/dtpm.c b/drivers/powercap/dtpm.c
+> index f390665743c4..129d55bc705c 100644
+> --- a/drivers/powercap/dtpm.c
+> +++ b/drivers/powercap/dtpm.c
+> @@ -548,9 +548,7 @@ static int dtpm_for_each_child(const struct dtpm_node *hierarchy,
+>    */
+>   int dtpm_create_hierarchy(struct of_device_id *dtpm_match_table)
+>   {
+> -	const struct of_device_id *match;
+>   	const struct dtpm_node *hierarchy;
+> -	struct device_node *np;
+>   	int i, ret;
+>   
+>   	mutex_lock(&dtpm_lock);
+> @@ -567,19 +565,7 @@ int dtpm_create_hierarchy(struct of_device_id *dtpm_match_table)
+>   		goto out_pct;
+>   	}
+>   
+> -	ret = -ENODEV;
+> -	np = of_find_node_by_path("/");
+> -	if (!np)
+> -		goto out_err;
+> -
+> -	match = of_match_node(dtpm_match_table, np);
+> -
+> -	of_node_put(np);
+> -
+> -	if (!match)
+> -		goto out_err;
+> -
+> -	hierarchy = match->data;
+> +	hierarchy = of_machine_get_match_data(dtpm_match_table);
+>   	if (!hierarchy) {
+>   		ret = -EFAULT;
+>   		goto out_err;
+> 
 
+I don't know if Daniel had a chance to look at it, but I can help him.
+
+The patch looks OK.
+
+The extra return error value which is removed doesn't harm the client of
+this function in other subsystem.
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
