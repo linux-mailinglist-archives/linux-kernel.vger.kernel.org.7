@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-899781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4E1C58D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:47:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B085C58E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B13D382E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:26:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF1A14FED73
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC50F3587D6;
-	Thu, 13 Nov 2025 16:14:36 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B26358D30;
+	Thu, 13 Nov 2025 16:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RFl8jFEW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AD43557F4;
-	Thu, 13 Nov 2025 16:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504D3559EE;
+	Thu, 13 Nov 2025 16:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050476; cv=none; b=DAqxpGklNPEk+OMGnKJ/q/Qw2zlaP10B9WQQ8v+aSCRS+9IVopAUcVkB2rI7uOA+3ewqTHYCUVSn2uk2KS3cZHV5bCeP+0XaGocPvMc0bhExFC7sQl9oBzj/RMqJT7TEkgeJJ9oog4g3QcgOZxoH1ia1GPA7FKFpbjw3EzQUmK4=
+	t=1763050536; cv=none; b=k49uOaDQuguJJ16p4eyKZcQsIcl81Z8cARv9fm0iGr9cnWnNWb0OwMsm8ajINWAKnU1F4ECdpIknx3u5zm6xNKT6gVOpupwotc8MB1FfzOtspU6boTvnUdaBhr7L6KWNWSJdtshJOzUTMz9dYXlHIIw9U83NmH1xLns8WdqoHaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050476; c=relaxed/simple;
-	bh=nCinza8nXx9Hmdirv7+F7P9s5xaniUgTMseT8oVoFrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AEgrUbEwESpyMmNSV343USrtO3Uv1P8NqVGSO+f3cznKf5IG8KVvMceCn5d4v8RGtmm3dAIxwvPw11jVyFECA7+zNeSlxREQZED3iT2pyM2+U0Gea+CAei7pGT2Mx7E444yPmq8lrwZ37AKVT0sQ3xGzhOyjQjY5kRF77U6fTqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id AC3755C2C8;
-	Thu, 13 Nov 2025 16:14:26 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 7590F2002B;
-	Thu, 13 Nov 2025 16:14:24 +0000 (UTC)
-Date: Thu, 13 Nov 2025 11:14:39 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com, Yongliang Gao
- <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
-Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
-Message-ID: <20251113111439.0f65c135@gandalf.local.home>
-In-Reply-To: <20251113160739.DUvh9i_o@linutronix.de>
-References: <20251113000252.1058144-1-leonylgao@gmail.com>
-	<20251113073420.yko6jYcI@linutronix.de>
-	<CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
-	<20251113141515.iZSIDK0T@linutronix.de>
-	<20251113100524.5c5f6bdc@gandalf.local.home>
-	<20251113151729.4Zky6d-t@linutronix.de>
-	<20251113102445.3e70c1ec@gandalf.local.home>
-	<20251113153508.9mYBNQlL@linutronix.de>
-	<20251113105106.4270f6ac@gandalf.local.home>
-	<20251113160739.DUvh9i_o@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1763050536; c=relaxed/simple;
+	bh=zch5XTqmqwnqBMfus+pEfLGmlWoIhGTvKQwot44PA08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DeGiGRC49uYhl6L55k0vemChERKBNlE72js+YYNiNaGYcWyx93T++ceSWlp/94M2lMU+20Znl7nwO4aJz3cjyUNvctexDQ8IS+CbGicVMl4TKxTGANlsTIpzvLp9W8f7G7/UHsceD82yMPenRNZLaJzz92ukEzmEPonWv1pO57E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RFl8jFEW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=d1qG2EOOPA2rU/81jZpVYjHAuGn8lV28KM97X2B3IAQ=; b=RFl8jFEWbUqFBQhFWlez5KnQL2
+	BmAq7H9ktc1BVFJUqNs9yl8UFNn+x9ocZRbgOCKlTe2GEA2bFfIKEWZAWzKGidxJ+BP4LYcc9OgHI
+	u1ktH/M4LvxP5YBftL/bqZveqHHCaiy4gOLYcnAH7p4nGK1WsVZ8kHrGX28+atAM0ZI8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vJZyl-00DtMx-HK; Thu, 13 Nov 2025 17:15:23 +0100
+Date: Thu, 13 Nov 2025 17:15:23 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+Cc: piergiorgio.beruto@gmail.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net: phy: phy-c45: add SQI and SQI+ support
+ for OATC14 10Base-T1S PHYs
+Message-ID: <f6acd8db-4512-4f5d-a8cc-0cc522573db5@lunn.ch>
+References: <20251113115206.140339-1-parthiban.veerasooran@microchip.com>
+ <20251113115206.140339-2-parthiban.veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: gyds8z71y513t87c115dmt3uai8zutis
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 7590F2002B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+0jg/VqpirRkY1Ose5yAU41JKcYZ9rCNM=
-X-HE-Tag: 1763050464-866752
-X-HE-Meta: U2FsdGVkX18cQi7g5vupGwmRZpL7/m9u9MdsYl3xRiAR3aliWAcYn7dAnBAgEXV+/9mTfWRzDZhz80bj7La32WdOT6VWJaTuGACow0YZ4RBxfh//8BZ2NPnIjm6dZfMjanUQHcvadrJXx4lk0PUUZcj1E5+ltePXEcdZ+DfOHspuRxIbWToaj44sEPk32EH5lo2+4aRbD7el/TiYGR49L32lz+QHFSWDrF5a8QyNNfJH5v1EbzINANZ6JUhz4+FWjVuL9dqG9KkGhZMQ6VaFTs3dP905PnflOtHkrbjzpT0SL0Yo58szLi5mmE/iKP+n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113115206.140339-2-parthiban.veerasooran@microchip.com>
 
-On Thu, 13 Nov 2025 17:07:39 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> +/**
+> + * genphy_c45_oatc14_get_sqi - Get Signal Quality Indicator (SQI) from an OATC14
+> +			       10Base-T1S PHY
+> + * @phydev: pointer to the PHY device structure
+> + *
+> + * Reads the SQI or SQI+ value from an OATC14-compatible 10Base-T1S PHY. If SQI+
+> + * capability is supported, the function returns the extended SQI+ value;
+> + * otherwise, it returns the basic SQI value.
+> + *
+> + * Return:
+> + * * Positive SQI/SQI+ value on success
+> + * * 0 if SQI update is not available
 
-> On 2025-11-13 10:51:06 [-0500], Steven Rostedt wrote:
-> > Yes, because they are only tested in sched_switch and fork and exit tracepoints.
-> > 
-> > Although, this was written when tracepoint callbacks were always called
-> > under preempt disable. Perhaps we need to change that call to:
-> > 
-> > 	tracepoint_synchronize_unregister()
-> > 
-> > Or add a preempt_disable() around the callers.  
-> 
-> Please don't. Please do a regular rcu_read_lock() ;)
-> I tried to get rid of the preempt_disable() around tracepoints so that
-> the attached BPF callbacks are not invoked with disabled preemption. I
-> haven't followed up here in a while but I think Paul's SRCU work goes
-> in the right direction.
+I thought 0 represented a very bad link? How is the call supposed to
+know the difference between a bad link, and no new value, try again
+later?
 
-I meant just reading the pid lists, which are usually called from
-tracepoints that are in preempt_disabled locations.
+I had a very quick look at the standard. All that update seems to
+indicate is that value has been updated since the last poll of that
+bit. There is no indication you cannot read the 'old' SQI value if
+there has not been an update. So i think you should always return an
+SQI value, if it is if 'old'. 
 
-Anyway, I can add rcu_read_lock() around the callers of it.
+> +	/* Read SQI capability */
+> +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, MDIO_OATC14_ADFCAP);
+> +	if (ret < 0)
+> +		return ret;
 
-> 
-> > I'm very nervous about using RCU here. It will add a lot more corner cases
-> > that needs to be accounted for. The complexity doesn't appear to be worth
-> > it. I'd rather just keep the raw spin locks than to convert it to RCU.
-> > 
-> > The seqcount makes sense to me. It's simple and keeps the same paradigm as
-> > what we have. What's wrong with using it?  
-> 
-> I'm fine with it once you explained under what conditions retry can
-> happen.  Thank you.
+I wounder if this should be cached somewhere. You don't expect it to
+change.
 
-Thanks,
-
--- Steve
+	Andrew
 
