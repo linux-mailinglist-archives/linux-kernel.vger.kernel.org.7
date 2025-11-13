@@ -1,259 +1,224 @@
-Return-Path: <linux-kernel+bounces-898969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AE1C566D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:00:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976B1C5675F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE913AE47A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:57:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A2C84ED625
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87792333421;
-	Thu, 13 Nov 2025 08:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C6D33F377;
+	Thu, 13 Nov 2025 08:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1Ad9Xsm"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="huOhOgCm"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB2F332EA5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E992933E376
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763024056; cv=none; b=JLVCjK/80c9MAhe0azJj4ulAZ1TlrWkUbb+OE9UZS3I3zgh8XtL5CC7hzM8WPpvqyayxr3Uqw2xZs6WmkCWslYgmy4ZnVCSukW4qe36Vfq8OIiSNl7g7OvGD3JTQ7VIMSvZtR00rfB6oOiI2t9gnVOIK1P0rtOxBdTe1meIm2RM=
+	t=1763024075; cv=none; b=Pf5RIcKiRfFzPQV9BEw6jg5jxQ9ejeDRMhxspe0sVdcsG5DKew2gYGrF8bZvw5OVDYsJuhgw0zcQhv2/o1kgO28XMVe/gFruaypAItyw+aMdHLEkRZvQDGvv/2t8HEYNsu0aRgmw+0EfBxZWHOmyGXpKW9sA40CPam6FT0AEQVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763024056; c=relaxed/simple;
-	bh=yId9UX3yYSZ80CLjUYhsLIP2TPDQAHVogZr335jJvvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDmelYrcQ/wae+Ti4P5QKelaYMMxsVcj8y4g3FSYGANIg4nn5TZGU59U7IFmAWTuq06FJ3VECYg1BnSs+oM/bs+N5MaY0QCgx835Pgy/RdOeinTgZS84xzq3+Z4KTCio02NYh/v+N5XckIQtCReIbyhifKX6OmfGNUxEuIB2qsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1Ad9Xsm; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 13 Nov 2025 10:54:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763024053; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=pfO0fvFlkW05B334+6YdEtQ+FnpAyfg/HtS//YYBJT0=;
-	b=B1Ad9XsmemOfRD3V13HxJdtw+ma9blpwtoeWwZmoEXKcu0rMDHTOxQpJznerUpg0vq2GuH
-	dXkiUfBlTKp12OI8BjJe/SVCm7ibsbwO79nETycydYiHWUV1PwKyqVs/zzmCXg+x7opan4
-	UdwBMAhv50FaEOonMqbGnLg4dJPvkZY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v4 09/16] regulator: bd71828: rename IC specific entities
-Message-ID: <f4a9fbe4bc0bda7e5ee7d46b85508f9084c16a84.1763022807.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1763024075; c=relaxed/simple;
+	bh=GKNA5sK22EBgrN4HZDB5/e/zDMa2o07L2CPe8NP9GFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KOqWIJM07wub5qS8kLRK6XvyUs5ZmtYXp3FhaP1GIcBdVyvnhv7vXNf9evdVV2dooUwl9paaZORJwxL6r0Zc/zM5c371uYtns8nNeTt2JF/OHN7wb20aJYgmYOQFwrOhAcRRCFg2wC5J1NmxfpzcCRhntO3M94xOvRg2GsOHhjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=huOhOgCm; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-29586626fbeso5547005ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:54:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1763024073; x=1763628873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+JRL9kiPv0pDFSMaNJ0bpAVD07o+mb0mBj6g1Zy7bM=;
+        b=huOhOgCmd/VZKOhV0smGsx/KW2l1QJVhgqa7089gyI7rbVsGGAENYnLKbKNkGPvaWd
+         lupHlTbje5y2HerxqCPMmxHqA3quM3OuYr3gOf/n5vIA2ubhddj4AjF6mY7Mgzc3oTL0
+         Am2qmREs+v2HtIS4O5dNDs9YDFss2TZ1dhYO8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763024073; x=1763628873;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7+JRL9kiPv0pDFSMaNJ0bpAVD07o+mb0mBj6g1Zy7bM=;
+        b=OjoK82erK+ot8diGYdBBp6LncrjrdlC6QGNYifWfbOT8CAVkacY52z9/XgAVSA5RFo
+         fMtePW1fd8p/NfdFyhf7vGMptWPqS3Yn9mnVfXxsG1mdmWhmbbIQDY0MwlIoISMcn3Mp
+         M6z+NlTDW4u1qvM5SIWl3nGWu4FhTEta3o/K5s0Pq7fXbvF8Lvi+X95uHZkRmv2yujNY
+         h04eNqyY2M6coMKaIF4hUjv4DCzTBDhFeHgE7SKrL0gbUBh6Cy6l/ic9kBT6qJoDsOPM
+         AVQgb4xKcKhD5bFu4C06Vvxe023z0d7doQoz3Dcr2e3/4fLEpT0776sT63KKfc31cz4f
+         MINQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhwrI7XIpIqfA1hlbenMEuZoQz3KwaSyFD2E2N9Ge1+F2xC/b/7qdCGkRQ033jZZ5+FZyP6/cR+EfTuFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlK3p+P7elDoE7FNBGG8nOEXrmmHmj4N7cnmeJ4dnFg8iufF0i
+	8FoHGWO5CbVTR57naSzKYIG1cV8rAvCbRQN1u5Ofd/S8tOJAhzLbyNVpgmFFFosqZA==
+X-Gm-Gg: ASbGncsDF9GXXbBpCTJqtWyikOu7xjetCgmO1r0ta1v/qxlPB8w850FTIEy44KnYy8y
+	Ej0ajuJGKtKFpL0v8uVZoReqCr/3fifsVM7zJDQlP2l+m0BLxsOxJpOjQ3Wyb3JfY/Zc3rj0L7a
+	PVPWMOC1I+txDlyqZ+6oKulX28Fn6cPZk6wxIJlb4Z3s13nu+e0aYtt/R0TSw/zzOtk2zmSrZQC
+	Ci4qni+KO26dCZRy2VcZpFO49/tip3BJZ8HO1tCvh5KXPUOnmduw7sN9qubhNS2E0LL/5sfzoxB
+	xdKedf9eZDXQdtgmB0dbSdeueXa7uZcHUxqb4NhWdqjnuuNbVlIVfZChLVXoOu1sb3LghNx2QQR
+	gB/G2dknkR/zqH1yIo2YrQtMklPjgb6crQfm6EXAKSJeHI1jS9/qGmZhF0EqI7jkiO5E2PSJ6Y5
+	/EqtBdSmW7lcrSK/s1f216VnIldd4=
+X-Google-Smtp-Source: AGHT+IGGZxYQr+LLoy8bEdHUKGbCLuJQ0gfi58q4jvR2bx074SYFubzhdfhY5JKnP3Pyt5bf5k/gtg==
+X-Received: by 2002:a17:902:dac3:b0:27e:ec72:f67 with SMTP id d9443c01a7336-2984ed27ec5mr76936745ad.6.1763024073273;
+        Thu, 13 Nov 2025 00:54:33 -0800 (PST)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:6d96:d8c6:55e6:2377])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2346f3sm17486465ad.18.2025.11.13.00.54.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 00:54:32 -0800 (PST)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Yuwen Chen <ywen.chen@foxmail.com>,
+	Richard Chang <richardycc@google.com>
+Cc: Brian Geffon <bgeffon@google.com>,
+	Fengyu Lian <licayy@outlook.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-block@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv2 4/4] zram: drop wb_limit_lock
+Date: Thu, 13 Nov 2025 17:54:02 +0900
+Message-ID: <20251113085402.1811522-5-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+In-Reply-To: <20251113085402.1811522-1-senozhatsky@chromium.org>
+References: <20251113085402.1811522-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="McRCVugZrl/LxzQg"
-Content-Disposition: inline
-In-Reply-To: <cover.1763022807.git.mazziesaccount@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+We don't need wb_limit_lock.  Writeback limit setters take an
+exclusive write zram init_lock, while wb_limit modifications
+happen only from a single task and under zram read init_lock.
+No concurrent wb_limit modifications are possible (we permit
+only one post-processing task at a time).  Add lockdep
+assertions to wb_limit mutators.
 
---McRCVugZrl/LxzQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While at it, fixup coding styles.
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
-
-The new ROHM BD72720 PMIC has similarities with the BD71828. It makes
-sense to support the regulator control for both PMICs using the same
-driver. It is often more clear to have the IC specific functions and
-globals named starting with the chip-name. So, as a preparatory step,
-prefix the BD71828 specific functions and globals with the bd71828.
-
-It would be tempting to try also removing the chip ID from those
-functions which will be common for both PMICs. I have bad experiences on
-this as it tends to lead to problems when yet another IC is being
-supported with the same driver, and we will have some functions used for
-all, some for two of the three, and some for just one. At this point
-I used to start inventing wildcards like BD718XX or BD7272X. This
-approach is pretty much always failing as we tend to eventually have
-something like BD73900 - where all the wildcard stuff will break down.
-
-So, my approach these days is to:
- - keep the original chip-id prefix for anything that had it already
-   (and avoid the churn).
- - use same prefix for all things that are used by multiple ICs -
-   typically the chip-ID of the first chip. This typically matches also
-   the driver and file names.
- - use specific chip-ID as a prefix for anything which is specific to
-   just one chip.
-
-As a preparatory step to adding the BD72720, add bd71828 prefix to all
-commonly usable functions and globals.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
-Revision history:
- RFCv1 =3D>:
- - No changes
-No functional changes intended.
----
- drivers/regulator/bd71828-regulator.c | 32 +++++++++++++--------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/block/zram/zram_drv.c | 22 +++++-----------------
+ drivers/block/zram/zram_drv.h |  1 -
+ 2 files changed, 5 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/regulator/bd71828-regulator.c b/drivers/regulator/bd71=
-828-regulator.c
-index dd871ffe979c..3d18dbfdb84e 100644
---- a/drivers/regulator/bd71828-regulator.c
-+++ b/drivers/regulator/bd71828-regulator.c
-@@ -28,7 +28,7 @@ struct bd71828_regulator_data {
- 	int reg_init_amnt;
- };
-=20
--static const struct reg_init buck1_inits[] =3D {
-+static const struct reg_init bd71828_buck1_inits[] =3D {
- 	/*
- 	 * DVS Buck voltages can be changed by register values or via GPIO.
- 	 * Use register accesses by default.
-@@ -40,7 +40,7 @@ static const struct reg_init buck1_inits[] =3D {
- 	},
- };
-=20
--static const struct reg_init buck2_inits[] =3D {
-+static const struct reg_init bd71828_buck2_inits[] =3D {
- 	{
- 		.reg =3D BD71828_REG_PS_CTRL_1,
- 		.mask =3D BD71828_MASK_DVS_BUCK2_CTRL,
-@@ -48,7 +48,7 @@ static const struct reg_init buck2_inits[] =3D {
- 	},
- };
-=20
--static const struct reg_init buck6_inits[] =3D {
-+static const struct reg_init bd71828_buck6_inits[] =3D {
- 	{
- 		.reg =3D BD71828_REG_PS_CTRL_1,
- 		.mask =3D BD71828_MASK_DVS_BUCK6_CTRL,
-@@ -56,7 +56,7 @@ static const struct reg_init buck6_inits[] =3D {
- 	},
- };
-=20
--static const struct reg_init buck7_inits[] =3D {
-+static const struct reg_init bd71828_buck7_inits[] =3D {
- 	{
- 		.reg =3D BD71828_REG_PS_CTRL_1,
- 		.mask =3D BD71828_MASK_DVS_BUCK7_CTRL,
-@@ -102,9 +102,9 @@ static int buck_set_hw_dvs_levels(struct device_node *n=
-p,
- 	return rohm_regulator_set_dvs_levels(&data->dvs, np, desc, cfg->regmap);
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 6312b0437618..28afb010307d 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -512,9 +512,7 @@ static ssize_t writeback_limit_enable_store(struct device *dev,
+ 		return ret;
+ 
+ 	down_write(&zram->init_lock);
+-	spin_lock(&zram->wb_limit_lock);
+ 	zram->wb_limit_enable = val;
+-	spin_unlock(&zram->wb_limit_lock);
+ 	up_write(&zram->init_lock);
+ 	ret = len;
+ 
+@@ -529,9 +527,7 @@ static ssize_t writeback_limit_enable_show(struct device *dev,
+ 	struct zram *zram = dev_to_zram(dev);
+ 
+ 	down_read(&zram->init_lock);
+-	spin_lock(&zram->wb_limit_lock);
+ 	val = zram->wb_limit_enable;
+-	spin_unlock(&zram->wb_limit_lock);
+ 	up_read(&zram->init_lock);
+ 
+ 	return sysfs_emit(buf, "%d\n", val);
+@@ -549,9 +545,7 @@ static ssize_t writeback_limit_store(struct device *dev,
+ 		return ret;
+ 
+ 	down_write(&zram->init_lock);
+-	spin_lock(&zram->wb_limit_lock);
+ 	zram->bd_wb_limit = val;
+-	spin_unlock(&zram->wb_limit_lock);
+ 	up_write(&zram->init_lock);
+ 	ret = len;
+ 
+@@ -559,15 +553,13 @@ static ssize_t writeback_limit_store(struct device *dev,
  }
-=20
--static int ldo6_parse_dt(struct device_node *np,
--			 const struct regulator_desc *desc,
--			 struct regulator_config *cfg)
-+static int bd71828_ldo6_parse_dt(struct device_node *np,
-+				 const struct regulator_desc *desc,
-+				 struct regulator_config *cfg)
+ 
+ static ssize_t writeback_limit_show(struct device *dev,
+-		struct device_attribute *attr, char *buf)
++				    struct device_attribute *attr, char *buf)
  {
- 	int ret, i;
- 	uint32_t uv =3D 0;
-@@ -212,8 +212,8 @@ static const struct bd71828_regulator_data bd71828_rdat=
-a[] =3D {
- 			 */
- 			.lpsr_on_mask =3D BD71828_MASK_LPSR_EN,
- 		},
--		.reg_inits =3D buck1_inits,
--		.reg_init_amnt =3D ARRAY_SIZE(buck1_inits),
-+		.reg_inits =3D bd71828_buck1_inits,
-+		.reg_init_amnt =3D ARRAY_SIZE(bd71828_buck1_inits),
- 	},
- 	{
- 		.desc =3D {
-@@ -253,8 +253,8 @@ static const struct bd71828_regulator_data bd71828_rdat=
-a[] =3D {
- 			.lpsr_reg =3D BD71828_REG_BUCK2_SUSP_VOLT,
- 			.lpsr_mask =3D BD71828_MASK_BUCK1267_VOLT,
- 		},
--		.reg_inits =3D buck2_inits,
--		.reg_init_amnt =3D ARRAY_SIZE(buck2_inits),
-+		.reg_inits =3D bd71828_buck2_inits,
-+		.reg_init_amnt =3D ARRAY_SIZE(bd71828_buck2_inits),
- 	},
- 	{
- 		.desc =3D {
-@@ -399,8 +399,8 @@ static const struct bd71828_regulator_data bd71828_rdat=
-a[] =3D {
- 			.lpsr_reg =3D BD71828_REG_BUCK6_SUSP_VOLT,
- 			.lpsr_mask =3D BD71828_MASK_BUCK1267_VOLT,
- 		},
--		.reg_inits =3D buck6_inits,
--		.reg_init_amnt =3D ARRAY_SIZE(buck6_inits),
-+		.reg_inits =3D bd71828_buck6_inits,
-+		.reg_init_amnt =3D ARRAY_SIZE(bd71828_buck6_inits),
- 	},
- 	{
- 		.desc =3D {
-@@ -440,8 +440,8 @@ static const struct bd71828_regulator_data bd71828_rdat=
-a[] =3D {
- 			.lpsr_reg =3D BD71828_REG_BUCK7_SUSP_VOLT,
- 			.lpsr_mask =3D BD71828_MASK_BUCK1267_VOLT,
- 		},
--		.reg_inits =3D buck7_inits,
--		.reg_init_amnt =3D ARRAY_SIZE(buck7_inits),
-+		.reg_inits =3D bd71828_buck7_inits,
-+		.reg_init_amnt =3D ARRAY_SIZE(bd71828_buck7_inits),
- 	},
- 	{
- 		.desc =3D {
-@@ -633,7 +633,7 @@ static const struct bd71828_regulator_data bd71828_rdat=
-a[] =3D {
- 			 * LDO6 only supports enable/disable for all states.
- 			 * Voltage for LDO6 is fixed.
- 			 */
--			.of_parse_cb =3D ldo6_parse_dt,
-+			.of_parse_cb =3D bd71828_ldo6_parse_dt,
- 		},
- 	}, {
- 		.desc =3D {
---=20
-2.51.1
+ 	u64 val;
+ 	struct zram *zram = dev_to_zram(dev);
+ 
+ 	down_read(&zram->init_lock);
+-	spin_lock(&zram->wb_limit_lock);
+ 	val = zram->bd_wb_limit;
+-	spin_unlock(&zram->wb_limit_lock);
+ 	up_read(&zram->init_lock);
+ 
+ 	return sysfs_emit(buf, "%llu\n", val);
+@@ -866,18 +858,18 @@ static struct zram_wb_ctl *init_wb_ctl(struct zram *zram)
+ 
+ static void zram_account_writeback_rollback(struct zram *zram)
+ {
+-	spin_lock(&zram->wb_limit_lock);
++	lockdep_assert_held_read(&zram->init_lock);
++
+ 	if (zram->wb_limit_enable)
+ 		zram->bd_wb_limit +=  1UL << (PAGE_SHIFT - 12);
+-	spin_unlock(&zram->wb_limit_lock);
+ }
+ 
+ static void zram_account_writeback_submit(struct zram *zram)
+ {
+-	spin_lock(&zram->wb_limit_lock);
++	lockdep_assert_held_read(&zram->init_lock);
++
+ 	if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
+ 		zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
+-	spin_unlock(&zram->wb_limit_lock);
+ }
+ 
+ static int zram_writeback_complete(struct zram *zram, struct zram_wb_req *req)
+@@ -991,13 +983,10 @@ static int zram_writeback_slots(struct zram *zram,
+ 
+ 	blk_start_plug(&wb_ctl->plug);
+ 	while ((pps = select_pp_slot(ctl))) {
+-		spin_lock(&zram->wb_limit_lock);
+ 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
+-			spin_unlock(&zram->wb_limit_lock);
+ 			ret = -EIO;
+ 			break;
+ 		}
+-		spin_unlock(&zram->wb_limit_lock);
+ 
+ 		while (!req) {
+ 			req = select_idle_req(wb_ctl);
+@@ -2944,7 +2933,6 @@ static int zram_add(void)
+ 	init_rwsem(&zram->init_lock);
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ 	zram->wb_batch_size = 1;
+-	spin_lock_init(&zram->wb_limit_lock);
+ #endif
+ 
+ 	/* gendisk structure */
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index 1a647f42c1a4..c6d94501376c 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -127,7 +127,6 @@ struct zram {
+ 	bool claim; /* Protected by disk->open_mutex */
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ 	struct file *backing_dev;
+-	spinlock_t wb_limit_lock;
+ 	bool wb_limit_enable;
+ 	u32 wb_batch_size;
+ 	u64 bd_wb_limit;
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
-
---McRCVugZrl/LxzQg
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkVnKkACgkQeFA3/03a
-ocWapQgAmV3PHHH9Yh2k2PqFueBdt77UE2BR4zF+GgBHl/R1V4O86/burrAfveJ5
-ncCDsBHLQ8JzVLaAUA4DnZha3tK78t3DqSx2uKk1sDuDieeAnKMkxWHK91HiZVyr
-7yfCtyj41uEXq50WDUQaBTg9492AwlKsi7cVNvvY+5ql+7RiHW3sSH6hTna+vkGz
-j+B+HSSN87XrO6+z1h13vihCUB4kYcZrYDsF3AgrWdGuyYnvaYGuwtgkmj3Dxkfv
-sfd6e29ADdrbr4cZwqQFVS3P6tMpSsu0oF0aE9lX2oFAUJL+b6/rOATr/yTkNI/+
-sO8rnnCP71775CIU5Jm79sVW12egwA==
-=pJJV
------END PGP SIGNATURE-----
-
---McRCVugZrl/LxzQg--
 
