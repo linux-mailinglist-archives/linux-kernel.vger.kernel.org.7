@@ -1,381 +1,197 @@
-Return-Path: <linux-kernel+bounces-898659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141E2C55AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:44:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B765AC55AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:44:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73B09347517
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:43:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BC004E234E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE7A306B0C;
-	Thu, 13 Nov 2025 04:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EC13009DE;
+	Thu, 13 Nov 2025 04:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H0Lratlx"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013066.outbound.protection.outlook.com [40.107.201.66])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="RMAg7p5L"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010005.outbound.protection.outlook.com [52.101.46.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1681917F0;
-	Thu, 13 Nov 2025 04:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1F98248C;
+	Thu, 13 Nov 2025 04:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.5
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763008947; cv=fail; b=ntDGVBfkTf24twz9IoesiY66/q7PYq/BgufX5/PEXPxv9rA3ktAvIFsbbF/96o7zPwrdbuibgSLVDXY/62z/4EQgAdcgajgixgCt99+Y5Yl2AW5o5TzG216qGPxVfVXYKYPHifoQVzTvxhtbBdxMedJdBBGfFotLn50seriWlNI=
+	t=1763009054; cv=fail; b=AS0Lw+33uhHI+NDeBiKdGr7j76okPzjEes0CoFJ1bNKNShucXpxBnPNG0EN3YniLubhbatZkKuzZehUoFIDhhNyLPEbZoYi70fwDq9rnI2dCTgf03IPEHMT1Swwm2Y2IjULLB2cTn5YIgXAeEiLaiyZYpz0TX8E1JISXL1YZqT0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763008947; c=relaxed/simple;
-	bh=KT6rLlTgqdR2/bAy9QXmO7kAZpZUF3KFSUkxdLntYZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JfT4SXfMNX7DW2YZbb/kzrMWBHb90cCwwaVdRgD7X/GG8VfPe2wM10pl43VoQ7nD0NK7ZZDAytuwb6ZQW3cu7rlXkrahFi5vx9Isa7ssM3Z7zgx+eZoo2xeuE4n3bWuALwfn9LDNQHI9pGe1cy4NrtXHG0yhgGxjUVW8xqwa6N0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H0Lratlx; arc=fail smtp.client-ip=40.107.201.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1763009054; c=relaxed/simple;
+	bh=Ne1OA2n9zG9f7ZjCnuA/Djz7e2NF4xDskDgPNhDbWTk=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=hLuT2A0xEN0EDmyZibmDdZUC8cupLrdD+kECp1vk2qpyALbVf5oDhKr+MVcQGjVfb+wWgOXZVw+Lsk1ALnISqjPEdH7vtBBhmFaOhDkZpozJW1G1mjXg5VP2Ek5sYNzfBtnzCfnAAccJ/39c+tOmgvF7sKnIrll7T1gXuyriAZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=RMAg7p5L; arc=fail smtp.client-ip=52.101.46.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JtxuzUczhql9P+89O/L+VMDyX6RiwF+7rPb3bLSKAra9IOm5wHrBcD1dJ8c32PQtuji8xptSnky1TiMIJIWKFR3RTx0mtY9U+ZsDMHa0JnPhDUyjvKJTQM+wIMFejF6FJlPdtzoIevhQamW9yrFOx1I54BCGCK8rvwfOHv/3fQj2uKR4jAZopYaHdex1NYOGOC09otH7YPvD0TKSWaoqXVZ/uQcnSrzbnT2thEFmI3ZxBXMKbeEfVRORas/RrSdnCklQaTxLOjvfi/4Vw6kxQU1e8cKImHA8scwoU+9X1YTndxCize+TlSZuDCFXxXu4Tc1QTCMBlwPQj71VG1tuqQ==
+ b=xQlTdAAPHd43GKy2XGD6SnQRtvEKSL5vWYTt+8JdIpvUXw91PiKKfDlA6Cjh1P6JLMiUl10py7C2uDJhvQ2VDGmIdRg5ZlVhW7mnZSqrxgrmrX3UWtR9/ILisrTRn3dHvG24+7GZw66WenBaJD3DfcxTrkKg8t64f4bjpbxvmtRNJUX+d7dgPdDtjuctOOVu2gyk/w5s250cJ76nnWsz2xQ6C2CXrXY+0L2zLBwqwLKAeJPLR9d1fW8XQno8znDhssxxPL3GduESAWFNqhOHg78xGBKqzhGLM4UF9Rs81ksctXP146OBBJT2vEQpooOW4FFhdajxiZH8e6T0LTww/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DvdXHGVcVeT81IhciuZaTupXZ5htZ5tabiU0wTXytpM=;
- b=IvJDLk111HkQ66UvFr9uLbqs3qdTOg84S8jRPS9MUBtlkgQR8JMdE5as852CnzBR+/e0lWPIy4VvsXaFmEb0g+W5gytdwXu0/2hFZLpDll+Z1uO6DDd8vmOmrzDKtHXM246UBXHJCVa5Q1L1Bub+XJ7Q59JGapPO0FgORnh3qsrN7BPlk9Ob3wEmUwK8v/7TOqEzAWDPWjylJbpTr2MTywAF/0W8/er397YNh7d29D1uBEGJpeLRr9K8w8MGje+6GQuaQ88MJ9LMxDgOrt01PugraBe26M7P8409opQICKtgG5cvxDM8Jkg0OMTrQGHDZVHFoXeGslmB0TV6kapWcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=icB34owfvtAeMzHpyUr6T/M5PJBdJluliT1dC/nkv0I=;
+ b=UjTRMfywgVwdO2nE24olHZGKaBBbKkFCxBFMqn+Mk9pIM8938P3IxUV0fDjTcxYowsflaUvgUfUncKomwivPLdr1hxfI6tE64cc6IX0hELKCsU/M7597IBvkJ+HGzsdnRWRXKs73V4C1lIy3JjsA7iH37F2o8t0HGoDBZb7ECXQqUvxXuINCIrVnYWoakS4+DUo/FaAWxBi5TJNXBsVI7WfNoIwJ8it9vCl5n3O7W4bvkTHEHnC/VCVX+pRJoWPF7uBBJnj7WgeIIAtzJewzzYpVldKmXr1XRpVBdeGDcXI4+kf/fnj+U6Ab043sMlji3+9eZ6kPCDd0SC2J22Ygaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DvdXHGVcVeT81IhciuZaTupXZ5htZ5tabiU0wTXytpM=;
- b=H0LratlxFDEkZa99RY1Ja4n7t3zycQV90mFw5aKjPTIuI3aP7gQEUbGoPaj646iJBc3S+q5+m1tY6ZopD8xtay4uSSKv3ipwHrvyTCN6bghtfRpxHf/518soFvrImg5jSNVYDMG8ZsiS6a3E4ymT/NwqRVXwg5HVYoVdxe2+A6M=
-Received: from SN7PR04CA0007.namprd04.prod.outlook.com (2603:10b6:806:f2::12)
- by SJ0PR12MB5635.namprd12.prod.outlook.com (2603:10b6:a03:42a::9) with
+ bh=icB34owfvtAeMzHpyUr6T/M5PJBdJluliT1dC/nkv0I=;
+ b=RMAg7p5LGxp+4ESL6px+q/u6CmBhfpZwPSsHQhZeyBv0HpBe2UVyLMg97uFas5imA9X+rADIGQRvsNtSFXuPupzhciw8vIGKCB1zzpLB1/gd8zH6qPfucPXLml/9Wd3EVgs0K3cr+/Dz8J2feUMRfYr/f7sP68VdxXCKuHlC1CAzWLVc2aEIGZhqDcyP4fAeXwFpTNfza8luW2cTLQK/KkIcxMOjryY96jRALOMwHic7mnR/WqyV0/fo1xo95WAulE0EdzBEoxVz6i8cPi0sChwEQLVpG+8wF3SCfhHwf+BzNgXPRSLgB0pALk72UlY+sZ95WSR8Rgynza7NqW7oeA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by PH7PR03MB6862.namprd03.prod.outlook.com (2603:10b6:510:15f::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 04:42:20 +0000
-Received: from SA2PEPF00003F66.namprd04.prod.outlook.com
- (2603:10b6:806:f2:cafe::79) by SN7PR04CA0007.outlook.office365.com
- (2603:10b6:806:f2::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
- 13 Nov 2025 04:42:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SA2PEPF00003F66.mail.protection.outlook.com (10.167.248.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 04:42:19 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 12 Nov
- 2025 20:42:18 -0800
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 12 Nov
- 2025 20:42:18 -0800
-Received: from [10.136.45.200] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 12 Nov 2025 20:42:15 -0800
-Message-ID: <079d48d9-a663-49d5-9bc6-f6518eb54810@amd.com>
-Date: Thu, 13 Nov 2025 10:12:13 +0530
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 04:44:08 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 04:44:07 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mahesh Rao <mahesh.rao@altera.com>,
+	Ho Yin <adrian.ho.yin.ng@altera.com>,
+	Niravkumar L Rabara <nirav.rabara@altera.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Subject: [PATCH v2 0/2] Enable FPGA Manager support for Agilex5
+Date: Thu, 13 Nov 2025 12:43:54 +0800
+Message-ID: <cover.1763008269.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.43.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR02CA0033.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::46) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] sched/kvm: Semantics-aware vCPU scheduling for
- oversubscribed KVM
-To: Wanpeng Li <kernellwp@gmail.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Vincent Guittot <vincent.guittot@linaro.org>, "Juri
- Lelli" <juri.lelli@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, Wanpeng Li <wanpengli@tencent.com>
-References: <20251110033232.12538-1-kernellwp@gmail.com>
- <7bc4b0b7-42ea-42fc-ae96-3084f44bdc81@amd.com>
- <CANRm+CxZfFVk=dX3Koi_RUH6ppr_zc6fs3HHPaYkRGwV7h9L7w@mail.gmail.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CANRm+CxZfFVk=dX3Koi_RUH6ppr_zc6fs3HHPaYkRGwV7h9L7w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F66:EE_|SJ0PR12MB5635:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8f02354-a6a4-4afe-f99f-08de226f07a1
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH7PR03MB6862:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbdabb8a-f855-4045-9231-08de226f4588
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|30052699003|82310400026|13003099007;
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TkovenJlUXZpVHQvNUdSVEE0ZnZGcWZRL1dBZWdWWDFnNDdRcUJtOGIzMkg4?=
- =?utf-8?B?NllLRmZ2NEpuczZJYkhDV0QzcUNUWDMrVk84N084Q0RzbWdrVGl2TU93eWMz?=
- =?utf-8?B?b2NXZEdWaVp3b3BEZVM3M2JzcXZwRjY1c29zTWllUWcwTjY3cWtvcWx0L3ph?=
- =?utf-8?B?NjhLTmNxWXdia21iSlp1TzNWYjdKVVBNODJuakNOUEVrUmtmT1lHRUdvOFFt?=
- =?utf-8?B?Rk8yaHVTcklQRVdReFRTbHQ3VXhnNE1GdGI1eituWVkzRDlscWxsVDY4K2k3?=
- =?utf-8?B?STFUNUpGOVhqMVh4RjRpelpVeWVBVFgwMjVJM2FrWWM2cjRTQmNRaG5ucGQv?=
- =?utf-8?B?WHlLTHQyUEZzNXlXYmVRbWlneUJTSjhjN1N4UVVrLytGU3loVXhJVDY5QVhv?=
- =?utf-8?B?U2J1TEdYU1laWGs5TzdxMHpsTURpNTNycWVEaHlsdFRHK3FLUktLVVFoVUUx?=
- =?utf-8?B?QndXQlJLUEtDSkRLWG9JRWREdjlyNEMxd2pQK3JyaS8yT3BITk1nOEtyc3Fk?=
- =?utf-8?B?TVNhekFqYi9RaG8xbWtVWndxMG5yNEhFcUpybFBtaTY0SlA2Mmw1VXRVdDF0?=
- =?utf-8?B?eVlIdjg0bDAwWUR3R3A5WUZpOHFTeDhKRFFXcllrUjBZSFRqL3ZEdW1XM3lp?=
- =?utf-8?B?TjlIem81U1FhKzkrU0h0ZU5FRnBXSDd3UTRkOWlXV0RyUUhmMG9sc0FLT0xx?=
- =?utf-8?B?VXpuRVQzU001cTgzdzlkSXprNTZvWHo3Y2svMmFoSnMxa2liUDZKTVpSY0Q0?=
- =?utf-8?B?U1lzM2R2ejlQa2dhUTI3eGpPYlRZVnNzMTI4N1phdmZIRm0wYU9lQkdrNjJH?=
- =?utf-8?B?VlFuemYrMk9RNUQ3YjdOVXVqOElEOTBERDdCZ3hhaTNDSk5HaEZWUUJZMTgx?=
- =?utf-8?B?NGhiaGErcGEzdGpLbEpnTjU3dHZwYUVab2tzT21pYkUxUWp5SFc2dHBYYWlw?=
- =?utf-8?B?MDBESm1EYWZCc2kwRmJUaGxsMktldEljdXFqVnhlcm05NTRoSUFIOE43Vnpu?=
- =?utf-8?B?UzNnOUNMSTJWeVg0anR6NzZzOGYvN0x3bXU2YWxqTDVnRkFQRHFrTzlrcW1k?=
- =?utf-8?B?ZUpHUEFaa2VEUWtLRVVIakFnc0RmK2FGS3EvbVd6NEtSeGR1RUlJK2h2dkxk?=
- =?utf-8?B?ZjZkL1g5SFJ3N0lhUUFkVkVualFZNzNLMUsyUUxIaWNnekVTNVhnVFZubkhU?=
- =?utf-8?B?SUhwSEZsNEVBWWdsdjZyUkVZb2xvTzE1VXp6RHFJdzZLOEROZGpHRWh0dEtn?=
- =?utf-8?B?T2dqVTlRZXU5S05pRDAzMFhFRW5veXVkcm9sN2RSUno2TTg0UzMrY282K0tt?=
- =?utf-8?B?UzVIUy8yVEs0c1hqb2xBZW9YcGNVWTRRNUpQRWdlRWlVZGxmeEd1VmJQOFYw?=
- =?utf-8?B?bTZDZ0o1dnYzNlZzelVkVUhTeWMyT1FrZXBPa2FVWkJ0VklSaDQvZDNrRjNF?=
- =?utf-8?B?MWRGRlpJN1RHRjROc3JBTndPcGtWb2JmOHFXRG9FbGt1bW5HWlRJdDlhTUlK?=
- =?utf-8?B?UXRpU2R4MEhPU1hRSDRWU0dMT2tzbWhJSkJ2MWkvUzNsM1V1OVBrR3g5UU5v?=
- =?utf-8?B?UGdpYzM2LzZjVlBBaWhlWEpELytuU2ZFV2M0MEtzNjZ4UkVacFp3TGJPU1h6?=
- =?utf-8?B?bHlpL2doNEowa3hMZUV0UC9rQWoyNkx2SW96YUJxc3JGRHNzRmtEejFaSzFV?=
- =?utf-8?B?Tm4wVnlGVWxUcXpObWkvWDQ4TmlOcDV4QnhOMmd4cnRPcjVDN3hjV1lNYTA2?=
- =?utf-8?B?NzVGR3NaMnFBaXp3WS9ZUHhTcGxnQ2tsdjYvb1Y3dHdlVDVJbVJXSE95dnY3?=
- =?utf-8?B?SjgrMjNJK0I1OHZNWDg5czg1VDRhTUVTMW0rWTVYVk1iYk5ZS2tqcDg1dzVW?=
- =?utf-8?B?bE5XM2NIeUZOZzBwSHBvdk8rbXlyRWJhRWhrMDI0SHhTOVh6eExFbWFUZjk0?=
- =?utf-8?B?NUlNL0s0emRuN1AvUUdPbTVVcEZZTE45aGVFWElpSTUrR2NPN3hHSXZHRTBi?=
- =?utf-8?B?ZFdSbTVtV2gvRE5kVDVzSHBaS3paN1RWWU5HVDRWZEMzZ0JSMjhFVExUTUo3?=
- =?utf-8?B?OGozdHA4VG93UUtkVlp5eUZtbm5IeUFxNjFiNTd3MW1NdmphYVRiZTF0QWll?=
- =?utf-8?Q?qAw4=3D?=
+	=?us-ascii?Q?6brLFUCi3ocNBjzNYm16qyNO4tReqwyxOcDVfU1CEaFhDEphihOB9rWlDEUb?=
+ =?us-ascii?Q?QN+eF/dWwsT29fVbI/j1RGEAdRGL1suHvw5UbyofOkTLU5hjXgHO7BnY2TTb?=
+ =?us-ascii?Q?ldfrgVqn3s2lH0hrq1AINBaYqK/eUEZ+mnQaYpm0iVeG37plwqtMBGjNy8mK?=
+ =?us-ascii?Q?2ybcGHpBtbYJpJQD75NkDxDJbWOCjg1JBT1TSltCPqTMZlesvj9SnaWZKYx4?=
+ =?us-ascii?Q?+Kvfemc38D25GOtTJlSLNgxmyEcnxCnrmxYRlDKZBDFWb3YBNbMysRecKqXB?=
+ =?us-ascii?Q?yc4CQjVfW2zeFdjN6bg/s6h3rm3Cnx3/HYliLEBe6Mkqx9NBU+3BDnaIdjzK?=
+ =?us-ascii?Q?vOhdSxAWtTjZYL0tJ2T61tHcg00C8ZeZCZvbXgvqZkJlhP0CaA66vPtfjSgx?=
+ =?us-ascii?Q?BK02IQ5RuTriYVoOufAxCs22OiD/gv1JIfXgIY0PU33+8woj74/q09qPV22u?=
+ =?us-ascii?Q?FYZZGtWSGAKZQF+dxPH4cLis2N+HpwrsJXq02/L/x7YcP9P7yQ7dv1PB+p1L?=
+ =?us-ascii?Q?PrQuxMGeHoN0LZHY1avs+pNKhIWWBqnxke7rK72mdNhnFuyCxVxGSsStSTMY?=
+ =?us-ascii?Q?8JWdRhEOzwfflfVUXGvPI+LJg9rjt4YnAza16JGYmo4bYcT+Zmt0WPkt4uMx?=
+ =?us-ascii?Q?ntu2SSPz/4Sni/i4ykREM/WT2SlXwm3e9uNf4Wg9j1FmNI7lbbfSQfS33mSm?=
+ =?us-ascii?Q?r6KnbjT0O2i5zNBp3JHqAvcr9RINmI9f84KZYoVO6osV32cMHjMyP87EOeQP?=
+ =?us-ascii?Q?bFZrWi40/ppcSp+TungfKUMGATmyWkdbAsb6mX6BcJFmZ/wMiux87K8ZngVn?=
+ =?us-ascii?Q?/H/Z2UMWbDgEZeEzx/w6t3hZ2DjrHsK5WeNGhHxBp/wF+OLMTwtjE8Pi/Bm5?=
+ =?us-ascii?Q?yGRXl9SIVVP3P2HAIzb5RopKL3z4AisaAtibCVz3oSI/Ny+N8T2FnaQBi1RH?=
+ =?us-ascii?Q?JSBLqmFqQ9gp1jMONkjXHddvRp5221+yH/oXLApy/JTonyBfuJxrHZUGFwEZ?=
+ =?us-ascii?Q?tiHkO/ugDeX6to0hWYKUSh9hNrBBYk/2yZHqKA9VvLv1UeN4lqy0sYe9cbri?=
+ =?us-ascii?Q?bwyRmDEYmwpyDcifr9+qjYhrxWikXxzSBJZFNwLJY5LzHM32gik1KiOA7s3H?=
+ =?us-ascii?Q?iZRWTC/1AFoKEQlHmyL7fyo5PZLVq6lFzmHHRV0p5ypLiRczdX/EvmAQzs+9?=
+ =?us-ascii?Q?+OW6M6v4umWggENpROCWtrtOnSiwX0SXY0S2Eg2VlXg4/iDRG3abF0dMUJaE?=
+ =?us-ascii?Q?CkKRdXnmGbbIxw/ECNZwtAEWeXUcfcQFUZxlzjhlGaZ4vnpE361EYBIsAa6Y?=
+ =?us-ascii?Q?JpYsn7Ms8CbYBx/VJUxQfPsCotnwTW1DvcVqgmY5yEWGLiG3OU+UzBX+YxPB?=
+ =?us-ascii?Q?RuAknWB+QD3UV8CwoPg7GVqVZ9U7I11CqrfiHvjPhk+nZNbPYYrHOuVhgLx8?=
+ =?us-ascii?Q?cU6w7ernVRsGH44VBWtB291I8pESy71ZFiu+zv/3QIQ+oNEHX+fDIk0NxsfE?=
+ =?us-ascii?Q?g+w28ilIWVnk8mW3quEzdVrq8MNNIbIECTlk?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(30052699003)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 04:42:19.7307
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bH4VTz6MCZykfl22a5cLdiBuAcdlmq/rzVUz4CPz6IO5cB/XIjU3iNkYjzzj?=
+ =?us-ascii?Q?/woO9G5MVYq9tmQE8MroxE6xrR19cYmVndYu29RqiMrRaWSl2jBI1WP1kF0X?=
+ =?us-ascii?Q?fi7PJU+MWn0PVReubKXp9t7sXG9TKQqTOj6S5jjK3nbZlU5z77l3XZMGz/Hg?=
+ =?us-ascii?Q?/Ff53JQDJ+I7D+y9BD3xU18jS2UqFtcn5N8TGPnzrLZqlq9j85zb1W493PeZ?=
+ =?us-ascii?Q?TyIIIKl2ygViyEuUF8hlFitwY8Nmtv1nEqnvKZY0S6kQhR+ZUH/0MzHhnKno?=
+ =?us-ascii?Q?WRvbXqAPSER88E1uau9ad+kppyyaAP23WIL3r9nF3UwspiMNVty3xWGoHcP5?=
+ =?us-ascii?Q?RX6EUPxhhqQ6wa20Vbi9fuMEhm5VGGyK13cjd13l+k7BdkSgQoz7OgrMZVXn?=
+ =?us-ascii?Q?K0ENqbJVkJHMkc88/y01VUHJfyL3nZN86S99er4ZrnloE4s/Mj9oVUfcpU6V?=
+ =?us-ascii?Q?ZmLusehrkydEH8YPTO5ZA/fIcHLSmQ9Z7auO9tvw97Rged7yIxh8OHpgeGKG?=
+ =?us-ascii?Q?2wVpUF74dY3P8VFwIq5FQEojmSfgR0qO2B5WqpjZlI+wyhnBte+EMb2G6Pha?=
+ =?us-ascii?Q?LqvjQcyD9o/aDyxalNpQ4aJVQCWma8hBjZ3OcWoC+RAYuPMYIKmkdFf4T0Y2?=
+ =?us-ascii?Q?r5FyO9lOBrf5tZMcTjI3a+QStFUOEREGGdwNUAXbWQdKj03dZzTlofe60lYe?=
+ =?us-ascii?Q?50nKBsPjCfFapZSFih7wXTfrRr5jN++lyC3UXq5H5b2VaVaEvbWwlK7+w7b1?=
+ =?us-ascii?Q?ALRRvhtK5lnTfwXtm2Ah1WzEKgw3z16qDCefyGXfy6Ch50tJffU4byKYUDjx?=
+ =?us-ascii?Q?ahzKWtRuCQb9mA3bJSHCCDcdd8JJ98QOwbQORcAIeWvlqzkJdT29jbSbQ7sb?=
+ =?us-ascii?Q?+K0e6WRrfPHUW3CApjccU/+VlevVEb81yJOK6bO21XPD/+kzCppcpqOJIdkp?=
+ =?us-ascii?Q?/cWtzaTTgYLy/kMkSAr67uRiglQNxjB/X3/ARps3RvyNSX/mb6S6YDeeeTQS?=
+ =?us-ascii?Q?HfbcRq+3Td/R1WjLmiCCPcDs2MBbJ26GH+qLE9nYALT/Smh36aIB7h57+OCB?=
+ =?us-ascii?Q?Sth2YleDmP5fFcTGf8z653Bet2vwhdPDZJMdZAvnln53pimpCNsE0XYaiIhB?=
+ =?us-ascii?Q?FZjHNaI/0pvaWo9dMXnAYCXEQIgtItSbmPhLrYNat0h+rdPY90AI7Iywqg43?=
+ =?us-ascii?Q?XIkbbIZUo9zgjuto6w2lpjRuE6OO1DvyJachSqSXxpZCSzPOj3lqINnidvFQ?=
+ =?us-ascii?Q?HPBcNJR2P2sPRpdW7FXMan0hSv3HJiNUgw7tlFoHfxCgobcTy68MT4CWYGf8?=
+ =?us-ascii?Q?Z/lpr3C8rKiKIbZqY+yqW7jIIylR6yCZijst7P43JcM+s4XTsFMxZ0zkVXkB?=
+ =?us-ascii?Q?F8p1P36vO9qTt+zlfh0g1exnoIHz+s2flIq5uELP8WFOyzsqTtQEOxT+SKXh?=
+ =?us-ascii?Q?PLXhdto3uitY10etDtsipUEBa1VhjaEuaiolFBKKmPK6oS5geJinP3DKdjuJ?=
+ =?us-ascii?Q?yQJgy/iOOzLUc8RqIDdzGoLLdu10Uv1Y+CSLIOyPaXt0jSNVNqNiS0ZaLIT5?=
+ =?us-ascii?Q?hKZhsp0JWfs2UmKPqDi+LeCA4rIWOOfb82qq6Kri1EbCFkKMZ/vyrZMQGMs4?=
+ =?us-ascii?Q?zg=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbdabb8a-f855-4045-9231-08de226f4588
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 04:44:07.4429
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8f02354-a6a4-4afe-f99f-08de226f07a1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F66.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5635
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vQpjwP1TUnRS8wj47/bjIAXTo/KbnqUDvoHiVTV7fMyGDqURwzgROeXJpPuJo4m16yXlSOVFKBViYStbnhWSkU5ULuvuFQigX5YdmVY+aAA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR03MB6862
 
-Hello Wanpeng,
+This patch series adds device tree bindings, driver support, and DTS
+updates to enable FPGA Manager functionality for Intel Agilex5 SoC.
 
-On 11/12/2025 10:24 AM, Wanpeng Li wrote:
->>
->> ( Only build and boot tested on top of
->>     git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
->>   at commit f82a0f91493f "sched/deadline: Minor cleanup in
->>   select_task_rq_dl()" )
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index b4617d631549..87560f5a18b3 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -8962,10 +8962,28 @@ static void yield_task_fair(struct rq *rq)
->>          * which yields immediately again; without the condition the vruntime
->>          * ends up quickly running away.
->>          */
->> -       if (entity_eligible(cfs_rq, se)) {
->> +       do {
->> +               cfs_rq = cfs_rq_of(se);
->> +
->> +               /*
->> +                * Another entity will be selected at next pick.
->> +                * Single entity on cfs_rq can never be ineligible.
->> +                */
->> +               if (!entity_eligible(cfs_rq, se))
->> +                       break;
->> +
->>                 se->vruntime = se->deadline;
-> 
-> Setting vruntime = deadline zeros out lag. Does this cause fairness
-> drift with repeated yields? We explicitly recalculate vlag after
-> adjustment to preserve EEVDF invariants.
+These changes are intended to enable FPGA programming and management
+capabilities on Agilex5-based platforms.
 
-We only push deadline when the entity is eligible. Ineligible entity
-will break out above. Also I don't get how adding a penalty to an
-entity in the cgroup hierarchy of the yielding task when there are
-other runnable tasks considered as "preserve(ing) EEVDF invariants".
+---
+Notes:
+Patch #3 depends on  "arm64: dts: intel: Add Agilex5 SVC node with memory
+region" from
+https://lore.kernel.org/all/3381ef56c1ff34a0b54cf76010889b5523ead825.1762387665.git.khairul.anuar.romli@altera.com/
 
-> 
->>                 se->deadline += calc_delta_fair(se->slice, se);
->> -       }
->> +
->> +               /*
->> +                * If we have more than one runnable task queued below
->> +                * this cfs_rq, the next pick will likely go for a
->> +                * different entity now that we have advanced the
->> +                * vruntime and the deadline of the running entity.
->> +                */
->> +               if (cfs_rq->h_nr_runnable > 1)
-> 
-> Stopping at h_nr_runnable > 1 may not handle cross-cgroup yield_to()
-> correctly. Shouldn't the penalty apply at the LCA of yielder and
-> target? Otherwise the vruntime adjustment might not affect the level
-> where they actually compete.
+This patch series is applied on socfpga maintainer's tree
+https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=socfpga_dts_for_v6.19
 
-So here is the case I'm going after - consider the following
-hierarchy:
+Changes in v2:
+	- Drop "fpga: stratix10-soc: Add support for Agilex5"
+	- Add fallback compatible in DT
+---
+Khairul Anuar Romli (2):
+  dt-bindings: fpga: stratix10: add support for Agilex5
+  arm64: dts: agilex5: add fpga-region and fpga-mgr nodes
 
-     root
-    /    \
-  CG0   CG1
-   |     |
-   A     B
-
-  CG* are cgroups and, [A-Z]* are tasks
-
-A decides to yield to B, and advances its deadline on CG0's timeline.
-Currently, if CG0 is eligible and CG1 isn't, pick will still select
-CG0 which will in-turn select task A and it'll yield again. This
-cycle repeates until vruntime of CG0 turns large enough to make itself
-ineligible and route the EEVDF pick to CG1.
-
-Now consider:
-
-
-       root
-      /    \
-    CG0   CG1
-   /   \   |
-  A     C  B
-
-Same scenario: A yields to B. A advances its vruntime and deadline
-as a prt of yield. Now, why should CG0 sacrifice its fair share of
-runtime for A when task B is runnable? Just because one task decided
-to yield to another task in a different cgroup doesn't mean other
-waiting tasks on that hierarchy suffer.
-
-> 
->> +                       break;
->> +       } while ((se = parent_entity(se)));
->>  }
->>
->>  static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
->> ---
-> 
-> Fixed one-slice penalties underperformed in our testing (dbench:
-> +14.4%/+9.8%/+6.7% for 2/3/4 VMs). We found adaptive scaling (6.0×
-> down to 1.0× based on queue size) necessary to balance effectiveness
-> against starvation.
-
-If all vCPUs of a VM are in the same cgroup - yield_to() should work
-just fine. If this "target" task is not selected then either some
-entity in the hierarchy, or the task is ineligible and EEVDF pick has
-decided to go with something else.
-
-It is not "starvation" but rather you've received you for fair share
-of "proportional runtime" and now you wait. If you really want to
-follow EEVDF maybe you compute the vlag and if it is behind the
-avg_vruntime, you account it to the "target" task - that would be
-in the spirit of the EEVDF algorithm.
-
-> 
->>
->> With that, I'm pretty sure there is a good chance we'll not select the
->> hierarchy that did a yield_to() unless there is a large discrepancy in
->> their weights and just advancing se->vruntime to se->deadline once isn't
->> enough to make it ineligible and you'll have to do it multiple time (at
->> which point that cgroup hierarchy needs to be studied).
->>
->> As for the problem that NEXT_BUDDY hint is used only once, you can
->> perhaps reintroduce LAST_BUDDY which sets does a set_next_buddy() for
->> the "prev" task during schedule?
-> 
-> That's an interesting idea. However, LAST_BUDDY was removed from the
-> scheduler due to concerns about fairness and latency regressions in
-> general workloads. Reintroducing it globally might regress non-vCPU
-> workloads.
-> 
-> Our approach is more targeted: apply vruntime penalties specifically
-> in the yield_to() path (controlled by debugfs flag), avoiding impact
-> on general scheduling. The debooster is inert unless explicitly
-> enabled and rate-limited to prevent pathological overhead.
-
-Yeah, I'm still not on board with the idea but maybe I don't see the
-vision. Hope other scheduler folks can chime in.
-
-> 
->>
->>>
->>>    This creates a ping-pong effect: the lock holder runs briefly, gets
->>>    preempted before completing critical sections, and the yielding vCPU
->>>    spins again, triggering another futile yield_to() cycle. The overhead
->>>    accumulates rapidly in workloads with high lock contention.
->>>
->>> 2. KVM-side limitation:
->>>
->>>    kvm_vcpu_on_spin() attempts to identify which vCPU to yield to through
->>>    directed yield candidate selection. However, it lacks awareness of IPI
->>>    communication patterns. When a vCPU sends an IPI and spins waiting for
->>>    a response (common in inter-processor synchronization), the current
->>>    heuristics often fail to identify the IPI receiver as the yield target.
->>
->> Can't that be solved on the KVM end?
-> 
-> Yes, the IPI tracking is entirely KVM-side (patches 6-10). The
-> scheduler-side debooster (patches 1-5) and KVM-side IPI tracking are
-> orthogonal mechanisms:
->    - Debooster: sustains yield_to() preference regardless of *who* is
-> yielding to whom
->    - IPI tracking: improves *which* target is selected when a vCPU spins
-> 
-> Both showed independent gains in our testing, and combined effects
-> were approximately additive.
-
-I'll try to look at the KVM bits but I'm not familiar enough with
-those bits enough to review it well :)
-
-> 
->> Also shouldn't Patch 6 be on top with a "Fixes:" tag.
-> 
-> You're right. Patch 6 (last_boosted_vcpu bug fix) is a standalone
-> bugfix and should be at the top with a Fixes tag. I'll reorder it in
-> v2 with:
-> Fixes: 7e513617da71 ("KVM: Rework core loop of kvm_vcpu_on_spin() to
-> use a single for-loop")
-
-Thank you.
-
-> 
->>
->>>
->>>    Instead, the code may boost an unrelated vCPU based on coarse-grained
->>>    preemption state, missing opportunities to accelerate actual IPI
->>>    response handling. This is particularly problematic when the IPI receiver
->>>    is runnable but not scheduled, as lock-holder-detection logic doesn't
->>>    capture the IPI dependency relationship.
->>
->> Are you saying the yield_to() is called with an incorrect target vCPU?
-> 
-> Yes - more precisely, the issue is in kvm_vcpu_on_spin()'s target
-> selection logic before yield_to() is called. Without IPI tracking, it
-> relies on preemption state, which doesn't capture "vCPU waiting for
-> IPI response from specific other vCPU."
-> 
-> The IPI tracking records sender→receiver relationships at interrupt
-> delivery time (patch 8), enabling kvm_vcpu_on_spin() to directly boost
-> the IPI receiver when the sender spins (patch 9). This addresses
-> scenarios where the spinning vCPU is waiting for IPI acknowledgment
-> rather than lock release.
-> 
-> Performance (16 pCPU host, 16 vCPUs/VM, PARSEC workloads):
->    - Dedup: +47.1%/+28.1%/+1.7% for 2/3/4 VMs
->    - VIPS: +26.2%/+12.7%/+6.0% for 2/3/4 VMs
-> 
-> Gains are most pronounced at moderate overcommit where the IPI
-> receiver is often runnable but not scheduled.
-> 
-> Thanks again for the review and suggestions.
-> 
-> Best regards,
-> Wanpeng
+ .../bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml  |  1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi       | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
 
 -- 
-Thanks and Regards,
-Prateek
+2.43.7
 
 
