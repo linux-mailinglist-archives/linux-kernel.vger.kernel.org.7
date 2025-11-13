@@ -1,240 +1,127 @@
-Return-Path: <linux-kernel+bounces-898533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C80C5578F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:50:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09A2C557B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 36211347A06
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:50:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 266AA4E43BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594D7265CA8;
-	Thu, 13 Nov 2025 02:50:01 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A183826FA67;
+	Thu, 13 Nov 2025 02:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7/foJwi"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1AA1D5ADE;
-	Thu, 13 Nov 2025 02:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4324225BEE5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763002200; cv=none; b=M/AI4TC16fTPOcyb6lidCyLa3pdiyL2Girx80n+8EJN4x9lEy/eEx/BSf3kEZupkSY/6a7N9R0zR4c/vaoo3+FYdIuTwTG53H6DHSOON7IP5PoXh8t3mb4SQFc/AM53sAl6oyV46dlr5fprDAwbaGQQs8Bx4xYy1aiVESZ0gmGk=
+	t=1763002236; cv=none; b=s9jkJF1gPnGI4pq/ePy6hwhDgz20tg7qjSWqJbGnmXId6b+5epVeNYisF3EJwXPZ4M1j2r3bS+uqWUq/ciH08QRuvQ7NO0E68LPjbTVN/MBiKOZ8xln8h72gCkXdpBRciotkXpdNFcnkwdxjiO2kuG0Q71OqF6j159zffdoxPxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763002200; c=relaxed/simple;
-	bh=xCebPx/DTTumY++I8/5MsUa5fN4CVr48wYQ7/7nwxIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXpZ15wTBzCJor5meVCBUGQUFdCRZYj+Jb44fGkpcApNEFMsRuAJm3ggLjUJ2DDKoz0DJRtA+PVGk73WzrvsSr8YQO4mggv8WVhcwe/3h/eFw4qaGAHEAoDX6Q0kb61vFn+9e3iH0QW+G5N0cTbflvs2fe2TZS6ePzGBPIH/5yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d6Pqz5GpPzKHMWr;
-	Thu, 13 Nov 2025 10:49:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 32BDD1A13E6;
-	Thu, 13 Nov 2025 10:49:54 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP4 (Coremail) with SMTP id gCh0CgBXf1xQRxVpsWU6Ag--.29421S2;
-	Thu, 13 Nov 2025 10:49:54 +0800 (CST)
-Message-ID: <47c20c78-9f7f-4134-8835-3c4f5bff4c30@huaweicloud.com>
-Date: Thu, 13 Nov 2025 10:49:52 +0800
+	s=arc-20240116; t=1763002236; c=relaxed/simple;
+	bh=1UywZ5EspbYYlW6xtPXW+5JF7MzvE+fk4ld2AVk511Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAJxF7oMovU+kmUnZ3ExU7N+Bn+3wHIPmIOheVbnLxPA9HZ1bWwQKT1nf6afcRl+djLI4wvwhvjf9SP1OGAPD29DNcbR2MuUEFcJ0bdMa76T5plCs8pGfPHsuRLb7xMjuoHkVctdYo/C18XmO/OQoU1sEJbCIBq7wQIpwTdzH+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7/foJwi; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3c965cc4so138571f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:50:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763002232; x=1763607032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1UywZ5EspbYYlW6xtPXW+5JF7MzvE+fk4ld2AVk511Y=;
+        b=A7/foJwih5tODU6mGE56M+xIRYocWBiG/pexRxN3jFMXT3bAERCE0iR2tVvnmJNPPv
+         zqhOV+8gk2MU4zrJ3u6AcjImkwQjQL/V/TQqstpSF8eeCj2SjSDJ2ZWug+hQb90IrMVE
+         ySH8bacZznHRMx6UULqycj+tOxEB21GmrHiEN7dsAVmYb5JPcAGlXjD5jeD3CguyLNnq
+         8/yuElRV8rX4D76Yh/sGXTHuutKpGxqQPk+BrE5cp8UsuzyZpzt1tCkb7CL6jjDint21
+         PUCbdNIrr9Yjq9HOCtdmub1ZNUK5uQ+bevYHj7m4UXpYDnm4YCOqQZHdKn3LzgG3tCYT
+         coVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763002232; x=1763607032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1UywZ5EspbYYlW6xtPXW+5JF7MzvE+fk4ld2AVk511Y=;
+        b=sKGDPPBv21iWj9Wwh2BMqOdlaZVhGSIwjkSeoLwn/xt9r4qUJ30qhB6ej9F/KYSO8T
+         cavXdiJhyGb0nEG27CGypq/l9auWyhd74UCtWp5SwhZ/U6U7xnaVL+JsEK5VFlhCewAl
+         FDv7YBPldbsdn7NGGyoQmgQfnwsneOJsO12M6Ko2MDyxmxT+uJ81psKhWyPY14cFqb5F
+         0jqCnzSou0sPXmZLHT2nXqeqmBibUPevKV+oamKwyaaM9fdb46MQEVljnTQ5JFKVWmpW
+         QkeQy4acPvekBi8byqnX+hV6I+lMjUuJGwE6GJA9j7/F2qLvCMZa4T2JoaglT4FgJCkH
+         bxnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNyUiQJyXd1c9vKU6CxKagH6gIdnJ7vLxde97WfZO4OgSbjRSraPbIIOfzLdEAP/G5+QsDJY3N87wtkWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSPXN/qUqsZeVHUC4TFycisKhk2MLRZkzWLjgIDAxlbf0voqdz
+	9pBx0Qu2khRjTCpyaeIhBFzuV9cDZPlgKCOwoJqRGSsJTBv9FjuiMMwyDL9eT24gKX6J9kha2qA
+	S2lqjnlOq//9YW4fDNnzFLrw3ujQ3qzM=
+X-Gm-Gg: ASbGncvQqo5kFUNxEnBU318Rh0rjDoSSCVhHY0d+cq0ZZ64Li/PQgZaNOUyeuYPwuqQ
+	ObQ43MFyC4a+4EiYGtYqQ79K5ObExzEGnc5RGYpNfiArbyJyiTR4hrQE22A2n6pP3uXqCus719T
+	WiSap5u+kzxeZaSZXLkLw+ObEIJ4+xQY4MVx7ZjSy3nP3Q+FzITsJ7P7YhU7DlN2BHHc6x+vDpb
+	wtnNtNuYSK/oFxcc2FF7kc8s7x4blORP8+VGPzkJaiEjn5mn7qt1NdL3C4bXDP9X/CIUXaOmvJ1
+	HV3dlU1ELd+HgWdfLA==
+X-Google-Smtp-Source: AGHT+IEGxkHsLlDeqqKYYxVV4qPNOdwbtTL8tifx+l6rLgWuNnhOTSmN/RLFv9iuIJNS51+mPUGAeqeerVG2TSOJBiA=
+X-Received: by 2002:a05:6000:4310:b0:429:bfbb:5dae with SMTP id
+ ffacd0b85a97d-42b52814d8dmr1346241f8f.17.1763002232446; Wed, 12 Nov 2025
+ 18:50:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 10/22] cpuset: introduce local_partition_enable()
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
- <20251025064844.495525-11-chenridong@huaweicloud.com>
- <71121d12-0cb2-4ffe-92e5-caf25bf4596e@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <71121d12-0cb2-4ffe-92e5-caf25bf4596e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXf1xQRxVpsWU6Ag--.29421S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFy7ArWfAr4UKF4kCr1rWFg_yoWxKw15pF
-	1kJrWUJrWUJr1rC347JFnrGryrGw4DJ3WDtw1kX3WrXr17Ar10gr1jq3yqgr1UJrWkJr15
-	Xr1UXrsruF13ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20251112142003.182062-1-pmladek@suse.com> <20251112142003.182062-6-pmladek@suse.com>
+In-Reply-To: <20251112142003.182062-6-pmladek@suse.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 12 Nov 2025 18:50:21 -0800
+X-Gm-Features: AWmQ_blTyug6l3_C6LlEH8I8hAO4t3AT5lTjYea505BxtYynZkMNHSFE3MVvFng
+Message-ID: <CAADnVQKUffyGCmpoGcvSTF1hwN58c7X=Ebvn70Y2Z0ZWJS0p=g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] kallsyms/bpf: Rename __bpf_address_lookup() to bpf_address_lookup()
+To: Petr Mladek <pmladek@suse.com>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	Aaron Tomlin <atomlin@atomlin.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	linux-modules@vger.kernel.org, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 12, 2025 at 6:21=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
+e:
+>
+> bpf_address_lookup() has been used only in kallsyms_lookup_buildid().
+> It was supposed to set @modname and @modbuildid when the symbol was
+> in a module.
+>
+> But it always just cleared @modname because BPF symbols were never in
+> a module. And it did not clear @modbuildid because the pointer was
+> not passed.
+>
+> The wrapper is not longer needed. Both @modname and @modbuildid
 
+is no longer
 
-On 2025/11/13 5:47, Waiman Long wrote:
-> On 10/25/25 2:48 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> The partition_enable() function introduced in the previous patch can be
->> reused to enable local partitions.
->>
->> The local_partition_enable() function is introduced, which factors out the
->> local partition enablement logic from update_parent_effective_cpumask().
->> After passing local partition validation checks, it delegates to
->> partition_enable() to complete the partition setup.
->>
->> This refactoring creates a clear separation between local and remote
->> partition operations while maintaining code reuse through the shared
->> partition_enable() infrastructure.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 94 ++++++++++++++++++++++++++----------------
->>   1 file changed, 59 insertions(+), 35 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 5b57c5370641..b308d9f80eef 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1822,6 +1822,61 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->>       remote_partition_disable(cs, tmp);
->>   }
->>   +/**
->> + * local_partition_enable - Enable local partition for a cpuset
->> + * @cs: Target cpuset to become a local partition root
->> + * @new_prs: New partition root state to apply
->> + * @tmp: Temporary masks for CPU calculations
->> + *
->> + * This function enables local partition root capability for a cpuset by
->> + * validating prerequisites, computing exclusive CPUs, and updating the
->> + * partition hierarchy.
->> + *
->> + * Return: 0 on success, error code on failure
->> + */
->> +static int local_partition_enable(struct cpuset *cs,
->> +                int new_prs, struct tmpmasks *tmp)
->> +{
->> +    struct cpuset *parent = parent_cs(cs);
->> +    enum prs_errcode part_error;
->> +    bool cpumask_updated = false;
->> +
->> +    lockdep_assert_held(&cpuset_mutex);
->> +    WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
->> +
->> +    /*
->> +     * The parent must be a partition root.
->> +     * The new cpumask, if present, or the current cpus_allowed must
->> +     * not be empty.
->> +     */
->> +    if (!is_partition_valid(parent)) {
->> +        return is_partition_invalid(parent)
->> +            ? PERR_INVPARENT : PERR_NOTPART;
->> +    }
->> +
->> +    /*
->> +     * Need to call compute_excpus() in case
->> +     * exclusive_cpus not set. Sibling conflict should only happen
->> +     * if exclusive_cpus isn't set.
->> +     */
->> +    if (compute_excpus(cs, tmp->new_cpus))
->> +        WARN_ON_ONCE(!cpumask_empty(cs->exclusive_cpus));
->> +
->> +    part_error = validate_partition(cs, new_prs, tmp->new_cpus);
->> +    if (part_error)
->> +        return part_error;
->> +
->> +    cpumask_updated = cpumask_andnot(tmp->addmask, tmp->new_cpus,
->> +                     parent->effective_cpus);
-> 
-> What is the purpose of this cpumask_andnot() operation? Is it just to create the cpumask_updated
-> boolean? At this point, cpumask_updated should always be true. If not, we have to add validation
-> check to return an error.
-> 
-> Cheers,
-> Longman
-> 
+> are newly always initialized to NULL in kallsyms_lookup_buildid().
 
-I want to support switching the root partition’s state between "root" and "isolated"—for example, an
-isolated partition switching to root without changing its CPU mask.
+are now?
 
-Adding a comment to clarify this behavior would be helpful.
+> Remove the wrapper and rename __bpf_address_lookup() to
+> bpf_address_lookup() because this variant is used everywhere.
+>
+> Fixes: 9294523e3768 ("module: add printk formats to add module build ID t=
+o stacktraces")
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
->> +    partition_enable(cs, parent, new_prs, tmp->new_cpus);
->> +
->> +    if (cpumask_updated) {
->> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
->> +        update_sibling_cpumasks(parent, cs, tmp);
->> +    }
->> +    return 0;
->> +}
->> +
->>   /**
->>    * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
->>    * @cs:      The cpuset that requests change in partition root state
->> @@ -1912,34 +1967,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>         nocpu = tasks_nocpu_error(parent, cs, xcpus);
->>   -    if ((cmd == partcmd_enable) || (cmd == partcmd_enablei)) {
->> -        /*
->> -         * Need to call compute_excpus() in case
->> -         * exclusive_cpus not set. Sibling conflict should only happen
->> -         * if exclusive_cpus isn't set.
->> -         */
->> -        xcpus = tmp->delmask;
->> -        if (compute_excpus(cs, xcpus))
->> -            WARN_ON_ONCE(!cpumask_empty(cs->exclusive_cpus));
->> -        new_prs = (cmd == partcmd_enable) ? PRS_ROOT : PRS_ISOLATED;
->> -
->> -        part_error = validate_partition(cs, new_prs, xcpus);
->> -        if (part_error)
->> -            return part_error;
->> -        /*
->> -         * This function will only be called when all the preliminary
->> -         * checks have passed. At this point, the following condition
->> -         * should hold.
->> -         *
->> -         * (cs->effective_xcpus & cpu_active_mask) ⊆ parent->effective_cpus
->> -         *
->> -         * Warn if it is not the case.
->> -         */
->> -        cpumask_and(tmp->new_cpus, xcpus, cpu_active_mask);
->> -        WARN_ON_ONCE(!cpumask_subset(tmp->new_cpus, parent->effective_cpus));
->> -
->> -        deleting = true;
->> -    } else if (cmd == partcmd_disable) {
->> +    if (cmd == partcmd_disable) {
->>           /*
->>            * May need to add cpus back to parent's effective_cpus
->>            * (and maybe removed from subpartitions_cpus/isolated_cpus)
->> @@ -3062,14 +3090,10 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>            * If parent is valid partition, enable local partiion.
->>            * Otherwise, enable a remote partition.
->>            */
->> -        if (is_partition_valid(parent)) {
->> -            enum partition_cmd cmd = (new_prs == PRS_ROOT)
->> -                           ? partcmd_enable : partcmd_enablei;
->> -
->> -            err = update_parent_effective_cpumask(cs, cmd, NULL, &tmpmask);
->> -        } else {
->> +        if (is_partition_valid(parent))
->> +            err = local_partition_enable(cs, new_prs, &tmpmask);
->> +        else
->>               err = remote_partition_enable(cs, new_prs, &tmpmask);
->> -        }
->>       } else if (old_prs && new_prs) {
->>           /*
->>            * A change in load balance state only, no change in cpumasks.
-> 
+other than typos in the commit log it lgtm.
 
--- 
-Best regards,
-Ridong
-
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
