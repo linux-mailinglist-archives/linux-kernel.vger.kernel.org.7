@@ -1,201 +1,250 @@
-Return-Path: <linux-kernel+bounces-898859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D168C562C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:11:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD81C562E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 281C03531AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:06:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53B72341114
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC341331205;
-	Thu, 13 Nov 2025 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JUSi+BQQ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835F432ED2F;
+	Thu, 13 Nov 2025 08:08:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE55330B15;
-	Thu, 13 Nov 2025 08:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D832ED21
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763021151; cv=none; b=GELfZr/okZsyLBDAHASJJsuAGa72XBrVk/TWRFA3Hvp2c5JBWM8Z2Cv/f8+IAxqtvOHfUVkJafM2T9EosWy8juabJbcEbWwPApfyfrTLyGg0GPztprNVHKR9hmIncPI+bWUCZ07PWSaexAUvlwEXB5XmPaEAuDBipy259tJU3Qs=
+	t=1763021311; cv=none; b=NB5QEnK6brlMev8D1ij2ddy8ycKtFVY5cSUL97k9vcOE4d9npbcUM/vodhHTG/cYgkb6tDz7qcTZscyOCJrRbu9/k+IFlur/cnykO481sDHhqLU17MRn+XplkIVaf3Tgdcy2BRB24+N+Y7RPP22/kA/+0OuZy9kTw2qe5sEXeEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763021151; c=relaxed/simple;
-	bh=zKXX9NyIy8Yg9dI6ML2pPKj7YbBPC2G80b4RqfwIcEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NxksTr/DG2gh/CmNscAZsxwInwJT5mR/h5jfo4ruGDzzXWal/mAz7eLFV7Ro+0r44fSbqnsCfm/80nNdtI3Qjh//jcnySOD+2Aab+RH64LO6zOyqAj9DCJxJcwaNk9l9SwQEvP85UkaL2VtZ47DMszTYgZ6Z7j1EXYfolQI2onw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JUSi+BQQ; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD1gbgI030886;
-	Thu, 13 Nov 2025 08:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=EGnnu
-	3yZZJmAfxouKKyousdXetQUS7YDyKqAR81Px4I=; b=JUSi+BQQmfQdXQM6EeDAn
-	10CcYcsDIqu3CmpReVokWqdkpTPzFg0cLHUco9gNuohVfd/PGKrfg9fwGgvAoCFh
-	FvVIoeW+ZuwBZMUFC9W0366HEz+B582kGQNkps8rOukS/EXaJbLE4F+LtBokaBTV
-	rpFUPSGmqfAS2/GMVcL6vtEjkV1znrLgchwOtVh9EuxN1oB31I7SRgx68BlfU4T/
-	U4zxt+2Rd82eW/21DmzCsRQUSeFhJLuJ5OmkPvzGiYsxRjO7scwQtr1iGZarwedB
-	cP5/9faDizcmCEohOuNkt/PiK+FSd7rbuuX7QWaeWCJx4c3b+cjKTx2HIiP0jNX4
-	w==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acyra949f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 08:05:37 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD7Tt0c010098;
-	Thu, 13 Nov 2025 08:05:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vacarha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 08:05:36 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AD85N4Z021139;
-	Thu, 13 Nov 2025 08:05:36 GMT
-Received: from oracle.home (dhcp-10-154-173-166.vpn.oracle.com [10.154.173.166])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vacar3f-2;
-	Thu, 13 Nov 2025 08:05:34 +0000
-From: gregory.herrero@oracle.com
-To: aleksandr.loktionov@intel.com, anthony.l.nguyen@intel.com,
-        przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gregory Herrero <gregory.herrero@oracle.com>
-Subject: [PATCH v2 1/1] i40e: validate ring_len parameter against hardware-specific values.
-Date: Thu, 13 Nov 2025 09:04:59 +0100
-Message-ID: <20251113080459.2290580-2-gregory.herrero@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251113080459.2290580-1-gregory.herrero@oracle.com>
-References: <20251113080459.2290580-1-gregory.herrero@oracle.com>
+	s=arc-20240116; t=1763021311; c=relaxed/simple;
+	bh=Bz7ED0HRek/uFNG4OY3n7adGXWxkDoF4osrRKhk/0Ec=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DkYp0g+8GrJvZepkiYpFwsGUoFG3JOdqgObClWB0PF7Q/z3iAv4fxEB1OhDKmfZgNrqr37i/mEEjG3HyF/5aNGiC7nCtk7XR8IHeBqbLNxZalgCwWE4bwcojiuyHKAd7FqxFGSTBrqoFPaNCgyDyofGFB8gG2FPnoyN36i3hE58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-43478824a6fso7317885ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:08:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763021309; x=1763626109;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BjNZP2aelH/P8mQTZ4oGC1U8Z+2onZLGOSHmsIRyDhQ=;
+        b=B5FJTZXXzcQSIZiXC6D72ClJndlmRPCh9UbRuLHtWpDWkawr48xwFHDEw9niGRX7tb
+         L+Vv9NZW8hsval3DMiT0Ir2vnC4YtSUgibbWeO7JrQBjJBLl3p9iFvKavuJUiLtkFoJk
+         4FOELx40gaRIhkWDGRtbYtHZdyVFpz+UgF+snuw4zUVxms64ZRosIEPqfwntR8RYbbxz
+         NKHRUwKWvIjEblNR/WlbL6pHWv3ZVmH0f9mVMM6cY8sNmeN5fHvJkO7vB2EgPC0qSjKD
+         pamQPkJNQZYTMfuO6v4LuSlpzrZgjfEdAnMkFVyaIb0lKBa7lzxFKXfZLJBceGjNzj2L
+         4R/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+SS5EdYq2fQnXFlQjb9lQAz/4tpFz8kEWaDYZuCS2aLP30lVjIcEOIMMAN6LPzrrlsQQuiS8KR4GcMp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyts5u0S4eaVrgkxUN/fE+SAM5HIn8KcTHNP+z/QSMPJJsid14e
+	sD2st9CRoCBjShOkAQf7KppIAkekjV74lYT4YASt5IIZ80uK9uFZGDesXUMjOto4C0+KCiZQNWo
+	e4cZW1HNNLE4QQrN5cUK2johFBcWiCV+X5V0W5az8oX8GRi1QR4veaK99Pdg=
+X-Google-Smtp-Source: AGHT+IE29TSkLF8mS0JVq4UWcSB07f3gfFPFuooM8qL9F5Vk9Szqj22GVIAT0bvZHd7X0SLwsgQil5zYSxaGV74lQSC6iRHu1x0Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511130057
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE1MSBTYWx0ZWRfX+lvge5ADH67G
- 5H6i8P+wZ/H29XREMtvs57653QZ8ftYAKEf9cn5KOj9bUCo96nNIKEfjP5btU5xF7R9WiQLsJY2
- vifVz/A2OQHaPuLFJvNrGfTtsIlWNTt+aIT9pKF3wn/z/Bc0GMnbca+wR6lUtey9S4lbe7RDNwq
- zOEkWZTpHSqPoI3om0tZhuTIt+FBqnO8kurXC6zSpIzBzA5SzoMFafjtog7qJu28DoafhZ/kA4Q
- cRuZIEMUAOtHOY17ZEH74ONi0Fwg6u/OJiZ9JwKtoisy05X21Vt0aX45dgUEZjhQMEXf/MO71nU
- 2PmJaoTfaMZQRm0Q9we6V1QwtBe6Zs3ev+MGs2UOTaeAntzIKiAOPvFB7ZM4zahRsszz+PkpBox
- 2XePKF8Gh+n4TU+JKHrohac6u32kyw==
-X-Proofpoint-GUID: saUpDi7pARLjMxPZpJP-4sHBYj40AQf0
-X-Authority-Analysis: v=2.4 cv=ILgPywvG c=1 sm=1 tr=0 ts=69159151 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=9o2BAfuAlkXtMw4cUEAA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: saUpDi7pARLjMxPZpJP-4sHBYj40AQf0
+X-Received: by 2002:a05:6e02:5c6:b0:433:7ad4:7392 with SMTP id
+ e9e14a558f8ab-43473d17daemr55243155ab.1.1763021309351; Thu, 13 Nov 2025
+ 00:08:29 -0800 (PST)
+Date: Thu, 13 Nov 2025 00:08:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691591fd.a70a0220.3124cb.0020.GAE@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in ext4_xattr_set_handle (7)
+From: syzbot <syzbot+f0b58a1f5075a90dd9a5@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-From: Gregory Herrero <gregory.herrero@oracle.com>
+Hello,
 
-The maximum number of descriptors supported by the hardware is hardware
-dependent and can be retrieved using i40e_get_max_num_descriptors().
-Move this function to a shared header and use it when checking for valid
-ring_len parameter rather than using hardcoded value.
-Cast info->ring_len to u32 in i40e_config_vsi_tx_queue() as it's u16 in
-struct virtchnl_txq_info.
-Also cast it in i40e_config_vsi_rx_queue() even if it's u32 in
-virtchnl_rxq_info to ease stable backport in case this changed.
+syzbot found the following issue on:
 
-By fixing an over-acceptance issue, behavior change could be seen where
-ring_len would now be rejected whereas it was not before.
+HEAD commit:    7bb4d6512545 Merge tag 'v6.18rc4-SMB-client-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=170350b4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=f0b58a1f5075a90dd9a5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Fixes: 55d225670def ("i40e: add validation for ring_len param")
-Signed-off-by: Gregory Herrero <gregory.herrero@oracle.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad654d5866e3/disk-7bb4d651.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7ad4d94f39b6/vmlinux-7bb4d651.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1fa5516b633d/bzImage-7bb4d651.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f0b58a1f5075a90dd9a5@syzkaller.appspotmail.com
+
+EXT4-fs (loop8): mounted filesystem 76b65be2-f6da-4727-8c75-0525a5b65a09 r/w without journal. Quota mode: none.
+ext4 filesystem being mounted at /81/mnt supports timestamps until 2038-01-19 (0x7fffffff)
+fscrypt: AES-256-XTS using implementation "xts-aes-vaes-avx2"
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.8.1928/14101 is trying to acquire lock:
+ffff8880494b9d78 (&ei->xattr_sem){++++}-{4:4}, at: ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
+ffff8880494b9d78 (&ei->xattr_sem){++++}-{4:4}, at: ext4_xattr_set_handle+0x165/0x1590 fs/ext4/xattr.c:2367
+
+but task is already holding lock:
+ffff888031d78b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
+ffff888031d78b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sbi->s_writepages_rwsem){++++}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal+0x48/0x1c0 include/linux/percpu-rwsem.h:53
+       percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
+       ext4_writepages_down_read fs/ext4/ext4.h:1796 [inline]
+       ext4_writepages+0x1cc/0x350 fs/ext4/inode.c:3024
+       do_writepages+0x32e/0x550 mm/page-writeback.c:2604
+       __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1719
+       writeback_single_inode+0x1f9/0x6a0 fs/fs-writeback.c:1840
+       write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2903
+       iput_final fs/inode.c:1901 [inline]
+       iput+0x830/0xc50 fs/inode.c:1966
+       ext4_xattr_block_set+0x1fce/0x2ac0 fs/ext4/xattr.c:2199
+       ext4_xattr_move_to_block fs/ext4/xattr.c:2664 [inline]
+       ext4_xattr_make_inode_space fs/ext4/xattr.c:2739 [inline]
+       ext4_expand_extra_isize_ea+0x12da/0x1ea0 fs/ext4/xattr.c:2827
+       __ext4_expand_extra_isize+0x30d/0x400 fs/ext4/inode.c:6364
+       ext4_try_to_expand_extra_isize fs/ext4/inode.c:6407 [inline]
+       __ext4_mark_inode_dirty+0x46c/0x700 fs/ext4/inode.c:6485
+       ext4_evict_inode+0x80d/0xee0 fs/ext4/inode.c:254
+       evict+0x504/0x9c0 fs/inode.c:810
+       ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
+       __ext4_fill_super fs/ext4/super.c:5617 [inline]
+       ext4_fill_super+0x5920/0x61e0 fs/ext4/super.c:5736
+       get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
+       vfs_get_tree+0x92/0x2b0 fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x302/0xa10 fs/namespace.c:3727
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ei->xattr_sem){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
+       ext4_xattr_set_handle+0x165/0x1590 fs/ext4/xattr.c:2367
+       ext4_set_context+0x21b/0x550 fs/ext4/crypto.c:166
+       fscrypt_set_context+0x38a/0x460 fs/crypto/policy.c:791
+       __ext4_new_inode+0x3143/0x3cb0 fs/ext4/ialloc.c:1315
+       ext4_ext_migrate+0x69f/0x1010 fs/ext4/migrate.c:456
+       ext4_ioctl_setflags fs/ext4/ioctl.c:705 [inline]
+       ext4_fileattr_set+0xeaf/0x1630 fs/ext4/ioctl.c:1024
+       vfs_fileattr_set+0x932/0xb90 fs/file_attr.c:298
+       ioctl_setflags+0x180/0x1e0 fs/file_attr.c:334
+       do_vfs_ioctl+0x8ed/0x1430 fs/ioctl.c:560
+       __do_sys_ioctl fs/ioctl.c:595 [inline]
+       __se_sys_ioctl+0x82/0x170 fs/ioctl.c:583
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_writepages_rwsem);
+                               lock(&ei->xattr_sem);
+                               lock(&sbi->s_writepages_rwsem);
+  lock(&ei->xattr_sem);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.8.1928/14101:
+ #0: ffff888031d7e420 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write_file+0x60/0x200 fs/namespace.c:552
+ #1: ffff8880494bd9f0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: inode_lock include/linux/fs.h:980 [inline]
+ #1: ffff8880494bd9f0 (&type->i_mutex_dir_key#3){++++}-{4:4}, at: vfs_fileattr_set+0x14e/0xb90 fs/file_attr.c:278
+ #2: ffff888031d78b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_writepages_down_write fs/ext4/ext4.h:1808 [inline]
+ #2: ffff888031d78b98 (&sbi->s_writepages_rwsem){++++}-{0:0}, at: ext4_ext_migrate+0x2f3/0x1010 fs/ext4/migrate.c:438
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 14101 Comm: syz.8.1928 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+ ext4_write_lock_xattr fs/ext4/xattr.h:157 [inline]
+ ext4_xattr_set_handle+0x165/0x1590 fs/ext4/xattr.c:2367
+ ext4_set_context+0x21b/0x550 fs/ext4/crypto.c:166
+ fscrypt_set_context+0x38a/0x460 fs/crypto/policy.c:791
+ __ext4_new_inode+0x3143/0x3cb0 fs/ext4/ialloc.c:1315
+ ext4_ext_migrate+0x69f/0x1010 fs/ext4/migrate.c:456
+ ext4_ioctl_setflags fs/ext4/ioctl.c:705 [inline]
+ ext4_fileattr_set+0xeaf/0x1630 fs/ext4/ioctl.c:1024
+ vfs_fileattr_set+0x932/0xb90 fs/file_attr.c:298
+ ioctl_setflags+0x180/0x1e0 fs/file_attr.c:334
+ do_vfs_ioctl+0x8ed/0x1430 fs/ioctl.c:560
+ __do_sys_ioctl fs/ioctl.c:595 [inline]
+ __se_sys_ioctl+0x82/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1f39f8f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f1f3ade0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f1f3a1e5fa0 RCX: 00007f1f39f8f6c9
+RDX: 0000200000000080 RSI: 0000000040086602 RDI: 0000000000000004
+RBP: 00007f1f3a011f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f1f3a1e6038 R14: 00007f1f3a1e5fa0 R15: 00007fffb7f49f38
+ </TASK>
+EXT4-fs error (device loop8): ext4_validate_block_bitmap:423: comm syz.8.1928: bg 0: bad block bitmap checksum
+
+
 ---
- drivers/net/ethernet/intel/i40e/i40e.h          | 17 +++++++++++++++++
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c  | 12 ------------
- .../net/ethernet/intel/i40e/i40e_virtchnl_pf.c  |  4 ++--
- 3 files changed, 19 insertions(+), 14 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
-index 801a57a925da..a953cce008f4 100644
---- a/drivers/net/ethernet/intel/i40e/i40e.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e.h
-@@ -1418,4 +1418,21 @@ static inline struct i40e_veb *i40e_pf_get_main_veb(struct i40e_pf *pf)
- 	return (pf->lan_veb != I40E_NO_VEB) ? pf->veb[pf->lan_veb] : NULL;
- }
- 
-+/**
-+ * i40e_get_max_num_descriptors - get maximum number of descriptors for this hardware.
-+ * @pf: pointer to a PF
-+ *
-+ * Return: u32 value corresponding to the maximum number of descriptors.
-+ **/
-+static inline u32 i40e_get_max_num_descriptors(const struct i40e_pf *pf)
-+{
-+	const struct i40e_hw *hw = &pf->hw;
-+
-+	switch (hw->mac.type) {
-+	case I40E_MAC_XL710:
-+		return I40E_MAX_NUM_DESCRIPTORS_XL710;
-+	default:
-+		return I40E_MAX_NUM_DESCRIPTORS;
-+	}
-+}
- #endif /* _I40E_H_ */
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-index 86c72596617a..61c39e881b00 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -2013,18 +2013,6 @@ static void i40e_get_drvinfo(struct net_device *netdev,
- 		drvinfo->n_priv_flags += I40E_GL_PRIV_FLAGS_STR_LEN;
- }
- 
--static u32 i40e_get_max_num_descriptors(struct i40e_pf *pf)
--{
--	struct i40e_hw *hw = &pf->hw;
--
--	switch (hw->mac.type) {
--	case I40E_MAC_XL710:
--		return I40E_MAX_NUM_DESCRIPTORS_XL710;
--	default:
--		return I40E_MAX_NUM_DESCRIPTORS;
--	}
--}
--
- static void i40e_get_ringparam(struct net_device *netdev,
- 			       struct ethtool_ringparam *ring,
- 			       struct kernel_ethtool_ringparam *kernel_ring,
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 081a4526a2f0..5e058159057b 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -656,7 +656,7 @@ static int i40e_config_vsi_tx_queue(struct i40e_vf *vf, u16 vsi_id,
- 
- 	/* ring_len has to be multiple of 8 */
- 	if (!IS_ALIGNED(info->ring_len, 8) ||
--	    info->ring_len > I40E_MAX_NUM_DESCRIPTORS_XL710) {
-+	    (u32)info->ring_len > i40e_get_max_num_descriptors(pf)) {
- 		ret = -EINVAL;
- 		goto error_context;
- 	}
-@@ -726,7 +726,7 @@ static int i40e_config_vsi_rx_queue(struct i40e_vf *vf, u16 vsi_id,
- 
- 	/* ring_len has to be multiple of 32 */
- 	if (!IS_ALIGNED(info->ring_len, 32) ||
--	    info->ring_len > I40E_MAX_NUM_DESCRIPTORS_XL710) {
-+	    (u32)info->ring_len > i40e_get_max_num_descriptors(pf)) {
- 		ret = -EINVAL;
- 		goto error_param;
- 	}
--- 
-2.51.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
