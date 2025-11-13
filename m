@@ -1,251 +1,118 @@
-Return-Path: <linux-kernel+bounces-899296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8F3C574C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E447EC574E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EA63B7F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED433B4A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9CB34D4D6;
-	Thu, 13 Nov 2025 11:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E397734DB63;
+	Thu, 13 Nov 2025 11:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UcDjy4r1"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011026.outbound.protection.outlook.com [40.93.194.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPYFMjtm"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2333D6F9;
-	Thu, 13 Nov 2025 11:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035108; cv=fail; b=QRIt7G681XiP8dsyJ5kiQubYLGDvRShOFkbvE3SxfSG9aEYsKl31Of50Ksp71GnF79LyGD2KOr2V8JS+nUXIFW+vwtqhElqNXjwZunfotxewJVfo9f6XL+LP6D4FAARheE+uLjQIi7ZDexl2icPa0unOXp4mVyj32Dak+YTMe3M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035108; c=relaxed/simple;
-	bh=1Cx50zctEONqefLPHiZnsthKGwF//2RYUKV+y8S5Tkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Kx9dziDNP1riPl+n39pWou8OCYiDFBbGlRwj3f6s3cK3kCGeT+z9Nx6k41R6P6XaEQ5+05Px/qN6iSiSovTewmn4X8hd2H2Ctp5wbOdk67lSMeo9QQBh4rC/FafciiL0HqqvT9LX/yaxKvkqApIFX2XRkL8AOsgXpn/btGMbMPI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UcDjy4r1; arc=fail smtp.client-ip=40.93.194.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=piXKQxvJL5AogsA6CW4msQDjU0P7xWUm2wwqBWdPUkk7uE8/UF8fR43fg6Fh3Wv79gEwIEG/QFYb8M0tXeHc/XS6795q4gB+vkCPtfflkt1toUCgrtXp8S9DWjP3ag+bQZo9HD6V/mLak+2y99Q+Ux7KQ0KRNhc+CDvl1gaTkKnEzhaEtEkmd9AnHtBWbkJONu0kU7xvWOmtOEdp6NGGXHtX8eRBxQXiKYp2o78aAyvxq8sNwuNm6hha6LdlV6iuZ/zmUAOxIl1LzVWtm3qxMYBjnftLR4xXLOU+hqFOKKVVNWn1WBhlLAnNjUd1VN2kTc18f6hVw/rBQMhozPXTXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CNzkxJpEtbEfot+Bix7y83KXkacAkmVq2QVi+bvk6zM=;
- b=J9Fcqzf2fB1mv+FXiX/d8tkGngFoIJ/EV4eKXtC2kZqY3lWCiWKZG/G3FOl0LzpeaoKY1zq8aCC8ez5EoMyZuQJbKBp68XPpoRc8PZYxL7snwFDR75PcmJ2PhQpE0hlBZxzkh3MmX78qBvd/NP/rrbxlr7QPz4zm1ONvRvGa0qeBuVMg+vN9PAmpgXbtqNDC5KPWRRksuTSwXgE960s/92NKLMzsBzdXXnOUr75yIXmLf3SpfVrODykYcSCj4+HQZHpbLpOnAXenTnpPqc7pd+yr040W77bAMq82fWf3N2Hp+Tox83ipI6fTtmN9XBlBaiZCbIrChcmm70D+LB1kAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.dev smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CNzkxJpEtbEfot+Bix7y83KXkacAkmVq2QVi+bvk6zM=;
- b=UcDjy4r1I1SPqxuEEtwm9DbBX4AkDJDOqRvKr937qlIEWm1ZvtzPaCDIClYEBYE8yK/XudkVGYm86UX18yK08sIiqOX0LIb9l0U4FgHccdWjYf25YztgoUokhNEmCeADBsD17jkhqXtvxuE7x6VpqeSfxY9+JNdL5fup9NBkdeM=
-Received: from BYAPR05CA0017.namprd05.prod.outlook.com (2603:10b6:a03:c0::30)
- by DS7PR12MB6046.namprd12.prod.outlook.com (2603:10b6:8:85::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 11:58:21 +0000
-Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
- (2603:10b6:a03:c0:cafe::cf) by BYAPR05CA0017.outlook.office365.com
- (2603:10b6:a03:c0::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.6 via Frontend Transport; Thu,
- 13 Nov 2025 11:58:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 11:58:20 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 13 Nov
- 2025 03:58:19 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Nov
- 2025 05:58:19 -0600
-Received: from [10.252.220.243] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 13 Nov 2025 03:58:17 -0800
-Message-ID: <1f39d5a3-e728-4b2b-a9c6-50cbc4fffd17@amd.com>
-Date: Thu, 13 Nov 2025 17:28:11 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A3333892C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763035155; cv=none; b=ViQvPR+k/rHfGXdwptJ+aFKGJSZh07rdGIjCkelTR/rqbMbqQdBLwXMVIN8vRmAdSDUjebLlfhkzqq9hxoLr0s7OdspONEgJETlhmntHT9Nq2wbPw/wiWPCptDK2MQMDlG+kiCjZexVq7WfFV8SW+Pz25vS6upMO3Q7vwnFd3CU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763035155; c=relaxed/simple;
+	bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DROOg80Fi0Vd/+6IkGV/Jd7JAIIFezB4YKv0ugrnLFXyL87V4mfViXYwwF0EvFAtfLKq9iRPpGmxVyvcltoRxcPLg/FfzTm8547SDyC2Nf4xcV0WKZlQWZzazM9s2pdA1z+PtO6Udb7Yi9GT92jIsx17+TF4Q9tw2S5FcuVcieM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPYFMjtm; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297ec8a6418so900605ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763035153; x=1763639953; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
+        b=MPYFMjtmF2zkT0JL/WICrah/g+d8C+cKznJ66MxhUhaBBUiSMf6DC1Y88EcTRxtspz
+         cbMBPw/uaiLcz24gGy/6bvfyWDU5aUVolf2m/PweSY11CDUCsPp/togxhuJQRSxw+xiO
+         RQjRksYhbY8vUaNqyjkRhW/+pZhXQD9CvpkTjuRIT3YA7nVfXS/CgLifvXWUcA62Lrjd
+         4lYrSveMLAsuMdRtrfwm3DoeelFF1cBtOhpKspqAStpqhN4FL8g1WpDRm6LFG02SHksM
+         6E1baFBn8jKFnmINNVyG91yaJMfLnxezi5rs0wxBljPSYomsZQAtFFYIqMOccGmm+XT6
+         eKRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763035153; x=1763639953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=piE+R+DODWYPPHjD0pGzhLNR2aaWjsMLKfoosxwGZms=;
+        b=XJ0EYh+9rkTyIUQOaraKVlOx9meWZwWlwxkfifPK1zc/5Ut7h7EzBFCfLTGhC6tQTF
+         cIL2VEKWWNCHbqJMT6K6Z8xblDhTa7cMRLX+kCU/vowL9BUa8PvOmX3bYRfjy3mlM8DL
+         lKmBYJjiOKwKaFkCosHnH+VlDo5wj+gwbx9U+9lLD7QVERIPMycYqa7q67yPc4SqLw77
+         O//EHlaa4wXJUTAQ4XOsKIs+QrOveotZUV/lcdHhLoAUcgiKgW/gLgiwbk9zBTJYDpnx
+         MLKSrYtYwfaeRCtAvBAx5yYWFJQCWaBeFcKZkLFpt+VZ6GOyoOPpFdllANTtZyWnepAe
+         9QRw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8kaoOga8fw0TaGUVwo9X5U2lB8GW9hY0SBROrc11xuM2U/ySgbiK6b/zhX2u9BTw72Wp7jEKqEclN4v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAz8BnRep19T0A/S7DRSdc++b2vBzP9999Il5JHdfP5oWGa97G
+	jP/1YhC+l8YSc5AKY9huTKF1FJyGfnKNyvNCFEM5tNBPzZZ56OGzhBD+FbBQS4NTqyP+uIiGaQp
+	hLjrNaNOlaloiTpuMus+8VRUEQp+uC+Y=
+X-Gm-Gg: ASbGncsaAKlpaDrolKgZ0Tx1vnC3dOugDUsVAVVjT9sZ9StnozNJQUAZBDeiRs8+d/M
+	qOsJ2HYQZecKrgIHwkslyp1P7xoVc9MW6+hQX+Eiko5AriRj8Gaggh4+m7iGX49tg6lY5s6Fs/4
+	8dnQdShZlOLdT4hddcUFoVd/W31U0DiL7Pdcv+ZYrodrtv9kzCuruvMpmrhTOlkhyUhuZtZIDUt
+	qhCSTSjIpxRhnsCvxzHP6VgjbcR6FaQj72/Ro78BqbycKUlXulFl3E2DM1D8Az4ImBx4em8L4lt
+	pncFNvfqxHuJMaKTezlebgucSwK9Vlmk/AEyLX1mfdwtDeaBeewZVktOFv0fCQfSqOyP2M/Yqvs
+	hbG4=
+X-Google-Smtp-Source: AGHT+IH+D8mikItI/8Y6u4gUIPrRb5tLtmrJuENgrbMSvZ0tfOZVAyP/NCtfZ76q8QGb2mFA/ILYSlBWkwz9/2ETygU=
+X-Received: by 2002:a17:902:e80d:b0:297:f2a0:fad6 with SMTP id
+ d9443c01a7336-2984ee1bademr45282445ad.9.1763035153039; Thu, 13 Nov 2025
+ 03:59:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/14] x86/svm: Cleanup LBRV tests
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
-	<seanjc@google.com>, Kevin Cheng <chengkev@google.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
- <20251110232642.633672-13-yosry.ahmed@linux.dev>
-Content-Language: en-US
-From: Shivansh Dhiman <shivansh.dhiman@amd.com>
-In-Reply-To: <20251110232642.633672-13-yosry.ahmed@linux.dev>
+References: <20251113-create-workqueue-v2-0-8b45277119bc@google.com>
+ <20251113-create-workqueue-v2-1-8b45277119bc@google.com> <CANiq72k1VqR7P7tY2V_siBQZrNXf_ck5aBkapo6M_6X=1P+nDA@mail.gmail.com>
+ <CAH5fLgixPsBwqFdY-ku3AtGQHY+qa9m5oqMUshqdob7nzGQpag@mail.gmail.com>
+In-Reply-To: <CAH5fLgixPsBwqFdY-ku3AtGQHY+qa9m5oqMUshqdob7nzGQpag@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 13 Nov 2025 12:58:58 +0100
+X-Gm-Features: AWmQ_bkW9VeZXUswN2jzNBepz02JOobTrhcASJoPSgwdewJn2LinH9hrzYbmObg
+Message-ID: <CANiq72kamBPnWFg0nBCe4_mcmd66vW86ryiQnV_mTsnemxmjow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: workqueue: restrict delayed work to global wqs
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Tejun Heo <tj@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	John Hubbard <jhubbard@nvidia.com>, Philipp Stanner <phasta@kernel.org>, 
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benno Lossin <lossin@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|DS7PR12MB6046:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49fa27e9-9957-4862-c72b-08de22abf0b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjNoVGFzak0vQXdYMm5qWnhJWW1ZeGdsL0FMYnlueU1NVjNHelN5eldObWlH?=
- =?utf-8?B?Rkx4OHdUN010QkFDeW5vNTh6UUp6UEIxanlFeWxocHlZcWYxeFdQdmZhdlha?=
- =?utf-8?B?OGowMXBzYjMvTC9uTzB4OFpoR3Jzc1VYMnk5d0lrU2QrMWl1ZGRlT0NtbU9q?=
- =?utf-8?B?bHFTRFVGcENEVmJOOTRYcWJMakNuQm5TcEF5SERKVW5nV2xpTGMzN2JvUEl1?=
- =?utf-8?B?NFl2WDZFTEdGeTRzNmc4N3BCNDJIVTdCOE5ibFRPbUhJZG5lMGo2L1hiTWht?=
- =?utf-8?B?bWNSOFZVcUNzODc0MlZEeDVvS1pEUlJEN0l1Q05MTWtWcGIyWUk5bnVOc0Uz?=
- =?utf-8?B?YmFUbTZmUTA2bkRadkxTSlhvRi9wdzJCYjBKa2JMSE9MUDIyeVNLRVQ2eXFY?=
- =?utf-8?B?U25oUHprR0VyY1d6RTAzdWxzS2xMT1R4VWNRMXI2WWllU25qbHQ5Yzg3TEdr?=
- =?utf-8?B?aGt6cTVVNVBpU1FTSDYyb2tkWCsrZjkxcURJYnVPcVhHdnRPNGk5aklUM3hu?=
- =?utf-8?B?MnowUDRRZjRBQVFqTHJGZHRFN2ZHQVlETVhkYXRxYkYydGhraFY0UmUyYlF6?=
- =?utf-8?B?cW9leTRFL0VFQ21ock9zZVlDVjZMNWJWZUNSR1pBWnN0SFNnb29FeEFHbmNz?=
- =?utf-8?B?WHpCQ0orWkYxeDlJNG1NanpRekZYSW9zc2NGSk8vYWxpdC9LOERheU9lUGFU?=
- =?utf-8?B?RUttbjFYcGNGY3VvaWdGUjFMQ3d2UFYvUk02S3JYU3QycmR1NGV1dXBsbHdP?=
- =?utf-8?B?SHlwUlZNTGk2RXZ5dFlKbTNTV25PZ0ZsTkdKZk0vNjVkZXdJZGxsK05aT3Fo?=
- =?utf-8?B?RGdtNE93QkV1dFZLM0tIczA2dHNIelVySFpBYktIVERZRFVtYnYrcXFkSkQy?=
- =?utf-8?B?QVcreWFUMWVPNHFZdUs1cWV4clRwSHNDaVRTdVdEdmJHOGE5Q1Z4TzBpMlVW?=
- =?utf-8?B?ZlM2L3VCUWZDdkUrRXB1TlRXeWttN05rVnliaW9NWWRPdkd1WG1ISHhscUtP?=
- =?utf-8?B?ODRRRDVtZE5pRnJYdDJQSFRsdFR6NUw0czl2QnpNYUxwdTNtVi9CQWswMzZD?=
- =?utf-8?B?Z0Ryazh3K2Q4WlUzNWI4U0tua2lpcVlUNGF6Mk1Hbkt1akh3dVFZWWl0TTZP?=
- =?utf-8?B?aUVlZmpzTW9wMHVNa3NZNVpmRG5UTVpnUm0wRUo5L0ZjRHVWaGJKVTgzMlZF?=
- =?utf-8?B?ZHlrVlI4a0VtMlU2cjVWamZ0NFErYS84ckNUcC8rZFoxN2ZjMnRPZlY2YnBZ?=
- =?utf-8?B?YkRzOGowdGsxam52RHJkUmdvOUVyaW55YjhrTjdJSm1TVzR0a1ZlMFJwVGlG?=
- =?utf-8?B?c0JQd05XZUFJNUhQbTNRSjFxbDh6Y2Y2Ym84T1lzeW9YaStrWmQwKzFzamlS?=
- =?utf-8?B?YXpqSDlIL0twMEkvelVQVjlVQVVFaDBvZnAzYWF3RklBQW1jWW0rU3JpbEs1?=
- =?utf-8?B?U08zSDNab2JuS29HNjd4dWF2RW9pMG9tM01OOU93NnozYy9MYlB3RVNZWEVF?=
- =?utf-8?B?MFFaRVFLK3pTdUdmV3ZLZkE5cG5aZDdPOUduQlQ3RHZoUU5RNWdGcElCWExZ?=
- =?utf-8?B?VVFHVmJMcHBhRGJibUtpRitmQkErUlRnQjJ1RU9zUzR4MnhPMnE0VEtSZ3pp?=
- =?utf-8?B?SkVINkljZjFnTTNXVzhOcjR0bDNPUU9NOUY0T2daelo1R0xLb0NNNWYwTG92?=
- =?utf-8?B?UUdReHNoK0tyY3ROalpWM2RYZXZVTmhmNkg2WThsaG5EUXRyczhxRndLd3Bs?=
- =?utf-8?B?RkJ4aml6aXFrR0UxZGdaanZZSzZ0ZnFqekFJY2tDcHVPWDVoTHhmUHZQc05U?=
- =?utf-8?B?ejlMNGZkLzdUQXp0WllrSk9XdlVhZXZzZzdMZXdiaEN5dHR4OSs0MURxSUwx?=
- =?utf-8?B?VGl4UG96MmhJejFqQ1U5TTZMOFRSMktxWUpUZkhXWFlVWkJwK1BYT1ZYLzl3?=
- =?utf-8?B?SXZuVVh1VFB0RVdkT3UzcDlXQTcvSm5KdnVNUFIyOFdlVlpXMm55R0xpS0V2?=
- =?utf-8?B?UVpIcUVhSE16TjVOU1VTL0s3dDlDZXRZOFpuY2Z2b0k4MURsTmZocGd4VS9v?=
- =?utf-8?B?Y0tGNDdMc1dzekN6Y2dTaWtKSmJxajFJSFZ4SmdaT2xzaENoNEJvL1dLblNO?=
- =?utf-8?Q?rUSQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:58:20.4720
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49fa27e9-9957-4862-c72b-08de22abf0b0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6046
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yosry,
+On Thu, Nov 13, 2025 at 11:08=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> I could go either way. Without the next patch, there's no way to use a
+> non-global workqueue. But probably is useful to backport anyway and
+> there's certainly no harm.
 
-I tested this on EPYC-Turin and found that some tests seem to be a bit flaky.
-See below.
+Yeah, I would say then let's propose it for stable to be safe than
+sorry in case this gets missed later on (or someone else out there
+uses only the other one etc.).
 
-On 11-11-2025 04:56, Yosry Ahmed wrote:
-> @@ -3058,55 +3041,64 @@ u64 dbgctl;
->  
->  static void svm_lbrv_test_guest1(void)
->  {
-> +	u64 from_ip, to_ip;
-> +
->  	/*
->  	 * This guest expects the LBR to be already enabled when it starts,
->  	 * it does a branch, and then disables the LBR and then checks.
->  	 */
-> +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-> +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
+Cc: stable@vger.kernel.org
+Fixes: 7c098cd5eaae ("workqueue: rust: add delayed work items")
 
-This TEST_EXPECT_EQ is run when LBR is enabled, causing it to change last
-branch. I tried to move it below wrmsr(MSR_IA32_DEBUGCTLMSR, 0) and it works
-fine that way.
+Thanks!
 
->  
->  	DO_BRANCH(guest_branch0);
->  
-> -	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-> +	/* Disable LBR before the checks to avoid changing the last branch */
->  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);> +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-> +	TEST_EXPECT_EQ(dbgctl, 0);
->  
-> -	if (dbgctl != DEBUGCTLMSR_LBR)
-> -		asm volatile("ud2\n");
-> -	if (rdmsr(MSR_IA32_DEBUGCTLMSR) != 0)
-> -		asm volatile("ud2\n");
-> +	get_lbr_ips(&from_ip, &to_ip);
-> +	TEST_EXPECT_EQ((u64)&guest_branch0_from, from_ip);
-> +	TEST_EXPECT_EQ((u64)&guest_branch0_to, to_ip);
->  
-> -	GUEST_CHECK_LBR(&guest_branch0_from, &guest_branch0_to);
->  	asm volatile ("vmmcall\n");
->  }
->  
->  static void svm_lbrv_test_guest2(void)
->  {
-> +	u64 from_ip, to_ip;
-> +
->  	/*
->  	 * This guest expects the LBR to be disabled when it starts,
->  	 * enables it, does a branch, disables it and then checks.
->  	 */
-> -
-> -	DO_BRANCH(guest_branch1);
->  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-> +	TEST_EXPECT_EQ(dbgctl, 0);
->  
-> -	if (dbgctl != 0)
-> -		asm volatile("ud2\n");
-> +	DO_BRANCH(guest_branch1);
->  
-> -	GUEST_CHECK_LBR(&host_branch2_from, &host_branch2_to);
-> +	get_lbr_ips(&from_ip, &to_ip);
-> +	TEST_EXPECT_EQ((u64)&host_branch2_from, from_ip);
-> +	TEST_EXPECT_EQ((u64)&host_branch2_to, to_ip);
->  
->  	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
->  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
-> +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
-
-Same thing here as well.
-
-> +
->  	DO_BRANCH(guest_branch2);
->  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
->  
-> -	if (dbgctl != DEBUGCTLMSR_LBR)
-> -		asm volatile("ud2\n");
-> -	GUEST_CHECK_LBR(&guest_branch2_from, &guest_branch2_to);
-> +	get_lbr_ips(&from_ip, &to_ip);
-> +	TEST_EXPECT_EQ((u64)&guest_branch2_from, from_ip);
-> +	TEST_EXPECT_EQ((u64)&guest_branch2_to, to_ip);
->  
->  	asm volatile ("vmmcall\n");
->  }
-Reviewed-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
-
-Other tests look good to me, and work fine.
-
-Tested-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
-
-
-
+Cheers,
+Miguel
 
