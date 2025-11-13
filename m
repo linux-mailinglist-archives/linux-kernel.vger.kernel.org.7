@@ -1,129 +1,211 @@
-Return-Path: <linux-kernel+bounces-900079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF05C59912
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:51:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A70C59906
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06B2F3454AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17FE3A5B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF8E2D7813;
-	Thu, 13 Nov 2025 18:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B9D2F5A07;
+	Thu, 13 Nov 2025 18:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nku4BofP"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hz1KdRW5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CFD314D16
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85E8223DDA;
+	Thu, 13 Nov 2025 18:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059647; cv=none; b=ueETjX8EWhVDba/elQ76zxAJGGvRoftgrPpqWONghmCxgbP96E2yIzuAuTlSHK69Bu4LCDbwPpmImu7XBdzlvOkeEpkBzp2Bxl6ikKbn8tYIvR9SNuu3Iabp9MDAe5w+eAcLYOajglNgYutgwPffOmDWiv/Z+5EJQ4xjRG00IyM=
+	t=1763059679; cv=none; b=YExCAnXYTbF8v7B2qnUVpnG0oKz3uCKPoOecbrLLOucRV4wfAUOLsQK/6EnzSkOmZhnZadrzbQFX/0oSxe0Wuxuyz9KvFa/TvhO1ixz7ZEYr81F2Q17JOhaEuFnEBoCIb1nTJVcu/VYHB8Hh/a3+Y8SYXOh5clce0NKrGR4b8pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059647; c=relaxed/simple;
-	bh=m/TMgIwaPkUbXfwT5NIqlaTMIB8pf+yolwgjLBXes/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MdQh4r0YjxIg3eg8FUuCf99jBMGrM2Civ/EsVT/9RCKWS0GLIY+1Dr5IBnfLDCAmu9f/QJ3nevkOniv4Oexz+h29qWOn3dqLi5DGZiArDWF9K/KsKotvCsR4Nqx5jx55P/plbyzFkmfELgFMeIyuIPMM+CNP1n2sEA4y1h10KPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nku4BofP; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6419b7b4b80so1738287a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:47:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1763059643; x=1763664443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pa5zOAGn4vfPtNLql7ISD9NlwOeK3Bkse1UUyaDWYw=;
-        b=nku4BofP8TJlw9gdqTYJlDAe4x2O2ELI496I43r7+z18+FT/O2Dhx6Gqz33Q+Ne40r
-         pmnznF6Zso4tegI8rd1h6DWmT+sOwJ1grL+5jmVnRDuD9u9/EYpr65Z5KvW27aMAOnLJ
-         tCvz5eVRlfPHFEx4Hovrdw2O85qA3PxRhfVas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059643; x=1763664443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6pa5zOAGn4vfPtNLql7ISD9NlwOeK3Bkse1UUyaDWYw=;
-        b=p//8JdpK+5w/C4NV8WNx/Di/YIxT6bV85C6gqagBMyR9YkuFuB3pLNlh5EITwHP0I2
-         bo6aP57v5a3WYY20yDHfmw+IwvhTpeD0rVTEW7O9ZInEKgEDsx2vVQGXeejtp83FR04P
-         XhrcCAuTBUsfd3/j8Y0XF/O0jpIoeO8JBvohJoHYfqcInTlulCPSf2FvEIifdnsz4LX8
-         UxKw/i+wCiif65HjFAlb6QY8oAmZdPpWrNC3O0JfaLapAkQl4GJaOtwTEDRiOMU7hfOM
-         +g3GB7Is8Hm/+i/9iOfKOD0cXw7m3cvE+8Kg4Cq1p2FTbLpvpercVsZ6Xr8UgOwJLFX+
-         7Rbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlgsDSKQJqcMAttuuE9eJ82mp6y1IrZ9woSKkxkgZ5jj+VbQPVLyxs9qSah6wCn8wtoebA8TeoQG6NADA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZpF963jwidOyIpQ7ph3Cxr04bCYYMcpVrW+R5IcI2dWA8Gzr5
-	pyvhWCNmiLduMLTjJAk6Z2ZC9DiGnLO9RcdwaQOulT6CGgXbP5UExbpzTT3av2EhHLy8bO9fslC
-	ZN/D+vuf7
-X-Gm-Gg: ASbGncsGEx4KeTQclQI7u3YCTg8Ad/XJ2CiXKbjFfT5OjIUl1YRagEk8nIqWxhE0cue
-	mXT3MOpJeRBehTpapBz4TlgpdFMfw2E+IoGwypGkLvDy3CrKoainZrjcnBubR7o/1ezXvm5oJxR
-	O7L8zhtB9MJA9NEgUmsZkfct8RqZ6Kp2aAC+6/OLyzEc34D3YVEVuM6yYegxLX1QU9sW6yyEEOO
-	VEFVwXjlvAXgHpIxtlayvwYyO8U+eL6cBUDUKBLA/bQgXa3axVTeG/lDKUSTxHwtqseipd3dTJx
-	5ER1W0J5ZgPPKn7WJe2x8rARPsfAMp/JuLACzzGq1pFtBvod6h7uzyyAys7srF7XVmK6yX1esXA
-	znsds3kbRoPjnWZmzncJGAqIzSpC47++lNvvq/WhOloPEYZRJasCr+Q7qUVZBE9HUMg6bF4zZ53
-	KTOyNsjp9/AZ2EL4cy7QoX0O9joWFY6hIMJBkURxANOzTWY2e51xbU9k1ZwJOJ
-X-Google-Smtp-Source: AGHT+IGR1vc6DhJ+hbCghHYiMJDsE4Xv2y34v4Gl2YHFA5gRDUdaIUeykZQFg2qJVYeVWHEfZ5tp9g==
-X-Received: by 2002:a05:6402:3553:b0:640:bd21:242f with SMTP id 4fb4d7f45d1cf-64350e06e88mr332893a12.1.1763059643247;
-        Thu, 13 Nov 2025 10:47:23 -0800 (PST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a4b19dcsm1920664a12.27.2025.11.13.10.47.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 10:47:22 -0800 (PST)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-471191ac79dso12798545e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:47:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXHKSitsdCxzWXctv0UVeXWqB27tCyaABfPMKNbYkz0RwaYyoTYin9lMzRDkdQClTu3pYQUFrYlL1QmUP4=@vger.kernel.org
-X-Received: by 2002:a05:600c:1c19:b0:46d:5189:3583 with SMTP id
- 5b1f17b1804b1-4778fe128d4mr5655535e9.0.1763059641794; Thu, 13 Nov 2025
- 10:47:21 -0800 (PST)
+	s=arc-20240116; t=1763059679; c=relaxed/simple;
+	bh=muVj7qILp2XS6H9acaHDLEs5rFMJFPMs/0Q9Zb/2JKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZD/iiOArvMNzanedQiuZbVXoYfZ30Sf2IIKlA3vFHd2NV9u+bZMNTGglixqMATPyInp+gjMrH82g5LIwFnofpttqHOvuP9LuaMx0HIbQLqdbmc6ayp8XX+zw1B/hOF7OBDQGR6yFybfXDfqyiU7fCn8nYAIyFwnR7NbYWoL0Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hz1KdRW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40026C4CEF8;
+	Thu, 13 Nov 2025 18:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763059678;
+	bh=muVj7qILp2XS6H9acaHDLEs5rFMJFPMs/0Q9Zb/2JKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hz1KdRW5mULhX+by7xvqiVsoeTN46VZVJdxzEddTrLjjeQAfvfZpyzUPH5wY3Wqdl
+	 NyjMZ2sh/YirX9dPE7JDN7TGI1TizyTLM2W4V9vYZybusPCSQ04c1qngCZmZQ5zP4R
+	 xeo3fHw4kH6UU/QbcxppRVVRRzizQ4mkpeU3d9Uw3L+y4AVCAVVxdSt6ZYaTA6jihh
+	 MB9Ug3t3WsHyzoxrnWJ4DVbhOGWjDUN2oidj0E5UQk1H3FjfH0hpdseAF6oDt7gbu4
+	 9s1GjfFkvy2jq0RblycUSI5aAreMGmioj6+gwaWG5amdehsHkIQUW/qtpm6h1lRLKX
+	 argfRRkfb588g==
+Date: Thu, 13 Nov 2025 18:47:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"longli@microsoft.com" <longli@microsoft.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"muislam@microsoft.com" <muislam@microsoft.com>,
+	"anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+	Jinank Jain <jinankjain@microsoft.com>
+Subject: Re: [PATCH v4] mshv: Extend create partition ioctl to support cpu
+ features
+Message-ID: <20251113184756.GA1175882@liuwe-devbox-debian-v2.local>
+References: <1762903194-25195-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB415718EF45BF1B79F2C15F20D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113140004.v4.1.I894dde5015f4acad94cb5bada61e5811c5142395@changeid>
- <20251113140004.v4.2.I47e9f0b76399e6009854dec06420c20e68e23116@changeid>
-In-Reply-To: <20251113140004.v4.2.I47e9f0b76399e6009854dec06420c20e68e23116@changeid>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 13 Nov 2025 10:47:10 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V1XDg4xeyNsonO=Vnqtr_h_t-6THVSN94OwnAc0rL0xA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmudWlj27QvceuHdnhfsgBSCMlgVO4gHcVjnbaop7V-bBcQI7Hn-P8apkc
-Message-ID: <CAD=FV=V1XDg4xeyNsonO=Vnqtr_h_t-6THVSN94OwnAc0rL0xA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] HID: i2c-hid: Add FocalTech FT8112
-To: daniel_peng@pegatron.corp-partner.google.com
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Pin-yen Lin <treapking@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB415718EF45BF1B79F2C15F20D4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-Hi,
+On Wed, Nov 12, 2025 at 04:27:05PM +0000, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, November 11, 2025 3:20 PM
+> > 
+> > The existing mshv create partition ioctl does not provide a way to
+> > specify which cpu features are enabled in the guest. Instead, it
+> > attempts to enable all features and those that are not supported are
+> > silently disabled by the hypervisor.
+> > 
+> > This was done to reduce unnecessary complexity and is sufficient for
+> > many cases. However, new scenarios require fine-grained control over
+> > these features.
+> > 
+> > Define a new mshv_create_partition_v2 structure which supports
+> > passing the disabled processor and xsave feature bits through to the
+> > create partition hypercall directly.
+> > 
+> > Introduce a new flag MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables
+> > the new structure. If unset, the original mshv_create_partition struct
+> > is used, with the old behavior of enabling all features.
+> > 
+> > Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+> > Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+> > Signed-off-by: Muminul Islam <muislam@microsoft.com>
+> > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> > ---
+> > Changes in v4:
+> > - Change BIT() to BIT_ULL() [Michael Kelley]
+> > - Enforce pt_num_cpu_fbanks == MSHV_NUM_CPU_FEATURES_BANKS and expect
+> >   that number to never change. In future, additional processor banks
+> >   will be settable as 'early' partition properties. Remove redundant
+> >   code that set default values for unspecified banks [Michael Kelley]
+> > - Set xsave features to 0 on arm64 [Michael Kelley]
+> > - Add clarifying comments in a few places
+> > 
+> > Changes in v3:
+> > - Remove the new cpu features definitions in hvhdk.h, and retain the
+> >   old behavior of enabling all features for the old struct. For the v2
+> >   struct, still disable unspecified feature banks, since that makes it
+> >   robust to future extensions.
+> > - Amend comments and commit message to reflect the above
+> > - Fix unused variable on arm64 [kernel test robot]
+> > 
+> > Changes in v2:
+> > - Fix exposure of CONFIG_X86_64 to uapi [kernel test robot]
+> > - Fix compilation issue on arm64 [kernel test robot]
+> > ---
+> >  drivers/hv/mshv_root_main.c | 113 +++++++++++++++++++++++++++++-------
+> >  include/uapi/linux/mshv.h   |  34 +++++++++++
+> >  2 files changed, 126 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> > index d542a0143bb8..9f9438289b60 100644
+> > --- a/drivers/hv/mshv_root_main.c
+> > +++ b/drivers/hv/mshv_root_main.c
+> > @@ -1900,43 +1900,114 @@ add_partition(struct mshv_partition *partition)
+> >  	return 0;
+> >  }
+> > 
+> > -static long
+> > -mshv_ioctl_create_partition(void __user *user_arg, struct device *module_dev)
+> > +static_assert(MSHV_NUM_CPU_FEATURES_BANKS ==
+> > +	      HV_PARTITION_PROCESSOR_FEATURES_BANKS);
+> > +
+> > +static long mshv_ioctl_process_pt_flags(void __user *user_arg, u64 *pt_flags,
+> > +					struct hv_partition_creation_properties *cr_props,
+> > +					union hv_partition_isolation_properties *isol_props)
+> >  {
+> > -	struct mshv_create_partition args;
+> > -	u64 creation_flags;
+> > -	struct hv_partition_creation_properties creation_properties = {};
+> > -	union hv_partition_isolation_properties isolation_properties = {};
+> > -	struct mshv_partition *partition;
+> > -	struct file *file;
+> > -	int fd;
+> > -	long ret;
+> > +	int i;
+> > +	struct mshv_create_partition_v2 args;
+> > +	union hv_partition_processor_features *disabled_procs;
+> > +	union hv_partition_processor_xsave_features *disabled_xsave;
+> > 
+> > -	if (copy_from_user(&args, user_arg, sizeof(args)))
+> > +	/* First, copy v1 struct in case user is on previous versions */
+> > +	if (copy_from_user(&args, user_arg,
+> > +			   sizeof(struct mshv_create_partition)))
+> >  		return -EFAULT;
+> > 
+> >  	if ((args.pt_flags & ~MSHV_PT_FLAGS_MASK) ||
+> >  	    args.pt_isolation >= MSHV_PT_ISOLATION_COUNT)
+> >  		return -EINVAL;
+> > 
+> > +	disabled_procs = &cr_props->disabled_processor_features;
+> > +	disabled_xsave = &cr_props->disabled_processor_xsave_features;
+> > +
+> > +	/* Check if user provided newer struct with feature fields */
+> > +	if (args.pt_flags & BIT_ULL(MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES)) {
+> > +		if (copy_from_user(&args, user_arg, sizeof(args)))
+> > +			return -EFAULT;
+> 
+> There's subtle issue here that I didn't notice previously. This second copy_from_user()
+> re-populates the first two fields of the "args" local variable. These two fields were
+> validated by code a few lines above. But there's no guarantee that a second read of
+> user space will get the same values. User space could have another thread that
+> changes the user space values between the two copy_from_user() calls, and thereby
+> sneak in some bogus values to be used further down in this function. Because of
+> this risk, there's a general rule for kernel code, which is to avoid multiple accesses to
+> the same user space values. There are places in the kernel where such double reads
+> would be an exploitable security hole.
+> 
+> The fix would be to validate the pt_flags and pt_isolation fields again, or to have the
+> second copy_from_user copy only the additional fields. But it's also the case that the
+> way the pt_flags and pt_isolation fields are used further down in this function,
+> nothing bad can happen if malicious user space should succeed in sneaking in some
+> bogus values.
+> 
+> Net, as currently coded, there's nothing that needs to be fixed. It would be more
+> robust to do one of the two fixes, if for no other reason than to acknowledge
+> awareness of the risk of reading user space twice. But I'm not going to insist
+> on a respin.
 
-On Wed, Nov 12, 2025 at 10:01=E2=80=AFPM
-<daniel_peng@pegatron.corp-partner.google.com> wrote:
->
-> From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
->
-> Information for touchscreen model HKO/RB116AS01-2 as below:
-> - HID :FTSC1000
-> - slave address:0X38
-> - Interface:HID over I2C
-> - Touch control lC:FT8112
-> - I2C ID: PNP0C50
->
-> Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
-> ---
->
-> Changes in v4:
-> - Move change log of v3 under "---" correctly as below 1 item.
->
-> - Modified the subject to include the ID of the chip as suggestion only.
->
->  drivers/hid/i2c-hid/i2c-hid-of-elan.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+Nuno, I can commit this patch first. If you can post a diff later I can
+squash it in.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+	/* Re-validate fields after the second copy_from_user */
+  	if ((args.pt_flags & ~MSHV_PT_FLAGS_MASK) ||
+  	    args.pt_isolation >= MSHV_PT_ISOLATION_COUNT)
+  		return -EINVAL;
+
+Perhaps something like this after the second copy_from_user()?
+
+>> Other than the double read of user space, LGTM.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+
+Thank you for the detailed review!
+
+Wei
 
