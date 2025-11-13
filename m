@@ -1,180 +1,160 @@
-Return-Path: <linux-kernel+bounces-899301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF82C5752E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:04:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A00BC5755B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8405A4E42F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:04:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D83093434E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6B234B69C;
-	Thu, 13 Nov 2025 12:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD2F34D3A9;
+	Thu, 13 Nov 2025 12:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TrGvUOCX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWByH5oU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TrGvUOCX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWByH5oU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="tw4s6Fkp"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC234AAF9
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745D9338F54
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035461; cv=none; b=VGVKtJMrcqlwNXp9gU58sinp6vR12N8yzPPgP/4ZRBJLc+UwJnyAG8B5z3uLBHE2VaP1WjwIN1a0UJJWlL6K9/7Ye8dtsfwqXAZIhczybw4TVSLAXLOgiKhfUg7unIYnfBD7oTgfiPa79XDjwcplgHd6L/Gumjuqv+H5XlZStkg=
+	t=1763035561; cv=none; b=LWdIzBrEvLWBoAChkEXMhyXWls8IbpHLqbCMoHbdF35fTxc/qbCiAWONVGbNkGE+aw/VpkPpN6+jbA6B6QAMytKdQKtxVhTaom3nTtCfENTumqyXpKWUyl9u3BUmEwYZ5cMPzSbRj5ZfWEzUda280eyZPyiMRW+y1F+WZ9V0S3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035461; c=relaxed/simple;
-	bh=EwACQkUUaj7OMJsgnLEuauJXcZfosM/TDDQbqvUOeTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFc3Oynshxn8o/MKV5Ex4icNXOpr8lmFyd3NTkdNr2Dz0z4xpgVJdoy2kFtDKOYZCLM17fMgkIRmd9vXZMNFLhJLJGVv/vOEUAODJnZwzK4w2RJ7Q8pQ236MuclsDzmpazz/rMO8Bxn4G2wTsT4TWt9IxOrOSXIDyri+8v0aOOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TrGvUOCX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWByH5oU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TrGvUOCX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWByH5oU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 90FE31F395;
-	Thu, 13 Nov 2025 12:04:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763035455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
-	b=TrGvUOCXOs7QH+PYeNPFvHAjxdbuXMoqiFrtYnA6FVga97LTv59g87y10uPCpInRkt9xMG
-	di4+EuW30F3iYLY1TcmH1EFqbwBtwoXgmMCYMWyVpn2bMeu2QyHBE39GEi4eb+Fera4LSR
-	L1/ule3HpZ3pRHHv0kwPbp+5ftsWwdg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763035455;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
-	b=cWByH5oUpIspG+wv+pyu95wcBOxFKb/gmooUgkcMDoujQfkBdYmM8CaeO32N2xtZb5Ll32
-	5rvGvm1VxafLUlAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763035455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
-	b=TrGvUOCXOs7QH+PYeNPFvHAjxdbuXMoqiFrtYnA6FVga97LTv59g87y10uPCpInRkt9xMG
-	di4+EuW30F3iYLY1TcmH1EFqbwBtwoXgmMCYMWyVpn2bMeu2QyHBE39GEi4eb+Fera4LSR
-	L1/ule3HpZ3pRHHv0kwPbp+5ftsWwdg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763035455;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
-	b=cWByH5oUpIspG+wv+pyu95wcBOxFKb/gmooUgkcMDoujQfkBdYmM8CaeO32N2xtZb5Ll32
-	5rvGvm1VxafLUlAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB4533EA61;
-	Thu, 13 Nov 2025 12:04:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BAugLj7JFWnzEQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 13 Nov 2025 12:04:14 +0000
-Date: Thu, 13 Nov 2025 13:04:07 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: hughd@google.com, baolin.wang@linux.alibaba.com,
-	akpm@linux-foundation.org, david@redhat.com, muchun.song@linux.dev,
-	kraxel@redhat.com, airlied@redhat.com, jgg@ziepe.ca,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	vivek.kasireddy@intel.com,
-	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm/memfd: fix information leak in hugetlb folios
-Message-ID: <aRXJN2WHvfAwoAFE@localhost.localdomain>
-References: <20251112145034.2320452-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1763035561; c=relaxed/simple;
+	bh=FQCyISZnPOKJei2bgAKraXYH+mV70ZDTbaSgZq6DQ2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NVOobE47Qa9W7/8HQRHAgz+E9ULsc2p/S0VhnzW6SpqDNl6T0SNq3+yD32x7QA5g1IRLDPVl6u2ZQR6QQkup18TSwYHqzmw3w7T7oCjlnxIg33a/Ft1/NutqH/g0Epk2PtgGV05TFAMupt0BbCPcpFIlj73jiQXKR+FI3BXNerA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=tw4s6Fkp; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297f35be2ffso10251185ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:05:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1763035557; x=1763640357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GfHQGwR2IJ0YhvOVkLG4P4YqTO9ZoG8OUJ/4HMhDBS4=;
+        b=tw4s6FkpCKcJOXXEMyAmR698AilOfHhB6SacnBOHt+2JYn76GZZxcts2IlqKBtU6rU
+         6W8h+8J9KRDlaN4O3WLq5Bw/RDvtS4jEb2T+6S6Hunn5bqT9WLDUzAvUEJ8GvWYOPiqp
+         8OYNuraP887WFGFQmUDjycYtG7qmz7BTBkQZ69dspJQ4jPxzfz9CAz9iTAyRUNHx5xww
+         gTjoAY6ugASbQZ/dn4UbAtFn+vHhnYP60N3tNEZc3xMj+0zotcU1U47stdRbDa4d1d2j
+         PwyBvvcwB2OB75E9YFECkWdmLZNU03b5klPCI4fubIbipx3A8i+G4shg97ve5FznVnze
+         SNKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763035557; x=1763640357;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GfHQGwR2IJ0YhvOVkLG4P4YqTO9ZoG8OUJ/4HMhDBS4=;
+        b=b6Gn8nVUDDI6GxAxOq7WE4r8NgWcPucrY0nfmEmB6l55B6ZsZdE724EYxONmbeX50L
+         HdWJ41GBz3+PYAKq7m6Wv3uEiuFCdk5RdXUMq0m3xTk8dYg5Q06a7k22pmpB3o4zXhxF
+         gwxk7seHwfYbRpINPCjMM5bCDlpy2z3Ie49+TctMggNdHmt2ncsXySV4/u60x70SDPW6
+         LPvnLZqP5O6O5o+dYn0qlbVdds2kKlAQgDWP1r8uwfhtnFUYVQ28esUx2h1WOxVsjOdW
+         uLrRt4H2n6yPuRAZIrNPXUBN8QkaguDqu/QM82m794UODs/BFuVyCNJj5aLoz2uDw7Sw
+         p+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXtYHYv4PMGVSS6Hta39QMTXAcy5wTpgC+n9uFfbQCRREFRAiVc4Z0tX8Hdg5fBV4syBFm7Q+y30HniN7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGFAotNNBFkUNZQQgD1j88NqZ9k+7tIFiEwpkS7x5wwWCW0Zbu
+	sMQlu/YqGagjWLzz82kwYu0DtGs0q+eLtwUJTkpMgru4qd6xVXirfXkonpPJl5hcUjc=
+X-Gm-Gg: ASbGncstbnfK+DUkJUEKPFLCzPyLFG1dv2Q2feSsloWb0HOpOVXoIdjzVvILi3DM6BJ
+	IU4yrlsNVmURIt9Nx0xNWxAhrCZLa39nv2GVPQghJvWlSH2TituAfetzQUsuD+t5vC0F5qWZA10
+	Tmty+mxdeqGmF2ZMaeH432znMRHLOEUp26kc9be2ffu3h+X85+Ko2aIyf3HbL4hvEXti37Byqj7
+	penJZQYFgVl3NA3jZREGh0lr45YlJAfI3cVcI9jQJYz8Q5Gp6EXUITxs/LJrmCX1B5XPTma3TK+
+	/g6uEnoVMcf/x9iU9bshDxWhguxWE1EUU4S44qNnl6KPlzYKWIM92z6B+4J8YDX0l9lzW6yfhno
+	FGTdd7XpDTA3aFENmLKKI8dU9FRA583lZR6J9adFjeG56bnYSVxtdAWnWQQ8zBp9AsmTk7XxgHf
+	grKR8cyBlTLmvEXiNOQYysdXxH
+X-Google-Smtp-Source: AGHT+IFgo9WsRupy+/jqOwQBJv80tuF4CK2JKSkC+PdQn2V45/Xn8leUXKdiJbwaz/ZGzv5fvvuF/A==
+X-Received: by 2002:a17:902:ce0d:b0:295:7b8c:6611 with SMTP id d9443c01a7336-2984ed48d7emr84032885ad.15.1763035556593;
+        Thu, 13 Nov 2025 04:05:56 -0800 (PST)
+Received: from localhost.localdomain ([103.158.43.25])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2985c2bed7bsm24122405ad.74.2025.11.13.04.05.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 04:05:55 -0800 (PST)
+From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+To: cezary.rojewski@intel.com
+Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: intel: avs: Fix potential memory leak in avs_pci_probe()
+Date: Thu, 13 Nov 2025 17:34:41 +0530
+Message-ID: <20251113120447.86911-1-nihaal@cse.iitm.ac.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112145034.2320452-1-kartikey406@gmail.com>
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[f64019ba229e3a5c411b];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 08:20:34PM +0530, Deepanshu Kartikey wrote:
-> When allocating hugetlb folios for memfd, three initialization steps
-> are missing:
-> 
-> 1. Folios are not zeroed, leading to kernel memory disclosure to userspace
-> 2. Folios are not marked uptodate before adding to page cache
-> 3. hugetlb_fault_mutex is not taken before hugetlb_add_to_page_cache()
-> 
-> The memfd allocation path bypasses the normal page fault handler
-> (hugetlb_no_page) which would handle all of these initialization steps.
-> This is problematic especially for udmabuf use cases where folios are
-> pinned and directly accessed by userspace via DMA.
-> 
-> Fix by matching the initialization pattern used in hugetlb_no_page():
-> - Zero the folio using folio_zero_user() which is optimized for huge pages
-> - Mark it uptodate with folio_mark_uptodate()
-> - Take hugetlb_fault_mutex before adding to page cache to prevent races
-> 
-> The folio_zero_user() change also fixes a potential security issue where
-> uninitialized kernel memory could be disclosed to userspace through
-> read() or mmap() operations on the memfd.
-> 
-> Reported-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/20251112031631.2315651-1-kartikey406@gmail.com/ [v1]
-> Closes: https://syzkaller.appspot.com/bug?extid=f64019ba229e3a5c411b
-> Fixes: 89c1905d9c14 ("mm/gup: introduce memfd_pin_folios() for pinning memfd folios")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Oscar Salvador <osalvador@suse.de>
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Tested-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+The link resources allocated in snd_hdac_ext_bus_get_ml_capabilities()
+are not freed on subsequent error paths in avs_pci_probe().
 
-As David mentioned, we can drop the comment wrt. __folio_mark_uptodate.
-As for the addr_hint in folio_zero_user, I do not think it makes a
-difference in here.
-AFAIK, it serves the purpose that subpages belong to the addr_hint will
-be zeroed the latest to keep them in cache, but here it does not really
-apply, so '0' should just work?
+Fixes: 1affc44ea5dd ("ASoC: Intel: avs: PCI driver implementation")
+Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+---
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+v1->v2:
+- Shorten commit message 
+- Handle the case when some of the links are allocated, as pointed out
+  by Cezary Rojewski
 
+Link to V1:
+https://lore.kernel.org/all/20251113104121.79484-1-nihaal@cse.iitm.ac.in/T/#u
 
+ sound/soc/intel/avs/core.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/intel/avs/core.c b/sound/soc/intel/avs/core.c
+index 6e0e65584c7f..f0d77f3f3a28 100644
+--- a/sound/soc/intel/avs/core.c
++++ b/sound/soc/intel/avs/core.c
+@@ -473,8 +473,13 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 	}
+ 
+ 	snd_hdac_bus_parse_capabilities(bus);
+-	if (bus->mlcap)
+-		snd_hdac_ext_bus_get_ml_capabilities(bus);
++	if (bus->mlcap) {
++		ret = snd_hdac_ext_bus_get_ml_capabilities(bus);
++		if (ret) {
++			dev_err(dev, "failed to get multilink capabilities: %d\n", ret);
++			goto err_ml_capabilities;
++		}
++	}
+ 
+ 	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64)))
+ 		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+@@ -483,7 +488,7 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 	ret = avs_hdac_bus_init_streams(bus);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to init streams: %d\n", ret);
+-		goto err_init_streams;
++		goto err_ml_capabilities;
+ 	}
+ 
+ 	ret = avs_hdac_acquire_irq(adev);
+@@ -515,7 +520,8 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ err_acquire_irq:
+ 	snd_hdac_bus_free_stream_pages(bus);
+ 	snd_hdac_ext_stream_free_all(bus);
+-err_init_streams:
++err_ml_capabilities:
++	snd_hdac_ext_link_free_all(bus);
+ 	iounmap(adev->dsp_ba);
+ err_remap_bar4:
+ 	iounmap(bus->remap_addr);
 -- 
-Oscar Salvador
-SUSE Labs
+2.43.0
+
 
