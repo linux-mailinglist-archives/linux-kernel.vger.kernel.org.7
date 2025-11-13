@@ -1,195 +1,182 @@
-Return-Path: <linux-kernel+bounces-899496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4C7C57EE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:27:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41030C57EFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E576F3535A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:23:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2FCB9354DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F34287503;
-	Thu, 13 Nov 2025 14:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXhivovE"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C8C2C15BE;
+	Thu, 13 Nov 2025 14:23:38 +0000 (UTC)
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8821DF75C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47793287504
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043800; cv=none; b=fkrr5zUbUQYpxnAnY1ANeZDK93tm2JOMx3VNBJVelEgSDL5BSSsBJQpyU87MahfzSJPNaDlf/tDkgFI7yaDeXwtlGXM9rJMcq04rfZb7+BWS7d5R1swqz0RxDZelgRx2YBaAqIlBj4SQ0PwklIhAg4XYbKzVsM/CvwHmjz+hZyI=
+	t=1763043817; cv=none; b=LKSDHp4QgQy0gr5myuCI9cdCYZeiqPhL6z3b5Q8r6WCXXM3yj4U3BvYyOshLpfOU5j0cnp9Yy7sHYfuCMJaZ114D76cy3bcGgfHtsCfbPABODi7Pi236s4qLoYnyk64mx1AJLdGfMNgMrkF0ZxXmPTg58JREejPFxc2IlfwxLGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043800; c=relaxed/simple;
-	bh=Clg5sgelmLHIJ5z8SyFZ6KUG1rYMaJFsiuldl9IIEBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPDFL2IbZBboKCmHjCT+PpaINMEjSksT6j/qTzLZJxhlyQ3DZzDvnKnXQ+l8zBUdOeeIJos3818KvSfZIoFPB0bI+uYUYp4RHfIANuwKwjmfPVx72FJC7qTHzDzIUU9o570oWinlmzqxz+KSUVdd85D9ccP/199ssw8mflBGPXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXhivovE; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1763043817; c=relaxed/simple;
+	bh=z39FuBLfVxg3dxedOWkc+Ia06tLSL22bXsDqvmAO158=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qDjzI2k1WZaaDds70sPu03Ohmq6dwNv6SJRGVgtRefwd6tzEBQU3llU7f2eKqgyWgJTU62mfR1TuZPqb9ryeEaeboD+WTGp3ewhJh09jk9LZJoh6xz2thqdFV3TL1B80nqUcq6JlogfghDXyuYUN49tAHMn6g5nCNdBy+yyUbGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b3720e58eso780578f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763043797; x=1763648597; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uhYQOOtjjyjB/jgUZ1+VwE5sf09BZ6WsEiD3C3pc0mU=;
-        b=TXhivovEKDFxjaHLkzVrfVhKNHhiagJxUjnE4H2GD2lZMCUIrVt3Yg0IqAT10ALcFj
-         qg8QWHsdYe71VNbi8CTKkVpC/dmR4R0ovXPODo8lwGktvvXa+ibopR9aFGlGky2DbEqv
-         7SG2YKttSltpV5w9oSUKSLrxIYR3GACQwO8TFbCXRSBqUtfLbUHm4Or+tOpPr0RuHzbV
-         T3ZaKUUUj5mMSlNU3eBhF7Df+OsgeGHnNKCjGV/jJ9vFvOjKsbRRwg46M8BUx3igrj/2
-         BRUA//biFIAlWe2qyNSlDeFtpupjNCyBGyTzH8w8+AMFrFHwsxGaARsqqEZ8nVX9ewpt
-         Pomw==
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c6cc366884so278347a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:23:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763043797; x=1763648597;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uhYQOOtjjyjB/jgUZ1+VwE5sf09BZ6WsEiD3C3pc0mU=;
-        b=ODDPqfBal716mAj2fMFjYOFJA/bGdAtG9juDLQn7GkU+kl0pcZQIkSkfd3EDaUaC90
-         X6vkDkKKcw/4U87xh2RMn9IEaQPdrsyEiH8phtehyJ7uZS+CZzoQq3JNCjfMtZvOHqto
-         Nq9n0Q1J0Hok8vL+yZfVgK4gsmvS/ZFzaKZYEsa7S2s57s26rYitJ2WhkxPVUvIIkjwB
-         mSgjcwIwiLDpiQJSI/inh/4URaIO9cQacf5SBA/6A1sI+jtT8MgJPhaNfWySH5j4l0c/
-         qvO6yzZ4NtMKyn05fj+smwnGErUZRnTkWbE2jmFxQHYIAWxDjAKsQHVkkq8SqxA86YCm
-         WHzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUet975JXh/Pw5NQSprMOAonlriPDS3lzlZ1MkU7d4U6l/AgEDRgkyGxmjLsGVhXmk82O7ih6E8ew9YYBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRU9RD5PlmxGIO6g8Q9ZhV/BLNVukspYruLvXBFk4kO/ecT+8Z
-	fZzlbRPAIU9qNV7ciHnz4Q41W3otYhNUALmhBaVSzkvNVlg4upI8iH6t
-X-Gm-Gg: ASbGncvT2EHJgmBqYAmHrB22AzJxQPBHqTrWd6xYW29XLQ2kzE5sTf7SXp+xiBzyMW4
-	Klap4ee+xKtpg87mtxWEpYAhcNum9CFudaA8IXfn4wwP7XyJy4TEnwi/KBVgf6oI/E7XayqBETI
-	D8GWMhji3Ki1c6oHoWygGXsJEn8G9Q6/6173sdyVaNLihza7Uins764wKqAsMQjXh8FxZy7U+WL
-	YFr1HiOI5RgMAeW4mMcR1OHhaOXbcpEf2ahfUoZhuNMKrm+EfYa2g1dF8b48PKT+UvmoIN45Jc0
-	94T/bwCJ4OFNPeZNNVfI2Pw6/4Gvgy3bIYwI34+qvEHK15YRgyIXli3YSRLkHNxbgzcVQHDFB2J
-	RSF5anoiSeGburrHRaHmiO62A1gWNYgjxIK0XYq2pf125zaQ4S6K9B36vwYU1fQSL4s7wpvOAKQ
-	==
-X-Google-Smtp-Source: AGHT+IE//V7nbtwXC5oFFlsMj1/yL13x4ZMxszjS+8enQRa1LEBFN0JNqsEJq8K17yBdpD+Niv3ZaQ==
-X-Received: by 2002:a05:6000:400b:b0:429:b958:218a with SMTP id ffacd0b85a97d-42b4bd9106bmr6183342f8f.28.1763043797368;
-        Thu, 13 Nov 2025 06:23:17 -0800 (PST)
-Received: from fedora ([94.73.38.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e91f2dsm4433060f8f.19.2025.11.13.06.23.15
+        d=1e100.net; s=20230601; t=1763043815; x=1763648615;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5iHf7lLF0gP9n63yXvZFud60lOk/rnCTC36lz7B8T0=;
+        b=nIy+JTHUfPfrbrXv/K/jTW0WH+GkmRFVqaU4rFGNBI2RdtUoOeR1695D+fA+VurPxy
+         Jcz9dl8ZTqZ8CqFfMOWWrVV/hYZFqsGCuP9Mem4iGWx0BY8TGJm+ipJECSbT+SEl5JmL
+         2sxM5RCLMDXDXTdMjwp/WKM/vwn47NRy9zlASJwXXabNFCGatebcfJ/EUB0jJ7pyqWyC
+         EnaDWpSX5ypQaHLemxp5sCyxUVtCfYOV2lj6Rs8hfrVfXxkzwypjlv1NHPrOPzMKoTZO
+         nuFVPpRo2RpIpNvJ8HDXiP5vDBQtt0yq/D9u/VDWsIUlTwLuO3pS9Kh9wPotUUc2PBeK
+         8ZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnm9IjERcySYQ2fdFXouCuml2vJzalBzoHjQJOsJUom98S9FFpW2FeirIGMQX4ikic9O546B3ZfnIIJMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4pFvCtFyejOHPcVnJovpaR9SCMoQsbJhHn22UKLiakPVbn25q
+	zOPiUKd0npa4nV4nAu9ApV+cqoCa6fY9iIZZfaQkymOpIr4Vj9KmNpBr
+X-Gm-Gg: ASbGncsP7QpS2K/x5NiFmNXKOoQ/POdx5zfplkGobPD55HWsM90airZnmmY2GjPjuCU
+	XNx3FCtu9V5j2P/eUOoeSu6Sy4HYDdpRcCPuhvk0Y5xBP87uxRKFCLwv+N/WJzrzeggyr29PIOg
+	8+FCDug5LrcApRvaUNPMLQEgdbTz071MvnxddGsj7mF4kUVHi7NfK7b6XQcaAV8/exVwmpES9K0
+	AzU47Tyhqov6ZlDqYoboU6aQNo9971twB38pKy5hS5qzPmDcKtBa4/SfPsGY2V5QpSGUFOzJS/x
+	FCr77ptgm+rWk5l5l7PclZAHkvTNJEC8UY3liEHBuL/pTkIeIVOgKCnKtyQDegJq4QZcVPaC9SM
+	cBRU89NmxRlxu99QnAvsZ8SMgBUCfHtO2bLx4Bd8eZqdO56caJdo0kUOEnOfORB+xt8CMAEwKPD
+	D6iT4=
+X-Google-Smtp-Source: AGHT+IEgT8+wwHcUmw+KwdvrC6zpX82dQU5Au6rcvd3OQYcE1aD4NgPaTo8lH5fXD4y/lfrV7Jwu+g==
+X-Received: by 2002:a05:6830:410c:b0:7c5:3798:fa52 with SMTP id 46e09a7af769-7c72e361474mr4284504a34.17.1763043815343;
+        Thu, 13 Nov 2025 06:23:35 -0800 (PST)
+Received: from localhost ([2a03:2880:10ff:53::])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c73a392f65sm1233807a34.17.2025.11.13.06.23.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 06:23:16 -0800 (PST)
-Date: Thu, 13 Nov 2025 15:23:14 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	victoria@system76.com, sebastian.wick@redhat.com,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 07/32] drm/blend: Get a rotation name from it's
- bitfield
-Message-ID: <aRXp0rfAoXxJ8PEh@fedora>
-References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
- <20251029-vkms-all-config-v2-7-a49a2d4cba26@bootlin.com>
+        Thu, 13 Nov 2025 06:23:34 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 13 Nov 2025 06:23:29 -0800
+Subject: [PATCH net-next v2] net: ixgbe: convert to use .get_rx_ring_count
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251029-vkms-all-config-v2-7-a49a2d4cba26@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251113-ixgbe_gxrings-v2-1-0ecf57808a78@debian.org>
+X-B4-Tracking: v=1; b=H4sIAODpFWkC/3XNQQqDMBBG4auEf22Kk9KIrnqPIkXNGGcTSxIkR
+ bx7IfuuH3zvROIonDCoE5EPSbIHDMo0Css2Bc9aHAYF05oHERktxc/89iVK8ElbWuzakevIzGg
+ UPpFXKdV7IXDWgUvG2ChskvIev3V0UO1/zIM06d62TPfe9t06PR3PMoXbHj3G67p+2w1edbUAA
+ AA=
+X-Change-ID: 20251112-ixgbe_gxrings-61c6f71d712b
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+ Paul Menzel <pmenzel@molgen.mpg.de>, 
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2893; i=leitao@debian.org;
+ h=from:subject:message-id; bh=z39FuBLfVxg3dxedOWkc+Ia06tLSL22bXsDqvmAO158=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFenm/V5RXfe69npzg+IrvANAHPqq3r8iMqJgy
+ EdiqapJhV+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRXp5gAKCRA1o5Of/Hh3
+ bdqwEACcfIVaC73zFQumgX1I6zM7QPZrgZ0fPnN7CpNKfOP1+P/kBANZvn6BWg9/TjIl8fHGwX0
+ IAfdbD2vTfcBg6axmc1U/+ogjVFpN6OaZFihMtypmlafWGhj35oYstjrzEJsuXogQFn+lGa45gP
+ l01qTdZ4hkKbIikbQQ/wbjOSPLC0vYwVvdfCkI5DsI6UovrpMIpZvxCbtTrV02R2Z9TGwZB3BPx
+ KppudrAGq8NpeTmBTsZaV4nA2zmAzgACfSBoG9t/J/bXYI/nur3aoQ92FzMx2nBWQKSNfD4SoEL
+ TRxX0yeVrlnD+H8yOBdTamBfMPl5LdryUacDnzIS7HDAG6G3LxgEvcQAqoEW9h6hCGH0EerIT0D
+ gijW6YB0h4nCRHqqjrd4c/ZnaiMhm2vWv+fzQH3L41X+kPhY3KyJApW3Lhe2kf6xuL0b+s14DSJ
+ qH51uTzUBgOq4r+7//w6OwD5dpb/3rCr1KbnS7dXmvHyXK0qLTZFpp/Ckvl8mUpfRDawf7xFGXK
+ cxC2wBWqQwJCEO9MJgy1kVGd6Pi9+fN2AIbVBRr2IQDxGcIcKtz+49kyRQdWiprW8OI5CJUII5L
+ BpMDxrVObPqcdlUfjhPWxauBhvciXpXfGllnV8W2ho5ug+c2Aqt4lFv+Z1E7fl19Uhe3rI4/Vmx
+ zk41pITloaoJWvQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Wed, Oct 29, 2025 at 03:36:44PM +0100, Louis Chauvet wrote:
-> Having the rotation/reflection name from its value can be useful for
-> debugging purpose. Extract the rotation property table and implement
-> drm_get_rotation_name.
+Convert the ixgbe driver to use the new .get_rx_ring_count ethtool
+operation for handling ETHTOOL_GRXRINGS command. This simplifies the
+code by extracting the ring count logic into a dedicated callback.
 
-Reviewed-by: José Expósito <jose.exposito@redhat.com>
+The new callback provides the same functionality in a more direct way,
+following the ongoing ethtool API modernization.
+
+This was compile-tested only.
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Explictly describe that the patch was compile-tested only.
+- Link to v1: https://patch.msgid.link/20251112-ixgbe_gxrings-v1-1-960e139697fa@debian.org
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+index 2d660e9edb80..2ad81f687a84 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+@@ -2805,6 +2805,14 @@ static int ixgbe_rss_indir_tbl_max(struct ixgbe_adapter *adapter)
+ 		return 64;
+ }
  
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/drm_blend.c | 35 ++++++++++++++++++++++++++---------
->  include/drm/drm_blend.h     |  2 ++
->  2 files changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-> index 6852d73c931c..bc7c05e20242 100644
-> --- a/drivers/gpu/drm/drm_blend.c
-> +++ b/drivers/gpu/drm/drm_blend.c
-> @@ -241,6 +241,31 @@ int drm_plane_create_alpha_property(struct drm_plane *plane)
->  }
->  EXPORT_SYMBOL(drm_plane_create_alpha_property);
->  
-> +static const struct drm_prop_enum_list rotation_props[] = {
-> +	{ __builtin_ffs(DRM_MODE_ROTATE_0) - 1,   "rotate-0" },
-> +	{ __builtin_ffs(DRM_MODE_ROTATE_90) - 1,  "rotate-90" },
-> +	{ __builtin_ffs(DRM_MODE_ROTATE_180) - 1, "rotate-180" },
-> +	{ __builtin_ffs(DRM_MODE_ROTATE_270) - 1, "rotate-270" },
-> +	{ __builtin_ffs(DRM_MODE_REFLECT_X) - 1,  "reflect-x" },
-> +	{ __builtin_ffs(DRM_MODE_REFLECT_Y) - 1,  "reflect-y" },
-> +};
-> +
-> +/**
-> + * drm_get_rotation_name - Return the name of a rotation
-> + * @rotation: The rotation mask (DRM_MODE_ROTATE_* | DRM_MODE_REFLECT_*)
-> + *
-> + * Returns: the name of the rotation type (unknown) if rotation is not
-> + * a known rotation/reflection
-> + */
-> +const char *drm_get_rotation_name(unsigned int rotation)
-> +{
-> +	if (rotation < ARRAY_SIZE(rotation_props))
-> +		return rotation_props[rotation].name;
-> +
-> +	return "(unknown)";
-> +}
-> +EXPORT_SYMBOL(drm_get_rotation_name);
-> +
->  /**
->   * drm_plane_create_rotation_property - create a new rotation property
->   * @plane: drm plane
-> @@ -279,14 +304,6 @@ int drm_plane_create_rotation_property(struct drm_plane *plane,
->  				       unsigned int rotation,
->  				       unsigned int supported_rotations)
->  {
-> -	static const struct drm_prop_enum_list props[] = {
-> -		{ __builtin_ffs(DRM_MODE_ROTATE_0) - 1,   "rotate-0" },
-> -		{ __builtin_ffs(DRM_MODE_ROTATE_90) - 1,  "rotate-90" },
-> -		{ __builtin_ffs(DRM_MODE_ROTATE_180) - 1, "rotate-180" },
-> -		{ __builtin_ffs(DRM_MODE_ROTATE_270) - 1, "rotate-270" },
-> -		{ __builtin_ffs(DRM_MODE_REFLECT_X) - 1,  "reflect-x" },
-> -		{ __builtin_ffs(DRM_MODE_REFLECT_Y) - 1,  "reflect-y" },
-> -	};
->  	struct drm_property *prop;
->  
->  	WARN_ON((supported_rotations & DRM_MODE_ROTATE_MASK) == 0);
-> @@ -294,7 +311,7 @@ int drm_plane_create_rotation_property(struct drm_plane *plane,
->  	WARN_ON(rotation & ~supported_rotations);
->  
->  	prop = drm_property_create_bitmask(plane->dev, 0, "rotation",
-> -					   props, ARRAY_SIZE(props),
-> +					   rotation_props, ARRAY_SIZE(rotation_props),
->  					   supported_rotations);
->  	if (!prop)
->  		return -ENOMEM;
-> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-> index 88bdfec3bd88..381d1f8d815b 100644
-> --- a/include/drm/drm_blend.h
-> +++ b/include/drm/drm_blend.h
-> @@ -42,6 +42,8 @@ static inline bool drm_rotation_90_or_270(unsigned int rotation)
->  
->  #define DRM_BLEND_ALPHA_OPAQUE		0xffff
->  
-> +const char *drm_get_rotation_name(unsigned int rotation);
-> +
->  int drm_plane_create_alpha_property(struct drm_plane *plane);
->  int drm_plane_create_rotation_property(struct drm_plane *plane,
->  				       unsigned int rotation,
-> 
-> -- 
-> 2.51.0
-> 
++static u32 ixgbe_get_rx_ring_count(struct net_device *dev)
++{
++	struct ixgbe_adapter *adapter = ixgbe_from_netdev(dev);
++
++	return min_t(u32, adapter->num_rx_queues,
++		     ixgbe_rss_indir_tbl_max(adapter));
++}
++
+ static int ixgbe_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+ 			   u32 *rule_locs)
+ {
+@@ -2812,11 +2820,6 @@ static int ixgbe_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+ 	int ret = -EOPNOTSUPP;
+ 
+ 	switch (cmd->cmd) {
+-	case ETHTOOL_GRXRINGS:
+-		cmd->data = min_t(int, adapter->num_rx_queues,
+-				  ixgbe_rss_indir_tbl_max(adapter));
+-		ret = 0;
+-		break;
+ 	case ETHTOOL_GRXCLSRLCNT:
+ 		cmd->rule_cnt = adapter->fdir_filter_count;
+ 		ret = 0;
+@@ -3743,6 +3746,7 @@ static const struct ethtool_ops ixgbe_ethtool_ops = {
+ 	.get_ethtool_stats      = ixgbe_get_ethtool_stats,
+ 	.get_coalesce           = ixgbe_get_coalesce,
+ 	.set_coalesce           = ixgbe_set_coalesce,
++	.get_rx_ring_count	= ixgbe_get_rx_ring_count,
+ 	.get_rxnfc		= ixgbe_get_rxnfc,
+ 	.set_rxnfc		= ixgbe_set_rxnfc,
+ 	.get_rxfh_indir_size	= ixgbe_rss_indir_size,
+@@ -3791,6 +3795,7 @@ static const struct ethtool_ops ixgbe_ethtool_ops_e610 = {
+ 	.get_ethtool_stats      = ixgbe_get_ethtool_stats,
+ 	.get_coalesce           = ixgbe_get_coalesce,
+ 	.set_coalesce           = ixgbe_set_coalesce,
++	.get_rx_ring_count	= ixgbe_get_rx_ring_count,
+ 	.get_rxnfc		= ixgbe_get_rxnfc,
+ 	.set_rxnfc		= ixgbe_set_rxnfc,
+ 	.get_rxfh_indir_size	= ixgbe_rss_indir_size,
+
+---
+base-commit: bde974ef62569a7da12aa71d182a760cd6223c36
+change-id: 20251112-ixgbe_gxrings-61c6f71d712b
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
