@@ -1,111 +1,110 @@
-Return-Path: <linux-kernel+bounces-900031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAEEC59677
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:15:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B1C597BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102023A3914
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 480654F7200
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D156B342514;
-	Thu, 13 Nov 2025 18:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BED34F486;
+	Thu, 13 Nov 2025 18:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zto6o8Cn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LGdw+TmK"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A7B241686
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E37D299A8C;
+	Thu, 13 Nov 2025 18:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763057346; cv=none; b=WbUM00xPYc4+KCix/5I/iXP7rBw7G3rvNFAJMRCB28zzguoIKzy8zbZsCXl+OlASLUWEXryQIX0yUGRpqBz/4xBUbswkkWCT+xInF+JG2HKsinvMOLrJirKzRCv7UfHqRY6pQaCYjMJbH5ZisSaan9hVAVtYCSQogHtWKS+PYIM=
+	t=1763057375; cv=none; b=V0ZCqBnhrbDM+yxX8rTch0rx1aqzquLHD2LyRl+xdIZ2uTj2UAY3sal6RCxtIX5pXv5Z5LOyuPjQ5jP12ujfUOKMF8DM3y3FJmJzC3ao2gmvW4FtXTI0K1AjOKUqYYgCUKax1uIDo99aL7OSvsXJYb6Gp7hI/PaFIGZQr1AwfRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763057346; c=relaxed/simple;
-	bh=vhuveNoTpeCdeUIVXGVjujDkfoEU7mjaugMISpw7YLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fQjTkCAJwTBP/hvujJE3UI7Za8B1ro3zeFGfxOLwHrGhsSHXNeuIAsGDb4Kz7S3NdHd/WvKLbYpvnhOUr1uQRno2H+8sgAdamVTo7qryPXkuBxrHoXErtBFc16NeVbPRv6KhIAUFvWEIXZ2HYOwqfXcAqjmS9tn31tEJ4F4ic68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zto6o8Cn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09986C4CEF8;
-	Thu, 13 Nov 2025 18:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763057345;
-	bh=vhuveNoTpeCdeUIVXGVjujDkfoEU7mjaugMISpw7YLE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zto6o8Cnw8fuJYO1Zxjq4PXwHstwsM6AjlD3OO3O93hm7pmhVHquS9wuRsU/bCGOt
-	 ZGmhghiW2Tx64EGY0mqn8zPPRUVgtGvSM9q9wAxOTjuRdJZZvK6JNJ44A5/Uh7MGA3
-	 4i8c+SzFSFFSEJ556O4XbyivXfuiikHrK3rU7BL2vf2L8HI3HVjVAae+N1MoX2fQvq
-	 EgiYEb1cl/c136Z4o/lTgzTzqsi5KOe3iDx61hMG8Nya1Q1F+V2FUdP/Hb0M81ji4m
-	 UiF0czlEAFPz/ViSVyuUjWgqJ5z612caQc4KWA09zNeyUsckB5Qz4yZ3lZplcuae1x
-	 gmY4it9hP6Xpg==
-Date: Thu, 13 Nov 2025 15:09:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1] tools headers UAPI: Sync KVM's vmx.h with the kernel to
- pick SEAMCALL exit reason
-Message-ID: <aRYevQjcXNCYVJRV@x1>
+	s=arc-20240116; t=1763057375; c=relaxed/simple;
+	bh=+WfrJYAcG5cVtaeOgZk4Ik7SVUGLhfv+q/98SoorJR0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=AMEc5pebWVex25mUxgcDMMvSFcEM6kEJqIyX2tKk3owWzqsP6QkeIEP82IWCgL+celrccyeea5F7PoH7ZbvB9hFzkQerHIjFW3qz8G2KJc8N7P5zQcSBK6HMTTuPZdi+x7DOfI68j/ULuxzxnoV+O+gKRkZ4WdJXx4WGP26pj8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LGdw+TmK; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id B448026599;
+	Thu, 13 Nov 2025 19:09:23 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 4JuVBlzQUfkY; Thu, 13 Nov 2025 19:09:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1763057363; bh=+WfrJYAcG5cVtaeOgZk4Ik7SVUGLhfv+q/98SoorJR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=LGdw+TmKg4/ga7JVk6RR2cNrViS4yxLbbMGIC7edjZ4aMgmEVjBt2KUJeymOIP65b
+	 izz/D3nd1BuwLkh+CFH7Ecn4mgsSeVDYaoIG7pg+L3nZfW0HAMtR9DBAX5xbTbaIJB
+	 WswuogQCKQq6+4bzGcg2nbVgu1wU8GCuFSAQ49Cp4DxZL4NyWbKe7E66JqvDlN/h1I
+	 dJarBGWmf4T6agr9xwBxGSYPLqT89m6hFwA5HDdHGAcve9ZGPDVpBHv9bGcqRaybiR
+	 zPtODu5O5AOYvlq+InKRc29oMvW/xjwBbg/RBiarpyOrMMQ1ZXWX98JHIrspjH//EM
+	 OEKCxNtOVesAQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Thu, 13 Nov 2025 18:09:22 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: samsung-dsim: Fix device node reference leak
+ in samsung_dsim_parse_dt
+In-Reply-To: <20251029074121.15260-1-linmq006@gmail.com>
+References: <20251029074121.15260-1-linmq006@gmail.com>
+Message-ID: <209646801ba4a40da89aa16853524756@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+On 2025-10-29 07:41, Miaoqian Lin wrote:
+> The function samsung_dsim_parse_dt() calls of_graph_get_endpoint_by_regs()
+> to get the endpoint device node, but fails to call of_node_put() to release
+> the reference when the function returns. This results in a device node
+> reference leak.
+> 
+> Fix this by adding the missing of_node_put() call before returning from
+> the function.
+> 
+> Found via static analysis and code review.
+> 
+> Fixes: 77169a11d4e9 ("drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge")
 
-Full explanation:
+Is the Fixes: tag correct? This is what I get for relevant code:
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2074)     endpoint = of_graph_get_endpoint_by_regs(node, 1, -1);
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2075)     nr_lanes = of_property_count_u32_elems(endpoint, "data-lanes");
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2076)     if (nr_lanes > 0 && nr_lanes <= 4) {
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2077)             /* Polarity 0 is clock lane, 1..4 are data lanes. */
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2078)             of_property_read_u32_array(endpoint, "lane-polarities",
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2079)                                        lane_polarities, nr_lanes + 1);
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2080)             for (i = 1; i <= nr_lanes; i++) {
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2081)                     if (lane_polarities[1] != lane_polarities[i])
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2082)                             DRM_DEV_ERROR(dsi->dev, "Data lanes polarities do not match");
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2083)             }
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2084)             if (lane_polarities[0])
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2085)                     dsi->swap_dn_dp_clk = true;
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2086)             if (lane_polarities[1])
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2087)                     dsi->swap_dn_dp_data = true;
+74629c49e66cc (Marek Vasut          2023-05-14 08:46:25 -0300 2088)     }
 
-See further details at:
-
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-
-To pick the changes in:
-
-  9d7dfb95da2cb5c1 ("KVM: VMX: Inject #UD if guest tries to execute SEAMCALL or TDCALL")
-
-The 'perf kvm-stat' tool uses the exit reasons that are included in the
-VMX_EXIT_REASONS define, this new SEAMCALL isn't included there (TDCALL
-is), so shouldn't be causing any change in behaviour, this patch ends up
-being just addressess the following perf build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/arch/x86/include/uapi/asm/vmx.h arch/x86/include/uapi/asm/vmx.h
-
-Please see tools/include/uapi/README for further details.
-
-Cc: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/uapi/asm/vmx.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/arch/x86/include/uapi/asm/vmx.h b/tools/arch/x86/include/uapi/asm/vmx.h
-index 9792e329343e8715..1baa86dfe029329a 100644
---- a/tools/arch/x86/include/uapi/asm/vmx.h
-+++ b/tools/arch/x86/include/uapi/asm/vmx.h
-@@ -93,6 +93,7 @@
- #define EXIT_REASON_TPAUSE              68
- #define EXIT_REASON_BUS_LOCK            74
- #define EXIT_REASON_NOTIFY              75
-+#define EXIT_REASON_SEAMCALL            76
- #define EXIT_REASON_TDCALL              77
- #define EXIT_REASON_MSR_READ_IMM        84
- #define EXIT_REASON_MSR_WRITE_IMM       85
--- 
-2.51.1
-
+This should be a fix for 74629c49e66c instead.
 
