@@ -1,212 +1,266 @@
-Return-Path: <linux-kernel+bounces-898689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83863C55C6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:14:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DC6C55C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796CB3AE2E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:13:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7341A3AE4F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D1C30103F;
-	Thu, 13 Nov 2025 05:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FF9306B0C;
+	Thu, 13 Nov 2025 05:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6x/AwVc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CokhR2it"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012009.outbound.protection.outlook.com [52.101.53.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E433016E4;
-	Thu, 13 Nov 2025 05:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763010814; cv=none; b=P4TCz3yI0UYmZz4QqEnxdUN8yvVfO53sUKF5SkhjF4g8CFuRr3DE3AHz03QbOy6u4WrTZUli2+xYhB8R67KOi95jGOcQpaS2sHugmBQntkLUrzQozXS5zPdZTe08sVszXPsU0b0AVg8cD4wXZAwDjGp/j9swABJD9fW7pKUD/9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763010814; c=relaxed/simple;
-	bh=s05zEuX8NlbM7zMqx8k2Ze9DCxOVUEWrwFdlI0JsaOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTVke9tsqQEqYapgeW/LPK/fYFmcQ/l6M3eViixA+BdcEXH4W1Q+PzMLalKPtifug8uiL43FaX0kepIX73LbCo7IvtNKBGBnb4rCQN4AA+1i0lNPl8dNHHr1HChMuVeOkoKYUpPSqpuR4ID4LSOBltotLO7Et2c44uPakQUVm04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6x/AwVc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A64EC4CEF5;
-	Thu, 13 Nov 2025 05:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763010814;
-	bh=s05zEuX8NlbM7zMqx8k2Ze9DCxOVUEWrwFdlI0JsaOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g6x/AwVcixNKFbv2jgCo/IXVP/GWeu36QSo8Dgzsjf61tRVdAdbvwWAI5eCEihDfc
-	 1/l1yVImXhHSJaVue6Db8hUhuCyfs0MxTCU4El/TeEP+2GIu6w2UY9fY6Ml83JKBEE
-	 mL1L9FkVwLSAIE7KE/wu9aR3VkYQ0GMSUlSM5Xoit0i6oFIRMrAj1n/XK+miM2Wxf0
-	 7O5LdKubTrqnBabufM5hPb2movVzQUUkJZnFDtb7u5MjtPeKX6Sq6zUPP2chlZumwt
-	 cFB07oAeVype5ph64twLMplFK8Eaq1CJBjl4wXrsyr+me4QKTEemx0bbR+TgcPPySc
-	 dkGHGn+N/N1tQ==
-Date: Thu, 13 Nov 2025 10:43:13 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 0/9] Add support for handling PCIe M.2 Key E connectors
- in devicetree
-Message-ID: <neymke6rrm764yi6u76d66d7w55kj3r22doojik3gucu5i4qpm@ni5cr6ftbmjq>
-References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
- <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D9284684
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763010815; cv=fail; b=tB+ScCa+dXYX5p9XXievC3QJgyq4xMkHjuaUO0Mg9pjynNpVbLDqQe5x8P9gAxaOdrllErNEdQwC8goYK3YWlK6c5TWJGPbvhF8IWlhZXTygLvcIEoO1ZyER7iM1vGC0FovSCJ2lpyvslefhsQO1wVByOH5vqwKx47WYJlz2M+8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763010815; c=relaxed/simple;
+	bh=cEh0K6cvW3P2c36xqorZf+Y+UtrAkDNGU/IijwjzXFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RCCk15KuARP/Ai/bzr30Bm05slkFG/6O839g70ZGwXYfS2l0MUqHwdS9gqcCxkVZVfputfrK/Yh0IWqUimKC1LOF4DptCWZMIX9PDWxKrbXP8TQb3Vh37b4TMRTH7DQAa2SGk6Gckn7OemoFOywYECGRQSYX6T8rHqNYE47+KMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CokhR2it; arc=fail smtp.client-ip=52.101.53.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C6Fm1RK0fWcwgrUTIybcsuheKwZ9xN+T5PsjOgCuwirrOnqvIpSP3EyUg5HrCRgGNX3L4g5XW1rW/o4irFF8jUCQW4ABSGL0CZTYC+HKNqOT9W4du55ZXUR0aFI7mZVA7cfw9QdJ8UgY3OpIFxvon1l3OtHAyKN8zpWqW0UZn9jEG8FhoDMAUO6pl/+CwRW+Dakh07Qpu9XtAx8gAO7mLfBqR/We/ELb2opqo1V+LjkJJv0facmZShe82hbLi6mnRlWNbqz2/9uWMY4tKeDyyCp95Ebues4zjsl87ZDMhqIg1hsO893V6KFovn0Z8GDDuPgVmksngVhCvZxqi0AFAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2e0XTJU9CvcG7cfPNHNVcr2/hpB+09khUSn7WOUVzaY=;
+ b=DZAFqg65FAL/mA/+xOoQys8CvLavOqAh+aNdurhzJF8aZtHNhJj8hjQ/xAJI/2TMDjRDE3Af9MdzqMaitg9OC6zMR4kC/bK3U4bwV/rsPSTrrifBXmoeq8T+MbrrGSZ8+QD8+ChBs8hiSrvEl4yJhpFV3V2VnEacUS+6edzoID9b1YFzaA3AlPs4rk3hddxofJebjYSeQn38tgOkBmPj80Tn3ggBROI71QklBzER0jL/AN+zjkEMA2rhX5209iZKaiaDxNldXxMC2olUq7m7SWBR+4e1ca2zMUjWzspyMaUe9jeCI/APjSj3+MhBY9qqmNlz6tthDVMIy4mdGhvQ9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2e0XTJU9CvcG7cfPNHNVcr2/hpB+09khUSn7WOUVzaY=;
+ b=CokhR2itodnROvQE9ted0hXkU1vvBu2OGkLR09wIGK735bv8GL9VEEjbv5MAr5vwmMnNIFu+Dp4PN25+z5k9WAbfLN1Qgsn6nIXy+eY4lJmd4f0S5mof6w3jvSYhnW2gcV2XJyWE6/RXCkgNaWKxpkLk5o56sRP9RTZtuTjSW7mvzunD1/OUp250WL5dWMBM3CdM4b5NUPXISSfJjAUjv3aSjnv4LklrCYCN7syy0oF6K8gn1HF7Xrcn3SruaL9Y+JcVi7nWT1mo0SxnDOrT6Pnvf05z7TOSUgil+rrKl+rUY3MVi2xsljTmiq77Za97h4EIDt4AV9Unmford5X47w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by LV9PR12MB9832.namprd12.prod.outlook.com (2603:10b6:408:2f3::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Thu, 13 Nov
+ 2025 05:13:30 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 05:13:30 +0000
+From: Balbir Singh <balbirs@nvidia.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	dri-devel@lists.freedesktop.org
+Cc: Balbir Singh <balbirs@nvidia.com>,
+	kernel test robot <lkp@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Ralph Campbell <rcampbell@nvidia.com>,
+	=?UTF-8?q?Mika=20Penttil=C3=A4?= <mpenttil@redhat.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Francois Dugast <francois.dugast@intel.com>
+Subject: [PATCH] fix gpu/drm/nouveau: fix return type in nouveau_dmem_migrate_to_ram()
+Date: Thu, 13 Nov 2025 16:13:22 +1100
+Message-ID: <20251113051322.1753532-1-balbirs@nvidia.com>
+X-Mailer: git-send-email 2.51.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SY5P300CA0037.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1fd::12) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+rOGUETwhPuzSsC6bhq1Q10k=pCRnZrnoDbCxVYV91YA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|LV9PR12MB9832:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c5582dc-6ec5-490a-5269-08de22736280
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|10070799003|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wk9Vb0ZhSU9Rb1FmYTFFbWFvMm5LOTB1cVA5eDBNOCtVVVF6NlNHKyt6VXRD?=
+ =?utf-8?B?UkdFZmtkbUZaOHFaRU8yTy9MNjlGNStJVHVDajF3SFppMFVlNFdWZWZNTitL?=
+ =?utf-8?B?emlRQkEwTUZlVC9nZzBBZ1dKcy9oRWhkaVdRUUdIVFh0Mm9MV3BYSGV6L2VK?=
+ =?utf-8?B?SUYyaGxncFNYZ0lRRml6VHVxMUtpL2ptbTE2UDJrcCsyeVEwS3piNjJodVFi?=
+ =?utf-8?B?UVUwUnQrdjEzclVtNS9kWUxEcEQvNjlMaXFFUkNNNVdJQi9sakhWSDFVMjJK?=
+ =?utf-8?B?Uklqa3V1bTViaE5Ra2JNVERmQWJzS2dhUHVoVExLemJRVXVla2pIbFJQZGVp?=
+ =?utf-8?B?ZmtPdmlZZVhXazZaNjhCNXVQQVNDblRhZzVmZUxqS0ZMM09kZCtiVFA3Szhk?=
+ =?utf-8?B?ZThqZWhHeXAvdXUyYlEwT29HODR4OUpqbTFtbnRLc1RsYkpQUTRjLzd6dVd4?=
+ =?utf-8?B?MFF1bEp0eEcvWi9oVzcxbXZTcE5PQ3hRRUVvOFdvWGhGL2pjdWlaMWNLc2VJ?=
+ =?utf-8?B?M1Q3Rms4UnFCOGI5eHdta1ZBQ01RbnVmYjdvNzVUZk5mcGNOWnB4UFZYck9F?=
+ =?utf-8?B?elNoL3c4NGhrWXZycnpOTXlrMjZWdjFYV3lZS3ZDNTNNdWZ3Sld6Ujk0L0Jz?=
+ =?utf-8?B?YVZQejNkVVlSQjFkQnE1WWh6eGk1dXNVdyttZGdRbnh2Ry8yU0VEeWV2MmtV?=
+ =?utf-8?B?empKcUhMWGVmVTlqem9SbmFraEFyTFpSQmlpQS9CMzFiZm00eVF2ZDBTVlRE?=
+ =?utf-8?B?RjJIY2didDFhWG9PLzFmVFZJRnRoZThjNS8wK2tjbEtLMmsvU0ZReU1xd3h6?=
+ =?utf-8?B?QnE5WUlmVkY4ekdwQ2ZDLzRzbVBVMVFBaTlPYUxXVndXQ1ZHR25Vc2liekw0?=
+ =?utf-8?B?SDZES1lQeDE4UFNtVFJYcGcvOTFqYm8xVVFWV1duUGJmTG9wMVRQYno5WUtW?=
+ =?utf-8?B?NjViZnNMUUdqUXlBc015akUxNmF4WmpuMmRsdGZrWEFmZVdjUjJEV3ZreGR4?=
+ =?utf-8?B?REp6M2pIbWY2K3pvRVozcXpGYU1RTzE3RDJ3UXVlVTdYRnlvcEs3akxYeWtQ?=
+ =?utf-8?B?MExCTnRxa2lFY2dPcHNyaXU4a2N0TlpReHROekxSWStWcUdwMDBOeG9NdEJz?=
+ =?utf-8?B?QVJFVmFZVU9CVEp4STJOSUNFaDFnejV1Nk8ySFhPaG94anhsb2l0enBSckdh?=
+ =?utf-8?B?RGNzeHZaT1dwMlh3cm82dXVCSHVJNlJ5clBBOVExOURaWHBSbjQxSjhsV0kw?=
+ =?utf-8?B?SXdkcHdyS0hQdVFueFp0LzVkQlBGQnZxbnhhNmRCZU9OVzhGYVN1NHptU3kz?=
+ =?utf-8?B?RjhvTkxJNmdlWGJoQVdHdzg2MElZVWZVdWdQSDV1cDNjcURTMno2RkQ5ZXFH?=
+ =?utf-8?B?WlY0cU9pZjNmRm10T2JNYzJFbkFDRzR3YS9rOTZBeG1JSytLZ2p6cUF0MVZz?=
+ =?utf-8?B?UTA2U1diUkZ6bElJcW9idUhwRUE3a1hUZ080eVBLMzA2d3VaSDA2OUxTM0pZ?=
+ =?utf-8?B?NXM4NlE4Z1FyR3RLbStEelE0ZFZXam9kdmpQc2UxNWRlWjU1SVNQR3lkWGZ0?=
+ =?utf-8?B?cGVaTWNIQklqazBXZEkxbEE4NlhXb3d2VmhuMXVSY0ZRZHFJTWs4UHhFYWg4?=
+ =?utf-8?B?WVN6a1BSRUcveU1UZmxxcXIxUWZuaS94QTJJU0NJV1Z4a0JiZG9WdE1mOWln?=
+ =?utf-8?B?NTdrdkZRMVppSkw1UDE3SjhPZ2t0Mkx6Z0Jab3Q1WGZOWnM5eHB3bE1ycnRj?=
+ =?utf-8?B?YmxUcUp4THdWaE9wM1pMVmZXSGVqdTN0YTJsNVZkbVREczlpaTZ2dnBHdUU1?=
+ =?utf-8?B?WmNUWFRSVWpsNkpNdXFnTXFIWFdocVIyeWVCZlh1cmd4Q2c1ODdHanhsUWRs?=
+ =?utf-8?B?Yk9VWVAwZG9IQS80bWtmVGwvUjNORmtXcjMvU3pTQkZZa1FIZ09QamJUYk96?=
+ =?utf-8?B?a3YyRExBcDNvUDUyODl5dUFkYjBTUmlHenZoRlBqMXRlMVRVL0lrT0thaGJo?=
+ =?utf-8?B?cGorOFQ3c0Z3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ekJQakxndnRPYklxZWVJTHNSUXJxWUtWTGR5T1c3Q0RiMXRoY1RSZ0hQU1A3?=
+ =?utf-8?B?T05UTlREZm16Mm5GcnVjR2NmeG5RQ0JSK3dMeXdNS2lnQmZJNVV4ck90RHVu?=
+ =?utf-8?B?d3p1ZzcvV0JxUVlvVDlobkwvZFExdTE3bEZjQnZUbmx4WTFNUUtlVFp0UWxz?=
+ =?utf-8?B?ME95a0l2TjRNcEI4MnlILzVJMTRLcmxiMGVSeTlmYlJtWFY0cnUxdkFPMk1v?=
+ =?utf-8?B?SERNZ3BVUzNFUlNrQUlYMVBMVk9rVFlyOTFuRUhzeU1SR0NWOGhkMmVEN01i?=
+ =?utf-8?B?N2lJczdKS0lyRExROHJreFdGMmt0SkFJcDFqWFBSS3pNb2NJQkdUNjFabW13?=
+ =?utf-8?B?UWNUR3FDTkw1VmVpRTNZa0ZSZ1dIYXhNcGRJbkxkRi9XMExYQlRYQVo0QldO?=
+ =?utf-8?B?aWhvTW90bzFQS3JzT0hmUnZpa041WnVrenA2ZzRLTlRvM3U0T0Uwc3RtUUlC?=
+ =?utf-8?B?c3hqV2IyQms5enUydEV3SU0zN3QvanJFTkpsVytRRUI4dVo2bW1MWjlQN3pK?=
+ =?utf-8?B?RGpOMGdMTFdBRVVCL0s3WWdwNUtmVFV2WTQ3SHpVNnE0b1BIRnMrYUFkSGRF?=
+ =?utf-8?B?OU9TNEdLNENFeHdld1QyRDQwdmlNb1ZmRVMwdHJIOXNIZnlPWHl1MjE1L0Iv?=
+ =?utf-8?B?MTlBUTVyZVU0ckd4NElKd2VZMUxHMXdFQklRWUFNK21hN0psdVFQUG9ORmV6?=
+ =?utf-8?B?dGRhdjhuUWsxaXByZXgyWjFhdHFVMElVTVJ3OFhJQThidElXNFF0VndNV3dG?=
+ =?utf-8?B?cVlSVVlua1lwUUVDdzVPMkJUSWF3TmoxUmc2TTNodmpOYzhtTFYxbnB3UUxt?=
+ =?utf-8?B?M3pNMEVuQ1FLL2hZNk50SnlsWmJsMU5ON09YYVF4cWkrb0p3RFAvMGZXbnlz?=
+ =?utf-8?B?WGtZOVFQOHczQkhzMWRRRTFzR0FaL0NWc20ybEJCQVcvTXRVZW96RDZGZUp6?=
+ =?utf-8?B?QUlxdnlPcG91SDJaRTIwV1JNeW80c0hNNjhHNDVjZWJIcnNXbmJIeVJVOWVh?=
+ =?utf-8?B?dVlxZlhqcmUvWmppdDh6cGdScDNCb1BNd3FoZTgxczJQa3g3UUJ0dHVEVmF5?=
+ =?utf-8?B?MW1yV0ZrR3cxaFk2N2xlTmd6YS9Tc0JzNXlZdTV5RGduQzlrdjVQVzd1cUR0?=
+ =?utf-8?B?bExPRG1OZENZWWJEZTBEZEk3c2FYUmdFNUtVVFVHbFdSMDFhUFR5elcwTDFa?=
+ =?utf-8?B?ZnlPSDJTcFNQeE14WDk1blhTQjhaYThFQVk5c3MxZW5TcE5DcGt5b2lFR1ZG?=
+ =?utf-8?B?MXg3TkUyVlkrcThpZ2JJQXVJTzV5REZocitkRWQ2a1JmTnFzZXhsL1lLSFNm?=
+ =?utf-8?B?RTA1TnV1cjNLWjIxZm05ZXZxTnlieHluenJaSWdEaytHUDZGUlFNeTBnQ01z?=
+ =?utf-8?B?NWlyMEx5MnQvczJLWFhXN0FGT2x2WjFvdTVUV1F2MW16SStQOWtWamUyUzd2?=
+ =?utf-8?B?cHhzaEVNcXQ4bkhITko0ZkJEZzZGRFVMbDFDbnZpWFJUWm40L0xuSXQ1L2J3?=
+ =?utf-8?B?UlBac3VXMWNkY0RxTkRtemxnbFkrc3FKQzdQMEFYNUhqaTgzZkdwYkhrYjJt?=
+ =?utf-8?B?emhuWkFVVkZPdmhpckRPMEF1dytaQno1WkhmTDJsRUhZTnR2YmxsZFhhejQy?=
+ =?utf-8?B?akl4blNXeXVhdkNwRGc1SDdYWnJyK2x2NnRLVHQvOHFvdWQwSkFVSXJYbEFQ?=
+ =?utf-8?B?QlFqTkpkci9jM1Q1M0lSRVJ5QnFwQ05pOWZQZ0hpS3VxRHVRaWMvUXdLTFVj?=
+ =?utf-8?B?alJlNnlNc1ZnZ1p4SmZDUUhXZlk5d1VyaHJjTVVBeURJT256NXRjN2RqbXIv?=
+ =?utf-8?B?R1k1dXFyaHhaVzFqeEtaTXBIdTVNNDR3aHB5cDZUL0VkeTRmYUoyakF2TUt4?=
+ =?utf-8?B?T0luNnJIV0swTlRub1MwRG1UVHNBb2RyQTJqWEFDN0luMUF6UHZDRlplRVVC?=
+ =?utf-8?B?cGdOdTJhQS95WmJMb1lGdGwrbVVzYTBzcGZCMUtQTGJITVB4SWI1Ni9xZjQ3?=
+ =?utf-8?B?alk2c0ZJNUFzNnVNRU55SXVPV0ZIK3ZjQjF6L2tJTWhsK25xSndDVTUxMzdJ?=
+ =?utf-8?B?K09mWWZoSTRzRk9mRytmL1JqZ1p1S3MraVM1UDNmTlhuR0JxZmU3b1JIWTVZ?=
+ =?utf-8?B?dGtMTmcyQlF2bDVRQ3lCRGUrQ1hua3Ztc29udW1qZzVkQXVTbXgwSlcxQnRH?=
+ =?utf-8?B?d3c9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c5582dc-6ec5-490a-5269-08de22736280
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:13:30.5240
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SLJYhsWcZ49hpGxJilw2+FyGNMJJngUXqwAft9nW1fQ9f5PWvVuUV9/PBMAzMT3zQR+JPmGRBnPUU02D0TcLdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9832
 
-On Wed, Nov 12, 2025 at 03:07:29PM -0600, Rob Herring wrote:
-> On Wed, Nov 12, 2025 at 8:45 AM Manivannan Sadhasivam via B4 Relay
-> <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > This series is the continuation of the series [1] that added the initial support
-> > for the PCIe M.2 connectors. This series extends it by adding support for Key E
-> > connectors. These connectors are used to connect the Wireless Connectivity
-> > devices such as WiFi, BT, NFC and GNSS devices to the host machine over
-> > interfaces such as PCIe/SDIO, USB/UART and NFC. This series adds support for
-> > connectors that expose PCIe interface for WiFi and UART interface for BT. Other
-> > interfaces are left for future improvements.
-> >
-> > Serdev device support for BT
-> > ============================
-> >
-> > Adding support for the PCIe interface was mostly straightforward and a lot
-> > similar to the previous Key M connector. But adding UART interface has proved to
-> > be tricky. This is mostly because of the fact UART is a non-discoverable bus,
-> > unlike PCIe which is discoverable. So this series relied on the PCI notifier to
-> > create the serdev device for UART/BT. This means the PCIe interface will be
-> > brought up first and after the PCIe device enumeration, the serdev device will
-> > be created by the pwrseq driver. This logic is necessary since the connector
-> > driver and DT node don't describe the device, but just the connector. So to make
-> > the connector interface Plug and Play, the connector driver uses the PCIe device
-> > ID to identify the card and creates the serdev device. This logic could be
-> > extended in the future to support more M.2 cards. Even if the M.2 card uses SDIO
-> > interface for connecting WLAN, a SDIO notifier could be added to create the
-> > serdev device.
-> >
-> > Open questions
-> > ==============
-> >
-> > Though this series adds the relevant functionality for handling the M.2 Key M
-> > connectors, there are still a few open questions exists on the design.
-> >
-> > 1. I've used the M.2 card model name as the serdev device name. This is found
-> > out by comparing the PCIe VID:PID in the notifier. Is this approach acceptable?
-> > I did not use the PID as the serdev name since it will vary if the SDIO
-> > interface is used in the future.
-> >
-> > 2. PCIe client drivers of some M.2 WLAN cards like the Qcom QCA6390, rely on
-> > the PCIe device DT node to extract properties such as
-> > 'qcom,calibration-variant', 'firmware-name', etc... For those drivers, should we
-> > add the PCIe DT node in the Root Port in conjunction with the Port node as
-> > below?
-> >
-> > pcie@0 {
-> >         wifi@0 {
-> >                 compatible = "pci17cb,1103";
-> >                 ...
-> >                 qcom,calibration-variant = "LE_X13S";
-> >         };
-> >
-> >         port {
-> >                 pcie4_port0_ep: endpoint {
-> >                         remote-endpoint = <&m2_e_pcie_ep>;
-> >                 };
-> >         };
-> > };
-> >
-> > This will also require marking the PMU supplies optional in the relevant ath
-> > bindings for M.2 cards.
-> >
-> > 3. Some M.2 cards require specific power up sequence like delays between
-> > regulator/GPIO and such. For instance, the WCN7850 card supported in this series
-> > requires 50ms delay between powering up an interface and driving it. I've just
-> > hardcoded the delay in the driver, but it is a pure hack. Since the pwrseq
-> > driver doesn't know anything about the device it is dealing with before powering
-> > it ON, how should it handle the device specific power requirements? Should we
-> > hardcode the device specific property in the connector node? But then, it will
-> > no longer become a generic M.2 connector and sort of defeats the purpose of the
-> > connector binding.
-> >
-> > I hope to address these questions with the help of the relevant subsystem
-> > maintainers and the community. Until then, this series is *not* mergeable as a
-> > whole.
-> >
-> > Testing
-> > =======
-> >
-> > This series, together with the devicetree changes [2] was tested on the
-> > Qualcomm X1e based Lenovo Thinkpad T14s Laptop which has the WCN7850 WLAN/BT M.2
-> > card connected over PCIe and UART.
-> >
-> > [1] https://lore.kernel.org/linux-pci/20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com
-> > [2] https://github.com/Mani-Sadhasivam/linux/commit/d39b81b3ff1ecfb0d423b4da0771925d41648b5a
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> > Manivannan Sadhasivam (9):
-> >       serdev: Convert to_serdev_device() and to_serdev_controller() helpers to macros
-> >       serdev: Add serdev device based driver match support
-> >       serdev: Allow passing the serdev device name to serdev_device_add()
-> >       serdev: Add an API to find the serdev controller associated with the devicetree node
-> >       serdev: Add modalias support for serdev client devices
-> >       serdev: Skip registering serdev devices from DT is external connector is used
-> >       dt-bindings: connector: Add PCIe M.2 Mechanical Key E connector
-> >       Bluetooth: hci_qca: Add support for WCN7850 PCIe M.2 card
-> >       power: sequencing: pcie-m2: Add support for PCIe M.2 Key E connectors
-> >
-> >  .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++
-> >  MAINTAINERS                                        |   1 +
-> >  drivers/bluetooth/hci_qca.c                        |  20 ++
-> >  drivers/platform/x86/dell/dell-uart-backlight.c    |   2 +-
-> >  .../x86/lenovo/yoga-tab2-pro-1380-fastcharger.c    |   2 +-
-> >  drivers/platform/x86/x86-android-tablets/core.c    |   2 +-
-> >  drivers/power/sequencing/Kconfig                   |   1 +
-> >  drivers/power/sequencing/pwrseq-pcie-m2.c          | 218 ++++++++++++++++++++-
-> >  drivers/tty/serdev/core.c                          |  77 +++++++-
-> >  include/linux/mod_devicetable.h                    |   8 +
-> >  include/linux/serdev.h                             |  25 ++-
-> >  scripts/mod/devicetable-offsets.c                  |   3 +
-> >  scripts/mod/file2alias.c                           |   8 +
-> >  13 files changed, 494 insertions(+), 27 deletions(-)
-> > ---
-> > base-commit: db81ec30672bb228cd7cd809edeeae661d621f2d
-> 
-> git show db81ec30672bb228cd7cd80
-> fatal: ambiguous argument 'db81ec30672bb228cd7cd80': unknown revision
-> or path not in the working tree.
-> Use '--' to separate paths from revisions, like this:
-> 'git <command> [<revision>...] -- [<file>...]'
-> 
-> This series doesn't apply.
-> 
+ret of type vm_fault_t is reused to capture the return value of
+nouveau_dmem_copy_folio(), which returns an int. Use a new copy_ret
+to fix the issue. The issue is not new, prior to this the function
+called was called nouveau_dmem_copy_one() and ret was used to capture
+it's value.
 
-Sorry, I forgot to edit the dependencies with b4. I'll fix it in v2. But if you
-are interested to try this one, here are the deps:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202511121922.oP20Lzb8-lkp@intel.com/
 
-message-id: 20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com
-base-commit: v6.18-rc1
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Rakie Kim <rakie.kim@sk.com>
+Cc: Byungchul Park <byungchul@sk.com>
+Cc: Gregory Price <gourry@gourry.net>
+Cc: Ying Huang <ying.huang@linux.alibaba.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mika Penttilä <mpenttil@redhat.com>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Cc: Francois Dugast <francois.dugast@intel.com>
 
-- Mani
+Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+index 244812e7dd69..06f2c544c2cb 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+@@ -188,6 +188,7 @@ static vm_fault_t nouveau_dmem_migrate_to_ram(struct vm_fault *vmf)
+ 	struct nouveau_svmm *svmm;
+ 	struct page *dpage;
+ 	vm_fault_t ret = 0;
++	int copy_ret;
+ 	struct migrate_vma args = {
+ 		.vma		= vmf->vma,
+ 		.pgmap_owner	= drm->dev,
+@@ -256,9 +257,9 @@ static vm_fault_t nouveau_dmem_migrate_to_ram(struct vm_fault *vmf)
+ 	svmm = folio_zone_device_data(sfolio);
+ 	mutex_lock(&svmm->mutex);
+ 	nouveau_svmm_invalidate(svmm, args.start, args.end);
+-	ret = nouveau_dmem_copy_folio(drm, sfolio, dfolio, &dma_info);
++	copy_ret = nouveau_dmem_copy_folio(drm, sfolio, dfolio, &dma_info);
+ 	mutex_unlock(&svmm->mutex);
+-	if (ret) {
++	if (copy_ret) {
+ 		ret = VM_FAULT_SIGBUS;
+ 		goto done;
+ 	}
 -- 
-மணிவண்ணன் சதாசிவம்
+2.51.1
+
 
