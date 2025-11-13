@@ -1,112 +1,199 @@
-Return-Path: <linux-kernel+bounces-899077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE5FC56B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:55:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DDBC56B22
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:53:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53CB134EAF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C15834DBFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9A62DFA46;
-	Thu, 13 Nov 2025 09:52:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5612E03EF;
+	Thu, 13 Nov 2025 09:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBqx3iDU"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFFA2E092E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DE72DECA1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763027522; cv=none; b=f8d9b4LxgHHtzn4AUV5gue5pCCi1+UrNU8psGTBHya8/wM6uoTnluoRidaervyn0VIlKf04ngVeJct/YAruitxKNoC/lM6SmP7giNy0miCjM6Uudapql057J22YDc+JHkJyyGKn20TLlNPGYxeeTG56UFRt+kryjDFL+tgYRw+I=
+	t=1763027516; cv=none; b=hXXadbaROTsCh17oHQ7yZ74TTsqdxreu/qdH8eLTjbXlDVc0MARVISfLX0/RtWplhmiO/eEwyxyUnbL5u0IBKrxAG4lvo3KXlym5/1RdwDrlXCB82y7uUnfMgKS8gjpg7cWlWgH7nLZHMOyjt4JguR+YgX2N2tBRMkrlgotguIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763027522; c=relaxed/simple;
-	bh=5rji+7Dzx+i4SIsi8JQiW2hPQ5571hfwzOj6A9jI0S4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZV/VxELxgABhpS4Wd4am5XxzacSs05DPKBVidx7e+IMykvSGJn8BbelWlx3oB+dIhuNBjOToo6/4/3YDJXRdg8dlOusExZIvtS6Am/+DAK5oyuK93WKlFyIBIigcIJRTC2OmcgRJ3FphucH+XvlS6Cd9zE+nNKNYfWttFB/oy2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJTzb-000185-JB; Thu, 13 Nov 2025 10:51:51 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJTza-000EZw-0b;
-	Thu, 13 Nov 2025 10:51:50 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vJTza-000000003jh-0Vws;
-	Thu, 13 Nov 2025 10:51:50 +0100
-Message-ID: <def3319117b2d2d71d0585e69d648b1a0f217bc4.camel@pengutronix.de>
-Subject: Re: [PATCH -next] reset: Remove unused variables
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: paulmck@kernel.org, bartosz.golaszewski@linaro.org
-Cc: linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, bigeasy@linutronix.de
-Date: Thu, 13 Nov 2025 10:51:50 +0100
-In-Reply-To: <8e6ec20e-8965-4b42-99fc-0462269ff2f1@paulmck-laptop>
-References: <8e6ec20e-8965-4b42-99fc-0462269ff2f1@paulmck-laptop>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1763027516; c=relaxed/simple;
+	bh=1oacFYY/294TkhoTBx5pVnm2MquFkmlHkFBHaMNlPfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZfRCW0ClKYHqkYZAD25eRnRh+DEYOdopKzS5dpM60hy6gK07EJaAdrAJn9PvTL8FaFWjWXG4yCfdrO5Q7YKdFJz19tWP1STComp/+cWkCzvU1BRksxSHI4GWMEZ37XB0Fuiey0P02X/eqa9oy2cQbMK5hhU/kTQyGJP4lGw04eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBqx3iDU; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b32ff5d10so1032084f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763027513; x=1763632313; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDYZngmwSRp+0NNAwoPTnkhHZW5E4BniA8duLqhYUG0=;
+        b=CBqx3iDUQC4FdMFOg5rqeoQLrvVlMD4F1JABvIRPnoED3VbaBWTxIUhETV7JWNSw7v
+         AuCDQPOG/sEjmn5swazPIDXI1dsNoBvEiYAXtQhGivdbdmK8t/aFMwZrfBF49LLC4KvE
+         arYLTbTKQzsO4k4EhfOlDM5syHRFNjdYs9tprBQ1hZ7/VUcR8PAZROYfK+ksGQOq8T6L
+         uhL4Zxa5BLxVNIAgEX5rttAflXGQgnDoy8c6OkkTXNRJfHGcVO8PylHtYl1N/9sWOrSb
+         W01xaT7rCITpfstiHtf3HbZfeTwlVR+wYxkQ78YJtquPt6s0prMg6EKWnUZlbskN3AaX
+         kCcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763027513; x=1763632313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZDYZngmwSRp+0NNAwoPTnkhHZW5E4BniA8duLqhYUG0=;
+        b=Wgx9pAPWE2ZVPmht6itgyZplEfQ7xkHFGcRETDbW9zlWc0qUo6qNQuZXRqDBuIAJET
+         Dpeu4bpSklXQpJ43gaLO8p7wAaI93QXiQ83Vi9O3SiVR8y3ntks1rIMOnLoJjBZrfTOZ
+         u/KheRm03ZP5xZg2nU3oFZ+UiU4I8hpWOANqLp/+sdTFfdQpmPtUveI06bk2N8Dfzz0S
+         lDrNTogkbW5Yrl+/8QKkVRZI1cJUbOjhZJVTJ8OeZGWM4RDjrGIKSxofhj/jUCffr8ng
+         RPA8neiYKqp8in8ynvwgEmfLgfWgiWB9EN4E4sN4dDagImVbZ+u/7cNjEF7CS1yZZLxK
+         9XVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXo9QMZa4kW4pNLp7ddUJMxRwIWYvmGLgQnZh3Zi6cbbaaPOKrvRhWq6qDUyQno62VMpYow5lEFN2nHvNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6CJPPN53scnPVkhQF2ONOGMkwsl/1PovAVuEEbMprBkTejDlj
+	wgcMtIA0rX1/+ser7t1lnCC9X3kNSSFQHI1ndebC4lPXqHrZUE8C+7weFJ1xfvuEMHI=
+X-Gm-Gg: ASbGncsuBlt0ObDBI5rkTTx5dW8HHP1GGlHK+ExX2f3s8f3ZYEPg+ftv0HwmmrUUPZb
+	nfjr+0rE/7LfTA0v83UHAcAapR9c3YRSKkYb6+wf2dThIg2UMbdKEPS30uQwNhrFnbVtHusowDX
+	SUJkPXUQkug5/Kcwb6QtcY5Fe6HpCgRoUa7IUNXI3H+IyCaCOHD48BWQp4YOr1NdREHhfFVwfmu
+	atwaZUTgbCzGrURNxMkuiSPdbBFuoM84HVa0IxC3T30ll7jwC/WDWUA6bnAQnY+hT2E/LGG30Pc
+	87iaJXw52n3JUf6ZpK96RSAf9fCU6WbpbzZm2z6UnpV4GZJMSdEl0TYYD3k7XmFRoMA2BuYcDkY
+	TJiQr9Vrzkj58bu9VMR85K/BHRNYZqEX+6iHVPiqT9Yefg3ThDMM3hVXuSRXXwVMmI2KrtKGtRo
+	LmP9+bLb94DmH3yRC/
+X-Google-Smtp-Source: AGHT+IHZkeuEDZYJsmeqSkNhq3Bl5KYXIylnr89Ea5RYR3BcZR9jpgcLY7nN/+8jXCtmO4YuJD3daw==
+X-Received: by 2002:a05:6000:2887:b0:429:58f:26f with SMTP id ffacd0b85a97d-42b5281c40cmr2203450f8f.24.1763027512635;
+        Thu, 13 Nov 2025 01:51:52 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f1fd50sm2817519f8f.38.2025.11.13.01.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 01:51:52 -0800 (PST)
+Message-ID: <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+Date: Thu, 13 Nov 2025 11:51:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
+ <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
+ <20251113-benign-macaw-of-development-dbd1f8@kuoka>
+ <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
+ <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2025-11-12 at 12:59 -0800, Paul E. McKenney wrote:
-> Neither reset_lookup_mutex nor reset_lookup_list are used anymore, which
-> results in build errors, so remove them.  It would be best if this were
-> to be folded into commit 205b261463ff ("reset: remove legacy reset lookup
-> code"), the better for bisection efforts.
->=20
-> Reproduce on armv8 with:
->=20
-> tools/testing/selftests/rcutorture/bin/torture.sh --duration 10 --do-none=
- --do-rt
->=20
-> Fixes: 205b261463ff ("reset: remove legacy reset lookup code") # -next
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 22f67fc77ae5..93575d5064a5 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -25,9 +25,6 @@
->  static DEFINE_MUTEX(reset_list_mutex);
->  static LIST_HEAD(reset_controller_list);
-> =20
-> -static DEFINE_MUTEX(reset_lookup_mutex);
-> -static LIST_HEAD(reset_lookup_list);
-> -
->  /* Protects reset_gpio_lookup_list */
->  static DEFINE_MUTEX(reset_gpio_lookup_mutex);
->  static LIST_HEAD(reset_gpio_lookup_list);
 
-Thank you, just applied to reset/next for now:
 
-[1/1] reset: Remove unused variables
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D3754bc97926e
+On 11/13/25 11:35 AM, Krzysztof Kozlowski wrote:
+> On 13/11/2025 10:28, Tudor Ambarus wrote:
+>>
+>>
+>> On 11/13/25 10:30 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Nov 12, 2025 at 08:29:06AM +0000, Tudor Ambarus wrote:
+>>>> Add initial support for the Samsung Exynos OTP controller. Read the
+>>>> product and chip IDs from the OTP controller registers space and
+>>>> register the SoC info to the SoC interface.
+>>>>
+>>>> The driver can be extended to empower the controller become nvmem
+>>>> provider. This is not in the scope of this patch because it seems the
+>>>> OTP memory space is not yet used by any consumer, even downstream.
+>>>
+>>> Quick look tells me you just duplicated existing Samsung ChipID driver.
+>>> Even actual product ID registers and masks are the same, with one
+>>> difference - you read CHIPID3... which is the same as in newer Exynos,
+>>> e.g. Exynos8895.
+>>
+>> Yes, that's correct. It's very similar with the Samsung ChipID driver.
+>>
+>>>
+>>> What is exactly the point of having this as separate driver? I think
+>>
+>> The difference is that for gs101 the chipid info is part of the OTP
+>> registers. GS101 OTP has a clock, an interrupt line, a register space 
+>> (that contains product and chip ID, TMU data, ASV, etc) and a 32Kbit
+>> memory space that can be read/program/locked with specific commands.
+>>
+>> The ChipID driver handles older exynos platforms that have a dedicated
+>> chipid device that references a SFR register space to get the product
+>> and chip ID. On GS101 (but also for e850 and autov9 I assume) the
+>> "ChipID block" is just an abstraction, it's not a physical device. The
+>> ChipID info is from OTP. When the power-on sequence progresses, the OTP
+>> chipid values are loaded to the OTP registers. We need the OTP clock to
+>> be on in order to read them. So GS101 has an OTP device that also happens
+>> to have chip ID info.
+>>
+>> For now I just got the chipid info and registered it to the SoC interface
+>> (which is very similar to that the exynos-chipid driver does), but this
+>> driver can be extended to export both its memory space and register space
+> 
+> 
+> There is no code for that now and possibility of extension is not a
+> reason to duplicate yet.
+> 
+>> as nvmem devices, if any consumer needs them. Downstream GS101 drivers
+>> seem to use just the chip id info and a dvfs version from the OTP
+>> registers. DVFS version is not going to be used upstream as we're defining
+>> the OPPs in DT. So I was not interested in extending the driver with nvmem
+>> provider support, because it seems we don't need it for GS101.
+>>
+>> Do the above justify the point of having a dedicated driver?
+> Only partially, I asked about driver. I did not spot previously the
+> clock, so we have two differences - CHIPID3 register and clock - right?
 
-I'll rebase this branch and squash this fix into 205b261463ff before
-sending a pull request. There's also the 25d4d4604d01 / f5c877fb74f4
-patch / revert pair that I should drop.
+clock and interrupts, but I don't use the interrupts because I just need
+to read the OTP registers to get the chip id info.
 
-regards
-Philipp
+> I wonder why Exynos8895 and others, which are already supported, do not
+> use CHIPID3, but nevertheless these two differences can be easily
+> integrated into existing driver.
+
+they can be integrated, but I want to make sure we're making the best
+decision.
+
+>>> this can easily be just customized chipid driver - with different
+>>> implementation of exynos_chipid_get_chipid_info().
+>>
+>> If the answer is no to my question above, how shall I model the device
+>> that binds to the existing exynos-chipid driver?
+> Just extend the existing driver.
+> 
+So you mean I shall have something like that in DT:
+
++		chipid@10000000 {
++			compatible = "google,gs101-chipid";
++			reg = <0x10000000 0xf084>;
++			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
++			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
++		};
+
+Maybe remove the interrupts because I don't need them for reading OTP regs.
+
+What happens in the maybe unlikely case we do want to add support for OTP
+for GS101? How will we describe that in DT?
+
+Thanks!
+ta
 
