@@ -1,278 +1,138 @@
-Return-Path: <linux-kernel+bounces-899253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB06CC5735D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 519EDC57363
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DDAC7352174
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:30:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F219352A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7A633E36C;
-	Thu, 13 Nov 2025 11:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300572ECEA5;
+	Thu, 13 Nov 2025 11:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyjw2SAe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CsIoJnic"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484C33DEFA;
-	Thu, 13 Nov 2025 11:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26EA2D9792
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033393; cv=none; b=MLdy3yJfKH6ZNMsE3kOa4FLRP3hN4pvJqyv0mTJRfXLGqdSMwz3SrGgQnEzmeKg/sm9TbV0wm3Sbt1S6NApTDMdYOdwgeHrsvkCWSPYNoA/gR16T/TfprygVu02ZBphenwXf6ebup+tcQtc9vLsDoaWZPKhCsv4JYrPPZ5xD0m4=
+	t=1763033471; cv=none; b=IgwRd85Za1x0NEB8R+cmHhvwU5JQNGog4rPz6KmqUh9Kc0PHf1mMgrq85dpCCIpG3uBDQA8pEot07Dm8IOgNdo7Ii0rPnkt0TAhn3UEz7vqubRGMk+GTEJW0/XkSTlzsnqC11EgV11nuPbjZ2TxtjTCHV36cqbD9M1i/CM0Tiq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033393; c=relaxed/simple;
-	bh=mNBcINM7vOrkwSjMdzQjMAOOJlMLTdt8p5nnmhi0bpk=;
+	s=arc-20240116; t=1763033471; c=relaxed/simple;
+	bh=VO0D4qtFDnnqDUnf4u1aGwJJ/e/ChUkUSuVmhopuyUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1Suxk/nkiONwInG4mjo2JwC858H0iuMQwtxQIy1J2+oUPLVLPC/KdpbgS7qfAzyDXnma+U/3dLgcoxToeimnlMK/T56vwe6xxNJ+i8Ir7by5c1h1klmZ8b6cN827VQk2wkdwXPD/oJCmZhgDFkAdwji9uM67n0+tKS6ijvizkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyjw2SAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46FA1C16AAE;
-	Thu, 13 Nov 2025 11:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763033393;
-	bh=mNBcINM7vOrkwSjMdzQjMAOOJlMLTdt8p5nnmhi0bpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kyjw2SAeCJwK8oZurRaA0tCYVsFMKQJakvjmg6wFjwxvBpd53XwrshwbBFDz3pFQ1
-	 5nZx35HkjgZzhoGT6TTPWVPqvEVbMo/HMopc4vywhGvEWZAV7dkzaDk46I+B9Jmrn5
-	 VsKN9UIH/MmR+oBiQSw0q36eyD5pwfwtFoViyAl4zneipjg6ppPVguXZ0+H2Elr1FE
-	 IWIL3LWjckVpQ9wTmB5HjISlIXTzHR3RYqbelRHTjM5LqFFrqk2BwiDln/uo4wTwBF
-	 jk21vj6aq3YQMCoJY0a7c1XLsGd9prSbjQta/mfhWklIr5mwoYweZCE0k3xQuM8JIi
-	 7cHUfjRxkiGbA==
-Date: Thu, 13 Nov 2025 11:29:47 +0000
-From: Lee Jones <lee@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: gregkh@linuxfoundation.org, pavel@kernel.org, rdunlap@infradead.org,
-	christophe.jaillet@wanadoo.fr, krzk+dt@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, corbet@lwn.net, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v17 2/3] leds: add basic support for TI/National
- Semiconductor LP5812 LED Driver
-Message-ID: <20251113112947.GF1949330@google.com>
-References: <20251106155915.GT8064@google.com>
- <20251111170728.81552-1-trannamatk@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVI/ShfZhZp7l1YCCB+IbAn2HBAdhbsrd/59neGHb5hQJRrHChH8dKuikPSdxeNOVMmCSN5BQPqMn9sG5r+TkXZZH+kIqjCIkXSzXhobgXW0Yri2b5/xPBSC2PEeJzauZDsnCZqZ8xLkgDnf9NQ23bGSws1YX8Cwt83LcYbOMdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CsIoJnic; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763033468; x=1794569468;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VO0D4qtFDnnqDUnf4u1aGwJJ/e/ChUkUSuVmhopuyUE=;
+  b=CsIoJnicPHf0Kad+fF4876F8/e0q7arQuAR7YdQgkl0qHNu7qBkPAObd
+   nOmISMECjfx0auRISryL1WoKAH2axzvw1ypVrGzzghzSPfuhHXZFcVY+x
+   RkxI98TPBF1fSiU6VveaMnhbGVPc1T6/b5p0rZXBPDg1z/FJUk44MOJwq
+   RO2hz6qDmCzz+DIdfN/ZQA9SPSChv8sCBrSgurEGQi57StOEDllINNFkU
+   K/TJMKn8v6rSN11qdx/63xzutI1Dfr1ptm/Q/ICTNEOSOU0DkVcj87gs5
+   Ys+Y83nyEzcOqYujwXm7XZNda2i5WIzrifxs7Seu+QXl/2Kh7iy4HNwCQ
+   Q==;
+X-CSE-ConnectionGUID: rSYKA7F6Qbu19m+YCI0siQ==
+X-CSE-MsgGUID: cbuZiTV+Rom6Rl/OSRLCIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="68960604"
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="68960604"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 03:31:07 -0800
+X-CSE-ConnectionGUID: qv+Wec9pSSqs4nivXwDvhQ==
+X-CSE-MsgGUID: Sn3jbVsASbKvR2WO6KQvFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="220132438"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2025 03:31:05 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJVXa-0005FV-26;
+	Thu, 13 Nov 2025 11:31:02 +0000
+Date: Thu, 13 Nov 2025 19:30:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCHv2 2/2] firmware: stratix10-rsu: add COMPILE_TEST support
+Message-ID: <202511131954.IdQx9gfF-lkp@intel.com>
+References: <20251112063033.176276-3-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251111170728.81552-1-trannamatk@gmail.com>
+In-Reply-To: <20251112063033.176276-3-rosenp@gmail.com>
 
-On Wed, 12 Nov 2025, Nam Tran wrote:
+Hi Rosen,
 
-> On Thu, 6 Nov 2025, Lee Jones wrote:
-> 
-> > On Tue, 21 Oct 2025, Nam Tran wrote:
-> > 
-> > > The LP5812 is a 4x3 matrix RGB LED driver with an autonomous animation
-> > > engine and time-cross-multiplexing (TCM) support for up to 12 LEDs or
-> > > 4 RGB LEDs. Each LED can be configured through the related registers
-> > > to realize vivid and fancy lighting effects.
-> > > 
-> > > This patch adds minimal driver support for the LP5812, implementing
-> > > only the essential functionality: I2C communication with the device,
-> > > LED registration, brightness control in manual mode, and basic sysfs
-> > > interfaces for LED configuration and fault monitoring.
-> > > 
-> > > Signed-off-by: Nam Tran <trannamatk@gmail.com>
-> > > ---
-> > >  MAINTAINERS                    |   4 +
-> > >  drivers/leds/rgb/Kconfig       |  13 +
-> > >  drivers/leds/rgb/Makefile      |   1 +
-> > >  drivers/leds/rgb/leds-lp5812.c | 730 +++++++++++++++++++++++++++++++++
-> > >  drivers/leds/rgb/leds-lp5812.h | 197 +++++++++
-> > >  5 files changed, 945 insertions(+)
-> > >  create mode 100644 drivers/leds/rgb/leds-lp5812.c
-> > >  create mode 100644 drivers/leds/rgb/leds-lp5812.h
-> > 
-> > Last go - just a few nits to fix-up.
-> 
-> Thank you for the feedback.
-> I'll address these minor issues and include the fixes in the next revision.
-> But I have a few concerns about some of the nits.
-> 
-> > > +static int lp5812_parse_led(struct device_node *np,
-> > > +			    struct lp5812_led_config *cfg,
-> > > +			    int led_index)
-> > > +{
-> > > +	int num_colors = 0, ret;
-> > 
-> > As above.
-> > 
-> > > +
-> > > +	of_property_read_string(np, "label", &cfg[led_index].name);
-> > 
-> > Is this optional?
-> 
-> The 'label' property is required for proper sysfs naming. Should I update the DT binding
-> to mark it mandatory and adjust the driver accordingly? I'd like to confirm if this aligns
-> with usual conventions for such properties.
+kernel test robot noticed the following build errors:
 
-I'll let you look around and decide for yourself.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.18-rc5 next-20251113]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If this is not optional, you should check this call for errors.
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/firmware-stratix10-rsu-fix-32-bit-compilation/20251112-143202
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20251112063033.176276-3-rosenp%40gmail.com
+patch subject: [PATCHv2 2/2] firmware: stratix10-rsu: add COMPILE_TEST support
+config: s390-randconfig-r111-20251113 (https://download.01.org/0day-ci/archive/20251113/202511131954.IdQx9gfF-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251113/202511131954.IdQx9gfF-lkp@intel.com/reproduce)
 
-> > > +static int lp5812_probe(struct i2c_client *client)
-> > > +{
-> > > +	struct lp5812_chip *chip;
-> > > +	struct device_node *np = dev_of_node(&client->dev);
-> > > +	struct lp5812_led *led;
-> > 
-> > This is all of the LEDs though, right.
-> > 
-> > So "leds" would be better.
-> > 
-> > > +	int ret;
-> > > +
-> > > +	if (!np)
-> > > +		return -EINVAL;
-> > > +
-> > > +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-> > > +	if (!chip)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	chip->cfg = i2c_get_match_data(client);
-> > > +	ret = lp5812_of_populate_pdata(&client->dev, np, chip);
-> > 
-> > That's not all this function does though.
-> > 
-> > And it's not pdata.
-> > 
-> > lp5812_of_probe() would probably be better.
-> > 
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	led = devm_kcalloc(&client->dev, chip->num_channels, sizeof(*led), GFP_KERNEL);
-> > > +	if (!led)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	chip->client = client;
-> > > +	mutex_init(&chip->lock);
-> > > +	i2c_set_clientdata(client, led);
-> > 
-> > If you're only using the chip, why not just save the chip?
-> 
-> Just to confirm, you mean to store all LED instances inside the lp5812_chip struct and
-> only save the chip in i2c_set_clientdata(), instead of allocating a separate leds array
-> in probe()?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511131954.IdQx9gfF-lkp@intel.com/
 
-At the moment, it looks as though you save the array of `led`s and pull
-out the `chip` pointer from the first one (in .remove() below).  Why not
-just store the `chip` in clientdata in the first place?
+All errors (new ones prefixed by >>):
 
-> I can update the code accordingly if that's the preferred approach.
-> 
-> > > +/* Chip specific configurations */
-> > > +static const struct lp5812_device_config lp5812_cfg = {
-> > > +	.reg_reset = {
-> > > +		.addr = LP5812_REG_RESET,
-> > > +		.val  = LP5812_RESET
-> > > +	},
-> > > +	.reg_chip_en = {
-> > > +		.addr = LP5812_REG_ENABLE,
-> > > +		.val  = LP5812_ENABLE_DEFAULT
-> > > +	},
-> > > +	.reg_dev_config_0 = {
-> > > +		.addr = LP5812_DEV_CONFIG0,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_1 = {
-> > > +		.addr = LP5812_DEV_CONFIG1,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_2 = {
-> > > +		.addr = LP5812_DEV_CONFIG2,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_3 = {
-> > > +		.addr = LP5812_DEV_CONFIG3,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_4 = {
-> > > +		.addr = LP5812_DEV_CONFIG4,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_5 = {
-> > > +		.addr = LP5812_DEV_CONFIG5,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_6 = {
-> > > +		.addr = LP5812_DEV_CONFIG6,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_7 = {
-> > > +		.addr = LP5812_DEV_CONFIG7,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_dev_config_12 = {
-> > > +		.addr = LP5812_DEV_CONFIG12,
-> > > +		.val  = LP5812_DEV_CONFIG12_DEFAULT
-> > > +	},
-> > > +	.reg_cmd_update = {
-> > > +		.addr = LP5812_CMD_UPDATE,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_tsd_config_status = {
-> > > +		.addr = LP5812_TSD_CONFIG_STATUS,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_led_en_1 = {
-> > > +		.addr = LP5812_LED_EN_1,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_led_en_2 = {
-> > > +		.addr = LP5812_LED_EN_2,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_fault_clear = {
-> > > +		.addr = LP5812_FAULT_CLEAR,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_manual_dc_base  = {
-> > > +		.addr = LP5812_MANUAL_DC_BASE,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_auto_dc_base  = {
-> > > +		.addr = LP5812_AUTO_DC_BASE,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_manual_pwm_base  = {
-> > > +		.addr = LP5812_MANUAL_PWM_BASE,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_lod_status_base  = {
-> > > +		.addr = LP5812_LOD_STATUS,
-> > > +		.val  = 0
-> > > +	},
-> > > +	.reg_lsd_status_base  = {
-> > > +		.addr = LP5812_LSD_STATUS,
-> > > +		.val  = 0
-> > > +	}
-> > > +};
-> > 
-> > This is an unusual way to set out a register map.
-> > 
-> > Where have you seen this done before?
-> > 
-> > > +static const struct of_device_id of_lp5812_match[] = {
-> > > +	{ .compatible = "ti,lp5812", .data = &lp5812_cfg },
-> > 
-> > Seems odd to populate .data when you only have a single device.
-> 
-> I followed the style used in the lp55xx series drivers for the register map and device
-> config. I thought it makes sense to keep the same pattern to allow easier upgrade and
-> maintenance in the future. But you expect a more typical approach, right?
+   s390-linux-ld: drivers/firmware/stratix10-svc.o: in function `svc_smccc_hvc':
+>> drivers/firmware/stratix10-svc.c:845:(.text+0x5ba): undefined reference to `__arm_smccc_hvc'
 
-You only need to provide differentiation when you support more than one
-device.
+
+vim +845 drivers/firmware/stratix10-svc.c
+
+7ca5ce896524f5 Richard Gong 2018-11-13  826  
+7ca5ce896524f5 Richard Gong 2018-11-13  827  /**
+7ca5ce896524f5 Richard Gong 2018-11-13  828   * svc_smccc_hvc() - hypervisor call between normal and secure world
+7ca5ce896524f5 Richard Gong 2018-11-13  829   * @a0: argument passed in registers 0
+7ca5ce896524f5 Richard Gong 2018-11-13  830   * @a1: argument passed in registers 1
+7ca5ce896524f5 Richard Gong 2018-11-13  831   * @a2: argument passed in registers 2
+7ca5ce896524f5 Richard Gong 2018-11-13  832   * @a3: argument passed in registers 3
+7ca5ce896524f5 Richard Gong 2018-11-13  833   * @a4: argument passed in registers 4
+7ca5ce896524f5 Richard Gong 2018-11-13  834   * @a5: argument passed in registers 5
+7ca5ce896524f5 Richard Gong 2018-11-13  835   * @a6: argument passed in registers 6
+7ca5ce896524f5 Richard Gong 2018-11-13  836   * @a7: argument passed in registers 7
+7ca5ce896524f5 Richard Gong 2018-11-13  837   * @res: result values from register 0 to 3
+7ca5ce896524f5 Richard Gong 2018-11-13  838   */
+7ca5ce896524f5 Richard Gong 2018-11-13  839  static void svc_smccc_hvc(unsigned long a0, unsigned long a1,
+7ca5ce896524f5 Richard Gong 2018-11-13  840  			  unsigned long a2, unsigned long a3,
+7ca5ce896524f5 Richard Gong 2018-11-13  841  			  unsigned long a4, unsigned long a5,
+7ca5ce896524f5 Richard Gong 2018-11-13  842  			  unsigned long a6, unsigned long a7,
+7ca5ce896524f5 Richard Gong 2018-11-13  843  			  struct arm_smccc_res *res)
+7ca5ce896524f5 Richard Gong 2018-11-13  844  {
+7ca5ce896524f5 Richard Gong 2018-11-13 @845  	arm_smccc_hvc(a0, a1, a2, a3, a4, a5, a6, a7, res);
+7ca5ce896524f5 Richard Gong 2018-11-13  846  }
+7ca5ce896524f5 Richard Gong 2018-11-13  847  
 
 -- 
-Lee Jones [李琼斯]
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
