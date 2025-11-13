@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-899112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAA4C56CC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:19:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EAFC56CFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B493AD720
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:18:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D3F64EB9F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664382DAFD7;
-	Thu, 13 Nov 2025 10:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC492F1FC3;
+	Thu, 13 Nov 2025 10:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M7Lj1st/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dOY1ZsMr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Jdmo17yd"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6961035CBAF;
-	Thu, 13 Nov 2025 10:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BA914AD20;
+	Thu, 13 Nov 2025 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763029127; cv=none; b=YttgSu9eyNmsBfermkCyvLoy2BSNwgPAXCS3k7BPpGwu9Mb+5LJnN0oAGVIykYYWZyH2BoccN0eUYlxDAvQl7ILd3WjaLrhOqv832Dm348OSeRZsJZbDdwRDZ2mqGeobKYKws/TlpUVreRlPIJLQJcVVW77yk+JhNK1/UnwnYQ8=
+	t=1763029137; cv=none; b=knYYk0rTpq3q9M0PG4r8xbUW9n/COT+HjeM9J9koPUTDuMLMdbhXokYf8zIhfX5SQ12kMLC746PmecMCnH5wLf3bSbveCkDSulMhAPuQ39x2ZjTSiGc/KUu3ymAEBVAjtxU2uS/iHk95L53D3zWi9Dwt/bRHnKho8MhqwbF+iWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763029127; c=relaxed/simple;
-	bh=LJGBzkpvbORrmNtfquLx7qWbEnyjNYbu81Pl10pBGxA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YOl1ENBq1j6kh6g3TAWTBVa6BQLwcNXwYoF7subr3fylawNppGqDFD9aqhebdJ/Fa5rR5yQ4btrdrrV4vXE6Uunw/e8vcGDOm4Xm0suH/67uTcWEfXnOGOtPc46Z1ENWuLaiOF2jAb8ctlm8zuFB+ZFSqlWR6D6nxGQIWsUoaCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M7Lj1st/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dOY1ZsMr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763029124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NcsDVZsBhQkgJbWn/k4TOWkjECO/uEWNKITsrhWHd00=;
-	b=M7Lj1st/qtCIasRa2Z048ekBYT/+/8EUym0tNiCC+BWUeDu1WofBDdb3gs8WOhEn4SAg/V
-	ZPgK8pGdAe/PPW37mL4NwoZ5HNP8d/ckeGcOnAu8WQaKW15vuSXLvQmXlXcNMIEq6OpmLE
-	kGOAHsEXCauFmTq4/UfSMH4c3zN/UkBkFDigUbFKisKI+kBebIZP2/3ghijD7ZIx6qIsK1
-	WhJQpagijXQaitTQRK5G96UQ2k8Bq9EMAbjuP5FbxAD0rEG8zbtJc15R2fTYzh6r5Gf08r
-	5SO/UzAQSvi86/Zy8JLEMVtYwfy7VPFbT3IbE7Nyq4KCtesTlMxCod3TF8WhRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763029124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NcsDVZsBhQkgJbWn/k4TOWkjECO/uEWNKITsrhWHd00=;
-	b=dOY1ZsMrBwgrsqXxiISAs7CWXPiA+gcp2s1cnXvBaID+J+jeTzX5ZugguFql0UeLWDR3m+
-	VWWuAFzyXvRU+8CA==
-To: Luigi Rizzo <lrizzo@google.com>, Marc Zyngier <maz@kernel.org>, Luigi
- Rizzo <rizzo.unipi@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Andrew
- Morton <akpm@linux-foundation.org>, Sean Christopherson
- <seanjc@google.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, Bjorn Helgaas
- <bhelgaas@google.com>, Willem de Bruijn <willemb@google.com>, Luigi Rizzo
- <lrizzo@google.com>
-Subject: Re: [PATCH 6/6] genirq: soft_moderation: implement per-driver
- defaults (nvme and vfio)
-In-Reply-To: <20251112192408.3646835-7-lrizzo@google.com>
-References: <20251112192408.3646835-1-lrizzo@google.com>
- <20251112192408.3646835-7-lrizzo@google.com>
-Date: Thu, 13 Nov 2025 11:18:43 +0100
-Message-ID: <87ldkack1o.ffs@tglx>
+	s=arc-20240116; t=1763029137; c=relaxed/simple;
+	bh=XyHOGRyLyTBRyQsxtR1tnGdoFyijF2WgBu/BGuiL+U4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:From:Cc:
+	 References:In-Reply-To; b=NP/yv/Bl3P6koN3rLUzx88mUNNYcNH51APpq4Rq9kAGnFHLcVRGkmt/Qw1KcMZA/Q0ufj7Ige0W3+z992m0TF+cyCnNiiJuj4P8miqt+kio9KFsoju5du8MMeOrHo1IIe2tJlV2arL4KQCuKEp0o2hLMd/DL5/8q7ZPb/e6YHLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Jdmo17yd; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD5ZXad009449;
+	Thu, 13 Nov 2025 10:18:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0mKJmP
+	AETsGmfv3UOpULntHIsQEeG1GgBH8GJm96EEI=; b=Jdmo17ydqWXkOkdq59jzAx
+	zWDgypTPjnJ9DskJHqdjbN9PeXZUEHvBGg0b/cQLmGjvrglcBUooWP4ny4reNw1W
+	FSxx9eUEJQdhxdrunG7d0kui6MdUdrJPxczPXhFWKtf/emzZjNp+xV3cE7RX1oFX
+	W15K1Z7IF342FUidOKjZXmYPe/MvTaYokSTQZuk3/2PrcqBwJVsMulxK378OPK39
+	BWNoBVc4DH4T/QdBEgj5eKcvilcRm2ncwmi99Nw1mLV7EUYZ4myKG1axVAP3itDY
+	BytQWNLTrWdKKLdKt0UsjqA2GEtx00xWgT8UsE7lNTJ1bbKQMc8bty746JEX9WFw
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk8fb9g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 10:18:53 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD8cxi3028859;
+	Thu, 13 Nov 2025 10:18:52 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aag6sncva-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 10:18:52 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ADAImxa62456162
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 10:18:48 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BE64820043;
+	Thu, 13 Nov 2025 10:18:48 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96A8F20040;
+	Thu, 13 Nov 2025 10:18:48 +0000 (GMT)
+Received: from darkmoore (unknown [9.111.1.139])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Nov 2025 10:18:48 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 13 Nov 2025 11:18:43 +0100
+Message-Id: <DE7HNY4I79TM.1EAA75D8OW13C@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 07/23] KVM: s390: KVM-specific bitfields and helper
+ functions
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <borntraeger@de.ibm.com>, <frankja@linux.ibm.com>, <nsg@linux.ibm.com>,
+        <nrb@linux.ibm.com>, <seiden@linux.ibm.com>,
+        <schlameuss@linux.ibm.com>, <hca@linux.ibm.com>, <svens@linux.ibm.com>,
+        <agordeev@linux.ibm.com>, <gor@linux.ibm.com>, <david@redhat.com>,
+        <gerald.schaefer@linux.ibm.com>
+X-Mailer: aerc 0.21.0
+References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+ <20251106161117.350395-8-imbrenda@linux.ibm.com>
+In-Reply-To: <20251106161117.350395-8-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX+EJ0nH+bMoWd
+ VB5IAUfJHUVhxTLV9i18peLzF0pg1YB4lT09gKo3RnSOHPhK7kjC27CdNs7E/uTaauGQaP6zBWk
+ wO7rj/cdA9RgLe0Aw8XQ0+X8PCDe4Sm4EeB8iNtxoWfGEkLjmq+uFUfup2MIx5hNqjGsQyLXHgf
+ imZpqd3NbUD7HA7ZsnYl58b50AOE13GxpY84Eu+YKFR/wdfzWCc8+eppUxsGsGk2If9XFKfabIq
+ UT6f6XGGTk1o746PLH62GgmGrEUlcqoNfoJ0F8ltae7URovm/XOQIogC8062u7NRzyWSHcW8XHG
+ ex7M0kfG/jJrBzB/BFsHR758+CBpQKJ3wYjvGLb3wLjiJg3PxCnXKvCNmGEF8PMqxvTxE0I+K7H
+ joybQljdGPX2d3axUqPRuswekUIqSw==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6915b08d cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=1VCRT6WqKb7475BWb5YA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: BQeDGuVaLkAloej7Wate6MvldPMBh_On
+X-Proofpoint-GUID: BQeDGuVaLkAloej7Wate6MvldPMBh_On
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_01,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
-On Wed, Nov 12 2025 at 19:24, Luigi Rizzo wrote:
-> Introduce helpers to implement per-driver module parameters to enable
-> moderation at boot/probe time.
+On Thu Nov 6, 2025 at 5:11 PM CET, Claudio Imbrenda wrote:
+> Add KVM-s390 specific bitfields and helper functions to manipulate DAT
+> tables.
 >
-> As an example, use the helpers in nvme and vfio drivers.
->
-> To test, boot a kernel with
->
-> ${driver}.soft_moderation=1 # enables moderation.
->
-> and verify with "cat /proc/irq/soft_moderation" that
-> the counters increase.
->
-> Change-Id: Iaad4110977deb96df845501895e0043bd93fc350
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 > ---
->  drivers/nvme/host/pci.c           |  3 +++
->  drivers/vfio/pci/vfio_pci_intrs.c |  3 +++
->  include/linux/interrupt.h         | 13 +++++++++++++
->  kernel/irq/irq_moderation.c       | 11 +++++++++++
+>  arch/s390/kvm/dat.h | 726 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 726 insertions(+)
+>  create mode 100644 arch/s390/kvm/dat.h
+>
+> diff --git a/arch/s390/kvm/dat.h b/arch/s390/kvm/dat.h
+> new file mode 100644
+> index 000000000000..9d10b615b83c
+> --- /dev/null
+> +++ b/arch/s390/kvm/dat.h
+> @@ -0,0 +1,726 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  KVM guest address space mapping code
+> + *
+> + *    Copyright IBM Corp. 2007, 2024
+> + *    Author(s): Claudio Imbrenda <imbrenda@linux.ibm.com>
+> + *               Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Again a pile of randomly picked files. The proper way is documented:
+nit:
+As this is a new file with new content.
+Remove Martin here and set the copyright to 2025?
 
-   1) Add infrastructure first
-
-   2) Use infrastructure in drivers, one patch per subsystem
-
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 72fb675a696f4..b9d7bce30061f 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -72,6 +72,8 @@
->  static_assert(MAX_PRP_RANGE / NVME_CTRL_PAGE_SIZE <=
->  	(1 /* prp1 */ + NVME_MAX_NR_DESCRIPTORS * PRPS_PER_PAGE));
->  
-> +DEFINE_IRQ_MODERATION_MODE_PARAMETER;
-> +
->  static int use_threaded_interrupts;
->  module_param(use_threaded_interrupts, int, 0444);
->  
-> @@ -1989,6 +1991,7 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid, bool polled)
->  		result = queue_request_irq(nvmeq);
->  		if (result < 0)
->  			goto release_sq;
-> +		IRQ_MODERATION_SET_DEFAULT_MODE(pci_irq_vector(to_pci_dev(dev->dev), vector));
-
-What's the point of this IRQ_MODERATION_SET_DEFAULT_MODE() wrapper?
-
-Thanks,
-
-        tglx
+...
 
