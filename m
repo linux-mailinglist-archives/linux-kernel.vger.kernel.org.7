@@ -1,160 +1,208 @@
-Return-Path: <linux-kernel+bounces-899399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4727C579D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:19:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE48EC57C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D526F344C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0414239CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B20F352931;
-	Thu, 13 Nov 2025 13:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C25F352929;
+	Thu, 13 Nov 2025 13:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ngVkrRun"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="au9Fnep+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA992350D7D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960543446AA;
+	Thu, 13 Nov 2025 13:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763039943; cv=none; b=swan6hSNCehnwbrZpZqLA2sntzM0UBWREyei5yozwoz3kADm6qY0RTe7WDs2EtvkjCseYUChKpQ3UXkVxkoAD/C6OLqfXP7Us5uXxmN5JmosSC4hjqf7E8sngi3kLToh8M35p5OAkRHpkBApY1nOoLkciEMog6sDJNgLwKfzeOQ=
+	t=1763039963; cv=none; b=KTNquhmG8LRbWLuzhIze8JjDzdEfgz7HgXpYfGfQp31STqv01wnOJ6QK+TkxE44qz0BxiXmVjiGHl5vmce3ux/rH/DaNBS+XKqhQRfYNU9nZXII0weo4+sPyp14HJRz3h9meM9uh04VxrnwAimbthV9fkVgMVNMHnPmMS6+t088=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763039943; c=relaxed/simple;
-	bh=dZ2FevfKGBfSlzInaPvMVB0Ytsg/HnbfQojoImKv34o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KiwybQRc+O3t13QG1YRDDFlCc8t3woHX6uWgxHKd9WzveHgAySnuPgFSYB7eiXzP/6B7/ZwVggRdSMKiBsyR/FZdjcb6ybL5/5UpmdEqEISDy4YfWwfsZ8vRU1OMRLYE1y7dJEOrUIZeNHWRw7ZkyXjKXML5DFkX5ywHRaQQJRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ngVkrRun; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-594516d941cso888003e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:19:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763039940; x=1763644740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VZfCaucUzkZTNK+50YPVLfmUuvxNRaVom6NqjpdOeAc=;
-        b=ngVkrRuni8C0ZzIICR4M1qJk0YSAc2BqN7tfoFD3K8miMEl3AUoeZTHyH3JTQqVne6
-         0oIe8sCSeQwTobVSMIdt2ef8RLM5qHSU1lYqNBttR0bvsXU8vCs1bqZLP1kDftPQ/GDb
-         t+JTcOKbGgfUFW9xHu2SLEEkIDrU51eaJ1bQfv3tadkzbSwl/i/KM2aFVsvr/ksSaVEW
-         Ija4F7f+3Ey+Zt7u6v1C54rFyngfipxqqC72siJWrM/BI8Sh9H/fAdtE46iAMG5DtuOK
-         WqgdBxKGG3OYy2YWVqE2iLqhQAEKzzM9UweJ+FUj+IQBQvPRye4/iWDTbRjQzESkqQqu
-         WZig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763039940; x=1763644740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VZfCaucUzkZTNK+50YPVLfmUuvxNRaVom6NqjpdOeAc=;
-        b=DMQx4r9I4BKVIReUiOGGTSEXNmpjUfAF3U55BRPre5AZzfE7H6iWqVDvV5Pv0UioqN
-         QHtjmDMrzl8nnjSBfl6i8h/5BwwcL2iRZyQLmHu6GFOZMrxMS0tGNL49kmz4iLht/kLW
-         WXbjVsp5b+k093D5XuHiHCthXSHEBWG5YgyCLeoFeD966yrBG6e6MeFRSTTjO0cVfxhv
-         NqbN6XLSFWflpDqaI/FZnjd4DPJ+gxFcFIkYrx7pTfmMNWIef2bQdR1o6s4DBdZMZbfc
-         taoNDbLt7wquV0NMnU1c0rhwB5ox59tup1VgWrp4mKslfn1mTQDlwJnC59W+xyfl1qbs
-         C1Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVipEN24XYwuVoBDAxdVRKOFzOoLyADuXn/0PE5JdHQb+/rjW1CW7rsY5QUtFEkkEgr442DK1yyaQ5Eq8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsh07VD2Dq0ekOlxnBHhpPP0YX9+VKK1Hro7Zpz28/K6zFS5o8
-	3YVleY7l2DuPO2JY2VxAxpUgNThjaEFgngmrgabqgWr2Ry+pkbjm28EfIwTrxUmAEsZLEc6EQTX
-	+GitEasSUIqMnjBuYy5UvmzCGbxbNqCMo/FC9Zry9gw==
-X-Gm-Gg: ASbGnctSjS8eQhfemDua3L3qeaBRQveWXcLfRKLq8VOb1zFirL2dftvhzkfYw2X9Tv5
-	ajbMq0kGBPBWjY8VgONl0Uf0E9ZWlIfMlpolMTHizcLl/eTYjBFO1+F+e9JQwtQb6Z9Iz5sPQGG
-	vAeRATrgpmrCnEwvSrv/xaaZC1qKdWGC6gL5ffd6oFy9vRJSBPFP9J5FXaB1ipoInj0P3wPIc76
-	tyfjg3oBA2nSQs1lZZyj21VQw/nmVmc5SiEf5ptICWl3MSSidF+PdAJdGjTy4BNPxeVZWNmf93w
-	ZLkZA4Bsh46pnedi
-X-Google-Smtp-Source: AGHT+IHeVzTuj43c2XKQpZBw2ErEf3YOWTRFAtQ1vaZEEtKBTkEs3tR1Hd50SIgH+QjYllZZcXodcrSS9KZ8vRhrh3k=
-X-Received: by 2002:a05:6512:3152:b0:595:7b24:d36e with SMTP id
- 2adb3069b0e04-5957b24d58cmr1396653e87.7.1763039939830; Thu, 13 Nov 2025
- 05:18:59 -0800 (PST)
+	s=arc-20240116; t=1763039963; c=relaxed/simple;
+	bh=P9s2h/Wjy9Na7b+ftnoX7l3kupSsVDNWwRbP5AEB8Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lf7TkrGPArqa6waLmV8so8CGNQ9DNU+WmzZZZ39+WDuQzRWFj1M4UzFxat9kOC+PH4fMBg0Yb5uRkAaxs22Th6BAZW8KEy6NuFQKjRFDH1YwwEFYg2Bk2U/KCeooL5g61otuq1+em9cp0ajVy2TUlpzeRLmd9NNtrHf76SqXapY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=au9Fnep+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEE4C113D0;
+	Thu, 13 Nov 2025 13:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763039963;
+	bh=P9s2h/Wjy9Na7b+ftnoX7l3kupSsVDNWwRbP5AEB8Og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=au9Fnep+e1nlh+6Akcy9xh1n7jklf2ToFt2W0nDV9torlK6X0yoWA3O/Pmq+p4QSg
+	 1FaO9fNr95zNVNcIsYGrd/7eBUSbUmZBtE0hXmihERVhqAHi9NPrvPPKnsB7Yfpnwg
+	 +tweOCW7HnYA4G3vEvAkLtFVEdtJqX5Lj7jYjKabIFhUgo2KPgD5kRSQxkIagEa7U8
+	 AstTMiCzIsw1Cc0j54FHQJ/zkPBfdFUv9ZXbqKiK+wTa4u8pSdxIIAaZXXwaJOMdC8
+	 GTHx58pq2iZT14EzsnthsvR6lPZKOkjUyaAilZZERWCqxaBRqrj044f+vLvUkEA+Z2
+	 mBQsZf+OVaxgQ==
+Date: Thu, 13 Nov 2025 14:19:19 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Kernel Mailing List <linux-kernel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+Message-ID: <20251113-gechartert-klargemacht-542a0630c88b@brauner>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net>
+ <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
+ <20251111102435.GW2441659@ZenIV>
+ <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+ <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
+ <20251112-kleckern-gebinde-d8dbe0d50e03@brauner>
+ <0dfa7fc6-3a15-4adc-ad1d-81bb43f62919@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
- <20251107-qcom-sa8255p-emac-v5-2-01d3e3aaf388@linaro.org> <21a3d269-76e6-4da9-aa25-bfd1fb6dfb07@oss.qualcomm.com>
-In-Reply-To: <21a3d269-76e6-4da9-aa25-bfd1fb6dfb07@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Nov 2025 14:18:48 +0100
-X-Gm-Features: AWmQ_bkdL6yYgjauNyydNchJ2jLFj9s46UQ7WB4-Hc5rFElcxZ0Jmq78mNjUwDc
-Message-ID: <CAMRc=MexMn_GSC2EtMek5hDRLjGYA5HKM8ge9vrxw1pYDqPJgw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/8] net: stmmac: qcom-ethqos: use generic device properties
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Matthew Gerlach <matthew.gerlach@altera.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Keguang Zhang <keguang.zhang@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com, 
-	Romain Gantois <romain.gantois@bootlin.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Minda Chen <minda.chen@starfivetech.com>, 
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Maxime Ripard <mripard@kernel.org>, Shuang Liang <liangshuang@eswincomputing.com>, 
-	Zhi Li <lizhi2@eswincomputing.com>, Shangjuan Wei <weishangjuan@eswincomputing.com>, 
-	"G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	Linux Team <linux-imx@nxp.com>, Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>, 
-	Samin Guo <samin.guo@starfivetech.com>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, Swathi K S <swathi.ks@samsung.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
-	linux-sunxi@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0dfa7fc6-3a15-4adc-ad1d-81bb43f62919@themaw.net>
 
-On Fri, Nov 7, 2025 at 11:49=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 11/7/25 11:29 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > In order to drop the dependency on CONFIG_OF, convert all device proper=
-ty
-> > getters from OF-specific to generic device properties and stop pulling
-> > in any linux/of.h symbols.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
->
-> [...]
->
-> > -     if (of_property_read_bool(np, "snps,tso"))
-> > +     if (device_property_present(dev, "snps,tso"))
->
-> This is a change in behavior - "snps,tso =3D <0>" would have previously
-> returned false, it now returns true
->
+On Thu, Nov 13, 2025 at 08:14:36AM +0800, Ian Kent wrote:
+> On 12/11/25 19:01, Christian Brauner wrote:
+> > On Tue, Nov 11, 2025 at 08:27:42PM +0800, Ian Kent wrote:
+> > > On 11/11/25 18:55, Christian Brauner wrote:
+> > > > On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
+> > > > > On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
+> > > > > 
+> > > > > > > +	sbi->owner = current->nsproxy->mnt_ns;
+> > > > > > ns_ref_get()
+> > > > > > Can be called directly on the mount namespace.
+> > > > > ... and would leak all mounts in the mount tree, unless I'm missing
+> > > > > something subtle.
+> > > > Right, I thought you actually wanted to pin it.
+> > > > Anyway, you could take a passive reference but I think that's nonsense
+> > > > as well. The following should do it:
+> > > Right, I'll need to think about this for a little while, I did think
+> > > 
+> > > of using an id for the comparison but I diverged down the wrong path so
+> > > 
+> > > this is a very welcome suggestion. There's still the handling of where
+> > > 
+> > > the daemon goes away (crash or SIGKILL, yes people deliberately do this
+> > > 
+> > > at times, think simulated disaster recovery) which I've missed in this
+> > Can you describe the problem in more detail and I'm happy to help you
+> > out here. I don't yet understand what the issue is.
+> 
+> I thought the patch description was ok but I'll certainly try.
 
-This property is a boolean flag, it cannot have a value.
+I'm sorry, we're talking past each other: I was interested in your
+SIGKILL problem when the daemon crashes. You seemed to say that you
+needed additional changes for that case. So I'm trying to understand
+what the fundamental additional problem is with a crashing daemon that
+would require additional changes here.
 
-Bartosz
+> 
+> 
+> Consider using automount in a container.
+> 
+> 
+> For people to use autofs in a container either automount(8) in the init
+> 
+> mount namespace or an independently running automount(8) entirely within
+> 
+> the container can be used. The later is done by adding a volume option
+> 
+> (or options) to the container to essentially bind mount the autofs mount
+> 
+> into the container and the option syntax allows the volume to be set
+> 
+> propagation slave if it is not already set by default (shared is bad,
+> 
+> the automounts must not propagate back to where they came from). If the
+> 
+> automount(8) instance is entirely within the container that also works
+> 
+> fine as everything is isolated within the container (no volume options
+> 
+> are needed).
+> 
+> 
+> Now with unshare(1) (and there are other problematic cases, I think systemd
+> 
+> private temp gets caught here too) where using something like "unshare -Urm"
+> 
+> will create a mount namespace that includes any autofs mounts and sets them
+> 
+> propagation private. These mounts cannot be unmounted within the mount
+> 
+> namepsace by the namespace creator and accessing a directory within the
 
-> although it seems like it's the plat driver clunkily working around
-> not including the common compatible and inlining parts of the common
-> probe functions..
->
-> Konrad
->
+Right, but that should only be true for unprivileged containers where we
+lock mounts at copy_mnt_ns().
+
+> 
+> autofs mount will trigger a callback to automount(8) in the init namespace
+> 
+> which mounts the requested mount. But the newly created mount namespace is
+> 
+> propagation private so the process in the new mount namespace loops around
+> 
+> sending mount requests that cannot be satisfied. The odd thing is that on
+> the
+> 
+> second callback to automount(8) returns an error which does complete the
+> 
+> ->d_automount() call but doesn't seem to result in breaking the loop in
+> 
+> __traverse_mounts() for some unknown reason. One way to resolve this is to
+> 
+> check if the mount can be satisfied and if not bail out immediately and
+> 
+> returning an error in this case does work.
+
+Yes, that's sensible. And fwiw, I think for private mounts that's the
+semantics you want. You have disconnected from the "managing" mount
+namespace - for lack of a better phrase - so you shouldn't get the mount
+events.
+
+> I was tempted to work out how to not include the autofs mounts in the cloned
+> 
+> namespace but that's file system specific code in the VFS which is not ok
+> and
+> 
+> it (should) also be possible for the namespace creator to "mount
+> --make-shared"
+> 
+> in the case the creator wants the mount to function and this would prevent
+> that.
+> 
+> So I don't think this is the right thing to do.
+> 
+> 
+> There's also the inability of the mount namespace creator to umount the
+> autofs
+> 
+> mount which could also resolve the problem which I haven't looked into yet.
+
+Ok, again, that should only be an issue with unprivileged mount
+namespaces, i.e., owned by another user namespace. This isn't easily
+doable. If the unprivileged mount namespaces can unmount the automount
+it might reveal hidden/overmounted directories that weren't supposed to
+be exposed to the container - I hate these semantics btw.
+
+> 
+> 
+> Have I made sense?
+
+Yes, though that's not the question I tried to ask you. :)
+
+> 
+> 
+> Clearly there's nothing on autofs itself and why one would want to use it
+> 
+> but I don't think that matters for the description.
+> 
+> 
+> Ian
+> 
 
