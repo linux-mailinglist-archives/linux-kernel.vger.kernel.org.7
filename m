@@ -1,139 +1,124 @@
-Return-Path: <linux-kernel+bounces-898983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E048FC56813
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:11:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD93CC5684B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AB11B354D81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:01:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDDA64F2AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFB133ADAF;
-	Thu, 13 Nov 2025 08:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i6HACEtl"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8EC334C28;
+	Thu, 13 Nov 2025 08:57:04 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4482741DA;
-	Thu, 13 Nov 2025 08:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215D332EDE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763024184; cv=none; b=DGRgXfYrO2qMBICPG+urFD3R8h6kQ8vsUXVr3sx70YXPfG9Mtb9Ae0KvZ7khsdEUEnbPSDMgQJejFgYAUUnHYLFBHY/vQ3ZmR8VTiwJ6YTKAsZkb5CCWlDME2iHSftZcSbS73d27NWhYqDb4Y1u1GY0oBmAk4O9HADGDMjB9gW4=
+	t=1763024224; cv=none; b=SQyu/NBdO+aOsZVjqbHMBsFiNnBQtpH3te51eN8nwHvjJuQqCz1P/VSmVKrXp3TwH9nr79TSFiFNvD0LCwuv3MttRQxfuxgO9lRSvOLiIVWhs+wVaVjKFe8wCQ4F7s/LFtNJQccLh5GfzgeW1Rl/lxecY0BPixAVMiueEC4BCGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763024184; c=relaxed/simple;
-	bh=zp6SlYcPA6p/E0ySGHx+QoEp05+2+wht8ejef48Qeh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lEQMIF1yKg+8Un3p2HqPfsgsX2UgG35eM10BThDAWdcHofHl1YmCJDfkl2hdgDZtbd3nUDhWh2BHIG9qPBIUCh9zvbMBySGqJDGtEfVdM0J0zgxjHpljPMTzrrar9CbEQKf2x7bPGFl4KqIZ+QmUe5Ky+UsBpSPDWi04kIBoqcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i6HACEtl; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 13 Nov 2025 10:56:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763024180; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=nWP3To9chHe8h02n9M1ldMghujzaU64BefpJAj3Yhlc=;
-	b=i6HACEtlEZRTsOq0Aw420IWJzeqnYlQlHrCGC44aRMpphV+QM19Nkd3SWxR/8Rh+VPI1Wx
-	YGN+xA5JY7HUIRIu9XqP51yViYUBKG2vuOAvUwSFyWUYnIzCJwJ3Kut3n0/z4NiKcvFHsa
-	ajjEH3CAha+UqO/Fa252aB6HqDN6iyw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v4 16/16] MAINTAINERS: Add ROHM BD72720 PMIC
-Message-ID: <3aa7088ba93e0faac1010897e5da2f0541022d9f.1763022807.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1763024224; c=relaxed/simple;
+	bh=as2Wl3WHy5m/K3oRgwuzwjXnWFg0R2hmfkUngFuxVnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TxU7/RAb+x9aLrNvx5AnpsOOmf2I10R1xPF+qq51vJ8/cD/hGxQZMpyYy6c9G0RktTii7BMUvuxqH6hrHNEoWzOIuJb8gm73XA7x2+rWJKpU2FqcGV1Xv2CvfTGb3HoAZYiwW67RkTfb0IhZeAhd5UXhlKgc1fSIVrsWQ96t9xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5597a426807so364243e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:57:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763024221; x=1763629021;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HNPad0IM0QP877Z/XWUvdL3MC286xcTm4p5JIGRP0vI=;
+        b=uPr6EqC969WEepU7i1Z4OhfFFbhAvlOXzUuEHWD2vTNoEduskMfj3Wnbta4eCrZl8w
+         Tg1DFaL4KwPt9Vy78R8ExqrdmevLu3ZVgH//x1mvLZkkHxQNjWlw/NNUeG5dKr8vx9Ss
+         8AYhrY2lR8WFBx6eXKwki+j2Up0tr/SxtwS5w4tnoc8vEt5SRdHuvR9goQg+6gv7/fOf
+         x4jeymk5xHtYJZgO6PY6g1VPChYGLmgDsrfdhYM5igNDg+GvxP4LLiWqM4vL3NFtOesG
+         C7ohMBzOoTvkjzY/lsnxQ/lS2u7Om+/2lJYPMwM/ugxOvSbSu0tEEIeqcTK/FKkj417a
+         L1nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBPri+WMdU78lEiqQb6Jn9TGiWgLdo265sgMWeD9BZl7l7R7koZqCtHjYhDdyAAKAsupVHJrpZMFCgxew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkVSOIjiMOEBSlM3vQynzOKdzRdvEAMNmEy2sbuzfAMsG7TYP3
+	Af09Epyug9LumQ/Z0sYLB2fEsBLgr0Efn9FBcmkNsJSeuMC2iud01diMKY+phOnc738=
+X-Gm-Gg: ASbGncvEUOrwZPfaL6V0q7NxwDXpi+BEWJvW3Rm3ZIBhpiPOxPoEreo621CAdagmPnH
+	Nsk1KztGhCb0TJwA0zOP3LUCF5QkEItefdencSxETBfiUKwqHJEJxy4CWrC3G3FFaDLBAf08mCE
+	0A0gs+Qltt5Dx6LeFz/HHblsxmkxDZP51Ch/b1yr1oCforiFrz36c5X+896j8djVu1/1ITtc71p
+	Ym8M7rQvh6qwkBvYZr8MG2FNsypq478N0yEeVY4S2xKrCGNlJYLPHgjh0FSqAGRPvVRTEeyJsZp
+	+BICiBRVs60BE7cTom66CXaPb1wbE93eMnIK7cE1uiggo7nqiUcoI8Qa5UFQNXM6ntAssFOtVtJ
+	WSHd/2EhHrY2hTZEhJjUjnJ2U2iViZjdYVqRdP69HMMZkVVJ+nc20+lLmifA2GMiQ9FgZa8BHgs
+	Sl6M8a8K0z/vzYx+ATbqO3bFEYP94QS+8v5KN6Ijzrlg==
+X-Google-Smtp-Source: AGHT+IHKCpMCJDtfKr/D+z5i9I7SzPHrPZ34dFYkJHlXpESpUNyaGq3/KE+a4/nRgHbwm4KRG7Bovw==
+X-Received: by 2002:a05:6122:1d86:b0:559:6092:936c with SMTP id 71dfb90a1353d-559e7d499a9mr2223851e0c.12.1763024221264;
+        Thu, 13 Nov 2025 00:57:01 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f441c79sm501197e0c.14.2025.11.13.00.56.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 00:57:00 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-559836d04f6so401213e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:56:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVWR84g5WhUdhGIYYoNFxMTR3/V5Ya4rFe4X+ivKGCtdFe9naZHvzedt7jYWc9t2U1+OTn7+1YFEsfjPsQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:374e:b0:5d5:f766:75f1 with SMTP id
+ ada2fe7eead31-5de07d598c3mr2559230137.11.1763024219221; Thu, 13 Nov 2025
+ 00:56:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a9hT/oob02Yt7ImX"
-Content-Disposition: inline
-In-Reply-To: <cover.1763022807.git.mazziesaccount@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <48381c47930d98380871458ca471ea5a7a89aafc.1762956447.git.geert+renesas@glider.be>
+ <aRULf65eNaRIVEHN@ziepe.ca>
+In-Reply-To: <aRULf65eNaRIVEHN@ziepe.ca>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 09:56:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU3rY8iyxJWdNFA0whOFv6WV-AgndnoA-QPjNLrLOjw2A@mail.gmail.com>
+X-Gm-Features: AWmQ_bkeganA7aM_P2ei0wcLl7_i_OWoRrr5SIFHNN0iTfxFCurm_-NlINuIdn0
+Message-ID: <CAMuHMdU3rY8iyxJWdNFA0whOFv6WV-AgndnoA-QPjNLrLOjw2A@mail.gmail.com>
+Subject: Re: [PATCH] genpt: Make GENERIC_PT invisible
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Jason,
 
---a9hT/oob02Yt7ImX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 12 Nov 2025 at 23:34, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Wed, Nov 12, 2025 at 03:08:05PM +0100, Geert Uytterhoeven wrote:
+> > There is no point in asking the user about the Generic Radix Page
+> > Table API:
+> >   - All IOMMU drivers that use this API already select GENERIC_PT when
+> >     needed,
+> >   - Most users probably do not know what to answer anyway.
+> >
+> > Fixes: 7c5b184db7145fd4 ("genpt: Generic Page Table base API")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  drivers/iommu/generic_pt/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> I can't check this right now but I do recall trying to do this from
+> the start and it was not working out, it ended up not being
+> automatically turned on?
+>
+> Did you test something like menuconfig and the IOMMU drivers are still
+> presented starting from an allnoconfig?
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+Yes, that still works.
 
-Add the ROHM BD72720 PMIC driver files to be maintained by undersigned.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+                        Geert
 
----
-Revision history:
- RFCv1 =3D>:
- - No changes
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe01aa31c58b..7e3c1eac7cda 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22353,6 +22353,7 @@ S:	Supported
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
-+F:	drivers/gpio/gpio-bd72720.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/mfd/rohm-bd9576.c
-@@ -22369,6 +22370,7 @@ F:	drivers/watchdog/bd96801_wdt.c
- F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
-+F:	include/linux/mfd/rohm-bd72720.h
- F:	include/linux/mfd/rohm-bd957x.h
- F:	include/linux/mfd/rohm-bd96801.h
- F:	include/linux/mfd/rohm-bd96802.h
---=20
-2.51.1
-
-
---a9hT/oob02Yt7ImX
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkVnSoACgkQeFA3/03a
-ocUZKQf3RnWEJD5XEsjYHiqpfGbSkxCyq2y+9UDyXdp8Wuq1kAvLxy1AgMgYRhSQ
-Kgsi/BaCI4HQt1RS6SxDioeYjAslQzVgcDRCRi3Uzw9wp8VUHx7F1QtZ7UY1oEur
-jE+IMZO4jPa0DF5EZAaxwaIPXmls2Lk/O3GYxMkeOdE7FR1vrFnY1EgiRv50W7QV
-Ai0RXIpR56RHaFZUPcdAse7o5xlRmNfttvhTEiKQ5jPjz1TmkOKJeoRNCSPwutS8
-t1i5GYgJ2MpQtdnmIEomcGfUA+Ul0xZCDGXuX2luQeTy1ncCy2Bsc2qVg7UL1iYN
-xGOLD658Bmn8KrOss590oC5IroDe
-=n6lR
------END PGP SIGNATURE-----
-
---a9hT/oob02Yt7ImX--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
