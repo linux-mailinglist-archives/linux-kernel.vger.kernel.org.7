@@ -1,128 +1,155 @@
-Return-Path: <linux-kernel+bounces-899955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF52FC5931A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:36:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB592C59446
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828CE426A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:19:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8CE74EAFCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A87F35A14B;
-	Thu, 13 Nov 2025 17:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14A2359FAD;
+	Thu, 13 Nov 2025 17:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1mRz2N9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTWOZ2vq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13EC35A12B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E668B287245;
+	Thu, 13 Nov 2025 17:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053765; cv=none; b=MyDhWKSpW23Lktc99jUlkSeFYpGEU4epEMPQ5OtJv09VgjKLgOzA4cYf64V3j5H+Sgc2Oz3yAPj+2l7OZmN+hc77BLXgtgdpkkgPiruy25SqNWSd8XFGwhB2Iy75jqMufLpthfpkQYO9v4jhfRoAKICMky+aeIVWT5DNAcGpe8I=
+	t=1763053758; cv=none; b=RcKltbDr0fnl33tkei+udo2Qo+r+58mnJ/4DmwLAxuFwDkCzvmhGJltt7KUzbKOBcatahQFwnTGr7wNQKuKWT9j8HUl3xqk3m3TZKwt8Xz7hu2ehGw+iJaN8u5dNSHVYpaEJXUIJckgg3lNA2NNPMzw5Drptytn7w9fBBo3YQ1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053765; c=relaxed/simple;
-	bh=62vwBOP9yKsaKuZOOstUW2+mwhy4EqYVKW6wWSai3WY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YsJRQCpvTXv/wBYVbkjd+Xw/sPc+ZXmf0BQBdqpADIyIxiV9DkM7gXjzTypXxo2fjCCevg2tIucUCC+uN9/xYKkLgzQikc4F5hN6dgqp7SoK9aAZUJUskD5z0567WBLL0dHze/qniS1hmWr12zSy9mXruxxcCalwOgJfbY9Px3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1mRz2N9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763053762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l7WJhtLVedGmTm5Wrszczo4emoT5IEM0tAgaV+QfK+0=;
-	b=D1mRz2N9nL3UGQ9c3YTMYRoIGyA4hgMNM9gRa4OtJsIUrArPWLmdE7MP3Ey/tkcxUQqq0t
-	HZs39CNijMngUle4yYQfTcc6GcFwHE9xj0fMSyG2Y4QFnTtf1b3cSygJWw41v8X+1EUfjx
-	2cIfvOeOAzp7EQgr6ow9mtIwFvR6zFI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-g_Qt6dFGNnSiilkrFUvtVA-1; Thu,
- 13 Nov 2025 12:09:17 -0500
-X-MC-Unique: g_Qt6dFGNnSiilkrFUvtVA-1
-X-Mimecast-MFC-AGG-ID: g_Qt6dFGNnSiilkrFUvtVA_1763053755
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62C7D18002D7;
-	Thu, 13 Nov 2025 17:09:15 +0000 (UTC)
-Received: from [10.44.32.61] (unknown [10.44.32.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D179C180049F;
-	Thu, 13 Nov 2025 17:09:10 +0000 (UTC)
-Message-ID: <018e3129-e367-4637-8892-7eb83dcae40f@redhat.com>
-Date: Thu, 13 Nov 2025 18:09:09 +0100
+	s=arc-20240116; t=1763053758; c=relaxed/simple;
+	bh=KgOyzW1bsNWElKjpd7nBjy4HkR9UXD/Y7CgdTNhJdTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqynN8qz9zoP4ADoX7r53TmfDFm4l26Jn7vWZ4s6KSiOjrmKEiUer6O21iFf+MZl4T6aAXy1nECYnDE6ifkQsGsfQ5OgpEUgfffMeo/iUCcc17vW8fHUZn+Xc6LBP56nOzF+pM7t5MsDugGWygVkawsJ2GRDUuWuVHL8t3KAEw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTWOZ2vq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947BDC4CEF1;
+	Thu, 13 Nov 2025 17:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763053757;
+	bh=KgOyzW1bsNWElKjpd7nBjy4HkR9UXD/Y7CgdTNhJdTY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=uTWOZ2vqZGjxvKr6fAC3v8eysVa/3uBKWQ+/27SGYB3n3KOi5k0K8jjmc1t3im3qt
+	 brvTq0V9/iq17X6Ljy2vcorxIx0UOpiTDHLKrUSdzwc7OBH38+vAbnWjbVrPOXmA1n
+	 oV4a22t/WgNW5BI23OEZOza8Le8La6Oivl4k7F5TeHh4cg05Rgpw29rq2nUhI/WgQ2
+	 Zl0PZuWdbbImF3En90fxVCZrKTSMLYcNBRTC1UVMHq/qp0AlOup8JhH4NKQSnF3Hdg
+	 ptdTUx41bL9k8DrnEUhiehroOn7UnYkZTHM311utFy8IxIOmpd0cQm9Y76KpU7Dpba
+	 yaabcgQqcqs9g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2994BCE0B6A; Thu, 13 Nov 2025 09:09:17 -0800 (PST)
+Date: Thu, 13 Nov 2025 09:09:17 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	d-tatianin@yandex-team.ru, john.ogness@linutronix.de,
+	sfr@canb.auug.org.au, rostedt@goodmis.org, senozhatsky@chromium.org
+Subject: Re: [BUG -next] WARNING: kernel/printk/printk_ringbuffer.c:1278 at
+ get_data+0xb3/0x100
+Message-ID: <571ad413-5fd2-496f-96f7-06ca95b1ec9a@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <a2f58837-2b29-4318-9c78-5905ab2e9d3b@paulmck-laptop>
+ <aRWKq2KNKjxbXexA@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dpll: zl3073x: fix kernel-doc name and missing
- parameter in fw.c
-To: Kriish Sharma <kriish.sharma2006@gmail.com>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251112055642.2597450-1-kriish.sharma2006@gmail.com>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20251112055642.2597450-1-kriish.sharma2006@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRWKq2KNKjxbXexA@pathway.suse.cz>
 
-On 11/12/25 6:56 AM, Kriish Sharma wrote:
-> Documentation build reported:
+On Thu, Nov 13, 2025 at 08:37:15AM +0100, Petr Mladek wrote:
+> Hi Paul,
 > 
->    Warning: drivers/dpll/zl3073x/fw.c:365 function parameter 'comp' not described in 'zl3073x_fw_component_flash'
->    Warning: drivers/dpll/zl3073x/fw.c:365 expecting prototype for zl3073x_flash_bundle_flash(). Prototype was for zl3073x_fw_component_flash() instead
->    Warning: drivers/dpll/zl3073x/fw.c:365 No description found for return value of 'zl3073x_fw_component_flash'
+> first, thanks a lot for reporting the regression.
 > 
-> The kernel-doc comment above `zl3073x_fw_component_flash()` used the wrong
-> function name (`zl3073x_flash_bundle_flash`) and omitted the `@comp` parameter.
-> This patch updates the comment to correctly document the
-> `zl3073x_fw_component_flash()` function and its arguments.
+> On Wed 2025-11-12 16:52:16, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > Some rcutorture runs on next-20251110 hit the following error on x86:
+> > 
+> > WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0xb3/0x100, CPU#0: rcu_torture_sta/63
+> > 
+> > This happens in about 20-25% of the rcutorture runs, and is the
+> > WARN_ON_ONCE(1) in the "else" clause of get_data().  There was no
+> > rcutorture scenario that failed to reproduce this bug, so I am guessing
+> > that the various .config files will not provide useful information.
+> > Please see the end of this email for a representative splat, which is
+> > usually rcutorture printing out something or another.  (Which, in its
+> > defense, has worked just fine in the past.)
+> > 
+> > Bisection converged on this commit:
+> > 
+> > 67e1b0052f6b ("printk_ringbuffer: don't needlessly wrap data blocks around")
+> > 
+> > Reverting this commit suppressed (or at least hugely reduced the
+> > probability of) the WARN_ON_ONCE().
+> > 
+> > The SRCU-T, SRCU-U, and TREE09 scenarios hit this most frequently at
+> > about double the base rate, but are CONFIG_SMP=n builds.  The RUDE01
+> > scenario was the most productive CONFIG_SMP=y scenario.  Reproduce as
+> > follows, where "N" is the number of CPUs on your system divided by three,
+> > rounded down:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*RUDE01"
+> > 
+> > Or if you can do CONFIG_SMP=n, the following works, where "N" is the
+> > number of CPUs on your system:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*SRCU-T"
+> > 
+> > Or please tell me what debug I should enable on my runs.
 > 
-> Fixes: ca017409da69 ("dpll: zl3073x: Add firmware loading functionality")
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> ---
-> v2:
->   - Added colon to fix kernel-doc warning for `Return:` line.
+> The problem was reported by two test robots last week. It happens when
+> a message fits exactly up to the last byte before the ring buffer gets
+> wrapped for the first time. It is interesting that you have seen
+> so frequently (in about 20-25% rcutorture runs).
 > 
-> v1: https://lore.kernel.org/all/20251110195030.2248235-1-kriish.sharma2006@gmail.com
-> 
->   drivers/dpll/zl3073x/fw.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/dpll/zl3073x/fw.c b/drivers/dpll/zl3073x/fw.c
-> index def37fe8d9b0..55b638247f4b 100644
-> --- a/drivers/dpll/zl3073x/fw.c
-> +++ b/drivers/dpll/zl3073x/fw.c
-> @@ -352,12 +352,12 @@ struct zl3073x_fw *zl3073x_fw_load(struct zl3073x_dev *zldev, const char *data,
->   }
->   
->   /**
-> - * zl3073x_flash_bundle_flash - Flash all components
-> + * zl3073x_fw_component_flash - Flash all components
->    * @zldev: zl3073x device structure
-> - * @components: pointer to components array
-> + * @comp: pointer to components array
->    * @extack: netlink extack pointer to report errors
->    *
-> - * Returns 0 in case of success or negative number otherwise.
-> + * Return: 0 in case of success or negative number otherwise.
->    */
+> Anyway, I have pushed a fix on Monday. It is the commit
+> cc3bad11de6e0d601 ("printk_ringbuffer: Fix check of
+> valid data size when blk_lpos overflows"), see
+> https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.19&id=cc3bad11de6e0d6012460487903e7167d3e73957
 
-Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+Even better!  Thank you for the fix.
 
+> Thanks a lot for so exhaustive report. And I am sorry that you
+> probably spent a lot of time with it.
+
+Well, actually, it was the first time that I turned "git bisect run"
+loose on a full (and fully scripted) remote RCU run.  Each step involved
+checking out 20 systems from the test group, building 20 kernels,
+downloading the build products to each of the 20 systems, running each
+of 286 guest OSes (15 each for 19 of the kernels and one instance of
+the large one) spread over the 20 systems, waiting for them to finish,
+uploading the test results, returning the systems to the test group,
+analyzing them, and reporting either success (all runs succeeded) or
+failure (at least one failure across the 286 kernels.  Then my grepping
+through the run results directory to get you the failure rate.  Of course,
+that failure rate indicates that I could have done the bisection more
+quickly and with much less hardware, but that would have required me to
+stop the other things I was doing and actually think about this.
+
+Each step took somewhere between 90 minutes and two hours on a total of
+1600 CPUs, and all ~11 bisection steps completed without my intervention.
+Thus far, neither the test grid, the systems, the scripting, nor git
+bisect have complained about my having wasted their time, but what with
+AI they probably soon will do so.
+
+I am somewhat surprised that it all went through without something
+breaking, but I guess that we all get lucky from time to time.  ;-)
+
+So not a lot of work for me, which is a good thing, given that I had
+lots of other distractions, including another much more troublesome
+bisection on ARM that actually found a bug that had not yet been fixed.
+A trivial bug, admittedly, but such is life!
+
+And again, thank you for so quickly fixing this!
+
+							Thanx, Paul
 
