@@ -1,86 +1,128 @@
-Return-Path: <linux-kernel+bounces-899725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B684FC58B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:27:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A535C58B1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 523E7503745
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0223B4C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF68328B43;
-	Thu, 13 Nov 2025 15:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1081346FB2;
+	Thu, 13 Nov 2025 15:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gE9K287B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J7URCsAY"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866E2F90C5;
-	Thu, 13 Nov 2025 15:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70ED2F4A19;
+	Thu, 13 Nov 2025 15:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049382; cv=none; b=QZT4jzxEqAaKkh4jznMJvbyMWovIjujxWTWMd+lwgWmIQ1Dkp1CvCvkPkUKMKFQzQaPI/5MhSybLtZghIVbBFlXpv2Lw0wU0T948dbp252AW2GeqXj3uOeNQC42tyNPt4rw1YWCO4+TsJjkMFGGJcSrByMk8ZJH1tFtzhI4Tb7M=
+	t=1763049506; cv=none; b=edzVvkaZwJBuvPXCYQVqAjZxgQkEptT6OsDRo/rASu9GYb1khVX08lhXmin7mw0xIdOsBXsxvCldkWqj7ssViAJPv11mUHX1jQSue6HUcNRUMt736WwUaOzppWcSdzBgMYHfyYnKEXt3FGaK+rrYAV/sMeuOkKd6tkDZR4avl88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049382; c=relaxed/simple;
-	bh=tJibYAQY+S5lOPWCgNk6mfELSA3HxfVzpagj661netk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UEEFJVO++kCLeA0xKKGcBCTjyMorYx6m9ap9/Q32bX9I3Zrmi4wyYfoSqH9eLWVB9p7oBtWw6xQwcc0naZM7kO5vyTy/eGMsZiYm6z8UZMbbqgb0yQ+YDh4M40wiFJzvomOD5EYfrjxG6DLKoKeOvMMm3nezXHqqYWXyfo7dxBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gE9K287B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CC1C4CEF5;
-	Thu, 13 Nov 2025 15:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763049381;
-	bh=tJibYAQY+S5lOPWCgNk6mfELSA3HxfVzpagj661netk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gE9K287Bj1AgbSsP/zRWIEzBAfjzegR5ZIKpYo6p3HM5S9+BcW/rUpHb2zCf77d2P
-	 dbkDj2rIOo6OYwdrCEgU6tr4MzotLpPiAiz6k/NKVNVFAC+luIPNCqLWwl5uQklzc0
-	 sMuOEDGY1YPPOWrM+gbFRC1JPiMoKLcTs+sV+PD3QXILH6Hx1Sg/38lwQlGqthBVHl
-	 kycwRlClLS3O5hoBYtK890OOjfnIIDLIqgAtUK5aI7RWqS0F4uNFpRKHZZhIK1aIBG
-	 bt20JCX1vgeGv8gV2EbDxuzNahj1bGPEsVa19XcR7CINLMYCjV4IoSxo8t8AFUuH4W
-	 qwrDGQqEmou5g==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- Marco Crivellari <marco.crivellari@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@kernel.org>, 
- Lee Jones <lee@kernel.org>
-In-Reply-To: <20251105111924.141555-1-marco.crivellari@suse.com>
-References: <20251105111924.141555-1-marco.crivellari@suse.com>
-Subject: Re: (subset) [PATCH] leds: trigger: replace use of system_wq with
- system_percpu_wq
-Message-Id: <176304937940.1554738.14671753263913309288.b4-ty@kernel.org>
-Date: Thu, 13 Nov 2025 15:56:19 +0000
+	s=arc-20240116; t=1763049506; c=relaxed/simple;
+	bh=NYeJSyKg8aRuFEhyCnL0JQc7N+mw1OvuhAKAZHnRiGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbHrLDccZluabgLgpX2v0IzSwza876Bo3pFpluz6uR2bP6b4p6jieSE7e7L9x9+D3n1cuqsDR/8Gcsq+b1X+J91fL83YU3umgIq6ODD0hH8i/gQChAIQsuGAQQP8CpItl05EapygzvreV8s7BebqVJ5EJuXaDVOoyat9shDKXio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J7URCsAY; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aWqMO5dgKynFXVsf0PHGotO7feJhY392/1Tkcj5y4X4=; b=J7URCsAY11Fgeyi5sgnO0X8T0v
+	DLtkvJJl3PyIkZ3+pQdqa5PD08pffN0ZsYf84O5wPEbDPpiWRbX+vKOEbp87LAFPiB/mZ3rOhRUev
+	wl/E73KkEUEJOW0cczLixDs89IGZapg8+t4mzKPDkp7aY+fu0dlQCpHoXtiBE7C0V33WqRqWR7Ina
+	pGBEbTpoHbR8kIAbT9jLtTXZHlosI5thcir0tsA3EceaS1T7Iz5jB9+WtF3oM79LWHPkzQX873kD2
+	U6e/ONoRJWyV2KMfNwpRVagYpVP1QRU/T0TRZyKfyznhdLSkKcCxnC3ab9fjEVPKPNTuo4mJ0PCIM
+	jRyeeBKw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59990)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vJZi5-000000005f9-20ny;
+	Thu, 13 Nov 2025 15:58:09 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vJZi1-000000004yz-1Tfu;
+	Thu, 13 Nov 2025 15:58:05 +0000
+Date: Thu, 13 Nov 2025 15:58:05 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: net: pcs: renesas,rzn1-miic:
+ Add renesas,miic-phylink-active-low property
+Message-ID: <aRYADfD8QkIw9Fnd@shell.armlinux.org.uk>
+References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251112201937.1336854-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aRTwz5QHq9U5QbQ-@ninjato>
+ <CA+V-a8s5fg02ZQT4tubJ46iBFtNXJRvTPp2DLJgeFnb3eMQPfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
+In-Reply-To: <CA+V-a8s5fg02ZQT4tubJ46iBFtNXJRvTPp2DLJgeFnb3eMQPfg@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 05 Nov 2025 12:19:24 +0100, Marco Crivellari wrote:
-> Currently if a user enqueues a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
+On Thu, Nov 13, 2025 at 02:45:18PM +0000, Lad, Prabhakar wrote:
+> Hi Wolfram,
 > 
-> This lack of consistency cannot be addressed without refactoring the API.
+> On Wed, Nov 12, 2025 at 8:40 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > > Add the boolean DT property `renesas,miic-phylink-active-low` to the RZN1
+> >
+> > Hmm, we already have "renesas,ether-link-active-low" in
+> > renesas,ether.yaml and renesas,etheravb.yaml. Can't we reuse that?
+> >
+> On the RZ/N1x we have the below architecture
 > 
-> [...]
+>                                                       +----> Ethernet Switch
+>                                                       |           |
+>                                                       |           v
+>     MII Converter ----------------------+      GMAC (Synopsys IP)
+>                                                       |
+>                                                       +----> EtherCAT
+> Slave Controller
+>                                                       |
+>                                                       +----> SERCOS
+> Controller
 
-Applied, thanks!
+I'm not sure that diagram has come out correctly. If you're going to
+draw diagrams, make sure you do it using a fixed-width font. To me,
+it looks like the MII Converter is bolted to GMAC and only has one
+connection, and the GMAC has what seems to be maybe five connections.
 
-[1/1] leds: trigger: replace use of system_wq with system_percpu_wq
-      commit: 88aa23c12888348bb4910e75a6088f0affc86923
-
---
-Lee Jones [李琼斯]
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
