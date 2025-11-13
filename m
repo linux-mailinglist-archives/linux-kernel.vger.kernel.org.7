@@ -1,212 +1,165 @@
-Return-Path: <linux-kernel+bounces-899411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F92C57D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:06:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67230C57F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313CA5025B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:24:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75B914EA71B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD643351FDA;
-	Thu, 13 Nov 2025 13:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D095D28C854;
+	Thu, 13 Nov 2025 14:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3RX1R0K"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsycDSpp"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E875351FAB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8BC204583
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040295; cv=none; b=bfaISAgu3U4t5U88/3iGU/H/1zJ7xktnqy9+d+D9xt6Zz/gO4tOl5C5sFYettVJfuLOuvHuM6KLOEa2fNjUea8gcc1Y1/stpSkJ7P4Xou6QBI+BmYDfKKwK9dVnW0qO77GX+EJZ1rmtGpbVbXZr7k1VMX6aoY3BLaGskhVIUHao=
+	t=1763044042; cv=none; b=Vtc0meRQJqeFpT00IiJiVfhxTaBVM2fbKGB+ylin3BOXRpPbwwtKHy+/bjAfpYYrnWgLKcXmwmXTRttcyXqR6fi/RHZjDZKkx6As+6x+NY19h5pMVA0VJbTC+OAtgVTK9aUQ/WOFHkWhckv62UmVHxJHZ1TNq7QyVhaBIo6nSJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040295; c=relaxed/simple;
-	bh=/G842q39ITL2+dv0er/oi50XuXabVeCFAWGwYX/iW3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pjvaEzn+bMMP2WIatjiyzqyakxdmMFLIfQYqUTKxvYr6k1dPMa4ZS/+P6CFwWlfmI/WMh5Oj3O/p/M0jGvop19Tt0NNyKji7oCpAmffSA5/Ao1yI4eURr6tSd9NuAcHhE2sAyOvCR6KmBznPNdpqjy7Y853mnnFt1pacx8V3nMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3RX1R0K; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1763044042; c=relaxed/simple;
+	bh=0Tw6q9uVnCB5RsC3DsVy4ZccNs7ur2RBRKPq+4D012o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZe4/+7JFC9CKjFdryHYbWpEmfZUgFnJm1aukuPdCTXsLJin5z1jH5ng8jbQzZGL41lH4DBROmMkL6HjaX9NQyB7EynMLXHiKsVpIJb26Bzt9V1tfIqQYgaNC8H7NXAzsMDNMvwXrlZibPrtGOkF3UikdZ/od/tMDqMgOoDgT/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsycDSpp; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4775c4197e1so254695e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:24:53 -0800 (PST)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-bb2447d11ceso545584a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:27:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763040292; x=1763645092; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B7jIez1MXpJkQUncD4sP1e3Goi5dMHittA/PGNqTbAk=;
-        b=B3RX1R0Ko9YGiykQ1vt5+/uglnGDG6EdEaKTRSXM+jGYa5fJBwX/XXcAVotT/i7GNI
-         AYzOHmGF6uYt2DuZr9gbtC1P32U6gfi7ec7iyB4oN/+BbpqXOVKeVucPnkR6yvMYQcxi
-         dale05ozLsdkYUz9TMPEcd5ZRvhcqzjOUYRD0J1SQpjS/Ksxvl3BtjRDTAQNbYbfOnln
-         pYO9eZXQLJwV9029cmfm0lQM5RWbzeQ3tZB45M8OCSbiPVp1C/rQ5wLu3H/dvzFP2XGG
-         Fz/zFwtCB10uEW0v1CDkMiQg1HNz6T1oUISdJC6iLDZODDomqYD40KuNZPgnGdk0HeK1
-         9oLA==
+        d=gmail.com; s=20230601; t=1763044039; x=1763648839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UFXYEF7QB/i0A/FdoVAEDHxZYMr8pDZZX3lr2SNEpCE=;
+        b=CsycDSppE1KSpDgiaKq+TAMob1NKpnbMq1D1lVw/J9USc8WH7u5CFqzDeC2lqnsG3+
+         MM9uw9UJMgoG/gx77LPgibrpwpkkGRc+ol+7pPWMty++MOjdNCeNqkYsNA/QWSUaeRAS
+         4E1RXaSpPFDB14wv1y6sAkWFMs6W3MOWUMM+CgtOCdMsA/toFdCl1rG9L66lYjEwSxYo
+         OQxKwwfJu1jZa2Wpppg/kMboIvbczPP5dhJOxS45B2h1csmC0bcg6q3eJoLVcjK1EKTH
+         2BhNyVwZK5qZpIaK83A1kwNE7thGe1wLgLKLsiPi1Ud7UtR+RFHYPX2VJL+fApyXrDFn
+         G3MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763040292; x=1763645092;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B7jIez1MXpJkQUncD4sP1e3Goi5dMHittA/PGNqTbAk=;
-        b=a3auBRaXZwNvdPW/tVihvPZeuvVfIC15PMQ5L2007D/kpABwIioRRP43dlg9ibOkQ2
-         d46+3/pGMLvQ7bn0mH0pc+Z6IpSXRiXuP+eXyAqGK+9Ele/bil0/BHxJrKgfE12YQz+5
-         L6XGRcZYdNJGasZYYf8Na6f5OJrwmClgVG45W0bv/dF1RNS4SpbjRYhXcCn9n35krV0P
-         VmyVZDLj5aex0bq3SJNaTejCIfRvejOVkZH6bzzW2w4JG7fxqlZSHDAhSzkvdq9V0uut
-         zSoufPGkxr4G3QjXKSNgbNFxYSB5ZY8UWQ03hvLw1sDEIIkePUi2r3dbCQYukRf2Fcd8
-         96xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjXHHWpMykBi0cRtk+WrZShqJmAx7iNszxKhTssp69JW6TttHcdkkRg8rTRkqghCYuZu5H27KsPe/OwVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwenmIATp3sS33PvyRxndqKe0fN07VM/nEa/V2lm1RWDbxrjpF9
-	eid2HS3kESpFsR+HCCU7zG6DMIGTaA4VxKiC84zgh70huMIpFmV3kqCo
-X-Gm-Gg: ASbGnct1K/QgKlJzLf1u0ISt49UQk/dYpCobkZEvRjM+1RLTsg9VkGPxEZsGe3AZCPt
-	FIYXTdeqDR43rkHExxGiQr2LCZd3yYtVSNJ4ZX0WQaLmeOvMGjQa+I/0HMbG+hQaNW8e7bEDSzg
-	rFRFWwHSaZr3eaUvx6nDDpctFR0o33QTAp7jJ1mlmryprUYYOAi9PpF2jDJ2otO48ziIIywXtNL
-	VQtZy7wqdM0uttfuqF4ofmH4HlJEnVIJTnyyUOkybsluJ1hwprCILTQcc3Fyf+DOP9lc6Txf1jW
-	HU0M9bi67+opZUcDLN7oNQEe50pU6NXFmBUE/EtR+i31hhmUUPPiBudjqEb/ApXQwUa9GytfEoh
-	tHE2kPkAbSvHf+jlkHkgNtq+tSEOJ5pyrPNpVdqoyvx6m9nH0XWbd9BkJkUdhJq8KpXI7QQWpak
-	tEfgeSOY6v37RxXPMEzVUuSQ==
-X-Google-Smtp-Source: AGHT+IEoYTRrkk4/MsqCg1hhWamxmkk6fIEwfucpjkEgmd6ISTBSqIjpMm6wzZyTSudgBXaqmBB8Xg==
-X-Received: by 2002:a05:600c:3b0a:b0:477:555b:3411 with SMTP id 5b1f17b1804b1-477870482f7mr32516245e9.1.1763040291609;
-        Thu, 13 Nov 2025 05:24:51 -0800 (PST)
-Received: from [192.168.1.105] ([196.239.132.233])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787ea3b56sm88868715e9.16.2025.11.13.05.24.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 05:24:51 -0800 (PST)
-Message-ID: <2f26b1a4-4dfc-4a8f-bebe-5be77107e4f4@gmail.com>
-Date: Thu, 13 Nov 2025 15:24:34 +0100
+        d=1e100.net; s=20230601; t=1763044039; x=1763648839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFXYEF7QB/i0A/FdoVAEDHxZYMr8pDZZX3lr2SNEpCE=;
+        b=Y1c7gwjHgKKxcWD06a4Ec4cYXXDmtwpsqkKTYO/Ji7mvhRAPbHDDBA/xzKnB6O5FJL
+         GA8oYynVILUJpEP/BjgDBdzR+rjTNDu264rNIrQG1DAsX5dBU0GFCOrPpmSBDOqM1fTU
+         9fzrXUSvj9KpgJEF5xYGD2t6AXZJM6Wh2iGOoUWWo6GM9HBo2jDpXCr0voSuMfy8Jtv4
+         W4dRT+MmCr7mHKKJISAZpoQwqQEtoONCn88zDjNiJco/mEVPKfsupVJd1LUBuX5W7ocu
+         84K89QIccYAQAxAMPsAQadzal6HHcg1FaA7EbfgOj++/PQjoE7sLgFpmKAgnAD2hwLdJ
+         QbuA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8TDx+4fVt5rKQV14KJUEN9rYoBl4fKp/0tNZ+5b2xbglB9qF6sl72ptguQBG9DpQ/hcAIIKBOSXgWa3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfsL8r/y4DbHFHDGrsTAcANGA/yThLV5WTxRE4GRrKakdGEGtv
+	nfvSbX1wTU9nZhFBL+DtIhWQ97kbCxaRevF8yXiNiHUuHLNnk22t+fes
+X-Gm-Gg: ASbGncuXi0lfLpfeJwNG4y5TMpdb8jophFDyavbbA5GmxUR+aleOnz60jrWl+LOvJCW
+	mPqKavMtzzQU4Qi/glJtnINg5w3/yNzImyS/MI5PlFh9jIBVHlmT0PJUeR4rSlvxodjexdbsVz0
+	/nZ3woVC2YfZMd1CvrrLEApIYEUA/jWzgX91UUr8stUrpkBpxI7hXNvHV0rlV9D7e4d4yPxetH6
+	yfDVQK7ZW8QZHssChdwjP0qMYoJFkTw9u3it0xOFUs9frX0qAqTLB9TtRXhfWykDrVgBfiyXHmZ
+	zdDwfU9VzLH3zuaYWW5IMS4keUzdjy0nW2KDejdGmHojijrUE28Nu7YHWLeZdGGZgkqYTl/x77r
+	u5jMjmBkMTkrctP2FHBVsMlmZWKl6HIBieZkm7IRQoO0VGmu6hMF9JYQle4fPFgIxlSVb0ZXaKY
+	P2hwsxgp52ri01ndjP
+X-Google-Smtp-Source: AGHT+IF3GrG7ZK+M9RU6VrohEraA5W5GhEDI6zHXa1dkOUqo9dFQeLn6sFP+g+cHtwCkgQIyJU9QrQ==
+X-Received: by 2002:a17:903:2b0f:b0:297:f09a:51db with SMTP id d9443c01a7336-2984ed45caemr92249865ad.15.1763044038540;
+        Thu, 13 Nov 2025 06:27:18 -0800 (PST)
+Received: from gmail.com ([152.57.125.163])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2346dasm28242755ad.7.2025.11.13.06.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 06:27:17 -0800 (PST)
+From: hariconscious@gmail.com
+To: cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	amadeuszx.slawinski@linux.intel.com,
+	sakari.ailus@linux.intel.com,
+	khalid@kernel.org,
+	shuah@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	HariKrishna Sagala <hariconscious@gmail.com>
+Subject: [PATCH v3] ASoC: Intel: avs: Replace snprintf() with scnprintf()
+Date: Thu, 13 Nov 2025 19:56:38 +0530
+Message-ID: <20251113142637.259737-2-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm/uffd: remove static address usage in
- shmem_allocate_area()
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, peterx@redhat.com, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- surenb@google.com, mhocko@suse.com, shuah@kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251111205739.420009-1-mehdi.benhadjkhelifa@gmail.com>
- <aRXDbk9ajOhH7ReX@kernel.org>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <aRXDbk9ajOhH7ReX@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/13/25 12:39 PM, Mike Rapoport wrote:
-> On Tue, Nov 11, 2025 at 09:54:27PM +0100, Mehdi Ben Hadj Khelifa wrote:
->> The current shmem_allocate_area() implementation uses a hardcoded virtual
->> base address(BASE_PMD_ADDR) as a hint for mmap() when creating shmem-backed
->> test areas. This approach is fragile and may fail on systems with ASLR or
->> different virtual memory layouts, where the chosen address is unavailable.
->>
->> Replace the static base address with a dynamically reserved address range
->> obtained via mmap(NULL, ..., PROT_NONE). The memfd-backed areas and their
->> alias are then mapped into that reserved region using MAP_FIXED, preserving
->> the original layout and aliasing semantics while avoiding collisions with
->> unrelated mappings.
->>
->> This change improves robustness and portability of the test suite without
->> altering its behavior or coverage.
->>
->> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
->> ---
->> Testing:
->> A diff between running the mm selftests on 6.18-rc5 from before and after
->> the change show no regression on x86_64 architecture with 32GB DDR5 RAM.
->>   tools/testing/selftests/mm/uffd-common.c | 25 +++++++++++++++---------
->>   1 file changed, 16 insertions(+), 9 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
->> index 994fe8c03923..492b21c960bb 100644
->> --- a/tools/testing/selftests/mm/uffd-common.c
->> +++ b/tools/testing/selftests/mm/uffd-common.c
->> @@ -6,11 +6,11 @@
->>    */
->>   
->>   #include "uffd-common.h"
->> +#include "asm-generic/mman-common.h"
-> 
-> Please drop this.
-> There's already include <sys/mman.h> via uffd-common.h/vm_util.h.
-> 
->>   
->>   uffd_test_ops_t *uffd_test_ops;
->>   uffd_test_case_ops_t *uffd_test_case_ops;
->>   
->> -#define BASE_PMD_ADDR ((void *)(1UL << 30))
->>   
->>   /* pthread_mutex_t starts at page offset 0 */
->>   pthread_mutex_t *area_mutex(char *area, unsigned long nr, uffd_global_test_opts_t *gopts)
->> @@ -142,30 +142,37 @@ static int shmem_allocate_area(uffd_global_test_opts_t *gopts, void **alloc_area
->>   	unsigned long offset = is_src ? 0 : bytes;
->>   	char *p = NULL, *p_alias = NULL;
->>   	int mem_fd = uffd_mem_fd_create(bytes * 2, false);
->> +	size_t region_size = bytes * 2 + hpage_size;
->>   
->> -	/* TODO: clean this up.  Use a static addr is ugly */
->> -	p = BASE_PMD_ADDR;
->> -	if (!is_src)
->> -		/* src map + alias + interleaved hpages */
->> -		p += 2 * (bytes + hpage_size);
->> +	void *reserve = mmap(NULL, region_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
->> +			-1, 0);
->> +	if (reserve == MAP_FAILED) {
->> +		close(mem_fd);
->> +		return -errno;
->> +	}
->> +
->> +	p = (char *)reserve;
-> 
-> No need for casting here.
-> 
->>   	p_alias = p;
->>   	p_alias += bytes;
->>   	p_alias += hpage_size;  /* Prevent src/dst VMA merge */
->>   
->> -	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
->> +	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
->>   			   mem_fd, offset);
->>   	if (*alloc_area == MAP_FAILED) {
->> +		munmap(reserve, region_size);
-> 
-> I think it'll be more readable to put munmap() after setting *alloc_area to
-> NULL.
-> 
->>   		*alloc_area = NULL;
->> +		close(mem_fd);
->>   		return -errno;
->>   	}
->>   	if (*alloc_area != p)
->>   		err("mmap of memfd failed at %p", p);
->>   
->> -	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
->> +	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
->>   			  mem_fd, offset);
->>   	if (area_alias == MAP_FAILED) {
->> -		munmap(*alloc_area, bytes);
->> +		munmap(reserve, region_size);
-> 
-> Here as well.
-> 
->>   		*alloc_area = NULL;
->> +		close(mem_fd);
->>   		return -errno;
->>   	}
->>   	if (area_alias != p_alias)
-Thank you for your suggestions, A v2 has already been sent out with your 
-suggestions.
-Best Regards,
-Mehdi Ben Hadj Khelifa>> --
->> 2.51.2
->>
-> 
+From: HariKrishna Sagala <hariconscious@gmail.com>
+
+snprintf() as defined by the C99 standard,returns the
+number of characters that *would have been* written if
+enough space were available.Use scnprintf() that returns
+the actual number of characters written.
+
+Link: https://github.com/KSPP/linux/issues/105
+Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
+---
+Thank you all for the valuable feedback and suggestions.
+
+This patch updates usage of snprintf() with scnprintf(). 
+As in accordance with the C99 standard, snprintf() returns
+the number of characters that would have been written if
+enough space were available.With scnprintf(),the return value
+reflects the actual number of characters written.
+Change log:
+V3:
+Dropped the Fixes, stable tag & updated the commit message.
+scnprintf doesn't return the negative values as per the contract.
+Hence removed the check of ret < 0 as it is unreachable.
+https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.scnprintf
+V2:
+https://lore.kernel.org/all/20251112181851.13450-1-hariconscious@gmail.com/
+V1:
+https://lore.kernel.org/all/20251112120235.54328-2-hariconscious@gmail.com/
+
+ sound/soc/intel/avs/debugfs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
+index 3534de46f9e4..d224b25323be 100644
+--- a/sound/soc/intel/avs/debugfs.c
++++ b/sound/soc/intel/avs/debugfs.c
+@@ -119,16 +119,13 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
+ 	}
+ 
+ 	for (i = 0; i < num_desc; i++) {
+-		ret = snprintf(buf + len, PAGE_SIZE - len,
+-			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
+-			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
+-		if (ret < 0)
+-			goto free_desc;
++		ret = scnprintf(buf + len, PAGE_SIZE - len,
++				"Id: %#010x  Purpose: %d  Node id: %#x\n",
++				desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
+ 		len += ret;
+ 	}
+ 
+ 	ret = simple_read_from_buffer(to, count, ppos, buf, len);
+-free_desc:
+ 	kfree(desc);
+ exit:
+ 	kfree(buf);
+
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+-- 
+2.43.0
 
 
