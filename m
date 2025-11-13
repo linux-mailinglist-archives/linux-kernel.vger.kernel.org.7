@@ -1,116 +1,220 @@
-Return-Path: <linux-kernel+bounces-899698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B47C588D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:02:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D8DC588EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5DD9F364585
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:52:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DF553636CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B2A35502B;
-	Thu, 13 Nov 2025 15:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BBC2F3C07;
+	Thu, 13 Nov 2025 15:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jRjZMGgh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTOZUvwU"
+Received: from mail-qv1-f74.google.com (mail-qv1-f74.google.com [209.85.219.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B8E346FA5;
-	Thu, 13 Nov 2025 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBC0264A92
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048785; cv=none; b=XU66a5PSr+wo1NiOoiKprui7Q4IQE5i5v7AExAydRdP31Q5WQs6n4RH3WZEU2N6dnndDWBe3gaog5BU3M+XeaRRlrNYlgwoSBhtED4W8Zwe25P9R75PnUxv5048tuG/aweNXQjVQF/JuvtyVI0AWLSY6WUkGesJ2zNkpzI2hwRQ=
+	t=1763048753; cv=none; b=ONurGpVQJ+g/t4O1AQPOrzxVeB6jeZsrv8baFjlTmpvlvXg9KiTIaUlluXYWHEqNGfhoAPu/4wf54+ajeMAMEDGgFiwby6+s1W9vVszaYcmJNMNW2mFUx6fel/Ajx9mgPiAGJj/jItPRTNdY1T9hdG1qwPlw6Hfc3Kg3uYrCayE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048785; c=relaxed/simple;
-	bh=NH/ceQ3mjaQT5vDkEJD/gpQXnn3J2iODCOYBIFZ/XiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FAuFUoVMBIIzfZYmUClavLZyczrVnzrQZJPt9QxVqZg1iinO6Wmn12G+yAOesJFAl3IZI4pbLBEr3Ik9Q/qSeTG5vLsibNyezJ0/OHtC3fwiJc9WpySOeIJB89riMeJ8CQYNloJ2qjRHZ1p7/naUHUrtEsAQGGbxILBdv8XT+hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jRjZMGgh; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763048783; x=1794584783;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NH/ceQ3mjaQT5vDkEJD/gpQXnn3J2iODCOYBIFZ/XiU=;
-  b=jRjZMGgh1JSkChCThIRtryWoJY4e9InMKdZoZS+OW8CcjGWnc3dd8cdf
-   398xztILEPKjleVuNkAiuIWYWSPbdoi6T3EQdv2NWJNku38nNMBVZYhZx
-   DTEQdv1zo1a6nAlceoplWv2bM3Wbu/FkpkhTxoYcXzoz4jd3jo16LEUbL
-   04Tu37GPQO9NmhZfb3gFNbJnyZZ+OnL2Xz9CzA+cQWFZWquPQi4S6hvTn
-   NbsR2VPNGkBT0eVEj/mXtFJKyl+krbx30SnoxlcDTUxhp1DD5Susbw5TW
-   h7lQIEh4OOafehn9oawbjK5h0F5hYjXj+YKTA2jOhpmdmkW0G7EZJ0GCg
-   Q==;
-X-CSE-ConnectionGUID: SaHXMf/wQi2QGobeTCKBeA==
-X-CSE-MsgGUID: FOWMf11rR8GoZVwztInXdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="75448553"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="75448553"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:46:21 -0800
-X-CSE-ConnectionGUID: +Rmr1sA0Qvif7Q+t9tR6zg==
-X-CSE-MsgGUID: sF/6SQ2jRM21vyIuMdyKmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="212933929"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Nov 2025 07:46:20 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 9C2E89B; Thu, 13 Nov 2025 16:46:17 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v2 5/5] Input: gpio_decoder - don't use "proxy" headers
-Date: Thu, 13 Nov 2025 16:44:46 +0100
-Message-ID: <20251113154616.3107676-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251113154616.3107676-1-andriy.shevchenko@linux.intel.com>
-References: <20251113154616.3107676-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1763048753; c=relaxed/simple;
+	bh=iCOgKpIlWHaK+2kiT271clXRT63k6oSVDGcj03I5Wdk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rJiFAIGsNClR7RaYmJYKlUwN4pWiIzAxPDQK6GK7DdhT0iMWD+GWLL296g9e/RfWbhiBssz6MNfYOkgtGo3DYryN/eEDUTGkk5Xo7bq3ns4As87RV10w4qpU4EZgQbyTDHew38lU2m9+5sbvcUnkH9ny5tX7B7rSoA4sdd8a8hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTOZUvwU; arc=none smtp.client-ip=209.85.219.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
+Received: by mail-qv1-f74.google.com with SMTP id 6a1803df08f44-88234e4a694so39119976d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:45:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1763048750; x=1763653550; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aMCtaSZTkzipqXr640E29rQ4+ntMw4/o/aQIQte0hk8=;
+        b=dTOZUvwULkpBz7RG/1sevq0CLcSYpdsiyJ4hgiLSStEVrEY/GuVCYhnRvuvReaWSDA
+         i5mKFlbRm00oOMFGUpU6zxWRUzOsULqp/VOoInmKmS1UTY2zGMJjEAjIcubg4lFsdO+k
+         1ZOM2LH8m125SWOXJ4pOMaIIcnWX2BxfjGPjybuVJI2MURzKiNSnUx7jEHxyxwuVyOdF
+         sZprAjEmpXRymgPm7j8mg3hsEKHx11XZatdrrF5E7ZjflOKtpbmomV0MrEldT/aWB+Ef
+         tF1Xcmwq/CoHxLjpy++6jUHhp0SPqJqnF7cTpizGXmfJu2VZGrXC6W0r8zbyeOylY8r5
+         oNAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763048750; x=1763653550;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aMCtaSZTkzipqXr640E29rQ4+ntMw4/o/aQIQte0hk8=;
+        b=F9VolBaGFqs0/x8S06p3OplrD07ihZvRJcLMKe1F4SGTMaUZE3O393micAfr8K0m9V
+         00HmQgBhnDmimepgVWoOYJ7WTtRRB4yVme/t2ZPmxqLmAZFvwhwt/118/7UKQgeLVYrZ
+         aBUKC+Ezs7fhit1IFy/MyTZlh4rKTIHWbG/B4dmuYKZ8EAcb6QXdVMYnSo6NW1kAzI2l
+         +WfR/ejMA3EbLiwgXuoPeI1pqc2jmSi6LyWtG8/iMcnIMQkpAjmq6ZMnjzlpWmAQWBZK
+         zJciGi6JDAnXVGX1Ykte01doJllmHH8Itv+/NDDUfSZe+vD9ke/ZXOkL62J8vDM7P4oD
+         fZTw==
+X-Gm-Message-State: AOJu0YwnTkA0C0/sp7cRt9wtIetJRGYdSQFCH1OxmP7/BLnf+dFcIyCh
+	xzSV2+Y3S1MX4976ur6fx4lk31GB+fzXFSEEjhi7ghOJvr1KxrVQUkg2vuhn0jako8Tijc81pDi
+	uG3OmvEdf5M3UyA==
+X-Google-Smtp-Source: AGHT+IF36p0PhkgE+zhcfmB5dD983XZpGkIXaJGToz+oxmcjo9H79ixj6u3F1jHrlPq85X3F/8RV6CKYloNjDQ==
+X-Received: from qvbmf19.prod.google.com ([2002:a05:6214:5d93:b0:882:4972:afd9])
+ (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6214:19ca:b0:880:51f0:5b8a with SMTP id 6a1803df08f44-8827191f7f1mr103271916d6.15.1763048750104;
+ Thu, 13 Nov 2025 07:45:50 -0800 (PST)
+Date: Thu, 13 Nov 2025 15:45:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251113154545.594580-1-edumazet@google.com>
+Subject: [PATCH] x86_64: inline csum_ipv6_magic()
+From: Eric Dumazet <edumazet@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, netdev@vger.kernel.org, 
+	Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Update header inclusions to follow IWYU (Include What You Use)
-principle.
+Inline this small helper.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This reduces register pressure, as saddr and daddr are often
+back to back in memory.
+
+For instance code inlined in tcp6_gro_receive() will look like:
+
+ 55a:	48 03 73 28          	add    0x28(%rbx),%rsi
+ 55e:	8b 43 70             	mov    0x70(%rbx),%eax
+ 561:	29 f8                	sub    %edi,%eax
+ 563:	0f c8                	bswap  %eax
+ 565:	89 c0                	mov    %eax,%eax
+ 567:	48 05 00 06 00 00    	add    $0x600,%rax
+ 56d:	48 03 46 08          	add    0x8(%rsi),%rax
+ 571:	48 13 46 10          	adc    0x10(%rsi),%rax
+ 575:	48 13 46 18          	adc    0x18(%rsi),%rax
+ 579:	48 13 46 20          	adc    0x20(%rsi),%rax
+ 57d:	48 83 d0 00          	adc    $0x0,%rax
+ 581:	48 89 c6             	mov    %rax,%rsi
+ 584:	48 c1 ee 20          	shr    $0x20,%rsi
+ 588:	01 f0                	add    %esi,%eax
+ 58a:	83 d0 00             	adc    $0x0,%eax
+ 58d:	89 c6                	mov    %eax,%esi
+ 58f:	66 31 c0             	xor    %ax,%ax
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 ---
- drivers/input/misc/gpio_decoder.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/checksum_64.h | 45 ++++++++++++++++++++++--------
+ arch/x86/lib/csum-wrappers_64.c    | 22 ---------------
+ 2 files changed, 33 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/input/misc/gpio_decoder.c b/drivers/input/misc/gpio_decoder.c
-index 057717de9849..f0759dd39b35 100644
---- a/drivers/input/misc/gpio_decoder.c
-+++ b/drivers/input/misc/gpio_decoder.c
-@@ -7,16 +7,17 @@
+diff --git a/arch/x86/include/asm/checksum_64.h b/arch/x86/include/asm/checksum_64.h
+index 4d4a47a3a8ab2310d279f7e465032b1463200393..5bdfd2db2b5a573ff8193a4878d372c97b158f47 100644
+--- a/arch/x86/include/asm/checksum_64.h
++++ b/arch/x86/include/asm/checksum_64.h
+@@ -9,6 +9,7 @@
   */
  
- #include <linux/bitmap.h>
--#include <linux/device.h>
-+#include <linux/dev_printk.h>
-+#include <linux/device/devres.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
- #include <linux/input.h>
--#include <linux/kernel.h>
- #include <linux/minmax.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
-+#include <linux/types.h>
+ #include <linux/compiler.h>
++#include <linux/in6.h>
+ #include <asm/byteorder.h>
  
- struct gpio_decoder {
- 	struct gpio_descs *input_gpios;
+ /**
+@@ -145,6 +146,17 @@ extern __wsum csum_partial_copy_nocheck(const void *src, void *dst, int len);
+  */
+ extern __sum16 ip_compute_csum(const void *buff, int len);
+ 
++static inline unsigned add32_with_carry(unsigned a, unsigned b)
++{
++	asm("addl %2,%0\n\t"
++	    "adcl $0,%0"
++	    : "=r" (a)
++	    : "0" (a), "rm" (b));
++	return a;
++}
++
++#define _HAVE_ARCH_IPV6_CSUM 1
++
+ /**
+  * csum_ipv6_magic - Compute checksum of an IPv6 pseudo header.
+  * @saddr: source address
+@@ -158,20 +170,29 @@ extern __sum16 ip_compute_csum(const void *buff, int len);
+  * Returns the unfolded 32bit checksum.
+  */
+ 
+-struct in6_addr;
++static inline __sum16 csum_ipv6_magic(
++	const struct in6_addr *_saddr, const struct in6_addr *_daddr,
++	__u32 len, __u8 proto, __wsum sum)
++{
++	const unsigned long *saddr = (const unsigned long *)_saddr;
++	const unsigned long *daddr = (const unsigned long *)_daddr;
++	__u64 sum64;
+ 
+-#define _HAVE_ARCH_IPV6_CSUM 1
+-extern __sum16
+-csum_ipv6_magic(const struct in6_addr *saddr, const struct in6_addr *daddr,
+-		__u32 len, __u8 proto, __wsum sum);
++	sum64 = (__force __u64)htonl(len) + (__force __u64)htons(proto) +
++		(__force __u64)sum;
+ 
+-static inline unsigned add32_with_carry(unsigned a, unsigned b)
+-{
+-	asm("addl %2,%0\n\t"
+-	    "adcl $0,%0"
+-	    : "=r" (a)
+-	    : "0" (a), "rm" (b));
+-	return a;
++	asm("	addq %1,%[sum64]\n"
++	    "	adcq %2,%[sum64]\n"
++	    "	adcq %3,%[sum64]\n"
++	    "	adcq %4,%[sum64]\n"
++	    "	adcq $0,%[sum64]\n"
++
++	    : [sum64] "+r" (sum64)
++	    : "m" (saddr[0]), "m" (saddr[1]),
++	      "m" (daddr[0]), "m" (daddr[1]));
++
++	return csum_fold(
++	       (__force __wsum)add32_with_carry(sum64 & 0xffffffff, sum64>>32));
+ }
+ 
+ #define HAVE_ARCH_CSUM_ADD
+diff --git a/arch/x86/lib/csum-wrappers_64.c b/arch/x86/lib/csum-wrappers_64.c
+index f4df4d241526c64a5ad2eabdcbf5f0d8d56d6fd8..831b7110b041598b9764a6647fa259e1058efef2 100644
+--- a/arch/x86/lib/csum-wrappers_64.c
++++ b/arch/x86/lib/csum-wrappers_64.c
+@@ -68,25 +68,3 @@ csum_partial_copy_nocheck(const void *src, void *dst, int len)
+ }
+ EXPORT_SYMBOL(csum_partial_copy_nocheck);
+ 
+-__sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+-			const struct in6_addr *daddr,
+-			__u32 len, __u8 proto, __wsum sum)
+-{
+-	__u64 rest, sum64;
+-
+-	rest = (__force __u64)htonl(len) + (__force __u64)htons(proto) +
+-		(__force __u64)sum;
+-
+-	asm("	addq (%[saddr]),%[sum]\n"
+-	    "	adcq 8(%[saddr]),%[sum]\n"
+-	    "	adcq (%[daddr]),%[sum]\n"
+-	    "	adcq 8(%[daddr]),%[sum]\n"
+-	    "	adcq $0,%[sum]\n"
+-
+-	    : [sum] "=r" (sum64)
+-	    : "[sum]" (rest), [saddr] "r" (saddr), [daddr] "r" (daddr));
+-
+-	return csum_fold(
+-	       (__force __wsum)add32_with_carry(sum64 & 0xffffffff, sum64>>32));
+-}
+-EXPORT_SYMBOL(csum_ipv6_magic);
 -- 
-2.50.1
+2.51.2.1041.gc1ab5b90ca-goog
 
 
