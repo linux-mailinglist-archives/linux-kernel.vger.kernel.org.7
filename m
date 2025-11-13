@@ -1,143 +1,217 @@
-Return-Path: <linux-kernel+bounces-899004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D84C5689D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:16:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1435AC56919
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5C75345754
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:13:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5AD04E59B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580DE3161A6;
-	Thu, 13 Nov 2025 09:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0A42D73BB;
+	Thu, 13 Nov 2025 09:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js1Xtar+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aqh1d7VK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kCKc/EkN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aqh1d7VK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kCKc/EkN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D4729ACC6;
-	Thu, 13 Nov 2025 09:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5B2244664
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763025174; cv=none; b=N/koSe17EfYxs//atk8KEInN+I0sbsabdcpi4aqYlGt6JMyDv73X4OmI4WBYbcL0Y7LspobO1jKOND+MkKtiN6kcLdbDcxxntPhuTJ1UCzCTG8bjAWtIfk9FDdgRaDKWMMj16vdr77yAej4ZTtQz5pyQsqyhurwy743qyMf5lik=
+	t=1763025233; cv=none; b=XVzs788TAcfD0Za9SpEOYQDaW7zdaKRvZtcOG/9qLuyPq7LLPeS7kt2iYW4iVVywQ0zvkgYNqyCt3O6VbwWzqF6ul/DAZbKXCAFMd9qOQ3HXZb2LgUQiL9/Jvr/vnpFEpYGAlgR3T6L51uvvFLEuIYbhgKxooU6zohfuPr58sA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763025174; c=relaxed/simple;
-	bh=Z5sCgPCZvSjgs/rZdisIFqpHsRyOQUvFSlrjPGt7aks=;
+	s=arc-20240116; t=1763025233; c=relaxed/simple;
+	bh=Z8TKXz8IkE+OmolwVdefz2vyhu3zywGVB8TAsgWfquE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dT2q4+SjXr1RuwdQnZJTGQW7Cdo5Sz+VMc0O5JkrzA0tvlvi1GKmKYFNPIvZyhVn2r3gf8JsqgxHzc/6eD+/jMPF8zqpKSESuEjJPCSbnK2CDkqJIAysvm4xWYzJ6ErWhLyVWhZwnar8kljeZuqegsUbFMVYHGICWLEl8E0Z1lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js1Xtar+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8961FC116D0;
-	Thu, 13 Nov 2025 09:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763025174;
-	bh=Z5sCgPCZvSjgs/rZdisIFqpHsRyOQUvFSlrjPGt7aks=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=js1Xtar+fTSewmsuYTUDV0A10GwT1XwZRx6McGr5fuhCLx+B/K0lhzeuyv2ODyQ8j
-	 dzVDfodH2T1lzzzR+sFgCLZDevpZObzcriZtoI2WR99HzwPJaIBpMEy0AQ1VAcaxnj
-	 XfTge17udmZjuUktYV9iuV0hSYSgEVXueTxrPeZqNNaQLR6cqlcvzCoOULt5ArEyDx
-	 JyFojC1d1oVWBv7fI8DH7ghzws40fd9jgrwPycRAhHLKNg+ve3zsz3TZjloj6gTN3a
-	 NgQgsLYZx8Lcy8GkXyUAdfQKWPPpbV6+ue2pFBnhjlF7/Fev2DyP/9AiVG4/t6rcRt
-	 1fgoxerYV/+WA==
-Message-ID: <4f302c55-b0a2-46c0-8cd3-0eb7bb9bac86@kernel.org>
-Date: Thu, 13 Nov 2025 10:12:44 +0100
+	 In-Reply-To:Content-Type; b=LdXYYw6zHiEgDBR+30W4tEYDGFXo/wXSsgsk2RtYvxLroXD3B6KbkfdlbpI9VNq6xZswUxVuEGDyqTLPIuAXtHUlmkDOwGwV5wNaCZPUrWBfr/2Tw6bQfF8tbCpO7Qp4QehlUhZGtMZRVfeWeLS7qt6OPmahz+71Ux0HVRMorHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aqh1d7VK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kCKc/EkN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aqh1d7VK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kCKc/EkN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8D4FE1F791;
+	Thu, 13 Nov 2025 09:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763025229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N3au+Y6kKOvEdxG7A5AUpxhW9mu41Ry6d7QeIg8YWhQ=;
+	b=aqh1d7VK6W704UDOKRQvL+MYJutIlUTYyMQTrjRBIJ+vyAawtRwAbdYOdCVVYpaKrs+tIw
+	KEnkA8GL3W9erEQIutJ093On+4pZ23twWTwtl+TqewGX7YKmQrY2Dep+jJjpfD4Knjyq9P
+	h4euX8rHJdM5PbHlpDvMWtGCPq6hSGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763025229;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N3au+Y6kKOvEdxG7A5AUpxhW9mu41Ry6d7QeIg8YWhQ=;
+	b=kCKc/EkNy0tKE0gNUK0PZAyZazBGTUDDVxos/uAtL8AFh7JUhcWmpIGWnlFBnNztALzyZM
+	7KusgY/M7VF2w1AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763025229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N3au+Y6kKOvEdxG7A5AUpxhW9mu41Ry6d7QeIg8YWhQ=;
+	b=aqh1d7VK6W704UDOKRQvL+MYJutIlUTYyMQTrjRBIJ+vyAawtRwAbdYOdCVVYpaKrs+tIw
+	KEnkA8GL3W9erEQIutJ093On+4pZ23twWTwtl+TqewGX7YKmQrY2Dep+jJjpfD4Knjyq9P
+	h4euX8rHJdM5PbHlpDvMWtGCPq6hSGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763025229;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N3au+Y6kKOvEdxG7A5AUpxhW9mu41Ry6d7QeIg8YWhQ=;
+	b=kCKc/EkNy0tKE0gNUK0PZAyZazBGTUDDVxos/uAtL8AFh7JUhcWmpIGWnlFBnNztALzyZM
+	7KusgY/M7VF2w1AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D2883EA61;
+	Thu, 13 Nov 2025 09:13:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C5UdHk2hFWkMZAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 13 Nov 2025 09:13:49 +0000
+Message-ID: <8633ea79-db53-4157-932b-30a814283c03@suse.cz>
+Date: Thu, 13 Nov 2025 10:13:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net v5 0/3] mptcp: Fix conflicts between MPTCP and sockmap
-Content-Language: en-GB, fr-BE
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Christoph Paasch <cpaasch@apple.com>, Florian Westphal <fw@strlen.de>,
- Peter Krystad <peter.krystad@linux.intel.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251111060307.194196-1-jiayuan.chen@linux.dev>
- <cf035c68-fe96-49e0-acdb-bf813ae71d57@kernel.org>
- <20251112182349.281a6a11@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20251112182349.281a6a11@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] slab: use struct freelist_counters as parameters in
+ relevant functions
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-kernel@vger.kernel.org
+References: <20251107-slab-fms-cleanup-v1-0-650b1491ac9e@suse.cz>
+ <20251107-slab-fms-cleanup-v1-4-650b1491ac9e@suse.cz>
+ <aRWXsVuiSCv062su@hyeyoo>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aRWXsVuiSCv062su@hyeyoo>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hi Jakub,
-
-On 13/11/2025 03:23, Jakub Kicinski wrote:
-> On Tue, 11 Nov 2025 11:35:04 +0100 Matthieu Baerts wrote:
->> I think this series can be applied directly in 'net', if that's OK for
->> both of you.
+On 11/13/25 09:32, Harry Yoo wrote:
+> On Fri, Nov 07, 2025 at 02:51:26PM +0100, Vlastimil Babka wrote:
+>> In functions such as [__]slab_update_freelist() and
+>> __slab_update_freelist_fast/slow() we pass old and new freelist and
+>> counters as 4 separate parameters. The underlying
+>> __update_freelist_fast() then constructs struct freelist_counters
+>> variables for passing the full freelist+counter combinations to cmpxchg
+>> double.
+>> 
+>> In most cases we actually start with struct freelist_counters variables,
+>> but then pass the individual fields, only to construct new struct
+>> freelist_counters variables. While it's all inlined and thus should be
+>> efficient, we can simplify this code.
+>> 
+>> Thus replace the 4 parameters for individual fields with two
+>> freelist_aba_t pointers wherever applicable. __update_freelist_fast()
 > 
-> Also no preference here, Martin mentioned he will take it via bpf
-> tomorrow. 
+> nit: I guess you meant struct freelist_counters pointers, because
+> freelist_aba_t is gone.
+
+Yeah, stale text from before removing freelist_aba_t, will update, thanks.
+
+>> can then pass them directly to try_cmpxchg_freelist().
+>> 
+>> The code is also more obvious as the pattern becomes unified such that
+>> we set up "old" and "new" struct freelist_counters variables upfront as
+>> we fully need them to be, and simply call [__]slab_update_freelist() on
+>> them.  Previously some of the "new" values would be hidden as one of the
+>> many parameters and thus make it harder to figure out what the code
+>> does.
+>> 
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
 > 
-> Please let us know on the off chance that you have anything that may
-> conflict queued up. These will likely need a week of travel before 
-> they reach net in this case.
+> Nice!
+> 
+> Looks good to me,
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
-No problem for me, this can go to bpf-net first. We don't have pending
-patches modifying these parts.
+Thanks a lot for all your reviews!
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
 
 
