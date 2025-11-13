@@ -1,101 +1,153 @@
-Return-Path: <linux-kernel+bounces-899184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB511C5705D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:55:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAF3C57078
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53A3D34437F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:52:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 846BB4E4558
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D75F332EDE;
-	Thu, 13 Nov 2025 10:51:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A25D3321D0;
-	Thu, 13 Nov 2025 10:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD66F33557C;
+	Thu, 13 Nov 2025 10:52:02 +0000 (UTC)
+Received: from cstnet.cn (smtp20.cstnet.cn [159.226.251.20])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6FB2E093B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763031119; cv=none; b=fG/vLeA9+9URf6pECHj6gOmyacbm+ylz/rwotiyIRG621CTJ0rg0MqS4YZpL3jI6P3nO8Y+UXBMT+s5UWtx6sxzYdKD9wQGS0tjkvFUl70RqafrFsRSR9GFDHpwN47qjOF8yhDfbEnWXlMNU1xOBHnhtgBQptLFeI55gz+rIt6E=
+	t=1763031122; cv=none; b=OUccv7Edfs5TtHGkkCqoziZJ32WT2zG5DMQY7uJqwwigX+HRHP0I8JSxrNRYGlMMJBxu3Q9L4bwSwgt8RPW/9gTsXVrabJNcl1D3z4y58GhXMK0YB5JH7FMoPICtg+pl1CF79AJsDQ819AVpZ7FSvLKlB0wct8baTgfLg/hfc8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763031119; c=relaxed/simple;
-	bh=TMalLOBJ2Ps+T1mVeULqAsJxSVmOVKoC84RboHyKnMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwWqAIzstP2gHfMNeQqT7rKmriXohezOKbBqlluQ1EqmyrvtTGyNnsbNyHtenLmf3TXAZsMRYcS1bPUs2w96SN8Y/e9lIF6jwcNqZmEUIiv1ofYsf7leRmAEDRIxLe43mjHyxwuy9Ppk6WD5shr7x7BGt0y9DIz1qbgNal0YlS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4F7412FC;
-	Thu, 13 Nov 2025 02:51:48 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49EE73F66E;
-	Thu, 13 Nov 2025 02:51:55 -0800 (PST)
-Date: Thu, 13 Nov 2025 10:51:42 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scmi: reset: validate number of reset domains
-Message-ID: <aRW4PpPjVw1-melm@pluto>
-References: <20251103161044.2269377-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1763031122; c=relaxed/simple;
+	bh=Z1tE5LtgcPzy5W4aA0oUbh7Lns5asEMR3jOe4nsfKVQ=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=Z6X1HE/glXWuZzJrJpFIC0iwPkLJUQPpYUBAJ3fOTQssQxbH0E4da+Mf7at3ZGiY5qc4g0Q1qTV321sdHEuw27jCJl2G9UmjvyUyWjMlyCSm9MS573YCiRLYr4lMr8cfT4ePbWSpDbaJXJS1cO8aV9kxrkVojvJEj1j0bsBv/j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from xujiakai2025$iscas.ac.cn ( [210.73.43.101] ) by
+ ajax-webmail-APP-10 (Coremail) ; Thu, 13 Nov 2025 18:51:42 +0800
+ (GMT+08:00)
+Date: Thu, 13 Nov 2025 18:51:42 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6K645L2z5Yev?= <xujiakai2025@iscas.ac.cn>
+To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: "Paul Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>
+Subject: [PATCH] riscv: fix KUnit test_kprobes crash when building with
+ Clang
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103161044.2269377-1-a.shimko.dev@gmail.com>
+Message-ID: <738dd4e2.ff73.19a7cd7b4d5.Coremail.xujiakai2025@iscas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:tACowAAnEOg_uBVp25oBAA--.19303W
+X-CM-SenderInfo: 50xmxthndljiysv6x2xfdvhtffof0/1tbiCQ4FCWkVqNMfUQABsD
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Mon, Nov 03, 2025 at 07:10:43PM +0300, Artem Shimko wrote:
-> Add validation to reject zero reset domains during protocol initialization.
-> 
-
-Hi Artem,
-
-> The fix adds an explicit check for zero domains in
-> scmi_reset_protocol_init(), returning -EINVAL early during protocol
-> initialization. This prevents the driver from proceeding with a
-> non-functional state and avoids potential kernel panics in functions
-> like scmi_reset_domain_reset() and scmi_reset_notify_supported() that
-> assume dom_info is always valid.
-
-Indeed, this was alreay spotted/reported/fixed in other protocols, but
-the preferred solution is NOT to bail-out when there are ZERO domains,
-but to carry-on WITHOUT crashing of course: the reason for this is
-testing scenarios in which you can have a platform/FW reply with ZERO
-domains.
-
-> 
-> The change is minimal and safe, affecting only the error case while
-> preserving all existing functionality for valid configurations.
-> The existing -ENOMEM handling for memory allocation remains unchanged
-> and sufficient.
->
-
-In fact if you look at the code there are already a lot of places in
-reset.c where the code path is anyway guarded by num_domains so it is
-NOT problematic.
-
-There are, though, other places where the dom-> dereference is NOT
-protected and those could be probelematic.
-
-Have you seen any crash related to this for real when zero num_domains
-are reported ?
-
-Anyway, it would be good to harden the protocol code as already done
-a bit in other protocols in the past, but I advise you to lookup in
-perf.c the scmi_perf_domain_lookup() helper as an example and see
-how it used across perf to address a similar scenario and adopt the
-same solution for reset in order to harden the code while preserving
-the possibility to initialize the protocol even with ZERO domains for
-testing purposes.
-
-Thanks,
-Cristian
+Q2xhbmcgbWlzYWxpZ25zIHRoZSB0ZXN0X2twcm9iZXNfYWRkcmVzc2VzIGFuZCB0ZXN0X2twcm9i
+ZXNfZnVuY3Rpb25zCmFycmF5cywgb3IgZG9lcyBub3QgZXhwb3J0IGxvY2FsIGxhYmVscyBieSBk
+ZWZhdWx0LiBCb3RoIGNhbiBjYXVzZQprbWFsbG9jX2FycmF5KCkgYWxsb2NhdGlvbiBlcnJvcnMg
+YW5kIEtVbml0IGZhaWx1cmVzLgoKVGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgYnk6Ci0gQWRk
+aW5nIC5zZWN0aW9uIC5yb2RhdGEgdG8gZXhwbGljaXRseSBwbGFjZSBhcnJheXMgaW4gdGhlIHJl
+YWQtb25seSBkYXRhIHNlZ21lbnQuCi0gQWRkaW5nIC5hbGlnbiAzIHRvIGFsaWduIGFycmF5cyB0
+byA4IGJ5dGVzLgotIEFkZGluZyAuZ2xvYmwgdG8gcHJvYmUgbGFiZWxzIHRvIGVuc3VyZSBzeW1i
+b2xzIGFyZSB2aXNpYmxlLgoKRm9yIGRldGFpbGVkIGRlYnVnIGFuZCBhbmFseXNpcywgc2VlOgpo
+dHRwczovL2dpdGh1Yi5jb20vajFha2FpL3RlbXAvYmxvYi9tYWluLzIwMjUxMTEzL3JlYWRtZS5t
+ZAoKU2lnbmVkLW9mZi1ieTogSmlha2FpIFh1IDx4dWppYWthaTIwMjVAaXNjYXMuYWMuY24+Ci0t
+LQogYXJjaC9yaXNjdi9rZXJuZWwvdGVzdHMva3Byb2Jlcy90ZXN0LWtwcm9iZXMtYXNtLlMgICB8
+IDI5ICsrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCsp
+CgpkaWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9rZXJuZWwvdGVzdHMva3Byb2Jlcy90ZXN0LWtwcm9i
+ZXMtYXNtLlMgYi9hcmNoL3Jpc2N2L2tlcm5lbC90ZXN0cy9rcHJvYmVzL3Rlc3Qta3Byb2Jlcy1h
+c20uUwppbmRleCBiOTUxZDBmMTI0ODIuLmFjNWNlMzA1YjFiZCAxMDA2NDQKLS0tIGEvYXJjaC9y
+aXNjdi9rZXJuZWwvdGVzdHMva3Byb2Jlcy90ZXN0LWtwcm9iZXMtYXNtLlMKKysrIGIvYXJjaC9y
+aXNjdi9rZXJuZWwvdGVzdHMva3Byb2Jlcy90ZXN0LWtwcm9iZXMtYXNtLlMKQEAgLTcsOCArNywx
+MCBAQAogU1lNX0ZVTkNfU1RBUlQodGVzdF9rcHJvYmVzX2FkZCkKIAlsaSBhMSwgS1BST0JFX1RF
+U1RfTUFHSUNfVVBQRVIKIAlsaSBhMiwgS1BST0JFX1RFU1RfTUFHSUNfTE9XRVIKKy5nbG9ibCB0
+ZXN0X2twcm9iZXNfYWRkX2FkZHIxCiB0ZXN0X2twcm9iZXNfYWRkX2FkZHIxOgogCWFkZCBhMSwg
+YTEsIGEyCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2FkZF9hZGRyMgogdGVzdF9rcHJvYmVzX2FkZF9h
+ZGRyMjoKIAlhZGQgYTAsIGExLCB4MAogCXJldApAQCAtMTksNiArMjEsNyBAQCBTWU1fRlVOQ19T
+VEFSVCh0ZXN0X2twcm9iZXNfamFsKQogCW12IGExLCByYQogCS5vcHRpb24gcHVzaAogCS5vcHRp
+b24gbm9ydmMKKy5nbG9ibCB0ZXN0X2twcm9iZXNfamFsX2FkZHIxCiB0ZXN0X2twcm9iZXNfamFs
+X2FkZHIxOgogCWphbCB4MCwgMmYKIAlyZXQKQEAgLTI3LDYgKzMwLDcgQEAgdGVzdF9rcHJvYmVz
+X2phbF9hZGRyMToKIAlyZXQKIAkub3B0aW9uIHB1c2gKIAkub3B0aW9uIG5vcnZjCisuZ2xvYmwg
+dGVzdF9rcHJvYmVzX2phbF9hZGRyMgogdGVzdF9rcHJvYmVzX2phbF9hZGRyMjoKIDI6CWphbCAx
+YgogCS5vcHRpb24gcG9wCkBAIC00MCw2ICs0NCw3IEBAIFNZTV9GVU5DX1NUQVJUKHRlc3Rfa3By
+b2Jlc19qYWxyKQogCW12IGExLCByYQogCS5vcHRpb24gcHVzaAogCS5vcHRpb24gbm9ydmMKKy5n
+bG9ibCB0ZXN0X2twcm9iZXNfamFscl9hZGRyCiB0ZXN0X2twcm9iZXNfamFscl9hZGRyOgogCWph
+bHIgYTAKIAkub3B0aW9uIHBvcApAQCAtNTEsNiArNTYsNyBAQCB0ZXN0X2twcm9iZXNfamFscl9h
+ZGRyOgogU1lNX0ZVTkNfRU5EKHRlc3Rfa3Byb2Jlc19qYWxyKQogCiBTWU1fRlVOQ19TVEFSVCh0
+ZXN0X2twcm9iZXNfYXVpcGMpCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2F1aXBjX2FkZHIKIHRlc3Rf
+a3Byb2Jlc19hdWlwY19hZGRyOgogCWF1aXBjIGEwLCBLUFJPQkVfVEVTVF9NQUdJQ19MT1dFUgog
+CWxhIGExLCB0ZXN0X2twcm9iZXNfYXVpcGNfYWRkcgpAQCAtNjcsMjAgKzczLDI2IEBAIFNZTV9G
+VU5DX1NUQVJUKHRlc3Rfa3Byb2Jlc19icmFuY2gpCiAJbGkgYTAsIDAKIAlsaSBhMSwgMQogCWxp
+IGEyLCAyCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2JyYW5jaF9hZGRyMQogdGVzdF9rcHJvYmVzX2Jy
+YW5jaF9hZGRyMToKIAliZXF6IGEwLCAxZgogCXJldAogMToKKy5nbG9ibCB0ZXN0X2twcm9iZXNf
+YnJhbmNoX2FkZHIyCiB0ZXN0X2twcm9iZXNfYnJhbmNoX2FkZHIyOgogCWJlcXogYTEsIDNmCisu
+Z2xvYmwgdGVzdF9rcHJvYmVzX2JyYW5jaF9hZGRyMwogdGVzdF9rcHJvYmVzX2JyYW5jaF9hZGRy
+MzoKIAlibmV6IGEwLCAzZgorLmdsb2JsIHRlc3Rfa3Byb2Jlc19icmFuY2hfYWRkcjQKIHRlc3Rf
+a3Byb2Jlc19icmFuY2hfYWRkcjQ6CiAJYm5leiBhMiwgMWYKIAlyZXQKIDE6CisuZ2xvYmwgdGVz
+dF9rcHJvYmVzX2JyYW5jaF9hZGRyNQogdGVzdF9rcHJvYmVzX2JyYW5jaF9hZGRyNToKIAliZ2Ug
+YTEsIGEyLCAzZgorLmdsb2JsIHRlc3Rfa3Byb2Jlc19icmFuY2hfYWRkcjYKIHRlc3Rfa3Byb2Jl
+c19icmFuY2hfYWRkcjY6CiAJYmdlIGEyLCBhMSwgMmYKIAlyZXQKQEAgLTg5LDkgKzEwMSwxMSBA
+QCB0ZXN0X2twcm9iZXNfYnJhbmNoX2FkZHI2OgogCWFkZCBhMCwgYTAsIHQwCiAJcmV0CiAyOgor
+Lmdsb2JsIHRlc3Rfa3Byb2Jlc19icmFuY2hfYWRkcjcKIHRlc3Rfa3Byb2Jlc19icmFuY2hfYWRk
+cjc6CiAJYmx0IGEyLCBhMSwgM2YKIAlsaSBhMCwgS1BST0JFX1RFU1RfTUFHSUNfTE9XRVIKKy5n
+bG9ibCB0ZXN0X2twcm9iZXNfYnJhbmNoX2FkZHI4CiB0ZXN0X2twcm9iZXNfYnJhbmNoX2FkZHI4
+OgogCWJsdCBhMSwgYTIsIDFiCiAzOgpAQCAtMTA0LDYgKzExOCw3IEBAIFNZTV9GVU5DX0VORCh0
+ZXN0X2twcm9iZXNfYnJhbmNoKQogCiBTWU1fRlVOQ19TVEFSVCh0ZXN0X2twcm9iZXNfY19qKQog
+CWxpIGEwLCAwCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2JyYW5jaF9jX2pfYWRkcjEKIHRlc3Rfa3By
+b2Jlc19icmFuY2hfY19qX2FkZHIxOgogCWMuaiAyZgogMToKQEAgLTExMSwxMiArMTI2LDE0IEBA
+IHRlc3Rfa3Byb2Jlc19icmFuY2hfY19qX2FkZHIxOgogCWFkZCBhMCwgYTAsIGExCiAJcmV0CiAy
+OglsaSBhMCwgS1BST0JFX1RFU1RfTUFHSUNfTE9XRVIKKy5nbG9ibCB0ZXN0X2twcm9iZXNfYnJh
+bmNoX2Nfal9hZGRyMgogdGVzdF9rcHJvYmVzX2JyYW5jaF9jX2pfYWRkcjI6CiAJYy5qIDFiCiBT
+WU1fRlVOQ19FTkQodGVzdF9rcHJvYmVzX2NfaikKIAogU1lNX0ZVTkNfU1RBUlQodGVzdF9rcHJv
+YmVzX2NfanIpCiAJbGEgYTAsIDJmCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2NfanJfYWRkcjEKIHRl
+c3Rfa3Byb2Jlc19jX2pyX2FkZHIxOgogCWMuanIgYTAKIAlyZXQKQEAgLTEyNiw2ICsxNDMsNyBA
+QCB0ZXN0X2twcm9iZXNfY19qcl9hZGRyMToKIDI6CiAJbGkgYTAsIEtQUk9CRV9URVNUX01BR0lD
+X1VQUEVSCiAJbGEgYTEsIDFiCisuZ2xvYmwgdGVzdF9rcHJvYmVzX2NfanJfYWRkcjIKIHRlc3Rf
+a3Byb2Jlc19jX2pyX2FkZHIyOgogCWMuanIgYTEKIFNZTV9GVU5DX0VORCh0ZXN0X2twcm9iZXNf
+Y19qcikKQEAgLTEzMyw2ICsxNTEsNyBAQCBTWU1fRlVOQ19FTkQodGVzdF9rcHJvYmVzX2NfanIp
+CiBTWU1fRlVOQ19TVEFSVCh0ZXN0X2twcm9iZXNfY19qYWxyKQogCW12IGExLCByYQogCWxhIGEw
+LCAxZgorLmdsb2JsIHRlc3Rfa3Byb2Jlc19jX2phbHJfYWRkcgogdGVzdF9rcHJvYmVzX2NfamFs
+cl9hZGRyOgogCWMuamFsciBhMAogCWxpIGEyLCBLUFJPQkVfVEVTVF9NQUdJQ19VUFBFUgpAQCAt
+MTQ1LDE2ICsxNjQsMTkgQEAgU1lNX0ZVTkNfRU5EKHRlc3Rfa3Byb2Jlc19jX2phbHIpCiBTWU1f
+RlVOQ19TVEFSVCh0ZXN0X2twcm9iZXNfY19iZXF6KQogCWxpIGEwLCAwCiAJbGkgYTEsIDEKKy5n
+bG9ibCB0ZXN0X2twcm9iZXNfY19iZXF6X2FkZHIxCiB0ZXN0X2twcm9iZXNfY19iZXF6X2FkZHIx
+OgogCWMuYmVxeiBhMCwgMmYKIAlyZXQKIDE6CWxpIGExLCBLUFJPQkVfVEVTVF9NQUdJQ19VUFBF
+UgogCWFkZCBhMCwgYTAsIGExCiAJcmV0CisuZ2xvYmwgdGVzdF9rcHJvYmVzX2NfYmVxel9hZGRy
+MgogdGVzdF9rcHJvYmVzX2NfYmVxel9hZGRyMjoKIDI6CWMuYmVxeiBhMSwgM2YKIAlsaSBhMCwg
+S1BST0JFX1RFU1RfTUFHSUNfTE9XRVIKIAltdiBhMSwgeDAKKy5nbG9ibCB0ZXN0X2twcm9iZXNf
+Y19iZXF6X2FkZHIzCiB0ZXN0X2twcm9iZXNfY19iZXF6X2FkZHIzOgogCWMuYmVxeiBhMSwgMWIK
+IDM6CWxpIGEwLCAwCkBAIC0xNjQsMTUgKzE4NiwxOCBAQCBTWU1fRlVOQ19FTkQodGVzdF9rcHJv
+YmVzX2NfYmVxeikKIFNZTV9GVU5DX1NUQVJUKHRlc3Rfa3Byb2Jlc19jX2JuZXopCiAJbGkgYTAs
+IDAKIAlsaSBhMSwgMQorLmdsb2JsIHRlc3Rfa3Byb2Jlc19jX2JuZXpfYWRkcjEKIHRlc3Rfa3By
+b2Jlc19jX2JuZXpfYWRkcjE6CiAJYy5ibmV6IGExLCAyZgogCXJldAogMToJbGkgYTEsIEtQUk9C
+RV9URVNUX01BR0lDX1VQUEVSCiAJYWRkIGEwLCBhMCwgYTEKIAlyZXQKKy5nbG9ibCB0ZXN0X2tw
+cm9iZXNfY19ibmV6X2FkZHIyCiB0ZXN0X2twcm9iZXNfY19ibmV6X2FkZHIyOgogMjoJYy5ibmV6
+IGEwLCAzZgogCWxpIGEwLCBLUFJPQkVfVEVTVF9NQUdJQ19MT1dFUgorLmdsb2JsIHRlc3Rfa3By
+b2Jlc19jX2JuZXpfYWRkcjMKIHRlc3Rfa3Byb2Jlc19jX2JuZXpfYWRkcjM6CiAJYy5ibmV6IGEw
+LCAxYgogMzoJbGkgYTAsIDAKQEAgLTE4MSw2ICsyMDYsOCBAQCBTWU1fRlVOQ19FTkQodGVzdF9r
+cHJvYmVzX2NfYm5leikKIAogI2VuZGlmIC8qIENPTkZJR19SSVNDVl9JU0FfQyAqLwogCisuc2Vj
+dGlvbiAucm9kYXRhCisuYWxpZ24gMwogU1lNX0RBVEFfU1RBUlQodGVzdF9rcHJvYmVzX2FkZHJl
+c3NlcykKIAlSSVNDVl9QVFIgdGVzdF9rcHJvYmVzX2FkZF9hZGRyMQogCVJJU0NWX1BUUiB0ZXN0
+X2twcm9iZXNfYWRkX2FkZHIyCkBAIC0yMTIsNiArMjM5LDggQEAgU1lNX0RBVEFfU1RBUlQodGVz
+dF9rcHJvYmVzX2FkZHJlc3NlcykKIAlSSVNDVl9QVFIgMAogU1lNX0RBVEFfRU5EKHRlc3Rfa3By
+b2Jlc19hZGRyZXNzZXMpCiAKKy5zZWN0aW9uIC5yb2RhdGEKKy5hbGlnbiAzCiBTWU1fREFUQV9T
+VEFSVCh0ZXN0X2twcm9iZXNfZnVuY3Rpb25zKQogCVJJU0NWX1BUUiB0ZXN0X2twcm9iZXNfYWRk
+CiAJUklTQ1ZfUFRSIHRlc3Rfa3Byb2Jlc19qYWwKLS0gCjIuMzQuMQoKPC94dWppYWthaTIwMjVA
+aXNjYXMuYWMuY24+
 
