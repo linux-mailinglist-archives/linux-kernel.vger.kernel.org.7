@@ -1,131 +1,252 @@
-Return-Path: <linux-kernel+bounces-899546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150C9C581C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:01:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE41C58343
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E281C4E4B65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:01:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2CD5B358682
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67392E5429;
-	Thu, 13 Nov 2025 15:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9282ECE82;
+	Thu, 13 Nov 2025 15:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xYgZo5a4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRe81eVr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29062E427F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5E62E5429;
+	Thu, 13 Nov 2025 15:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763046094; cv=none; b=CPdXO4qnJu6hhbMRoOMlko4Ng2YQUq+jQTaxvQFvDWUMo00xDxYZ4fbSKvs5Gzc1zSdC8Cq21PJM9LkEaDDvolgD3EKWXADZUuXSKxhsXH3aHWE+N7ZLGmPIchFPjBqfB8FqM0KUmEbyjjPcVHB62m9hQVIWkTVes3sWiuDsjNM=
+	t=1763046164; cv=none; b=buzQqCvsp94Qlfnuvm0AVarUqsmtGca7CojrB7VLXiamedlsmfEfiKQFpKhZNQ1uQ77Be7OXvthG3MfhWUkUTPETgnMjrbOcPN89dtoojJu2Om7ql684bqlFErK96cVSsw1C+FQQN5oLueiY977L2Qk8oB1uN85Ug8DrRyf86i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763046094; c=relaxed/simple;
-	bh=dXd4PrP+M4ZkZTjQ91QC0jeAdSuL5P8/tUammlUtrPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H955PEuQfed0JXLQgyJxtt4Cv2Y7lQXdiUWnfHjmM2lvEIJTDzk1POKD2WXPJHdz3mR835F+Wk6/mvLO8zy3cSFEirDuLJHFDsUEDyyEu7bozXcqlJQkBjXyT4J0s6q8dlWobjSO2QbbpANRpi4ZzdXAlaYru82BRWop23tSecY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xYgZo5a4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-29852dafa7dso183045ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:01:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763046092; x=1763650892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/SziGgu+jV7pu6XCcGhbgmOS9AguhsMW+n+l2AM6CI=;
-        b=xYgZo5a491KRNaSZCmiA51VIoWHaUSoEXXq8Z/bsfz6amdgX/ctLoOkxCfpvkyr2ce
-         4pIxaoQz4whPzqLDih0pb4if6sR+coYc5grEQeA6yyCYt50kc4wlRZqVNK8ZyhdjCTE2
-         NymkQ37p3MD2i5Beg5xDm81ybru21zqtUhWW4JyoA8UjAiMfwBvZ6LCEwiJqUkPI4yWd
-         LColjANHGazq8CYeraxAUofl8P1RiRc77WPc1VOOuwzluyX5zjIkdT8sZrYk8KZZlbaF
-         mfo8E5tYesy/twPqXBHPomOQ2HoX8BZcfhU6eqO5idffx8NitV4JA5MjF5oCvOQqfNUE
-         ZXiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763046092; x=1763650892;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/SziGgu+jV7pu6XCcGhbgmOS9AguhsMW+n+l2AM6CI=;
-        b=oQtj2G6Dj/kn7CoMeYuLgMogFmUKlnL/15/ZyjoIFwCGhz39srgUpoiavQHaISv4aq
-         18Ca+NXpoEkzj8ub1F5jKBC05DQYUPGuQ6f89hvqG3JDGMTIwDcy2FPXOAgEZVi0SFXN
-         uKrMuQ/foi2f3luWXMFjMMI+mX3qS8LFuflOtsTc3upPImknZ2Ngik3UxWScZRQVCHDV
-         ALVlk+z6XoYylHY2QsEx1awD0hvIiE0CkFeFI6gdp0JKyyCsLT4WZbrtjOlG+GLRJd2Y
-         L0Hr62x54v4t87hqueNNnpDSR7mM5/owscep+MPIMSDE3VdJ6djRBRj5M5CqQ6SllFUr
-         EzJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW92CMIwr9RMM+JDHBCsv1wAGI+ESSGwlizYxk3qB+9sZSXoy0lq5KB7gyDyCK0SxQQMvmQ8/Zdb27Xhr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjFmjQwrJtnpXg+B9wBaMaG+sEJ3xjA38bx4XAxL+cWGNgR43Z
-	j1+TzZjNIu/DBi42bLNUBr5iDHjzRPxoC1AM4N5TLSYAwSMnNo7YjNiZdEC4ARH+xg==
-X-Gm-Gg: ASbGncsR7lGPSOl7wY6VM52cpz9RbhejtP1HWx0dnj0XU4Uz5y/PLr7oMVgsT5I8uk6
-	3aF5deTkUK2o/76eLEe/C0RMsMwBj9SYapaTayjr/gI/9K6/MFXm6g9ZANORzgKy3ldx592Wdph
-	gRknINvtxbKxoy1evrzY1A8iibEXKs15+frVQ2SNXYSk05kNvdjB2rg8FJCPHkIWGru5T5Wiiy3
-	nCnfBSQDFaNOvuRTp02DrWu+N6MTxMWB/F40zk+3a9lsNrcrpIhLW95uDHkrAWqc5PSraiuPdRt
-	gv9zRBkTyD/SUnkNbYMowQRLnvnuuwaLF8CJ+Gfh/J9DbE9sLgVLMzbx5nqlHuV+Tq28+Imx/Rb
-	bLP46RxJzLprwr4yVPniLQ7DbSXXtxaR9/TQU+x7XMCE0IIheuEJSx+dtfF4qjHsqzuh9PcXejU
-	XFRwU2zQ1L2q6/ggKajyv3NDPzt7dgQTocx5X5XyMaYrfvxmRX60d8ZEAp6BpyIQi4vWS3EviO7
-	22NY2hkVCMQWLgUid4N9IeTeujg9OjS2O0U6tLPrlz8MhA=
-X-Google-Smtp-Source: AGHT+IHdr8Ij45kQ70mHUK/k9cB73vb7jVTWb4ZvM7UlEaVt90l+E+NrBr9d5OiWsFGMZC1NA0oARQ==
-X-Received: by 2002:a17:903:41ce:b0:297:eadc:3cd5 with SMTP id d9443c01a7336-2985c45434amr4335235ad.15.1763046091379;
-        Thu, 13 Nov 2025 07:01:31 -0800 (PST)
-Received: from google.com (116.241.118.34.bc.googleusercontent.com. [34.118.241.116])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245f8asm28347325ad.37.2025.11.13.07.01.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 07:01:30 -0800 (PST)
-Date: Thu, 13 Nov 2025 15:01:25 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "David Hildenbrand (Red Hat)" <david@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Brendan Jackman <jackmanb@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	"open list:MEMORY MANAGEMENT - USERFAULTFD" <linux-mm@kvack.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH] selftests/mm: fix division-by-zero in uffd-unit-tests
-Message-ID: <aRXyxWeh81-aTHaC@google.com>
-References: <20251113034623.3127012-1-cmllamas@google.com>
- <e0be6864-4260-4843-a432-d47437b5d43f@kernel.org>
- <4a60a703-d9c2-46a8-83b4-a7ecff7f6ba2@lucifer.local>
+	s=arc-20240116; t=1763046164; c=relaxed/simple;
+	bh=vx0/Sdb0miwmSnREMEy30Z2f25MQbxHWNPqxk4mpfZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fO8ppQznr8OHjx8PyrBQcy88qgnRphpbNMmEbBfwnKNT6d+JMkXuQ17xDhzOl9CId9CMExBalCnKX7RDeaC0ZOg4KjRgE35cjkYvJbSRBA2hsB/rlRg40Hhzz49twLrnLC/ZZ11iHtMA9cff0qrTp0wLt+L8aoUhwyTDzASeJjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRe81eVr; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763046162; x=1794582162;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vx0/Sdb0miwmSnREMEy30Z2f25MQbxHWNPqxk4mpfZk=;
+  b=VRe81eVrxoCBcgzavv3+aNRPrGhNBHEh7nmxzooX0ReTUfIZs8jAxNP4
+   /tX+MOjoLOsdyd/1ZKHTia1TRiGwI6t7WnmqDOz3F6XTm8AjTJgezyfeX
+   1EeNWEc4NiiAUTLLOymowCHjAjqUrDBTotzOssGvl49sqmIIG7UjEgq7O
+   QDnFA7oN+K309bir8LcArClFjq9EU9US4PZRkzgS/W2OoGG3iVyBnfqxC
+   0m75w/LEM5KsUEYdEnbfTlaLAIinVZY69V7cM+Klr6/AXvfMp3USRP4Qd
+   9qGG98IeTPjLKQCJAR+iSREJNr7Du7v37w8CEMsJCdo6BIxeDuQw2Msns
+   w==;
+X-CSE-ConnectionGUID: 7EPVwNgAQSWdDwd00ZQDZQ==
+X-CSE-MsgGUID: 6/jJcZf/QleX9QsyyS8Pqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65054025"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="65054025"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:02:41 -0800
+X-CSE-ConnectionGUID: LWhFLovNRgWDoJiNm0HUow==
+X-CSE-MsgGUID: nE6QdQs7Rjq7/OOgIgzs2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="220324615"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa001.fm.intel.com with ESMTP; 13 Nov 2025 07:02:20 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 008C496; Thu, 13 Nov 2025 16:02:18 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Corey Minyard <corey@minyard.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Calvin Owens <calvin@wbinvd.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-pci@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	ceph-devel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 00/21] treewide: Introduce %ptS for struct timespec64 and convert users
+Date: Thu, 13 Nov 2025 15:32:14 +0100
+Message-ID: <20251113150217.3030010-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a60a703-d9c2-46a8-83b4-a7ecff7f6ba2@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 09:54:37AM +0000, Lorenzo Stoakes wrote:
-> On Thu, Nov 13, 2025 at 10:06:42AM +0100, David Hildenbrand (Red Hat) wrote:
-> > On 13.11.25 04:46, Carlos Llamas wrote:
-> > > Commit 4dfd4bba8578 ("selftests/mm/uffd: refactor non-composite global
-> > > vars into struct") moved some of the operations previously implemented
-> > > in uffd_setup_environment() earlier in the main test loop.
-> > >
-> > > The calculation of nr_pages, which involves a division by page_size, now
-> > > occurs before checking that default_huge_page_size() returns a non-zero
-> > > This leads to a division-by-zero error on systems with !CONFIG_HUGETLB.
-> > >
-> > > Fix this by relocating the non-zero page_size check before the nr_pages
-> > > calculation, as it was originally implemented.
-> > >
-> > > Cc: stable@vger.kernel.org
-> >
-> > Do we CC stable on unit tests? From my recollection, no.
-> 
-> Yeah please let's not.
+Here is the third part of the unification time printing in the kernel.
+This time for struct timespec64. The first patch brings a support
+into printf() implementation (test cases and documentation update
+included) followed by the treewide conversion of the current users.
 
-Oops, I keep getting confused about this Cc stable thing. Please let me
-know if a v2 dropping the tag is needed.
+Petr, we got like more than a half being Acked, I think if you are okay
+with this, the patches that have been tagged can be applied.
 
---
-Carlos Llamas
+Note, not everything was compile-tested. Kunit test has been passed, though.
+
+Changelog v3:
+- fixed a compilation issue with fnic (LKP), also satisfied checkpatch
+- collected more tags
+
+Petr, I have not renamed 'p' to 'n' due to much of rework and
+noise introduction for the changes that has been reviewed.
+However, I addressed the documentation issues.
+
+v2: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+
+Changelog v2:
+- dropped wrong patches (Hans, Takashi)
+- fixed most of the checkpatch warnings (fdo CI, media CI)
+- collected tags
+
+v1: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
+
+Andy Shevchenko (21):
+  lib/vsprintf: Add specifier for printing struct timespec64
+  ceph: Switch to use %ptSp
+  libceph: Switch to use %ptSp
+  dma-buf: Switch to use %ptSp
+  drm/amdgpu: Switch to use %ptSp
+  drm/msm: Switch to use %ptSp
+  drm/vblank: Switch to use %ptSp
+  drm/xe: Switch to use %ptSp
+  e1000e: Switch to use %ptSp
+  igb: Switch to use %ptSp
+  ipmi: Switch to use %ptSp
+  media: av7110: Switch to use %ptSp
+  mmc: mmc_test: Switch to use %ptSp
+  net: dsa: sja1105: Switch to use %ptSp
+  PCI: epf-test: Switch to use %ptSp
+  pps: Switch to use %ptSp
+  ptp: ocp: Switch to use %ptSp
+  s390/dasd: Switch to use %ptSp
+  scsi: fnic: Switch to use %ptSp
+  scsi: snic: Switch to use %ptSp
+  tracing: Switch to use %ptSp
+
+ Documentation/core-api/printk-formats.rst     | 11 +++-
+ drivers/char/ipmi/ipmi_si_intf.c              |  3 +-
+ drivers/char/ipmi/ipmi_ssif.c                 |  6 +--
+ drivers/dma-buf/sync_debug.c                  |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c  |  3 +-
+ drivers/gpu/drm/drm_vblank.c                  |  6 +--
+ .../gpu/drm/msm/disp/msm_disp_snapshot_util.c |  3 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 |  3 +-
+ drivers/gpu/drm/xe/xe_devcoredump.c           |  4 +-
+ drivers/mmc/core/mmc_test.c                   | 20 +++----
+ drivers/net/dsa/sja1105/sja1105_tas.c         |  8 ++-
+ drivers/net/ethernet/intel/e1000e/ptp.c       |  7 +--
+ drivers/net/ethernet/intel/igb/igb_ptp.c      |  7 +--
+ drivers/pci/endpoint/functions/pci-epf-test.c |  5 +-
+ drivers/pps/generators/pps_gen_parport.c      |  3 +-
+ drivers/pps/kapi.c                            |  3 +-
+ drivers/ptp/ptp_ocp.c                         | 13 ++---
+ drivers/s390/block/dasd.c                     |  3 +-
+ drivers/scsi/fnic/fnic_trace.c                | 52 ++++++++-----------
+ drivers/scsi/snic/snic_debugfs.c              | 10 ++--
+ drivers/scsi/snic/snic_trc.c                  |  5 +-
+ drivers/staging/media/av7110/av7110.c         |  2 +-
+ fs/ceph/dir.c                                 |  5 +-
+ fs/ceph/inode.c                               | 49 ++++++-----------
+ fs/ceph/xattr.c                               |  6 +--
+ kernel/trace/trace_output.c                   |  6 +--
+ lib/tests/printf_kunit.c                      |  4 ++
+ lib/vsprintf.c                                | 28 +++++++++-
+ net/ceph/messenger_v2.c                       |  6 +--
+ 29 files changed, 130 insertions(+), 153 deletions(-)
+
+-- 
+2.50.1
+
 
