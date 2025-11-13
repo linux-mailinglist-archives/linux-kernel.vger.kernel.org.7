@@ -1,184 +1,127 @@
-Return-Path: <linux-kernel+bounces-899664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5685EC58A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:15:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770F9C587CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 688F54FF591
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106EE502199
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB713596FA;
-	Thu, 13 Nov 2025 15:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34652F6181;
+	Thu, 13 Nov 2025 15:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZqQIL5/3";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wts+n/uy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="KZF6IMWt"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E8C2F60A7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E08C2F5A0C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047900; cv=none; b=Igh7wJ5cyd7c8Il5hSsA0MLxU+WH0gNinHS6kJIaajDV4fgzvLcnZIiCQ2Nlpqc6hiad31veLAT+d96CH2XuDQvo8bP2Y9XKn8pakTyOKaKEaSlC65Fxz6Qr9pnAhQKYO63mswDoPgfzF+JNRX4GFKC9MTxca9TBWz3Kr60rNwY=
+	t=1763047930; cv=none; b=kDZqA/HQr2z/GQ7iCJstg2AL9t1xhjt/SdZgpM/bZEqe74ygjFqrsGahp+iMQFUwEkB+ILzpw1tX1q2MktIDM64AAIGdsVoyDQ6thlU9q8uDZK7XyPEJ2Wgah3dwS/8d6BvVJMguLcnZ/5KGiSAmtSdxvf5Az2j1eVaVMny+UMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047900; c=relaxed/simple;
-	bh=cmUw5fQytCW5K8CgA+45UI+EqXpRzL3G2UrLV2MjQf4=;
+	s=arc-20240116; t=1763047930; c=relaxed/simple;
+	bh=VIFAibIeFk9BTaPwOLtgvXcIFgSN73xkX53R/rEjGQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=icut120aZfVoQwH8RTTIAa+jpDZNF0BI/NS2P/7ihgd7YHDfDXcxpeQp3tCZ9gpqv35+JcTs8QIkJkl6wPnFtQZi7kx4FoiLo/1/HcE4pfOyLOTODAeXEtMpCELs1zIc+p9RaAybXVlXXfYgG8ryMfM+GdsqrFFU11S6JqzMSJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZqQIL5/3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wts+n/uy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763047898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
-	b=ZqQIL5/3UTREq+0mfpv6OtJWi17VumrYh3NOh5gTr46SWoFYNsCu3Wt2zFsfOkKDxt/WEH
-	qzVwtd9JiiSztULsRmCqbVwM3awgaOhBKGKJvaQpdFg9i/kDVIqFUPvfxZ+GMJanUJUO38
-	z7a0t4H5IRaE37JyQj3+aYEsGLh25NE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-Jm0o_B6YNlOWx9tc_8KxLA-1; Thu, 13 Nov 2025 10:31:36 -0500
-X-MC-Unique: Jm0o_B6YNlOWx9tc_8KxLA-1
-X-Mimecast-MFC-AGG-ID: Jm0o_B6YNlOWx9tc_8KxLA_1763047895
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b70a978cd51so117670566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:31:36 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FK/g78pWt2wWQbz57TTACDV3i99lc8ofC+QkqI/woTsoruOVMEXyg+LZV8JLQN7CPlPet8ZGF2leGNp6FQ0u3E7MiBfzvTUFGyzjjpT83sVDZkoYeACAEVq6mnj9y8WhL6n/hUBEeaeN8s5mZmUiorV9nUwro+CepuO9yeoD1SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=KZF6IMWt; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8804ca2a730so12477536d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1763047895; x=1763652695; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1763047927; x=1763652727; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
-        b=Wts+n/uyvcUEotTfun8PRRCrASIZGOOHVkTuyYceI7X8bx2pYg0FLaS8sVQGFNTYp7
-         AjZFRDNBL6HVJTcTmZmjNQfUsXT4E/+IfRDUPGEuOd69Jfzcx48g6LYVBz/QZ+NtLU8W
-         OS8KVPe4lmiJh0brRUYwjj46Sehjg0U/pmOk1h1wreE8QJGBrdGHjU2BaKQ035SfgOOc
-         YWS/sP5RCj1xE6S158ZsLv+wXrsaBNsV9ap1T5U+SL6cnsAGb/n7MetzoGVKD98FoPTI
-         08vyJEP4MYxeeBKRekzgXZIxolO5mAHhk06b2wfyZIl9Aq2AqtJvIyFT4/WPsXalKB/8
-         fnrg==
+        bh=RwXZ3QZb2iH/PQgS8t9fflZ6rAwJ6dkd/cv8rL8YNXQ=;
+        b=KZF6IMWtHFkUghWYhdeKo3htyHsBD1Fk1W+dlM7eqWdG4hJ206SoHahS6MGJoxvmbw
+         rMI1btmMn609nwPA1ODmAPKP5qigiLnCrd8esHnt3CYUP+yFI/dMLGw+ZBtHxI3QiCJA
+         5AAjNQbt4ECOKEoG+d7XGa5/556VwHvSynxRho+CBCyyE5hZBDMzxQkIXXP7Oz0+YwNu
+         iGI9Ojpdz0LybQkKBCzuOx4bHBZphYMpCXr25E8QvQ2iXd/uBI5UONtDlOZFXY95TqLh
+         k2mDZY8U/u5EnVNXsTwOFmVYkPcwuBftuE1Yq40JJPL4MbhwxljMDfCzBM9or6qHd5hY
+         vq9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763047895; x=1763652695;
+        d=1e100.net; s=20230601; t=1763047927; x=1763652727;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
-        b=iYLfNVkwX658vNDliwr+ITI56pgOYgZzsMIw91s10S/9KIrQCxoZdORMMhXOGvbcoT
-         f2OKFaBi2S6duCIBdjWD+X3Ui1tn1jsb7pckNdacuUErG/XFKAAYZCTlIEmizYuwGt+v
-         jwV7KwyO0frZ8DTEfpN3YkbHEEVKOu4C7oXTZ6FKcwXptSByM3FPqed2o0gwwWHDtQmL
-         I5+/NPQT921k06tNhW78SkoIJM7IsmECfXuZcioSwi8AcUlPFaOS/83d16u/M8Pjz9kw
-         B0wfZ8pARy5ID22+AdrmJR2ngARWEn6A0QxKZ1cdt7dnMN0iB52aANGEAQSb/lXSogKC
-         Adnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaoh+SeI+uLyUkOcaJiEJqPO48jd431hfADIdTE2/fiwRmtvshSOiHvU6kekRJ38aa8BSvLVvTb1uHZZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNU1qvfMNlGIukZlHHTPPkpOdfZifTYrVvleg2Kn1UH+kK1j0K
-	D5obghf3qnpP7hEjq9g/GXDJHnekiD2tUqMgKCioLQHUjB157yjF92uhkIjohE34Nx8pyedwrqo
-	MUpTFbrk+4K2gQmkrzb7ObVqRHmGeW6qO2JHTRP5eaqKYOXCKvJHPlekUQGEgbtcBmQ==
-X-Gm-Gg: ASbGncthdwCvflfhq8gshMmktcwm57vjVakQONJ1PqguID1SwozMT0X3uZvwXVJXSLE
-	A387hhHyoY4hAGVZQiNLUbkH5XWJFhgP2sXlasmK4HtHQVuEWnu0PEby94HCoJrAsGWV49/S5Lb
-	tUucdWjjiZhVxwWp/wRmeYT/Fv9G6kIDPkK5Ub0v/oYiAmYYs+ideuQGPyu9TmWu1EzSo3ow2l4
-	4betIhTzA9Fvglp2iyNki58cR+e4IiDszulNEFD+KjkmW9WvhiCg2Q/4e+jx1n6f+nqU/VHADBU
-	cmjwOZC0H4mWs7Qsn3GY9LNK5nizbC8q1vRirp61ICyhN2XguTn1SbP3P4OWzhrQ3GWS8xODxv1
-	PIzk41aJW6QYBOucPg/5G6hMqpz+rScMYL4y2hmHoLVtVB+V6bDM=
-X-Received: by 2002:a17:907:c06:b0:b70:6d3a:a08b with SMTP id a640c23a62f3a-b733192f5c5mr808714866b.10.1763047895386;
-        Thu, 13 Nov 2025 07:31:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF8lpe22E3h1TC8hEnHCzisPSR4qLMl80qiAEbaySsAUvtzhvgQRLYBeX2TaGg4WnRojfXASw==
-X-Received: by 2002:a17:907:c06:b0:b70:6d3a:a08b with SMTP id a640c23a62f3a-b733192f5c5mr808708566b.10.1763047894844;
-        Thu, 13 Nov 2025 07:31:34 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad3edasm184936266b.17.2025.11.13.07.31.32
+        bh=RwXZ3QZb2iH/PQgS8t9fflZ6rAwJ6dkd/cv8rL8YNXQ=;
+        b=YoTeldzbwSA89UOvMZEzlMcDVr95hG0MXa8fJGrWBjWPh1eI7uuNXtjn0VKFOB3reA
+         qfj90fgRqQkYxNvyRY2hsJDHhtHzf+B0YROXY4PrcdDZ1sWlATBjqWUd8AlaHEleCkFp
+         3pzbaBkAoC+iw3Q2Bs3+KIvn0QtrBMB7gCo7eUk7mTsZ5Vn0EsnP9nZ7Ozg8wgCg1U4+
+         X6M4Ni9FnHx/OkOULzt7nWowTW6iAmm56SpbrmkJsknkW/YvFA12JCuM9ikEiu1LHfSS
+         tTcXcYFL2QduxK07gmIW92i91Pm08MZraSWKRtZh8KNUQvF0Oo6C4j4+yrvjTt99Tx3A
+         UhXA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DR+eX62Macut75ObC49oiJrkNX2d9tYSZuoO/rRJR2N/z4VqJnC3O+jcKa1pELwDHecCJFNx/56UxsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyVBfqd/U16F1veyvL0ioS6Y3yABBy4tlf3SxHN6Jin41Tjo6E
+	r/4U+FtpwY0mB3drOEKCGnbM0YUU/tUsqXCpQdN8+jaoYry7H59Y1ewsrO3jrwt/AV0=
+X-Gm-Gg: ASbGncvA4pKT3/Ueq9hH6JoswNKCohwUgOQzHmOhOHoOEdoGI/4ei9WgZ/eR63PP77G
+	4oDTKVmX6Bot7bqrZoqhT1GnhV06mDnD4NsnSRLV6WzPGPxI+7+a5mvLhdBP3fl80thhSL0QifX
+	mnh5oVvT9bVU2pnCpWnz7PHU2SzJI23bGtOKHhuFIUlB5DgSdkjbtfdTXtNkLkdlMJuNCTUebqv
+	uGGaMdlvtZz0Sf5Pz+UeOKCVfLCWrQ5RDK35t+eRG0WpoCF0z5fuVx1G9z8rP2LRPPb25o/9jc+
+	j1DmRDc52GOa91OBAwuu+hVhBwrUZKhU5rqSmuUahlKqZGIIc5QzPb3bkMuIeKlk7MvBasCE+eq
+	+l2ZQBkeypFziUK3eGe/9QPTAkUoBimWFLfiKIJGf/GZpnDlUfAqRjdBiyd4TasnB++YvIqjly0
+	QbkeLomr7nhVtwpSmdNc5ST5MTjfF8YlelucHd837YMivababSuZpxE3rQCpp56a09RUgedg==
+X-Google-Smtp-Source: AGHT+IF9bU4eg/VyjhOJgUKQHU3c3vXBSWjhuCVC64Widl9iAlPrHF5pMHl/JQjFydCbvLNKLyPN1Q==
+X-Received: by 2002:a05:6214:410f:b0:78f:1312:2d94 with SMTP id 6a1803df08f44-88271a4402emr113638886d6.56.1763047927323;
+        Thu, 13 Nov 2025 07:32:07 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88286314656sm13735666d6.21.2025.11.13.07.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 07:31:34 -0800 (PST)
-Date: Thu, 13 Nov 2025 16:31:28 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, berrange@redhat.com, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v9 03/14] vsock/virtio: add netns support to
- virtio transport and virtio common
-Message-ID: <ym7us45wytkmibod5fkxoyss3nl4kxzehlchdm4pqnvvnzreey@dvuwn7olusc2>
-References: <20251111-vsock-vmtest-v9-0-852787a37bed@meta.com>
- <20251111-vsock-vmtest-v9-3-852787a37bed@meta.com>
- <cah4sqsqbdp52byutxngl3ko44kduesbhan6luhk3ukzml7bs6@hlv4ckunx7jj>
- <aRSyPqNo1LhqGLBq@devvm11784.nha0.facebook.com>
- <bhc6s7anskmnnrnpp2r3xzjbesadsex24kmyi5tvsgup7c2rfi@arj4iw5ndnr3>
- <aRTg4/HyOOhYYMzp@devvm11784.nha0.facebook.com>
+        Thu, 13 Nov 2025 07:32:06 -0800 (PST)
+Date: Thu, 13 Nov 2025 10:32:04 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Robert Richter <rrichter@amd.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH 0/3] CXL updates for v6.19
+Message-ID: <aRX59JpZJa18QfoQ@gourry-fedora-PF4VCD3F>
+References: <20251112205105.1271726-1-rrichter@amd.com>
+ <db9e4d27-057f-4bf1-9d74-008ffeb0dbc8@intel.com>
+ <aRW6h127k5Tzns8R@rric.localdomain>
+ <f0285498-810f-44aa-8577-e28641e97d56@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRTg4/HyOOhYYMzp@devvm11784.nha0.facebook.com>
+In-Reply-To: <f0285498-810f-44aa-8577-e28641e97d56@intel.com>
 
-On Wed, Nov 12, 2025 at 11:32:51AM -0800, Bobby Eshleman wrote:
->On Wed, Nov 12, 2025 at 06:39:22PM +0100, Stefano Garzarella wrote:
->> On Wed, Nov 12, 2025 at 08:13:50AM -0800, Bobby Eshleman wrote:
->> > On Wed, Nov 12, 2025 at 03:18:42PM +0100, Stefano Garzarella wrote:
->> > > On Tue, Nov 11, 2025 at 10:54:45PM -0800, Bobby Eshleman wrote:
->> > > > From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->[...]
->
->> > > If it simplifies, I think we can eventually merge all changes to transports
->> > > that depends on virtio_transport_common in a single commit.
->> > > IMO is better to have working commits than better split.
->> >
->> > That would be so much easier. Much of this patch is just me trying to
->> > find a way to keep total patch size reasonably small for review... if
->> > having them all in one commit is preferred then that makes life easier.
->> >
->> > The answer to all of the above is that I was just trying to make the
->> > virtio_common changes in one place, but not break bisect/build by
->> > failing to update the transport-level call sites. So the placeholder
->> > values are primarily there to compile.
->>
->> In theory, they should compile, but they should also properly behave.
->>
->> BTW I strongly believe that having separate commits is a great thing, but we
->> shouldn't take things to extremes and complicate our lives when things are
->> too closely related, as in this case.
->>
->> There is a clear dependency between these patches, so IMO, if the patch
->> doesn't become huge, it's better to have everything together. (I mean
->> between dependencies with virtio_transport_common).
->
->Sounds good, let's give the combined commit a go, I think the
->transport-specific pieces are small enough for it to not balloon?
+On Thu, Nov 13, 2025 at 08:20:59AM -0700, Dave Jiang wrote:
+> On 11/13/25 4:01 AM, Robert Richter wrote:
+> > On 12.11.25 14:45:28, Dave Jiang wrote:
+> >>
+> >>
+> > Additionally, patch 3/3 (@inc variable change) of this series also
+> > depends on patch 02/11 of v5 (store root decoder in in struct
+> > cxl_region). If you chose to pickup some patches from v5 first on top
+> > of cxl/next, then all this 3 patches should apply cleanly.
+> > 
+> > Since 02/11 is one of the first patches and it sounded to me some of
+> > them will be applied as well, I would prefer that order to avoid
+> > rebasing and resubmitting a v6 for that. Let me know if you want to
+> > handle this differently.
+> 
+> Hmmm....maybe I should just take the entire series hopefully next cycle when it's ready given all the dependencies?
 
-Yeah, I think so.
+As an active user of the Zen5 translation patch (I've been carrying
+backports Zen5 support for over a year), I would greatly prefer not
+to delay the Zen5 series for the sake of this series.
 
->
->> What we could perhaps do is have an initial commit where you make the
->> changes, but the behavior remains unchanged (continue to use global
->> everywhere, as for virtio_transport.c in this patch), and then specific
->> commits to just enable support for local/global.
->>
->> Not sure if it's doable, but I'd like to remove the placeholders if
->> possibile. Let's discuss more about it if there are issues.
->
->Sounds good, I'll come back to this thread if the combined commit
->approach above balloons. For the combined commit, should the change log
->start at "Changes in v10" with any new changes, mention combining +
->links to the v9 patches that were combined?
-
-Yep, that would be great. Plus exaplaining why we decided to do that (I 
-mean just in the changelog).
-
-Thanks,
-Stefano
-
+~Gregory
 
