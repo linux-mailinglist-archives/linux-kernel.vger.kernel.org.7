@@ -1,247 +1,180 @@
-Return-Path: <linux-kernel+bounces-899299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD286C57516
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF82C5752E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D9A34E6BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:00:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8405A4E42F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A66334DB67;
-	Thu, 13 Nov 2025 12:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6B234B69C;
+	Thu, 13 Nov 2025 12:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBk8bIqm"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TrGvUOCX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWByH5oU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TrGvUOCX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWByH5oU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0513285045
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BC234AAF9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035235; cv=none; b=JKhgj2AaY+LyytfuLrMWjpo0pBI49qjkUCBB2Joh/czXHJD+5R5kf8Cdj/CugJjMFz/rDUfLQoit0Jx382lrNAo+l2TPfJ9eR5CujNQfjZr3h31R8p3kXlAEjlIzn8W5dag3P4mXg7cjhpzE5wM8gljs5MttjWloJEUX3vHgCQo=
+	t=1763035461; cv=none; b=VGVKtJMrcqlwNXp9gU58sinp6vR12N8yzPPgP/4ZRBJLc+UwJnyAG8B5z3uLBHE2VaP1WjwIN1a0UJJWlL6K9/7Ye8dtsfwqXAZIhczybw4TVSLAXLOgiKhfUg7unIYnfBD7oTgfiPa79XDjwcplgHd6L/Gumjuqv+H5XlZStkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035235; c=relaxed/simple;
-	bh=4P4LhGMXNDpOMLzkgSnNvj8G+OXHvtlSD4CrCtiKVM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L9ppSWYiim+h5Odu9ntur36gORoqpINBFzuW+807HyLvQ09k0dlxXvHYBXnVFdZRWOHhQXI3d81JWRnnUHMrAbQ/sXkCdDV7yTbJb0kVfYeOiTrz2E28bb4unFL1kzzTSEg2tpo3Y57kWqH0E72ek+By23/aT02b1G/5oNsUjtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBk8bIqm; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-340ba29d518so536250a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:00:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763035233; x=1763640033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMbZe017tqsUHZpQ2QjARaQuit2dg0zAawqoQ3eFuRM=;
-        b=eBk8bIqm4A2dQDXlFI/NG+b82jOhbvl6/xQehWcEWuZS7pJeHVAehMQZLOi+UACtO3
-         4Op2eR2/eCjS7mfhhKpF0VHuBA51iwu2PUMh1moYR1ka8fyFXdM1G897+NAoDJQpKY3z
-         2iJdpworRIZwfFeQyzQllzanrWrTAAXCMLYc17EzC9GpIBOxppD6nrIZQYsoX3ePqqAR
-         DEfP7BD6oC7ese65TnBmff2J5ymszsIIOI3kZskzfysvvrac9ShEpKH6IrQmaAtFuMKt
-         g9ZRD+EdrOnfiCCbbLxiot5DeeBOBUL6AUUkqJY9xMrx31c9YF46BJf/LRFimyA2DxSV
-         Ptbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763035233; x=1763640033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VMbZe017tqsUHZpQ2QjARaQuit2dg0zAawqoQ3eFuRM=;
-        b=hyYNkSmtSVJiljtxMrMxnF6YElJy37rCOL2rUc/ezN6/xUOy5NsGxj4y+VhwUag2ng
-         MCTh4SQBNlft46YbNw1JqMDTQHvttcWMx7DAj5xYsqtL9jwAU2TRNiHt9SDISHaCgrIj
-         CyRkVD9yLekqp77o7HN8IpntF/S9db4MnZJyXUxd5RzgKQJ1sUFgZ9utw1+Za80Px31Z
-         NK06jjeHkHE9qCfQXYJ6dSqw0H5pyn6WT+ZVs/1S0XDEDEIwDwIZ8AJlV1jOTAOFE+9w
-         VRGoWvQRiBY1heLlW1x9VMf8X7Wk7uwzXnkRCdOg9+e4XgPOJx8prm1PsIuEEkeOkPl9
-         aHkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiorEd/WQBJS1cWrz8lI3a7ahPVN0ZZgwmqSgSkOyJI9kzTCJo78bG+zLGRicEVQxRDgEyfBOYeToLcCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcJp+wTnW02mxjAZl8vrwSLjQ3MjAC0908WFyu53DjiDfRQvon
-	T2oQ7Hf6Z+CkmRv4VHMBhTfdoqbO3RlOPNrn34U1DosFm1aZKahrSnM2DkWML2FutKPb8ICzTjP
-	NlVoZk4j/sWThp6Ni/x0D36QPGG1tM0Y=
-X-Gm-Gg: ASbGncu01SHcBJ0d49mXHKfB+PkDd9tEyzIOgB3ezatjti+QqCFdFNZ7L8uuFg7dWgF
-	mwUy+CcCoHoVa6VWp/7CB0rSlyNv7h0ic7sbxi7OAGF+aHoFjvgcdWyANQmCAEcNltfAQd9QTVR
-	NnyyWyf/Wttva2o71Qip91IAKsTrIOR8VO5mzEC8/ZH2ZUfrhndrvU1Y29P842A/mQhPHmAsWfw
-	5G2CryNkqp6ButpbhxrYxyWI1pGwkqfZX/5wzhOSE4Mu6adNwrfzHT8GE0W
-X-Google-Smtp-Source: AGHT+IEI2/ETIyN+HIgY1WEvq69lhMhuMqrT7htmjzbXfUhWwBXWYHygAT11nF7Fs+GljLoWjfY7MsHoOczG1GMYc8c=
-X-Received: by 2002:a17:90a:d448:b0:340:f7d6:dc70 with SMTP id
- 98e67ed59e1d1-343dde13826mr7620363a91.13.1763035233051; Thu, 13 Nov 2025
- 04:00:33 -0800 (PST)
+	s=arc-20240116; t=1763035461; c=relaxed/simple;
+	bh=EwACQkUUaj7OMJsgnLEuauJXcZfosM/TDDQbqvUOeTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFc3Oynshxn8o/MKV5Ex4icNXOpr8lmFyd3NTkdNr2Dz0z4xpgVJdoy2kFtDKOYZCLM17fMgkIRmd9vXZMNFLhJLJGVv/vOEUAODJnZwzK4w2RJ7Q8pQ236MuclsDzmpazz/rMO8Bxn4G2wTsT4TWt9IxOrOSXIDyri+8v0aOOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TrGvUOCX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWByH5oU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TrGvUOCX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWByH5oU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 90FE31F395;
+	Thu, 13 Nov 2025 12:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763035455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
+	b=TrGvUOCXOs7QH+PYeNPFvHAjxdbuXMoqiFrtYnA6FVga97LTv59g87y10uPCpInRkt9xMG
+	di4+EuW30F3iYLY1TcmH1EFqbwBtwoXgmMCYMWyVpn2bMeu2QyHBE39GEi4eb+Fera4LSR
+	L1/ule3HpZ3pRHHv0kwPbp+5ftsWwdg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763035455;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
+	b=cWByH5oUpIspG+wv+pyu95wcBOxFKb/gmooUgkcMDoujQfkBdYmM8CaeO32N2xtZb5Ll32
+	5rvGvm1VxafLUlAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763035455; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
+	b=TrGvUOCXOs7QH+PYeNPFvHAjxdbuXMoqiFrtYnA6FVga97LTv59g87y10uPCpInRkt9xMG
+	di4+EuW30F3iYLY1TcmH1EFqbwBtwoXgmMCYMWyVpn2bMeu2QyHBE39GEi4eb+Fera4LSR
+	L1/ule3HpZ3pRHHv0kwPbp+5ftsWwdg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763035455;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4cIyQEDcX8IYtapSz3cwYnB1AEHvylAazd0oOZJHbE=;
+	b=cWByH5oUpIspG+wv+pyu95wcBOxFKb/gmooUgkcMDoujQfkBdYmM8CaeO32N2xtZb5Ll32
+	5rvGvm1VxafLUlAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB4533EA61;
+	Thu, 13 Nov 2025 12:04:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BAugLj7JFWnzEQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 13 Nov 2025 12:04:14 +0000
+Date: Thu, 13 Nov 2025 13:04:07 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: hughd@google.com, baolin.wang@linux.alibaba.com,
+	akpm@linux-foundation.org, david@redhat.com, muchun.song@linux.dev,
+	kraxel@redhat.com, airlied@redhat.com, jgg@ziepe.ca,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	vivek.kasireddy@intel.com,
+	syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm/memfd: fix information leak in hugetlb folios
+Message-ID: <aRXJN2WHvfAwoAFE@localhost.localdomain>
+References: <20251112145034.2320452-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110033232.12538-1-kernellwp@gmail.com> <20251110033232.12538-3-kernellwp@gmail.com>
- <015bfa4d-d89c-4d4e-be06-d6e46aec28cb@amd.com>
-In-Reply-To: <015bfa4d-d89c-4d4e-be06-d6e46aec28cb@amd.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Thu, 13 Nov 2025 20:00:21 +0800
-X-Gm-Features: AWmQ_bm9GFF_fVDEXPJNSBQ91hN0PH9vClzZfoOKcy5ZG0d_ttlXsdzXEocsdlQ
-Message-ID: <CANRm+CzsjNyd9-QjUupszpULNkJ31U+wPWC81A5jaTFRFdPfMg@mail.gmail.com>
-Subject: Re: [PATCH 02/10] sched/fair: Add rate-limiting and validation helpers
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Wanpeng Li <wanpengli@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112145034.2320452-1-kartikey406@gmail.com>
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[f64019ba229e3a5c411b];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-Hi Prateek=EF=BC=8C
+On Wed, Nov 12, 2025 at 08:20:34PM +0530, Deepanshu Kartikey wrote:
+> When allocating hugetlb folios for memfd, three initialization steps
+> are missing:
+> 
+> 1. Folios are not zeroed, leading to kernel memory disclosure to userspace
+> 2. Folios are not marked uptodate before adding to page cache
+> 3. hugetlb_fault_mutex is not taken before hugetlb_add_to_page_cache()
+> 
+> The memfd allocation path bypasses the normal page fault handler
+> (hugetlb_no_page) which would handle all of these initialization steps.
+> This is problematic especially for udmabuf use cases where folios are
+> pinned and directly accessed by userspace via DMA.
+> 
+> Fix by matching the initialization pattern used in hugetlb_no_page():
+> - Zero the folio using folio_zero_user() which is optimized for huge pages
+> - Mark it uptodate with folio_mark_uptodate()
+> - Take hugetlb_fault_mutex before adding to page cache to prevent races
+> 
+> The folio_zero_user() change also fixes a potential security issue where
+> uninitialized kernel memory could be disclosed to userspace through
+> read() or mmap() operations on the memfd.
+> 
+> Reported-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+> Link: https://lore.kernel.org/all/20251112031631.2315651-1-kartikey406@gmail.com/ [v1]
+> Closes: https://syzkaller.appspot.com/bug?extid=f64019ba229e3a5c411b
+> Fixes: 89c1905d9c14 ("mm/gup: introduce memfd_pin_folios() for pinning memfd folios")
+> Cc: stable@vger.kernel.org
+> Suggested-by: Oscar Salvador <osalvador@suse.de>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Tested-by: syzbot+f64019ba229e3a5c411b@syzkaller.appspotmail.com
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 
-On Wed, 12 Nov 2025 at 14:40, K Prateek Nayak <kprateek.nayak@amd.com> wrot=
-e:
->
-> Hello Wanpeng,
->
-> On 11/10/2025 9:02 AM, Wanpeng Li wrote:
-> > +/*
-> > + * High-frequency yield gating to reduce overhead on compute-intensive=
- workloads.
-> > + * Returns true if the yield should be skipped due to frequency limits=
-.
-> > + *
-> > + * Optimized: single threshold with READ_ONCE/WRITE_ONCE, refresh time=
-stamp on every call.
-> > + */
-> > +static bool yield_deboost_rate_limit(struct rq *rq, u64 now_ns)
-> > +{
-> > +     u64 last =3D READ_ONCE(rq->yield_deboost_last_time_ns);
-> > +     bool limited =3D false;
-> > +
-> > +     if (last) {
-> > +             u64 delta =3D now_ns - last;
-> > +             limited =3D (delta <=3D 6000ULL * NSEC_PER_USEC);
-> > +     }
-> > +
-> > +     WRITE_ONCE(rq->yield_deboost_last_time_ns, now_ns);
->
-> We only look at local rq so READ_ONCE()/WRITE_ONCE() seems
-> unnecessary.
+As David mentioned, we can drop the comment wrt. __folio_mark_uptodate.
+As for the addr_hint in folio_zero_user, I do not think it makes a
+difference in here.
+AFAIK, it serves the purpose that subpages belong to the addr_hint will
+be zeroed the latest to keep them in cache, but here it does not really
+apply, so '0' should just work?
 
-You're right. Since we're under rq->lock and only accessing the local
-rq's fields, READ_ONCE()/WRITE_ONCE() provide no benefit here. Will
-simplify to direct access.
+Acked-by: Oscar Salvador <osalvador@suse.de>
 
->
-> > +     return limited;
-> > +}
-> > +
-> > +/*
-> > + * Validate tasks and basic parameters for yield deboost operation.
-> > + * Performs comprehensive safety checks including feature enablement,
-> > + * NULL pointer validation, task state verification, and same-rq requi=
-rement.
-> > + * Returns false with appropriate debug logging if any validation fail=
-s,
-> > + * ensuring only safe and meaningful yield operations proceed.
-> > + */
-> > +static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq,=
- struct task_struct *p_target,
-> > +                                       struct task_struct **p_yielding=
-_out,
-> > +                                       struct sched_entity **se_y_out,
-> > +                                       struct sched_entity **se_t_out)
-> > +{
-> > +     struct task_struct *p_yielding;
-> > +     struct sched_entity *se_y, *se_t;
-> > +     u64 now_ns;
-> > +
-> > +     if (!sysctl_sched_vcpu_debooster_enabled)
-> > +             return false;
-> > +
-> > +     if (!rq || !p_target)
-> > +             return false;
-> > +
-> > +     now_ns =3D rq->clock;
->
-> Brief look at Patch 5 suggests we are under the rq_lock so might
-> as well use the rq_clock(rq) helper. Also, you have to do a
-> update_rq_clock() since it isn't done until yield_task_fair().
 
-Good catch. Since yield_to() holds rq_lock but doesn't call
-update_rq_clock() before invoking yield_to_task(), I need to call
-update_rq_clock(rq) at the start of yield_to_deboost() and use
-rq_clock(rq) instead of direct rq->clock access. This ensures the
-clock is current before rate limiting checks.
-
->
-> > +
-> > +     if (yield_deboost_rate_limit(rq, now_ns))
-> > +             return false;
-> > +
-> > +     p_yielding =3D rq->curr;
-> > +     if (!p_yielding || p_yielding =3D=3D p_target ||
-> > +         p_target->sched_class !=3D &fair_sched_class ||
-> > +         p_yielding->sched_class !=3D &fair_sched_class)
-> > +             return false;
->
-> yield_to() in syscall.c has already checked for the sched
-> class matching under double_rq_lock. That cannot change by the
-> time we are here.
-
-Correct. The sched_class checks are redundant since yield_to() already
-validates curr->sched_class =3D=3D p->sched_class under double_rq_lock(),
-and sched_class cannot change while holding the lock. Will remove.
-
->
-> > +
-> > +     se_y =3D &p_yielding->se;
-> > +     se_t =3D &p_target->se;
-> > +
-> > +     if (!se_t || !se_y || !se_t->on_rq || !se_y->on_rq)
-> > +             return false;
-> > +
-> > +     if (task_rq(p_yielding) !=3D rq || task_rq(p_target) !=3D rq)
->
-> yield_to() has already checked for this under double_rq_lock()
-> so this too should be unnecessary.
-
-Right. yield_to() already ensures both tasks are on their expected run
-queues under double_rq_lock(), so the task_rq(p_yielding) !=3D rq ||
-task_rq(p_target) !=3D rq check is redundant. Will remove.
-
->
-> > +             return false;
-> > +
-> > +     *p_yielding_out =3D p_yielding;
-> > +     *se_y_out =3D se_y;
-> > +     *se_t_out =3D se_t;
->
-> Why do we need these pointers? Can't the caller simply do:
->
->     if (!yield_deboost_validate_tasks(rq, target))
->         return;
->
->     p_yielding =3D rq->donor;
->     se_y_out =3D &p_yielding->se;
->     se_t =3D &target->se;
-
-You're right, the output parameters are unnecessary. The caller can
-derive them directly:
-   p_yielding =3D rq->donor (accounting for proxy exec)
-   se_y =3D &p_yielding->se
-   se_t =3D &target->se
-I'll simplify yield_deboost_validate_tasks() to just return bool and
-let the caller obtain these pointers.
-
->
-> That reminds me - now that we have proxy execution, you need
-> to re-evaluate the usage of rq->curr (running context) vs
-> rq->donor (vruntime context) when looking at all this.
-
-Good catch. Since we're manipulating vruntime/deadline/vlag, I should
-use rq->donor (scheduling context) instead of rq->curr (execution
-context). In the yield_to() path, curr should equal donor (the
-yielding task is running), but using donor makes the vruntime
-semantics clearer and consistent with
-update_curr_fair()/check_preempt_wakeup_fair().
-
-Regards,
-Wanpeng
+-- 
+Oscar Salvador
+SUSE Labs
 
