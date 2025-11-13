@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-899305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBF6C57582
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:12:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1073C57585
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F1501346A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:10:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64C0E4E4B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5F534DCC6;
-	Thu, 13 Nov 2025 12:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A00034D91E;
+	Thu, 13 Nov 2025 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isITHALc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hv9b7xs+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14D34AB09
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F17434AB09;
+	Thu, 13 Nov 2025 12:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035811; cv=none; b=S2MkOxdOWn8FqDZ4xuHfuGzP/gDsf+ZthWC2w1BUS6YNdTSOdxQz/0Srm/0MxZH5FYLYUSD7gRnoICHaYkUMxdnSPdDiMqL+Lnmkjaaqfh594P6Pnl3q+T5m8Zhip8ZhuRShe8FSAhz60JIsltMniyfaeyE5n9VS/tWVl2++814=
+	t=1763035896; cv=none; b=NWePfr9j2EhEtsne3/iue59KaJZfnkZzV5LmdteBv8f1ckRanpJ6Tg5/bqerd6M9+0hKMNt7f3bE0ZIOGNLh3TYeo7rCBpQxhvY85kqQmloHfqgGLnK5H5oM7SKB9OxUz5U3urpRVf8Tj2Jb/NRcvKRDGc8OhDCaDb/C1MdGrro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035811; c=relaxed/simple;
-	bh=Qyw9iG0CzdG/4+p8EcrutwNw+cZTi8P2KxxppelH7dc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=itvswhBZPHSdTUfaiKwxvpjlImuFxm5qWNJiwg1+m2yzUUuo+q04RpMPXy2wy68wHfmkfyE8kcrgHm+XiRDlZqI9sQ0ZfFQJRaZ+LBw5kceYdJFxWRbEaGX1XJZws9C8zvTAShT7YC/TS27RqHSqRznPOsdEfxEO9wI3sgR1lEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isITHALc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3587AC2BC9E;
-	Thu, 13 Nov 2025 12:10:10 +0000 (UTC)
+	s=arc-20240116; t=1763035896; c=relaxed/simple;
+	bh=Re1je7zQc+x3bKvtwuM4wZn4KGHoRXGn+zQBODkxr50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tIIDN5D8Qgc79V0Tkjbx09NdXA91N0paJTVTyVGwiGb87gto/s5RPluEhuObkG/t/wtn17NcC1xrW0Rt2yzLwZRwKt2EkrY6mbHTF829pOTs+ZeutgELEbXU1rRagrHZ9P8QFNEc0ItuXqA50GSYjMUMqG6GZGLid90l+icqZ/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hv9b7xs+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71383C116D0;
+	Thu, 13 Nov 2025 12:11:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763035810;
-	bh=Qyw9iG0CzdG/4+p8EcrutwNw+cZTi8P2KxxppelH7dc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=isITHALc7NklYMJxudHByEhJuJyXFzRuaICLwGyGMf6B9Cvd/HzqrZjhVILD+/68k
-	 Yhn8M6ja7teGVaT1qmiioaXhJ9z8zWTL+SwlQs3NqsrZ0ugMUL+Ic6akh+dm9sSlz/
-	 G0gXiAEad5KQgRgr4RFJIh7A+C+Ucm053NOEYe2+XMuZkWUjln0IkPaX+rsB9x0s0A
-	 MNTkR/t3U7WDrobBnCcBroVN9+kE3YYmsI5DGob6w3YozXwIHFEC5bU3ww4EWB6V2+
-	 PAOkHnjczxXzz2IhiMR1lvBsBHqvS0zIr3LmThtaCLQG3r3zX1PLZ8uizO2QquIXB7
-	 6Far/3C9k/07Q==
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 517FFF4007E;
-	Thu, 13 Nov 2025 07:10:09 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 13 Nov 2025 07:10:09 -0500
-X-ME-Sender: <xms:ocoVaRc9dpPNy7XsCqZ5lFJmtnMM4WX_mx8BWih7Q2INPAaMfbq69A>
-    <xme:ocoVadcy56l8j1C4A5hn9Mw8ckncJaHeQpy0CzqpDn8irKHYAS0cMtnZTr7LlupAN
-    3WU4e5o1XZ45g0I8ck892aG_CDKG6bQeaAjZR2c5DdSp5chzOTaPYQ>
-X-ME-Received: <xmr:ocoVaT0ToFbjTJeiKCss8QVDA7Uu9JGOT7QZvc8c068SLyHtXHijBtIScJSvpQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeiledtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpefmihhrhihlucfuhhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghl
-    rdhorhhgqeenucggtffrrghtthgvrhhnpeffvdfhtdfgkedutddtffegleejheeuffdvgf
-    ejjedvteeitdeffefgtefgfffhffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehkihhrihhllhdomhgvshhmthhprghuthhhphgvrhhsohhnrg
-    hlihhthidqudeiudduiedvieehhedqvdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghl
-    rdhorhhgsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeduuddpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidr
-    ihhnthgvlhdrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtth
-    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehhphgrseiihiht
-    ohhrrdgtohhmpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpth
-    htohepphgsohhniihinhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehrihgtkhdr
-    phdrvggughgvtghomhgsvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsvggrnhhjtg
-    esghhoohhglhgvrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ocoVad_RkUysjHHgItcSqoczU_bUFANDm6rUW543-Sg5hOtdiGY1OA>
-    <xmx:ocoVaQ7RA0hNZiNncUZEP6pI8rZeld6IJUK-oeMhf_8aIDYmaaCYAA>
-    <xmx:ocoVadsBjLEpvJm9VuGHe_pOrbVMz78rCtJzFcRt5I4BrXRPei8qcQ>
-    <xmx:ocoVaa3FfMoVUS7McIPXZjwKUN8nLjjdNgGKhL7Wd6fgPWXnEqmBHw>
-    <xmx:ocoVaerV48TtEEygnkGz0VNIh675dfjnTDwk82aA0Dp9PFoXDYwWy1Ni>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Nov 2025 07:10:08 -0500 (EST)
-From: Kiryl Shutsemau <kas@kernel.org>
-To: dave.hansen@linux.intel.com,
-	bp@alien8.de,
-	tglx@linutronix.de
-Cc: hpa@zytor.com,
-	mingo@redhat.com,
-	pbonzini@redhat.com,
-	rick.p.edgecombe@intel.com,
-	seanjc@google.com,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kiryl Shutsemau <kas@kernel.org>
-Subject: [PATCH] MAINTAINERS: Update name spelling
-Date: Thu, 13 Nov 2025 12:10:06 +0000
-Message-ID: <20251113121006.651992-1-kas@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1763035896;
+	bh=Re1je7zQc+x3bKvtwuM4wZn4KGHoRXGn+zQBODkxr50=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hv9b7xs+9rTAxcmcEMkcl99qjgmEvtnz2aJ3Saur/UfhHxxrkaBy2g8C300bh8nru
+	 eQfDbA9ZEeOHpSdfF01cV/KZCH8JdeuFkvXDaRvDaT6Eo8X4yKsuMf+1wHdypIhfzn
+	 XXOHkGaU70hqlYrL4zixPenh7EnlGHuE8M+TrPHJ9xI61zc6KNX3G6u+ILDB9tfyY/
+	 bcyicslf9h/3vfr24u01+x4XoYfoCArW2OHycxLZYcPVtHzzMtxIskvnkASLKnY/bQ
+	 czf8HF7tr144ZO+8k1Elc0hVLdFwJpist64JRgnwZmnKhPThRE66/0JkXsemQ5CcFt
+	 Raa7YHyDBrT0A==
+Message-ID: <ef9b57ee-5ea4-4ce9-ab9d-02502c410630@kernel.org>
+Date: Thu, 13 Nov 2025 13:11:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] Make enter_lazy_tlb inline on x86
+To: Xie Yuanbin <qq570070308@gmail.com>, tglx@linutronix.de,
+ riel@surriel.com, segher@kernel.crashing.org, peterz@infradead.org,
+ hpa@zytor.com, osalvador@suse.de, linux@armlinux.org.uk,
+ mathieu.desnoyers@efficios.com, paulmck@kernel.org, pjw@kernel.org,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, hca@linux.ibm.com,
+ gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+ svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
+ luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org,
+ anna-maria@linutronix.de, frederic@kernel.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com,
+ thuth@redhat.com, brauner@kernel.org, arnd@arndb.de, sforshee@kernel.org,
+ mhiramat@kernel.org, andrii@kernel.org, oleg@redhat.com, jlayton@kernel.org,
+ aalbersh@redhat.com, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ baolin.wang@linux.alibaba.com, max.kellermann@ionos.com,
+ ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com
+Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, llvm@lists.linux.dev, will@kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20251113105227.57650-1-qq570070308@gmail.com>
+ <20251113105227.57650-2-qq570070308@gmail.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251113105227.57650-2-qq570070308@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use transliteration from the Belarusian language instead of Russian.
+On 13.11.25 11:52, Xie Yuanbin wrote:
+> This function is very short, and is called in the context switching,
+> which is the hot code path.
+> 
+> Change it to inline function
 
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
----
- .mailmap    | 2 +-
- MAINTAINERS | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+"always_inline" here and in the subject.
 
-diff --git a/.mailmap b/.mailmap
-index 369cfe467932..0f74e16e239c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -426,7 +426,7 @@ Kenneth W Chen <kenneth.w.chen@intel.com>
- Kenneth Westfield <quic_kwestfie@quicinc.com> <kwestfie@codeaurora.org>
- Kiran Gunda <quic_kgunda@quicinc.com> <kgunda@codeaurora.org>
- Kirill Tkhai <tkhai@ya.ru> <ktkhai@virtuozzo.com>
--Kirill A. Shutemov <kas@kernel.org> <kirill.shutemov@linux.intel.com>
-+Kiryl Shutsemau <kas@kernel.org> <kirill.shutemov@linux.intel.com>
- Kishon Vijay Abraham I <kishon@kernel.org> <kishon@ti.com>
- Konrad Dybcio <konradybcio@kernel.org> <konrad.dybcio@linaro.org>
- Konrad Dybcio <konradybcio@kernel.org> <konrad.dybcio@somainline.org>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46bd8e033042..ffd964b0a9bc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27845,7 +27845,7 @@ F:	arch/x86/kernel/stacktrace.c
- F:	arch/x86/kernel/unwind_*.c
- 
- X86 TRUST DOMAIN EXTENSIONS (TDX)
--M:	Kirill A. Shutemov <kas@kernel.org>
-+M:	Kiryl Shutsemau <kas@kernel.org>
- R:	Dave Hansen <dave.hansen@linux.intel.com>
- R:	Rick Edgecombe <rick.p.edgecombe@intel.com>
- L:	x86@kernel.org
 -- 
-2.51.0
+Cheers
 
+David
 
