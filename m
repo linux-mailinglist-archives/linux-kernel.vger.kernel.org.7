@@ -1,261 +1,197 @@
-Return-Path: <linux-kernel+bounces-899989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A343C595A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:05:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049AFC59644
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FE704ECE95
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7FB3AA0EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9F63596F3;
-	Thu, 13 Nov 2025 17:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75BB328B5E;
+	Thu, 13 Nov 2025 18:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nd6klbLc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XL+w0aXz"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7421357736;
-	Thu, 13 Nov 2025 17:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8F12FBDE2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763056635; cv=none; b=e2eDoI+q/s9hb4qi9fItvdKxnerPt/h2PmKBlUci3FiDQEo+ejRwu9GoDpSETayYGzCjQWKMy1bB0ZAli9U4RA/1ZVyg54ZRYMH6zf7n33/lXzkpu0oNk1jWac7QrooSaI/Dq1TFWwTrp/T16TqxU4Rc0CzzMWWneKzAzImcyno=
+	t=1763057116; cv=none; b=Yi5Ans8xN6bOw669jeIX6XWC0rRDPIqu2b6IC91kfgcX40+wxAN+s58bS75fbGI1MbK1wg5ifzqQuv86fKmEEGhMt7inRvE2XjDslCWa/Ntcr8+LLTjNcx5g1KPvYeseOTMuWAkl0by6Id/hgYgyUkcYpzjTVNWCMJ/TdgNqP6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763056635; c=relaxed/simple;
-	bh=LKHZZvO2jHql3ksMJdLc/BWAsCltAd1QdFx3MtO4FOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEQednLIl7/HCeqzKLIGBSNFtaGx53Hz2eeuY3rBAK49BERyvHmIMcJQrfO5/I7YqIgogaAXzQEU5P6cOqwE7fTRiysnD2Uq/slVzhnh9Ejw3IJE8nsWLnMD8fvtqKsc/rbtxbIRleyorq9eF31U2sd8mLW/XO9MTtFuJlDHonQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nd6klbLc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550D7C19421;
-	Thu, 13 Nov 2025 17:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763056635;
-	bh=LKHZZvO2jHql3ksMJdLc/BWAsCltAd1QdFx3MtO4FOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nd6klbLcMqvMpiOb4KGbXZMnu1ps+D0i98PFnP2oFedbhFgeV7xyDjteXNJy/9dO2
-	 whKX3d5CZHgBM4uQMUueH1mEORo7wGI1j86yhUsvaB+MxXMWIXxRUhsN2TacuZ8Hxy
-	 rqo6qtCaAecZUXio3Ytt6oxn2qPuxbz7UQjjqbs29gechjlatv8+3Oj1uXJU+A5Ypr
-	 K2CF6gB0zefc2PXYWO56ysq+4cCy9U8FhQbnPYyK0I63aL5g1FLPpZ3wAVMyL9X6So
-	 yy5qwjzL0sES6JI/1cZjFmQrHKQ4XkxhuJ5bWyEtkqlAdwM6TmzPJ5Jzj3U6EJx3ua
-	 iI7ZgHmoeZeiQ==
-Date: Thu, 13 Nov 2025 12:01:37 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
-Message-ID: <zi6jlw35clxwxtlshhjazbotv2wkfrbv3kkzgb76igirycxzak@3nujn2mvhjbh>
-References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
- <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
- <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
- <ad00835e-bc20-4f97-aba6-e1b4f5e97191@oss.qualcomm.com>
- <f2q7a7r7quq6pplcn3kklwrhdc6hxa5zvc7osygshtyurwyvi4@t5iyragt7irh>
- <b5ecf5e7-4dc4-41ac-9b56-7c52afacb950@oss.qualcomm.com>
- <01de9616-825b-4fbb-83cf-e0bf91e8cf39@oss.qualcomm.com>
- <81174278-c3c4-4dc6-856e-b58aa2cb6fea@oss.qualcomm.com>
- <br3fmilhh7fihv4atnf4olvy4w66z4p7sh4ypicuc3766ky6tb@pppfdynfhfz7>
- <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
+	s=arc-20240116; t=1763057116; c=relaxed/simple;
+	bh=pf1IXO1BZpdM2zhduHtSifJzEC4zT6MOU9JeXX7SMOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=blyZ2pllToGGkYlWrZc8f5fWbU22KE6nNzNGGaffCTUU/NzY7AJ0YhrDzuq/MYZf3Y7eY4G11qk9oHD6dG729q/rl6pRzDui02qvZDybnBG2T2SsM4r6i7XAo4uzr488+N1+dRCNGTeDawm5/Bx3J3mshaNxJ6GdWuQq6QujIf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XL+w0aXz; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b72bf7e703fso184785866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1763057108; x=1763661908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6uac0xj8a+6k+KJ/TLozw+bMuDmR0K+Bzcv/b4RoLw=;
+        b=XL+w0aXz3M3Nw6LB56xNxpe42rJZBinLtofeGpZnV6hhQjSkXm3LbxeSk3evulJtKh
+         q+0UhlaJb3ZPiluRBDBqX9ryC8LM6n6KDXdd+uuX0jN/4UHJlkYKNwIjiuFDmu8p0ZEv
+         NybDGRPmUUsbsaYVJMGwLxZHrKhn4SKBbYMhY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763057108; x=1763661908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=X6uac0xj8a+6k+KJ/TLozw+bMuDmR0K+Bzcv/b4RoLw=;
+        b=KCwWG5H7HSzsZLul/FAQ/MzErY7+oAoN7N1lit1U8xFO6Q706HPbWYXtDgx3YlR1jx
+         04h7BDPi7b+kB0mlFiMVDTHV1MXfbRxPR6FPCAzQJd00WbvpPt2yUx5vpYOyWlakjFTo
+         9UOZfjxX8Ctf1nAFntxwkAD1x51ccosXHMePVFf7QHWGlKQbiZhOKQNIwb5QUGX/V0lF
+         oarKhG8hkT0U+CnbQ2FV/i4VeZ/NZ+4V1onhVgyU183HmQXZE0Ly9VpOR8+/mlJ2Ygle
+         EGzg2IQspgCKrMugyLkxqwra3vr2m3lzL5bEZ9p8ottdU90ny2fsywH5Ar7YrQeKXKNq
+         rFFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVgTmFPNrbTsaBLu84K9+vN2DodwXHOycSXLiefZDbkaeWAeHVyQSDJSp3ZrkU+YMdz5qpX4rmbBlgntQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIPPIvrnjyJuhDJlDt8gcrN07fdIV3kBomKm8fj93Z5HSECvsZ
+	n9QaBDE0i5/WSCjZu35kOXaO1gVXCU0fiqfPMZ0Nd7cqhNsjGPX92f1ba6x/PGq2dT+culYienv
+	G3VsQTNf8
+X-Gm-Gg: ASbGnctuBAFuZf0n9Ps5dd8CQzgSvba85ABgC7wstmhKoCCaa0K7gftSGXRpALOO12k
+	q+m3oa0yxvNDQoBGvttYEd1q+6fRHJJjLXLp7ZckAVkxVPdTwauZvYQw3GKt1rBwm+vsfcvIRO/
+	3ZilOR44XvrTe/qWRtWw0BMcCCe7sllfgG9te0NqWGQ0dZ91aDrK4tCc6xF/giSKjg2lFWckSBX
+	OVra6XtZZ+JKhfAlLreqcAoolDFwIKL292jd2arCn0TyBQELMD0JSOA3Y3lx24FRle1k+8TN5pU
+	TPXYBQSy4dceTrj9pwVMxvLeZy7IHDiIO1t6SjUUeL2HTykda4CNRGdEXjyWJPPYvV0+MP9DsLJ
+	RHibaO3O1QDsnUoJ9ziveSbJ/wYVE9ChkDQlXqNF8AN8pf6hTjdZVCPCrhxfaSOhqCNMK2B59HH
+	eWrWVaFV5MwZDlUHS5pQoeKAJsGSFL3hjTMDr+ZbzCYTbhc8PaUA==
+X-Google-Smtp-Source: AGHT+IEGicKtA/pzADJ4hF1TJB4nCI35V1np0b4ATY4PyZNx8ZwFO4FoUeX2xz5ZynNICEb5xFHE0w==
+X-Received: by 2002:a17:907:3e8c:b0:b73:22fe:3abc with SMTP id a640c23a62f3a-b73678cba23mr17694066b.28.1763057107622;
+        Thu, 13 Nov 2025 10:05:07 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fed80f0sm205667566b.66.2025.11.13.10.05.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 10:05:07 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b3377aaf2so724060f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:05:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV85hDnDrGLuxLbCCksPt1LHY3/EquAXig4PSXmtJPNcoi6+lHDUPrNONsrGASsr4wAETE8NZy94+aVpgk=@vger.kernel.org
+X-Received: by 2002:a05:6000:1863:b0:42b:3023:66a9 with SMTP id
+ ffacd0b85a97d-42b59367802mr289626f8f.22.1763057105007; Thu, 13 Nov 2025
+ 10:05:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+ <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org> <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
+ <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org> <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+ <6490f20a-2492-4ee0-8f34-d529e0df0bad@kernel.org> <CAD=FV=Us7SU_OifVkS4mdfVhc=xGYSBiBpBk9aA1Ki0y+iYBpQ@mail.gmail.com>
+ <abb77afe-c285-46ba-88ac-08574bd67712@kernel.org>
+In-Reply-To: <abb77afe-c285-46ba-88ac-08574bd67712@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 13 Nov 2025 10:04:53 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
+X-Gm-Features: AWmQ_bm88XdKzAi5IStwbrVdXDDrbTXMC9ViB_9-mq5L9vr4mmyrArKaiYvTgn4
+Message-ID: <CAD=FV=VcAbgv41tjgWQN4i8Wqk6T6uvdpQ261Q_hcKM4AMpGEw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for frankel/blazer/mustang
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, 
+	Julius Werner <jwerner@chromium.org>, William McVicker <willmcvicker@google.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 06:03:33PM +0800, Aiqun(Maria) Yu wrote:
-> On 11/12/2025 12:05 AM, Bjorn Andersson wrote:
-> > On Tue, Nov 11, 2025 at 08:27:17PM +0800, Aiqun(Maria) Yu wrote:
-> >> On 11/7/2025 12:24 AM, Konrad Dybcio wrote:
-> >>> On 11/6/25 11:16 AM, Aiqun(Maria) Yu wrote:
-> >>>> On 11/6/2025 5:06 AM, Bjorn Andersson wrote:
-> >>>>> On Tue, Nov 04, 2025 at 01:35:01PM +0800, Jingyi Wang wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 11/4/2025 12:02 PM, Bjorn Andersson wrote:
-> >>>>>>> On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
-> >>>>>>>> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
-> >>>>>>>>> Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
-> >>>>>>>>> control and status functions for their peripherals.
-> >>>>>>>>>
-> >>>>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >>>>>>>>> ---
-> >>>>>>>>>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
-> >>>>>>>>>  1 file changed, 1 insertion(+)
-> >>>>>>>>>
-> >>>>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> >>>>>>>>> index 14ae3f00ef7e..ae55b0a70766 100644
-> >>>>>>>>> --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> >>>>>>>>> +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
-> >>>>>>>>> @@ -48,6 +48,7 @@ properties:
-> >>>>>>>>>            - qcom,tcsr-ipq8064
-> >>>>>>>>>            - qcom,tcsr-ipq8074
-> >>>>>>>>>            - qcom,tcsr-ipq9574
-> >>>>>>>>> +          - qcom,tcsr-kaanapali
-> >>>>>>>>
-> >>>>>>>> It looks good to me. Glymur didn't have this functionality verified yet.
-> >>>>>>>
-> >>>>>>> You spelled Reviewed-by: Aiqun Yu <..> wrong.
-> >>>>>>>
-> >>>>>>>> Remind for review.
-> >>>>>>>
-> >>>>>>> No need for that, reviewers will review when they have time.
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>
-> >>>>>> Hi Bjorn,
-> >>>>>>
-> >>>>>>>
-> >>>>>>> But that said, most modern additions to this binding follow the common
-> >>>>>>> format of qcom,<soc>-<block>.
-> >>>>>>>
-> >>>>>>> So I would prefer this to be qcom,kaanapali-tcsr.
-> >>>>>>>
-> >>>>>>> Regards,
-> >>>>>>> Bjorn
-> >>>>>>>
-> >>>>>>
-> >>>>>> qcom,tcsr-kaanapali is used to distinguish with binding for GCC:
-> >>>>>> https://lore.kernel.org/all/20251030-gcc_kaanapali-v2-v2-2-a774a587af6f@oss.qualcomm.com/
-> >>>>>>
-> >>>>>
-> >>>>> So, qcom,kaanapali-tcsr is the clock controller region of TCSR and
-> >>>>> qcom,tcsr-kaanapali is the non-clock controller region of TCSR?
-> >>>>>
-> >>>>> Sorry for not understanding that earlier, but this doesn't work for me.
-> >>>>>
-> >>>>> It's a bit of a lie that TCSR_MUTEX is a separate node in devicetree,
-> >>>>> but it's always an nice chunk of 256K in the beginning (or end in some
-> >>>>> cases?) of TCSR. But for the rest, there should be a single tcsr node in
-> >>>>> DeviceTree and that one node should be a syscon and a clock controller.
-> >>>>
-> >>>> I've been dive deeply on this tcsr block. And actually the tcsr clock
-> >>>> controller part is a very small trunk size(0x1c) of the tcsr block. And
-> >>>> this block have contain other multiple purposed sys registers. So maybe
-> >>>> we can have a more discussion on how to have device tree node describe
-> >>>> this situation? It is not straight forward that to have a non-tcsrcc
-> >>>> related area being described in tcsrcc.
-> >>>>
-> >>>> What about option 1 (tcsr_mutex + tcsr_dload_syscon + tcsrcc):>> tcsr_mutex: hwlock@1f40000 {
-> >>>> 	compatible = "qcom,tcsr-mutex";
-> >>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
-> >>>> 	#hwlock-cells = <1>;
-> >>>> };
-> >>>>
-> >>>> tcsr_dload: syscon@1fc0000 {
-> >>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
-> >>>> 	reg = <0x0 0x1fc0000 0x0 0x30000>;
-> >>>> };
-> >>>>
-> >>>> tcsrcc: clock-controller@1fd5044 {
-> >>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
-> >>
-> >> Remove "syscon" here. Not need for tcsrcc fallback to "syscon".
-> >>
-> >>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
-> >>>> ...
-> >>>> };
-> >>>>
-> >>>> What about option 2 (tcsr whole block + tcsr_mutex  + tcsrcc):
-> >>>>
-> >>>> tcsr: syscon@1f40000 {
-> >>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
-> >>>> 	reg = <0x0 0x1f40000 0x0 0xC0000>; //align with the whole hardware
-> >>>> block design.
-> >>>> };
-> >>>>
-> >>>> tcsr_mutex: hwlock@1f40000 {
-> >>>> 	compatible = "qcom,tcsr-mutex";
-> >>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
-> >>>> 	#hwlock-cells = <1>;
-> >>>> };
-> >>>>
-> >>>> tcsrcc: clock-controller@1fd5044 {
-> >>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
-> >>
-> >> Same here, don't need to have "syscon" here.
-> >>
-> >>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
-> >>>> ...
-> >>>> };
-> >>>
-> >>> Is there anything wrong with what we have done for x1e80100?
-> >>> ______________________
-> >>> |             |       |
-> >>> | TCSR_MUTEX  | mutex |
-> >>> |_____________|_______|
-> >>> |	      |       |
-> >>> | RANDOM_REGS |       |
-> >>> |_____________|       |
-> >>> |	      |       |
-> >>> | TCSR_CLKS   | tcsr  |
-> >>> |_____________|       |
-> >>> |	      |       |
-> >>> | RANDOM_REGS |       |
-> >>> |_____________|_______|
-> >>>
-> >>
-> >> Second you! We can firstly have a option selected for kaanapali, and
-> >> then other platform can be followed or fixed afterwards.
-> >>
-> >> Here suggest to have option 2 which is remove "syscon" from tcsr clocks,
-> >> and only add the whole "syscon" to "tcsr" whole block.
-> >>
-> > 
-> > I think you misunderstood Konrad, or perhaps I misunderstand you.
-> 
-> Maybe let Konrad help to explain more here. I thought the chart below is
-> very clearly indicate the tcsr_clks is only part of the tcsr block.
-> 
+Hi,
 
-Yes, the TCSR clocks are controlled in the TCSR block, but there's no
-"TCSR clocks"-IP-block in the memory map, it's just some registers in
-the TCSR block.
 
-And technically TCSR_MUTEX isn't a block of its own either, but so far
-it's always been a clearly defined region of TCSR, either in the
-beginning or end. (Might even be a separate block in the register map on
-some older target, iirc)
+On Thu, Nov 13, 2025 at 9:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> >>> Yes, the complexity of just "hooking up" the components on an SoC is
+> >>> an order of magnitude harder than a Raspberry Pi, but it's still just
+> >>> hooking it up to external components. In both cases, we are modeling
+> >>> the core "brains" (the part that contains the processor) as the DTB
+> >>> and everything else just "hooks up" to interfaces.
+> >>
+> >> You mix the topics, so I don't follow. I speak here about bindings - y=
+ou
+> >> cannot have the that compatible alone, because it is incomplete, just
+> >> like compatible for "transistor" is not correct in that context. You
+> >> speak what could or could be DTB, different topic.
+> >
+> > A "SoC" is "complete". It has a processor that can run instructions.
+>
+> Then show me executing any piece of software, which is the consumer of
+> the bindings, and runs on the SoC without the rest of the hardware system=
+.
 
-> > 
-> > This is what we have for Hamoa:
-> > 
-> > tcsr_mutex: hwlock@1f40000 {
-> >         compatible = "qcom,tcsr-mutex";
-> >         reg = <0 0x01f40000 0 0x20000>;
-> >         #hwlock-cells = <1>;
+Show me something that runs on a Raspberry Pi (the models that don't
+have eMMC) that runs without hooking up power and plugging in an SD
+card. :-P
+
+
+> > In any case, maybe we can approach this a different way that I alluded
+> > to in one of my other posts. Can we just call the SoC thing something
+> > different and make everyone happy?
+> >
+> > 1. Rename the SoC file to lga-b0.dtf (device tree fragment) and
+> > _REMOVE_ the top-level compatible. Problem solved--we're not adding a
+> > top-level compatible.
+> >
+> > 2. Add a special node at the top level of the "dtf" file describing it
+> > (so someone could figure it's useful for). Like:
+> >
+> > fragment-info {
+> >   compatible =3D "google,soc-id";
+> >   google,product-id =3D <0x5>;
+> >   google,major-rev =3D <0x1>;
+> >   google,minor-rev =3D <0x0>;
+> >   google,package-mode =3D <0x0>;
 > > };
-> > 
-> > tcsr: clock-controller@1fc0000 {
-> 
-> 
-> It is not a clock-controller start from 0x1fc0000.
-> 
+> >
+> > 3. We can compile the "dtf" file using existing tools into a "dtfb".
+> > This looks just like a "dtb" but has no top-level compatible but
+> > instead has "fragment-info".
+> >
+> > Now we're not violating any spec because we're not adding any
+> > top-level compatible.
+>
+> Didn't you just describe an overlay or DTSI file?
 
-Compare with GCC, the DeviceTree isn't saying "address X is a clock,
-address Y is a reset, address Z is a GDSC...".
+Sure, you can look at it that way. ...and since you're happy with
+"dtsi" files I assume you're happy with my "device tree fragment"
+files, right?
 
-The DeviceTree says "at address A we have the Kaanapali GCC IP block",
-and we can refer to it from other nodes as a clock controller, a
-reset-controller, and a power-domain provider.
+The difference here is:
+
+* A "dtf" file must be able to compile (with dtc) on its own. Contrast
+with a "dtsi" file could rely on labels that are provided by the file
+including it.
+
+* A "dtf" file needs to have "/dts-v1/;" at the top, unlike a "dtsi" file.
+
+* Kernel (or other OS) build rules will be happy compiling a "dtf"
+file. This is in contrast with a "dtsi" file.
+
+* A "dtf" file is _intended_ to be compiled and hooked up to an
+overlay. This means it will always be compiled with "-@".
+
+* We can document the requirement that a "dtf" file needs to live
+together with the overlays that it will be combined with to make
+complete device trees. This means that there is no need to set a new
+ABI boundary here and we can be flexible with what labels are exported
+by the "dtf" file.
 
 
-Same here, the DeviceTree should say that at 0x01fc0000 there is a
-Kaanapali TCSR block, which is a "syscon", a clock controller and a
-reset controller.
+If that all sounds reasonable, I'll get working on it right away.
 
-We don't know which operating system (or other implementation - e.g.
-U-boot) will consume this information, and we don't know what frameworks
-or driver model is implemented, so we need to describe things without
-thinking of a particular driver model.
-
-Regards,
-Bjorn
+-Doug
 
