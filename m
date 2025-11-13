@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-899776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4DF4C58CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:44:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3329EC58F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9D2A7365EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:24:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C3DC4FBDFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABCB35C1B0;
-	Thu, 13 Nov 2025 16:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238FA35CB68;
+	Thu, 13 Nov 2025 16:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VL22SRc3"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fofcCtYu"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7AF35C187
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CFC35C192
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050380; cv=none; b=Zy7hXhBt5/hirME0P8qbwqSjmEbLr67ul2XDRkYo07N8AJ1BxAYz7hlNRAIn2fVaZGYsiknCrw7RksxTITVMPdAxcGf4mrZ2hr+L5WHK66oSnoVRI9ln4ofubwap4f6WrGaIr+e/Bp1rz+PVhZE1us/BVCMVJ9B/On9GHMX+Dmw=
+	t=1763050381; cv=none; b=Sp2a1w9h3pn7Gy0ka66QEu9F0UlI2o0mo+gKi5wdJopKQFrR8Ad0g3N7DQ4/vNrlJNFn/c6A4+9YEunOgFAmpdKPmm21C3ey3VFO3cnzZn4JWX3peMkkE67K+HPP8PJQt7M28ahVs5ut2DCkPa1fDDABoiGIJWA/7yYDIzcIdO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050380; c=relaxed/simple;
-	bh=5Q6+jx694R5FD9t9uLYyFN92bEi8X+fGwEsS2Iy+wf8=;
+	s=arc-20240116; t=1763050381; c=relaxed/simple;
+	bh=i6/Tdijqg6TUvObXhkp4KVAh++KkLe0kXSMy/xdGERI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B4HfaDnOrJhXlNjU2N3yecMIxzlzGt5Yje3c7sSWGu9NR3lC/W7tLW1j4p9/OF1aOV50yScilF4E+YNdAB122Dj6MWIy0lUhhCDHcpGBr4ezodDtqBRXwN0AgwdGWRAT7LF6QLK20fL/66mDAdx+SNh4gf0kbGURIcrhwtblA/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VL22SRc3; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version:Content-Type; b=lWrceyePHcE+XMlWX7uTwAXstXef2sGLMFD4qM3QSlIYCi0Dm9c6IPKzzy7jILl1PJh0z0rj+FzC5BlIr/xVa3oI1ivWubirtBVlDxefo5M5jWi33xiNwVA/rR7EWAGMaxs3bi/p66pRdIvDKu1JzmQbghADs5pnWl0B/svMh6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fofcCtYu; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477775d3728so10354175e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:12:58 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4777707a7c2so16610965e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=suse.com; s=google; t=1763050377; x=1763655177; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UILebnM/hGlC/4mGqUQsEbI9oK9lCHY4NHYgMXAAz80=;
-        b=VL22SRc3bveXeWQP8al03YhU9Lk5cJmBFXv5JHgl1IMEvScRw5aRBCVTauEDu86uuo
-         7R817BC3ym5O2md8nFsaoMjN0cUwMMxHPL/JM4b4fx0J2QsQqwhRWWx7rvAkcEI3HCHt
-         6KHdaTBL4msEbYKem0vtQe9sGEXCai8Ahmf11qH4cF+oMYucntKtDAmgPSyP/i9HvJ6I
-         DVl794A6S0HJA+QaUaDDK2Jmib5Gou5INKy4jwnl2UyS4HMvwaDcv+j2Y2a6Eq6xd1BI
-         I5a+6wiYXaTOAxlAXGgVfdkhoHm6ITmVU5JoQvhpD+7cRk9xfDnPeF6Fw2dzPj/IA+TS
-         U1Yw==
+        bh=m3hl8tY1RLv+K2+Ox9WrDl4hIf6rzuWKqmNX1UuS7YY=;
+        b=fofcCtYu+DIHPIz/4L9a4+0o6Be0uh3jygGeeBaTZhohoJYHvMdCUA752g7JlCBM+m
+         +8OIePTusMBvY+kw3n6RdpXFyEyWgatB9lPs2X4ezutCnBvlpUzJwbcyoC6+872jwb4W
+         cGCpKAk/HSFakqjt2tKBaccU1Tj6VDVwooXJwPX8+r9Ya9weGpi8rTgB8txiVrTFDQCG
+         RRkIs4HZS5ihcRvZDm5DIsS2Foh7cwYhUNgmzc2YeRqEKRun91OHXiXpri5qZI6PhRF/
+         rWC336cxHewKJ9MNzLR8aHtX89Vyb9MSUdkQ9binBDaabBAugu39qofr+CHhAKL6w7ai
+         am2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1763050377; x=1763655177;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=UILebnM/hGlC/4mGqUQsEbI9oK9lCHY4NHYgMXAAz80=;
-        b=tpBVbhm33bdJAEXV0EVyRy+euHX/hQ1mXWVhZnSEvL2xYQaL032uQk4Av354O+WSmB
-         DLieGfLPFiZdIBRTY4a7WhhQAq7KNimp2MWg6n/39pyv9rT2Mb10JyY1majHNNhVkOCv
-         t2LIh3b04dNzM4NBc9xt+lf1tVnLIyih8kbPwLJVlpG+21urH+DRMgCc8RrtHQJEUoHV
-         NiVvEQXKRlQ1HIOM3DI5TuFQ9afCXArPzAUTvsUm/WIdZ6QYc1lYvXCSshhD9S4/cyLY
-         E8LoWusm4/J1y8lUGnl2RzoSCIiYDG0ksLkTmbE/4S2bp45t29ceED34JRwlHmNYBMjA
-         Nwgw==
-X-Gm-Message-State: AOJu0YzvkKllxwW4YxIGEvbngj1NlAwjGmTvnxyz1AGsX6ifQad6YI30
-	oEkQOyJ1HIzkvW0L5If3RzkAxu5L0IAiL029cybYgugrMmLeXcekeZoORK7xkjtXS/RtPMglWy7
-	TSvXY
-X-Gm-Gg: ASbGncu2vJpUrO8Vu+NDN6yqjvjcSc9pY1Z0SDenHfKwcCMFOdhtFcmL+4MNSmcCNNs
-	RDHGZqH57gxzRKOqPOJH/Oira2AMVp/nJV60+H/DkZOaRuJlD+ndn1RuZabrUxx9cXpPEWKAHXz
-	PTlOqHTWoLWEAq40qglJyqIqkwhBhf1+nNoUYD+A1DuhPJmR+xSoFFeRbBvv5GWQs/Ym4m5Mnu7
-	D2Zmkrz0ZJaTV/NZVEzlDCcShO6uClxn/wqVb4beIouslC1YscHN+/OlUAURprCoFHtpymMRI1y
-	9WJpghbFcK60DsB9PNT9zFN0WWeXDvoVTJxpPARNTwQ/ZPpIK2auTQpNmmZUnj5lxzQrAkQIFC4
-	YgZ14rulkCuabGTzTcr+9o9lMJwbgYBc5z+ozZ1X6UKjQy8MHbGjjzEZcK+Ja41LOacB00yt5I5
-	gOai7FrDDQvNxC2Vapz2YYIRQZ
-X-Google-Smtp-Source: AGHT+IGZG84e2i3kH3kF6zGBbD+XTMkE/ONZxFyoZMwtpC/IQYVjSU8HZIKPCelinSkbwEjNjAMHSg==
-X-Received: by 2002:a05:600c:c4a2:b0:471:21:554a with SMTP id 5b1f17b1804b1-4778fe5ee18mr462395e9.13.1763050376577;
-        Thu, 13 Nov 2025 08:12:56 -0800 (PST)
+        bh=m3hl8tY1RLv+K2+Ox9WrDl4hIf6rzuWKqmNX1UuS7YY=;
+        b=ediXWOp4LNyCV3UwQsxZzMr5L07AmsyiuH+3N+y8YaLd7UA/muOzQ3F5WJNhihLSVA
+         ikYTxB7wgj62VFkQ0MC61GfHrW1PB56ingfxqo3jPnGxMTFzh4FfTGRnHPzJIDixVgXJ
+         PYZCHHalCb3P1b/sz7g+d5QLG10Gn0wvvVtSu7CfZ3jlJ3Q2VbmTS9lim7jti+O6smRE
+         rHMC3fHDLTF01t+p5pkx0lbPxCNCoslvGDIPpipOFa+kL9jXFPvAsC4iSfqhBcnFyVd5
+         lKr+He+EmcxopXNsbS+SNm54Ot1O2O5HnXCBkiYvRwrPOsAnmHBhbsE/5lM7VNSf0b/d
+         Bj/A==
+X-Gm-Message-State: AOJu0Yxwm2HPt9tcJGtbVeEsgtPKfN2MdLOhO3FGeO6F8Nz8aREVSaKB
+	Tf/0Z9ZLxadWXYRlON2cZceW7ttthNEEHwsSTgl9a+/rz2jeZExa+liSV214MzPvPvG7iQ0EXQA
+	UJUmy
+X-Gm-Gg: ASbGnctDrZ6COoqX5WcaRhJv3H5fZKuq9d+OVxwqISqrmL0CY7gQuEzBclMXG8yHwV2
+	VeGkUkuYKToxBXxb7q3N/FAqh03tKKujE+kN02uINC/k7NKTN38GWgWUafnAIJZ+4jgavUkkRpb
+	a58gPqnynCdahbXuqar2TbFEfKk0eUlUbYIL+A2fv5Rw77wulrSzjv4dSpIqZ2l9ZzgQl4A3jHA
+	fGE9HOAS7v6edsgK4Mj1lAuCsd/rsssRuDaMpbCse3W3QWxMsFYGysft+9Z/CWouLDW75p+crvO
+	Cfv5kDLnX9Tk2DTWMunPc+TfSkuxoZo2h5ISZWknFRm5vu+CPpUXxQs+sdBCFLy/WDB+Q7MsE4L
+	kmd5vbmHbMGsGyKSCXL+Wu4eBqbCTkddNNKqHFpEGRvJZH9vel3XSLT5Utxe3ycjoXaaR5usDRW
+	2Noz65ubvrbUh0eyphvLRvD16l
+X-Google-Smtp-Source: AGHT+IENmaUAtcIakh8Mn4zUT3IzBfIjhSaHtJtleCx6qYleuptiYERekZkAHB4z2rUrdoiGfSHzcg==
+X-Received: by 2002:a05:600c:2e0c:b0:46f:b42e:e363 with SMTP id 5b1f17b1804b1-4778bd3c9d3mr22882215e9.20.1763050377491;
+        Thu, 13 Nov 2025 08:12:57 -0800 (PST)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c850000sm41700085e9.4.2025.11.13.08.12.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c850000sm41700085e9.4.2025.11.13.08.12.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:12:56 -0800 (PST)
+        Thu, 13 Nov 2025 08:12:57 -0800 (PST)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-wireless@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
 	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 1/2] ath6kl: add WQ_PERCPU to alloc_workqueue users
-Date: Thu, 13 Nov 2025 17:12:47 +0100
-Message-ID: <20251113161248.387964-2-marco.crivellari@suse.com>
+Subject: [PATCH 2/2] cw1200: add WQ_PERCPU to alloc_workqueue users
+Date: Thu, 13 Nov 2025 17:12:48 +0100
+Message-ID: <20251113161248.387964-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251113161248.387964-1-marco.crivellari@suse.com>
 References: <20251113161248.387964-1-marco.crivellari@suse.com>
@@ -103,7 +103,6 @@ used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
 WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
 schedule_work() that is using system_wq and queue_work(), that makes use
 again of WORK_CPU_UNBOUND.
-
 This lack of consistency cannot be addressed without refactoring the API.
 For more details see the Link tag below.
 
@@ -134,22 +133,25 @@ Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 ---
- drivers/net/wireless/ath/ath6kl/usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/st/cw1200/bh.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 38bb501fc553..bfb21725d779 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -637,7 +637,7 @@ static struct ath6kl_usb *ath6kl_usb_create(struct usb_interface *interface)
- 	ar_usb = kzalloc(sizeof(struct ath6kl_usb), GFP_KERNEL);
- 	if (ar_usb == NULL)
- 		return NULL;
--	ar_usb->wq = alloc_workqueue("ath6kl_wq", 0, 0);
-+	ar_usb->wq = alloc_workqueue("ath6kl_wq", WQ_PERCPU, 0);
- 	if (!ar_usb->wq) {
- 		kfree(ar_usb);
- 		return NULL;
+diff --git a/drivers/net/wireless/st/cw1200/bh.c b/drivers/net/wireless/st/cw1200/bh.c
+index 3b4ded2ac801..bdf7132c5849 100644
+--- a/drivers/net/wireless/st/cw1200/bh.c
++++ b/drivers/net/wireless/st/cw1200/bh.c
+@@ -54,8 +54,9 @@ int cw1200_register_bh(struct cw1200_common *priv)
+ 	int err = 0;
+ 	/* Realtime workqueue */
+ 	priv->bh_workqueue = alloc_workqueue("cw1200_bh",
+-				WQ_MEM_RECLAIM | WQ_HIGHPRI
+-				| WQ_CPU_INTENSIVE, 1);
++				WQ_MEM_RECLAIM | WQ_HIGHPRI |
++				WQ_CPU_INTENSIVE | WQ_PERCPU,
++				1);
+ 
+ 	if (!priv->bh_workqueue)
+ 		return -ENOMEM;
 -- 
 2.51.1
 
