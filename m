@@ -1,213 +1,375 @@
-Return-Path: <linux-kernel+bounces-899232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3056C57263
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:22:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450E0C5723F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C123A80E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:18:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 45FA534A1FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A4B33ADB3;
-	Thu, 13 Nov 2025 11:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5864A33B97B;
+	Thu, 13 Nov 2025 11:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="RJ40f5UZ"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tEx0PXpS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOUAPU0D";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TPAANJvU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IMDALd4J"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57C6207A20
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237CF3328F5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032725; cv=none; b=YzZVRZSoX56AjC/MitC51nAY3kjkc7a487u9d8ZNYyXwbFqoYokcDXb9dhdrGaMWYWhKaDXJAKB4jHw8A1H4pwsg1tQgn6qd0pp1fgWpDFq2O1MpDBWD7Un0/eFFzSsyH+gaNK8iTFAjOh9uh7i+sewZkiKGc3UCr8xSMAPrcAg=
+	t=1763032787; cv=none; b=OUdNaxoYuJ96GL5Gg1B9sU3mRNU12et1RCq/QrwnD7lBk+LUkl5Kmbu4AApkofqb6rXGVmaWCACvi3NRmcuKLOZS/A8BhGlwpK3NW2yzWmS3GzqsKkvhfbqk1+J5Bs2w8e2I78ffvX1vCcmBC/W6C44hl8CqGAbSEuuEDr07C4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032725; c=relaxed/simple;
-	bh=S7Z42UDhkX6H6wBxTL0kXRuApqtExgHZUfSFFjrYN+E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=EkDOou27qRHKvopWUy1eKoLyAHuV2Tp8HAUM0TTvI2tdIYYUJ1VF7Ke0RTq/cDDtDSSwFIMR0ZmLUoz8dKcB8Zb99PnVu5a78QoCDYDn3uZTVC3WCI6MrLl01ny2JgpdOwxR7PU7RPxfqTtyIhwVBjtjhVA5hPt5BW5vqmZK8xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=RJ40f5UZ; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1763032787; c=relaxed/simple;
+	bh=3rFO83tVJVFEQkZ468DFpQrekAqbDzV1/0JoUWHKE0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aq9pRCQeI0RYA3avYvqrt/j91OLZfL8Pn5D5f+WBg6C5sRfvraqd8SNUsWPWK1vjNC2vSTlcyJCDPerH3gbzbDvQJPv1O7vlKwwgViLScZh/7t6q3USfMYHpwCEthWFU2WWoc2zSatBOr9Lq/G++w+ThZGBi0TpGW8JYy+WsTlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tEx0PXpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOUAPU0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TPAANJvU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IMDALd4J; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B45DC21281;
+	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763032782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=tEx0PXpSR9fC2UvG0u7MJFp2BSlhdeqm6tfjJPlZS4pzGQmOwabgT+ii7BsgRYsefYOMF3
+	VvsJYx6JmgiNnIkc2NCbUzK9WMs4Iesgm99E+qFwo8H8q29+lEmIo9rS5V2MjR+2UAS7Qp
+	XFnzrWjacC8RlMPSp7qTqHvuw+qVCws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763032782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=LOUAPU0DI5ldL7amV9RP5y5ZRcrOsqlJWe+yGqm+w1F5fGBdUOw3+MjMsiQwLq6RLZlsah
+	z1b+3BWuTShjlLBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TPAANJvU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IMDALd4J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763032780; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=TPAANJvULtvZbKY9kTlFDj3fHaqwcTQ7QSHepORPj1SmGNXAVQl+h4cThVAzOE6Yl7BCLK
+	P+mNsKLJnjLZvTwsl3qRAtpBElJ625a6hag5mPaMbQZLS4fmnximef6W0ci53Jrf6gupH/
+	2n45l6UZt9TFhva3h8X/wtCXAWukFSU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763032780;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
+	b=IMDALd4JeMlPI9Mxv0/hWb4imPPdPuOJsIg/iIEqAN8lny7MqpgtZO9x5EjyCnO6vYkjJ5
+	0uFVDgatEsam+WBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65493EA61;
+	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2zOKKMy+FWnVYgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 11:19:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 63A30A0976; Thu, 13 Nov 2025 12:19:40 +0100 (CET)
+Date: Thu, 13 Nov 2025 12:19:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, 
+	dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
+	kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
+	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com, 
+	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Subject: Re: [PATCH] nsproxy: fix free_nsproxy() and simplify
+ create_new_namespaces()
+Message-ID: <3yjawi3c72ieiss7ivefckuua55e2yvo55z4m4ykp2pzw2snpa@ym34e3d7cnoi>
+References: <691360cc.a70a0220.22f260.013e.GAE@google.com>
+ <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1763032718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+r3eA7uqjYviG5Wbo7UxLrUTDN7ePU6jG8MMKZBMMA=;
-	b=RJ40f5UZpL+AYew0HKB3Ry38U/jj0BY+uYJilws9y2DZDU9YIyC5HmOU8C8hRQ4YjgUhvf
-	0wZ6+z/JUelK8f5JxA6G9Ed+Q+ptcnrvdz9NkqNzJEfDrFwKjsPHgF5ZuaByEYgqFyontT
-	SaKpUYpQ9wXtNskzxYj3/+Bjm97+7+RfuxuO5oMCGDI04ns5jPrD4OLUXvsme6H5w4UykS
-	1HL62VZP/mV0Ioyt1uDv/yVRsZ2u4i9Q2E4W1f9Wa6LcKf8A8dWf0PC8CxZ8bTqtX1nKco
-	kzqeEaRzmGZP/OrF7kvUaHs38mlDYj9OC8c6mhADKRu5h/k5SobOqRT47hBpGw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 13 Nov 2025 12:18:17 +0100
-Message-Id: <DE7IXK6SWV7J.3B9AOCCGWT4EH@cknow-tech.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Dang Huynh" <dang.huynh@mainlining.org>, "Andy Yan" <andyshrk@163.com>
-Cc: <heiko@sntech.de>, <hjc@rock-chips.com>, <diederik@cknow-tech.com>,
- <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-rockchip@lists.infradead.org>, "Andy
- Yan" <andy.yan@rock-chips.com>
-Subject: Re: [PATCH] drm/rockchip: vop2: Use OVL_LAYER_SEL configuration
- instead of use win_mask calculate used layers
-References: <20251112085024.2480111-1-andyshrk@163.com>
- <hrg6geclph37olvqr3o5v4d4mifvl25kaemh7f2z3hwega7h2b@muf2gkfqzvvz>
-In-Reply-To: <hrg6geclph37olvqr3o5v4d4mifvl25kaemh7f2z3hwega7h2b@muf2gkfqzvvz>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+X-Rspamd-Queue-Id: B45DC21281
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[35];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim,appspotmail.com:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,linux-foundation.org,vger.kernel.org,google.com,redhat.com,arm.com,suse.cz,gmail.com,kernel.org,oracle.com,kvack.org,suse.de,suse.com,paul-moore.com,infradead.org,goodmis.org,googlegroups.com,linaro.org,zeniv.linux.org.uk];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_RCPT(0.00)[0a8655a80e189278487e,0b2e79f91ff6579bfa5b];
+	R_RATELIMIT(0.00)[to_ip_from(RLuhuubkxd663ptcywq6p8zkwd)];
+	MISSING_XM_UA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
 
-On Thu Nov 13, 2025 at 9:11 AM CET, Dang Huynh wrote:
-> Hi Andy,
->
-> This fix works on my device. No more black box around the cursor.
->
-> Tested-by: Dang Huynh <dang.huynh@mainlining.org>
+On Tue 11-11-25 22:29:44, Christian Brauner wrote:
+> Make it possible to handle NULL being passed to the reference count
+> helpers instead of forcing the caller to handle this. Afterwards we can
+> nicely allow a cleanup guard to handle nsproxy freeing.
+> 
+> Active reference count handling is not done in nsproxy_free() but rather
+> in free_nsproxy() as nsproxy_free() is also called from setns() failure
+> paths where a new nsproxy has been prepared but has not been marked as
+> active via switch_task_namespaces().
+> 
+> Fixes: 3c9820d5c64a ("ns: add active reference count")
+> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+> Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Thanks for testing and your Tested-by tag :-D
+I believe having free_nsproxy() and nsproxy_free() functions with
+the same signature and slightly different semantics is making things too
+easy to get wrong. Maybe call free_nsproxy() say deactivate_nsproxy()?
 
-FYI: Apparently something went wrong with delivery it as it only arrived
-at LKML, but not dri-devel, linux-arm-kernel or linux-rockchip MLs.
-No idea if that's problematic (for b4 f.e.) though.
+Otherwise the patch looks correct to me. Feel free to add:
 
-'lore' has it here:
-https://lore.kernel.org/all/hrg6geclph37olvqr3o5v4d4mifvl25kaemh7f2z3hwega7=
-h2b@muf2gkfqzvvz/
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Cheers,
- Diederik
+								Honza
 
-> On Wed, Nov 12, 2025 at 04:50:23PM +0800, Andy Yan wrote:
->> From: Andy Yan <andy.yan@rock-chips.com>
->>=20
->> When there are multiple Video Ports, and only one of them is working
->> (for example, VP1 is working while VP0 is not), in this case, the
->> win_mask of VP0 is 0. However, we have already set the port mux for VP0
->> according to vp0->nlayers, and at the same time, in the OVL_LAYER_SEL
->> register, there are windows will also be assigned to layers which will
->> map to the inactive VPs. In this situation, vp0->win_mask is zero as it
->> now working, it is more reliable to calculate the used layers based on
->> the configuration of the OVL_LAYER_SEL register.
->>=20
->> Note: as the configuration of OVL_LAYER_SEL is take effect when the
->> vsync is come, so we use the value backup in vop2->old_layer_sel instead
->> of read OVL_LAYER_SEL directly.
->>=20
->> Fixes: 3e89a8c68354 ("drm/rockchip: vop2: Fix the update of LAYER/PORT s=
-elect registers when there are multi display output on rk3588/rk3568")
->> Reported-by: Diederik de Haas <diederik@cknow-tech.com>
->> Closes: https://bugs.kde.org/show_bug.cgi?id=3D511274
->> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->> ---
->>=20
->>  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 49 +++++++++++++++++---
->>  1 file changed, 42 insertions(+), 7 deletions(-)
->>=20
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/=
-drm/rockchip/rockchip_vop2_reg.c
->> index d22ce11a4235..f3950e8476a7 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
->> @@ -1369,6 +1369,25 @@ static const struct vop2_regs_dump rk3588_regs_du=
-mp[] =3D {
->>  	},
->>  };
->> =20
->> +/*
->> + * phys_id is used to identify a main window(Cluster Win/Smart Win, not
->> + * include the sub win of a cluster or the multi area) that can do over=
-lay
->> + * in main overlay stage.
->> + */
->> +static struct vop2_win *vop2_find_win_by_phys_id(struct vop2 *vop2, uin=
-t8_t phys_id)
->> +{
->> +	struct vop2_win *win;
->> +	int i;
->> +
->> +	for (i =3D 0; i < vop2->data->win_size; i++) {
->> +		win =3D &vop2->win[i];
->> +		if (win->data->phys_id =3D=3D phys_id)
->> +			return win;
->> +	}
->> +
->> +	return NULL;
->> +}
->> +
->>  static unsigned long rk3568_set_intf_mux(struct vop2_video_port *vp, in=
-t id, u32 polflags)
->>  {
->>  	struct vop2 *vop2 =3D vp->vop2;
->> @@ -1842,15 +1861,31 @@ static void vop2_parse_alpha(struct vop2_alpha_c=
-onfig *alpha_config,
->>  	alpha->dst_alpha_ctrl.bits.factor_mode =3D ALPHA_SRC_INVERSE;
->>  }
->> =20
->> -static int vop2_find_start_mixer_id_for_vp(struct vop2 *vop2, u8 port_i=
-d)
->> +static int vop2_find_start_mixer_id_for_vp(struct vop2_video_port *vp)
->>  {
->> -	struct vop2_video_port *vp;
->> -	int used_layer =3D 0;
->> +	struct vop2 *vop2 =3D vp->vop2;
->> +	struct vop2_win *win;
->> +	u32 layer_sel =3D vop2->old_layer_sel;
->> +	u32 used_layer =3D 0;
->> +	unsigned long win_mask =3D vp->win_mask;
->> +	unsigned long phys_id;
->> +	bool match;
->>  	int i;
->> =20
->> -	for (i =3D 0; i < port_id; i++) {
->> -		vp =3D &vop2->vps[i];
->> -		used_layer +=3D hweight32(vp->win_mask);
->> +	for (i =3D 0; i < 31; i +=3D 4) {
->> +		match =3D false;
->> +		for_each_set_bit(phys_id, &win_mask, ROCKCHIP_VOP2_ESMART3) {
->> +			win =3D vop2_find_win_by_phys_id(vop2, phys_id);
->> +			if (win->data->layer_sel_id[vp->id] =3D=3D ((layer_sel >> i) & 0xf))=
- {
->> +				match =3D true;
->> +				break;
->> +			}
->> +		}
->> +
->> +		if (!match)
->> +			used_layer +=3D 1;
->> +		else
->> +			break;
->>  	}
->> =20
->>  	return used_layer;
->> @@ -1935,7 +1970,7 @@ static void vop2_setup_alpha(struct vop2_video_por=
-t *vp)
->>  	u32 dst_global_alpha =3D DRM_BLEND_ALPHA_OPAQUE;
->> =20
->>  	if (vop2->version <=3D VOP_VERSION_RK3588)
->> -		mixer_id =3D vop2_find_start_mixer_id_for_vp(vop2, vp->id);
->> +		mixer_id =3D vop2_find_start_mixer_id_for_vp(vp);
->>  	else
->>  		mixer_id =3D 0;
->> =20
->> --=20
->> 2.43.0
->>=20
->> base-commit: ded94ec6167e84195507237100f6278941e36fdd
->> branch: drm-misc-next-2025-1016
->>=20
->>=20
->> _______________________________________________
->> Linux-rockchip mailing list
->> Linux-rockchip@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
+> ---
+>  include/linux/ns_common.h |  11 ++--
+>  kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
+>  2 files changed, 48 insertions(+), 70 deletions(-)
+> 
+> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+> index 136f6a322e53..825f5865bfc5 100644
+> --- a/include/linux/ns_common.h
+> +++ b/include/linux/ns_common.h
+> @@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
+>  }
+>  
+>  #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
+> -#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
+> -#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
+> -#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
+> +#define ns_ref_inc(__ns) \
+> +	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
+> +#define ns_ref_get(__ns) \
+> +	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
+> +#define ns_ref_put(__ns) \
+> +	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
+>  #define ns_ref_put_and_lock(__ns, __ns_lock) \
+> -	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
+> +	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
+>  
+>  #define ns_ref_active_read(__ns) \
+>  	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index 94c2cfe0afa1..2c94452dc793 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
+>  	return nsproxy;
+>  }
+>  
+> +static inline void nsproxy_free(struct nsproxy *ns)
+> +{
+> +	put_mnt_ns(ns->mnt_ns);
+> +	put_uts_ns(ns->uts_ns);
+> +	put_ipc_ns(ns->ipc_ns);
+> +	put_pid_ns(ns->pid_ns_for_children);
+> +	put_time_ns(ns->time_ns);
+> +	put_time_ns(ns->time_ns_for_children);
+> +	put_cgroup_ns(ns->cgroup_ns);
+> +	put_net(ns->net_ns);
+> +	kmem_cache_free(nsproxy_cachep, ns);
+> +}
+> +
+> +DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
+> +
+> +void free_nsproxy(struct nsproxy *ns)
+> +{
+> +	nsproxy_ns_active_put(ns);
+> +	nsproxy_free(ns);
+> +}
+> +
+>  /*
+>   * Create new nsproxy and all of its the associated namespaces.
+>   * Return the newly created nsproxy.  Do not attach this to the task,
+> @@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
+>  	struct task_struct *tsk, struct user_namespace *user_ns,
+>  	struct fs_struct *new_fs)
+>  {
+> -	struct nsproxy *new_nsp;
+> -	int err;
+> +	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
+>  
+>  	new_nsp = create_nsproxy();
+>  	if (!new_nsp)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
+> -	if (IS_ERR(new_nsp->mnt_ns)) {
+> -		err = PTR_ERR(new_nsp->mnt_ns);
+> -		goto out_ns;
+> -	}
+> +	if (IS_ERR(new_nsp->mnt_ns))
+> +		return ERR_CAST(new_nsp->mnt_ns);
+>  
+>  	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
+> -	if (IS_ERR(new_nsp->uts_ns)) {
+> -		err = PTR_ERR(new_nsp->uts_ns);
+> -		goto out_uts;
+> -	}
+> +	if (IS_ERR(new_nsp->uts_ns))
+> +		return ERR_CAST(new_nsp->uts_ns);
+>  
+>  	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
+> -	if (IS_ERR(new_nsp->ipc_ns)) {
+> -		err = PTR_ERR(new_nsp->ipc_ns);
+> -		goto out_ipc;
+> -	}
+> +	if (IS_ERR(new_nsp->ipc_ns))
+> +		return ERR_CAST(new_nsp->ipc_ns);
+>  
+> -	new_nsp->pid_ns_for_children =
+> -		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
+> -	if (IS_ERR(new_nsp->pid_ns_for_children)) {
+> -		err = PTR_ERR(new_nsp->pid_ns_for_children);
+> -		goto out_pid;
+> -	}
+> +	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
+> +						   tsk->nsproxy->pid_ns_for_children);
+> +	if (IS_ERR(new_nsp->pid_ns_for_children))
+> +		return ERR_CAST(new_nsp->pid_ns_for_children);
+>  
+>  	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
+>  					    tsk->nsproxy->cgroup_ns);
+> -	if (IS_ERR(new_nsp->cgroup_ns)) {
+> -		err = PTR_ERR(new_nsp->cgroup_ns);
+> -		goto out_cgroup;
+> -	}
+> +	if (IS_ERR(new_nsp->cgroup_ns))
+> +		return ERR_CAST(new_nsp->cgroup_ns);
+>  
+>  	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
+> -	if (IS_ERR(new_nsp->net_ns)) {
+> -		err = PTR_ERR(new_nsp->net_ns);
+> -		goto out_net;
+> -	}
+> +	if (IS_ERR(new_nsp->net_ns))
+> +		return ERR_CAST(new_nsp->net_ns);
+>  
+>  	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
+> -					tsk->nsproxy->time_ns_for_children);
+> -	if (IS_ERR(new_nsp->time_ns_for_children)) {
+> -		err = PTR_ERR(new_nsp->time_ns_for_children);
+> -		goto out_time;
+> -	}
+> +						     tsk->nsproxy->time_ns_for_children);
+> +	if (IS_ERR(new_nsp->time_ns_for_children))
+> +		return ERR_CAST(new_nsp->time_ns_for_children);
+>  	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
+>  
+> -	return new_nsp;
+> -
+> -out_time:
+> -	put_net(new_nsp->net_ns);
+> -out_net:
+> -	put_cgroup_ns(new_nsp->cgroup_ns);
+> -out_cgroup:
+> -	put_pid_ns(new_nsp->pid_ns_for_children);
+> -out_pid:
+> -	put_ipc_ns(new_nsp->ipc_ns);
+> -out_ipc:
+> -	put_uts_ns(new_nsp->uts_ns);
+> -out_uts:
+> -	put_mnt_ns(new_nsp->mnt_ns);
+> -out_ns:
+> -	kmem_cache_free(nsproxy_cachep, new_nsp);
+> -	return ERR_PTR(err);
+> +	return no_free_ptr(new_nsp);
+>  }
+>  
+>  /*
+> @@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
+>  	return 0;
+>  }
+>  
+> -void free_nsproxy(struct nsproxy *ns)
+> -{
+> -	nsproxy_ns_active_put(ns);
+> -
+> -	put_mnt_ns(ns->mnt_ns);
+> -	put_uts_ns(ns->uts_ns);
+> -	put_ipc_ns(ns->ipc_ns);
+> -	put_pid_ns(ns->pid_ns_for_children);
+> -	put_time_ns(ns->time_ns);
+> -	put_time_ns(ns->time_ns_for_children);
+> -	put_cgroup_ns(ns->cgroup_ns);
+> -	put_net(ns->net_ns);
+> -	kmem_cache_free(nsproxy_cachep, ns);
+> -}
+> -
+>  /*
+>   * Called from unshare. Unshare all the namespaces part of nsproxy.
+>   * On success, returns the new nsproxy.
+> @@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
+>  	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
+>  		free_fs_struct(nsset->fs);
+>  	if (nsset->nsproxy)
+> -		free_nsproxy(nsset->nsproxy);
+> +		nsproxy_free(nsset->nsproxy);
+>  }
+>  
+>  static int prepare_nsset(unsigned flags, struct nsset *nsset)
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
