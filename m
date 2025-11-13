@@ -1,235 +1,164 @@
-Return-Path: <linux-kernel+bounces-899460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29826C57D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:59:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E22CC57EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB88E345304
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE71F4A5DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F2E212574;
-	Thu, 13 Nov 2025 13:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5323824634F;
+	Thu, 13 Nov 2025 13:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NfqGLIP0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6MLVrb1F";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NfqGLIP0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6MLVrb1F"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="K260DBP9"
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990223AE62
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F27D23AE62;
+	Thu, 13 Nov 2025 13:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763042203; cv=none; b=Ry6xmXcbu3pFag/qxndURuLIfWVwHRDuFlH5HqbC9HxBcjS2d4xLmE1ZxOGDdJODpUJP5Kko/qgiIk+RInEwQMDYWJHvh0SaS+ksfOCeksx3EdsZjTxXcUIKyMIZEehyccCy40D5AIYQn+xUNG7QI0+VCmgty0T3R2rdSFpKFhc=
+	t=1763042272; cv=none; b=RSyk4IDJhxf2rLJRte44XzBQYvJ23tgoTvHG3aH90g9KXBo8IE7XBYfg4WVYqTtg5AvTJmL5zZu7DCTM/HHDEIdUKzEI5Tl5NN1aBSkEaw4BtIdCAX79jn3MrVyA8TsOkuAMz4P8hRpMP5dKgw8m4CF6H3XYNuEav2pwCamNQfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763042203; c=relaxed/simple;
-	bh=XwD1YJLTQRU7DYLluydwUseeRjb+KRtpbieDcHlRcV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Muy26hR9oaBJas2LkUjg86w0eCDULk09g23ofkZo21S5xHZQB16TzlobMxBOPXTiiOYebgzfzRIdnHqlL5HvL0w7bkI3bkw5Ha0ABC2WuD6Z3Hj9dGLh3Y2kRZRK++GlX6FV49q3McvpyJI2gyXXwvrROG4X0ytFU3ibod20TfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NfqGLIP0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6MLVrb1F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NfqGLIP0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6MLVrb1F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4D5751F451;
-	Thu, 13 Nov 2025 13:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763042199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zJihWS4w54QfjbnU9sQxaWaLhLGEz1OXZ/jtjdU3dUg=;
-	b=NfqGLIP0enj6SYDsbvBYZvNeW3tJSLGRRkky0zrRi8eOsLHiojY27nOPH9RqesLoZDWLaK
-	oxNyfjKw+KID3KGSxg9V74ymNqehcaWh/aTTYgW0xfmh73ApGqaZnskoKiOhz98GKjnx8X
-	h8ZFJH2pdB1ezRFk9DIvhUhfHEGWWXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763042199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zJihWS4w54QfjbnU9sQxaWaLhLGEz1OXZ/jtjdU3dUg=;
-	b=6MLVrb1FvqGt7UCqGMbo8+LO9YjSUVaqlHxFVSBRgT/B5H6Id9nDuh9jveOIR3zTbQfHSw
-	eJytEpoEf+crL+Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1763042199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zJihWS4w54QfjbnU9sQxaWaLhLGEz1OXZ/jtjdU3dUg=;
-	b=NfqGLIP0enj6SYDsbvBYZvNeW3tJSLGRRkky0zrRi8eOsLHiojY27nOPH9RqesLoZDWLaK
-	oxNyfjKw+KID3KGSxg9V74ymNqehcaWh/aTTYgW0xfmh73ApGqaZnskoKiOhz98GKjnx8X
-	h8ZFJH2pdB1ezRFk9DIvhUhfHEGWWXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1763042199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zJihWS4w54QfjbnU9sQxaWaLhLGEz1OXZ/jtjdU3dUg=;
-	b=6MLVrb1FvqGt7UCqGMbo8+LO9YjSUVaqlHxFVSBRgT/B5H6Id9nDuh9jveOIR3zTbQfHSw
-	eJytEpoEf+crL+Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 201F73EA61;
-	Thu, 13 Nov 2025 13:56:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7xjSBZfjFWloAwAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Thu, 13 Nov 2025 13:56:39 +0000
-Date: Thu, 13 Nov 2025 14:56:36 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: linux-mm@kvack.org
-Cc: LKML <linux-kernel@vger.kernel.org>, David Hildenbrand
- <david@redhat.com>
-Subject: [PATCH] mm/cma: Remove CONFIG_CMA_SYSFS option
-Message-ID: <20251113145636.731a24e4@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1763042272; c=relaxed/simple;
+	bh=TD/yy2xrXMvZ/UI+lPd7eXy664hMoisCsg3sr+ZuWmU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UcxJaUy6Fci9/ygaDr+b/n4i+BrNCCigHnQmNNxvaCWIZNnQR5QObbLf0iPJc8TLwBqJGvMRDe1Si+PufFvH4VaOpxzDFsmnlsqlwdQne5Mryb9UTZ+cPrD5dKUCIY9QP0pJZEuPZB2zftTCBrsDYoJgEmjKse+nM8s+pxPpexQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=K260DBP9; arc=none smtp.client-ip=91.103.66.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1763042267;
+	bh=C7sSsi1ZYZ1fTZwjIwsbLN3ukM79LfIrJOyPDTNA8ns=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=K260DBP99V+SBe1nd3wlqkVxXDoCqsHfqZkFR38at7MnC8NOcuRQz9oSQ6Fp2nzKZ
+	 sjBZKjS/6svh4UnDZbjtT6NK6JG4DxmLNtk3wZCWVLma5FgT9ryDWb8+RVBs6tGF5G
+	 S13wBOyPU00Ouo5hD+NTrHH4g0bfpsF3+RIo45ZOGhJoxY1GV5viEg42o3Azhh8ZvU
+	 AN41ZEtmo2bsGFsAi/Wmi97w9cTGbV+CMCs8nQTVSOAx8YL6BqILZVKPuVdhDpuC0f
+	 5T9hvnnvnup0LYKvogN/kkJotcqM+n7ibITVw4+fUDxWXz/EpNUknZ6nMOpwCEzujI
+	 BGAuiahHria7w==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 1E2AC3E1D86;
+	Thu, 13 Nov 2025 16:57:47 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 4A8E03E2663;
+	Thu, 13 Nov 2025 16:57:46 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
+ 2025 16:57:45 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Kurt Kanzenbach <kurt@linutronix.de>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Andrew Lunn
+	<andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] net: dsa: hellcreek: fix missing error handling in LED registration
+Date: Thu, 13 Nov 2025 16:57:44 +0300
+Message-ID: <20251113135745.92375-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[suse.de:email,lkml.org:url,imap1.dmz-prg2.suse.org:helo];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/13/2025 13:38:54
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 198054 [Nov 13 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 76 0.3.76
+ 6aad6e32ec76b30ee13ccddeafeaa4d1732eef15
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;kaspersky.com:7.1.1,5.0.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/13/2025 13:41:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/13/2025 11:57:00 AM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/13 09:15:00 #27919685
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-The sysfs interface to CMA has a marginal runtime cost and a small
-footprint, there's no reason not to include it in all kernels where
-the dependencies are satisfied.
+The LED setup routine registered both led_sync_good
+and led_is_gm devices without checking the return
+values of led_classdev_register(). If either registration
+failed, the function continued silently, leaving the
+driver in a partially-initialized state and leaking
+a registered LED classdev.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Add proper error handling
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 7d9ee2e8ff15 ("net: dsa: hellcreek: Add PTP status LEDs")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
 ---
-As discussed with David:
-  https://lkml.org/lkml/2025/8/6/371
+ drivers/net/dsa/hirschmann/hellcreek_ptp.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
- arch/loongarch/configs/loongson3_defconfig |    1 -
- arch/s390/configs/debug_defconfig          |    1 -
- arch/s390/configs/defconfig                |    1 -
- mm/Kconfig                                 |    7 -------
- mm/Makefile                                |    4 +++-
- mm/cma.h                                   |    4 ++--
- 6 files changed, 5 insertions(+), 13 deletions(-)
+diff --git a/drivers/net/dsa/hirschmann/hellcreek_ptp.c b/drivers/net/dsa/hirschmann/hellcreek_ptp.c
+index bfe21f9f7dcd..cb23bea9c21b 100644
+--- a/drivers/net/dsa/hirschmann/hellcreek_ptp.c
++++ b/drivers/net/dsa/hirschmann/hellcreek_ptp.c
+@@ -376,8 +376,18 @@ static int hellcreek_led_setup(struct hellcreek *hellcreek)
+ 		hellcreek_set_brightness(hellcreek, STATUS_OUT_IS_GM, 1);
 
---- linux-6.17.orig/arch/loongarch/configs/loongson3_defconfig
-+++ linux-6.17/arch/loongarch/configs/loongson3_defconfig
-@@ -120,7 +120,6 @@ CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
- CONFIG_TRANSPARENT_HUGEPAGE=y
- CONFIG_CMA=y
--CONFIG_CMA_SYSFS=y
- CONFIG_USERFAULTFD=y
- CONFIG_NET=y
- CONFIG_PACKET=y
---- linux-6.17.orig/arch/s390/configs/debug_defconfig
-+++ linux-6.17/arch/s390/configs/debug_defconfig
-@@ -103,7 +103,6 @@ CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
- CONFIG_TRANSPARENT_HUGEPAGE=y
- CONFIG_CMA_DEBUGFS=y
--CONFIG_CMA_SYSFS=y
- CONFIG_CMA_AREAS=7
- CONFIG_MEM_SOFT_DIRTY=y
- CONFIG_DEFERRED_STRUCT_PAGE_INIT=y
---- linux-6.17.orig/arch/s390/configs/defconfig
-+++ linux-6.17/arch/s390/configs/defconfig
-@@ -95,7 +95,6 @@ CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
- CONFIG_TRANSPARENT_HUGEPAGE=y
--CONFIG_CMA_SYSFS=y
- CONFIG_CMA_AREAS=7
- CONFIG_MEM_SOFT_DIRTY=y
- CONFIG_DEFERRED_STRUCT_PAGE_INIT=y
---- linux-6.17.orig/mm/Makefile
-+++ linux-6.17/mm/Makefile
-@@ -119,6 +119,9 @@ obj-$(CONFIG_ZPOOL)	+= zpool.o
- obj-$(CONFIG_ZSMALLOC)	+= zsmalloc.o
- obj-$(CONFIG_GENERIC_EARLY_IOREMAP) += early_ioremap.o
- obj-$(CONFIG_CMA)	+= cma.o
-+ifdef CONFIG_SYSFS
-+obj-$(CONFIG_CMA)	+= cma_sysfs.o
-+endif
- obj-$(CONFIG_NUMA) += numa.o
- obj-$(CONFIG_NUMA_MEMBLKS) += numa_memblks.o
- obj-$(CONFIG_NUMA_EMU) += numa_emulation.o
-@@ -127,7 +130,6 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext
- obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
- obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
- obj-$(CONFIG_SECRETMEM) += secretmem.o
--obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
- obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
- obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
- obj-$(CONFIG_DEBUG_PAGEALLOC) += debug_page_alloc.o
---- linux-6.17.orig/mm/cma.h
-+++ linux-6.17/mm/cma.h
-@@ -49,7 +49,7 @@ struct cma {
- 	char name[CMA_MAX_NAME];
- 	int nranges;
- 	struct cma_memrange ranges[CMA_MAX_RANGES];
--#ifdef CONFIG_CMA_SYSFS
-+#ifdef CONFIG_SYSFS
- 	/* the number of CMA page successful allocations */
- 	atomic64_t nr_pages_succeeded;
- 	/* the number of CMA page allocation failures */
-@@ -80,7 +80,7 @@ static inline unsigned long cma_bitmap_m
- 	return cmr->count >> cma->order_per_bit;
- }
- 
--#ifdef CONFIG_CMA_SYSFS
-+#ifdef CONFIG_SYSFS
- void cma_sysfs_account_success_pages(struct cma *cma, unsigned long nr_pages);
- void cma_sysfs_account_fail_pages(struct cma *cma, unsigned long nr_pages);
- void cma_sysfs_account_release_pages(struct cma *cma, unsigned long nr_pages);
---- linux-6.17.orig/mm/Kconfig
-+++ linux-6.17/mm/Kconfig
-@@ -981,13 +981,6 @@ config CMA_DEBUGFS
- 	help
- 	  Turns on the DebugFS interface for CMA.
- 
--config CMA_SYSFS
--	bool "CMA information through sysfs interface"
--	depends on CMA && SYSFS
--	help
--	  This option exposes some sysfs attributes to get information
--	  from CMA.
--
- config CMA_AREAS
- 	int "Maximum count of the CMA areas"
- 	depends on CMA
+ 	/* Register both leds */
+-	led_classdev_register(hellcreek->dev, &hellcreek->led_sync_good);
+-	led_classdev_register(hellcreek->dev, &hellcreek->led_is_gm);
++	ret = led_classdev_register(hellcreek->dev, &hellcreek->led_sync_good);
++	if (ret) {
++		dev_err(hellcreek->dev, "Failed to register sync_good LED\n");
++		goto out;
++	}
++
++	ret = led_classdev_register(hellcreek->dev, &hellcreek->led_is_gm);
++	if (ret) {
++		dev_err(hellcreek->dev, "Failed to register is_gm LED\n");
++		led_classdev_unregister(&hellcreek->led_sync_good);
++		goto out;
++	}
 
+ 	ret = 0;
 
--- 
-Jean Delvare
-SUSE L3 Support
+--
+2.43.0
+
 
