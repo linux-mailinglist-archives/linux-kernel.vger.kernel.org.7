@@ -1,94 +1,208 @@
-Return-Path: <linux-kernel+bounces-899865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59647C5907D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:13:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EDCC5903D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2902B4270CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:53:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E62A835080D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8CC359F80;
-	Thu, 13 Nov 2025 16:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8mEga9R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F103135C1BD;
+	Thu, 13 Nov 2025 16:46:18 +0000 (UTC)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B7921D3F3;
-	Thu, 13 Nov 2025 16:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F5F359FAB
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052370; cv=none; b=mcZIXpYzxeNzNPPCkorNA5TIXNCDIT/3GhxU2MzKuaAidgCnKu3jBzPfsFrbIJrzUbXja6fC+Fa2Upr1/5NNwklz1N+57qTn2m80RNbJ/9a6qKikJ3n2D3fQwH7X6SFZpKfFNnJqE1vqbN6unpF5r1Olau0YNsLTOj6b4eL8C6g=
+	t=1763052378; cv=none; b=lSWTyI2LtQ1pve65fEEcRAy5uzkjwIHlQ/IHdyunI4NhI2i9Yff+FPTFuwnD2+CI3AwQg7dV6nx466kjGxib2ZOe8tFTuhkoQldDFoLOvFyKtvlrVhi7+m7Iu3ra0+cgXYrUWJ2uV9R7OvZ6mPyUUB5g3uGqrdhfGIJNECzXItc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052370; c=relaxed/simple;
-	bh=+SNBZZpwIVsQ1NMm9S2r0CGt8y213OHdKQwYS8JlXzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnlEmWNgSWpkpBzozjRHmmPbNuklH28V+SI3lHMiwlgbYgNezoNWIdsSVcH6jpDOQz/ewMsnGgaFb0wCXUYMuMTgnFXrvp6U6loCL2Tt/rqlgZsvdWq3o4FEXkXQB4W7ZK5ls9y3JouSRCu64Cu6Cgm2QdKM0BREQW2NQdPQpNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8mEga9R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C27C4CEF5;
-	Thu, 13 Nov 2025 16:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763052369;
-	bh=+SNBZZpwIVsQ1NMm9S2r0CGt8y213OHdKQwYS8JlXzw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A8mEga9Rmp51/7zGCoyQ8Ecsah26vWq7zE+u+7YzNSypa+OURY3wOD2ntrIuOCb1Q
-	 JEme03y2PBUgJ6J7Mp85nDQX+CFPREH8wMRLN3+c2kRiUPFPW/nOOmWqEiWXG083h8
-	 uz9cLSjIlrbHa1AOSCluR/uR5MDJoiQrHfrEa2fJGBWgYcRdJVmUkgzSiLZJ4bNCkt
-	 oSzBElibE5+KtXZ8X1XieuXRYpC6bQ/jJqg1F3wG1yqut6gGbG4VE8WG3m7ZOl3DZ3
-	 B/KpoJKIZjzpNQOpX22bjmrJsseposwHAbEzV5bL+KeDFZpp0N6vUKn20rp8ud9a3M
-	 fwIlh14+ShhuA==
-Date: Thu, 13 Nov 2025 16:46:03 +0000
-From: Lee Jones <lee@kernel.org>
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: leds: backlight: Add Awinic AW99706
- backlight
-Message-ID: <20251113164603.GP1949330@google.com>
-References: <20251109032240.3422503-1-caojunjie650@gmail.com>
- <20251109032240.3422503-2-caojunjie650@gmail.com>
+	s=arc-20240116; t=1763052378; c=relaxed/simple;
+	bh=poQ2ltGXAGj/R6azLC8+vFrV6fsBn4x8KuYNyoxOTxE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GkjMSaZT/gflhi0MY5P7QTx6YDJ1e+6zB74k4MdJkI0MRzPoS6LSNevVhuCqY5CMgCgLaXz6NhUyR6pC96tL7+GzHvCWccPd7l2WWpXOhT35JdoB9BMEB/anDfhhDQ0LPTc9KVLS2Ln981WgiuArstEW2QFMzPLmAvK+92zdiVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7c28ff7a42eso395460a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:46:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763052375; x=1763657175;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AMwHal9dzTj8WL52AK+cJ5GudloGhSjkVv/ITspvX8U=;
+        b=hOe+8xCtAwGH1pJRwgT9CeM/Tb5Pq4kaxtuFUN67sBVcZnfhRnhyrfoSNcRKoo5NHK
+         hnVAAojKtbZWqNUwzCx12lPapCsabaQRxoTXuLDgthCzk28AvOkk1robx7rAwUx4E+M5
+         OLg+yYhf8KlZceN/ZwpqvDI8UATrVMk8O33xKr+j42CvgL5oeoibPFEMKSnvJO7mHlIZ
+         qkyS4wE4JsJyy6zaMrNlcvR6RnW3iY8bTNIl32Yla9FQtjnHwdbnOFor1m7RydFq8hQi
+         PadPiCA8Uv1pXWjg+sGrMXK4CLuGgEMsv86Xizc1hATtUVB5rEXtFY9payvGDHEqXYJM
+         r4aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZBjxEf2ne07pL5IzHnW8QHtUkaNdFEHdnQE2oOV+JlIzxU3i4lC6lehoBmAO+5M4fz80T/Ye9bppjyhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6nryQQhMWw/S1t0lRjprY8OYklTgIFVY8REJIuuBS2xC30pXb
+	q4IhdL4SVtoPANjCpB/ZDlpvD5RC9lMS89sjfhyTQtjKtYKyxnYwj3Za
+X-Gm-Gg: ASbGncuo0d8kJT8SHQEiffmgz7Zcwb7d6MHgcQsYq6y++fLcB8PCpdX1sCSKqisgN9p
+	xZnQKiSP1Z1RVSOSv9uctl8CRhWz5qd8bFTX6LnNanaghrhDZ8JNLxZiNe3o7kly+sqmQTsOpdJ
+	sF5w4mpy1FWLxbhceFkMFnBohd7poxoUY8qzM53v7voxJuV/yehQ2IIIrahVTWX49ychTjRin2L
+	F43eiOwSehlhi2MUiak4wv26oWsIM5FHxRju3Mck3VTVuhdulze+RJf9pZxmkeEmV6y8lu3lla9
+	SC/arlJeXVwBId9fShAJhvMfPa9J6tm4vbI9U0PNAddUXFvMq3mGRpdakDcQGE+X1fupQ0XB3PG
+	GLk/l4POdYNe10vCq2IZqlzdXsLzbbTnrT4qLJkwaL7ujU4yn6xgq35sJfZpInlQXqSYRebPnWK
+	jdTkWKuPUX344c
+X-Google-Smtp-Source: AGHT+IHwklT+fSAdTS6FhgXRWj9vGB2ajsTuhU7iPf3ZuTDe1HF6NP47ittL43ZGlAOFk7Zre3gEqA==
+X-Received: by 2002:a05:6830:4129:b0:7c7:162:e0c7 with SMTP id 46e09a7af769-7c7442db71dmr128771a34.6.1763052375233;
+        Thu, 13 Nov 2025 08:46:15 -0800 (PST)
+Received: from localhost ([2a03:2880:10ff:5::])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c73a283a44sm1515045a34.2.2025.11.13.08.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 08:46:14 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 13 Nov 2025 08:46:04 -0800
+Subject: [PATCH 2/2] mlx5: extract GRXRINGS from .get_rxnfc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251109032240.3422503-2-caojunjie650@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251113-mlx_grxrings-v1-2-0017f2af7dd0@debian.org>
+References: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
+In-Reply-To: <20251113-mlx_grxrings-v1-0-0017f2af7dd0@debian.org>
+To: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
+ Leon Romanovsky <leon@kernel.org>
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
+ kernel-team@meta.com
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4074; i=leitao@debian.org;
+ h=from:subject:message-id; bh=poQ2ltGXAGj/R6azLC8+vFrV6fsBn4x8KuYNyoxOTxE=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFgtUh28966CZumXyyIbtdUKCDXVJ8AGRMjLUp
+ wrz5B/DxWmJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRYLVAAKCRA1o5Of/Hh3
+ bdFbD/982JwpeO4nF2jB9yp61nX7YvYeLYMRBYZfid29jOZd2WDNUdzO9NVNTaIVbKOZBn5xA1K
+ waiTW2l04raQU0qsjerdzgOWGHtn1q9rYnu6WUN5vkXkocZCBfjfFYv9Cuf9UaEHU2NWgWBlbO3
+ UQatrdWD3FJmrx8ziHaw5u2Z4rYmrhmk8RVLh7SSAbU2zVatHBuMcyd35GMgduFkavNNMk4wMLS
+ 6txW1fGu2VBmEhNbQEJJou+zK7K6jisiFpBqd3jS6k2VRyjCwFoJ+X8zhrQMgwB9YP85IiXTlWH
+ JUCpk/ugnrlTbq58FjFjyUAv8AW+c/EB6e1HGLJWWT22MJtt5dmUkG/6rVDAT0vpRtPkYgt1wxG
+ L+KtiYVC1kkCJpFlPWKpHCLNkzk+TShPOmo7kNjdUeVKpbDKX7Cw71m5PG8Xd1Eqa42n8Jfz1qG
+ 4xTq6TRVw30lZO7oF2ZyHkQHmM8xfVh0pxq/cYgrBQvdWAuMyIMpkrxvhKF3yenZly5Juq5+QH6
+ Dn6pZhTcLMRZRfGja6Z5K7I435aXUUlb7TH1h/W4DdN4fmkzMM/LOlIR19/JcSjiQE8SnWkzJnh
+ bbQDhhKDvL0w67oZG7T8g7VHZ3QtpsJNXvIyuPMp7k36nRXsbHMiw/qU1N2NoALz4N6xYXxvuHE
+ j/fVWMcO1UlhFrw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Sun, 09 Nov 2025, Junjie Cao wrote:
+Commit 84eaf4359c36 ("net: ethtool: add get_rx_ring_count callback to
+optimize RX ring queries") added specific support for GRXRINGS callback,
+simplifying .get_rxnfc.
 
-> Add Awinic AW99706 backlight binding documentation.
-> 
-> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> ---
-> Changes in v3:
-> - breaking a long line (Krzysztof)
-> - rename backlight node (Krzysztof)
-> - Link to v2: https://lore.kernel.org/linux-leds/20251103110648.878325-2-caojunjie650@gmail.com
-> 
-> Changes in v2:
-> - use proper units for properties (Krzysztof)
-> - drop non-fixed properties (Krzysztof)
-> - add properties(max-brightness, default-brightness) (Krzysztof)
-> - Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-2-caojunjie650@gmail.com
-> 
->  .../leds/backlight/awinic,aw99706.yaml        | 101 ++++++++++++++++++
->  1 file changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
+Remove the handling of GRXRINGS in .get_rxnfc() by moving it to the new
+.get_rx_ring_count() for both the mlx5 ethernet and IPoIB drivers.
 
-Applied (manually), thanks
+The ETHTOOL_GRXRINGS handling was previously kept in .get_rxnfc() to
+support "ethtool -x" when CONFIG_MLX5_EN_RXNFC=n. With the new
+dedicated .get_rx_ring_count() callback, this is no longer necessary.
+
+This simplifies the RX ring count retrieval and aligns mlx5 with the new
+ethtool API for querying RX ring parameters.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c   | 18 ++++++++----------
+ .../net/ethernet/mellanox/mlx5/core/ipoib/ethtool.c    | 18 ++++++++----------
+ 2 files changed, 16 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index 01b8f05a23db..939e274779b3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -2492,21 +2492,18 @@ static int mlx5e_set_rxfh_fields(struct net_device *dev,
+ 	return mlx5e_ethtool_set_rxfh_fields(priv, cmd, extack);
+ }
+ 
++static u32 mlx5e_get_rx_ring_count(struct net_device *dev)
++{
++	struct mlx5e_priv *priv = netdev_priv(dev);
++
++	return priv->channels.params.num_channels;
++}
++
+ static int mlx5e_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info,
+ 			   u32 *rule_locs)
+ {
+ 	struct mlx5e_priv *priv = netdev_priv(dev);
+ 
+-	/* ETHTOOL_GRXRINGS is needed by ethtool -x which is not part
+-	 * of rxnfc. We keep this logic out of mlx5e_ethtool_get_rxnfc,
+-	 * to avoid breaking "ethtool -x" when mlx5e_ethtool_get_rxnfc
+-	 * is compiled out via CONFIG_MLX5_EN_RXNFC=n.
+-	 */
+-	if (info->cmd == ETHTOOL_GRXRINGS) {
+-		info->data = priv->channels.params.num_channels;
+-		return 0;
+-	}
+-
+ 	return mlx5e_ethtool_get_rxnfc(priv, info, rule_locs);
+ }
+ 
+@@ -2766,6 +2763,7 @@ const struct ethtool_ops mlx5e_ethtool_ops = {
+ 	.remove_rxfh_context	= mlx5e_remove_rxfh_context,
+ 	.get_rxnfc         = mlx5e_get_rxnfc,
+ 	.set_rxnfc         = mlx5e_set_rxnfc,
++	.get_rx_ring_count = mlx5e_get_rx_ring_count,
+ 	.get_tunable       = mlx5e_get_tunable,
+ 	.set_tunable       = mlx5e_set_tunable,
+ 	.get_pause_stats   = mlx5e_get_pause_stats,
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ethtool.c
+index 4b3430ac3905..3b2f54ca30a8 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ethtool.c
+@@ -266,21 +266,18 @@ static int mlx5i_set_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd)
+ 	return mlx5e_ethtool_set_rxnfc(priv, cmd);
+ }
+ 
++static u32 mlx5i_get_rx_ring_count(struct net_device *dev)
++{
++	struct mlx5e_priv *priv = mlx5i_epriv(dev);
++
++	return priv->channels.params.num_channels;
++}
++
+ static int mlx5i_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info,
+ 			   u32 *rule_locs)
+ {
+ 	struct mlx5e_priv *priv = mlx5i_epriv(dev);
+ 
+-	/* ETHTOOL_GRXRINGS is needed by ethtool -x which is not part
+-	 * of rxnfc. We keep this logic out of mlx5e_ethtool_get_rxnfc,
+-	 * to avoid breaking "ethtool -x" when mlx5e_ethtool_get_rxnfc
+-	 * is compiled out via CONFIG_MLX5_EN_RXNFC=n.
+-	 */
+-	if (info->cmd == ETHTOOL_GRXRINGS) {
+-		info->data = priv->channels.params.num_channels;
+-		return 0;
+-	}
+-
+ 	return mlx5e_ethtool_get_rxnfc(priv, info, rule_locs);
+ }
+ 
+@@ -304,6 +301,7 @@ const struct ethtool_ops mlx5i_ethtool_ops = {
+ 	.set_rxfh_fields    = mlx5i_set_rxfh_fields,
+ 	.get_rxnfc          = mlx5i_get_rxnfc,
+ 	.set_rxnfc          = mlx5i_set_rxnfc,
++	.get_rx_ring_count  = mlx5i_get_rx_ring_count,
+ 	.get_link_ksettings = mlx5i_get_link_ksettings,
+ 	.get_link           = ethtool_op_get_link,
+ };
 
 -- 
-Lee Jones [李琼斯]
+2.47.3
+
 
