@@ -1,124 +1,158 @@
-Return-Path: <linux-kernel+bounces-899292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF260C57510
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:02:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B35C57477
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69597343FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:57:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 051F64E43E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D4834FF55;
-	Thu, 13 Nov 2025 11:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c07aU7E9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA6F34DB45;
+	Thu, 13 Nov 2025 11:56:15 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8F034DCE9
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13F434B186;
+	Thu, 13 Nov 2025 11:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035001; cv=none; b=KF9Rg3k0EQMDm4FtQWI7Te2KSt9yZi6VzWD+vutbDtk+TRofS8H2q4X7aB3qIulhpunqz+uJTWjdFYaXSdSxuBNvFY2AUH3MHThxGuFr1JQh9gAZBoZ4Eqkxjy3L30SYwbbtifFYU6g5B8kO7tbLsjO4IPM6Yg5/Rotf/nILtfw=
+	t=1763034974; cv=none; b=jJljM352cBIDA5EMgZc02v8OP61bWngEycK44UTGH8mLHFh9wBJbeJr8u0PkH0WtHW0E9Ie0zNuSVLKV2MFMTlRGEgPdrf66p9Rz5rFz/gIrZugD60e+wUZQjlviwM07Sf2x9xMI8oiEyWFNmah4Qsc1snH2HGQLWNreF5TIaKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035001; c=relaxed/simple;
-	bh=vDa/ArHDNygxl8ATzaKQtXkkTbj/f2T+x8SQ0I4O8pM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DFSJaCEUgcl/RDIW909G07SaX2pbBJUk3+8rIa9sdlJ4X5rQ4xzQ/OPASGKcK3gptU8TPY/g/NavM2mFfn3wVKza5x3rcTQqIeWUpoKdrvx15LZh9kH4IWGkOkxCK0lUfxXy5A/65MNxWW/txvuMFfLiuR/UzXhIhQPlqAFxAdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c07aU7E9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763034998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=97IEgQ7raWJ37uSPdBuA1IEh2oOdlGp2O5eUhoIZhZg=;
-	b=c07aU7E9QWQTAxGaKgbZJIQ/tmCjIpVj+e7SruNlFzpsBBZRhp7xIkqGgrBcyY3T+JLrlZ
-	eOVHS62RojxZIWAbJokBzIHKyogzcOELeTKWw8iYHGZ10BxYT/AH7m0Dc7yLZ02Y5u4lQd
-	BYJAkrKY/kdZDeUkbquBtN1xiWBC1xY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-W2clVaWDNI-HASMAnVhq_w-1; Thu,
- 13 Nov 2025 06:56:35 -0500
-X-MC-Unique: W2clVaWDNI-HASMAnVhq_w-1
-X-Mimecast-MFC-AGG-ID: W2clVaWDNI-HASMAnVhq_w_1763034994
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBAD718AB40A;
-	Thu, 13 Nov 2025 11:56:34 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.122])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D77D119560B9;
-	Thu, 13 Nov 2025 11:56:30 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: "Michael S . Tsirkin " <mst@redhat.com>
-Cc: Laurent Vivier <lvivier@redhat.com>,
-	virtualization@lists.linux.dev,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Cindy Lu <lulu@redhat.com>,
-	jasowang@redhat.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v9 6/6] vduse: bump version number
-Date: Thu, 13 Nov 2025 12:55:58 +0100
-Message-ID: <20251113115558.1277981-7-eperezma@redhat.com>
-In-Reply-To: <20251113115558.1277981-1-eperezma@redhat.com>
-References: <20251113115558.1277981-1-eperezma@redhat.com>
+	s=arc-20240116; t=1763034974; c=relaxed/simple;
+	bh=mu6KsYLk3gqGxKjE6WtBf8pesH+jfo9fAeTNW9JO4z8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=heJIYJPnAVWJ3yfQ83Y8A7gF2Q90yhtg0Fg0c1AeRkBpkWx97uPta4aJdMboMk55utDdwAzJXR+dveTCaRsKGMDr6QGwuydANhB3+ZTpz+TM9/BDc4pY3mvvvebkUZb0daRXoEzv9ClvlVJTktCEkqqATl/isK8694lsvzMGchk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net; spf=pass smtp.mailfrom=hadess.net; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hadess.net
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C2624431F3;
+	Thu, 13 Nov 2025 11:56:03 +0000 (UTC)
+Message-ID: <dd5d8e8ca634724ab4f77ac2ed8ab56956551bc3.camel@hadess.net>
+Subject: Re: [RFC PATCH v2 1/3] HID: input: Introduce struct hid_battery
+From: Bastien Nocera <hadess@hadess.net>
+To: Benjamin Tissoires <bentiss@kernel.org>, Lucas Zampieri
+	 <lzampier@redhat.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina
+	 <jikos@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+	linux-pm@vger.kernel.org
+Date: Thu, 13 Nov 2025 12:56:03 +0100
+In-Reply-To: <tuya626zqiabd6ejwbaafj4cq3nlngc2vzvvjwdl3rc5wkwhhh@2k6ehu62tviu>
+References: <20251113001508.713574-1-lzampier@redhat.com>
+	 <20251113001508.713574-2-lzampier@redhat.com>
+	 <tuya626zqiabd6ejwbaafj4cq3nlngc2vzvvjwdl3rc5wkwhhh@2k6ehu62tviu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdeikeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttderjeenucfhrhhomhepuegrshhtihgvnhcupfhotggvrhgruceohhgruggvshhssehhrgguvghsshdrnhgvtheqnecuggftrfgrthhtvghrnhepieffgfehtedtgefgjeeggfffgeeuvdegveekveejfeekkedujeehteffueefffeunecukfhppedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfedphhgvlhhopeglkffrvheimedvrgdtudemvgefgeemvggtjeefmegtfhdvtdemsggrgeefmegrieejieemtgdvugefmeejrgehfegnpdhmrghilhhfrhhomhephhgruggvshhssehhrgguvghsshdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehliigrmhhpihgvrhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkv
+ ghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: hadess@hadess.net
 
-Finalize the series by advertising VDUSE API v1 support to userspace.
+On Thu, 2025-11-13 at 11:47 +0100, Benjamin Tissoires wrote:
+> On Nov 13 2025, Lucas Zampieri wrote:
+> > Add struct hid_battery to encapsulate battery state per HID device.
+> > This structure will allow tracking individual battery properties
+> > including capacity, min/max values, report information, and status.
+> >=20
+> > The structure includes a list node to enable support for multiple
+> > batteries per device in subsequent patches.
+> >=20
+> > This is a preparation step for transitioning from direct
+> > power_supply
+> > access to a more flexible battery management system.
+> >=20
+> > Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+> > ---
+> > =C2=A0include/linux/hid.h | 30 ++++++++++++++++++++++++++++++
+>=20
+> I know Bastien asked you to split out this into a separate commit,
+> but I
+> hate having a header change when noone uses it. It is painful for
+> people
+> needing to backport the further changes (imagine you are fixing a CVE
+> without noticing it), as they also need to pull this one.
 
-Now that all required infrastructure for v1 (ASIDs, VQ groups,
-update_iotlb_v2) is in place, VDUSE devices can opt in to the new
-features.
+I usually find that a stand-alone "this can't possibly introduce bugs"
+commit to be better (and it makes it easier to concentrate on smaller
+amounts of content).
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- drivers/vdpa/vdpa_user/vduse_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+For the CVE use case, I don't really understand the problem. Either you
+forget to backport the commit that added the type, in which case it
+just doesn't compile, or you can backport the whole series (I would
+hope that there's enough metadata in the kernel git to figure that out,
+isn't there?).
 
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index ff95ed56f22d..f5a1bc027ecb 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -2188,7 +2188,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
- 			break;
+In any case, your subsystem, your rules, just thought I'd mention why I
+asked Lucas to split this up.
 
- 		ret = -EINVAL;
--		if (api_version > VDUSE_API_VERSION)
-+		if (api_version > VDUSE_API_VERSION_1)
- 			break;
+Cheers
 
- 		ret = 0;
-@@ -2255,7 +2255,7 @@ static int vduse_open(struct inode *inode, struct file *file)
- 	if (!control)
- 		return -ENOMEM;
-
--	control->api_version = VDUSE_API_VERSION;
-+	control->api_version = VDUSE_API_VERSION_1;
- 	file->private_data = control;
-
- 	return 0;
---
-2.51.1
-
+>=20
+> > =C2=A01 file changed, 30 insertions(+)
+> >=20
+> > diff --git a/include/linux/hid.h b/include/linux/hid.h
+> > index a4ddb94e3ee5..63422130de20 100644
+> > --- a/include/linux/hid.h
+> > +++ b/include/linux/hid.h
+> > @@ -634,6 +634,36 @@ enum hid_battery_status {
+> > =C2=A0	HID_BATTERY_REPORTED,		/* Device sent unsolicited
+> > battery strength report */
+> > =C2=A0};
+> > =C2=A0
+> > +/**
+> > + * struct hid_battery - represents a single battery power supply
+> > + * @list: list node for linking into hid_device's battery list
+>=20
+> For the first inclusion of the new struct, please drop the list
+> field.
+> This should go into the last patch when you actually make use of it.
+>=20
+> > + * @dev: pointer to the parent hid_device
+> > + * @ps: the power supply device
+> > + * @capacity: current battery capacity
+> > + * @min: minimum battery value
+> > + * @max: maximum battery value
+> > + * @report_type: type of report (HID_INPUT_REPORT,
+> > HID_FEATURE_REPORT)
+> > + * @report_id: report ID for this battery
+> > + * @charge_status: current charge status
+> > + * @status: battery status (unknown, queried, reported)
+> > + * @avoid_query: if true, don't query battery (wait for device
+> > reports)
+> > + * @ratelimit_time: time for rate limiting battery updates
+> > + */
+> > +struct hid_battery {
+> > +	struct list_head list;
+> > +	struct hid_device *dev;
+> > +	struct power_supply *ps;
+> > +	__s32 capacity;
+> > +	__s32 min;
+> > +	__s32 max;
+> > +	__s32 report_type;
+> > +	__s32 report_id;
+> > +	__s32 charge_status;
+> > +	enum hid_battery_status status;
+> > +	bool avoid_query;
+> > +	ktime_t ratelimit_time;
+> > +};
+> > +
+> > =C2=A0struct hid_driver;
+> > =C2=A0struct hid_ll_driver;
+> > =C2=A0
+> > --=20
+> > 2.51.1
+> >=20
+>=20
+> Cheers,
+> Benjamin
 
