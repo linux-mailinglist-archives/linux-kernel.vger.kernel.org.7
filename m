@@ -1,131 +1,168 @@
-Return-Path: <linux-kernel+bounces-898770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591F1C55F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F26C55F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:50:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06573348EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE5E3B0E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297B7320A0B;
-	Thu, 13 Nov 2025 06:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA40320A0B;
+	Thu, 13 Nov 2025 06:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvbFTyxF"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FG+U4YmF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5E9289811
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39FB289811;
+	Thu, 13 Nov 2025 06:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763016588; cv=none; b=D++g07mkuonGtrPphc45BhvYq6QErS52uBjuDGbuGQam4ZkQkx1vONydSxFh19/IBesgAtEG7DiHHWV4mkmwf4+ITtV7atSNO7az0e6o/O6/15zMggmX1m1QjsdSCmBXRgANlj4EU+1yg4xZLtn49GmB8tYuoDcT+3QCpyOuRGE=
+	t=1763016626; cv=none; b=U2YxNIVUS9ucimiaN6xKuSCBZwLUcoOK36GUhx+zIWdkp1UjAEDumSu6dmNmjpPPlwpK02QIz6jB4971T8lyoJTpmdxm8s3+42DwjBzDZzLhAEs+UmMx9WZeU/1rJhcvI3fOm5Mqyv08qKntXPwrjW0WE7BeePlBBerKOr1mfiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763016588; c=relaxed/simple;
-	bh=29nAki8ESaO1fL9aGhOKACF0bJg24F8USzUzT2R+14k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IcptWvMHzfG71gb2FNxCFkJLZC2T9/TiLb4LF9GgfclcZgyzfdjSpuaKd3cnKLTilRe75v+tStdH6+SGsD9F91Mlln/VXFnRUGrSMfCGo/XQWNlOGGk1QRICUi177wFFA/mz2EqyqWfTk+KKgQZk79uwr0W0CJyQCIz2DWoFYqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvbFTyxF; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3436d6bdce8so564802a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:49:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763016586; x=1763621386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T84pQ1+9aq8AWuzbsa/zDb8vuVA7/GAGMhFUb/seRIk=;
-        b=XvbFTyxFH48sRBlCsuND1ti+4HkLaua4NcMYB3AsL/8Mxqm8SpmHlKiW9F5EX7PxQs
-         x8Kxsa6+RDM4CkXHHtCWHxXmYsJabD5wfjvs+BLf2k4oxhwX/YtXCAep8TjpymS9/E1H
-         Uke8t54lZX5gEVSC2gm2xcM+rwasguzDZJxSYeeaAqWznRBQy5AzCbfkpTffPYHkgMNP
-         i1rSSQ2ZhSMpk2kUgYqjhofIWRioc4rGeaTQ6MsqGG+rVtqKXEjR6EiOLdPIQ066k79I
-         Z/XwMNDWspfslUrWwnPWISv3Su7HiT/FhchV3yceNXw8ceR4WfI8d2ly/vZSwFeO1/xD
-         hw5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763016586; x=1763621386;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T84pQ1+9aq8AWuzbsa/zDb8vuVA7/GAGMhFUb/seRIk=;
-        b=eCJS3KXcTL6k0Vtd55YVvVmu41s0DjFx5hljx79DiszbIynBAbv7sFudLH47HEvuz9
-         gsQKCPanBUjlbGWOH2O93SeXvP6nIcqFHFUg+G96qki8FggpAZVEtsSEARsc/SvWNLRD
-         UxFiK3sukbh9+zkvDgkkgREw94vdKJ1/CpcycEX/p3YAACsRPELW+FYn/nHyPSSJX7+I
-         WmWdBCjfchRNQkqIoKlUbjUiLK1yEB21Q9VVVFaszyWSODGXsDMfB6+FXnYspadLHf65
-         kH12rNyqUXbraDWQLDECujzpnFpGSUV7AhlGAKam5PFM1WoECIRk29PbkP2lNWQUHpFB
-         V6fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrPCaYCcH7G5+vWxIFApmuUexGYtvCJbFqu1w0c97h/K1jOijG/vzpoZ09soanwX2b+8fyqYA5/KaccdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLe/KJhWknYarp7jCxinxVQswyI7KatwxeRDucidivl6omFom
-	MgQZmilcVngyIOke89MDh0x2eCatmZg9n7FA59rShM2wD8y/K5Z+u2jH
-X-Gm-Gg: ASbGncspiqNQGwsaaEpfD/HMT0953yuDJ+ZjcS3jPmdaYJggBpj83qTlFq2EXvqStzl
-	V74Xw3akV5pMfJFodcA0EFxXj4APDF0s6hOOtxpQ+3XwTHqEKeeRFsY/FASh11o3Uz30iUvLhmG
-	HUgOJq3KSmJZsblZPg1b65PbEdvAIIpDZmK0IwpSdYFHlrGcdPxi45e6KxK0Vg4+vxAmiIe0f2q
-	vtkE5ecomvuUppnWo6y+gRQx1kqbOGNNRxHbD2iCjqXEcszbHbA7t3w/odsgR4cS7PNhD1Mpy8n
-	/Nuq/UHAUGAk+QZpenHtWuS/17CqniLFMXNAv/E6OP7ljlr59Y+RtjUjAsDVU6Hq6/5qOWTgXDm
-	m9/JvqYg3ikAvw4o0QJNiWPQH0zH7nzkWP2oKzQ37KpMMQGiDfDNpBk7xyqR4iEaMmEGbW0Q9mj
-	QCclWDjlEP61AA9KJW1+r0WIEk
-X-Google-Smtp-Source: AGHT+IFcm/7eA7OM1o0lYGSXbMuGwXv23lCAu3vI178c0WrBUNLFpdQ0EvMHjhKjzvOvGwj6jeFaVQ==
-X-Received: by 2002:a17:90b:5487:b0:343:c839:21d2 with SMTP id 98e67ed59e1d1-343ddef34c5mr6162819a91.28.1763016586418;
-        Wed, 12 Nov 2025 22:49:46 -0800 (PST)
-Received: from ti-am64x-sdk.. ([14.98.178.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343e07156absm4838126a91.5.2025.11.12.22.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 22:49:46 -0800 (PST)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: dmaengine@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	bhanuseshukumar@gmail.com
-Subject: [PATCH] docs: dmaengine: add explanation for phys field in dma_async_tx_descriptor structure
-Date: Thu, 13 Nov 2025 12:19:37 +0530
-Message-Id: <20251113064937.8735-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1763016626; c=relaxed/simple;
+	bh=6FMyS+r3odqL7f6BS/HvHN06i1NQj2Qf7B+OK41yJVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KlJBseHS3E/q7oeT3U6OZ45qFMae9QGi0F2PxPZGMy8TlEanK/RTa6bKw7TzSB90fRhIbUNzFEydlsJ++SqQn9xUpbMfZsUeT+NU6aoeh6odxeM/h5yAxbhF0CcZSKFQaBxtMzY+OslhH8BRUmyxTDWHCt3SnYHq4SeD6wOBszs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FG+U4YmF; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763016624; x=1794552624;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6FMyS+r3odqL7f6BS/HvHN06i1NQj2Qf7B+OK41yJVo=;
+  b=FG+U4YmFavQiCy6KJfKoLmM+RiV1JK8x7GacQ8Rb8iugaDr+TquFx8Po
+   KwovANiGlw3SPkl/tUYiVK94TXUsgiyQBgx8qUGazIojQhLcp4FNVHUvZ
+   F/YlDxFSxkpaP3j8nNwqj5B9ad+7CF+tsdYUYHHnD6ARDIn7LB1c+gN/K
+   9uJTFI/jO1DC4rhMmRMusDLsLOZ9brrfOCw5OaAc3s6YKGpR9Z4lppby1
+   1CPb6WNO7aak2aKxYK+d5qxu30JFMmBilmtrAd1E72UyqHqLu1a8dBijC
+   xC67CnI9DDW+OrcL/MHFWxfxG7N3nomqaL1DuluEdUFpL9l9C7ByJ4Du4
+   Q==;
+X-CSE-ConnectionGUID: kxpmUJB3TVSBWXXa1P0y4A==
+X-CSE-MsgGUID: 8mcWtpEyQh6zRz5mC2kAag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="90561287"
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="90561287"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:50:23 -0800
+X-CSE-ConnectionGUID: DuWpZ0LaSDGn6wuielH07Q==
+X-CSE-MsgGUID: ykgb+UGMQQ+wJuh5Uc4VSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="212807959"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:50:20 -0800
+Message-ID: <db0d7975-946e-4d74-928a-0c7018adcc03@linux.intel.com>
+Date: Thu, 13 Nov 2025 14:50:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/events/intel/cstate: Add Pantherlake support
+To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, jolsa@kernel.org,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251112090024.3298186-1-kaushlendra.kumar@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251112090024.3298186-1-kaushlendra.kumar@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Describe the need to initialize the phys field in the dma_async_tx_descriptor
-structure during its initialization.
+Hi Kaushlendra,
 
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
----
- Documentation/driver-api/dmaengine/provider.rst | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+The PTL cstate enabling patch had been merged into tip perf/core branch. :)
 
-diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
-index 1594598b3..f4ed98f70 100644
---- a/Documentation/driver-api/dmaengine/provider.rst
-+++ b/Documentation/driver-api/dmaengine/provider.rst
-@@ -411,7 +411,7 @@ supported.
-   - This structure can be initialized using the function
-     ``dma_async_tx_descriptor_init``.
- 
--  - You'll also need to set two fields in this structure:
-+  - You'll also need to set following fields in this structure:
- 
-     - flags:
-       TODO: Can it be modified by the driver itself, or
-@@ -421,6 +421,9 @@ supported.
-       that is supposed to push the current transaction descriptor to a
-       pending queue, waiting for issue_pending to be called.
- 
-+    - phys: Physical address of the descriptor which is used later by
-+      the dma engine to read the descriptor and initiate transfer.
-+
-   - In this structure the function pointer callback_result can be
-     initialized in order for the submitter to be notified that a
-     transaction has completed. In the earlier code the function pointer
--- 
-2.34.1
+Thanks,
 
+- Dapeng
+
+On 11/12/2025 5:00 PM, Kaushlendra Kumar wrote:
+> It supports the same C-state residency counters as Lunarlake.This
+> enables monitoring of C1, C6, C7 core states and C2,C3,C6,C10
+> package states residency counters on Pantherlake platforms.
+>
+> Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+> ---
+>  arch/x86/events/intel/cstate.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+> index ec753e39b007..b3582eeb6c4b 100644
+> --- a/arch/x86/events/intel/cstate.c
+> +++ b/arch/x86/events/intel/cstate.c
+> @@ -41,7 +41,7 @@
+>   *	MSR_CORE_C1_RES: CORE C1 Residency Counter
+>   *			 perf code: 0x00
+>   *			 Available model: SLM,AMT,GLM,CNL,ICX,TNT,ADL,RPL
+> - *					  MTL,SRF,GRR,ARL,LNL
+> + *					  MTL,SRF,GRR,ARL,LNL,PTL
+>   *			 Scope: Core (each processor core has a MSR)
+>   *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
+>   *			       perf code: 0x01
+> @@ -53,31 +53,32 @@
+>   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+>   *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
+>   *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
+> - *						GRR,ARL,LNL
+> + *						GRR,ARL,LNL,PTL
+>   *			       Scope: Core
+>   *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
+>   *			       perf code: 0x03
+>   *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
+> - *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL
+> + *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL,
+> + *						PTL
+>   *			       Scope: Core
+>   *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
+>   *			       perf code: 0x00
+>   *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+>   *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+> - *						RPL,SPR,MTL,ARL,LNL,SRF
+> + *						RPL,SPR,MTL,ARL,LNL,SRF,PTL
+>   *			       Scope: Package (physical package)
+>   *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+>   *			       perf code: 0x01
+>   *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
+>   *						GLM,CNL,KBL,CML,ICL,TGL,TNT,RKL,
+> - *						ADL,RPL,MTL,ARL,LNL
+> + *						ADL,RPL,MTL,ARL,LNL,PTL
+>   *			       Scope: Package (physical package)
+>   *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
+>   *			       perf code: 0x02
+>   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+>   *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
+>   *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
+> - *						ARL,LNL
+> + *						ARL,LNL,PTL
+>   *			       Scope: Package (physical package)
+>   *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
+>   *			       perf code: 0x03
+> @@ -96,7 +97,7 @@
+>   *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+>   *			       perf code: 0x06
+>   *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL,
+> - *						TNT,RKL,ADL,RPL,MTL,ARL,LNL
+> + *						TNT,RKL,ADL,RPL,MTL,ARL,LNL,PTL
+>   *			       Scope: Package (physical package)
+>   *	MSR_MODULE_C6_RES_MS:  Module C6 Residency Counter.
+>   *			       perf code: 0x00
+> @@ -652,6 +653,7 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+>  	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&adl_cstates),
+>  	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	&adl_cstates),
+>  	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_cstates),
+> +	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&lnl_cstates),
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
 
