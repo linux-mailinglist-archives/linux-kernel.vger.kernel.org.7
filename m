@@ -1,322 +1,333 @@
-Return-Path: <linux-kernel+bounces-899074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B328BC56B4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA24C56B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F309B3B9602
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212BD3BB628
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C12E11B0;
-	Thu, 13 Nov 2025 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbAGd2Rl"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD0A2DFA2F;
+	Thu, 13 Nov 2025 09:50:58 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851D2DEA97
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DCF2DEA68;
+	Thu, 13 Nov 2025 09:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763027413; cv=none; b=jhrlnxNtdmWYBwbwInaDoEgm1RylqoPdJHOBqAoqklRzyYLaAXHv5qF2WA+RzUaHRDylVgiIKe8lWNdC1l1jJ5kA4VwZEGbA7TLVKw5J9lbrtcxzdts6Mk8m+C+gHpaPdNOkQ6kNiNIR8dR6xQzbv2F0RoVrC78eMF3GeeXVnqs=
+	t=1763027458; cv=none; b=FugmkR5nDCFGZBPpT2SlJtMUmT7FFWemNFq3ycjmMIlQZ+MC25dPZw4mAZbV/fs2DEWS6Dj6AeyXrwwLytAIGSQOYFpDkxLwGE+cP5ittWSGnhfmPkW9LufzMpESrxJiwbvZuuQtEuNElOpNKlmf7Mxv6Ly1+rmm5yvdVF+2xuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763027413; c=relaxed/simple;
-	bh=XpBw9jNdihDIQ+USWx2ZINXrg3bak+lbfxXKptjyquk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8MDqhFTEB8ewMdRODziWxdJ779ymb2DukouKevy6m0Z3b7QYNbptj4zHu9XRGKBl70q8XWlgo2h27NIcjTjhGNF1Jm7FyshBxXAplNfudYcWnQhQq/2Xueb+eSPexQih39n9C/UygJVzY/TWwYZw2dmu2qnvnvy2aZDSUEzl68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VbAGd2Rl; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471191ac79dso6523635e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:50:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763027410; x=1763632210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2QTjxXNOoSuI+2dGtGVFoKKzr99l+pBctFnCDAf+KgU=;
-        b=VbAGd2Rlt432SioPtslSKXqrKQUN/+yGi+VrznRgkDGkaW+qoBkvYFAXLwScGF7P8B
-         5kt1mZIiuhpRQqQld8TFnnGnAwOP7oWZ/9ARHcA1Jh6MnpXhEe2hCGmKSGvgtGbSWe6F
-         DdFpcAL/rDHwcMglniWa55IrmPF4nvRy+cNSJbi/6tRvdLL6g8UvfhNjMcO3RWGhgCCQ
-         gZ1WcsqaI2CPWzXFuUK/J48Qx72SQn8JmzKDSgOQgiQ7QMYSCeBd2TkgbHsPMgXgLGS/
-         ekQFxzV45iWhWsVrXjl0uGTvpggJjk2AJGXl3NQgS5d1/FvAny/Dyn1o9Kc6anf10pmO
-         pusg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763027410; x=1763632210;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2QTjxXNOoSuI+2dGtGVFoKKzr99l+pBctFnCDAf+KgU=;
-        b=RSdIfcegzaI8G0UelQRqpVPYdGXdaNeWpnAtrOsA/bI/KQQ/zBzJbe2Psu1Hva2qJr
-         ckrcH4EhoGcx8N739oW3ZZj39f+Iq/+a4iUKhfBLnsj+aiGfmOxhKHGbzx/1f5aBSVwi
-         XnKjvMtbgHggu5A7LGvLitZsxH/EsyFg6R5BH9tCFGsjWz1V/vLTmv0on0m1UVsETHGI
-         YNmUC5bb57rFynMc4LkJZ3PrMPfLil+EhqtCrBfQri5bWgORv3qYDQ38mDaduSqrlpo+
-         B1TkGDys8VCOUwB4fl9eERuygSn68LbPfedpGOLBsB5JZglSFACnLjB2KTI4U6rVhhIs
-         ETjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkijK35ERKG4l3ncecvfS2G5dJy95Co0guBxD1indZ6edJB6o8JStYEc7rB/Wi80Wr/7vv+spC9OnXVV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGQ3ht38hQpfMvp4feMxPc8wlS+W58EiL+CMeTP9TrWrqu7yJJ
-	nm001JJ1rI0fCYZ0R1WY+2kGw57hr5myUUbxEvTtrQ80sXtTbvmUx2+4qLeCmdBBlNHcBuNTN0F
-	ua9c+Ozs=
-X-Gm-Gg: ASbGnct/hvV9vZuNwj1cODRcydiQW+U9Ic81ncJ0FKW5D6cOBOYfsj18U+fsOqwiix6
-	071tiRIGURBls+/RtKRMY+JrOtE1mtipb32bzQrEA9w5CD6/2s05lGM9NWuvqyXcj+enRu6m3T2
-	8BWHR5mJyY8zXCa+G3z2nezo4hZHWyC+vc7KF7k7j6C0ZOc0YInL2JUjcuNsj1IrFmzYbOGKapY
-	2vPcVrfwyuVGErnpYIYhguOzUwZlPwJAFVsIMdgj9Weg8rmpmxk2Ou1HUx/0p9SEqBjKCG6zdpM
-	vmb6GAQc3zwNgZGUdv4wv4HcYT1McoqdYl+hmeOCgfisW0jjU3fBXGEPoZId0eCwO/zJjQTUJAV
-	sqrp0USItBeSsrQvBDqXFFPBOyBSI1dv1gVZvm38mQvJr7KPbnZNXLtuD643XVUUr35L+BPjwBY
-	CVMRd7XYFXI1qRCRywoLMMNl+LFcoFFKCIIJnn4zMsFZ3+TnuWPez0
-X-Google-Smtp-Source: AGHT+IHoIg7Efgxy6dw+w+8oXHxjzD+pmw7q6YswFEs7wPLTvdZP4dszLcwCRxeAHF9fQzgBhCOi9A==
-X-Received: by 2002:a05:600c:4695:b0:471:c72:c7f8 with SMTP id 5b1f17b1804b1-477870858b6mr59904005e9.21.1763027409874;
-        Thu, 13 Nov 2025 01:50:09 -0800 (PST)
-Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e8e798sm77714465e9.10.2025.11.13.01.50.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 01:50:09 -0800 (PST)
-Message-ID: <e043ca0b-aeb1-4343-aa53-895e7c1992c4@linaro.org>
-Date: Thu, 13 Nov 2025 09:50:07 +0000
+	s=arc-20240116; t=1763027458; c=relaxed/simple;
+	bh=q9mFL8RiAZj6RMExwmFVyoj5ShrrswYQK5SmpeJxjKY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TLUQNny/htwtZO1igA7iL/4hqrKYQZs8Dv1doXQzQC3JJJMOrfjC2jxmCPlAZzyYmZHSDXUDuyEvruYwyzEb/iaccbUFbHnl0ca6ArnHMWsXHn2StF7NICqh/gvoGDxYTHmw4YBhJRmW5CTS6QHQOxL4j74+JAXuMcHWdHjJyRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 389b3ddec07611f0a38c85956e01ac42-20251113
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
+	SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:bae591e1-cddb-4d2a-aadc-b87fd6a85652,IP:10,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:15
+X-CID-INFO: VERSION:1.3.6,REQID:bae591e1-cddb-4d2a-aadc-b87fd6a85652,IP:10,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:re
+	lease,TS:15
+X-CID-META: VersionHash:a9d874c,CLOUDID:d1fd8e5c04717b0a002828b5f9deddca,BulkI
+	D:2511131750462U230LTH,BulkQuantity:0,Recheck:0,SF:19|38|66|72|78|102|850,
+	TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 389b3ddec07611f0a38c85956e01ac42-20251113
+X-User: zhangguopeng@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhangguopeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 358271896; Thu, 13 Nov 2025 17:50:43 +0800
+From: Guopeng Zhang <zhangguopeng@kylinos.cn>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	shuah@kernel.org,
+	cgroups@vger.kernel.org
+Cc: mkoutny@suse.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guopeng Zhang <zhangguopeng@kylinos.cn>
+Subject: [PATCH] selftests/cgroup: conform test to TAP format output
+Date: Thu, 13 Nov 2025 17:50:25 +0800
+Message-Id: <20251113095025.2811205-1-zhangguopeng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] media: qcom: iris: Add scale support for encoder
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- quic_qiweil@quicinc.com, quic_renjiang@quicinc.com
-References: <20251110-iris_encoder_enhancements-v5-0-1dbb19968bd5@oss.qualcomm.com>
- <HaNbXZ7myaf8gi5D0BP71ZDWX9lWp7A-KDu3_afxIoadFrHH7UIQIe__QGQbeUgeUUysuUHpldVtEdpFOTZnrA==@protonmail.internalid>
- <20251110-iris_encoder_enhancements-v5-3-1dbb19968bd5@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251110-iris_encoder_enhancements-v5-3-1dbb19968bd5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/11/2025 10:23, Wangao Wang wrote:
-> Add members enc_scale_width, enc_scale_height to the struct iris_inst to
-> support scale requirements.
-> 
-> Add output width and height settings in iris_venc_s_fmt_output to
-> enable scaling functionality.
-> 
-> Add VPSS buffer to platform data, which the scale function requires.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 12 +++++------
->   .../platform/qcom/iris/iris_hfi_gen2_response.c    |  2 ++
->   drivers/media/platform/qcom/iris/iris_instance.h   |  4 ++++
->   .../media/platform/qcom/iris/iris_platform_gen2.c  | 12 +++++++++++
->   drivers/media/platform/qcom/iris/iris_venc.c       | 23 +++++++++++++++++++++-
->   drivers/media/platform/qcom/iris/iris_vpu_buffer.c |  9 +++++----
->   6 files changed, 51 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index 30c0cbe22d1d34b5bbbc6bdbd3881dd43a6ff647..8945e94ec9e87750fc87bebf63f4fbb634d8571a 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -194,8 +194,8 @@ static int iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
->   		payload_type = HFI_PAYLOAD_U32;
->   	} else {
->   		codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> -		resolution = ALIGN(inst->fmt_dst->fmt.pix_mp.width, codec_align) << 16 |
-> -			ALIGN(inst->fmt_dst->fmt.pix_mp.height, codec_align);
-> +		resolution = ALIGN(inst->enc_scale_width, codec_align) << 16 |
-> +			ALIGN(inst->enc_scale_height, codec_align);
->   		inst_hfi_gen2->dst_subcr_params.bitstream_resolution = resolution;
->   		payload_type = HFI_PAYLOAD_32_PACKED;
->   	}
-> @@ -237,10 +237,10 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
->   			left_offset = inst->crop.left;
->   			top_offset = inst->crop.top;
->   		} else {
-> -			bottom_offset = (ALIGN(inst->fmt_dst->fmt.pix_mp.height, codec_align) -
-> -					inst->fmt_dst->fmt.pix_mp.height);
-> -			right_offset = (ALIGN(inst->fmt_dst->fmt.pix_mp.width, codec_align) -
-> -					inst->fmt_dst->fmt.pix_mp.width);
-> +			bottom_offset = (ALIGN(inst->enc_scale_height, codec_align) -
-> +					inst->enc_scale_height);
-> +			right_offset = (ALIGN(inst->enc_scale_width, codec_align) -
-> +				       inst->enc_scale_width);
->   			left_offset = 0;
->   			top_offset = 0;
->   		}
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> index 2f1f118eae4f6462ab1aa1d16844b34e6e699f1e..dc3e606b6ab429a1d15536fa8316afb1e384d674 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
-> @@ -54,6 +54,8 @@ static u32 iris_hfi_gen2_buf_type_to_driver(struct iris_inst *inst,
->   			return BUF_SCRATCH_2;
->   	case HFI_BUFFER_PERSIST:
->   		return BUF_PERSIST;
-> +	case HFI_BUFFER_VPSS:
-> +		return BUF_VPSS;
->   	default:
->   		return 0;
->   	}
-> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
-> index a9892988c10bc28e9b2d8c3b5482e99b5b9af623..0b36092fe4e7296da2f66aecf9083f7f1edc5459 100644
-> --- a/drivers/media/platform/qcom/iris/iris_instance.h
-> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
-> @@ -66,6 +66,8 @@ struct iris_fmt {
->    * @hfi_rc_type: rate control type
->    * @enc_raw_width: source image width for encoder instance
->    * @enc_raw_height: source image height for encoder instance
-> + * @enc_scale_width: scale width for encoder instance
-> + * @enc_scale_height: scale height for encoder instance
->    */
-> 
->   struct iris_inst {
-> @@ -106,6 +108,8 @@ struct iris_inst {
->   	u32				hfi_rc_type;
->   	u32				enc_raw_width;
->   	u32				enc_raw_height;
-> +	u32				enc_scale_width;
-> +	u32				enc_scale_height;
->   };
-> 
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index 36d69cc73986b74534a2912524c8553970fd862e..d3306189d902a1f42666010468c9e4e4316a66e1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -729,6 +729,10 @@ static const u32 sm8550_dec_op_int_buf_tbl[] = {
->   	BUF_DPB,
->   };
-> 
-> +static const u32 sm8550_enc_ip_int_buf_tbl[] = {
-> +	BUF_VPSS,
-> +};
-> +
->   static const u32 sm8550_enc_op_int_buf_tbl[] = {
->   	BUF_BIN,
->   	BUF_COMV,
-> @@ -816,6 +820,8 @@ struct iris_platform_data sm8550_data = {
->   	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->   	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> 
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->   	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->   	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->   };
-> @@ -908,6 +914,8 @@ struct iris_platform_data sm8650_data = {
->   	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->   	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> 
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->   	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->   	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->   };
-> @@ -989,6 +997,8 @@ struct iris_platform_data sm8750_data = {
->   	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->   	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> 
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->   	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->   	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->   };
-> @@ -1077,6 +1087,8 @@ struct iris_platform_data qcs8300_data = {
->   	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->   	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> 
-> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
->   	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
->   	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-> index 7ad747d2272f029e69a56572a188a032f898a3fb..f573408a3fc66e1bbc7814a8fc7953158e043fce 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
-> @@ -70,6 +70,8 @@ int iris_venc_inst_init(struct iris_inst *inst)
-> 
->   	inst->enc_raw_width = DEFAULT_WIDTH;
->   	inst->enc_raw_height = DEFAULT_HEIGHT;
-> +	inst->enc_scale_width = DEFAULT_WIDTH;
-> +	inst->enc_scale_height = DEFAULT_HEIGHT;
-> 
->   	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
->   	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
-> @@ -188,15 +190,32 @@ int iris_venc_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
-> 
->   static int iris_venc_s_fmt_output(struct iris_inst *inst, struct v4l2_format *f)
->   {
-> +	const struct iris_fmt *venc_fmt;
->   	struct v4l2_format *fmt;
-> +	u32 codec_align;
-> 
->   	iris_venc_try_fmt(inst, f);
-> 
-> -	if (!(find_format(inst, f->fmt.pix_mp.pixelformat, f->type)))
-> +	venc_fmt = find_format(inst, f->fmt.pix_mp.pixelformat, f->type);
-> +	if (!venc_fmt)
->   		return -EINVAL;
-> 
-> +	codec_align = venc_fmt->pixfmt == V4L2_PIX_FMT_HEVC ? 32 : 16;
-> +
->   	fmt = inst->fmt_dst;
->   	fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-> +	/*
-> +	 * If output format size != input format size,
-> +	 * it is considered a scaling case,
-> +	 * and the scaled size needs to be saved.
-> +	 */
-> +	if (f->fmt.pix_mp.width != inst->fmt_src->fmt.pix_mp.width ||
-> +	    f->fmt.pix_mp.height != inst->fmt_src->fmt.pix_mp.height) {
-> +		inst->enc_scale_width = f->fmt.pix_mp.width;
-> +		inst->enc_scale_height = f->fmt.pix_mp.height;
-> +		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, codec_align);
-> +		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, codec_align);
-> +	}
->   	fmt->fmt.pix_mp.num_planes = 1;
->   	fmt->fmt.pix_mp.plane_fmt[0].bytesperline = 0;
->   	fmt->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_OUTPUT);
-> @@ -254,6 +273,8 @@ static int iris_venc_s_fmt_input(struct iris_inst *inst, struct v4l2_format *f)
-> 
->   	inst->enc_raw_width = f->fmt.pix_mp.width;
->   	inst->enc_raw_height = f->fmt.pix_mp.height;
-> +	inst->enc_scale_width = f->fmt.pix_mp.width;
-> +	inst->enc_scale_height = f->fmt.pix_mp.height;
-> 
->   	if (f->fmt.pix_mp.width != inst->crop.width ||
->   	    f->fmt.pix_mp.height != inst->crop.height) {
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..db5adadd1b39c06bc41ae6f1b3d2f924b3ebf150 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> @@ -1131,10 +1131,11 @@ static u32 iris_vpu_enc_arp_size(struct iris_inst *inst)
-> 
->   inline bool is_scaling_enabled(struct iris_inst *inst)
->   {
-> -	return inst->crop.left != inst->compose.left ||
-> -		inst->crop.top != inst->compose.top ||
-> -		inst->crop.width != inst->compose.width ||
-> -		inst->crop.height != inst->compose.height;
-> +	struct v4l2_pix_format_mplane *dst_fmt = &inst->fmt_dst->fmt.pix_mp;
-> +	struct v4l2_pix_format_mplane *src_fmt = &inst->fmt_src->fmt.pix_mp;
-> +
-> +	return dst_fmt->width != src_fmt->width ||
-> +		dst_fmt->height != src_fmt->height;
->   }
-> 
->   static inline
-> 
-> --
-> 2.43.0
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Conform the layout, informational and status messages to TAP.  No
+functional change is intended other than the layout of output messages.
+
+Signed-off-by: Guopeng Zhang <zhangguopeng@kylinos.cn>
+---
+ tools/testing/selftests/cgroup/test_core.c       | 7 ++++---
+ tools/testing/selftests/cgroup/test_cpu.c        | 7 ++++---
+ tools/testing/selftests/cgroup/test_cpuset.c     | 7 ++++---
+ tools/testing/selftests/cgroup/test_freezer.c    | 7 ++++---
+ tools/testing/selftests/cgroup/test_kill.c       | 7 ++++---
+ tools/testing/selftests/cgroup/test_kmem.c       | 7 ++++---
+ tools/testing/selftests/cgroup/test_memcontrol.c | 7 ++++---
+ tools/testing/selftests/cgroup/test_zswap.c      | 7 ++++---
+ 8 files changed, 32 insertions(+), 24 deletions(-)
+
+diff --git a/tools/testing/selftests/cgroup/test_core.c b/tools/testing/selftests/cgroup/test_core.c
+index 5e5b8c4b8c0e..102262555a59 100644
+--- a/tools/testing/selftests/cgroup/test_core.c
++++ b/tools/testing/selftests/cgroup/test_core.c
+@@ -923,8 +923,10 @@ struct corecg_test {
+ int main(int argc, char *argv[])
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), &nsdelegate)) {
+ 		if (setup_named_v1_root(root, sizeof(root), CG_NAMED_NAME))
+ 			ksft_exit_skip("cgroup v2 isn't mounted and could not setup named v1 hierarchy\n");
+@@ -946,12 +948,11 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+ 	cleanup_named_v1_root(root);
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
+index 7d77d3d43c8e..c83f05438d7c 100644
+--- a/tools/testing/selftests/cgroup/test_cpu.c
++++ b/tools/testing/selftests/cgroup/test_cpu.c
+@@ -796,8 +796,10 @@ struct cpucg_test {
+ int main(int argc, char *argv[])
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 
+@@ -814,11 +816,10 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_cpuset.c b/tools/testing/selftests/cgroup/test_cpuset.c
+index 8094091a5857..c5cf8b56ceb8 100644
+--- a/tools/testing/selftests/cgroup/test_cpuset.c
++++ b/tools/testing/selftests/cgroup/test_cpuset.c
+@@ -247,8 +247,10 @@ struct cpuset_test {
+ int main(int argc, char *argv[])
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 
+@@ -265,11 +267,10 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_freezer.c b/tools/testing/selftests/cgroup/test_freezer.c
+index 714c963aa3f5..97fae92c8387 100644
+--- a/tools/testing/selftests/cgroup/test_freezer.c
++++ b/tools/testing/selftests/cgroup/test_freezer.c
+@@ -1488,8 +1488,10 @@ struct cgfreezer_test {
+ int main(int argc, char *argv[])
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
+@@ -1501,11 +1503,10 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_kill.c b/tools/testing/selftests/cgroup/test_kill.c
+index a4dd326ced79..c8c9d306925b 100644
+--- a/tools/testing/selftests/cgroup/test_kill.c
++++ b/tools/testing/selftests/cgroup/test_kill.c
+@@ -274,8 +274,10 @@ struct cgkill_test {
+ int main(int argc, char *argv[])
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
+@@ -287,11 +289,10 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_kmem.c b/tools/testing/selftests/cgroup/test_kmem.c
+index 005a142f3492..ca38525484e3 100644
+--- a/tools/testing/selftests/cgroup/test_kmem.c
++++ b/tools/testing/selftests/cgroup/test_kmem.c
+@@ -421,8 +421,10 @@ struct kmem_test {
+ int main(int argc, char **argv)
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 
+@@ -446,11 +448,10 @@ int main(int argc, char **argv)
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index 2e9d78ab641c..4e1647568c5b 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -1650,8 +1650,10 @@ struct memcg_test {
+ int main(int argc, char **argv)
+ {
+ 	char root[PATH_MAX];
+-	int i, proc_status, ret = EXIT_SUCCESS;
++	int i, proc_status;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 
+@@ -1685,11 +1687,10 @@ int main(int argc, char **argv)
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
+index ab865d900791..64ebc3f3f203 100644
+--- a/tools/testing/selftests/cgroup/test_zswap.c
++++ b/tools/testing/selftests/cgroup/test_zswap.c
+@@ -597,8 +597,10 @@ static bool zswap_configured(void)
+ int main(int argc, char **argv)
+ {
+ 	char root[PATH_MAX];
+-	int i, ret = EXIT_SUCCESS;
++	int i;
+ 
++	ksft_print_header();
++	ksft_set_plan(ARRAY_SIZE(tests));
+ 	if (cg_find_unified_root(root, sizeof(root), NULL))
+ 		ksft_exit_skip("cgroup v2 isn't mounted\n");
+ 
+@@ -625,11 +627,10 @@ int main(int argc, char **argv)
+ 			ksft_test_result_skip("%s\n", tests[i].name);
+ 			break;
+ 		default:
+-			ret = EXIT_FAILURE;
+ 			ksft_test_result_fail("%s\n", tests[i].name);
+ 			break;
+ 		}
+ 	}
+ 
+-	return ret;
++	ksft_finished();
+ }
+-- 
+2.25.1
+
 
