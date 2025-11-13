@@ -1,232 +1,89 @@
-Return-Path: <linux-kernel+bounces-899330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E75C576D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:32:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF22C576FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:35:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6B424E4EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:31:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0B7E234C2C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D002D0607;
-	Thu, 13 Nov 2025 12:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646C34DCDF;
+	Thu, 13 Nov 2025 12:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Igr4Hvdq"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOp/uNGL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DF010F1
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9782435979;
+	Thu, 13 Nov 2025 12:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037053; cv=none; b=tdONMSZwqETr9i5RSFvZpqUqxkVNU984Qi5Dg6jC5QyRORFqcleuiRS45Dg7gWkmTMqmrxlpIEbC8TJafG90uUfpEwogOxChx8vxIndciCp8tFGyhO8o6+SzkfEbaruwlrH/zkIIoII0zkWvYYsXXTQeg8U4Wt7VgFesr1okEZ8=
+	t=1763037269; cv=none; b=ND73IWODeRgk/0JnrsLoTalqAwXjAZZW12uMREkITrKiqglrZn+qZCVTMMIEi1fWhVFrcPfb5Gmzynruq1u+wpcaa7HjDR7H8WqEejJLGAMTm20qJFe+IYn1eMRJgNcgQ5CFjEc+520YquoEAdetjT2m29pEmPvLxBuan1mxQII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037053; c=relaxed/simple;
-	bh=A2fhQ2/KBTrdnYDye7ghdl7QYaygI+ZGlpMm/6JoSiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ketoQbYBdRNvdpiwOtXWQLBw/v09L7VTVdV8pSCOoGn2m0dENWEZX/3KQKN0tRtNtCWDTd/afFEPXljl1dO1lJrYJcThAy6pLQGWlQjzCRtxZhytbAobGW4/8EG43njfiKDYiw5uSDaKBY+pbpnP3tGND+V8n0AjH77d701eZ5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Igr4Hvdq; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so4272625e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:30:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763037050; x=1763641850; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrCwq6g4qJ/eiWE4fzuFVPtWBnMqMIh/+G4br43U4t8=;
-        b=Igr4Hvdq83KyJzV6IpXDIs8z7CZRkbeYtcQIb6QRjROzm8gdya26/bp0ldBZQMhYAL
-         DPjPY9Arvoa4DFOdiLTXPVi06zaa5nR+hpExix/ojlKzxGJgwJBD84LWwL0SqQuCoi8E
-         qMQsDvpoFnYVhoXrVuVoK/L28Dv2EdzKSCpY6skLzJUonZS+L+2vPlKDBq9oPbHSoY63
-         uzpf3U59mK3NjZuIQxlxhw6Xrpc9gnqxfgL29AEyh4o///6tRrTTaLlSk1+X65gMNwhZ
-         17ScG+9OjjNi9lC+DbkkTGj6n9Qdx8xb8uF6CcMstaDqJWdROQjXeDERrBx0QZBmAqzi
-         uSmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763037050; x=1763641850;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrCwq6g4qJ/eiWE4fzuFVPtWBnMqMIh/+G4br43U4t8=;
-        b=wpcBqZ/zkim0qToRmRgCsNPliy5KYmeO5uIkx6b2Lbrq6vr59j+8x/MFPMgfz4od1l
-         pMWps86EohQHSjZvsd2hvvW3I/cXyLhYqEsIj78pPtG5bQ+bttAhS6eIZ39sTRfVGJxX
-         X1LSBOFtIbKWWb2yBTclkxCS802DX90cG/ZPohcVQripsuFUYNWN59GgkPMtiDcq/Qp4
-         d5miL+HUjJ5W9WNvz++HqnDemGcnna7f9H53jeu9DlqKHIUhSQTMbIoUvV4g9M1ybEuG
-         xpHDZdQM6kztBYMMK3+fu8jI+OJIikp7/NFf0w9CvFmPcdIy5PaFN9dLYDLt89M6DOGE
-         iNPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmvXCH2w8c+tjS4Dq4RKMj+NYzKqctBmWzL3bDNmn/c447R6N4HNYoDvDVVXyEMhI6qCwvw7eanwfH7C4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU+jKBHTVbEFfPSlh5fSmlvzM3SiFqeogp4Ggr84dHaqm65dMi
-	2tp8xkFwRwHLyk1PuMmQxNBvLrWF5F2MjZhLp7T9KJNM8fLra2RPPftk6Z3d5krX64Qc9FxdUqL
-	vba7cdBRY1Ep5fwAKE1JdCdqsLv9dOKClRz+uOel2vw==
-X-Gm-Gg: ASbGncsfVEyaCKEjiDqNyEVi90Yi/6mC+vDtfsoy4nOUnOAQupQ/65Haj7xgcHWqQyY
-	3BC7Z/D05TmZsoPYlLZvKD6VccwKdoiu58PwadYcr3qOTtdqkva710xul7YsHgpQruPx3hZIF/o
-	SNAPWyJrGSEeJcnn/lHGbX+N/N32WitegW8xyhuQcbGXYL00VWOIN0loVQogu6rBec6mt4UkRLt
-	HW8oj5vCkArtY+ZQ9h27+jF4x9MrfOFbAb1yhTVvmK4uzT9t4DFpfujhZevRwU9jvw10RE5AtR0
-	BMcAYM0FRsdLrm9apaPtewY0kGiU8sjIKbTWRN/AbryRa5pEyevvZYfkmQ==
-X-Google-Smtp-Source: AGHT+IHiAAHAOq5J8r/kHDgff+Eb6mU47kysXO0Bq+GkER/xA2+JNPCnRYlxP4yd+QacdC6d3J5CDnv10Ii/0ybdHkY=
-X-Received: by 2002:a05:600c:138b:b0:46d:ba6d:65bb with SMTP id
- 5b1f17b1804b1-477870c31c4mr62295625e9.31.1763037049738; Thu, 13 Nov 2025
- 04:30:49 -0800 (PST)
+	s=arc-20240116; t=1763037269; c=relaxed/simple;
+	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qZ7k2dnf6qFEtUZrvWCDqqivuKl4+p+2tTs8xewhXErHgK/qsFoksVQBp+eDiJfeu6ouBcb/8rwNRQ/BdEApqF3Ps/x/yHnaP6v+WurXjyzKlBUs8JqVEv/38D9guXzZ8KCEMnNy/PwqL/RbOPEJs3GLN5emUO6KdKUT80ujDeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOp/uNGL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A64C4CEF8;
+	Thu, 13 Nov 2025 12:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763037269;
+	bh=y1FfFIuMb0svp4ymlKmSDs7EFvaJvR5A3gJ3lpcq8Uk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EOp/uNGLEJX2/o1A0Oqqre+Il30QU6+REZ6YFDPWH0Meu5sP92HduOMkUe8kYKDAB
+	 VdMLglbLi+06rRrPRmZtPa85qJJEDgpngLeHOzUgN1sNS8CURZ8cVUCHj7//ChyqxF
+	 VuOuLY62yswpDC7bqM25vTrSPw6RUWv/LeQgStQLbLM2OrQuNcrt/3iInfvUmER6AV
+	 Nc+T6QelxZUkCLsxA1HPvQevv9ZkT7AKrzBRgRHmpmiBzB/hsqvjQmmfHqp2ZR80oO
+	 H3l+CR6hjebnQdqloBIy7TOa2FcbeyT4jGxT7OutE15lQOo+L85dtISsLNkHoQJUIp
+	 agdcL9uWkwFxQ==
+Message-ID: <13db54a4-5f02-4b57-8ff9-6298c2c4b8d3@kernel.org>
+Date: Thu, 13 Nov 2025 13:34:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1762972845.git.foxido@foxido.dev> <c7abcfeb7e549bf5ad9861044c97b9a111d64370.1762972845.git.foxido@foxido.dev>
- <20251113084323.GG13846@twin.jikos.cz> <35e1977e-7cca-4ea3-9df8-0a2b43bc0f85@foxido.dev>
- <20251113112514.GN13846@suse.cz>
-In-Reply-To: <20251113112514.GN13846@suse.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Thu, 13 Nov 2025 13:30:38 +0100
-X-Gm-Features: AWmQ_blnxNnvDzEZMqTYwUC-BTC_2Ojhag6zmMej5SMBzsbJu-YcbvcQwXN-4lM
-Message-ID: <CAPjX3Fed9D1wdjvLyhXq5MB2aKOtUPsxx7gaEM_81q32hgnKtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/8] btrfs: simplify function protections with guards
-To: dsterba@suse.cz
-Cc: Gladyshev Ilya <foxido@foxido.dev>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/8] mm: Add PG_atomic
+To: Matthew Wilcox <willy@infradead.org>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+ ritesh.list@gmail.com, john.g.garry@oracle.com, tytso@mit.edu,
+ dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, jack@suse.cz,
+ nilay@linux.ibm.com, martin.petersen@oracle.com, rostedt@goodmis.org,
+ axboe@kernel.dk, linux-block@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <cover.1762945505.git.ojaswin@linux.ibm.com>
+ <5f0a7c62a3c787f2011ada10abe3826a94f99e17.1762945505.git.ojaswin@linux.ibm.com>
+ <aRSuH82gM-8BzPCU@casper.infradead.org>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <aRSuH82gM-8BzPCU@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Nov 2025 at 12:25, David Sterba <dsterba@suse.cz> wrote:
->
-> On Thu, Nov 13, 2025 at 01:06:42PM +0300, Gladyshev Ilya wrote:
-> > On 11/13/25 11:43, David Sterba wrote:
-> > > On Wed, Nov 12, 2025 at 09:49:40PM +0300, Gladyshev Ilya wrote:
-> > >> Replaces cases like
-> > >>
-> > >> void foo() {
-> > >>      spin_lock(&lock);
-> > >>      ... some code ...
-> > >>      spin_unlock(&lock)
-> > >> }
-> > >>
-> > >> with
-> > >>
-> > >> void foo() {
-> > >>      guard(spinlock)(&lock);
-> > >>      ... some code ...
-> > >> }
-> > >>
-> > >> While it doesn't has any measurable impact,
-> > >
-> > > There is impact, as Daniel mentioned elsewhere, this also adds the
-> > > variable on stack. It's measuable on the stack meter, one variable is
-> > > "nothing" but combined wherever the guards are used can add up. We don't
-> > > mind adding variables where needed, occasional cleanups and stack
-> > > reduction is done. Here it's a systematic stack use increase, not a
-> > > reason to reject the guards but still something I cannot just brush off
-> > I thought it would be optimized out by the compiler in the end, I will
-> > probably recheck this
->
-> There are cases where compiler will optimize it out, IIRC when the lock
-> is embedded in a structure, and not when the pointer is dereferenced.
+On 12.11.25 16:56, Matthew Wilcox wrote:
+> On Wed, Nov 12, 2025 at 04:36:05PM +0530, Ojaswin Mujoo wrote:
+>> From: John Garry <john.g.garry@oracle.com>
+>>
+>> Add page flag PG_atomic, meaning that a folio needs to be written back
+>> atomically. This will be used by for handling RWF_ATOMIC buffered IO
+>> in upcoming patches.
+> 
+> Page flags are a precious resource.  I'm not thrilled about allocating one
+> to this rather niche usecase.
 
-Yes. If you have a pointer to a structure with a lock embedded in it,
-the compiler knows the local variable is stable (as in non-volatile or
-const, the pointer does not change) and is happy to use it and
-optimize out the explicit copy. It knows both values are the same and
-so it is safe to do so. At least starting with -O2 with gcc with my
-tests.
+Fully agreed.
 
-But if you have a pointer to a pointer to some structure, the compiler
-(unlike us) cannot make the same assumptions. Strictly speaking, since
-the address to the structure containing the lock is not in a local
-variable but somewhere in the memory, it can change during the
-execution of the function. We as developers know the pointers are
-reasonably stable as the code is usually designed in such a way. And
-if it's not, we know that as well and modify the locking accordingly.
-So usually we're happy to `spin_unlock(&foo->bar->lock)`, but for the
-compiler this may be a different lock then the one initially locked
-before. From the language point of view, the address of `bar` could
-have changed in the meantime. And so the compiler is forced to use the
-local copy of the pointer to the lock saved when acquiring the lock
-and cannot optimize it out.
+-- 
+Cheers
 
-So this really depends case by case. Using the guard in place of
-patterns like `spin_unlock(&foo->lock)` can be optimized out while
-guard for patterns like `spin_unlock(&foo->bar->lock)` need to use an
-extra stack space for the local variable storing a copy of the lock
-address.
-
-You would really have to use `struct bar *bar = foo->bar;
-guard(spinlock)(&bar->lock); ...`. But then you are explicitly using
-the stack yourself. So it's equivalent.
-
-> > >> it makes clear that whole
-> > >> function body is protected under lock and removes future errors with
-> > >> additional cleanup paths.
-> > >
-> > > The pattern above is the one I find problematic the most, namely in
-> > > longer functions or evolved code. Using your example as starting point
-> > > a followup change adds code outside of the locked section:
-> > >
-> > > void foo() {
-> > >      spin_lock(&lock);
-> > >      ... some code ...
-> > >      spin_unlock(&lock)
-> > >
-> > >      new code;
-> > > }
-> > >
-> > > with
-> > >
-> > > void foo() {
-> > >      guard(spinlock)(&lock);
-> > >      ... some code ...
-> > >
-> > >      new code;
-> > > }
-> > >
-> > > This will lead to longer critical sections or even incorrect code
-> > > regarding locking when new code must not run under lock.
-> > >
-> > > The fix is to convert it to scoped locking, with indentation and code
-> > > churn to unrelated code to the new one.
-> > >
-> > > Suggestions like refactoring to make minimal helpers and functions is
-> > > another unecessary churn and breaks code reading flow.
-> >
-> > What if something like C++ unique_lock existed? So code like this would
-> > be possible:
-> >
-> > void foo() {
-> >    GUARD = unique_lock(&spin);
-> >
-> >    if (a)
-> >      // No unlocking required -> it will be done automatically
-> >      return;
-> >
-> >    unlock(GUARD);
-> >
-> >    ... unlocked code ...
-> >
-> >    // Guard undestands that it's unlocked and does nothing
-> >    return;
-> > }
-> >
-> > It has similar semantics to scoped_guard [however it has weaker
-> > protection -- goto from locked section can bypass `unlock` and hold lock
-> > until return], but it doesn't introduce diff noise correlated with
-> > indentations.
-> >
-> > Another approach is allowing scoped_guards to have different indentation
-> > codestyle to avoid indentation of internal block [like goto labels for
-> > example].
-> >
-> > However both of this approaches has their own downsides and are pure
-> > proposals
->
-> Thanks, it's good to have concrete examples to discuss. It feels like
-> we'd switch away from C and force patterns that are maybe common in
-> other languages like C++ that do things under the hood and it's fine
-> there as it's the mental programming model one has. This feels alien to
-> kernel C programming, namely for locking where the "hide things" is IMO
-> worse than "make things explicit".
->
-> There are cases where switching to guards would be reasonable because
-> the functions are short and simple but then it does not utilize the
-> semantics of automatic cleanup. In more complex functions it would mean
-> to make more structural changes to the code at the cost of churn and
-> merge conflicts of backported patches.
+David
 
