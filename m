@@ -1,194 +1,197 @@
-Return-Path: <linux-kernel+bounces-898601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6394C558EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:36:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E492FC5592A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 65F53343B1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:34:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAAD64E8962
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C083E3002C2;
-	Thu, 13 Nov 2025 03:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hJP6Dw7o"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09052BE629;
+	Thu, 13 Nov 2025 03:27:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DA02877CF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E929B224;
+	Thu, 13 Nov 2025 03:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763004270; cv=none; b=IRq6xbzMowyUO4D8pqbzDN/GaULGfRl5UTACo1NM+KNzhO3Vwfdw4pzngohOy4sj24KTLzTOWCx/sYavciKH6kDDyOgNh8h/pJkysOJFDSzlaccXwFt21yTFr2xjOPc3KyT1aaLRUiJEYTNxiMSKqRv0lt/G75GR+3M9oimcQiY=
+	t=1763004440; cv=none; b=V/sKg5SIENWIG+HETTSCXF3MMxJX3LaUKtbWfkxESQ9v0aoTvIaukKvxWEGIUexNNy6CQeQBY9jB6s6+dM1yCb1JKXmuV8WHJhx/Z8l8g0dlIMnSEglKlZ1ENXu+yNCGeIbKJtMe11hpFMiIf2AP0kDAl3e9Ox0fj402gCQa6o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763004270; c=relaxed/simple;
-	bh=w19LmHl9EzPoq+VagsivemZSdZB3oysJfy50JY4ePY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E2losKM0g7m8zJ1Bgpe0R8y4NGG1iHqsPgbEoFEoHRTvs25ZnORA+KltEnjXjzioUGsWg4XC9blPRig0L+pGl7oegDjYPQzY16l8NJdc5BpdqX5D5q0Zt6d3IPl1GDjaYNNUBdYwJuUD9QOwGS8CT3kJTBnj4kZzX0QccrQ3qcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hJP6Dw7o; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-297e13bf404so107605ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763004268; x=1763609068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGyRfQ7sxinUKyVvjsR+Vqj6OVZ9Yu2U/bhjn87KrGg=;
-        b=hJP6Dw7oqVNrhg1lKL3H5OLVdY1uhO1tC6VnPHqHtPBr4TAW+FrtzCO1T2pUeIKGb+
-         Y5DNrJpTAZ1qu4HSOQexkPscc5bYoDMwTAs2UHkhr4tIlXYmJc95X6LN4OPKmCg9/sZb
-         VG/VnERPPln2XGhmGgU0nXN3Mk0hA7mY4b3/fFFF+63qNtg/6yskv28tdFYY+Ojv8U6u
-         hlws2FiuIiTUT0pOwFD9ByAVHsY0yiKTvfB9H05hGYmdQCSKx/Vlew0leTvM75SL6owb
-         eBCoDOURkl0vmCaKiKBIDtXnd4YbMktY/u8K2wumY/X/tsVf1JCTS2h7DRY4kjJCI0Xu
-         bm9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763004268; x=1763609068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jGyRfQ7sxinUKyVvjsR+Vqj6OVZ9Yu2U/bhjn87KrGg=;
-        b=iY+Y01Eu0B/b7nPR7Dv2dkUF69+24P9/x09SR/vXofGhK/hPWiuuOFjxQiQxJU9fTX
-         if6l6HjVBCQVc8WEmsoAtaLlB5sIudypbwakT/I/Xa//l6ocgw4HQmD4+lS3EJCtHale
-         w/1mI8WuaDkv3h/iNR31/viL0aPUg3nP7EvZHprtA/4P5XXamxYa0N4gPN0Qud3aZ/aM
-         5aGjGYibwaao66350R+V02RVmrUivb8/FqXPb88KFQ/2sSYjF2JHl2L2LNgnj+Zy5o5I
-         vUhuye4s5ouecQ+Oa2InEP7nQnn/27ahi1ErrdL1M030BGlLKIXfk9Vly7wzr0eNhXnf
-         hUNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWL60wMZJVn3v/KrpcenZqam2d7qPNuNh5hA7G3vE99UYCotio+fefudLSm7aoeUYy94vw6P6UR2Wb1O80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOeweb/84A01/YLPauVNmzqM3d7x80DkDURPOT9fRy/h2h3CkI
-	IU3ORVYdDc8k5MAeEovMBWyRCCVgN8mqrAwF2SR58MGP0GPpsCekpsl1UplW5UZB5vOIrdTcFsj
-	+688FJfGbXJRKG/S5sp/AY60Yap4iirBPyDW05M9im01DBa3LiTVU5H5Z
-X-Gm-Gg: ASbGncsZycAFAWuRkwZ/wEyo8hTefY8ZXY9zJpCj1CH9nNmElAhcbUCdIttGE0R9Lbi
-	E749k4NQAwNdxdHBH0EPNpr8lpkNP6Ihiy+BoAkXgYl3tsAovME06NBrnFaQg+df9rXgOGyvTwB
-	CAGIDpw+2f2HPEXtFNEsikqkMt8BYUiRiQzToaq/Mt7gjFL1fmJ6qtB0pLTBeknW3KsU8Se/9ZU
-	WlySBvpDlN7TUJa3reuWjXDLO+d63q94lwp1pfY49Z9cs59dk+4BYaWBkOoJEwKzg79ws+R
-X-Google-Smtp-Source: AGHT+IET2jzGv22qFGYzYgBvGvfIe5eJnj7IAX2cABZdqxy9Xi0Ge1lrllrdq2zKbFwAYFKpEx3lgnkNxvYprRHLu0s=
-X-Received: by 2002:a17:902:e746:b0:290:be4a:40d2 with SMTP id
- d9443c01a7336-2985c41ca40mr1781765ad.13.1763004267309; Wed, 12 Nov 2025
- 19:24:27 -0800 (PST)
+	s=arc-20240116; t=1763004440; c=relaxed/simple;
+	bh=+oOlVIJ7BW7dBmztUdrHhfLWJiEumgnsRlrxm4aLDq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ropBzps7WsGtShF5zRFjtz8LRWJLjG3XEslq2gTK4hzOQa8V+g5klzt4DKuL9EzGmpzZXCG9C+xTChbjHSU5PqaEJxEg4zdh1YU0cUITfJ+PdU5YZT8sQAeYP90B23tnCi6RoIpkj4r32b9FJdoS/LeMP0FVKtzY/A+m4asFL8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6Qfs25jWzYQv0v;
+	Thu, 13 Nov 2025 11:26:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id BACF21A0A22;
+	Thu, 13 Nov 2025 11:27:14 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgBnxXsRUBVpUqM9Ag--.21141S2;
+	Thu, 13 Nov 2025 11:27:14 +0800 (CST)
+Message-ID: <3569d5d9-1a5d-4e01-a24b-4d5817181899@huaweicloud.com>
+Date: Thu, 13 Nov 2025 11:27:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aRUs5Lp7RM2qx1Gl@x1>
-In-Reply-To: <aRUs5Lp7RM2qx1Gl@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Nov 2025 19:24:16 -0800
-X-Gm-Features: AWmQ_blvZBbQKrOg0P6KfvzAlgf6prkDH91L0xaddiPExbWTy0XYsLDKlYlOGgU
-Message-ID: <CAP-5=fUtdjaGHCQBNGuVfq7AYMsk67m1zhtrAwsbcwPSvDEr3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf build: Don't fail fast path feature detection
- when binutils-devel is not available
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 11/22] cpuset: introduce local_partition_disable()
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <20251025064844.495525-12-chenridong@huaweicloud.com>
+ <c4adcc3d-577d-4065-b419-581f67d5e724@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <c4adcc3d-577d-4065-b419-581f67d5e724@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBnxXsRUBVpUqM9Ag--.21141S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XrWkWr47CF4DWr4DJr1DWrg_yoW7Gw1xpr
+	1kJrW7GrWUXr1rC347JFnrJryrJw4DJ3WDtwn7X3WrJr17Jw1vgF1jq34qg3WUXrWkJryU
+	ZF1UXr47uF17ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Wed, Nov 12, 2025 at 4:57=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> tldr; Just FYI, I'm carrying this on the perf tools tree.
->
-> This is one more remnant of the BUILD_NONDISTRO series to make building
-> with binutils-devel opt-in due to license incompatibility.
->
-> In this case just the references at link time were still in place, which
-> make building the test-all.bin file fail, which wasn't detected before
-> probably because the last test was done with binutils-devel available,
-> doh.
->
-> Now:
->
->   $ rpm -q binutils-devel
->   package binutils-devel is not installed
->   $ file /tmp/build/perf-tools/feature/test-all.bin
->   /tmp/build/perf-tools/feature/test-all.bin: ELF 64-bit LSB executable, =
-x86-64, version 1 (SYSV),
->   dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2,
->   BuildID[sha1]=3D4b5388a346b51f1b993f0b0dbd49f4570769b03c, for GNU/Linux=
- 3.2.0, not stripped
->   $
->
-> Fixes: 970ae86307718c34 ("perf build: The bfd features are opt-in, stop t=
-esting for them by default")
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Lgtm.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+On 2025/11/13 6:10, Waiman Long wrote:
+> On 10/25/25 2:48 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> The partition_disable() function introduced earlier can be extended to
+>> handle local partition disablement.
+>>
+>> The local_partition_disable() functions is introduced, which extracts the
+>> local partition disable logic from update_parent_effective_cpumask(). It
+>> calls partition_disable() to complete the disablement process.
+>>
+>> This refactoring establishes a clear separation between local and remote
+>> partition operations while promoting code reuse through the shared
+>> partition_disable() infrastructure.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 55 ++++++++++++++++++++++++++++++------------
+>>   1 file changed, 39 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index b308d9f80eef..f36d17a4d8cd 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1877,6 +1877,43 @@ static int local_partition_enable(struct cpuset *cs,
+>>       return 0;
+>>   }
+>>   +/**
+>> + * local_partition_disable - Disable a local partition
+>> + * @cs: Target cpuset (local partition root) to disable
+>> + * @part_error: partition error when @cs is disabled
+>> + * @tmp: Temporary masks for CPU calculations
+>> + */
+>> +static void local_partition_disable(struct cpuset *cs, enum prs_errcode part_error,
+>> +                    struct tmpmasks *tmp)
+>> +{
+>> +    struct cpuset *parent = parent_cs(cs);
+>> +    bool cpumask_updated = false;
+>> +    int new_prs;
+>> +
+>> +    lockdep_assert_held(&cpuset_mutex);
+>> +    WARN_ON_ONCE(is_remote_partition(cs));    /* For local partition only */
+>> +
+>> +    if (!is_partition_valid(cs))
+>> +        return;
+>> +
+>> +    new_prs = part_error ? -cs->partition_root_state : 0;
+>> +    /*
+>> +     * May need to add cpus back to parent's effective_cpus
+>> +     * (and maybe removed from subpartitions_cpus/isolated_cpus)
+>> +     * for valid partition root. xcpus may contain CPUs that
+>> +     * shouldn't be removed from the two global cpumasks.
+>> +     */
+>> +    if (is_partition_valid(parent))
+>> +        cpumask_updated = !cpumask_empty(cs->effective_xcpus);
+> 
+> If cs is a valid local partition, parent must be a valid partition. So the
+> is_partition_valid(parent) check is meaningless. Also the effective_xcpus must not be empty. IOW,
+> cpumask_updated must be true.
+> 
+> Cheers,
+> Longman
+> 
 
-Thanks,
-Ian
+I believe is_partition_valid(parent) is meaningless and can be removed. We do support valid
+partitions with empty effective CPUs—meaning cs->effective_xcpus may be empty.
 
-> ---
->  tools/build/feature/Makefile | 4 ++--
->  tools/perf/Makefile.config   | 5 ++---
->  2 files changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index 49b0add392b1c11a..95646290cb89cda3 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -107,7 +107,7 @@ all: $(FILES)
->  __BUILD =3D $(CC) $(CFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.c=
-,$(@F)) $(LDFLAGS)
->    BUILD =3D $(__BUILD) > $(@:.bin=3D.make.output) 2>&1
->    BUILD_BFD =3D $(BUILD) -DPACKAGE=3D'"perf"' -lbfd -ldl
-> -  BUILD_ALL =3D $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=3D2=
- -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) =
--DPACKAGE=3D'"perf"' -lbfd -ldl -lz -llzma -lzstd
-> +  BUILD_ALL =3D $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=3D2=
- -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) =
--ldl -lz -llzma -lzstd
->
->  __BUILDXX =3D $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bi=
-n,%.cpp,$(@F)) $(LDFLAGS)
->    BUILDXX =3D $(__BUILDXX) > $(@:.bin=3D.make.output) 2>&1
-> @@ -115,7 +115,7 @@ __BUILDXX =3D $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o=
- $@ $(patsubst %.bin,%.cpp,$(
->  ###############################
->
->  $(OUTPUT)test-all.bin:
-> -       $(BUILD_ALL) || $(BUILD_ALL) -lopcodes -liberty
-> +       $(BUILD_ALL)
->
->  $(OUTPUT)test-hello.bin:
->         $(BUILD)
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 5700516aa84aec2c..2dd5f5a60568d002 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -354,9 +354,6 @@ FEATURE_CHECK_LDFLAGS-libpython :=3D $(PYTHON_EMBED_L=
-DOPTS)
->
->  FEATURE_CHECK_LDFLAGS-libaio =3D -lrt
->
-> -FEATURE_CHECK_LDFLAGS-disassembler-four-args =3D -lbfd -lopcodes -ldl
-> -FEATURE_CHECK_LDFLAGS-disassembler-init-styled =3D -lbfd -lopcodes -ldl
-> -
->  CORE_CFLAGS +=3D -fno-omit-frame-pointer
->  CORE_CFLAGS +=3D -Wall
->  CORE_CFLAGS +=3D -Wextra
-> @@ -930,6 +927,8 @@ ifdef BUILD_NONDISTRO
->
->    ifeq ($(feature-libbfd), 1)
->      EXTLIBS +=3D -lbfd -lopcodes
-> +    FEATURE_CHECK_LDFLAGS-disassembler-four-args =3D -lbfd -lopcodes -ld=
-l
-> +    FEATURE_CHECK_LDFLAGS-disassembler-init-styled =3D -lbfd -lopcodes -=
-ldl
->    else
->      # we are on a system that requires -liberty and (maybe) -lz
->      # to link against -lbfd; test each case individually here
-> --
-> 2.51.1
->
+>> +
+>> +    partition_disable(cs, parent, new_prs, part_error);
+>> +
+>> +    if (cpumask_updated) {
+>> +        cpuset_update_tasks_cpumask(parent, tmp->addmask);
+>> +        update_sibling_cpumasks(parent, cs, tmp);
+>> +    }
+>> +}
+>> +
+>>   /**
+>>    * update_parent_effective_cpumask - update effective_cpus mask of parent cpuset
+>>    * @cs:      The cpuset that requests change in partition root state
+>> @@ -1967,19 +2004,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>         nocpu = tasks_nocpu_error(parent, cs, xcpus);
+>>   -    if (cmd == partcmd_disable) {
+>> -        /*
+>> -         * May need to add cpus back to parent's effective_cpus
+>> -         * (and maybe removed from subpartitions_cpus/isolated_cpus)
+>> -         * for valid partition root. xcpus may contain CPUs that
+>> -         * shouldn't be removed from the two global cpumasks.
+>> -         */
+>> -        if (is_partition_valid(cs)) {
+>> -            cpumask_copy(tmp->addmask, cs->effective_xcpus);
+>> -            adding = true;
+>> -        }
+>> -        new_prs = PRS_MEMBER;
+>> -    } else if (newmask) {
+>> +    if (newmask) {
+>>           /*
+>>            * Empty cpumask is not allowed
+>>            */
+>> @@ -3110,9 +3135,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>           if (is_remote_partition(cs))
+>>               remote_partition_disable(cs, &tmpmask);
+>>           else
+>> -            update_parent_effective_cpumask(cs, partcmd_disable,
+>> -                            NULL, &tmpmask);
+>> -
+>> +            local_partition_disable(cs, PERR_NONE, &tmpmask);
+>>           /*
+>>            * Invalidation of child partitions will be done in
+>>            * update_cpumasks_hier().
+> 
+
+-- 
+Best regards,
+Ridong
+
 
