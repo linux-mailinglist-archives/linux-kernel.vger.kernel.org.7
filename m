@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel+bounces-898747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8866CC55EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:24:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C34C55EB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 13C7334DCD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:24:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 89C3E34C8A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F6320A1D;
-	Thu, 13 Nov 2025 06:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="QHLrg1om"
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F18320A24;
+	Thu, 13 Nov 2025 06:26:34 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FBC3168E6;
-	Thu, 13 Nov 2025 06:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F9CDDD2;
+	Thu, 13 Nov 2025 06:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763015072; cv=none; b=ghX9y+eK3UujXfXdZY9kXuU7Q729sEDdcNvihhhV1DDm1BTzYaR14IM/kVq3pQsI7YJO73ToZ2YCS4idct3FG/vo/CotgBdsVeQc1CiTje1IxJup1YJeweitYoUPrM0/a3ZmP4CuNCUhz4uCKkFFDwySmaGnw1pjiNqHpEI2zwg=
+	t=1763015194; cv=none; b=A92XJDzhKHuqnZiI4rRrIfmODlBuZI+YV7gsAOS6UXGnTozkITHQJh0Fd1GXhjk5waZC5E8hyRg9iQwe9UlfiISLyrPcRz/zbwYKzYEJC8aWUYvDo1RE2RmTjy076Yf9qZYJ8mYE4BiGDDzo2g/VNQXI3zTAXamDui1P1djdi8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763015072; c=relaxed/simple;
-	bh=K2olLyY16s08T120sxxsDBpAyaz5wrbgfRe8BLONLS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UWmNlljEyh3M4+pQzELYboboTg6xzipunsA197myuV62vlQHHC49yyivKeSaFUlffFLq4BLVMpp2Wt8fO+eK0F4LYodqg8JLAoo3cgofmoZ+yxTIu5S6O/okL6SV/JTQRd63wOg4pdo8OAlP7UaKboxrR2QNqYqudCp/tzuBj6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=QHLrg1om; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 296eb37ed;
-	Thu, 13 Nov 2025 14:24:18 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: nbd@nbd.name
-Cc: lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH net] mt76: mt7615: Fix memory leak in mt7615_mcu_wtbl_sta_add()
-Date: Thu, 13 Nov 2025 06:24:15 +0000
-Message-Id: <20251113062415.103611-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1763015194; c=relaxed/simple;
+	bh=vDVGkh4WF79UE66l4neDxZvGMG2WNiegP5HSrpxDaRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaQ3zy0yubK0K+a7acyvrtvEgjxV2BrKjNnD6MQJiaB/DFvfDfBwd46uZZWGPbBE9nMv9X7yeflhH6PMIahMrvDIoGFDcZqJ4G86/lth1OzHq+qksxu3mmhlkp4GEW78aC+mdFrSFf+RNMmdrNHELWjl9Kp3mBmbl2byRoCnb9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6VdZ0yTpzYQtyC;
+	Thu, 13 Nov 2025 14:25:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id BFB531A0C36;
+	Thu, 13 Nov 2025 14:26:23 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgCnBHsOehVpykRMAg--.57065S2;
+	Thu, 13 Nov 2025 14:26:23 +0800 (CST)
+Message-ID: <575be198-b52f-4a4a-a551-ce5058584786@huaweicloud.com>
+Date: Thu, 13 Nov 2025 14:26:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpuset: Avoid unnecessary partition invalidation
+To: Sun Shaojie <sunshaojie@kylinos.cn>, longman@redhat.com
+Cc: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, shuah@kernel.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <b9dce00a-4728-4ac8-ae38-7f41114c7c81@redhat.com>
+ <20251113033322.431859-1-sunshaojie@kylinos.cn>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251113033322.431859-1-sunshaojie@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a7be2e11303a1kunm4a412972110eee
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSBhLVkwdQ00eHh1LSh8eT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=QHLrg1omORyQvGJuKbNRFxk3dRh3/GYzA5JngeZw/cgJz3tz9ACgBW2bd3Z6+7rYA7SajuYdGSRCfo3P1grhQ8VrnZfDX+cHJ/9pHnYzszEMp25biRgeaWIqL2ppQm2fXklqxBYJFMEIimNPxykQC0RGK2732adun6WtugWOBng=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=TsCv3+cJ+T1nVfr75kjuiGgZn2uIqwLNHM/E0w+NzcM=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:Syh0CgCnBHsOehVpykRMAg--.57065S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ArWUtryfZr4fCrW7Kr47CFg_yoW8WFWrpF
+	y8KF1UXayvgr1rCwsrt3Wxuw4ay3ZrZF17AF98Gw48Ar9rt3Wvk3Wqyr9xG398X3s5Ga4j
+	v3y7Zw4SvFWDW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-In mt7615_mcu_wtbl_sta_add(), an skb sskb is allocated. If the
-subsequent call to mt76_connac_mcu_alloc_wtbl_req() fails, the function
-returns an error without freeing sskb, leading to a memory leak.
 
-Fix this by calling dev_kfree_skb() on sskb in the error handling path
-to ensure it is properly released.
 
-Fixes: 99c457d902cf9 ("mt76: mt7615: move mt7615_mcu_set_bmc to mt7615_mcu_ops")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 2025/11/13 11:33, Sun Shaojie wrote:
+> On 2025/11/13 09:21, Chen Ridong wrote:
+>>
+>> Hi, Longman.
+>>
+>> It did not fail to set cupset.cpus, but invalidated the sibling cpuset partition.
+>>
+>> If we relax this rule, we should consider:
+>>
+>>  What I want to note is this: what if we run echo root > /sys/fs/cgroup/B1/cpuset.cpus.partition
+>> after step #5? There’s no conflict check when enabling the partition.
+>>
+>> -- 
+>> Best regards,
+>> Ridong
+> 
+> Hi, Ridong.
+> 
+> I understand your concern, and there is a conflict check when enabling 
+> partitions. Below, I will use two tables to show the partition states of A1
+> and B1 before applying this patch and after applying it.(All the steps in 
+> the table are by default under the path /sys/fs/cgroup)
+> 
+> Table 1: Before applying the patch
+>                                             | A1's prstate | B1's prstate |
+>  #1> mkdir -p A1                            | member       |              |
+>  #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
+>  #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
+>  #4> mkdir -p B1                            | root         | member       |
+>  #5> echo "0-3" > B1/cpuset.cpus            | root invalid | member       |
+>  #6> echo "root" > B1/cpuset.cpus.partition | root invalid | root invalid |
+> 
+> Table 2: After applying the patch
+>                                             | A1's prstate | B1's prstate |
+>  #1> mkdir -p A1                            | member       |              |
+>  #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
+>  #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
+>  #4> mkdir -p B1                            | root         | member       |
+>  #5> echo "0-3" > B1/cpuset.cpus            | root         | member       |
+>  #6> echo "root" > B1/cpuset.cpus.partition | root         | root invalid |
+> 
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index 4064e193d4de..08ee2e861c4e 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -874,8 +874,10 @@ mt7615_mcu_wtbl_sta_add(struct mt7615_phy *phy, struct ieee80211_vif *vif,
- 	wtbl_hdr = mt76_connac_mcu_alloc_wtbl_req(&dev->mt76, &msta->wcid,
- 						  WTBL_RESET_AND_SET, NULL,
- 						  &wskb);
--	if (IS_ERR(wtbl_hdr))
-+	if (IS_ERR(wtbl_hdr)) {
-+		dev_kfree_skb(sskb);
- 		return PTR_ERR(wtbl_hdr);
-+	}
- 
- 	if (enable) {
- 		mt76_connac_mcu_wtbl_generic_tlv(&dev->mt76, wskb, vif, sta,
+Thank you for your clarification.
+
+I missed exclusive conflict will be checked with:
+
+update_prstate
+update_partition_exclusive_flag
+cpuset_update_flag
+validate_change
+
 -- 
-2.34.1
+Best regards,
+Ridong
 
 
