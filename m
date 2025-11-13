@@ -1,375 +1,150 @@
-Return-Path: <linux-kernel+bounces-899233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450E0C5723F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:20:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204A5C57299
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 45FA534A1FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9443B92EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5864A33B97B;
-	Thu, 13 Nov 2025 11:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tEx0PXpS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOUAPU0D";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TPAANJvU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IMDALd4J"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2EE33B96F;
+	Thu, 13 Nov 2025 11:20:18 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237CF3328F5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E746633ADAF;
+	Thu, 13 Nov 2025 11:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032787; cv=none; b=OUdNaxoYuJ96GL5Gg1B9sU3mRNU12et1RCq/QrwnD7lBk+LUkl5Kmbu4AApkofqb6rXGVmaWCACvi3NRmcuKLOZS/A8BhGlwpK3NW2yzWmS3GzqsKkvhfbqk1+J5Bs2w8e2I78ffvX1vCcmBC/W6C44hl8CqGAbSEuuEDr07C4s=
+	t=1763032818; cv=none; b=AjPrIH2Up1ao3pgC255KOvwB2tuUc44cT+yZQPZu9lyTnxj+sYKGvlZW9V2zwsNpa5LXmuaDj34F1xEmfu9WaYzCIRPpXAyfYESNhjrHfRZmxa50/cuARnlruE5WYVkDyQtHyGGsfav+qKMX8Xca17UwrrgG/8UzEksfh332quI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032787; c=relaxed/simple;
-	bh=3rFO83tVJVFEQkZ468DFpQrekAqbDzV1/0JoUWHKE0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aq9pRCQeI0RYA3avYvqrt/j91OLZfL8Pn5D5f+WBg6C5sRfvraqd8SNUsWPWK1vjNC2vSTlcyJCDPerH3gbzbDvQJPv1O7vlKwwgViLScZh/7t6q3USfMYHpwCEthWFU2WWoc2zSatBOr9Lq/G++w+ThZGBi0TpGW8JYy+WsTlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tEx0PXpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOUAPU0D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TPAANJvU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IMDALd4J; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B45DC21281;
-	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763032782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=tEx0PXpSR9fC2UvG0u7MJFp2BSlhdeqm6tfjJPlZS4pzGQmOwabgT+ii7BsgRYsefYOMF3
-	VvsJYx6JmgiNnIkc2NCbUzK9WMs4Iesgm99E+qFwo8H8q29+lEmIo9rS5V2MjR+2UAS7Qp
-	XFnzrWjacC8RlMPSp7qTqHvuw+qVCws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763032782;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=LOUAPU0DI5ldL7amV9RP5y5ZRcrOsqlJWe+yGqm+w1F5fGBdUOw3+MjMsiQwLq6RLZlsah
-	z1b+3BWuTShjlLBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TPAANJvU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=IMDALd4J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1763032780; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=TPAANJvULtvZbKY9kTlFDj3fHaqwcTQ7QSHepORPj1SmGNXAVQl+h4cThVAzOE6Yl7BCLK
-	P+mNsKLJnjLZvTwsl3qRAtpBElJ625a6hag5mPaMbQZLS4fmnximef6W0ci53Jrf6gupH/
-	2n45l6UZt9TFhva3h8X/wtCXAWukFSU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1763032780;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lczhD1MzObRMKndPkZG3oPhNpz/T85+A7Y0PvHv3zA4=;
-	b=IMDALd4JeMlPI9Mxv0/hWb4imPPdPuOJsIg/iIEqAN8lny7MqpgtZO9x5EjyCnO6vYkjJ5
-	0uFVDgatEsam+WBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65493EA61;
-	Thu, 13 Nov 2025 11:19:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2zOKKMy+FWnVYgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 13 Nov 2025 11:19:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 63A30A0976; Thu, 13 Nov 2025 12:19:40 +0100 (CET)
-Date: Thu, 13 Nov 2025 12:19:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, 
-	dietmar.eggemann@arm.com, jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, 
-	kartikey406@gmail.com, kees@kernel.org, liam.howlett@oracle.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, 
-	peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
-	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com, 
-	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-Subject: Re: [PATCH] nsproxy: fix free_nsproxy() and simplify
- create_new_namespaces()
-Message-ID: <3yjawi3c72ieiss7ivefckuua55e2yvo55z4m4ykp2pzw2snpa@ym34e3d7cnoi>
-References: <691360cc.a70a0220.22f260.013e.GAE@google.com>
- <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+	s=arc-20240116; t=1763032818; c=relaxed/simple;
+	bh=6sh4gEpzZka45KBSDUYPPELbNhlKK57QS4xAYVbgdCM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=awkLGvAvPmuNMuO7WwXDwzqJSZN6yQ3McKXHIfTt4E9UMOq1mgp+XhDIdW+E74pLoCLjvd76f3dBrzAa2ckhuk1eO6dAMkvzxkBqBowvdwaCxE8E3BO+xzZj89LImqZdVjgoZjxpoZwpHM8I9OEG4v9kz0ah6HCJzE6lFH+sMnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 40BE4201C28;
+	Thu, 13 Nov 2025 12:20:15 +0100 (CET)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C630201477;
+	Thu, 13 Nov 2025 12:20:15 +0100 (CET)
+Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CEC91180009C;
+	Thu, 13 Nov 2025 19:20:13 +0800 (+08)
+From: Lakshay Piplani <lakshay.piplani@nxp.com>
+To: linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: [PATCH] hwmon: (lm75) Add software-based alarm support for NXP P3T1750/P3T1755
+Date: Thu, 13 Nov 2025 16:50:11 +0530
+Message-Id: <20251113112011.28909-1-lakshay.piplani@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
-X-Rspamd-Queue-Id: B45DC21281
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:email,suse.cz:dkim,appspotmail.com:email];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,linux-foundation.org,vger.kernel.org,google.com,redhat.com,arm.com,suse.cz,gmail.com,kernel.org,oracle.com,kvack.org,suse.de,suse.com,paul-moore.com,infradead.org,goodmis.org,googlegroups.com,linaro.org,zeniv.linux.org.uk];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_RCPT(0.00)[0a8655a80e189278487e,0b2e79f91ff6579bfa5b];
-	R_RATELIMIT(0.00)[to_ip_from(RLuhuubkxd663ptcywq6p8zkwd)];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Tue 11-11-25 22:29:44, Christian Brauner wrote:
-> Make it possible to handle NULL being passed to the reference count
-> helpers instead of forcing the caller to handle this. Afterwards we can
-> nicely allow a cleanup guard to handle nsproxy freeing.
-> 
-> Active reference count handling is not done in nsproxy_free() but rather
-> in free_nsproxy() as nsproxy_free() is also called from setns() failure
-> paths where a new nsproxy has been prepared but has not been marked as
-> active via switch_task_namespaces().
-> 
-> Fixes: 3c9820d5c64a ("ns: add active reference count")
-> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+NXP P3T1750/P3T1755 does not provide readable alarm/status bits. To support
+the standard tempX_alarm attribute, implement the comparator mode threshold
+checks in the software using THIGH and TLOW registers.
 
-I believe having free_nsproxy() and nsproxy_free() functions with
-the same signature and slightly different semantics is making things too
-easy to get wrong. Maybe call free_nsproxy() say deactivate_nsproxy()?
+Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+---
+ drivers/hwmon/lm75.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Otherwise the patch looks correct to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/ns_common.h |  11 ++--
->  kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
->  2 files changed, 48 insertions(+), 70 deletions(-)
-> 
-> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> index 136f6a322e53..825f5865bfc5 100644
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
->  }
->  
->  #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
-> -#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
-> -#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
-> -#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
-> +#define ns_ref_inc(__ns) \
-> +	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
-> +#define ns_ref_get(__ns) \
-> +	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
-> +#define ns_ref_put(__ns) \
-> +	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
->  #define ns_ref_put_and_lock(__ns, __ns_lock) \
-> -	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
-> +	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
->  
->  #define ns_ref_active_read(__ns) \
->  	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
-> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> index 94c2cfe0afa1..2c94452dc793 100644
-> --- a/kernel/nsproxy.c
-> +++ b/kernel/nsproxy.c
-> @@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
->  	return nsproxy;
->  }
->  
-> +static inline void nsproxy_free(struct nsproxy *ns)
-> +{
-> +	put_mnt_ns(ns->mnt_ns);
-> +	put_uts_ns(ns->uts_ns);
-> +	put_ipc_ns(ns->ipc_ns);
-> +	put_pid_ns(ns->pid_ns_for_children);
-> +	put_time_ns(ns->time_ns);
-> +	put_time_ns(ns->time_ns_for_children);
-> +	put_cgroup_ns(ns->cgroup_ns);
-> +	put_net(ns->net_ns);
-> +	kmem_cache_free(nsproxy_cachep, ns);
-> +}
-> +
-> +DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
-> +
-> +void free_nsproxy(struct nsproxy *ns)
-> +{
-> +	nsproxy_ns_active_put(ns);
-> +	nsproxy_free(ns);
-> +}
-> +
->  /*
->   * Create new nsproxy and all of its the associated namespaces.
->   * Return the newly created nsproxy.  Do not attach this to the task,
-> @@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
->  	struct task_struct *tsk, struct user_namespace *user_ns,
->  	struct fs_struct *new_fs)
->  {
-> -	struct nsproxy *new_nsp;
-> -	int err;
-> +	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
->  
->  	new_nsp = create_nsproxy();
->  	if (!new_nsp)
->  		return ERR_PTR(-ENOMEM);
->  
->  	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
-> -	if (IS_ERR(new_nsp->mnt_ns)) {
-> -		err = PTR_ERR(new_nsp->mnt_ns);
-> -		goto out_ns;
-> -	}
-> +	if (IS_ERR(new_nsp->mnt_ns))
-> +		return ERR_CAST(new_nsp->mnt_ns);
->  
->  	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
-> -	if (IS_ERR(new_nsp->uts_ns)) {
-> -		err = PTR_ERR(new_nsp->uts_ns);
-> -		goto out_uts;
-> -	}
-> +	if (IS_ERR(new_nsp->uts_ns))
-> +		return ERR_CAST(new_nsp->uts_ns);
->  
->  	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
-> -	if (IS_ERR(new_nsp->ipc_ns)) {
-> -		err = PTR_ERR(new_nsp->ipc_ns);
-> -		goto out_ipc;
-> -	}
-> +	if (IS_ERR(new_nsp->ipc_ns))
-> +		return ERR_CAST(new_nsp->ipc_ns);
->  
-> -	new_nsp->pid_ns_for_children =
-> -		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
-> -	if (IS_ERR(new_nsp->pid_ns_for_children)) {
-> -		err = PTR_ERR(new_nsp->pid_ns_for_children);
-> -		goto out_pid;
-> -	}
-> +	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
-> +						   tsk->nsproxy->pid_ns_for_children);
-> +	if (IS_ERR(new_nsp->pid_ns_for_children))
-> +		return ERR_CAST(new_nsp->pid_ns_for_children);
->  
->  	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
->  					    tsk->nsproxy->cgroup_ns);
-> -	if (IS_ERR(new_nsp->cgroup_ns)) {
-> -		err = PTR_ERR(new_nsp->cgroup_ns);
-> -		goto out_cgroup;
-> -	}
-> +	if (IS_ERR(new_nsp->cgroup_ns))
-> +		return ERR_CAST(new_nsp->cgroup_ns);
->  
->  	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
-> -	if (IS_ERR(new_nsp->net_ns)) {
-> -		err = PTR_ERR(new_nsp->net_ns);
-> -		goto out_net;
-> -	}
-> +	if (IS_ERR(new_nsp->net_ns))
-> +		return ERR_CAST(new_nsp->net_ns);
->  
->  	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
-> -					tsk->nsproxy->time_ns_for_children);
-> -	if (IS_ERR(new_nsp->time_ns_for_children)) {
-> -		err = PTR_ERR(new_nsp->time_ns_for_children);
-> -		goto out_time;
-> -	}
-> +						     tsk->nsproxy->time_ns_for_children);
-> +	if (IS_ERR(new_nsp->time_ns_for_children))
-> +		return ERR_CAST(new_nsp->time_ns_for_children);
->  	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
->  
-> -	return new_nsp;
-> -
-> -out_time:
-> -	put_net(new_nsp->net_ns);
-> -out_net:
-> -	put_cgroup_ns(new_nsp->cgroup_ns);
-> -out_cgroup:
-> -	put_pid_ns(new_nsp->pid_ns_for_children);
-> -out_pid:
-> -	put_ipc_ns(new_nsp->ipc_ns);
-> -out_ipc:
-> -	put_uts_ns(new_nsp->uts_ns);
-> -out_uts:
-> -	put_mnt_ns(new_nsp->mnt_ns);
-> -out_ns:
-> -	kmem_cache_free(nsproxy_cachep, new_nsp);
-> -	return ERR_PTR(err);
-> +	return no_free_ptr(new_nsp);
->  }
->  
->  /*
-> @@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
->  	return 0;
->  }
->  
-> -void free_nsproxy(struct nsproxy *ns)
-> -{
-> -	nsproxy_ns_active_put(ns);
-> -
-> -	put_mnt_ns(ns->mnt_ns);
-> -	put_uts_ns(ns->uts_ns);
-> -	put_ipc_ns(ns->ipc_ns);
-> -	put_pid_ns(ns->pid_ns_for_children);
-> -	put_time_ns(ns->time_ns);
-> -	put_time_ns(ns->time_ns_for_children);
-> -	put_cgroup_ns(ns->cgroup_ns);
-> -	put_net(ns->net_ns);
-> -	kmem_cache_free(nsproxy_cachep, ns);
-> -}
-> -
->  /*
->   * Called from unshare. Unshare all the namespaces part of nsproxy.
->   * On success, returns the new nsproxy.
-> @@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
->  	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
->  		free_fs_struct(nsset->fs);
->  	if (nsset->nsproxy)
-> -		free_nsproxy(nsset->nsproxy);
-> +		nsproxy_free(nsset->nsproxy);
->  }
->  
->  static int prepare_nsset(unsigned flags, struct nsset *nsset)
-> -- 
-> 2.47.3
-> 
+diff --git a/drivers/hwmon/lm75.c b/drivers/hwmon/lm75.c
+index 3c23b6e8e1bf..b25c19de05d4 100644
+--- a/drivers/hwmon/lm75.c
++++ b/drivers/hwmon/lm75.c
+@@ -116,6 +116,7 @@ struct lm75_data {
+ 	const struct lm75_params	*params;
+ 	u8				reg_buf[1];
+ 	u8				val_buf[3];
++	bool				alarm_state;
+ };
+ 
+ /*-----------------------------------------------------------------------*/
+@@ -229,6 +230,7 @@ static const struct lm75_params device_params[] = {
+ 		.default_sample_time = 55,
+ 		.num_sample_times = 4,
+ 		.sample_times = (unsigned int []){ 28, 55, 110, 220 },
++		.alarm = true,
+ 	},
+ 	[p3t1755] = {
+ 		.clr_mask = 1 << 1 | 1 << 7,	/* disable SMBAlert and one-shot */
+@@ -236,6 +238,7 @@ static const struct lm75_params device_params[] = {
+ 		.default_sample_time = 55,
+ 		.num_sample_times = 4,
+ 		.sample_times = (unsigned int []){ 28, 55, 110, 220 },
++		.alarm = true,
+ 	},
+ 	[pct2075] = {
+ 		.default_resolution = 11,
+@@ -407,6 +410,49 @@ static int lm75_read(struct device *dev, enum hwmon_sensor_types type,
+ 			case tmp112:
+ 				*val = (regval >> 13) & 0x1;
+ 				break;
++
++			case p3t1750:
++			case p3t1755: {
++				unsigned int temp_raw, thigh_raw, tlow_raw;
++				s16 temp, thigh, tlow;
++
++				err = regmap_read(data->regmap, LM75_REG_TEMP, &temp_raw);
++				if (err)
++					return err;
++
++				err = regmap_read(data->regmap, LM75_REG_MAX, &thigh_raw);
++				if (err)
++					return err;
++
++				err = regmap_read(data->regmap, LM75_REG_HYST, &tlow_raw);
++				if (err)
++					return err;
++
++				temp = (s16)temp_raw;
++				thigh = (s16)thigh_raw;
++				tlow = (s16)tlow_raw;
++
++				/*
++				 * Implement software-based alarm logic for P3T1750/P3T1755.
++				 *
++				 * These devices do not provide readable alarm bits in hardware.
++				 * To comply with hwmon ABI and to support standard 'tempX_alarm'
++				 * attribute, check the current temperature against THIGH and TLOW
++				 * thresholds:
++				 *
++				 * - If temp >= thigh, set alarm = 1 (over-temperature condition).
++				 * - If temp < tlow, clear alarm = 0 (clear alarm).
++				 * - If temp is between tlow and thigh, keep previous alarm state
++				 *   to provide hysteresis behavior similar to hardware.
++				 */
++				if (!data->alarm_state && temp >= thigh)
++					data->alarm_state = true;
++				else if (data->alarm_state && temp < tlow)
++					data->alarm_state = false;
++
++				*val = data->alarm_state;
++				break;
++			}
+ 			default:
+ 				return -EINVAL;
+ 			}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
