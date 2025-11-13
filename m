@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-899639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA28CC58773
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:45:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12403C58823
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:53:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 352CA34456B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260075004E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBD7346A0F;
-	Thu, 13 Nov 2025 15:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DA2351FC2;
+	Thu, 13 Nov 2025 15:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aaCrJlPl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IsIq0zZk"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB1D34677F;
-	Thu, 13 Nov 2025 15:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1C62F069D;
+	Thu, 13 Nov 2025 15:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047606; cv=none; b=nkkvMfpNM3cPTAlDJpArjneRSJw6CzLKs8kX+XS5WCcqTpk/5p2RCO8gUBZnsMoziGR9YzZf8BOHeyD+17IKpJXt5dziYo9I6D8zfSPmqLfuu3j6PzByjSvNSXitXzjSVfFeVoULY1t80Y5dU05cCfVCQQsKiK1j9yVO4RVwdP8=
+	t=1763047732; cv=none; b=BNkR4djEFBsOoS0InYiOtYem8eSzOsPwsjEK3ysSuKzUva3xhLNeaDRk8t47VqoYXhDwecRU7oeGp6UpptZ2FsQZXnSk+hUjcugSWdcHPHv0CuikMrLSdfWK1A0bhx1JRP8/GJhzV+mXLvj4p62udqoWweDHnGlRDzTTItUQkEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047606; c=relaxed/simple;
-	bh=KL0lzQAv3cy8PVayRvP5QDusRGFnsWks23GTe7Q6uFY=;
+	s=arc-20240116; t=1763047732; c=relaxed/simple;
+	bh=xl0Wj32ElFByT7POZlmtgHiowDCIQXU1fq2ns2atUCw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmKqzI1w0ebeKEyyoy3y9lfSmCK66REoOg9z475/YDml+qyc92WqVj/uoLsEv8LpVvkGCRyw7KntxPAyoW2tCLA4V3wHPKbZ7P6GdEfbNoiaFdL2gGJF9/KfYeP5sDyw/MSplAJlLuG7i8GuLcDr9sulje/EtKU4u+uNzJSiHvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aaCrJlPl; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763047606; x=1794583606;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KL0lzQAv3cy8PVayRvP5QDusRGFnsWks23GTe7Q6uFY=;
-  b=aaCrJlPlM3JBgZvJyBEau9LAFARkEK62K/CPO3xbaKz0PLvWpkTT1nP0
-   LhJul51nMnGOlVslQEwdz3yboQDZf9SFwt67jMYbea64RtToQIEeqdbyv
-   0varUhapA1+5ilbWkUSyC+eIBqxkzcKVlJXRz9NCxyZkkF9vJbA4/+Dg7
-   N1lPX0nVeHy0dKvGWVWk3h5dEDPoh0oCzYsXaIxz8W6/HsVyuVDhmvQxs
-   iQ+7tgttjHIyUf4hv7PXmfrPzlCmXIBl+bn/ZD5bRMCGKScMggDFkYf8i
-   NlSJ6kW/SsX97gkBn/hAJtKqDs5+UjjpmI86xqTGBiLUuCsyU4E0+sSrC
-   w==;
-X-CSE-ConnectionGUID: HIk2triMSGOL7+9ofyXt7w==
-X-CSE-MsgGUID: O9idYbIyQsKoAqqxhmQAwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="75741474"
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="75741474"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:26:45 -0800
-X-CSE-ConnectionGUID: 8BP79HrgT3WLVJDpPhUafw==
-X-CSE-MsgGUID: 06lbx2lXQKmnQfMyhZWeWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
-   d="scan'208";a="189793622"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.80]) ([10.125.108.80])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:26:44 -0800
-Message-ID: <745d70bf-feec-46d5-b3f7-2bb86cd8bbb1@intel.com>
-Date: Thu, 13 Nov 2025 07:26:43 -0800
+	 In-Reply-To:Content-Type; b=NN1GikwMiR3HrNWfNzg7twark4ch6I90F4Zk45nF/OxfYiATmMNyYYwtJ2SOIrNf7XwbXn+744wdV8I8azTbaT9fe3tDVGgIu4Rt227sOoek1t+oacBRlsrPXdhHZXm+6MIs6G589/L6SRqxOPddy+LoXWQR+emsuVtP9zl+rko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IsIq0zZk; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD8rUoX028843;
+	Thu, 13 Nov 2025 15:28:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QD37x+
+	IqLLHJ5yViqZyM62WIGvkCbM8wiyyWiCARFiE=; b=IsIq0zZkMjcC8e05Aw0OD2
+	kuU0cDIrwzNHe/rJZaIJp7VatN6T2pYbu6qIj//oMWE8d9RKuHpbjetWftX5JvKi
+	/5XEsAOluGuOnbODfC7nnqb4C/wiqA7PFLPAWe2joNfQGeIFSXjczjtU6JLh/m6z
+	tC06PI4I3ToE2gfJ8ii2cZywWTAnl0QwFLmO0JpDYbuyck+AbogpIwBkBFpM8ebz
+	hp5kBkec0N4QNxrLpMHOzstthPnXs9sVYZQlwd99Gybmj97Ko6MVF9i36gX4IWaJ
+	XefhDl4ph0C1ZoK8RXjepsU7SbCxEcnb7YLJfQyr7WdbXEq+JmPnS6XxCb6hHbYQ
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk8gs1v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 15:28:26 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ADCnglZ008190;
+	Thu, 13 Nov 2025 15:28:24 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6n6gux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Nov 2025 15:28:24 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ADFSNQh27525794
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Nov 2025 15:28:23 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3352758059;
+	Thu, 13 Nov 2025 15:28:23 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8AFBD58043;
+	Thu, 13 Nov 2025 15:28:22 +0000 (GMT)
+Received: from [9.24.12.149] (unknown [9.24.12.149])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 13 Nov 2025 15:28:22 +0000 (GMT)
+Message-ID: <534cd250-1ebb-4c72-8c6a-49cef88568cf@linux.ibm.com>
+Date: Thu, 13 Nov 2025 09:28:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,114 +76,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 03/23] x86/tdx: Enhance
- tdh_phymem_page_wbinvd_hkid() to invalidate huge pages
-To: "Huang, Kai" <kai.huang@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
-Cc: "Du, Fan" <fan.du@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "david@redhat.com" <david@redhat.com>,
- "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
- "kas@kernel.org" <kas@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "seanjc@google.com" <seanjc@google.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "ackerleytng@google.com" <ackerleytng@google.com>,
- "michael.roth@amd.com" <michael.roth@amd.com>,
- "Weiny, Ira" <ira.weiny@intel.com>, "Peng, Chao P" <chao.p.peng@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Miao, Jun" <jun.miao@intel.com>, "x86@kernel.org" <x86@kernel.org>,
- "pgonda@google.com" <pgonda@google.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
- <20250807094202.4481-1-yan.y.zhao@intel.com>
- <fe09cfdc575dcd86cf918603393859b2dc7ebe00.camel@intel.com>
- <aRRItGMH0ttfX63C@yzhao56-desk.sh.intel.com>
- <858777470674b2ddd594997e94116167dee81705.camel@intel.com>
- <aRVD4fAB7NISgY+8@yzhao56-desk.sh.intel.com>
- <01731a9a0346b08577fad75ae560c650145c7f39.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/8] s390/ptrace: Rename psw_t32 to psw32_t
+To: Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik
+ <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andreas Krebbel
+ <krebbel@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Willy Tarreau <w@1wt.eu>, Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20251113150731.2697279-1-hca@linux.ibm.com>
+ <20251113150731.2697279-2-hca@linux.ibm.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <01731a9a0346b08577fad75ae560c650145c7f39.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jimmy Brisson <jbrisson@linux.ibm.com>
+In-Reply-To: <20251113150731.2697279-2-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX0BHUVGZbC1G1
+ 6Cnsb1v1kk6osbUvuy+ReJydwePPCGeSLoA0yC3bAyoPLHe3Z5cFOWugeevF6w96qkTlhoC8Ukd
+ n3D45Zm5TEciemxmLBtqVR0Yifnjb0ShbbZ9Qb2f3w0tRskoM3hG/NhbRLoiD4bZrmQ/XWhPy3V
+ YM8xj2X1WdbIkmxLBgYIrqVdFGa0K+4xogs5EKV4qCGm21s0+gjuN11+6RoQ3uEBMPtZofepLiv
+ QopfraqKuylHWf41p2OAjaAQ4KEy5dKV0a+sXyBLdw5Erl4e17eu6l6+ZVMgRqaLG9FP1aXkwPq
+ esWGL0Cep67W5rODIEz87bOZPl9WAmigDFnHyKL7ymrsWc+SVDb1xc0wzAaL6nryF3yqhmLEJSq
+ 7z86Z7mxVgrE/Hhb8mVu6wrAzQq/KQ==
+X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6915f91a cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=JAbWjcxYnC2GCM1842QA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 6dnRP_uNfKpyNovLviAXkGB_tUuIJYju
+X-Proofpoint-GUID: 6dnRP_uNfKpyNovLviAXkGB_tUuIJYju
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_02,2025-11-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511080022
 
-On 11/12/25 23:37, Huang, Kai wrote:
-> Sure.  But it seems you will need to wait all patches that you mentioned to
-> be merged to safely use 'page++' for pages in a folio?
+On 11/13/25 9:07 AM, Heiko Carstens wrote:
+> Use a standard "_t" suffix for psw_t32 and rename it to psw32_t.
 > 
-> And if you do:
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
+>   arch/s390/boot/ipl_data.c       | 2 +-
+>   arch/s390/include/asm/ptrace.h  | 2 +-
+>   arch/s390/kernel/compat_linux.h | 2 +-
+>   3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> 	for (i = 0; i < npages; i++)
-> 	{
-> 		struct page *p = folio_page(folio, start_idx + i);
-> 		struct tdx_module_args args = {};
-> 
-> 		args.rcx = mk_keyed_paddr(hkid, p);
-> 		...
-> 	}
-> 
-> It should work w/o any dependency?
-> 
-> Anyway, I don't have any strong opinion, as long as it works.  You may
-> choose what you want. 🙂
+> diff --git a/arch/s390/boot/ipl_data.c b/arch/s390/boot/ipl_data.c
+> index c4130a80b058..7957cc6554e7 100644
+> --- a/arch/s390/boot/ipl_data.c
+> +++ b/arch/s390/boot/ipl_data.c
+> @@ -12,7 +12,7 @@
+>   #define PSW_MASK_DISABLED (PSW_MASK_WAIT | PSW_MASK_EA | PSW_MASK_BA)
+>   
+>   struct ipl_lowcore {
+> -	psw_t32		ipl_psw;			/* 0x0000 */
+> +	psw32_t		ipl_psw;			/* 0x0000 */
+>   	struct ccw0	ccwpgm[2];			/* 0x0008 */
+>   	u8		fill[56];			/* 0x0018 */
+>   	struct ccw0	ccwpgmcc[20];			/* 0x0050 */
+> diff --git a/arch/s390/include/asm/ptrace.h b/arch/s390/include/asm/ptrace.h
+> index dfa770b15fad..f2ecc013a48a 100644
+> --- a/arch/s390/include/asm/ptrace.h
+> +++ b/arch/s390/include/asm/ptrace.h
+> @@ -99,7 +99,7 @@ enum {
+>   typedef struct {
+>   	unsigned int mask;
+>   	unsigned int addr;
+> -} psw_t32 __aligned(8);
+> +} psw32_t __aligned(8);
+>   
+>   #define PGM_INT_CODE_MASK	0x7f
+>   #define PGM_INT_CODE_PER	0x80
+> diff --git a/arch/s390/kernel/compat_linux.h b/arch/s390/kernel/compat_linux.h
+> index ef23739b277c..133f22b5deeb 100644
+> --- a/arch/s390/kernel/compat_linux.h
+> +++ b/arch/s390/kernel/compat_linux.h
+> @@ -33,7 +33,7 @@ typedef struct {
+>   } _s390_fp_regs32;
+>   
+>   typedef struct {
+> -	psw_t32		psw;
+> +	psw32_t		psw;
+>   	__u32		gprs[__NUM_GPRS];
+>   	__u32		acrs[__NUM_ACRS];
+>   } _s390_regs_common32;
 
-Folks, I'll make it easy: Do what Kai suggested above. It works
-universally and it's obvious. Saving an "i" variable only makes the code
-harder to read.
+Looks great
 
-If anyone thinks that:
+Reviewed-by: Jimmy Brisson <jbrisson@linux.ibm.com>
 
-	while (npages--)
-
-Is easier to understand than the most common C idiom on the planet:
-
-	for (i = 0; i < npages; i++)
-
-... then I don't know what to tell them.
+-Jimmy
 
