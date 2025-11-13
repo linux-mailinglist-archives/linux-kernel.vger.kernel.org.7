@@ -1,228 +1,168 @@
-Return-Path: <linux-kernel+bounces-899115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C47C56CD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:20:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670CBC56CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F14E35131C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:20:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1071A3AD20D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7FF30102A;
-	Thu, 13 Nov 2025 10:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F4E2F7479;
+	Thu, 13 Nov 2025 10:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQ90IUcC"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fXm+TbBY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="peMxbR02";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fXm+TbBY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="peMxbR02"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074BD35CBAF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EFF2E11D7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763029215; cv=none; b=lQpFb+cFJgrBBFGRRChZmyTahwsmemS1/p7roCd7iT0GcQhjlF5DSBOXWXDugWLFEIbL2c7Mf0MmzVu3MhlGYhLdVElvYTBUpDrtXHQB6WesjD9nyCkv1Gmp/7Ca0RSnYbaYSsDbm7+YsGheFtn+xYotsKvYI5oFvEDhfjTJu2g=
+	t=1763029373; cv=none; b=sL9dwVfOiPloqMVcSMbdyG/t0rP5Le0J4opZEOSl3utz0XSB6VwjXa9sM+VQj/AAHdbsp6LPNAwg/WyzqScLVCnEA0w1i90WYoySQHuLLL4WkvTG7zE9n3K3yh5Md7HQmG2Baf0XTfmvxDu2zFlymi10pskQw1Uil5XUtkQwWk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763029215; c=relaxed/simple;
-	bh=DJZn8hUcr7qrXuuyp5TspC4wXrB7yMIW9ad/R+jXQq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XfpsjrCq8h0PC66KuGVt3T91EIF/gmJtWN9eF1thKqy21WZPWawu1QbPoAqEVZ5+vFdJbXbdtY4p4O/LD8O8xlek3oGBwhXqyS6aH8f7lgBIUnOym06nHYaj0NmkojKtw4+XjcORM5dpfWwsM+algy3J5NfIOk96r8exHGGS3Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQ90IUcC; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b73301e6ab5so78894866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:20:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763029212; x=1763634012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IaLuTVv6ogQrV7pgPnqPwD8BmOYnKQewjeQIkkX8Rks=;
-        b=KQ90IUcCCH41by4dG9uXHjmxEo5GOXEmfOtimJWDiJwavXQuTtDnWq1if/VZ8HSypB
-         2hUrhw6L+68gPf0/Z1ufmC9tBhHjiokV3HmlIc7qctyuRzsbs+R+ZHBft4RouFGgexwL
-         bw0uWxKOofubjtRVFsTjr3fzJmS/QmERzmYsHYzQ1kL9sj+sDMI8DQv19V8arpNwZXqN
-         ozFmniPWds1+k62xnGe9YZL/G+f9o4iDlKpVBNAo9J3FSmIHI2vkOfgy6fXSswnmp6qi
-         skv0RtfKNocC3V6ly44SzP3Viot49KNOsaH4yEPBC6xNJ3JUPxuhHJg/CQFcqI+V+/Ie
-         hWuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763029212; x=1763634012;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IaLuTVv6ogQrV7pgPnqPwD8BmOYnKQewjeQIkkX8Rks=;
-        b=SFJWhSh1Bj4ymzzvtwU7HXu/jfGlb4Qop6rvaRQrObf3pJSDIzKBkol/DAfNb0EMVr
-         sN8uIAcuYjJhiWEKtAV6udcnkaUet//288OmhkMdwjvtsM74AXvSj/HnE7RZq6D2B5rK
-         ciNsCZIoFKetuh2YkM3rWo3I8TPG4Bpa/ydSgk25pB7xEbQHnAyA7iwqLwp0C5//E25v
-         djEJk+Bryl0xY1+j332Ts8UVE5FvRGkE65N9ZEfWpTKeFHWS9Vr/w8jFJY+1w5tbGNYo
-         6Fep6Zxm8itmZLR0EhMR+Cq01s4PuUA2BKj+iz7//L4G2ivianWr1L67InfgsYUh62Hm
-         tpzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCvKirj1tkolEtjsFSfPucbxd0FKKpNyYyqsVm2npqZoA+ByKBGqQ9Jz+cqlnayWuk9FUiZENzxtIREOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMGCcyl4E8WExdFJne8Adqk0V5JpZpv+TtBbIcLSa3rszDJNqT
-	GlN0lKMSnw02whIMn1dxT4umtwQKNQemGxsa72IwbF0M3OKtT/zAPtPkJ4wNR+CKQ75ugLi02+L
-	Sx2g16vsOillhoNXBYMGsc8XRyCi0/wQ=
-X-Gm-Gg: ASbGncvFMHgSM65wy6/cCx99TmBaFFKth2v0scuFbcx9hprQWunDfwMMOL7vN4ac9MB
-	ToWNiSsjvbryIlJfkl//mLlT00XXBo55TEkjKJOo/hnNRIFdcmzk7pnHSifE61tGMzW0rDGMbVi
-	d6P2k2YJiMAL/6E9H3xiSABFk6a+/HBr5KJCbzwhqWhHLsG7TfJSXGz0CXesP5mN37oTvuc2hiJ
-	zotDbmGV8JiCbj0okL7wImm2X5cL1/6Q8suhJrx3ekecQgOCzq38IMl6JEpwMxXnQ6hihb5FrVX
-	89icMIb70lX8sFQ=
-X-Google-Smtp-Source: AGHT+IHW+MEeffc/pTPQLmL7Dde2CnR8q/jO4iZvJp6R/AepiIuZRquQtp0We7AMZrEbstFQ9LYr74m01iZsJkJ+N6k=
-X-Received: by 2002:a17:906:f58a:b0:b72:6d3e:848f with SMTP id
- a640c23a62f3a-b7331a372c0mr637454366b.19.1763029212208; Thu, 13 Nov 2025
- 02:20:12 -0800 (PST)
+	s=arc-20240116; t=1763029373; c=relaxed/simple;
+	bh=7uQ/pI/RoS9BjjtqvTOq0aNGc/BMOMqew3c2U02uLM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h3QqzaBZoAwrlOTJSBhyYHSD09hRvt85KJMe/ktfi/OIbUY9MWf0m9WEZ7fp6Jy8d5Z+zW1wqwpQnqOGxXY5FJtBWIWlOaKJdt1cwvRmu1gnYBIiTPhqLEZM52RSSypKksO/RWFvAJKATlGy8kWxJ0FxHAta2pE2vJtpu4nBpjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fXm+TbBY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=peMxbR02; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fXm+TbBY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=peMxbR02; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 07B65218A0;
+	Thu, 13 Nov 2025 10:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763029370;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9m6JeSCnuEZmw4ahOIeRDETubk6GZDbaOotXeI+sHrw=;
+	b=fXm+TbBYmiiDpCgR7DdZddJU4zuo5ASQ6vfu6bd4XVfvYnQoP6BVvh1gvw9CYL1ze4HB/9
+	04qz8AF4NRkTYRgwSz1MxWGJbxWA6KwCuN7fYw7yzqF10L0mYLxa3ngt+CucOXoNDe1ssO
+	vwOnZ+tCkR5GfEfLJ5W3qKblgij2/+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763029370;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9m6JeSCnuEZmw4ahOIeRDETubk6GZDbaOotXeI+sHrw=;
+	b=peMxbR02frfYUXERuLpdr19ttYsxJOhzNFcuUg8VkrNgclkKLa3/jSn7LKh/F3KT2ANdBu
+	QBo4k9L+mzRVBRCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fXm+TbBY;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=peMxbR02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1763029370;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9m6JeSCnuEZmw4ahOIeRDETubk6GZDbaOotXeI+sHrw=;
+	b=fXm+TbBYmiiDpCgR7DdZddJU4zuo5ASQ6vfu6bd4XVfvYnQoP6BVvh1gvw9CYL1ze4HB/9
+	04qz8AF4NRkTYRgwSz1MxWGJbxWA6KwCuN7fYw7yzqF10L0mYLxa3ngt+CucOXoNDe1ssO
+	vwOnZ+tCkR5GfEfLJ5W3qKblgij2/+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1763029370;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9m6JeSCnuEZmw4ahOIeRDETubk6GZDbaOotXeI+sHrw=;
+	b=peMxbR02frfYUXERuLpdr19ttYsxJOhzNFcuUg8VkrNgclkKLa3/jSn7LKh/F3KT2ANdBu
+	QBo4k9L+mzRVBRCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE9A33EA61;
+	Thu, 13 Nov 2025 10:22:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 67c1NnmxFWmsKgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 13 Nov 2025 10:22:49 +0000
+Date: Thu, 13 Nov 2025 11:22:44 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Daniel Vacek <neelx@suse.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Omar Sandoval <osandov@osandov.com>,
+	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Subject: Re: [PATCH v6 1/8] btrfs: disable various operations on encrypted
+ inodes
+Message-ID: <20251113102244.GJ13846@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20251112193611.2536093-1-neelx@suse.com>
+ <20251112193611.2536093-2-neelx@suse.com>
+ <aa8f8100-3a68-4e48-b5da-b0749bce06d7@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112042720.3695972-1-alistair.francis@wdc.com>
- <20251112042720.3695972-3-alistair.francis@wdc.com> <49bbe54a-4b55-48a7-bfb4-30a222cb7d4f@oracle.com>
-In-Reply-To: <49bbe54a-4b55-48a7-bfb4-30a222cb7d4f@oracle.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Thu, 13 Nov 2025 20:19:45 +1000
-X-Gm-Features: AWmQ_bkRDLojedW15PfOpNiK2JsU2DoevPnRuJfyF_0Rq1ckrKQa8VpTESFPsDE
-Message-ID: <CAKmqyKN4SN6DkjaRMe4st23Xnc3gb6DcqUGHi72UTgaiE9EqGw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] net/handshake: Define handshake_sk_destruct_req
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: hare@kernel.org, kernel-tls-handshake@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, 
-	sagi@grimberg.me, kch@nvidia.com, hare@suse.de, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa8f8100-3a68-4e48-b5da-b0749bce06d7@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 07B65218A0
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.21
 
-On Thu, Nov 13, 2025 at 1:47=E2=80=AFAM Chuck Lever <chuck.lever@oracle.com=
-> wrote:
->
-> On 11/11/25 11:27 PM, alistair23@gmail.com wrote:
-> > From: Alistair Francis <alistair.francis@wdc.com>
-> >
-> > Define a `handshake_sk_destruct_req()` function to allow the destructio=
-n
-> > of the handshake req.
-> >
-> > This is required to avoid hash conflicts when handshake_req_hash_add()
-> > is called as part of submitting the KeyUpdate request.
-> >
-> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> > Reviewed-by: Hannes Reinecke <hare@suse.de>
-> > ---
-> > v5:
-> >  - No change
-> > v4:
-> >  - No change
-> > v3:
-> >  - New patch
-> >
-> >  net/handshake/request.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/net/handshake/request.c b/net/handshake/request.c
-> > index 274d2c89b6b2..0d1c91c80478 100644
-> > --- a/net/handshake/request.c
-> > +++ b/net/handshake/request.c
-> > @@ -98,6 +98,22 @@ static void handshake_sk_destruct(struct sock *sk)
-> >               sk_destruct(sk);
-> >  }
-> >
-> > +/**
-> > + * handshake_sk_destruct_req - destroy an existing request
-> > + * @sk: socket on which there is an existing request
->
-> Generally the kdoc style is unnecessary for static helper functions,
-> especially functions with only a single caller.
->
-> This all looks so much like handshake_sk_destruct(). Consider
-> eliminating the code duplication by splitting that function into a
-> couple of helpers instead of adding this one.
->
->
-> > + */
-> > +static void handshake_sk_destruct_req(struct sock *sk)
->
-> Because this function is static, I imagine that the compiler will
-> bark about the addition of an unused function. Perhaps it would
-> be better to combine 2/6 and 3/6.
->
-> That would also make it easier for reviewers to check the resource
-> accounting issues mentioned below.
->
->
-> > +{
-> > +     struct handshake_req *req;
-> > +
-> > +     req =3D handshake_req_hash_lookup(sk);
-> > +     if (!req)
-> > +             return;
-> > +
-> > +     trace_handshake_destruct(sock_net(sk), req, sk);
->
-> Wondering if this function needs to preserve the socket's destructor
-> callback chain like so:
->
-> +       void (sk_destruct)(struct sock sk);
->
->   ...
->
-> +       sk_destruct =3D req->hr_odestruct;
-> +       sk->sk_destruct =3D sk_destruct;
->
-> then:
->
-> > +     handshake_req_destroy(req);
->
-> Because of the current code organization and patch ordering, it's
-> difficult to confirm that sock_put() isn't necessary here.
->
->
-> > +}
-> > +
-> >  /**
-> >   * handshake_req_alloc - Allocate a handshake request
-> >   * @proto: security protocol
->
-> There's no synchronization preventing concurrent handshake_req_cancel()
-> calls from accessing the request after it's freed during handshake
-> completion. That is one reason why handshake_complete() leaves completed
-> requests in the hash.
+On Thu, Nov 13, 2025 at 07:40:35AM +1030, Qu Wenruo wrote:
+> 在 2025/11/13 06:06, Daniel Vacek 写道:
+> > From: Omar Sandoval <osandov@osandov.com>
+> > 
+> > Initially, only normal data extents will be encrypted. This change
+> > forbids various other bits:
+> > - allows reflinking only if both inodes have the same encryption status
+> > - disable inline data on encrypted inodes
+> 
+> I'm wondering how will this affect other users of inlined data. 
+> Especially for symbol links.
+> 
+> Symbol links always store they link source inside an inline data file 
+> extent. Does such content also get encrypted?
 
-Ah, so you are worried that free-ing the request will race with
-accessing the request after a handshake_req_hash_lookup().
-
-Ok, makes sense. It seems like one answer to that is to add synchronisation
-
->
-> So I'm thinking that removing requests like this is not going to work
-> out. Would it work better if handshake_req_hash_add() could recognize
-> that a KeyUpdate is going on, and allow replacement of a hashed
-> request? I haven't thought that through.
-
-I guess the idea would be to do something like this in
-handshake_req_hash_add() if the entry already exists?
-
-    if (test_and_set_bit(HANDSHAKE_F_REQ_COMPLETED, &req->hr_flags)) {
-        /* Request already completed */
-        rhashtable_replace_fast(...);
-    }
-
-I'm not sure that's better. That could possibly still race with
-something that hasn't yet set HANDSHAKE_F_REQ_COMPLETED and overwrite
-the request unexpectedly.
-
-What about adding synchronisation and keeping the current approach?
-From a quick look it should be enough to just edit
-handshake_sk_destruct() and handshake_req_cancel()
-
-Alistair
-
->
->
-> As always, please double-check my questions and assumptions before
-> revising this patch!
->
->
-> --
-> Chuck Lever
+Symlinks are passed to the fscrypt API and encrypted if needed, using
+ext4_symlink() as an example.
 
