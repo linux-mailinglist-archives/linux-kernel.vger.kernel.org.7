@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-899245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA13C572BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:26:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B28C572E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A6DD4E13D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:26:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2550347DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC2933BBB0;
-	Thu, 13 Nov 2025 11:26:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BD82D5C6C;
-	Thu, 13 Nov 2025 11:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4BE33BBA6;
+	Thu, 13 Nov 2025 11:27:37 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D5327B4E8;
+	Thu, 13 Nov 2025 11:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033178; cv=none; b=bdbcI4YDpLDPpCNu0ghCKmKbxZemk4NqSDLWIQhwHhL5RZvIEq8WXnj6fv2fwNEXbvZgXs2YGFZsYz7mrSWDsy3Si5XQmVimSZqF2s16Xxj7ghQGjyaTyBVcbXhxU6fUV8j5+HGL3XEcRQ0HoxevbFbV3QX6zq/Pk+f0zjRJyOA=
+	t=1763033256; cv=none; b=F3o0SxrCClXkGUMr2p9G20vf6i7HSfUq0ee5zS2EZa3uEV0Y+Bxwt4JTJQSzPJNDSzl2/GzL8iXNo2JmoP3vGspZV42jdslF9TuKRbYypoZulksEiVg2WsuZJCelexeIdRmFcRh4XLzlgiXydUAkdTr9Z4iwsjf9Eds3jtBIYYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033178; c=relaxed/simple;
-	bh=/FJmqLMHLv/MBteuHFWGYx6Eqd8rC4+Vxc9u9W0jJPk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W3/Rf5tEgvc0STNhfyV/FD+IyUeYyAVBf1F+83Jn44GPOcGAoZLKQvRuDnfttUDd6ss1PYpfHnEAYW78aoKgW5W4/LNf46INnJPA35K7ok6VpQYgD9oBE2dyua8NVN+pj3XAc8UA5kbE8Vz8PDUxiUPaUhTtyjmhSTr782hPl+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6dHg5CqlzHnGcw;
-	Thu, 13 Nov 2025 19:25:51 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9CE331402F5;
-	Thu, 13 Nov 2025 19:26:12 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 13 Nov
- 2025 11:26:11 +0000
-Date: Thu, 13 Nov 2025 11:26:10 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <dan.j.williams@intel.com>, Dhruva Gole <d-gole@ti.com>, Frank Li
-	<Frank.Li@nxp.com>, Linux PM <linux-pm@vger.kernel.org>, Linux ACPI
-	<linux-acpi@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, LKML
-	<linux-kernel@vger.kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>, Linux
- PCI <linux-pci@vger.kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, Alex
- Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v1 0/3] PM: runtime: Wrapper macros for usage counter
- guards
-Message-ID: <20251113112610.000071df@huawei.com>
-In-Reply-To: <CAJZ5v0i0U=BYFH+QmeVjSpcyrVhVR0zjke3Vve3wxnpNzcDcoQ@mail.gmail.com>
-References: <13883374.uLZWGnKmhe@rafael.j.wysocki>
-	<20251112063941.kbg44srt5f7rfkjb@lcpd911>
-	<5068916.31r3eYUQgx@rafael.j.wysocki>
-	<6914fbb5a6ce_1d911001b@dwillia2-mobl4.notmuch>
-	<CAJZ5v0i0U=BYFH+QmeVjSpcyrVhVR0zjke3Vve3wxnpNzcDcoQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1763033256; c=relaxed/simple;
+	bh=UrvlQ83EKK9oIfUzK6QTaUu2K8vkuGwtm07L3TzfAzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M7wXGHwjIZQae9TgImoFzXeTIWKWKYGMmN8xz7xf7Q/PSyKuhdA0WYpd2+y6td1Id6zpHEyrzDhZBbpAiwSDSmR7nEBKYlWNNRlyw8rLH+ZbBRd7P6kW0OyiA0uba26sbMI5HWtYTQunApvTHiJ/l2V6ldbrnAdQpjhPJh7zkjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: yahheH1SRiuOOQtMT8/IWA==
+X-CSE-MsgGUID: Df5RvJB/RFamhu+4zrneHQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Nov 2025 20:27:27 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.175])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 084A2428B0E9;
+	Thu, 13 Nov 2025 20:27:22 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	rmk+kernel@armlinux.org.uk,
+	maxime.chevallier@bootlin.com,
+	boon.khai.ng@altera.com
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/2] net: stmmac: Disable EEE RX clock stop when VLAN is enabled
+Date: Thu, 13 Nov 2025 11:27:19 +0000
+Message-ID: <20251113112721.70500-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Nov 2025 22:38:14 +0100
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+Hi,
 
-> On Wed, Nov 12, 2025 at 10:27=E2=80=AFPM <dan.j.williams@intel.com> wrote:
-> >
-> > Rafael J. Wysocki wrote: =20
-> > > On Wednesday, November 12, 2025 7:39:41 AM CET Dhruva Gole wrote: =20
-> > > > On Nov 07, 2025 at 19:35:09 +0100, Rafael J. Wysocki wrote: =20
-> > > > > Hi All,
-> > > > >
-> > > > > The runtime PM usage counter guards introduced recently:
-> > > > >
-> > > > > https://lore.kernel.org/linux-pm/6196611.lOV4Wx5bFT@rafael.j.wyso=
-cki/
-> > > > >
-> > > > > and then fixed:
-> > > > >
-> > > > > https://lore.kernel.org/linux-pm/5943878.DvuYhMxLoT@rafael.j.wyso=
-cki/
-> > > > >
-> > > > > should generally work, but using them feels sort of arcane and cr=
-yptic
-> > > > > even though the underlying concept is relatively straightforward.
-> > > > >
-> > > > > For this reason, runtime PM wrapper macros around ACQUIRE() and
-> > > > > ACQUIRE_ERR() involving the new guards are introduced in this ser=
-ies
-> > > > > (patch [1/3]) and then used in the code already using the guards =
-(patches
-> > > > > [2/3] and [3/3]) to make it look more straightforward. =20
-> > > >
-> > > > The patches look okay to me,
-> > > > Reviewed-by: Dhruva Gole <d-gole@ti.com> =20
-> > >
-> > > Thank you and Jonathan for the tags, but since Frank is not convinced=
-, let me
-> > > bounce one more idea off all of you.
-> > >
-> > > Namely, I think that Frank has a point when he wonders if PM_RUNTIME_=
-ACQUIRE_ERR
-> > > hides too much information and I agree with Jonathan that may be misu=
-nderstood,
-> > > so what about defining the wrapper macros so they don't hide the guar=
-d variable
-> > > name, like in the patch below? =20
-> >
-> > I had been reluctant about offering an enthusiastic tag on this series
-> > given that information hiding, but with this change:
-> >
-> > Reviewed-by: Dan Williams <dan.j.williams@intel.com> =20
->=20
-> Thanks!
->=20
-> > However, I prefer that the scope variable declaration vs usage
-> > (reference) cases should maintain visual separation with an operator,
-> > i.e.:
-> >
-> >         PM_RUNTIME_ACQUIRE(dev, pm);
-> >         if (PM_RUNTIME_ACQUIRE_ERR(&pm))
-> >                 return -ENXIO;
-> >
-> > Otherwise we have a case of different flavors of *_ACQUIRE_ERR
-> > implementing various styles. I initially looked at hiding the '&':
-> >
-> > http://lore.kernel.org/681ea7d5ea04b_2a2bb100cf@dwillia2-mobl4.notmuch
-> >
-> > ...but it grew on me precisely because it provides a clue about how this
-> > magic operates. =20
->=20
-> Fair enough.
->=20
-> I'll resend the series with this change then.
-This new option is much nicer and not too verbose.
+This series fixes a couple of VLAN issues observed on the Renesas RZ/V2H
+EVK platform (stmmac + Microchip KSZ9131RNXI PHY):
 
->=20
-> Thank you!
->=20
+- The first patch fixes a bug where VLAN ID 0 would not be properly removed
+due to how vlan_del_hw_rx_fltr() matched entries in the VLAN filter table.
+
+- The second patch addresses RX clock gating issues that occur during VLAN
+creation and deletion when EEE is enabled with RX clock-stop active (the
+default configuration). For example:
+
+    # ip link add link end1 name end1.5 type vlan id 5
+    15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
+    RTNETLINK answers: Device or resource busy
+
+The stmmac hardware requires the receive clock to be running when writing
+certain registers, including VLAN registers. However, by default the driver
+enables Energy Efficient Ethernet (EEE) and allows the PHY to stop the
+receive clock when the link is idle. As a result, the RX clock might be
+stopped when attempting to access these registers, leading to timeouts.
+
+A more comprehensive overview of receive clock related issues in the
+stmmac driver can be found here:
+https://lore.kernel.org/all/Z9ySeo61VYTClIJJ@shell.armlinux.org.uk/
+
+Most of the issues were resolved by commit dd557266cf5fb ("net: stmmac:
+block PHY RXC clock-stop"), which wraps register accesses with
+phylink_rx_clk_stop_block()/unblock() calls. However, VLAN add/delete
+operations are invoked with bottom halves disabled, where sleeping is
+not permitted, so those helpers cannot be used.
+
+To avoid these VLAN timeouts, the second patch disables the EEE RX
+clock-stop feature when VLAN support is enabled. This ensures the receive
+clock remains active, allowing VLAN operations to complete successfully.
+
+Best regards,
+Ovidiu
+
+v2:
+- Added comment mentioning that EEE RX clock stop is disabled to allow
+  access to VLAN registers.
+- Added "Reviewed-by" tag from Russell.
+
+Ovidiu Panait (2):
+  net: stmmac: Fix VLAN 0 deletion in vlan_del_hw_rx_fltr()
+  net: stmmac: Disable EEE RX clock stop when VLAN is enabled
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 6 +++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c | 3 ++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+-- 
+2.51.0
 
 
