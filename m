@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-898423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89989C55430
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:35:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E185C55457
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF1244E1E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:34:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C40494E381B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0F8288502;
-	Thu, 13 Nov 2025 01:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA0B296BBF;
+	Thu, 13 Nov 2025 01:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="yLT5YQJt"
-Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESTeipE0"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF228751A;
-	Thu, 13 Nov 2025 01:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=137.74.80.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138C53B1BD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 01:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762997668; cv=none; b=Skce4KL59fjbMp74jDA/j+XY5ZKyU9jZYOajK+Hb0s4wPbU4PefkJT+Mil2Eco490Blfr08iDxtzskeZmmGyKkqITyAuHSU0e/npFR9XGaSt5NChTW0KInzIQotipoPuKxU2eGnkqq05Fw7sfLwwCb4OhNep79MqnrwKA/C/Ck8=
+	t=1762997801; cv=none; b=m62kwpwsvKrNLWQt10kk9FzRtK2w/5TTM/E+zjjEpD1k23GO972VIWHyAhhYT6QMKl3t2SmOm0h1DGBmaVJEUveRSOPgLlYILIFs0HcJhI5ZBxiJTK1n0l/Yi/H9dDDWBCSioREg4uXYhcLqXf22s2E5yFM+tccHaieUV7ECR0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762997668; c=relaxed/simple;
-	bh=/C8d2McLRUeNClD+TCW1xxnMF0x3wXTvVg6S8iQDfxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ozM5S7dNKyN6iBfiWdfZgJU+c69ZnOX+taHArE2fbu7CNCn9YxkyGez2kkwAEJG6/B1yAIN+d7EsREBgMOwzQoq8QUGSbsAV0rfiOpRslhxSogyAIVue7XYBxS6D0L80C7ncpfR/jTiHCsvtODu3aUm/zwTfHXd0qyMbengzmd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=yLT5YQJt; arc=none smtp.client-ip=137.74.80.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay4.mymailcheap.com (Postfix) with ESMTPS id 10044202D9;
-	Thu, 13 Nov 2025 01:34:19 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 0330740084;
-	Thu, 13 Nov 2025 01:34:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1762997656; bh=/C8d2McLRUeNClD+TCW1xxnMF0x3wXTvVg6S8iQDfxk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=yLT5YQJtCOMQ0wAicIwX+bXUcUDiQZcfjoAB81C+dgPsKmHGPZP2RRIm4pX9cHZk3
-	 XZHEDZZU2e8psGhxNKnAZyBHEa17XXn8eZt7bfAOfNe2gp+P7HV+7vMkpwqG7mRgNN
-	 H1Y2HAYvLQiV9g5zzHqZoAQ+GvYJez9o/vTvdQdc=
-Received: from [192.168.0.64] (unknown [223.104.43.17])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 25C0042A31;
-	Thu, 13 Nov 2025 01:34:13 +0000 (UTC)
-Message-ID: <a2e3e8ec-bac6-401b-a302-c1a6ddc50e51@aosc.io>
-Date: Thu, 13 Nov 2025 09:34:11 +0800
+	s=arc-20240116; t=1762997801; c=relaxed/simple;
+	bh=bMdDBLNj03OoDLCv+IHb3i9hv5R5kNipckjW1y7Fk14=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kvfzTaWy59l9Q1yRZd7Qlvyc6R6EJ7UXrnwKgcQivG6gmFFIRFaolRCYuWpJgmcVs/qIvpOhxCRhAoUjteUeaFfll0uqH4QXR0XyGLNs+XTZhSm+qm+H9gSR8DjOJ2bBosxn6pfF/0pekhsA//NPX21Hjdb8lcORVb6U5Nq2Nvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESTeipE0; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-657230e45e8so243777eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:36:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762997799; x=1763602599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
+        b=ESTeipE09Ouw4aTYaFw3XMRaJHgmimxe7+5EfWsKO0aQ3Ei1YroLbVQm0wYXTc2aBf
+         OG/0Z1XGaC5sAFfy5jM4qeHymMrmsSl1I5kU7zcgNHwXFPSA3MtoQdzfduFkn7Dioocg
+         X81tFxOJMOP61XPZwkPDKDSd5fYegg9jN4N1d+HAZ85nNuQ1jWbgOFKGgnbsOlH88oiO
+         ZCGRLg2V/mqtEfUekuwioi1Flaa1D2pgG0opmqNk40I6G3JP3QzXIGl0PbdzqtJLxy2n
+         WflAqpGt9WTEF1BfiFFEilGgcue0KWSjtCRIEP+KMx8N6hKwOTVZ6zhLjiqdNQ4/7Ynf
+         jjTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762997799; x=1763602599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3jgQtlJhc0lxfymO4tKYMAAUXywVaSmij9voL4WdtpY=;
+        b=PjU38GN53ONAcwKXnS71ShF6y2UeP7S/0qQ/YmbR/lht/yqOc5J4HwSyfM7zlktMre
+         yt1ods/i/x/8R+Ru7qfpnumWL8gdFN+S6GBTCqHLFcCK6U31IT9txs0garmEV5Yuh0/9
+         W/qAUdLqlHsw4ocxiow78+t4PFVQSz6SIgJOoq6SxhtZ+guklgJMlRx5a7s3WpBvFY84
+         LN3vVg1L+mfBBf4aGADyQvR92ENKSKRqXVdkxJvNHtA2FhN2qv+ULFnAB1GkLGS95l9l
+         78cjOIfHM7s0+uM+2DSK+1DSgs9bSUhoaBUijO4bx7Gqx75rcVY53EbcfMSa+SkZJUaZ
+         NTww==
+X-Forwarded-Encrypted: i=1; AJvYcCVMx6RIFdCmbt0tbKIYE5YsqKAdtmD+yR5FL7dUVdQJoOALeg9dQ4BB2EWkSw5jxc501ZQIvRni9CrvjyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm5zsFnTPjYLXL88+HkxoRvam9sFWGyFUqAmlYP7/okfzpqnOB
+	ywAksCgB6Ml2Al34/cUY+WlcOEW2IwbwS+kphKkOfQlx3DagGmT5ioGI
+X-Gm-Gg: ASbGncvy4psbSZGpXwc1Jk3NM4HoeH8tUMETsI4JI+DOgz0eOpjMGo82KgwS/bkRNZF
+	5n0rYsL+HHbXacZU2iTgxIggcwjdrQpNacq0CLBClFSLFIG1OThhiuFBdZNfALJm0EFQ8T/4Rqf
+	RPCXuri30jpEgI66j9SyIG501Ah3C7yP2inV8IEE7ZRdAInWKt9OAKY6BLywCI1FyEL2w1yQobx
+	tpA6N8g+AWOrCryCZqscc5RaUDOaN7dNZjUIZ5bP6Ez9LXFxGv2cLq8hCCKtcYmPWKf/kOPxdsg
+	537gAzTkl1TA3xB3dG+yOtd+Em1TEP8e65hXBQ20bIHafFu864GVQwjPTxM3//ovUo0h/vPaJ+N
+	dCLGjGfhZ1GRD8eWeUWWSHgTsZssOnnJiLVw8citniCmXTgvowvEckgWB/qJjB4a8r1dYc3TW3h
+	XA6PPNUYcVck0q9Eg7UP+R8rFlJ+bQdYjyrhTI4dymr52PU6giHzWt8+m6tO4vkMbdci0LOmo9X
+	nTOfpMEEgmv0+QZOfxeSevAMN8T
+X-Google-Smtp-Source: AGHT+IENjRfB0Wr8Tt+t2GzNl6io0GJSBGW6XHcXIqQoB6ahGHC1gEyI5aGELtUaPn+tkI9HjmtyHA==
+X-Received: by 2002:a05:6870:247:b0:314:faa7:931b with SMTP id 586e51a60fabf-3e84c6ffc66mr1042812fac.25.1762997799104;
+        Wed, 12 Nov 2025 17:36:39 -0800 (PST)
+Received: from uacde259c55d655.ant.amazon.com (syn-071-040-000-058.biz.spectrum.com. [71.40.0.58])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e852058dcesm486754fac.9.2025.11.12.17.36.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 17:36:38 -0800 (PST)
+From: jayxu1990@gmail.com
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jayxu1990@gmail.com,
+	rdlee.upstream@gmail.com,
+	avnerkhan@utexas.edu
+Subject: [PATCH] fs: optimize chown_common by skipping unnecessary ownership changes
+Date: Thu, 13 Nov 2025 09:34:49 +0800
+Message-Id: <20251113013449.3874650-1-jayxu1990@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] alpha/boot: Add .gitignore ignoring vmlinux kernel
- image
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Richard Henderson <richard.henderson@linaro.org>,
- Matt Turner <mattst88@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org
-References: <20251112172248.3927-1-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: WangYuli <wangyuli@aosc.io>
-In-Reply-To: <20251112172248.3927-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0330740084
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[linux.dev,linaro.org,gmail.com,kernel.org,fjasle.eu];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[thorsten.blum.linux.dev:server fail,wangyl5933.chinaunicom.cn:server fail];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Action: no action
 
-[ Cc the kbuild subsystem mailing list and its maintainers. ]
+From: Jay Xu <jayxu1990@gmail.com>
 
+Add early return optimization to chown_common() when the requested
+uid/gid already matches the current inode ownership. This avoids
+calling notify_change() and associated filesystem operations when
+no actual change is needed.
 
-Hi Thorsten Blum,
+The check is performed after acquiring the inode lock to ensure
+atomicity and uses the kernel's uid_eq()/gid_eq() functions for
+proper comparison.
 
+This optimization provides several benefits:
+- Reduces unnecessary filesystem metadata updates and journal writes
+- Prevents redundant storage I/O when files are on persistent storage
+- Improves performance for recursive chown operations that encounter
+  files with already-correct ownership
+- Avoids invoking security hooks and filesystem-specific setattr
+  operations when no change is required
 
-(If the maintainers happen to spot patches like this), Please feel free 
-to add my "Co-developed-by" or "Reviewed-by" tag: WangYuli 
-<wangyl5933@chinaunicom.cn>
+Signed-off-by: Jay Xu <jayxu1990@gmail.com>
+---
+ fs/open.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-  — I would be very grateful!
+diff --git a/fs/open.c b/fs/open.c
+index 3d64372ecc67..82bde70c6c08 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -761,6 +761,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	struct iattr newattrs;
+ 	kuid_t uid;
+ 	kgid_t gid;
++	bool needs_update = false;
+ 
+ 	uid = make_kuid(current_user_ns(), user);
+ 	gid = make_kgid(current_user_ns(), group);
+@@ -779,6 +780,17 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	error = inode_lock_killable(inode);
+ 	if (error)
+ 		return error;
++
++	/* Check if ownership actually needs to change */
++	if ((newattrs.ia_valid & ATTR_UID) && !uid_eq(inode->i_uid, uid))
++		needs_update = true;
++	if ((newattrs.ia_valid & ATTR_GID) && !gid_eq(inode->i_gid, gid))
++		needs_update = true;
++
++	if (!needs_update) {
++		inode_unlock(inode);
++		return 0;
++	}
+ 	if (!S_ISDIR(inode->i_mode))
+ 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
+ 				     setattr_should_drop_sgid(idmap, inode);
+-- 
+2.34.1
 
-Link: 
-https://lore.kernel.org/all/6269AF2792BA8D05+20250704085945.317850-1-wangyuli@uniontech.com/
-
-Link: 
-https://lore.kernel.org/all/47F75842218B0DDC+20250507060012.1203990-1-wangyuli@uniontech.com/
-
-Link: 
-https://lore.kernel.org/all/90A2E6E70A68DD1E+20250415091206.413647-1-wangyuli@uniontech.com/
-
-
-On 2025/11/13 01:22, Thorsten Blum wrote:
-> Building the kernel creates the untracked kernel image file 'vmlinux' in
-> 'arch/alpha/boot/' - ignore it by adding a new local .gitignore file.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   arch/alpha/boot/.gitignore | 2 ++
->   1 file changed, 2 insertions(+)
->   create mode 100644 arch/alpha/boot/.gitignore
->
-> diff --git a/arch/alpha/boot/.gitignore b/arch/alpha/boot/.gitignore
-> new file mode 100644
-> index 000000000000..4abc9c8ab7d3
-> --- /dev/null
-> +++ b/arch/alpha/boot/.gitignore
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +vmlinux
 
