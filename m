@@ -1,481 +1,210 @@
-Return-Path: <linux-kernel+bounces-899646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92150C587D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:49:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513D7C58A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 263824F29EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB023A4C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13592F0661;
-	Thu, 13 Nov 2025 15:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C12F25E2;
+	Thu, 13 Nov 2025 15:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1k8FqFI"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OQFLcFO+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0DF2ECEA8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECABB26E6F3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047863; cv=none; b=MLEC8uF2Std7gNEtnfZcgTDSEzg9ZVS0D/ncdGICA+xwhy5RmLWC2nLJw9doHSk6M3ybna+Qne4rYSMZwHDaEaGQt9w3UZZ8d/CucgmeYhabxPWK1I+Uk0TlkyVU3a3Nvdz2uDqUNGpaSS5XGlj3lom3qyp1OkVrH4x7+5y5YCs=
+	t=1763047865; cv=none; b=kD6AxsdEDSCBS74jSwwbe7IPUbtYHHxMVKfXNZ8BmPp2QlRH49yNa0/iYQO05ifxn91KAHqD3Fytu7adeUUK5cR4h0bgXkCamygvMCVVptZ8HA1hp97yuEr13UECEjGfXuZQg4BLTbZ0jHF5EKROTqk8H4huRZEyGjSQLIbLZ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047863; c=relaxed/simple;
-	bh=cLL+QJfU6/rSryWG0kNr6jJj29W3dje9rR+7Zxauf5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CAVq8iyz8GQ8pt149fFs82KpHkPBMHJf0febJ4fr9PzPRyHO1c9MPSet0curdWCmRd+8XnqwPbYDGKI5qrXGUqxXdHyr19WPzUDVGjXN170UE5zPfAu7UZVG/XtDR9WpO4QM6KRR4lfYITKYY1RdReqCkTouNUSMmN/KeoJ+F3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1k8FqFI; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5597330a34fso677760e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763047860; x=1763652660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xF2SVFkeCIEKSwrJ2QVnWGz6Tzdsu34uG8BCaZLxcA0=;
-        b=R1k8FqFIW1yN82HFVhVVM/KXWE8FqtrL1Fjyq8rGUy13uixRqmwfQMYFREQDzSXtlI
-         ZClGdFEjYhlBXZoiMSXG3EwZ6YuU/690AyLgxpByKTv1fQsy8JSDvE5+DKxVEyfSqq9r
-         z1T/WCeMJhqgN+9ybZmDPDqvka94j6UeIHqAXfdFd+bD/sTv4VU3Lh3RoVayOYqWTEZk
-         WLZ+VVGtMQkEHtjmQroypHgL9aMW0o7BnsTlvTycwU4pdzXxjDe4I9uHgkEZWkPZNFQP
-         NobUphBixD9SwVO4mo87owChrLqwPFUG3i80nWk6VzD4flnH7LCccoRhXpl376BZrup5
-         nPGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763047860; x=1763652660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xF2SVFkeCIEKSwrJ2QVnWGz6Tzdsu34uG8BCaZLxcA0=;
-        b=FabikEHmIDzDBvZTixd/RqUzkqqv5BeESaBPpoAZFkYpvopVtWuYLr9F+HbGqGjSBb
-         GevenwzjrYTTNZPmLxffSA1KRHbNoc+lD+4fDRxWAuqWMNKSeIebSVxVUS/qa1t8ooCD
-         fBIGtZLibF2h2aQuNWy80ztwDngrMn5iR2F9Vpe+xbs1WmVeyAEabJ4nMYs5FNjeynzg
-         QOzsZ2DNURD0J/B/sfyrra3oEe6PogBDa6suRY3VsY1R4+eWrpam25SRE5e7sHhSig1Q
-         4ioDt6OSgnReMHY4pdBI4SypkZdWouK3PBFPGuIfJ7G/R9mdpGiVbYLLYe5nwpL/R2AU
-         0q0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXBl9Vm5/ddBkrohmiConwEDCZSJ/emIF5ZzVSfYf4feTBcnnA3t6qCxfYqtLA8i9cNJ/71G8kv+WK+0jk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNOQ3ky3mQ/Rlb7GO9pgdnR0Z2Tg9bQf/SClI4ZGR1QD2SvoW2
-	rVEOq/CPbLX78Xr6vPOLI8469WLV+LV1CGQfhRSpQw6zdt3w5v2nwtQBOYj+Xf/xGyCrE41mMUM
-	rC8q9/HDAPxvqboZ7ef5bueNqveRBwh4=
-X-Gm-Gg: ASbGncvLGnWIJJJk7yFA8jVcT3I+eMC3NwocSZNMXqVQbY9y7V68glOppwzCT8tq3gc
-	Hb92L0E0m9RWwAGwJ0ClKg+xQrVsSobfdTbUEYnAWGtXbNo8zueI97XpGgJ5LyCAiqIlTsR2KJb
-	esokkvG76i4f7yUn7z7MjdcDdYXQilGznSw5UWEFznQUiz4ovIKUuxrizWu7CCa2yNPXMhhEBio
-	ZfsHhrgdWYgLWbIPFvur5WWbp+6BXnDLZQGV64L5dCKwD8veYyTIpsd21dwncU49PLbgWTeSw==
-X-Google-Smtp-Source: AGHT+IGb0OyOeZ3rJF4PQyPBEgerq/OhD2yVdHMwgMWuNlK6dT0VXBxgUF1TzUsj9RQuVBpMCDj4RG7ZEfNSSBv9GuY=
-X-Received: by 2002:a05:6122:791:b0:559:3d59:1fdc with SMTP id
- 71dfb90a1353d-559e7d9dfbemr3267331e0c.14.1763047859828; Thu, 13 Nov 2025
- 07:30:59 -0800 (PST)
+	s=arc-20240116; t=1763047865; c=relaxed/simple;
+	bh=Ca0AWLsvZ8pJ3VXEd7Jyq9mVNzFrysCMIrLNco6FEn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQMsTxVL/3rS1+/h1ahQNjKH4lhQ4ozMorGGItW+tL6qoHeGY0eFCJkpko0g88QDa6GVKKhn2ioEM85Y8ec7/Dyy8tBSmtu/46E57UuHjfYkkwilHD3JcthWkosni7gGoq5ojgaxaIdKhZT1+CDAr7bErjSfASsGtvlj9ovZNKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OQFLcFO+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Va+K4sYYYcuGxcNONY0J+Ck3zRKdFoVQxsy0V8zHpU4=; b=OQFLcFO+3Y+b1Iam9slsjX7OWt
+	6sKiDHKwBUnMdH0LWmSm2+kCZrXwsM8Ma/NtMkMFmVAOmvdwIGUzufxOo48hwJDjiaBWrGbnHMrS9
+	ejvu4sn/R/g0BxddPsXzDHcfVFlO3Qw/SmYHwvj7lfi6qHbch8qf7e6W1m2MuiXt3qCT4XTOzUOzk
+	5MbIxDIAmXCeO0oGQMK1pdd+ttyHT6oLAdiCEy0qWAEKkv+YPOKcru2oZ90Dc1Ae7jLgMmRR0IuMD
+	gfDn02jLjx/gUXGBlNWSaKXQfIX0tw/sBwyEk9PzOh1bLf+7z6woXbkMhkrKXlL3QUQoob64fw+L6
+	YAuUJopQ==;
+Received: from [90.240.106.137] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vJZHf-000557-TT; Thu, 13 Nov 2025 16:30:51 +0100
+Message-ID: <d36c9a72-3ac3-4a17-8f8e-795495fb734a@igalia.com>
+Date: Thu, 13 Nov 2025 15:30:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113092606.91406-1-scott_mitchell@apple.com> <CANn89iJAH0-6FiK-wnA=WUS8ddyQ-q2e7vfK=7-Yrqgi_HrXAQ@mail.gmail.com>
-In-Reply-To: <CANn89iJAH0-6FiK-wnA=WUS8ddyQ-q2e7vfK=7-Yrqgi_HrXAQ@mail.gmail.com>
-From: Scott Mitchell <scott.k.mitch1@gmail.com>
-Date: Thu, 13 Nov 2025 07:30:48 -0800
-X-Gm-Features: AWmQ_blLhmvcg0BMTovERebKeevypY01q9GYx5CaBw_9fIVqLTrv9PxhLLEb3M0
-Message-ID: <CAFn2buAXHDcKiHyPs_7rT617j7=BopZRrMKVv5pYWNi2OxRAfQ@mail.gmail.com>
-Subject: Re: [PATCH v2] netfilter: nfnetlink_queue: optimize verdict lookup
- with hash table
-To: Eric Dumazet <edumazet@google.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, phil@nwl.cc, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Scott Mitchell <scott_mitchell@apple.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/psi: Streamline the flow in psi_group_change
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ Suren Baghdasaryan <surenb@google.com>, Peter Ziljstra <peterz@infradead.org>
+References: <20251113122254.40445-1-tvrtko.ursulin@igalia.com>
+ <20251113152223.GA3465062@cmpxchg.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <20251113152223.GA3465062@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 13, 2025 at 2:25=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Thu, Nov 13, 2025 at 1:26=E2=80=AFAM Scott Mitchell <scott.k.mitch1@gm=
-ail.com> wrote:
-> >
-> > The current implementation uses a linear list to find queued packets by
-> > ID when processing verdicts from userspace. With large queue depths and
-> > out-of-order verdicting, this O(n) lookup becomes a significant
-> > bottleneck, causing userspace verdict processing to dominate CPU time.
-> >
-> > Replace the linear search with a hash table for O(1) average-case
-> > packet lookup by ID. The hash table size is configurable via the new
-> > NFQA_CFG_HASH_SIZE netlink attribute (default 1024 buckets, matching
-> > NFQNL_QMAX_DEFAULT; max 131072). The size is normalized to a power of
-> > two to enable efficient bitwise masking instead of modulo operations.
-> > Unpatched kernels silently ignore the new attribute, maintaining
-> > backward compatibility.
-> >
-> > The existing list data structure is retained for operations requiring
-> > linear iteration (e.g. flush, device down events). Hot fields
-> > (queue_hash_mask, queue_hash pointer) are placed in the same cache line
-> > as the spinlock and packet counters for optimal memory access patterns.
-> >
-> > Signed-off-by: Scott Mitchell <scott_mitchell@apple.com>
-> > ---
-> > Changes in v2:
-> > - Use kvcalloc/kvfree with GFP_KERNEL_ACCOUNT to support larger hash
-> >   tables with vmalloc fallback (Florian Westphal)
-> > - Remove incorrect comment about concurrent resizes - nfnetlink subsyst=
-em
-> >   mutex already serializes config operations (Florian Westphal)
-> > - Fix style: remove unnecessary braces around single-line if (Florian W=
-estphal)
-> >
-> >  include/net/netfilter/nf_queue.h              |   1 +
-> >  .../uapi/linux/netfilter/nfnetlink_queue.h    |   1 +
-> >  net/netfilter/nfnetlink_queue.c               | 129 ++++++++++++++++--
-> >  3 files changed, 123 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/include/net/netfilter/nf_queue.h b/include/net/netfilter/n=
-f_queue.h
-> > index 4aeffddb7586..3d0def310523 100644
-> > --- a/include/net/netfilter/nf_queue.h
-> > +++ b/include/net/netfilter/nf_queue.h
-> > @@ -11,6 +11,7 @@
-> >  /* Each queued (to userspace) skbuff has one of these. */
-> >  struct nf_queue_entry {
-> >         struct list_head        list;
-> > +       struct hlist_node       hash_node;
-> >         struct sk_buff          *skb;
-> >         unsigned int            id;
-> >         unsigned int            hook_index;     /* index in hook_entrie=
-s->hook[] */
-> > diff --git a/include/uapi/linux/netfilter/nfnetlink_queue.h b/include/u=
-api/linux/netfilter/nfnetlink_queue.h
-> > index efcb7c044a74..bc296a17e5aa 100644
-> > --- a/include/uapi/linux/netfilter/nfnetlink_queue.h
-> > +++ b/include/uapi/linux/netfilter/nfnetlink_queue.h
-> > @@ -107,6 +107,7 @@ enum nfqnl_attr_config {
-> >         NFQA_CFG_QUEUE_MAXLEN,          /* __u32 */
-> >         NFQA_CFG_MASK,                  /* identify which flags to chan=
-ge */
-> >         NFQA_CFG_FLAGS,                 /* value of these flags (__u32)=
- */
-> > +       NFQA_CFG_HASH_SIZE,             /* __u32 hash table size (round=
-ed to power of 2) */
-> >         __NFQA_CFG_MAX
-> >  };
-> >  #define NFQA_CFG_MAX (__NFQA_CFG_MAX-1)
-> > diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_=
-queue.c
-> > index 8b7b39d8a109..f076609cac32 100644
-> > --- a/net/netfilter/nfnetlink_queue.c
-> > +++ b/net/netfilter/nfnetlink_queue.c
-> > @@ -46,7 +46,10 @@
-> >  #include <net/netfilter/nf_conntrack.h>
-> >  #endif
-> >
-> > -#define NFQNL_QMAX_DEFAULT 1024
-> > +#define NFQNL_QMAX_DEFAULT      1024
-> > +#define NFQNL_MIN_HASH_SIZE     16
-> > +#define NFQNL_DEFAULT_HASH_SIZE 1024
-> > +#define NFQNL_MAX_HASH_SIZE     131072
-> >
-> >  /* We're using struct nlattr which has 16bit nla_len. Note that nla_le=
-n
-> >   * includes the header length. Thus, the maximum packet length that we
-> > @@ -65,6 +68,7 @@ struct nfqnl_instance {
-> >         unsigned int copy_range;
-> >         unsigned int queue_dropped;
-> >         unsigned int queue_user_dropped;
-> > +       unsigned int queue_hash_size;
-> >
-> >
-> >         u_int16_t queue_num;                    /* number of this queue=
- */
-> > @@ -77,6 +81,8 @@ struct nfqnl_instance {
-> >         spinlock_t      lock    ____cacheline_aligned_in_smp;
-> >         unsigned int    queue_total;
-> >         unsigned int    id_sequence;            /* 'sequence' of pkt id=
-s */
-> > +       unsigned int    queue_hash_mask;
-> > +       struct hlist_head *queue_hash;
-> >         struct list_head queue_list;            /* packets in queue */
-> >  };
-> >
-> > @@ -95,6 +101,39 @@ static struct nfnl_queue_net *nfnl_queue_pernet(str=
-uct net *net)
-> >         return net_generic(net, nfnl_queue_net_id);
-> >  }
-> >
-> > +static inline unsigned int
-> > +nfqnl_packet_hash(u32 id, unsigned int mask)
-> > +{
-> > +       return hash_32(id, 32) & mask;
-> > +}
-> > +
->
-> (Resent in plaintext for the lists, sorry for duplicates)
->
-> I do not think this is an efficient hash function.
->
-> queue->id_sequence is monotonically increasing (controlled by the
-> kernel : __nfqnl_enqueue_packet(), not user space).
->
-> I would use   return (id & mask) so that we have better use of cpu
-> caches and hardware prefetchers,
-> in case a cpu receives a batch of ~64 packets from a busy network device.
->
-> Your hash function would require 8x more cache line misses.
->
 
-Nice improvement, done!
+On 13/11/2025 15:22, Johannes Weiner wrote:
+> On Thu, Nov 13, 2025 at 12:22:54PM +0000, Tvrtko Ursulin wrote:
+>> Given that psi_group_change() can be called rather frequently from the
+>> scheduler task switching code lets streamline it a bit to reduce the
+>> number of loops and conditionals on the typical invocation.
+>>
+>> First thing is that we replace the open coded mask walks with the standard
+>> for_each_set_bit(). This makes the source code a bit more readable and
+>> also enables usage of the efficient CPU specific zero bit skip
+>> instructions.
+>>
+>> In doing so we also remove the need to mask out the special TSK_ONCPU bit
+>> from the set and clear masks, since for_each_set_bit() now directly limits
+>> the array index to the safe range.
+>>
+>> As the last remaining step we can now easily move the new state mask
+>> computation to only run when required.
+>>
+>> End result is hopefully more readable code and a very small but measurable
+>> reduction in task switching CPU overhead.
+>>
+>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Peter Ziljstra <peterz@infradead.org>
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   kernel/sched/psi.c | 48 ++++++++++++++++++++--------------------------
+>>   1 file changed, 21 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+>> index 59fdb7ebbf22..fe19aeef8dbd 100644
+>> --- a/kernel/sched/psi.c
+>> +++ b/kernel/sched/psi.c
+>> @@ -798,39 +798,26 @@ static void psi_group_change(struct psi_group *group, int cpu,
+>>   			     u64 now, bool wake_clock)
+>>   {
+>>   	struct psi_group_cpu *groupc;
+>> -	unsigned int t, m;
+>> +	unsigned long t, m;
+>>   	u32 state_mask;
+>>   
+>>   	lockdep_assert_rq_held(cpu_rq(cpu));
+>>   	groupc = per_cpu_ptr(group->pcpu, cpu);
+>>   
+>>   	/*
+>> -	 * Start with TSK_ONCPU, which doesn't have a corresponding
+>> -	 * task count - it's just a boolean flag directly encoded in
+>> -	 * the state mask. Clear, set, or carry the current state if
+>> -	 * no changes are requested.
+>> +	 * TSK_ONCPU does not have a corresponding task count - it's just a
+>> +	 * boolean flag directly encoded in the state mask. Clear, set, or carry
+>> +	 * the current state if no changes are requested.
+>> +	 *
+>> +	 * The rest of the state mask is calculated based on the task counts.
+>> +	 * Update those first, then construct the mask.
+>>   	 */
+>> -	if (unlikely(clear & TSK_ONCPU)) {
+>> -		state_mask = 0;
+>> -		clear &= ~TSK_ONCPU;
+>> -	} else if (unlikely(set & TSK_ONCPU)) {
+>> -		state_mask = PSI_ONCPU;
+>> -		set &= ~TSK_ONCPU;
+>> -	} else {
+>> -		state_mask = groupc->state_mask & PSI_ONCPU;
+>> -	}
+> 
+> This doesn't look right. Without PSI_ONCPU in state_mask, the results
+> of test_states() will be bogus, as well as the PSI_MEM_FULL special
+> case for an active reclaimer on the CPU.
 
->
-> > +static inline u32
-> > +nfqnl_normalize_hash_size(u32 hash_size)
-> > +{
-> > +       /* Must be power of two for queue_hash_mask to work correctly.
-> > +        * Avoid overflow of is_power_of_2 by bounding NFQNL_MAX_HASH_S=
-IZE.
-> > +        */
-> > +       BUILD_BUG_ON(!is_power_of_2(NFQNL_MIN_HASH_SIZE) ||
-> > +                    !is_power_of_2(NFQNL_DEFAULT_HASH_SIZE) ||
-> > +                    !is_power_of_2(NFQNL_MAX_HASH_SIZE) ||
-> > +                    NFQNL_MAX_HASH_SIZE > 1U << 31);
-> > +
-> > +       if (!hash_size)
-> > +               return NFQNL_DEFAULT_HASH_SIZE;
-> > +
-> > +       /* Clamp to valid range before power of two to avoid overflow *=
-/
-> > +       if (hash_size <=3D NFQNL_MIN_HASH_SIZE)
-> > +               return NFQNL_MIN_HASH_SIZE;
-> > +
-> > +       if (hash_size >=3D NFQNL_MAX_HASH_SIZE)
-> > +               return NFQNL_MAX_HASH_SIZE;
-> > +
-> > +       if (!is_power_of_2(hash_size))
-> > +               hash_size =3D roundup_pow_of_two(hash_size);
-> > +
-> > +       return hash_size;
-> > +}
-> > +
-> >  static inline u_int8_t instance_hashfn(u_int16_t queue_num)
-> >  {
-> >         return ((queue_num >> 8) ^ queue_num) % INSTANCE_BUCKETS;
-> > @@ -114,13 +153,56 @@ instance_lookup(struct nfnl_queue_net *q, u_int16=
-_t queue_num)
-> >         return NULL;
-> >  }
-> >
-> > +static int
-> > +nfqnl_hash_resize(struct nfqnl_instance *inst, u32 hash_size)
-> > +{
-> > +       struct hlist_head *new_hash, *old_hash;
-> > +       struct nf_queue_entry *entry;
-> > +       unsigned int h, hash_mask;
-> > +
-> > +       hash_size =3D nfqnl_normalize_hash_size(hash_size);
-> > +       if (hash_size =3D=3D inst->queue_hash_size)
-> > +               return 0;
-> > +
-> > +       new_hash =3D kvcalloc(hash_size, sizeof(*new_hash), GFP_KERNEL_=
-ACCOUNT);
-> > +       if (!new_hash)
-> > +               return -ENOMEM;
-> > +
-> > +       hash_mask =3D hash_size - 1;
-> > +
-> > +       for (h =3D 0; h < hash_size; h++)
-> > +               INIT_HLIST_HEAD(&new_hash[h]);
-> > +
-> > +       spin_lock_bh(&inst->lock);
-> > +
-> > +       list_for_each_entry(entry, &inst->queue_list, list) {
-> > +               /* No hlist_del() since old_hash will be freed and we h=
-old lock */
-> > +               h =3D nfqnl_packet_hash(entry->id, hash_mask);
-> > +               hlist_add_head(&entry->hash_node, &new_hash[h]);
-> > +       }
-> > +
-> > +       old_hash =3D inst->queue_hash;
-> > +       inst->queue_hash_size =3D hash_size;
-> > +       inst->queue_hash_mask =3D hash_mask;
-> > +       inst->queue_hash =3D new_hash;
-> > +
-> > +       spin_unlock_bh(&inst->lock);
-> > +
-> > +       kvfree(old_hash);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static struct nfqnl_instance *
-> > -instance_create(struct nfnl_queue_net *q, u_int16_t queue_num, u32 por=
-tid)
-> > +instance_create(struct nfnl_queue_net *q, u_int16_t queue_num, u32 por=
-tid,
-> > +               u32 hash_size)
-> >  {
-> >         struct nfqnl_instance *inst;
-> >         unsigned int h;
-> >         int err;
-> >
-> > +       hash_size =3D nfqnl_normalize_hash_size(hash_size);
-> > +
-> >         spin_lock(&q->instances_lock);
-> >         if (instance_lookup(q, queue_num)) {
-> >                 err =3D -EEXIST;
-> > @@ -133,11 +215,24 @@ instance_create(struct nfnl_queue_net *q, u_int16=
-_t queue_num, u32 portid)
-> >                 goto out_unlock;
-> >         }
-> >
-> > +       inst->queue_hash =3D kvcalloc(hash_size, sizeof(*inst->queue_ha=
-sh),
-> > +                                   GFP_KERNEL_ACCOUNT);
-> > +       if (!inst->queue_hash) {
-> > +               kfree(inst);
-> > +               err =3D -ENOMEM;
-> > +               goto out_unlock;
-> > +       }
-> > +
-> > +       for (h =3D 0; h < hash_size; h++)
-> > +               INIT_HLIST_HEAD(&inst->queue_hash[h]);
-> > +
-> >         inst->queue_num =3D queue_num;
-> >         inst->peer_portid =3D portid;
-> >         inst->queue_maxlen =3D NFQNL_QMAX_DEFAULT;
-> >         inst->copy_range =3D NFQNL_MAX_COPY_RANGE;
-> >         inst->copy_mode =3D NFQNL_COPY_NONE;
-> > +       inst->queue_hash_size =3D hash_size;
-> > +       inst->queue_hash_mask =3D hash_size - 1;
-> >         spin_lock_init(&inst->lock);
-> >         INIT_LIST_HEAD(&inst->queue_list);
-> >
-> > @@ -154,6 +249,7 @@ instance_create(struct nfnl_queue_net *q, u_int16_t=
- queue_num, u32 portid)
-> >         return inst;
-> >
-> >  out_free:
-> > +       kvfree(inst->queue_hash);
-> >         kfree(inst);
-> >  out_unlock:
-> >         spin_unlock(&q->instances_lock);
-> > @@ -172,6 +268,7 @@ instance_destroy_rcu(struct rcu_head *head)
-> >         rcu_read_lock();
-> >         nfqnl_flush(inst, NULL, 0);
-> >         rcu_read_unlock();
-> > +       kvfree(inst->queue_hash);
-> >         kfree(inst);
-> >         module_put(THIS_MODULE);
-> >  }
-> > @@ -194,13 +291,17 @@ instance_destroy(struct nfnl_queue_net *q, struct=
- nfqnl_instance *inst)
-> >  static inline void
-> >  __enqueue_entry(struct nfqnl_instance *queue, struct nf_queue_entry *e=
-ntry)
-> >  {
-> > -       list_add_tail(&entry->list, &queue->queue_list);
-> > -       queue->queue_total++;
-> > +       unsigned int hash =3D nfqnl_packet_hash(entry->id, queue->queue=
-_hash_mask);
-> > +
-> > +       hlist_add_head(&entry->hash_node, &queue->queue_hash[hash]);
-> > +       list_add_tail(&entry->list, &queue->queue_list);
-> > +       queue->queue_total++;
-> >  }
-> >
-> >  static void
-> >  __dequeue_entry(struct nfqnl_instance *queue, struct nf_queue_entry *e=
-ntry)
-> >  {
-> > +       hlist_del(&entry->hash_node);
-> >         list_del(&entry->list);
-> >         queue->queue_total--;
-> >  }
-> > @@ -209,10 +310,11 @@ static struct nf_queue_entry *
-> >  find_dequeue_entry(struct nfqnl_instance *queue, unsigned int id)
-> >  {
-> >         struct nf_queue_entry *entry =3D NULL, *i;
-> > +       unsigned int hash =3D nfqnl_packet_hash(id, queue->queue_hash_m=
-ask);
-> >
-> >         spin_lock_bh(&queue->lock);
-> >
-> > -       list_for_each_entry(i, &queue->queue_list, list) {
-> > +       hlist_for_each_entry(i, &queue->queue_hash[hash], hash_node) {
-> >                 if (i->id =3D=3D id) {
-> >                         entry =3D i;
-> >                         break;
-> > @@ -407,8 +509,7 @@ nfqnl_flush(struct nfqnl_instance *queue, nfqnl_cmp=
-fn cmpfn, unsigned long data)
-> >         spin_lock_bh(&queue->lock);
-> >         list_for_each_entry_safe(entry, next, &queue->queue_list, list)=
- {
-> >                 if (!cmpfn || cmpfn(entry, data)) {
-> > -                       list_del(&entry->list);
-> > -                       queue->queue_total--;
-> > +                       __dequeue_entry(queue, entry);
-> >                         nfqnl_reinject(entry, NF_DROP);
-> >                 }
-> >         }
-> > @@ -1483,6 +1584,7 @@ static const struct nla_policy nfqa_cfg_policy[NF=
-QA_CFG_MAX+1] =3D {
-> >         [NFQA_CFG_QUEUE_MAXLEN] =3D { .type =3D NLA_U32 },
-> >         [NFQA_CFG_MASK]         =3D { .type =3D NLA_U32 },
-> >         [NFQA_CFG_FLAGS]        =3D { .type =3D NLA_U32 },
-> > +       [NFQA_CFG_HASH_SIZE]    =3D { .type =3D NLA_U32 },
-> >  };
-> >
-> >  static const struct nf_queue_handler nfqh =3D {
-> > @@ -1495,11 +1597,15 @@ static int nfqnl_recv_config(struct sk_buff *sk=
-b, const struct nfnl_info *info,
-> >  {
-> >         struct nfnl_queue_net *q =3D nfnl_queue_pernet(info->net);
-> >         u_int16_t queue_num =3D ntohs(info->nfmsg->res_id);
-> > +       u32 hash_size =3D 0;
-> >         struct nfqnl_msg_config_cmd *cmd =3D NULL;
-> >         struct nfqnl_instance *queue;
-> >         __u32 flags =3D 0, mask =3D 0;
-> >         int ret =3D 0;
-> >
-> > +       if (nfqa[NFQA_CFG_HASH_SIZE])
-> > +               hash_size =3D ntohl(nla_get_be32(nfqa[NFQA_CFG_HASH_SIZ=
-E]));
-> > +
-> >         if (nfqa[NFQA_CFG_CMD]) {
-> >                 cmd =3D nla_data(nfqa[NFQA_CFG_CMD]);
-> >
-> > @@ -1559,11 +1665,12 @@ static int nfqnl_recv_config(struct sk_buff *sk=
-b, const struct nfnl_info *info,
-> >                                 goto err_out_unlock;
-> >                         }
-> >                         queue =3D instance_create(q, queue_num,
-> > -                                               NETLINK_CB(skb).portid)=
-;
-> > +                                               NETLINK_CB(skb).portid,=
- hash_size);
-> >                         if (IS_ERR(queue)) {
-> >                                 ret =3D PTR_ERR(queue);
-> >                                 goto err_out_unlock;
-> >                         }
-> > +                       hash_size =3D 0; /* avoid resize later in this =
-function */
-> >                         break;
-> >                 case NFQNL_CFG_CMD_UNBIND:
-> >                         if (!queue) {
-> > @@ -1586,6 +1693,12 @@ static int nfqnl_recv_config(struct sk_buff *skb=
-, const struct nfnl_info *info,
-> >                 goto err_out_unlock;
-> >         }
-> >
-> > +       if (hash_size > 0) {
-> > +               ret =3D nfqnl_hash_resize(queue, hash_size);
-> > +               if (ret)
-> > +                       goto err_out_unlock;
-> > +       }
-> > +
-> >         if (nfqa[NFQA_CFG_PARAMS]) {
-> >                 struct nfqnl_msg_config_params *params =3D
-> >                         nla_data(nfqa[NFQA_CFG_PARAMS]);
-> > --
-> > 2.39.5 (Apple Git-154)
-> >
+You are completely right, I was sure local state_mask was not used 
+outside the !group->enabled branch but missed it is an input parameter 
+to test_states().
+
+> 
+>> -	/*
+>> -	 * The rest of the state mask is calculated based on the task
+>> -	 * counts. Update those first, then construct the mask.
+>> -	 */
+>> -	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
+>> -		if (!(m & (1 << t)))
+>> -			continue;
+>> -		if (groupc->tasks[t]) {
+>> +	m = clear;
+>> +	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks)) {
+> 
+> The current version relies on !!m and doesn't need the range checks
+> for_each_set_bit() introduces. This seems less efficient. Did you
+> compare the generated code?
+
+Yes, slightly more .text but empirically it looks a tiny bit fewer 
+cycles. Which I thought was due being able to use the CPU specific 
+optimised __ffs variants. So it still bails on as soon as the last set 
+bit "goes away" just differently.
+
+I will need to redo the tests with the state_mask breakage fixed.
+>> +		if (likely(groupc->tasks[t])) {
+>>   			groupc->tasks[t]--;
+>>   		} else if (!psi_bug) {
+>> -			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
+>> +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%lu tasks=[%u %u %u %u] clear=%x set=%x\n",
+>>   					cpu, t, groupc->tasks[0],
+>>   					groupc->tasks[1], groupc->tasks[2],
+>>   					groupc->tasks[3], clear, set);
+>> @@ -838,9 +825,9 @@ static void psi_group_change(struct psi_group *group, int cpu,
+>>   		}
+>>   	}
+>>   
+>> -	for (t = 0; set; set &= ~(1 << t), t++)
+>> -		if (set & (1 << t))
+>> -			groupc->tasks[t]++;
+>> +	m = set;
+>> +	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks))
+>> +		groupc->tasks[t]++;
+>>   
+>>   	if (!group->enabled) {
+>>   		/*
+>> @@ -853,6 +840,13 @@ static void psi_group_change(struct psi_group *group, int cpu,
+>>   		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
+>>   			record_times(groupc, now);
+>>   
+>> +		if (unlikely(clear & TSK_ONCPU))
+>> +			state_mask = 0;
+>> +		else if (unlikely(set & TSK_ONCPU))
+>> +			state_mask = PSI_ONCPU;
+>> +		else
+>> +			state_mask = groupc->state_mask & PSI_ONCPU;
+> 
+> You moved it here, but this is the !group->enabled exception
+> only. What about the common case when the group is enabled?
+
+Yep, I was blind. I will get back to you with v2 if there is still some 
+cpu cycles to be saved.
+
+Regards,
+
+Tvrtko
+
 
