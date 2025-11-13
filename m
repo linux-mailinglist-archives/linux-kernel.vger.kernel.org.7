@@ -1,153 +1,149 @@
-Return-Path: <linux-kernel+bounces-898488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECCFC5563E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:12:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF42CC5564A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0255B3B4197
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96383B4679
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE072BCF4A;
-	Thu, 13 Nov 2025 02:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1735329B776;
+	Thu, 13 Nov 2025 02:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQiDyARZ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZMfjxcBa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7nAoTd5"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3EA2BD03
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89B5189BB6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762999618; cv=none; b=gnmVuZ31V1sBCtS/MBWzql9Z8qWfsfmEACppa2ZgSoO/IuUzTBA6y6lRhcFy68TvXiTD8sC7rKkqXCQO0l9RCgHwcFE/V02HUwaOz/bhcMMvNAGgnSZSG5ZyGI84IOPcjYlh2jdqVHoykaTLvX9lYrpwrYqbQjBnpizIJiNpFic=
+	t=1762999724; cv=none; b=qjO1cXkeh/v1rquxtQEorn0tNP4ngwNaITWspCcbXkA8YUIBaMmu1ZeGR+LVTLTa/31m9Vne+NNcSVXFy876alyYdUFs+rVRninpQW/GHuOxe+DG8nIzO9O4caM//e4yaG3Z4xFBRHqU+Sy1NAeOpzcsMrwV1EaErZcVEB3pYgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762999618; c=relaxed/simple;
-	bh=IahK6y5WaenF4MCU8w5zfMzE+ab1EnS1xLPbJ9kZCQM=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gBWUV4Qo+XFzIn6okcA5p1A1STBxdMaa7+o2CQxsOTQQkZuaieCDXmgeQPaR5gkBHuqPA7fBZmlfBK2ntx6ZYBTX/ZuTAPJligQTJD0mPXHI9gnLfNkThASjJ21NUEl1xawU8tBRDFg1JcaNJ61RtfSNiW7rxssCVBjI0LPjLXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQiDyARZ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZMfjxcBa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762999615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nwLfxiEgNX9ofFATsdLOeVj72vW/st41Tfih7kYHKv8=;
-	b=EQiDyARZWlIqPhW7ueb4QGxBKqcTicymEZCj9oiiYAdPVpVngMHYdfyQcBdAqG2ey4RK4b
-	bUMeGKrQdwH68PUnr/peRssmU5knANxVQvwyyEl1OFsYY2c+9AFCBetpFs126BtLxInBjO
-	ZiYzcCTugvqaQkVc19feywWSmF51INc=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-KVQ7vlpFOpiEwHf_mOSyuw-1; Wed, 12 Nov 2025 21:06:54 -0500
-X-MC-Unique: KVQ7vlpFOpiEwHf_mOSyuw-1
-X-Mimecast-MFC-AGG-ID: KVQ7vlpFOpiEwHf_mOSyuw_1762999613
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8a5b03118f4so401768985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:06:54 -0800 (PST)
+	s=arc-20240116; t=1762999724; c=relaxed/simple;
+	bh=lpfYFXLVeUKxs+egWV3Ox5Z6NpCd53PQOChlDLG1wo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=udTtvzLrvkk176PNxdBgm8KI1Tp2WnaHu8Rw1QeLJOtgZyi7ckAsZpIjbypaOwHIhYaBSV2agLuEiIPOpR/ANLaCLzJrB6zJZNlhYzIBG8iez3IlsDzjObpVE9e4hmz4XLV3tQd/z4tsyXrtpK3/RGmqSUXoIN3XNsFgP48ZlrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7nAoTd5; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b72dad1b713so34374266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:08:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762999613; x=1763604413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nwLfxiEgNX9ofFATsdLOeVj72vW/st41Tfih7kYHKv8=;
-        b=ZMfjxcBaHKxZkT6EZxPErI+WuS4+Bv8BFzEtmOa9MT4yuAzlTL31+n9wypyDE5TIWU
-         Wu0bhvQF1KbxALaKqkaoNw2FXfS/UInYCdyXd3xqrqJsE2Ec31hxIRXYvnx1+J4OvyDj
-         bV0ZqR0e+WThyucyL6Zq1KeN1fsHKTqcNA1eoCGuBRPbBw4TwxrJx1ucqqrgKY6vx5qV
-         CjqZjranVq1HvEEr7qIIKUgUBa7ft0pCxxEfFHhm95LGeisNJCG0d+5fJPB2ZfclrxM6
-         dFS4KIpGMNNHqSb1zO9zscsyH+FabzfgcaRI4kxsYNcRWBVelGjmpjibVnbq3GEY+1aP
-         FKmg==
+        d=gmail.com; s=20230601; t=1762999721; x=1763604521; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t65DqIpLR2XJc52MvkU8Zhi1oYYMgA74171ikGaz3IA=;
+        b=J7nAoTd5Z4UH2fOXpVMoDajfLeEh2CgmWgPeCL9NV9tfSHXbNi5dKNtKBuTBMqiz4W
+         B0oLDYOZjgPkSYik1diuKoBSrFxH1IQ31Hc3oFLoz1jYf5wdll/SupzxLx/h0i104twM
+         3AhlYwDhwiqDp0vjAyCPE4oMdWUWwlCc9QOEB2PhqTuBnBB8lL9rfr/oJI1Mx2vhtsUw
+         JnfEfjr7zKV0Yjc5rvLIqk1uVn7DVZJqxukap/SaW2GqQM4qB5jN6ivAHjnCkyuLFexn
+         fGpCE9/po6+g9s9B8K7nVy6wKjkfrm4tb0AC62u/DpcB6Ncn5CafSe+MVnWdEgHc8/T2
+         MGPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762999613; x=1763604413;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwLfxiEgNX9ofFATsdLOeVj72vW/st41Tfih7kYHKv8=;
-        b=irSTcI81LZlFk+JylCKNS6nm1daIx4VSQLMYeT7UhnDQ3nB/5fe+/SwKJFYqeuTXwa
-         NhrYEIAoShupOmsssUT2SoMxElrncjlbhhJ5Wwv7LiHtDvQIdDfh5UfSCSuN5vVp94jY
-         hJ1MjktAWDG0J1QqJ+qlwi9NrUb7gh0xsl/tGsMXeS+D78ge8/h1elINMnzr1y3fhePn
-         FOZROkdKUatcgGjFWQuVxQbJFBGxDUKTuOA3mKMXGvy0ybSn3mhBH9k8sKP+BjjGWnNz
-         2xY5JfRac2mHUUIz9d6OGNMydUh7nmPvxx7WEBrTSoEumpnXGVMZuqCWEvbopL2Z405R
-         xn0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1L/JZ0dZVmrN3PxCkg7KmyOW8FlLOwLayPN6KmaGSWj+ZS0WBi5u2CXHVPxTmhkM2GiCWApzJjYMen+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOARizfDfua0rQklO5v56jOlWHL6M11I0D/+rY+1guU1zdpwG9
-	0/+/a/fn/9mvHyqRcGwz6E5z9bCUeMcwFzvqGHyKSyjVTLbakfctmMfq5WZm+DHu2FNtDFXDEHi
-	NGhG0Zu0E7Ug8RuMi/LkLY1LHBQp4y+lIHS8soVKZcbPTxMULQkfMxGxufi6On8wW1w==
-X-Gm-Gg: ASbGnctq0lFKqAXZiTVmQq8P2BjlmzPwjXoH15COxzBvtdnN1yaNULqGVBwWGUirjEB
-	jgL1afw6BDxqC4gM2oH3qYz8bVS104gipme0yHvIhxmvyLQj5PWkJXKhCmhzFxlKMSRP04XNYOX
-	Xku8OI82+iDBEhVRI3yWxHQey+v4xVkUM2+XG64bID1xsVL+Ie5vLV54w49W+jCRgs9NKojJ6hY
-	o+Sv3LHgJnesGlb1D7juXsNo6kKdARlO5hYaRQAgP4+uBU3B5joglQ32t5QviBPOfT30v3fhT8B
-	uqfywe8C+qzNW+ZwEduP2YVK48/1kwiVoZctrgV0GiID4ptvn872ZlvyXru978M2v8MUAk4gCCt
-	X49jwWoRETQ1rwquiLG+8HPU5ey3JX16XZQ8EVWRHZ4nKug==
-X-Received: by 2002:a05:620a:4692:b0:8ad:453f:8b19 with SMTP id af79cd13be357-8b2ac1ec6c3mr225518585a.32.1762999613624;
-        Wed, 12 Nov 2025 18:06:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEOI/YfNKWL0Jyv0zeQOmK7Xhyn4wG1lOa7dtDlEoeVUKwP9+WhvUSSS6dR5cS4lcK53Zyj5w==
-X-Received: by 2002:a05:620a:4692:b0:8ad:453f:8b19 with SMTP id af79cd13be357-8b2ac1ec6c3mr225516585a.32.1762999613295;
-        Wed, 12 Nov 2025 18:06:53 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2aef2f9bbsm38251885a.31.2025.11.12.18.06.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 18:06:52 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <3b3b49df-c215-4f7d-b2c6-628eac823134@redhat.com>
-Date: Wed, 12 Nov 2025 21:06:51 -0500
+        d=1e100.net; s=20230601; t=1762999721; x=1763604521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=t65DqIpLR2XJc52MvkU8Zhi1oYYMgA74171ikGaz3IA=;
+        b=QbYjNvCOilhpP8JaoEoAJSXiMtaONvPtgoDD786DnPMqk02xlwQ+YcL4BsGi3sxIp+
+         Xe7yDeDY4dsgrnl8vcOwfu/cCh3iYkt16/Fm6HO5PlzhGnWwEoYkGP3my3aZPOlalPMb
+         lJqxNnTJ1k8GVopOhBVrR9N01jkIHEOH2mLEGifX9S7slEDLfn3Ql4tpP2McFM9Ffx57
+         MhF9Hm4G6XZSi/OHB4+UCIRCuSUWS9PmJ8XE713OPH+FEIiogSMzQ7N+GDBc+1Aa/SkK
+         kc/sLqxs9ILQPt13NYfn6gtcjZ8OqUFjK+2RZZ3Y00l0HE95+Jlk35aanfoLf/WMbqzY
+         6Nug==
+X-Forwarded-Encrypted: i=1; AJvYcCWurNt5zLumtHMr5yhXaXjLeIW3fbIsq38vw7hCLy/+9iRmGgiH0WzoNNBDrrJrTX9HbD2lwoFYRMEhdls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcP8RA40KK0XOQtfGVzyuL3rLn77Q3g13CwZKuUE6ir34iZZxB
+	ua/3liEp8PcEAL05Gfz5BzuGF8f0fVZbfSJIDrd4qsTCBCKnNV99vaZyu1Bl4QASpUGZw3OxFhr
+	Ed9fEadsJ2ioeP5BTBMgkqPUja/IxTCU=
+X-Gm-Gg: ASbGncsOYk+Holb5Q89bw3UqdUSan0q8A5qdrTzM14yUPjYwYKlzlEQVe8tcs8P2v2Y
+	a0Q5iYAvDpNF3FquNKPLUTCIRZz9XqhmwvzqyrK6arqaUkr50qwVq37rRFnSjeelLsBqZI1ZEpW
+	A8IAH3ViiY0f42aJuV9sqKkZY7KjSO2oRj0N0f7W/iMgO5G4MuxytiMgUsiFabMuurm4v1KZZC1
+	KIlNR+6xEBKf+jNz2vDdIPTgqYgayFQ7jpgL9YXzEBMk1/rMhaEolUb/p9XZZCiOaQJv9McMyuq
+	yi8ubddgnilRulk=
+X-Google-Smtp-Source: AGHT+IFyNWhr/4Git6cscpcGTem+aU8tvSmWDpBf45NHHKnDkHzsi0qx1de/+ZvskwSE8Sn5fra35DX3byqBpX8Be5Q=
+X-Received: by 2002:a17:906:6a0a:b0:b72:b289:6de3 with SMTP id
+ a640c23a62f3a-b7331af6e23mr526654966b.58.1762999720784; Wed, 12 Nov 2025
+ 18:08:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 13/22] cpuset: introduce local_partition_update()
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
- <20251025064844.495525-14-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20251025064844.495525-14-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251111234519.3467440-1-alistair.francis@wdc.com>
+ <20251111234519.3467440-4-alistair.francis@wdc.com> <caadfcbb-8964-4447-a93d-8e49b4c14c7e@suse.de>
+In-Reply-To: <caadfcbb-8964-4447-a93d-8e49b4c14c7e@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Thu, 13 Nov 2025 12:08:14 +1000
+X-Gm-Features: AWmQ_bkFf-G8MuLmGZPhefsEFyG89yAqq4VscB5fW2rNoawjSt9VITO75ff2oo8
+Message-ID: <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] nvme: Expose the tls_configured sysfs for secure
+ concat connections
+To: Hannes Reinecke <hare@suse.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, 
+	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/25/25 2:48 AM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
+On Wed, Nov 12, 2025 at 5:08=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
+e:
 >
-> The local_partition_update() function replaces the command partcmd_update
-> previously handled within update_parent_effective_cpumask(). The update
-> logic follows a state-based approach:
+> On 11/12/25 00:45, alistair23@gmail.com wrote:
+> > From: Alistair Francis <alistair.francis@wdc.com>
+> >
+> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > ---
+> > v2:
+> >   - New patch
+> >
+> >   drivers/nvme/host/sysfs.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+> > index 29430949ce2f..6d10e12136d0 100644
+> > --- a/drivers/nvme/host/sysfs.c
+> > +++ b/drivers/nvme/host/sysfs.c
+> > @@ -838,7 +838,7 @@ static umode_t nvme_tls_attrs_are_visible(struct ko=
+bject *kobj,
+> >           !ctrl->opts->tls && !ctrl->opts->concat)
+> >               return 0;
+> >       if (a =3D=3D &dev_attr_tls_configured_key.attr &&
+> > -         (!ctrl->opts->tls_key || ctrl->opts->concat))
+> > +         !ctrl->opts->concat)
+> >               return 0;
+> >       if (a =3D=3D &dev_attr_tls_keyring.attr &&
+> >           !ctrl->opts->keyring)
 >
-> 1. Validation check: First verify if the local partition is currently valid
-> 2. Invalidation handling: If the partition is invalid, trigger invalidation
-> 3. State transition: If an invalid partition has no errors, transition to
->     valid
-> 4. cpumasks updates: For local partition that only cpu maks changes, use
-"cpumask"
->     partition_update() to handle partition change.
+> ??
 >
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 153 +++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 148 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 73a43ab58f72..49df38237c1d 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1822,6 +1822,59 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->   	remote_partition_disable(cs, tmp);
->   }
->   
-> +static bool is_user_cpus_exclusive(struct cpuset *cs)
+> How can you have a configured TLS Key for secure concatenation?
 
-Should we name this "is_user_xcpus_exclusive"?
+I'm not sure I follow
 
-Cheers,
-Longman
+`ctrl->opts->tls_key` is directly set at the end of the
+`nvme_auth_secure_concat()` function, so it will be set for secure
+concatenation.
 
+> We generate the keys from the DH-CHAP key material, don't we?
+
+I haven't checked that closely, but the key seems to be generated from
+the CHAP hash id
+
+Alistair
+
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
