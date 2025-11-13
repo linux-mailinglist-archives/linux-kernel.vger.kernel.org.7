@@ -1,69 +1,57 @@
-Return-Path: <linux-kernel+bounces-899965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE7DC59278
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:29:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA9FC59485
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B235F6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:23:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B38B54F7B9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B8345739;
-	Thu, 13 Nov 2025 17:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567922DECBA;
+	Thu, 13 Nov 2025 17:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K7gY2oIY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PUYGJC2E"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKsY10Lu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE12F7AC9;
-	Thu, 13 Nov 2025 17:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D5629E0E5;
+	Thu, 13 Nov 2025 17:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763054527; cv=none; b=Q47zQuoMwjNOd7WUHcqb87ywoZ58+N7bdR4NhoHGq4tY9HmqWjHAE3xPeR3BKZJ3YDajZzREmqDEOe0jR2qPfSSM2Nyt9o1atcugjBqTmD/RKg64mAyqjLqkp6HWq/jcj6IrIeGqRWQCbon1/H2Twyid4WW3bxdgNo63pjh4FJk=
+	t=1763054572; cv=none; b=mm13JgoFCM2LXoZ8vfTtHSJQ6iYefEW2/oS0139P3BY4gwwBquJmrbN4dd/frqkkQrLmPU4uYRiwZPavJBLDcxgbHoCTJRtMzMrJPCCJFlNkw0WKoNAlwA2Filrg+3McgCyD6c2uHgyZ8+aP79fShfiM9ZOhn1wXEv13BJ8H4dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763054527; c=relaxed/simple;
-	bh=gDGxPoImWOtItgifoiFHC4tQg2flME8hbVchoAWf8mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gI3QVrPuj/JAiLPzYFd65RISLrLGK8zUpHKCMV1gE+B0whGC27ZrZAzsSag+/6L+wQPgjghg5uli6Z+Sq6ijIS4xADuLzrjG90bUgfT+48FQkjgLwF7fva1CROukm/bAAaKuW8OvzIMOLlkTbDpHIg1tnPxRQB4AjE9LAdsVkgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K7gY2oIY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PUYGJC2E; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Nov 2025 18:21:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763054521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ROMWpRRLugWsifaHPQePfDdfFY98GVu+EcHMapiLrY=;
-	b=K7gY2oIYkYcBs5dO38P3m0foDjmg+o+fCt0qFWL8QY7mlF7S213vvjKLrsJSfNk0bXD6dM
-	hMn9/1NMLBAC99pNeqU62L8tmNNLeUyIsLC4z0J+XnG9HHaq0YEA42o2mFh0ojOdfUUMHN
-	LqNA9wPzolhzui7AysYr46Ni1zrHchBwGD3XgUiv4FJvxSY946li9dmiInNLSMMX6kdlus
-	dXPKPUO6p6I/oUJMSyMgwFd7vYayj3C/IDApOXVa1YSMvr9gdWpDMJ6Hmc/guyqZRNp7PY
-	mV+tgjAgXomRJRyYlmauhUZIjWVZwTYQZ6jL2uDavJ8u/LSWOLzzpwDsa4B6pg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763054521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ROMWpRRLugWsifaHPQePfDdfFY98GVu+EcHMapiLrY=;
-	b=PUYGJC2EESYvf8bFpEUt0jo8RMONXYylNuumTaQXVO5DnoN1j98HbVVeeoOM0MuhTXBWDL
-	RJksfIC/OEi9Y6BQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: =?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] wifi: wfx: add WQ_PERCPU to alloc_workqueue users
-Message-ID: <20251113172159.a-yjqge1@linutronix.de>
-References: <20251113160825.383883-1-marco.crivellari@suse.com>
- <2530603.TnzJ9iJZxx@nb0018864>
+	s=arc-20240116; t=1763054572; c=relaxed/simple;
+	bh=e8yo/Z7TSasynCjYpy8uIS8ubYj77xNchCdhFaFEfiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qzxtd3DCNNqYwHeDx/69XGOuzV0AAqG5M1IPKgrOUPLXjX5l2WijcpWZqJNHVKOgOb0GmmpzoE5xkj4fcX3Lw8adZJgJc2eVPOImLk1RED6fFwkROXdMooJ6D3Ez3qC1MGlc9BzBiVvKKuX0fCvXEbnkJjLrP/RayBstDPrv1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKsY10Lu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB614C19422;
+	Thu, 13 Nov 2025 17:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763054572;
+	bh=e8yo/Z7TSasynCjYpy8uIS8ubYj77xNchCdhFaFEfiI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=SKsY10Lu/yHxBKeQ0HKqoWu1CFUlAKN0OX0fjA3NHrzL+YUOsHOi3jLvlR8t0SzCT
+	 LVWI4TGYLZCKNNz4b3RD2bp0mNZJHmolRnJBVQqunV6e5M1H8UvPGgv4omNbfWEF4I
+	 dgCUBW81c5/o3SzflOVDlEJiunEBFeGC4kzTEUAbnbZb0eyCt8pTfcK5tTADzIbvHJ
+	 dBYn4sri9xxVqLnECbWa2Mmmb4yChHFy8fj2xWsWQ7h7M9sYKHn1Vvqx1YCSrrt6WN
+	 FX02WKn1U8qLBs/gGn1RPL0Y/ZDe/NGMfp6MeBx16nRu7WB6TswO6eH+h/zbQhh4eU
+	 gi2bL1SatI0KA==
+Date: Thu, 13 Nov 2025 11:22:50 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+	will@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	linux-arm-msm@vger.kernel.org, zhangsenchuan@eswincomputing.com,
+	vincent.guittot@linaro.org
+Subject: Re: [PATCH v2 2/3] PCI: qcom: Check for the presence of a device
+ instead of Link up during suspend
+Message-ID: <20251113172250.GA2291436@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,34 +60,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2530603.TnzJ9iJZxx@nb0018864>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <zgj3ubyb234ig6ndz6ov5q3szvuxnd3jkz2rjglbad4ksri6nl@ov7boxuar4va>
 
-On 2025-11-13 17:57:40 [+0100], J=C3=A9r=C3=B4me Pouiller wrote:
-> > -       wdev->bh_wq =3D alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI, 0);
-> > +       wdev->bh_wq =3D alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI | WQ_PE=
-RCPU, 0);
-=E2=80=A6
-> BTW, this workqueue has changed multiple times. I though it was already
-> unbound (and I believe it should).
+On Thu, Nov 13, 2025 at 10:24:17PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Nov 13, 2025 at 10:41:47AM -0600, Bjorn Helgaas wrote:
+> > On Fri, Nov 07, 2025 at 10:13:18AM +0530, Manivannan Sadhasivam wrote:
+> > > The suspend handler checks for the PCIe Link up to decide when to turn off
+> > > the controller resources. But this check is racy as the PCIe Link can go
+> > > down just after this check.
+> > > 
+> > > So use the newly introduced API, pci_root_ports_have_device() that checks
+> > > for the presence of a device under any of the Root Ports to replace the
+> > > Link up check.
+> > 
+> > Why is pci_root_ports_have_device() itself not racy?
+> 
+> Because it is very uncommon for the 'pci_dev' to go away during the
+> host controller suspend. It might still be possible in edge cases,
+> but very common as the link down. I can reword it.
 
-It is not unbound. It can be enqueued on any CPU but the work item/
-worker not migrate to another CPU should there be resources available)
-compared to the CPU performing the enqueue.
+I guess it's better to acknowledge replacing one race with another
+than it would be to suggest that this *removes* a race.
 
-> I also think the HIGHPRI is not required (the device perform better
-> with HIGHPRI, but this is only because we steal the CPU of the other
-> tasks).
+But I don't understand the point of this.  Is
+pci_root_ports_have_device() *less* racy than the
+qcom_pcie_suspend_noirq() check?  Why would that be?
 
-HIGHPRI sets the nice level as per nice(2).
-I did look a bit and one of the users is a threaded interrupt as of
-wfx_spi_irq_handler(). This is already a thread with SCHED_FIFO 50.
-You can sleep here or do anything else that you could in a workqueue.
-This thread will be preferred to other threads in the system which run
-usually at SCHED_OTHER including the worker.
+I'm kind of skeptical about adding pci_root_ports_have_device() at
+all.  It seems like it just encourages racy behavior in drivers.
 
-Not sure if the requirement for the additional offload is to be able to
-serve another interrupt before the worker completes.
-
-Sebastian
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > ---
+> > >  drivers/pci/controller/dwc/pcie-qcom.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > index 805edbbfe7eb..b2b89e2e4916 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > @@ -2018,6 +2018,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> > >  static int qcom_pcie_suspend_noirq(struct device *dev)
+> > >  {
+> > >  	struct qcom_pcie *pcie;
+> > > +	struct dw_pcie_rp *pp;
+> > >  	int ret = 0;
+> > >  
+> > >  	pcie = dev_get_drvdata(dev);
+> > > @@ -2053,8 +2054,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+> > >  	 * powerdown state. This will affect the lifetime of the storage devices
+> > >  	 * like NVMe.
+> > >  	 */
+> > > -	if (!dw_pcie_link_up(pcie->pci)) {
+> > > -		qcom_pcie_host_deinit(&pcie->pci->pp);
+> > > +	pp = &pcie->pci->pp;
+> > > +	if (!pci_root_ports_have_device(pp->bridge->bus)) {
+> > > +		qcom_pcie_host_deinit(pp);
+> > >  		pcie->suspended = true;
+> > >  	}
+> > >  
+> > > -- 
+> > > 2.48.1
+> > > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
