@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-899414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58529C57D7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:07:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268C8C57A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF76E502B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:25:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06D25342252
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4D8352F80;
-	Thu, 13 Nov 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RABtzDeV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E21A35292B;
+	Thu, 13 Nov 2025 13:26:23 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A27352932;
-	Thu, 13 Nov 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8093446AA;
+	Thu, 13 Nov 2025 13:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040336; cv=none; b=LErYumUSlPiUknwiIQXSW9/XR2ldbi6sfzr/VtTyFuXd/eiYQQTSNpkcI+q1VojQD3f5HrePmhP0k5yfKMMtN3X5IXy3I6QlDB2gE5fCkbbzi0UPzLC3CrwnssHG63LJ4aQA+Rb5rRUitFPk7EdYjCSU/jt0PoncaWOC3y/q47s=
+	t=1763040382; cv=none; b=V8N7R2Q+R7GpwRVCppEhHtEJUwBAOusdqIXRBm2WK00gBRu1Vh/TKEyGvORu2NIS0XosjMOVo80WOppyWO+U1Z8N43wYceCUCEnuQWT5rh7rURJq87FIzmnsrE3hpfj7x98y/ivBbqTJSfkvsWSazu7rRqUTfVi2PoBx7ihewg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040336; c=relaxed/simple;
-	bh=2beZImer8eWKIWcDAocCGxfxykTRh4iaBe3x/wgdk4U=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZGCQLZcC4ASdIeaU6alr2NtkZrd1Wnd9SfTTzsg/txTI/Ltfa+i7+sc2dpP+efSu/Jdr4OhC1uw/VH2BNv1x792vKi8WuOK978GK4Ae5RhwWjxlJLnbJEZuZ8dweM/8SEzqhDyL11EZ03wrmKsO6lqHSwVxhUXT2EkK0gsOvoHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RABtzDeV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0096BC2BC87;
-	Thu, 13 Nov 2025 13:25:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763040336;
-	bh=2beZImer8eWKIWcDAocCGxfxykTRh4iaBe3x/wgdk4U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RABtzDeVbXRDOvl93LROn+Mckrp/mKLXEXnPz99QkOkX+h1lng7C5tMyKn0xde662
-	 w5Mwl261mDV+jRn9c8RysceJjqrN558vI6j9Soco3hRKwV4OvPZMEh9/GqerBXBmob
-	 w9KOc6c4m/6tcsWUm4SK7Wi0E4+S/vFCBMsQz9DJSNO4+ayRbHXkUMkI3ZehJmzQcT
-	 yBQIa0W3Xdi2CuO3HICKIvH+p77EHLhG9cFWAQfKjTXASoA2L/R2wo1J8YneZ+sXIR
-	 mFQt3insYK4LypCl0Mwwestyw6XGbJjR22Kkxj0tbbRnoTsSmANRpAx3PFnYY88iIp
-	 eXFCQPzVaDpYA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vJXKP-00000004snh-1stV;
-	Thu, 13 Nov 2025 13:25:33 +0000
-Date: Thu, 13 Nov 2025 13:25:33 +0000
-Message-ID: <86o6p6t67m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Luigi Rizzo <lrizzo@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Luigi Rizzo <rizzo.unipi@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH 1/6] genirq: platform wide interrupt moderation: Documentation, Kconfig, irq_desc
-In-Reply-To: <20251112192408.3646835-2-lrizzo@google.com>
-References: <20251112192408.3646835-1-lrizzo@google.com>
-	<20251112192408.3646835-2-lrizzo@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1763040382; c=relaxed/simple;
+	bh=Rh3bzVGApBGQbzZkTO2BFKFs3NSxoPrIjQ2As0xPEjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2kiqgTLE2DHbbrqFwRFNw0aEDx53ouZUdI3cHz4ICVSPKEYtSCfOxCWhOeRDQQG7I9nsV3Ka8gMDHoUhJ6j8q9Qz0vG1dAuV9aQAbYFjyGevyT0WlkN9+80fFFNLbgiRwJsRKsxPfh7d1TlJdO+5EfsgBEU1ntatYCPSypgNSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [192.168.7.227] (54-240-197-234.amazon.com [54.240.197.234])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 7BF1A40C10;
+	Thu, 13 Nov 2025 13:26:11 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 54.240.197.234) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[192.168.7.227]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <43aa4ed3-d9c0-4f60-b850-d345cb85fe41@arnaud-lcm.com>
+Date: Thu, 13 Nov 2025 13:26:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lrizzo@google.com, tglx@linutronix.de, rizzo.unipi@gmail.com, pabeni@redhat.com, akpm@linux-foundation.org, seanjc@google.com, jacob.jun.pan@linux.intel.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, bhelgaas@google.com, willemb@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack to
+ fix OOB write
+To: Brahmajit Das <listout@listout.xyz>
+Cc: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com, andrii@kernel.org,
+ ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+ eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+ song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
+ <20251111081254.25532-1-listout@listout.xyz>
+ <3f79436c-d343-46ff-8559-afb7da24a44d@arnaud-lcm.com>
+ <kjjn3mvfp2gf5iyeyukthgluayrkefonfmqbugrsreeeqfwde5@rxrzxrsobt54>
+Content-Language: en-US
+From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+In-Reply-To: <kjjn3mvfp2gf5iyeyukthgluayrkefonfmqbugrsreeeqfwde5@rxrzxrsobt54>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <176304037239.10917.10498323386673519218@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Wed, 12 Nov 2025 19:24:03 +0000,
-Luigi Rizzo <lrizzo@google.com> wrote:
 
-[...]
+On 13/11/2025 12:49, Brahmajit Das wrote:
+> On 12.11.2025 08:40, 'Lecomte, Arnaud' via syzkaller-bugs wrote:
+>> I am a not sure this is the right solution and I am scared that by
+>> forcing this clamping, we are hiding something else.
+>> If we have a look at the code below:
+>> ```
+>>
+>> |
+>>
+>> 	if (trace_in) {
+>> 		trace = trace_in;
+>> 		trace->nr = min_t(u32, trace->nr, max_depth);
+>> 	} else if (kernel && task) {
+>> 		trace = get_callchain_entry_for_task(task, max_depth);
+>> 	} else {
+>> 		trace = get_perf_callchain(regs, kernel, user, max_depth,
+>> 					crosstask, false, 0);
+>> 	} ``` trace should be (if I remember correctly) clamped there. If not, it
+>> might hide something else. I would like to have a look at the return for
+>> each if case through gdb. |
+> Hi Arnaud,
+> So I've been debugging this the reproducer always takes the else branch
+> so trace holds whatever get_perf_callchain returns; in this situation.
+>
+> I mostly found it to be a value around 4.
+>
+> In some case the value would exceed to something 27 or 44, just after
+> the code block
+>
+> 	if (unlikely(!trace) || trace->nr < skip) {
+> 		if (may_fault)
+> 			rcu_read_unlock();
+> 		goto err_fault;
+> 	}
+>
+> So I'm assuming there's some race condition that might be going on
+> somewhere.
+Which value ? trace->nr ?
+> I'm still debugging bug I'm open to ideas and definitely I could be
+> wrong here, please feel free to correct/point out.
 
-> The system does not rely on any special hardware feature except from
-> MSI-X Pending Bit Array (PBA), a mandatory component of MSI-X
+I should be able to have a look tomorrow evening as I am currently a bit 
+overloaded
+with my work.
 
-Is this stuff PCI specific? if so, Why? What is the actual dependency
-on PBA? It is it just that you are relying on the ability to mask
-interrupts without losing them, something that is pretty much a given
-on any architecture?
+Thanks,
+Arnaud
 
-[...]
-
-> +Platform Wide software interrupt moderation is a variant of moderation
-> +that adjusts the delay based on platform-wide metrics, instead of
-> +considering each source separately.  It then uses hrtimers to implement
-> +adaptive, per-CPU moderation in software, without requiring any specific
-> +hardware support other than Pending Bit Array, a standard feature
-> +of MSI-X.
-> +
-> +To understand the motivation for this feature, we start with some
-> +background on interrupt moderation.
-
-This reads like marketing blurb. This is an API documentation, and it
-shouldn't be a description of your motivations for building it the way
-you did. I'd suggest you stick to the API, and keep the motivations
-for the cover letter.
-
-> +
-> +* **Interrupt** is a mechanism to **notify** the CPU of **events**
-> +  that should be handled by software, for example, **completions**
-> +  of I/O requests (network tx/rx, disk read/writes...).
-
-That's only half of the truth, as this description only applies to
-*edge* interrupts. Level interrupts report a change in *state*, not an
-event.
-
-How do you plan to deal with interrupt moderation for level
-interrupts?
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
