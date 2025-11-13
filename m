@@ -1,370 +1,140 @@
-Return-Path: <linux-kernel+bounces-898996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2908C567E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:09:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169FCC5687F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8B33A4167
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:09:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B11B93477DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54682F1FC3;
-	Thu, 13 Nov 2025 09:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158E92D7394;
+	Thu, 13 Nov 2025 09:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="miZkR8ie"
-Received: from sonic315-8.consmr.mail.gq1.yahoo.com (sonic315-8.consmr.mail.gq1.yahoo.com [98.137.65.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Tt3fERR1"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DB6244664
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F71248F7C;
+	Thu, 13 Nov 2025 09:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763024943; cv=none; b=LaJ/pSdqw74QFOJnw8P8cGakbp/EIaJVHAQY4bdc52q1LV6G3bOzAHv6vgLL1Bs3+TydWbZRlol6I7cr35D+9lAkd5MpLfddOCZINx2BC/uPTC92QRiSmXiEQU6O9cVKx5NcXnFl8+L5QJQvimjynSvqS7iDpmKTbeagFn0QyV4=
+	t=1763024984; cv=none; b=GU+v8itF0up96QqZ6v++HObY7FAQ5oUS7kO8QBWxAPOu9hkpqZg62U978hfDUg5OmKw+n58UkAaeTpZbhyWkGYC512arai4OqK9gJk54nhUEVnJrviWn9JkapsdtXuujazccKAFgY3zzK/jhRZtPCWghrBWRGTysc5udC0qDRPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763024943; c=relaxed/simple;
-	bh=CwvV06c0j02ohPrWnmShptC6or4QZNgaNdyuGU45zpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/eQ3Nzo2A+eqJshjW2oDFhMNfbxQFuPiV4gYZaXwTnJXhGefjR88+BWhWmXSj0oFkpMChQM1l2EAYGUxSeSYeFmIoGk5lYGEt3JfWmGW4YNpzNd6CAtN1J7zxRGl4drnod8WCmYp6HsdtIXitdWrXacdYdoEX/NvC2v0ftlLdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=miZkR8ie; arc=none smtp.client-ip=98.137.65.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763024939; bh=MMknRcqQGM7el+Tdt6AzBBcCY6hjBX+ZqSYQZHHoMbM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=miZkR8ieFjOzi4aCKS+oTXZuj6CHcmUgKg/wMOIQm8a8glya7jefRzhwdxJnZzTG1ZTcHAyaFlvmYHEEOetwzPazNOCieDuiO30iZU5Q+DHFdq/s7A2XTEnGNVSqX58e6RHKntixVfDwJ+jtwbM2/XLSxu4H0VY7qB34/AnKO2o53mO1pEtYolC4efW2T7BDHjb0zQijiMlVaY1nNpgNjA4HuWlUT2m9epI5mNzakzjAM9M/pc/oQnhh3S+qWbcaoNRHBSgMxXVgWEo03Cl2GbP6DvD+7tqk0rPgH55p4++kxt7uRHQNKBnjaZFDEmLaASvodYEHgTllVllgJz0hhg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763024939; bh=P2dHwo/jICi09YLwJjlpT6Tm3t0BAZ+WPScGryLaK58=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sNMlncDkiRdgJY+Mj3ZMdnvP8gjUbUz+rXzxpWt+ZnGQrbgkkermk88Qx1Ke+Wa4jKhEyhCKMPSzhHlSuYKyGnfj+P1k+1TXOYY5W6elsqurIzWZMenteBO2zSkMiSafcoBUPKjA2GXqBUEnSvATxXsA9J3eiVclRcydrnKX+9hPS8CtWivzGORpeXCFjkRkBDsOUEr2v4attM5GMKSM2HotgwJne4Po61Krhra4eqwsagG272mV2xc4U0OzceYFE0yIin1oteQNm+Xh3Rtk+Z6xoPxmtU43Ot3Ra1noGlUDS6oEBqjjkQhgNeaJsaf1I70KMPbdjvV2/t7eZeXeuA==
-X-YMail-OSG: H3QI864VM1kjGBAIJ.lfiRLwJjx9DiZVbw67QVtfkaQ8w6P_UBT2yZpNbR23EQj
- 9QoISeQZ4R3JZHkZWFcBZxAbhrNAy7T5K2PEAtp3CgLl.jnuqdJXoj5YhM70OAJ9oP.rXeyoTVGF
- Mmk2GVVWh6xpBIazDGCgwbczhvBlPvMkqLuRs9a7IxUvVdV9fZm7bLpacfZwuKnY_FhIrUlB_Avp
- jPuGa3n.D3J1XDO8rCPrJ.kGVOAIFH1xvS9YqaqNkJ9Roxyhb4HE1AiHMIdvYiK6uy6JsXH8q9Le
- 1.EuUBNAIXqW86LYPBwXQEwk9Bs9nMxNpwnMTQWZgYDS3kXlv_Vwwm.EVJP9rDW3EEl7B0ufN63T
- 5SzdnzTv7Xitm6VeA0pHUGAsUYlGxourIzehzih7NAOTwgg9rrre7cmZ8Kd2VtEzY6_40QcVvJ01
- dL2bg71vqfF.4QzRn5qlYNmyfJRKz6FTSiXo1kWWX6M9SSU7ZnyEJHLjLr6FmzJ.S2N8KjHwZU0t
- ajBmS9nk8M.mughghobnQbJKyf76OgMkqckyhIsDbyuhyeiH7n9RjBKPiprZ3w_KkR8aiFp9PdWE
- HA0ltt2sqUfsqxcWlVRr3LUb2e7AMguPRHFfb93U0rhYcbJQB4CPx9ezzviHa_3aIzWUx7HwjCA4
- .Cm4Tqpk_lDy.ncOmWtI7kTtJYbDcmJwxmUqJHRbtgHJCUmljGfQxi11PN7RtUYmh0W3JC_fJP0T
- 9ezDZkoY_V1y3_58vsdWdQSSGU6xPFlu7n4WFCCstWT7giMsaEruoa3wej0F5mnl8GGGNXR.LZCl
- QF3xWdvT9l93TeeNovuUc2XZoxUV3wdHi55mM44Dwa22PJVlSzMwFH1JE21OVCk1glxwRPE7QEWm
- 9g3EyVLrdpr0RjxwXxiXXn773gTUmoQaD4LcocXHMyaGeqKiQM6ttlxk.2G8mSJRo8MTzGZi8qYc
- zeni2NW06v_x_CGrl9aB.jOPn5kepAue319pM9isEZ5mAj7kUs3DcaWpQDis9_HaNA2NQ6e7eiNr
- fuO6Q.fdPonkjHGgnRYdDreZvAF8.kTw1z_XOX.78.fBSZQeq2dQOG70mTIcTPfYY4_N2SJNLrsr
- 4oxPBgOtM0sKjSiHV3ImIwPSr4U7JZGBgx3A.o0oO9B3YF.lGPuET91.lbUPM_AyGMGxPFZ_kJAK
- LkSitBA7N7QgKzOCBuNe7Ym1KlWJw8kLfVh8fA6tPHFE8qb37DwCwvMAHxgbRqPc4LnN9Zttfckf
- 29Gu0FHzuIo2swVQdAYswHLoLSB_WnbqSihz2liZp_RvWPpDCC6hqdqZlUhOhg6e6BNZ8Un5Nzyg
- vj1VNPsrtwKN163IrOt3mjLQmJFACVgv_xMFrLR1GYaMnIsMvjHirStceitOe6v8chJ0VJEMgU9O
- jQXeJR7fG1gZnBgpvN9UIq499h2n_jP32BGz4MNbILvG8TIFeomHPeqm2vSnglqfxNphYMA5eNzC
- WgQqaEOmjipSB4W_ZMnlZ4WEwFIpadCmt6GgfxTJg6hV4GUcYJw1WDLeUxEGQy8CJS08a4Gr1XzX
- 8QvoShpTW4u6XiygwqlSXdhryLoZ4eDTZ6V6wUUD09nIYk9yTn9cChi9UDp4RMbNq69N8lxdEujb
- ztOKudXfpw4hhBDLPsifnfo5d2RfPhQmUA8BXtTb86XRY5zB_vBLIyxIKLzctQdc.cERXj33pC.2
- 4pxDGy5MeDrfNqjfYIO8vFELVZK8aDDTQxuGenR3ZxzXIUj5DywwPFqJV1m2kJz_Hyv_lbsx0_Oz
- pgPUEHZEOIqTiTwyx9YBQPkskzDrHaezbtQORA169H847aoXRY2cqWUzYEdKOdfv91NyDTTGLHFA
- oCyxvMLAw2eCf_NOSkhDDJeSMj8e66xJ12dOjWJjyfDnIovCio0fXqySp5_ndUMEi_as3kYZXtfC
- favETqF2wuYsa1Ofn1.NHQ2ADXv9dH1L1tOH2hlZ95bU0Q3F51BKySxixzaYhZ2JFyeoOJA2KOPm
- cOA7yJQlt8eN01C3Pn43M_CXgEDrKpEVYk2yKXx8XG7eCG9if88HPKIQGvtPro2hgmW8zwUfB.ig
- CDRgWZt8Ucm9o9ioGcCGi4WiMZ5P0rxUw14WOFgvxP4fFz31mrkx1gFAGNuLPI_fKbcXwY5DX4ni
- 9ZMRtUFbmQ9aTs7kjXEBvr85YYTzhLoj0NM4N0__gwpdBafc7GHhWQGtkvqVGq2lnNDdI3uSXZDH
- i.fuTDoG8ouA2z578d0eW4lOf64Faht7ABkI1imGdiorOjd2WUyDM7_cIqVGGri5LgkW8pPUc73U
- F7_gr8y.9vwR4KviA96mWpvI4tA--
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: e4833e3d-7fdc-413d-aca0-8214303fc968
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 09:08:59 +0000
-Received: by hermes--production-bf1-58477f5468-tllkx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d6fd48f5390c9041d0017d1e906ed9be;
-          Thu, 13 Nov 2025 09:08:53 +0000 (UTC)
-Message-ID: <216b2c7d-09eb-4d20-b8af-b8160ce14e32@yahoo.com>
-Date: Thu, 13 Nov 2025 10:08:49 +0100
+	s=arc-20240116; t=1763024984; c=relaxed/simple;
+	bh=Rp7Z8Nbk+XngHPvukR28mGt8Tvb9RTvzouJkBVBA+tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=npxgvFSwV+jkU16vS6jzK539kGtgk0HGeGPHKVRmLissdUrc9pQ090+OmDnmRP8iVyYmtfv2R07wAPLYKUMWznfJYVnpLXX8NzarjAB61dszroLiMQl6vNGsk/PdSA4g6eq5Z/57cJ30wkl7GPYySpbJbzcxxfkyamHitqIXGyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Tt3fERR1; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E29C0103D144D;
+	Thu, 13 Nov 2025 10:09:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1763024972; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=K7E9QF6PoTwdjOzELtXjqU+UET+KoQv5bYJIbXqp7B0=;
+	b=Tt3fERR1JHfof1JWppuTTQolC40L4kIY2MoOtBs+1zGebPUwDPibQEQzeuinqGtS4xoecw
+	PIYv0HFCSRqK/aK1DkKA27Fd9BxgUE39oDlBDk1v3Qh7jqIElGsNAmYlsi9C+dGIddWRWK
+	hv+ydRd6py9mGjKILUVxXnpi4IsLZivZmxOAKq5D8OSynjrRZBTh0i4NBWmVVUDH+0MH/V
+	Ib/zUMSa0HRpRfOUtVPzmYPfGJ9HxiJItLhSg7VEUsB85wWlaJc075oRKnYeU6zxzCrCFU
+	kJmYEPz6Oanl5yfEqqN4q5Ptyi3LOFAbffafzYJUIt+EICoKOHqDZXUQUmHihg==
+Date: Thu, 13 Nov 2025 10:09:24 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, tiwai@suse.de,
+	niklas.soderlund+renesas@ragnatech.se, lirongqing@baidu.com,
+	viro@zeniv.linux.org.uk, theo.lebrun@bootlin.com,
+	arkadiusz.bokowy@gmail.com
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	sr@sladewatkins.com
+Subject: Re: [PATCH 6.12 000/562] 6.12.58-rc2 review
+Message-ID: <aRWgRG5VmLHFZDWp@duo.ucw.cz>
+References: <20251111012348.571643096@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] selftests: af_unix: Add tests for ECONNRESET and EOF
- semantics
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251113071756.40118-1-adelodunolaoluwa.ref@yahoo.com>
- <20251113071756.40118-1-adelodunolaoluwa@yahoo.com>
- <CAAVpQUBvLN=sRVb8cbMngwm3o=KZkVOeCYdyi2p5sYjjZQU=HQ@mail.gmail.com>
-Content-Language: en-US
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-In-Reply-To: <CAAVpQUBvLN=sRVb8cbMngwm3o=KZkVOeCYdyi2p5sYjjZQU=HQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vkMACDBEIuRlEgTs"
+Content-Disposition: inline
+In-Reply-To: <20251111012348.571643096@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 11/13/25 09:43, Kuniyuki Iwashima wrote:
-> On Wed, Nov 12, 2025 at 11:19 PM Sunday Adelodun
-> <adelodunolaoluwa@yahoo.com> wrote:
->> Add selftests to verify and document Linux’s intended behaviour for
->> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
->> The tests verify that:
->>
->>   1. SOCK_STREAM returns EOF when the peer closes normally.
->>   2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
->>   3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->>   4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->>   5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->>
->> This follows up on review feedback suggesting a selftest to clarify
->> Linux’s semantics.
->>
->> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
->> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
->> ---
->> Changelog:
->>
->> changes made in v4 to v5:
->> 1. Moved the send() call before the socket type check in Test 2 to ensure
->>     the unread data behavior is tested for SOCK_DGRAM as well.
->>
->> 2. Removed the misleading commend about accept() for clarity.
->>
->> 3. Applied indentation fixes for style consistency
->>     (alignment with open parenthesis).
->>
->> 4. Minor comment and formatting cleanups for clarity and adherence
->>     to kernel coding style.
->>
->>   tools/testing/selftests/net/.gitignore        |   1 +
->>   tools/testing/selftests/net/af_unix/Makefile  |   1 +
->>   .../selftests/net/af_unix/unix_connreset.c    | 178 ++++++++++++++++++
->>   3 files changed, 180 insertions(+)
->>   create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
->>
->> diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
->> index 439101b518ee..e89a60581a13 100644
->> --- a/tools/testing/selftests/net/.gitignore
->> +++ b/tools/testing/selftests/net/.gitignore
->> @@ -65,3 +65,4 @@ udpgso
->>   udpgso_bench_rx
->>   udpgso_bench_tx
->>   unix_connect
->> +unix_connreset
->> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
->> index de805cbbdf69..5826a8372451 100644
->> --- a/tools/testing/selftests/net/af_unix/Makefile
->> +++ b/tools/testing/selftests/net/af_unix/Makefile
->> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
->>          scm_pidfd \
->>          scm_rights \
->>          unix_connect \
->> +       unix_connreset \
->>   # end of TEST_GEN_PROGS
->>
->>   include ../../lib.mk
->> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
->> new file mode 100644
->> index 000000000000..9cb0f48597eb
->> --- /dev/null
->> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
->> @@ -0,0 +1,178 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
->> + *
->> + * This test verifies:
->> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
->> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
->> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->> + *
->> + * These tests document the intended Linux behaviour.
->> + *
->> + */
->> +
->> +#define _GNU_SOURCE
->> +#include <stdlib.h>
->> +#include <string.h>
->> +#include <fcntl.h>
->> +#include <unistd.h>
->> +#include <errno.h>
->> +#include <sys/socket.h>
->> +#include <sys/un.h>
->> +#include "../../kselftest_harness.h"
->> +
->> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
->> +
->> +static void remove_socket_file(void)
->> +{
->> +       unlink(SOCK_PATH);
->> +}
->> +
->> +FIXTURE(unix_sock)
->> +{
->> +       int server;
->> +       int client;
->> +       int child;
->> +};
->> +
->> +FIXTURE_VARIANT(unix_sock)
->> +{
->> +       int socket_type;
->> +       const char *name;
->> +};
->> +
->> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
->> +       .socket_type = SOCK_STREAM,
->> +       .name = "SOCK_STREAM",
->> +};
->> +
->> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
->> +       .socket_type = SOCK_DGRAM,
->> +       .name = "SOCK_DGRAM",
->> +};
->> +
->> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
->> +       .socket_type = SOCK_SEQPACKET,
->> +       .name = "SOCK_SEQPACKET",
->> +};
->> +
->> +FIXTURE_SETUP(unix_sock)
->> +{
->> +       struct sockaddr_un addr = {};
->> +       int err;
->> +
->> +       addr.sun_family = AF_UNIX;
->> +       strcpy(addr.sun_path, SOCK_PATH);
->> +       remove_socket_file();
->> +
->> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
->> +       ASSERT_LT(-1, self->server);
->> +
->> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
->> +       ASSERT_EQ(0, err);
->> +
->> +       if (variant->socket_type == SOCK_STREAM ||
->> +           variant->socket_type == SOCK_SEQPACKET) {
->> +               err = listen(self->server, 1);
->> +               ASSERT_EQ(0, err);
->> +       }
->> +
->> +       self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
->> +       ASSERT_LT(-1, self->client);
->> +
->> +       err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->> +       ASSERT_EQ(0, err);
->> +}
->> +
->> +FIXTURE_TEARDOWN(unix_sock)
->> +{
->> +       if ((variant->socket_type == SOCK_STREAM ||
->> +            variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
-> Sorry for missing this one, but NIPA caught this.
-No problem, that was my oversight.
 
-I added it because, in the third test, no child (no accept()) is 
-created, so I wanted to avoid closing something that doesn’t exist.
+--vkMACDBEIuRlEgTs
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks like I was just being a bit overcautious.
-> see: https://netdev.bots.linux.dev/static/nipa/1022816/14311938/build_tools/stderr
->
-> +unix_connreset.c: In function ‘unix_sock_teardown’:
-> +unix_connreset.c:92:68: warning: suggest parentheses around
-> comparison in operand of ‘&’ [-Wparentheses]
-> +   92 |              variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
-> +      |                                                        ~~~~~~~~~~~~^~~
->
-> I think you can simply remove the "& self->child >0" part
-> because you don't check that for self->server below anyway.
->
-> Thanks
-I will remove it and send v6 right away.
-Thank you.
->
->> +               close(self->child);
->> +
->> +       close(self->client);
->> +       close(self->server);
->> +       remove_socket_file();
->> +}
->> +
->> +/* Test 1: peer closes normally */
->> +TEST_F(unix_sock, eof)
->> +{
->> +       char buf[16] = {};
->> +       ssize_t n;
->> +
->> +       if (variant->socket_type == SOCK_STREAM ||
->> +           variant->socket_type == SOCK_SEQPACKET) {
->> +               self->child = accept(self->server, NULL, NULL);
->> +               ASSERT_LT(-1, self->child);
->> +
->> +               close(self->child);
->> +       } else {
->> +               close(self->server);
->> +       }
->> +
->> +       n = recv(self->client, buf, sizeof(buf), 0);
->> +
->> +       if (variant->socket_type == SOCK_STREAM ||
->> +           variant->socket_type == SOCK_SEQPACKET) {
->> +               ASSERT_EQ(0, n);
->> +       } else {
->> +               ASSERT_EQ(-1, n);
->> +               ASSERT_EQ(EAGAIN, errno);
->> +       }
->> +}
->> +
->> +/* Test 2: peer closes with unread data */
->> +TEST_F(unix_sock, reset_unread_behavior)
->> +{
->> +       char buf[16] = {};
->> +       ssize_t n;
->> +
->> +       /* Send data that will remain unread */
->> +       send(self->client, "hello", 5, 0);
->> +
->> +       if (variant->socket_type == SOCK_DGRAM) {
->> +               /* No real connection, just close the server */
->> +               close(self->server);
->> +       } else {
->> +               /* Accept client connection */
->> +               self->child = accept(self->server, NULL, NULL);
->> +               ASSERT_LT(-1, self->child);
->> +
->> +               /* Peer closes before client reads */
->> +               close(self->child);
->> +       }
->> +
->> +       n = recv(self->client, buf, sizeof(buf), 0);
->> +       ASSERT_EQ(-1, n);
->> +
->> +       if (variant->socket_type == SOCK_STREAM ||
->> +           variant->socket_type == SOCK_SEQPACKET) {
->> +               ASSERT_EQ(ECONNRESET, errno);
->> +       } else {
->> +               ASSERT_EQ(EAGAIN, errno);
->> +       }
->> +}
->> +
->> +/* Test 3: closing unaccepted (embryo) server socket should reset client. */
->> +TEST_F(unix_sock, reset_closed_embryo)
->> +{
->> +       char buf[16] = {};
->> +       ssize_t n;
->> +
->> +       if (variant->socket_type == SOCK_DGRAM)
->> +               SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
->> +
->> +       /* Close server without accept()ing */
->> +       close(self->server);
->> +
->> +       n = recv(self->client, buf, sizeof(buf), 0);
->> +
->> +       ASSERT_EQ(-1, n);
->> +       ASSERT_EQ(ECONNRESET, errno);
->> +}
->> +
->> +TEST_HARNESS_MAIN
->> +
->> --
->> 2.43.0
->>
+Hi!
 
+> This is the start of the stable review cycle for the 6.12.58 release.
+> There are 562 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+I don't believe Sasha or his automation did good job here. It is wrong
+to sign-off patches just because of LLM output.
+
+> Takashi Iwai <tiwai@suse.de>
+>     ALSA: usb-audio: Add validation of UAC2/UAC3 effect units
+
+If the check triggers, we'll be breaking someone's audio.
+
+> Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+>     net: sh_eth: Disable WoL if system can not suspend
+
+WoL is used for powering up systems, too. Congratulations, this patch
+breaks that.
+
+> Li RongQing <lirongqing@baidu.com>
+>     x86/kvm: Prefer native qspinlock for dedicated vCPUs irrespective of =
+PV_UNHALT
+
+Looking at the code, that should really be "goto out".
+
+> Al Viro <viro@zeniv.linux.org.uk>
+>     allow finish_no_open(file, ERR_PTR(-E...))
+
+Not sure what bug this is supposed to fix. Sounds like preparation for
+something we don't have.
+
+> Th=E9o Lebrun <theo.lebrun@bootlin.com>
+>     net: macb: avoid dealing with endianness in macb_set_hwaddr()
+
+First, this does not fix any bugs. Second, code was "cpu_to_le32", now
+it is equivalent of "le32_to_cpu".
+
+> Arkadiusz Bokowy <arkadiusz.bokowy@gmail.com>
+>     Bluetooth: btusb: Check for unexpected bytes when defragmenting HCI f=
+rames
+
+BTUSB_BARROT is "write only". That value is never checked.
+
+Best regards,
+								Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--vkMACDBEIuRlEgTs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaRWgRAAKCRAw5/Bqldv6
+8mSuAKCxatrZYWRdTsqb+VMeMJcO5rylqgCfW1YNLeoPMoUzaELhp79o4uuu9Lg=
+=4tVS
+-----END PGP SIGNATURE-----
+
+--vkMACDBEIuRlEgTs--
 
