@@ -1,84 +1,171 @@
-Return-Path: <linux-kernel+bounces-899672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C761C58A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:16:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CC3C58895
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B8C4A2EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42E43BB400
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37BB2FC890;
-	Thu, 13 Nov 2025 15:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B2A325734;
+	Thu, 13 Nov 2025 15:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnJecusn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WR1hTpvD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jqemhNOF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8BB26C384
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5363112BB;
+	Thu, 13 Nov 2025 15:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048107; cv=none; b=l6I4rfDc5GvmM2xEjDoL2rDhJdnUuS7JMgC2c+bcbEEqKQCDON2GPdVfKgfUgcawvcJxvH7vlHkfFQERgB18teuS4rb3ukmNaXHCzU2cjK+AGqIgnHuijfA+uaIg8qQSWD6k1eNfUol8F08xq46awG2ILj0e1xMe8OpU0+1yU1s=
+	t=1763048112; cv=none; b=JUPhV4CktS+ogkfO8OYSQfKVMLn060bkY+cT0VE0FcpiNnb5DtA1JnTnzSWx9okwYv6l2Km4ob1UWbDxVoH0e3KtIlo5DFtEQQMMxR+WI6kTuSLQue08OR5SLc6ysLpdEZhbE7BCumas9IWkFuiiwsDEn4ZjWuBRtVyNyUuyDkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048107; c=relaxed/simple;
-	bh=D8WvGXX9KYt11CApC01Q8d5gtw7/8hiqu4Qp5u8lf8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zy23KSgUiE0ftb5LThodKPHwrEmpAde93cVeZ34COZmMkPzyMyy+jvQXLGbum1ckuSSty7Ju36BsUZi/1gCG0vuNU/nggHU/Y2rj6TO5ewvEcHqSTlPu4I02T6CBKYALDFjtYfwG/fvg8VqGSbF2pScD6aIk67xPIgdAXBg6KpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnJecusn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD89C116D0;
-	Thu, 13 Nov 2025 15:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763048106;
-	bh=D8WvGXX9KYt11CApC01Q8d5gtw7/8hiqu4Qp5u8lf8I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZnJecusnHwdqsuJ9fbtwY58AijXmd8yBp2s3PG7GblTLfdAVe0BzB+hDsCeDhQxYM
-	 Q6yPcbFWMbPTp5DYk6rFubx4vveHj8UFpn/BNA+ukh7ZCo1CIY/fFN7O9la+spfyl7
-	 P5HrVepyV7con/tRe03jqW0qXxGI2dREqYJZVBfefH4pyhT0hDvwRoE/m3n6nyiYQx
-	 B8BKt9bU5Fr18+yKOcRD2bGDsxs6YLzGfL6WqheSjoIb4U4k5v9IbDLpZNMT+2vBGn
-	 QDck2fOXy+RYPESEGKClI2QzpvAYAFueHEPUcR4CWisMdNnjFQE1B4eMbTaVGVb/a1
-	 ma7sxp2ysUfbQ==
-Message-ID: <73552a22-c7c8-4106-949e-471b9a7bbc87@kernel.org>
-Date: Thu, 13 Nov 2025 16:35:03 +0100
+	s=arc-20240116; t=1763048112; c=relaxed/simple;
+	bh=x0fuzI6YRP3PTZsgW3tQ/n7GZ7E7kPR1ddm5RqYDeyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=toajjGEsYHK5N4xLzHuO9gFGfQL3p5Vcqtn9hfO47dzw3OBRX8mwi5bEJyDAkJiltqJ/dO+I1zitwMIi1F6Pu6IxNVvjQFx/LP7Evt7HJAdjiDKsHrhO1p/CsT1T6f4fAQSymH0y84d6taZWO4a6gQxlyIuN6v9jBpkOTUhBSws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WR1hTpvD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jqemhNOF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Nov 2025 16:35:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763048109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AgWbF0s9rqqAq6d5nm/n6NPP01/SAB2lh3emYsdDdyI=;
+	b=WR1hTpvDz3V68Vatk3WsX7G46aKoG+UyCVkh4KfFtRBctoDfY+BQ42FdtNi+XpF5h4UDLy
+	chKfh+wmOc/xgtSR/bd0RlH24UhNzZdrals49rUajKqGDhADMcF/kIYAaTniwhN5GzrRf/
+	jjm87GcwWJQSrPjrGip+qqKvQG3XpBjN3D4VfLJRXQiEQk4s+qf7JE4eaq6kVwycT+IWQ9
+	Si06o7lkFe9ctUCk+b0+vYMPf56SdVf3IxpyPG0DEvqikk3WuhvJ3KsTibBCSPJSIirp38
+	F0b/vGnAkS7sTtzTSXAbTnIoPyDPh/T4vQELbJ0rvMOp0WlHw7Yjw0tRjrrhyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763048109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AgWbF0s9rqqAq6d5nm/n6NPP01/SAB2lh3emYsdDdyI=;
+	b=jqemhNOFpx9+448NsBzy/OfzpN3nsk+Y5+id2E7h7F38r3weYCUR0hZ8UmAs86ZVj8gs1/
+	ybt+JP5PmBnu9mAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com,
+	Yongliang Gao <leonylgao@tencent.com>,
+	Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251113153508.9mYBNQlL@linutronix.de>
+References: <20251113000252.1058144-1-leonylgao@gmail.com>
+ <20251113073420.yko6jYcI@linutronix.de>
+ <CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
+ <20251113141515.iZSIDK0T@linutronix.de>
+ <20251113100524.5c5f6bdc@gandalf.local.home>
+ <20251113151729.4Zky6d-t@linutronix.de>
+ <20251113102445.3e70c1ec@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/cma: Remove CONFIG_CMA_SYSFS option
-To: Jean Delvare <jdelvare@suse.de>, linux-mm@kvack.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20251113145636.731a24e4@endymion>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251113145636.731a24e4@endymion>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251113102445.3e70c1ec@gandalf.local.home>
 
-On 13.11.25 14:56, Jean Delvare wrote:
-> The sysfs interface to CMA has a marginal runtime cost and a small
-> footprint, there's no reason not to include it in all kernels where
-> the dependencies are satisfied.
+On 2025-11-13 10:24:45 [-0500], Steven Rostedt wrote:
+> On Thu, 13 Nov 2025 16:17:29 +0100
+> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 > 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> ---
-> As discussed with David:
->    https://lkml.org/lkml/2025/8/6/371
+> > On 2025-11-13 10:05:24 [-0500], Steven Rostedt wrote:
+> > > This means that the chunks are not being freed and we can't be doing
+> > > synchronize_rcu() in every exit.  
+> > 
+> > You don't have to, you can do call_rcu().
+> 
+> But the chunk isn't being freed. They may be used right away.
 
-Thanks for the reminder, it sounded familiar but I couldn't remember 
-when this was discussed.
+Not if you avoid using it until after the rcu callback.
 
-Hoping this was properly compile-tested :)
+> > > > So I *think* the RCU approach should be doable and cover this.  
+> > > 
+> > > Where would you put the synchronize_rcu()? In do_exit()?  
+> > 
+> > simply call_rcu() and let it move to the freelist.
+> 
+> A couple of issues. One, the chunks are fully used. There's no place to put
+> a "rcu_head" in them. Well, we may be able to make use of them.
 
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+This could be the first (16?) bytes of the memory chunk.
 
+> Second, if there's a lot of tasks exiting and forking, we can easily run
+> out of chunks that are waiting to be "freed" via call_rcu().
 
--- 
-Cheers
+but this is a general RCU problem and not new here. The task_struct and
+everything around it (including stack) is RCU freed.
 
-David
+> > 
+> > > Also understanding what this is used for helps in understanding the scope
+> > > of protection needed.
+> > > 
+> > > The pid_list is created when you add anything into one of the pid files in
+> > > tracefs. Let's use /sys/kernel/tracing/set_ftrace_pid:
+> > > 
+> > >   # cd /sys/kernel/tracing
+> > >   # echo $$ > set_ftrace_pid
+> > >   # echo 1 > options/function-fork
+> > >   # cat set_ftrace_pid
+> > >   2716
+> > >   2936
+> > >   # cat set_ftrace_pid
+> > >   2716
+> > >   2945
+> > > 
+> > > What the above did was to create a pid_list for the function tracer. I
+> > > added the bash process pid using $$ (2716). Then when I cat the file, it
+> > > showed the pid for the bash process as well as the pid for the cat process,
+> > > as the cat process is a child of the bash process. The function-fork option
+> > > means to add any child process to the set_ftrace_pid if the parent is
+> > > already in the list. It also means to remove the pid if a process in the
+> > > list exits.  
+> > 
+> > This adding/ add-on-fork, removing and remove-on-exit is the only write
+> > side?
+> 
+> That and manual writes to the set_ftrace_pid file.
+
+This looks like minimal. I miss understood then that context switch can
+also contribute to it.
+
+> > > What we are protecting against is when one chunk is freed, but then
+> > > allocated again for a different set of PIDs. Where the reader has the chunk,
+> > > it was freed and re-allocated and the bit that is about to be checked
+> > > doesn't represent the bit it is checking for.  
+> > 
+> > This I assumed.
+> > And the kfree() at the end can not happen while there is still a reader?
+> 
+> Correct. That's done by the pid_list user:
+> 
+> In clear_ftrace_pids():
+> 
+> 	/* Wait till all users are no longer using pid filtering */
+> 	synchronize_rcu();
+> 
+> 	if ((type & TRACE_PIDS) && pid_list)
+> 		trace_pid_list_free(pid_list);
+> 
+> 	if ((type & TRACE_NO_PIDS) && no_pid_list)
+> 		trace_pid_list_free(no_pid_list);
+
+And the callers of trace_pid_list_is_set() are always in the RCU read
+section then? I assume so, since it wouldn't make sense otherwise.
+
+> -- Steve
+
+Sebastian
 
