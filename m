@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-898846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789EAC56242
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BA9C56257
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29034346E71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:00:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0659B345399
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD22330B37;
-	Thu, 13 Nov 2025 07:59:45 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023133.outbound.protection.outlook.com [52.101.127.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FBF33033F;
+	Thu, 13 Nov 2025 08:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvngG+gP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A0C32F76B;
-	Thu, 13 Nov 2025 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763020784; cv=fail; b=V118d2U3vTGsmLhnBfZDJwuDvh0oWEQlPkw5GTfJi1z6sSV1utBwEx+BBxgvnTGoo5c4kFtZge+nQRY+4Fk7/c5FzcnNtnx3CVcoIYh2ZlaKQkzBNrlCWDHZWSvAVjPtaoEpL0BkgO3b60T78wtgeHtpVcPUVi7LwDd6aO6/5q0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763020784; c=relaxed/simple;
-	bh=61mBWSCWjHa+zfLFKQYkOI12Ie0anN8DcddSgFaZOOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aDmNOJXaLgKYzlNIMwa3MZXhKEpfE8RcvNX2gUPcOM5sICRuQYBSxRXzMSHo1HdxpP98MqvECJtQCUccpVxeJKURjdgIPdJQ6dxq6bnbrm1pgnb8SAT016dBFCybjZK4X6X4eFWjVpb340cZWciuBN6AX7/UN08z6fKqrAffdSM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O6/lfOpKfsM6tMT9gJp0aR00cYMwcdUKSTp3vDPQ33AZEKUk6abdGuL/G5HuPbhWPhgMCXkspPbfR2eid5KvzP+j1qx/kTrBqWby9c+mw6Hp64KYlJgMIvQGgEdIKnvkbLNHyXrAZ3hGA2BQo/dTzP47ot7o6Tp2Y6so5GFg+rBn+p3lm6E/A9Kf+omZljXGX1xiC8PxGHL812v6G03vImGhVqmdEA7IhqECUfkxtJDOz0WDl16YJhrrMgFFUC58WnORxj/adNFvAjdp2kDPQtT2kpCouF5bk3eGNASG9+E/PsMQFxuNiHk+eVjU33RG86zsWCn+U8sD9gB5/fUGmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eUG6bmMn3sf0+eAMTxFJeYgEa4J0mA7vzNlpoX+BBiQ=;
- b=J6bPPeN5Od038LFG/20cgbmQJFBnr4wP0BUvbtF2J9aGaV1md0wJ2Z7CTF2EGvKKATcV+2uZDGj7m0kRpuMMzkgtmMm+29NBWncAWNvfgYUlMklzawxeVhXGDAWs8qQVjygfMZ7l5rwY9XLBVQFS476523XsHc32UFqY1Z0VsCWnNQZn+cpxx9jVfB6dWKt3NxX9M9v+Se5tBoz1BgMXtZu2CAt/lx0fdpXZfr0V40NGAEzTO583+znvSrsbAa1Mc6p6Ui8x/nt5zq6o5pI/Uaj1/ltShpRAQLOYCnf5EnvxOZl76gJtyjtceo5L+Tvg9eIembQdu1G7Dc5EYcgNYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from PUZP153CA0005.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::22)
- by SEZPR06MB7121.apcprd06.prod.outlook.com (2603:1096:101:237::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 07:59:37 +0000
-Received: from OSA0EPF000000C6.apcprd02.prod.outlook.com
- (2603:1096:301:c2:cafe::c0) by PUZP153CA0005.outlook.office365.com
- (2603:1096:301:c2::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.6 via Frontend Transport; Thu,
- 13 Nov 2025 07:59:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000C6.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 07:59:36 +0000
-Received: from localhost.localdomain (unknown [172.16.64.196])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id BECEE41C017F;
-	Thu, 13 Nov 2025 15:59:35 +0800 (CST)
-From: Gary Yang <gary.yang@cixtech.com>
-To: p.zabel@pengutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	cix-kernel-upstream@cixtech.com,
-	Gary Yang <gary.yang@cixtech.com>
-Subject: [PATCH v2 3/3] arm64: dts: cix: add support for cix sky1 resets
-Date: Thu, 13 Nov 2025 15:59:35 +0800
-Message-ID: <20251113075935.774359-4-gary.yang@cixtech.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251113075935.774359-1-gary.yang@cixtech.com>
-References: <20251113075935.774359-1-gary.yang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66265289811;
+	Thu, 13 Nov 2025 08:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763020852; cv=none; b=aC+G/BVmA7y9m2dRHBPDt2VzEsYZPPH75D6ZuCalBR2tHkUH4wyU+yeMRcf+bvK+2/x//nIklwVTAPiY53bLr4uMpc4SzTkJX8lpZXkErdM2DC/Wd3eU8rxBjKlJKSq0Jq1kacR6bC/IlMAdwzT8j8bPaZpup744b7KlOK2E7vE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763020852; c=relaxed/simple;
+	bh=WmqkW3UkMPxJ2hqmmHl3aY1fYJJukh2KzhzojgxvCVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoFpHHG7TubqtrMH5u3QQ9v4XZleqmLIV+YcDPU/xCu3MhYVR3qna0w2T/Z3btS3tKzeD8ufwOaM4eljEkrU6sm5rH5Vqez7pqzOawWkX2MS9iR6Y7E6GozQ8mxreb9HuVh6ZHe0ETPUBewcnrzCFvKlJoA6tyUED//i6YFRufQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvngG+gP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D933C4CEF8;
+	Thu, 13 Nov 2025 08:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763020851;
+	bh=WmqkW3UkMPxJ2hqmmHl3aY1fYJJukh2KzhzojgxvCVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MvngG+gP69SHM63Z5iI4/xBcHcRs5CX3CfTI4J8cHRSjueLzf1e79gBMCBFR16cDe
+	 pW0tfxhuQ9L76KNMppP5d6rV1Vl5AjD1q2qhwkSoLbHEqj6OC3R27NLlZEqXJzyV0X
+	 yc4nRv7c4ySqJKX4+z/EVNbxvMlPHMZerq8edYClXV1ka6zr7npFiBQWJGaIFmGiQr
+	 YK62ZoCZu9cXjNk6cUzPSKAUh9nJQ65kNcp7PgOslvJDq0oYMKh5nYXJLizxnxrhxH
+	 5Wk1hoq7bTIePtEoeYN6Mzy1J0YbKpIN9KOo+ZMScmRR2K9DYCkXrpPZDYPrHpDscU
+	 VF5xF+BI5UbOg==
+Date: Thu, 13 Nov 2025 09:00:49 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: bmc-sw@aspeedtech.com, benh@kernel.crashing.org, joel@jms.id.au, 
+	andi.shyti@kernel.org, jk@codeconstruct.com.au, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
+	andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, linux-i2c@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v22 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
+Message-ID: <20251113-waxbill-of-awesome-fame-8a84d1@kuoka>
+References: <20251112085649.1903631-1-ryan_chen@aspeedtech.com>
+ <20251112085649.1903631-2-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C6:EE_|SEZPR06MB7121:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2ea27f13-c9fc-4b65-aceb-08de228a9721
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DuPTEYHLsg4r/PYmN9QPyy48+dkbETTRkYfYETqqjdjL8Z4kcWX4iZFPeYIA?=
- =?us-ascii?Q?by/tcvdmGForiawGuTUAObStbljCy1yz8RHCTvnCm8n+Vczxrkta1bl2rlrv?=
- =?us-ascii?Q?IHmD99euAMtjRFWH1zsWbd5uMe4P4FVMK39uF4WE+RvZ4t1PgEy9zQ/YskL1?=
- =?us-ascii?Q?gHZiKNbpE0qU/r1mAspshlN8Y2VRdCFCkFJv16Co2l4sF6YQrd+/VsgV+ped?=
- =?us-ascii?Q?fR9hpv8PrLgI4+fewzPW2aaa8lVBjsb4Tq/PX7RMgDOcJUW+2AmQhl/khPpA?=
- =?us-ascii?Q?W2DBCLfpqqn8aT6phzInF2yjoZpeSNL4m2500hTZBJIc29wmzXRMVQg5BDJ+?=
- =?us-ascii?Q?PXQszVisVQrzJvk/T5Us1swrSW92R6xtIiDl3035Om5EhIlO341OskGL5qcV?=
- =?us-ascii?Q?oZLpayLLuB7DLwzeUjdi6pYf0vpueTLTjoV+UrR2zrTFMago9htS8HD9SV0f?=
- =?us-ascii?Q?EJy4uH5lCvO5D01wXoRC+zNdUHgtF183olooUGDWq4qZy610zDAKIozSy/dR?=
- =?us-ascii?Q?yfoDqXBVOQNueJJYVr7ngpsg3+ZzvNxIcOmysEE5Y90tffOpkGcrEH9XKNHk?=
- =?us-ascii?Q?ZaPgTMOAk6LCYqSA48p5x8du90/ahPVXAWgSUVtpQSDUpp9dVcNxcGBB7f+h?=
- =?us-ascii?Q?9Di7qqBo9M+UvhzLR6FQLVl+GOng4femSSM3CxYueZKmwfbnc8ddtF17CrXu?=
- =?us-ascii?Q?ZFFymJ1Jo0iEOIRHvzLzCByh8H8jqkr28OT0AVdsWMLxd0PuIpzEpd9Va4Gy?=
- =?us-ascii?Q?HqS8/8vOuudo5ZjciXsWZN7ZW3GtwRat2QDrx0wGxbw7qch4H5tJKWmCcylq?=
- =?us-ascii?Q?WAB11od7pR+IDOlpD8paR9p/ugfwt9rFUdpC+HYOXYm+Y8DpMR08nYCGOEgf?=
- =?us-ascii?Q?t0aphdOUzov+IGqKPf6SbanfvCVIf66p7HJjcp2gCREhU5VesioZKZ0dsYAs?=
- =?us-ascii?Q?Gr4WHZl/5NKZ7l9iyLjOWgI+jPneKesbnY1mhm0rB6UTeNM+Ilww3cQpV6QS?=
- =?us-ascii?Q?wyoEAe/Aa5Y5UNaPwN9IR0jO4AgA5wkJ7Oz8iAiO2FNiyFuOYdgI2YfH4oww?=
- =?us-ascii?Q?CUIKRmN2YucL4bnQMSupP/lekRQCQJGZwSRlpM8ss0ouau7C8kgTxGfD3RPb?=
- =?us-ascii?Q?GZxaxk5PjJPPf+rneCxAK2V5LnYcAh9XIdOwu/yAwcjwIECMsqRy2IziRjPZ?=
- =?us-ascii?Q?Cwk52wQI8NzLgT57Yy/n/G1SC9WKGQ9YzCLKcCY49V5GazKe2+ILKtdGeuoo?=
- =?us-ascii?Q?ubslEke5Fnqpj6korw2jyqMTN0CDetaz87LkrDSvSjLNuY0WNys8jXNIDVTI?=
- =?us-ascii?Q?yGDRKjDHCDiThBbcJmSwSCv4/6twoj4fTI1eTltCPT0xd4bMV9Y4GJ90Go3q?=
- =?us-ascii?Q?V/JZqZMP2xpvhb8mJCaCYXsh93AsS9qjGZaJIxcAYhP+U7t4jlrq+o5xAlSw?=
- =?us-ascii?Q?t0m3LdXhiDKhXCwRD9AM0Zd359hkipeAYy9kfW7sjItIRJm183p456FXPp+n?=
- =?us-ascii?Q?pkr4ihMnbfWc1z2C6rJcZ32FFG8cYUjZKUyeUYa03M52WOoUYueoAt+ZlJHR?=
- =?us-ascii?Q?vIXbf8R023kF//hq88Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 07:59:36.7134
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ea27f13-c9fc-4b65-aceb-08de228a9721
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000C6.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7121
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251112085649.1903631-2-ryan_chen@aspeedtech.com>
 
-There are two reset conctrollers on Cix Sky1 Soc.
-One is located in S0 domain, and the other is located
-in S5 domain.
+On Wed, Nov 12, 2025 at 04:56:46PM +0800, Ryan Chen wrote:
+> The AST2600 I2C controller introduces a completely new register
+> map and Separate control/target register sets, unlike the mixed
+> layout used in AST2400/AST2500.
+> 
+> In addition, at new AST2600 configuration registers and transfer
+> modes require new DT properties, which are incompatible with
+> existing bindings. Therefore, this creates a dedicated binding
+> file for AST2600 to properly describe these new hardware
+> capabilities.
+> 
+> A subsequent change will modify this new binding to properly
+> describe the AST2600 hardware.
+> 
+> The example section updated to reflect the actual AST2600 SoC
+> register layout and interrupt configuration.
+> Reference: aspeed-g6.dtsi (lines 885-897)
+> 
+> -I2C bus and buffeset address offsets
+>  - AST2600 I2C controller register base starts from 0x80, and the
+>    buffer region is located at 0xc00, as defined in AST2600 SOC
+>    register map.
+> 
+> -Interrupt configuration
+>  - AST2600 U2C controller are connected to ARM GIC interrupt
+>    controller rather than the legacy internal interrupt controller.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../bindings/i2c/aspeed,ast2600-i2c.yaml      | 67 +++++++++++++++++++
+>  .../devicetree/bindings/i2c/aspeed,i2c.yaml   |  3 +-
+>  2 files changed, 68 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml b/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
+> new file mode 100644
+> index 000000000000..e6ed84c53639
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/aspeed,ast2600-i2c.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/i2c/aspeed,ast2600-i2c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ASPEED I2C on the AST26XX SoCs
+> +
+> +maintainers:
+> +  - Ryan Chen <ryan_chen@aspeedtech.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - aspeed,ast2600-i2c-bus
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description:
+> +      The first region covers the controller registers.
+> +      The optional second region covers the controller's buffer space.
 
-Signed-off-by: Gary Yang <gary.yang@cixtech.com>
----
- arch/arm64/boot/dts/cix/sky1.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+1. List the items instead. We discussed this already and this had
+correct format in the past and now it is getting to some odd style. Why?
 
-diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-index d21387224e79..157672bf5dbe 100644
---- a/arch/arm64/boot/dts/cix/sky1.dtsi
-+++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-@@ -348,6 +348,12 @@ i3c1: i3c@4100000 {
- 			status = "disabled";
- 		};
- 
-+		src_fch: reset-controller@4160000 {
-+			compatible = "cix,sky1-rst-fch", "syscon";
-+			reg = <0x0 0x04160000 0x0 0x90>;
-+			#reset-cells = <1>;
-+		};
-+
- 		iomuxc: pinctrl@4170000 {
- 			compatible = "cix,sky1-iomuxc";
- 			reg = <0x0 0x04170000 0x0 0x1000>;
-@@ -568,6 +574,12 @@ ppi_partition1: interrupt-partition-1 {
- 			};
- 		};
- 
-+		src: reset-controller@16000000 {
-+			compatible = "cix,sky1-rst", "syscon";
-+			reg = <0x0 0x16000000 0x0 0x1000>;
-+			#reset-cells = <1>;
-+		};
-+
- 		iomuxc_s5: pinctrl@16007000 {
- 			compatible = "cix,sky1-iomuxc-s5";
- 			reg = <0x0 0x16007000 0x0 0x1000>;
--- 
-2.49.0
+2. How region can be optional? Device either has it or does not have it.
+Please explain me how one, same SoC has optional IO address space? I
+asked to explain WHY this is flexible.
+
+You never replied.
+
+NAK, we are discussing same over and over again. I am not reviewing the
+rest. Go to previous versions and read the feedback again.
+
+Best regards,
+Krzysztof
 
 
