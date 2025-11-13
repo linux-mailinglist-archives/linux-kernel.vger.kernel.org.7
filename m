@@ -1,290 +1,106 @@
-Return-Path: <linux-kernel+bounces-899746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578E9C58C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:36:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FCFC58AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DEF2835FADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:08:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E0E4635B720
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BD73587D2;
-	Thu, 13 Nov 2025 16:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9559D35A120;
+	Thu, 13 Nov 2025 16:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vn4Kwj+C";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0RHu7IV/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F34EFOJo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816B7355038;
-	Thu, 13 Nov 2025 16:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0053A3570CA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049836; cv=none; b=MzEL5gD2gq/lNjg9awWUbDELtIuKsuDBWleLKUVHNg+VJmaP3MKwDX2GUyVTu2nHAS9Jes6f7NQKe1+ows/JeyryKP0zDgKeFMXFoDnrUnM9WRsn9T+8t5PTEJ2sctKCosJt7IWQM+aUbjCLVoP0scpNOv5A3wvGTIWxVN60Bx4=
+	t=1763049840; cv=none; b=TnljMXP0DipQAvxJ2DXX+atyd6Uj9S9r5/pKanX8Q+WQ62T3uOf/Yggrg0tAzjZ1DuUfp73ttCZFYKPY1kH8iORIdQ6IE4WKTS0j8T8pe9ko3/hd6XDOfum9Knu5dIwB0qcuXCZjTbnxaln/6k9KWXGXR1UNSFaFcJWPBbhjI9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049836; c=relaxed/simple;
-	bh=jsRjABolfvt58Su8HCoQgSIvPvsz0ytX+Sb2WJUG1hI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fVhSni7Pfk2J6T6cL1mateorn15MKQ8dY4KRV6y1S5WGVBORAOiQmsZeSJkuSmC/II4blo+3HNqQ/5vEaY+8fdoYa0UMeCKzN4EbmyzP3dkkUsnct3LxrXNl9bwjNxQGzBVCw4wHBLORcatdvQdeoTC/djtlwjqkSeSur5jhYJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vn4Kwj+C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0RHu7IV/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763049832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0x6UpLvGpne1nhqWuL/Iohd+4FDKyD/F9FrhWYniBNg=;
-	b=Vn4Kwj+ChvdVWTEXHdQuLTlx7eoXKatFWvco7SwFylF+1bb5/rFJ3F3c3Vf1joN6m5zTM3
-	PD2m5aSmtmGdfV+HIvtgB8SXC87VJKU8GYauy8X89yuwLLwzQdrkww9s1aOddxEQvr7Oxi
-	LZjW819UpQRTvddtAScHmM0KOOnvFSm6cIHP6mw7H4g9eOl2AorO2w+Idg73uySHYWbO6S
-	XrEutC3ut16vLMDwN1AWFexc3N3ZC/8hNr0Z/J44Ny85pWDaEJNoR7MSX0VVBh15cPeO+k
-	UM5ViOST5DwvDzmUfksxdFJzuAckxFYjlHkvPhUJWttUDRyYLjecLTr8w0m+yA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763049832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0x6UpLvGpne1nhqWuL/Iohd+4FDKyD/F9FrhWYniBNg=;
-	b=0RHu7IV/97k+xouUohNtqmfeTikojcLheX+v+EfJdn46bJQaWW0AdgThM4p9Xx+lwOhVTE
-	qhfrdjQ8bH5xf7Bw==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sherry Sun <sherry.sun@nxp.com>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Derek Barbosa <debarbos@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH printk v2 2/2] printk: Avoid scheduling irq_work on suspend
-Date: Thu, 13 Nov 2025 17:09:48 +0106
-Message-ID: <20251113160351.113031-3-john.ogness@linutronix.de>
-In-Reply-To: <20251113160351.113031-1-john.ogness@linutronix.de>
-References: <20251113160351.113031-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1763049840; c=relaxed/simple;
+	bh=QYMLZLa57DsA3oH9ggb5b2PWktdx3uDRLUyqm4pJcmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZg+f9nEXm/oCQq5Ryk2WFuKBEM/tLp8/8FRvhdpBDe8T+PrJycCOZJ75BPpjAPH6gKM6YhRRgUK0RRn3/5TdlNTl//qz+/RFTKMCrn25rwMWi82wjEM5mSEQDJAPxUbs7smVmXpTAdeMrTssuqh6tA75WrMDUHjqtGHvIKJyZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F34EFOJo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F51BC116D0;
+	Thu, 13 Nov 2025 16:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763049839;
+	bh=QYMLZLa57DsA3oH9ggb5b2PWktdx3uDRLUyqm4pJcmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F34EFOJodSNkdDeCQDbX66r2XCXrMm1a6kzxtOej8ZvKeMBTxWjY/AClDZAuGHovg
+	 KgLWxhbboL2CGf5pnM82R4g670qHeR972yRTo6qtoifOwSr24qR54TWVz2hsugm3Pj
+	 lqnoHsLaCBv48YhLGMzp+VkN7VaUkX2J2hqwh3Eb0IBcBzOMUiEhf9V0C58QN4RLOL
+	 Ldc4vxHoW2KWjVEn8PFk50NPcLBt8n+4pfs96yi+XiS7qjU4DH8yt87x9CYBuSMNNd
+	 OaW1Vda5pZAW23c19IWNPMNjwj1rHsx0TCgP05ZFbfoovNdXc1xTpBi3Dh8YMyJj7h
+	 OdSvJMsk/M0Lw==
+Date: Thu, 13 Nov 2025 16:03:56 +0000
+From: Lee Jones <lee@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mfd: qnap-mcu: Add proper error handling for
+ command errors
+Message-ID: <20251113160356.GN1949330@google.com>
+References: <20251105234704.159381-1-heiko@sntech.de>
+ <20251105234704.159381-5-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251105234704.159381-5-heiko@sntech.de>
 
-Allowing irq_work to be scheduled while trying to suspend has shown
-to cause problems as some architectures interpret the pending
-interrupts as a reason to not suspend. This became a problem for
-printk() with the introduction of NBCON consoles. With every
-printk() call, NBCON console printing kthreads are woken by queueing
-irq_work. This means that irq_work continues to be queued due to
-printk() calls late in the suspend procedure.
+On Thu, 06 Nov 2025, Heiko Stuebner wrote:
 
-Avoid this problem by preventing printk() from queueing irq_work
-once console suspending has begun. This applies to triggering NBCON
-and legacy deferred printing as well as klogd waiters.
+> Further investigation revealed that the MCU in QNAP devices may return
+> two error states. One "@8" for a checksum error in the submitted command
+> and one "@9" for any generic (and sadly unspecified) error.
+> 
+> These error codes with 2 data character can of course also be shorter
+> then the expected reply length for the submitted command, so we'll
+> need to check the received data for error codes and exit the receive
+> portion early in that case.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/mfd/qnap-mcu.c | 65 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 64 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/qnap-mcu.c b/drivers/mfd/qnap-mcu.c
+> index cd836bdd44a8..8c5eb4a72829 100644
+> --- a/drivers/mfd/qnap-mcu.c
+> +++ b/drivers/mfd/qnap-mcu.c
+> @@ -19,6 +19,7 @@
+>  /* The longest command found so far is 5 bytes long */
+>  #define QNAP_MCU_MAX_CMD_SIZE		5
+>  #define QNAP_MCU_MAX_DATA_SIZE		36
+> +#define QNAP_MCU_ERROR_SIZE		2
+>  #define QNAP_MCU_CHECKSUM_SIZE		1
+>  
+>  #define QNAP_MCU_RX_BUFFER_SIZE		\
+> @@ -103,6 +104,47 @@ static int qnap_mcu_write(struct qnap_mcu *mcu, const u8 *data, u8 data_size)
+>  	return serdev_device_write(mcu->serdev, tx, length, HZ);
+>  }
+>  
+> +static bool qnap_mcu_is_error_msg(size_t size) {
 
-Since triggering of NBCON threaded printing relies on irq_work, the
-pr_flush() within console_suspend_all() is used to perform the final
-flushing before suspending consoles and blocking irq_work queueing.
-NBCON consoles that are not suspended (due to the usage of the
-"no_console_suspend" boot argument) transition to atomic flushing.
+Looks like you forgot to run checkpatch.pl.
 
-Introduce a new global variable @console_irqwork_blocked to flag
-when irq_work queueing is to be avoided. The flag is used by
-printk_get_console_flush_type() to avoid allowing deferred printing
-and switch NBCON consoles to atomic flushing. It is also used by
-vprintk_emit() to avoid klogd waking.
+> +	return (size == QNAP_MCU_ERROR_SIZE + QNAP_MCU_CHECKSUM_SIZE);
+> +}
 
-Add WARN_ON_ONCE(console_irqwork_blocked) to the irq_work queuing
-functions to catch any code that attempts to queue printk irq_work
-during the suspending/resuming procedure.
+[...]
 
-Cc: <stable@vger.kernel.org> # 6.13.x because no drivers in 6.12.x
-Fixes: 6b93bb41f6ea ("printk: Add non-BKL (nbcon) console basic infrastructure")
-Closes: https://lore.kernel.org/lkml/DB9PR04MB8429E7DDF2D93C2695DE401D92C4A@DB9PR04MB8429.eurprd04.prod.outlook.com
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- @sherry.sun: This patch is essentially the same as v1, but since
- two WARN_ON_ONCE() were added, I decided not to use your
- Tested-by. It would be great if you could test again with this
- series.
-
- kernel/printk/internal.h |  8 +++---
- kernel/printk/nbcon.c    |  7 +++++
- kernel/printk/printk.c   | 58 +++++++++++++++++++++++++++++-----------
- 3 files changed, 55 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index f72bbfa266d6c..b20929b7d71f5 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -230,6 +230,8 @@ struct console_flush_type {
- 	bool	legacy_offload;
- };
- 
-+extern bool console_irqwork_blocked;
-+
- /*
-  * Identify which console flushing methods should be used in the context of
-  * the caller.
-@@ -241,7 +243,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
- 	switch (nbcon_get_default_prio()) {
- 	case NBCON_PRIO_NORMAL:
- 		if (have_nbcon_console && !have_boot_console) {
--			if (printk_kthreads_running)
-+			if (printk_kthreads_running && !console_irqwork_blocked)
- 				ft->nbcon_offload = true;
- 			else
- 				ft->nbcon_atomic = true;
-@@ -251,7 +253,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
- 		if (have_legacy_console || have_boot_console) {
- 			if (!is_printk_legacy_deferred())
- 				ft->legacy_direct = true;
--			else
-+			else if (!console_irqwork_blocked)
- 				ft->legacy_offload = true;
- 		}
- 		break;
-@@ -264,7 +266,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
- 		if (have_legacy_console || have_boot_console) {
- 			if (!is_printk_legacy_deferred())
- 				ft->legacy_direct = true;
--			else
-+			else if (!console_irqwork_blocked)
- 				ft->legacy_offload = true;
- 		}
- 		break;
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index 73f315fd97a3e..730d14f6cbc58 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -1276,6 +1276,13 @@ void nbcon_kthreads_wake(void)
- 	if (!printk_kthreads_running)
- 		return;
- 
-+	/*
-+	 * It is not allowed to call this function when console irq_work
-+	 * is blocked.
-+	 */
-+	if (WARN_ON_ONCE(console_irqwork_blocked))
-+		return;
-+
- 	cookie = console_srcu_read_lock();
- 	for_each_console_srcu(con) {
- 		if (!(console_srcu_read_flags(con) & CON_NBCON))
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index dc89239cf1b58..b1c0d35cf3caa 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -462,6 +462,9 @@ bool have_boot_console;
- /* See printk_legacy_allow_panic_sync() for details. */
- bool legacy_allow_panic_sync;
- 
-+/* Avoid using irq_work when suspending. */
-+bool console_irqwork_blocked;
-+
- #ifdef CONFIG_PRINTK
- DECLARE_WAIT_QUEUE_HEAD(log_wait);
- static DECLARE_WAIT_QUEUE_HEAD(legacy_wait);
-@@ -2426,7 +2429,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 
- 	if (ft.legacy_offload)
- 		defer_console_output();
--	else
-+	else if (!console_irqwork_blocked)
- 		wake_up_klogd();
- 
- 	return printed_len;
-@@ -2730,10 +2733,20 @@ void console_suspend_all(void)
- {
- 	struct console *con;
- 
-+	if (console_suspend_enabled)
-+		pr_info("Suspending console(s) (use no_console_suspend to debug)\n");
-+
-+	/*
-+	 * Flush any console backlog and then avoid queueing irq_work until
-+	 * console_resume_all(). Until then deferred printing is no longer
-+	 * triggered, NBCON consoles transition to atomic flushing, and
-+	 * any klogd waiters are not triggered.
-+	 */
-+	pr_flush(1000, true);
-+	console_irqwork_blocked = true;
-+
- 	if (!console_suspend_enabled)
- 		return;
--	pr_info("Suspending console(s) (use no_console_suspend to debug)\n");
--	pr_flush(1000, true);
- 
- 	console_list_lock();
- 	for_each_console(con)
-@@ -2754,26 +2767,34 @@ void console_resume_all(void)
- 	struct console_flush_type ft;
- 	struct console *con;
- 
--	if (!console_suspend_enabled)
--		return;
--
--	console_list_lock();
--	for_each_console(con)
--		console_srcu_write_flags(con, con->flags & ~CON_SUSPENDED);
--	console_list_unlock();
--
- 	/*
--	 * Ensure that all SRCU list walks have completed. All printing
--	 * contexts must be able to see they are no longer suspended so
--	 * that they are guaranteed to wake up and resume printing.
-+	 * Allow queueing irq_work. After restoring console state, deferred
-+	 * printing and any klogd waiters need to be triggered in case there
-+	 * is now a console backlog.
- 	 */
--	synchronize_srcu(&console_srcu);
-+	console_irqwork_blocked = false;
-+
-+	if (console_suspend_enabled) {
-+		console_list_lock();
-+		for_each_console(con)
-+			console_srcu_write_flags(con, con->flags & ~CON_SUSPENDED);
-+		console_list_unlock();
-+
-+		/*
-+		 * Ensure that all SRCU list walks have completed. All printing
-+		 * contexts must be able to see they are no longer suspended so
-+		 * that they are guaranteed to wake up and resume printing.
-+		 */
-+		synchronize_srcu(&console_srcu);
-+	}
- 
- 	printk_get_console_flush_type(&ft);
- 	if (ft.nbcon_offload)
- 		nbcon_kthreads_wake();
- 	if (ft.legacy_offload)
- 		defer_console_output();
-+	else
-+		wake_up_klogd();
- 
- 	pr_flush(1000, true);
- }
-@@ -4511,6 +4532,13 @@ static void __wake_up_klogd(int val)
- 	if (!printk_percpu_data_ready())
- 		return;
- 
-+	/*
-+	 * It is not allowed to call this function when console irq_work
-+	 * is blocked.
-+	 */
-+	if (WARN_ON_ONCE(console_irqwork_blocked))
-+		return;
-+
- 	preempt_disable();
- 	/*
- 	 * Guarantee any new records can be seen by tasks preparing to wait
 -- 
-2.47.3
-
+Lee Jones [李琼斯]
 
