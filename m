@@ -1,101 +1,56 @@
-Return-Path: <linux-kernel+bounces-899541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2896AC581A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:59:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00DFC5819B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0B0FD34FB92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:58:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73E084E612A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F9723A984;
-	Thu, 13 Nov 2025 14:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9821DF74F;
+	Thu, 13 Nov 2025 14:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CI9vAkIq";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="XKLoRhEv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T8vElxvm"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686A82DAFDE
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7723D7D2;
+	Thu, 13 Nov 2025 14:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763045880; cv=none; b=GmX1bTvqBumNOc8hfJr92OvSYzMio0N2RjQM5oUmaa1YIX4kgpqsbgogZx2bSRcaMN2H6Yj8TquHASEHMzbpVaHb0+1NoE9Ex9pjp55yfcw/V1Zxo9uaa/Z4fwY4dfYn8YnRB4firKxBZGkQK0Xnf7H35Wf/4NMMUBBET4u1NjQ=
+	t=1763045886; cv=none; b=pJpzZX0OBvJ5DwLCj03Xp+QMzx+riVRe8wc5/21WiVwGz8sDX8+sIj0/45aJLPsz/Zw4in2r+q9wIXkf8PiMfxmxQ7xcQEnHdyEUC/KvH3w0YpZLy+YCfqkl+nmLS2DxKi4EwEU+2ETcjGA9jZAQAmpdt316I+dd2T2YFjzAOUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763045880; c=relaxed/simple;
-	bh=faj86vAeazNGZyO4GIiqZNPU1r2huFPhAw+qock7rN4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gjx4y35nfBrw5ayKHBw210a5mB4yMhcCXwAmpNnmxj701da0VQ5L3tL86aheDe4WObIkL0yHFE+t1IftNwzhi4WJHE9qlILol9ap+as9eWTMiYBuM6hshy4j4hWJrGxRSfI9l+sIq94260zmmnh8DKCILmZdQO6psm4t37C5gUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CI9vAkIq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=XKLoRhEv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1763045875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJxYtQRZI2oPZefjc4khJHiI16kn+fD7Y9WQvYzGtO0=;
-	b=CI9vAkIqjGWpu7uw1qjki4tMXVXX3zTj9Xb81RewFehOobjkWxXna1F4ZRpkf89kUjNLWl
-	GDo93+pmf+zTkSrXRne+t1XjDsKQG3VA1jZtGIVSZsMNLlDNwC/TKDL52a04+TMjaRimDf
-	4INo1udqtsciAkREF2SF92rQ7DWX9Lg=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-iEsFKNalMYaerImtTVmrcA-1; Thu, 13 Nov 2025 09:57:54 -0500
-X-MC-Unique: iEsFKNalMYaerImtTVmrcA-1
-X-Mimecast-MFC-AGG-ID: iEsFKNalMYaerImtTVmrcA_1763045874
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8804823b757so56734116d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:57:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1763045874; x=1763650674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eJxYtQRZI2oPZefjc4khJHiI16kn+fD7Y9WQvYzGtO0=;
-        b=XKLoRhEvE0u30FPSr8aF8KDRUt5ZEHjGLWJqEE7wHn23FOSrFk6qLOFrIqyD5f1zu0
-         sGHkpYvNy/PQdZEXTMdutdyfXbaLxsOXiY08Fac4AHmFGeHZ/nO/qO4A49xQeIOPadyL
-         GV+YrkHCzS87KaV4Ajjmjb+YHpx1ZUpnWFMmsWcLhSsISxrPzvPGimlykGK1zVMUtXcM
-         71CCrLTMwjno3LtAU7H75XziTS1S+6YSrEd5vmZWx21sByjxzpMED1mlJz1sooNLTT3K
-         tTqqB5S0lm/rioODIf9FpBrILuAIPD/xZFrmdwzHZ+/3L16UxSjuy20DIvk1Goo82RDo
-         HHIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763045874; x=1763650674;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJxYtQRZI2oPZefjc4khJHiI16kn+fD7Y9WQvYzGtO0=;
-        b=AJIG2M0YN4EPdgWJR3oG/NcwmjsFSd142u6bS5rAbb5bDFtjx15bsEnKeiNhAoHYp5
-         +0XraNXCw7OQibUMMDhmv4IJNani33wetUSH4/d1tNA63vrg9xzaJ2sSIFsGCMixStFi
-         bxsmNczybpg34I78DPWuHdpqF0QEBABe7ZiEfsphbVe0DvAXD0EUdd1IwLz8zw2hCGQ3
-         sryM+cI+SkgVC7Jkwm+acmuklAQEBRsI0oD7ExRxJDZa/SavvvWNZin49ucTtbYx7cTG
-         WQTCvh0YEdKIPl8Lf/ibqJUEPh+X1qXAx+yBjkyb8hUqPOPTq/88F9Ck+o9wjxkmGLZ4
-         W7Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVv6d6JeuY+I53YynaiU6K+5F2Nf5JPOES2v1PUqeGlXoTT7L99cjPpUlIZgb3AOIgMxewTmvVU9dQg5Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHgy00iXKDy+Gu1+uMORrrjEW87DygDl/mzCXMi5Cq4KtDgEId
-	xQmhYBcagCE+8nq/uKkZahiBCIQw4rK6tNOEl6RG9X0pucW9DWKvus46HWw8IsgFajKgDWF5cfE
-	gDaAIHPG6Xjg33G6TCrqo466vLdDUtNnnuEL1Qz16MLBrtUOIVWOoU9L+HGfZyLYkEA==
-X-Gm-Gg: ASbGncvjEj12ZqdTrv+KYW6q0QsRohYZr1Tt3PP5Yyn8t4H+zp/KapUHVJ7NZSpefo1
-	NyuQJRMPCuD09ZrQZNW0wb97+Ba0mSlhgcGeyhnl+9ILN5b2a7nFf6WA/XQqEnIRLcMiITYop4A
-	xqcucCKj+z/v8+a0wpTA/ViYjwz7koMm/mlr3D3rU3rHdBD3IajiZqaO3+excjf6bMom80KY8+X
-	b8xus6djqAJ6bge0MEJxATcFlUjBolkST0Vdp01ZOTbQSWzcwnxWFHazR2YEZC8AgIXFAyIDQT9
-	umWyNRoKEJI2szPJyXB2b7g1rTz9amZPeF1SBd9ArjDRhm6dLfjz6z6BxpBH/ndI0JTZ+s4q8ta
-	tiGj/m0BqiBr0jU0KW/TgJikj38N/7M9J74fBIwOZ9PeyZA==
-X-Received: by 2002:a05:6214:2241:b0:882:42a7:9a10 with SMTP id 6a1803df08f44-8828188ab58mr53149356d6.19.1763045873961;
-        Thu, 13 Nov 2025 06:57:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF7ivS+/VnFbxs2+/hbdR+e606kVPGVkUdYiPwGihBy73ZEjeUI63aBB6N9af8uBkgape58ng==
-X-Received: by 2002:a05:6214:2241:b0:882:42a7:9a10 with SMTP id 6a1803df08f44-8828188ab58mr53148946d6.19.1763045873459;
-        Thu, 13 Nov 2025 06:57:53 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882865cff46sm13273816d6.57.2025.11.13.06.57.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 06:57:52 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <52ce4948-4285-4846-8ca8-d997cc0c6868@redhat.com>
-Date: Thu, 13 Nov 2025 09:57:51 -0500
+	s=arc-20240116; t=1763045886; c=relaxed/simple;
+	bh=3Uu21/c6Hbs21uxpxbmZo7JhKjwRedtSvTBuDxAnxMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=bnoZm8SBNOZsSdawEKekpcm89RPqcM6qCt4lQL1o0R3wobLYkGCgwwNg16R/aSLxGSY9/7GT7fbd404fK77bfUVYtGDyqnGdjop0PTlxMt1Jy49YeN+ZlLsT6wHIDYWKOZoH5j1aPRF6ejAO5TcWtdS5RVVqoaYXjamilF1qyE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T8vElxvm; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012;
+	Thu, 13 Nov 2025 14:57:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763045879;
+	bh=ogp7tQuY4ykhbwHIKUJTRYSar7oRQokZNx6TlxIJ+5c=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=T8vElxvmkwwSu1Wl5s0VXj6iVdl2A5s7iYFjmFeFPouxsJm1ZPkAuL/pj3v38TcxU
+	 /xoPUpVOskKRLjECmF0grhpoxv/PVum1bvXNYzG6n+Owrs/cxRuPbe4zkZQdEvAzaI
+	 PFjnHtKU80hgiAFcv2hYlDM5zIbRHGRMVNt0srsQ=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093~3mOLC8LIJ0576905769eucas1p1J;
+	Thu, 13 Nov 2025 14:57:58 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251113145757eusmtip2959d20c844dc6203e206300997e642d0~3mOJlt2ga3124231242eusmtip2e;
+	Thu, 13 Nov 2025 14:57:57 +0000 (GMT)
+Message-ID: <e1696331-1271-46a8-adb6-9fed4521f22b@samsung.com>
+Date: Thu, 13 Nov 2025 15:57:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,119 +58,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpuset: relax the overlap check for cgroup-v2
-To: Sun Shaojie <sunshaojie@kylinos.cn>, llong@redhat.com
-Cc: cgroups@vger.kernel.org, chenridong@huaweicloud.com, hannes@cmpxchg.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- mkoutny@suse.com, shuah@kernel.org, tj@kernel.org
-References: <20251113131434.606961-1-sunshaojie@kylinos.cn>
+Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display
+ subsystem
+To: Conor Dooley <conor@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+	<hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
+	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+	Abraham I <kishon@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+	Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Philipp
+	Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Icenowy Zheng <uwu@icenowy.me>, Maud Spierings
+	<maudspierings@gocontroll.com>, Andy Yan <andyshrk@163.com>, Heiko Stuebner
+	<heiko@sntech.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
 Content-Language: en-US
-In-Reply-To: <20251113131434.606961-1-sunshaojie@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20251111-matriarch-diocese-b314e7bdaf81@spud>
 Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+X-EPHeader: CA
+X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
+	<20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+	<20251110-clang-baking-b8b27730356e@spud>
+	<00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
+	<20251111-footing-eclair-332f5f0769f2@spud>
+	<20251111-matriarch-diocese-b314e7bdaf81@spud>
 
-On 11/13/25 8:14 AM, Sun Shaojie wrote:
-> In cgroup v2, a mutual overlap check is required when at least one of two
-> cpusets is exclusive. However, this check should be relaxed and limited to
-> cases where both cpusets are exclusive.
->
-> The table 1 shows the partition states of A1 and B1 after each step before
-> applying this patch.
->
-> Table 1: Before applying the patch
->   Step                                       | A1's prstate | B1's prstate |
->   #1> mkdir -p A1                            | member       |              |
->   #2> echo "0-1" > A1/cpuset.cpus            | member       |              |
->   #3> echo "root" > A1/cpuset.cpus.partition | root         |              |
->   #4> mkdir -p B1                            | root         | member       |
->   #5> echo "0-3" > B1/cpuset.cpus            | root invalid | member       |
->   #6> echo "root" > B1/cpuset.cpus.partition | root invalid | root invalid |
->
-> After step #5, A1 changes from "root" to "root invalid" because its CPUs
-> (0-1) overlap with those requested by B1 (0-3). However, B1 can actually
-> use CPUs 2-3, so it would be more reasonable for A1 to remain as "root."
->
-> This patch relaxes the exclusive cpuset check for cgroup v2 while
-> preserving the current cgroup v1 behavior.
->
-> Signed-off-by: Sun Shaojie <sunshaojie@kylinos.cn>
->
-> ---
-> v1 -> v2:
->    - Keeps the current cgroup v1 behavior unchanged
->    - Link: https://lore.kernel.org/cgroups/c8e234f4-2c27-4753-8f39-8ae83197efd3@redhat.com
-> ---
->   kernel/cgroup/cpuset.c                            |  9 +++++++--
->   tools/testing/selftests/cgroup/test_cpuset_prs.sh | 10 +++++-----
->   2 files changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 52468d2c178a..3240b3ab5998 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -592,8 +592,13 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
->    */
->   static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
->   {
-> -	/* If either cpuset is exclusive, check if they are mutually exclusive */
-> -	if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
-> +	/* If both cpusets are exclusive, check if they are mutually exclusive */
-> +	if (is_cpu_exclusive(cs1) && is_cpu_exclusive(cs2))
-> +		return !cpusets_are_exclusive(cs1, cs2);
-> +
-> +	/* In cgroup-v1, if either cpuset is exclusive, check if they are mutually exclusive */
-> +	if (!is_in_v2_mode() &&
 
-You should just use cpuset_v2() here as is_in_v2_mode() checks an 
-additional v1 specific mode that is irrelevant wrt to exclusive bit 
-handling. Also please update the functional comment about difference in 
-v1 vs. v2 behavior.
 
-Note that we may have to update other conflict checking code in cpuset.c 
-to make this new behavior more consistent.
+On 11/11/25 19:37, Conor Dooley wrote:
+> On Tue, Nov 11, 2025 at 06:14:48PM +0000, Conor Dooley wrote:
+>> On Tue, Nov 11, 2025 at 04:33:28PM +0100, Michal Wilczynski wrote:
+>>>
+>>>
+>>> On 11/10/25 20:35, Conor Dooley wrote:
+>>>> On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
+>>>>> This series enables the display subsystem on the StarFive JH7110 SoC.
+>>>>> This hardware has a complex set of dependencies that this series aims to
+>>>>> solve.
+>>>>>
+>>>>> I believe this is a PHY tuning issue that can be fixed in the new
+>>>>> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
+>>>>> I plan to continue debugging these modes and will submit follow up fixes
+>>>>> as needed.
+>>>>>
+>>>>> The core architectural plumbing is sound and ready for review.
+>>>>>
+>>>>> Notes:
+>>>>> - The JH7110 does not have a centralized MAINTAINERS entry like the
+>>>>>   TH1520, and driver maintainership seems fragmented. I have therefore
+>>>>>   added a MAINTAINERS entry for the display subsystem and am willing to
+>>>>>   help with its maintenance.
+>>>>
+>>>> Yeah, bunch of different folks wrote the drivers, so lots of entries.
+>>>> Pretty much all as you've done here, authors are responsible for the
+>>>> individual components and Emil is the platform maintainer but
+>>>> responsible for most drivers.
+>>>>
+>>>> Do you need any feedback dt wise on the RFC, or is it too likely that
+>>>> we'll both waste our breath if the DRM folks don't approve of your
+>>>> approach for the rest of this series?
+>>>
+>>> Hi Conor,
+>>>
+>>> Thank you for your response.
+>>>
+>>> That's a fair point about the risk of the DRM approach being rejected.
+>>> While I can't be certain, I'm hopeful that part is relatively
+>>> straightforward, as it primarily integrates other recently reviewed
+>>> (though not yet merged) components like the inno-hdmi bridge and dc8200
+>>> drivers.
+>>>
+>>> To be honest, I was more concerned that the DT part of the series would
+>>> be more problematic. Given that, I would find it very helpful to get
+>>> your feedback on the DT aspects now, if you have the time.
+>>
+>> Right. You'll definitely want some actual DRM people to weigh in though
+>> before making changes, I am really not familiar enough with this type of
+>> hardware to know if the breakdown is correct.
+> 
+> It looks generally sane to me chief, but as I said I am not really
+> familiar enough with this sort of hardware to have a real take on it.
+> Sorry, you'll need to get your affirmation about how you've laid stuff
+> out elsewhere :/
 
-Thanks,
-Longman
+Thanks for the look, Conor.
 
-> +	    (is_cpu_exclusive(cs1) != is_cpu_exclusive(cs2)))
->   		return !cpusets_are_exclusive(cs1, cs2);
->   
->   	/* Exclusive_cpus cannot intersect */
-> diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> index a17256d9f88a..903dddfe88d7 100755
-> --- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> +++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-> @@ -269,7 +269,7 @@ TEST_MATRIX=(
->   	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X3:P2    .      .     0 A1:0-2|A2:3|A3:3 A1:P0|A2:P2 3"
->   	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3  X2-3:P2   .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
->   	" C0-3:S+ C1-3:S+ C2-3     .    X2-3   X2-3 X2-3:P2:C3 .     0 A1:0-1|A2:1|A3:2-3 A1:P0|A3:P2 2-3"
-> -	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-3|A2:1-3|A3:2-3|B1:2-3 A1:P0|A3:P0|B1:P-2"
-> +	" C0-3:S+ C1-3:S+ C2-3   C2-3     .      .      .      P2    0 A1:0-1|A2:1|A3:1|B1:2-3 A1:P0|A3:P0|B1:P2 2-3"
->   	" C0-3:S+ C1-3:S+ C2-3   C4-5     .      .      .      P2    0 B1:4-5 B1:P2 4-5"
->   	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3  X2-3:P2   P2    0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
->   	" C0-3:S+ C1-3:S+ C2-3    C4    X2-3   X2-3 X2-3:P2:C1-3 P2  0 A3:2-3|B1:4 A3:P2|B1:P2 2-4"
-> @@ -318,7 +318,7 @@ TEST_MATRIX=(
->   	# Invalid to valid local partition direct transition tests
->   	" C1-3:S+:P2 X4:P2  .      .      .      .      .      .     0 A1:1-3|XA1:1-3|A2:1-3:XA2: A1:P2|A2:P-2 1-3"
->   	" C1-3:S+:P2 X4:P2  .      .      .    X3:P2    .      .     0 A1:1-2|XA1:1-3|A2:3:XA2:3 A1:P2|A2:P2 1-3"
-> -	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:4-6 A1:P-2|B1:P0"
-> +	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:5-6 A1:P2|B1:P0 0-4"
->   	"  C0-3:P2   .      .    C4-6 C0-4:C0-3  .      .      .     0 A1:0-3|B1:4-6 A1:P2|B1:P0 0-3"
->   
->   	# Local partition invalidation tests
-> @@ -388,10 +388,10 @@ TEST_MATRIX=(
->   	"  C0-1:S+  C1      .    C2-3     .      P2     .      .     0 A1:0-1|A2:1 A1:P0|A2:P-2"
->   	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2 0-1|1"
->   
-> -	# A non-exclusive cpuset.cpus change will invalidate partition and its siblings
-> -	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P0"
-> +	# A non-exclusive cpuset.cpus change will not invalidate partition and its siblings
-> +	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:3 A1:P1|B1:P0"
->   	"  C0-1:P1   .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P-1"
-> -	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P0|B1:P-1"
-> +	"   C0-1     .      .  P1:C2-3  C0-2     .      .      .     0 A1:0-1|B1:2-3 A1:P0|B1:P1"
->   
->   	# cpuset.cpus can overlap with sibling cpuset.cpus.exclusive but not subsumed by it
->   	"   C0-3     .      .    C4-5     X5     .      .      .     0 A1:0-3|B1:4-5"
+I appreciate the sanity check on the DT side. I'll focus on getting the
+necessary feedback from the DRM maintainers regarding the architectural
+breakdown before spinning a v2.
 
+[Adding Dmitry Baryshkov and highlighting Maxime, Heiko, and Robert]
+
+Could you folks take a brief look at the driver split in this series?
+
+Conor has reviewed the DT bindings and they look sane to him, but we
+need to verify that the architectural split between the
+phy-jh7110-inno-hdmi and the DRM bridge driver is acceptable for this
+Innosilicon IP.
+
+I am particularly interested if the current handling of the PHY tuning
+parameters (as described in the cover letter) fits the modern DRM
+bridge/PHY paradigm, or if this should be modeled differently given the
+similarities to Rockchip implementations.
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
