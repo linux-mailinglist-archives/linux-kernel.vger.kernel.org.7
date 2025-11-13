@@ -1,157 +1,307 @@
-Return-Path: <linux-kernel+bounces-899634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94C1C5871C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:42:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63A7C58782
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7308235C8B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60934A791B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AB92FC881;
-	Thu, 13 Nov 2025 15:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F050F2FD665;
+	Thu, 13 Nov 2025 15:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GpdDsCqr"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NN3H6Fph";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PV7HTG7s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59112FC02F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE62FD69C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047487; cv=none; b=fxe0qvDsBpgRRd8WsINIWBcML8o9YamdjnAlP+hOwa7DZ5u36BdlmAU81j/Ht/ytsP6dt3UioxB9yc4HdIf4kjWutyS6ugpx6ZjZX9UcGQsu7UcPWedxPvB6b700qFJTv/U+uULcHX8jv5bwmDof6wmUL4tby10mHUhFXi5v6xc=
+	t=1763047498; cv=none; b=Bw3wrg0IukKsEsjDKQHJczqV3/ntss3Xbdvborik9Tcf0HCR49DJBrrh9KJ2s0JMFK9EAVLiCK/DoPAYPFw7enTkmoFieQcppd4KWlVXsPzNd8kJ7aVK1m+0TBMp/82RW68H5rLHez369i01fJSP/CI5HmJ7KHm6w31ugZiF5dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047487; c=relaxed/simple;
-	bh=a8Oh4ByEmIDtGdZ8h4OuLqjW5FkDttrFXTOx2NT4iss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rFNFqUgAXxCgxzk9Yr9ttxWc1ka1lfErKHLN9CGEvBxAnP5v11T97/m2NXQF63l5ZVzvUIumtawYu3tuzOse5UA+3IaRE9zWbGN00L2yiWPrzXKIv8qclnhcufaGzAMd16j+MFwNczRv3y8ieciq2BEUGURYiBK7RwWnfRgbCJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GpdDsCqr; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477549b3082so8564485e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:24:45 -0800 (PST)
+	s=arc-20240116; t=1763047498; c=relaxed/simple;
+	bh=RWmdUrg02H6f+aep4jIDFyNZk5wA5k2aihRICtWoOEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLH/fYmsIppX3Z2JyRwi+1ETBbd0dqYJBxIjHsm4I/EwH5U9mpu9lb/Tt0f5lWoOqtV4S7bnzX7NMNhZ4geZbyjsvnO30GKu8AeYKubOLHvKXmOvA997rFk3sznGcubJDBYcWxa+m0UpqwbiB3YHEL6vlQRpEZuozNR4z/YIDws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NN3H6Fph; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PV7HTG7s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763047493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+6KSIoS5LmlMULcY0rSH3odgewvUTbNtCV5m3STvge8=;
+	b=NN3H6FphYabUoE/hWZhY6AHZT+tJF2udbt6qDtApDMvBb9f6q39su7mldV1L2rwIzYo5j6
+	70XgPYLdZkzRE4XTi43bkm//BMpCaayN6RUXZim+0EAmdo7ZJNv94+G800UndMcdvEic/Q
+	85QVp7gWvmdRPclVucja75ZR0Y/EghY=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-DVi1OaBXPBCujt6MTiaobQ-1; Thu, 13 Nov 2025 10:24:52 -0500
+X-MC-Unique: DVi1OaBXPBCujt6MTiaobQ-1
+X-Mimecast-MFC-AGG-ID: DVi1OaBXPBCujt6MTiaobQ_1763047491
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-6430efef759so1626153a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:24:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1763047484; x=1763652284; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iB+JT+rAjTzk5qbj4tgjSnTjnda4G40CL0DtaEMW97s=;
-        b=GpdDsCqrLIix28BI6t007HUPegFO3MBRZgB+SsxTYwALow5rm66zBh7t9qjBFivPWE
-         9aejZSa4HfhABOr6MBT/H42UMdfZ+lXTQnVFGpLhbdaJ5Uu0o87PxRV6xE4HHyJdDRyr
-         hZMlg2jqpoPlhE4vKjAeIumZrnEF+uShmuoRgQitPSYH3UfskwS8yLLUqn1WBrHwV6hp
-         Jg52+FUe8trj5HkWCpWirpK17M1P2A/T0h5OtgIZaOdGx1WSuCevnkJu0vZMSgBnjU0Q
-         w1sU4r2Hwzyk91khCOMvNt/KezqretHovC9HFa4DHXOffv3WQB2j5AcbCfbLxmloQy1n
-         ENyQ==
+        d=redhat.com; s=google; t=1763047491; x=1763652291; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+6KSIoS5LmlMULcY0rSH3odgewvUTbNtCV5m3STvge8=;
+        b=PV7HTG7sLgXc7EV1zPc2q1hyjYQ+iQ7j2Al/2LlmnCnvO08F4m7NBpx7SnkOnI5OI/
+         5wk4tPfwRvsSEPib1SjCuF+HUUx9afNI8leHkjtHFgd5HrE69B3V7YWFIlwwlckjL79U
+         3YFOeqZSbJLIjm97dxkqI554PCUDMEdIjKIHn+9gY0vslWr15qRllLmYvi23i4T6aqqr
+         iCL8eL0pwtiUmd4TvXTbkjcSO5tVU7KYrtd9xoxWKIh9Rg8K35UjtJt+8c4cjIXqC8Ay
+         56HqCS2YY5LV54Nufo6aQNxGu2/Ki3jXfs/johv00BKNdtVZ08GNjrJgC6HZ4oj2N/PL
+         4OWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763047484; x=1763652284;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iB+JT+rAjTzk5qbj4tgjSnTjnda4G40CL0DtaEMW97s=;
-        b=LqVUkTQNjZNRKTKCqwApDWS7bQloHqYk9uQFegRglamPJvGd3YaDGUlOVga3mCks8D
-         VFnJIgz7TJjmclgamLe9/QBBkiCarxsd6uZpAZm0WJpS0ykXe/RHmo5DNSkbhWygWDQu
-         soQbGV1dsEEEq3Chpok6b7p1epy5/jxZuS9K2gK3OCVmtEW+hWbu1t/m1d9+pmAlter/
-         bY+DnWQqutIQ9wcm0MIm/Oe8RXcqeC4d2bifRxJ0sC8io3rCWgj3kbsLxNMx2JgxvXo2
-         +Fb3g6jKJwvcX25B/c1tchVDLXhfFd9hsOmTRAAq6TzDUIjy2yYYTgqqrMlMRkJGjSLd
-         h7NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVuE3v1mpEdkzJa/9ywLUAmws1J4RWarDdQyv7W+Vu5KxoK/2eyZMp+yKmBfiu051I9kHb9oQUirsRiLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWJRF8JYHL59Psck43yBoUZ8Km7fAJ6khklKNTIctnFDKnr8Nf
-	bFlnVLLHcdcMlOVZlWs9zRdsci2VE5/frqexgrHrxCfMQkOcBMLmplv3vsVlS71eCkM=
-X-Gm-Gg: ASbGncs/gQ1vRcrfkpWgPcQI2EO7dtSdxSOe3o7FgPqfjUDb9gTb6eS6Q2cS1+oqgBW
-	i1wT0xax8glM86BN9tx9hFy9HV/PxZIxiOxPF6C+VpH1WGl2Isc3V+igayfnqxY1VLpGNk9Q/Sz
-	bWfFb7hpzRihve6det1AVVmWWsAn5jDtUpAoxsxJh6/R52G6A6yFnddefxpG/RXRaLr1XPYrA3B
-	fDa63uFbeMb05SE+9Rcf/z841P3GunsTvo6puoiuJL/wFwwK1Vyp/mDMxPawClfBhrKGPg+fCbu
-	y6fHrZJzugnN1k6/DfJ6M+5jjjMoMZ4uT8hd405Bc1fNoZrrKx99W6RZtlN95b7L9FeTWAJJAAF
-	JQqsyzu1PFGldeDeQoNk/kc5KN1BFDe7ztAHbtFcEfNJyG3EWHzJaRgfmI6//7Uvyrxm2FOsV6b
-	MuYwHIs4ae
-X-Google-Smtp-Source: AGHT+IE4kSPN0NcyZr5YwaFByd3zY3e87tD0XqKRmf32VutndhscEu4TOszysUiok7ZPHwh1vTJRjw==
-X-Received: by 2002:a05:600c:3546:b0:475:dae5:d972 with SMTP id 5b1f17b1804b1-47787095cc8mr69292105e9.23.1763047483038;
-        Thu, 13 Nov 2025 07:24:43 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e97a87sm4923542f8f.20.2025.11.13.07.24.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 07:24:42 -0800 (PST)
-Message-ID: <c8f7f55e-4229-49b6-8627-2a177ca85d5f@tuxon.dev>
-Date: Thu, 13 Nov 2025 17:24:40 +0200
+        d=1e100.net; s=20230601; t=1763047491; x=1763652291;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+6KSIoS5LmlMULcY0rSH3odgewvUTbNtCV5m3STvge8=;
+        b=drwXxbgvWyA5A87P4WJ/1U8RZvQaCXvf3KoJZHbha9DDfLGTl9OWNe4CEzdMtY71vF
+         8SFVo61daOf8SSGDsqPGw6zXVpK+tCceCBO8bTsHtkXH7XYiYCoWbT/41upeXwCYFD4P
+         gWATslJR8/B8R37l4WQ6g7cV/Ad/5mbtmYgAacE2xSIRtxn0LAIxWKD4OqwovNjd3NDN
+         6IWz0kzSzyPwDHSaqaX/PrNv2OZDSTnnGpDz5Mw7MFQXMBGEqIHgiX73xgE1bnGLj6xx
+         UDIy9I5mLFm3189V2w2JLbGHHtBpRBcboHHSM2o2Gjna/5uDP6FIhuznzULMIIdGheqz
+         WVXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKbu8Tzy84MnsK8t6Rl9lhbpl/VERVsERI8BM7JN44mBTqr7M/X0qHqxvqdGlLVOMpg1wUnVCU3mnXSuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySQeOBKwu82nyuDqwSIJXur023cqFKtQ2SF9NsGYNDtAVZe8+j
+	uL4l4ze3FmdEc2H7oc8k6oy8ex1d0ehf4Dc/ggF2bkJNk+Amxj9vqJOauwvLnYcxDpmiiGSc0oz
+	HYRrWjYyuQam7RmFbnKFtb6jcoopJJwrItL/85eed893y4egjG5rNdGW2v2Lgreu+Xg==
+X-Gm-Gg: ASbGncvTTFMnCdGoF7efqoUaLod1XJros8c+jumm5gq9d/z2ijVc8Hzs1GfWVJvsgtT
+	4qdEMehDk94+e0vd+sa4ISqrYEcsQuP1MfJrwsw4Vxn3xhTSp3zGyNbCkuijLlyHjilYkLhcFkl
+	xODDSYMVElmMWjHDCUZlzqV8ZSVX8Yx6YExSmW5WCIphg4jWGhASFpNXdQw/KKyiEVlu/0I/Ovb
+	UGT8s6QL+KCkWOd40zoC3mOv3mQs2g8ti4pdY2vck/G8tNKHhL/VrAkB4E0zz2IeaBy+EZYt+13
+	dL1KbkbxHVYQuYN7xZEkUu7DAlElwc+jHbjnoYmTYCA3sOJ3Zi/WHMMhdU03FWRh+pAxJtoDiNz
+	/kRdYtcNGWT1vwO+Hp19nMLp3ZYrJrPmlY4efDarnSqTX/rXqWPM=
+X-Received: by 2002:a05:6402:3510:b0:63c:eb6:65e8 with SMTP id 4fb4d7f45d1cf-6431a56938amr6157365a12.30.1763047491178;
+        Thu, 13 Nov 2025 07:24:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFlKgqnCe8xOA2ZWxmxvwtxL2cKocqyC9cwwbKOiPr8xF8kOeK/j8WX7lSpFb7Tuv717eLwhg==
+X-Received: by 2002:a05:6402:3510:b0:63c:eb6:65e8 with SMTP id 4fb4d7f45d1cf-6431a56938amr6157323a12.30.1763047490676;
+        Thu, 13 Nov 2025 07:24:50 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a497fc5sm1661218a12.22.2025.11.13.07.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 07:24:50 -0800 (PST)
+Date: Thu, 13 Nov 2025 16:24:44 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, berrange@redhat.com, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v9 06/14] vsock/loopback: add netns support
+Message-ID: <g5dcyor4aryvtcnqxm5aekldbettetlmog3c7sj7sjx3yp2pgy@hcpxyubied2n>
+References: <20251111-vsock-vmtest-v9-0-852787a37bed@meta.com>
+ <20251111-vsock-vmtest-v9-6-852787a37bed@meta.com>
+ <g6bxp6hketbjrddzni2ln37gsezqvxbu2orheorzh7fs66roll@hhcrgsos3ui3>
+ <aRTRhk/ok06YKTEu@devvm11784.nha0.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
- driver
-To: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- p.zabel@pengutronix.de
-Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20251029133653.2437024-1-claudiu.beznea.uj@bp.renesas.com>
- <20251029133653.2437024-3-claudiu.beznea.uj@bp.renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20251029133653.2437024-3-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aRTRhk/ok06YKTEu@devvm11784.nha0.facebook.com>
 
-Hi,
+On Wed, Nov 12, 2025 at 10:27:18AM -0800, Bobby Eshleman wrote:
+>On Wed, Nov 12, 2025 at 03:19:47PM +0100, Stefano Garzarella wrote:
+>> On Tue, Nov 11, 2025 at 10:54:48PM -0800, Bobby Eshleman wrote:
+>> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+>> >
+>> > Add NS support to vsock loopback. Sockets in a global mode netns
+>> > communicate with each other, regardless of namespace. Sockets in a local
+>> > mode netns may only communicate with other sockets within the same
+>> > namespace.
+>> >
+>> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+>> > ---
+>> > Changes in v9:
+>> > - remove per-netns vsock_loopback and workqueues, just re-using
+>> >  the net and net_mode in skb->cb achieved the same result in a simpler
+>> >  way. Also removed need for pernet_subsys.
+>> > - properly track net references
+>> >
+>> > Changes in v7:
+>> > - drop for_each_net() init/exit, drop net_rwsem, the pernet registration
+>> >  handles this automatically and race-free
+>> > - flush workqueue before destruction, purge pkt list
+>> > - remember net_mode instead of current net mode
+>> > - keep space after INIT_WORK()
+>> > - change vsock_loopback in netns_vsock to ->priv void ptr
+>> > - rename `orig_net_mode` to `net_mode`
+>> > - remove useless comment
+>> > - protect `register_pernet_subsys()` with `net_rwsem`
+>> > - do cleanup before releasing `net_rwsem` when failure happens
+>> > - call `unregister_pernet_subsys()` in `vsock_loopback_exit()`
+>> > - call `vsock_loopback_deinit_vsock()` in `vsock_loopback_exit()`
+>> >
+>> > Changes in v6:
+>> > - init pernet ops for vsock_loopback module
+>> > - vsock_loopback: add space in struct to clarify lock protection
+>> > - do proper cleanup/unregister on vsock_loopback_exit()
+>> > - vsock_loopback: use virtio_vsock_skb_net()
+>> >
+>> > Changes in v5:
+>> > - add callbacks code to avoid reverse dependency
+>> > - add logic for handling vsock_loopback setup for already existing
+>> >  namespaces
+>> > ---
+>> > net/vmw_vsock/vsock_loopback.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+>> > 1 file changed, 40 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
+>> > index d3ac056663ea..e62f6c516992 100644
+>> > --- a/net/vmw_vsock/vsock_loopback.c
+>> > +++ b/net/vmw_vsock/vsock_loopback.c
+>> > @@ -32,6 +32,9 @@ static int vsock_loopback_send_pkt(struct sk_buff *skb, struct net *net,
+>> > 	struct vsock_loopback *vsock = &the_vsock_loopback;
+>> > 	int len = skb->len;
+>> >
+>> > +	virtio_vsock_skb_set_net(skb, net);
+>> > +	virtio_vsock_skb_set_net_mode(skb, net_mode);
+>> > +
+>> > 	virtio_vsock_skb_queue_tail(&vsock->pkt_queue, skb);
+>> > 	queue_work(vsock->workqueue, &vsock->pkt_work);
+>> >
+>> > @@ -116,8 +119,10 @@ static void vsock_loopback_work(struct work_struct *work)
+>> > {
+>> > 	struct vsock_loopback *vsock =
+>> > 		container_of(work, struct vsock_loopback, pkt_work);
+>> > +	enum vsock_net_mode net_mode;
+>> > 	struct sk_buff_head pkts;
+>> > 	struct sk_buff *skb;
+>> > +	struct net *net;
+>> >
+>> > 	skb_queue_head_init(&pkts);
+>> >
+>> > @@ -131,7 +136,41 @@ static void vsock_loopback_work(struct work_struct *work)
+>> > 		 */
+>> > 		virtio_transport_consume_skb_sent(skb, false);
+>> > 		virtio_transport_deliver_tap_pkt(skb);
+>> > -		virtio_transport_recv_pkt(&loopback_transport, skb, NULL, 0);
+>> > +
+>> > +		/* In the case of virtio_transport_reset_no_sock(), the skb
+>> > +		 * does not hold a reference on the socket, and so does not
+>> > +		 * transitively hold a reference on the net.
+>> > +		 *
+>> > +		 * There is an ABA race condition in this sequence:
+>> > +		 * 1. the sender sends a packet
+>> > +		 * 2. worker calls virtio_transport_recv_pkt(), using the
+>> > +		 *    sender's net
+>> > +		 * 3. virtio_transport_recv_pkt() uses t->send_pkt() passing the
+>> > +		 *    sender's net
+>> > +		 * 4. virtio_transport_recv_pkt() free's the skb, dropping the
+>> > +		 *    reference to the socket
+>> > +		 * 5. the socket closes, frees its reference to the net
+>> > +		 * 6. Finally, the worker for the second t->send_pkt() call
+>> > +		 *    processes the skb, and uses the now stale net pointer for
+>> > +		 *    socket lookups.
+>> > +		 *
+>> > +		 * To prevent this, we acquire a net reference in vsock_loopback_send_pkt()
+>> > +		 * and hold it until virtio_transport_recv_pkt() completes.
+>> > +		 *
+>> > +		 * Additionally, we must grab a reference on the skb before
+>> > +		 * calling virtio_transport_recv_pkt() to prevent it from
+>> > +		 * freeing the skb before we have a chance to release the net.
+>> > +		 */
+>> > +		net_mode = virtio_vsock_skb_net_mode(skb);
+>> > +		net = virtio_vsock_skb_net(skb);
+>>
+>> Wait, we are adding those just for loopback (in theory used only for
+>> testing/debugging)? And only to support virtio_transport_reset_no_sock() use
+>> case?
+>
+>Yes, exactly, only loopback + reset_no_sock(). The issue doesn't exist
+>for vhost-vsock because vhost_vsock holds a net reference, and it
+>doesn't exist for non-reset_no_sock calls because after looking up the
+>socket we transfer skb ownership to it, which holds down the skb -> sk ->
+>net reference chain.
+>
+>>
+>> Honestly I don't like this, do we have any alternative?
+>>
+>> I'll also try to think something else.
+>>
+>> Stefano
+>
+>
+>I've been thinking about this all morning... maybe
+>we can do something like this:
+>
+>```
+>
+>virtio_transport_recv_pkt(...,  struct sock *reply_sk) {... }
+>
+>virtio_transport_reset_no_sock(..., reply_sk)
+>{
+>	if (reply_sk)
+>		skb_set_owner_sk_safe(reply, reply_sk)
 
-On 10/29/25 15:36, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> only as a root complex, with a single-lane (x1) configuration. The
-> controller includes Type 1 configuration registers, as well as IP
-> specific registers (called AXI registers) required for various adjustments.
-> 
-> Hardware manual can be downloaded from the address in the "Link" section.
-> The following steps should be followed to access the manual:
-> 1/ Click the "User Manual" button
-> 2/ Click "Confirm"; this will start downloading an archive
-> 3/ Open the downloaded archive
-> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> 5/ Open the file r01uh1014ej*-rzg3s.pdf
-> 
-> Link: https://www.renesas.com/en/products/rz-g3s?
-> queryID=695cc067c2d89e3f271d43656ede4d12
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Changes in v6:
-> - split the help message from Kconfig to 80 chars
-> - dropped unused defines
-> - dropped dot at the end of short comments
-> - re-arranged the members of rzg3s_pcie_child_prepare_bus(),
->   rzg3s_pcie_child_read_conf(), rzg3s_pcie_child_write_conf(),
->   rzg3s_pcie_root_map_bus() to save few lines
-> - in rzg3s_pcie_irq_compose_msi_msg() drop drop_mask and use
->   RZG3S_PCI_MSIRCVWADRL_MASK
-> - merge INTx and MSI configuration in rzg3s_pcie_init_irqdomain(); with it,
->   rzg3s_pcie_host_setup() takes now only 2 function pointer for IRQ domain
->   config and teardown; also, updated the names of other functions to match
->   the most used pattern accross other drivers:
-> -- rzg3s_pcie_msi_enable() -> rzg3s_pcie_init_msi()
-> -- rzg3s_pcie_host_parse_root_port() -> rzg3s_pcie_host_parse_port()
-> -- rzg3s_pcie_host_init_root_port() -> rzg3s_pcie_host_init_port() 
-> - used dev_fwnode() instead of of_fwnode_handle()
-> - used fsleep() instead of usleep_range()
-> - pass "size - 1" to rzg3s_pcie_set_inbound_window() only and keep the
->   undecremented value in the calling function
-> - added a comment on top of request_irq() to explain why devm_ variant
->   was not used
+Interesting, but what about if we call skb_set_owner_sk_safe() in 
+vsock_loopback.c just before calling virtio_transport_recv_pkt() for 
+every skb?
 
-Could you please let me know if there's anything I should be doing for this
-version?
+Maybe we should refactor a bit virtio_transport_recv_pkt() e.g. moving 
+`skb_set_owner_sk_safe()` to be sure it's called only when we are sure 
+it's the right socket (e.g. after checking SOCK_DONE).
 
-Thank you,
-Claudiu
+WDYT?
+
+>
+>	t->send_pkt(reply);
+>}
+>
+>vsock_loopback_work(...)
+>{
+>	virtio_transport_recv_pkt(..., skb, skb->sk);
+>}
+>
+>
+>for other transports:
+>
+>	virtio_transport_recv_pkt(..., skb, NULL);
+>
+>```
+>
+>This way 'reply' keeps the sk and sk->net alive even after
+>virtio_transport_recv_pkt() frees 'skb'. The net won't be released until
+>after 'reply' is freed back on the other side, removing the race.
+>
+>It makes semantic sense too... for loopback, we already know which sk
+>the reply is going back to. For other transports, we don't because
+>they're across the virt boundary.
+>
+>WDYT?
+>
+>I hate to suggest this, but another option might be to just do nothing?
+>In order for this race to have any real effect, a loopback socket must
+>send a pkt to a non-existent socket, immediately close(), then the
+>namespace deleted, a new namespace created with the same pointer
+>address, and finally a new socket with the same port created in that
+>namespace, all before the reply RST reaches recv_pkt()... at which point
+>the newly created socket would wrongfully receive the RST.
+
+Yeah, let's keep this as plan B for now :-)
+
+Thanks,
+Stefano
+
 
