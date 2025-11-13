@@ -1,253 +1,129 @@
-Return-Path: <linux-kernel+bounces-899507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7E2C57F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:36:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38407C57FF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:41:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0CB54E68B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC493B1A1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E644B2BDC14;
-	Thu, 13 Nov 2025 14:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334962D0638;
+	Thu, 13 Nov 2025 14:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTsXoWdL"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nEke/2FF"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3B129BD95
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6252C11D9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044163; cv=none; b=M8YMA35+Gl3u11uvZip8xbEoeo5mBnntCeiekDoby6iB3dXzdBdUi5lqjHKumZUk98mRCCws39faE2wwcYVplTYpTRJNtvZwl7R7VVvBUueqLi+9fohG9h2frmmUCZoghtk4mK9bYM8u1A5qyQs4Diu+SVRCQpfgV5a9EesXwNM=
+	t=1763044247; cv=none; b=p/cTnwsFeUb1fuuT6q6S+j5YOC/6SQX2lGakX2Hlazi9sSnVi7o+ogf1/aJhF1SML3jxj+Rhei7srm5khnaMY1ywyyxfzol3dEQYZUv/jPBL5N/7xUYYDd6YSHLZFw1NPQ9xGW4v+RV6qb4siEWD4ugyVM4+jJroPeM0a+rNmK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044163; c=relaxed/simple;
-	bh=enukvQUkWp5qWLLQJutYEr5eHCre8gtyCfegyL8aecU=;
+	s=arc-20240116; t=1763044247; c=relaxed/simple;
+	bh=MBXryWsSo8WBJYsfFQQsezl+bvHfvcNsNG0PI/C7tiU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dALwQZzyYEKiaPFDja78Svp20tbVNHG27Pbr6maDteY0QeqN6x7a47lw7gHvFM+bL8AT+uxFpr0amiXrtt0mKg+rkJiaun9T6FJjG51YtllRAsugRxo24sxC/mXQ9DiV1AqbIJXeJu/wVFqW2XROF187cAmnhwySBispO/zFiQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTsXoWdL; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b3c965cc4so471308f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:29:21 -0800 (PST)
+	 To:Cc:Content-Type; b=MS4c+uiHarLVnmRFGCGDBzFl4jIwvnE8NZeHUB+M5mInfKFez+5lnTttLy5clNvIRcZYz6Cj5kafiWDCz3qBeC1gD5uTFZnYMeK1yWGS2CI3Z2sVNyCCp1XXhTaCN9VHfzapu02Kw8uMIXZgEwMQsLRRXNntsC+89f63kvu6jSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nEke/2FF; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29845b06dd2so8973795ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763044160; x=1763648960; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
-        b=MTsXoWdL5q+SKlKFYuluPzOD01u5Un9K0DErqJEcgs6WiRpSbbI5NNZX3gSvFhXKR6
-         QY5Kza6huPV0tgxIbLxCwu1+wExP9MxfVJmtk/5yd1zvprODuYXu1RHE5/b5gCI2lyXe
-         E7vm1+iNcnvO5ULiHvudpmhjgiMXsf0tLRZTL8hu7aTAPyZBOrzazrR8oynNh9FAF9Mh
-         M1qixhxtDwJa+ZIF/HMxw6f8uWUrsiAvWwAMrLz29PO8EChBw4JXcZRqbwXZsERb1tSH
-         0MORytgRr3WbRHs8FX42JeDkoiwqk/im9aMBRG7CmwRK62YZDsl1rlJJXJ24Gt8pjuak
-         vz/Q==
+        d=google.com; s=20230601; t=1763044245; x=1763649045; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBXryWsSo8WBJYsfFQQsezl+bvHfvcNsNG0PI/C7tiU=;
+        b=nEke/2FFZG1ng+mTf7XuFWr72uIT/zMOwz5Plept3fLottY4A7mR9yd0pdYTXPfV3L
+         hK19/tFNKtBWt03/3aIrLuEFubAZ86OG8UKxWfMXZ/xwaPm0haeaSFvRKRZyqL68IFFr
+         RUbfkpw/AxbmwRe4UBjcf4u0hY4RgCtAQU+DeP++bLkWGUge3WghXIIG2aYlBAHwJrwa
+         qNbtn/U/W2g+PNsPotzSGxq1CDZ2ivBjEr/ylIi5pnAtig/o0c8DLddUOMVoTVfBVYw2
+         2Wrg941g53UdcpQMWmmNwsTkD97k9PkGsnanMcPBhYlfeFftgOS6jQNCW+h68bt/aUbO
+         AUAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044160; x=1763648960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
-        b=oy6UM8RJ+U8fMTMmuSct4sW4YUvDlARJGdXONpoi+F8l3XhZ9q7Cv40B1clU0b2EeN
-         NBE+Tk1QdUib6dOrEhwJ+z/jhpP/KrkzaqmNmjCFuwkBgYciWG6F7p0WLUecB6fiChO0
-         HojTWiMQpGTczvqIlxIKdzlacRgMTiqjtRB1l5SKO7n0fuiI/eaHrYAgYNNnS8XYIU1V
-         VZp7b5PGyh6eDw7BTJOBCoZ4iLOykXriXD/0BOtiFq1XWrTR/WPPYsYkk1EQP+e/dMW+
-         rvpalWHYZp6GQLprcGmjZIIJD3LDVAxQ2xjwvsYay8yYcSJdBA1YQdI2sHJ7FlwOrtbF
-         HMlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyKiVrnBPxx/ZYMBKA1fr2At6FxUQFHYEGrWmEr1JXLQ8ub/WBuwE4+r1sDNW36qKEp7FjLtH/60D0m00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmrjU5ou3+EXHL5+aWsBpxYSi5PrZFXc0iQHYVUulyQdk4EcsV
-	vNRmL4CB97zB3rnfZ9osYvRoTIhTbeEUsDN0479l/Gx+L2W8Unuum4HiHVZQibAU30u7MQvA9hR
-	EOKd+NNvo1GUPxonO0pKxvmra+yxdteY=
-X-Gm-Gg: ASbGncvd+4m9JO5PRfwjNIOdQrUVig9eZIHCXXQnkoSmd1fvCq9HH+bkTVqS9ulKZ6E
-	8ayyXUG8DcYOEpsYEMDWhLanX3sFCDmQwS8015Soj6X6eJBk5kfEG9jfSdtyPymWCiYw/TCtZ6A
-	z5ZysytQUdaNRbV/8P6BMwoONbk8JIYIBzt3hUWojh0TbuRtQZdjPDf6+NbvpdBp4+1ik8cNM8l
-	gY68R2KM5kdlmt2PGgvBXCmfTaCBUgLJfUqPidMBROgcLejf3CSeZ89KdXbc/xYhfsJpBVFY6tT
-	n28kz8I=
-X-Google-Smtp-Source: AGHT+IEjZesfWe6UAJr9rfneLrz6LT9ITsEcvC5EG+9+SI64dIq/3Wyqp3hO3mKXfLSgOhg9/PSLnT/sN+ozMuJc6zU=
-X-Received: by 2002:a05:6000:230b:b0:429:d253:8619 with SMTP id
- ffacd0b85a97d-42b52795624mr3292848f8f.5.1763044159375; Thu, 13 Nov 2025
- 06:29:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763044245; x=1763649045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBXryWsSo8WBJYsfFQQsezl+bvHfvcNsNG0PI/C7tiU=;
+        b=xOqLfaXc3vkamME4zZ+l9cMm40l1xs9AXD+DAD9mcgw8peeZmepekAguc/ww+VMY//
+         9eYu8t9L1Mny1NFlNyy+irADwZM9ps4qwQkxUB//BXl9XQZ29js6AoiIZW5/8ednaxf9
+         xWYYhFmdorNAOc2KoDA+J8ECethL9jdu8v80VjVztJzEW9l2TQZ/7b4HM3aGNBz/T5M2
+         l6uNeH7iZ+sklvWqCaAFm7OseKlqxTyZcUTB4GWYFJpIQd2BbkaTDQExbt5xBzTRd/ZI
+         HYmFkpWwxtUks6a5xtyi0m+4hggzvMUOCTqi/R6N/WVCarP/K/r2XQY7R0GtDlBY61mG
+         YtUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwgrndeX72l0aeQ9KpkBRwSOSTpx1vhpIRpqpWg7tYulfpjG7ljO+SQeWYhFIjg+/46xcTMcZ6MnKS0v8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAtuZRxWxNpOBJq0WrWVPKThBpjrENQGZW3Ggkya4nlJ74+PE9
+	dmXQDlPJeVELXP76G3GPtonU4ZbszbvogbzgFjp6As5ND6wwAtVFbRNWT91IW1/AD0OcVO3MP0H
+	Gm60FW5hk9XOh2i6ZGavbNj0GkGwN0Y24a7b9TVLK
+X-Gm-Gg: ASbGnctUgglmX/AkO+gn507IpzMxJQOOIMV1EinzPjAgakvj4B1N22tFbr6ctcqRyYk
+	21x1fXAK6OdA3Dg+ep6GFqXHV2u89LDvKXwGw2wV400Ibix4Bjk+CWqE0wSWTN07gh9RR3yFDZX
+	uFqpSToOLBvdTZGTQRT+iWsdDBq8ss913Zr9m71B7p1/cC2FlagBkxzRlNe7vMqUB+mAX++KUH2
+	2NVvoPu7YU8dXh3RFYEZFIZtY8x4KCxqentJXsWsyFHEtzSKXRZsa9+aEQwTwFMjlL5BrbIe9ZM
+	YFWCytctVxryM5FBUy3lI2Q=
+X-Google-Smtp-Source: AGHT+IFnNFIlMm9/L/bcyHMVah+51vkdm0T/jdjxqhLQ7LFy8/zaHzLzvotK4qxuC0MECLmidBODybpZNRr9UFx4Cuk=
+X-Received: by 2002:a17:903:fa7:b0:294:f6b4:9a42 with SMTP id
+ d9443c01a7336-2984ed2b5edmr67173465ad.9.1763044244630; Thu, 13 Nov 2025
+ 06:30:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-7-clamor95@gmail.com>
- <6112196.aeNJFYEL58@senjougahara>
-In-Reply-To: <6112196.aeNJFYEL58@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 13 Nov 2025 16:29:08 +0200
-X-Gm-Features: AWmQ_bn3skm8vRUEdsGZ0nnCIIDUv9P1uoNNzH9ij76xxg0XWrgAcalJ4Vq9gRI
-Message-ID: <CAPVz0n12YKGfjvYZZOkMaB18gk74xiprB7=XbcSpPvi9=Jtt4A@mail.gmail.com>
-Subject: Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+References: <20250918140451.1289454-1-elver@google.com> <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
+ <aMx4-B_WAtX2aiKx@elver.google.com> <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
+ <aM0eAk12fWsr9ZnV@elver.google.com>
+In-Reply-To: <aM0eAk12fWsr9ZnV@elver.google.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 13 Nov 2025 15:30:08 +0100
+X-Gm-Features: AWmQ_bmFh2aVYHZwkaHdVYkb7IeD9B_c5E9TrUEhRxSr8kO14B_rxSCEK8GKI2o
+Message-ID: <CANpmjNNoKiFEW2VfGM7rdak7O8__U3S+Esub9yM=9Tq=02d_ag@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-=D1=87=D1=82, 13 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 07:0=
-5 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On Fri, 19 Sept 2025 at 11:10, Marco Elver <elver@google.com> wrote:
+[..]
+> I went with "context guard" to refer to the objects themselves, as that
+> doesn't look too odd. It does match the concept of "guard" in
+> <linux/cleanup.h>.
 >
-> On Monday, September 15, 2025 5:01=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Configure EMC without mux for correct EMC driver support.
->
-> Rather than just 'removing EMC to MC clock mux in Tegra114', I would say =
-this patch removes current emc and emc_mux clocks and replaces them with th=
-e proper EMC clock implementation. I would edit the commit subject and comm=
-it message along those lines.
->
+> See second attempt below.
+[..]
 
-Noted
+I finally got around baking this into a renamed series, that now calls
+it "Context Analysis" - here's a preview:
+https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=ctx-analysis/dev
 
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra114.c | 48 ++++++++++++++++++++++----------
-> >  1 file changed, 33 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
-egra114.c
-> > index 8bde72aa5e68..6b3a140772c2 100644
-> > --- a/drivers/clk/tegra/clk-tegra114.c
-> > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > @@ -622,10 +622,6 @@ static const char *mux_plld_out0_plld2_out0[] =3D =
-{
-> >  };
-> >  #define mux_plld_out0_plld2_out0_idx NULL
-> >
-> > -static const char *mux_pllmcp_clkm[] =3D {
-> > -     "pll_m_out0", "pll_c_out0", "pll_p_out0", "clk_m", "pll_m_ud",
-> > -};
-> > -
-> >  static const struct clk_div_table pll_re_div_table[] =3D {
-> >       { .val =3D 0, .div =3D 1 },
-> >       { .val =3D 1, .div =3D 2 },
-> > @@ -672,7 +668,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max=
-] __initdata =3D {
-> >       [tegra_clk_csi] =3D { .dt_id =3D TEGRA114_CLK_CSI, .present =3D t=
-rue },
-> >       [tegra_clk_i2c2] =3D { .dt_id =3D TEGRA114_CLK_I2C2, .present =3D=
- true },
-> >       [tegra_clk_uartc] =3D { .dt_id =3D TEGRA114_CLK_UARTC, .present =
-=3D true },
-> > -     [tegra_clk_emc] =3D { .dt_id =3D TEGRA114_CLK_EMC, .present =3D t=
-rue },
-> >       [tegra_clk_usb2] =3D { .dt_id =3D TEGRA114_CLK_USB2, .present =3D=
- true },
-> >       [tegra_clk_usb3] =3D { .dt_id =3D TEGRA114_CLK_USB3, .present =3D=
- true },
-> >       [tegra_clk_vde_8] =3D { .dt_id =3D TEGRA114_CLK_VDE, .present =3D=
- true },
-> > @@ -1048,14 +1043,7 @@ static __init void tegra114_periph_clk_init(void=
- __iomem *clk_base,
-> >                                            0, 82, periph_clk_enb_refcnt=
-);
-> >       clks[TEGRA114_CLK_DSIB] =3D clk;
-> >
-> > -     /* emc mux */
-> > -     clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> > -                            ARRAY_SIZE(mux_pllmcp_clkm),
-> > -                            CLK_SET_RATE_NO_REPARENT,
-> > -                            clk_base + CLK_SOURCE_EMC,
-> > -                            29, 3, 0, &emc_lock);
-> > -
-> > -     clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
-RCE_EMC,
-> > +     clk =3D tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_=
-EMC,
-> >                                   &emc_lock);
-> >       clks[TEGRA114_CLK_MC] =3D clk;
-> >
-> > @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long=
- id)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_TEGRA124_CLK_EMC
-> > +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args=
- *clkspec,
-> > +                                             void *data)
-> > +{
-> > +     struct clk_hw *hw;
-> > +     struct clk *clk;
-> > +
-> > +     clk =3D of_clk_src_onecell_get(clkspec, data);
-> > +     if (IS_ERR(clk))
-> > +             return clk;
-> > +
-> > +     hw =3D __clk_get_hw(clk);
-> > +
-> > +     if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
-> > +             if (!tegra124_clk_emc_driver_available(hw))
-> > +                     return ERR_PTR(-EPROBE_DEFER);
-> > +     }
-> > +
-> > +     return clk;
-> > +}
-> > +#endif
-> > +
-> >  static void __init tegra114_clock_init(struct device_node *np)
-> >  {
-> >       struct device_node *node;
-> > @@ -1362,16 +1372,24 @@ static void __init tegra114_clock_init(struct d=
-evice_node *np)
-> >       tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
-> >                            tegra114_audio_plls,
-> >                            ARRAY_SIZE(tegra114_audio_plls), 24000000);
-> > +
-> > +     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> > +
->
-> Is there any particular reason for moving this here? If not, omitting the=
- change would simplify the patch a bit.
->
+As for when we should give this v4 another try: I'm 50/50 on sending
+this now vs. waiting for final Clang 22 to be released (~March 2026).
 
-IIRC, I tried to align with Tegra124 EMC clk driver, I will try to
-drop this change and check if all works as expected.
-
-> >       tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
-> >                                       &pll_x_params);
-> >
-> >       tegra_init_special_resets(1, tegra114_reset_assert,
-> >                                 tegra114_reset_deassert);
-> >
-> > +#ifdef CONFIG_TEGRA124_CLK_EMC
-> > +     tegra_add_of_provider(np, tegra114_clk_src_onecell_get);
-> > +     clks[TEGRA114_CLK_EMC] =3D tegra124_clk_register_emc(clk_base, np=
-,
-> > +                                                        &emc_lock);
-> > +#else
-> >       tegra_add_of_provider(np, of_clk_src_onecell_get);
-> > -     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> > +#endif
->
-> tegra124_clk_register_emc and tegra124_clk_emc_driver_available have stub=
- implementations when CONFIG_TEGRA124_CLK_EMC is not enabled, so it would b=
-e cleaner to just call them always.
->
-
-Yes, I will adjust this in v4. Thank you.
-
-> >
-> > -     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> > +     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> >
-> >       tegra_cpu_car_ops =3D &tegra114_cpu_car_ops;
-> >  }
-> >
->
->
->
->
+Preferences?
 
