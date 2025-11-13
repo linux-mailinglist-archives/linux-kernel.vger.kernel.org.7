@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-899820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5C5C59170
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:21:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACF3C59073
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:12:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45ED2546BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:37:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 343FF501A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA6335A936;
-	Thu, 13 Nov 2025 16:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093FF35A941;
+	Thu, 13 Nov 2025 16:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IMD82bH3"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2rK0EFS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E8235A155
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488E635A93C;
+	Thu, 13 Nov 2025 16:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051352; cv=none; b=JJwN+vy7vGfKT1tcLoRK9LJar7GgkrUsIGebZgkpEm0IBnytIt7hCXTTDcc6TA9JTl3lXZTbvN3emHPy2zrCsTkLyoSuIUKZXMeYW+OnFH5JLKYqICjEEClOE6pcRPDpWkf7EmMfEE2kdTuSepc9uttG7jzGKopaFsCEo72MpKw=
+	t=1763051374; cv=none; b=BicYVjtrfxwr4BWJJCw7fqxPKJRw6ysxon5Go7u4a0kc6OIlhzlHw99hsEOCGajEuxSYMk7eGVZWJwrdfSyO2xZZZwUo+351c98UaaNSyP0cKPefL/VDNmLekpaWVdRc81SlzdZMPdqzdIEx95n5wMBrQZsE0+3WQfeAU9CHM8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051352; c=relaxed/simple;
-	bh=JPzSVp59ZCmlDUI9Beydu0hu21hddcAy+tsckcJKHLI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uswx50AhyXZtyqpO47MtsyvW5ymGmYUF/QAI6rwwgnQj1b0EGr3PsFyjP2QmpOtVZDlAbnoXeX9I+QPcz2NwlX3FgXyhhPCB1fa6Wbl9WoHbESjpAZf4cXHjGimEq8qYsfgpFMRDMAfqjJ7skmz5uagJy6sIED+zZ8PD1lfNHoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IMD82bH3; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297f587dc2eso12902225ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:29:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763051350; x=1763656150; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jggj5Ym/rIR7T7fXmMSGr1c+7mHxEtZV9zaRb5SwErk=;
-        b=IMD82bH36oioDahCDvILysNXnaq2DaXCUir9392v2WbW5JU/mSoDjPJxuQtVRIqEOI
-         Wa/1sLh0HExEjwlboyCy+asnYoim7mPOHygiSKJwYM3VcQNnh1kab909Iq46OcOge7/y
-         1xX/d61/4DK0R9Xkh5+JIizyjIGb/3l8WpAJfZ1XiCU1si38JBz5VYHpVF0WsAwvlpBU
-         vaJmLAmDRJsUP2dxfedczQxIgGU0EK3Cv5CmSPoMGK449FpcsjEHJ+6GzicPZsT6WD36
-         scgxgSdd5tjtLjewp2KKUvUFkNtjqxrBVQgM+KgVln73bAsIM1DPrHm7byBlnYo6GsiF
-         Ltng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763051350; x=1763656150;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jggj5Ym/rIR7T7fXmMSGr1c+7mHxEtZV9zaRb5SwErk=;
-        b=k8NCr5KSAbP1LXUabGRv+EfAJY+48xXWKFST/kovO76v3M1p/O0UEOwvMb2kww3OIu
-         juu4dT7JSq45NB9VaOuYr8hl7YMe3pq4hII82SvuLlMFQBVgVAFRra56WB6Nr/Cg/OUr
-         y9MIL3l6abX39A2DUtf05nkKmC5Ykh/bvY0fFRb1XnhJJxDva4MdzXp2Oqmc7YuTr+6A
-         1Y546DTwRFJxDbhdsAcN864RdPY7vpNCs9YoUzkTcunisIGoZX+kE/t0PIMTr+YTOQaN
-         WRyjcgfNm5Kw154lI+ROCKRuQSjYfd/0bXn0DRNYNEVAUv4T3e8mqIZ84cQMw/z98biP
-         v1/w==
-X-Forwarded-Encrypted: i=1; AJvYcCX5dmncWv6Zl9Xfz7mbwam5EmCql430tiqd0xsiR+mffYfPXh+KKzW318d6E1D9UslsVqAnPxbny3AORp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD/tSkAOit+AE32/1p0l12BMFRH25Dw/8zSYVdKor20yTnFdn1
-	GdsYWuFIyp/sRdbmZh98uX0FQ9SMuZKtEU/83/myBoBJwYXl/PLglx9UCZQhAWF6W6v8ip/zHrB
-	7GAxgxg==
-X-Google-Smtp-Source: AGHT+IGN4f1Z5MZfxK3TyPutsSVmoeFbSOAbtCMPNamHDfo8B2Hxzq7CUQshCWhzAT4nMU/PWEj7huMl4y8=
-X-Received: from plbkj13.prod.google.com ([2002:a17:903:6cd:b0:268:cfa:6a80])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f683:b0:298:60d5:d27a
- with SMTP id d9443c01a7336-29860d5d2famr21044725ad.28.1763051350343; Thu, 13
- Nov 2025 08:29:10 -0800 (PST)
-Date: Thu, 13 Nov 2025 08:29:08 -0800
-In-Reply-To: <0d9e4840da85ae419b5f583c9dacee1588a509ba.camel@intel.com>
+	s=arc-20240116; t=1763051374; c=relaxed/simple;
+	bh=o4PnkyZUx4AYVVRBtOx+l6lCbnmaN+rai8Qixxl6L+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=f5OiJnlQep+u4Wcmb0mOy5oRPsF+EeJVhx1Lxv9YwCKrZ0ewB9CoyocBhoESiQsh7DSZQVjg5xXcButNi9ZghuBDAHXDlenXEUPLPXhJ+GZCnjXmmLJHtYahPWDZIEaDoRMabKl0lRndPhQDhm3UUZS9i1/jAVci2SOMGeX7x9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2rK0EFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1191C4CEF7;
+	Thu, 13 Nov 2025 16:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763051373;
+	bh=o4PnkyZUx4AYVVRBtOx+l6lCbnmaN+rai8Qixxl6L+s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P2rK0EFSKs/CQAHyYHeYXKw/qINMyPHZ1K73aZD2yWYVFoz4BSYjwNoo+Hhexm9b3
+	 1ZjdcJEBSe/cCF70DrUF7hKQ+CEIrcpB8wn6+VZm8IuaQrj3KXz5HSceHT376Phscl
+	 BGBAg18oeiF76IPtS3qMaKyX4tRZD+jIo704XV8JmP7PAM0ocjBdsqkkRbO9mCCKk7
+	 awZkLY/AvaEm263KeN2vRJsnljGPH+StvtePJkcPlRegrnBEjhpf+OGF2sIRD6UfJh
+	 qeTQpCkXQLsNQVUkf7xPrfoyfdGVXQlYIYiJ6hjGQ8PGjxauXTR6m6IthInv/seNtS
+	 8ZpaBcj2EXzCw==
+Date: Thu, 13 Nov 2025 10:29:32 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Simon Richter <Simon.Richter@hogyros.de>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org, Bjorn Helgaas <bhelgaas@google.com>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/9] PCI/IOV: Adjust ->barsz[] when changing BAR size
+Message-ID: <20251113162932.GA2285446@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112171630.3375-1-thorsten.blum@linux.dev>
- <4a2a74e01bfd31bc4bd7a672452c2d3d513c33db.camel@intel.com>
- <aRTtGQlywvaPmb8v@google.com> <0d9e4840da85ae419b5f583c9dacee1588a509ba.camel@intel.com>
-Message-ID: <aRYHVHOex4zkyt5z@google.com>
-Subject: Re: [PATCH RESEND] KVM: TDX: Use struct_size and simplify tdx_get_capabilities
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, 
-	"thorsten.blum@linux.dev" <thorsten.blum@linux.dev>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kas@kernel.org" <kas@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251028173551.22578-3-ilpo.jarvinen@linux.intel.com>
 
-On Thu, Nov 13, 2025, Rick P Edgecombe wrote:
-> On Wed, 2025-11-12 at 12:24 -0800, Sean Christopherson wrote:
-> > Your CI caught me just in time; I applied this locally last week, but haven't
-> > fully pushed it to kvm-x86 yet. :-)
-> 
-> The TDX CI tracks some upstream branches. Is there one in kvm_x86 tree that
-> would be useful? It's not foolproof enough to warrant sending out automated
-> mails. But we monitor it and might notice TDX specific issues. Ideally we would
-> not be chasing generic bugs in like scratch code not headed upstream or
-> something.
+On Tue, Oct 28, 2025 at 07:35:44PM +0200, Ilpo Järvinen wrote:
+> pci_rebar_set_size() adjusts BAR size for both normal and IOV BARs. The
+> struct pci_srvio keeps a cached copy of BAR size in unit of
+> resource_size_t in ->barsz[] ...
 
-Assuming you're tracking linux-next, I wouldn't bother adding kvm-x86 as kvm-x86/next
-is fed into linux-next.  I do push to topic branches, e.g. kvm-x86/tdx, before
-merging to kvm-x86/next, but at best you might "gain" a day or two, and the entire
-reason I do "half" pushes is so that I can run everything through my testing
-before "officially" publishing it to the world.
+Nit: s/pci_srvio/pci/sriov/  (fixed locally, FYI in case you post a v2)
 
-All in all, explicitly tracking anything kvm-x86 would likely be a net negative.
+I'm not sure what "unit of resource_size_t" adds here, maybe could be
+removed to just say this?
+
+  struct pci_srvio keeps a cached copy of BAR size in ->barsz[] ...
 
