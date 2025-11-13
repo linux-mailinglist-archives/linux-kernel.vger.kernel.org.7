@@ -1,228 +1,205 @@
-Return-Path: <linux-kernel+bounces-898681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC40C55BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F0BC55C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D2F8343A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:01:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 64ACF3447D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1865309F02;
-	Thu, 13 Nov 2025 05:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02FF223DEF;
+	Thu, 13 Nov 2025 05:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKgetDj7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zo9zThkm"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012070.outbound.protection.outlook.com [40.93.195.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1264E1EDA3C;
-	Thu, 13 Nov 2025 05:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763010067; cv=none; b=KTc+m4Y9AP82Kh5mTKqgwP6m/HAyofyLNVzUWC08OEo0KwmItJ3MNRcO3739xNWVCjUjVatuu33epFAb6mmTKj0GGrOGoDYhbj35u4nxbQUavieA1tNLdOqbm64FvYEylv8LFTc4LYZvISl5R9hQNVVzRjQFCJxQb7XvRnkOhns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763010067; c=relaxed/simple;
-	bh=elbIHIxtHN/iHCWls82TyqD3OxlbCSrevgrw2dpxzBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUpJ/VV1jDuaAydRqKxl407oRvgHnW72cnm7ePtLugmR6iQM9VDIrlH8LoPWGswymRxfi7bmu2CzvpE+aLQDUQwwkbmlCXjGdGrxzW0iMwB/OtazgPBR+1vFq2iMTKVBlfza3d/tvH/Vqt0ZY3cAtzodWcNVdB/HlYsPgO29izI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKgetDj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA76C19424;
-	Thu, 13 Nov 2025 05:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763010066;
-	bh=elbIHIxtHN/iHCWls82TyqD3OxlbCSrevgrw2dpxzBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DKgetDj7dRR9Tfdf7Vr3zTxqI/ZLzKWaMpV2ow4x0puNQVtVelNfSdUZ2RKjLTROg
-	 e1ci46SxX8QhyVvhq42cupyaLkqn5pSKQoZRm+zuYjmTGQS9oQOyxVGMOTWXVnqrqn
-	 kjF7uVCwbDXPS6dQ6ApjXrMoVlW3PmSAH2QB7+QzqoumRp0gcINGgIIRsvXyfyRRGR
-	 BtkronFgRDPcwh0yq/Rs8VWiEK/+rFeER34DXNzZWI6Zu8vXPXH9wjXc2SOeGJG89p
-	 xQ9MWkqJ0cmkhd7IeyQOOEAHVlMrI6o8oy3DiXMdXyw5HVS4BzlVEFeIHR2Pnqxg24
-	 RGy9fx6Mj6eSA==
-Date: Thu, 13 Nov 2025 10:30:42 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Hans de Goede <hansg@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	"Derek J. Clark" <derekjohn.clark@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 7/9] dt-bindings: connector: Add PCIe M.2 Mechanical Key
- E connector
-Message-ID: <qiwgnela4b6gbwuuq7xaqjong47c2ix6caagjl6ryqukzqkswn@6l7rvkf4dfyx>
-References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com>
- <20251112-pci-m2-e-v1-7-97413d6bf824@oss.qualcomm.com>
- <aRS/3OTerCBGlmBm@lizhi-Precision-Tower-5810>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA772940B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763010232; cv=fail; b=e5tL15P6OSjGwyuNDUIrrNQwgF90rwlDcaTd1NHR0FEv7bVoXeJzvZIgs7Mt0pt8Fqfijv5iUVhT7fTm0/0/wOwbFLbE/dPeadpALodO2u2B7YFIu1eWpCdHoHxtCW/SVZMUzWkygVXBJXvsEltq0NVhK0fV6bAWkYXIUn6PQvU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763010232; c=relaxed/simple;
+	bh=pNQuKY2WhdbM1nXgrE3wUYH5UqWu7LjG/RIaIAbncSY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Qo2+Debq2CiY0ubAaLzePSAdUdtrCgNpYUluZpnlXXcE/zgJMtEUkqc4c8Z7I84eWUHmTpvv9CA+davddjqIb7MFw5VsepCYkji99Y7vhUh0e+kr5ElYtWTchU5ZwwjeVg4bJqkLm/OfIdgwEStIdOGfRmLrN33GPvL6cgqqALE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zo9zThkm; arc=fail smtp.client-ip=40.93.195.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G2k+OXgIY/t8dubfFjGuaqUfDrdg0Yn2SwFNUMt9CggzOL+3rJvPqdISxDILq/sCPEs/hJvAw0jMwzGMWNQ7QkKUedUyaqHCk681d4fsT3ax7maU1M4+cQmwlx1BdCV8Ax3EvU1LSanfEqRr3+VuGc1wNXzhiP+j9UqKeUfriiNd5IblS04V3D1PAkL/1i/ZIIQu5mWVvYuV+ylqJ88WOOIiU6g2Ns6CiEbPGfBXufbwRL9xWy7bDS8/ZZbV/fehCzjINd03ynn2QjqmY7G0taYnfXV1lDxVjvm1Ql1tT4iNSRLTP648fh0c4WJ6B4n7szXWwG70dtTZTfw2dS0XDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d8LIlGiXhZlNm9uxyOkg60WnVC4cmK1O0QkVIZG+2Ro=;
+ b=lhUfi4Rf9/KjVJz/5R+MkmaF4/a156bmL9KAIg/5dJ+uG7TphvGtQSDxGOwmxm8fw7UFV/G4uBlrbIe6mK4VFUQhTSYgVdkyBmRygZTdQ1m110TUtUHRS0yC5GVJfIiGWbdYytQE0p7vD2P2chCqFEIu65ODZQRiBxLAbV+0gK1R41MSUoM0+7HkMnH1t0sIQI9TgMXQUToGQ0fHXtFcWhGui2U9dqORXyDSyeV5dOKiSOjM14NqAAor5BgJleHAt8F+QMDN9P0ETKJZXZh7Z/ZNtRdyra2+iDAWtqbsll7s55Du/U+lWptj7xgOflSxenuWvHmOTH67laB5D3axRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d8LIlGiXhZlNm9uxyOkg60WnVC4cmK1O0QkVIZG+2Ro=;
+ b=Zo9zThkmTkm1wLJlCQvsor530XbxnIu5SbHb2B+GoePBrH/uTU/ZO3kn8BB72ZbLw/RWcz0MvB7U9edWOntC6ynB7Ec8L5TtVSYd7UVrpLDZ7skrrAewo4qafRhak0mKOSuqNf4WF+QsrXjZdpdqBROW0gflhy2NjDbPaaTjh9PcSPka92z9f0Mw27sKyJ8hoxqUt19Oh8RXG29qNox+kiUjTpqZgK3WOTcFO7P90OjLnqrOHvTJ4TDu16IBNOi+VCQigmUKQr0eI79TowZGwv6aXDpyLo8mrxrr8F1qMKdtiyREyhJdtFg13Zn7rZI08aEmI8I19O8rn3bPxGM3+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by IA1PR12MB8407.namprd12.prod.outlook.com (2603:10b6:208:3d9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Thu, 13 Nov
+ 2025 05:03:48 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 05:03:48 +0000
+Message-ID: <a9c8fd41-66c6-4cb4-a033-4138be701b3f@nvidia.com>
+Date: Thu, 13 Nov 2025 16:03:43 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: softleaf device private fixes in
+ remove_migration_pmd()
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>
+References: <20251112044634.963360-1-balbirs@nvidia.com>
+ <20251112044634.963360-2-balbirs@nvidia.com>
+ <4e6286a6-721d-45cd-a4ea-e79e90e14fc7@kernel.org>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <4e6286a6-721d-45cd-a4ea-e79e90e14fc7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR05CA0030.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::35) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRS/3OTerCBGlmBm@lizhi-Precision-Tower-5810>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|IA1PR12MB8407:EE_
+X-MS-Office365-Filtering-Correlation-Id: b18df49c-2bd0-4a19-7311-08de22720785
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UUMvSEtSd0ZkSTlTUzZaK2pPb21XN2d3TUw0enIranBzV2JpS1pKbGtrVFBS?=
+ =?utf-8?B?RVE2enlEYzdBUDdzeHRySk9UOWtZaWlHNmQ2RXUvdlpuaUFTc2VVZXpHN1gw?=
+ =?utf-8?B?dVhwVitPVDJLY2s4WGRTZHJlbHErVXczbFFraFVUazlNQWhabXl1Ly9JbnA3?=
+ =?utf-8?B?WDRyUWhiUDRMUDNKdkRKVjQ4Mi9uZndWV24zWncxbzhkUGFMdk9HbXNhMzBF?=
+ =?utf-8?B?VGNKWWdwNTRQRWEydnE0WVl3NGVEV3o0cDhOVGUvQllKWlpGcWxMK1l3SkdR?=
+ =?utf-8?B?azlRNm0xNkgwK2J2MCtoTk5LZFhrUVJoMXpOODBQdndRN25VUE14aVFLcWti?=
+ =?utf-8?B?RUM0R0Q3MzMvSDRveXhlbC9xN0Z2Q1VKb0pxTEJDTlJlV3pxWnZqM0VFVjhs?=
+ =?utf-8?B?YWluUGRSNmhCMlI3M1lqYVVLZ3QrNDl0ODUrNk1jbWd3QWh2dnpiNjMvbWtE?=
+ =?utf-8?B?S0JjQkYxZlRMMThwMkhOZGptVWZ3ZS9oN1pQTlZBYTN5UlFvS3diSERJK3JY?=
+ =?utf-8?B?N1BLb3Qwb3ZhcU1hbHRQNzQwVTV6MDZFeEp1MGJsd2hLVkMxS3JMa01IaGkx?=
+ =?utf-8?B?T1hBNUFzM05vTVVESGIwdlU4NFBxYUozclhyMUlZclQ1U2lkY0k2L05XczZH?=
+ =?utf-8?B?K1lHd1QydkZEVDBvNHFpZTh2ZWVzbFFLeVJmMkdQczVGS0pjbHlsSldpV3NX?=
+ =?utf-8?B?S1BzV1JZTmRYeGtFTkh6Q1RlQmpWZjE1dytMUCtIalJBMWNPMG1wLzZvRW0v?=
+ =?utf-8?B?YWFKbXhoS1hCYVNEbWc4UGxEQmI4Tm9SZGQ2ZElXNmFuVlI3QzlKbCsyWXY3?=
+ =?utf-8?B?Umw4MXBYQXJoVmtsZzBFN25jUG0zbzltUW0wVFpRVE0vVW5mQ3JiTFJBVmZw?=
+ =?utf-8?B?N0pSbEY1M05HOVVnTTI1WkFoTENCWkJRdHhsM092dk85Rks5TG9pZmV4V0Yx?=
+ =?utf-8?B?dDVYVzB4WExQZm91N3loQUF2UytZcjJtQ0VsZDdDMEEyK0FuYjk3NnpZZFpE?=
+ =?utf-8?B?aE1UUmNnMUtDNXp1RUZuZFRBbHBrZ0RnSHRRcXUyWWJXVGluRVJZVHc4YVJs?=
+ =?utf-8?B?Vis3dDl5SURsZm9OVWVTN3dKRjk3em8yVW1iZnJlaG15NE5pKzZuWHB6K3VY?=
+ =?utf-8?B?Uk0wd3p1YnlHOFJEcGVhR1ltQVJORkhrc29xTEM4MFVuL05RWS82NW52SmNo?=
+ =?utf-8?B?S3lHZEU0L2p4Vmp2VkJHMitpeWkyUjlpWEY5T1Z4UUhQTkdFMjJ0V2puR0dp?=
+ =?utf-8?B?NW8rWmNlSU9ZQzZ0Z0dkb3RaNEt5d1lucWpBWjFNYnU2eUpVam9FTlkwOERC?=
+ =?utf-8?B?bGRCa1Z2dUlrTmlpeGhUcXVpQTNRaDJSWXcwMmc1WW94Y21rd2Y3L3pTdG9X?=
+ =?utf-8?B?SWlacm9WdFdpWXpiZFpYREF3QnRsb2VyUHY1OGlpdnArZno2TjM3U1RnbVZO?=
+ =?utf-8?B?UXl6SS91dDhCMnV4R3VnOE5LSGF5czhqSWFWc0RYWVRZTnJhbEJNS242a0pJ?=
+ =?utf-8?B?YkNRaVJoUVZxbjVnOE9CRDl4ZGJxenhFTkVlOUFqUHMwRll5Y1JOTTVpUmJ2?=
+ =?utf-8?B?L1oyRFpNZnoveEMrSU1xR0h5NzZvVCtuYlJ4eU9sSUdzVFRQTWoxeGMvb3lh?=
+ =?utf-8?B?UnVGWk5TaWhpUVVXcDI4QXdtR1NQK3V1Zzl0QVc4ditXRTFYMnNNS2hPVjBr?=
+ =?utf-8?B?K0YyYlEwK3puelFlbmFVOUhvMXkwdUpZdkNXT2FyTnVPMzVUZ0c2bzNJRjQy?=
+ =?utf-8?B?NVNTMm5kRHhFb3IxOHdwQjVQOEZYa2Q2MHpyTUt4OVNKVjhyQ1h6b2c1akZD?=
+ =?utf-8?B?STJJMGVRRkhRamR2cFlSemNLYzVvRlQvTFl0N1Zaa1hGTHl2Q2w0bzA2R1li?=
+ =?utf-8?B?VDlmcHh6d2RtUk9aSmgvaUE5aG43YUxsR2VidTFMa0RxYmllWWlIRXIvOG9p?=
+ =?utf-8?Q?Ab4baYY125qPGT3+/ZWCnaIkgEWb/7ga?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1gwVmRBVDNwQ0xIV1h0ZUI3NGw0OTk1OENYWExib2ZySityY0NYbDkvcTNK?=
+ =?utf-8?B?T1dmcmVGdlRkdlozY0lvN0h2Ym5OV0hRYlJmK2R5U2xxVXpjTE1VWVJWVFNM?=
+ =?utf-8?B?eHY4cWlIMG5pbStNNis4czF0MHRESXowMmVJeEowMWFTYjkwcTNaakVwTG1N?=
+ =?utf-8?B?azFkNjNiQnhEVHZDZ2dOSEhLMURGaEEvMnp4b0VDRnlqbFkvQ0QyVitDSHpy?=
+ =?utf-8?B?eWxlZDhMRnVObjNEK3cvNmVrNHZZSkRDRzgzNFlVREhCUXhPL0VrMTZSdmow?=
+ =?utf-8?B?VGd0T0daaDlnM1IycXk3NGpUb2ZrU2ZndmtjZElBUnlpQUxNUG1sK0hmY2NW?=
+ =?utf-8?B?Um5GUUtrZ1RFKzZROXUvTC83ZjV6SExnYkIwbjZjZVg5bUVoYmNkVzlLemZP?=
+ =?utf-8?B?T3gralc2dnBqM05Odk52b2FqUmgxa1ZKWHpjRFFyUGl1Y0orK3EwUVRqYXhG?=
+ =?utf-8?B?WDRuWUVXSThkQUpJUVBJRkpWMnByWk5XWmdyRHFEZTkydzdkRGNFNkpGR0dl?=
+ =?utf-8?B?ZDhkSDk3bS9ORzl1cTVIN1JLcWJhOEUxSUNKdm45cDRzakhSSnhhQjN0MUN6?=
+ =?utf-8?B?RmpjWXpCUVN6TmRFalBnWVNXYjFoVmZOU0dzUndobm83NDc4Um8zM2tjQ3d2?=
+ =?utf-8?B?eDVyUWZZM0syY1hGYTZVeG9kaXN1YklMV296bFViK1RQcW8zWnpUU09BVnpo?=
+ =?utf-8?B?NVBJQUh4bVlmUWhNNEdRYWJ3Y1Z5MkVsN01KUDBsb3hLM25zMzYrSWIyQytI?=
+ =?utf-8?B?QXpaRXN6OUZybUZzVFZJVVFNeXZCVlBpRFVVTjRmdWVHQlhkQmNzMlNoaUEx?=
+ =?utf-8?B?WTRteW5HNVprcHVZTFVmNy81cTZpZzJJc0dVZmNCV1g3UHhhUnpDYm12TmdK?=
+ =?utf-8?B?aGpHOUs3RjRWRHRhWm1zOGNteVVVd0RsOFpoVitmUVBuOEN2Z2NFOTY4Yjlt?=
+ =?utf-8?B?NktPQ2JMdVk3amsrWFZnVU1mV1hmWENzbkh4VU9XRWJFS3JlenlsWENoYk85?=
+ =?utf-8?B?dExXQVVLa0c4OUpaWnFRZElWZnozUjZiS2h2bkZDemVKZTNWRnU4blRuYzE1?=
+ =?utf-8?B?aFlTVXgzUGlSZWdpK0hvRGV2b0krSVIzY3ZDRWRyMzVLaC9RNUFwVEI1dlFh?=
+ =?utf-8?B?MmZITHN3M01UN1c4eEQyMmRvUnhWenY2eElpcEJKcWhpbDNmOXE2a2VBSGw1?=
+ =?utf-8?B?akVjNEErTTIrOXBDdGNGNGhUYWJKd0hscW5qaFRQemdkQ291SHN3bk55c3Fs?=
+ =?utf-8?B?dlRUYmlFODF3N1RPcUpqZ3MwU1lIWmw3MHYzZndQRDlVUW02OHRVZkxPOGV1?=
+ =?utf-8?B?eHdZRExBREttUEtNSzRaNXBpZFFkaVpzOHhCYzg0REUvOUx3dDhGOHNmWGhp?=
+ =?utf-8?B?UHEwc0hTNkRENktNamNCMjdPSGtER3luOVM5WWpuWCthTGJFd2d2cVo4Mm1n?=
+ =?utf-8?B?YVp0ZXo3dWxlVW9CdjJnTDhJZXJxZ0FXYTlyRmNkOVN3WGgwTHZwSUJPRW9C?=
+ =?utf-8?B?T2Zob3hZZVIzQVVJNmEvSXU0dy8vd2xEckFrcWNyOTNWS1dNMDgzM2RvcDNG?=
+ =?utf-8?B?Z0dOaC9zT2cwUzFjK0lyTHJaZU4rQjhLRFZrR0VncTBuTzJlblpzeDNJeUtF?=
+ =?utf-8?B?WXpLOEV3cnk1RmFBR0N4TlJqb1RBZ290V1FHSnNUUkVPMWtON1llcnp4LzNq?=
+ =?utf-8?B?b3BEeXY5YmNGVnZ3MXIvSGo2REdFbUpET3cwcmxacFRKbW4wMGZnU2lHVXpC?=
+ =?utf-8?B?TGE5QUxmVElYaG5ocVVCUWpEdTEveVlzckgxa2NLRDNXam16TkhkcjQzSGJx?=
+ =?utf-8?B?UGJ2ZlAzN04zc0Y0ZW1ScWtxRFluVXhoazV0dllVcGt2Z3k0MWhpYUludXlC?=
+ =?utf-8?B?WjVVZFk1V29zdGpyVWt3UnZOd2lLelNvTWFYdlNPd0NFSjc3d0RaRThXaGsr?=
+ =?utf-8?B?VlduS2kvUzB3a2M5RUNZOW5iTlNiYjNZdFlpZEllUmo0S2tPUVdSTmRNQmgv?=
+ =?utf-8?B?bGp0bEZRbUdvdWs3dm1iZC9JNEpSM0U3QVBvZUVGNlE4eTBYYi8wTUVWa2xY?=
+ =?utf-8?B?NWJQOWVxUlp2dEhoTGJ2T2s1bnBoeHhyWmJ3NW5MWU8vbGRQQ0E4cUFnVmYw?=
+ =?utf-8?B?ditjaUhYaFd2NGtqOXhMV0NIN2FrU1Q0THdNNGpRSzFXOG1yemRPTG1KNmIw?=
+ =?utf-8?Q?uU+0ZAUesnp3npLhbSxz1ea0hNZIC1mGnvUxoSEtXC2u?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b18df49c-2bd0-4a19-7311-08de22720785
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:03:48.3124
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gCGIWoME3yKqRvyx/SIeJpglc2WKGBs7MkQEZ4EXiSQ+TOvUJIzZxE30K8QhjcndovN1nEMcXe6C/63MU7YSmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8407
 
-On Wed, Nov 12, 2025 at 12:11:56PM -0500, Frank Li wrote:
-> On Wed, Nov 12, 2025 at 08:15:19PM +0530, Manivannan Sadhasivam wrote:
-> > Add the devicetree binding for PCIe M.2 Mechanical Key E connector defined
-> > in the PCI Express M.2 Specification, r4.0, sec 5.1.2. This connector
-> > provides interfaces like PCIe or SDIO to attach the WiFi devices to the
-> > host machine, USB or UART+PCM interfaces to attach the Bluetooth (BT)
-> > devices along with additional interfaces like I2C for NFC solution. At any
-> > point of time, the connector can only support either PCIe or SDIO as the
-> > WiFi interface and USB or UART as the BT interface.
-> >
-> > The connector provides a primary power supply of 3.3v, along with an
-> > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> > 1.8v sideband signaling.
-> >
-> > The connector also supplies optional signals in the form of GPIOs for fine
-> > grained power management.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  .../bindings/connector/pcie-m2-e-connector.yaml    | 154 +++++++++++++++++++++
-> >  MAINTAINERS                                        |   1 +
-> >  2 files changed, 155 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..91cb56b1a75b7e3de3b9fe9a7537089f96875746
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-e-connector.yaml
-> > @@ -0,0 +1,154 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/connector/pcie-m2-e-connector.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: PCIe M.2 Mechanical Key E Connector
-> > +
-> > +maintainers:
-> > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > +
-> > +description:
-> > +  A PCIe M.2 E connector node represents a physical PCIe M.2 Mechanical Key E
-> > +  connector. Mechanical Key E connectors are used to connect Wireless
-> > +  Connectivity devices including combinations of Wi-Fi, BT, NFC to the host
-> > +  machine over interfaces like PCIe/SDIO, USB/UART+PCM, and I2C.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: pcie-m2-e-connector
-> > +
-> > +  vpcie3v3-supply:
-> > +    description: A phandle to the regulator for 3.3v supply.
-> > +
-> > +  vpcie1v8-supply:
-> > +    description: A phandle to the regulator for VIO 1.8v supply.
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +    description: OF graph bindings modeling the interfaces exposed on the
-> > +      connector. Since a single connector can have multiple interfaces, every
-> > +      interface has an assigned OF graph port number as described below.
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: PCIe/SDIO interface
+On 11/12/25 22:37, David Hildenbrand (Red Hat) wrote:
+> On 12.11.25 05:46, Balbir Singh wrote:
+>> commit a6ca2ba46390 ("mm: replace pmd_to_swp_entry() with softleaf_from_pmd()")
 > 
+> So should this be squashed into Lorenzo patch, or incorporated in his series in case he has to resend?
 > 
-> PCIe and SDIO is difference signal at key E. why combine to one port? The
-> similar case is USB2.0/UART
+>> does not work with device private THP entries. softleaf_is_migration_young()
+>> asserts that the entry be a migration entry, but in the current code, the
+>> entry might already be replaced by a device private entry by the time the
+>> check is made. The issue exists with commit
+>> 7385dbdbf841 ("mm/rmap: extend rmap and migration support device-private entries")
+>>
 > 
-
-They will be defined as separate endpoints in the next version.
-
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: USB 2.0/UART interface
-> > +
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: PCM/I2S interface
-> > +
-> > +      port@3:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: I2C interface
-> > +
-> > +    oneOf:
-> > +      - required:
-> > +          - port@0
-> > +
-> > +  clocks:
-> > +    description: 32.768 KHz Suspend Clock (SUSCLK) input from the host system to
-> > +      the M.2 card. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.1 for
-> > +      more details.
-> > +    maxItems: 1
-> 
-> Do we need add pciref clock here?
-> 
-> > +
-> > +  w_disable1-gpios:
-> 
-> use "-"
-> 
-> w-disable1-gpios
+> Because this confuses me. If it's already a problem in the commit-to-go-upstream-first, it should be fixed in that commit?
 > 
 
-I just went with the spec that defines the signal as W_DISABLE.
+Not sure how to handle this, because that would break rebase of mm/mm-new
+or I'd have to send a replacement patch for the original patch from Lorenzo
+(which does not seem right).
 
-> > +    description: GPIO controlled connection to W_DISABLE1# signal. This signal
-> > +      is used by the system to disable WiFi radio in the M.2 card. Refer, PCI
-> > +      Express M.2 Specification r4.0, sec 3.1.12.3 for more details.
-> > +    maxItems: 1
-> > +
-> > +  w_disable2-gpios:
-> > +    description: GPIO controlled connection to W_DISABLE2# signal. This signal
-> > +      is used by the system to disable BT radio in the M.2 card. Refer, PCI
-> > +      Express M.2 Specification r4.0, sec 3.1.12.3 for more details.
-> > +    maxItems: 1
-> > +
-> > +  led1-gpios:
-> > +    description: GPIO controlled connection to LED_1# signal. This signal is
-> > +      used by the M.2 card to indicate the card status via the system mounted
-> > +      LED. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.2 for more
-> > +      details.
-> > +    maxItems: 1
-> > +
-> > +  led2-gpios:
-> > +    description: GPIO controlled connection to LED_2# signal. This signal is
-> > +      used by the M.2 card to indicate the card status via the system mounted
-> > +      LED. Refer, PCI Express M.2 Specification r4.0, sec 3.1.12.2 for more
-> > +      details.
-> > +    maxItems: 1
-> > +
-> > +  viocfg-gpios:
-> > +    description: GPIO controlled connection to IO voltage configuration
-> > +      (VIO_CFG) signal. This signal is used by the M.2 card to indicate to the
-> > +      host system that the card supports an independent IO voltage domain for
-> > +      the sideband signals. Refer, PCI Express M.2 Specification r4.0, sec
-> > +      3.1.15.1 for more details.
-> > +    maxItems: 1
-> > +
-> > +  uim_power_src-gpios:
-> 
-> property use -
-> 
+I'll post a simpler patch, but it needs to be on top of the series
 
-Again, this is as per the spec. If DT maintainers object to it, I'll change it.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Balbir
 
