@@ -1,139 +1,333 @@
-Return-Path: <linux-kernel+bounces-899544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8353AC58373
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:08:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9741FC583AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04723B25E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:59:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 431D14EBC65
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A244223A984;
-	Thu, 13 Nov 2025 14:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Blrvp02f"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5533135CBD3;
-	Thu, 13 Nov 2025 14:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DA62FB0A9;
+	Thu, 13 Nov 2025 15:02:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967DC2F6592
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763045963; cv=none; b=RdPwdTp+ud3nBzxZUSSb5Facq/D5Ka/l3YQf0LhGDaHERHZQk/A08Z8R+ENgI/fpQTjeKPAt6vBOoIr/M14XfTlRtYN7SdQBj7/hwHr5g8+J388mxIpxOs7vlb2TrYyyV8diQftqc5BAEAyzHWyJ41DTyZotb5Q7eXUwhx3uQXg=
+	t=1763046171; cv=none; b=bJxDT0MetouAd5GIoyvIjqThPnSh8Prlfie4dttfnuEsz1SviPG4nr6iq4EVuaUI+zb5599n0k+8DBtfFa+rzHxO9IbE619/nOmdvNZCIDAQ1rZtmDDHNXkYz/PXn3E8Z5fZBJZZeQWJkl6DC9LQYz6h5w80JqZI0m24Z+dMNGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763045963; c=relaxed/simple;
-	bh=Db9hu2HdD//jk91631tPIDTC2WqeaooR8SDMjqObAYQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LjpSEHqggDc9NCKZSpnntDWOAAMNe+6iGARqXwnuCedsNIVnKAliISgssEi/TCcPXbOLAeAQQbtWg8a3f4wBBk2Hl46Eho5zxnKil9qN9YZSBOg9U11M6ySdcgzPOLBTYy9ZglC5+RCOF2jI0Rj4VBaGF3QDc2uGohmMbqgcKXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Blrvp02f; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E73346003C0C;
-	Thu, 13 Nov 2025 14:59:16 +0000 (WET)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with UTF8LMTP id 4hFpyF9LhRyf; Thu, 13 Nov 2025 14:59:14 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 33CF66003400;
-	Thu, 13 Nov 2025 14:59:13 +0000 (WET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail2; t=1763045954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=chc/NlipiB+N/nq7OLHWxVwlHw0T2tebinCs9Z7oCSs=;
-	b=Blrvp02fgKdi0gybUy5/jQu6fFHa3/odEf9jRtYaWzg7dfTMIVAOF4EN5j5p0mI+lfunUa
-	CLTSsv6WAywZgrNJ9i5ibGU+QUh8v19ZVq+aUgFfSys6+a+ml+JINeFsh0XajytK3aoQIM
-	yLsQtqCAf8BOOqsd0XO6o6OjTO3iCr2ZPy83PQBvsRqlqDq8Jwl5XrgJrSXnFSP0CMAz0v
-	B8N1Tv5lolol3WbvTVgXEktRQNVm2uWU/L0RSTr9yMFnhaBl1GWwKsiL5Lnl+RN+kW+rKK
-	Rv8/cE7OJ+2+uIBZRSkKKRV3UOclJBXU+xgyIg9V8vO8D+vGidWyjBB1AiYe9g==
-Received: from [10.39.153.220] (unknown [87.58.94.198])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 0A4F136007B;
-	Thu, 13 Nov 2025 14:59:11 +0000 (WET)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Thu, 13 Nov 2025 14:59:06 +0000
-Subject: [PATCH] usb: phy: Initialize struct usb_phy list_head
+	s=arc-20240116; t=1763046171; c=relaxed/simple;
+	bh=ofqEaqcDcRxADyvyfw9NAbvPUoDTknNZKyghgKMGzyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQnQ6aCpQEVYSn5qkw99SpeMYohmk9PNc6mCEmbndSQa6Vo8JgWXvji9Kw9DvTgV5VWPRitaa2XRWA9FnmWmYIySYGVwMjZOO3gjC3gDuyZJfzRvyIrJNpvcZ/jEbJYLWz15YqB//chzOhA2ZfaaN1agqrqMRF1mAVD5JGp/Ab4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17A7B1477;
+	Thu, 13 Nov 2025 07:02:41 -0800 (PST)
+Received: from [10.1.27.38] (Suzukis-MBP.cambridge.arm.com [10.1.27.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 140C63F66E;
+	Thu, 13 Nov 2025 07:02:46 -0800 (PST)
+Message-ID: <15868ecb-c1e7-4273-a2e2-5c10f2701c0b@arm.com>
+Date: Thu, 13 Nov 2025 15:02:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] coresight: tmc: refactor the tmc-etr mode setting
+ to avoid race conditions
+Content-Language: en-GB
+To: Junhao He <hejunhao3@h-partners.com>, james.clark@linaro.org,
+ anshuman.khandual@arm.com, yeoreum.yun@arm.com, mike.leach@linaro.org,
+ leo.yan@arm.com
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+ jonathan.cameron@huawei.com
+References: <20251111122149.1981162-1-hejunhao3@h-partners.com>
+ <20251111122149.1981162-3-hejunhao3@h-partners.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20251111122149.1981162-3-hejunhao3@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-diogo-smaug_typec-v1-1-f1aa3b48620d@tecnico.ulisboa.pt>
-X-B4-Tracking: v=1; b=H4sIADnyFWkC/x3MQQ5AMBBA0avIrE2ilQquIiIto2ZBpUVI4+4ay
- 7f4P0IgzxSgzSJ4ujiw2xJEnsG46M0S8pQMspBKCFHixM46DKs+7XA8O42oKiML1Zi6kQZSt3u
- a+f6fXf++HxXsxWVjAAAA
-X-Change-ID: 20251113-diogo-smaug_typec-56b2059b892b
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Felipe Balbi <felipe.balbi@linux.intel.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763045951; l=1571;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=Db9hu2HdD//jk91631tPIDTC2WqeaooR8SDMjqObAYQ=;
- b=KCLSRK3WOMqOzloTkWHQbkZQGg07lhBfJXX+nF3hkqXupGm9rr5HcRbbZMlp/SQBJU5dMMxZ3
- Y2avkf0OvFQB/hDjHpye+rlpQvGJ9F4RxWptdINWjEi5UvMVF3q4JTe
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
-When executing usb_add_phy() and usb_add_phy_dev() it is possible that
-usb_add_extcon() fails (for example with -EPROBE_DEFER), in which case
-the usb_phy does not get added to phy_list via
-list_add_tail(&x->head, phy_list).
+Hi Junhao,
 
-Then, when the driver that tried to add the phy receives the error
-propagated from usb_add_extcon() and calls into usb_remove_phy() to
-undo the partial registration there will be an unconditional call to
-list_del(&x->head) which is notinitialized and leads to a NULL pointer
-dereference.
+While your patch fixes the problem it introduces imbalance in the
+way perf vs sysfs modes are handled.
 
-Fix this by initializing x->head before usb_add_extcon() has a chance to
-fail.
+On 11/11/2025 12:21, Junhao He wrote:
+> From: Junhao He <hejunhao3@huawei.com>
+> 
+> When trying to run perf and sysfs mode simultaneously, the WARN_ON()
+> in tmc_etr_enable_hw() is triggered sometimes:
+> 
+>   WARNING: CPU: 42 PID: 3911571 at drivers/hwtracing/coresight/coresight-tmc-etr.c:1060 tmc_etr_enable_hw+0xc0/0xd8 [coresight_tmc]
+>   [..snip..]
+>   Call trace:
+>    tmc_etr_enable_hw+0xc0/0xd8 [coresight_tmc] (P)
+>    tmc_enable_etr_sink+0x11c/0x250 [coresight_tmc] (L)
+>    tmc_enable_etr_sink+0x11c/0x250 [coresight_tmc]
+>    coresight_enable_path+0x1c8/0x218 [coresight]
+>    coresight_enable_sysfs+0xa4/0x228 [coresight]
+>    enable_source_store+0x58/0xa8 [coresight]
+>    dev_attr_store+0x20/0x40
+>    sysfs_kf_write+0x4c/0x68
+>    kernfs_fop_write_iter+0x120/0x1b8
+>    vfs_write+0x2c8/0x388
+>    ksys_write+0x74/0x108
+>    __arm64_sys_write+0x24/0x38
+>    el0_svc_common.constprop.0+0x64/0x148
+>    do_el0_svc+0x24/0x38
+>    el0_svc+0x3c/0x130
+>    el0t_64_sync_handler+0xc8/0xd0
+>    el0t_64_sync+0x1ac/0x1b0
+>   ---[ end trace 0000000000000000 ]---
+> 
+> Since the sysfs buffer allocation and the hardware enablement is not
+> in the same critical region, it's possible to race with the perf
+> 
+> mode:
+>    [sysfs mode]                   [perf mode]
+>    tmc_etr_get_sysfs_buffer()
+>      spin_lock(&drvdata->spinlock)
+>      [sysfs buffer allocation]
+>      spin_unlock(&drvdata->spinlock)
+>                                   spin_lock(&drvdata->spinlock)
+>                                   tmc_etr_enable_hw()
+>                                     drvdata->etr_buf = etr_perf->etr_buf
+>                                   spin_unlock(&drvdata->spinlock)
+>   spin_lock(&drvdata->spinlock)
 
-Fixes: 7d21114dc6a2d53 ("usb: phy: Introduce one extcon device into usb phy")
-Cc: stable@vger.kernel.org
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/usb/phy/phy.c | 4 ++++
- 1 file changed, 4 insertions(+)
+^^ Could we not double check the mode here and break out ?
 
-diff --git a/drivers/usb/phy/phy.c b/drivers/usb/phy/phy.c
-index e1435bc59662..5a9b9353f343 100644
---- a/drivers/usb/phy/phy.c
-+++ b/drivers/usb/phy/phy.c
-@@ -646,6 +646,8 @@ int usb_add_phy(struct usb_phy *x, enum usb_phy_type type)
- 		return -EINVAL;
- 	}
- 
-+	INIT_LIST_HEAD(&x->head);
-+
- 	usb_charger_init(x);
- 	ret = usb_add_extcon(x);
- 	if (ret)
-@@ -696,6 +698,8 @@ int usb_add_phy_dev(struct usb_phy *x)
- 		return -EINVAL;
- 	}
- 
-+	INIT_LIST_HEAD(&x->head);
-+
- 	usb_charger_init(x);
- 	ret = usb_add_extcon(x);
- 	if (ret)
+Something like this :
 
----
-base-commit: 35d084745b3ea4af571ed421844f2bb1a99ad6e2
-change-id: 20251113-diogo-smaug_typec-56b2059b892b
 
-Best regards,
--- 
-Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c 
+b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index e0d83ee01b77..2097c57d19d0 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -1314,6 +1314,9 @@ static int tmc_enable_etr_sink_sysfs(struct 
+coresight_device *csdev)
+         if (coresight_get_mode(csdev) == CS_MODE_SYSFS) {
+                 csdev->refcnt++;
+                 goto out;
++       } else if (coresight_get_mode(csdev) != CS_MODE_DISABLED) {
++               ret = -EBUSY;
++               goto out;
+         }
+
+         ret = tmc_etr_enable_hw(drvdata, sysfs_buf);
+
+
+Suzuki
+
+
+>   tmc_etr_enable_hw()
+>     WARN_ON(drvdata->etr_buf) // WARN sicne etr_buf initialized at
+>                                  the perf side
+>    spin_unlock(&drvdata->spinlock)
+> 
+> A race condition is introduced here, perf always prioritizes execution, and
+> warnings can lead to concerns about potential hidden bugs, such as getting
+> out of sync.
+> 
+> To fix this, configure the tmc-etr mode before invoking enable_etr_perf()
+> or enable_etr_sysfs(), explicitly check if the tmc-etr sink is already
+> enabled in a different mode, and simplily the setup and checks for "mode".
+> To prevent race conditions between mode transitions.
+> 
+> Fixes: 296b01fd106e ("coresight: Refactor out buffer allocation function for ETR")
+> Reported-by: Yicong Yang <yangyicong@hisilicon.com>
+> Closes: https://lore.kernel.org/linux-arm-kernel/20241202092419.11777-2-yangyicong@huawei.com/
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> Tested-by: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Junhao He <hejunhao3@h-partners.com>
+> ---
+>   .../hwtracing/coresight/coresight-tmc-etr.c   | 106 +++++++++---------
+>   1 file changed, 55 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index b07fcdb3fe1a..fe1d5e8a0d2b 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -1263,11 +1263,6 @@ static struct etr_buf *tmc_etr_get_sysfs_buffer(struct coresight_device *csdev)
+>   		raw_spin_lock_irqsave(&drvdata->spinlock, flags);
+>   	}
+>   
+> -	if (drvdata->reading || coresight_get_mode(csdev) == CS_MODE_PERF) {
+> -		ret = -EBUSY;
+> -		goto out;
+> -	}
+> -
+>   	/*
+>   	 * If we don't have a buffer or it doesn't match the requested size,
+>   	 * use the buffer allocated above. Otherwise reuse the existing buffer.
+> @@ -1278,7 +1273,6 @@ static struct etr_buf *tmc_etr_get_sysfs_buffer(struct coresight_device *csdev)
+>   		drvdata->sysfs_buf = new_buf;
+>   	}
+>   
+> -out:
+>   	raw_spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   
+>   	/* Free memory outside the spinlock if need be */
+> @@ -1289,7 +1283,7 @@ static struct etr_buf *tmc_etr_get_sysfs_buffer(struct coresight_device *csdev)
+>   
+>   static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+>   {
+> -	int ret = 0;
+> +	int ret;
+>   	unsigned long flags;
+>   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   	struct etr_buf *sysfs_buf = tmc_etr_get_sysfs_buffer(csdev);
+> @@ -1299,23 +1293,10 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+>   
+>   	raw_spin_lock_irqsave(&drvdata->spinlock, flags);
+>   
+> -	/*
+> -	 * In sysFS mode we can have multiple writers per sink.  Since this
+> -	 * sink is already enabled no memory is needed and the HW need not be
+> -	 * touched, even if the buffer size has changed.
+> -	 */
+> -	if (coresight_get_mode(csdev) == CS_MODE_SYSFS) {
+> -		csdev->refcnt++;
+> -		goto out;
+> -	}
+> -
+>   	ret = tmc_etr_enable_hw(drvdata, sysfs_buf);
+> -	if (!ret) {
+> -		coresight_set_mode(csdev, CS_MODE_SYSFS);
+> +	if (!ret)
+>   		csdev->refcnt++;
+> -	}
+>   
+> -out:
+>   	raw_spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   
+>   	if (!ret)
+> @@ -1729,39 +1710,24 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+>   {
+>   	int rc = 0;
+>   	pid_t pid;
+> -	unsigned long flags;
+>   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   	struct perf_output_handle *handle = data;
+>   	struct etr_perf_buffer *etr_perf = etm_perf_sink_config(handle);
+>   
+> -	raw_spin_lock_irqsave(&drvdata->spinlock, flags);
+> -	 /* Don't use this sink if it is already claimed by sysFS */
+> -	if (coresight_get_mode(csdev) == CS_MODE_SYSFS) {
+> -		rc = -EBUSY;
+> -		goto unlock_out;
+> -	}
+> -
+> -	if (WARN_ON(!etr_perf || !etr_perf->etr_buf)) {
+> -		rc = -EINVAL;
+> -		goto unlock_out;
+> -	}
+> +	if (WARN_ON(!etr_perf || !etr_perf->etr_buf))
+> +		return -EINVAL;
+>   
+>   	/* Get a handle on the pid of the session owner */
+>   	pid = etr_perf->pid;
+>   
+>   	/* Do not proceed if this device is associated with another session */
+> -	if (drvdata->pid != -1 && drvdata->pid != pid) {
+> -		rc = -EBUSY;
+> -		goto unlock_out;
+> -	}
+> +	if (drvdata->pid != -1 && drvdata->pid != pid)
+> +		return -EBUSY;
+>   
+> -	/*
+> -	 * No HW configuration is needed if the sink is already in
+> -	 * use for this session.
+> -	 */
+> +	/* The sink is already in use for this session */
+>   	if (drvdata->pid == pid) {
+>   		csdev->refcnt++;
+> -		goto unlock_out;
+> +		return rc;
+>   	}
+>   
+>   	rc = tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
+> @@ -1773,22 +1739,60 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+>   		csdev->refcnt++;
+>   	}
+>   
+> -unlock_out:
+> -	raw_spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>   	return rc;
+>   }
+>   
+>   static int tmc_enable_etr_sink(struct coresight_device *csdev,
+>   			       enum cs_mode mode, void *data)
+>   {
+> -	switch (mode) {
+> -	case CS_MODE_SYSFS:
+> -		return tmc_enable_etr_sink_sysfs(csdev);
+> -	case CS_MODE_PERF:
+> -		return tmc_enable_etr_sink_perf(csdev, data);
+> -	default:
+> -		return -EINVAL;
+> +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> +	int rc;
+> +
+> +retry:
+> +	scoped_guard(raw_spinlock_irqsave, &drvdata->spinlock) {
+> +		if (coresight_get_mode(csdev) != CS_MODE_DISABLED &&
+> +		    coresight_get_mode(csdev) != mode)
+> +			return -EBUSY;
+> +
+> +		switch (mode) {
+> +		case CS_MODE_SYSFS:
+> +			if (drvdata->reading)
+> +				return -EBUSY;
+> +
+> +			if (csdev->refcnt) {
+> +				/* The sink is already enabled via sysfs */
+> +				csdev->refcnt++;
+> +				return 0;
+> +			}
+> +
+> +			/*
+> +			 * A sysfs session is currently enabling ETR, preventing
+> +			 * a second sysfs process from repeatedly triggering the
+> +			 * enable procedure.
+> +			 */
+> +			if (coresight_get_mode(csdev) == CS_MODE_SYSFS && !csdev->refcnt)
+> +				goto retry;
+> +
+> +			/*
+> +			 * Set ETR to sysfs mode before it is fully enabled, to
+> +			 * prevent race conditions during mode transitions.
+> +			 */
+> +			coresight_set_mode(csdev, mode);
+> +			break;
+> +		case CS_MODE_PERF:
+> +			return tmc_enable_etr_sink_perf(csdev, data);
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	rc = tmc_enable_etr_sink_sysfs(csdev);
+> +	if (rc) {
+> +		guard(raw_spinlock_irqsave)(&drvdata->spinlock);
+> +		coresight_set_mode(csdev, CS_MODE_DISABLED);
+>   	}
+> +
+> +	return rc;
+>   }
+>   
+>   static int tmc_disable_etr_sink(struct coresight_device *csdev)
 
 
