@@ -1,176 +1,142 @@
-Return-Path: <linux-kernel+bounces-899446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFDCC57C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:51:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC920C57A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69895355540
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:43:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 46A9C355AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62256208994;
-	Thu, 13 Nov 2025 13:43:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244A35292B;
+	Thu, 13 Nov 2025 13:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pqBNYNH8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A220015ADB4;
-	Thu, 13 Nov 2025 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575A733F8D2;
+	Thu, 13 Nov 2025 13:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041419; cv=none; b=kwxiQHAqDTtzcSddNK1EpBjs3L2LeAog6QfiSvGEhOeu1ebb58fcsQE7eUR4kJTUGMTLgEpC4PxH3N6ZPZ8kPnqjomJLgtPPyHXW70wQdqitWvLcWYbwgMEsLdb+g5L4j7rwtQe1wWpuUqcgydmuU64wxQzCOMwXXC6tgOt8JAM=
+	t=1763040533; cv=none; b=KLb2sonratekC4uVNurCXabN3OYj4vFgGx2VuxTf8XvefQPi3R3pLLo6vm9yHWNpj4V3PgBNdmpQS53lEfUc5UQfJI10VhdoXbw14070PMGLVsQ4st2gQh5T1Tvb1TG4aQ2PeOoY4avXH+vwp1PyApRm9wA+gd1+E3PjN6aiwlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041419; c=relaxed/simple;
-	bh=CE61IUQz4cz5vuMavzuawiI4VHFtO9rfKS7YcoDaUfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTDLnkdGs7ZV2j8Pvxp8+MlC09biNIGloewpKFbWcBVf0GGfKTrWL6O4jsmbJ3G5b473BFKZ2Urb4ARqZVUhjf/f/EhwK1APrLI4xnki8eEQwfWw8wTF+PtZx7l2zF7mF1NcoaHZOpdStCwODNZP+p6VFq+tjDjQnslkZBQNMmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d6hKx5d6lzYQvBP;
-	Thu, 13 Nov 2025 21:43:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id EE1AF1A0359;
-	Thu, 13 Nov 2025 21:43:31 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgAXdXt54BVpsH9vAg--.17234S2;
-	Thu, 13 Nov 2025 21:43:31 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next v2] cpuset: Treat cpusets in attaching as populated
-Date: Thu, 13 Nov 2025 13:28:33 +0000
-Message-Id: <20251113132833.1036960-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1763040533; c=relaxed/simple;
+	bh=d1S6EXhuajmdeR7g4lfZh2Y4Mab0D3MUxG1o04pb/Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3hb1r0UmFaR+Np6H06xwg0XvzgKgi0kY6K90sYjTdptT/06YLVkOcCwXbsWUGhI7D0u1BVY581TS1ETpBf1xT80HFlyPW8jxJ7XdOvWJteOQ67rq+ILv/kLuXKtCOaVXGrTO8Mh+Pr2tcPjJakoIr7lavBKNklNE4QiWClFnGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pqBNYNH8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC0FC4CEF5;
+	Thu, 13 Nov 2025 13:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1763040532;
+	bh=d1S6EXhuajmdeR7g4lfZh2Y4Mab0D3MUxG1o04pb/Rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pqBNYNH8/BIfoX/TrzoEjwLZDxdxVbfbQ+cHttzzxvvz0Kkz+Fv4p0ifL5XAQ9hG3
+	 plIcQgkNonNx3etrLAl7wnYbgu24yeTNdEAZ3wo6hpjASn23oneq/KlhkNK4ZbJwLl
+	 TZf3WjvciP6u9O/D/cHIyR8UXfdK6LmePt6vFAVo=
+Date: Thu, 13 Nov 2025 08:28:50 -0500
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jie Deng <dengjie03@kylinos.cn>
+Cc: mathias.nyman@linux.intel.com, sakari.ailus@linux.intel.com,
+	stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: core: fix NULL dereference in usb_ifnum_to_if()
+ during device removal
+Message-ID: <2025111342-chummy-preppy-e3e6@gregkh>
+References: <20251113114411.1410343-1-dengjie03@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAXdXt54BVpsH9vAg--.17234S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF1furyxXw1kXF1rGw15Jwb_yoW5ZrW7pF
-	Wkua47J3y5K3W3C393Gayxu34Fgw1ktF1UJrn3Kw1rXFy7JF1jkr1qvas8tFy3JF97C34f
-	ZFsxZr4IganFyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113114411.1410343-1-dengjie03@kylinos.cn>
 
-From: Chen Ridong <chenridong@huawei.com>
+On Thu, Nov 13, 2025 at 07:44:11PM +0800, Jie Deng wrote:
+> During USB device hot-unplug, in the time window between when
+> usb_disconnect() calls usb_disable_device() to set
+> dev->actconfig->interface[i] to NULL but before dev->actconfig
+> is set to NULL.At this point, outside the kernel, usb_ifnum_to_if()
+> is called through usb_set_interface(), and usb_ifnum_to_if() continues
+> to access interface[i]->altsetting[i], triggering a null pointer.
 
-Currently, the check for whether a partition is populated does not
-account for tasks in the cpuset of attaching. This is a corner case
-that can leave a task stuck in a partition with no effective CPUs.
+I do not understand, sorry.  What do you mean by "outside the kernel"?
 
-The race condition occurs as follows:
+> kernel log:
+> [ 9518.779148][ 1] [ T4650] pc : usb_ifnum_to_if+0x34/0x50
+> [ 9518.784360][ 1] [ T4650] lr : usb_hcd_alloc_bandwidth+0x260/0x348
 
-cpu0				cpu1
-				//cpuset A  with cpu N
-migrate task p to A
-cpuset_can_attach
-// with effective cpus
-// check ok
+What is the [TXXX] stuff?
 
-// cpuset_mutex is not held	// clear cpuset.cpus.exclusive
-				// making effective cpus empty
-				update_exclusive_cpumask
-				// tasks_nocpu_error check ok
-				// empty effective cpus, partition valid
-cpuset_attach
-...
-// task p stays in A, with non-effective cpus.
+> [ 9518.790439][ 1] [ T4650] sp : ffffffa25a6c79d0
+> [ 9518.794868][ 1] [ T4650] x29: ffffffa25a6c79d0 x28: 0000000040045613
+> [ 9518.801294][ 1] [ T4650] x27: 0000000000000000 x26: 0000000000000000
+> [ 9518.807720][ 1] [ T4650] x25: ffffffa2e1597408 x24: ffffffa2e1597408
+> [ 9518.814146][ 1] [ T4650] x23: ffffffa2e15974f8 x22: 0000000000000000
+> [ 9518.820572][ 1] [ T4650] x21: ffffffa2e9acc000 x20: ffffffa2e6712000
+> [ 9518.826998][ 1] [ T4650] x19: ffffffa2e6a8a800 x18: 0000000000000000
+> [ 9518.833423][ 1] [ T4650] x17: 0000007fbb91b4b0 x16: ffffffc01016a170
+> [ 9518.839849][ 1] [ T4650] x15: 0000000000000000 x14: 0845c02202702800
+> [ 9518.846275][ 1] [ T4650] x13: 0000000000000001 x12: 0000000000000000
+> [ 9518.852700][ 1] [ T4650] x11: 0000000000000400 x10: ffffffff89e5d720
+> [ 9518.859126][ 1] [ T4650] x9 : 0000000000000000 x8 : 0000000000000000
+> [ 9518.865551][ 1] [ T4650] x7 : ffffffa2fff1e440 x6 : ffffffa28175c900
+> [ 9518.871977][ 1] [ T4650] x5 : 0000000000000060 x4 : ffffffa2e9bc54b0
+> [ 9518.878403][ 1] [ T4650] x3 : ffffffa2e9bc54a0 x2 : ffffffa2e9bc54a0
+> [ 9518.884828][ 1] [ T4650] x1 : 0000000000000001 x0 : 0000000000000000
+> [ 9518.891254][ 1] [ T4650] Call trace:
+> [ 9518.894817][ 1] [ T4650]  usb_ifnum_to_if+0x34/0x50
+> [ 9518.899681][ 1] [ T4650]  usb_set_interface+0x108/0x3c8
+> [ 9518.904898][ 1] [ T4650]  uvc_video_stop_streaming+0x3c/0x90 [uvcvideo]
+> [ 9518.911500][ 1] [ T4650]  uvc_stop_streaming+0x24/0x90 [uvcvideo]
+> [ 9518.917583][ 1] [ T4650]  __vb2_queue_cancel+0x44/0x458 [videobuf2_common]
+> [ 9518.924444][ 1] [ T4650]  vb2_core_streamoff+0x20/0xb8 [videobuf2_common]
+> [ 9518.931221][ 1] [ T4650]  vb2_streamoff+0x18/0x60 [videobuf2_v4l2]
+> [ 9518.937390][ 1] [ T4650]  uvc_queue_streamoff+0x30/0x50 [uvcvideo]
+> [ 9518.943557][ 1] [ T4650]  uvc_ioctl_streamoff+0x40/0x68 [uvcvideo]
+> [ 9518.949724][ 1] [ T4650]  v4l_streamoff+0x20/0x28
+> [ 9518.954415][ 1] [ T4650]  __video_do_ioctl+0x17c/0x3e0
+> [ 9518.959540][ 1] [ T4650]  video_usercopy+0x1d8/0x558
+> [ 9518.964490][ 1] [ T4650]  video_ioctl2+0x14/0x1c
+> [ 9518.969094][ 1] [ T4650]  v4l2_ioctl+0x3c/0x58
+> [ 9518.973526][ 1] [ T4650]  do_vfs_ioctl+0x374/0x7b0
+> [ 9518.978304][ 1] [ T4650]  ksys_ioctl+0x78/0xa8
+> [ 9518.982734][ 1] [ T4650]  sys_ioctl+0xc/0x18
+> [ 9518.986991][ 1] [ T4650]  __sys_trace_return+0x0/0x4
+> [ 9518.991943][ 1] [ T4650] Code: eb04005f 54000100 f9400040 91002042 (f9400003)
+> [ 9518.999153][ 1] [ T4650] ---[ end trace f7c7d3236806d9a4 ]---
+> 
+> To resolve this issue, a null pointer check for config->interface[i]
+> can be added in the usb_ifnum_to_if() function.
+> 
+> Signed-off-by: Jie Deng <dengjie03@kylinos.cn>
+> ---
+>  drivers/usb/core/usb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+> index e740f7852bcd..85dcda06a838 100644
+> --- a/drivers/usb/core/usb.c
+> +++ b/drivers/usb/core/usb.c
+> @@ -355,7 +355,7 @@ struct usb_interface *usb_ifnum_to_if(const struct usb_device *dev,
+>  	if (!config)
+>  		return NULL;
+>  	for (i = 0; i < config->desc.bNumInterfaces; i++)
+> -		if (config->interface[i]->altsetting[0]
+> +		if (config->interface[i] && config->interface[i]->altsetting[0]
 
-To fix this issue, this patch introduces cs_is_populated, which considers
-tasks in the attaching cpuset. This new helper is used in validate_change
-and partition_is_populated.
+Are you sure this is not just papering over a race?  What prevents this
+from changing right after you check it?
 
-Fixes: e2d59900d936 ("cgroup/cpuset: Allow no-task partition to have empty cpuset.cpus.effective")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+And what is causing this to happen now?  What commit broke this to
+require this change?
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index daf813386260..bd273b1e09b0 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -356,6 +356,15 @@ static inline bool is_in_v2_mode(void)
- 	      (cpuset_cgrp_subsys.root->flags & CGRP_ROOT_CPUSET_V2_MODE);
- }
- 
-+static inline bool cs_is_populated(struct cpuset *cs)
-+{
-+	lockdep_assert_held(&cpuset_mutex);
-+
-+	/* Cpusets in the process of attaching should be considered as populated */
-+	return cgroup_is_populated(cs->css.cgroup) ||
-+		cs->attach_in_progress;
-+}
-+
- /**
-  * partition_is_populated - check if partition has tasks
-  * @cs: partition root to be checked
-@@ -373,19 +382,25 @@ static inline bool is_in_v2_mode(void)
- static inline bool partition_is_populated(struct cpuset *cs,
- 					  struct cpuset *excluded_child)
- {
--	struct cgroup_subsys_state *css;
--	struct cpuset *child;
-+	struct cpuset *cp;
-+	struct cgroup_subsys_state *pos_css;
- 
--	if (cs->css.cgroup->nr_populated_csets)
-+	/*
-+	 * We cannot call cs_is_populated(cs) directly, as
-+	 * nr_populated_domain_children may include populated
-+	 * csets from descendants that are partitions.
-+	 */
-+	if (cs->css.cgroup->nr_populated_csets ||
-+	    cs->attach_in_progress)
- 		return true;
- 
- 	rcu_read_lock();
--	cpuset_for_each_child(child, css, cs) {
--		if (child == excluded_child)
-+	cpuset_for_each_descendant_pre(cp, pos_css, cs) {
-+		if (cp == cs || cp == excluded_child)
- 			continue;
--		if (is_partition_valid(child))
-+		if (is_partition_valid(cp))
- 			continue;
--		if (cgroup_is_populated(child->css.cgroup)) {
-+		if (cs_is_populated(cp)) {
- 			rcu_read_unlock();
- 			return true;
- 		}
-@@ -670,7 +685,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
- 	 * be changed to have empty cpus_allowed or mems_allowed.
- 	 */
- 	ret = -ENOSPC;
--	if ((cgroup_is_populated(cur->css.cgroup) || cur->attach_in_progress)) {
-+	if (cs_is_populated(cur)) {
- 		if (!cpumask_empty(cur->cpus_allowed) &&
- 		    cpumask_empty(trial->cpus_allowed))
- 			goto out;
--- 
-2.34.1
+thanks,
 
+greg k-h
 
