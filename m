@@ -1,114 +1,87 @@
-Return-Path: <linux-kernel+bounces-898494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC517C55647
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:12:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46825C55650
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A1654E1CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:12:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38A2D4E2FF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7AE2DAFAF;
-	Thu, 13 Nov 2025 02:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550CA2DF12B;
+	Thu, 13 Nov 2025 02:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeitnRji"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tg5RbcIU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD82DAFDA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A07299AB5;
+	Thu, 13 Nov 2025 02:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762999960; cv=none; b=CUNM4xlWd49XZ22XltMHIK/s+ExR7vBZmMfHYFxRKGju8jXKqJVXUi5WNbuJjYPbY4YswY6mB6Z+Y8fjpCwoMeBDZlppzXr2IIAtMwGyUGsIN62h6Tcd0d2tKtLOIxBkS9SI5qd4FvP9GvGU6n9TukujxWYXuy/Q1w7C60NTCY4=
+	t=1762999970; cv=none; b=ueGfy+DaQHz7Cc8Y+slZEoKmmhM/Sl7apX3RctZGrV/8pr1OKktPKUwNfJ2Nzs8VX3lPz3RdyFadWPXuPD6oVsoRoFFBI9hB4bssi3ahXrSi455ja8qlKtrqrpr19EwY9/aLvfoaMHFFBHrTLQMrkPyU406ZykbNt4xLdNlXS9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762999960; c=relaxed/simple;
-	bh=eunM6lFOtg60cJinz8jCdCXay4DGmA8E08p6jgGr6C8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e9SqT56DR/UNITjhNYVECGSMIk6b77pqyPFd/3sq0754tcl4PenREfz8rMIREjCzgu4nwod4dgx3t6toC9FMQWLrHvlSXJarNJXA6P383yAC4EoNzyXj88HabGRs7UoJbcUzAWZwlRfQb4Mhq/N7GCfD3kiZ2GogTQV/hZQ+x7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeitnRji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E761C113D0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:12:39 +0000 (UTC)
+	s=arc-20240116; t=1762999970; c=relaxed/simple;
+	bh=flGmFZhoOXR2YxO/YWjefEuhtv6mAu2jpcpOx7T+HB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ptt/mrfCsj9HtwGCf/vK1AqoO8QDBpxmyn8uelPKtGZVhGz3O5pZ6eZBPbQLIq7TEn+ITlvu6S4dJ19w8S8W2zFKxZMj7FIkYsT5L7UD1OvBybBDHxKMepvevdCIcKgGY6uplJWaMv2Ah1zjug6kV20aXhTRebCVP9nwCWj/c/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tg5RbcIU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06DBAC116B1;
+	Thu, 13 Nov 2025 02:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762999959;
-	bh=eunM6lFOtg60cJinz8jCdCXay4DGmA8E08p6jgGr6C8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XeitnRjidoNm7IeLEr3VjBr6UAV6cPkt+LZBvfMOOSiaTFsakCkPGWedvh6Zw+BHN
-	 F+jIheewedqvGqsDo1k3Ppq64EFDBzq4zysNoqrQL3daPs6ZF0EWaRHxpdhFQ4oJPt
-	 /7sZkJ325TcRDu2XPUekrEz1LChqV5kJAdoP19RlUHPk1DVzz8FD/tIv2pY/s4AAle
-	 WnpB8ulDApUV8C6ZE2jmxflYX7iujut5z3xyxHcoTPXOkAcVdNLf1FsU9MJ5ALkU8C
-	 qo67z/mWd+31cAY7CgmmutKeHxvEjooWTs/jKPXicIiwOJOg16XTkj5icWoqJLf27r
-	 TFNtgVfE4JJyA==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640d0ec9651so500244a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:12:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUk0Y6pBtvjy4gysecZEdesw8ks0/H/gE9N1HQT9GSEmsefYFB+YLRzUjZB2//OkZwKdEDK0GnRePRAfGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM1vp46LftnndJn+ptogiiyxqe0qBzG3wm2eJ9aF0pNOU1gjn/
-	Ii3z3E2h2vnyJ14sgp7xxBwEgYWZAhu05iycwqap6yWlNbrB0y2bnkR/H0c/yULRWNsbP72IuPm
-	AIqq2Sovm7Ih9PbfH/So97PXTLUKG++E=
-X-Google-Smtp-Source: AGHT+IGvr4PyRge3H1tPN47kpaot3DaL+oE9X08xC7yp/+y9GeNLtZZeuUUq9w/wYd84gyycWzLzbQEt6KUl4XWm4AA=
-X-Received: by 2002:a05:6402:34ce:b0:63c:683c:f9d2 with SMTP id
- 4fb4d7f45d1cf-6431a4d60b9mr4650668a12.12.1762999958142; Wed, 12 Nov 2025
- 18:12:38 -0800 (PST)
+	s=k20201202; t=1762999969;
+	bh=flGmFZhoOXR2YxO/YWjefEuhtv6mAu2jpcpOx7T+HB8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tg5RbcIUqLdNPG1DDHChGLXBZnnLyA46EYb2O5DY6H89g/ZKulLMxjLNOx7X9TEPM
+	 2lhpA3gdZzij2wmcOtrec61fkOb2c78eeODzy5Y24ZEKd+7ufwa8tXvFpTGhq8uLWD
+	 +Q/9Le/22xbhyVf4tCKsvqAhUiwJFhxsr/lusyPOKrelT/TWiRF1wRw+8aNeXuszoV
+	 e60zbxiSbitEcT6RJnVHOe5Z7X6B/5Sn6EROHOs44Ob5BpjgV5IZTjNkPPgNVIM/0h
+	 DsSKWM1bvzbr1CacfAQ5fn9Le4Uvg4gcZkjxdgL30pC8tq3q0Fp3x8UTvmkQ7P5VII
+	 M9CMXkepnMZGg==
+Date: Wed, 12 Nov 2025 18:12:48 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Jiri Pirko <jiri@resnulli.us>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Bloch
+ <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>, Leon Romanovsky
+ <leonro@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Moshe Shemesh
+ <moshe@nvidia.com>, Jiri Pirko <jiri@nvidia.com>, Carolina Jubran
+ <cjubran@nvidia.com>, Shay Drory <shayd@nvidia.com>
+Subject: Re: [PATCH net] devlink: rate: Unset parent pointer in
+ devl_rate_nodes_destroy
+Message-ID: <20251112181248.190415f7@kernel.org>
+In-Reply-To: <1762863279-1092021-1-git-send-email-tariqt@nvidia.com>
+References: <1762863279-1092021-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251102073059.3681026-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251102073059.3681026-7-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd8o3CKcaArMzEifR+oaX2G_g3XuEjFkBtPhyO99pKQO+g@mail.gmail.com> <fd9d8a05-32e8-4f83-8e40-a6497dde1ed5@chenxiaosong.com>
-In-Reply-To: <fd9d8a05-32e8-4f83-8e40-a6497dde1ed5@chenxiaosong.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 13 Nov 2025 11:12:26 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-niyc2df5BvZYBzo-fOX3WcTjhgtxh5aQyHrVwL4ONsQ@mail.gmail.com>
-X-Gm-Features: AWmQ_blMVnsOyedOFMGFML-5m4qQos6dPAtk7FXodpOIVT2VlGDPcijcCea34j8
-Message-ID: <CAKYAXd-niyc2df5BvZYBzo-fOX3WcTjhgtxh5aQyHrVwL4ONsQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/14] smb/server: remove create_durable_reconn_req
-To: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Cc: chenxiaosong.chenxiaosong@linux.dev, sfrench@samba.org, smfrench@gmail.com, 
-	linkinjeon@samba.org, christophe.jaillet@wanadoo.fr, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 13, 2025 at 10:46=E2=80=AFAM ChenXiaoSong
-<chenxiaosong@chenxiaosong.com> wrote:
->
-> Okay, I'll make the changes.
->
-> Once you've applied some of the patches from this version, I'll
-> immediately send the next version.
-I have applied all patches except 0006, 0012 patches to #ksmbd-for-next-nex=
-t.
-Thanks!
->
-> Thanks,
-> ChenXiaoSong.
->
-> On 11/13/25 9:19 AM, Namjae Jeon wrote:
-> > On Sun, Nov 2, 2025 at 4:32=E2=80=AFPM <chenxiaosong.chenxiaosong@linux=
-.dev> wrote:
-> >>
-> >> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >>
-> >> The fields in struct create_durable_reconn_req and struct create_durab=
-le
-> >> are exactly the same.
-> >>
-> >> The documentation references are:
-> >>
-> >>    - SMB2_CREATE_DURABLE_HANDLE_REQUEST   in MS-SMB2 2.2.13.2.3
-> >>    - SMB2_CREATE_DURABLE_HANDLE_RECONNECT in MS-SMB2 2.2.13.2.4
-> >>    - SMB2_FILEID in MS-SMB2 2.2.14.1
-> >>
-> >> We can give these two structs a uniform name: create_durable.
-> > Please use typedef to define multiple aliases for a single struct.
-> > typedef struct {
-> >    ...
-> > } create_durable, create_durable_reconn_req;
-> >
-> > Thanks.
->
+On Tue, 11 Nov 2025 14:14:39 +0200 Tariq Toukan wrote:
+> The function devl_rate_nodes_destroy is documented to "Unset parent for
+> all rate objects". However, it was only calling the driver-specific
+> `rate_leaf_parent_set` or `rate_node_parent_set` ops and decrementing
+> the parent's refcount, without actually setting the
+> `devlink_rate->parent` pointer to NULL.
+> 
+> This leaves a dangling pointer in the `devlink_rate` struct, which is
+> inconsistent with the behavior of `devlink_nl_rate_parent_node_set`,
+> where the parent pointer is correctly cleared.
+> 
+> This patch fixes the issue by explicitly setting `devlink_rate->parent`
+> to NULL after notifying the driver, thus fulfilling the function's
+> documented behavior for all rate objects.
+
+What is the _real_ issue you're solving here? If the function destroys
+all nodes maybe it doesn't matter that the pointer isn't cleared.
+-- 
+pw-bot: cr
 
