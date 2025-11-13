@@ -1,219 +1,172 @@
-Return-Path: <linux-kernel+bounces-899834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DD9C59013
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:08:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AAEC593F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D4095610F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C59556153B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E995C3587A4;
-	Thu, 13 Nov 2025 16:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F25358D2E;
+	Thu, 13 Nov 2025 16:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cPNdSBhC"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010017.outbound.protection.outlook.com [52.101.61.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrGC9Z1H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555AA357A55;
-	Thu, 13 Nov 2025 16:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051508; cv=fail; b=CPZugGJV6z7bxJFGSeW0iFH9185e/tcuQ/NMAkNACoubkGqHSQajRoND8n3hxAf+IG3fn8PN0jx8ZTZUY4OJWuU7iySwc0/L6brX6kD5ff/0QQxHikcr7HpOZ74roegxYl4QtzFAx/uCFbWyB69v7Mt7ow4thVZiwVe/NyB8eug=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051508; c=relaxed/simple;
-	bh=VLwrEk9sTry7zO426W5BMd/MAFppZePgk92WFQFS4Zo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s8Pctbj8igU9NHes98RzGxW1fk3XQaF42C61Zi18Nr5hrff7Y5+flL3WGDH9P9p2ryN0SCf71QN/RmcJkiRkegI3T24XEjtdLpdpLRwVkcYdEASrL1isluylaEjseoYSAzfXKOYHRxKF7mX5DXNMvNbDiOMeKxI+Eq6AdhjWf5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cPNdSBhC; arc=fail smtp.client-ip=52.101.61.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r8i4vO0SIqbEb/BR4S57SORh+nVa3SNtAiszl6sl35F1aFLNhCRu0Tgjmxc0UoRs1V0Q29HBRSHynwLdq3YqSQcmV47WzTpcXwkbBk1eaC5GtIzy3hBlIjnKQtDy4nDVBh3m6TjsibJXmi0NV7+VH6j059WpE48PP3fwAWudSwhWeTE5xaOKtIc95kzuu28J/jWSAKTzL0fuh9ipFKPeHvGni8ZtdYlQ7rBYs1DXAvtw5lBKT1/s5h+0x7QOVKxSh9kXWSENfnz5WLFYrrT+OQJrUmLUVlQPtz8ie43gJ2I3iHhG2hsa2Yu5WwOv78FXcAwDSRHWwmNyc3yjyza6ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
- b=wvCmKXZiYofkXne3NNQQYEl2ZuHvWBKFQDnBxDB8rZD4BOd9am4V+4C6Ck4+Ci4BDwVa+g5ItHSnrverl1NSfKziWFEAqF/4URjz6tnfnfd6nFB8UXZxn85I2XuF/QCCWNNVol1ft6ujUT7wyJsXy+QisUhUmCfGDEC0oga7shljRkDRt2KlMtPDDcTFDZiKNbrwerm4IL+NI8cHW+EhnTkkv5HQDbFCmSRq1mNCIFMe2m4tGStaS5D7+SOmfnAZb/mNM9GLKn+Qat+jpksCQQ29qs61QDCDu91SJBUuNGgyJslR40WB0ugwY3lgeUCc9hSg6armMyk+uraOWrexXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+93hdRL7Bch1JUkvRRNBiK22lgvEd1EaOIyiMFE1he8=;
- b=cPNdSBhCyTcoo0fxAggYu7tYwZZrNp87qCtEMlsqJRFfTLDdhzksaaCmZiN+H+gJNXNLnOm4TYXXSIS05X1LjiUvrGutSq5w69MOv0D1HuoaFDz5K5FCueshJ26h2uf3zvpbRzd5ISYuRyal4shqyAlsccsRU7ikUuS24C+PEJ/ymDcXmAikLnu+2OGQE9KTRGh3BE85RjXl4uRQ+r6NKzvtrWjaIrKvlyoY8RUCE05dCYbUzCDQroduDvY+pU1iQchw/hb11HDLLMfuQSyywjQrT05AKiil92SjkJUg4k7XxGBXCaxnunH5Yd+IN2tuaaXO1mh/zR+t7h2aNO6abg==
-Received: from SJ0PR03CA0131.namprd03.prod.outlook.com (2603:10b6:a03:33c::16)
- by SA3PR12MB7879.namprd12.prod.outlook.com (2603:10b6:806:306::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 16:31:40 +0000
-Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
- (2603:10b6:a03:33c:cafe::f) by SJ0PR03CA0131.outlook.office365.com
- (2603:10b6:a03:33c::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
- 13 Nov 2025 16:31:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 16:31:40 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 08:31:17 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 08:31:17 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 13 Nov 2025 08:31:14 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <pshete@nvidia.com>, <nhartman@nvidia.com>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kkartik@nvidia.com>
-Subject: [PATCH] gpio: tegra186: Fix GPIO name collisions for Tegra410
-Date: Thu, 13 Nov 2025 22:01:12 +0530
-Message-ID: <20251113163112.885900-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB1340A79;
+	Thu, 13 Nov 2025 16:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051543; cv=none; b=VAaNYfwilOneNi4K9QS/BoP8kZPZKNtpoxIPEsX5KYUqheS/gnCI9T6bWJXqHlf8CMMsDbs9/XhfBS1TRHAKC1s2rMRvqdbtvjrm18oDQL0mIa70UfC24Y64/oAz2va3QVXlkZO9vqVP00bKiT+tW3CS/NZvpTHHImCvMPwfXf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051543; c=relaxed/simple;
+	bh=48cU/r2mCuhBi2o3QbLq7X+wCorzdfK7kjE/pbyUoys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzwWJ5DEPbUs1jnz9I6UJ0rb8FSffGq+po83UanJndQ+ZIZZZapR/y5c5lrIYRJKfxELfkvy9TbKPiHcjg0QvSjsjvq8+AARU4CP6l6HPpsou1lgNjJ0dBPl3jP8bXJqmIsUTekyAbQ6fAGtozAY0LMfIHEnamQaMew8+iT6bq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrGC9Z1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B42EC4CEF1;
+	Thu, 13 Nov 2025 16:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763051542;
+	bh=48cU/r2mCuhBi2o3QbLq7X+wCorzdfK7kjE/pbyUoys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NrGC9Z1HvTGjTjRL3xw+mZ4VRxFvPWujkCi0vHliqnjQPxgDj5Iq1rshZmt6ySeMc
+	 HGMSMKVh9VgMIzXnB8CNP7DemQTXKeUC8H36kD7XXCJ8kj8oUOWtKFtV5JfCVlNMUH
+	 vV2Wz9lpEeXMW2vqdMbjTqxar0BcgazuH6zXzm6BsqIwtOVpVA7LeQFXB8qnOtRmO6
+	 ydVLEDH5JNfCnMadYTtk2Srvhd9ymPG9C691mZ4GV2PRr0Iwvc9aecAiVDEwcWPZYX
+	 IzqR46Q59HdXyVhnv/UTfIsTjQPSNCKfiaL+IDedKXACddxrDzR6Q4dn3sl1d1gn/I
+	 R2sYn55yOR5pQ==
+Date: Thu, 13 Nov 2025 18:31:57 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+Message-ID: <aRYH_Ugp1IiUQdlM@kernel.org>
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com>
+ <aRHiCxoJnEGmj17q@kernel.org>
+ <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
+ <aROZi043lxtegqWE@kernel.org>
+ <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
+ <aRSKrxfAb_GG_2Mw@kernel.org>
+ <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|SA3PR12MB7879:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e926c76-e074-4462-c395-08de22d21fba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?I4IP63rUkjd7cduICucilmeBFSa1F63prPfM3pGfyh84MwVfb2zHVS9WyJQ0?=
- =?us-ascii?Q?z05G3AGQIpOhppuhr83gxKcgZV8akwUMXKo+uob6G250o3TtQXlbiysUzXnJ?=
- =?us-ascii?Q?OtdCcqZIbXn5M7BfgGm4DDeFWO4oqHgQvJQrq2peBNiZypMkPz9l8gc6mNeg?=
- =?us-ascii?Q?XEzUfVQqh3BcopzpRNmDwxkXT5jzXaAftrteaIWY8e2RpH4M1LB4AsduWXag?=
- =?us-ascii?Q?GrqXffAfJnC4dq4RhuLj61ut+8r94SgiesJycsj7sy/n26j+hJNtI+XEI4rE?=
- =?us-ascii?Q?NPjPK5sPC4VuJPIAvKXWfUu2Iq0s5NeeFfpGNt5noRgcK04PY5uO5iQNhsS9?=
- =?us-ascii?Q?bGn1Tqr0WoodNyDY+PE0EgBrEuWOufhMSSlLiOl0nnAH4cELsYbpaqdEZ+N8?=
- =?us-ascii?Q?nPTi83yEXoRERjzDzlhiUIBEE7E3dUPQV7BCRL7okxIBttf2T6yAZVG/x6ib?=
- =?us-ascii?Q?PcUo6q5UEplnMecHpQmujvn9KW/vbmyKuV6tRftSfTMOZ6dAO4tqdCMljJ2/?=
- =?us-ascii?Q?4WYEaVVgLiSqkqC/52ws/Wx7T7aUyV3kcQKcAfi8lhsXgx6lTjsdV+1ZuJ2L?=
- =?us-ascii?Q?7DtCEb8pQSsSGUOreNk9yuZc7gYjMZTb0EPi1uPqbXJFWTXQy4g1fCcU7TnZ?=
- =?us-ascii?Q?/QDwebA9Aoohb6Zn70LlPBqQznppJuhxZWG01MnNoJ5+yRxnFvc5Z0jL8E2B?=
- =?us-ascii?Q?Wh6g7zaLuNmNcm0h1LkigM2bNz/vzDoAXL7voopPqk7Al+VlBys1t3LDXOUx?=
- =?us-ascii?Q?arffNvCGq3NoaFs+Zh5PB5ZR0gEEm/k1upqj2KQFf2spXrmUvFukgYRBAfUg?=
- =?us-ascii?Q?/dCM0/xJo/s0C+L60CxEz3MdDVAHt2reQZJPWCHpRK4vOIFxLyf2RnGhWxNv?=
- =?us-ascii?Q?eA5EcxZzGTPswJUkN4/ouLr/iEBCgjCR0ZSb4xIPqNXGHwGng9KpMA2IGkAf?=
- =?us-ascii?Q?voHW6zelxKXb+Bt8/iGBDJMMCYOLdomP1KgX8GCJ8uddlj0Km++MzfY911nt?=
- =?us-ascii?Q?Xmsg+mBmqCio+5lY3Ft6WPYjt52zroRWeFLFKf6yDTWUA7q+1MNgvSxrBLGg?=
- =?us-ascii?Q?lznorczklwq/VUWf89Qv7y8svaxXUHK2GdkxSK2rwPlVnSYb9ANBXbPGvZjO?=
- =?us-ascii?Q?lbwGDIfoDntZwjexaXDx436IsPpW6+y3IUM9icGaww7ecg6fZPuC8Zmx03ty?=
- =?us-ascii?Q?euxP4rl7WrqXBhP3NF3neXvlku+6EEXe+K0Ccr7xep3cMhMT3GguugkVFT3G?=
- =?us-ascii?Q?d3qnUl16YeSKw6zbTNhepARWLPYzQepvtIof6eBwuMVerGqx+icLAXr92ymy?=
- =?us-ascii?Q?KoMq5ll0wE4CLjwOHWs8CuKS8M/OmNxiJgtaI/dSF7cwcsdtdD/8n2x30FUH?=
- =?us-ascii?Q?Bu5f+VWJ7J9NLpOeDA22bmSqlIcOBO7dUke5LMBMpSwtm/sfCF05aGUBUWAW?=
- =?us-ascii?Q?+hVsbBh/bwL6SSiCm5kNFE/z8SsHHodwwQDyx6xG5tIsvO6N/9xoiFxyM8CQ?=
- =?us-ascii?Q?DV96CBkgeGTpvFQ52ZsBw3JA4n+AmAXgozqPfgNcprNj6xvDaSz/mEOPBHRM?=
- =?us-ascii?Q?4WkX5dAsssyFEEQqNiA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:31:40.2623
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e926c76-e074-4462-c395-08de22d21fba
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002319.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7879
+In-Reply-To: <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
 
-On Tegra410, Compute and System GPIOs have same port names. This
-results in the same GPIO names for both Compute and System GPIOs
-during initialization in `tegra186_gpio_probe()`, which results in
-following warnings:
+On Wed, Nov 12, 2025 at 09:58:27AM -0500, Pasha Tatashin wrote:
+> On Wed, Nov 12, 2025 at 8:25 AM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > Hi Pasha,
+> >
+> > On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
+> > > Hi Mike,
+> > >
+> > > Thank you for review, my comments below:
+> > >
+> > > > > This is why this call is placed first in reboot(), before any
+> > > > > irreversible reboot notifiers or shutdown callbacks are performed. If
+> > > > > an allocation problem occurs in KHO, the error is simply reported back
+> > > > > to userspace, and the live update update is safely aborted.
+> >
+> > The call to liveupdate_reboot() is just before kernel_kexec(). Why we don't
+> > move it there?
+> 
+> Yes, I can move that call into kernel_kexec().
+> 
+> > And all the liveupdate_reboot() does if kho_finalize() fails it's massaging
+> > the error value before returning it to userspace. Why kernel_kexec() can't
+> > do the same?
+> 
+> We could do that. It would look something like this:
+> 
+> if (liveupdate_enabled())
+>    kho_finalize();
+> 
+> Because we want to do kho_finalize() from kernel_kexec only when we do
+> live update.
+> 
+> > > > This is fine. But what I don't like is that we can't use kho without
+> > > > liveupdate. We are making debugfs optional, we have a way to call
+> 
+> This is exactly the fix I proposed:
+> 
+> 1. When live-update is enabled, always disable "finalize" debugfs API.
+> 2. When live-update is disabled, always enable "finalize" debugfs API.
 
-  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.00'
-  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.01'
-  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PA.02'
-  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.00'
-  kernel: gpio gpiochip1: Detected name collision for GPIO name 'PB.01'
-  ...
+I don't mind the concept, what I do mind is sprinkling liveupdate_enabled()
+in KHO.
 
-Add GPIO name prefix in the SoC data and use it to initialize the GPIO
-name.
+How about we kill debugfs/kho/out/abort and make kho_finalize() overwrite
+an existing FDT if there was any? 
 
-Port names remain unchanged for previous SoCs. On Tegra410, Compute
-GPIOs are named COMPUTE-P<PORT>.GPIO, and System GPIOs are named
-SYSTEM-P<PORT>.GPIO.
+Abort was required to allow rollback for subsystems that had kho notifiers,
+but now notifiers are gone and kho_abort() only frees the memory
+serialization data. I don't see an issue with kho_finalize() from debugfs
+being a tad slower because of a call to kho_abort() and the liveupdate path
+anyway won't incur that penalty.
 
-Fixes: 9631a10083d8 ("gpio: tegra186: Add support for Tegra410")
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+> > KHO should not call into liveupdate. That's layering violation.
+> > And "stateless KHO" does not really make it stateless, it only removes the
+> > memory serialization from kho_finalize(), but it's still required to pack
+> > the FDT.
+> 
+> This touches on a point I've raised in the KHO sync meetings: to be
+> effective, the "stateless KHO" work must also make subtree add/remove
+> stateless. There should not be a separate "finalize" state just to
+> finish the FDT. The KHO FDT is tiny (only one page), and there are
+> only a handful of subtrees. Adding and removing subtrees is cheap; we
+> should be able to open FDT, modify it, and finish FDT on every
+> operation. There's no need for a special finalization state at kexec
+> time. KHO should be totally stateless.
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 83ecdc876985..b1498b59a921 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -109,6 +109,7 @@ struct tegra_gpio_soc {
- 	const struct tegra_gpio_port *ports;
- 	unsigned int num_ports;
- 	const char *name;
-+	const char *prefix;
- 	unsigned int instance;
+And as the first step we can drop 'if (!kho_out.finalized)' from
+kho_fill_kimage(). We might need to massage the check for valid FDT in
+kho_populate() to avoid unnecessary noise, but largely there's no issue
+with always passing KHO data in kimage.
  
- 	unsigned int num_irqs_per_bank;
-@@ -940,8 +941,12 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
- 		char *name;
- 
- 		for (j = 0; j < port->pins; j++) {
--			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
--					      "P%s.%02x", port->name, j);
-+			if (gpio->soc->prefix)
-+				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "%s-P%s.%02x",
-+						      gpio->soc->prefix, port->name, j);
-+			else
-+				name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL, "P%s.%02x",
-+						      port->name, j);
- 			if (!name)
- 				return -ENOMEM;
- 
-@@ -1306,6 +1311,7 @@ static const struct tegra_gpio_soc tegra410_compute_soc = {
- 	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
- 	.ports = tegra410_compute_ports,
- 	.name = "tegra410-gpio-compute",
-+	.prefix = "COMPUTE",
- 	.num_irqs_per_bank = 8,
- 	.instance = 0,
- };
-@@ -1335,6 +1341,7 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
- 	.num_ports = ARRAY_SIZE(tegra410_system_ports),
- 	.ports = tegra410_system_ports,
- 	.name = "tegra410-gpio-system",
-+	.prefix = "SYSTEM",
- 	.num_irqs_per_bank = 8,
- 	.instance = 0,
- };
+> Thanks,
+> Pasha
+
 -- 
-2.43.0
-
+Sincerely yours,
+Mike.
 
