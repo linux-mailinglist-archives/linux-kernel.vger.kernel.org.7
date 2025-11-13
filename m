@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-899964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA8EC596AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:19:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE7DC59278
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CED45000FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:22:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B235F6D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F712FCC10;
-	Thu, 13 Nov 2025 17:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B8345739;
+	Thu, 13 Nov 2025 17:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpkIEYXU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K7gY2oIY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PUYGJC2E"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9BE2609CC;
-	Thu, 13 Nov 2025 17:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE12F7AC9;
+	Thu, 13 Nov 2025 17:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763054448; cv=none; b=JEtRe0Yvweh9oz64sV60Cpyj9syARSp79adq8sJCclwG0DPmjqqoOdz+XGWQcw5XcRQQQySrYweeaNDGb2myFsAtn2FtriN0OCsBXGvpYk5x9XygtzCild6rFEp/6HbN1RoxhDfMjRe6fQ414b65aSi5D+DFSatECsIrb74tH7A=
+	t=1763054527; cv=none; b=Q47zQuoMwjNOd7WUHcqb87ywoZ58+N7bdR4NhoHGq4tY9HmqWjHAE3xPeR3BKZJ3YDajZzREmqDEOe0jR2qPfSSM2Nyt9o1atcugjBqTmD/RKg64mAyqjLqkp6HWq/jcj6IrIeGqRWQCbon1/H2Twyid4WW3bxdgNo63pjh4FJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763054448; c=relaxed/simple;
-	bh=e4w8F5T0ln8Rha6zvjUQabjHWXT2GZbMyXlv8D2R2e4=;
+	s=arc-20240116; t=1763054527; c=relaxed/simple;
+	bh=gDGxPoImWOtItgifoiFHC4tQg2flME8hbVchoAWf8mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfUmH+2Qgn09m+8gR47+stODgS7p2VQxKSNVzJAGeUdvVYMsCWk4kOUpZWcrw1jqh49GjHfNuf5CVcSy3qCloAOryhfAilyAVfuWmdzqCWCK53BgLpilL3koavR7Ytuwh/7uDwdZmJvKcDc8mOze7KBrtHz8muNud8SnRshmfO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpkIEYXU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74404C113D0;
-	Thu, 13 Nov 2025 17:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763054447;
-	bh=e4w8F5T0ln8Rha6zvjUQabjHWXT2GZbMyXlv8D2R2e4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BpkIEYXUe6cYwg9EkzPKlx03iEjVWmvIjpqVtXudwkoLL4jSSaCkneVYo1rNFLEye
-	 Y5SgDZkNqsfqrvLxPWGqOZsIXakpQnHX/X5lMZxFaxRkIcap2TyXcIGU9TtbzAmwMn
-	 yDet18iw3ds+dqjzeYN1aMeEj+1jOf3S2/AQ9YNd0itg2U0EKPyzMgkN8YJpo2nLyl
-	 3uHISwMmLX9lh3kIFpgIAEVQZRyF9yuP1OHCwjZ8JI0EnTDBZgampMHF+SzsBoLtcS
-	 DFFxZ24Dz31mV0rRlopLYDYn8QyI16vtt16yo5StfHuRFPawmW38zmN0QU/QL4d7+i
-	 6lGsJF13Ru1aw==
-Date: Thu, 13 Nov 2025 09:19:06 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: marcelo.leitner@gmail.com, lucien.xin@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] sctp: Remove unused declaration
- sctp_auth_init_hmacs()
-Message-ID: <20251113171906.GB1792@sol>
-References: <20251113114501.32905-1-yuehaibing@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gI3QVrPuj/JAiLPzYFd65RISLrLGK8zUpHKCMV1gE+B0whGC27ZrZAzsSag+/6L+wQPgjghg5uli6Z+Sq6ijIS4xADuLzrjG90bUgfT+48FQkjgLwF7fva1CROukm/bAAaKuW8OvzIMOLlkTbDpHIg1tnPxRQB4AjE9LAdsVkgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K7gY2oIY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PUYGJC2E; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 13 Nov 2025 18:21:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1763054521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ROMWpRRLugWsifaHPQePfDdfFY98GVu+EcHMapiLrY=;
+	b=K7gY2oIYkYcBs5dO38P3m0foDjmg+o+fCt0qFWL8QY7mlF7S213vvjKLrsJSfNk0bXD6dM
+	hMn9/1NMLBAC99pNeqU62L8tmNNLeUyIsLC4z0J+XnG9HHaq0YEA42o2mFh0ojOdfUUMHN
+	LqNA9wPzolhzui7AysYr46Ni1zrHchBwGD3XgUiv4FJvxSY946li9dmiInNLSMMX6kdlus
+	dXPKPUO6p6I/oUJMSyMgwFd7vYayj3C/IDApOXVa1YSMvr9gdWpDMJ6Hmc/guyqZRNp7PY
+	mV+tgjAgXomRJRyYlmauhUZIjWVZwTYQZ6jL2uDavJ8u/LSWOLzzpwDsa4B6pg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1763054521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ROMWpRRLugWsifaHPQePfDdfFY98GVu+EcHMapiLrY=;
+	b=PUYGJC2EESYvf8bFpEUt0jo8RMONXYylNuumTaQXVO5DnoN1j98HbVVeeoOM0MuhTXBWDL
+	RJksfIC/OEi9Y6BQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: =?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] wifi: wfx: add WQ_PERCPU to alloc_workqueue users
+Message-ID: <20251113172159.a-yjqge1@linutronix.de>
+References: <20251113160825.383883-1-marco.crivellari@suse.com>
+ <2530603.TnzJ9iJZxx@nb0018864>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251113114501.32905-1-yuehaibing@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2530603.TnzJ9iJZxx@nb0018864>
 
-On Thu, Nov 13, 2025 at 07:45:01PM +0800, Yue Haibing wrote:
-> Commit bf40785fa437 ("sctp: Use HMAC-SHA1 and HMAC-SHA256 library for chunk
-> authentication") removed the implementation but leave declaration.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
->  include/net/sctp/auth.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/net/sctp/auth.h b/include/net/sctp/auth.h
-> index 3d5879e08e78..6f2cd562b1de 100644
-> --- a/include/net/sctp/auth.h
-> +++ b/include/net/sctp/auth.h
-> @@ -72,7 +72,6 @@ struct sctp_shared_key *sctp_auth_get_shkey(
->  int sctp_auth_asoc_copy_shkeys(const struct sctp_endpoint *ep,
->  				struct sctp_association *asoc,
->  				gfp_t gfp);
-> -int sctp_auth_init_hmacs(struct sctp_endpoint *ep, gfp_t gfp);
->  const struct sctp_hmac *sctp_auth_get_hmac(__u16 hmac_id);
->  const struct sctp_hmac *
->  sctp_auth_asoc_get_hmac(const struct sctp_association *asoc);
+On 2025-11-13 17:57:40 [+0100], J=C3=A9r=C3=B4me Pouiller wrote:
+> > -       wdev->bh_wq =3D alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI, 0);
+> > +       wdev->bh_wq =3D alloc_workqueue("wfx_bh_wq", WQ_HIGHPRI | WQ_PE=
+RCPU, 0);
+=E2=80=A6
+> BTW, this workqueue has changed multiple times. I though it was already
+> unbound (and I believe it should).
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+It is not unbound. It can be enqueued on any CPU but the work item/
+worker not migrate to another CPU should there be resources available)
+compared to the CPU performing the enqueue.
 
-- Eric
+> I also think the HIGHPRI is not required (the device perform better
+> with HIGHPRI, but this is only because we steal the CPU of the other
+> tasks).
+
+HIGHPRI sets the nice level as per nice(2).
+I did look a bit and one of the users is a threaded interrupt as of
+wfx_spi_irq_handler(). This is already a thread with SCHED_FIFO 50.
+You can sleep here or do anything else that you could in a workqueue.
+This thread will be preferred to other threads in the system which run
+usually at SCHED_OTHER including the worker.
+
+Not sure if the requirement for the additional offload is to be able to
+serve another interrupt before the worker completes.
+
+Sebastian
 
