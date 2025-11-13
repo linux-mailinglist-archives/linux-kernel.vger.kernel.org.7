@@ -1,266 +1,110 @@
-Return-Path: <linux-kernel+bounces-898355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E64AC55126
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEB0C54E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE903B7D16
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4597A3B4EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C5526FA60;
-	Thu, 13 Nov 2025 00:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="LcFeVDZg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y5IZtIaQ"
-Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40573BB40;
+	Thu, 13 Nov 2025 00:21:19 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB0226E6F5;
-	Thu, 13 Nov 2025 00:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BABA35CBC1;
+	Thu, 13 Nov 2025 00:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762994591; cv=none; b=PLfsTLnnteJErhHPVi5P5e1R/lpnPl2xzi0XYkJZUfdSvYCaX9+cYdHuX81EtxkYUiGP9gSPcnjEBW3LC4iJy44cfqehnNdLawWmTR6y4o6hNhlKDJRlo+3qYX3c6uW2uev2lTM9MYYN3hciog6bPkgKBCYJAreZt6h0gekBhJY=
+	t=1762993279; cv=none; b=UgwrftAu2udYnORPL9LMYfowT6s0b7/KqJCCx2A1Va30CVUf4FSoYLdcO2R6MYfbKAxEDUMWvUrRjtCRPGMv3GGU7VA5Wu2llQEZW2Oiure6MeN7sk/qUg7GNpyeAa+IOU5UzeCvG8/qRs+whKMwXJJTzJKWg5LPClF0mrWvky0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762994591; c=relaxed/simple;
-	bh=OTB0rGLAxSxPYqaVuzKhtxaaom6SXBwXYWGgKixk4og=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iqrqu4o5GvS9NXQzlb4+DphUWW0uPJT9NYfXlDGp5UpZfndo0TDEdyB37mOr58mbgg4beTV3W3HpnJm2h55LtVIpu+OrrIyD9uuw07irQ5CHCcKhYQYlr18UsOKMSl6jL5CfA661X0fFQqtjzDv4uiQwS+/6BMuYo8hfUsaAJhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=LcFeVDZg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=y5IZtIaQ; arc=none smtp.client-ip=202.12.124.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 1C94C1300C9C;
-	Wed, 12 Nov 2025 19:43:08 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 12 Nov 2025 19:43:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1762994587;
-	 x=1763001787; bh=LH6B8gufGV0TjJ4vlHu8RH1VmAxd1MYT56YsH6sKK6w=; b=
-	LcFeVDZgdj6isygMwW1oIYlc7mst+quWlTaNMT0fsvXfYmp1ZXN1NXM4X95hrrSv
-	DvoZcFS/DH6CH+uKZJBGXii8RSKCe2jAKSdyTbzyLr5rxDVADOhFFguBaHaIZogi
-	Oo84gyVH5AkICsS30Alo8gyP9KHpBLzZCGALCeL/pjklVuqcD4VNCTlpX5EFnFTy
-	8dwEwqys52KZbOFCf//pXRccTxqE/H12Vm9+s30YWKbYHR5Xr5Aar++CxnTNrRq0
-	MHhuhpn8Rdx8Q7lybzi2Wb7ZZFdPSAlEMNeK47V59B8GpH2W7bk59BOEmFxSFlb0
-	0nePM9v/timsp+emzn9D9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1762994587; x=1763001787; bh=L
-	H6B8gufGV0TjJ4vlHu8RH1VmAxd1MYT56YsH6sKK6w=; b=y5IZtIaQ5rUB7FZc9
-	DZiFRQNoyTxQjRss2CWGi/2vujHuc8nwLRS0bIATFM/3zmLXR1D+WqEgcUa5xBgG
-	NmIj2541lKoAXLaqsR+t2zkfDd8Kl87UiOQCz/YwJSIqsZHFh8c8Mezk7hoitMfJ
-	+lkR8gI45oA9KzMR3Y72nNsZYENu4QGgO7onqdAlQmku+pyNP8tEJR9CF3f8dq20
-	LQjyaoNmewI7tTUsacxY2huMyhJ2JCCpvq+mPm/yIp/Z7sQisLYcFT5bTmeFXEIH
-	SZ3QOLjICK5YWweqXwcazxL2DuID/AwpOp2Y+XiPrSW17gr7GwaaLGVmaWHciqFp
-	OHW7Q==
-X-ME-Sender: <xms:mykVaSUwVqtIzfyjHocH7cPvv5XBpa0X1D_9lZn61xQbxHCxkXGasw>
-    <xme:mykVaTqMEcjDOUNn2Ok2QhFo2ec8KKqTJWiECORYIv3NWqT4aZa1u3vIAgqIt3DuT
-    eL62AF9da2UBumwh6hHqMlr2Apy5LlOPCd8u_VE77TRzFCxGA>
-X-ME-Received: <xmr:mykVaTYWE3CdfkUP4vOCNQ4YFfvW5eEWclj8W-i2XmghbotjkL8ytkpP4S6-hBL6wB21RR8h9qeV8G8-UnifVAI_9CT3ZWU5uS00Yn9GZUFO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdehheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:mykVaXCaC6FMRT2xrI4xiuXZMdd4I6puaIt8pgf5zrtW07ZMrxjszw>
-    <xmx:mykVaeH4gTlfc_orQZm7HbzBGUxV9g9PdW-yYmi3BPtyvHuOubhxEg>
-    <xmx:mykVaTwsOiMEB8iYLInJyeTZKhfJ1yAms0HRzV6umBeNshUynQYHXg>
-    <xmx:mykVaTfSC-8N3rruS9d_IutVbX-KqK1QErWxGADESmYPr-whfK0uGA>
-    <xmx:mykVaWuUGHt76D35n5qsHYsTqLG9Zdz2WwzhMWF2V0_uy5i2t_IuohBZ>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Nov 2025 19:42:57 -0500 (EST)
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"Amir Goldstein" <amir73il@gmail.com>
-Cc: "Jan Kara" <jack@suse.cz>,	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,	Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,	Dai Ngo <Dai.Ngo@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,	ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,	selinux@vger.kernel.org
-Subject: [PATCH v6 15/15] VFS: introduce end_creating_keep()
-Date: Thu, 13 Nov 2025 11:18:38 +1100
-Message-ID: <20251113002050.676694-16-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20251113002050.676694-1-neilb@ownmail.net>
-References: <20251113002050.676694-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	s=arc-20240116; t=1762993279; c=relaxed/simple;
+	bh=fkDHdmg66zLpi1lUzDoV5cjB3E6G1XTaNeaYG1tT+w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m4MD+Fu59oM+i8Kzv7zF1VO4M6KspzCwMXDglG/RdYtXxM/zVXdGLfeyGguORCNvMJRl9Xq6iYjaj4gP6IL2NVzSuYjlBtR52c7JA+B6zcKkSvPh4ambrX+vqOKLyy4X0AsADk6s3ap2sfWPlTnu7EXE1MbnYh6e5mC4p5yvsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id E71F512DFB5;
+	Thu, 13 Nov 2025 00:21:14 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id B962B2F;
+	Thu, 13 Nov 2025 00:21:12 +0000 (UTC)
+Date: Wed, 12 Nov 2025 19:21:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yongliang Gao <leonylgao@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com, Yongliang Gao
+ <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251112192126.76a4cb9a@gandalf.local.home>
+In-Reply-To: <20251113000252.1058144-1-leonylgao@gmail.com>
+References: <20251113000252.1058144-1-leonylgao@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B962B2F
+X-Stat-Signature: m5xcrckzciz7gkbpzfyop7ajh4hamkkz
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18POhQmfnD+3W8de2YF63ONw4wAc56uZCs=
+X-HE-Tag: 1762993272-567681
+X-HE-Meta: U2FsdGVkX19fbCLrnKnN0mshvPLcDz3kk68l3rlbxz7TYv2JK7ktf9+CKo76PBybXPrkCAFCrwW4o7+KHD7m9bHRU73JHrMYF4p4lsXSKBx5xIcH2d2il6BiXhtAmu30sx4IptKPhsOYOAjROWlXUdEiHsaAXyln9q9PqanWdZHbobqS162wcFQFILba6kRqIePxfy3nCvndnKEiQ+UM/K2ZN+r7bqCCzomfE2cyHEF3eIuc0Sh/mmKBKcUwJRq7I6tMpr3rKFR+2QkocOGktvHbiWBnfBlnk9og3+ZRxEPBJv8eNfHxMgxKtM3nO3iVlWA7sc2gtzW4iRyQXM4r86xdErhuGkx50IX9Dhorgblb1sRPMXvrsQdWhf/f02CS/lwk4eIuNnY=
 
-From: NeilBrown <neil@brown.name>
+On Thu, 13 Nov 2025 08:02:52 +0800
+Yongliang Gao <leonylgao@gmail.com> wrote:
 
-Occasionally the caller of end_creating() wants to keep using the dentry.
-Rather then requiring them to dget() the dentry (when not an error)
-before calling end_creating(), provide end_creating_keep() which does
-this.
+> From: Yongliang Gao <leonylgao@tencent.com>
+> 
+> When the system has many cores and task switching is frequent,
+> setting set_ftrace_pid can cause frequent pid_list->lock contention
+> and high system sys usage.
+> 
+> For example, in a 288-core VM environment, we observed 267 CPUs
+> experiencing contention on pid_list->lock, with stack traces showing:
+> 
+>  #4 [ffffa6226fb4bc70] native_queued_spin_lock_slowpath at ffffffff99cd4b7e
+>  #5 [ffffa6226fb4bc90] _raw_spin_lock_irqsave at ffffffff99cd3e36
+>  #6 [ffffa6226fb4bca0] trace_pid_list_is_set at ffffffff99267554
+>  #7 [ffffa6226fb4bcc0] trace_ignore_this_task at ffffffff9925c288
+>  #8 [ffffa6226fb4bcd8] ftrace_filter_pid_sched_switch_probe at ffffffff99246efe
+>  #9 [ffffa6226fb4bcf0] __schedule at ffffffff99ccd161
+> 
+> Replaces the existing spinlock with a seqlock to allow concurrent readers,
+> while maintaining write exclusivity.
+> 
+> ---
+> Changes from v2:
+> - Keep trace_pid_list_next() using raw_spin_lock for simplicity. [Steven Rostedt]
+> - Link to v2: https://lore.kernel.org/all/20251112181456.473864-1-leonylgao@gmail.com
+> Changes from v1:
+> - Fixed sleep-in-atomic issues under PREEMPT_RT. [Steven Rostedt]
+> - Link to v1: https://lore.kernel.org/all/20251015114952.4014352-1-leonylgao@gmail.com
+> ---
 
-cachefiles and overlayfs make use of this.
+You don't need to resend, but the "Changes from" needs to go below the
+'---' after the tags. Otherwise, git am removes everything from the above
+'---', including your tags below.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: NeilBrown <neil@brown.name>
----
- fs/cachefiles/namei.c |  3 +--
- fs/overlayfs/dir.c    |  8 ++------
- fs/overlayfs/super.c  | 11 +++--------
- include/linux/namei.h | 22 ++++++++++++++++++++++
- 4 files changed, 28 insertions(+), 16 deletions(-)
+-- Steve
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 59327618ac42..ef22ac19545b 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -155,8 +155,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 
- 	/* Tell rmdir() it's not allowed to delete the subdir */
- 	inode_lock(d_inode(subdir));
--	dget(subdir);
--	end_creating(subdir);
-+	end_creating_keep(subdir);
- 
- 	if (!__cachefiles_mark_inode_in_use(NULL, d_inode(subdir))) {
- 		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 739f974dc258..d21f81a524f6 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -251,10 +251,7 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
- 	if (IS_ERR(ret))
- 		return ret;
- 	ret = ovl_create_real(ofs, workdir, ret, attr);
--	if (!IS_ERR(ret))
--		dget(ret);
--	end_creating(ret);
--	return ret;
-+	return end_creating_keep(ret);
- }
- 
- static int ovl_set_opaque_xerr(struct dentry *dentry, struct dentry *upper,
-@@ -364,8 +361,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
- 	if (IS_ERR(newdentry))
- 		return PTR_ERR(newdentry);
- 
--	dget(newdentry);
--	end_creating(newdentry);
-+	end_creating_keep(newdentry);
- 
- 	if (ovl_type_merge(dentry->d_parent) && d_is_dir(newdentry) &&
- 	    !ovl_allow_offline_changes(ofs)) {
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 3acda985c8a3..7b8fc1cab6eb 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -319,8 +319,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 		};
- 
- 		if (work->d_inode) {
--			dget(work);
--			end_creating(work);
-+			end_creating_keep(work);
- 			if (persist)
- 				return work;
- 			err = -EEXIST;
-@@ -336,9 +335,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 		}
- 
- 		work = ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
--		if (!IS_ERR(work))
--			dget(work);
--		end_creating(work);
-+		end_creating_keep(work);
- 		err = PTR_ERR(work);
- 		if (IS_ERR(work))
- 			goto out_err;
-@@ -630,9 +627,7 @@ static struct dentry *ovl_lookup_or_create(struct ovl_fs *ofs,
- 		if (!child->d_inode)
- 			child = ovl_create_real(ofs, parent, child,
- 						OVL_CATTR(mode));
--		if (!IS_ERR(child))
--			dget(child);
--		end_creating(child);
-+		end_creating_keep(child);
- 	}
- 	dput(parent);
- 
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index b4d95b79b5a8..58600cf234bc 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -126,6 +126,28 @@ static inline void end_creating(struct dentry *child)
- 	end_dirop(child);
- }
- 
-+/* end_creating_keep - finish action started with start_creating() and return result
-+ * @child: dentry returned by start_creating() or vfs_mkdir()
-+ *
-+ * Unlock and return the child. This can be called after
-+ * start_creating() whether that function succeeded or not,
-+ * but it is not needed on failure.
-+ *
-+ * If vfs_mkdir() was called then the value returned from that function
-+ * should be given for @child rather than the original dentry, as vfs_mkdir()
-+ * may have provided a new dentry.
-+ *
-+ * Returns: @child, which may be a dentry or an error.
-+ *
-+ */
-+static inline struct dentry *end_creating_keep(struct dentry *child)
-+{
-+	if (!IS_ERR(child))
-+		dget(child);
-+	end_dirop(child);
-+	return child;
-+}
-+
- /**
-  * end_removing - finish action started with start_removing
-  * @child:  dentry returned by start_removing()
--- 
-2.50.0.107.gf914562f5916.dirty
 
+> 
+> Signed-off-by: Yongliang Gao <leonylgao@tencent.com>
+> Reviewed-by: Huang Cun <cunhuang@tencent.com>
+> ---
+>  kernel/trace/pid_list.c | 30 +++++++++++++++++++++---------
+>  kernel/trace/pid_list.h |  1 +
+>  2 files changed, 22 insertions(+), 9 deletions(-)
+> 
 
