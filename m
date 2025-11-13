@@ -1,393 +1,469 @@
-Return-Path: <linux-kernel+bounces-899959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7984EC59257
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:27:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF3FC59347
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33DEB35C9E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:21:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77E414ED9E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0138C35B12A;
-	Thu, 13 Nov 2025 17:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE7F357A5B;
+	Thu, 13 Nov 2025 17:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXWK5cyU"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tylerwross.com header.i=@tylerwross.com header.b="XBRz00m3"
+Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D459E357A44
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8526C2FA0DF;
+	Thu, 13 Nov 2025 17:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763054173; cv=none; b=rX033xGq4FpxdztXp5lJw6oqDpW9AVfEd13spH2pz49CczuZPDTzRdsSZTPOBnf4bzMUa8A107B5Kb03EC4ofCl8kx61r5J4zQGgASpblb+93anAvHyR45bKZkTDQC5pL0G/B+4M+HYj69kEmqi4l+B5OwyWY+grQwTYZBX/nJ8=
+	t=1763054202; cv=none; b=FAqf3rMt2DC/QhxsMRhxCRQKCPaFxjMVSQjqsm5IPedeM80R8PitJOvwSjOkprWPXaEJFkzowBTU0TNqGGb+QARjMda1dMCskMxPeh/KjQq/0SNF8DyNJh5ws7KezR5xacKI5I6/qGpOFqfZNL6ky3SHECMrP3EZRbSwLBszb8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763054173; c=relaxed/simple;
-	bh=kqOapHUlJokGBMDLAw5/AmUa8eanlJO9CMQNBhMqoTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=on+il8YN8tKouZQZLhoPRyoCe9RHogNdFLl7XT5kfH85ZdVrodoDbdfY1dt7CiRfM8Y3AZZDjOk0gTyDJC7gvp7KW8Fid5r0SLSwpXjVgz3y4C6Y+dSEKbJPoW5KgkNLAHXNSiqJlzpDl/snXx++o0cimGbYOEvGO+Oz/Gerxk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXWK5cyU; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7ba49f92362so21844b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:16:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763054170; x=1763658970; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uG+8vrqjSfz++GhVWiiV/C0o3uKcfQReluhJYZukBK8=;
-        b=AXWK5cyUJNMljJzHtTy42iEV0gpdaScXCohsV3wUI0oksp8ijLzfHgbOBD5RrdL8hQ
-         C8+8x8xVVetcL7ywnAeEBhbf1HQ8rQ4gJvkErsmcLoe1VHa/41HT7urnVML99xWeB64M
-         YhFP3iRsGEqEdV3X4yEY3rXJn4sxat5xmcKOwnkRN26Ui8fDNxi+WCKRdNUhj2/0sgpr
-         UCf/cqrOwHKBMqz03xuSQTlJI44kGhwjOSzqjdvm6TnH6JwKz2jKhX1X0oX3+SHitiSg
-         wvZed+7mNgDCvsHTRCLRg2omSuoMRMiqyH2/GUFeVAWGBnWrnCwx7JuTzNNpXXZSGEk7
-         hWcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763054170; x=1763658970;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uG+8vrqjSfz++GhVWiiV/C0o3uKcfQReluhJYZukBK8=;
-        b=NENgmF+lx7ccE/ZRA5Bbg0M8du4v8kOn63hOG8zHwDQzM5W08Ys2OXrCiLgrmfyNeP
-         NfcmS0uobw6C0uP+Nm000WiCwz1NfGKv72MCSg6QVMMSm1EtYbwYWwDx58L/3RCGHkFR
-         Qe2/DXtpXaMOLIPp+B5+xt7EbWxW9ic0NMgQAnIH0JrlY+D4IwmIBKaQ18aIcx9CUXmZ
-         Z++YagF+tgj5ETa1kWWr7tyZTN+09QQRc/WiymKZp5VQvs97myd7LU23bt0jGOo//L/t
-         E2uPp7LxR00foilXY+eW+v4Cd3MtdRaN/RelVS6yK8xlmuiWPiGm9n6j0JYyKjhGXzAC
-         ts5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVu05Hu7lnDdbC5CpjNoL8w1jos45gMD4NPWjgcEPYtFMouy5ccbWKea5/KebVU5iykXVwSlkB3HgrJVB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz43jrYm6Cj4tgf1Afh4UiaaZmvSfBjUcuZ3vQFp/CLk8TPK/bM
-	ORO9aK6ZUCn3+3kp7w7Wx3RIYrjr/uLuoIOqw8n0rEfraqJfeHN5ig1t
-X-Gm-Gg: ASbGncvHHl2Eu6x/ymKidVt1MBHv85uwSA86bEXh0OlY9q9puPxMGIWXuUyRI3qYNLz
-	mRgI2C15bkKwaqPNe43MtQje4TCQ1nYHBVpQ0P4w8CRDvGZ/H2DBRYhHVb3o0bRmG183AvQC/6W
-	irXNlkbSABCS5D+lIj4+xDKEXyOaYik2gJrlrlrZmOWmQTxlZ34kI28gGbBf64DuH8BoZfx3FKL
-	nsGCjNWVt+usaTcjekl5j7mYffQZcP8jIJmU9LJD4b9dqX15fyMB2sfc02OKNfGXEAnDU9+x6dm
-	kvNoFVQA2Q7Jzd5/OGjyJw91+m8Ds+x9bfk9lmvo1juNYwNpgOJDd2Wok1+VyMAhPzJDIb9dZ63
-	waDsDPt/rBn+A0Kwd+6ySQfZn7oqpBb6mhXX6uQeoQDkC/jkW30W5trHJeJEHqXm2fw0CUbIYP4
-	CqnxLUzVfRkhAr
-X-Google-Smtp-Source: AGHT+IEpVcVjkR7tBwOR+VbhWQK7bhDkeeibEPzjJSicrGZb7ubD0P6CLIsCvytRfb2Tgt2Sd2OjRQ==
-X-Received: by 2002:a05:6a00:3d42:b0:776:19f6:5d2f with SMTP id d2e1a72fcca58-7ba3419a59emr440944b3a.11.1763054169507;
-        Thu, 13 Nov 2025 09:16:09 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b924aede04sm2847809b3a.11.2025.11.13.09.16.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 09:16:08 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 13 Nov 2025 09:16:07 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Wenliang Yan <wenliang202407@163.com>
-Cc: Jean Delvare <jdelvare@suse.com>, christophe.jaillet@wanadoo.fr,
-	conor+dt@kernel.org, corbet@lwn.net, devicetree@vger.kernel.org,
-	krzk+dt@kernel.org, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH 6/8] hwmon:(ina3221)Modify read/write functions for 'in'
- attribute
-Message-ID: <05cf9a44-506c-4515-ae12-39ac0bf0cc3d@roeck-us.net>
-References: <20251111080546.32421-1-wenliang202407@163.com>
- <20251111080546.32421-7-wenliang202407@163.com>
+	s=arc-20240116; t=1763054202; c=relaxed/simple;
+	bh=5qrpoOpRzcWRlp0mIHXVmHORzQhXRgX0ULMAdSAPXls=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZY42t0LzSmT5BShqCH4PDEI95Dls7xtKK67brHdNTPtDnJ89EO5JlnacAvkrJ47i+1MbI+Ec3Zc3g0s4yVaRV1hY3YTyNfU2X+BaMfF88QhLFOOfD/Ub75nNJEKk7Eor7o2AJuK/2kIJiNhMnzf5jwkPTOyZkpv/ZtHI28FUEf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tylerwross.com; spf=pass smtp.mailfrom=tylerwross.com; dkim=pass (2048-bit key) header.d=tylerwross.com header.i=@tylerwross.com header.b=XBRz00m3; arc=none smtp.client-ip=57.129.93.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tylerwross.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tylerwross.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tylerwross.com;
+	s=protonmail; t=1763054181; x=1763313381;
+	bh=WyAGC1w9hjUAC1tHk1ST8O5OokhSUtPxX7tlZ+9NcIk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XBRz00m3kUgYVHd600kywH6Y53jolrOztaR9+/OKgIsiaQQgn1shnJdOB2fSXaA1T
+	 sNSLc2LDyTDiNFVQmbDqdvaIYA3OeHATFVOfqUGFYHryzyC5m62ncUTGgbZ7iRe4KF
+	 LCE/y2fC6q0GUILH+uoro/2mRqmZVpm+VyDRTtYbpRp9SPU0QKOpWAc7iJ45QUvVdH
+	 dkK74axwz516YqWTwNoCJADeDRuaYiLzseG7sDdRg94ebkoj18kutHR616M8042wLc
+	 eiSrqkXrzeRVBejE41BGCsPMAmJGab5filzdTWY4yWSEKApuUor4LnNS2o6bhGPJej
+	 2COwV3WTH9LPw==
+Date: Thu, 13 Nov 2025 17:16:18 +0000
+To: "1120598@bugs.debian.org" <1120598@bugs.debian.org>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, Scott Mayhew <smayhew@redhat.com>, Steve Dickson <steved@redhat.com>, Salvatore Bonaccorso <carnil@debian.org>
+From: "Tyler W. Ross" <TWR@tylerwross.com>
+Cc: Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ls input/output error ("NFS: readdir(/) returns -5") on krb5 NFSv4 client using SHA2
+Message-ID: <c8-cRKuS2KXjk19lBwOGLCt21IbVv7HsS-V-ihDmhQ1Uae_LHNm83T0dOKvbYqsf4AeP5T8PR_xdiKLj5-Nvec-QVTLqIC4NGuU2FA0hN5U=@tylerwross.com>
+In-Reply-To: <8d873978-2df6-4b79-891d-f0fd78485551@oracle.com>
+References: <176298368872.955.14091113173156448257.reportbug@nfsclient-sid.ipa.twrlab.net> <aRVl8yGqTkyaWxPM@eldamar.lan> <8d873978-2df6-4b79-891d-f0fd78485551@oracle.com>
+Feedback-ID: 101639484:user:proton
+X-Pm-Message-ID: 42789f88a753c0b5e258f93d710b47a811499867
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111080546.32421-7-wenliang202407@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 03:05:44AM -0500, Wenliang Yan wrote:
-> SQ52210 adds current, power, and alert-limit sensors, with read/write
-> functions modified to accommodate these new changes.
-> 
-> The ina3221_read_value function has been rewritten to adapt to the
-> new register format for data reading.
-> 
-> The sq52210_alert_to_reg function has been added to handle reading
-> of different data types.
-> 
-> Each channel supports four new alert trigger modes, with only one
-> trigger active at any given time. Alert values are stored in the
-> same register. The sq52210_alert_limit_write function has been
-> implemented for writing alert threshold values.
-> 
-> The 'in' read/write functions have been modified to add crit,
-> lcrit, crit_alarm, and lcrit_alarm characteristics.
-> 
-> Signed-off-by: Wenliang Yan <wenliang202407@163.com>
-> ---
->  drivers/hwmon/ina3221.c | 182 +++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 178 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-> index 77b2505a49a2..abb6049c8eab 100644
-> --- a/drivers/hwmon/ina3221.c
-> +++ b/drivers/hwmon/ina3221.c
-> @@ -66,6 +66,9 @@
->  #define INA3221_MASK_ENABLE_SCC_MASK	GENMASK(14, 12)
->  
->  #define SQ52210_ALERT_CONFIG_MASK	GENMASK(15, 4)
-> +#define SQ52210_MASK_ALERT_CHANNEL1 (BIT(15) | BIT(12) | BIT(9) | BIT(6))
-> +#define SQ52210_MASK_ALERT_CHANNEL2 (BIT(14) | BIT(11) | BIT(8) | BIT(5))
-> +#define SQ52210_MASK_ALERT_CHANNEL3 (BIT(13) | BIT(10) | BIT(7) | BIT(4))
->  
->  #define INA3221_CONFIG_DEFAULT		0x7127
->  #define INA3221_RSHUNT_DEFAULT		10000
-> @@ -84,6 +87,9 @@ enum ina3221_fields {
->  	/* Alert Flags: SF is the summation-alert flag */
->  	F_SF, F_CF3, F_CF2, F_CF1,
->  
-> +	/* Alert Flags: AFF is the alert function flag */
-> +	F_AFF3, F_AFF2, F_AFF1,
-> +
->  	/* sentinel */
->  	F_MAX_FIELDS
->  };
-> @@ -99,6 +105,10 @@ static const struct reg_field ina3221_reg_fields[] = {
->  	[F_CF3] = REG_FIELD(INA3221_MASK_ENABLE, 7, 7),
->  	[F_CF2] = REG_FIELD(INA3221_MASK_ENABLE, 8, 8),
->  	[F_CF1] = REG_FIELD(INA3221_MASK_ENABLE, 9, 9),
-> +
-> +	[F_AFF3] = REG_FIELD(SQ52210_ALERT_CONFIG, 1, 1),
-> +	[F_AFF2] = REG_FIELD(SQ52210_ALERT_CONFIG, 2, 2),
-> +	[F_AFF1] = REG_FIELD(SQ52210_ALERT_CONFIG, 3, 3),
->  };
->  
->  enum ina3221_channels {
-> @@ -293,11 +303,39 @@ static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
->  	 * Shunt Voltage Sum register has 14-bit value with 1-bit shift
->  	 * Other Shunt Voltage registers have 12 bits with 3-bit shift
->  	 */
-> -	if (reg == INA3221_SHUNT_SUM || reg == INA3221_CRIT_SUM)
-> +	switch (reg) {
-> +	case INA3221_SHUNT_SUM:
-> +	case INA3221_CRIT_SUM:
->  		*val = sign_extend32(regval >> 1, 14);
-> -	else
-> +		break;
-> +	case SQ52210_CURRENT1:
-> +	case SQ52210_CURRENT2:
-> +	case SQ52210_CURRENT3:
-> +	case SQ52210_POWER1:
-> +	case SQ52210_POWER2:
-> +	case SQ52210_POWER3:
-> +		*val = regval;
-> +		break;
-> +	case INA3221_BUS1:
-> +	case INA3221_BUS2:
-> +	case INA3221_BUS3:
-> +	case INA3221_SHUNT1:
-> +	case INA3221_SHUNT2:
-> +	case INA3221_SHUNT3:
-> +	case INA3221_WARN1:
-> +	case INA3221_WARN2:
-> +	case INA3221_WARN3:
-> +	case INA3221_CRIT1:
-> +	case INA3221_CRIT2:
-> +	case INA3221_CRIT3:
->  		*val = sign_extend32(regval >> 3, 12);
-> -
-> +		break;
-> +	case SQ52210_ALERT_LIMIT1:
-> +	case SQ52210_ALERT_LIMIT2:
-> +	case SQ52210_ALERT_LIMIT3:
-> +		*val = regval >> 3;
-> +		break;
-> +	};
+Thanks, Chunk.
 
-This returns 0 if the register is not listed in the case statement while leaving
-val unset. It would probably be better to drop this function entirely and handle the
-conversions in the calling code.
+Suggested trace-cmd report from the client follows. Last 3 lines appear sal=
+ient, but I've included the full report just in case.
 
->  	return 0;
->  }
->  
-> @@ -311,6 +349,56 @@ static const u8 ina3221_in_reg[] = {
->  	INA3221_SHUNT_SUM,
->  };
->  
-> +static const u8 alert_limit_reg[] = {
-> +	SQ52210_ALERT_LIMIT1,
-> +	SQ52210_ALERT_LIMIT2,
-> +	SQ52210_ALERT_LIMIT3,
-> +};
-> +
-> +static const u8 alert_flag[] = {
-> +	F_AFF1,
-> +	F_AFF2,
-> +	F_AFF3,
-> +};
-> +
-> +/*
-> + * Turns alert limit values into register values.
-> + * Opposite of the formula in ina3221_read_value().
-> + */
-> +static u16 sq52210_alert_to_reg(struct ina3221_data *ina, int reg, long val)
-> +{
-> +	int regval;
-> +	/*
-> +	 * Formula to convert voltage_uv to register value:
-> +	 *     regval = (voltage_mv / scale) << shift
-> +	 * Results:
-> +	 *     bus_voltage: (1 / 8mV) << 3 = 1 mV
-> +	 */
-> +	switch (reg) {
-> +	case INA3221_BUS1:
-> +	case INA3221_BUS2:
-> +	case INA3221_BUS3:
-> +		/* clamp voltage */
-> +		regval = clamp_val(val, -32760, 32760);
-> +		return regval;
-> +	case SQ52210_CURRENT1:
-> +	case SQ52210_CURRENT2:
-> +	case SQ52210_CURRENT3:
-> +		/* signed register, result in mA */
-> +		regval = DIV_ROUND_CLOSEST(val * 8000, ina->current_lsb_uA);
-> +		return clamp_val(regval, -32760, 32760);
-> +	case SQ52210_POWER1:
-> +	case SQ52210_POWER2:
-> +	case SQ52210_POWER3:
-> +		regval = DIV_ROUND_CLOSEST(val * 8000, ina->power_lsb_uW);
-> +		return clamp_val(regval, 0, 65528);
-> +	default:
-> +		/* programmer goofed */
-> +		WARN_ON_ONCE(1);
-> +		return 0;
+cpus=3D4
+              ls-969   [003] .....   270.318649: nfs_getattr_enter:    file=
+id=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D0x0 ()
+              ls-969   [003] .....   270.318651: nfs_getattr_exit:     erro=
+r=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versio=
+n=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] .....   270.318654: nfs_revalidate_inode_enter=
+: fileid=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D=
+0x0 ()
+              ls-969   [003] .....   270.318658: rpc_task_begin:       task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3D0x4=
+ status=3D0 action=3D0x0
+              ls-969   [003] .....   270.318658: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Drpc_prepare_task
+              ls-969   [003] .....   270.318660: nfs4_setup_sequence:  sess=
+ion=3D0x5988ad3c slot_nr=3D0 seq_nr=3D24 highest_used_slotid=3D0
+              ls-969   [003] .....   270.318661: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_start
+              ls-969   [003] .....   270.318661: rpc_request:          task=
+:00000006@00000005 nfsv4 GETATTR (sync)
+              ls-969   [003] .....   270.318662: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserve
+              ls-969   [003] .....   270.318663: xprt_reserve:         task=
+:00000006@00000005 xid=3D0x79569c7a
+              ls-969   [003] .....   270.318663: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserveresult
+              ls-969   [003] .....   270.318663: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refresh
+        rpc.gssd-613   [001] .....   270.318690: rpcgss_upcall_msg:    msg=
+=3D'mech=3Dkrb5 uid=3D591200003 enctypes=3D20,19,18,17'
+        rpc.gssd-970   [002] .....   270.326582: rpcgss_context:       win_=
+size=3D128 expiry=3D4316009978 now=3D4294959728 timeout=3D84201 acceptor=3D=
+nfs@nfssrv.ipa.twrlab.net
+              ls-969   [003] ...1.   270.326598: rpcgss_ctx_init:      cred=
+=3D0xffff8895c5989900 service=3Dintegrity principal=3D'(null)'
+              ls-969   [003] .....   270.326600: rpcgss_upcall_result: for =
+uid 591200003, result=3D0
+              ls-969   [003] .....   270.326601: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refreshresult
+              ls-969   [003] .....   270.326601: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_allocate
+              ls-969   [003] .....   270.326603: rpc_buf_alloc:        task=
+:00000006@00000005 callsize=3D1844 recvsize=3D2704 status=3D0
+              ls-969   [003] .....   270.326603: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_encode
+              ls-969   [003] .....   270.326604: rpcgss_seqno:         task=
+:00000006@00000005 xid=3D0x79569c7a seqno=3D1
+              ls-969   [003] .....   270.326611: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x1c status=3D0 action=3Dcall_transmit
+              ls-969   [003] ...1.   270.326611: xprt_reserve_xprt:    task=
+:00000006@00000005 snd_task:00000006
+              ls-969   [003] .....   270.326612: rpcgss_need_reencode: task=
+:00000006@00000005 xid=3D0x79569c7a rq_seqno=3D1 seq_xmit=3D0 reencode unne=
+eded
+              ls-969   [003] .....   270.326612: rpc_xdr_sendto:       task=
+:00000006@00000005 head=3D[0xffff8895c29fe008,260] page=3D0(0) tail=3D[(nil=
+),0] len=3D260
+              ls-969   [003] .....   270.326627: xprt_transmit:        task=
+:00000006@00000005 xid=3D0x79569c7a seqno=3D1 status=3D0
+              ls-969   [003] ...1.   270.326628: xprt_release_xprt:    task=
+:00000006@00000005 snd_task:ffffffff
+              ls-969   [003] .....   270.326629: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 action=3Dcall_transmit_status
+              ls-969   [003] ...2.   270.326629: rpc_task_sleep:       task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 timeout=3D0 queue=3Dxprt_pending
+              ls-969   [003] .....   270.326630: rpc_task_sync_sleep:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x16 status=3D0 action=3Dcall_status
+          <idle>-0     [001] ..s2.   270.326754: xs_data_ready:        peer=
+=3D[10.108.2.102]:2049
+   kworker/u16:0-12    [001] ...1.   270.326762: xprt_lookup_rqst:     peer=
+=3D[10.108.2.102]:2049 xid=3D0x79569c7a status=3D0
+   kworker/u16:0-12    [001] ...2.   270.326764: rpc_task_wakeup:      task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x6 status=3D0 timeout=3D15000 queue=3Dxprt_pending
+   kworker/u16:0-12    [001] .....   270.326768: xs_stream_read_request: pe=
+er=3D[10.108.2.102]:2049 xid=3D0x79569c7a copied=3D384 reclen=3D384 offset=
+=3D384
+   kworker/u16:0-12    [001] .....   270.326769: xs_stream_read_data:  peer=
+=3D[10.108.2.102]:2049 err=3D-11 total=3D388
+              ls-969   [003] .....   270.326775: rpc_task_sync_wake:   task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.326775: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dxprt_timer
+              ls-969   [003] .....   270.326775: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.326775: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_decode
+              ls-969   [003] .....   270.326776: rpc_xdr_recvfrom:     task=
+:00000006@00000005 head=3D[0xffff8895c29fe73c,2704] page=3D0(0) tail=3D[(ni=
+l),0] len=3D384
+              ls-969   [003] .....   270.326785: nfs4_map_name_to_uid: erro=
+r=3D0 (OK) id=3D591200000 name=3Dadmin@ipa.twrlab.net
+              ls-969   [003] .....   270.326786: nfs4_map_group_to_gid: err=
+or=3D0 (OK) id=3D591200004 name=3Ddomainusers@ipa.twrlab.net
+              ls-969   [003] .....   270.326787: rpc_task_run_action:  task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Drpc_exit_task
+              ls-969   [003] .....   270.326787: rpc_task_end:         task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Drpc_exit_task
+              ls-969   [003] .....   270.326788: rpc_stats_latency:    task=
+:00000006@00000005 xid=3D0x79569c7a nfsv4 GETATTR backlog=3D7956 rtt=3D149 =
+execute=3D8131 xprt_id=3D1
+              ls-969   [003] .....   270.326789: rpc_task_call_done:   task=
+:00000006@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dnfs41_call_sync_done
+              ls-969   [003] .....   270.326789: nfs4_sequence_done:   erro=
+r=3D0 (OK) session=3D0x5988ad3c slot_nr=3D0 seq_nr=3D24 highest_slotid=3D63=
+ target_highest_slotid=3D63 status_flags=3D0x0 ()
+              ls-969   [003] ...1.   270.326791: xprt_release_xprt:    task=
+:00000006@00000005 snd_task:ffffffff
+              ls-969   [003] .....   270.326793: nfs4_getattr:         erro=
+r=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c valid=3DTYPE|MODE|NLI=
+NK|OWNER|GROUP|RDEV|SIZE|FSID|FILEID|ATIME|MTIME|CTIME|CHANGE|BTIME|0x40020=
+0
+              ls-969   [003] ...1.   270.326795: nfs_refresh_inode_enter: f=
+ileid=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D0x0=
+ ()
+              ls-969   [003] ...1.   270.326797: nfs_set_cache_invalid: err=
+or=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versi=
+on=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] ...1.   270.326797: nfs_refresh_inode_exit: er=
+ror=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) vers=
+ion=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] .....   270.326798: nfs_revalidate_inode_exit:=
+ error=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) v=
+ersion=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] .....   270.326799: nfs_access_enter:     file=
+id=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D0x0 ()
+              ls-969   [003] .....   270.326801: rpc_task_begin:       task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3D0x4=
+ status=3D0 action=3D0x0
+              ls-969   [003] .....   270.326801: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Drpc_prepare_task
+              ls-969   [003] .....   270.326801: nfs4_setup_sequence:  sess=
+ion=3D0x5988ad3c slot_nr=3D0 seq_nr=3D25 highest_used_slotid=3D0
+              ls-969   [003] .....   270.326802: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_start
+              ls-969   [003] .....   270.326802: rpc_request:          task=
+:00000007@00000005 nfsv4 ACCESS (sync)
+              ls-969   [003] .....   270.326802: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserve
+              ls-969   [003] .....   270.326803: xprt_reserve:         task=
+:00000007@00000005 xid=3D0x7a569c7a
+              ls-969   [003] .....   270.326803: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserveresult
+              ls-969   [003] .....   270.326803: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refresh
+              ls-969   [003] .....   270.326804: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refreshresult
+              ls-969   [003] .....   270.326804: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_allocate
+              ls-969   [003] .....   270.326804: rpc_buf_alloc:        task=
+:00000007@00000005 callsize=3D1836 recvsize=3D2712 status=3D0
+              ls-969   [003] .....   270.326804: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_encode
+              ls-969   [003] .....   270.326805: rpcgss_seqno:         task=
+:00000007@00000005 xid=3D0x7a569c7a seqno=3D2
+              ls-969   [003] .....   270.326807: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x1c status=3D0 action=3Dcall_transmit
+              ls-969   [003] ...1.   270.326807: xprt_reserve_xprt:    task=
+:00000007@00000005 snd_task:00000007
+              ls-969   [003] .....   270.326808: rpcgss_need_reencode: task=
+:00000007@00000005 xid=3D0x7a569c7a rq_seqno=3D2 seq_xmit=3D1 reencode unne=
+eded
+              ls-969   [003] .....   270.326808: rpc_xdr_sendto:       task=
+:00000007@00000005 head=3D[0xffff8895c29fe008,268] page=3D0(0) tail=3D[(nil=
+),0] len=3D268
+              ls-969   [003] .....   270.326816: xprt_transmit:        task=
+:00000007@00000005 xid=3D0x7a569c7a seqno=3D2 status=3D0
+              ls-969   [003] ...1.   270.326817: xprt_release_xprt:    task=
+:00000007@00000005 snd_task:ffffffff
+              ls-969   [003] .....   270.326817: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 action=3Dcall_transmit_status
+              ls-969   [003] ...2.   270.326817: rpc_task_sleep:       task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 timeout=3D0 queue=3Dxprt_pending
+              ls-969   [003] .....   270.326817: rpc_task_sync_sleep:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x16 status=3D0 action=3Dcall_status
+          <idle>-0     [001] ..s2.   270.326882: xs_data_ready:        peer=
+=3D[10.108.2.102]:2049
+   kworker/u16:0-12    [001] ...1.   270.326885: xprt_lookup_rqst:     peer=
+=3D[10.108.2.102]:2049 xid=3D0x7a569c7a status=3D0
+   kworker/u16:0-12    [001] ...2.   270.326885: rpc_task_wakeup:      task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x6 status=3D0 timeout=3D15000 queue=3Dxprt_pending
+   kworker/u16:0-12    [001] .....   270.326888: xs_stream_read_request: pe=
+er=3D[10.108.2.102]:2049 xid=3D0x7a569c7a copied=3D260 reclen=3D260 offset=
+=3D260
+   kworker/u16:0-12    [001] .....   270.326888: xs_stream_read_data:  peer=
+=3D[10.108.2.102]:2049 err=3D-11 total=3D264
+              ls-969   [003] .....   270.326895: rpc_task_sync_wake:   task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.326895: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dxprt_timer
+              ls-969   [003] .....   270.326895: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.326895: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_decode
+              ls-969   [003] .....   270.326895: rpc_xdr_recvfrom:     task=
+:00000007@00000005 head=3D[0xffff8895c29fe734,2712] page=3D0(0) tail=3D[(ni=
+l),0] len=3D260
+              ls-969   [003] .....   270.326898: rpc_task_run_action:  task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Drpc_exit_task
+              ls-969   [003] .....   270.326898: rpc_task_end:         task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Drpc_exit_task
+              ls-969   [003] .....   270.326899: rpc_stats_latency:    task=
+:00000007@00000005 xid=3D0x7a569c7a nfsv4 ACCESS backlog=3D7 rtt=3D76 execu=
+te=3D98 xprt_id=3D1
+              ls-969   [003] .....   270.326899: rpc_task_call_done:   task=
+:00000007@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dnfs41_call_sync_done
+              ls-969   [003] .....   270.326899: nfs4_sequence_done:   erro=
+r=3D0 (OK) session=3D0x5988ad3c slot_nr=3D0 seq_nr=3D25 highest_slotid=3D63=
+ target_highest_slotid=3D63 status_flags=3D0x0 ()
+              ls-969   [003] ...1.   270.326900: xprt_release_xprt:    task=
+:00000007@00000005 snd_task:ffffffff
+              ls-969   [003] ...1.   270.326901: nfs_refresh_inode_enter: f=
+ileid=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D0x0=
+ ()
+              ls-969   [003] ...1.   270.326901: nfs_set_cache_invalid: err=
+or=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versi=
+on=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] ...1.   270.326901: nfs_refresh_inode_exit: er=
+ror=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) vers=
+ion=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x0 ()
+              ls-969   [003] .....   270.326902: nfs4_access:          erro=
+r=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c
+              ls-969   [003] .....   270.326903: nfs_access_exit:      erro=
+r=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versio=
+n=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x4 (ACL_LRU_SET) ma=
+sk=3D0x24 permitted=3D0x7
+              ls-969   [003] .....   270.326907: nfs_getattr_enter:    file=
+id=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cache_validity=3D0x0 ()
+              ls-969   [003] .....   270.326908: nfs_getattr_exit:     erro=
+r=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versio=
+n=3D31 size=3D4096 cache_validity=3D0x0 () nfs_flags=3D0x4 (ACL_LRU_SET)
+              ls-969   [003] .....   270.326928: nfs_readdir_cache_fill: fi=
+leid=3D00:2d:262146 fhandle=3D0xad8c294c version=3D31 cookie=3D000000000000=
+0000:0x0 cache_index=3D0 dtsize=3D4096
+              ls-969   [003] .....   270.326931: rpc_task_begin:       task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3D0x4=
+ status=3D0 action=3D0x0
+              ls-969   [003] .....   270.326931: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Drpc_prepare_task
+              ls-969   [003] .....   270.326931: nfs4_setup_sequence:  sess=
+ion=3D0x5988ad3c slot_nr=3D0 seq_nr=3D26 highest_used_slotid=3D0
+              ls-969   [003] .....   270.326931: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_start
+              ls-969   [003] .....   270.326932: rpc_request:          task=
+:00000008@00000005 nfsv4 READDIR (sync)
+              ls-969   [003] .....   270.326932: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserve
+              ls-969   [003] .....   270.326932: xprt_reserve:         task=
+:00000008@00000005 xid=3D0x7b569c7a
+              ls-969   [003] .....   270.326932: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_reserveresult
+              ls-969   [003] .....   270.326932: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refresh
+              ls-969   [003] .....   270.326933: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_refreshresult
+              ls-969   [003] .....   270.326933: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_allocate
+              ls-969   [003] .....   270.326933: rpc_buf_alloc:        task=
+:00000008@00000005 callsize=3D3932 recvsize=3D176 status=3D0
+              ls-969   [003] .....   270.326933: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x4 status=3D0 action=3Dcall_encode
+              ls-969   [003] .....   270.326934: rpcgss_seqno:         task=
+:00000008@00000005 xid=3D0x7b569c7a seqno=3D3
+              ls-969   [003] .....   270.326936: rpc_xdr_reply_pages:  task=
+:00000008@00000005 head=3D[0xffff8895c29fef64,140] page=3D4008(88) tail=3D[=
+0xffff8895c29feff0,36] len=3D0
+              ls-969   [003] .....   270.326937: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|NORTO|CRED_NOREF runstate=3DRUN=
+NING|0x1c status=3D0 action=3Dcall_transmit
+              ls-969   [003] ...1.   270.326937: xprt_reserve_xprt:    task=
+:00000008@00000005 snd_task:00000008
+              ls-969   [003] .....   270.326937: rpcgss_need_reencode: task=
+:00000008@00000005 xid=3D0x7b569c7a rq_seqno=3D3 seq_xmit=3D2 reencode unne=
+eded
+              ls-969   [003] .....   270.326938: rpc_xdr_sendto:       task=
+:00000008@00000005 head=3D[0xffff8895c29fe008,284] page=3D0(0) tail=3D[(nil=
+),0] len=3D284
+              ls-969   [003] .....   270.326946: xprt_transmit:        task=
+:00000008@00000005 xid=3D0x7b569c7a seqno=3D3 status=3D0
+              ls-969   [003] ...1.   270.326947: xprt_release_xprt:    task=
+:00000008@00000005 snd_task:ffffffff
+              ls-969   [003] .....   270.326947: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 action=3Dcall_transmit_status
+              ls-969   [003] ...2.   270.326947: rpc_task_sleep:       task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x14 status=3D0 timeout=3D0 queue=3Dxprt_pending
+              ls-969   [003] .....   270.326947: rpc_task_sync_sleep:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x16 status=3D0 action=3Dcall_status
+          <idle>-0     [001] ..s2.   270.327040: xs_data_ready:        peer=
+=3D[10.108.2.102]:2049
+   kworker/u16:0-12    [001] ...1.   270.327048: xprt_lookup_rqst:     peer=
+=3D[10.108.2.102]:2049 xid=3D0x7b569c7a status=3D0
+   kworker/u16:0-12    [001] ...2.   270.327050: rpc_task_wakeup:      task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3D0x6 status=3D0 timeout=3D15000 queue=3Dxprt_pending
+   kworker/u16:0-12    [001] .....   270.327054: xs_stream_read_request: pe=
+er=3D[10.108.2.102]:2049 xid=3D0x7b569c7a copied=3D988 reclen=3D988 offset=
+=3D988
+   kworker/u16:0-12    [001] .....   270.327055: xs_stream_read_data:  peer=
+=3D[10.108.2.102]:2049 err=3D-11 total=3D992
+              ls-969   [003] .....   270.327062: rpc_task_sync_wake:   task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.327062: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dxprt_timer
+              ls-969   [003] .....   270.327063: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_status
+              ls-969   [003] .....   270.327063: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D0 action=3Dcall_decode
+              ls-969   [003] .....   270.327063: rpc_xdr_recvfrom:     task=
+:00000008@00000005 head=3D[0xffff8895c29fef64,140] page=3D4008(88) tail=3D[=
+0xffff8895c29feff0,36] len=3D988
+              ls-969   [003] .....   270.327067: rpc_xdr_overflow:     task=
+:00000008@00000005 nfsv4 READDIR requested=3D8 p=3D0xffff8895c29fefec end=
+=3D0xffff8895c29feff0 xdr=3D[0xffff8895c29fef64,140]/4008/[0xffff8895c29fef=
+f0,36]/988
+              ls-969   [003] .....   270.327068: rpc_task_run_action:  task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D-5 action=3Drpc_exit_task
+              ls-969   [003] .....   270.327068: rpc_task_end:         task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D-5 action=3Drpc_exit_task
+              ls-969   [003] .....   270.327068: rpc_stats_latency:    task=
+:00000008@00000005 xid=3D0x7b569c7a nfsv4 READDIR backlog=3D7 rtt=3D110 exe=
+cute=3D137 xprt_id=3D1
+              ls-969   [003] .....   270.327068: rpc_task_call_done:   task=
+:00000008@00000005 flags=3DMOVEABLE|DYNAMIC|SENT|NORTO|CRED_NOREF runstate=
+=3DRUNNING|0x4 status=3D-5 action=3Dnfs41_call_sync_done
+              ls-969   [003] .....   270.327068: nfs4_sequence_done:   erro=
+r=3D0 (OK) session=3D0x5988ad3c slot_nr=3D0 seq_nr=3D26 highest_slotid=3D63=
+ target_highest_slotid=3D63 status_flags=3D0x0 ()
+              ls-969   [003] ...1.   270.327069: xprt_release_xprt:    task=
+:00000008@00000005 snd_task:ffffffff
+              ls-969   [003] ...1.   270.327070: nfs_set_cache_invalid: err=
+or=3D0 (OK) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR) versi=
+on=3D31 size=3D4096 cache_validity=3D0x4 (INVALID_ATIME) nfs_flags=3D0x4 (A=
+CL_LRU_SET)
+              ls-969   [003] .....   270.327070: nfs4_readdir:         erro=
+r=3D-5 (EIO) fileid=3D00:2d:262146 fhandle=3D0xad8c294c
+              ls-969   [003] .....   270.327071: nfs_readdir_cache_fill_don=
+e: error=3D-5 (IO) fileid=3D00:2d:262146 fhandle=3D0xad8c294c type=3D4 (DIR=
+) version=3D31 size=3D4096 cache_validity=3D0x4 (INVALID_ATIME) nfs_flags=
+=3D0x4 (ACL_LRU_SET)
 
-Same as above. I know other code uses the samew approach, but this kind of
-"validation" would be better to avoid. It would be much better to handle the
-conversions in the calling code.
 
-> +	}
-> +}
-> +
->  static int ina3221_read_chip(struct device *dev, u32 attr, long *val)
->  {
->  	struct ina3221_data *ina = dev_get_drvdata(dev);
-> @@ -373,6 +461,25 @@ static int ina3221_read_in(struct device *dev, u32 attr, int channel, long *val)
->  	case hwmon_in_enable:
->  		*val = ina3221_is_enabled(ina, channel);
->  		return 0;
-> +	case hwmon_in_crit:
-> +	case hwmon_in_lcrit:
-> +		reg = alert_limit_reg[channel];
-> +		ret = ina3221_read_value(ina, reg, &regval);
-> +		if (ret)
-> +			return ret;
-> +		/*
-> +		 * Scale of bus voltage (mV): LSB is 8mV
-> +		 */
-> +		*val = regval * 8;
-> +		return 0;
-> +	case hwmon_in_crit_alarm:
-> +	case hwmon_in_lcrit_alarm:
-> +		reg = alert_flag[channel];
-> +		ret = regmap_field_read(ina->fields[reg], &regval);
-> +		if (ret)
-> +			return ret;
-> +		*val = regval;
-> +		return 0;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -450,6 +557,58 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
->  	}
->  }
->  
-> +static const u32 sq52210_alert_mask[][INA3221_NUM_CHANNELS] = {
-> +	[hwmon_curr_lcrit] = { BIT(15), BIT(14), BIT(13) },
-> +	[hwmon_in_crit] = { BIT(12), BIT(11), BIT(10) },
-> +	[hwmon_in_lcrit] = { BIT(9), BIT(8), BIT(7) },
-> +	[hwmon_power_crit] = { BIT(6), BIT(5), BIT(4) },
 
-This does not work. hwmon_curr_xxx, hwmon_inxxx, and hwmon_power_xxx use
-different and overlapping number spaces. Even if that was not the case,
-the above would result in a serverely sparse array, and the callingo code
-would have to make sure that the row is actually populated before using it.
+TWR
 
-> +};
-> +
-> +static int sq52210_alert_limit_write(struct ina3221_data *ina, u32 attr, int channel, long val)
-> +{
-> +	struct regmap *regmap = ina->regmap;
-> +	int ret, limit_reg, item;
-> +	u32 alert_group;
-> +
-> +	if (val < 0)
-> +		return -EINVAL;
-> +	item = channel % INA3221_NUM_CHANNELS;
-> +	switch (item) {
-> +	case 0:
-> +		alert_group = SQ52210_MASK_ALERT_CHANNEL1;
-> +		limit_reg = SQ52210_ALERT_LIMIT1;
-> +		break;
-> +	case 1:
-> +		alert_group = SQ52210_MASK_ALERT_CHANNEL2;
-> +		limit_reg = SQ52210_ALERT_LIMIT2;
-> +		break;
-> +	case 2:
-> +		alert_group = SQ52210_MASK_ALERT_CHANNEL3;
-> +		limit_reg = SQ52210_ALERT_LIMIT3;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	/*
-> +	 * Clear all alerts first to avoid accidentally triggering ALERT pin
-> +	 * due to register write sequence. Then, only enable the alert
-> +	 * if the value is non-zero.
-> +	 */
-> +	ret = regmap_update_bits(regmap, SQ52210_ALERT_CONFIG,
-> +				alert_group, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +	ret = regmap_write(regmap, limit_reg,
-> +			sq52210_alert_to_reg(ina, ina3221_curr_reg[attr][item], val));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (val)
-> +		return regmap_update_bits(regmap, SQ52210_ALERT_CONFIG,
-> +					alert_group, sq52210_alert_mask[attr][item]);
-> +	return 0;
-> +}
-> +
->  static int ina3221_write_chip(struct device *dev, u32 attr, long val)
->  {
->  	struct ina3221_data *ina = dev_get_drvdata(dev);
-> @@ -586,6 +745,21 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
->  	return ret;
->  }
->  
-> +static int ina3221_write_in(struct device *dev, u32 attr, int channel, long val)
-> +{
-> +	struct ina3221_data *ina = dev_get_drvdata(dev);
-> +
-> +	switch (attr) {
-> +	case hwmon_in_lcrit:
-> +		return sq52210_alert_limit_write(ina, attr, channel, val);
-> +	case hwmon_in_crit:
-> +		return sq52210_alert_limit_write(ina, attr, channel, val);
-> +	case hwmon_in_enable:
-> +		return ina3221_write_enable(dev, channel, val);
-> +	default:
-> +		return 0;
-> +	}
-> +}
->  static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
->  			u32 attr, int channel, long *val)
->  {
-> @@ -620,7 +794,7 @@ static int ina3221_write(struct device *dev, enum hwmon_sensor_types type,
->  		break;
->  	case hwmon_in:
->  		/* 0-align channel ID */
-> -		ret = ina3221_write_enable(dev, channel - 1, val);
-> +		ret = ina3221_write_in(dev, attr, channel - 1, val);
->  		break;
->  	case hwmon_curr:
->  		ret = ina3221_write_curr(dev, attr, channel, val);
-> -- 
-> 2.17.1
-> 
-> 
 
