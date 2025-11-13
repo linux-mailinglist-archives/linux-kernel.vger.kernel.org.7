@@ -1,130 +1,218 @@
-Return-Path: <linux-kernel+bounces-898645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72058C55A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:26:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE52DC55A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D7D3B1DF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:26:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F5C04E3FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62EE2FD1BF;
-	Thu, 13 Nov 2025 04:26:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D4A2FF648;
+	Thu, 13 Nov 2025 04:27:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FF92D9EE2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DD12FDC20
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763007991; cv=none; b=dgVlg70sNE34Zjhmu93jDKip7D6/NSPtfA1kD2lix1/pXkNNjDrmYPoSiagacgwEnqYPR38r4+gr85WzDdUbf/uHsjRo2pf1rE1qKAwjTmwmk86n8q6XVBoYBHfhhf2EIc2Nyhjo3uxvmvKhkRS8PpogQe9B9M9378Y+GU/CzB4=
+	t=1763008054; cv=none; b=ifV7x4B7smNIfnKHxjjba/QT/UynWL38rBYlRkeewReI0ZSzkIvyBiZ/SuK8i+/hTAYCY2/zZIBA6JH+ZwIPBc0uoTCYKADkqzs7UxoE7DqowchYmyld6UHrGc+mQK2YIxGS0WWWYIMMMFLz9+B5rWAS7QyS98plaFN7X2DIidM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763007991; c=relaxed/simple;
-	bh=nhLbmKXgssz+M2ZkXGbr1waI7PBbdxLjfV4Nhc+cyx4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PLqcAoGyVwV6ye8r2+a54RAHUVpGhZzWXr/unhk9jSsPfbmauyccXimP3Ct2nNyyvDLyxhl4ADnSemYhFgH/rbmHdICYo7AumIGcnwlbwA6QqRXid637u7hy2PSxYjbLispaZCKQgCUTvBLdETcTKhD8plvtrTYg2jAA8dqjiZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+	s=arc-20240116; t=1763008054; c=relaxed/simple;
+	bh=e410lL0XtJhawaYXcwc+sC+bh1ZpZB82XM/advswfI8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bLhGF2sTRyeiAe6P3qfL2IIrmbZJi9kuruJY+ELGc08yoL0OjZ2ZHXQ55vKS0bcwZ4FQVTLc51KTx9YQ98GZlox5Hdob90xCgefZxd6OxR5N/m5UqTCXNWOXAgY08aC9Hze+yzpsDY0LYpPQ4pdox1owwOQ3FPIMv10dxzG0nqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4337e3aca0cso7330715ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:26:29 -0800 (PST)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-948cc59142aso57952839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:27:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763007989; x=1763612789;
+        d=1e100.net; s=20230601; t=1763008052; x=1763612852;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vko0liSXNlPrds3fLz3R6ALlGDNGPAyedKhhTM/0DZo=;
-        b=HIwNCuZevbY2mkElgUqfXUSco5RjUgMyB1wdu8rmoCMaDpj4EQZnbixRK2k6Cl1zhd
-         rfbDqRrV6YAhz2+lDzLGV6tp9Du6uOj7M7q0WrZ5VSICQOPntQY1J8q8RcRCrgoI2sIa
-         a5nAH8gHcT+yk3lAxCThl+r/+As1Stbe0/161H5ipO6d6BdpgsIYL4p47gKfvrXzG7WU
-         h3mF5OYT6TrkDLIzCSoLoOnbG8zf1OdkfVSeEYXsENoQ6p++D56W+9K0KOHLK008WliE
-         r6Age4RPeYkKzdWwZ4WUbAEAFfUGTSKGo2Zrt2vGeJ3vhgvhLFk298WeXn7CUMox554y
-         CaWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ2nTWWagBs0HN9q908WWNar4a6tXsT02DQKN4Dyz356GWlMAb9p2cfof8f6jrOWfvU0GKZUNCV9sfT9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6FWS28kREiamt20lPRt4WCpqbgYRhVQVEzFZZXmWLwhjeQnUl
-	z/d9JC9LL5qlgOyrkO/knH+tMesRhvjaMo2cakrLrWbpl2AsRJelFVNAo9wNTRoZ4dzP5nGG+GO
-	UvfGKsKtxuqx08a34ku/DdHbOQ5h6lCa/E9up+N/q3tHbB2Sv8TKf/+/Iq9s=
-X-Google-Smtp-Source: AGHT+IHTTg/Ln7hW0ZRls9+FebScaGrhdhm3A65/NuTqSZpNXbTbj+CfmNVcC4X+buUi8x+OqoaimPhEjr/XGYz0Dg3mpKzO9m2S
+        bh=iuB9FyGKjr7RQqFH7KTTEBJokESm16XwCwKVflGFl9M=;
+        b=NQKgMoqzccLmuSDzYPAk/FznXGy+nTVB/b7ixe+48zjOlSAhBA8KpGKf2I6X05IfP+
+         vdgTjuyki0gMEMeJJ+oz7VKtncjqHN0takBjUyncxr7mb2XIaNTrM/hdt9SSZX0rqhgW
+         /cicyybAn52PYGTkr6FRZuJoEG2PI9Z6XKBBARMyDniw0rtLRZRItu6QgV6dSSrXKzaY
+         wOW+Okjl+9U1RbGDdXRGbxVMaZVrwXmT4Vvg4qeLanYO1u7HboIyQ2byI2uh4q1dyPT3
+         cEd5g4vSFIb3cikfgcnUGbog9cttGHKns3j1PG13VgMDVrz61eQDWiwg/6hODK0hO48N
+         7Kag==
+X-Forwarded-Encrypted: i=1; AJvYcCUas5wTMkAJ9L9ZRGWb7cpq4pRu+B3X5nzVisqyW54oOjpuLcwi5Zc2p5LgPZCtgWSzxGs+PL36B3j200Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCG6RON+I230fcQXqsM3p8/XmipMQEWQilerU8TavjBXvZgrXc
+	fWv17Vnh7DOWO5UzA7ni15gznExrJ9kuNpxCgb+5KGj4vxWSi9gz0DTzvR1O13E4vRtWDeeuAWn
+	Gea7HV1RLWG0D8dcv5tPOtalU26XV8dVmV4HAqIkcI7+QBK4H0rVzpANgxMA=
+X-Google-Smtp-Source: AGHT+IGeZ/Gg+McHtOFHUT3knOBoPtWRPAUPYSEbUGKCUvGl563WPw/+WpQpxVznIYzsX3701JzbnkImhcNuXIMIWcb2aT+Nlzrq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:11:b0:433:74c1:2edb with SMTP id
- e9e14a558f8ab-43473d4e71cmr89149855ab.14.1763007989168; Wed, 12 Nov 2025
- 20:26:29 -0800 (PST)
-Date: Wed, 12 Nov 2025 20:26:29 -0800
+X-Received: by 2002:a05:6602:601a:b0:948:7aa3:3670 with SMTP id
+ ca18e2360f4ac-948c467bf13mr686625939f.13.1763008052246; Wed, 12 Nov 2025
+ 20:27:32 -0800 (PST)
+Date: Wed, 12 Nov 2025 20:27:32 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69155df5.a70a0220.3124cb.0018.GAE@google.com>
-Subject: [syzbot] [bpf?] possible deadlock in bpf_lru_push_free (2)
-From: syzbot <syzbot+18b26edb69b2e19f3b33@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
+Message-ID: <69155e34.050a0220.3565dc.0019.GAE@google.com>
+Subject: [syzbot] [hfs?] memory leak in hfs_init_fs_context
+From: syzbot <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    e427054ae7bc Merge branch 'x86-fgraph-bpf-fix-orc-stack-un..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=136b70b4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=18b26edb69b2e19f3b33
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10013c12580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16541c12580000
+HEAD commit:    4ea7c1717f3f Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17346c12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad45f827c88778ff7df6
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143f5c12580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c9a7cd980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c1ac942fc5fb/disk-e427054a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/be05ef12ba31/vmlinux-e427054a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c75604292a15/bzImage-e427054a.xz
+disk image: https://storage.googleapis.com/syzbot-assets/1f8cf51c9042/disk-4ea7c171.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6f227246b5b7/vmlinux-4ea7c171.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f935766a00b3/bzImage-4ea7c171.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/bee9311f4026/mount_4.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+18b26edb69b2e19f3b33@syzkaller.appspotmail.com
+Reported-by: syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com
 
-============================================
-WARNING: possible recursive locking detected
-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor149/10558 is trying to acquire lock:
-ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_common_lru_push_free kernel/bpf/bpf_lru_list.c:514 [inline]
-ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_lru_push_free+0x33b/0xbb0 kernel/bpf/bpf_lru_list.c:553
+BUG: memory leak
+unreferenced object 0xffff888111778c00 (size 512):
+  comm "syz.0.17", pid 6092, jiffies 4294942644
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc eb1d7412):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    hfs_init_fs_context+0x24/0xd0 fs/hfs/super.c:411
+    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
+    do_new_mount fs/namespace.c:3707 [inline]
+    path_mount+0x93c/0x12e0 fs/namespace.c:4037
+    do_mount fs/namespace.c:4050 [inline]
+    __do_sys_mount fs/namespace.c:4238 [inline]
+    __se_sys_mount fs/namespace.c:4215 [inline]
+    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4215
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-but task is already holding lock:
-ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_common_lru_pop_free kernel/bpf/bpf_lru_list.c:440 [inline]
-ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_lru_pop_free+0x1ab/0x19b0 kernel/bpf/bpf_lru_list.c:496
+BUG: memory leak
+unreferenced object 0xffff88810a2e8800 (size 512):
+  comm "syz.0.18", pid 6098, jiffies 4294942646
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc eb1d7412):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    hfs_init_fs_context+0x24/0xd0 fs/hfs/super.c:411
+    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
+    do_new_mount fs/namespace.c:3707 [inline]
+    path_mount+0x93c/0x12e0 fs/namespace.c:4037
+    do_mount fs/namespace.c:4050 [inline]
+    __do_sys_mount fs/namespace.c:4238 [inline]
+    __se_sys_mount fs/namespace.c:4215 [inline]
+    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4215
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+BUG: memory leak
+unreferenced object 0xffff88810a2e8e00 (size 512):
+  comm "syz.0.19", pid 6102, jiffies 4294942648
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc eb1d7412):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    hfs_init_fs_context+0x24/0xd0 fs/hfs/super.c:411
+    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
+    do_new_mount fs/namespace.c:3707 [inline]
+    path_mount+0x93c/0x12e0 fs/namespace.c:4037
+    do_mount fs/namespace.c:4050 [inline]
+    __do_sys_mount fs/namespace.c:4238 [inline]
+    __se_sys_mount fs/namespace.c:4215 [inline]
+    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4215
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-       CPU0
-       ----
-  lock(&loc_l->lock);
-  lock(&loc_l->lock);
+BUG: memory leak
+unreferenced object 0xffff8881263ed600 (size 512):
+  comm "syz.0.20", pid 6125, jiffies 4294943177
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc eb1d7412):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    hfs_init_fs_context+0x24/0xd0 fs/hfs/super.c:411
+    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
+    do_new_mount fs/namespace.c:3707 [inline]
+    path_mount+0x93c/0x12e0 fs/namespace.c:4037
+    do_mount fs/namespace.c:4050 [inline]
+    __do_sys_mount fs/namespace.c:4238 [inline]
+    __se_sys_mount fs/namespace.c:4215 [inline]
+    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4215
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
- *** DEADLOCK ***
+BUG: memory leak
+unreferenced object 0xffff88810db18c00 (size 512):
+  comm "syz.0.21", pid 6127, jiffies 4294943179
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc eb1d7412):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    hfs_init_fs_context+0x24/0xd0 fs/hfs/super.c:411
+    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
+    do_new_mount fs/namespace.c:3707 [inline]
+    path_mount+0x93c/0x12e0 fs/namespace.c:4037
+    do_mount fs/namespace.c:4050 [inline]
+    __do_sys_mount fs/namespace.c:4238 [inline]
+    __se_sys_mount fs/namespace.c:4215 [inline]
+    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4215
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
- May be due to missing lock nesting notation
-
-3 locks held by syz-executor149/10558:
- #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: bpf_percpu_hash_update+0x2b/0x200 kernel/bpf/hashtab.c:2409
- #1: ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_common_lru_pop_free kernel/bpf/bpf_lru_list.c:440 [inline]
- #1: ffffe8ffffc41588 (&loc_l->lock){....}-{2:2}, at: bpf_lru_pop_free+0x1ab/0x19b0 kernel/bpf/bpf_lru_list.c:496
- #2: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #2: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #2: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2074 [inline]
- #2: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run2+0x186/0x4b0 kernel/trace/bpf_trace.c:2116
-
-stack backtrace:
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
 
 
 ---
