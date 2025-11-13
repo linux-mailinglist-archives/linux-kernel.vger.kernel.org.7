@@ -1,210 +1,127 @@
-Return-Path: <linux-kernel+bounces-900069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-900068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FF2C59876
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:41:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB2DC5983A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5953B9042
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:38:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 225603470FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4971930CD9E;
-	Thu, 13 Nov 2025 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4573112B6;
+	Thu, 13 Nov 2025 18:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LmR/r5P9"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NuLPZgLC"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7EE311C1B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631C730DD2E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 18:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763059122; cv=none; b=WyJPs/aHhVd31o2yhbVNwNKNoIvtkGl68QN8E3NlbR0ZTs1nxDwWh2lJx1jWrDJ8+FNA15rSe7sZoFvTS8hYOaaLpfbJGCr8Nj+wc3V0SJCS4KGqxoREoRtpcO4wAkRHqmNqONpQ5A1GVIN141I1oy1Rlw0hZa8NXUTAqknetDU=
+	t=1763059102; cv=none; b=XnM3NaiUmvJtLMgd95WZWy4gOCEa69eZCodNwF4XTI5KwLvt+mEplvsBjYVQrPI9/c8ftmBPtIhSDvoEiQssxVLadrSO8iKPZyM6RkbamrM8X/vkdqiHfaztPOzpiBiCYAzLiNhXEBITfN2CnVcgSK7/V5pPkxKMDoBuAMJGsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763059122; c=relaxed/simple;
-	bh=Cv/QbwolssPfl2k/AIydYpdcMQzVyb3+RLFiXzqCKjI=;
+	s=arc-20240116; t=1763059102; c=relaxed/simple;
+	bh=GRip0L6z1TjJ1nD2v9eWpBy+v6fZlcUxO43j7XE8w5I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P4uhaFdOP+9W/fHblkNBeHC0/QAK6DTadp4lbHwQ9K2CDsbn5cAHZqRD64+5ONMh92s08YrsHtxkX7ImND02JI3ofxr5VUDBjSx3zr63vkjzCuudHQvRvPzs28QRREEZMQon2njGAvYC9BPZwhp/dUB0r8Jbj18mJnFRXzDi5rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=LmR/r5P9; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640c1fda178so1879311a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:38:39 -0800 (PST)
+	 To:Cc:Content-Type; b=HLjyhZKq60j1FnVSvwDJcSafL+j8phjw8IyH0EcXEkHl68hON588Se72VvthE4LQvO0RbOI8EGcM9kWvyeRMnaN1bwJ6Kx1hPbpdWC87gTQC69QMPXZvvuNrSspMExPL9LOPjyEkUx0ONpRn2c6GoqmTarQ/xA4BC2wkmfgGSiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NuLPZgLC; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37a3d86b773so12460891fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:38:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1763059118; x=1763663918; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763059098; x=1763663898; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5QzIZolLw0TWeicvPUi5XAG3YGoC32FLVnv2N+ZATiw=;
-        b=LmR/r5P9nSv0fnAvDZE6SNaqXVbp8Ckb0bd82wvAwKZ7cMo0vtgk7RUYeOpQi5MJ4N
-         1igvmfh0EgPGx2/lukRolXS0FXDrwLW6cK1fASpWHTu6bbRjAE2ffo1/tAm40XqZiDqr
-         ES3IOmiz6sRq1a3MmSgGtKmOzB/aLd+AOmjN+IYsRwlN1XzPP4YF2xMf9aROQuVfJjld
-         PVDYOhH+WDleBXykhoFUgkXUor5ojw7QQ1pRDHt5iP73U+1t8DOoO+DzFqJxgnARCLqE
-         4U1zAz03FC2q0kHp8C8I269NlzUy3hnIxFlgLmN+V0jcYDWmeTiaiWbMSszPs5R6A96j
-         ghkA==
+        bh=KuaLltO93tDllZeZpDO8ivNIqES1wnPSOVBcYNJ4uiI=;
+        b=NuLPZgLCu7fQ/3e7XgTia862z3OL0R0hUL4tHqHgkPfoKU4L4TKcuRMefwPxJi1ftQ
+         oWQe85mwhdmmndwKy77EniT/CLItbAeI3s0HTzrU4SE4OK6lL/7MDL+YLtvMAlUaFQKq
+         ZW1xj8ER0Qyjm8451GJ03iOP8PItasfgjWy8986rgwiwK+vsbytr60t/Pw9Z7z9fhikf
+         CNzUfpIY2NustU64p1roqXvsWmGFt+r0EhbqTZs1EOW/fb7nzyL9kSjGwlkc+5dW25DE
+         iNwRfkyc3YpWCn/tAhQIQwdT6TSFA5h6K3nwxu/qvkSxrZwks7qDHGocaOs0EVTv/vQj
+         h1SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763059118; x=1763663918;
+        d=1e100.net; s=20230601; t=1763059098; x=1763663898;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5QzIZolLw0TWeicvPUi5XAG3YGoC32FLVnv2N+ZATiw=;
-        b=MJKgQSBHVH2VjU1shl851jfesp9gQ6NnA57ygQXpvyIONxQNBK4I3uq4pSSCcpIZ6K
-         93rxsh5mgd2oSrR4u+hCrJarTwDdTC+CTlYH9C1XMaIUx7XRzV/IV/DClIrHFmvfFU9B
-         6pbAtUSjTPikNKp0IOoLhUyHkyPTom2mMrUPBlOcBZHuk0HuwMt/0sO4UJteSYvlLI5W
-         r39PNOe4AAkNktHOEHUkN+U1G9isZF3Uen0HrCs1E/b2YkLIJJSja32bQV93hGgMOzHr
-         ts4FR0RrdBT+K53YQBcGoVqeoOJmxaMPTnCmx/TaxdqKAZ9F9IUFC2CxfxmPth1ba2iF
-         mMrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhm0c20U9E5rKW1yh7vGXrBoZV04xEU4LWu8Y9u5v3zH/4VY6w2LJgGwBKdi1DU8KdhJzLAsvE4qj00eI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsAZr0Y45gL48E0NlxHMOdPudLgRXFmGYAeKOq6zHkcZJp/l4V
-	32RfUpmrsrPETUjgAydMW7SL/uzMb/6U2Rrr3XRAz4HgBx2dedJ/YjrEbWaaatQNxqzy7a9aGec
-	FVha8DCD6UY9JUbBVv31/PS+YKKnjUkBlVtWbuhVj6w==
-X-Gm-Gg: ASbGncubA5UGiRYrkP08AmmM8NR8lCHZQe4mDe25rOnOh8aeZaJNJszV+qEn73r5S7a
-	ITKPMgSi0SH4IvZgyobzB4yTeN1NLVNADPP9nDBrh54mF7s+qITYPZpQeVBKTglXp8dlPin37Hh
-	+3qZBwr9qV1Ao2rkKZL6CUS+LcX9jZpODD63EszoEa5dVnrix9XYuVF9MUtj10gb3cEnPh2oRCC
-	eCsg1fQ33DGG/e6VGOtcn28dRoBRUlyFwyP4tjyLlxO9yMbcoO3W/sC2Q==
-X-Google-Smtp-Source: AGHT+IEDdgrLTNweUjb0jeGLJZI3hwXTN5B+vwJRTiRZj6uuz96RHszyffXikSiDLB6+TEf6KwvdNmtJbHmHq1QzP+8=
-X-Received: by 2002:a05:6402:3056:10b0:640:b1cf:f7f7 with SMTP id
- 4fb4d7f45d1cf-64350ebf795mr201526a12.35.1763059118370; Thu, 13 Nov 2025
- 10:38:38 -0800 (PST)
+        bh=KuaLltO93tDllZeZpDO8ivNIqES1wnPSOVBcYNJ4uiI=;
+        b=v4uu/YQdrCMLKLGzI3Qqsvh9qF3XLwp/6zsMIZM41lvL0XGXDiA0pkSKtZdkFHOrCH
+         NJIw9jUco3+QyfdrpXGhVtEOMPoPUEE6gy0I3PI5AzIyvrv4zwt20G7gS/kA8usEeDPf
+         vK3IGMaQCfudy3Kn1Aanu+fZDhsWV3YU93lCi7bl5STIYBARuSbMeIC+u0W4cvhe0Cau
+         eohfTcauL1FdQlIKtyhKsiui9z1SLX47e5947z/oAsX3da6qSIG8ieQewvzEg1h6oj39
+         LzH+jWKKuiIhbRZ/gcikj1NI3LgRJandomO+Ei5BZUwLxtghw0zg3+nXj52jm5VxaXRm
+         bIbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkZd0XDMnbq/C17tPHYQRqysfGI0CNbNU6Mhd/HkUxZUbOMfv14wWwY8lNlP/MVqrSaT92XN2onJo6mLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7aY4Z7HsGX8BhFRhAYIO8yqoSN4vJXcXThn9PKD3oBCbmpQ9T
+	bQoxJZxx8gjRB7Mq+gt9SJuPDGadULN+BNIBtLTYoEFJETeJORdQywEFNTBDm+PA+kLoEFxZWJX
+	hTsGqpz9K2VLjee/yjj17W4ZMm5pdubwd7AI=
+X-Gm-Gg: ASbGncuM2BTAx6lRRJmClMLjJlE9Q4E6sF/Yq98BpdwPzhUXajEIZkmFaNStIMjSNkE
+	ZajLYAa7oPoDMtbp7oR0dUam5H6swbOSN4KBSgtoowz2Ppzya/E89jtYEa7vnAMbUS1E/OgDFLO
+	6PinohaGGChvvOLBzId0xf/POilfoo4gzWjap2JDk/EU4Q5h44aNxRu6LczxoINYpTIkjlMTWbz
+	q1x/PGLHdoleYVMwORFIHUUzf8Z0Zp38hxK66pAoiimilkGUtPBrRhQ1qRgGE52Ha5vUqYKFuY=
+X-Google-Smtp-Source: AGHT+IFTNaY4mZM1ix3QYFEc82EzkpvKcUBcyp813LVZ4p7kn0l1FqFqSSvz0QMX9+tLUJN4chgtI95mLiddsP3Pj0c=
+X-Received: by 2002:a2e:b952:0:b0:37b:aaf7:f007 with SMTP id
+ 38308e7fff4ca-37baaf7f224mr1618891fa.31.1763059098207; Thu, 13 Nov 2025
+ 10:38:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRHiCxoJnEGmj17q@kernel.org>
- <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com>
- <aROZi043lxtegqWE@kernel.org> <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
- <aRSKrxfAb_GG_2Mw@kernel.org> <CA+CK2bAq-0Vz4jSRWnb_ut9AqG3RcH67JQj76GhoH0BaspWs2A@mail.gmail.com>
- <aRYH_Ugp1IiUQdlM@kernel.org>
-In-Reply-To: <aRYH_Ugp1IiUQdlM@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 13 Nov 2025 13:38:01 -0500
-X-Gm-Features: AWmQ_bneOtiUV_-OT7VkHtp8xKlM72B3fH-AsO6J1uV7zz_LDIJjB88yI7q7RiE
-Message-ID: <CA+CK2bC_m=pUHt1uOoW9UMssDATqabHKHRyq7QNbzrb9Vm13Cw@mail.gmail.com>
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
+References: <20251112202258.1310754-1-hpa@zytor.com> <20251112202258.1310754-3-hpa@zytor.com>
+In-Reply-To: <20251112202258.1310754-3-hpa@zytor.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Thu, 13 Nov 2025 13:38:05 -0500
+X-Gm-Features: AWmQ_bl8F5Gv6WqKGpN4l0omqbFGWN4-1qCrBCfwhQmjbk6-525Ibg67llMH-nQ
+Message-ID: <CAMzpN2iwrzKzhif7WXsoQi=4OdBENZMV14Hm2a5ePukywNgh1w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/9] x86/entry/vdso: refactor the vdso build
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Morse <james.morse@arm.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>, Nam Cao <namcao@linutronix.de>, 
+	Oleg Nesterov <oleg@redhat.com>, Perry Yuan <perry.yuan@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-sgx@vger.kernel.org, 
+	x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 11:32=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wr=
-ote:
+On Wed, Nov 12, 2025 at 3:23=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrot=
+e:
 >
-> On Wed, Nov 12, 2025 at 09:58:27AM -0500, Pasha Tatashin wrote:
-> > On Wed, Nov 12, 2025 at 8:25=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
- wrote:
-> > >
-> > > Hi Pasha,
-> > >
-> > > On Tue, Nov 11, 2025 at 03:57:39PM -0500, Pasha Tatashin wrote:
-> > > > Hi Mike,
-> > > >
-> > > > Thank you for review, my comments below:
-> > > >
-> > > > > > This is why this call is placed first in reboot(), before any
-> > > > > > irreversible reboot notifiers or shutdown callbacks are perform=
-ed. If
-> > > > > > an allocation problem occurs in KHO, the error is simply report=
-ed back
-> > > > > > to userspace, and the live update update is safely aborted.
-> > >
-> > > The call to liveupdate_reboot() is just before kernel_kexec(). Why we=
- don't
-> > > move it there?
-> >
-> > Yes, I can move that call into kernel_kexec().
-> >
-> > > And all the liveupdate_reboot() does if kho_finalize() fails it's mas=
-saging
-> > > the error value before returning it to userspace. Why kernel_kexec() =
-can't
-> > > do the same?
-> >
-> > We could do that. It would look something like this:
-> >
-> > if (liveupdate_enabled())
-> >    kho_finalize();
-> >
-> > Because we want to do kho_finalize() from kernel_kexec only when we do
-> > live update.
-> >
-> > > > > This is fine. But what I don't like is that we can't use kho with=
-out
-> > > > > liveupdate. We are making debugfs optional, we have a way to call
-> >
-> > This is exactly the fix I proposed:
-> >
-> > 1. When live-update is enabled, always disable "finalize" debugfs API.
-> > 2. When live-update is disabled, always enable "finalize" debugfs API.
+> - Separate out the vdso sources into common, vdso32, and vdso64
+>   directories.
+> - Move the vdso2c tool to arch/x86/tools.
+> - Build the 32- and 64-bit vdsos in their respective subdirectories;
+>   this greatly simplifies the build flags handling.
+> - Unify the mangling of Makefile flags between the 32- and 64-bit
+>   vdso code as much as possible; all common rules are put in
+>   arch/x86/entry/vdso/common/Makefile.include. The remaining
+>   is very simple for 32 bits; the 64-bit one is only slightly more
+>   complicated because it contains the x32 generation rule.
+> - Define __DISABLE_EXPORTS when building the vdso. This need seems to
+>   have been masked by different ordering compile flags before.
+> - Change CONFIG_X86_64 to BUILD_VDSO32_64 in vdso32/system_call.S,
+>   to make it compatible with including fake_32bit_build.h.
+> - The -fcf-protection=3D option was "leaking" from the kernel build,
+>   for reasons that was not clear to me. Futhermore, several
+>   distributions ship with it set to a default value other than
+>   "-fcf-protection=3Dnone". Make it match the configuration options
+>   for *user space*.
 >
-> I don't mind the concept, what I do mind is sprinkling liveupdate_enabled=
-()
-> in KHO.
+> Note that this patch may seem large, but the vast majority of it is
+> simply code movement.
 
-Sure, let's just unconditionally do kho_fill_kimage().
-
-> How about we kill debugfs/kho/out/abort and make kho_finalize() overwrite
-> an existing FDT if there was any?
->
-> Abort was required to allow rollback for subsystems that had kho notifier=
-s,
-> but now notifiers are gone and kho_abort() only frees the memory
-> serialization data. I don't see an issue with kho_finalize() from debugfs
-> being a tad slower because of a call to kho_abort() and the liveupdate pa=
-th
-> anyway won't incur that penalty.
-
-Sounds good to me.
-
-> > > KHO should not call into liveupdate. That's layering violation.
-> > > And "stateless KHO" does not really make it stateless, it only remove=
-s the
-> > > memory serialization from kho_finalize(), but it's still required to =
-pack
-> > > the FDT.
-> >
-> > This touches on a point I've raised in the KHO sync meetings: to be
-> > effective, the "stateless KHO" work must also make subtree add/remove
-> > stateless. There should not be a separate "finalize" state just to
-> > finish the FDT. The KHO FDT is tiny (only one page), and there are
-> > only a handful of subtrees. Adding and removing subtrees is cheap; we
-> > should be able to open FDT, modify it, and finish FDT on every
-> > operation. There's no need for a special finalization state at kexec
-> > time. KHO should be totally stateless.
->
-> And as the first step we can drop 'if (!kho_out.finalized)' from
-> kho_fill_kimage(). We might need to massage the check for valid FDT in
-> kho_populate() to avoid unnecessary noise, but largely there's no issue
-> with always passing KHO data in kimage.
-
-Sounds good, let me work on this patch.
-
-Pasha
+Some of these changes (like moving vdso2c) can be split out into
+smaller patches.
 
