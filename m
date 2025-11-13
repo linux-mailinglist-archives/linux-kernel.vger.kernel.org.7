@@ -1,161 +1,220 @@
-Return-Path: <linux-kernel+bounces-899523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A809AC58060
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:48:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C01EC5802A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 865294EA0C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:43:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5E4F35575A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AAF2D739B;
-	Thu, 13 Nov 2025 14:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8110286D60;
+	Thu, 13 Nov 2025 14:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUFMEC43"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="pUaRuL6o"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1112D661C;
-	Thu, 13 Nov 2025 14:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F362D0637
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044949; cv=none; b=Ach6JD4RpmRh8OPhlz4y11lqtNGFrmHDFmtM5CENf6CyLlMUXDIRHZeHs9+EnEYfNa3U1VIf6Pm7ebZkzBCQw5yIi4gtArUQUHsKPlPVbKlE5WtpbVFt7I1TB5O7MPZYc0yHAujsj5as+V1+/0gGyThMMlT+1KBc12uLdVPaoqQ=
+	t=1763044988; cv=none; b=qguLVZ+DVzOXIkGUPI+hAjVAo74+7KF8sGdiemfHbd66NvzfC2dtRmV2sL/NcH8tpSVIZ779V5tmB27awXBfUX4N/zfQ6nujEk3PjHVVLIFz7JbAVK7AvPWoZ/wz9a8LIy4gvGD5vH8ETDVKeBXS2OvatIQLrmUFGUD1t7C9Ek8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044949; c=relaxed/simple;
-	bh=dTOdH5XXahBmpE3YhOi/ArZkYgYWK5rGtHBHSoKtRnA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S+hbF4vEjSQ+8pv/iLN6S9iUjRs7ASB6Fzt6OrSy2VsaSYts42jPiYFgh8m92lbO03/Y20zHAaQUe52THCYOwnrlpIWEWNUAk42SfGOQojQsv3e2frk2lufJzmM9bbNEyjSc7Y/WGmo+fX3DLweap+17QXQolfq5LZLBIQM1CiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUFMEC43; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67599C116D0;
-	Thu, 13 Nov 2025 14:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763044948;
-	bh=dTOdH5XXahBmpE3YhOi/ArZkYgYWK5rGtHBHSoKtRnA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BUFMEC43P+MjRbP7up2539GgXoU13bo2rMh1uVfKvuJHKQEH7voJMpJrpi1EJWaCV
-	 M3SyYJfXW7niBTieRafYfS+PJBUjz+tIhf+GLKNwxyJb5x3Ec77uThIN70hBIRh82e
-	 Dvy1oSSEDjCxt4mn3DX23bX69IusDYtu4IduDiR9jrXtZ9HRpuH7386Y9Bqi76w76n
-	 8fQM+zXBALAWXOCmIdPG+sJXKtB96PjtxwR7gmGrhEE16AuypB3KyX79j2Nsq5U+QP
-	 OZjoJsTems7T60JqVY5NOJBpKQlpZ/adk0wVUyPHQnhSGa5T1hzl9qZz/b8GjUgfZM
-	 4O/xghz/TIvGQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vJYWo-00000004u5n-0RcC;
-	Thu, 13 Nov 2025 14:42:26 +0000
-Date: Thu, 13 Nov 2025 14:42:25 +0000
-Message-ID: <86jyzut2ni.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Luigi Rizzo <lrizzo@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Luigi Rizzo <rizzo.unipi@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH 1/6] genirq: platform wide interrupt moderation: Documentation, Kconfig, irq_desc
-In-Reply-To: <CAMOZA0K3hMSE32SnyVBW5NY4V=zuC3S7ueHfZN2sAWZNqRCwvQ@mail.gmail.com>
-References: <20251112192408.3646835-1-lrizzo@google.com>
-	<20251112192408.3646835-2-lrizzo@google.com>
-	<86o6p6t67m.wl-maz@kernel.org>
-	<CAMOZA0K3hMSE32SnyVBW5NY4V=zuC3S7ueHfZN2sAWZNqRCwvQ@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1763044988; c=relaxed/simple;
+	bh=pzyv7vLjjU9lDazIwtsSgVGiP+Et3EtHRfN13T3NXVk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ULski0qL4UUqQbaFqs0NYfkuWsCLEIw7qheGt5ab9JXM32v9vhS3yB+Y9XHOD9SSYlZO6T8pRkXoguEeUOavk6nXI4X/BwhWWn4Sl24jUJ1Hu6O4EvIZ/NzBRM0vHEggMW2J4RjLR+2rv656pK/ohxpThyzUj1cv6inCIn8YCxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=pUaRuL6o; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id BE305240027
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:43:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1763044984; bh=q7uv+pZE/Rt1SjFLQLc3Ebfv1mmsna4IvbAjN0LEdXM=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:OpenPGP:From;
+	b=pUaRuL6ooOsKt9kULEak6RFgNePZcJxGrNSSQ7HmWr/dfmzKIsOrCBryqNsQYWUhB
+	 IQZ2CNFRbT7dG9CxYUfldhM0cuLnRiXfCy6z9Bbl0cTflPIT2q3eZsVfilEgtB7U/9
+	 gI6QfxEUpsSnEgH7GfMmDStI8oJ0TIW/wRG7Swv4jGXinMJEbqnUhJpOJVF4N1HYkk
+	 U5YjRiwZhUXDnrlzzqxtruu+RsctzXtOy9Q3sipmADCzeHgXUOvNuUbkLUMdT7hKT/
+	 Dy0x/xDSVeyt4C2HC2SO0UiPuRRkL8p4bPdOa/ZREjnPg7MxhFEtzj1Rx40rWreG4b
+	 Sr4Nv/vkibNew==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4d6jg92v54z6trs;
+	Thu, 13 Nov 2025 15:43:01 +0100 (CET)
+Message-ID: <8e1d09db23439a361e12b93bbaa2f80959799775.camel@posteo.de>
+Subject: Re: [PATCH v7 0/2] rust: leds: add led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda
+	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich
+	 <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones
+	 <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+  Leon Romanovsky	 <leon@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, 	bjorn3_gh@protonmail.com, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross	 <tmgross@umich.edu>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 13 Nov 2025 14:43:03 +0000
+In-Reply-To: <bf4192fd466571f798023b70c3e83e19448d8149.camel@posteo.de>
+References: <20251027200547.1038967-1-markus.probst@posteo.de>
+	 <bf4192fd466571f798023b70c3e83e19448d8149.camel@posteo.de>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ R3rOFHA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lrizzo@google.com, tglx@linutronix.de, rizzo.unipi@gmail.com, pabeni@redhat.com, akpm@linux-foundation.org, seanjc@google.com, jacob.jun.pan@linux.intel.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, bhelgaas@google.com, willemb@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Thu, 13 Nov 2025 13:33:51 +0000,
-Luigi Rizzo <lrizzo@google.com> wrote:
+On Thu, 2025-11-13 at 15:20 +0100, Markus Probst wrote:
+> On Mon, 2025-10-27 at 20:06 +0000, Markus Probst wrote:
+> > This patch series has previously been contained in
+> > https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.p=
+robst@posteo.de/T/#t
+> > which added a rust written led driver for a microcontroller via i2c.
+> >=20
+> > As the reading and writing to the i2c client via the register!
+> > macro has not been implemented yet [1], the patch series will only
+> > contain the additional abstractions required.
+> >=20
+> > [1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@k=
+ernel.org/
+> >=20
+> > The following changes were made:
+> > * add abstraction to convert a device reference to a bus device
+> >   reference for use in class device callbacks
+> >=20
+> > * add basic led classdev abstractions to register and unregister leds
+> >=20
+> > Changes since v6:
+> > * fixed typos
+> > * improved documentation
+> >=20
+> > Changes since v5:
+> > * rename `IntoBusDevice` trait into `AsBusDevice`
+> > * fix documentation about `LedOps::BLOCKING`
+> > * removed dependency on i2c bindings
+> > * added `AsBusDevice` implementation for `platform::Device`
+> > * removed `device::Device` fallback implementation
+> > * document that `AsBusDevice` must not be used by drivers and is
+> >   intended for bus and class device abstractions only.
+> >=20
+> > Changes since v4:
+> > * add abstraction to convert a device reference to a bus device
+> >   reference
+> > * require the bus device as parent device and provide it in class devic=
+e
+> >   callbacks
+> > * remove Pin<Vec<_>> abstraction (as not relevant for the led
+> >   abstractions)
+> > * fixed formatting in `led::Device::new`
+> > * fixed `LedOps::BLOCKING` did the inverse effect
+> >=20
+> > Changes since v3:
+> > * fixed kunit tests failing because of example in documentation
+> >=20
+> > Changes since v2:
+> > * return `Devres` on `led::Device` creation
+> > * replace KBox<T> with T in struct definition
+> > * increment and decrement reference-count of fwnode
+> > * make a device parent mandatory for led classdev creation
+> > * rename `led::Handler` to `led::LedOps`
+> > * add optional `brightness_get` function to `led::LedOps`
+> > * use `#[vtable]` instead of `const BLINK: bool`
+> > * use `Opaque::cast_from` instead of casting a pointer
+> > * improve documentation
+> > * improve support for older rust versions
+> > * use `&Device<Bound>` for parent
+> >=20
+> > Changes since v1:
+> > * fixed typos noticed by Onur =C3=96zkan
+> >=20
+> > Markus Probst (2):
+> >   rust: Add trait to convert a device reference to a bus device
+> >     reference
+> >   rust: leds: add basic led classdev abstractions
+> >=20
+> > Markus Probst (2):
+> >   rust: Add trait to convert a device reference to a bus device
+> >     reference
+> >   rust: leds: add basic led classdev abstractions
 >=20
-> On Thu, Nov 13, 2025 at 2:25=E2=80=AFPM Marc Zyngier <maz@kernel.org> wro=
-te:
-> >
-> > On Wed, 12 Nov 2025 19:24:03 +0000,
-> > Luigi Rizzo <lrizzo@google.com> wrote:
-> >
-> > [...]
-> >
-> > > The system does not rely on any special hardware feature except from
-> > > MSI-X Pending Bit Array (PBA), a mandatory component of MSI-X
-> >
-> > Is this stuff PCI specific? if so, Why? What is the actual dependency
-> > on PBA? It is it just that you are relying on the ability to mask
-> > interrupts without losing them, something that is pretty much a given
-> > on any architecture?
+> Hi,
 >=20
-> You are right, I was overly restrictive. I only need what you say,
-> will replace the text accordingly.
+> So you know in advance, I will add a 3. patch for multicolor led
+> classdev abstractions (drivers/leds/led-class-multicolor.c,
+> include/linux/led-class-multicolor.h) to this patch series.
 >=20
-> >
-> > [...]
-> > > +To understand the motivation for this feature, we start with some
-> > > +background on interrupt moderation.
-> >
-> > This reads like marketing blurb. This is an API documentation, and it
-> > shouldn't be a description of your motivations for building it the way
-> > you did. I'd suggest you stick to the API, and keep the motivations
-> > for the cover letter.
+> In the atmega1608 led driver (the user of these abstractions) there are
+> leds with different colors that share the same slot.
+> Technically "drivers/leds/rgb/leds-group-multicolor.c" could be used in
+> combination with single color leds instead, but then hardware
+> accelerated blinking wouldn't be supported. I think it would make more
+> sense to directly implement it in the driver.
 >=20
-> ok will remove it.
-> Sorry if it reads like marketing, that is very very far from my intention=
-s.
-> I just wanted to give background information in a way that is easy
-> to access from the source tree.
-
-Background information is only valid at a given point in time, for a
-particular configuration, and rarely translate into something that
-spans architectures and implementation in a universal way. For a
-start, the quoted figures for interrupt rates are pretty much
-irrelevant -- think of reading this in 10 years...
-
-The descriptions are also massively x86-specific. That's probably OK
-for the stuff you care about, but I'd certainly would want things to
-be a bit more abstract and applicable to all architectures.
-
-> > > +* **Interrupt** is a mechanism to **notify** the CPU of **events**
-> > > +  that should be handled by software, for example, **completions**
-> > > +  of I/O requests (network tx/rx, disk read/writes...).
-> >
-> > That's only half of the truth, as this description only applies to
-> > *edge* interrupts. Level interrupts report a change in *state*, not an
-> > event.
-> >
-> > How do you plan to deal with interrupt moderation for level
-> > interrupts?
+> The existing 2 patches shouldn't change, so feel free to review them.
 >=20
-> I don't. This is restricted to edge interrupts.
+> Thanks
+> - Markus Probst
 
-I also note that since you explicitly check for handle_edge_irq() in
-set_moderation_mode(), this will not work on anything GIC related, or
-any other architecture that uses the fasteoi flows. I really wonder
-why you are not looking at the actual trigger mode instead...
+ignore the duplicate email. Sending the email gave an error, retrying
+resulted in the email being sent twice.
 
-Until you fix it, please refrain from touching the GICv3 code, and
-make sure this is solely enabled on x86 -- it clearly wasn't tested on
-anything else.
+Thanks
+- Markus Probst
 
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+>=20
+> >=20
+> >  rust/kernel/auxiliary.rs |   7 +
+> >  rust/kernel/device.rs    |  33 ++++
+> >  rust/kernel/led.rs       | 375 +++++++++++++++++++++++++++++++++++++++
+> >  rust/kernel/lib.rs       |   1 +
+> >  rust/kernel/pci.rs       |   7 +
+> >  rust/kernel/platform.rs  |   7 +
+> >  rust/kernel/usb.rs       |   6 +
+> >  7 files changed, 436 insertions(+)
+> >  create mode 100644 rust/kernel/led.rs
 
