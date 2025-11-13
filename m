@@ -1,148 +1,360 @@
-Return-Path: <linux-kernel+bounces-899160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0188EC56FD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:50:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC53C57003
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02E93BEB6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9FE3BEFBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191ED3321A4;
-	Thu, 13 Nov 2025 10:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759AE3321C3;
+	Thu, 13 Nov 2025 10:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="Jvt26m+a"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BZ/mzdf8";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="V/igIplb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA0331A50
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2E3314D9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763030502; cv=none; b=dyikee2MoDozB9/fiMTvoCjXaRmjR4z21v+An03xQjCws8PYF5tGDX1emPa6+X6XAX85wqzmkGkbRJpDwrIWNH/SRzZL+mdu87Amn8Y83DP/bkCMvjIyWtZQqXju19OxwIg6mWhsB+Dkk+27EcRlZFZdyOKBu0XJkoDeUBJIHWU=
+	t=1763030523; cv=none; b=SUKtUSmVfnZAKbhPB1qG7dCG2ZjE6aQaHEn0FTLxS9Nmk8l1ArHeUZjiJfkEx1dFoGV8XPPrWbaogn+h5tT+MMhY9I5edElLAKAJigpvf/RuGDLjflcRk7EKA2lzgLPIZhWNJ3iegusl+hlLFKbMmb3Su4S66JTp6HACHYQaSHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763030502; c=relaxed/simple;
-	bh=aNIpEp0tWzp6Hm7TmTE9jYjQYZRYZ+L/GDzDkm2PqH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RByuwTj9Eh8K0VYwW5Sjsw3XIbPH+sbem4K57n4mJhc3gYug2IoT2wJjSP2DK0YLawxCxke1UVgZxq4FWzXieWhlUEZFtghufqeZZzq8r3v15A+flf8Vp6J9oh4BJsFcCFsRn/5Fa623V2AbKV2SrVt4cg4ENp6xyKuZjpEdeog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=Jvt26m+a; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-340bb1cb9ddso555110a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:41:38 -0800 (PST)
+	s=arc-20240116; t=1763030523; c=relaxed/simple;
+	bh=hXnD6LTmh4guVB4bmTUA8Fa8BRB+LUsKMsPfTIUEKcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZZAoDQz2x+7/OabyoSUx4dwBemi+ieoJ8vq8DmvJXwOffXHgP9W/X8v3wULc6G2O45sqt/vqh6UX9r1JLpkArn74oK+lanx4so/rE5TevBGW51YqKmhQNtfaeL6Q7qeE8ieo+MW4JGIdtBde/VLpLU4ZIwX+WlFAJjSYp0qhdBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BZ/mzdf8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=V/igIplb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD6qc9k3873621
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	E/2GHGKMHH3/peG1/WgTL/Kznds7LnX+Rx8aV6ZmG/8=; b=BZ/mzdf8FsUTa5S8
+	S2PuVk1AwG5OQRuzNiulTYOFRsh+hNX0yI3ePguikeODvXjPfGiTR72vgNNBCfb3
+	WMycOihk6RzTTlbriof7ZTKm+8uf6u065W8fgzog5tty1v31cKnED+257k9XcGhv
+	AsiF3gMiTlzFRn3ADtScIoeuXtG/ZCDQc8S1NDfdoo/YpE7N4VbA3NZfTN+VUmzG
+	tTTk6PLKJCqpNmabG7T6qybBT3IK2BCJyq1fvm8MlE8mWkSv1QHgSoKJa2wjbZej
+	RIl8i8/PVOsaL0QVr+WhOzgifa4xnrPN90jbZoX2D8xpqAC/PX6/Ldn2dF8u0r/G
+	SY7RRw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4adaeurq5d-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:42:00 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b23452ec2bso17104485a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:42:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1763030498; x=1763635298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJz+ux1agXrbz0s4q+1/StE2n0vhcodsi2hiIHN4wt0=;
-        b=Jvt26m+ajkc4zu8OwRBlgSgN0CKhqTIYNB7h4BKiTs6cnpO1i1Ba4s/iAjkZC4/a9T
-         A0AK0G+DEM+m4AJ/a53W+DqoZT/J7eWRbXR0mbCqaARgAv9VX9vsr8eHUusyAr12oB4K
-         JsnzB6c2uGHWOFO2DTsTrUAkLGx6ZUH3pmKs/wBCnBWXxrPterS487Oy4GJPNtUYdWYz
-         wmxczMK+84lzHYsnThrPMuRvwPibun/RMWdt2qhE0Z1EonGKOa4cPQrckH5A0LzEKdM6
-         Erztm4918qbbSdkwp3ACyaqNBlSflJmourlCvVFHddhUFby4ydICi7pbnnZaNYZJttcn
-         SxOQ==
+        d=oss.qualcomm.com; s=google; t=1763030519; x=1763635319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E/2GHGKMHH3/peG1/WgTL/Kznds7LnX+Rx8aV6ZmG/8=;
+        b=V/igIplbnyJkCBteF40UyjJ4zYpfKq+J/ZiU//itJZwAdPdDLIcz7FIskjke+NT/YL
+         2RbVPaTfusguIsjOf+/XsyzYEiqwGTlaQyEH337lXJb/KioBUzgI6TM7V3LJDSr2XFMx
+         Wex9wa9/gLDd0aWKYeuyFki4vT+gm8/RbTzQdOJrgoHIm5e/X0Y5s8xOcnxlUrwteJ6u
+         +/ksSja7fFbqPUoqR+E2uNAQUgTl6Cs3B9xk2YDXLQvyzlTbyFdryZdsA8qJKfnrK9KD
+         Cga71tIEtW84cpc4T7TPfrVNVTkdTiy2Awww3471lJjNswEYprdXV/x7CwOVLQtvHUAu
+         5+Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763030498; x=1763635298;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DJz+ux1agXrbz0s4q+1/StE2n0vhcodsi2hiIHN4wt0=;
-        b=veKl8lFQtIZwa9E2TLxGJBKNTl2mjHCvik1ukuEdFFo2TS+IZO0RA2zArPw6q6s8uk
-         RtUEdaXA/+cUgmY2wk7WLnJEYm19R5IWJr5x1AYAkqL5u+0yg/zKOtyD06wgCQfnMFWA
-         oezNUNRcPWeFNmZwtYbQcgwU8ufL2Hn7In5tGbB8IyR6xXAlglBvPFqm3awjXdP1c55a
-         O02bhnVETOGOd1tV6UHtnpLywQSgR6rcUcWE0ef9WKpyavuhCKnwH80r+nzTiSd2i8Tw
-         yYwWUvB4R5mmvR2dbaPJlycGjm89i/adeCs+zoEkp7h/TyGe3GXyDrc6LTF4bL5hpIQ+
-         YQ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHbOOyZYBLdQzy1DKF1Wm0mdOar+Brw1/RUmosDuPHKJjQpH2EJD2+qUV2otz2UJOXWsU9WnPFDP1jdbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcM9K5LwzsP0U6BOx4SwmogGZ40H4gsEmV/6OxIKz9+4LyWRCV
-	V/AmscF7KfhoNUwS7LhWb58gb1RTMvaxtwObm0lQfRXaDgRv7fHH5nWxYinH7jzOyWY=
-X-Gm-Gg: ASbGncttvGOIUgDwHtKBoUdQj297CziN20PC+G3drTlP4Tc1RtwKhdnx82j7iIo1jir
-	HsLMJeCDWs7Zf3eypchX9m+lFjZ12wVVV9ui+ft9gUl26XshNkVy+1npDTeE1PgCDSk8OxyVUPr
-	dGd3LgPd6j4enX0cbU6au8Y2cu374JNswNWp8NN9LQmuphbvoctL/c8TQ35JNEDXSudJZ94EXn+
-	GKyPt+IXps/ngagPAcbjN42z+EfC8CGf4xL9VTR6DLqMDKwuy5cA7uNIkw4BaIQPSAggCeYxj+K
-	qwhOSPsmSyZ8ySqMx92qPX7nMmkmNWaRTrdR94vSvooatT/OvOXWLlcSnhDCS+HD2yMzulHzpCe
-	EBoM6Pff8LMWfUSyX24VecuEVKu6FRLKbesPXQg3JLuBp98dOsLpOjePgaBB+otyd3KV9cP6R+Y
-	SDbQsgo6DyfkJ4fQ==
-X-Google-Smtp-Source: AGHT+IHJPNOxOgpSD+v9EzuulPA1PCX4HxiLuMt9tyYIQH59E/uUGS1fwIwf/FuYrqXa6iso6ctPZg==
-X-Received: by 2002:a17:90b:5625:b0:341:88ba:c6d3 with SMTP id 98e67ed59e1d1-343ddec5702mr7551477a91.23.1763030498074;
-        Thu, 13 Nov 2025 02:41:38 -0800 (PST)
-Received: from localhost.localdomain ([103.158.43.25])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-343e07d3bb3sm5568870a91.19.2025.11.13.02.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 02:41:37 -0800 (PST)
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: cezary.rojewski@intel.com
-Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com,
-	kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: intel: avs: Fix potential memory leak in avs_pci_probe()
-Date: Thu, 13 Nov 2025 16:11:19 +0530
-Message-ID: <20251113104121.79484-1-nihaal@cse.iitm.ac.in>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1763030519; x=1763635319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E/2GHGKMHH3/peG1/WgTL/Kznds7LnX+Rx8aV6ZmG/8=;
+        b=oCFINJYsGHckxV7hzNvw3lSPkUe72gco3BEcoU68RXZNnPn9KdWSeWWacwd+sf6FPJ
+         xFzHLjfE0w4QAGQLHm0d+SxGYKYs2sofbx1WplfnLtqkyj3AFNjWhX8quchybMBlLVLm
+         BzCl5xF41yRLa/OnneQGR63OvpwOnYSrVbhbamG/MFIvEurkbCemLx5PCtxd5pPzwgvW
+         dAhv/+4Gb7ZdndMTzaMwF6R3XKKROekP7puryxdJMv3c82bqj2HTDWCFbSiPbm0mCnyM
+         xm/ysaygHbOCTyOzhwt3BrjkDdE9BA/EnBdxifmjqssnuvT+zAuyxdRB6pffAzPyZs6g
+         EMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVusl6TmI30qXjTtTxk6j3DhMrVTQUyAgVpoaVLXrW9x4ZCfMmr+vKnkq4NvyhWZVc1x5w+wjHJUzSWncI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAN98LeStrufa8Ad1eHVd4FRfG3vJDpyfzValTdk8rGkPpKL+Q
+	ULEa457YxMUEt21puwJolcNMwCq10w9Aykm2xDXJds37hMlQEbylQeaqB8ozKn1tXF7IccW0AIb
+	ikSzWu/6ZEttuWRcguN6wMzje4Bw4c1GWxvSHY0EjIr2jgUCV/Ik+aCZTpbWclTP/mOw=
+X-Gm-Gg: ASbGnctltYgwsS1oeBbRKiq8bxnCOhG70u9VbqvYvsRCfP/kaQYxJonVNrK/rGqGWQB
+	FPrR6SmKWIjYjjSgB2Z74wPzgdDzByFt5sosrHiJtmomMdPzC6+U4g4KrYUY8CCc3eIg5hOMS2J
+	VGhoG5IBvSmwe+bc4seG2nHJ2xywkqBY9lgjaSUaeT1wcJELFZSGaYLbDMdHNoNNoL7YkBfOT1S
+	JfiUseEhzfDu51BGg3QiHbH46aynkRF9CbnPmnJOv2ellprEl5iprx991jxL7pHJWWbScWUw6vP
+	JbOrYG5k6kRDCZZslCVglxkWaw1LQkeoQTcx0fnlqQWQB2T80xIYg7HzdJ3nRBkAA4j5xO3e6Rw
+	F0MOV6D4EnH8d3R0Jegf6MBSYt4ivYKZ5jp/YPxBDYqiCQ2XUacPdRSRb
+X-Received: by 2002:ac8:5dc7:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4eddbc9b895mr53790371cf.4.1763030519304;
+        Thu, 13 Nov 2025 02:41:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFrcl4+qTqOk0GNCNMWbcWMtXYz2d4n4q2FotMPgIrNQP9oX8JoqbWJTtwwS/ePssboaTi9sA==
+X-Received: by 2002:ac8:5dc7:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4eddbc9b895mr53790161cf.4.1763030518787;
+        Thu, 13 Nov 2025 02:41:58 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad41e5sm136107866b.19.2025.11.13.02.41.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 02:41:58 -0800 (PST)
+Message-ID: <f0dc9c49-93af-45d3-90a1-6f098a036afa@oss.qualcomm.com>
+Date: Thu, 13 Nov 2025 11:41:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
+ <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
+ <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
+ <ad00835e-bc20-4f97-aba6-e1b4f5e97191@oss.qualcomm.com>
+ <f2q7a7r7quq6pplcn3kklwrhdc6hxa5zvc7osygshtyurwyvi4@t5iyragt7irh>
+ <b5ecf5e7-4dc4-41ac-9b56-7c52afacb950@oss.qualcomm.com>
+ <01de9616-825b-4fbb-83cf-e0bf91e8cf39@oss.qualcomm.com>
+ <81174278-c3c4-4dc6-856e-b58aa2cb6fea@oss.qualcomm.com>
+ <br3fmilhh7fihv4atnf4olvy4w66z4p7sh4ypicuc3766ky6tb@pppfdynfhfz7>
+ <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <bf706156-1413-42cb-a463-803063c347fc@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: VXi2_MiyLwim6ZlkXRQnMYip9Bfjghez
+X-Proofpoint-GUID: VXi2_MiyLwim6ZlkXRQnMYip9Bfjghez
+X-Authority-Analysis: v=2.4 cv=JPI2csKb c=1 sm=1 tr=0 ts=6915b5f9 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=q7Qu6pG9dnr7vhMOZxIA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA3OSBTYWx0ZWRfX52fXVQ4dkmVO
+ oK4+NMDPaUYMTBxPD4yoKA9T9wZx4seVWtEffVxGlt11XWa3Gi7qlWZh9j7j/StYBnmGMO10mZ5
+ rqkw0XPl4mFVRzoFW6FNjGh5zhDUANgL5VK5EPqfy7Z+yV5L6XWVnurZNcW4nlf+2KWZbm8gfVz
+ v/aKpws9hmgXYElO3r5of1JIh0REWOwwErSImuWQpizjv08COW5CnYy7exdc0dX8dr7J3o86XDw
+ OCNtMqpcDjSyqG4jM9Aef1wCNgRZIYUsfwCa01nJLa650FcSZz7GiW7jYUbSycT0CNWoPA0h/RU
+ XaQ/uNxQuzX3IONqjarMwOdshZh8LFz4OmUuPIBf2X3Ux+Uq1ZMOjlVoHNbditBWV5sHlnhMoGk
+ YOAXPoYeZIL7sgaUcmyJuvkmJxz2WA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-13_01,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130079
 
-In snd_hdac_ext_bus_get_ml_capabilities(), memory is allocated for
-multiple hdac_ext_link structures, and appended to bus->hlink_list.
-But the subsequent error paths in avs_pci_probe() don't free them.
+On 11/13/25 11:03 AM, Aiqun(Maria) Yu wrote:
+> On 11/12/2025 12:05 AM, Bjorn Andersson wrote:
+>> On Tue, Nov 11, 2025 at 08:27:17PM +0800, Aiqun(Maria) Yu wrote:
+>>> On 11/7/2025 12:24 AM, Konrad Dybcio wrote:
+>>>> On 11/6/25 11:16 AM, Aiqun(Maria) Yu wrote:
+>>>>> On 11/6/2025 5:06 AM, Bjorn Andersson wrote:
+>>>>>> On Tue, Nov 04, 2025 at 01:35:01PM +0800, Jingyi Wang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 11/4/2025 12:02 PM, Bjorn Andersson wrote:
+>>>>>>>> On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
+>>>>>>>>> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
+>>>>>>>>>> Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
+>>>>>>>>>> control and status functions for their peripherals.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>>>>>>>>>> ---
+>>>>>>>>>>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+>>>>>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+>>>>>>>>>> index 14ae3f00ef7e..ae55b0a70766 100644
+>>>>>>>>>> --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+>>>>>>>>>> +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+>>>>>>>>>> @@ -48,6 +48,7 @@ properties:
+>>>>>>>>>>            - qcom,tcsr-ipq8064
+>>>>>>>>>>            - qcom,tcsr-ipq8074
+>>>>>>>>>>            - qcom,tcsr-ipq9574
+>>>>>>>>>> +          - qcom,tcsr-kaanapali
+>>>>>>>>>
+>>>>>>>>> It looks good to me. Glymur didn't have this functionality verified yet.
+>>>>>>>>
+>>>>>>>> You spelled Reviewed-by: Aiqun Yu <..> wrong.
+>>>>>>>>
+>>>>>>>>> Remind for review.
+>>>>>>>>
+>>>>>>>> No need for that, reviewers will review when they have time.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>
+>>>>>>> Hi Bjorn,
+>>>>>>>
+>>>>>>>>
+>>>>>>>> But that said, most modern additions to this binding follow the common
+>>>>>>>> format of qcom,<soc>-<block>.
+>>>>>>>>
+>>>>>>>> So I would prefer this to be qcom,kaanapali-tcsr.
+>>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> Bjorn
+>>>>>>>>
+>>>>>>>
+>>>>>>> qcom,tcsr-kaanapali is used to distinguish with binding for GCC:
+>>>>>>> https://lore.kernel.org/all/20251030-gcc_kaanapali-v2-v2-2-a774a587af6f@oss.qualcomm.com/
+>>>>>>>
+>>>>>>
+>>>>>> So, qcom,kaanapali-tcsr is the clock controller region of TCSR and
+>>>>>> qcom,tcsr-kaanapali is the non-clock controller region of TCSR?
+>>>>>>
+>>>>>> Sorry for not understanding that earlier, but this doesn't work for me.
+>>>>>>
+>>>>>> It's a bit of a lie that TCSR_MUTEX is a separate node in devicetree,
+>>>>>> but it's always an nice chunk of 256K in the beginning (or end in some
+>>>>>> cases?) of TCSR. But for the rest, there should be a single tcsr node in
+>>>>>> DeviceTree and that one node should be a syscon and a clock controller.
+>>>>>
+>>>>> I've been dive deeply on this tcsr block. And actually the tcsr clock
+>>>>> controller part is a very small trunk size(0x1c) of the tcsr block. And
+>>>>> this block have contain other multiple purposed sys registers. So maybe
+>>>>> we can have a more discussion on how to have device tree node describe
+>>>>> this situation? It is not straight forward that to have a non-tcsrcc
+>>>>> related area being described in tcsrcc.
+>>>>>
+>>>>> What about option 1 (tcsr_mutex + tcsr_dload_syscon + tcsrcc):>> tcsr_mutex: hwlock@1f40000 {
+>>>>> 	compatible = "qcom,tcsr-mutex";
+>>>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+>>>>> 	#hwlock-cells = <1>;
+>>>>> };
+>>>>>
+>>>>> tcsr_dload: syscon@1fc0000 {
+>>>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+>>>>> 	reg = <0x0 0x1fc0000 0x0 0x30000>;
+>>>>> };
+>>>>>
+>>>>> tcsrcc: clock-controller@1fd5044 {
+>>>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+>>>
+>>> Remove "syscon" here. Not need for tcsrcc fallback to "syscon".
+>>>
+>>>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+>>>>> ...
+>>>>> };
+>>>>>
+>>>>> What about option 2 (tcsr whole block + tcsr_mutex  + tcsrcc):
+>>>>>
+>>>>> tcsr: syscon@1f40000 {
+>>>>> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+>>>>> 	reg = <0x0 0x1f40000 0x0 0xC0000>; //align with the whole hardware
+>>>>> block design.
+>>>>> };
+>>>>>
+>>>>> tcsr_mutex: hwlock@1f40000 {
+>>>>> 	compatible = "qcom,tcsr-mutex";
+>>>>> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+>>>>> 	#hwlock-cells = <1>;
+>>>>> };
+>>>>>
+>>>>> tcsrcc: clock-controller@1fd5044 {
+>>>>> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+>>>
+>>> Same here, don't need to have "syscon" here.
+>>>
+>>>>> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+>>>>> ...
+>>>>> };
+>>>>
+>>>> Is there anything wrong with what we have done for x1e80100?
+>>>> ______________________
+>>>> |             |       |
+>>>> | TCSR_MUTEX  | mutex |
+>>>> |_____________|_______|
+>>>> |	      |       |
+>>>> | RANDOM_REGS |       |
+>>>> |_____________|       |
+>>>> |	      |       |
+>>>> | TCSR_CLKS   | tcsr  |
+>>>> |_____________|       |
+>>>> |	      |       |
+>>>> | RANDOM_REGS |       |
+>>>> |_____________|_______|
+>>>>
+>>>
+>>> Second you! We can firstly have a option selected for kaanapali, and
+>>> then other platform can be followed or fixed afterwards.
+>>>
+>>> Here suggest to have option 2 which is remove "syscon" from tcsr clocks,
+>>> and only add the whole "syscon" to "tcsr" whole block.
+>>>
+>>
+>> I think you misunderstood Konrad, or perhaps I misunderstand you.
+> 
+> Maybe let Konrad help to explain more here. I thought the chart below is
+> very clearly indicate the tcsr_clks is only part of the tcsr block.
+> 
+>>
+>> This is what we have for Hamoa:
+>>
+>> tcsr_mutex: hwlock@1f40000 {
+>>         compatible = "qcom,tcsr-mutex";
+>>         reg = <0 0x01f40000 0 0x20000>;
+>>         #hwlock-cells = <1>;
+>> };
+>>
+>> tcsr: clock-controller@1fc0000 {
+> 
+> 
+> It is not a clock-controller start from 0x1fc0000.
+> 
+>>         compatible = "qcom,x1e80100-tcsr", "syscon";
+>>         reg = <0 0x01fc0000 0 0x30000>;
+> 
+> This is what we have a discussion initialized here:
+> "qcom,<platform>-tcsr" is only a tcsr clock controller binder, reference
+> from [1].
+> "qcom,tcsr-<platform>" is a common tcsr block. reference current binding
+> patch.
+> 
+> For below hardware block information, is it really a recommendation to
+> combine the tscr block with tcsr clock controller all together?
+> ______________________
+> |             |       |
+> | TCSR_MUTEX  | mutex |
+> |_____________|_______|
+> |	      |       |
+> | RANDOM_REGS |       |
+> |_____________|       |
+> |	      |       |
+> | TCSR_CLKS   | tcsr  |
+> |_____________|       |
+> |	      |       |
+> | RANDOM_REGS |       |
+> |_____________|_______|
+> 
+> [1]https://lore.kernel.org/all/20251030-gcc_kaanapali-v2-v2-2-a774a587af6f@oss.qualcomm.com/
+> 
+> 
+>>         clocks = <&rpmhcc RPMH_CXO_CLK>;
+>>         #clock-cells = <1>;
+>>         #reset-cells = <1>;
+>> };
+>>
+>> This is exactly what I suggested above and Konrad is asking you why
+>> this doesn't work for Kaanapali. The addresses are even the same, what
+>> is the problem?
+> 
+> The problem is the current patchset document a separate tcsr block as a
+> mfd. While the suggestion here is to use the tcsr clock controller
+> binding to document the whole tcsr block which is not belonged to tcsr
+> clock controller.
 
-Fix this by calling snd_hdac_ext_link_free_all() on the error path.
-Also handle the return code of snd_hdac_ext_bus_get_ml_capabilities()
-correctly, since it can return -ENOMEM.
+Neither Bjorn nor I see an issue with this. Clock controllers are usually
+not just clock controllers anyway. For example, all of our XX_CC blocks
+also include resets, power-domains and various tunables which are often
+not used by Linux
 
-Fixes: 1affc44ea5dd ("ASoC: Intel: avs: PCI driver implementation")
-Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
----
-Compile tested only. Issue found using static analysis.
-
- sound/soc/intel/avs/core.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/avs/core.c b/sound/soc/intel/avs/core.c
-index 6e0e65584c7f..ece78a1c0e42 100644
---- a/sound/soc/intel/avs/core.c
-+++ b/sound/soc/intel/avs/core.c
-@@ -473,8 +473,13 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
- 	}
- 
- 	snd_hdac_bus_parse_capabilities(bus);
--	if (bus->mlcap)
--		snd_hdac_ext_bus_get_ml_capabilities(bus);
-+	if (bus->mlcap) {
-+		ret = snd_hdac_ext_bus_get_ml_capabilities(bus);
-+		if (ret < 0) {
-+			dev_err(dev, "failed to get multilink capabilities: %d\n", ret);
-+			goto err_ml_capabilities;
-+		}
-+	}
- 
- 	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64)))
- 		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-@@ -516,6 +521,8 @@ static int avs_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
- 	snd_hdac_bus_free_stream_pages(bus);
- 	snd_hdac_ext_stream_free_all(bus);
- err_init_streams:
-+	snd_hdac_ext_link_free_all(bus);
-+err_ml_capabilities:
- 	iounmap(adev->dsp_ba);
- err_remap_bar4:
- 	iounmap(bus->remap_addr);
--- 
-2.43.0
-
+Konrad
 
