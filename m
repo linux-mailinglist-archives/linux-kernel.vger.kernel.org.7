@@ -1,195 +1,174 @@
-Return-Path: <linux-kernel+bounces-899264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FC1C573AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:39:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566AEC573F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734114E5CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9523A3861
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A225C2D0C9D;
-	Thu, 13 Nov 2025 11:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E4633F8A4;
+	Thu, 13 Nov 2025 11:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvbMGTc+"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIr0rjst"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55135337BB5
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E38299AA3;
+	Thu, 13 Nov 2025 11:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763033906; cv=none; b=UfnStA3jxSsAy9H7fGm0ck/aRSethTSuS0erY9+5RtqUi379j1cTJw3Ra+2lquTfS+Irlgb2XKcBS4XNpH3VM9aUSUDgX45d5E9aKaGKbgZysEupGbjf7Yg3zQpAQIzy6ypsYZxIo/Ou0ZEFhHHeE4MY+HIIXMMWQlX54baC3p8=
+	t=1763033976; cv=none; b=T2uwgj/DnZiwAMoBGvp7yFa33DuVqWA22ZbkQNf+5lvBR1rclMq+hyUPn02ZzJdNefkiX32wrVvk3XEOH5bpG63ETdLuNqbU5Ja1dC5nDtF0vBjRubemLgGzePpcFv8l3SCVpVhfhJrF5eNQtVZkG93iLMvAASJF1Lq6meYb/uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763033906; c=relaxed/simple;
-	bh=ELnE8IV2Py/JdIKniMjJbWE3lX2i5Fc3ho84PTNS0jg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fI6oPGkV0RvuyVR6cL3NWiDcEekHSkI8j6EMq0tUdTf7Dt1pi9S99zHA635Ha2RIq8XxWc7EmZ0a7JMQWrukQQrZXfhnt2vyqDkbmUgNR5w5Z7FzZNhqsyXIMZ5fLIgw1qpFLyqPwQFDe/e2jk6bri34GBBfbuI7e8rV5KyxUX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvbMGTc+; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88057f5d041so7680186d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:38:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763033904; x=1763638704; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pgP9WNWvxV4SyeMxufc+beHNpMEnN2n4g+p2ssHNpfM=;
-        b=fvbMGTc+LwLhaHnuFA2e8J4tnLk9j4Hfczvt55mCkluwv5t+fzibKxRnhIio81XJWb
-         kFoHomqQrYq0vsy4sdiBRvDlHFwQolPLCeSIEpMTgAaxqw80qNP7TYq3zJJk4J4tPHem
-         7d62t4AlE1LgMS5tKHlQuXCMovPc3D0ZHbAz0Yn7r8Zw6saL6eAEbxAME/ZhtZzk6nkB
-         wEBcUMO9Pzs5lVYbkRn2w3WvSblkr6uIIu21IdgmZD3eaSGHLj9JDfY/yVECfWxcJiUe
-         TPui/PDd9ahdcftTbnACdA03GxQBo85BlbHAe2O5ZdFaA41F3MluAKXIPjCEpeZKCO6z
-         6X7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763033904; x=1763638704;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pgP9WNWvxV4SyeMxufc+beHNpMEnN2n4g+p2ssHNpfM=;
-        b=Ug/Wrle6YZALmwfGKXJuq1F7fstK0/CVpuU1DUstWL/BIa5++pDOQiDlDAPHh0k9Ae
-         1A5rYWquMWqeCpZvTHkHUUXHsDGv+0jI2f8eLwGxfYEma+GZup7q1r9rT6BaWImkHZ8o
-         5F/Ok+oocqt3ZXDB04Q8OyMwSy8j5chxfM4DVEahm272toFFv9e0YnEr3EXJRvG5eTM2
-         yRf1XX3Db9Jz31iqLM3GXsSParFzO3zSVvykeqtNunb5086KDt/ct4XJRyPMUOI6lEdP
-         OWS262okhrR+6UKqpH0M65s7PbFhAF3Mh3mfVBRv2qa2GeTqDu00ZJ1PXADTynxculGc
-         KvPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXof7N3rBXYiSD+yzb3xIxysTRQqkmwzo2s67/D3W3ieKHO5wO6eWfkCDNYadypVFjPETycdjoC68qO3go=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw80hxR96U9Eni5VXsbHu6B+VkWWBBGt7AbLASCeSv+wR4jTu6J
-	A3pfCqkghu6iyXolXBpP7kSRoIIyIqtWu65oD6e6buqEKN7kx6gRXxo3l4K0bEhE7EeaeyUH/mg
-	fhp4y/y4LJjTUIAfBBY5Exjd+uDW9PR4=
-X-Gm-Gg: ASbGncsy+QCVSI2qyiDEPQXWwMHDISAkn/I/L+S3cQcJYKXg339OzJq514//+DDEzis
-	ZthoPNwE2PWZhL9//Rc/CDu3JzZgvcY63eSPvI919MMCN2mjkohGr1D+W4Wh9x9uW/qxh9k8tZF
-	kfBSjWjscTEq0C4+rvcw0+X40YjT0E+1pKJpbQvPEduj7/x3KcT51qq1S7wGFRc7JFrqYJA/7lm
-	h2VyWOqNJdOzzmaqAvbI8O9GQqw+vMDLpsFj424FY7AZpkpS1IYrtYiq87X
-X-Google-Smtp-Source: AGHT+IFpLYzC3G5p9JQBS3rFphYbIEod4J5L5q0HiHlacwQQ7uFiNr3fLSmpcneuiRUvEsG67H4xiktWPd4IgVb8lI8=
-X-Received: by 2002:ad4:5d47:0:b0:880:4ac3:fbdb with SMTP id
- 6a1803df08f44-88271922123mr96370946d6.23.1763033904000; Thu, 13 Nov 2025
- 03:38:24 -0800 (PST)
+	s=arc-20240116; t=1763033976; c=relaxed/simple;
+	bh=ENVhoOS7G7gCzCBUGCoR+ITgrpqX7seulif8UfTBp0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onv917+BY/9oO+ZW5f7F/i96sE4s/vF/aL1VyuI7S5ZR7N+4ROn2ZN8g1srckxWNCHhClKFmANbi38L2NpoHdRtDsNg8N/yN+WewcDycwnvOLS+lDwcBF/c7T7AUWUrhc0CReybSx/0xLQR4Fh9vqGC5rxoKuvh/sIpdxkFnKgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIr0rjst; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A995C4CEF5;
+	Thu, 13 Nov 2025 11:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763033976;
+	bh=ENVhoOS7G7gCzCBUGCoR+ITgrpqX7seulif8UfTBp0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VIr0rjstKJ3saWpOlCPEj9yrlsSRfWVdSQkR1q6I3ZgbEqEbjPhjAwZARfKCLBEHD
+	 NGXFco0t56DpoMlRyxC4Dv7YU5Dj77k5L5LEk+YeLgg6BmGF3YD/hglGfiBsfuYSL3
+	 WalSNO2wr0gm3B+obfSK4LBPcORjuDCqoqCbXgpv9hONWBGRCQH7Icr1ATqy0Pmb9r
+	 ZMVa4ISTLJXD4HD0aPUFJ3/8+8HfJoZY1kBU/TJZKi4MwFDa1g7A0PisLusFC0HKNg
+	 wdLEn1kFzdFK2Tk27NHIoXVG5ZbkwxsahhpJX0ykb16FldNGhAL4Y2Sxc+/7dRi/YV
+	 dht9+6EHugDgQ==
+Date: Thu, 13 Nov 2025 13:39:26 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: akpm@linux-foundation.org, peterx@redhat.com, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	surenb@google.com, mhocko@suse.com, shuah@kernel.org,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com, khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] selftests/mm/uffd: remove static address usage in
+ shmem_allocate_area()
+Message-ID: <aRXDbk9ajOhH7ReX@kernel.org>
+References: <20251111205739.420009-1-mehdi.benhadjkhelifa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAsfc_ry+u771V_dTQMiXpaz2iGbQOPmZfhwnyF56pM+FjXdsw@mail.gmail.com>
- <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
- <CAAsfc_pa=AwaaN6Fy2jU6nPwnGET0oZgWZtSc3LtQ9_oJ6supA@mail.gmail.com> <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com>
-In-Reply-To: <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com>
-From: liequan che <liequanche@gmail.com>
-Date: Thu, 13 Nov 2025 19:38:11 +0800
-X-Gm-Features: AWmQ_bmWIj-YyDux4f-p0e4dDonjgLkEi59TnpDIlgAdPp0GJH4xj-vG4i-IhZY
-Message-ID: <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
-Subject: [PATCH v2] bcache: fix UAF in cached_dev_free and safely flush/destroy
-To: Coly Li <colyli@fnnas.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache <linux-bcache@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111205739.420009-1-mehdi.benhadjkhelifa@gmail.com>
 
-stop writeback thread and rate-update work exactly once across teardown paths,
-- Add STOP_THREAD_ONCE() and use it at all three places that stop
-  dc->writeback_thread: cached_dev_detach_finish(), cached_dev_free(),
-  and the bch_cached_dev_attach() error path.
-- In cached_dev_detach_finish(), also clear WB_RUNNING and cancel the
-  periodic writeback-rate delayed work to avoid a UAF window after
-  detach is initiated.
-- Keep the per-dc writeback workqueue flush/destroy in the writeback
-  thread exit tail, avoiding double-destroy.
-Signed-off-by: cheliequan <cheliequan@inspur.com>
----
- drivers/md/bcache/bcache.h    | 11 +++++++++++
- drivers/md/bcache/super.c     | 14 ++++++--------
- drivers/md/bcache/writeback.c |  7 +++++--
- 3 files changed, 22 insertions(+), 10 deletions(-)
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 1d33e40d26ea..66dc5dca5c20 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -961,6 +961,17 @@ static inline void wait_for_kthread_stop(void)
-        }
- }
+On Tue, Nov 11, 2025 at 09:54:27PM +0100, Mehdi Ben Hadj Khelifa wrote:
+> The current shmem_allocate_area() implementation uses a hardcoded virtual
+> base address(BASE_PMD_ADDR) as a hint for mmap() when creating shmem-backed
+> test areas. This approach is fragile and may fail on systems with ASLR or
+> different virtual memory layouts, where the chosen address is unavailable.
+> 
+> Replace the static base address with a dynamically reserved address range
+> obtained via mmap(NULL, ..., PROT_NONE). The memfd-backed areas and their
+> alias are then mapped into that reserved region using MAP_FIXED, preserving
+> the original layout and aliasing semantics while avoiding collisions with
+> unrelated mappings.
+> 
+> This change improves robustness and portability of the test suite without
+> altering its behavior or coverage.
+> 
+> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+> ---
+> Testing:
+> A diff between running the mm selftests on 6.18-rc5 from before and after
+> the change show no regression on x86_64 architecture with 32GB DDR5 RAM.
+>  tools/testing/selftests/mm/uffd-common.c | 25 +++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
+> index 994fe8c03923..492b21c960bb 100644
+> --- a/tools/testing/selftests/mm/uffd-common.c
+> +++ b/tools/testing/selftests/mm/uffd-common.c
+> @@ -6,11 +6,11 @@
+>   */
+>  
+>  #include "uffd-common.h"
+> +#include "asm-generic/mman-common.h"
 
-+/*
-+ * Stop a kthread exactly once by taking ownership of the pointer.
-+ * Safe against concurrent callers and against already-stopped threads.
-+ */
-+#define STOP_THREAD_ONCE(dc, member)                                    \
-+       do {                                                             \
-+               struct task_struct *t__ = xchg(&(dc)->member, NULL);     \
-+               if (t__ && !IS_ERR(t__))                                 \
-+               kthread_stop(t__);                                       \
-+       } while (0)
-+
- /* Forward declarations */
+Please drop this.
+There's already include <sys/mman.h> via uffd-common.h/vm_util.h.
 
- void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 1492c8552255..b4da0a505d4a 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1143,8 +1143,7 @@ static void cached_dev_detach_finish(struct
-work_struct *w)
-                cancel_writeback_rate_update_dwork(dc);
+>  
+>  uffd_test_ops_t *uffd_test_ops;
+>  uffd_test_case_ops_t *uffd_test_case_ops;
+>  
+> -#define BASE_PMD_ADDR ((void *)(1UL << 30))
+>  
+>  /* pthread_mutex_t starts at page offset 0 */
+>  pthread_mutex_t *area_mutex(char *area, unsigned long nr, uffd_global_test_opts_t *gopts)
+> @@ -142,30 +142,37 @@ static int shmem_allocate_area(uffd_global_test_opts_t *gopts, void **alloc_area
+>  	unsigned long offset = is_src ? 0 : bytes;
+>  	char *p = NULL, *p_alias = NULL;
+>  	int mem_fd = uffd_mem_fd_create(bytes * 2, false);
+> +	size_t region_size = bytes * 2 + hpage_size;
+>  
+> -	/* TODO: clean this up.  Use a static addr is ugly */
+> -	p = BASE_PMD_ADDR;
+> -	if (!is_src)
+> -		/* src map + alias + interleaved hpages */
+> -		p += 2 * (bytes + hpage_size);
+> +	void *reserve = mmap(NULL, region_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
+> +			-1, 0);
+> +	if (reserve == MAP_FAILED) {
+> +		close(mem_fd);
+> +		return -errno;
+> +	}
+> +
+> +	p = (char *)reserve;
 
-        if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
--               kthread_stop(dc->writeback_thread);
--               dc->writeback_thread = NULL;
-+               STOP_THREAD_ONCE(dc, writeback_thread);
-        }
+No need for casting here.
 
-        mutex_lock(&bch_register_lock);
-@@ -1308,8 +1307,9 @@ int bch_cached_dev_attach(struct cached_dev *dc,
-struct cache_set *c,
-                 * created previously in bch_cached_dev_writeback_start()
-                 * have to be stopped manually here.
-                 */
--               kthread_stop(dc->writeback_thread);
--               cancel_writeback_rate_update_dwork(dc);
-+               if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
-+                       cancel_writeback_rate_update_dwork(dc);
-+               STOP_THREAD_ONCE(dc, writeback_thread);
-                pr_err("Couldn't run cached device %pg\n", dc->bdev);
-                return ret;
-        }
-@@ -1349,10 +1349,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
-        if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
-                cancel_writeback_rate_update_dwork(dc);
+>  	p_alias = p;
+>  	p_alias += bytes;
+>  	p_alias += hpage_size;  /* Prevent src/dst VMA merge */
+>  
+> -	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
+> +	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
+>  			   mem_fd, offset);
+>  	if (*alloc_area == MAP_FAILED) {
+> +		munmap(reserve, region_size);
 
--       if (!IS_ERR_OR_NULL(dc->writeback_thread))
--               kthread_stop(dc->writeback_thread);
--       if (!IS_ERR_OR_NULL(dc->status_update_thread))
--               kthread_stop(dc->status_update_thread);
-+       STOP_THREAD_ONCE(dc, writeback_thread);
-+       STOP_THREAD_ONCE(dc, status_update_thread);
+I think it'll be more readable to put munmap() after setting *alloc_area to
+NULL.
 
-        mutex_lock(&bch_register_lock);
+>  		*alloc_area = NULL;
+> +		close(mem_fd);
+>  		return -errno;
+>  	}
+>  	if (*alloc_area != p)
+>  		err("mmap of memfd failed at %p", p);
+>  
+> -	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
+> +	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
+>  			  mem_fd, offset);
+>  	if (area_alias == MAP_FAILED) {
+> -		munmap(*alloc_area, bytes);
+> +		munmap(reserve, region_size);
 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 302e75f1fc4b..50e67a784acd 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -741,6 +741,7 @@ static int bch_writeback_thread(void *arg)
-        struct cached_dev *dc = arg;
-        struct cache_set *c = dc->disk.c;
-        bool searched_full_index;
-+       struct workqueue_struct *wq = NULL;
+Here as well.
 
-        bch_ratelimit_reset(&dc->writeback_rate);
+>  		*alloc_area = NULL;
+> +		close(mem_fd);
+>  		return -errno;
+>  	}
+>  	if (area_alias != p_alias)
+> -- 
+> 2.51.2
+> 
 
-@@ -832,8 +833,10 @@ static int bch_writeback_thread(void *arg)
-                }
-        }
-
--       if (dc->writeback_write_wq)
--               destroy_workqueue(dc->writeback_write_wq);
-+       wq = xchg(&dc->writeback_write_wq, NULL);
-+       if (wq) {
-+           destroy_workqueue(wq);
-+        }
-
-        cached_dev_put(dc);
-        wait_for_kthread_stop();
 -- 
-2.25.1
+Sincerely yours,
+Mike.
 
