@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-899277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79968C5744D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:51:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA67C5742F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EED72351423
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:48:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB3D74E1403
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CA534889A;
-	Thu, 13 Nov 2025 11:48:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFD227B34E;
-	Thu, 13 Nov 2025 11:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BED534A790;
+	Thu, 13 Nov 2025 11:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fKSFphfR"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C12927B34E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763034494; cv=none; b=gzMegZ57rapJZ/cVzFYCsDu+5cYXsREHzQA74Y+hk15iQWJ772Huu49m0qEZFtU9fjHz7G5UkkJudBchwwKv6ur00UxCpQxXCizmrk2aPDvBLLp72gXZO+zYjzhIcOVbv3h1vBTxzBstCeMXbjqli2aWxBKTX8sKlQUIBzjXc6o=
+	t=1763034531; cv=none; b=AjRbmKnoU+jNit0kAcl0/28pAbCOgvFLr0qmvGuRQ6XsgFhuSXtkAnIhn8otpn/MDhyGT2tds3rIG7PjMhzFMpzqBbDl4LGKSpyhCAjEykJXAttLVBifgfqKVvGhaJbBPHk40CU3K+p6+IOOFUWhl4Ikk1ZTDaGd3KMprcQbigc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763034494; c=relaxed/simple;
-	bh=qhOfdGgBrrf6k/HsNHpiwuqkWULXk59D0/gyGV7+9Q8=;
+	s=arc-20240116; t=1763034531; c=relaxed/simple;
+	bh=rshe4Y9K3TD4DqVqqxd4CPhZeTlaOd12ylbzuqXsFVY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I84NJXmRYZ13Lkb3CbtJqcwMWNUtTsTOBsy2Ed0UBrGnaGLaEzvC0fZph8yLiEroGgC+EQwk0kwqBfHp6BVuaqbb7ukUpybntKaUF0fkN+d7w6oTtTUeqekKQk7ne461+rSbgHFgW/eC/5FFOLJ7PSIaqevHQjdr1c5oZNP58mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B56D612FC;
-	Thu, 13 Nov 2025 03:48:03 -0800 (PST)
-Received: from [10.1.28.59] (e127648.arm.com [10.1.28.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C37513F66E;
-	Thu, 13 Nov 2025 03:48:09 -0800 (PST)
-Message-ID: <ec6af97c-5d9d-4485-a343-7e4683a51ab8@arm.com>
-Date: Thu, 13 Nov 2025 11:48:06 +0000
+	 In-Reply-To:Content-Type; b=ZHVGykBCBWWcqgX+I2RmLDbo62GYf70WfwEzn4EwvT6CBFlnbDo/K5SnYlmm+GQO2pCkXn0JyzK2huhBFG3pUizn/3wOY/oqkEogsPPUfinW2GWf8zQNgdZs7Am5RNf2sIh4/MsGd8R+WZb6BSzKq6gU43kc9CeKfmsiXm5d8J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fKSFphfR; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 381C31A1A77;
+	Thu, 13 Nov 2025 11:48:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EB0DF6068C;
+	Thu, 13 Nov 2025 11:48:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 364B5102F2351;
+	Thu, 13 Nov 2025 12:48:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1763034524; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=ctBc4upCgqzKeJAnk9xRDnJ5/kLYkjPG0jykALkFcYg=;
+	b=fKSFphfRMoXTQ0hCbm1ZC+zPU9x35KzW0zgQCVqecpiOq6xEYaWdAIZgWBuZF8QPSrH1FX
+	3YYtrjz5mnrq3z4tYS1VvV/OGySMGEChlnwlFEyJDXVbq5dwt/nGOKJJiqenF43f3N5PO5
+	Cy1n3L8dQS0ygIIffIDzOsJVKq9HUvt1K/wy3r0GZnrfW3/FYlKtDxAkUFz9Vp6ZCMTP4G
+	rZ0HqUf7mvbhYlwiqp5DoVAd4zM628y/u/ag8d60VzZf2BJkQLMTwf7geYjfcdWG5YqL1s
+	BW5MJffQA8Q0v2iTR+gD7YnJg3fZ6Imtm97MLeP5ezTZaPpEXQw/8EHzYUCcNA==
+Message-ID: <98560fc9-ca90-4c64-980a-472e49a77a13@bootlin.com>
+Date: Thu, 13 Nov 2025 12:48:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,62 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] cpuidle: governors: teo: Use s64 consistently in
- teo_update()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
-References: <4701737.LvFx2qVVIh@rafael.j.wysocki>
- <3026616.e9J7NaK4W3@rafael.j.wysocki>
+Subject: Re: [PATCH net-next v2 1/2] net: stmmac: Fix VLAN 0 deletion in
+ vlan_del_hw_rx_fltr()
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ rmk+kernel@armlinux.org.uk, boon.khai.ng@altera.com
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251113112721.70500-1-ovidiu.panait.rb@renesas.com>
+ <20251113112721.70500-2-ovidiu.panait.rb@renesas.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <3026616.e9J7NaK4W3@rafael.j.wysocki>
+In-Reply-To: <20251113112721.70500-2-ovidiu.panait.rb@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 11/12/25 16:24, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Two local variables in teo_update() are defined as u64, but their
-> values are then compared with s64 values, so it is more consistent
-> to use s64 as their data type.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-> ---
->  drivers/cpuidle/governors/teo.c |    7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+On 13/11/2025 12:27, Ovidiu Panait wrote:
+> When the "rx-vlan-filter" feature is enabled on a network device, the 8021q
+> module automatically adds a VLAN 0 hardware filter when the device is
+> brought administratively up.
 > 
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -157,8 +157,7 @@ static void teo_update(struct cpuidle_dr
->  {
->  	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
->  	int i, idx_timer = 0, idx_duration = 0;
-> -	s64 target_residency_ns;
-> -	u64 measured_ns;
-> +	s64 target_residency_ns, measured_ns;
->  
->  	cpu_data->short_idles -= cpu_data->short_idles >> DECAY_SHIFT;
->  
-> @@ -167,9 +166,9 @@ static void teo_update(struct cpuidle_dr
->  		 * If one of the safety nets has triggered, assume that this
->  		 * might have been a long sleep.
->  		 */
-> -		measured_ns = U64_MAX;
-> +		measured_ns = S64_MAX;
->  	} else {
-> -		u64 lat_ns = drv->states[dev->last_state_idx].exit_latency_ns;
-> +		s64 lat_ns = drv->states[dev->last_state_idx].exit_latency_ns;
->  
->  		measured_ns = dev->last_residency_ns;
->  		/*
+> For stmmac, this causes vlan_add_hw_rx_fltr() to create a new entry for
+> VID 0 in the mac_device_info->vlan_filter array, in the following format:
 > 
+>     VLAN_TAG_DATA_ETV | VLAN_TAG_DATA_VEN | vid
 > 
+> Here, VLAN_TAG_DATA_VEN indicates that the hardware filter is enabled for
+> that VID.
 > 
+> However, on the delete path, vlan_del_hw_rx_fltr() searches the vlan_filter
+> array by VID only, without verifying whether a VLAN entry is enabled. As a
+> result, when the 8021q module attempts to remove VLAN 0, the function may
+> mistakenly match a zero-initialized slot rather than the actual VLAN 0
+> entry, causing incorrect deletions and leaving stale entries in the
+> hardware table.
+> 
+> Fix this by verifying that the VLAN entry's enable bit (VLAN_TAG_DATA_VEN)
+> is set before matching and deleting by VID. This ensures only active VLAN
+> entries are removed and avoids leaving stale entries in the VLAN filter
+> table, particularly for VLAN ID 0.
+> 
+> Fixes: ed64639bc1e08 ("net: stmmac: Add support for VLAN Rx filtering")
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Maxime
 
 
