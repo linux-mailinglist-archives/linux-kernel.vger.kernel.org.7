@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-899235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0732C57254
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:21:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227AFC57278
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BDA0234A2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:21:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FE8E4E3CA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E033A028;
-	Thu, 13 Nov 2025 11:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B81033B97E;
+	Thu, 13 Nov 2025 11:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdZSjTkW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvfS1BAQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B967821B9F1;
-	Thu, 13 Nov 2025 11:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5133321254B;
+	Thu, 13 Nov 2025 11:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032858; cv=none; b=LJ6TBv28wrbW431n8pGatF/nBBFztG7j55LX+A7NxgKnXYNCepkH9zO8pwQ4Ad5sSh1xcBXZJSOGtbVcgRpL/aQyxzUFPef1bg3wG/960jYp4exyNUQzNrIlFoeyS3xKN5H/USbQul8iXRAl/HHfYBfw6imOcshPSumlF7Guvz4=
+	t=1763032990; cv=none; b=J0oge2mHNLULFes5EizcL8ZDBaAl8OWMaKmDrt9r2Z7G7mOigFCEzZGSKfOsI9s5dw2YF75k+tf5iMeYxksTNcPFHug7/vNKmR38Li143BtCV06raqWgRA6gHZPNCyUxOUWOGWJ68PYhQ141Sy+skEkqKmcFSng9zF9jM98/v4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032858; c=relaxed/simple;
-	bh=vtBK544FRyKS1BOwji0xiD0d+JWv6PGkNg7wpRHpRxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wr9E2I+Kw57EpZBLGRqgMYXEJguHefcmrbWs7GaV7amurNQQ1Hvdn4revhMgvW2jEs4b3J8Gt4bzsbSqgjHJPdCcMrqjOoCI65iat5spCtC0zWNVAAvH8Px9Z9jMk1EF7SHH0RyIVGF/PPzmRW6Txe4/r81fydodUzPZqHpOkQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdZSjTkW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A567C19423;
-	Thu, 13 Nov 2025 11:20:55 +0000 (UTC)
+	s=arc-20240116; t=1763032990; c=relaxed/simple;
+	bh=07j0kRDgLb2cpwghhl85faRVIEr3GuN8BXsZKSyWsgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tD5UyXbKySlcTdhYcRqGBSBR1RyqTddk+zJ3NJ+bDSfDNEWFQO+n8N9zobzGx1x1+HCW58D37eTXTRM2WG2tBO7WoAWToZOS4Zs/vGNmPbk9pejFDP+bVDwLU+opQOoClqDzCRKk0+/t//btHFlkY500M4jCKnENnlRddp6WIj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvfS1BAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B60C4CEF1;
+	Thu, 13 Nov 2025 11:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763032858;
-	bh=vtBK544FRyKS1BOwji0xiD0d+JWv6PGkNg7wpRHpRxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SdZSjTkWNvwUE1+1q/Y6z8HApEWYFKsQV8J/3ylVYTDbNqnvBz7bG0SCIRZKkbdjI
-	 Z55GKxjAUlXxLEhLhEJ8tNLn7z5utLBkz0NJdjszJlRHqklQG6oUDMtnH4jAr9v3kp
-	 PF1ae0rWtMcdERLd9X/i7FUmM/8RUPh0AwTIv4rW0MAGZdVO9LBL25cqmCM//0NvyO
-	 /GoQ/Fvi4ERBN1bRVCbVcr2Wfx7iOlOax9b20NI152XAseZyyRRqcICufQqoKmTqbV
-	 Q8gpRLUCvhnbbqUM95+tU+M8TGVgTZcahtMAmsV5zM+BF7xQN+j3Xn+Giv3iQmpiM9
-	 /fIFBV//4KDQg==
-Date: Thu, 13 Nov 2025 11:20:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomer Maimon <tmaimon77@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com, andrew@codeconstruct.com.au,
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] spi: dt-bindings: nuvoton,npcm-fiu: Convert to DT
- schema
-Message-ID: <9a175890-bfb9-43d7-bf19-5e2f5ca00f41@sirena.org.uk>
-References: <20251112173314.1751671-1-tmaimon77@gmail.com>
- <20251113-loose-seahorse-of-endeavor-5d216e@kuoka>
+	s=k20201202; t=1763032988;
+	bh=07j0kRDgLb2cpwghhl85faRVIEr3GuN8BXsZKSyWsgo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NvfS1BAQ/pX8vHgr8ln0H7yMT+OCoogJ2GCAoA5782uMw8GAZDplD2eJo6Fu020kv
+	 WLcH50BcQV4KthAxdcDbUjpV10KJd9jnIQ6YtQukpq0LC55fM92oWqhG5EL4Zh8E0x
+	 b4ROZ3nml8e2gAO0f/Ao/zZkuR7VNVsbTOcvVc6gSVV8oC+BgU3RkmzpU3shYETWr+
+	 bsPmRFyJliAFu39g97o6Z3wg9QU9j8joP+T15KPrGhYwMlDbsz22zL2C7zD5dX+8aL
+	 koRVKmJNZjtLl0UrNu1GxBKwGAx+IEo91dmH9FTVY9WefHYOCgPx8L3NJkwSKW/nSh
+	 BB5W6Jf0/9TtQ==
+Message-ID: <80fdad22-ae53-43d1-bb4e-02469edd6464@kernel.org>
+Date: Thu, 13 Nov 2025 12:23:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c70ftPtkFe0Y8++O"
-Content-Disposition: inline
-In-Reply-To: <20251113-loose-seahorse-of-endeavor-5d216e@kuoka>
-X-Cookie: An idle mind is worth two in the bush.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/20] regulator: dt-bindings: add s2mpg11-pmic
+ regulators
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
+ <20251110-s2mpg1x-regulators-v4-3-94c9e726d4ba@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251110-s2mpg1x-regulators-v4-3-94c9e726d4ba@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 10/11/2025 20:28, André Draszik wrote:
+> The S2MPG11 PMIC is a Power Management IC for mobile applications with
+> buck converters, various LDOs, power meters, NTC thermistor inputs, and
+> additional GPIO interfaces. It typically complements an S2MPG10 PMIC in
+> a main/sub configuration as the sub-PMIC.
+> 
+> S2MPG11 has 12 buck, 1 buck-boost, and 15 LDO rails. Several of these
+> can either be controlled via software (register writes) or via external
+> signals, in particular by:
+>     * one out of several input pins connected to a main processor's:
+>         *  GPIO pins
+>         * other pins that are e.g. firmware- or power-domain-controlled
+>           without explicit driver intervention
+>     * a combination of input pins and register writes.
+> 
 
 
---c70ftPtkFe0Y8++O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Thu, Nov 13, 2025 at 09:51:47AM +0100, Krzysztof Kozlowski wrote:
-
-> Anyway, address space is rarely optional, so I have doubts you would
-> have proper justification for this change.
-
-IIRC I have seen some of the controllers with memory mapped flash
-support where the address range for the memory mapping was optional
-since it could be configured out of the IP when wiring it into the
-platform.  No idea if that's what's going on here.
-
---c70ftPtkFe0Y8++O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkVvw0ACgkQJNaLcl1U
-h9Ac1wf+LU21wucZkPrUikGhqSauz0L9PAoNweBaHggildDs6G+y/dxG67+ucIZb
-qNKB2x26bwrysd0AM9nenCcdSd72zNrsb5/lxYxLIYkRbHwTqGDshxn8CEjHYU8u
-0tF9panGf6fGeS0cWP2vDNk2288cIGEJ3oSFbPjJaWJIleja2O8vhT3WYzDXF6h/
-vNkYKl3kmStqr69F10KTad5IyExU5QhsvzYrhRcKWim9uSc5E+4Ip4Uqz5fwEnWC
-oz1/qp2ZZiMWYsUi8gnY8qKtzocJ5muMbXyS80uZQlF8mYE2JJIPMgY4OrpdSypL
-+dwe6cAI15iM2MiNhjv2BFinMda4Og==
-=OfFS
------END PGP SIGNATURE-----
-
---c70ftPtkFe0Y8++O--
+Best regards,
+Krzysztof
 
