@@ -1,165 +1,82 @@
-Return-Path: <linux-kernel+bounces-899454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF25C57CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:57:15 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38EBC57CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6911359B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:51:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 30BD83467F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D06D23909C;
-	Thu, 13 Nov 2025 13:50:52 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2423184F;
+	Thu, 13 Nov 2025 13:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEIV9L7B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270221883E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B33E1B4F09;
+	Thu, 13 Nov 2025 13:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041852; cv=none; b=Rv+3bBNjI7TgyDfiREGX5ZOZ/HJQTrcvAPZ+4+03gb+s1pz0FXn4u7KDkhnHbvi4pP2iODrFg5s5dtmCqudaV8sCFNdk4hWqHQ9NIU2+AQ6z/Xr6GUDiPf/R5olEkQdAOMzPBn4jzfKrl9l4/vMM3cu7j+7wZTEW9Ch8MblB27k=
+	t=1763041951; cv=none; b=dmetLPDGi/FAJMv/GNmgDpqTZVXwEQr19Rdl5OL39ZHEpXA9YKyG3yZNOZTQMdO5LtlPlOClquDrE9ZSVAFdc0UqtoXAIqxvpUaI97Bt+w1oZcm/9AdzX2+pCDgTT/Cs98+d7WUEUTso187inBBKTmsCBBaqpVl984fax8CEf3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041852; c=relaxed/simple;
-	bh=YHwpLQZLAsocv8zCxcdO6JPA15+fou47SRFPfHukz4E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=BAYKzWTSM5oP0marfxDUg9ILlelRyzHcAczKvWDOxPMy/ZJF5YKiGtwg/60q2fq9iT4DIZfpUEiuvCViFkQuPUvwcmDTNrWQpuWhvewavAfx9LGrlz9M1wh+zrAALyxQFXqaUwC4rDGtXpi9mYIPnK+dMDjPnjqu5i8JT6w2aFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43322b98837so10466395ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:50:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763041849; x=1763646649;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gR5QHRJoKlUfEKsqtqN8QGAlulySX9Zv3V+FIyZgt/0=;
-        b=b7Zxhfj16Im5cD+O46NrZVJS4XwcixF9eg1I1JvaUlch9Rgn+KGXGF/z1zEuabhqjk
-         jkhk86Zn44YGnewT72k9QG8Pffye8P2WAY06JeZ7MgbA7IB0HPdXibh/TcWaCDGoQgEK
-         B7OFhsj55TtHw2a0TX79IVKZvNmCfP3sBIScFLiFdKpGgz2xJPhszPcJM7BDdT4gWERy
-         vuKh5gteTUVk6fvT5dPaQ/t2nHg4VjovMZYlhBqJOi3vuHyCns+YWTsOVWoWuPhBk/B6
-         hgNH07tS4IILEIn30ZR1BQP1JqCjbC5pftZQSQRSjGOgpJDBFP0BDSYsTlCHU6aO3aR2
-         OHbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIw3aFWcNeXCZU19oFNbX0f3UcAQ+G/vy11/slJ/1HmYnCSH0iu8pYsrp3m58k/U/kGKAAObN0df8kEr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ1hjnl4p00e7zUmzy3YFqZNCi0eABSV5pegz13TMIb0BjmP4f
-	DETqH9GnXEtQP7JPrztFd0CDSXrAPtuX/c9fbjH7y+KfvbwUVmJf4r11KmxPHhYIqfPSkrnCo9J
-	JIzKaJ9+vP7NOtvL+1V0NSxrJzd/JrG62J6aidp09QDNO2zCgjEytIGAsQsY=
-X-Google-Smtp-Source: AGHT+IFGfFo1KbKpKvVzlkRza9ovk/p48usi5JoqdbcquAg13bFV2sMz3dIBqs4h/BeJvO+cPBPDvTd991hK3B/F6D8tnMw4OJlT
+	s=arc-20240116; t=1763041951; c=relaxed/simple;
+	bh=xIjCW+4Yvi30VBnjeO/skjFdynW0qrgZcaW3Jtnpkyc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EoXP03WEU9nK8MGTnZTstPQkHyJkwZ924LacLBqQBLuupwxvRIWt9n8Jfiju+0cwHmsXtZLa2IGo05fkiNr0LaJBYt9/VmRi0ltC1QbHkLFWUK8Ea4UxXZvSBh/oBWy6kTxkVYkSAzZIgui2sIlFs/FYOanqNQTOld2Rkv68cnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEIV9L7B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C025AC4CEFB;
+	Thu, 13 Nov 2025 13:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763041951;
+	bh=xIjCW+4Yvi30VBnjeO/skjFdynW0qrgZcaW3Jtnpkyc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=nEIV9L7BJYkG/sMHERcFp66BgqANQSA4gvpn8ITuwmlnMDxTBkTcwAzuD6AvjdO+O
+	 LpOG/FiKcp26Rq/QC/Km282Pswaqk8fMtDyjM5ZWgmyC7zC0MyAmYviQpstd19OZ53
+	 4Vy1mgB5gjX7DZaw0Jpb+JKsBazSS5oXKezZKJky1dgrneftgF7lDaGGuLDRhKh4E5
+	 wibnZ8h3ysn+HSZqq91ehLDviRBocuAq096hzXVM9OvDOSxgsSou6pFaDsYzpw1Lrn
+	 byF4nnhKywi/tENxDWzZAH9MoqjBSFzC0GWv50NhlsZYcaB6DGxXdbWNffb4xUeW/9
+	 zOjBgnHwgS/PA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Markus.Elfring@web.de, Haotian Zhang <vulab@iscas.ac.cn>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251031021620.781-1-vulab@iscas.ac.cn>
+References: <20251031021620.781-1-vulab@iscas.ac.cn>
+Subject: Re: (subset) [PATCH v3] leds: netxbig: fix GPIO descriptor leak in
+ error paths
+Message-Id: <176304194952.1492848.1003570657764262540.b4-ty@kernel.org>
+Date: Thu, 13 Nov 2025 13:52:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3091:b0:433:7e25:b93d with SMTP id
- e9e14a558f8ab-43473da71bdmr85293035ab.28.1763041849569; Thu, 13 Nov 2025
- 05:50:49 -0800 (PST)
-Date: Thu, 13 Nov 2025 05:50:49 -0800
-In-Reply-To: <20251113092606.91406-1-scott_mitchell@apple.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6915e239.a70a0220.3124cb.0029.GAE@google.com>
-Subject: [syzbot ci] Re: netfilter: nfnetlink_queue: optimize verdict lookup
- with hash table
-From: syzbot ci <syzbot+ci9bdcb0a5ada952db@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	phil@nwl.cc, scott.k.mitch1@gmail.com, scott_mitchell@apple.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-52d38
 
-syzbot ci has tested the following series
+On Fri, 31 Oct 2025 10:16:20 +0800, Haotian Zhang wrote:
+> The function netxbig_gpio_ext_get() acquires GPIO descriptors but
+> fails to release them when errors occur mid-way through initialization.
+> The cleanup callback registered by devm_add_action_or_reset() only
+> runs on success, leaving acquired GPIOs leaked on error paths.
+> 
+> Add goto-based error handling to release all acquired GPIOs before
+> returning errors.
+> 
+> [...]
 
-[v2] netfilter: nfnetlink_queue: optimize verdict lookup with hash table
-https://lore.kernel.org/all/20251113092606.91406-1-scott_mitchell@apple.com
-* [PATCH v2] netfilter: nfnetlink_queue: optimize verdict lookup with hash table
+Applied, thanks!
 
-and found the following issue:
-BUG: sleeping function called from invalid context in instance_create
+[1/1] leds: netxbig: fix GPIO descriptor leak in error paths
+      commit: 03865dd8af52eb16c38062df2ed30a91b604780e
 
-Full report is available here:
-https://ci.syzbot.org/series/001a6a6c-7e1b-46e8-995d-5b6d650af320
+--
+Lee Jones [李琼斯]
 
-***
-
-BUG: sleeping function called from invalid context in instance_create
-
-tree:      nf-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netfilter/nf-next.git
-base:      0d0eb186421d0886ac466008235f6d9eedaf918e
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/69a4254b-f4aa-45a7-a4bd-2d23940887f3/config
-C repro:   https://ci.syzbot.org/findings/8074062c-0aee-4734-a3d1-587b80676bf1/c_repro
-syz repro: https://ci.syzbot.org/findings/8074062c-0aee-4734-a3d1-587b80676bf1/syz_repro
-
-netlink: 'syz.0.17': attribute type 6 has an invalid length.
-BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 5968, name: syz.0.17
-preempt_count: 1, expected: 0
-RCU nest depth: 1, expected: 0
-3 locks held by syz.0.17/5968:
- #0: ffffffff99cc1c30 (nfnl_subsys_queue){+.+.}-{4:4}, at: nfnl_lock net/netfilter/nfnetlink.c:98 [inline]
- #0: ffffffff99cc1c30 (nfnl_subsys_queue){+.+.}-{4:4}, at: nfnetlink_rcv_msg+0x9dc/0x1130 net/netfilter/nfnetlink.c:295
- #1: ffffffff8df3d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #1: ffffffff8df3d2e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #1: ffffffff8df3d2e0 (rcu_read_lock){....}-{1:3}, at: nfqnl_recv_config+0x222/0xf90 net/netfilter/nfnetlink_queue.c:1653
- #2: ffff888112297d18 (&q->instances_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #2: ffff888112297d18 (&q->instances_lock){+.+.}-{3:3}, at: instance_create+0x121/0x740 net/netfilter/nfnetlink_queue.c:206
-Preemption disabled at:
-[<0000000000000000>] 0x0
-CPU: 1 UID: 0 PID: 5968 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x495/0x610 kernel/sched/core.c:8927
- might_alloc include/linux/sched/mm.h:321 [inline]
- slab_pre_alloc_hook mm/slub.c:4913 [inline]
- slab_alloc_node mm/slub.c:5248 [inline]
- __do_kmalloc_node mm/slub.c:5633 [inline]
- __kvmalloc_node_noprof+0x149/0x910 mm/slub.c:7089
- kvmalloc_array_node_noprof include/linux/slab.h:1122 [inline]
- instance_create+0x203/0x740 net/netfilter/nfnetlink_queue.c:218
- nfqnl_recv_config+0x660/0xf90 net/netfilter/nfnetlink_queue.c:1667
- nfnetlink_rcv_msg+0xb4d/0x1130 net/netfilter/nfnetlink.c:302
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2550
- nfnetlink_rcv+0x282/0x2590 net/netfilter/nfnetlink.c:669
- netlink_unicast_kernel net/netlink/af_netlink.c:1318 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1344
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1894
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- ____sys_sendmsg+0x505/0x830 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7a65f8f6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffde4361588 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7a661e5fa0 RCX: 00007f7a65f8f6c9
-RDX: 0000000000008010 RSI: 00002000000000c0 RDI: 0000000000000003
-RBP: 00007f7a66011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7a661e5fa0 R14: 00007f7a661e5fa0 R15: 0000000000000003
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
