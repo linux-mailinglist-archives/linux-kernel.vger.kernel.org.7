@@ -1,220 +1,562 @@
-Return-Path: <linux-kernel+bounces-898663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F587C55AF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:46:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E89DC55AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D09D34E9E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:45:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0864834F3BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 04:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88DE302CBF;
-	Thu, 13 Nov 2025 04:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBA302CD7;
+	Thu, 13 Nov 2025 04:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="voss/A37"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012054.outbound.protection.outlook.com [40.107.209.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RRX8lkjk"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9A9302CB1;
-	Thu, 13 Nov 2025 04:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763009067; cv=fail; b=hyr5wPPWHGVRbwHJ9x2iImC92qBDbpRLThpNRErFJzp1UC7lO0MigWAaeou5R3Awo6ZHVv+FQ4H+tGCWlE5A2vJr3ZddYMSErCZ5TMqBALOH3TxGK7trExDWoQr7VUUE9LltO7kvrimUDVqoQygNlPIFbI+vJ+4nZiLqyonuVxU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763009067; c=relaxed/simple;
-	bh=VR/ekySbUI/uGm59nfghVbFuVPkKcW8ex6HvscaiAzk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eYm2IdDF5JfzK/+PXhp3G4RuQo9SoyOeJVnVGhOS7fS0e0K2AD5wxf2pP+w85CakBXrX6MrNfxHXR1KDNCo4gnUFiE+tyaQCKCnpmoXMxv9Rer7PIHUalssFBsJFu9xAclwwFYRJg+rXmui80Gvzr6FySiGPc5Z6NfQsWCtyZZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=voss/A37; arc=fail smtp.client-ip=40.107.209.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k9RZvJ0fWKCQV/RHJH4zXZbXhgXg5t051ezzbPK4kOZb/mWIAKBgjG6OkyoR5hNuooBQ15amm844SmyOjDxqpc8Qro1Iq19cYEBopVslhfAJR2X1tS7U8nP3kEJu3GCc4ABuIbPFBYgCZie7OP2gvcmX3d4joABvrPzenZgr3Yvfwy3qOHG5/YIghzXpgbLMYgc/O+tSeVFoB6WGCW4BUZKFZ6AXGNVW6Q8Ucx58U39Eumk4VSWQqU+e6KhoTaUEGpiCK0FhmmhQhe/4F06TnO4zz4Y2JsW8onjY6Sj1randJJoLlAn6HBHKdj2cFqTp5sQ/MP/g9U+AEFS39ot13g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SvA8x9GcLZVu4/QWU8ObObdnKEXBNZvwyn4MrL1Go1M=;
- b=JrY+ej/mGaVos1edFcI6mYGV8u/aruE0J6fzKjLkrzn1EXdpOhSrIspU86Cd2uwltPJLR69TbgzohfeCOyqcjip2ZqhdTgmcMoFFfygnCBlg0NSeetWTNRDEhl1KPUU1pTsBRsFhK8X4jJHyRra/lBCKPQbWtybkxNiZM7/KAFzxPYPMmBpbJ3XtnTRgbGEN35FA6YsppTf6PGCYaWwTigK+o7UDxvKqwACBlsvpecZZZjEdvCT6MTx72BDmpW1FpYZ4czDO+4/fwOzgeLKSp7ecpM537uhMF/Sv2fkptaBQRMKYFIcIlVjIr0P187kKMfMpDn4DdJ6/k8cRylFm9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SvA8x9GcLZVu4/QWU8ObObdnKEXBNZvwyn4MrL1Go1M=;
- b=voss/A37oQEm6jH8FLJ8jC1UeNmdpg700Lt6knR0DTYD+S+AiGj24Qq0cItFr3tuXr8e7rVP4bWoym+ZMx/YSYXUAjwkIOsVLZFfCZ8x92qkMaa354n84oMQyblzIMujTcfw+MLvADD67IrtQRj4mGqeMATUL6f/fD1V0RK6SsEZ0rBYO4puSUugTMi+F0gbEkfp8S1Yb0NysIKmQH8gC2L1QdohiEY86YfxtGTCTB9RLDMoBRyDnoLRJd8WU9wX2VQv07PUb0rQClWalxt/ZnkzDwB5tQvvmP/cNgfAAX1oBJt9DJ9fAouw7LAbY7f8AKtS4u/62CuiSe/VlwpX9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by PH7PR03MB6862.namprd03.prod.outlook.com (2603:10b6:510:15f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 04:44:24 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
- 04:44:24 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mahesh Rao <mahesh.rao@altera.com>,
-	Ho Yin <adrian.ho.yin.ng@altera.com>,
-	Niravkumar L Rabara <nirav.rabara@altera.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH v2 2/2] arm64: dts: agilex5: add fpga-region and fpga-mgr nodes
-Date: Thu, 13 Nov 2025 12:43:56 +0800
-Message-ID: <9a4ce6b2470328b9326402a2f00ff285be1793c3.1763008269.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <cover.1763008269.git.khairul.anuar.romli@altera.com>
-References: <cover.1763008269.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR02CA0033.namprd02.prod.outlook.com
- (2603:10b6:a02:ee::46) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094830171D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763009106; cv=none; b=JNyCKEzVHQDsFkisVTCrMX+v260RGe5SqakseH5VYSOMbPUI2quItUXXtFQlj2TVGZnlPbUJVX+28jIEWtwBhDanh9ksg2tM0aIDKtXKvLL2PaoXzCvlFvU5hvy2WAAxaA85aPvSiqmE/gTvsb0Fgd+MCWZwVbB61OogM+H2mwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763009106; c=relaxed/simple;
+	bh=9EPIpqcnaT1yw4HrsxdZwVmGVBvkiak5aKzp2vbsEow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3y7dQ4dBTJ/zuF9aF2KH1HXU3sh3u1JPszYFuciei+gfdnUkQhu/Igwxn+gNTW9VOcT9ll++r7j0haI74WR+TGXHtB2fas2qd8jEfa7W8QKuzlVgAIiZne/oakMZ95+3KIGDL7ot214LkixxczFnesxEHmUj6t5cLSG5a5s/5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RRX8lkjk; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-782e93932ffso286428b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:45:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1763009104; x=1763613904; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WW9NVt//V73VxoeUFc0q/YGH8xho76ZVJ4bJ41hK3dU=;
+        b=RRX8lkjkD3/hjoYzOWSu0Vqo3ePPINIgZo2Y1uzZRHqLR5o3Qa1ggvOPQhFpX6St0j
+         Qz3LmATsCEkMYFYjSgiS9/tjHAixVnGQCZBa665B5E6JQIlNcpo2kCY1s58kvRh1ggJB
+         PVpT7/0Scz18k3O0VDcgxrYzPdEWeY+twzFHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763009104; x=1763613904;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WW9NVt//V73VxoeUFc0q/YGH8xho76ZVJ4bJ41hK3dU=;
+        b=LR4Obro4XeGcvGiC5dRisAuq2RscR6AbbfZtAHp+LlH+o+c1YaFIe8se4dmNC8ANrj
+         B/z9x7ZEyC0u0F4f6GgUfzfimI90lHOZSjvnTMG5sMwqisXcGpUIj3T4h8Ex1RSPDCFY
+         uauzX1aNihxtE5g0ZUqbLj+G4uPssNjVkNhcVe8TtCfrmT+eCwaIqf1OtJnkTlmnwREu
+         uM/JMfDfzo2KMrmaxsYIRDim1s9K22wJuMEY18YAqo3qOdSIhYQza1UIkH0LxW+mBZU2
+         HucdtdxdO8+LiFWgDvDFuyk3GGDDl05xjycHoLRJLEQm3edjbdhM8use76oXuJoV2/D1
+         cr8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWwt5SnH64iqCgkvGzd8pS6drsBQ1Xk/wdzGAH6Pxu3c5PwI/fZjJYpqRbL9TSul+FTPR1wLzfUfjIYogg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6tnHi15do3B1CHIjhY9AHUiwvfdqChvXZGKuLsibL+xUuCFWU
+	qvsCV+L8dhS+tO5eVYnq4QijJNl4+5kM0w1Qvcdh8AK+TXNMzbsXBQdBszMoq0UWvg==
+X-Gm-Gg: ASbGncs8Jc9wHKTpVW032MQ29li4D3pDNr999eC6XruwzeGK/reaSd3jafshUaI30OT
+	y9LEQxG3pPeq88Kxdl23bnWJ1mxZ3a+KANVFnzY/syh+RpkSjBLeIXZ1IpJY+6bfkHRRC9Qh7xG
+	mrCui/j4I6UCdU78G8cakcQOXtBCLc/fxKk8jI7sr9f6FHBX0byxr/EH53lF6R26bAaGlmOeUyt
+	WzkHvD6RTHgideP5jS+o93zxSlKQQPvG8YRRts/zN9IoJjWspHhkIWjy2F/czyQXi1N1Du7601Z
+	sTfQhQq+Ym+RWPZhdwY86NbrumWOXbR9LFmsKUnALM34OMG4B0GQqc9knDgOVjyZUNb35JmCNMk
+	6VyjMDuvpwX3w0x5bLcXDLy1IE9H2gPkjBADIoFAQc9ZiMVZHca6LAh6jz+6RZe0euDoG4uld91
+	Skfzzf
+X-Google-Smtp-Source: AGHT+IEXtpLJGicudobq9OA6veeDOdY2jEZwNvXU511J/iL1OnckJnRZMsgb0VebRnUOGKc0IoD+1A==
+X-Received: by 2002:a05:6a21:6d98:b0:33e:6885:2bd4 with SMTP id adf61e73a8af0-3590b513a3fmr7350959637.29.1763009104090;
+        Wed, 12 Nov 2025 20:45:04 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:6d96:d8c6:55e6:2377])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b927731e65sm723162b3a.62.2025.11.12.20.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 20:45:03 -0800 (PST)
+Date: Thu, 13 Nov 2025 13:44:57 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yuwen Chen <ywen.chen@foxmail.com>
+Cc: axboe@kernel.dk, akpm@linux-foundation.org, bgeffon@google.com, 
+	licayy@outlook.com, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, liumartin@google.com, minchan@kernel.org, richardycc@google.com, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v4] zram: Implement multi-page write-back
+Message-ID: <xovdviolzjnf6bwbvw4heskfmeasrku7s32xzzljtyomv55do3@s7uy5jb5itqq>
+References: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
+ <tencent_0FBBFC8AE0B97BC63B5D47CE1FF2BABFDA09@qq.com>
+ <x6ksirxv2xffhzpvdxmm5fa7r4b56mlh3kbhopljdsvwzg62wm@rrsslefk4rb4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH7PR03MB6862:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45101a89-5c8b-47b7-5333-08de226f518f
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mYEANvFGUWAERFM9aEm8UZuiauWC29BHzPeXPyiHMbg3po5o1PIrO/aV9Wje?=
- =?us-ascii?Q?rCXvYJqPoEDyj/CSV1FJUIObrarDbXwsICVASz/zDbJt1U6rcykX+xhnS6rC?=
- =?us-ascii?Q?Eb9PwLxRc+dUfBNPxzCXiEmHq8HOTvPPLrMDaph+4O3FlXuUmG9Ntd2gy2/b?=
- =?us-ascii?Q?5HVE2/4y38E0NoZ8ZkUhkudtjIPPukbH5xgugJYUZitVQkgzVQR1iEyTIYDp?=
- =?us-ascii?Q?Xtm1KKTJNM7K4DQCJ/1ZQ1ngU/8J1j8Upakc1qciW8WmB3dwDnj9w7xGAxDQ?=
- =?us-ascii?Q?39QmBWSOZ8A6YAbcKXR/PF4h2upflfY0KUDhDXI0WUlBIGr+PIH8WwWo0TP6?=
- =?us-ascii?Q?h11jvmaB1I1Qb7BDgMeq7SKKuSFvIjMayv4IX6EYh/sbUgPOF6XLnihY9fCA?=
- =?us-ascii?Q?RYeCNK89DaOZtNRpRwAS9uN7osS3rW9rh0df2NCXlWAEo0jVflA65+LT8vpF?=
- =?us-ascii?Q?klleAhqRdjFYwGXFMp6XJoXmroEcrCmhu+nn6LYUQLqgsn/iKVmlvTpdjZRJ?=
- =?us-ascii?Q?DB5uW+f9yPGO9Rx0H22uBODuONvutSA2TRfuxKCZI8Pgwa4pnasYZFV8PZkw?=
- =?us-ascii?Q?u+hgW5R/QmCVAQzU8IXd/la5Z2usBl6MYXnApVhYWYMdTpkaNbgR28Z/GmKS?=
- =?us-ascii?Q?ekjw/adqSMW027LT3I7IhA7lyGIRIQ4hydHN+geNHcGt/w7C7vgr3cg4ClKx?=
- =?us-ascii?Q?yO8Mkk2TWBpRhO1AXUvARFM0A4zyarvJUwaYNJnqWpYYAbh8kXxj7ufLIJle?=
- =?us-ascii?Q?E2QDqF71fC7MzHIGjvTKCLnL5c3C8wddyBiKBy3/UNR0TlLJ7FczPU78urRH?=
- =?us-ascii?Q?KFIYqHBVlI4iUT+EG1Ae1PpyVIyWALS6Z6pgc/Wu+MaeQeA6u7qaPQXuUQvA?=
- =?us-ascii?Q?fQUFuk8D6IIAtTY84WWKokUCCGVSwBPnm7GXVF16ekpn3Eq7d8qkHeD/Ltaj?=
- =?us-ascii?Q?5npSbMgMLr84P41OleyXbmVjNb3PRDP7/ogb9N1E4PmqljTTHf7fT4YhQAQF?=
- =?us-ascii?Q?ShKpboBGldAdg+wBCPEJHuTm8XeUXiVjhJOtS4QQ7xMSPshUrG6acEPdCESF?=
- =?us-ascii?Q?RjE0px2RsBkJoFr5ZnlCdM9k2KOaDMxShoTu+5QQwhOYDKPh58XTSp0v7f3w?=
- =?us-ascii?Q?HFGCF3rVv8pVaclr1xpsBsbx7Rr2243vBJLuqz3ZXuoXI4SM86xRQTuU13XH?=
- =?us-ascii?Q?7WK6FgnQdxqcnpsVX7zXiSseFmjebWBTKQFwmP5QiDfy0LLf8iL4XkJ/3UJX?=
- =?us-ascii?Q?vYV1IpNEwUxcrU9J8wpRyK1N6tj4QPYYE2rAklH2WCurj9IeIpAhMgrxgeyl?=
- =?us-ascii?Q?w/t1fhFz5RMJEDoho77mSrQXpbu0hidIaziXpBQWNdYXI849Rnu8U200IVT6?=
- =?us-ascii?Q?zH8e2ihmmicCbszpH8BTx+74q4q4RQp0SOlczi1UiRNTkfzC/Nm1o2xJqWQv?=
- =?us-ascii?Q?Buc2UAsGUuMv6pzsvRmOojLKhoykv+zg/pwBwi977j6J/TiZuhE88LRDJ2/T?=
- =?us-ascii?Q?4GE9Zs4Dh/bBhwQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oOm3vjDhM2Enl+a4qEW2Tk/QVes2Qj4nj8N6O+H8BxGaX0LrsjwBTge11WXC?=
- =?us-ascii?Q?5ixxe7VAF7BZgDHM6bynJVS8zHpTpshclK2mRiu6bSFUQlYL0l7DInTluzUc?=
- =?us-ascii?Q?UF5etor0hPZYNgTgVYINLE20U3MrV4dflJiuuMYtsDRRt4NB22vIHbdl0ERd?=
- =?us-ascii?Q?KKXmnOO/GHuk2zqWrf5ykQ+Sq2uc0aoc2BpMPp99SRA3b3E0HjiTijzZTyQA?=
- =?us-ascii?Q?eRvcE3FN7wtXIP5kIwFKQ1DYibCp9+a8XtxI2PV0OprgN9BoxkAkb0SfOGQu?=
- =?us-ascii?Q?dtYqIZ2edwzZUMAC9pXF5q6LlMC/CZESKWnBXsA72DNs95LTdFBLCZVm8/ck?=
- =?us-ascii?Q?ySUShvczEuYxs3ZJ0JMSZDD6u6pIheMYJa3xGmZBt73iQK6n/IKWbrdpnqI6?=
- =?us-ascii?Q?Afz8iT3pNGYUWVZV1LlvlToUS64GaEtlvoi4qMZ9ohZYJDnPpq7Zljg4MOBc?=
- =?us-ascii?Q?eFeCu11FE0aYq8qwJVGkqkgmqXjO7OMNazgF8Il8Mn1pFwgDkNO48ArZwdkB?=
- =?us-ascii?Q?/K8jkfEqTOz0sWre9iKmJNvy/6EASsGboRPfqJOMCFZAqrixwSLR/Ge4aBz1?=
- =?us-ascii?Q?HAZwkGpA5LdiVjACpnphBaJOG60rBy9kz4C5G+Gyu2/ec8tNwZ9h9bvszhGB?=
- =?us-ascii?Q?70jkK8lOfqZ+yevQa2eRhdEky1htFyV6vrc6HQsfJvz1lFoN7nd7n1Zh0xr1?=
- =?us-ascii?Q?++WZg6k9BYJv2A3TZ7EJ3rlHNJIO9zvuMxF0wNr3cxU1rc3BHFhOnwh1H0Ve?=
- =?us-ascii?Q?bdYthseddXiFjJrloivh8nHcw9I/MOF8MaR9VXrb+U2eZETdKYcgNWtv0V1q?=
- =?us-ascii?Q?Ni9/oXS7JuzyeY0ZKF0q39dh0hVRy29sl66X4VoQiP3JlHf9TsFwCZFGuFpv?=
- =?us-ascii?Q?fP9/AZh8RH+XIw93vSpzn0sJRgJj+L9IHv/sNjV6i2fdb+7yky/ztSXKbWE/?=
- =?us-ascii?Q?J7E+NG3fx4By3PCvjcNkVaqG9lgRibj/7ctcke+LhNU0P3ANW2xZYXtTFPoc?=
- =?us-ascii?Q?8ijeR7bh+Lk9IKl860pEXUTea/Wip8kFFEeUNqMGuru9ko6d9oYss/3Dlfut?=
- =?us-ascii?Q?TlMx/RU6kUE2qJxq3+4ZGd2P2DKkNq5VaOnYJCB7Yr98ZYu4dUaQY8yuUt11?=
- =?us-ascii?Q?B7PEvhIJfmIKuOj17ymy63HN3Xs+n+oN8ZUuOm0r+/q2owSaUU1zEPBs9nJp?=
- =?us-ascii?Q?Ogrhp0PoGEes5cl6ikUpXCUkuaRzT+3sO4WOiKMyudRwIdhQOcteEAOG9vAf?=
- =?us-ascii?Q?pNLhwQzcBE/cCMnmzZrhgWlzgdRVCVN/Irh+KXYTpJmFOmhtvBW9UhQcpT9t?=
- =?us-ascii?Q?jkGHyGUTkHkd1e+dhdO1d2XoudUAGaXtQU5FL0wWEk4zjKaqcpYk7tc5Vj/e?=
- =?us-ascii?Q?+QR9TsZ2jNzDltcqs2tTpPOt+Oy+d1cirS9wW7tYDVJ3OXtXLRjZZcwxh054?=
- =?us-ascii?Q?pvmEMNt6KtKwOSh0Vu51JcM0tKDjhizIYnCu7qrS61TAmAJ2P4/gUd2RZFMX?=
- =?us-ascii?Q?7qK9cBMmeetlQC6NoIAOiG7u7o8Vtq08V6mWl4nZ2omAuXpFiHKgu4gUtBV8?=
- =?us-ascii?Q?cnPLZNcaclNVfXm23221qUf4Uzj1NgvnaRv4nVzEQX51pKjYvBjfVJbFgCpT?=
- =?us-ascii?Q?+g=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45101a89-5c8b-47b7-5333-08de226f518f
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 04:44:24.1861
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1AGpQxH2THnbYEB/OdNd+0mF/ywyV/XOU6G3h/6JecODIVjrjcT0Ifs/WAcQOjjNTP9KnO7M5ykXipWQydEuhaYRbSK6xpoigT+bTQIMb9w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR03MB6862
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x6ksirxv2xffhzpvdxmm5fa7r4b56mlh3kbhopljdsvwzg62wm@rrsslefk4rb4>
 
-The Intel Agilex 5 SoC contains a programmable FPGA region that requires
-proper device tree description to enable FPGA manager support in the Linux
-kernel. Without the 'fpga-region' and 'fpga-mgr' nodes, the kernel cannot
-detect or manage the FPGA hardware correctly.
+On (25/11/13 11:20), Sergey Senozhatsky wrote:
+> On (25/11/06 09:49), Yuwen Chen wrote:
+> > +static struct zram_wb_request *zram_writeback_next_request(struct zram_wb_request *pool,
+> > +	int pool_cnt, int *cnt_off)
+> > +{
+> > +	struct zram_wb_request *req = NULL;
+> > +	int i = 0;
+> > +
+> > +	for (i = *cnt_off; i < pool_cnt + *cnt_off; i++) {
+> > +		req = &pool[i % pool_cnt];
+> > +		if (!req->page) {
+> > +			/* This memory should be freed by the caller. */
+> > +			req->page = alloc_page(GFP_KERNEL);
+> > +			if (!req->page)
+> > +				continue;
+> > +		}
+> > +
+> > +		if (!test_and_set_bit(ZRAM_WB_REQUEST_ALLOCATED, &req->flags)) {
+> > +			*cnt_off = (i + 1) % pool_cnt;
+> > +			return req;
+> > +		}
+> > +	}
+> > +	return NULL;
+> > +}
+> 
+> So I wonder if things will look simpler (is this the word I'm looking
+> for?) if you just have two lists for requests: one list for completed/idle
+> requests and one list for in-flight requests (and you move requests
+> around accordingly).  Then you don't need to iterate the pool and check
+> flags, you just can check list_empty(&idle_requests) and take the first
+> (front) element.
 
-This patch adds a 'fpga-region' node with compatible = "fpga-region", along
-with appropriate #address-cells and #size-cells properties, to describe the
-FPGA region layout.
 
-Also defines specific compatible string for Agilex5 and add Agilex string
-as fallback for stratix10-soc driver initialization.
+OK, so this is (look below) roughly what I want it to look like.
+It's closer (in sense of logic and approach) to what we do for
+post-processing, and I think it's easier to understand.
 
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+1. factored out a new structure zram_wb_ctl, similar to zram_pp_ctl;
+2. zram_wb_ctl is initialized outside of zram_writeback_slots(),
+   because this function is purely about pp-slot writeback. wb_ctl
+   is passed to zram_writeback_slots() as an argument, just like pp_ctl;
+3. requests move between two lists: idle and inflight requests;
+4. factored out and unified the wait-for-completion logic;
+
+TODO: writeback_batch_size device attr.
+
+Please take a look?  Does this make sense to you, do this
+work for you?
+
 ---
-Changes in v2:
-	- All fallback compatible string to ensure driver is still able to
-	  initialize without new compatible string added in the driver.
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/block/zram/zram_drv.c | 312 ++++++++++++++++++++++++++--------
+ 1 file changed, 244 insertions(+), 68 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index bf7128adddde..06be0b8671c0 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -85,9 +85,21 @@ svc {
- 			method = "smc";
- 			memory-region = <&service_reserved>;
- 			iommus = <&smmu 10>;
-+
-+			fpga_mgr: fpga-mgr {
-+				compatible = "intel,agilex5-soc-fpga-mgr",
-+					     "intel,agilex-soc-fpga-mgr";
-+			};
- 		};
- 	};
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index a43074657531..60c3a61c7ee8 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -734,20 +734,195 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
+ 	submit_bio(bio);
+ }
  
-+	fpga-region {
-+		compatible = "fpga-region";
-+		#address-cells = <0x2>;
-+		#size-cells = <0x2>;
-+		fpga-mgr = <&fpga_mgr>;
-+	};
+-static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+-{
+-	unsigned long blk_idx = 0;
+-	struct page *page = NULL;
++struct zram_wb_ctl {
++	struct list_head idle_reqs;
++	struct list_head inflight_reqs;
 +
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
++	atomic_t num_inflight;
++	struct completion done;
++	struct blk_plug plug;
++};
++
++struct zram_wb_req {
++	unsigned long blk_idx;
++	struct page *page;
+ 	struct zram_pp_slot *pps;
+ 	struct bio_vec bio_vec;
+ 	struct bio bio;
+-	int ret = 0, err;
++
++	struct list_head entry;
++};
++
++static void release_wb_req(struct zram_wb_req *req)
++{
++	__free_page(req->page);
++	kfree(req);
++}
++
++static void release_wb_ctl(struct zram_wb_ctl *wb_ctl)
++{
++	/* We should never have inflight requests at this point */
++	WARN_ON(!list_empty(&wb_ctl->inflight_reqs));
++
++	while (!list_empty(&wb_ctl->idle_reqs)) {
++		struct zram_wb_req *req;
++
++		req = list_first_entry(&wb_ctl->idle_reqs,
++				       struct zram_wb_req, entry);
++		list_del(&req->entry);
++		release_wb_req(req);
++	}
++
++	kfree(wb_ctl);
++}
++
++/* should be a module param */
++#define ZRAM_WB_REQ_CNT (32)
++
++static struct zram_wb_ctl *init_wb_ctl(void)
++{
++	struct zram_wb_ctl *wb_ctl;
++	int i;
++
++	wb_ctl = kmalloc(sizeof(*wb_ctl), GFP_KERNEL);
++	if (!wb_ctl)
++		return NULL;
++
++	INIT_LIST_HEAD(&wb_ctl->idle_reqs);
++	INIT_LIST_HEAD(&wb_ctl->inflight_reqs);
++	atomic_set(&wb_ctl->num_inflight, 0);
++	init_completion(&wb_ctl->done);
++
++	for (i = 0; i < ZRAM_WB_REQ_CNT; i++) {
++		struct zram_wb_req *req;
++
++		req = kmalloc(sizeof(*req), GFP_KERNEL);
++		if (!req)
++			goto release_wb_ctl;
++
++		req->page = alloc_page(GFP_KERNEL);
++		if (!req->page) {
++			kfree(req);
++			goto release_wb_ctl;
++		}
++
++		INIT_LIST_HEAD(&req->entry);
++		list_add(&req->entry, &wb_ctl->idle_reqs);
++	}
++
++	return wb_ctl;
++
++release_wb_ctl:
++	release_wb_ctl(wb_ctl);
++	return NULL;
++}
++
++static int zram_writeback_complete(struct zram *zram, struct zram_wb_req *req)
++{
+ 	u32 index;
++	int err;
+ 
+-	page = alloc_page(GFP_KERNEL);
+-	if (!page)
+-		return -ENOMEM;
++	index = req->pps->index;
++	release_pp_slot(zram, req->pps);
++	req->pps = NULL;
++
++	err = blk_status_to_errno(req->bio.bi_status);
++	if (err)
++		return err;
++
++	atomic64_inc(&zram->stats.bd_writes);
++	zram_slot_lock(zram, index);
++	/*
++	 * We release slot lock during writeback so slot can change under us:
++	 * slot_free() or slot_free() and zram_write_page(). In both cases
++	 * slot loses ZRAM_PP_SLOT flag. No concurrent post-processing can
++	 * set ZRAM_PP_SLOT on such slots until current post-processing
++	 * finishes.
++	 */
++	if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
++		goto out;
++
++	zram_free_page(zram, index);
++	zram_set_flag(zram, index, ZRAM_WB);
++	zram_set_handle(zram, index, req->blk_idx);
++	atomic64_inc(&zram->stats.pages_stored);
++	spin_lock(&zram->wb_limit_lock);
++	if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
++		zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
++	spin_unlock(&zram->wb_limit_lock);
++
++out:
++	zram_slot_unlock(zram, index);
++	return 0;
++}
++
++static void zram_writeback_endio(struct bio *bio)
++{
++	struct zram_wb_ctl *wb_ctl = bio->bi_private;
++
++	if (atomic_dec_return(&wb_ctl->num_inflight) == 0)
++		complete(&wb_ctl->done);
++}
++
++static void zram_submit_wb_request(struct zram_wb_ctl *wb_ctl,
++				   struct zram_wb_req *req)
++{
++	atomic_inc(&wb_ctl->num_inflight);
++	list_add_tail(&req->entry, &wb_ctl->inflight_reqs);
++	submit_bio(&req->bio);
++}
++
++static struct zram_wb_req *select_idle_req(struct zram_wb_ctl *wb_ctl)
++{
++	struct zram_wb_req *req = NULL;
++
++	if (!list_empty(&wb_ctl->idle_reqs)) {
++		req = list_first_entry(&wb_ctl->idle_reqs,
++				       struct zram_wb_req, entry);
++		list_del(&req->entry);
++	}
+ 
++	return req;
++}
++
++static int zram_wb_wait_for_completion(struct zram *zram,
++				       struct zram_wb_ctl *wb_ctl)
++{
++	int ret = 0;
++
++	if (atomic_read(&wb_ctl->num_inflight) == 0)
++		return 0;
++
++	wait_for_completion_io(&wb_ctl->done);
++	reinit_completion(&wb_ctl->done);
++
++	while (!list_empty(&wb_ctl->inflight_reqs)) {
++		struct zram_wb_req *req;
++		int err;
++
++		req = list_first_entry(&wb_ctl->inflight_reqs,
++				       struct zram_wb_req, entry);
++		list_move(&req->entry, &wb_ctl->idle_reqs);
++
++		err = zram_writeback_complete(zram, req);
++		if (err)
++			ret = err;
++	}
++
++	return ret;
++}
++
++static int zram_writeback_slots(struct zram *zram,
++				struct zram_wb_ctl *wb_ctl,
++				struct zram_pp_ctl *ctl)
++{
++	struct zram_wb_req *req = NULL;
++	unsigned long blk_idx = 0;
++	struct zram_pp_slot *pps;
++	int ret = 0, err;
++	u32 index = 0;
++
++	blk_start_plug(&wb_ctl->plug);
+ 	while ((pps = select_pp_slot(ctl))) {
+ 		spin_lock(&zram->wb_limit_lock);
+ 		if (zram->wb_limit_enable && !zram->bd_wb_limit) {
+@@ -757,15 +932,34 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+ 		}
+ 		spin_unlock(&zram->wb_limit_lock);
+ 
++		while (!req) {
++			req = select_idle_req(wb_ctl);
++			if (req)
++				break;
++
++			blk_finish_plug(&wb_ctl->plug);
++			err = zram_wb_wait_for_completion(zram, wb_ctl);
++			blk_start_plug(&wb_ctl->plug);
++			/*
++			 * BIO errors are not fatal, we continue and simply
++			 * attempt to writeback the remaining objects (pages).
++			 * At the same time we need to signal user-space that
++			 * some writes (at least one, but also could be all of
++			 * them) were not successful and we do so by returning
++			 * the most recent BIO error.
++			 */
++			if (err)
++				ret = err;
++		}
++
+ 		if (!blk_idx) {
+ 			blk_idx = alloc_block_bdev(zram);
+-			if (!blk_idx) {
++			if (blk_idx) {
+ 				ret = -ENOSPC;
+ 				break;
+ 			}
+ 		}
+ 
+-		index = pps->index;
+ 		zram_slot_lock(zram, index);
+ 		/*
+ 		 * scan_slots() sets ZRAM_PP_SLOT and relases slot lock, so
+@@ -775,67 +969,41 @@ static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+ 		 */
+ 		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
+ 			goto next;
+-		if (zram_read_from_zspool(zram, page, index))
++		if (zram_read_from_zspool(zram, req->page, index))
+ 			goto next;
+ 		zram_slot_unlock(zram, index);
+ 
+-		bio_init(&bio, zram->bdev, &bio_vec, 1,
++		req->blk_idx = blk_idx;
++		req->pps = pps;
++		bio_init(&req->bio, zram->bdev, &req->bio_vec, 1,
+ 			 REQ_OP_WRITE | REQ_SYNC);
+-		bio.bi_iter.bi_sector = blk_idx * (PAGE_SIZE >> 9);
+-		__bio_add_page(&bio, page, PAGE_SIZE, 0);
+-
+-		/*
+-		 * XXX: A single page IO would be inefficient for write
+-		 * but it would be not bad as starter.
+-		 */
+-		err = submit_bio_wait(&bio);
+-		if (err) {
+-			release_pp_slot(zram, pps);
+-			/*
+-			 * BIO errors are not fatal, we continue and simply
+-			 * attempt to writeback the remaining objects (pages).
+-			 * At the same time we need to signal user-space that
+-			 * some writes (at least one, but also could be all of
+-			 * them) were not successful and we do so by returning
+-			 * the most recent BIO error.
+-			 */
+-			ret = err;
+-			continue;
+-		}
++		req->bio.bi_iter.bi_sector = req->blk_idx * (PAGE_SIZE >> 9);
++		req->bio.bi_end_io = zram_writeback_endio;
++		req->bio.bi_private = wb_ctl;
++		__bio_add_page(&req->bio, req->page, PAGE_SIZE, 0);
+ 
+-		atomic64_inc(&zram->stats.bd_writes);
+-		zram_slot_lock(zram, index);
+-		/*
+-		 * Same as above, we release slot lock during writeback so
+-		 * slot can change under us: slot_free() or slot_free() and
+-		 * reallocation (zram_write_page()). In both cases slot loses
+-		 * ZRAM_PP_SLOT flag. No concurrent post-processing can set
+-		 * ZRAM_PP_SLOT on such slots until current post-processing
+-		 * finishes.
+-		 */
+-		if (!zram_test_flag(zram, index, ZRAM_PP_SLOT))
+-			goto next;
+-
+-		zram_free_page(zram, index);
+-		zram_set_flag(zram, index, ZRAM_WB);
+-		zram_set_handle(zram, index, blk_idx);
++		zram_submit_wb_request(wb_ctl, req);
+ 		blk_idx = 0;
+-		atomic64_inc(&zram->stats.pages_stored);
+-		spin_lock(&zram->wb_limit_lock);
+-		if (zram->wb_limit_enable && zram->bd_wb_limit > 0)
+-			zram->bd_wb_limit -=  1UL << (PAGE_SHIFT - 12);
+-		spin_unlock(&zram->wb_limit_lock);
++		req = NULL;
++		continue;
++
+ next:
+ 		zram_slot_unlock(zram, index);
+ 		release_pp_slot(zram, pps);
+-
+ 		cond_resched();
+ 	}
+ 
+-	if (blk_idx)
+-		free_block_bdev(zram, blk_idx);
+-	if (page)
+-		__free_page(page);
++	/*
++	 * Selected idle req, but never submitted it due to some error or
++	 * wb limit.
++	 */
++	if (req)
++		release_wb_req(req);
++
++	blk_finish_plug(&wb_ctl->plug);
++	err = zram_wb_wait_for_completion(zram, wb_ctl);
++	if (err)
++		ret = err;
+ 
+ 	return ret;
+ }
+@@ -948,7 +1116,8 @@ static ssize_t writeback_store(struct device *dev,
+ 	struct zram *zram = dev_to_zram(dev);
+ 	u64 nr_pages = zram->disksize >> PAGE_SHIFT;
+ 	unsigned long lo = 0, hi = nr_pages;
+-	struct zram_pp_ctl *ctl = NULL;
++	struct zram_pp_ctl *pp_ctl = NULL;
++	struct zram_wb_ctl *wb_ctl = NULL;
+ 	char *args, *param, *val;
+ 	ssize_t ret = len;
+ 	int err, mode = 0;
+@@ -970,8 +1139,14 @@ static ssize_t writeback_store(struct device *dev,
+ 		goto release_init_lock;
+ 	}
+ 
+-	ctl = init_pp_ctl();
+-	if (!ctl) {
++	pp_ctl = init_pp_ctl();
++	if (!pp_ctl) {
++		ret = -ENOMEM;
++		goto release_init_lock;
++	}
++
++	wb_ctl = init_wb_ctl();
++	if (!wb_ctl) {
+ 		ret = -ENOMEM;
+ 		goto release_init_lock;
+ 	}
+@@ -1000,7 +1175,7 @@ static ssize_t writeback_store(struct device *dev,
+ 				goto release_init_lock;
+ 			}
+ 
+-			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
++			scan_slots_for_writeback(zram, mode, lo, hi, pp_ctl);
+ 			break;
+ 		}
+ 
+@@ -1011,7 +1186,7 @@ static ssize_t writeback_store(struct device *dev,
+ 				goto release_init_lock;
+ 			}
+ 
+-			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
++			scan_slots_for_writeback(zram, mode, lo, hi, pp_ctl);
+ 			break;
+ 		}
+ 
+@@ -1022,7 +1197,7 @@ static ssize_t writeback_store(struct device *dev,
+ 				goto release_init_lock;
+ 			}
+ 
+-			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
++			scan_slots_for_writeback(zram, mode, lo, hi, pp_ctl);
+ 			continue;
+ 		}
+ 
+@@ -1033,17 +1208,18 @@ static ssize_t writeback_store(struct device *dev,
+ 				goto release_init_lock;
+ 			}
+ 
+-			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
++			scan_slots_for_writeback(zram, mode, lo, hi, pp_ctl);
+ 			continue;
+ 		}
+ 	}
+ 
+-	err = zram_writeback_slots(zram, ctl);
++	err = zram_writeback_slots(zram, wb_ctl, pp_ctl);
+ 	if (err)
+ 		ret = err;
+ 
+ release_init_lock:
+-	release_pp_ctl(zram, ctl);
++	release_pp_ctl(zram, pp_ctl);
++	release_wb_ctl(wb_ctl);
+ 	atomic_set(&zram->pp_in_progress, 0);
+ 	up_read(&zram->init_lock);
+ 
 -- 
-2.43.7
+2.51.2.1041.gc1ab5b90ca-goog
 
 
