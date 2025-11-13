@@ -1,210 +1,184 @@
-Return-Path: <linux-kernel+bounces-899647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513D7C58A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:12:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5685EC58A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB023A4C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:38:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 688F54FF591
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C12F25E2;
-	Thu, 13 Nov 2025 15:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB713596FA;
+	Thu, 13 Nov 2025 15:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OQFLcFO+"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZqQIL5/3";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wts+n/uy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECABB26E6F3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E8C2F60A7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047865; cv=none; b=kD6AxsdEDSCBS74jSwwbe7IPUbtYHHxMVKfXNZ8BmPp2QlRH49yNa0/iYQO05ifxn91KAHqD3Fytu7adeUUK5cR4h0bgXkCamygvMCVVptZ8HA1hp97yuEr13UECEjGfXuZQg4BLTbZ0jHF5EKROTqk8H4huRZEyGjSQLIbLZ1k=
+	t=1763047900; cv=none; b=Igh7wJ5cyd7c8Il5hSsA0MLxU+WH0gNinHS6kJIaajDV4fgzvLcnZIiCQ2Nlpqc6hiad31veLAT+d96CH2XuDQvo8bP2Y9XKn8pakTyOKaKEaSlC65Fxz6Qr9pnAhQKYO63mswDoPgfzF+JNRX4GFKC9MTxca9TBWz3Kr60rNwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047865; c=relaxed/simple;
-	bh=Ca0AWLsvZ8pJ3VXEd7Jyq9mVNzFrysCMIrLNco6FEn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQMsTxVL/3rS1+/h1ahQNjKH4lhQ4ozMorGGItW+tL6qoHeGY0eFCJkpko0g88QDa6GVKKhn2ioEM85Y8ec7/Dyy8tBSmtu/46E57UuHjfYkkwilHD3JcthWkosni7gGoq5ojgaxaIdKhZT1+CDAr7bErjSfASsGtvlj9ovZNKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OQFLcFO+; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Va+K4sYYYcuGxcNONY0J+Ck3zRKdFoVQxsy0V8zHpU4=; b=OQFLcFO+3Y+b1Iam9slsjX7OWt
-	6sKiDHKwBUnMdH0LWmSm2+kCZrXwsM8Ma/NtMkMFmVAOmvdwIGUzufxOo48hwJDjiaBWrGbnHMrS9
-	ejvu4sn/R/g0BxddPsXzDHcfVFlO3Qw/SmYHwvj7lfi6qHbch8qf7e6W1m2MuiXt3qCT4XTOzUOzk
-	5MbIxDIAmXCeO0oGQMK1pdd+ttyHT6oLAdiCEy0qWAEKkv+YPOKcru2oZ90Dc1Ae7jLgMmRR0IuMD
-	gfDn02jLjx/gUXGBlNWSaKXQfIX0tw/sBwyEk9PzOh1bLf+7z6woXbkMhkrKXlL3QUQoob64fw+L6
-	YAuUJopQ==;
-Received: from [90.240.106.137] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vJZHf-000557-TT; Thu, 13 Nov 2025 16:30:51 +0100
-Message-ID: <d36c9a72-3ac3-4a17-8f8e-795495fb734a@igalia.com>
-Date: Thu, 13 Nov 2025 15:30:50 +0000
+	s=arc-20240116; t=1763047900; c=relaxed/simple;
+	bh=cmUw5fQytCW5K8CgA+45UI+EqXpRzL3G2UrLV2MjQf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icut120aZfVoQwH8RTTIAa+jpDZNF0BI/NS2P/7ihgd7YHDfDXcxpeQp3tCZ9gpqv35+JcTs8QIkJkl6wPnFtQZi7kx4FoiLo/1/HcE4pfOyLOTODAeXEtMpCELs1zIc+p9RaAybXVlXXfYgG8ryMfM+GdsqrFFU11S6JqzMSJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZqQIL5/3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wts+n/uy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763047898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
+	b=ZqQIL5/3UTREq+0mfpv6OtJWi17VumrYh3NOh5gTr46SWoFYNsCu3Wt2zFsfOkKDxt/WEH
+	qzVwtd9JiiSztULsRmCqbVwM3awgaOhBKGKJvaQpdFg9i/kDVIqFUPvfxZ+GMJanUJUO38
+	z7a0t4H5IRaE37JyQj3+aYEsGLh25NE=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-5-Jm0o_B6YNlOWx9tc_8KxLA-1; Thu, 13 Nov 2025 10:31:36 -0500
+X-MC-Unique: Jm0o_B6YNlOWx9tc_8KxLA-1
+X-Mimecast-MFC-AGG-ID: Jm0o_B6YNlOWx9tc_8KxLA_1763047895
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b70a978cd51so117670566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:31:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1763047895; x=1763652695; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
+        b=Wts+n/uyvcUEotTfun8PRRCrASIZGOOHVkTuyYceI7X8bx2pYg0FLaS8sVQGFNTYp7
+         AjZFRDNBL6HVJTcTmZmjNQfUsXT4E/+IfRDUPGEuOd69Jfzcx48g6LYVBz/QZ+NtLU8W
+         OS8KVPe4lmiJh0brRUYwjj46Sehjg0U/pmOk1h1wreE8QJGBrdGHjU2BaKQ035SfgOOc
+         YWS/sP5RCj1xE6S158ZsLv+wXrsaBNsV9ap1T5U+SL6cnsAGb/n7MetzoGVKD98FoPTI
+         08vyJEP4MYxeeBKRekzgXZIxolO5mAHhk06b2wfyZIl9Aq2AqtJvIyFT4/WPsXalKB/8
+         fnrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763047895; x=1763652695;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z7XY31OsyOl8v7j52xmkmb5uEiW5I0tIphYxwIfznBM=;
+        b=iYLfNVkwX658vNDliwr+ITI56pgOYgZzsMIw91s10S/9KIrQCxoZdORMMhXOGvbcoT
+         f2OKFaBi2S6duCIBdjWD+X3Ui1tn1jsb7pckNdacuUErG/XFKAAYZCTlIEmizYuwGt+v
+         jwV7KwyO0frZ8DTEfpN3YkbHEEVKOu4C7oXTZ6FKcwXptSByM3FPqed2o0gwwWHDtQmL
+         I5+/NPQT921k06tNhW78SkoIJM7IsmECfXuZcioSwi8AcUlPFaOS/83d16u/M8Pjz9kw
+         B0wfZ8pARy5ID22+AdrmJR2ngARWEn6A0QxKZ1cdt7dnMN0iB52aANGEAQSb/lXSogKC
+         Adnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaoh+SeI+uLyUkOcaJiEJqPO48jd431hfADIdTE2/fiwRmtvshSOiHvU6kekRJ38aa8BSvLVvTb1uHZZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNU1qvfMNlGIukZlHHTPPkpOdfZifTYrVvleg2Kn1UH+kK1j0K
+	D5obghf3qnpP7hEjq9g/GXDJHnekiD2tUqMgKCioLQHUjB157yjF92uhkIjohE34Nx8pyedwrqo
+	MUpTFbrk+4K2gQmkrzb7ObVqRHmGeW6qO2JHTRP5eaqKYOXCKvJHPlekUQGEgbtcBmQ==
+X-Gm-Gg: ASbGncthdwCvflfhq8gshMmktcwm57vjVakQONJ1PqguID1SwozMT0X3uZvwXVJXSLE
+	A387hhHyoY4hAGVZQiNLUbkH5XWJFhgP2sXlasmK4HtHQVuEWnu0PEby94HCoJrAsGWV49/S5Lb
+	tUucdWjjiZhVxwWp/wRmeYT/Fv9G6kIDPkK5Ub0v/oYiAmYYs+ideuQGPyu9TmWu1EzSo3ow2l4
+	4betIhTzA9Fvglp2iyNki58cR+e4IiDszulNEFD+KjkmW9WvhiCg2Q/4e+jx1n6f+nqU/VHADBU
+	cmjwOZC0H4mWs7Qsn3GY9LNK5nizbC8q1vRirp61ICyhN2XguTn1SbP3P4OWzhrQ3GWS8xODxv1
+	PIzk41aJW6QYBOucPg/5G6hMqpz+rScMYL4y2hmHoLVtVB+V6bDM=
+X-Received: by 2002:a17:907:c06:b0:b70:6d3a:a08b with SMTP id a640c23a62f3a-b733192f5c5mr808714866b.10.1763047895386;
+        Thu, 13 Nov 2025 07:31:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF8lpe22E3h1TC8hEnHCzisPSR4qLMl80qiAEbaySsAUvtzhvgQRLYBeX2TaGg4WnRojfXASw==
+X-Received: by 2002:a17:907:c06:b0:b70:6d3a:a08b with SMTP id a640c23a62f3a-b733192f5c5mr808708566b.10.1763047894844;
+        Thu, 13 Nov 2025 07:31:34 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fad3edasm184936266b.17.2025.11.13.07.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 07:31:34 -0800 (PST)
+Date: Thu, 13 Nov 2025 16:31:28 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, berrange@redhat.com, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v9 03/14] vsock/virtio: add netns support to
+ virtio transport and virtio common
+Message-ID: <ym7us45wytkmibod5fkxoyss3nl4kxzehlchdm4pqnvvnzreey@dvuwn7olusc2>
+References: <20251111-vsock-vmtest-v9-0-852787a37bed@meta.com>
+ <20251111-vsock-vmtest-v9-3-852787a37bed@meta.com>
+ <cah4sqsqbdp52byutxngl3ko44kduesbhan6luhk3ukzml7bs6@hlv4ckunx7jj>
+ <aRSyPqNo1LhqGLBq@devvm11784.nha0.facebook.com>
+ <bhc6s7anskmnnrnpp2r3xzjbesadsex24kmyi5tvsgup7c2rfi@arj4iw5ndnr3>
+ <aRTg4/HyOOhYYMzp@devvm11784.nha0.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/psi: Streamline the flow in psi_group_change
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- Suren Baghdasaryan <surenb@google.com>, Peter Ziljstra <peterz@infradead.org>
-References: <20251113122254.40445-1-tvrtko.ursulin@igalia.com>
- <20251113152223.GA3465062@cmpxchg.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20251113152223.GA3465062@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aRTg4/HyOOhYYMzp@devvm11784.nha0.facebook.com>
 
-
-On 13/11/2025 15:22, Johannes Weiner wrote:
-> On Thu, Nov 13, 2025 at 12:22:54PM +0000, Tvrtko Ursulin wrote:
->> Given that psi_group_change() can be called rather frequently from the
->> scheduler task switching code lets streamline it a bit to reduce the
->> number of loops and conditionals on the typical invocation.
+On Wed, Nov 12, 2025 at 11:32:51AM -0800, Bobby Eshleman wrote:
+>On Wed, Nov 12, 2025 at 06:39:22PM +0100, Stefano Garzarella wrote:
+>> On Wed, Nov 12, 2025 at 08:13:50AM -0800, Bobby Eshleman wrote:
+>> > On Wed, Nov 12, 2025 at 03:18:42PM +0100, Stefano Garzarella wrote:
+>> > > On Tue, Nov 11, 2025 at 10:54:45PM -0800, Bobby Eshleman wrote:
+>> > > > From: Bobby Eshleman <bobbyeshleman@meta.com>
+>
+>[...]
+>
+>> > > If it simplifies, I think we can eventually merge all changes to transports
+>> > > that depends on virtio_transport_common in a single commit.
+>> > > IMO is better to have working commits than better split.
+>> >
+>> > That would be so much easier. Much of this patch is just me trying to
+>> > find a way to keep total patch size reasonably small for review... if
+>> > having them all in one commit is preferred then that makes life easier.
+>> >
+>> > The answer to all of the above is that I was just trying to make the
+>> > virtio_common changes in one place, but not break bisect/build by
+>> > failing to update the transport-level call sites. So the placeholder
+>> > values are primarily there to compile.
 >>
->> First thing is that we replace the open coded mask walks with the standard
->> for_each_set_bit(). This makes the source code a bit more readable and
->> also enables usage of the efficient CPU specific zero bit skip
->> instructions.
+>> In theory, they should compile, but they should also properly behave.
 >>
->> In doing so we also remove the need to mask out the special TSK_ONCPU bit
->> from the set and clear masks, since for_each_set_bit() now directly limits
->> the array index to the safe range.
+>> BTW I strongly believe that having separate commits is a great thing, but we
+>> shouldn't take things to extremes and complicate our lives when things are
+>> too closely related, as in this case.
 >>
->> As the last remaining step we can now easily move the new state mask
->> computation to only run when required.
+>> There is a clear dependency between these patches, so IMO, if the patch
+>> doesn't become huge, it's better to have everything together. (I mean
+>> between dependencies with virtio_transport_common).
+>
+>Sounds good, let's give the combined commit a go, I think the
+>transport-specific pieces are small enough for it to not balloon?
+
+Yeah, I think so.
+
+>
+>> What we could perhaps do is have an initial commit where you make the
+>> changes, but the behavior remains unchanged (continue to use global
+>> everywhere, as for virtio_transport.c in this patch), and then specific
+>> commits to just enable support for local/global.
 >>
->> End result is hopefully more readable code and a very small but measurable
->> reduction in task switching CPU overhead.
->>
->> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Peter Ziljstra <peterz@infradead.org>
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   kernel/sched/psi.c | 48 ++++++++++++++++++++--------------------------
->>   1 file changed, 21 insertions(+), 27 deletions(-)
->>
->> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
->> index 59fdb7ebbf22..fe19aeef8dbd 100644
->> --- a/kernel/sched/psi.c
->> +++ b/kernel/sched/psi.c
->> @@ -798,39 +798,26 @@ static void psi_group_change(struct psi_group *group, int cpu,
->>   			     u64 now, bool wake_clock)
->>   {
->>   	struct psi_group_cpu *groupc;
->> -	unsigned int t, m;
->> +	unsigned long t, m;
->>   	u32 state_mask;
->>   
->>   	lockdep_assert_rq_held(cpu_rq(cpu));
->>   	groupc = per_cpu_ptr(group->pcpu, cpu);
->>   
->>   	/*
->> -	 * Start with TSK_ONCPU, which doesn't have a corresponding
->> -	 * task count - it's just a boolean flag directly encoded in
->> -	 * the state mask. Clear, set, or carry the current state if
->> -	 * no changes are requested.
->> +	 * TSK_ONCPU does not have a corresponding task count - it's just a
->> +	 * boolean flag directly encoded in the state mask. Clear, set, or carry
->> +	 * the current state if no changes are requested.
->> +	 *
->> +	 * The rest of the state mask is calculated based on the task counts.
->> +	 * Update those first, then construct the mask.
->>   	 */
->> -	if (unlikely(clear & TSK_ONCPU)) {
->> -		state_mask = 0;
->> -		clear &= ~TSK_ONCPU;
->> -	} else if (unlikely(set & TSK_ONCPU)) {
->> -		state_mask = PSI_ONCPU;
->> -		set &= ~TSK_ONCPU;
->> -	} else {
->> -		state_mask = groupc->state_mask & PSI_ONCPU;
->> -	}
-> 
-> This doesn't look right. Without PSI_ONCPU in state_mask, the results
-> of test_states() will be bogus, as well as the PSI_MEM_FULL special
-> case for an active reclaimer on the CPU.
+>> Not sure if it's doable, but I'd like to remove the placeholders if
+>> possibile. Let's discuss more about it if there are issues.
+>
+>Sounds good, I'll come back to this thread if the combined commit
+>approach above balloons. For the combined commit, should the change log
+>start at "Changes in v10" with any new changes, mention combining +
+>links to the v9 patches that were combined?
 
-You are completely right, I was sure local state_mask was not used 
-outside the !group->enabled branch but missed it is an input parameter 
-to test_states().
+Yep, that would be great. Plus exaplaining why we decided to do that (I 
+mean just in the changelog).
 
-> 
->> -	/*
->> -	 * The rest of the state mask is calculated based on the task
->> -	 * counts. Update those first, then construct the mask.
->> -	 */
->> -	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
->> -		if (!(m & (1 << t)))
->> -			continue;
->> -		if (groupc->tasks[t]) {
->> +	m = clear;
->> +	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks)) {
-> 
-> The current version relies on !!m and doesn't need the range checks
-> for_each_set_bit() introduces. This seems less efficient. Did you
-> compare the generated code?
-
-Yes, slightly more .text but empirically it looks a tiny bit fewer 
-cycles. Which I thought was due being able to use the CPU specific 
-optimised __ffs variants. So it still bails on as soon as the last set 
-bit "goes away" just differently.
-
-I will need to redo the tests with the state_mask breakage fixed.
->> +		if (likely(groupc->tasks[t])) {
->>   			groupc->tasks[t]--;
->>   		} else if (!psi_bug) {
->> -			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
->> +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%lu tasks=[%u %u %u %u] clear=%x set=%x\n",
->>   					cpu, t, groupc->tasks[0],
->>   					groupc->tasks[1], groupc->tasks[2],
->>   					groupc->tasks[3], clear, set);
->> @@ -838,9 +825,9 @@ static void psi_group_change(struct psi_group *group, int cpu,
->>   		}
->>   	}
->>   
->> -	for (t = 0; set; set &= ~(1 << t), t++)
->> -		if (set & (1 << t))
->> -			groupc->tasks[t]++;
->> +	m = set;
->> +	for_each_set_bit(t, &m, ARRAY_SIZE(groupc->tasks))
->> +		groupc->tasks[t]++;
->>   
->>   	if (!group->enabled) {
->>   		/*
->> @@ -853,6 +840,13 @@ static void psi_group_change(struct psi_group *group, int cpu,
->>   		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
->>   			record_times(groupc, now);
->>   
->> +		if (unlikely(clear & TSK_ONCPU))
->> +			state_mask = 0;
->> +		else if (unlikely(set & TSK_ONCPU))
->> +			state_mask = PSI_ONCPU;
->> +		else
->> +			state_mask = groupc->state_mask & PSI_ONCPU;
-> 
-> You moved it here, but this is the !group->enabled exception
-> only. What about the common case when the group is enabled?
-
-Yep, I was blind. I will get back to you with v2 if there is still some 
-cpu cycles to be saved.
-
-Regards,
-
-Tvrtko
+Thanks,
+Stefano
 
 
