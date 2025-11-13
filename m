@@ -1,70 +1,148 @@
-Return-Path: <linux-kernel+bounces-899787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B4EC58D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0092C58D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E168F360915
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9056A358532
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48C835971A;
-	Thu, 13 Nov 2025 16:19:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB91C359FB5;
+	Thu, 13 Nov 2025 16:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="xfx8k0sh"
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7593935970A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B015F2FB085;
+	Thu, 13 Nov 2025 16:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763050753; cv=none; b=HuAh1dGGHvc3Nuo5XXZI0l1pRHqB+DokRVasv1jqgoSbDnNkO+dac0/VQ4XqXIDSc/3YX5ovHMil72/grYehe42qkkKVW9W1jYnMt10FwhkOeLnGbVVYQF0qfOwDnRQ3cMKASXu2lcw+sqSGtns4ntSRAHTzWTwtp1HpP2Lgzic=
+	t=1763050774; cv=none; b=ZLWdrwi4xH8L/vnFnuwlWHx877fqiqzb7DccikOfh2oErSXuXUy46lWtkzNWUw9QFowjP86ZsBBF9mQSH2rPjXH2/0cH0wYMWReY5VhkaEUoIb+n9EF0x3irjgT+XW8goJnQPh7iPlVrLnSfNVuAHxUV/uI6wnXcoGqWfj0IC28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763050753; c=relaxed/simple;
-	bh=c/02IqZqX5D26fffDnfRKqnAE0R1uRwe9oUFQK+yNDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QGPVS6ODI3aBruiu6/4W1F9Yd7PJwOYlzGTTC3qSb2kpCiJOW2PYA+hxicVaq/dOOX5gk/DE4yUfDvt9ixuv6vpPS+klP5kx2sHZJAEgUhWXPbBgABwBJs7Z0nDzPY6D3mH54QvFjwsyN9BbVyHO2h48OpkwgofI6o/eFW4Wv4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E22C4CEF5;
-	Thu, 13 Nov 2025 16:19:11 +0000 (UTC)
-Date: Thu, 13 Nov 2025 16:19:09 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	ryan.roberts@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: Add a fallback stub for pgd_page_paddr()
-Message-ID: <aRYE_Z-x_RUKkqUS@arm.com>
-References: <20251014110633.304961-1-anshuman.khandual@arm.com>
- <aQoORmgliayA0s_a@willie-the-truck>
- <e660e033-6300-4deb-b034-4d26746d8d01@arm.com>
- <aQuDdE_Tj3di7q3P@willie-the-truck>
- <044a6526-d6e8-4ae0-9279-8cc42bff5aa0@arm.com>
+	s=arc-20240116; t=1763050774; c=relaxed/simple;
+	bh=7wf/xOs7XuSmGg449lsqqvdQlHgd0WZoRwyEoxYWEsI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IuiLkKHMhbOmZh+AE7LtE1T0J5xrVZpn0u+YR0fTZhSMq0gIPWAUMje7R1GbZGy71Ugda/du5GEdyfudQU0BMDIQjfPNwvuB8QabDOf/uu0Djb9fg+Cg6O8JIDODgAIc0QEbz504VCJBFKpQFW5LWpCv9URw1o4i1uZWodP3LXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=xfx8k0sh; arc=none smtp.client-ip=91.103.66.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1763050768;
+	bh=jnA9DA8lX4Guv4D7cGrX3r5E4UpXiQdK0MPT7VSRILs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=xfx8k0shGB53wDM8+2laIcnxxJzhsneRVU96FJbJ16Tp21kzyB2ulgVkOS6U+hGL3
+	 yxZgQ13iuRArXn4Yyzu7ImWWPYjFsLJz8jX8y4BT+A4dqeHnzl204HY8FexWbt8oPr
+	 AHb1o7e87opw0WLG792Vzowde34Qj6dt3XFMCd/Y4V30ktfzIFZVm1lpLqzgXF5a8y
+	 bI1va3pwqGIzaQkfnv4T2uWcr2S381F2LLAN5AslF/5MI4f1MQ4xIENQdzUU3QUxjm
+	 1+TXeKSa821BruKSTmam+8QenBknWPa0qcy7vd6cYdS4/4spdi8SfysNajdez2RQHX
+	 Pt+WbEu2/bQCQ==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id B43D93E2614;
+	Thu, 13 Nov 2025 19:19:28 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 4599A3E4518;
+	Thu, 13 Nov 2025 19:19:27 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV3.avp.ru
+ (10.64.57.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 13 Nov
+ 2025 19:19:26 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Ido Schimmel <idosch@nvidia.com>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Petr Machata
+	<petrm@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+	<jiri@resnulli.us>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] net: mlxsw: linecards: fix missing error check in mlxsw_linecard_devlink_info_get()
+Date: Thu, 13 Nov 2025 19:19:21 +0300
+Message-ID: <20251113161922.813828-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <044a6526-d6e8-4ae0-9279-8cc42bff5aa0@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV4.avp.ru (10.64.57.54) To HQMAILSRV3.avp.ru
+ (10.64.57.53)
+X-KSE-ServerInfo: HQMAILSRV3.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/13/2025 16:01:27
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 198067 [Nov 13 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 76 0.3.76
+ 6aad6e32ec76b30ee13ccddeafeaa4d1732eef15
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/13/2025 16:04:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/13/2025 3:25:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/13 15:20:00 #27921117
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-On Thu, Nov 06, 2025 at 07:29:55AM +0530, Anshuman Khandual wrote:
-> On 05/11/25 10:33 PM, Will Deacon wrote:
-> > So my question is, would such a user compile today? If not, then your
-> > patch is pointless.
-> 
-> The point is this macro is not visible outside #ifdef PGTBALE_LEVELS > 4
-> where as similar ones such as p4d_page_paddr() and pud_page_paddr() are
-> always visible via their respective fallback stubs, when PGTABLE_LEVELS
-> are lower.
+The call to devlink_info_version_fixed_put() in
+mlxsw_linecard_devlink_info_get() did not check for errors,
+although it is checked everywhere in the code.
 
-Yes but we needed the p4d/pud fallbacks to be able to use them in
-functions like early_fixmap_init_pud() without #ifdefs. We don't have
-such a case for pgd_page_paddr(), so I don't think this patch makes
-sense on its own.
+Add missed 'err' check to the mlxsw_linecard_devlink_info_get()
 
--- 
-Catalin
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 3fc0c51905fb ("mlxsw: core_linecards: Expose device PSID over device info")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/core_linecards.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
+index b032d5a4b3b8..10f5bc4892fc 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
+@@ -601,6 +601,8 @@ int mlxsw_linecard_devlink_info_get(struct mlxsw_linecard *linecard,
+ 		err = devlink_info_version_fixed_put(req,
+ 						     DEVLINK_INFO_VERSION_GENERIC_FW_PSID,
+ 						     info->psid);
++		if (err)
++			goto unlock;
+
+ 		sprintf(buf, "%u.%u.%u", info->fw_major, info->fw_minor,
+ 			info->fw_sub_minor);
+--
+2.43.0
+
 
