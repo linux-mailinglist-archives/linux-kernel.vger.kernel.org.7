@@ -1,155 +1,135 @@
-Return-Path: <linux-kernel+bounces-899954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB592C59446
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:51:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085A4C59203
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8CE74EAFCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:19:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 98FD535AE03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14A2359FAD;
-	Thu, 13 Nov 2025 17:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA90F3431F2;
+	Thu, 13 Nov 2025 17:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTWOZ2vq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GVJnbLJ6"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E668B287245;
-	Thu, 13 Nov 2025 17:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A51D2F83AE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053758; cv=none; b=RcKltbDr0fnl33tkei+udo2Qo+r+58mnJ/4DmwLAxuFwDkCzvmhGJltt7KUzbKOBcatahQFwnTGr7wNQKuKWT9j8HUl3xqk3m3TZKwt8Xz7hu2ehGw+iJaN8u5dNSHVYpaEJXUIJckgg3lNA2NNPMzw5Drptytn7w9fBBo3YQ1g=
+	t=1763053966; cv=none; b=cHI7s2oxvqopv2IOfyIYNCtvA1cJtpZiDNTv98jVSFO/4a1EgYemdx0f5/rT4b+tSGPPwLTPsRhZUs3J5YhhDI4SXyFQQox7utgbKGhmmWk5okHb172qAiKVdEMTqXklqEEt1x/00UtVjydYxW/v3OPREwMDR+Fof06IIvm3A5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053758; c=relaxed/simple;
-	bh=KgOyzW1bsNWElKjpd7nBjy4HkR9UXD/Y7CgdTNhJdTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqynN8qz9zoP4ADoX7r53TmfDFm4l26Jn7vWZ4s6KSiOjrmKEiUer6O21iFf+MZl4T6aAXy1nECYnDE6ifkQsGsfQ5OgpEUgfffMeo/iUCcc17vW8fHUZn+Xc6LBP56nOzF+pM7t5MsDugGWygVkawsJ2GRDUuWuVHL8t3KAEw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTWOZ2vq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947BDC4CEF1;
-	Thu, 13 Nov 2025 17:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763053757;
-	bh=KgOyzW1bsNWElKjpd7nBjy4HkR9UXD/Y7CgdTNhJdTY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=uTWOZ2vqZGjxvKr6fAC3v8eysVa/3uBKWQ+/27SGYB3n3KOi5k0K8jjmc1t3im3qt
-	 brvTq0V9/iq17X6Ljy2vcorxIx0UOpiTDHLKrUSdzwc7OBH38+vAbnWjbVrPOXmA1n
-	 oV4a22t/WgNW5BI23OEZOza8Le8La6Oivl4k7F5TeHh4cg05Rgpw29rq2nUhI/WgQ2
-	 Zl0PZuWdbbImF3En90fxVCZrKTSMLYcNBRTC1UVMHq/qp0AlOup8JhH4NKQSnF3Hdg
-	 ptdTUx41bL9k8DrnEUhiehroOn7UnYkZTHM311utFy8IxIOmpd0cQm9Y76KpU7Dpba
-	 yaabcgQqcqs9g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2994BCE0B6A; Thu, 13 Nov 2025 09:09:17 -0800 (PST)
-Date: Thu, 13 Nov 2025 09:09:17 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	d-tatianin@yandex-team.ru, john.ogness@linutronix.de,
-	sfr@canb.auug.org.au, rostedt@goodmis.org, senozhatsky@chromium.org
-Subject: Re: [BUG -next] WARNING: kernel/printk/printk_ringbuffer.c:1278 at
- get_data+0xb3/0x100
-Message-ID: <571ad413-5fd2-496f-96f7-06ca95b1ec9a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <a2f58837-2b29-4318-9c78-5905ab2e9d3b@paulmck-laptop>
- <aRWKq2KNKjxbXexA@pathway.suse.cz>
+	s=arc-20240116; t=1763053966; c=relaxed/simple;
+	bh=0VC4dmzU+Ey9Ygdim/pTVXAzfR7taHPmdRqGAxfsOcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FzCI921m3CWepDDFrAUEM7tuPYrg1KZ1EnqxwKiv39vMjROfk85L+w2IfEVaMcO8gtpDFnJosjhp13+LVWCYmseo+zlrjHZLfr3a3IvSgRw8tc9smDqG423IpFUEF5m2s165a7wMDrTBOLJm1n8BG9Wf0CgMDZeVWX/FuO8Emf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GVJnbLJ6; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-948e03b096dso9791639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763053963; x=1763658763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7e3BcbCwL4WqFcaayevnA/yDxq1SWODYXV/lEdC4NZI=;
+        b=GVJnbLJ6PusS7eiRbhdFJxeW8ITF+vZSHocHDPBZsKi6NHIRKUZ1sbq40oSD5yU4ws
+         41mUMR+oTGxEHTujntURJV7tWR5XYIisjokecLjtKomCIryOXF/yWU3+ux1dgFNpSch1
+         DIg40kg1NPQcje5pYZNWcMwlGFT797NsHbUwLO2P7Ui1JOhl7s5MmjxkWqunIs+mqvUH
+         +J0+pTGeNua0GD0C+tZ82oQkd7/RdR2vVxXtbI/M12HCXz17J3+Lg6KUwpURIeEyhKr+
+         PUpczdMiqK5IKPwNuQ7O7R/cVT9MdmDB5KPVQYw2gqjRaDFtvQsnX2s6hrp5FFaOnjkw
+         akIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763053963; x=1763658763;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7e3BcbCwL4WqFcaayevnA/yDxq1SWODYXV/lEdC4NZI=;
+        b=rhzJLNlzmN89PC4DDiiCZgRa0IWPDGzHq1V7cxfqXbtw0JKGFz6EehbI1OT1wmPhBj
+         dVBUmDpb5yYYMPVInUCvLaCL+MwIsMMPhzWn1ldhrvwP9UE3X5y5d7e2jecF21C/SOAe
+         blZNHPpKuXVx8F/X4+I8sFnfzCGJJvWEV1+33kF1JXlvzHZeoOdnSQm9D+tgWElLio+C
+         VIdVakQRfb9DG1snLXyMjdc4CHUElh0Tvz2Y7qUctO6AEON1Oz7Ez+uljd8TN4hvqEfG
+         8dithqD01zgbJWPxC3heDayMI4WZkHPk9W9RpQCU9aX1p3d2jNiaoFuBN4bCdGiBjqwT
+         1/3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVj1DJ796dWSrbmN0FiJIucd4ebT4MZMx8Y4DrM3t3uNoSNfvWj8Jtz5/sfl2f5kGsdBgzwjbanS+y4Zx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7RfCjtgG7CT6z2zSyDLXdi53102AUhYF3kvv/HKN7OjfODz3c
+	ezxp4M3KPE/BOwIWA8Ara7rjd+gsFPGpxz8C6sKZglsYiqwYUr/J0O2n0mERgqQyQF4=
+X-Gm-Gg: ASbGncuMjihqhOElVvoMklLmij2fZE6PyMcVov50C3SWAUTz8xwEjQmcj24CKFc9A9Z
+	4ypjDrJt5JqYBjbZWon4B231qhPlBWp+OL5eDh94gDTF73rXAKz+0tpMimJGLjXMlGUPMwdnIwy
+	euzVetDvbXPYJtTxPLTXi3AFTumP5gR6tQO5dWAQT4lRgHOrAyET/WvHiNomOfP+PbFinhC82TN
+	0u5CZpJ7ZueOS9KcqEzgeGsK7snUnFPQXyiBMUE38FV99mrdZ2HeBxFikW87U+41Des12mACCua
+	Pcw+ajy7ShGN/ybcLlEQAPKOX06suuUMF3UcsLRNAOonThnv8LeaSD7/vQ4OYnYUzklQXM6oK1U
+	0goleTtym6pPrupw6cxYUT49yb0MfdQhj9foTArB14kj3+NmMkEmByJiDzU+KWZVV7dDYa3yW
+X-Google-Smtp-Source: AGHT+IESfdDpCl3TykV3jnebGBOgzapv9FYkIKAhNH+gAKGVBuzPG8lrd5CjZsSJSCN84KOJrH4GFQ==
+X-Received: by 2002:a05:6602:2c06:b0:948:cbd2:3b84 with SMTP id ca18e2360f4ac-948e0d87a37mr14748539f.11.1763053963524;
+        Thu, 13 Nov 2025 09:12:43 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-948d2ba690bsm82035439f.8.2025.11.13.09.12.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 09:12:42 -0800 (PST)
+Message-ID: <cec91b1e-a545-4799-97c3-676e3b566721@kernel.dk>
+Date: Thu, 13 Nov 2025 10:12:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRWKq2KNKjxbXexA@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] block: Enable proper MMIO memory handling for P2P
+ DMA
+From: Jens Axboe <axboe@kernel.dk>
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Leon Romanovsky <leon@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20251112-block-with-mmio-v4-0-54aeb609d28d@nvidia.com>
+ <176305197986.133468.1935881415989157155.b4-ty@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <176305197986.133468.1935881415989157155.b4-ty@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 13, 2025 at 08:37:15AM +0100, Petr Mladek wrote:
-> Hi Paul,
+On 11/13/25 9:39 AM, Jens Axboe wrote:
 > 
-> first, thanks a lot for reporting the regression.
+> On Wed, 12 Nov 2025 21:48:03 +0200, Leon Romanovsky wrote:
+>> Changelog:
+>> v4:
+>>  * Changed double "if" to be "else if".
+>>  * Added missed PCI_P2PDMA_MAP_NONE case.
+>> v3: https://patch.msgid.link/20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com
+>>  * Encoded p2p map type in IOD flags instead of DMA attributes.
+>>  * Removed REQ_P2PDMA flag from block layer.
+>>  * Simplified map_phys conversion patch.
+>> v2: https://lore.kernel.org/all/20251020-block-with-mmio-v2-0-147e9f93d8d4@nvidia.com/
+>>  * Added Chirstoph's Reviewed-by tag for first patch.
+>>  * Squashed patches
+>>  * Stored DMA MMIO attribute in NVMe IOD flags variable instead of block layer.
+>> v1: https://patch.msgid.link/20251017-block-with-mmio-v1-0-3f486904db5e@nvidia.com
+>>  * Reordered patches.
+>>  * Dropped patch which tried to unify unmap flow.
+>>  * Set MMIO flag separately for data and integrity payloads.
+>> v0: https://lore.kernel.org/all/cover.1760369219.git.leon@kernel.org/
+>>
+>> [...]
 > 
-> On Wed 2025-11-12 16:52:16, Paul E. McKenney wrote:
-> > Hello!
-> > 
-> > Some rcutorture runs on next-20251110 hit the following error on x86:
-> > 
-> > WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0xb3/0x100, CPU#0: rcu_torture_sta/63
-> > 
-> > This happens in about 20-25% of the rcutorture runs, and is the
-> > WARN_ON_ONCE(1) in the "else" clause of get_data().  There was no
-> > rcutorture scenario that failed to reproduce this bug, so I am guessing
-> > that the various .config files will not provide useful information.
-> > Please see the end of this email for a representative splat, which is
-> > usually rcutorture printing out something or another.  (Which, in its
-> > defense, has worked just fine in the past.)
-> > 
-> > Bisection converged on this commit:
-> > 
-> > 67e1b0052f6b ("printk_ringbuffer: don't needlessly wrap data blocks around")
-> > 
-> > Reverting this commit suppressed (or at least hugely reduced the
-> > probability of) the WARN_ON_ONCE().
-> > 
-> > The SRCU-T, SRCU-U, and TREE09 scenarios hit this most frequently at
-> > about double the base rate, but are CONFIG_SMP=n builds.  The RUDE01
-> > scenario was the most productive CONFIG_SMP=y scenario.  Reproduce as
-> > follows, where "N" is the number of CPUs on your system divided by three,
-> > rounded down:
-> > 
-> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*RUDE01"
-> > 
-> > Or if you can do CONFIG_SMP=n, the following works, where "N" is the
-> > number of CPUs on your system:
-> > 
-> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 5 --configs "N*SRCU-T"
-> > 
-> > Or please tell me what debug I should enable on my runs.
+> Applied, thanks!
 > 
-> The problem was reported by two test robots last week. It happens when
-> a message fits exactly up to the last byte before the ring buffer gets
-> wrapped for the first time. It is interesting that you have seen
-> so frequently (in about 20-25% rcutorture runs).
-> 
-> Anyway, I have pushed a fix on Monday. It is the commit
-> cc3bad11de6e0d601 ("printk_ringbuffer: Fix check of
-> valid data size when blk_lpos overflows"), see
-> https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.19&id=cc3bad11de6e0d6012460487903e7167d3e73957
+> [1/2] nvme-pci: migrate to dma_map_phys instead of map_page
+>       commit: f10000db2f7cf29d8c2ade69266bed7b51c772cb
+> [2/2] block-dma: properly take MMIO path
+>       commit: 8df2745e8b23fdbe34c5b0a24607f5aaf10ed7eb
 
-Even better!  Thank you for the fix.
+And now dropped again - this doesn't boot on neither my big test box
+with 33 nvme drives, nor even on my local test vm. Two different archs,
+and very different setups. Which begs the question, how on earth was
+this tested, if it doesn't boot on anything I have here?!
 
-> Thanks a lot for so exhaustive report. And I am sorry that you
-> probably spent a lot of time with it.
-
-Well, actually, it was the first time that I turned "git bisect run"
-loose on a full (and fully scripted) remote RCU run.  Each step involved
-checking out 20 systems from the test group, building 20 kernels,
-downloading the build products to each of the 20 systems, running each
-of 286 guest OSes (15 each for 19 of the kernels and one instance of
-the large one) spread over the 20 systems, waiting for them to finish,
-uploading the test results, returning the systems to the test group,
-analyzing them, and reporting either success (all runs succeeded) or
-failure (at least one failure across the 286 kernels.  Then my grepping
-through the run results directory to get you the failure rate.  Of course,
-that failure rate indicates that I could have done the bisection more
-quickly and with much less hardware, but that would have required me to
-stop the other things I was doing and actually think about this.
-
-Each step took somewhere between 90 minutes and two hours on a total of
-1600 CPUs, and all ~11 bisection steps completed without my intervention.
-Thus far, neither the test grid, the systems, the scripting, nor git
-bisect have complained about my having wasted their time, but what with
-AI they probably soon will do so.
-
-I am somewhat surprised that it all went through without something
-breaking, but I guess that we all get lucky from time to time.  ;-)
-
-So not a lot of work for me, which is a good thing, given that I had
-lots of other distractions, including another much more troublesome
-bisection on ARM that actually found a bug that had not yet been fixed.
-A trivial bug, admittedly, but such is life!
-
-And again, thank you for so quickly fixing this!
-
-							Thanx, Paul
+-- 
+Jens Axboe
 
