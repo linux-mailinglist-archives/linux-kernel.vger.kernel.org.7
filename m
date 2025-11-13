@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-898504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A51C556CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 106ECC556E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1423A878F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87533A4A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A982F6569;
-	Thu, 13 Nov 2025 02:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71842F83C2;
+	Thu, 13 Nov 2025 02:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chenxiaosong-com.20230601.gappssmtp.com header.i=@chenxiaosong-com.20230601.gappssmtp.com header.b="jdMSb/pu"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+OhYIvL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D4D29DB61
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094042F6910;
+	Thu, 13 Nov 2025 02:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763000499; cv=none; b=Kni8/RY6FTHW6LizcwPjr356ODvLx+0YskK3o7kG6mHURkHHthGfduhQL4slHyzfoOSD/AoKoh6ZkA5Lte2y/6iADlvgqxvgsyk59APM7m3iVyK2WUVGRJV/BTYIBdKc+DFXhYPEeYPIt5aeP1sLiDCQXFkHt4hvpuWbIKY/W/8=
+	t=1763000632; cv=none; b=e+X1BA7kPYaeAVIlfWuNoxfqM/lnDU5QYHpGUWUTQJvm1F1mPVDqASTG79EL5KGxbKRfdcW6zDUuqOovfwGSm59qbOLx5YEVncus0cxiSgvzfw1fBcy5HmZx5PrZO06xI/pYISeLsGjx3on3wY/XfvKMYCyd4jJ9zmLhCsuKKs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763000499; c=relaxed/simple;
-	bh=JrYpJbnMMLzKJWCfIvJsV5n9ot3SXRyGAY8AhmxUdcg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qKjv+zlhB08MvshKp23fUOLFiPPEj2cSMcDPLNWkV1LcdPBCVGgYRgCb43r5Z9TOQ1XG/EON9/tQScPtlqacOv3jHC0hTJrhxB2jQG2j7gJdYGmWzkwVOFVBDJ+hYwLmc4Zr+kAB2f3tz1HkxHrOTQsnFpb6er7NzpEP+u+OG88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=none smtp.mailfrom=chenxiaosong.com; dkim=pass (2048-bit key) header.d=chenxiaosong-com.20230601.gappssmtp.com header.i=@chenxiaosong-com.20230601.gappssmtp.com header.b=jdMSb/pu; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chenxiaosong.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-343ea89896eso298296a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chenxiaosong-com.20230601.gappssmtp.com; s=20230601; t=1763000496; x=1763605296; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XQUss227TbD117Y99UM8EdtGfgfeIJ7HRgtQsqQweZs=;
-        b=jdMSb/pugxu3NC7BzKQuq1rNd9AHYhRZ7Ca877dmPO4ZxyUejTJ7xlDUFmCr6rPgQC
-         OHU3rT+qvRa4YdwSYbUoxi1N8cGhWlttMzGRwJQ0okskxuz01JluGFMEUIy9nuOe3Nux
-         ZAn4YOAH9LMhJDprjBr9Dlz0t/xUP+H0guGH9Alx0QAcho6vbNG75rUSES3RXRXdRnPG
-         bzEDloDF5EhCLf56aJuaPakNmgm1pyIsOKe/vAkYora4IBKBJys8CxB8Vlgt1ASdNNEo
-         J3GL9dg6+txkTKW125A7LkRL10TNmVbaKN/T9owi+yXDcEKObGuU8TQc7wCq6CE3DZ6M
-         QoDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763000496; x=1763605296;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQUss227TbD117Y99UM8EdtGfgfeIJ7HRgtQsqQweZs=;
-        b=ao+7BTGi3LAbqHPJaGB2MWb0Rwpmrw/i2K8OOVHUVd1IZXLCrCq3wDQxiTtvMvF52o
-         ehjrOhSThk8P//gAR9ze/VCxySEV4cb7vT05WgNBjDTk3276SrNtEFyQySN6RbyiV3ek
-         GlMK+uiRBrHc63cTTYoN3KDpTo+E+ZYAAed3CkppCIE/qT0DINbTKD5XvDNJpsSImq5J
-         ICZZPMxo/DBZLCnRrZ6COrwKcmCRFWI7IMEv+26djLKmFw2VOYfs97Sa3evm5kBZe+VJ
-         sQ4zxShzBeqSe0VC3gKr71EZxtr0DOMVT/puWntwUs6DgnU4gp5F3qN15Qe0PhMYxsNN
-         gEMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi7CLXH8GP4XKKKBbhhnSDDmxM54jcfrukLDeaIpo3uNMSgfMAdWdht9MOhJtZs6KI3qXjPRn3WsaWnsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHgrl/6oCIYkQRbXwWd1TtaDFB5yCe6Du2C6lcyox0TlNVaWyb
-	qBmHM1I/6Ojruu+V9G34TBl9JN6p4DCEzl9RLWApzSc6wdm7/x+AfvgRsL2riBik4efp
-X-Gm-Gg: ASbGncsphbXVulL/mwwh7ho97ZkDS482EFnOSynBK99I2MOCRVhlF1qL+Fn5aQJ+FUo
-	12MaKPJxqdY9iom86Qsn/+4Wgp893k1U7EWs4n94R082GHbUyE3ZS/rUou3kyFaAlcyh8uZAxaZ
-	9RL+Oki/82GyIoa3Ocd4EB3DfXie+VuccY1mrd1oikuq0+fYU7boqiDCYpcyyHvGWuj25bEj4Yl
-	TQAvmFEOXsbh9vSJDcOXGObELFSZyTfoLCXGJmWLRHr7T6aaiRxpV/9bRfqxxjo1Y3dCablecG9
-	rL7Tj3ntIntwiE/5f4buq567ZxNE7JYJE3mEanYlCKA6luAaHE1eyxH3XV105Suyk+rRGsFSSq6
-	ipe0KfZwxDESAkcCSPT7e4Obuh5rUfMOKX0IhAs5eaNJIn0fhnITfDd0Rj3+90mxF+7tGoKhisy
-	EpOIqqVzzFZVFLIx+oOrC2zVmuoTG1kQ==
-X-Google-Smtp-Source: AGHT+IF7raoySsbUlfbW8T8R293TK8CZiEvhaipCZA3Z4lCexZrzcSnDUMp5q+957C2u5Z8dulGl+A==
-X-Received: by 2002:a17:90a:e7d2:b0:341:88ba:bdd9 with SMTP id 98e67ed59e1d1-343ddeda0dcmr5440253a91.25.1763000496550;
-        Wed, 12 Nov 2025 18:21:36 -0800 (PST)
-Received: from [192.168.3.223] ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343eaca761fsm583707a91.2.2025.11.12.18.21.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 18:21:35 -0800 (PST)
-Message-ID: <d919223e-7901-4b1d-bf53-69cd71ecec70@chenxiaosong.com>
-Date: Thu, 13 Nov 2025 10:21:24 +0800
+	s=arc-20240116; t=1763000632; c=relaxed/simple;
+	bh=uiIKjmlOaAuVzG/eOCcOMDdAt1BLiAZtilWHaUZlBp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f05lLaqMIz1HTfdPrfN9jkZY6yGwH1yJHcthBppw0yTXr0m/2X2h0eF8RXMTuxj7DU2oUjaLVTZsymIowLhC5RtDTrMY231bWHwMiXQaBXjeerYYkcQChxT6XQo5e6PbHB6vhj6da5mgwFh+znhdiBI6y3x4PB/FGgZQmYGNdU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+OhYIvL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E38C4CEF1;
+	Thu, 13 Nov 2025 02:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763000631;
+	bh=uiIKjmlOaAuVzG/eOCcOMDdAt1BLiAZtilWHaUZlBp0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I+OhYIvLdMiP1mW5j/cV/kopMRJpCWVRFR3lRntku6GmbCToIZY329xsfRedUegmv
+	 ZxhYT+fg7PhIa080G0AgZYogyz5dCXaPfBHYD3BDCsCIGcyCCYu7lzX2NEYLDH7HDe
+	 7xjxE1e9A63IaO1sTt1dY45Hb+JiqaqzUk3WvqrRjdI8RyWVZVUTOsKZyOk+iLl2mx
+	 hs9T1Zfx1IqwdlhSubVEUHcDgkTeOd6f66Kz8vfWxkhbBM7ypxHVqYvJyFI2UZRVrd
+	 1k9T3H33cEwhKCVKrtFFws+GGDseWphrX51h0gO3rjrQn5rYUi/FsTJH8nyfzdbApQ
+	 n2CUHvBW4mKcw==
+Date: Wed, 12 Nov 2025 18:23:49 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev, Mat
+ Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, Christoph Paasch
+ <cpaasch@apple.com>, Florian Westphal <fw@strlen.de>, Peter Krystad
+ <peter.krystad@linux.intel.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net v5 0/3] mptcp: Fix conflicts between MPTCP and
+ sockmap
+Message-ID: <20251112182349.281a6a11@kernel.org>
+In-Reply-To: <cf035c68-fe96-49e0-acdb-bf813ae71d57@kernel.org>
+References: <20251111060307.194196-1-jiayuan.chen@linux.dev>
+	<cf035c68-fe96-49e0-acdb-bf813ae71d57@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Subject: Re: [PATCH v5 12/14] smb: move FILE_SYSTEM_ATTRIBUTE_INFO to
- common/fscc.h
-To: Namjae Jeon <linkinjeon@kernel.org>, chenxiaosong.chenxiaosong@linux.dev
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
- christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251102073059.3681026-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251102073059.3681026-13-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd_n3D=CC9DfVTak3oQa3xqkQ2jyHm9sUKDLd=exJAuXJQ@mail.gmail.com>
- <7f061d12-0166-46ff-be38-33f6acb02a49@chenxiaosong.com>
-Content-Language: en-US
-In-Reply-To: <7f061d12-0166-46ff-be38-33f6acb02a49@chenxiaosong.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-It seems that the client side does not use FileSystemName[52], so I will 
-try modifying it to use a flexible array.
+On Tue, 11 Nov 2025 11:35:04 +0100 Matthieu Baerts wrote:
+> I think this series can be applied directly in 'net', if that's OK for
+> both of you.
 
-Thanks,
-ChenXiaoSong.
+Also no preference here, Martin mentioned he will take it via bpf
+tomorrow. 
 
-On 11/13/25 9:56 AM, ChenXiaoSong wrote:
-> In the client-side code, SMB2_QFS_attr() needs to get the maximum and 
-> minimum lengths of the FileFsAttributeInformation. Using a flexible 
-> array would require more extensive changes.
-> 
-> Thanks,
-> ChenXiaoSong.
-> 
-> On 11/13/25 9:23 AM, Namjae Jeon wrote:
->> Is there any reason why we can not use flex-array ?
->> Thanks.
-> 
-
+Please let us know on the off chance that you have anything that may
+conflict queued up. These will likely need a week of travel before 
+they reach net in this case.
 
