@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-899357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40029C577C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:51:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C08DC577F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DA9E4E4298
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667AB3BC613
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFEB35028E;
-	Thu, 13 Nov 2025 12:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE542350A0F;
+	Thu, 13 Nov 2025 12:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLkdkHW+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0T+yyxh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B732FFF8B;
-	Thu, 13 Nov 2025 12:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE9535029F;
+	Thu, 13 Nov 2025 12:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038271; cv=none; b=C8c45Z9C+9GJzYjA35IBnua8Jf8RMB66lqpAG6t5H4antspWNAvRcXvXfu9cBsVfwe8MsMPEuneMJcyGPVGKd5lqEjarDINp2AqK9lNC+7k13xTW+U4m7QYMmNlNRrSx0pQjt6KkS9uesHeYbU7aE8WeVhBO4X5GGWXRYYerrSY=
+	t=1763038272; cv=none; b=tbcFxwd7xC109Ydmykd3Otvq5sEtm9XxTXdrL8RLdugREZnU2Mplmj2e+aXBTR5CqLQaH+OUxDr7fHAKPj0cmG0VIoZ3fTiXJcEOdYdhAD6nwosQymPjQwq67oQU+RaExuP6XUXp6oB5fvXw2Hm2Z3hSkZvoYfgn5AUfRhGCN7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038271; c=relaxed/simple;
-	bh=v8Y6xL6/JEDK8WNjpV1QvjO5CFa5S3nMylBofRMehp4=;
+	s=arc-20240116; t=1763038272; c=relaxed/simple;
+	bh=UXAXTE2YFK7QvC/Dt9ZLRi3M39iCRLseej2ogxIsteo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=urYZO29dqEXJpGrbzLNySEh5RShGCuWTVLYJDaqAK9UyMiJwr1elLi3J8jVHzwlGLeFZWgooiRReCJjgrT+d5ydnnXS7/cq9khbhQS0PHcUgxHkLDvkHr2kx/2lIBjKyDZ+5G9h1t1kFYUpwtUdyYDoo6u9Tc1lYtw+DQn1u254=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLkdkHW+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560C7C4CEF5;
-	Thu, 13 Nov 2025 12:51:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=AgSPhUJU2FJDy4I+dCNE74xOBlPSNxk2DZru37C2ty+Tace0jC1ZqoYgiNx/SdZyq0ZtcfV0LILZ0stUFFfwir4EcQVcZhadM3nnnMKYQuFXI6AyI7wcoMjQIhIgcRG8RFpuDK/DygD1KmKMeNCRdemHelD84CVEq+RN81qM+0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0T+yyxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF80FC113D0;
+	Thu, 13 Nov 2025 12:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763038269;
-	bh=v8Y6xL6/JEDK8WNjpV1QvjO5CFa5S3nMylBofRMehp4=;
+	s=k20201202; t=1763038271;
+	bh=UXAXTE2YFK7QvC/Dt9ZLRi3M39iCRLseej2ogxIsteo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=fLkdkHW+LaDv4Oqa0PtjkU4U3UO6C2xR8mkHe1n+5ZN99nW3+H7gLuRxvLyj6P+18
-	 lrJZDcuPQKAFRHsFUVac+DKXC8mxYna1Io8ZFGocMfpr+sV1aidKY+7tR9exRYvwbW
-	 WpR4iLlFefHxn2FVIx6jYTzp8LHCJgXzwdY2IlQutoi1R6KdKisBkRgEHFsRVfhoMw
-	 iFBrWZClH15hfrZWNIWxfmFYIZk1V4OFMDUGpPOrnKdvJT2slJyoO1oPl5Vdw2OrdK
-	 D+swH2gAf9H6MI66F//Ib5KOAM6yoaIqISddJmeYqv7XP7JRG5HvREf+6NekZMIkra
-	 rKPwhKz1M7u+Q==
+	b=M0T+yyxhlEMKfzu6caIBqBivhdEnjwT4AigNZzTAialQ4ZLWo3BEDcnDVBBKjq1u7
+	 LD9ywx/sx8OteLIl971Y9BSUrJ4yq4Gi5e3FMOHUvPTJlEpDcTaYb6281ZL3Yu42UE
+	 hBkNIsmO/Ec1ZmttzOarvabtS8iN3gl23tmW7+FFDWVrZIWr6lF/fVzk8B6S+Embd+
+	 +8AH5jmplNt0IoU+LvKq3a4PJJXq/+9hddM/jlC302pWcOeNi51hqDzO6oxHuw6m2u
+	 oo//5UZGskFurXuTGitmJHwYtENXv108o1C3yEbBy2thoObQwt4n03rDtspk2+j/Iu
+	 ditgfeFXnDEiQ==
 From: Mark Brown <broonie@kernel.org>
-To: Cezary Rojewski <cezary.rojewski@intel.com>, 
- Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251112202630.6277-1-thorsten.blum@linux.dev>
-References: <20251112202630.6277-1-thorsten.blum@linux.dev>
-Subject: Re: [PATCH v2] ASoC: Intel: atom: Replace strcpy() with strscpy()
-Message-Id: <176303826496.17893.17470205530298717876.b4-ty@kernel.org>
-Date: Thu, 13 Nov 2025 12:51:04 +0000
+To: kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, geert+renesas@glider.be, magnus.damm@gmail.com, 
+ Haotian Zhang <vulab@iscas.ac.cn>
+Cc: linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251112065709.1522-1-vulab@iscas.ac.cn>
+References: <20251112065709.1522-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] ASoC: rsnd: fix OF node reference leak in
+ rsnd_ssiu_probe()
+Message-Id: <176303826968.17893.10351782135097925928.b4-ty@kernel.org>
+Date: Thu, 13 Nov 2025 12:51:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,10 +62,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 12 Nov 2025 21:26:25 +0100, Thorsten Blum wrote:
-> strcpy() is deprecated; use the safer strscpy() instead.
+On Wed, 12 Nov 2025 14:57:09 +0800, Haotian Zhang wrote:
+> rsnd_ssiu_probe() leaks an OF node reference obtained by
+> rsnd_ssiu_of_node(). The node reference is acquired but
+> never released across all return paths.
 > 
+> Fix it by declaring the device node with the __free(device_node)
+> cleanup construct to ensure automatic release when the variable goes
+> out of scope.
 > 
+> [...]
 
 Applied to
 
@@ -78,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: Intel: atom: Replace strcpy() with strscpy()
-      commit: 123cd174a3782307787268adf45f22de4d290128
+[1/1] ASoC: rsnd: fix OF node reference leak in rsnd_ssiu_probe()
+      commit: 360b3730f8eab6c4467c6cca4cb0e30902174a63
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
