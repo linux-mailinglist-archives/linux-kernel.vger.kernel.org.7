@@ -1,169 +1,194 @@
-Return-Path: <linux-kernel+bounces-899847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7BBC58E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:55:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4C3C58EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACEF4A0A81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:48:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B5AF4ECB2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAFF342514;
-	Thu, 13 Nov 2025 16:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4703A1F63D9;
+	Thu, 13 Nov 2025 16:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+3gerQl"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4mwiWk6d"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012005.outbound.protection.outlook.com [40.107.200.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF9E2FD668
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051953; cv=none; b=YpiBIjb0vZIc+ggv/LSkMy0k/HOdjd6LHHp38OgzqZOftSXHy3Yq9+5CbEWdRTL8xsiD/llFfnXldU9XGpiYoGTfOSf/j1E5Uddtc/gHh+7+QrYES6/Hraj/UrIUkxlKWkN0TWynzHmyNC6UE3gxwDqsdpvI6yQ5EdkhHHKfiWQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051953; c=relaxed/simple;
-	bh=jMiV4RbMNeOesGqKgORN1iKerZRElW5XEIqKQrbUT2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpQgCQpXQtFZheJgA+Hxkb2YTEzgaKiWET9z7ez2f1P8kcbdLqS2dNkH1l1jjxWSOjq6RVfpb3oFB8xDRV/Rk6Ot8LK6hLburVc5VetyJYZCVg/5jewEZx/byVcAi0CuSl8qZunOSDtPmzizkAjYGBLQQ6IbtBUGyESkfV1u7og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+3gerQl; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2958db8ae4fso10344255ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:39:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763051951; x=1763656751; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S/ucMNEdTPs4tdBdIab98EcaF+7fPlknQB7RoGYRpzI=;
-        b=G+3gerQlIFcYM4wJuPzSobt5Qkzq6fvAmv5Sr1xJ5rs759VDfzk07c1fm93sC8Wxl7
-         jfcpnmRNhjPQgs0bRPRckHBc7ZD8pikP9FUWkJbmRBNSOXPaVSN4+pVouphjOov7QzsU
-         Fw0h79PmIy1OeD8NmGyKYQuFlNgl8u485Xxt6Rwi5jBvddnr/Sd3XfdeVEQepPuYctDR
-         O2ui0b7yAMuKnWq2kl8s3PyoXeZ5TbdWQPgZXoIODDfmN/+FGvkflhzQEPT/Q05jGTuw
-         dpaZavWkLPgbWI4R1JfdpkdxjO/nHlUjx08PoBUpWZskMfNB6/Dr6hRiwQfxNLgwK/cM
-         NARg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763051951; x=1763656751;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/ucMNEdTPs4tdBdIab98EcaF+7fPlknQB7RoGYRpzI=;
-        b=UMZLn75y6V7O7a6pkk1Dg08NOKG+EJRfT1s7r4+d6Kb054qtNYPeKfXXdXNyFnfLDa
-         /kmdy/odpoxEaxQzHFzaswlbUtb1z2NdSNDIgtBSQjb34d1zw2yXC5/Bu0K6J33KQ+1G
-         VKeAyfsUCOELkjvMRpEFADG0AzfEXtKyuGUxeK/b1MVu8PT5kRTXRASm2A1ou6Qo7v4q
-         kyLjMQPlL8gAmIfjrTS3XZxkqLqAbBo9UWwPkJ/3Vo+DMI7UY4Vd+lRjnEKd3dRLUfam
-         d/WMyuEyHFn/XSaqpXqEjxe7+yYXH4kgAfuCDOd8aIEPMOnHazDs82msIZil1MMeZ8UT
-         ShJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvTDtbJOfmnzJ1A5cRMDpuoYEslhsYz7xJ4yFov2SglVTGe4+gEHZ+eYVUX/vRUbordqGFaWwBmFDfzxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwZR6S19BFs/xhqYVWVv5KZGmV/wDanP/Xe1CgIApvY/atfCoL
-	Bp3Q7SOdG62ibgzsJewhM3gtq7t54BBpXiLW7rMDOz2zK2ETK6bltN3w
-X-Gm-Gg: ASbGncvLzZt/pSUSyyOKVIg9MbqBzk4IltDCYTDz6S7E04AuAuHDrGWlQABJxZK4wIV
-	wNjszYEjHwaaOQs/rE99ueY8q+s4CM9Ivzfe6C6ekBIZMxpH3ztNS5MwCELaCt3LAYJwthisE7q
-	uJCn73OiCx4cEmzhk+eTq/8+AwWQlAubfUV5MVJInHY8E2HZgST8pQYlpnIK9Gxno8EiJ2OGWas
-	gnS8p5IdqFnFuAhxtnNGQkgmaeHwC1hatZxs15gx+HjH106tCs3vc7YSI42p+OHj+zP5Vzbu9dj
-	Y3HR2RoE+KGiFPIZPkCUuhDYMB8b2dB2+7BtboMU2STUeHaYhcJBG8rOEMkJKtI0s9d63LfY5Iy
-	qDbL/ENYHqrW1N+5J4jKCl3JtYcEVajFPigvEp25FPPORFk9nptPKnMOSTGXpLVgeAtUUd9e3ZR
-	+Cdk4=
-X-Google-Smtp-Source: AGHT+IEs0sHw9yn/h78U4VzfNtAGyDH+Vb8Xjj0sh1kFUc43l7I1lswC+8d2RPaL8vbpculyPwUdyg==
-X-Received: by 2002:a17:903:1a28:b0:298:485d:557d with SMTP id d9443c01a7336-2984edcaaaamr90085595ad.45.1763051950935;
-        Thu, 13 Nov 2025 08:39:10 -0800 (PST)
-Received: from localhost ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2cce59sm30165515ad.105.2025.11.13.08.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:39:10 -0800 (PST)
-Date: Thu, 13 Nov 2025 22:09:08 +0530
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: gregkh@linuxfoundation.org, snovitoll@gmail.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-Subject: Re: [PATCH] usb: raw-gadget: cap raw_io transfer length to
- KMALLOC_MAX_SIZE
-Message-ID: <u3okc42qhpzi2uorrdei3jigq5wwgdqb66u3u5khtuzxhwbamx@f3dh3fivx3uo>
-References: <20251028165659.50962-1-krishnagopi487@gmail.com>
- <CA+fCnZeZ+c15X8BXg59ppbEmEUvp64aMaTPjXARyO_0x6KL+eQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A948A34A3B1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051972; cv=fail; b=hnR1NLdfnFDWd46BYVrFGzGgbvCJyiTimAlFWJdlLHvERZ2AcmEglyfNtSMUJDXZQ4RqDzBH/aCF69qcY5SHYlTisR/exgRK9DX6Boru+6MygHmR90Q4dY4M1tGMXrcU75hDmJD5V/wFIpbTXCslG6wHzofGv5fe7CHoE0zolg0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051972; c=relaxed/simple;
+	bh=f0ggmq+vQrsIGozS8GBUS8zFJU+Fxq7RTisDe4L6Q8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=czGLeyFQBtRL5FsHq4jQYeU77BmQYeMzFbXXEABrHH1UcBId7Mkz+Rl1RQEltbls9Es+zw10zZgyV9NCdOf6vWiyijQAJQYy9QsWeVPBvm9hINHVz8xd+eh+TsUipKJRrMVv8Wv2dZzri06slMB0WIRl8ZUIpXIB3ndYypksxRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4mwiWk6d; arc=fail smtp.client-ip=40.107.200.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c5DNrGO0Jtmu5qUkiPD9d56zXTty39D4YHZR05MkVD7/apgaQt34Azt8CaAWUNyogIzvpouh4+QcqNmmJlclLX3K4pBf2+8+3DhyDYCxpud7cVSpUdqjb4aiCM9+sLZ0um8Biz1IEcl59SoIZbNovJ1Ugo3uNv9nWMumaEd0xb1o15Q5E7zalVE0XaWu1u+fcd7MvWKYyqispL1avrM5PbIzewWblKwkgU8YEGLbZ/4y5EH6eKANPD6nR/dS1kU6MUDijI0Td3Ss5RKPLlDa57bDL67LwL/09y4e9D0luB/LcfQ4QPREGBlexk++g9bM2nqlXHKk3ELjKGp0Tx7RfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8F2qmeanFiSgWu8BX/cW2bSVKmmrkVtAySF67ZRiAzQ=;
+ b=kRXdpo+qB2Is9cBlQQAgIXKkvEGaB+wihwe4XfnVi/W/ouOkcuddYIffXuTjcQOXdX2yUHTdLIKHl7153tfd+8CJ7qU5trMuFV62KdglAs5fiW4NxA/pwCr2wZr276vodMZjFPfs0hYSoovUpMSXuADBMusT98xz/nPKd3MHEqwNhJVXy39NXUtqSYbmChnoU0Zgi+9VB2D7SBN0VQ0GmbAfkmDYTP1DMWKNbgnhlo9FFZD+Kod0JowAWntjtE68DjvFnnUMrFzpPVV61jH4sNDaj0+YX4Q1ypm+oMcXW1bSckYpLt2nh91uUhV8MKN3OjG3m6F6nCGapU+xf0M2ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8F2qmeanFiSgWu8BX/cW2bSVKmmrkVtAySF67ZRiAzQ=;
+ b=4mwiWk6dYOaxCg2fY1Ryje+AUt+LIOk7CaUlLszBRFxqD/Z2yCnCr1sietfWdhmu2vCDn+A1XPtlXD7wpqa72zRsr+jwUjQ22LgUFbT3itMH4RUsE63lPrBS26N1G9SgWMG+yHj3AmL0C/8ZOJ92M8YECuEJcQaGrtcQJaIgrQM=
+Received: from PH7P220CA0177.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:33b::25)
+ by CH3PR12MB9250.namprd12.prod.outlook.com (2603:10b6:610:1ae::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
+ 2025 16:39:25 +0000
+Received: from CY4PEPF0000E9CD.namprd03.prod.outlook.com
+ (2603:10b6:510:33b:cafe::8) by PH7P220CA0177.outlook.office365.com
+ (2603:10b6:510:33b::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
+ 13 Nov 2025 16:39:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CD.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 16:39:24 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
+ 2025 08:39:21 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
+ 2025 08:39:21 -0800
+Received: from [172.19.71.207] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 13 Nov 2025 08:39:20 -0800
+Message-ID: <ed406f30-6381-0a89-a266-c5d9c0da4d2e@amd.com>
+Date: Thu, 13 Nov 2025 08:39:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] accel/amdxdna: Clear mailbox interrupt register during
+ channel creation
+Content-Language: en-US
+To: "Falkowski, Maciej" <maciej.falkowski@linux.intel.com>,
+	<ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <mario.limonciello@amd.com>
+References: <20251107181115.1293158-1-lizhi.hou@amd.com>
+ <3ee3c7a6-65cc-4d67-9a4d-5b9b09e7908e@linux.intel.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <3ee3c7a6-65cc-4d67-9a4d-5b9b09e7908e@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZeZ+c15X8BXg59ppbEmEUvp64aMaTPjXARyO_0x6KL+eQ@mail.gmail.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CD:EE_|CH3PR12MB9250:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0cc0f911-ee39-4a00-1de9-08de22d33441
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZFZhWmE1L3NHNjl2K01lZW1NdUZjVmIyRG1VVEZXNU1pTnVpNWF4RmVNY1px?=
+ =?utf-8?B?SjdXZXZyRXFaS2pVMnB3UG9HVEcwSysydGZJays0NkxUaWxWNitxV2N3Viti?=
+ =?utf-8?B?eEZHbDVlSll2MGlMS3JHM3ZBUGRtcmhxU295TmpZSVhIUkIxNmVPcG5henJS?=
+ =?utf-8?B?L0g2anJGUjNrODk5Z2hZZEJ2TTlzeXBhUzZ2bHZtSnBGOU93Y3FLdVRZb29U?=
+ =?utf-8?B?QU4yWmJpV25PZDJiYkx0T2hHNitQTFZKRTUzQU5uT2ZJT01KZElVMXR3TVBB?=
+ =?utf-8?B?ek82Y2FmRDZWSmcycHV0alpmYW1IRDZNSGlaUjFhVEpNd09pR2VweHcwdWlu?=
+ =?utf-8?B?ZFZBc0lvWXE5aEV5bjdHT0lHTVpIbkxhRERGRjNOWXFST3BxMyt6N0tLdFp1?=
+ =?utf-8?B?WG1GaHNjZU9vUk5YRUdtdGY2bjU2Q3FPMDlOOTF3cmY4aXhYWEpWa3VNaENR?=
+ =?utf-8?B?WXVVU1JRWThjMTByRU1hNENJVE5qZXFrV1dRRld3eG5ISUx5TkxWYjdVWTRr?=
+ =?utf-8?B?ZWkvcGRiRHFod0pXUXJjdjdONUo5ZG9KUlZwSHo0NXFnVk5KbHlRd1JGNHhK?=
+ =?utf-8?B?d0FwZmVYVmdDdFJLUG92ZFhNUTdMQ0RrR1FqWm16ZFZXeUs1M3UvMzRNTkov?=
+ =?utf-8?B?TFdoZktRbHRzL0J2d0VKTU5ycXhjVFB6eGRqbTliNHB4eHlKNVZoQitsNGIz?=
+ =?utf-8?B?WHFCdkdmbXorTVJjWjR5YjVEbGsydDQ5bk52NXRVSlNzYnFBMHNDM3JjSWIw?=
+ =?utf-8?B?dlNFbVhvT3ExZWRNVmVRTDdVL09GMmxuWkhtNm5KdllHa3JQL0lYejZJSmlH?=
+ =?utf-8?B?T2hCb2FOSENoNXNtMjExM1F3dHVEQ21meEZmQ3BTYnpxdEozekNkYktFZStq?=
+ =?utf-8?B?SlNsQmowUW51V09XRU1OeWlLQjZ5N2pqeDhNQm1PQWtqNC91M3VKNXI3WGIx?=
+ =?utf-8?B?WUU4S0pMYWdLQmR2Ukt3K2c5VjRvbFpOTmtlY1hnR0x1blVzTi80a2NvaG1u?=
+ =?utf-8?B?MXJlalk1QVd6dXA2aC9XZVBLVzc3UU1yUjdiK2F3NGNmaTlYaFAwMlVwQm9G?=
+ =?utf-8?B?UG5tQWM4bU1uM0xhWDl4RkpoMDB5RnZ1UlgxREFYVlVlR3phaGpJdnpXTk9H?=
+ =?utf-8?B?ZVdKMFljajB1L3E3Mjl1ZUxBVnlJbmhIKy9HRk9tZk9tWHJORllrN2hkN3Nt?=
+ =?utf-8?B?MTF4QlFLK3JwU21RNmxJdXRZUTFmSXdEOHpDZ25WSTRzWDNQNDc1KzUrTnFr?=
+ =?utf-8?B?a0duVGdjUGpoL0tIaUtqVXNRVTFINXdQRnJuQ09WTVNRY3BxejIzR0M3OE50?=
+ =?utf-8?B?a0NQUEJzY1RYL1JjTk4yVGJVWm83c3p2dDMrOFc1dHdnSWdTQUdtQUZmTXFa?=
+ =?utf-8?B?OWM2VHVmaTNjZStiWHNTbk1xR1Y1RHJZZXVGYWw1UmJjTlNTTjdGNEtlZWxz?=
+ =?utf-8?B?T2hiU1JsUFBOSURoc29KWktSQ2pScDlZZXJTYTZjejFxRmpWMlpiQ1FHTG5n?=
+ =?utf-8?B?SlRMVTByR1Q4ZXhxQitHU3BkNk91dkJDeHd3dXFKRWpvcmJ4NVdsNThueGl1?=
+ =?utf-8?B?MjB2VFhaMUVER2N3bTgxazFFTUZNTnNBTXpYYjMyRnp2REtxVWNxR2J3Ym9z?=
+ =?utf-8?B?YzBwSzZtaGpQeEhCNTdJWDhRalV4ZE15Zzc5YjRhcEJmeVlhNndoSjFlRlU4?=
+ =?utf-8?B?NmFrWkJsSXFUaG9GQkZwSVdnR1F6OHZ6R0c2NnIvQ1ZoSFVZdjZMNkJuTEJo?=
+ =?utf-8?B?ZDJxNVBpZS94cWVwclVDcGFUUnJEUDhBYklqTFA5cDVsaTd3VTZJc3Q3SEE0?=
+ =?utf-8?B?UkNVZTN2cDR5dXRDcTBEQnF0TjB6VEo1d1o2aWZLNEpVUVJCa0ZrOVJwWk5m?=
+ =?utf-8?B?eVBjQ3ZGL0xDSEhsSzhkT0oyaGlGVy80bzExWFoyZGVaNjVZdkQ4VVkxdzFZ?=
+ =?utf-8?B?a3gzOWZ2Rm5uakc4T0lhWXZwMFFYVG5mZkx4VW92THQwV2xLWS8yNU5NKzcx?=
+ =?utf-8?B?VnhQS08vTHBwZTRud1BreVVOcGM4dXVUOG5kdG93MDNrRmVFL0ZnRzBObGNt?=
+ =?utf-8?B?ekJ2ejkybGFodnRuUDExVVAzNmlmZGUyOTRzcmVZaFlaaFR4bUwrRFZLUVY4?=
+ =?utf-8?Q?yu6M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:39:24.2440
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cc0f911-ee39-4a00-1de9-08de22d33441
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9CD.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9250
 
-On Tue, Oct 28, 2025 at 09:15:47PM +0100, Andrey Konovalov wrote:
+Applied to drm-misc-next
 
-> On Tue, Oct 28, 2025 at 5:57 PM Gopi Krishna Menon
-> <krishnagopi487@gmail.com> wrote:
-> >
-> > The previous commit removed the PAGE_SIZE limit on transfer length of
-> > raw_io buffer in order to avoid any problems with emulating USB devices
-> > whose full configuration descriptor exceeds PAGE_SIZE in length. However
-> > this also removes the upperbound on user supplied length, allowing very
-> > large values to be passed to the allocator.
-> >
-> > syzbot on fuzzing the transfer length with very large value (1.81GB)
-> > results in kmalloc() to fall back to the page allocator, which triggers
-> > a kernel warning as the page allocator cannot handle allocations more
-> > than MAX_PAGE_ORDER/KMALLOC_MAX_SIZE.
-> 
-> Ah, right.
-> 
-> >
-> > Since there is no limit imposed on the size of buffer for both control
-> > and non control transfers, cap the raw_io transfer length to
-> > KMALLOC_MAX_SIZE and return -EINVAL for larger transfer length to
-> > prevent any warnings from the page allocator.
-> >
-> > Fixes: 37b9dd0d114a ("usb: raw-gadget: do not limit transfer length")
-> > Tested-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-> > Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/all/68fc07a0.a70a0220.3bf6c6.01ab.GAE@google.com/
-> > Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> > ---
-> >  drivers/usb/gadget/legacy/raw_gadget.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
-> > index b71680c58de6..46f343ba48b3 100644
-> > --- a/drivers/usb/gadget/legacy/raw_gadget.c
-> > +++ b/drivers/usb/gadget/legacy/raw_gadget.c
-> > @@ -40,6 +40,7 @@ MODULE_LICENSE("GPL");
-> >
-> >  static DEFINE_IDA(driver_id_numbers);
-> >  #define DRIVER_DRIVER_NAME_LENGTH_MAX  32
-> > +#define USB_RAW_IO_LENGTH_MAX KMALLOC_MAX_SIZE
-> >
-> >  #define RAW_EVENT_QUEUE_SIZE   16
-> >
-> > @@ -667,6 +668,8 @@ static void *raw_alloc_io_data(struct usb_raw_ep_io *io, void __user *ptr,
-> >                 return ERR_PTR(-EINVAL);
-> >         if (!usb_raw_io_flags_valid(io->flags))
-> >                 return ERR_PTR(-EINVAL);
-> > +       if (io->length > USB_RAW_IO_LENGTH_MAX)
-> > +               return ERR_PTR(-EINVAL);
-> >         if (get_from_user)
-> >                 data = memdup_user(ptr + sizeof(*io), io->length);
-> >         else {
-> > --
-> > 2.43.0
-> >
-> 
-> Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-> 
-> Thank you!
-
-Hi,
-
-Just following up on this patch to check its status.
-Thanks again to Andrey Konovalov for the earlier review. Please let me
-know if any further changes are required from my side.
-
-Thanks,
-Gopi Krishna Menon
+On 11/13/25 07:22, Falkowski, Maciej wrote:
+> Reviewed-by: Maciej Falkowski <maciej.falkowski@linux.intel.com>
+>
+> On 11/7/2025 7:11 PM, Lizhi Hou wrote:
+>> The mailbox interrupt register is not always cleared when a mailbox 
+>> channel
+>> is created. This can leave stale interrupt states from previous 
+>> operations.
+>>
+>> Fix this by explicitly clearing the interrupt register in the mailbox
+>> channel creation function.
+>>
+>> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   drivers/accel/amdxdna/amdxdna_mailbox.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c 
+>> b/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> index 24258dcc18eb..858df97cd3fb 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> @@ -516,6 +516,7 @@ xdna_mailbox_create_channel(struct mailbox *mb,
+>>       }
+>>         mb_chann->bad_state = false;
+>> +    mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
+>>         MB_DBG(mb_chann, "Mailbox channel created (irq: %d)", 
+>> mb_chann->msix_irq);
+>>       return mb_chann;
 
