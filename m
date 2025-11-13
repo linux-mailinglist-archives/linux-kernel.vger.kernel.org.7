@@ -1,200 +1,124 @@
-Return-Path: <linux-kernel+bounces-899973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6075CC5939B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:41:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EC0C59497
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D9CF34F49D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:31:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BED994EC474
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517EB346E7C;
-	Thu, 13 Nov 2025 17:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617F72F9D83;
+	Thu, 13 Nov 2025 17:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsOAxkeI"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP5N4lX/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D263B30AAB3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5112F0C46;
+	Thu, 13 Nov 2025 17:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763055070; cv=none; b=AwR3NdpK8QHCVDqz7E/QVJScuJkZfuCrpl7493wmMOgz2f2UyKomGFej7t2tjyTOdTBMEIrYQyrDjCyoDzn1v5VYn/c73xcFD2gZKscXicmZsGSluLOk3/I5taLyTbmfIh5Q38z4j8Ll0EfFD9qRdczsZ2599WKQUy77wYqsNHk=
+	t=1763054961; cv=none; b=Cd4eJLFrvcrJO2QcHYlJkkHwzARr4Ieo4vKiaHnzXPQcT15gAUBOliFU+pPhlUXvfUNIjK11BN252qwrssLvtEqWyHA7Exsr+RF5pABhlm5GHpjObezE9C+aJ/6IUXAcmLMYSLvMQMTgUbkf2oUGlFwqMXBynGm8WvvzJDe8/GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763055070; c=relaxed/simple;
-	bh=XAtOyJI0WQ3sgK78fW2Uwi7DxHqSxXhyLy1fwArqA+I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NKuNBlzrMwNE6ZmQUq2j9Y5bX8QrIJJz8lgFrZARxhXGHjJLX8+FEnTjbASPv/UcLOFpv4GRTPRfAcG+3I9FLp4uxkWkyYOFz3y+BtjiBH6gvxW0S/85r4tKiScH74wcsJTvAM0RgXSzHRJVjgXE2KwSnnVR/88xJcr00fxdMcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsOAxkeI; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-787f586532bso11470127b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763055063; x=1763659863; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K7+oD30MonOt9TxD+/IIU01PfOYIQejOmUfS0Y1z+3A=;
-        b=KsOAxkeIV3tribzISi2W6VFkHuEcSSNldz35T5qel/ZFG1EE+f00hoUizn4ez8Qq34
-         dlZxKY3vZ2Q3FczAo8mrE7Cf3dAip1qAy9Klpb/GxNYAPMJNGsmVABlgzPtkJgYyfKL4
-         sKDZWXkXkJTJglE9q9qC6bqvp0ava0dNe71SfO24uLB5H/Mdpn2Pn8uxu2lp9DgapX9j
-         dQNs7r6k981DxC1IDm9/C+HNdKV0BOKSuu6YGX3r1u/CPt1wi8yu39ckfRIl/sjD5Zv5
-         25O5VYaL24ySGnGtvl6RxHbP+lhB3NWXUDh3JNfgBUE0KC3RhV5lS54Hc9j5+PmKK67F
-         xe7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763055063; x=1763659863;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7+oD30MonOt9TxD+/IIU01PfOYIQejOmUfS0Y1z+3A=;
-        b=oR3gAz/i3bAavGH+vILsaVpNDP5eSE0p+8u83HgRSj2bPvr+2TMd6Am78j/Gp0dRVa
-         swfhphazhRxvu3OvJDCQVqppJrqLD8UGLIO35LqtEHL2xQwXAHPDHhwNv6sZliLrY6oR
-         VsH9D1jRdUnqqcbl0+ilbnF6gjWo8+Y4yh86RYVuUmhwBCrovH8hJ3CGHWlebYp2UvXl
-         Fb0mI4UJ5MQL/RUun/UY81AXND3xcYi4PE5sHT2rCI+bEU9/SEpMjC0P8BAQkJdbFz+I
-         gqjLTv0X9QeajWqD/0wS1MIw5zk2EQOgnCHyDYXE0q8d3omDtQ0/prDrHez2OGjv+jT4
-         CHDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcthiB+054eK0qAn7u6zS5zuukvUc0NNC3wVbNDHqo89XRURPtdLCkjj0gGryWOnG4yD1NhYHaRrA5lFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBp6ZLCZs93Uc3GBIw8+Hij+oFx2lDtPpcGQs46YrIMYDlxDQr
-	zfgD9TZGgX31AWcYrkiyoglQaFlR7kZrqv1XwFNVE+YqbSTOImluBnk6p0KTiVq5rV/JkZzh25Z
-	Pjcg2lp6/cpooM5p1iG4GWCZ+ODl/2Gs=
-X-Gm-Gg: ASbGnct0Uwq1x1BpIGBrWvtXw2WOmxqRTAZc9NCwN1nLzt6Aq9co71IVYkBEkx0S1Rm
-	PAwsAeM+GFe81IuvZw7OjIy+wiI1QN03Z4ffgY/t2e6ogy0HA0Thi3Txpdm/jClqx/nAHQ1RE39
-	DSiWtrPjvLQiyyPhXnVDJIELUYOIErE1F3qoORRRy60PWEA6VAdoyMv97G4ILfNHdY4w/fRRos7
-	UrFxAMmaDGF9/vGFruJu8KM8EjaNN8GkvgrUifjV+cckY/OyIpyFk7+JJvp67qTLv/JGdkVYJnx
-	4sG54CC2gujG5dnZfT79rrstnw==
-X-Google-Smtp-Source: AGHT+IFsidDvuOCz+MG4jnFkcxt8JfyZwP35D2o6eA6gkXKCxY0urqtYVEMTdk14UB4A4mWqHiIo5vbUe9K3bheP8cA=
-X-Received: by 2002:a05:690c:6f8f:b0:788:c07:2518 with SMTP id
- 00721157ae682-78929e66819mr2085127b3.31.1763055062543; Thu, 13 Nov 2025
- 09:31:02 -0800 (PST)
+	s=arc-20240116; t=1763054961; c=relaxed/simple;
+	bh=yD3B+lsSCpLxr1JjizKv8OQ2Eubc5wN3S2xnJUgLluQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbfbCWwKtmwbfMiQatpECpfpFK12Vb8DiXy+OQswk0AIQrLIYyPAxolP7sE/Z5rXZVXCt9gKnmy2wRyunsiZoSpC7CFCYXIbghkdqTvQ6An74KiCYRDmrkzjzZzmTfQbCTB+/vCdMr9Tuvtnyr6wVlRP/PjhqI8gxu9jgs54tgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP5N4lX/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC256C2BC86;
+	Thu, 13 Nov 2025 17:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763054960;
+	bh=yD3B+lsSCpLxr1JjizKv8OQ2Eubc5wN3S2xnJUgLluQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jP5N4lX/UypWUhrwR++c92hzNsnWptjOI/6tw/0Or7vHDnlsTYEy2wKDnhhqNVcfG
+	 B1T8l388/Mf36FhhyDg20tdDbbtFHl8D4KRBD/+IkHwaM29S20em9uAqNl8SDB35Z1
+	 SOPAimUIQ/nZjJSvj/oA7wjaG/MKAWmTg/ykszW1pSLTT3Hc7nG5XXoEIVElgixjtv
+	 m75xFiRcz0XhO0tvTMKSyWLY2Hb2k78JIoaaNM6+d6rURg9M1o9xr6+6Xm2fecKckK
+	 BVBl1I4qR6fk2zZLEVDD8s/+gPTdGTwfHKdCOWUVTLuRDznYCv7vbPZpwcRxCmIyZF
+	 CPxRi/4+pCgjg==
+Date: Thu, 13 Nov 2025 11:33:41 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
+	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v8 0/5] PCI: dwc: Add ECAM support with iATU
+ configuration
+Message-ID: <d5byixqmmka3wm5jo7stfmbydit5dnqpxcczgwc2zu7ge3dc4n@47ukwyvj4oqk>
+References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+ <176160465177.73268.9869510926279916233.b4-ty@kernel.org>
+ <e9306983-e2df-4235-a58b-e0b451380b52@oss.qualcomm.com>
+ <zovd3p46jmyitqyr5obsvvmxj3sa3lcaczmnv4iskhos44klhk@gk6c55ndeklr>
+ <d6a33801-d4fe-40fc-ae19-6a2ce83e5773@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Michael Zimmermann <sigmaepsilon92@gmail.com>
-Date: Thu, 13 Nov 2025 18:30:51 +0100
-X-Gm-Features: AWmQ_bm6MhuRBoEbeEn02QJrMla9RuqDmDIlbn0Yt7eze9EuiHC6qN1NFtE2XVU
-Message-ID: <CAN9vWDK=36NUdTtZhPMu7Yh15kGv+gkE35A93dU0qg01z5VkbA@mail.gmail.com>
-Subject: RTL8127AF doesn't get a link over SFP+ DAC
-To: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd@realtek.com, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6a33801-d4fe-40fc-ae19-6a2ce83e5773@oss.qualcomm.com>
 
-Hi,
+On Thu, Nov 13, 2025 at 09:27:36AM +0530, Krishna Chaitanya Chundru wrote:
+> 
+> On 11/10/2025 11:51 PM, Bjorn Andersson wrote:
+> > On Tue, Oct 28, 2025 at 11:12:23PM +0530, Krishna Chaitanya Chundru wrote:
+> > > On 10/28/2025 4:07 AM, Bjorn Andersson wrote:
+> > > > On Thu, 28 Aug 2025 13:04:21 +0530, Krishna Chaitanya Chundru wrote:
+> > > > > The current implementation requires iATU for every configuration
+> > > > > space access which increases latency & cpu utilization.
+> > > > > 
+> > > > > Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
+> > > > > which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
+> > > > > would be matched against the Base and Limit addresses) of the incoming
+> > > > > CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
+> > > > > 
+> > > > > [...]
+> > > > Applied, thanks!
+> > > > 
+> > > > [1/5] arm64: dts: qcom: sc7280: Increase config size to 256MB for ECAM feature
+> > > >         commit: 03e928442d469f7d8dafc549638730647202d9ce
+> > > Hi Bjorn,
+> > > 
+> > > Can you revert this change, this is regression due to this series due to
+> > > that we have change the logic,
+> > How is that possible? This is patch 1 in the series, by definition it
+> > doesn't have any outstanding dependencies.
+> The regression is due to the drivers changes on non qcom platforms.
+> 
 
-I have a RT8127AF card from DIEWU:
-https://24wireless.info/diewu-txa403-and-txa405 .
-The card is detected just fine:
-[125201.683763] r8169 0000:08:00.0 eth1: RTL8127A, xx:xx:xx:xx:xx:xx,
-XID 6c9, IRQ 143
-[125201.683770] r8169 0000:08:00.0 eth1: jumbo features [frames: 16362
-bytes, tx checksumming: ko]
-[125201.688543] r8169 0000:08:00.0 enp8s0: renamed from eth1
-[125201.715519] Realtek Internal NBASE-T PHY r8169-0-800:00: attached
-PHY driver (mii_bus:phy_addr=r8169-0-800:00, irq=MAC)
-[125202.277034] r8169 0000:08:00.0 enp8s0: Link is Down
+Please be specific when you're answering, this way of saying "go fish"
+isn't helpful.
 
-This is what ethtool shows:
-Settings for enp8s0:
-        Supported ports: [ TP    MII ]
-        Supported link modes:   10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-                                1000baseT/Full
-                                10000baseT/Full
-                                2500baseT/Full
-                                5000baseT/Full
-        Supported pause frame use: Symmetric Receive-only
-        Supports auto-negotiation: Yes
-        Supported FEC modes: Not reported
-        Advertised link modes:  10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-                                1000baseT/Full
-                                10000baseT/Full
-                                2500baseT/Full
-                                5000baseT/Full
-        Advertised pause frame use: Symmetric Receive-only
-        Advertised auto-negotiation: Yes
-        Advertised FEC modes: Not reported
-        Speed: Unknown!
-        Duplex: Unknown! (255)
-        Auto-negotiation: on
-        master-slave cfg: preferred slave
-        master-slave status: unknown
-        Port: Twisted Pair
-        PHYAD: 0
-        Transceiver: internal
-        MDI-X: Unknown
-        Supports Wake-on: pumbg
-        Wake-on: d
-        Link detected: no
+By investing a little bit more time and writing a single sentence to
+share what you know, you could have enlightened me and other readers of
+this email list.
 
-and `ip a`:
-10: enp8s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc
-fq_codel state DOWN group default qlen 1000
-    link/ether xx:xx:xx:xx:xx:xx brd ff:ff:ff:ff:ff:ff
-    altname enxXXXXXXXXXXXX
+Regards,
+Bjorn
 
-And that's it, the link never comes up. The 10G Mikrotik switch on the
-other side sees that the module is inserted on its side, but doesn't
-show any change when I plug in the RTL8127AF.
-
-It works in Windows 11 and it also works with the r8127 Linux driver
-downloaded from Realteks website:
-https://www.realtek.com/Download/List?cate_id=584 :
-
-[129318.976134] r8127: This product is covered by one or more of the
-following patents: US6,570,884, US6,115,776, and US6,327,625.
-[129318.976175] r8127  Copyright (C) 2025 Realtek NIC software team
-<nicfae@realtek.com>
-                 This program comes with ABSOLUTELY NO WARRANTY; for
-details, please see <http://www.gnu.org/licenses/>.
-                 This is free software, and you are welcome to
-redistribute it under certain conditions; see
-<http://www.gnu.org/licenses/>.
-[129318.988293] r8127 0000:08:00.0 enp8s0: renamed from eth1
-[129318.997092] enp8s0: 0xffffd49ec9140000, xx:xx:xx:xx:xx:xx, IRQ 137
-[129319.421629] r8127: enp8s0: link up
-
-ethtool with realteks driver shows something quite interesting:
-Settings for enp8s0:
-        Supported ports: [ TP ]
-        Supported link modes:   1000baseT/Full
-                                10000baseT/Full
-        Supported pause frame use: No
-        Supports auto-negotiation: No
-        Supported FEC modes: Not reported
-        Advertised link modes:  1000baseT/Full
-                                10000baseT/Full
-        Advertised pause frame use: No
-        Advertised auto-negotiation: No
-        Advertised FEC modes: Not reported
-        Speed: 10000Mb/s
-        Duplex: Full
-        Auto-negotiation: off
-        Port: Twisted Pair
-        PHYAD: 0
-        Transceiver: internal
-        MDI-X: on
-        Supports Wake-on: pumbg
-        Wake-on: g
-        Current message level: 0x00000033 (51)
-                               drv probe ifdown ifup
-        Link detected: yes
-
-auto-negotiation is off, even though it's enabled on my Mikrotik
-switch. "ethtool -s enp8s0 autoneg on" (or off) on the realtek driver
-succeeds but doesn't change what ethtools status shows. "ethtool -s
-enp8s0 autoneg off" on the mainline driver does fail with:
-netlink error: link settings update failed
-netlink error: Invalid argument
-
-So while I have no idea why things are not working, my best theory is
-that auto-negotiation isn't supported (properly) and the mainline
-driver doesn't support disabling it.
-
-Thanks
-Michael
+> - Krishna Chaitanya.
+> > I've reverted the change.
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > we need to update the dtsi accordingly, I will send a separate for all
+> > > controllers to enable this ECAM feature.
+> > > 
+> > > - Krishna Chaitanya.
+> > > 
+> > > 
+> > > > Best regards,
 
