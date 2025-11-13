@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-898333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EF5C54EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:38:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ECCC54ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5BDB34A9F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:37:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F19BE34A707
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67BD1552FD;
-	Thu, 13 Nov 2025 00:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E601448D5;
+	Thu, 13 Nov 2025 00:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cVLW2eG/"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nbEFtcrx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777DF72617
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215A10F2;
+	Thu, 13 Nov 2025 00:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762994243; cv=none; b=YZ1xgNkLg8M+jSX81ux1LLIAO53Whw8xwdmUi/HKzqI/o9wQQAGZI1lWw9F73auIpTmIV0US15LuVszMRi+o/Oid0OzQobkl66KX2A0cfw+ZDrIv7qBn5EyOxDVD/hlmncXrpkRsecEJOJA09Ot/V/jAeM9Uyin/KHWgvOgp6fs=
+	t=1762994276; cv=none; b=Lj2NeBIJSPFIcvDF2Pisy1B4FRSaZZCPxT1wkRDNpGCGXOZ0sxOgQHGikDK2PaAmJ4J77gYhL3VxnsuViiFLYSw/gYrkxxzC9gfUKpOcKl9MH1K0kOPPeZTS2F3sL52va4fea7Ls0FyQ8jPnrNuKXNY/1YKmhGtHwgQWQDvObqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762994243; c=relaxed/simple;
-	bh=gQAFEkuis6MxG6DQ2tXr7tvJKT50Xpw9bu5kwP7LPfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ddv6MA8TT8aXtNcZVWmVypsUelqVyGwSBhSdFXl/nNkP9NP/PDw5d7vLTGTg7rstgKNSXEKZ4yAbbwMN+r9vb67OykWSe3C2oJUG5AyDchEQLhBH6GCNW5GwQxRh58o/9QpEWFrZYSHmHx3BzBj2ai9snqQx0eudUT3qk5CulPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cVLW2eG/; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5957f617ff0so233024e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762994240; x=1763599040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gQAFEkuis6MxG6DQ2tXr7tvJKT50Xpw9bu5kwP7LPfM=;
-        b=cVLW2eG/gPr1sJMBKzZEY21OMPLNeE6ftCtoZGHFrgcHGQMGOmRzQwNKGGJstI1jGa
-         Gg6Hv5kPDIeXEeO8S4KLCDmgwMymhkrsr+tePT1TYm12oOLrpQUaMdy41Xv7IODsHaBw
-         jjAhtP4CWpRn7sqY7/yBtNDygBBUn/od2EdUKJ54dbbYnV6oJSWwo/r2ZxUTe4umFmp1
-         HuRpJvZNBLZKXi5egl/3aUzoLFntjduxNVHuLz5MAgQ7T4Zmiwz8Qe1syrNpqiYkWyJn
-         t0y2vp2sgvULVGYQ/k5JNQWy6YWdm1qWIQOeI+2bdT+QL7pGtDdMfADQPU/asLIz0jjX
-         72NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762994240; x=1763599040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gQAFEkuis6MxG6DQ2tXr7tvJKT50Xpw9bu5kwP7LPfM=;
-        b=wKETMvwpHpc4rnnG8M1t8coK1rmR9N8m7qB/2Zu8YSGz8GtxH2YsgYMxFX3ZbKIB14
-         lDM+DiuWnQ7BO3nVfgVr25l1DLtvSKK3xDDtgW+TvavvA4l2GEDA14WUTBrILGEuq5gW
-         BFQmsIBXd4Guv6kTyzQyBRaFp/l9FnQS6gWF7PT9geJ5hT2RczZv9bwVkTH5fOHzyXM0
-         63/e/DgcSNQj7js75KvIWTOf4ihl9SoyUcYOHfqaA3DrBn5E+gpAZSJu7OfV3Ikk80d0
-         QWpjz5z2qEY+BiCTl12K07hnVglOpxHTAVWL1VIl1zlhwFF99SfgqZkczr+f5NJyuaqT
-         xMHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+eZPg4RPBdEer6is4uuCjNUyXM+Yec69Z4fLsnYHwD/x12p9cAQLcONA0GyY9MNIHkLnzvLR4p4r/Z/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMgcckA/n9ca6Hwv6k5pPn2+dJWGg6JV5VLcN4EsoGo+D7p/VS
-	sd2mt1mV5dellneimgdWPQu2YJe9e/yoHPachi58CaeQumiPE4ertXy0uORW3SSAPplNbgKZOOW
-	+0AsvynJI+AbCRvkaIxVrqmbE7hXOAg/Z+Rzkr+qN
-X-Gm-Gg: ASbGncsrImPzLeaC5hZ0sQLWL4Sn8axoEYQI6/BcwBSD+2YpFWKg864vydJMQpoxmya
-	30YoleozWyp0FqrQ9yC3nxfFgf5HSreVLdtg5OlgDcRfKkeDTvSD+OkccKZkHUvoM8vUSB+3H4U
-	K5MgQXwK8EtkXF8Wz4+zxItEcYZNgiEPtzp6VNNp9EBB/WYpKfaxdmbqUNofgGFp7fVWUbhE+sw
-	Dqldbej5f8m0rWIJ+rKFBdcaHYbmmO1klVDEaedB/6EUPM+Yg3jfXObb4H+dXvXbeMoLCA=
-X-Google-Smtp-Source: AGHT+IES/CJsPbrAgyWQnLon15KjjafWzvib+JwHwpBetgA1Zmgy6sN5eKJD/4qlHX/bLU4ksRV0aZSNvBB5EL/4rWs=
-X-Received: by 2002:a05:6512:3d17:b0:595:7daf:9425 with SMTP id
- 2adb3069b0e04-5957daf9557mr931008e87.28.1762994239481; Wed, 12 Nov 2025
- 16:37:19 -0800 (PST)
+	s=arc-20240116; t=1762994276; c=relaxed/simple;
+	bh=o5L6HkhCQuXaz7cApneIxjvvM/KWOY0fJxTQQ1dj4uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Bs/+Vmohb+n64FWdD/4XDt9M7sA5A1TF2/VILIKVdhfR43c0cIVim3sazLAFmFI7C5hzrsyEY7fFZHQ8QSmxR1HLXbZi5guxsdWk1VcMoM/dN2z0qZYhll/NtwZ5uhPh4QyswCBWGYVY0oYvbSO3lNOa+m3Us1qw0AuZdhU0o/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nbEFtcrx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762994268;
+	bh=gYKE6SX1/E/5eXtWvxaLQu/zVPEMflb3H4KX6zUuHkI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nbEFtcrxEmu+qLtddbEpU5KChoXPOhswWGxS7Qr2DIucD9IBvLVFNI6yvm9zUjlhd
+	 +Yy5SoigItKtxvp4RBFnh1W4ayjdu2dmiNTG/wxgVTPQDNh0ZmAqusw9Nl9fUgZm97
+	 Shxk1eQpGBQpjVzsQOUjJH0k0yr2BSluE2iy6J4VeQkwgwL0sfqmU7vAB55Mi0R8XM
+	 TQ680BzKwETtM4HBzBX4jhnW9+CSGCRnkD+3FCDJQYBhwvScetYlq+o2CDcILSVVZ8
+	 eehWx/VVm7n0R2/7euv83mdADRaaHegOlt5tm6Nfk//QpsDPlTTKc/Z7DyQNgMBhu/
+	 xSJlQvnQzBRqA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d6Lvw1BFGz4wCB;
+	Thu, 13 Nov 2025 11:37:47 +1100 (AEDT)
+Date: Thu, 13 Nov 2025 11:37:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Oliver Upton
+ <oupton@kernel.org>, Sascha Bischoff <Sascha.Bischoff@arm.com>
+Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
+Message-ID: <20251113113746.01737ec0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112192232.442761-1-dmatlack@google.com> <aRUFGHPe+EXao10B@devgpu015.cco6.facebook.com>
-In-Reply-To: <aRUFGHPe+EXao10B@devgpu015.cco6.facebook.com>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 12 Nov 2025 16:36:51 -0800
-X-Gm-Features: AWmQ_bk8b8m7l1BLL99RYzxjgrX9eX0t8GUscVQicIffm6eZO-IaDbPjTlCoDjg
-Message-ID: <CALzav=fYCutTptee2+9ZDYChxDGFUaOytSwmf4qZhFTRSGRGNw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/18] vfio: selftests: Support for multi-device tests
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Alex Williamson <alex@shazbot.org>, 
-	Jason Gunthorpe <jgg@nvidia.com>, Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Raghavendra Rao Ananta <rananta@google.com>, Vipin Sharma <vipinsh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/hvVqSdRWTVY_o0zvXPgbd=F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/hvVqSdRWTVY_o0zvXPgbd=F
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 2:07=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote:
->
-> On Wed, Nov 12, 2025 at 07:22:14PM +0000, David Matlack wrote:
-> > This series adds support for tests that use multiple devices, and adds
-> > one new test, vfio_pci_device_init_perf_test, which measures parallel
-> > device initialization time to demonstrate the improvement from commit
-> > e908f58b6beb ("vfio/pci: Separate SR-IOV VF dev_set").
->
-> The new test runs and passes for me.
->
-> Tested-by: Alex Mastro <amastro@fb.com>
+Hi all,
 
-Thanks for testing!
+Today's linux-next merge of the kvm-arm tree got a conflict in:
+
+  arch/arm64/kvm/vgic/vgic-v3.c
+
+between commit:
+
+  da888524c393 ("KVM: arm64: vgic-v3: Trap all if no in-kernel irqchip")
+
+from Linus' tree and commit:
+
+  ca30799f7c2d ("KVM: arm64: Turn vgic-v3 errata traps into a patched-in co=
+nstant")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/kvm/vgic/vgic-v3.c
+index 2f75ef14d339,32654ea51418..000000000000
+--- a/arch/arm64/kvm/vgic/vgic-v3.c
++++ b/arch/arm64/kvm/vgic/vgic-v3.c
+@@@ -301,21 -504,9 +504,10 @@@ void vcpu_set_ich_hcr(struct kvm_vcpu *
+  		return;
+ =20
+  	/* Hide GICv3 sysreg if necessary */
+ -	if (vcpu->kvm->arch.vgic.vgic_model =3D=3D KVM_DEV_TYPE_ARM_VGIC_V2)
+ +	if (vcpu->kvm->arch.vgic.vgic_model =3D=3D KVM_DEV_TYPE_ARM_VGIC_V2 ||
+- 	    !irqchip_in_kernel(vcpu->kvm)) {
+++	    !irqchip_in_kernel(vcpu->kvm))
+  		vgic_v3->vgic_hcr |=3D (ICH_HCR_EL2_TALL0 | ICH_HCR_EL2_TALL1 |
+  				      ICH_HCR_EL2_TC);
+- 		return;
+- 	}
+-=20
+- 	if (group0_trap)
+- 		vgic_v3->vgic_hcr |=3D ICH_HCR_EL2_TALL0;
+- 	if (group1_trap)
+- 		vgic_v3->vgic_hcr |=3D ICH_HCR_EL2_TALL1;
+- 	if (common_trap)
+- 		vgic_v3->vgic_hcr |=3D ICH_HCR_EL2_TC;
+- 	if (dir_trap)
+- 		vgic_v3->vgic_hcr |=3D ICH_HCR_EL2_TDIR;
+  }
+ =20
+  int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq)
+
+--Sig_/hvVqSdRWTVY_o0zvXPgbd=F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkVKFoACgkQAVBC80lX
+0Gx6uQgAk3QpJUeOJzM1dR7BdrrDfud39M+mzd/XT6zEQEb04oEaFd6Bmzf7aIm7
+pRPL+gP7gYgryaIC7jmvuE7tFyHpqcYPKMTCkNQ/T/uQJaaL9veE5h6TR65zgBJF
+rWqRfDTSeJmCgx91XUIYSK9djE6RYsQ22Begg4sVt67VoHyddrC9haZBLPC15l4/
+hnsiluP2d8/P12aFqYahxgjQQUSGnv2RPDmbGqmJ4AXyxjmn14RYias+eMIhG6iD
+nPeG/7ouPIls2r6oQfMRhNEQ0Ei7YtuL2RyxVgqzvM0bLB/2DqlUh3fp//21i5RV
+eHmGN4J5lEjkzZun77Hv6MesFWR19g==
+=6At3
+-----END PGP SIGNATURE-----
+
+--Sig_/hvVqSdRWTVY_o0zvXPgbd=F--
 
