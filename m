@@ -1,215 +1,153 @@
-Return-Path: <linux-kernel+bounces-899229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AC1C5723C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:20:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E424C5725A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE043BD839
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:16:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 445263482B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A8C339B44;
-	Thu, 13 Nov 2025 11:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F96133B973;
+	Thu, 13 Nov 2025 11:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HMuZoRh+"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="lule7x3c"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E4433B977
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35632D5C6C;
+	Thu, 13 Nov 2025 11:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763032554; cv=none; b=TgJD3JOKcO/sa5h1dIncrmN+D45kF+cdrqGqFTWrPhwkxbFgTgEdUI+YhpKG2gZe1R+0Z8TjWU5K0wlumMDGjpgbvmMbFXxliP48I9im6gYGul6nTsGhh6T2oOiNfoldhpAP+POsEiDIWNbmqonrkrEuHLSg0HIzWLrIKVAdsg0=
+	t=1763032879; cv=none; b=Edqnq74hyEISfnQf5Eivit3z4+eAjf2amgvW+sxVTXGST7oOssCt3f0J7bhemQA9uaoxYNxxGMNCMpJo0AVFhAgEk6/ISdKPdF8F6ZRF91U+XztVgIzOgQgmnT8SMuOMHV1awvczfcq9R+I3xbTbTe/4O0dfBl7e5aNHiZsjPXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763032554; c=relaxed/simple;
-	bh=7Dty1bsVrl3mflWypqdumDcsm+eUd6kxdLgav7xBytY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmK31DHtSJFbHGxaQcBbuastSqX0lFEg3ZATk7tn4i0AZOKVxtEw6junQTeamsg9Im6t6iFZJvlBJEsTlVig0HXvJzP0pjEesyclUHKpOZqXMhgjcipmn0zcCRYMzW9HJu+bdBh6iHjBiZI4WxFCaA3wfITT4+HF09Ld92w9JVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HMuZoRh+; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b72dad1b713so99027266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:15:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1763032550; x=1763637350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c5AzzFRZPbAyw/0U2l3vo4T8Z0AKAvwU0ttCnBP9wco=;
-        b=HMuZoRh+Jngf1OkERsVdMUw/sJ5vTIDiLbUXMxOds4Lk8Kx7L10xHWE3y/QRXqHl1W
-         dIccO+egfpUCaszzY8usa+j9cCR9W6sLDgEDXroUNfNR4Kg/ZBvkBMJ8LwC8O6hWHIiN
-         bCzii8vJ0CYVxt0hiZ2F5uzT9THnf2GsNwSFTaO/20AHT1UO5JqFGDUQFELAbujAYM+v
-         bnh1tUnXXdCfe942oOh+qY4Ig4t8bYBjNXusMzIU4/lB3F+I/iI1tJmgkiMZnQnskhsa
-         hGjojOdUCoM+cK23aJqTwGnn5FWDGwHyZ7GfcMLfcMfFtSzdJqiHtJthW8GaVAgyfcNa
-         cFmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763032550; x=1763637350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c5AzzFRZPbAyw/0U2l3vo4T8Z0AKAvwU0ttCnBP9wco=;
-        b=AL9Fc9+OtVQPTzj4Z1HtsAXuY8IGkARCqhBIviCcwqT/4f6AgLzGluqN/6+X0O7/32
-         FmOfHciYjl6S+mrroY2PYnameUoncxDZETkPjUSAEXGOQKZwcziO1L1CFelDmgQJOYgq
-         dFldNNkEbcX02B07fz0iCZJdh6YhkPkBMpgw8TvjSegGPFUlj/jgJC/tVbDRnCRvaHU9
-         4ggItrPrt/mjYtCTFB/km1yIOdM9IaeAztOgFUvdt+RPf8aQR4Xgf+GDdWSaj5OaigdE
-         cIFwRpuNy8YX3RzACpqIDXv1UR2oHdw7a7RTFRg94MhGa3mnhhTk/avAlxZBxy+IApQS
-         F3mg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1SFTwFSupM/sPP4ZnmrqHm324QoQyi6EqkoU+9vH20h3H2MDK87TZHIaZW1uyrf+PUpED5bYYh5KVTig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqPQlO0vpLEWW69uzj+e6bHR8W1AEXjNizBT/iehIiWzhCieRF
-	C0ojGyOT9VYaYp8ZLfpFuXWK0TmMfJcwfNBSHORmkdDwZmdu9dVxnj0NiYQuzKa4ERI=
-X-Gm-Gg: ASbGncurHgRDspH6NKJlxhWJ7HO4Upjf7x1xybfGRUE+btOI82V60/wQaU/D6KVZ9Sn
-	AFxyG1hNTeTqM3Ql6/WtXolUCnq/69cQbkSisqZtP/5WikNhw1X3Lc5tpx70Ks+kfFETJrXsQtO
-	DK0VOzZpO1rA2FFlxSgorcH8sscRxnj02my+BupR87RhLmBXqG/icYo6xp4iI0tW5jWHfzkdHB0
-	iRPLl7vEhV1Wjd5txR55c2YL2WuRIUc2Z24M8pqIkeouzjnQ9hSe+kUo3sOF/y14Jb/MkfjgdOr
-	JdD/6/iMPOc+YyfVTxVpTc1fk5bHsHH1lBGVfR81fhs2KLv9sS6oF3HnjyPaQWG+jYsjutdtEXx
-	ajjDHibNDvN5zwPFepHCmlsRvj/gVcHRuRhq/lvD6IAMHA2GNuYEBqXdo7NNSi2tXGHmpHEcU8E
-	S5v1Q=
-X-Google-Smtp-Source: AGHT+IExcpEGzB16h+OORPfiSc3U/Q+WA4IUJ/PrcE+hSGqVvU7uaWsum+i+r5qrKs9tVBN7TJ03IQ==
-X-Received: by 2002:a17:907:3f11:b0:b73:1baa:6424 with SMTP id a640c23a62f3a-b7331af1e06mr647068066b.55.1763032550071;
-        Thu, 13 Nov 2025 03:15:50 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fd809fasm142355066b.45.2025.11.13.03.15.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 03:15:49 -0800 (PST)
-Date: Thu, 13 Nov 2025 12:15:47 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sherry Sun <sherry.sun@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Derek Barbosa <debarbos@redhat.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH printk v1 1/1] printk: Avoid scheduling irq_work on
- suspend
-Message-ID: <aRW9439ee0NdXuyo@pathway.suse.cz>
-References: <20251111144328.887159-1-john.ogness@linutronix.de>
- <20251111144328.887159-2-john.ogness@linutronix.de>
- <aRNk8vLuvfOOlAjV@pathway>
- <87ldkb9rnl.fsf@jogness.linutronix.de>
- <aRWqei9jA8gcM-sD@pathway.suse.cz>
- <877bvukzs1.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1763032879; c=relaxed/simple;
+	bh=8CHqPv7wXWbkwcfY8JwF/tXEnpUTJdKgfHsxA2V8yvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+5oUR6inrcJsXL6TizNMgtPkXHy3etLyXWk8HRfi0f2whiw7T5vN23GhIEswSAU1kPA5F7YrdFX4l4no3i6JR0xSdW5eOwhWwOZtJaWg9Fk2bNQStb7eZ5ctYvHxyBKaUnpa09bxJdwQA06eqHRFoMM9DKNRg6jigv9D71Rj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=lule7x3c; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=byDR1fe+RkZbydORahZWwZfPNqQzlEtpY91gu23avaI=; b=lule7x3colzf8Odh4dD0x9UGHv
+	z97LhXsxKEAAzbAH2RETlW3PakkbDniWny6bAs5HkJKq6Lw7V5pSxp+3Yen4Q4J3sSmtVCwoGxwpm
+	B5xX4ZealQMuNNDh85q3vXNkOB1UeZZkhlWSPjXHGBAV9XQxT0CyrFFKrHHTAGdnk9SLvxCWObbNK
+	M6cAuskheyMtRKCmaFL6ORtckmVPnC1x/vKRzmu1Z8J6qzcp6x+kB0aTMhTyQ2kKXF1qGFrpB152/
+	sZLpLLbUXFP3lT1EhHHNW1oFWhjhVkxrHKai5t1y3ZKkgu+0ppkyxepW/OXOieID5d8oHpgO4+tVa
+	Y+lfAm1w==;
+Received: from [122.175.9.182] (port=53373 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1vJVO7-0000000Geg5-0y02;
+	Thu, 13 Nov 2025 06:21:15 -0500
+From: Parvathi Pudi <parvathi@couthit.com>
+To: nm@ti.com,
+	vigneshr@ti.com,
+	afd@ti.com,
+	tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	richardcochran@gmail.com
+Cc: andrew@lunn.ch,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	danishanwar@ti.com,
+	pratheesh@ti.com,
+	j-rameshbabu@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	parvathi@couthit.com
+Subject: [PATCH v3 0/2] Add support for ICSSM Ethernet on AM57x, AM437x, and AM335x
+Date: Thu, 13 Nov 2025 16:46:01 +0530
+Message-ID: <20251113112049.676806-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877bvukzs1.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu 2025-11-13 11:17:42, John Ogness wrote:
-> On 2025-11-13, Petr Mladek <pmladek@suse.com> wrote:
-> >> I would prefer to keep all the printk_get_console_flush_type() changes
-> >> since it returns proper available flush type information. If you would
-> >> like to _additionally_ short-circuit __wake_up_klogd() and
-> >> nbcon_kthreads_wake() in order to avoid all possible irq_work queueing,
-> >> I would be OK with that.
-> >
-> > Combining both approaches might be a bit messy. Some code paths might
-> > work correctly because of the explicit check and some just by chance.
-> >
-> > But I got an idea. We could add a warning into __wake_up_klogd()
-> > and nbcon_kthreads_wake() to report when they are called unexpectedly.
-> >
-> > And we should also prevent calling it from lib/nmi_backtrace.c.
-> >
-> > I played with it and came up with the following changes on
-> > top of this patch:
-> >
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index 334b4edff08c..e9290c418d12 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -4637,6 +4644,21 @@ void defer_console_output(void)
-> >  	__wake_up_klogd(PRINTK_PENDING_WAKEUP | PRINTK_PENDING_OUTPUT);
-> >  }
-> >  
-> > +void printk_try_flush(void)
-> > +{
-> > +	struct console_flush_type ft;
-> > +
-> > +	printk_get_console_flush_type(&ft);
-> > +	if (ft.nbcon_atomic)
-> > +		nbcon_atomic_flush_pending();
-> 
-> For completeness, we should probably also have here:
-> 
-> 	if (ft.nbcon_offload)
-> 		nbcon_kthreads_wake();
+Hi,
 
-Makes sense. I think that did not add it because I got scared by
-the _wake suffix. I forgot that it just queued the irq_work.
+This series adds support for ICSSM Ethernet on Texas Instruments AM57x,
+AM437x and AM335x platforms.
 
+The AM57x and AM437x IDKs support two PRU-ICSS instances, each consisting
+of two PRU cores, with each PRU-ICSS instance capable of handling two
+Ethernet ports. For the AM57x platforms, the PRU-ICSS2 node has been added
+to the am57xx-idk-common.dtsi, while for the AM437x platform, the PRU-ICSS1
+node has been added to the am437x-idk-evm.dts.
 
-> > +	if (ft.legacy_direct) {
-> > +		if (console_trylock())
-> > +			console_unlock();
-> > +	}
-> > +	if (ft.legacy_offload)
-> > +		defer_console_output();
-> > +}
-> > +
-> >  void printk_trigger_flush(void)
-> >  {
-> >  	defer_console_output();
-> > diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
-> > index 33c154264bfe..632bbc28cb79 100644
-> > --- a/lib/nmi_backtrace.c
-> > +++ b/lib/nmi_backtrace.c
-> > @@ -78,10 +78,10 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
-> >  	nmi_backtrace_stall_check(to_cpumask(backtrace_mask));
-> >  
-> >  	/*
-> > -	 * Force flush any remote buffers that might be stuck in IRQ context
-> > +	 * Try flushing messages added CPUs which might be stuck in IRQ context
-> >  	 * and therefore could not run their irq_work.
-> >  	 */
-> > -	printk_trigger_flush();
-> > +	printk_try_flush();
-> >  
-> >  	clear_bit_unlock(0, &backtrace_flag);
-> >  	put_cpu();
-> >
-> > How does it look, please?
-> 
-> I like this. But I think the printk_try_flush() implementation should
-> simply replace the implementation of printk_trigger_flush().
+The AM335x ICE features a single PRU-ICSS instance. A new device tree overlay
+source file, am335x-icev2-prueth-overlay.dtso, has been introduced to define the
+PRU-ICSS node for the AM335x platform.
 
-Make sense.
+This is v3 of the patch series [v1]. It addresses comments made on [v2].
+This series is based on the latest next-20251113 linux-next.
 
-> For the arch/powerpc/kernel/watchdog.c:watchdog_timer_interrupt() and
-> lib/nmi_backtrace.c:nmi_trigger_cpumask_backtrace() sites I think it is
-> appropriate.
+Changes from v2 to v3 :
 
-Yup.
+*) Addressed Andrew Davis's comment by placing PRUETH nodes in a new overlay file
+am335x-icev2-prueth-overlay.dtso.
+*) Rebased the series on latest linux-next.
 
-> For the kernel/printk/nbcon.c:nbcon_device_release() site I think the
-> call should be changed to defer_console_output():
-> 
-> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> index 558ef31779760..73f315fd97a3e 100644
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -1849,7 +1849,7 @@ void nbcon_device_release(struct console *con)
->  			if (console_trylock())
->  				console_unlock();
->  		} else if (ft.legacy_offload) {
-> -			printk_trigger_flush();
-> +			defer_console_output();
->  		}
->  	}
->  	console_srcu_read_unlock(cookie);
+Changes from v1 to v2 :
 
-Looks good.
+*) Addressed Andrew Lunn's comment on patch 1 of the series.
+*) Addressed MD Danish Anwar comment on patch 1 of the series.
+*) Rebased the series on latest linux-next.
 
-> Can I fold all that into a new patch?
+[v1] https://lore.kernel.org/all/20251013125401.1435486-1-parvathi@couthit.com/
+[v2] https://lore.kernel.org/all/20251103124820.1679167-1-parvathi@couthit.com/
 
-Go ahead.
+Thanks and Regards,
+Parvathi.
 
-Best Regards,
-Petr
+Roger Quadros (2):
+  arm: dts: ti: Adds device tree nodes for PRU Cores, IEP and eCAP
+    modules of PRU-ICSS2 Instance.
+  arm: dts: ti: Adds support for AM335x and AM437x
+
+ arch/arm/boot/dts/ti/omap/Makefile            |   5 +
+ .../ti/omap/am335x-icev2-prueth-overlay.dtso  | 190 ++++++++++++++++++
+ arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi      |  11 +
+ arch/arm/boot/dts/ti/omap/am4372.dtsi         |  11 +
+ arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts  | 137 ++++++++++++-
+ arch/arm/boot/dts/ti/omap/am57-pruss.dtsi     |  11 +
+ arch/arm/boot/dts/ti/omap/am571x-idk.dts      |   8 +-
+ arch/arm/boot/dts/ti/omap/am572x-idk.dts      |  10 +-
+ arch/arm/boot/dts/ti/omap/am574x-idk.dts      |  10 +-
+ .../boot/dts/ti/omap/am57xx-idk-common.dtsi   |  61 ++++++
+ 10 files changed, 444 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm/boot/dts/ti/omap/am335x-icev2-prueth-overlay.dtso
+
+-- 
+2.43.0
+
 
