@@ -1,164 +1,193 @@
-Return-Path: <linux-kernel+bounces-898951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67009C56695
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:58:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863F6C5669D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 09:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 754B634BD04
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:51:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 23AF934F38E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF76331220;
-	Thu, 13 Nov 2025 08:51:18 +0000 (UTC)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE47D330D3D;
+	Thu, 13 Nov 2025 08:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ALXDqWi4"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA3614AD20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA252D3EF2
 	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763023877; cv=none; b=VQxpNy5Tv40Jt2tQMXxh3BOibmSk7PQ1gPDBQZSL9Jl0CZSFYW8nwFMpKtdjSS4mKt41dX9mh7rBrMPdmwsHjZRq4lRK3PFWwgwtgrySNI1kR8VRrfUOdyIQ7mGM2vgZN2PNxlZgdBpN0iwcZFMOBfVs5NfslCYXTzMaQqw4xIk=
+	t=1763023878; cv=none; b=H6raaha2eDndgkjzztpIrWjyFG9Il54GJ+c9ZdXjyG2az/Tcg///8pRk/NRgM3jhex+CKc6gGOM3MDQ/2jF1FXlLyFReaVxqO80LgFYRaMCKnXzgKR0CJvWKmOOI5E/WcJj3ybF6iao08J9DjP/idkaIOEsdU1ML48CphBOTeWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763023877; c=relaxed/simple;
-	bh=Y3cJxBYr0FtmmjeUHDLAuwvYPIolcl+a0e64J8Sa72s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ksUVxSmrVeNGK48JEhxXIYV1JkXc77dmycVYaTRRYDSyRCjLExifjs5kqcBJNgxVBYBdB4AqrzJG/axmQbJje/48Ra3nhzDRFZuTbEtroa+KyTSKdW58CfzyoBYyyoga6OOK/VpAKTtqfnACApr4xr+ibwmUXqtBXJ/WN6YHd0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5d967b67003so420393137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:51:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763023874; x=1763628674;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6jppCAljRnFmNoD8IBybx1rRIy6Hth1Yqeh1nYPEFHA=;
-        b=XUuKYkkFx0vFbl8YZNWQ43KrwSofLeGc9yc59UmRQR4WN3xo0cA1FbBhTROtgcY0Gj
-         f+KyZFN8frPAy5UWUXvC3lCyZMT9bhiWQBA3xTOFzrphrHjlhoaCAT/0F+OtBd+mse/l
-         4aHQAPk6akajfN73dlUHvhAGG6nOUlMErF94EWECDHFEUdA60jZZt576jiibmTJQJmny
-         0plPpPF3wbcm4gyTEuiI+Q75Avl3YgaL+ipFVK6XBACKeDkmLVXNaeBYBXaChcAv11Nd
-         jSGUzs3IRoladJC70zcxxdtUg7kknOLNKlqvP3oo76eBvpfNHl+e+kIL3Fejh0b+wG1y
-         l+Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKOFZL22D4fOn2SA32NjYyBY/NkUUtW51eetOmZcSHS1tHsd5i+dwyMRHMuFtbHqVy1ykloolAnPQJ2og=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRESNbxb5Svh+F5mz/uthbwzGUwyOg5AsExWqdnhy9vszUj/Xm
-	na2pvzrWbeCYZD8k3Ts6Eo1FaJsixL/fA8mZT9XFlZMXq8qAe10NCgKf9JgYe/f9/fE=
-X-Gm-Gg: ASbGncuYIStSAwDbkU+txisKyuLGqFEu7lzdAm0WUniw3Voo74nJeKyNPif/CS3KBy1
-	zVIWEJH11TeD+A+8xNnVsEkV5LonhId6T6EK/ajizWk8hZ59B9atuDQ6UOpEn0DSNrTV4GD0r8E
-	BN0yxOdIqmCpfk4m2lf4Ae7wj9UXuIFMbs04n6LJAZWBMAXvEEnyrwTXHjD6G0Q2ajb36lJYD4n
-	ohFi02uoSoO2wGgb7pAd38fPzkkqO2anUkIqWl/UsbXRXLfmeYqydjmGZpLghDO/jCHHcoWobVr
-	3gKSa62IP89ROQm1SujLfRXJ1gbAJ7SfVju42Fi4ogxQEgEcnKnMYe/xCOARsvNuI2U2qPVdfUP
-	TUyKvqcLUAj7J8tvV3xLb2ZpU4wCRVXsDZh21uPdn/ywG1Q4fKbpV4kX09RK1IzLxmqaj8UuxmU
-	4mLiSUjp9sBxrbAcRZVyfH9Cz/wpUTsVAtqYAhpTDhMg==
-X-Google-Smtp-Source: AGHT+IF0Yo8X6GPzwisSVdGVupucH2Ve52NquMhMi/jYdVTeq1rQ7DM3paMKLgCTd8VaH+a12s9rxg==
-X-Received: by 2002:a05:6102:8384:10b0:5de:e881:1a8d with SMTP id ada2fe7eead31-5dee881230cmr1300693137.45.1763023873937;
-        Thu, 13 Nov 2025 00:51:13 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f46319dsm490470e0c.17.2025.11.13.00.51.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 00:51:13 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-559748bcf99so464150e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:51:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVXdLjOe8aENrKiYS7WE57rpt+wztZQdboFZROuGc1HObFg5Slctk1nV737+Itiy9mqNox7n7W1PfRHfrM=@vger.kernel.org
-X-Received: by 2002:a05:6102:2b92:b0:5df:b1f4:77d9 with SMTP id
- ada2fe7eead31-5dfb1f4937fmr1427327137.17.1763023873293; Thu, 13 Nov 2025
- 00:51:13 -0800 (PST)
+	s=arc-20240116; t=1763023878; c=relaxed/simple;
+	bh=gErgExs0giELNyDUhov4fCt/tgP4xuvM5MPlSNyKCQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BkIjiQ2qdtR4zM3FTXUjWiXtp+DIZawLKmiOV+eB7p+7bO9x3L+FEjI05GfSvJXvMG3YFObX4ynAlAesHTs2ApCVkWR1s3gegf6FvVYG7Cr58nOc1Pwe1HiLEXXctIq3G98Ze43jCHkHR0kmvV7/YtN8hRzu0le2KMvC8+/UsjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ALXDqWi4; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 13 Nov 2025 10:51:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763023873; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type; bh=4Cu0d6W6TNdyyOOYee94EXw4t7os5fCG6nMUY/+KWMU=;
+	b=ALXDqWi4fMqjrdjYjYsvwPp+xOCvKCXNir1cgSmEAmSUfH5pTQmzSYnqU7yox5q+lwSQPl
+	ToJXsn5lJF7X+Izzp4pI68MjKOu3jZbrXxFelDM+4hQ0J6kkEhzprhSM9tmDgUo3YfnKic
+	F8kilmrxA6A4UQMpa2ooICj+KUZJLGQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Matti Vaittinen <matti.vaittinen@linux.dev>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v4 00/16] Support ROHM BD72720 PMIC
+Message-ID: <cover.1763022807.git.mazziesaccount@gmail.com>
+Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113082551.99595-1-biju.das.jz@bp.renesas.com> <20251113082551.99595-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20251113082551.99595-2-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Nov 2025 09:51:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUdiczsrB8H57VjPbcaWWS22HmUvc_iU3rs84qHAsfB6A@mail.gmail.com>
-X-Gm-Features: AWmQ_blLiZfPk5wgCv0WpvOv1cvXZLyFXHVM_u5r95hEUYF3wWO-Xhplpf5nrtE
-Message-ID: <CAMuHMdUdiczsrB8H57VjPbcaWWS22HmUvc_iU3rs84qHAsfB6A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ASoC: renesas: rz-ssi: Fix channel swap issue in
- full duplex mode
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, stable@kernel.org, 
-	Tony Tang <tony.tang.ks@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dKFZS09m7tQZCgSp"
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hi Biju,
 
-On Thu, 13 Nov 2025 at 09:25, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> The full duplex audio starts with half duplex mode and then switch to
-> full duplex mode (another FIFO reset) when both playback/capture
-> streams available leading to random audio left/right channel swap
-> issue. Fix this channel swap issue by detecting the full duplex
-> condition by populating struct dup variable in startup() callback
-> and synchronize starting both the play and capture at the same time
-> in rz_ssi_start().
->
-> Cc: stable@kernel.org
-> Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
-> Co-developed-by: Tony Tang <tony.tang.ks@renesas.com>
-> Signed-off-by: Tony Tang <tony.tang.ks@renesas.com>
-> Reviewed-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+--dKFZS09m7tQZCgSp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+The ROHM BD72720 is a new power management IC for portable, battery
+powered devices. It integrates 10 BUCKs and 11 LDOs, RTC, charger, LEDs,
+GPIOs and a clock gate. To me the BD72720 seems like a successor to the
+BD71828 and BD71815 PMICs.
 
-> --- a/sound/soc/renesas/rz-ssi.c
-> +++ b/sound/soc/renesas/rz-ssi.c
-> @@ -374,12 +379,18 @@ static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
->                               SSISR_RUIRQ), 0);
->
->         strm->running = 1;
-> -       if (is_full_duplex)
-> -               ssicr |= SSICR_TEN | SSICR_REN;
-> -       else
-> +       if (is_full_duplex) {
-> +               if (ssi->dup.one_stream_triggered) {
-> +                       ssicr |= SSICR_TEN | SSICR_REN;
-> +                       rz_ssi_reg_writel(ssi, SSICR, ssicr);
-> +                       ssi->dup.one_stream_triggered = false;
-> +               } else {
-> +                       ssi->dup.one_stream_triggered = true;
-> +               }
-> +       } else {
->                 ssicr |= is_play ? SSICR_TEN : SSICR_REN;
-> -
-> -       rz_ssi_reg_writel(ssi, SSICR, ssicr);
-> +               rz_ssi_reg_writel(ssi, SSICR, ssicr);
-> +       }
+This series depends on
+5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
+which is in power-supply tree, for-next. Thus, the series is based on
+it.
 
-You can reduce indentation by restructuring the tests:
+The testing of v4 suffered some hardware-issues after I accidentally
+enabled charging while the PMIC's battery pin was connected to the I/O
+domain. Some heat was generated, not terribly lot smoke though...
 
-    if (!is_full_duplex) {
-            ...
-    } else if (ssi->dup.one_stream_triggered) {
-            ...
-    } else {
-            ...
-   }
+After the incident I've had occasional I2C failures. I, however, suspect
+the root cause is HW damage in I/O lines since changes in this revision
+have been made to dt-bindings. It's still fair to note that though, as
+my testing was impacted.
 
->
->         return 0;
->  }
+Revision history:
+  v3 =3D> v4:
+  - dt-binding fixes to the BD72720 MFD example and regulator bindings
+  More accurate changelog in individual patches
 
-Gr{oetje,eeting}s,
+  v2 =3D> v3:
+  - rebased to power-supply/for-next as dependencies are merged to there
+  - plenty of dt-binding changes as suggested by reviewers
+  - add new patch to better document existing 'trickle-charging' property
+  More accurate changelog in individual patches
 
-                        Geert
+  RFCv1 =3D> v2:
+  - Drop RFC status
+  - Use stacked regmaps to hide secondary map from the sub-drivers
+  - Quite a few styling fixes and improvements as suggested by
+    reviewers. More accurate changelog in individual patches.
+  - Link to v1:
+    https://lore.kernel.org/all/cover.1759824376.git.mazziesaccount@gmail.c=
+om/
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+---
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Matti Vaittinen (16):
+  dt-bindings: regulator: ROHM BD72720
+  dt-bindings: battery: Clarify trickle-charge
+  dt-bindings: battery: Add trickle-charge upper limit
+  dt-bindings: power: supply: BD72720 managed battery
+  dt-bindings: mfd: ROHM BD72720
+  dt-bindings: leds: bd72720: Add BD72720
+  mfd: rohm-bd71828: Use regmap_reg_range()
+  mfd: bd71828: Support ROHM BD72720
+  regulator: bd71828: rename IC specific entities
+  regulator: bd71828: Support ROHM BD72720
+  gpio: Support ROHM BD72720 gpios
+  clk: clk-bd718x7: Support BD72720 clk gate
+  rtc: bd70528: Support BD72720 rtc
+  power: supply: bd71828: Support wider register addresses
+  power: supply: bd71828-power: Support ROHM BD72720
+  MAINTAINERS: Add ROHM BD72720 PMIC
+
+ .../bindings/leds/rohm,bd71828-leds.yaml      |    7 +-
+ .../bindings/mfd/rohm,bd72720-pmic.yaml       |  338 ++++++
+ .../bindings/power/supply/battery.yaml        |   11 +-
+ .../power/supply/rohm,vdr-battery.yaml        |   80 ++
+ .../regulator/rohm,bd72720-regulator.yaml     |  148 +++
+ MAINTAINERS                                   |    2 +
+ drivers/clk/Kconfig                           |    4 +-
+ drivers/clk/clk-bd718x7.c                     |   10 +-
+ drivers/gpio/Kconfig                          |    9 +
+ drivers/gpio/Makefile                         |    1 +
+ drivers/gpio/gpio-bd72720.c                   |  281 +++++
+ drivers/mfd/Kconfig                           |   18 +-
+ drivers/mfd/rohm-bd71828.c                    |  546 ++++++++-
+ drivers/power/supply/bd71828-power.c          |  160 ++-
+ drivers/regulator/Kconfig                     |    8 +-
+ drivers/regulator/bd71828-regulator.c         | 1025 ++++++++++++++++-
+ drivers/rtc/Kconfig                           |    3 +-
+ drivers/rtc/rtc-bd70528.c                     |   21 +-
+ include/linux/mfd/rohm-bd72720.h              |  634 ++++++++++
+ include/linux/mfd/rohm-generic.h              |    1 +
+ 20 files changed, 3177 insertions(+), 130 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic=
+=2Eyaml
+ create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,vdr=
+-battery.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7272=
+0-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd72720.c
+ create mode 100644 include/linux/mfd/rohm-bd72720.h
+
+
+base-commit: 8e8856396b54bea5c00a7ae88d87c6254aef2d94
+--=20
+2.51.1
+
+
+--dKFZS09m7tQZCgSp
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkVm/kACgkQeFA3/03a
+ocX7IwgAzz6P/Y+KNbJ7ZjWahFcHUI1wgYDFcf/SlBI/HhU9hi+MX66swIV7RDkm
+VU8AUpREZDAa8F+YPBoDb+SWRVVkwN9NzP4rLsWiBL66HaHFtabSm0vRglj6AEY3
+71wtOXR0faeX2crZd8J2ID861dHix3A2mxomBmoAL6kF1E8arv7rIhyx3RonJ1dH
+rIT/DaJ7f/O7zJOHm9/YKTk4sN6paGFqGOIsj4qvLq87E/+70MZ02RsfSLWUDEIM
+4ITyfhALAxsa9Rq0Qw5XFB5jQzpQw7SCrJ+ms8Dkx2TX9H94UXj7Tj7pW6jTOa+L
+6GPekxZMEliDsXSVFdBkg/d3zK6C9Q==
+=03Sq
+-----END PGP SIGNATURE-----
+
+--dKFZS09m7tQZCgSp--
 
