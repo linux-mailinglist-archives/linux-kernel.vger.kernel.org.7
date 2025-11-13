@@ -1,226 +1,162 @@
-Return-Path: <linux-kernel+bounces-899339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EC5C57763
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:41:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C96C57799
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D146B3B9BE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A474F420CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B7434FF55;
-	Thu, 13 Nov 2025 12:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2021934EEF2;
+	Thu, 13 Nov 2025 12:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ES56M6pI";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BWq5IwsI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k70PRfsx"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626B34D92E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63334DCEC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037496; cv=none; b=Rcx3Ws3xaIITuNd59lI2oEuaUkOazK6E1GgsygXr9MrMGpskE942+BZ9jNoNT2dmxXpkuwJo28VeFLtEgN1Gc0kNFDxyl8d1FaUv2W2Lb5GJMA+RQNHEKgMjBVbElU4zMY3tn82FhtmGDvx4eSjPNVYOD/6Y8o89wk+ehw8LGzQ=
+	t=1763037604; cv=none; b=tk3xKU0sdq75G6d4YbBGEjwe1rbVe81QiYEsFqPdFT15BntG/DvQ1wprYJVIGJwLTQzeApj1JFcBMRKejMeQd0yfc4xdnX3Q7QTvjH44R580xuokBxuUQypIQFV6wJM6gnxI4Gk9oP15vnFI9PVNvh5DpOYoh+QE9NlwXgYF9UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037496; c=relaxed/simple;
-	bh=9elVzQ7mj77HKCWZYVJOcXXu5o8wH0/C9oI2JgD/UFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WN2NrNmsS/ZoJg+cKeHLFYgyE/4ShRi9qvGxaTI4AM86YjT1iJ6JpzA1uwrcbXD4FTK61PoU0XsOV/LyyxXJA8LQcMH0TsRVu/cof299Odsz1alO/qiKG6QJszoeDOadMWUpGOT7VGDbLApDCSWvUN6yU8eYHb+U3NZ5keg8bL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ES56M6pI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BWq5IwsI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AD65hfq3563304
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=; b=ES56M6pIRZfroTGw
-	5C3QBjap7rARk/2HKLQQaT2LMjM/5G9thrQy8MUfGqtwRE0DQ/ai2LlLYkl/sKAA
-	pvXdxjG6orAJntwfcRT7HjQSFKgybU8AxEcziNtXfZtwv5FdS2lmbVHng2DjSeaZ
-	Q+PxXLbbmewPEkGJOAwBdu+oxRv0ucBFMOxK7Vxtx/B5k1PGQiwdEDnpYmmsDh15
-	roSmjaGVHM1+GjiotwWdZ8NJZTXTVO1T/jSL87texxLL7pYFtcbVumPtZtatI+fc
-	OoT1x7mOzjUHPgEqdHx2h1Nvm4xH4eNO8eXEAtccOn39mmoUZmWdI0LdqemXYuob
-	ukPj0g==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ad9rvh4tu-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:38:12 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297df5c10ffso2891885ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:38:12 -0800 (PST)
+	s=arc-20240116; t=1763037604; c=relaxed/simple;
+	bh=+kTwDuwG6rspdkZ99dNoC1BLBNHio/t4Ku94BnnhqRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JbxP9o9z3zZx2T2hvnak57QbjMe2mPoFHJpUsb27gHIUfUkbw5sUrbvaxDTvK+j+1cYDnq3to/RsftpBs8OJ4E+5Pmbdmww5CEQzy67jIPG16SpgHk0YZyTu6dVSGYwLGXyHGGeoC+CkvJ46hXrpe0fn4qq1raYSXjzaEQy+vCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k70PRfsx; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59428d2d975so823352e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:40:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763037492; x=1763642292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=;
-        b=BWq5IwsIZ6uqxBRxynlu6HEPkVJFlrs0VFW6yskvQhw3np8gAJQtJzWzOOpQ8lL4JM
-         CQdUo1/f1iL6IIDhsCvKOuhLNp7L+AdhJaea2w0MiKeWs2/OMASxjBmMTnNiT7o/GLAh
-         WfOrUdIitAaXfnfkSytAHj7J2WCIdggQnYDafxwu+E05tFN3hnuPCp0hjoqwFm6xMDto
-         Y0cNt4eFPoPPuNf6LrGHhgQ6R/vtQH3zYppSOiIWZUacqbW6iTA4bIFVWiu8Z0dyIEMF
-         K+1CDY9IPZy7YLj4CFZwnoJn+xk0biPf1OaQaAXvXQ0YT+raFziGVh+ntrDdrHJkbvfP
-         qSCw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763037600; x=1763642400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUOrtPsGub1HhpXyzrUpFchIESa38qs85WIyjbHg4K8=;
+        b=k70PRfsxSapODP2hSfOJ/F/sCO3uVA5pmXnaBQcvEkzOkrmmaBgIMLdKvCB+GjKFhg
+         DHsWqidK96RQgK80hLFLKn8nbDnEnRAr7avhDtWujfGOLfFdfCNodLgos8wYgp+7v1+p
+         Aiu/OK5XSqJZyEwCA4xYQ1XazUzGGHwajHC/6EQ1w0E0KzdqLFPSTxZUJogI+93I0xOP
+         P4ZugIH4/7WVZZuklJyhwmIbYkYJ+gpGNSmwfIwbcdqiCaPC4E3PhjqkMPgWMWM4v40q
+         uS93wPY0UOD90sqXNt/OXYWk3xKuvblwxguwJNUzpCwYTbn7cryMGcJmhsGCo+4WPMeO
+         sHeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763037492; x=1763642292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8q73xJKrrwuofdSMpRsZlhIm0BkjbrHEOxLRKfjxylk=;
-        b=gtSwkGvdty1RoyFexjGDeBnZMJoOqCc694rYlLIfk+JROGvBKmjvOtjubFAfvp9LC+
-         0eJd+ge4C/RduaECETb0TRT9a4valderYIrPt1RW7D+UFN9I5dRpbISjyIYtZJk24/9g
-         +JuWUEPlE4RaVoK+1e+dEDVLwGdVk32HgxwglWBc5rmEDP3KRmep0fbktFWbC+y0gMYx
-         txKHErvQhqakw+Ff7x9+2hJ/arMwtXJ4/n+fug9R/KxEwrLurezDmQVgFzpcKY6/2rHX
-         ljkOaghlx+5SobzjkcgVbhEzxK+xLzZDJ8ddpQ/iTs1VKgYIAnP4fmGDZoHXdy31rvph
-         HCSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQloP6pcD9UqybcRe9LegdBD67FXI+c6Z7bF1fk2I/uLYjq5+Oew9QS2xOGTsiiiiZPuKwnV46kdsxXD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6SZ3q67OY9t7EDLVUl5+abwOIbnhpM7lpl/MGTMKK26FDdMcd
-	VKQUfuWbny8DyUvs0VtXd1/d2X4bw5PPix5cIbu3zZV8Pq7KOpvFPu7VWis1qG3kXsDM43Vf0fg
-	MZmpqsc2VC3rLyO7b2p3nOVq+pERR+DsD4v2Cc+lW3c9jGKpkOl58IAaaZ6txzYJpTm8=
-X-Gm-Gg: ASbGncuFzQew7OxojXh5G2o3auM+U/CVL22P4AILgJeWe8PFSdmvAe3qCCQhIwK80fr
-	Goi/GnnA/hPOTN5yMASORxgM7Ke9evCNPI7PoSd4N87xyU0aMLmtTxWOx0OMMkiNbxOzhU42Al8
-	FwNHTHtir+mUs/jCcIJI2mCn7lQVCs9s+1Zlf0lF9/V2Cc1RROYZXvwMUsg5t2kZp8MPVZWH5AZ
-	gl26zr8IZF7ZAtPyYw6PkkksFpRBy5S/tDLVF1vdAHrXGdNjOIFrmF/Aw3BXhfSWe4SXj4Fv0TL
-	GT1iXov8IiDE909q1YrItUusPVRBDqWLEe4igzwlrwXyyxFbPxVpfZNyiXBZTkO03cskdXKc5R3
-	MHFjxzjXNy+C0bMCI3fu6dQ==
-X-Received: by 2002:a17:902:da90:b0:295:2cab:dbc2 with SMTP id d9443c01a7336-2984edd4be8mr48491895ad.6.1763037492095;
-        Thu, 13 Nov 2025 04:38:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGmiRvv1bAO43hwnywK6aLTI273kvGCPDpDB6tE28lZlIwLwScGnHFybsark2D2NJEdA5iRFQ==
-X-Received: by 2002:a17:902:da90:b0:295:2cab:dbc2 with SMTP id d9443c01a7336-2984edd4be8mr48491645ad.6.1763037491596;
-        Thu, 13 Nov 2025 04:38:11 -0800 (PST)
-Received: from [10.253.73.240] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c245f21sm24521815ad.35.2025.11.13.04.38.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 04:38:11 -0800 (PST)
-Message-ID: <5a8d75a3-b20e-4de4-b15d-a56af503324d@oss.qualcomm.com>
-Date: Thu, 13 Nov 2025 20:38:04 +0800
+        d=1e100.net; s=20230601; t=1763037600; x=1763642400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AUOrtPsGub1HhpXyzrUpFchIESa38qs85WIyjbHg4K8=;
+        b=YnRyEIVnAYFZkjTINfCIvTyNwCec6Syq2t0+hE2C4ySZKzIZuinDXu38kKl43tpkQt
+         cm2zkiWs9MS8z7mBt83ZOhHduVXVcJ9qqj1bX40naplYzkgGUfMq44ZKWrzv2zCz+NVL
+         8hEMGUVK3+JLqTMPWRP853RUs8PgBXvU3gjwfb0KEZqrne9B8FD3UFgnxcDrvVSdBWW4
+         7cFQmeFxz21KEDOFA1AgubyxZ3nhSo0BfixCL1tnzfLG1ZQ1F2L/9i72MkcSeiiE3UC7
+         /ohI2AbiyQgXqF9aFOT3JUJbRZSvT4KIgkcrleDiqbM0YIDlxDz+5n3jaxYkHn65KoAc
+         RAzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNoNQoEtcY89odC1c8/ViiOM6uFNuTsAGwzHnlWIQ4MIn1ebAnQwwlgoADKCS3C5+9Fkb/izWlTQByGzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4u88qsHkFka+3qKUY0Hv7kIbBDZXNOOIIKO7486Dt4vknLAae
+	OrtCC6mnp84WRZ2VO8LFMfyZ/+h/TXjE6cxfHAIM8tEgSA7GchpGL0bfETdMUO1nWh20n5juYJE
+	Ng94TJMD82YfGCWlbyzHRaZNibmc1+uJRJS2E1SPB8Q==
+X-Gm-Gg: ASbGncu+g77VKhgwI98zexixYpErxGvT1lNLNL9+5c46arbxHvOr1sWO6qP7xjaR1UT
+	vQsBm1o8FbyAOB7j7iVGKoQ8rhDNQ+gile39J0te0eGRsu8QMTFzgW/I8Qm8OU7DN0Uxhr2fVej
+	PHJ0TPSeBXhfHGkxHFNR5Y2SbEfwcBpUtmXpMqTejbze17oAxbEycDnlEZkuTScJBq0Aa4dger0
+	HKcKq3P51z3oy82in9wXqSj83HDDvtOTruVfJbjtUrYgcTWzyRHVi6CoeG/0x5oo1bQlVkm1cOc
+	edfReU09zRS9xq+4
+X-Google-Smtp-Source: AGHT+IEwidGHoNOMaYo4htt19dYp1oulw6jtGUPFtCAr2wRYS9NFrgMFss39wedYdFqyQ0XIZvSRls+UzQXDbZ99yYM=
+X-Received: by 2002:a05:6512:3b1e:b0:594:51ac:13e with SMTP id
+ 2adb3069b0e04-59576df8da4mr2157404e87.17.1763037600276; Thu, 13 Nov 2025
+ 04:40:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Enable Bluetooth support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        stable@vger.kernel.org, cheng.jiang@oss.qualcomm.com,
-        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
-        quic_shuaz@quicinc.com
-References: <20251110055709.319587-1-wei.deng@oss.qualcomm.com>
- <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
- <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
- <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
-Content-Language: en-US
-From: Wei Deng <wei.deng@oss.qualcomm.com>
-In-Reply-To: <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=XrX3+FF9 c=1 sm=1 tr=0 ts=6915d134 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=1x_t3JyoWHe2diQJI2EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 5B2alaJWwn_EcrC2Ff3tAlUSbiiFZzag
-X-Proofpoint-GUID: 5B2alaJWwn_EcrC2Ff3tAlUSbiiFZzag
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEzMDA5NSBTYWx0ZWRfX23sFjKCYI2xW
- iIgq8l2QdLOUuz9oWeXBXeinaIFrbEbtXXq3myJLgfEENZ1c4hUXet/c9X4CMopOgYyB8a7p2y0
- Z3a5vTMbPJF2gVIqdEeL47Tl16U00Y2kdpMWtj/camyew/rxGe1dLJuwIN8qKXXYxyvKz1nLXzI
- Xg9eHarMq6A6MpaWBBcfK+iTd6hq7EXTpmizCq4Stwhch9dKbpulEc+th6/Q0ni49RtTqJRKQ2w
- STWmANc5hUReK+AnW20qUJ9n998XRpWUuzMABCCTqMUmvQRcaUyKcWIkoqevDtKXV4v/vFJWLeJ
- 0kb2OKKzxFcdD0DREE9tsdSL0FuNePWOo2SQzDgb4QiJv+N98na2myMxG6MZRoZfdciKHMpCGGJ
- Fgtp3sZcxlN/+uF2pLN7/Skf9Z1e8Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 adultscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511130095
+References: <20251106-reset-gpios-swnodes-v6-0-69aa852de9e4@linaro.org>
+ <e0e81310332cfdc075bf13f66d7be712b42964ed.camel@pengutronix.de>
+ <CAMRc=Mfcir56ZizXgZZpt4nQY234PA9jx3CQ24YCVQJFBQ7msA@mail.gmail.com>
+ <7aa5a0ce599f86cc29e5075aa4e35155dfcd013e.camel@pengutronix.de> <CAMRc=Me3mOaFpn=xwpDwBzLWjOqS0Gx4rV0E=v_aEg6s_uJyvw@mail.gmail.com>
+In-Reply-To: <CAMRc=Me3mOaFpn=xwpDwBzLWjOqS0Gx4rV0E=v_aEg6s_uJyvw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 13 Nov 2025 13:39:47 +0100
+X-Gm-Features: AWmQ_blTF4bGHOPBFto4bdAeuDnTVCZ4z2kdDUSFoogNBWSvY3rUo6lXRjR-7mU
+Message-ID: <CAMRc=Men0Dc3rokguW-ghsViyMmJzLgvJZtx9ACur5h7U4z_7w@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] reset: rework reset-gpios handling
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad，
-Thanks for your comments.
+On Thu, Nov 13, 2025 at 1:16=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Thu, 13 Nov 2025 11:30:39 +0100, Philipp Zabel <p.zabel@pengutronix.de=
+> said:
+> > On Mo, 2025-11-10 at 17:57 +0100, Bartosz Golaszewski wrote:
+> >> On Mon, Nov 10, 2025 at 10:02=E2=80=AFAM Philipp Zabel <p.zabel@pengut=
+ronix.de> wrote:
+> >> >
+> >> > On Do, 2025-11-06 at 15:32 +0100, Bartosz Golaszewski wrote:
+> >> > > NOTE: I've picked up commit e5d527be7e69 ("gpio: swnode: don't use=
+ the
+> >> > > swnode's name as the key for GPIO lookup") into my fixes branch an=
+d will
+> >> > > send it upstream by the end of this week. It will be part of v6.18=
+-rc5
+> >> > > which tag will need to be the base for the future immutable branch
+> >> > > created by Philipp.
+> >> > >
+> >> > > Software node maintainers: if this versions is good to go, can you=
+ leave
+> >> > > your Acks under patches 1-3 and allow Philipp to take it through t=
+he
+> >> > > reset tree, provided he creates an immutable branch you can pull f=
+rom
+> >> > > for v6.19?
+> >> >
+> >> > Now that -rc5 is out, could I get an Ack to create an immutable bran=
+ch
+> >> > with this series on top of v6.18-rc5 (and merge it into reset/next)?
+> >> >
+> >>
+> >> Hi Philipp,
+> >>
+> >> I assume the Reviewed-by tags by Andy and Sakari under patches 1-3
+> >> make them good enough to go in?
+> >
+> > I assumed I also need an Acked-by by Greg or Rafael.
+> >
+>
+> From MAINTAINERS:
+>
+> SOFTWARE NODES AND DEVICE PROPERTIES
+> R:      Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> R:      Daniel Scally <djrscally@gmail.com>
+> R:      Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> R:      Sakari Ailus <sakari.ailus@linux.intel.com>
+>
+> Looks like neither Greg nor Rafael are mentioned.
+>
 
-On 11/12/2025 5:49 PM, Konrad Dybcio wrote:
-> On 11/11/25 1:24 PM, Wei Deng wrote:
->> Hi Konrad,
->>
->> Thanks for your comments.
->>
->> On 11/10/2025 7:49 PM, Konrad Dybcio wrote:
->>> On 11/10/25 6:57 AM, Wei Deng wrote:
->>>> There's a WCN6855 WiFi/Bluetooth module on an M.2 card. To make
->>>> Bluetooth work, we need to define the necessary device tree nodes,
->>>> including UART configuration and power supplies.
->>>>
->>>> Since there is no standard M.2 binding in the device tree at present,
->>>> the PMU is described using dedicated PMU nodes to represent the
->>>> internal regulators required by the module.
->>>>
->>>> The 3.3V supply for the module is assumed to come directly from the
->>>> main board supply, which is 12V. To model this in the device tree, we
->>>> add a fixed 12V regulator node as the DC-IN source and connect it to
->>>> the 3.3V regulator node.
->>>>
->>>> Signed-off-by: Wei Deng <wei.deng@oss.qualcomm.com>
->>>> ---
->>>
->>> [...]
->>>
->>>>  &apps_rsc {
->>>> @@ -627,6 +708,22 @@ &qupv3_id_2 {
->>>>  	status = "okay";
->>>>  };
->>>>  
->>>> +&qup_uart17_cts {
->>>> +	bias-disable;
->>>> +};
->>>> +
->>>> +&qup_uart17_rts {
->>>> +	bias-pull-down;
->>>> +};
->>>> +
->>>> +&qup_uart17_tx {
->>>> +	bias-pull-up;
->>>> +};
->>>> +
->>>> +&qup_uart17_rx {
->>>> +	bias-pull-down;
->>>> +};
->>>
->>> This is notably different than all other platforms' bluetooth pin
->>> settings - for example pulling down RX sounds odd, since UART signal
->>> is supposed to be high at idle
->>>
->>> see hamoa.dtsi : qup_uart14_default as an example
->>>
->>
->> I followed the qup_uart17 settings from lemans-ride-common.dtsi. Since these configurations are not required for Bluetooth functionality. I will remove this configuration in the next patch.
-> 
-> This feels like you're essentially saying you don't know/care why you
-> did this before and don't know why you're changing it again. This
-> doesn't give me a lot of confidence. Are you testing your changes on
-> real hw, running an upstream kernel with some distro userland?
-> 
+Ah but also:
 
-We add qup_uart17 config followed the changes referenced in the below 
-link and validated them on the hardware platform. Bluetooth functionality
-works fine before and after the removal.
-https://lore.kernel.org/all/20250509090443.4107378-1-quic_vdadhani@quicinc.com/
+DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS
+M:      Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+M:      "Rafael J. Wysocki" <rafael@kernel.org>
+M:      Danilo Krummrich <dakr@kernel.org>
 
-> Konrad
+So depending how we look at it. Greg, Rafael, Danilo: can you leave an Ack =
+here?
 
--- 
-Best Regards,
-Wei Deng
-
+Bartosz
 
