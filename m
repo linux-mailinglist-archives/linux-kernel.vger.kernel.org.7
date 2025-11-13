@@ -1,201 +1,157 @@
-Return-Path: <linux-kernel+bounces-899990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC36FC5974D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:27:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE673C5958F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 19:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 078EF4E67BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036ED3A88B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2842935970E;
-	Thu, 13 Nov 2025 17:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646DB35A13F;
+	Thu, 13 Nov 2025 17:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqqB+O3a"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJBFf65V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF243590BB
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 17:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834552EF67F;
+	Thu, 13 Nov 2025 17:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763056643; cv=none; b=OWdpgu6L3vkP4SmYjbK57h8QNgDVTqct8ps8nm8QAVrLK/XN+7hoojS9LcB9g4+9Cgc9okkhYEprbG4agsxqJSWupBYW9aLdOcloXxFUP1Cn66DvFT641pJRaKBzIXSLsvgpMYhM8Y6LW1UyysBVN4GqdExZHQRZPzbIbfStAqs=
+	t=1763056663; cv=none; b=Uo4/aS2uOTa/L6BIwei9D2SKFEiAE5elGsUFPo+Q+ALYkOuReevTO3ENWkFuC8aWhB2x4ajvVD0Sp3Utmbh+HB+f5kJyYl7RBidxgMDrfLTexYm2MWPfYSnntT/v2oM8gJBqqgWs2HldaJs1ph1/J3ajJawlQWvsXNc1mjYQjpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763056643; c=relaxed/simple;
-	bh=kvDK0kyHBLsRLqo/xqfgjRnH1mILL5tzYr3RBtYpY5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WPG9zZWnfD7ksFAqVg9GJ9Y61Cb6xtRKU8VxWGKucXpl7Jvt9xdj+ktLC6HkODCjce4Jd4dLJwY4kJa7dfwAHaa+N0amEWMkBLII6Ok+6qX9SQAJTLJcovncXonVfMOYZH7BpoHJVveqxi0asMkJmUqnkermrlkGTbrH8BaqAgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqqB+O3a; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so6728615e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 09:57:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763056640; x=1763661440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YI6SwLVxaeWge12jpv+g65IL6HLVUJJ6dHq74rzDBFI=;
-        b=gqqB+O3as26Es4StwpMjNr7sXODvZxhjRDPhnWWK6BV8QBa600NpcoqYwpw+UtCN5W
-         e8jNkZZPVeTriwboCCSG8z1qN4nc4qJWzUeSGoFp2AOtLJq825w0moZoqc0dSXogewr7
-         k19CDwiDZ3BJP+mNW58NMVJ1iUBqJdq/GOspUIx+LHR37YCkZgK8H9Mwg2M7szLfIccd
-         TiUqa8tYahcq0xl+8UCgE/UViZN9SA9nff5IaAJiQ+ie5KWU/wqVVfFCafn08Vj5B0Pe
-         1arYXm9FWx/4FTS3V+Bg6/EJZ6p5aAQrr48Vdx+XztJf2Uopyb2/23laN6kkRgCHygyx
-         cWGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763056640; x=1763661440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YI6SwLVxaeWge12jpv+g65IL6HLVUJJ6dHq74rzDBFI=;
-        b=bTli1g0dX9769ENdIsablaSEWR88CtW4A0zAZ0Az9vZJXOB1iYftasO/v3EybTVZNL
-         ikNyLEvCEEDP3kDFcUeIHtv2YnV7foIVPE2uFPGOMDL/IZusQkVhEmNnqXPI37QXxrjq
-         NQjDxs5CdnZrn4qPfK+TmKYs8gl+NLvRc/TJoUQTy4IKVdBDtCxKMW6+Rju2wY5+K9Xp
-         FJ0om4sSopGxqwx+z76hFQFBsTNgON9RfHnpQywgNHwaaI3kbe7DOxajx187khneNSgi
-         yMwvv/nUCgWNOJtTVXkePgYPwjhVgSlD3+zojY2nU7u9aXsC/+ZMfYP87nIL8TwO5jcH
-         vmYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYe9b+12HlV1RLjHAup6yNHd8SG9YwWevih8fFj8ePyK3hZ/NY5mqOvymrTsI5511CEZgv39HPGRXAvi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiWCxDYHSfnPSR2cLIZ8AIvszAhLKpS7qbycjSCQPe3HZJjJlO
-	j/yaQW5tL/LceIfcasJ2Tl6pWgn0DeqbtnQX79uR22xjmliR08Ja7zkJmOsFwoqP5FJ9vvAPula
-	WeI2n4wsbUNMy55CYE0tU+KOg+PTyPvg=
-X-Gm-Gg: ASbGncv9ZpSftEVK+tqd+S7wiQqGgEwbmO7e/CsDz/pTWZxeS2D8HQgwqFTFS6Tv0KS
-	mWQ89sDW34VBkamzInqy8AG9dZJEuZp7BDBllLD2Jnntco7GLaglEojvoqenlABIZJ4719A3ebu
-	gSX6WfgyxuzasIaE2pCYUrOQxv7hsyKdwYf3NM0qjzPtH95iZ5wSUJ0l1ApkgwUq0Z0wjI4ZGhk
-	qKmaIVcYySQ+pc0+9EZ8plIGiUa+tbyTpD/lnGAd4QlQbqu6KGw72k/UkH2eq65boeO1Ne6I/3c
-	9TPSgRdw6XE=
-X-Google-Smtp-Source: AGHT+IHbO+ZGBFXO5ge0ijkSwdvqQcv57wZTtQs6YNPPselRxjdniZ7ynd75vfty+uOIzSWSgkGQqLyBXVlxsfcb078=
-X-Received: by 2002:a05:600c:3b84:b0:476:a25f:6a4d with SMTP id
- 5b1f17b1804b1-4778fe4f3d1mr4281155e9.1.1763056639666; Thu, 13 Nov 2025
- 09:57:19 -0800 (PST)
+	s=arc-20240116; t=1763056663; c=relaxed/simple;
+	bh=vgzmso7a8Y8t5RJ9ImlUQnWFBosuuGamKlYy2aDvNqk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NZjHSMyODkpUQe8sGDfCK8gYpJhKx9vTeha0nCXJWXEnWAWYSi3LJOnia11YsB/t9RoYELKT9nVdvfDiMVx8J5TbaHT50c1xwiZ3LYnfN36Yu/kavvWB+ERR9trRQfNS1uc4QIqFAVZ9dZhJ4KFerFAnhLSTYhb5q3EJv5jmDLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJBFf65V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 22363C4CEF5;
+	Thu, 13 Nov 2025 17:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763056663;
+	bh=vgzmso7a8Y8t5RJ9ImlUQnWFBosuuGamKlYy2aDvNqk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=dJBFf65V6xf092PTLrTR0jqE35vrSe3InxtQrAIQ/fsrzmBRilcEUllbi1zBOahIY
+	 7EFtbHk4Euo6VrBis/hbtJCKJZLbk6EYQrvOu/v15ic6ZI4JmUXkI5Fu/T7XjAj5qg
+	 Kxc0WeZTXujQrNLno+bnnidU+wbBMf2LoXZXfIRGq/gXsABtfg16s72+VHuwbbEQNt
+	 iN4vZK9W2CqPzrqSq1VaworrkMzp8uM3HuhPf4BvN9ZtmTfLuJsxsSn9iysAFWJ+0F
+	 /5vL649zGDSQL/6GFueSomJcp0xQUYr1oAUaFG0AX+YBZB7cMlpw7RBolGqNYKR3Ow
+	 /iAnB6ktyJ0PQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B28CD8C9B;
+	Thu, 13 Nov 2025 17:57:43 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v2 00/12] Make Samsung SOFEF00 DDIC and panel work
+Date: Thu, 13 Nov 2025 18:57:34 +0100
+Message-Id: <20251113-sofef00-rebuild-v2-0-e175053061ec@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113123750.2507435-6-jolsa@kernel.org> <c3260fe9e3d8ad79c75a6e8281f9fae5580beb3fcdd08e2015f417e11ec0a1b2@mail.kernel.org>
- <aRYAhDqGsOHZzTL-@krava>
-In-Reply-To: <aRYAhDqGsOHZzTL-@krava>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 13 Nov 2025 09:57:05 -0800
-X-Gm-Features: AWmQ_bljz9ERUrLpgXYFmwgFdNYuQjEZ9EECbJhv0IrVw392banlmrLNtGinfI0
-Message-ID: <CAADnVQKnnZkODUUDDJQNJ7tVnoGreggw5NuvaP81=rpUYXwd7g@mail.gmail.com>
-Subject: Re: [PATCHv2 bpf-next 5/8] ftrace: Add update_ftrace_direct_mod function
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: bot+bpf-ci@kernel.org, rostedt@kernel.org, 
-	Florent Revest <revest@google.com>, Mark Rutland <mark.rutland@arm.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Menglong Dong <menglong8.dong@gmail.com>, Song Liu <song@kernel.org>, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, Chris Mason <clm@meta.com>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA8cFmkC/3WNQQ6CMBBFr0Jmbc1Mg8W48h6GBbRTmcSAtoWgh
+ LtbceHK5XvJf3+ByEE4wqlYIPAkUYY+g94VYLumv7ISlxk06gMRlioOnj2iCtyOcnMKS+utYXP
+ kiiCv7oG9zFvxUn858GPM4fSTncQ0hOf2OtHH/j+YSKFy3vqGKm6pMmeZJe3tC+p1Xd9ajmIGw
+ QAAAA==
+X-Change-ID: 20251104-sofef00-rebuild-04cfc6e68e71
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2543; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=vgzmso7a8Y8t5RJ9ImlUQnWFBosuuGamKlYy2aDvNqk=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpFhwUpLovHkS4Wk+TvhDkWFSO6YdoFELC9NIfw
+ X/f4peBP9eJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRYcFAAKCRBgAj/E00kg
+ clvvEADM9AA6L1Uc0zOH7Xy9Lg+VvtzTdgFMcacL8oqV0Jxc4xA7uwMogRWbbT6AfveF0nYSWJJ
+ +RIpkBqvZ69T6klh61F3hrzhXZqOzy1kKtB65Qnp1ESAJkV1RxjLtV3G+xog7LjtK5roItWeBH6
+ SyB6/2PVRijQyrHWy0IEhKjqm0gUy2VmcgX4gecnfKFyBO07+PvNr6AkIDj0cIY550VezG5OjxD
+ 3zrqxMGKvE/+d79+pekZqZsK7hjHLW1FIPNu2GfAH8qQBuWTFsEgecLdJWCz+PdFZwan2JaNDa0
+ BE8XIw6GgXrPm2p+LyapG2h2rOj1JTm+GGs0L6GgcILpNoS1jym8eHxvErn1Lmu1ZpFgXsWRMIN
+ 1hPjN3F6feAMRmfce/iuJ3Pl1EI9trHYqtVfpy+T0IRCdkNyZ11oo4jcwPL02Dbj0z14vJYWzPb
+ vLMrqmme9zrCal67ZrmZpux/vY27ZTjls+k5YCBM9F6ZefEzs/vS43O+Mg8ayntl+Sw59bbsiNX
+ AG94WO0ZaBOMM/iE/wcb7puT1l8OSr1zu6NpOBArQidVFaOMjAjokTjJA+58uSYFvGG6ingKAaA
+ KJhrkSKaLJECwKAYNIZMRlLyiXmFEFhJhC3gfVRDjRdF4h0dXQi11/+w3RIHrrk8raKhb9ZJOfh
+ 8A9sYHFcvnHLQFw==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Thu, Nov 13, 2025 at 8:00=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Thu, Nov 13, 2025 at 01:02:17PM +0000, bot+bpf-ci@kernel.org wrote:
-> > > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > > index 433c36c3a..bacb6d9ab 100644
-> > > --- a/include/linux/ftrace.h
-> > > +++ b/include/linux/ftrace.h
-> > > @@ -544,6 +544,7 @@ int modify_ftrace_direct_nolock(struct ftrace_ops=
- *ops, unsigned long addr);
-> > >
-> > >  int update_ftrace_direct_add(struct ftrace_ops *ops, struct ftrace_h=
-ash *hash);
-> > >  int update_ftrace_direct_del(struct ftrace_ops *ops, struct ftrace_h=
-ash *hash);
-> > > +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_h=
-ash *hash, bool do_direct_lock);
-> > >
-> > >  void ftrace_stub_direct_tramp(void);
-> > >
-> > > @@ -581,6 +582,11 @@ int update_ftrace_direct_del(struct ftrace_ops *=
-ops, struct ftrace_hash *hash)
-> > >     return -ENODEV;
-> > >  }
-> > >
-> > > +int modify_ftrace_direct_hash(struct ftrace_ops *ops, struct ftrace_=
-hash *hash, bool do_direct_lock)
-> >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > The stub function name doesn't match the declaration. Should this be
-> > update_ftrace_direct_mod() instead of modify_ftrace_direct_hash()?
->
-> it should, my bad
->
-> >
-> > > +{
-> > > +   return -ENODEV;
-> > > +}
-> > > +
-> >
-> > [ ... ]
-> >
-> > > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > > index 345f3fdd2..627d05b57 100644
-> > > --- a/kernel/trace/ftrace.c
-> > > +++ b/kernel/trace/ftrace.c
-> > > @@ -6445,6 +6445,74 @@ int update_ftrace_direct_del(struct ftrace_ops=
- *ops, struct ftrace_hash *hash)
-> > >     return err;
-> > >  }
-> > >
-> > > +int update_ftrace_direct_mod(struct ftrace_ops *ops, struct ftrace_h=
-ash *hash, bool do_direct_lock)
-> > > +{
-> > > +   struct ftrace_hash *orig_hash =3D ops->func_hash->filter_hash;
-> > > +   struct ftrace_func_entry *entry, *tmp;
-> > > +   static struct ftrace_ops tmp_ops =3D {
-> > > +           .func           =3D ftrace_stub,
-> > > +           .flags          =3D FTRACE_OPS_FL_STUB,
-> > > +   };
-> > > +   unsigned long size, i;
-> > > +   int err;
-> > > +
-> > > +   if (!hash_count(hash))
-> > > +           return 0;
-> > > +   if (check_direct_multi(ops))
-> > > +           return -EINVAL;
-> > > +   if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
-> > > +           return -EINVAL;
-> > > +   if (direct_functions =3D=3D EMPTY_HASH)
-> > > +           return -EINVAL;
-> > > +
-> > > +   if (do_direct_lock)
-> > > +           mutex_lock(&direct_mutex);
-> > > +
-> > > +   /* Enable the tmp_ops to have the same functions as the direct op=
-s */
-> > > +   ftrace_ops_init(&tmp_ops);
-> > > +   tmp_ops.func_hash =3D ops->func_hash;
-> > > +
-> > > +   err =3D register_ftrace_function_nolock(&tmp_ops);
-> > > +   if (err)
-> > > +           goto unlock;
-> > > +
-> > > +   /*
-> > > +    * Call __ftrace_hash_update_ipmodify() here, so that we can call
-> > > +    * ops->ops_func for the ops. This is needed because the above
-> > > +    * register_ftrace_function_nolock() worked on tmp_ops.
-> > > +    */
-> > > +   err =3D __ftrace_hash_update_ipmodify(ops, orig_hash, orig_hash, =
-true);
-> >                                                                        =
- ^^^^
-> > Does __ftrace_hash_update_ipmodify() accept a fourth argument? The
-> > function signature shows it only takes three parameters (ops, old_hash,
-> > new_hash). This looks like a compilation error.
->
-> the whole patchset is based on bpf-next/master plus Song's livepatch
-> fixes which change modify_ftrace_direct_hash function, it's mentioned
-> in the cover letter
+This DDIC is essential for panels used in OnePlus 6 and Pixel 3a XL
+(SDC variant). With proper support, all downstream patches in
+sdm845-mainline and sdm670-mainline can be dropped.
 
-Ohh. Will send bpf PR to Linus today and merge into bpf-next afterwards.
+The mainline driver was broken so far, and with my recent introduction
+of S6E3FC2X01 driver, I had to "break it even more" due to OnePlus 6
+common device-tree changes which defined all the regulators and
+corrected properties.
+
+At this moment the first version of the patchset will not include
+Pixel 3a XL (SDC) as no testers yet volunteered.
+
+The code, including the Pixel 3a XL enhancement can be found at
+  https://gitlab.com/dhxx/linux/-/tree/b4/sofef00-rebuild
+
+There are some unknown issues with -next-20251103 - 11, so won't likely
+work there, recommend linus 6.18-rc4 and later.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Changes in v2:
+- General fixes to device-tree binding (Krzysztof)
+- Add myself as a maintainer
+- Updated commits wording
+- Link to v1: https://lore.kernel.org/r/20251104-sofef00-rebuild-v1-0-dfcfa17eb176@ixit.cz
+
+---
+Casey Connolly (2):
+      drm/panel: sofef00: Add prepare_prev_first flag to drm_panel
+      drm/panel: sofef00: Initialise at 50% brightness
+
+David Heidelberg (10):
+      dt-bindings: panel: Convert Samsung SOFEF00 DDIC into standalone yaml
+      arch: arm64: qcom: sdm845-enchilada: Specify panel name within the compatible
+      drm/panel: sofef00: Clean up panel description after s6e3fc2x01 removal
+      drm/panel: sofef00: Handle all regulators
+      drm/panel: sofef00: Split sending commands to the enable/disable functions
+      drm/panel: sofef00: Introduce page macro
+      drm/panel: sofef00: Introduce compatible which includes the panel name
+      drm/panel: sofef00: Simplify get_modes
+      drm/panel: sofef00: Mark the LPM mode always-on
+      drm/panel: sofef00: Non-continuous mode and video burst are supported
+
+ .../bindings/display/panel/panel-simple-dsi.yaml   |  25 +----
+ .../bindings/display/panel/samsung,sofef00.yaml    |  79 ++++++++++++++++
+ MAINTAINERS                                        |   6 ++
+ .../boot/dts/qcom/sdm845-oneplus-enchilada.dts     |   4 +-
+ drivers/gpu/drm/panel/Kconfig                      |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-sofef00.c      | 104 +++++++++++++--------
+ 6 files changed, 162 insertions(+), 63 deletions(-)
+---
+base-commit: 6d7e7251d03f98f26f2ee0dfd21bb0a0480a2178
+change-id: 20251104-sofef00-rebuild-04cfc6e68e71
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
+
 
