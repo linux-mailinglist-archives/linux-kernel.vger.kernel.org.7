@@ -1,350 +1,139 @@
-Return-Path: <linux-kernel+bounces-898326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B2B8C54E39
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CC0C54E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 01:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B284F4E2F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:15:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F9D54E3FCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E902419D8A8;
-	Thu, 13 Nov 2025 00:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F4E3A1D2;
+	Thu, 13 Nov 2025 00:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyRRBzY5";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LPrwbDPU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8J9T8qt";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="TDigx1TB"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7132913C9C4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1B035977
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 00:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762992923; cv=none; b=B4HHgO4v22fR28p7ezb1vDZ9BnZrIM5byyj3RM16imUJb05dQkV1ukShnvYkAweeyjiIesUL0Zg6hUM4cWvRrsPFvd9FGkN/ULGW3hhdEGJjUPE1PWco6x130+N2Jqr4v/x4qguiTAfrXD/e3CAReaWAcDtWIoGOD9Q2BQdITto=
+	t=1762992960; cv=none; b=GHcspEWODb2rhYhRiqp7AKlhxdeEk4WJgFYxNJfr87D/GJ4/x8Jhpxz0Yeie6/xjo5Z8rOch4ADDHlNtZrirSKm6PWmbaBBilnlHcZITiyWfZvFCfR2PKZcdxWZ31Uo063VEBOMc/GIajLLLvY/BHZ8RN/7n7k6o2l6p/ZXZ7QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762992923; c=relaxed/simple;
-	bh=rkZwVrkOadyDRR22lYKiSlNshpLUvze0UwNBJO2yDCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tcqqrcjcqmAPP/la3a/435Q03qwOqDX1IByzuO4uxnai0wbXYHucs6rqqQDseOvW1fHlFYEdzhbm0ahjMKWspPQWEtRIZDSMFcSeIX/qHJaEGI78InrFRLdAuUCxDffVn2y0vDHwdWhPIGlYx9dJ6iMucfchCYyGoS4//MZZgAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyRRBzY5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LPrwbDPU; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1762992960; c=relaxed/simple;
+	bh=1uQgCaKZj2tGULsNrZstj+l1JrpS7Lk/ujXpQ4zaIXo=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z47zZOd3nuAX1d+c/6qJ2H7gVkWCSlc46A+3HSdTW1Pbnq06hdpoD4mDR5e5UEakVE1fOM+j9xTIcl0WiKx7HjAU0SgGsQIntKomSjIibgQVnOYi/lA+SfNvv3OqXAY9K+NBaRF199+kgyq4LxxDZ05G8Zcxma5fEWUdpFF1Ht8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8J9T8qt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TDigx1TB; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762992920;
+	s=mimecast20190719; t=1762992957;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K1WcE71YI025D4IauzKZF0rnIgAKdLJAwYCr9A+FMYc=;
-	b=QyRRBzY50+ZYtTIR8ZNS+gz3msSc0gwySrRFyXKr8xJPgcxSl13MZqPNHCif2gSSY2oZRx
-	U4TyFZtMaQP+db8JK10FKNFEj6+qQkrQ142kd7fMY7WVKldpjeYLMqrnyYyftwHjvpHqaP
-	GSvcr5Ze2kZ7VQ6R7fYLo/CPSxQ2SPY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=1uQgCaKZj2tGULsNrZstj+l1JrpS7Lk/ujXpQ4zaIXo=;
+	b=K8J9T8qtJbax0gCgWIG9mQvbfK6XahZZ5NFZrXdy2/4VhjZss9wFV0iYapPZFrA5gTi3ba
+	LgcB/gotF9jSAXhXdplWVJu82PDZakAajXdxKlbhYYNMXByRx0QdfaEOk0gkbrRokMlySD
+	SH+Oz7zU6qorvA253AUNZhr7MxK/xy0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654-sQ24RLi2MB-IlpfBis1FCQ-1; Wed, 12 Nov 2025 19:15:18 -0500
-X-MC-Unique: sQ24RLi2MB-IlpfBis1FCQ-1
-X-Mimecast-MFC-AGG-ID: sQ24RLi2MB-IlpfBis1FCQ_1762992917
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4776079ada3so1789195e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:15:18 -0800 (PST)
+ us-mta-298-Ck82k4x8N4CFtMjHGDxWRw-1; Wed, 12 Nov 2025 19:15:55 -0500
+X-MC-Unique: Ck82k4x8N4CFtMjHGDxWRw-1
+X-Mimecast-MFC-AGG-ID: Ck82k4x8N4CFtMjHGDxWRw_1762992955
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-882529130acso7253826d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:15:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762992917; x=1763597717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K1WcE71YI025D4IauzKZF0rnIgAKdLJAwYCr9A+FMYc=;
-        b=LPrwbDPURBroc32TcXP5i9B6kur4desTXNf1VtUtz6Sd9ihm5gSopv9C3x9XMW2UBS
-         BEgY2k8Gg5xWkAmPfE2mAr6/2XYTZXyT/ZNL2+A8pJaeI4egiqXz6H+yijDycLJ+8jFF
-         BFzCjQhLYAgwPqn8WCgD4irKWAmC0Tz3tkqQv6sh58d0pS+EKbsN+PyAu89SdIydq9Gh
-         DRyxC12xE5ojceOnuZ96VBldcryNSDPS0Rz3fBlKl1n3OoVV9NUvdECpUsCWoDTiDqhg
-         liBjj15CEpt6PO39M4Vq1YnEKqzr35C3VNmwMZa7YXys5BQKSCbVDooUq/tY6Cfwu2Mo
-         tOog==
+        d=redhat.com; s=google; t=1762992955; x=1763597755; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1uQgCaKZj2tGULsNrZstj+l1JrpS7Lk/ujXpQ4zaIXo=;
+        b=TDigx1TBZ9R9yU6DyT0vmJ9Wn6x2XlLQp+u6/sOz3+HfVYZblp8hpl5e3/WG3Vpi45
+         TzeCxNF/Aj7wCWcs2xfl275nJCPnsVjeQZJA5SmpPC1agJ8Pbjfbsi6y5CZo25pFsuPt
+         kBZjz/LJejyWgZgw4iMRlvw0y3ErxE/w0yrHvClHIc8un7TJ/fvC5u/c/Z9+5Jp/Mwm4
+         9vpJKLRjbm8oh8HqQ7tlhHAXEtw4tu9XsJqrUaWfw8khScNIr2rqRNvliyOyi+YBJv5f
+         ifoDwlu02sBaB9R/SVWkgjP5T3MNgl3zxxxr7hcZ/qW7oPoLAVyXG7hPzW/xrfeR25zG
+         YADQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762992917; x=1763597717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=K1WcE71YI025D4IauzKZF0rnIgAKdLJAwYCr9A+FMYc=;
-        b=LdlT1xpkiMrKginZNRM1Xg74Ntb73ZLFLE+W3LDzWu3M8NvSdJnAv20C/IG+3fcF+o
-         lqB5xFLh/r3C43Z9EkpoCPmTmdatyqXsrlg8cDDl3WIt7KGPbp3m3L3d6/KZPxixL6/K
-         9mqc4YHInw7x89Gn4LzwtLk7UHCrnTIRriIdO6u+uqgUYWBKSNF+0aEyG4VuaA4DhVkY
-         t4gUQ9VmTEPFe6VhYeew5nW78RfHRUPpG2eGxPP5KtbpqYd64z8Eboi4PWuI9QtjJ6qS
-         O20CC+0qQOo6igl9ZYZRxYZiPMX5RPPoi9lWyCI+rSzi1/g8tytF2jb1abKGNH6RJ/76
-         YPig==
-X-Forwarded-Encrypted: i=1; AJvYcCXv40xoUG2Y/3iKXQc1+gts9JvcAqRh8FLIVqlKc/LgItlSRmJIr4cSb11GC7hJF73vygzgmxHiPkHfPTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXjydyHP9grEKSWtBLGUVsxfSFqAPluhUfV1dmQDPH/whKg5zt
-	fdaR72zhg0pKttTqPc384CKR/1RCtmIJG8gfEGVyO/zhy15QiWoN7kzGFaoRlmWgc4AzT0Li/X6
-	xmbIftaZuEaPhxD9mTvcpKAvAhDiT1MacmfDAwADtspI3BEPnznzmWzu2PL9TiE2TLg==
-X-Gm-Gg: ASbGncsjPAP4cxcVHe6b6gMqCQCAlxlfLnJLFLDfs6LyPl0Z85tSx2r5rpr7gsy3EF9
-	JjOdGdwd2ARGC6Rb54QXZHmjBj08HoVXOMMuOQ3zbafvjWTTzAU5VewlJ5sQ1zOqH12ppfYuQy8
-	Np2cMcejMruI89nwhx6kIOkApC4X2PSYJXm6LdK1x4rSgnSXD+OJqdAHGkxOTgiHhdaLMLUFz7N
-	H60ZfgSrshrhyeSXZl9RRBgQu21BH68NmXQraXHneDfQ5AiXITgTqDkwm83aqeO+OCjr9NxvutV
-	ObVKCksTkPl9WY+Kz+rj1CeJflvfnT8b8LCbxTe65SarODZkdaG+WjwRdAlap5THqU/ctsegj64
-	MDwzfxZtXrpMlhw==
-X-Received: by 2002:a05:600c:3145:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-477870718cdmr46780925e9.2.1762992917433;
-        Wed, 12 Nov 2025 16:15:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFPbmxVbliqZZE2ij3N4XrtnplcTCMheZR9g48joM0Qg+CQVasHu64phvjG2+WlyX9GjLZJWA==
-X-Received: by 2002:a05:600c:3145:b0:477:76c2:49c9 with SMTP id 5b1f17b1804b1-477870718cdmr46780715e9.2.1762992917037;
-        Wed, 12 Nov 2025 16:15:17 -0800 (PST)
-Received: from sissix.lzampier.com ([2a06:5900:814a:ab00:3725:2991:6cf3:b3aa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b589sm432983f8f.23.2025.11.12.16.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 16:15:16 -0800 (PST)
-From: Lucas Zampieri <lzampier@redhat.com>
-To: linux-input@vger.kernel.org
-Cc: Lucas Zampieri <lzampier@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Bastien Nocera <hadess@hadess.net>,
-	linux-pm@vger.kernel.org
-Subject: [RFC PATCH v2 3/3] HID: input: Add support for multiple batteries per device
-Date: Thu, 13 Nov 2025 00:15:05 +0000
-Message-ID: <20251113001508.713574-4-lzampier@redhat.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251113001508.713574-1-lzampier@redhat.com>
-References: <20251113001508.713574-1-lzampier@redhat.com>
+        d=1e100.net; s=20230601; t=1762992955; x=1763597755;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uQgCaKZj2tGULsNrZstj+l1JrpS7Lk/ujXpQ4zaIXo=;
+        b=BHiwGuV6FJLHTuwCEdnOK/OyIuBZCP3ndczk57Emjgc0lhQL8vldiEVVLtpQSnrzYK
+         TxNXdrzjkUbZLxOLE3dW7zoOKb272UCEIejiiOIO0aF9cYk8HNeIgm51ycodlESBOUMJ
+         Z9QxYZuQb2tKj5RX2O66TBVRSeeb7MmgdxAiV1QVto7Kc650wNUw6Sv0jIqlXVDNn3KX
+         +kmEs7z38x0OaEb016iV2Lj0wyUbF3k1k2JMV8cCF4upOVscbFEGUYShMjc3ZyMk2B/x
+         XzJjkGgTP8BzsVXqdo7EITxSvD5qwbC7LyfPYfUHYC3yPx3WSHxIPWDrKBCSK4bHkO26
+         8yhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5+5tTqOrn5VSDtAnQubbkwKtq+yYgsj1cODhfOOiSoPL4VqDDE4c49A9y+uNM55/fMDFcNaTpNTNe44g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4Ev/wCHU8dcnDTlrt6yAw8YBhz0SOgD+GsC+jENmeOjnP1FZn
+	0S3qJPyKFlrtwrPj19J9K1mw/88uxNdI9Tsayc5Wy+Iumk1WwR/+hQ6sQ7MkPY3iYApzWeO0G0X
+	SsxljxzcswFLtp1vQh4OD2gwrxdet/RFw7e7VNLn+NKFbeOa3NUYXAby7zvHMqISgoQ==
+X-Gm-Gg: ASbGncuUiTQHFoXZ9CJZD+IVN+/xPMtzrgFDM2ekSOj4c/IlN5qSgkZ4fvMQjBiqJA0
+	qS3iZ/kPgRSsP+36nQZUhaOZrG0gZMwpA83xltUdCxHbMA8ZAi9Y36HE0HZl9wx/vZtmAQZIaUC
+	BBMGmNb3OM3R2WTSJPm8F2to455Teos2i0qHkbu6bBMfyg4veHUGNNsd+wbdVEaHpm+DnSb0Evi
+	hKna+n2/KBh9ASD1uq77/l3ChItSG2HXVkOOHLoTnN3PPt6n4tbfVJ7HK+uJponCms16MpW/9yX
+	IDiEvwFpy9nforM83SRsvgsCMyoj5xfhoWDDgZwAJGeZ0l6KoclJWsEJFHGJxNCgg5U22HtxMbc
+	o3wzpoa5zFVMd74qsGsKe5LWSpqX0+rSW/0b45tI7ABKltA==
+X-Received: by 2002:a05:6214:19ec:b0:882:437d:2831 with SMTP id 6a1803df08f44-882719e69c4mr76020626d6.34.1762992955110;
+        Wed, 12 Nov 2025 16:15:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQ/5laODbRLTtMJ6oFMsJihehWBShOjFK/xe+7cmHL2bQLklCsUIp4BkQW6kgEel0W5IC9fg==
+X-Received: by 2002:a05:6214:19ec:b0:882:437d:2831 with SMTP id 6a1803df08f44-882719e69c4mr76020406d6.34.1762992954768;
+        Wed, 12 Nov 2025 16:15:54 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8828655e55bsm1573796d6.43.2025.11.12.16.15.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 16:15:54 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <52aa0b5d-cc4c-4072-a590-9944fff4bce0@redhat.com>
+Date: Wed, 12 Nov 2025 19:15:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 12/22] cpuset: introduce
+ local_partition_invalidate()
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+ <20251025064844.495525-13-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20251025064844.495525-13-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable HID devices to register and manage multiple batteries by
-maintaining a list of hid_battery structures, each identified by
-its report ID.
 
-The legacy dev->battery field and related fields are maintained for
-backward compatibility, pointing to the first battery in the list.
-This allows existing code to continue working unchanged while
-enabling new functionality for multi-battery devices.
+On 10/25/25 2:48 AM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> Build on the partition_disable() infrastructure introduced in the previous
+> patch to handle local partition invalidation.
+>
+> The local_partition_invalidate() function factors out the local partition
+> invalidation logic from update_parent_effective_cpumask(), which delegates
+> to partition_disable() to complete the invalidation process.
+>
+> Additionally, correct the transition logic in cpuset_hotplug_update_tasks()
+> when determining whether to transition an invalid partition root, the check
+> should be based on non-empty user_cpus rather than non-empty
 
-Example hardware that can benefit from this:
-- Gaming headsets with charging docks (e.g., SteelSeries Arctis Nova Pro
-  Wireless)
-- Graphics tablets with stylus batteries (Wacom)
-- Wireless earbuds with per-earbud batteries plus charging case
-- Split keyboards with independent battery per side
+"user_xcpus"
 
-Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
----
- drivers/hid/hid-core.c  |  4 ++
- drivers/hid/hid-input.c | 99 +++++++++++++++++++++++++++--------------
- include/linux/hid.h     | 12 ++++-
- 3 files changed, 80 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index a5b3a8ca2fcb..76d628547e9a 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2990,6 +2990,10 @@ struct hid_device *hid_allocate_device(void)
- 	mutex_init(&hdev->ll_open_lock);
- 	kref_init(&hdev->ref);
-
-+#ifdef CONFIG_HID_BATTERY_STRENGTH
-+	INIT_LIST_HEAD(&hdev->batteries);
-+#endif
-+
- 	ret = hid_bpf_device_init(hdev);
- 	if (ret)
- 		goto out_err;
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 0e71efea9da3..9d0be3d4ce04 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -520,14 +520,20 @@ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_type,
- 	unsigned quirks;
- 	s32 min, max;
- 	int error;
-+	int battery_num = 0;
-
--	if (dev->battery)
--		return 0;	/* already initialized? */
-+	/* Check if battery with this report_id already exists */
-+	list_for_each_entry(bat, &dev->batteries, list) {
-+		if (bat->report_id == field->report->id)
-+			return 0;	/* already initialized */
-+		battery_num++;
-+	}
-
- 	quirks = find_battery_quirk(dev);
-
--	hid_dbg(dev, "device %x:%x:%x %d quirks %d\n",
--		dev->bus, dev->vendor, dev->product, dev->version, quirks);
-+	hid_dbg(dev, "device %x:%x:%x %d quirks %d report_id %d\n",
-+		dev->bus, dev->vendor, dev->product, dev->version, quirks,
-+		field->report->id);
-
- 	if (quirks & HID_BATTERY_QUIRK_IGNORE)
- 		return 0;
-@@ -542,9 +548,17 @@ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_type,
- 		goto err_free_bat;
- 	}
-
--	psy_desc->name = kasprintf(GFP_KERNEL, "hid-%s-battery",
--				   strlen(dev->uniq) ?
--					dev->uniq : dev_name(&dev->dev));
-+	/* Create unique name for each battery based on report ID */
-+	if (battery_num == 0) {
-+		psy_desc->name = kasprintf(GFP_KERNEL, "hid-%s-battery",
-+					   strlen(dev->uniq) ?
-+						dev->uniq : dev_name(&dev->dev));
-+	} else {
-+		psy_desc->name = kasprintf(GFP_KERNEL, "hid-%s-battery-%d",
-+					   strlen(dev->uniq) ?
-+						dev->uniq : dev_name(&dev->dev),
-+					   battery_num);
-+	}
- 	if (!psy_desc->name) {
- 		error = -ENOMEM;
- 		goto err_free_desc;
-@@ -597,15 +611,23 @@ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_type,
-
- 	power_supply_powers(bat->ps, &dev->dev);
-
--	/* Maintain legacy single battery fields for backward compatibility */
--	dev->battery = bat->ps;
--	dev->battery_min = bat->min;
--	dev->battery_max = bat->max;
--	dev->battery_report_type = bat->report_type;
--	dev->battery_report_id = bat->report_id;
--	dev->battery_charge_status = bat->charge_status;
--	dev->battery_status = bat->status;
--	dev->battery_avoid_query = bat->avoid_query;
-+	list_add_tail(&bat->list, &dev->batteries);
-+
-+	/*
-+	 * The legacy single battery API is preserved by exposing the first
-+	 * discovered battery. Systems relying on a single battery view maintain
-+	 * unchanged behavior.
-+	 */
-+	if (battery_num == 0) {
-+		dev->battery = bat->ps;
-+		dev->battery_min = bat->min;
-+		dev->battery_max = bat->max;
-+		dev->battery_report_type = bat->report_type;
-+		dev->battery_report_id = bat->report_id;
-+		dev->battery_charge_status = bat->charge_status;
-+		dev->battery_status = bat->status;
-+		dev->battery_avoid_query = bat->avoid_query;
-+	}
-
- 	return 0;
-
-@@ -620,21 +642,33 @@ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_type,
-
- static void hidinput_cleanup_battery(struct hid_device *dev)
- {
--	struct hid_battery *bat;
-+	struct hid_battery *bat, *next;
- 	const struct power_supply_desc *psy_desc;
-
--	if (!dev->battery)
--		return;
-+	list_for_each_entry_safe(bat, next, &dev->batteries, list) {
-+		psy_desc = bat->ps->desc;
-+		power_supply_unregister(bat->ps);
-+		kfree(psy_desc->name);
-+		kfree(psy_desc);
-+		list_del(&bat->list);
-+		kfree(bat);
-+	}
-
--	bat = power_supply_get_drvdata(dev->battery);
--	psy_desc = dev->battery->desc;
--	power_supply_unregister(dev->battery);
--	kfree(psy_desc->name);
--	kfree(psy_desc);
--	kfree(bat);
- 	dev->battery = NULL;
- }
-
-+static struct hid_battery *hidinput_find_battery(struct hid_device *dev,
-+						 int report_id)
-+{
-+	struct hid_battery *bat;
-+
-+	list_for_each_entry(bat, &dev->batteries, list) {
-+		if (bat->report_id == report_id)
-+			return bat;
-+	}
-+	return NULL;
-+}
-+
- static bool hidinput_update_battery_charge_status(struct hid_battery *bat,
- 						  unsigned int usage, int value)
- {
-@@ -652,17 +686,16 @@ static bool hidinput_update_battery_charge_status(struct hid_battery *bat,
- 	return false;
- }
-
--static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
--				    int value)
-+static void hidinput_update_battery(struct hid_device *dev, int report_id,
-+				    unsigned int usage, int value)
- {
- 	struct hid_battery *bat;
- 	int capacity;
-
--	if (!dev->battery)
-+	bat = hidinput_find_battery(dev, report_id);
-+	if (!bat)
- 		return;
-
--	bat = power_supply_get_drvdata(dev->battery);
--
- 	if (hidinput_update_battery_charge_status(bat, usage, value)) {
- 		power_supply_changed(bat->ps);
- 		return;
-@@ -705,8 +738,8 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
- {
- }
-
--static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
--				    int value)
-+static void hidinput_update_battery(struct hid_device *dev, int report_id,
-+				    unsigned int usage, int value)
- {
- }
- #endif	/* CONFIG_HID_BATTERY_STRENGTH */
-@@ -1574,7 +1607,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
- 		return;
-
- 	if (usage->type == EV_PWR) {
--		hidinput_update_battery(hid, usage->hid, value);
-+		hidinput_update_battery(hid, report->id, usage->hid, value);
- 		return;
- 	}
-
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 63422130de20..a6e36835fb3c 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -700,8 +700,16 @@ struct hid_device {
- #ifdef CONFIG_HID_BATTERY_STRENGTH
- 	/*
- 	 * Power supply information for HID devices which report
--	 * battery strength. power_supply was successfully registered if
--	 * battery is non-NULL.
-+	 * battery strength. Each battery is tracked separately in the
-+	 * batteries list.
-+	 */
-+	struct list_head batteries;		/* List of hid_battery structures */
-+
-+	/*
-+	 * Legacy single battery support - kept for backwards compatibility.
-+	 * Points to the first battery in the list if any exists.
-+	 * power_supply was successfully registered if battery is non-NULL.
-+	 * DEPRECATED: New code should iterate through batteries list instead.
- 	 */
- 	struct power_supply *battery;
- 	__s32 battery_capacity;
---
-2.51.1
+Cheers,
+Longman
 
 
