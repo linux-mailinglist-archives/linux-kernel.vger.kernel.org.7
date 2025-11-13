@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-898786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4823AC5604F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BB7C56052
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58AC84E3541
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:13:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE5C84E34E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CE93218BA;
-	Thu, 13 Nov 2025 07:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F648321F5F;
+	Thu, 13 Nov 2025 07:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6IpA+uR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upuLy5FB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA8030215A;
-	Thu, 13 Nov 2025 07:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8601320A0E;
+	Thu, 13 Nov 2025 07:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018011; cv=none; b=NReFuk9rr5s0w5ZNxzlzfb01yg/9vYnp3vr9oqyTulqe5wzIpLY7a5AabnW483ziAFLtVURcunscvOQQ8WOqaWU/p186SPxJWL/sxVnMCHydtJg4ng8+l6FHpN0Auz44E0/JBglMN/bvoB/xJvAKTQBGGHi2XxQtBiCav0fWHJU=
+	t=1763018099; cv=none; b=OcvpcTQDVVZ3la+rmG2mX+EWiirDNpEvrU9nuLhZzm3eppi8JHfl95aeZlN2bPs2SuraCnEsp5C5aNMUiklV5mZ4hs4hRC2XzUSrVsg1ylLgF+fAAtbzGSzl+ZF47U30UBggGJGAOm9fQoPHS1HjD/qkqyAFMYBnqSGzcKEIDI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018011; c=relaxed/simple;
-	bh=5Q1RpSwdTfASXvfMjdvVX/rWQwNm6+UIMaysWg+YEHg=;
+	s=arc-20240116; t=1763018099; c=relaxed/simple;
+	bh=SDz5IUPxp2WbK+ZgDzhfQ6GPQiWpizsIvuDW3iYmwq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzBfKLOoxXmCR3XudCmVmdD4EzvBX2ffHQgET0zzYOcR6+u+JdgnMX24UGA8tNXGwljuXVtNUX+B+GXHCRAMsUkhofSe82wwVa6kmSlhQC/g00YMi1tD3fd9k9hKy/0J+ywi/S3ijZ0hk3S0jPMnfTBcbZP45iXCkGHEf8JRF5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6IpA+uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D29D9C4CEF5;
-	Thu, 13 Nov 2025 07:13:27 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nBQD5EoJbN5Yp7wCDFEZHdOJJgFdZkvxnQqRL6QBeme9EcQIjgYAxpRxi77Cgnb6U3jFxrMNlg9lKneolK+XmMOOsUilOnS12J35gNO9EMh8FIInnUhuoLtyy5OICfPxZq4DokjCFYfk0Ayyf0Kkddir+h5+QfqSxKxmYHHv/W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upuLy5FB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF0FC4CEFB;
+	Thu, 13 Nov 2025 07:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763018011;
-	bh=5Q1RpSwdTfASXvfMjdvVX/rWQwNm6+UIMaysWg+YEHg=;
+	s=k20201202; t=1763018099;
+	bh=SDz5IUPxp2WbK+ZgDzhfQ6GPQiWpizsIvuDW3iYmwq0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b6IpA+uROFYriHohpGtSgRpx0PAi2YwVYvMZkCo/1tY0VP74Tvj6b/Efe5G+1zK9J
-	 I4aavZskt2/oD9ehzKP+Aq1UnNtdEkibt9xtzolgcX9XnA85QPHCCNCMxNE0gwAcXQ
-	 l/glqpDIcVi5i+NQJnAjSFEVAWTuxLawsgksVlYTTpNqE9YAunURLPqR9C1Vj3GLg2
-	 NEr29eYAfMIS1lPvXA8JfVXMuwcWeQzlKZN1Sdl9ezoK1unIwsjpPE2J4uNoKWNyyP
-	 CytgPIPRS+RTZVIJLfHbXqxt4q1UpmVktYnIsF6g4OSHz4QyfjAz4GdPwrJFbQ4V2b
-	 LiB8C8N3r5dpQ==
-Message-ID: <a0214340-d0dd-4689-9692-d934f3a80c40@kernel.org>
-Date: Thu, 13 Nov 2025 08:13:25 +0100
+	b=upuLy5FBcpDEll3XS50VxE9Au3AHGzSdnn0VLeRQIvE3pvPuCAv05ylFRgi3B4GrK
+	 ebPWnXeK/tUzX7oCMaP1jqHZR9uOqKO57Mqh7DRcE9/Tup9ucHbhJsQqdaDhn+9cpa
+	 EQdvXakUcKplTiRIMIUFkN0JBXK+yZD3Yuz1oilvPC8sS0d3gKjuJSnVZy+zsL41ma
+	 Jm20U0Y5ffm7SZgInoOnRaaNyj5GL9k0Cm9WJMuvFQeH+3Bx3qL19kAfQri3obgt0e
+	 9sAemzqUUaqLVpI7KHIsmykzN7Byv7qWNmEK/+RTwPgIc9aiqRbov23qVkhrEeigoS
+	 ClM/Gcf619yFw==
+Message-ID: <259e917f-0570-40d6-983f-bfe9d77444a7@kernel.org>
+Date: Thu, 13 Nov 2025 08:14:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Enable FPGA Manager support for Agilex5
-To: Xu Yilun <yilun.xu@linux.intel.com>,
- Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
- Tom Rix <trix@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>,
- Ho Yin <adrian.ho.yin.ng@altera.com>,
- Niravkumar L Rabara <nirav.rabara@altera.com>, linux-fpga@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1763008269.git.khairul.anuar.romli@altera.com>
- <aRV0UCZD6fwnfWUE@yilunxu-OptiPlex-7050>
+Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: Add compatible for
+ Facebook Anacapa BMC
+To: Peter Shen <sjg168@gmail.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Joel Stanley <joel@jms.id.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, peter.shen@amd.com
+References: <20251112211248.3711889-1-sjg168@gmail.com>
+ <20251112211248.3711889-2-sjg168@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,36 +105,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aRV0UCZD6fwnfWUE@yilunxu-OptiPlex-7050>
+In-Reply-To: <20251112211248.3711889-2-sjg168@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/11/2025 07:01, Xu Yilun wrote:
-> On Thu, Nov 13, 2025 at 12:43:54PM +0800, Khairul Anuar Romli wrote:
->> This patch series adds device tree bindings, driver support, and DTS
->> updates to enable FPGA Manager functionality for Intel Agilex5 SoC.
->>
->> These changes are intended to enable FPGA programming and management
->> capabilities on Agilex5-based platforms.
->>
->> ---
->> Notes:
->> Patch #3 depends on  "arm64: dts: intel: Add Agilex5 SVC node with memory
+On 12/11/2025 22:12, Peter Shen wrote:
+> This patch adds the compatible string for the Facebook Anacapa BMC
+> which uses an Aspeed AST2600 SoC. This is required before adding
+> the board's device tree source file.
 > 
-> There is no patch #3 now. Should be Patch #2 ?
-> 
->> region" from
->> https://lore.kernel.org/all/3381ef56c1ff34a0b54cf76010889b5523ead825.1762387665.git.khairul.anuar.romli@altera.com/
->>
->> This patch series is applied on socfpga maintainer's tree
->> https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=socfpga_dts_for_v6.19
-> 
-> Given that, @Dinh Nguyen could you take the series if you are good?
+> Signed-off-by: Peter Shen <sjg168@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-This was never tested, so series cannot be taken.
 
-NAK, Altera should test the code BEFORE sending it to upstream, not
-after we say it was not tested.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here ('b4 trailers -u ...'). However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for tags received on the version they apply.
+
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
 
 Best regards,
 Krzysztof
