@@ -1,179 +1,251 @@
-Return-Path: <linux-kernel+bounces-899295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A832EC574B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8F3C574C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADB874E52AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EA63B7F54
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E6034EF13;
-	Thu, 13 Nov 2025 11:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9CB34D4D6;
+	Thu, 13 Nov 2025 11:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSh0r3cp"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UcDjy4r1"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011026.outbound.protection.outlook.com [40.93.194.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D50934E75C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 11:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763035040; cv=none; b=mgtGIwBGFINmelqppgGLVp7///ANwCyf7gTPZ6/U2KyR+B+bQmqROsQAiTrLYrYLXYtOrre9gXyotXjI5DCw8ITknNkxQ0FTD163wT+M5f44B2IrwLkqUDzr48sDJTjZP5UIsEYWdnCAGvuU1wNOQ0uMdiqPIyKVwQQJ9Yo3hSI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763035040; c=relaxed/simple;
-	bh=3C29Q45QiYOyNH9+Uzgm2x1iE6Ss30RmLieomkQXEpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFGZ1Ra5jaRrmptfscMMnlbJ13HOj0s3IeRT1iq2tOnUKPovcG0po2A9LFxoZdzH6oQG9RIEjDwyolfzFwu1ZpVGlqKhAij70ytV4xJGqqExgfM0Qm4Kxv9U+SrlBCcgR6a0Ct2IKo5kswr+2xYPSvtrWI3E+33HMaXlxvL6COc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSh0r3cp; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so1231942a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 03:57:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763035036; x=1763639836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pfe1V+epjpy6bgW6SoCEKzjepepuLRA0eHE/Lz4yqY=;
-        b=sSh0r3cpu4mIwIgz5fFj0OyIhcgJDzVqNz1/2VE8rHJ/icz2YdsAuJeZxPUnZkBulq
-         XLIlEyE7/wnq2mDYjhLr824ibMXNS+HxKqqoELboAqCO2minCU+lf7MA8SKdN0DCXtn8
-         jATMyZnpX6slPbVL6oxWn2g4tbSIWmy0m4vq2c+/Zs3rBA34/W7HDDckyURGYpvxhpP6
-         iVK/CuyshLcEz1amTQ59udUoACRZvOsazrf2FrHVn6vl7U/rU7NrgajMrLH1ym7f1zef
-         2IAKXkiRgjK7qngopNfWe8wTUQBiUQsmM+R7l8Dbu337D65zbKVeCyVQ1YHSj7qyFmLz
-         EHsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763035036; x=1763639836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Pfe1V+epjpy6bgW6SoCEKzjepepuLRA0eHE/Lz4yqY=;
-        b=LQSPTlbt5eQGuOP9RJQ0W+JkuF5swslKoT2pj8DW9xNUMoowTmBgIhcJl3QlUYjCUP
-         xtdJy8VAlhqfwQ9dz+ZGo/kL2zVeykgk5qhY9bti7lqgChF2ptr63JNpMBnjtmaCGuih
-         eqLT77OrpyzkdgB26QRvbPPcXXwvK8v4YJbWFrfjjzRBnVvx2MyMQfFn7hRUteWk6IAs
-         eTw71nVMmDwWK1q4pJo03icuU9w2DQDGJuiZ/mBsqsONYaPRXevcU6so9ydttpmjqHBw
-         J7NJNdjzbB1RdAy3zA+LJRRXSoPMce9gtzMlU8dHOpTWaVmtGWxXE8qE0nd7owAml188
-         xwxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuHkRQcZPnJ9SOk37IVeuEtP6rocTqzR0pUFMvOzQ1/xiy5SgR+SWgyok3bQTLNwLOzo6VxXYjP6fTzpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziGPt7rHijzc39c/8ix7n00OIXfBv1+e1vLrEBv/8lXxACtZlJ
-	szlMWLBMYVoCWOEBeoxU92fl2OV7DRPPpFIJsLIeoQYyMVxBRm1yDzZBI6Ihea8GTB4=
-X-Gm-Gg: ASbGnctgXogiEnG9hQXRW/Yp2mLAwRYopqvoqy9lFo7qp5PhDNZ7ZjMqxjaOJHrxfHV
-	Wr8A0eH0Jgnj+GfHAdG29ZROdDqgThnHaMI1YjzG62wtMTXX6nnhsJdmotNzIhUVocxFnWNPYEF
-	F+9pp3rV+4quVDpBI6w0IocIV5Yh2HHqfc8+Gev9fzweX03h/zo9EV2i2+qtNJagzfAn1xfBfJ4
-	IzbLG1kEOjlv7Tpx7ajNu9KqZBcyTY20gyO1plNG+plKolCQjrkmZ37emxnGv24XFq/aWfpVTUp
-	TAoBkZYrrjr47HbmshoMmirsrEFsyQwv8vE91R3d8R+w0ayDAByy95bnqtnb3e+YbUzMBZWwHVD
-	a9TE9+2rDXJGj9jdbzShnAxQF1ymdp1aSJn+aZ1SU0DG/1TcA6S8g+xAt5cwr8h8Hyw1coe2YGM
-	40Imts4JmZp/Q+
-X-Google-Smtp-Source: AGHT+IGgiSF1zetGk7scP6UPOWU5rKLto8aKAOIhNy5s1Fw9vFiOgcRh6HS62kk2VZBRDEGdVcPCCg==
-X-Received: by 2002:a05:6402:3585:b0:641:66cc:9d91 with SMTP id 4fb4d7f45d1cf-6431a56b3d7mr5951684a12.27.1763035035749;
-        Thu, 13 Nov 2025 03:57:15 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff23:4430:e68d:9e37:1627:2b9b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a4ce83dsm1309174a12.34.2025.11.13.03.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 03:57:15 -0800 (PST)
-Date: Thu, 13 Nov 2025 12:57:08 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 04/14] firmware: qcom_scm: Introduce PAS context
- initialization helper function
-Message-ID: <aRXHlL49sSGML__G@linaro.org>
-References: <20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com>
- <20251113-kvm-rproc-v7-v7-4-df4910b7c20a@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2333D6F9;
+	Thu, 13 Nov 2025 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763035108; cv=fail; b=QRIt7G681XiP8dsyJ5kiQubYLGDvRShOFkbvE3SxfSG9aEYsKl31Of50Ksp71GnF79LyGD2KOr2V8JS+nUXIFW+vwtqhElqNXjwZunfotxewJVfo9f6XL+LP6D4FAARheE+uLjQIi7ZDexl2icPa0unOXp4mVyj32Dak+YTMe3M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763035108; c=relaxed/simple;
+	bh=1Cx50zctEONqefLPHiZnsthKGwF//2RYUKV+y8S5Tkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kx9dziDNP1riPl+n39pWou8OCYiDFBbGlRwj3f6s3cK3kCGeT+z9Nx6k41R6P6XaEQ5+05Px/qN6iSiSovTewmn4X8hd2H2Ctp5wbOdk67lSMeo9QQBh4rC/FafciiL0HqqvT9LX/yaxKvkqApIFX2XRkL8AOsgXpn/btGMbMPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UcDjy4r1; arc=fail smtp.client-ip=40.93.194.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=piXKQxvJL5AogsA6CW4msQDjU0P7xWUm2wwqBWdPUkk7uE8/UF8fR43fg6Fh3Wv79gEwIEG/QFYb8M0tXeHc/XS6795q4gB+vkCPtfflkt1toUCgrtXp8S9DWjP3ag+bQZo9HD6V/mLak+2y99Q+Ux7KQ0KRNhc+CDvl1gaTkKnEzhaEtEkmd9AnHtBWbkJONu0kU7xvWOmtOEdp6NGGXHtX8eRBxQXiKYp2o78aAyvxq8sNwuNm6hha6LdlV6iuZ/zmUAOxIl1LzVWtm3qxMYBjnftLR4xXLOU+hqFOKKVVNWn1WBhlLAnNjUd1VN2kTc18f6hVw/rBQMhozPXTXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CNzkxJpEtbEfot+Bix7y83KXkacAkmVq2QVi+bvk6zM=;
+ b=J9Fcqzf2fB1mv+FXiX/d8tkGngFoIJ/EV4eKXtC2kZqY3lWCiWKZG/G3FOl0LzpeaoKY1zq8aCC8ez5EoMyZuQJbKBp68XPpoRc8PZYxL7snwFDR75PcmJ2PhQpE0hlBZxzkh3MmX78qBvd/NP/rrbxlr7QPz4zm1ONvRvGa0qeBuVMg+vN9PAmpgXbtqNDC5KPWRRksuTSwXgE960s/92NKLMzsBzdXXnOUr75yIXmLf3SpfVrODykYcSCj4+HQZHpbLpOnAXenTnpPqc7pd+yr040W77bAMq82fWf3N2Hp+Tox83ipI6fTtmN9XBlBaiZCbIrChcmm70D+LB1kAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.dev smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CNzkxJpEtbEfot+Bix7y83KXkacAkmVq2QVi+bvk6zM=;
+ b=UcDjy4r1I1SPqxuEEtwm9DbBX4AkDJDOqRvKr937qlIEWm1ZvtzPaCDIClYEBYE8yK/XudkVGYm86UX18yK08sIiqOX0LIb9l0U4FgHccdWjYf25YztgoUokhNEmCeADBsD17jkhqXtvxuE7x6VpqeSfxY9+JNdL5fup9NBkdeM=
+Received: from BYAPR05CA0017.namprd05.prod.outlook.com (2603:10b6:a03:c0::30)
+ by DS7PR12MB6046.namprd12.prod.outlook.com (2603:10b6:8:85::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 11:58:21 +0000
+Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
+ (2603:10b6:a03:c0:cafe::cf) by BYAPR05CA0017.outlook.office365.com
+ (2603:10b6:a03:c0::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.6 via Frontend Transport; Thu,
+ 13 Nov 2025 11:58:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 11:58:20 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 13 Nov
+ 2025 03:58:19 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Nov
+ 2025 05:58:19 -0600
+Received: from [10.252.220.243] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 13 Nov 2025 03:58:17 -0800
+Message-ID: <1f39d5a3-e728-4b2b-a9c6-50cbc4fffd17@amd.com>
+Date: Thu, 13 Nov 2025 17:28:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113-kvm-rproc-v7-v7-4-df4910b7c20a@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] x86/svm: Cleanup LBRV tests
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+	<seanjc@google.com>, Kevin Cheng <chengkev@google.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
+ <20251110232642.633672-13-yosry.ahmed@linux.dev>
+Content-Language: en-US
+From: Shivansh Dhiman <shivansh.dhiman@amd.com>
+In-Reply-To: <20251110232642.633672-13-yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|DS7PR12MB6046:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49fa27e9-9957-4862-c72b-08de22abf0b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MjNoVGFzak0vQXdYMm5qWnhJWW1ZeGdsL0FMYnlueU1NVjNHelN5eldObWlH?=
+ =?utf-8?B?Rkx4OHdUN010QkFDeW5vNTh6UUp6UEIxanlFeWxocHlZcWYxeFdQdmZhdlha?=
+ =?utf-8?B?OGowMXBzYjMvTC9uTzB4OFpoR3Jzc1VYMnk5d0lrU2QrMWl1ZGRlT0NtbU9q?=
+ =?utf-8?B?bHFTRFVGcENEVmJOOTRYcWJMakNuQm5TcEF5SERKVW5nV2xpTGMzN2JvUEl1?=
+ =?utf-8?B?NFl2WDZFTEdGeTRzNmc4N3BCNDJIVTdCOE5ibFRPbUhJZG5lMGo2L1hiTWht?=
+ =?utf-8?B?bWNSOFZVcUNzODc0MlZEeDVvS1pEUlJEN0l1Q05MTWtWcGIyWUk5bnVOc0Uz?=
+ =?utf-8?B?YmFUbTZmUTA2bkRadkxTSlhvRi9wdzJCYjBKa2JMSE9MUDIyeVNLRVQ2eXFY?=
+ =?utf-8?B?U25oUHprR0VyY1d6RTAzdWxzS2xMT1R4VWNRMXI2WWllU25qbHQ5Yzg3TEdr?=
+ =?utf-8?B?aGt6cTVVNVBpU1FTSDYyb2tkWCsrZjkxcURJYnVPcVhHdnRPNGk5aklUM3hu?=
+ =?utf-8?B?MnowUDRRZjRBQVFqTHJGZHRFN2ZHQVlETVhkYXRxYkYydGhraFY0UmUyYlF6?=
+ =?utf-8?B?cW9leTRFL0VFQ21ock9zZVlDVjZMNWJWZUNSR1pBWnN0SFNnb29FeEFHbmNz?=
+ =?utf-8?B?WHpCQ0orWkYxeDlJNG1NanpRekZYSW9zc2NGSk8vYWxpdC9LOERheU9lUGFU?=
+ =?utf-8?B?RUttbjFYcGNGY3VvaWdGUjFMQ3d2UFYvUk02S3JYU3QycmR1NGV1dXBsbHdP?=
+ =?utf-8?B?SHlwUlZNTGk2RXZ5dFlKbTNTV25PZ0ZsTkdKZk0vNjVkZXdJZGxsK05aT3Fo?=
+ =?utf-8?B?RGdtNE93QkV1dFZLM0tIczA2dHNIelVySFpBYktIVERZRFVtYnYrcXFkSkQy?=
+ =?utf-8?B?QVcreWFUMWVPNHFZdUs1cWV4clRwSHNDaVRTdVdEdmJHOGE5Q1Z4TzBpMlVW?=
+ =?utf-8?B?ZlM2L3VCUWZDdkUrRXB1TlRXeWttN05rVnliaW9NWWRPdkd1WG1ISHhscUtP?=
+ =?utf-8?B?ODRRRDVtZE5pRnJYdDJQSFRsdFR6NUw0czl2QnpNYUxwdTNtVi9CQWswMzZD?=
+ =?utf-8?B?Z0Ryazh3K2Q4WlUzNWI4U0tua2lpcVlUNGF6Mk1Hbkt1akh3dVFZWWl0TTZP?=
+ =?utf-8?B?aUVlZmpzTW9wMHVNa3NZNVpmRG5UTVpnUm0wRUo5L0ZjRHVWaGJKVTgzMlZF?=
+ =?utf-8?B?ZHlrVlI4a0VtMlU2cjVWamZ0NFErYS84ckNUcC8rZFoxN2ZjMnRPZlY2YnBZ?=
+ =?utf-8?B?YkRzOGowdGsxam52RHJkUmdvOUVyaW55YjhrTjdJSm1TVzR0a1ZlMFJwVGlG?=
+ =?utf-8?B?c0JQd05XZUFJNUhQbTNRSjFxbDh6Y2Y2Ym84T1lzeW9YaStrWmQwKzFzamlS?=
+ =?utf-8?B?YXpqSDlIL0twMEkvelVQVjlVQVVFaDBvZnAzYWF3RklBQW1jWW0rU3JpbEs1?=
+ =?utf-8?B?U08zSDNab2JuS29HNjd4dWF2RW9pMG9tM01OOU93NnozYy9MYlB3RVNZWEVF?=
+ =?utf-8?B?MFFaRVFLK3pTdUdmV3ZLZkE5cG5aZDdPOUduQlQ3RHZoUU5RNWdGcElCWExZ?=
+ =?utf-8?B?VVFHVmJMcHBhRGJibUtpRitmQkErUlRnQjJ1RU9zUzR4MnhPMnE0VEtSZ3pp?=
+ =?utf-8?B?SkVINkljZjFnTTNXVzhOcjR0bDNPUU9NOUY0T2daelo1R0xLb0NNNWYwTG92?=
+ =?utf-8?B?UUdReHNoK0tyY3ROalpWM2RYZXZVTmhmNkg2WThsaG5EUXRyczhxRndLd3Bs?=
+ =?utf-8?B?RkJ4aml6aXFrR0UxZGdaanZZSzZ0ZnFqekFJY2tDcHVPWDVoTHhmUHZQc05U?=
+ =?utf-8?B?ejlMNGZkLzdUQXp0WllrSk9XdlVhZXZzZzdMZXdiaEN5dHR4OSs0MURxSUwx?=
+ =?utf-8?B?VGl4UG96MmhJejFqQ1U5TTZMOFRSMktxWUpUZkhXWFlVWkJwK1BYT1ZYLzl3?=
+ =?utf-8?B?SXZuVVh1VFB0RVdkT3UzcDlXQTcvSm5KdnVNUFIyOFdlVlpXMm55R0xpS0V2?=
+ =?utf-8?B?UVpIcUVhSE16TjVOU1VTL0s3dDlDZXRZOFpuY2Z2b0k4MURsTmZocGd4VS9v?=
+ =?utf-8?B?Y0tGNDdMc1dzekN6Y2dTaWtKSmJxajFJSFZ4SmdaT2xzaENoNEJvL1dLblNO?=
+ =?utf-8?Q?rUSQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 11:58:20.4720
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49fa27e9-9957-4862-c72b-08de22abf0b0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E3.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6046
 
-On Thu, Nov 13, 2025 at 04:05:54PM +0530, Mukesh Ojha wrote:
-> When the Peripheral Authentication Service (PAS) method runs on a SoC
-> where Linux operates at EL2 (i.e., without the Gunyah hypervisor), the
-> reset sequences are handled by TrustZone. In such cases, Linux must
-> perform additional steps before invoking PAS SMC calls, such as creating
-> a SHM bridge. Therefore, PAS SMC calls require awareness and handling of
-> these additional steps when Linux runs at EL2.
-> 
-> To support this, there is a need for a data structure that can be
-> initialized prior to invoking any SMC or MDT functions. This structure
-> allows those functions to determine whether they are operating in the
-> presence or absence of the Gunyah hypervisor and behave accordingly.
-> 
-> Currently, remoteproc and non-remoteproc subsystems use different
-> variants of the MDT loader helper API, primarily due to differences in
-> metadata context handling. Remoteproc subsystems retain the metadata
-> context until authentication and reset are completed, while
-> non-remoteproc subsystems (e.g., video, graphics, IPA, etc.) do not
-> retain the metadata context and can free it within the
-> qcom_scm_pas_init() call by passing a NULL context parameter and due to
-> these differences, it is not possible to extend metadata context
-> handling to support remoteproc and non remoteproc subsystem use PAS
-> operations, when Linux operates at EL2.
-> 
-> Add PAS context data structure and initialization helper function.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c       | 32 ++++++++++++++++++++++++++++++++
->  include/linux/firmware/qcom/qcom_scm.h | 12 ++++++++++++
->  2 files changed, 44 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 0a0c48fca7cf..e4eb7f3ab7a5 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -558,6 +558,38 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
->  		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
+Hi Yosry,
+
+I tested this on EPYC-Turin and found that some tests seem to be a bit flaky.
+See below.
+
+On 11-11-2025 04:56, Yosry Ahmed wrote:
+> @@ -3058,55 +3041,64 @@ u64 dbgctl;
+>  
+>  static void svm_lbrv_test_guest1(void)
+>  {
+> +	u64 from_ip, to_ip;
+> +
+>  	/*
+>  	 * This guest expects the LBR to be already enabled when it starts,
+>  	 * it does a branch, and then disables the LBR and then checks.
+>  	 */
+> +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
+
+This TEST_EXPECT_EQ is run when LBR is enabled, causing it to change last
+branch. I tried to move it below wrmsr(MSR_IA32_DEBUGCTLMSR, 0) and it works
+fine that way.
+
+>  
+>  	DO_BRANCH(guest_branch0);
+>  
+> -	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> +	/* Disable LBR before the checks to avoid changing the last branch */
+>  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);> +	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> +	TEST_EXPECT_EQ(dbgctl, 0);
+>  
+> -	if (dbgctl != DEBUGCTLMSR_LBR)
+> -		asm volatile("ud2\n");
+> -	if (rdmsr(MSR_IA32_DEBUGCTLMSR) != 0)
+> -		asm volatile("ud2\n");
+> +	get_lbr_ips(&from_ip, &to_ip);
+> +	TEST_EXPECT_EQ((u64)&guest_branch0_from, from_ip);
+> +	TEST_EXPECT_EQ((u64)&guest_branch0_to, to_ip);
+>  
+> -	GUEST_CHECK_LBR(&guest_branch0_from, &guest_branch0_to);
+>  	asm volatile ("vmmcall\n");
 >  }
 >  
-> +/**
-> + * devm_qcom_scm_pas_context_init() - Initialize peripheral authentication service
-> + *				      context for a given peripheral
-> + *
-> + * PAS context is device-resource managed, so the caller does not need
-> + * to worry about freeing the context memory.
-> + *
-> + * @dev:	  PAS firmware device
-> + * @pas_id:	  peripheral authentication service id
-> + * @mem_phys:	  Subsystem reserve memory start address
-> + * @mem_size:	  Subsystem reserve memory size
-> + *
-> + * Upon successful, returns the PAS context or ERR_PTR() of the error otherwise.
-> + */
-> +void *devm_qcom_scm_pas_context_init(struct device *dev, u32 pas_id, phys_addr_t mem_phys,
-
-Why does this return void* rather than struct qcom_scm_pas_context *?
-
-> +				     size_t mem_size)
-> +{
-> +	struct qcom_scm_pas_context *ctx;
+>  static void svm_lbrv_test_guest2(void)
+>  {
+> +	u64 from_ip, to_ip;
 > +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ctx->dev = dev;
-> +	ctx->pas_id = pas_id;
-> +	ctx->mem_phys = mem_phys;
-> +	ctx->mem_size = mem_size;
-> +
-> +	return ctx;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_qcom_scm_pas_context_init);
+>  	/*
+>  	 * This guest expects the LBR to be disabled when it starts,
+>  	 * enables it, does a branch, disables it and then checks.
+>  	 */
+> -
+> -	DO_BRANCH(guest_branch1);
+>  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> +	TEST_EXPECT_EQ(dbgctl, 0);
+>  
+> -	if (dbgctl != 0)
+> -		asm volatile("ud2\n");
+> +	DO_BRANCH(guest_branch1);
+>  
+> -	GUEST_CHECK_LBR(&host_branch2_from, &host_branch2_to);
+> +	get_lbr_ips(&from_ip, &to_ip);
+> +	TEST_EXPECT_EQ((u64)&host_branch2_from, from_ip);
+> +	TEST_EXPECT_EQ((u64)&host_branch2_to, to_ip);
+>  
+>  	wrmsr(MSR_IA32_DEBUGCTLMSR, DEBUGCTLMSR_LBR);
+>  	dbgctl = rdmsr(MSR_IA32_DEBUGCTLMSR);
+> +	TEST_EXPECT_EQ(dbgctl, DEBUGCTLMSR_LBR);
 
-Thanks,
-Stephan
+Same thing here as well.
+
+> +
+>  	DO_BRANCH(guest_branch2);
+>  	wrmsr(MSR_IA32_DEBUGCTLMSR, 0);
+>  
+> -	if (dbgctl != DEBUGCTLMSR_LBR)
+> -		asm volatile("ud2\n");
+> -	GUEST_CHECK_LBR(&guest_branch2_from, &guest_branch2_to);
+> +	get_lbr_ips(&from_ip, &to_ip);
+> +	TEST_EXPECT_EQ((u64)&guest_branch2_from, from_ip);
+> +	TEST_EXPECT_EQ((u64)&guest_branch2_to, to_ip);
+>  
+>  	asm volatile ("vmmcall\n");
+>  }
+Reviewed-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
+
+Other tests look good to me, and work fine.
+
+Tested-by: Shivansh Dhiman <shivansh.dhiman@amd.com>
+
+
+
 
