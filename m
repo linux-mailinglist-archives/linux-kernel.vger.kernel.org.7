@@ -1,125 +1,155 @@
-Return-Path: <linux-kernel+bounces-899109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF87C56CC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:19:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87455C56C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 11:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A5FB4EC885
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C718E3A95ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 10:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AC4322768;
-	Thu, 13 Nov 2025 10:15:18 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CEB327208;
+	Thu, 13 Nov 2025 10:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g1JOScuJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13518312831;
-	Thu, 13 Nov 2025 10:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB8C2E92BA
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 10:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763028917; cv=none; b=lGafCv0fnaGeRxgCOh6311mwI26dxK5Eqyv2RXR6WsO04O3xY1mxn4n5kNCWrsbkEyRYbxbn3HElvvsNUISohxDG2AjoRX6IZMUh8dA8fFkNk8jlO61EK3A740JQp2O+TOEtRdtvwuNSg3n7CzN1nlDA5qhrbeP6tBoUNDhlWvo=
+	t=1763028915; cv=none; b=TByc1G0gNtDldR5FjZ7iAeo4/t+nzq7UFQzPKOUy/SuebmVSrWyFROrbBL50HEEJEUYXTQiP0+ifqkQrnZsL2tpBEnJVgm6LrXAa+mdkWR9p9g0u+WeTCpddWygHynmZlR4Myi0NjBhUn/K9k7hp9V/yZY3wLJTwquGWCR+EgjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763028917; c=relaxed/simple;
-	bh=BAf4PChdrXsEECboXjuWhMhLZMG7PICo2eR6NUwLSpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kYTiHnK3mAbCQXnqJ37NSxhLA8i7GKDAIKiDk5zOG2kVcctTCGW/6WMhe6CgsMXvnG3LXZsNwezwv49BQQkbH5VLN/Whr8xZULkAKEHZek2/tBD5RkDf3O316Lecg6xUwZsNskhLqDrHV1/ZipAmZarAMDY0mtdyIANir+i96zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.48.119])
+	s=arc-20240116; t=1763028915; c=relaxed/simple;
+	bh=ShMy3nLafbdyxOStUvqd7oI2N/f66M1pOhgVh2OmtYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YzighmAZJ6Q4IMUy2n5sNNa1/XJMY/eCXioW4gUyI8PpRxiOhA86NkxHSCTI2vR4sJSYyg4nByHJhSCWKzbQzqwzprqOaA2caPDLqm5GxpvSTt1Ogy6Py36drKBZBqvASNHI+XqQ9oVqPkc+pB1M+4lMHVuSPcerDXfGa6bTQX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g1JOScuJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763028912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HD4mugaHkDDtHPnrViY3D59+rWWIvzs7KEepW4USoek=;
+	b=g1JOScuJym43Q7589J62dvpcqBxLzzkgFxvAGR0zrJitLSFem0xixfjVkCar7g7RUgaj5v
+	4PGinGNpNBnFs51b33iUxAcNl7SKtElKoMVw4bF4eJ04YWntMpseadVcGTFGNK9C8cz1FI
+	R8ZlFuH6dtQfooyjv2MyuZqEQkZPHR8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-178-T0l06bT9OlKxDc6tf60pPQ-1; Thu,
+ 13 Nov 2025 05:15:09 -0500
+X-MC-Unique: T0l06bT9OlKxDc6tf60pPQ-1
+X-Mimecast-MFC-AGG-ID: T0l06bT9OlKxDc6tf60pPQ_1763028908
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 80DDB340861;
-	Thu, 13 Nov 2025 10:15:11 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: soc@kernel.org
-Cc: Yixun Lan <dlan@gentoo.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alex Elder <elder@riscstar.com>,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V SpacemiT Devicetrees for v6.19
-Date: Thu, 13 Nov 2025 18:14:50 +0800
-Message-ID: <20251113180732-GYC0846694@gentoo.org>
-X-Mailer: git-send-email 2.51.0
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C9B118002D0;
+	Thu, 13 Nov 2025 10:15:07 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.82])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27143300018D;
+	Thu, 13 Nov 2025 10:15:01 +0000 (UTC)
+Date: Thu, 13 Nov 2025 18:14:56 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Xue He <xue01.he@samsung.com>
+Cc: axboe@kernel.dk, yukuai@fnnas.com, akpm@linux-foundation.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 RESEND] block: plug attempts to batch allocate tags
+ multiple times
+Message-ID: <aRWvoOmo3_JTelPq@fedora>
+References: <CGME20251113080643epcas5p154d9edfbf0f99e0d4c08408ad6cf68f4@epcas5p1.samsung.com>
+ <20251113080202.193508-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113080202.193508-1-xue01.he@samsung.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Arnd,
+On Thu, Nov 13, 2025 at 08:02:02AM +0000, Xue He wrote:
+> This patch aims to enable batch allocation of sufficient tags after
+> batch IO submission with plug mechanism, thereby avoiding the need for
+> frequent individual requests when the initial allocation is
+> insufficient.
+> 
+> ------------------------------------------------------------
+> Perf:
+> base code: __blk_mq_alloc_requests() 1.31%
+> patch: __blk_mq_alloc_requests() 0.7%
+> ------------------------------------------------------------
 
-   Please pull SpacemiT's DeviceTree changes for v6.19
+Can you include the workload with perf together?
 
-Yixun Lan
+> 
+> ---
+> changes since v1:
+> - Modify multiple batch registrations into a single loop to achieve
+>   the batch quantity
+> 
+> changes since v2:
+> - Modify the call location of remainder handling
+> - Refactoring sbitmap cleanup time
+> 
+> changes since v3:
+> - Add handle operation in loop
+> - Add helper sbitmap_find_bits_in_word
+> 
+> changes since v4:
+> - Split blk-mq.c changes from sbitmap
+> 
+> Signed-off-by: hexue <xue01.he@samsung.com>
+> ---
+>  block/blk-mq.c | 39 ++++++++++++++++++++++-----------------
+>  1 file changed, 22 insertions(+), 17 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 09f579414161..64cd0a3c7cbf 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -467,26 +467,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
+>  	unsigned long tag_mask;
+>  	int i, nr = 0;
+>  
+> -	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+> -	if (unlikely(!tag_mask))
+> -		return NULL;
+> +	do {
+> +		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+> +		if (unlikely(!tag_mask)) {
+> +			if (nr == 0)
+> +				return NULL;
+> +			break;
+> +		}
+> +		tags = blk_mq_tags_from_data(data);
+> +		for (i = 0; tag_mask; i++) {
+> +			if (!(tag_mask & (1UL << i)))
+> +				continue;
+> +			tag = tag_offset + i;
+> +			prefetch(tags->static_rqs[tag]);
+> +			tag_mask &= ~(1UL << i);
+> +			rq = blk_mq_rq_ctx_init(data, tags, tag);
+> +			rq_list_add_head(data->cached_rqs, rq);
+> +			data->nr_tags--;
+> +			nr++;
+> +		}
+> +		if (!(data->rq_flags & RQF_SCHED_TAGS))
+> +			blk_mq_add_active_requests(data->hctx, nr);
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+Here not only less-efficient, but also a over-counting bug, please
+move the above two lines after `percpu_ref_get_many`.
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-are available in the Git repository at:
+Thanks, 
+Ming
 
-  https://github.com/spacemit-com/linux tags/spacemit-dt-for-6.19-1
-
-for you to fetch changes up to 5a97a38c22799a802f33001dcb022d2942fe4a41:
-
-  riscv: dts: spacemit: define all missing I2C controller nodes (2025-11-12 18:53:26 +0800)
-
-----------------------------------------------------------------
-RISC-V SpacemiT DT changes for 6.19
-
-- Add Uart and I2C nodes
-- Add P1 PMIC nodes
-- Add MusePi Pro board support
-- Add OrangePi R2S board support
-- Enable eeprom for BPI-F3
-- Enable QSPI on BPI-F3
-- Enable Ethernet and PDMA on OrangePi RV2
-
-----------------------------------------------------------------
-Alex Elder (4):
-      riscv: dts: spacemit: enable the i2c8 adapter
-      riscv: dts: spacemit: define fixed regulators
-      riscv: dts: spacemit: define regulator constraints
-      riscv: dts: spacemit: enable K1 SoC QSPI on BPI-F3
-
-Aurelien Jarno (3):
-      riscv: dts: spacemit: enable the i2c2 adapter on BPI-F3
-      riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
-      riscv: dts: spacemit: add i2c aliases on BPI-F3
-
-Hendrik Hamerlinck (1):
-      riscv: dts: spacemit: add UART pinctrl combinations
-
-Michael Opdenacker (3):
-      riscv: dts: spacemit: add Ethernet and PDMA to OrangePi RV2
-      dt-bindings: riscv: spacemit: Add OrangePi R2S board
-      riscv: dts: spacemit: Add OrangePi R2S board device tree
-
-Troy Mitchell (4):
-      dt-bindings: riscv: spacemit: add MusePi Pro board
-      riscv: dts: spacemit: add MusePi Pro board device tree
-      riscv: dts: spacemit: reorder i2c2 node
-      riscv: dts: spacemit: define all missing I2C controller nodes
-
- .../devicetree/bindings/riscv/spacemit.yaml        |   2 +
- arch/riscv/boot/dts/spacemit/Makefile              |   2 +
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    | 172 ++++++++
- arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts     |  79 ++++
- arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts   |  90 ++++
- arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts   |  52 +++
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       | 465 ++++++++++++++++++++-
- arch/riscv/boot/dts/spacemit/k1.dtsi               | 122 ++++++
- 8 files changed, 982 insertions(+), 2 deletions(-)
- create mode 100644 arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
- create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-r2s.dts
 
