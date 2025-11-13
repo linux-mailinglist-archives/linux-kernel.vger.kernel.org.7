@@ -1,233 +1,300 @@
-Return-Path: <linux-kernel+bounces-898484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AC3C555E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:00:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EE6C55671
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 03:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E60B4E19E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:00:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1867934821A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 02:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492B729E11A;
-	Thu, 13 Nov 2025 02:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Yrx0QE6l"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC91B2F5302;
+	Thu, 13 Nov 2025 02:16:39 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDE62248AF;
-	Thu, 13 Nov 2025 02:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4160C85C4A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 02:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762999242; cv=none; b=WfY1iXm1RwM0SqlCC9O9uw8YAlVtfr6bU9BDdZps1g1LiyOX1xSwn7FEVrxaKxvLbbEgT39c9SRc+ZMAR+iCOXHRK+BnSqpBYcQ9VFnCye+lcFcFGT+WR1Zp7UMdKYEYpykAAtL2T/RZ9TESY6JC8GGxsvzVQrH6d3MCg2Rg4HY=
+	t=1763000199; cv=none; b=oHW3AQCMK8z79bdaqKPU2TSUpqcEhAd3NSxYhfGJGMFqtlPRaUtipe7IeTm3LALMvCWMNKehcUkHiEcwoY8PAMYcEl6+Ta3uBnLNnMfn57UI8SSET+1+KHFMrawmem00Sw0eq1Rd0wenJUVgTzk/665yM5iYMFwS3ACOUicLmxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762999242; c=relaxed/simple;
-	bh=m/JsSUuuwvDOeT9RQcGvgVZikLHJyfgvCRC/Km24WVM=;
+	s=arc-20240116; t=1763000199; c=relaxed/simple;
+	bh=Bt1uXlZPw/nKh5/JP2JGfg9HYD7gdM8IVXfmkIuY4OM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AT1O9WgYTgm86RRIv/Vyke80QXYuhL0NI2UVzcNphHedL9xcsCloACGWJTS5ja1bqR9me9BCz3Yev0S9v6mvHMDEeeGSLJbRhQRxAB5sU/83ElRy8Is+G/sMml0x74BUp4sLztidkZz4D4YYJHHIQgvQd3+Iijp9BBtQ3IIPC14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Yrx0QE6l; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [213.216.211.176])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8B042BD2;
-	Thu, 13 Nov 2025 02:58:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762999118;
-	bh=m/JsSUuuwvDOeT9RQcGvgVZikLHJyfgvCRC/Km24WVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yrx0QE6l81GKJpO7fUpDjtqnA5GrvpgVcKw12mkvhSUeNKwzoA5dm+f8PQQU/pHwQ
-	 pOTPOexPfTcmFKdY2Uv+IlpJCWsNnxJaxnQL0L+hG679KyV9uQqt3ii6BXKlD9jxR6
-	 eH9ydbOSbO4wdbNojVfBEQeCE5fR4cuG+zJarzCY=
-Date: Thu, 13 Nov 2025 04:00:27 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guoniu Zhou <guoniu.zhou@nxp.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 1/5] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-Message-ID: <20251113020027.GE9135@pendragon.ideasonboard.com>
-References: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
- <20251023-csi2_imx8ulp-v7-1-5ecb081ce79b@nxp.com>
- <20251027000537.GM13023@pendragon.ideasonboard.com>
- <aROg99ryy6RTZZIx@lizhi-Precision-Tower-5810>
- <20251111211025.GA26805@pendragon.ideasonboard.com>
- <aROzSqKEOXQgkWLz@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBfgQA+ShHTzIe8ejuADgIlHjCQNc1DFFGe2EZVr6erGN3y+TSuDhJp3iOLh0dojxdS32rAzOqgUDSeqFDeJOZKej2I5qVbHdKv49jriGiKgeqkTS6RgZy66o4TGcSavrGChGYwz6PseVAab67goz/IGstJXuNBsr3in3IooODs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 13 Nov 2025 11:01:34 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Thu, 13 Nov 2025 11:01:34 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kasong@tencent.com,
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, gunho.lee@lge.com, taejoon.song@lge.com
+Subject: Re: [PATCH 2/3] mm: swap: introduce swap tier infrastructure
+Message-ID: <aRU7/ibyrPTn93qV@yjaykim-PowerEdge-T330>
+References: <20251109124947.1101520-1-youngjun.park@lge.com>
+ <20251109124947.1101520-3-youngjun.park@lge.com>
+ <CACePvbUvDfZgDx-sXkZ+Oa7DwtKg6b1t=owQ1sRZ_FpFrGxA3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aROzSqKEOXQgkWLz@lizhi-Precision-Tower-5810>
+In-Reply-To: <CACePvbUvDfZgDx-sXkZ+Oa7DwtKg6b1t=owQ1sRZ_FpFrGxA3g@mail.gmail.com>
 
-On Tue, Nov 11, 2025 at 05:06:02PM -0500, Frank Li wrote:
-> On Tue, Nov 11, 2025 at 11:10:25PM +0200, Laurent Pinchart wrote:
-> > On Tue, Nov 11, 2025 at 03:47:51PM -0500, Frank Li wrote:
-> > > On Mon, Oct 27, 2025 at 02:05:37AM +0200, Laurent Pinchart wrote:
-> > > > On Thu, Oct 23, 2025 at 05:19:42PM +0800, Guoniu Zhou wrote:
-> > > > > From: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > > >
-> > > > > The CSI-2 receiver in the i.MX8ULP is almost identical to the version
-> > > > > present in the i.MX8QXP/QM, but i.MX8ULP CSI-2 controller needs pclk
-> > > > > clock as the input clock for its APB interface of Control and Status
-> > > > > register(CSR). So add compatible string fsl,imx8ulp-mipi-csi2 and
-> > > > > increase maxItems of Clocks (clock-names) to 4 from 3.  And keep the
-> > > > > same restriction for existing compatible.
-> > > > >
-> > > > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > > > ---
-> > > > >  .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 41 ++++++++++++++++++++--
-> > > > >  1 file changed, 39 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> > > > > index 3389bab266a9adbda313c8ad795b998641df12f3..da3978da1cab75292ada3f24837443f7f4ab6418 100644
-> > > > > --- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
-> > > > > @@ -20,6 +20,7 @@ properties:
-> > > > >        - enum:
-> > > > >            - fsl,imx8mq-mipi-csi2
-> > > > >            - fsl,imx8qxp-mipi-csi2
-> > > > > +          - fsl,imx8ulp-mipi-csi2
-> > > > >        - items:
-> > > > >            - const: fsl,imx8qm-mipi-csi2
-> > > > >            - const: fsl,imx8qxp-mipi-csi2
-> > > > > @@ -39,12 +40,16 @@ properties:
-> > > > >                       clock that the RX DPHY receives.
-> > > > >        - description: ui is the pixel clock (phy_ref up to 333Mhz).
-> > > > >                       See the reference manual for details.
-> > > > > +      - description: pclk is clock for csr APB interface.
-> > > > > +    minItems: 3
-> > > > >
-> > > > >    clock-names:
-> > > > >      items:
-> > > > >        - const: core
-> > > > >        - const: esc
-> > > > >        - const: ui
-> > > > > +      - const: pclk
-> > > > > +    minItems: 3
-> > > > >
-> > > > >    power-domains:
-> > > > >      maxItems: 1
-> > > > > @@ -130,19 +135,51 @@ allOf:
-> > > > >          compatible:
-> > > > >            contains:
-> > > > >              enum:
-> > > > > -              - fsl,imx8qxp-mipi-csi2
-> > > > > +              - fsl,imx8ulp-mipi-csi2
-> > > > > +    then:
-> > > > > +      properties:
-> > > > > +        reg:
-> > > > > +          minItems: 2
-> > > > > +        resets:
-> > > > > +          minItems: 2
-> > > > > +          maxItems: 2
-> > > > > +        clocks:
-> > > > > +          minItems: 4
-> > > > > +        clock-names:
-> > > > > +          minItems: 4
-> > > >
-> > > > Do we need the clock-names constraint ? The DT schemas will enforce that
-> > > > clocks and clock-names always have the same number of elements.
-> > >
-> > > clock-names list already restrict at top section
-> > >
-> > > clock-names:
-> > >   items:
-> > >     - const: core
-> > >     - const: esc
-> > >     - const: ui
-> > >     - const: pclk
-> > >   minItems: 3
-> > >
-> > > Here just restrict need 4 clocks, instead 3 clock for fsl,imx8ulp-mipi-csi2
+On Wed, Nov 12, 2025 at 06:20:22AM -0800, Chris Li wrote:
+> First of all, for RFC series, please include RFC in each patch subject as well.
+> 
+> For the real patch submission, please consider split it into smaller
+> chunks and have incremental milestones.
+> Only introduce the function needed for each milestone, not define them
+> all together then use it in later patches.
+> 
+> See some feedback as follows.
+> 
+> This patch is too big, to be continued.
+> 
+> Chris
+
+Sure, I will take care of it. will make better on real patch submissions.
+
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 966f7c1a0128..1224029620ed 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -283,6 +283,10 @@ struct mem_cgroup {
+> >         /* per-memcg mm_struct list */
+> >         struct lru_gen_mm_list mm_list;
+> >  #endif
+> > +#ifdef CONFIG_SWAP_TIER
+> 
+> I think we don't need this CONFIG_SWAP_TIER. Making it part of the
+> default swap is fine.
+> By default the memory.swap.tiers is empty and matches the previous
+> swap behavior. The user doesn't need to do anything if they are not
+> using swap tiers. I see no reason to have a separate config option.
+
+Okay I will change it to default kernel option.
+
+> > +       int tiers_onoff;
+> > +       int tiers_mask;
+> > +#endif
 > >
-> > I understand that. My point was that the dt-schema will always verify
-> > that the number of clocks items is equal to the number of clock-names
-> > items. That's a constraint enforced by the core schemas. As
-> > clocks: minItems is set to 4, the clock-names: minItems constraint is
-> > redundant.
-> 
-> I am not sure when have such features. Previous comments from Rob require
-> clocks and clock-names keep the same at binding yaml.
-> 
-> https://lore.kernel.org/linux-devicetree/20251031000012.GA466250-robh@kernel.org/
-> 
-> Rob have not said that clock-names can be removed.
-> 
-> Do you have any thread, which inidicate we only need limit clocks at
-> if-else branch?
-> 
-> I also have not found related commit at
-> https://github.com/devicetree-org/dt-schema.git
+> >  #ifdef CONFIG_MEMCG_V1
+> >         /* Legacy consumer-oriented counters */
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index 90fa27bb7796..8911eff9d37a 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -271,6 +271,9 @@ struct swap_info_struct {
+> >         struct percpu_ref users;        /* indicate and keep swap device valid. */
+> >         unsigned long   flags;          /* SWP_USED etc: see above */
+> >         signed short    prio;           /* swap priority of this type */
+> > +#ifdef CONFIG_SWAP_TIER
+> > +       int tier_idx;
+> > +#endif
+> >         struct plist_node list;         /* entry in swap_active_head */
+> >         signed char     type;           /* strange name for an index */
+> >         unsigned int    max;            /* extent of the swap_map */
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index e1fb11f36ede..78173ffe65d6 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -163,6 +163,19 @@ endmenu
+> >
+> >  endif
+> >
+> > +config SWAP_TIER
+> Same, I think we can remove the SWAP_TIER, just turn it on when swap is enabled.
 
-I think you're right. There are dependencies between clock-names and
-clocks described in the DT schemas, but I don't see any automatic
-dependency regarding the number of items. I seem to have dreamt this :-/
-Sorry about the noise.
+Ack
 
-> > > > > +
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        compatible:
-> > > > > +          contains:
-> > > > > +            const: fsl,imx8qxp-mipi-csi2
-> > > > >      then:
-> > > > >        properties:
-> > > > >          reg:
-> > > > >            minItems: 2
-> > > > >          resets:
-> > > > >            maxItems: 1
-> > > > > -    else:
-> > > > > +        clocks:
-> > > > > +          maxItems: 3
-> > > > > +        clock-names:
-> > > > > +          maxItems: 3
-> > > > > +
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        compatible:
-> > > > > +          contains:
-> > > > > +            enum:
-> > > > > +              - fsl,imx8mq-mipi-csi2
-> > > > > +    then:
-> > > > >        properties:
-> > > > >          reg:
-> > > > >            maxItems: 1
-> > > > >          resets:
-> > > > >            minItems: 3
-> > > > > +        clocks:
-> > > > > +          maxItems: 3
-> > > > > +        clock-names:
-> > > > > +          maxItems: 3
-> > > > >        required:
-> > > > >          - fsl,mipi-phy-gpr
-> > > > >
-> > > >
-> > > > Could you please sort those conditional blocks by alphabetical order of
-> > > > the compatible strings ?
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index d034c13d8dd2..b116282690c8 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -16,6 +16,10 @@ extern int page_cluster;
+> >  #define swap_entry_order(order)        0
+> >  #endif
+> >
+> > +#define DEF_SWAP_PRIO  -1
+> > +
+> > +extern spinlock_t swap_lock;
+> > +extern struct plist_head swap_active_head;
+> >  extern struct swap_info_struct *swap_info[];
+> >
+> >  /*
+> > diff --git a/mm/swap_tier.c b/mm/swap_tier.c
+> > new file mode 100644
+> > index 000000000000..4301e3c766b9
+> > --- /dev/null
+> > +++ b/mm/swap_tier.c
+> > @@ -0,0 +1,602 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +#include <linux/swap.h>
+> > +#include <linux/rcupdate.h>
+> > +#include <linux/memcontrol.h>
+> > +#include <linux/plist.h>
+> > +#include <linux/sysfs.h>
+> > +#include <linux/sort.h>
+> > +
+> > +#include "swap_tier.h"
+> > +
+> > +/*
+> > + * struct swap_tier - Structure representing a swap tier.
+> > + *
+> > + * @name:              Name of the swap_tier.
+> > + * @prio_st:           Starting value of priority.
+> > + * @prio_end:          Ending value of priority.
+> > + * @list:              Linked list of active tiers.
+> > + * @inactive_list:     Linked list of inactive tiers.
+> > + * @kref:              Reference count (held by swap device and memory cgroup).
+> > + */
+> > +static struct swap_tier {
+> > +       char name[MAX_TIERNAME];
+> > +       short prio_st;
+> > +       short prio_end;
+> 
+> I see a lot of complexity of the code come from this priority range.
+> Having both start and end.
+> We should be able to just keep just one of the start and end,  e.g.
+> high end of the priority, then keep all tier in a sorted list or
+> array. Then use the next tier's priority to indicate the other end of
+> the current tier.
 
--- 
-Regards,
+After checking my code, I decide to remove st or end.
 
-Laurent Pinchart
+> > +       union {
+> > +               struct plist_node list;
+> > +               struct list_head inactive_list;
+> > +       };
+> 
+> Is this the list of swapfiles?
+> Why union, how does it indicate which field of the union is valid?
+
+It is swap_tier itself. The 'list' maintains active tiers, and
+'inactive_list' maintains inactive tiers. One tier exists on either
+'list' or 'inactive_list'. The code ensures that a tier must be on one
+of them.
+
+> > +
+> > +/* swap_tiers initialization */
+> > +void swap_tiers_init(void)
+> > +{
+> > +       struct swap_tier *tier;
+> > +       int idx;
+> > +
+> > +       BUILD_BUG_ON(BITS_PER_TYPE(int) < MAX_SWAPTIER * 2);
+> > +
+> > +       for_each_tier(tier, idx) {
+> > +               if (idx < SWAP_TIER_RESERVED_CNT) {
+> > +                       /* for display fisrt */
+> > +                       plist_node_init(&tier->list, -SHRT_MAX);
+> > +                       plist_add(&tier->list, &swap_tier_active_list);
+> > +                       kref_init(&tier->ref);
+> > +               } else {
+> > +                       INIT_LIST_HEAD(&tier->inactive_list);
+> > +                       list_add_tail(&tier->inactive_list, &swap_tier_inactive_list);
+> > +               }
+> > +       }
+> > +
+> > +       strscpy(swap_tiers[SWAP_TIER_DEFAULT].name, DEFAULT_TIER_NAME);
+> 
+> The default tier is not a real tier. It shouldn't show up in the
+> swap_tiers array.
+> The default tier is only a wide cast for memory.swap.tiers to select
+> tiers to turn on/off swap tiers. It is a wide cast pattern, not an
+> actual tier.
+
+Yeah, as I commented in the previous mail, I will change it to a
+logical concept.
+
+> > +void swap_tiers_show_memcg(struct seq_file *m, struct mem_cgroup *memcg)
+> > +{
+> > +       spin_lock(&swap_tier_lock);
+> > +       if (memcg->tiers_onoff)
+> > +               swap_tier_show_mask(m, memcg->tiers_onoff);
+> > +       else
+> > +               seq_puts(m, "\n");
+> > +       swap_tier_show_mask(m, swap_tier_collect_mask(memcg));
+> > +       spin_unlock(&swap_tier_lock);
+> > +}
+> > +
+> > +void swap_tiers_assign(struct swap_info_struct *swp)
+> > +{
+> > +       struct swap_tier *tier;
+> > +
+> > +       spin_lock(&swap_tier_lock);
+> > +       swp->tier_idx = NULL_TIER;
+> > +
+> > +       for_each_active_tier(tier) {
+> > +               if (swap_tier_is_default(tier))
+> > +                       continue;
+> > +               if (swap_tier_prio_in_range(tier, swp->prio)) {
+> > +                       swp->tier_idx = TIER_IDX(tier);
+> > +                       swap_tier_get(tier);
+> > +                       break;
+> > +               }
+> > +       }
+> > +       spin_unlock(&swap_tier_lock);
+> > +}
+> > +
+> > +void swap_tiers_release(struct swap_info_struct *swp)
+> > +{
+> > +       spin_lock(&swap_tier_lock);
+> > +       if (swp->tier_idx != NULL_TIER)
+> > +               swap_tier_put(&swap_tiers[swp->tier_idx]);
+> > +       spin_unlock(&swap_tier_lock);
+> > +}
+> > +
+> > +/* not incremental, but reset. */
+> > +int swap_tiers_get_mask(struct tiers_desc *desc, int nr, struct mem_cgroup *memcg)
+> 
+> Who is using this function? I can't find the user of this function in
+> this patch.
+> Please introduce this function together with the patch that uses it.
+> Don't introduce a function without a user.
+
+swapoff calls swap_tiers_release. I must improve the readability of my
+RFC patch series.
+
+> 
+> > +{
+> > +       struct swap_tier *tier;
+> > +       int ret = 0;
+> > +       int tiers_mask = 0;
+> > +       int tiers_onoff = 0;
+> > +       int cnt = 0;
+> > +
+> > +       for (int i = 0; i < nr; i++) {
+> > +               for (int j = i+1; j < nr; j++) {
+> > +                       if (!strcmp(desc[i].name, desc[j].name))
+> 
+> These two nested for loops look suspicious. Again because I don't see
+
+For assuring, unique tier name input.
+I will think of making simple.
+
+> the caller, I can't reason what it is doing here.
+
+When a swap tier is designated by the memcg sys interface, it is
+called. I will introduce this logic together with the caller
+implementation.
+
+Best Regards,
+Youngjun Park
 
