@@ -1,115 +1,325 @@
-Return-Path: <linux-kernel+bounces-899410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8354C57A28
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC73C57B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A7F93553C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319164A1822
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A9F351FDA;
-	Thu, 13 Nov 2025 13:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528F35292E;
+	Thu, 13 Nov 2025 13:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDUmRthq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSiKQUzD"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDB43446AA;
-	Thu, 13 Nov 2025 13:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F3A2FF14F
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763040276; cv=none; b=C27PrbZYVc2BxlcSyB+twEc20BvWeed9ozUqO4kOtJpS2O899bpqXxXN2ZahnFfBp5qbjzevpWKpxwYhA/Z3xVaLtb7qi9gECipZruZssCcFAWVMT2PqtF9hpnU1xkczmdwYX1aZbI/s1DM2X8ljuvX1oXHXP4oZa/prBkDRI4s=
+	t=1763040335; cv=none; b=qUGZwKzHzlSQJVFEDU9/l22MweF7Ts6sxY0LPD97Tndw5A8JjM5hKpnpbJmowsvbw6oeIJwA9VpKA4apDgTL9CV9tvOn8b7PyL5qFw9D0uUdCYWgvNtJOOpnuhwaj4OECt3OAia4vx3UNlbQlIW8NSag5PbmuXh23xEvCm+9o1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763040276; c=relaxed/simple;
-	bh=OVlfDob210xkBYPcrnR/Kfy4T4yeohtxEqflJ1gh0rw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eE+zk8glJ7vsUDqPFKj7GmFZMhjV43j75YN5w/wBVyLYWhvML5Ec0hRmUk9mVRa+KF7vkHIMrTxDcjmvW9lAA+67cCvU0XXE1V0JC9kz1do/COaKJrxeCAoeiVwwEP0+Y6eJrKEgFRTJJBfxzNOFvRe+DIGfVwBZq44zBd7cnYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDUmRthq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A165C4CEFB;
-	Thu, 13 Nov 2025 13:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763040275;
-	bh=OVlfDob210xkBYPcrnR/Kfy4T4yeohtxEqflJ1gh0rw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EDUmRthqMCW49fs/aqdy1TYnjLXr/3cQveQtaZ637a6Zb8064y0oOc75Mf5clyBkK
-	 H2Flzt99PQ+qAeY+3xms3zdc209/qgd4XjBaoIlmoDSB8tIvOHa57UHrg600S3gOJM
-	 wDKmzGadGGbz6KSnXQXNHSoh8cE1uPuCGsMY489O5JWRiJzFuQq/U0nQ7tHYvjpUyX
-	 0tUNPI8KIllS+UQ0E/wRJT0lwOO6frDo/GMFGIBNLauCslZ6Wis4L3UwFs9x6YWQUR
-	 CPdyspYkATs2jPzC/AnsamcJfnTc7UWVsVkcrRdSeinWTxsAreC3hlBebntGxzZXEm
-	 qUDtii7kf62sQ==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>,
- Christian Loehle <christian.loehle@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
-Subject:
- [PATCH v2 1/4] cpuidle: governors: teo: Drop misguided target residency check
-Date: Thu, 13 Nov 2025 14:24:31 +0100
-Message-ID: <5955081.DvuYhMxLoT@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5035693.GXAFRqVoOG@rafael.j.wysocki>
-References:
- <4701737.LvFx2qVVIh@rafael.j.wysocki> <5035693.GXAFRqVoOG@rafael.j.wysocki>
+	s=arc-20240116; t=1763040335; c=relaxed/simple;
+	bh=ZP6dcd7IlPR4hcT0m5FYuFluPw7uPRCzakl+xsoN6cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gEQS1oaKFrff70OYECb0GTD9S56guwrtxxwaIXT7h6AK5otxY/9NngzbqMZovDjyWjZk2Y6vWMR8CwU7uCB3Uh7DTuMJPOuzOIzQbr2S2Ejo6PpayoGfUjnAeCGXcCFjoSbWWIPO3xbYQfcLJUXIqIh8PdJUwbnJrAMgmgr8Lh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSiKQUzD; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-343684a06b2so638661a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:25:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763040333; x=1763645133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miKoKkS0E4DDQTU4ZoQVZaIJ9BfwANPVz6M1P6aM+RY=;
+        b=aSiKQUzDCCMDoor9rPQZ13MxzX4A//lq7f/RAjzgok2hpP/RKM/b5lwjC4/A8B98Ma
+         gsWOIpV8dWtDCFVALcJdjZm5klixxzBpad7DuKBHcSVvNIcfLSwnymipFzt3xzoPs3oD
+         qdlmOPP1ev4GYso1kD8YfVm+be8llDquEpjzLsezxMaKEXWYzkBsWDHTRWnLmChyQ0C8
+         ucsL4AsQ/46I02VhYLin7FIiIqqv3tWTbP9YCNlqyHGz7lOfQcDp0hCDVdQOLmYme0zl
+         djdvZfDdZ8NYlLSwOeVHjQPahCusQ9lWAu9FbMiPk0JLRbTFPUzLru6v7ORKCQr9n/Th
+         tL6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763040333; x=1763645133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=miKoKkS0E4DDQTU4ZoQVZaIJ9BfwANPVz6M1P6aM+RY=;
+        b=SqIgU6STlfB2EVi+UWY5nCKKoRK3Km61P0I/qZSXHNM7oq71o23eEuVWL+i/fnRHrP
+         lX6z3ViCAZxl/9MM1TWcmQLEX6liyWVlhX8ftK2ItLxeV+t0iHKeFzhsH9F8SxNBtCGV
+         fsgHzVNWyoV9eQoKcWOLg89qo6w/68RCrxK+IPa47il/o83Ch0ATgCo/vNDa6afJKf4l
+         JNXECUiusHC7AnBehw84Fg6sR/15GyBHxZVUaJ7hGllaJrygX/GDyuqpVtesklnPSreb
+         qbkai0Sh9fxckXbQgqFY+44lLmLlK/BYFxNVnO0ucJFbRVqGtZx0orggJ9NqXXGSUTZP
+         B7Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5i/9IT1oSRdYzp0lBfRiNK+s3HIcFTW5o3BmYTSJvJX1BIbQahKU4wr0EGAilU68bW+77b5ohRz04TlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg7QYk08DwSxCSgKxnA42/wVY7UNXWB42OBTEvAE/mImnS36Qf
+	a3vZPCggilRPFA9E3qYdQTb+Fx+9Lu3WgZIvZg3FHbyPqNFEixN4r4RPGnUngxG5jqgdl4Yf2Xx
+	lLGNPP+zrMchkbZ8RJL3AzGV4c3NAbII=
+X-Gm-Gg: ASbGncsnquu81AGyTzWHXsbjvYBcIuyIuP1B7/VYQcPp5XXtsWllnDKojSsFygIWjyF
+	AyjCyIHV6izRQWyZY3ZQ6AYBISHNLrtkC8qydUVTe59iY0ia5z1fDMl3QP0NnprSMyzIP0kv52W
+	/Dc7TMwG533etu5JHTEXDZOoQYKpJC2fLKeqxy8suGQlIsHZdv8kOzMg4MTaljgkY6vuj00yvsP
+	rhjRQin2IKOR8o59dDyYgUr1jyRRmfTrUIqoQGdZOOiYKGdsnYUddP3dRPnGVWUuI8hhOc=
+X-Google-Smtp-Source: AGHT+IGnUhe7zmpxv88QqqSBQbbROBjgIpHvXD3nGhc2Tm9cAcc2hKjlJ6TKSDJ2dgbArgeGAoOg2zK9RANuA7mFLVs=
+X-Received: by 2002:a17:90b:184d:b0:32e:5646:d448 with SMTP id
+ 98e67ed59e1d1-343dde821a5mr6886548a91.21.1763040332768; Thu, 13 Nov 2025
+ 05:25:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20251110033232.12538-1-kernellwp@gmail.com> <20251110033232.12538-5-kernellwp@gmail.com>
+ <ef7d974e-7fcd-4e30-8a0d-8b97e00478bc@amd.com>
+In-Reply-To: <ef7d974e-7fcd-4e30-8a0d-8b97e00478bc@amd.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Thu, 13 Nov 2025 21:25:21 +0800
+X-Gm-Features: AWmQ_bk3OSe7ErsOfPbY7FWe1XcWAd_DsbRR6d73waCp4y01FUk_mR4moqTSaPQ
+Message-ID: <CANRm+CxZCkF-1Vy5bxAsFuAM99euUtQVmNwJzb+4SWRa47T4LQ@mail.gmail.com>
+Subject: Re: [PATCH 04/10] sched/fair: Add penalty calculation and application logic
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Wanpeng Li <wanpengli@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Prateek=EF=BC=8C
 
-When the target residency of the current candidate idle state is
-greater than the expected time till the closest timer (the sleep
-length), it does not matter whether or not the tick has already been
-stopped or if it is going to be stopped.  The closest timer will
-trigger anyway at its due time, so if an idle state with target
-residency above the sleep length is selected, energy will be wasted
-and there may be excess latency.
+On Wed, 12 Nov 2025 at 15:25, K Prateek Nayak <kprateek.nayak@amd.com> wrot=
+e:
+>
+> Hello Wanpeng,
+>
+> On 11/10/2025 9:02 AM, Wanpeng Li wrote:
+> > +/*
+> > + * Calculate penalty with debounce logic for EEVDF yield deboost.
+> > + * Computes vruntime penalty based on fairness gap (need) plus granula=
+rity,
+> > + * applies queue-size-based caps to prevent excessive penalties in sma=
+ll queues,
+> > + * and implements reverse-pair debounce (~300us) to reduce ping-pong e=
+ffects.
+> > + * Returns 0 if no penalty needed, otherwise returns clamped penalty v=
+alue.
+> > + */
+> > +static u64 __maybe_unused yield_deboost_calculate_penalty(struct rq *r=
+q, struct sched_entity *se_y_lca,
+> > +                                 struct sched_entity *se_t_lca, struct=
+ sched_entity *se_t,
+> > +                                 int nr_queued)
+> > +{
+> > +     u64 gran, need, penalty, maxp;
+> > +     u64 gran_floor;
+> > +     u64 weighted_need, base;
+> > +
+> > +     gran =3D calc_delta_fair(sysctl_sched_base_slice, se_y_lca);
+> > +     /* Low-bound safeguard for gran when slice is abnormally small */
+> > +     gran_floor =3D calc_delta_fair(sysctl_sched_base_slice >> 1, se_y=
+_lca);
+> > +     if (gran < gran_floor)
+>
+> Is this even possible?
 
-Of course, if the closest timer were canceled before it could trigger,
-a deeper idle state would be more suitable, but this is not expected
-to happen (generally speaking, hrtimers are not expected to be
-canceled as a rule).
+No. Both use the same weight denominator in calc_delta_fair(), the
+check is redundant. Will remove.
 
-Accordingly, the teo_state_ok() check done in that case causes energy to
-be wasted more often than it allows any energy to be saved (if it allows
-any energy to be saved at all), so drop it and let the governor use the
-teo_find_shallower_state() return value as the new candidate idle state
-index.
+>
+> > +             gran =3D gran_floor;
+> > +
+> > +     need =3D 0;
+> > +     if (se_t_lca->vruntime > se_y_lca->vruntime)
+> > +             need =3D se_t_lca->vruntime - se_y_lca->vruntime;
+>
+> So I'm assuming you want the yielding task's vruntime to
+> cross the target's vruntime simply because one task somewhere
+> down the hierarchy said so.
 
-Fixes: 21d28cd2fa5f ("cpuidle: teo: Do not call tick_nohz_get_sleep_length() upfront")
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Yes, this is a known tradeoff. We apply the penalty at the LCA where A
+and B compete to make B schedulable immediately. Side effect:
+independent task C in CG0 loses CPU time. In practice, VMs place all
+vCPUs in one cgroup (no independent C). If C exists and shares the
+lock, the penalty helps. If C is truly independent, it loses ~one
+scheduling slice. Your natural convergence approach avoids this but
+needs multiple yield cycles before B gets sustained preference.
 
-v1 -> v2: Subject and changelog modifications
+>
+> > +
+> > +     /* Apply 10% boost to need when positive (weighted_need =3D need =
+* 1.10) */
+> > +     penalty =3D gran;
+>
+> So at the very least I see it getting weighted(base_slice / 2) penalty
+> ...
+>
+> > +     if (need) {
+> > +             /* weighted_need =3D need + 10% */
+> > +             weighted_need =3D need + need / 10;
+> > +             /* clamp to avoid overflow when adding to gran (still cap=
+ped later) */
+> > +             if (weighted_need > U64_MAX - penalty)
+> > +                     weighted_need =3D U64_MAX - penalty;
+> > +             penalty +=3D weighted_need;
+>
+> ... if not more ...
 
----
- drivers/cpuidle/governors/teo.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Yes, the floor is gran (weighted ~700=C2=B5s). Empirically, smaller values
+didn't sustain preference=E2=80=94the yielder would re-preempt the target
+within 1-2 decisions in dbench testing. This is a workload-specific
+heuristic. If too aggressive for general use, I can lower it or tie it
+to h_nr_queued . Thoughts?
 
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -458,11 +458,8 @@ static int teo_select(struct cpuidle_dri
- 	 * If the closest expected timer is before the target residency of the
- 	 * candidate state, a shallower one needs to be found.
- 	 */
--	if (drv->states[idx].target_residency_ns > duration_ns) {
--		i = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
--		if (teo_state_ok(i, drv))
--			idx = i;
--	}
-+	if (drv->states[idx].target_residency_ns > duration_ns)
-+		idx = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
- 
- 	/*
- 	 * If the selected state's target residency is below the tick length
+>
+> > +     }
+> > +
+> > +     /* Apply debounce via helper to avoid ping-pong */
+> > +     penalty =3D yield_deboost_apply_debounce(rq, se_t, penalty, need,=
+ gran);
+>
+> ... since without debounce, penalty remains same.
+>
+> > +
+> > +     /* Upper bound (cap): slightly more aggressive for mid-size queue=
+s */
+> > +     if (nr_queued =3D=3D 2)
+> > +             maxp =3D gran * 6;                /* Strongest push for 2=
+-task ping-pong */
+> > +     else if (nr_queued =3D=3D 3)
+> > +             maxp =3D gran * 4;                /* 4.0 * gran */
+> > +     else if (nr_queued <=3D 6)
+> > +             maxp =3D (gran * 5) / 2;          /* 2.5 * gran */
+> > +     else if (nr_queued <=3D 8)
+> > +             maxp =3D gran * 2;                /* 2.0 * gran */
+> > +     else if (nr_queued <=3D 12)
+> > +             maxp =3D (gran * 3) / 2;          /* 1.5 * gran */
+> > +     else
+> > +             maxp =3D gran;                    /* 1.0 * gran */
+>
+> And all the nr_queued calculations are based on the entities queued
+> and not the "h_nr_queued" so we can have a boat load of tasks to
+> run above but since one task decided to call yield_to() let us make
+> them all starve a little?
 
+You're absolutely right. Using nr_queued (entity count) instead of
+h_nr_queued (hierarchical task count) is wrong:
+CG0 (nr_queued=3D2, h_nr_queued=3D100)
+  =E2=94=9C=E2=94=80 CG1 (50 tasks)
+  =E2=94=94=E2=94=80 CG2 (50 tasks)
+My code sees 2 entities and applies maxp =3D 6=C3=97gran (strongest penalty=
+),
+but 100 tasks are competing. This starves unrelated tasks. Will switch
+to cfs_rq_common->h_nr_queued . The caps should reflect actual task
+count, not group count.
 
+>
+> > +
+> > +     if (penalty < gran)
+> > +             penalty =3D gran;
+> > +     if (penalty > maxp)
+> > +             penalty =3D maxp;
+> > +
+> > +     /* If no need, apply refined baseline push (low risk + mid risk c=
+ombined). */
+> > +     if (need =3D=3D 0) {
+> > +             /*
+> > +              * Baseline multiplier for need=3D=3D0:
+> > +              *   2        -> 1.00 * gran
+> > +              *   3        -> 0.9375 * gran
+> > +              *   4=E2=80=936      -> 0.625 * gran
+> > +              *   7=E2=80=938      -> 0.50  * gran
+> > +              *   9=E2=80=9312     -> 0.375 * gran
+> > +              *   >12      -> 0.25  * gran
+> > +              */
+> > +             base =3D gran;
+> > +             if (nr_queued =3D=3D 3)
+> > +                     base =3D (gran * 15) / 16;        /* 0.9375 */
+> > +             else if (nr_queued >=3D 4 && nr_queued <=3D 6)
+> > +                     base =3D (gran * 5) / 8;          /* 0.625 */
+> > +             else if (nr_queued >=3D 7 && nr_queued <=3D 8)
+> > +                     base =3D gran / 2;                /* 0.5 */
+> > +             else if (nr_queued >=3D 9 && nr_queued <=3D 12)
+> > +                     base =3D (gran * 3) / 8;          /* 0.375 */
+> > +             else if (nr_queued > 12)
+> > +                     base =3D gran / 4;                /* 0.25 */
+> > +
+> > +             if (penalty < base)
+> > +                     penalty =3D base;
+> > +     }
+> > +
+> > +     return penalty;
+> > +}
+> > +
+> > +/*
+> > + * Apply penalty and update EEVDF fields for scheduler consistency.
+> > + * Safely applies vruntime penalty with overflow protection, then upda=
+tes
+> > + * EEVDF-specific fields (deadline, vlag) and cfs_rq min_vruntime to m=
+aintain
+> > + * scheduler state consistency. Returns true on successful application=
+,
+> > + * false if penalty cannot be safely applied.
+> > + */
+> > +static void __maybe_unused yield_deboost_apply_penalty(struct rq *rq, =
+struct sched_entity *se_y_lca,
+> > +                              struct cfs_rq *cfs_rq_common, u64 penalt=
+y)
+> > +{
+> > +     u64 new_vruntime;
+> > +
+> > +     /* Overflow protection */
+> > +     if (se_y_lca->vruntime > (U64_MAX - penalty))
+> > +             return;
+> > +
+> > +     new_vruntime =3D se_y_lca->vruntime + penalty;
+> > +
+> > +     /* Validity check */
+> > +     if (new_vruntime <=3D se_y_lca->vruntime)
+> > +             return;
+> > +
+> > +     se_y_lca->vruntime =3D new_vruntime;
+> > +     se_y_lca->deadline =3D se_y_lca->vruntime + calc_delta_fair(se_y_=
+lca->slice, se_y_lca);
+>
+> And with that we update vruntime to an arbitrary value simply
+> because one task in the hierarchy decided to call yield_to().
 
+Yes, modifying vruntime at se_y_lca affects the entire hierarchy
+beneath it, not just the calling task. This is the cost of making
+yield_to() work in hierarchical scheduling. Is it worth it? We believe
+yes, because:
+1. Yield_to() is already a hierarchy-wide decision: When vCPU-A yields
+to vCPU-B, it's not just task-A helping task-B=E2=80=94it's the entire VM (=
+the
+hierarchy) requesting another vCPU to make progress. Lock-holder
+scenarios are VM-wide problems, not individual task problems.
+2. The alternative is broken semantics: Without hierarchy-level
+adjustment, yield_to() silently fails in cgroup configurations. Users
+call yield_to() expecting it to work, but it doesn't=E2=80=94that's worse t=
+han
+documented unfairness.
+3. Bounded impact: The penalty scales conservatively with h_nr_queued
+(larger hierarchies get 1.0=C3=97 gran, not 6.0=C3=97), limiting blast radi=
+us.
+If the position is that hierarchy-wide vruntime perturbation is never
+acceptable regardless of use case, then yield_to() should explicitly
+fail or be disabled in cgroup configurations rather than pretending to
+work.
+
+>
+> Since we are on the topic, you are also missing an update_curr()
+> which is only done in yield_task_fair() so you are actually
+> looking at old vruntime for the yielding entity.
+
+ Will fix it.
+
+Regards,
+Wanpeng
 
