@@ -1,415 +1,510 @@
-Return-Path: <linux-kernel+bounces-898808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9048C56110
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:32:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FF5C56107
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD7EE34FC73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:30:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9147F34EC3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AB53271F2;
-	Thu, 13 Nov 2025 07:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC5322DCA;
+	Thu, 13 Nov 2025 07:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YdJrFlHH"
-Received: from sonic309-22.consmr.mail.gq1.yahoo.com (sonic309-22.consmr.mail.gq1.yahoo.com [98.137.65.148])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8YTrDNG"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9133254A3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC502F693E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763019039; cv=none; b=p0Ve7CBCFnJQ0xzgN9DGFuy78r3RMFx/AIHPixW3vPAvoaoyy1eQ5cfNIIb14EAUmalq5h4F4bxw5XejDGwb7YtKZWhdlYYmBJnCYN6TAS1AY/I8DqUQZiGFpnBQSGyZ90lhU4RQbvkzO/5oHnYaGV+ZHnvAPu9EkcjmfDftV6o=
+	t=1763018990; cv=none; b=q+7toZRhaLqyqHFlDwCGfspjvrp0eJRsRZI+hwzDGDAVAl/NWE8VKpEdjRv7l97WWBLhGvt8bQxbz6Y3ff+S4mKz1lw8FpnCelDlE/aGLD6G0SyyKky0qjsYuBACjLKDvvrbtAILEJqBt/leK7IvFIIHdv8oxS6uxHBD0hO58Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763019039; c=relaxed/simple;
-	bh=bipiMI/qfWSuAJ3wnC4NPJxUrzV0+z5UO40lEU1V45o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2W+AJSPqskqaVQjeAD8fMLASUAQaS5Dn6hLD9L5s+HaYv31XKkJns3ztEjkVQXr2hCn3P4r3TP8xbjTNzfRuy6nPuG3IrQBol5BHi01YK2XM/ceNuQDHKAtDrTiJC3TFXxobLWVM/qxqNKsH+w+RDR2eBULzgioQgTnuyDDqqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=YdJrFlHH; arc=none smtp.client-ip=98.137.65.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763019027; bh=vhtB/c33uxa4OUD6Wsm09MTPxU4EGKamAQEd8oPw/yg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=YdJrFlHHnJwtSD7IOxyhpuQty+1u6VRpWYszJgBBPC9N2MxHcIKgG8hef1t4kcI09pkSiExOZEn7dJynEJel1NKjFbzLkC+8iBArn/kRrDZ/7RwqsbqXvjh5B3hqyq69g2n3cHns7wS6JqWN3EpEhJfXzlyOjVRMQQxFT5/Kis7JJialWDDo+sfaSJhC73R55KkqDQzL+A+w5aoUsqGVY4vkNiidkp9m2M5VxCmeRE0twm4H2vF5kwuFkqBce+5c5Kjnxp7OeN2Kz/wD4eNHLhX3UwE/qvdRgfjOuY+ge0xGUp0FI2njLujUc4md/XVRN/sLxj9jH1PRl6MXwB/Gcg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1763019027; bh=NK+8Z4PwW/lll2F3tt+sSLsojubtUGQUq1KHeXWSZpV=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Afl29fMuobmnLqcAcAYVAPyUatsY/LvAz0S8ESbF1tsknEJdvaBBtEUHJRGnSmwpAvr/h13A8WEOw8y/r0nfJbYnKmN2/gZWS6cBMA/la/Of7fQVx07lB4ye6rBXw2WYRv+IR9Vw38WMFF/onTWAgqtbAsobBriD9SLGokylXGRm7GNMDyasKw/2h5ePZPrmdtTJSrOXRQU5PF81FgBUpINhzFSHFiAJUo4c0n11s5jI1nC/pwplWG9avqyoM3yY7kUtIP+fMjvy4gviEkwokh50NrufRd+uw3V22UYuMxYZziInyV5XeFgI+dIp98BulqAsiECTa/BYf6Fd4QMgYw==
-X-YMail-OSG: njGOSx0VM1lF.YS2Jbkp5nZvfgakSyLL.IiZsuYmPLYkumf4E_JwqiPuib352J_
- iWr9Gnhu8A0HXnajrLYviVKRC_1iv2UuP5KxrVS4NfNSWH1xvUrFD3EpoonX.q2._8SWzWRku9D_
- uIhEgzjtq.TyU_ogxY.h7CvrRmxwLNQGi2nKtPzudj6KoGNVJk.qYKRrl8XOFCV0MCHg3DAYNjx5
- RQPfPU4Xh4y9seJDHG5xNGlm.p3TTT9SrxxDL7nNj4guxyBJADKpFqL.F2UQTKGjJzCCqvkOql4K
- tjNjElVPgvsBS6k0Yxl83dLOk8kd4I4nGsDHf44pkySc.yshYfkwYLj1cWQ_bmlQzM2vT.OQrWqF
- KvuAsEciXfC_IKsB_4rG9TbcYzRk.ez6BOuhWL_He_TYUhF3bHTX9B71j86w5guT02ofS0t3B653
- X4BHy0QT.xefSQHqYSVvy1fxf.JMJQC0kVbf.atTxZ8eUc8_eitUqm_5g5Q1WGn0IC_Pa1.n9olu
- 5uKrPU6QSjKweDM5ptHRfhggobli32ifhF7CSbZboO9sB1lsBCypFa9H4zc22VIdaCs0WZpwK0Ns
- MQj14oTvRS6jL8XVkItDpR1fwNl1XkUmRH8P.XziRPpU8d.pESQKFT8OIcvQcILR_KDfdK1tYBwZ
- iFA0cUPSUC2uiV8m_wXhvuH4uB.V4R0I4W39UfkAloXHFGqaMiB0qHjYZkNe5.ne_Kus1RjX6Ekb
- XnLjLXTesaTmxd6FD9usvcuKo2FoHrfz7MClFbgeJd6eXTfs9ZzI0ERLKdTneyhHRc5QxG9Iu0Mf
- yM2Ez2asF_Hk8fa44th14frYkMrZLsDk5lc5r0DhOO_Vd00V4.DBBvQaioeaIdh_G7QRB1iqVuVs
- NK_wsIuFzpR5hN1U9KkafcwL5_iEU3GQiKLdynN5UGv8d_uitS5KIGh0K4mjP7ZxW_1tDNox2RXU
- fDp4rcXvxhzbYqmubgEuwYV.0xxuwTcvJlE7mVTszzRH1FGLCEX9WYxWISkCPfJTep5Rof9hh6qx
- zmggNp3DETmd.bDS8rCo.DzXO1r_rY8d9leg3r0sVrbL0U3KVoxOi48fX_Kna.3q.Pg9pWko7TQG
- b9tSVYV4EQ1KOX8jszrXT6NkYz0Nbfrl5TkxuSvGBSiq0rSCXkUrkCt_Bj0mmQDIuh2SUOY9Qzp9
- knW.49ObRtjfJh240_R5blkLu6J.ER06F_i5kzJ9gwuPeGK0Qz69XxIgdRkB8wKSp3Qt648dS.pD
- 72Z92UE75aNCcTjjF2K.HmDWKdOyQpvc8DBEpqnXtBGLdz473_MPsEVPqF5dUtVUQe9i39QC6ebF
- 0frArOACJMJVk9XsNZn72YtfeAli1Ibp6laTvwqnnrBIeQ.FdaD5_CMlUMNHj67P4PZcVYP664Eo
- dPNyX1AIlssEvH7ofsetsq_khe4qxrdfuhIkiF8NlZ0fRSD.oRiTYeFWm0nySNHzmmwOf5Wzzdf6
- 6wLIsBNmcIpdJFgKfzr.1YyLbEJO7jWyW_.AtwaPHkxWNLaItkF4eYHcHcxEJxdQTk7p49Obrji6
- v85qXTTMaxRbCXWdWOa92IpIgh3SuPTsUwwJ133_Pp8B9qOr5H_TrD5JK8.X1W2uLyi6CfN77mED
- PDVY9HxK1MsEDWYp11su54sDmFGe5nq7wbU1E7_R6miHCbmKkWyIT0oOtJjBsEHewE.nYpW_YMR4
- rEJWfcmMq2GQ_2exmufQlEw5Yv81kcpRsQix1xBoextU_KlXmEayoh86FFz4bnXSlz9IcvGfYTkD
- _ocPQdtHb0qH1_9djzFS7KOTySIbmeHKuyWuBHuLFIeWFSEQdOUc9i9ZKB7gDkxTxq7YmPkXgzOf
- OAEqCRSQfzrIcZPHQYCCeKDcQM6G3iczj4KKV4JYFfg8yo.2EHVdz44osprinvCMOdKi7rJ7oTCM
- bH9jd_2xLBJYSU3Yo2TyssVmTFqHP_bHJT.mQMNJRwqUdNcsNZ2cWTur3iT_GUNtyDUh7BnJzkua
- YQowPFjf0VHkof4JAmfM8LDRxSc.QYt4G8YPLBkDKUigZxX1XKSpckotgAJlOEiLwxdbAd0rNgwq
- .lq7RY24Rs5VkFmmtN6WKMlyPpxC4XJ3E371CcKe1JDxo9pCA9lCqEqLDcakBkFF.C9t0tyFbcaV
- NiI1MZAK.CNTBYlS7exswR7mVi_VG_QNrVqnWKcfyRrIYm5LKP4YPHkm8GnwV7qq6n0ETAvhwraf
- w1FPrWLuE4f_hNjKyNR0J79jACKIWxApxlj9xiUuv9E3QPoL0LCn_HwG4BBrf
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 161470a8-a3b2-4c18-9f40-a9ca9c618b08
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 13 Nov 2025 07:30:27 +0000
-Received: by hermes--production-bf1-58477f5468-m6v5n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c412dc1e93a6f5fb8334dd2b670743fb;
-          Thu, 13 Nov 2025 07:30:24 +0000 (UTC)
-Message-ID: <233cb349-b7ea-42cf-8cc4-ce08cf3179ee@yahoo.com>
-Date: Thu, 13 Nov 2025 08:29:10 +0100
+	s=arc-20240116; t=1763018990; c=relaxed/simple;
+	bh=cP8S7m2Qkbups6CRNyYnK4KlbxHwXoMs3w033+7/8qE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F9WILaT/pLOAPyhEbyO6vPbLZEBeRGoiiYZzybW1bT7e02IhP78tSsssVbnxCzYgGpU6Yg/HW247USACxJn11EWe2DArypcZ9uwjQJrKbQCnf2QpTEQwpwGAcvfgJ3eUW4meyHtz5ipluRw1k0NXwS8/+TF9V+CHslTFAymsVII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8YTrDNG; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b98983bae80so320244a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 23:29:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763018988; x=1763623788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CXl3hrJOvnGqqQZrScGTXdSlRJqBfrSlJRmfjjT/Sw=;
+        b=m8YTrDNG+oUp0vL5AzsaiTP1/IA2knwOKoxzX7/4utdPARMAxSwgb+Xn6lSzxT0Cyg
+         9jzg1bcSyDCjV9wuqglrPowdhJgoS/T+lPj/hoVjCJezN3BqhPaZEjwnaLKpPmlpVswR
+         Z3DOJCO35r9rJt8zIU09/3dscnzX5eAuoIenMEHYkox3UHDK9pymrGtuNhku0k3+8GAN
+         rtUexyZccc+HwALISgEdj6ngy1smviVAQwPMdw/Durom6fFE20rI32AOG6XLkWj9kwK7
+         pisg+N9aGtuS2bCs7CVurvWlqqNtxep+s8JDJy5pRcxKwToCn70ZPHfZjQ04Xv6mshym
+         N7Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763018988; x=1763623788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8CXl3hrJOvnGqqQZrScGTXdSlRJqBfrSlJRmfjjT/Sw=;
+        b=dyffH4vjnG43eprTsL5ZYpbVMUpSZbsn9BGtd0n4euxPhcPpxAi0vDwXWPld83RWRP
+         93mbLoX5chOZi/iZnuWJTX9JTbzt5lIkBkgVdLfNItEVwNCFiQzA6hpqaA/i7+3WVVwU
+         WpSsticdT2mBZwxfuZztkAaWfWH8WccJAtuW/uubXnIZrBPK89bSVoDWPidXeUnLW/pS
+         6sL65WwIWIXhDck2k23eKEKQheatYmnSwbelleCyhTTUjPguqp4oiml9CcFXK/qZLGOW
+         9eZ25pOnOc86u78USdke7KF3TSNBVqiNJ879akEwDGkBVJzljz8M1jpS9cwevV8i1i/f
+         Tp+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/7ektIssIlrXoLf8yJgfeV7c+SvrHcxZ/ENsI7drBvfmV+NIclSYH2USg+jJz7lfMpvdfpcEWt5BY5V4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ57b73n6LsbMZNj30c+Tw+bcWnAJfro2d7kHptWGa1Wv1aBu6
+	GjEFGvMuKTHRukQQGyf1iTUIAMbwsGwDP4bYEkATZ1HssUjP9Hpy6jBJ
+X-Gm-Gg: ASbGnctj4Kjq6WxAhHqDJvVXXezazJY3bdcYvZjO1bdDMz/CJ/yV7Fe8eb/qhRwOYvy
+	1MdUSQm7tszpaLKln1A9qLlF8taHKbqeDkZIpy1ohFs6JVXG2rWcwCvE3vr3g7FuV7TMg7/UyIs
+	T55ocu1nsHgD7jsmp9Po/hw8VZDtEv3ePEZz+ApdIJPC+W4x1uToj4jZb6/cAL4ea118WjkkhmC
+	pl7qW9Mmq6JiRW1wx9xtpaQzmPkQiJ8YkMWYMDOAALU0zpB4AmCRpksCdz2VvGyXd6Tuc8Gn6GN
+	MwgITfPfOLSBr0hyZbmEoTTlIBC05/VGHtOsE6ctOsuOprUTQqwdJpRHWXq1nKPuJv8iEELPLEH
+	/1uPMnbirCN0KOhaXBJayj3rk0yYq7SX/omM8iDxLFlSY+4q86l7VVPeBbNUKXyLATIvNKXdwAE
+	MowT0cC9FGFGqakerZL8jY7bVsDyMhumAScvmKHw==
+X-Google-Smtp-Source: AGHT+IHyhIk2ZYGy3UgRrzULJGvez6PUvt7U2xkFkcanKY0LBbMy7E6xduat9bfzU2N65ojJ62PyYg==
+X-Received: by 2002:a17:902:e844:b0:24c:965a:f94d with SMTP id d9443c01a7336-2984edd2cd0mr79059585ad.46.1763018988042;
+        Wed, 12 Nov 2025 23:29:48 -0800 (PST)
+Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2b0d76sm14589805ad.68.2025.11.12.23.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 23:29:46 -0800 (PST)
+From: Donglin Peng <dolinux.peng@gmail.com>
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Donglin Peng <pengdonglin@xiaomi.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5] function_graph: Enable funcgraph-args and funcgraph-retaddr to work simultaneously
+Date: Thu, 13 Nov 2025 15:29:38 +0800
+Message-Id: <20251113072938.333657-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] selftests: af_unix: Add tests for ECONNRESET and EOF
- semantics
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20251112212026.31441-1-adelodunolaoluwa.ref@yahoo.com>
- <20251112212026.31441-1-adelodunolaoluwa@yahoo.com>
- <CAAVpQUB97EBnTbA9pKwdhPM0pHadiM3QhP4_1qLSKGg2LAwzkA@mail.gmail.com>
- <295e5440-94eb-447f-b4f0-4943e9d02f1c@yahoo.com>
- <CAAVpQUAyPwyG=aSnv-2w7g3dqhB3BLXGoo5VmbSNqQ0txpqqWQ@mail.gmail.com>
- <335f64d5-390b-4529-b2da-0af019c7f598@yahoo.com>
- <CAAVpQUDX2LcWu+u5CHSJUoPnHLuGNoPzEZuV+K67WoPUUvymdg@mail.gmail.com>
-Content-Language: en-US
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-In-Reply-To: <CAAVpQUDX2LcWu+u5CHSJUoPnHLuGNoPzEZuV+K67WoPUUvymdg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 11/13/25 07:52, Kuniyuki Iwashima wrote:
-> On Wed, Nov 12, 2025 at 10:41 PM Sunday Adelodun
-> <adelodunolaoluwa@yahoo.com> wrote:
->> On 11/13/25 07:10, Kuniyuki Iwashima wrote:
->>> On Wed, Nov 12, 2025 at 9:25 PM Sunday Adelodun
->>> <adelodunolaoluwa@yahoo.com> wrote:
->>>> On 11/12/25 23:04, Kuniyuki Iwashima wrote:
->>>>> On Wed, Nov 12, 2025 at 1:20 PM Sunday Adelodun
->>>>> <adelodunolaoluwa@yahoo.com> wrote:
->>>>>> Add selftests to verify and document Linux’s intended behaviour for
->>>>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
->>>>>> The tests verify that:
->>>>>>
->>>>>>     1. SOCK_STREAM returns EOF when the peer closes normally.
->>>>>>     2. SOCK_STREAM returns ECONNRESET if the peer closes with unread data.
->>>>>>     3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->>>>>>     4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->>>>>>     5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->>>>>>
->>>>>> This follows up on review feedback suggesting a selftest to clarify
->>>>>> Linux’s semantics.
->>>>>>
->>>>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
->>>>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
->>>>>> ---
->>>>>>     tools/testing/selftests/net/.gitignore        |   1 +
->>>>>>     tools/testing/selftests/net/af_unix/Makefile  |   1 +
->>>>>>     .../selftests/net/af_unix/unix_connreset.c    | 178 ++++++++++++++++++
->>>>>>     3 files changed, 180 insertions(+)
->>>>>>     create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>>
->>>>>> diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
->>>>>> index 439101b518ee..e89a60581a13 100644
->>>>>> --- a/tools/testing/selftests/net/.gitignore
->>>>>> +++ b/tools/testing/selftests/net/.gitignore
->>>>>> @@ -65,3 +65,4 @@ udpgso
->>>>>>     udpgso_bench_rx
->>>>>>     udpgso_bench_tx
->>>>>>     unix_connect
->>>>>> +unix_connreset
->>>>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
->>>>>> index de805cbbdf69..5826a8372451 100644
->>>>>> --- a/tools/testing/selftests/net/af_unix/Makefile
->>>>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
->>>>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
->>>>>>            scm_pidfd \
->>>>>>            scm_rights \
->>>>>>            unix_connect \
->>>>>> +       unix_connreset \
->>>>>>     # end of TEST_GEN_PROGS
->>>>>>
->>>>>>     include ../../lib.mk
->>>>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>> new file mode 100644
->>>>>> index 000000000000..9413f8a0814f
->>>>>> --- /dev/null
->>>>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
->>>>>> @@ -0,0 +1,178 @@
->>>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>>> +/*
->>>>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
->>>>>> + *
->>>>>> + * This test verifies:
->>>>>> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
->>>>>> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread data.
->>>>>> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
->>>>>> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unread data.
->>>>>> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
->>>>>> + *
->>>>>> + * These tests document the intended Linux behaviour.
->>>>>> + *
->>>>>> + */
->>>>>> +
->>>>>> +#define _GNU_SOURCE
->>>>>> +#include <stdlib.h>
->>>>>> +#include <string.h>
->>>>>> +#include <fcntl.h>
->>>>>> +#include <unistd.h>
->>>>>> +#include <errno.h>
->>>>>> +#include <sys/socket.h>
->>>>>> +#include <sys/un.h>
->>>>>> +#include "../../kselftest_harness.h"
->>>>>> +
->>>>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
->>>>>> +
->>>>>> +static void remove_socket_file(void)
->>>>>> +{
->>>>>> +       unlink(SOCK_PATH);
->>>>>> +}
->>>>>> +
->>>>>> +FIXTURE(unix_sock)
->>>>>> +{
->>>>>> +       int server;
->>>>>> +       int client;
->>>>>> +       int child;
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT(unix_sock)
->>>>>> +{
->>>>>> +       int socket_type;
->>>>>> +       const char *name;
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
->>>>>> +       .socket_type = SOCK_STREAM,
->>>>>> +       .name = "SOCK_STREAM",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
->>>>>> +       .socket_type = SOCK_DGRAM,
->>>>>> +       .name = "SOCK_DGRAM",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
->>>>>> +       .socket_type = SOCK_SEQPACKET,
->>>>>> +       .name = "SOCK_SEQPACKET",
->>>>>> +};
->>>>>> +
->>>>>> +FIXTURE_SETUP(unix_sock)
->>>>>> +{
->>>>>> +       struct sockaddr_un addr = {};
->>>>>> +       int err;
->>>>>> +
->>>>>> +       addr.sun_family = AF_UNIX;
->>>>>> +       strcpy(addr.sun_path, SOCK_PATH);
->>>>>> +       remove_socket_file();
->>>>>> +
->>>>>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
->>>>>> +       ASSERT_LT(-1, self->server);
->>>>>> +
->>>>>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
->>>>>> +       ASSERT_EQ(0, err);
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +           variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               err = listen(self->server, 1);
->>>>>> +               ASSERT_EQ(0, err);
->>>>>> +       }
->>>>>> +
->>>>>> +       self->client = socket(AF_UNIX, variant->socket_type | SOCK_NONBLOCK, 0);
->>>>>> +       ASSERT_LT(-1, self->client);
->>>>>> +
->>>>>> +       err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
->>>>>> +       ASSERT_EQ(0, err);
->>>>>> +}
->>>>>> +
->>>>>> +FIXTURE_TEARDOWN(unix_sock)
->>>>>> +{
->>>>>> +       if ((variant->socket_type == SOCK_STREAM ||
->>>>>> +            variant->socket_type == SOCK_SEQPACKET) & self->child > 0)
->>>>>> +               close(self->child);
->>>>>> +
->>>>>> +       close(self->client);
->>>>>> +       close(self->server);
->>>>>> +       remove_socket_file();
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 1: peer closes normally */
->>>>>> +TEST_F(unix_sock, eof)
->>>>>> +{
->>>>>> +       char buf[16] = {};
->>>>>> +       ssize_t n;
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +           variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               self->child = accept(self->server, NULL, NULL);
->>>>>> +               ASSERT_LT(-1, self->child);
->>>>>> +
->>>>>> +               close(self->child);
->>>>>> +       } else {
->>>>>> +               close(self->server);
->>>>>> +       }
->>>>>> +
->>>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +           variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               ASSERT_EQ(0, n);
->>>>>> +       } else {
->>>>>> +               ASSERT_EQ(-1, n);
->>>>>> +               ASSERT_EQ(EAGAIN, errno);
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 2: peer closes with unread data */
->>>>>> +TEST_F(unix_sock, reset_unread_behavior)
->>>>>> +{
->>>>>> +       char buf[16] = {};
->>>>>> +       ssize_t n;
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_DGRAM) {
->>>>>> +               /* No real connection, just close the server */
->>>>>> +               close(self->server);
->>>>>> +       } else {
->>>>>> +               /* Establish full connection first */
->>>>>> +               self->child = accept(self->server, NULL, NULL);
->>>>>> +               ASSERT_LT(-1, self->child);
->>>>>> +
->>>>>> +               /* Send data that will remain unread */
->>>>>> +               send(self->client, "hello", 5, 0);
->>>>> Could you move this send() before "if (...)" because we want
->>>>> to test unread_data behaviour for SOCK_DGRAM too ?
->>>>>
->>>>> Otherwise looks good, so with that fixed:
->>>>>
->>>>> Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
->>>>>
->>>>> Thanks!
->>>> Thank you for the prompt response.
->>>> I thought of putting the send before the if the statement , but I was afraid
->>>> STREAM and SEQPACKET connections won't be accepted before data sending.
->>> connect() create the paired child socket and accept()
->>> allocates a file descriptor to expose the socket to user
->>> space.
->> Thank you for this explanation.
->>> In that sense, the comment above accept() sounds a
->>> bit weird ;)
->> I understand.
->> I am changing it to
->> /* Accept client connection */
-> I'd remove it since it just repeats the code, but up to you.
->
-> Thanks!
+From: Donglin Peng <pengdonglin@xiaomi.com>
 
-Sent.
+Currently, the funcgraph-args and funcgraph-retaddr features are
+mutually exclusive. This patch resolves this limitation by modifying
+funcgraph-retaddr to adopt the same implementation approach as
+funcgraph-args, specifically by storing the return address in the
+first entry of the args array.
 
-I removed the comment, but unfortunately I didn't know it didn't save.
-so, the comment was sent along with patch.
+As a result, both features now coexist seamlessly and function as
+intended.
 
-Thank you for the guidance and patience.
-I am open to any feedback if any.
->
->> If this is accepted, I will send v5 immediately
->>
->> Thank you for your guidance.
->>>
->>>> I will start working on v5.
->>>>
->>>> That part will look like this now:
->>>> /* Test 2: peer closes with unread data */
->>>> TEST_F(unix_sock, reset_unread_behavior)
->>>> {
->>>>            char buf[16] = {};
->>>>            ssize_t n;
->>>>
->>>> */* Send data that will remain unread */
->>>>            send(self->client, "hello", 5, 0);*
->>>>
->>>> *if (variant->socket_type == SOCK_DGRAM) {
->>>>                    /* No real connection, just close the server */
->>>>                    close(self->server);
->>>>            } else {
->>>>                    /* Establish full connection first */
->>>>                    self->child = accept(self->server, NULL, NULL);
->>>>                    ASSERT_LT(-1, self->child);
->>>>
->>>>                    /* Peer closes before client reads */
->>>>                    close(self->child);
->>>>            }*
->>>>
->>>>            n = recv(self->client, buf, sizeof(buf), 0);
->>>>            ASSERT_EQ(-1, n);
->>>>
->>>>            if (variant->socket_type == SOCK_STREAM ||
->>>>                variant->socket_type == SOCK_SEQPACKET) {
->>>>                    ASSERT_EQ(ECONNRESET, errno);
->>>>            } else {
->>>>                    ASSERT_EQ(EAGAIN, errno);
->>>>            }
->>>> }
->>>>
->>>> Thank you once again.
->>>>>> +
->>>>>> +               /* Peer closes before client reads */
->>>>>> +               close(self->child);
->>>>>> +       }
->>>>>> +
->>>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>>>> +       ASSERT_EQ(-1, n);
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_STREAM ||
->>>>>> +           variant->socket_type == SOCK_SEQPACKET) {
->>>>>> +               ASSERT_EQ(ECONNRESET, errno);
->>>>>> +       } else {
->>>>>> +               ASSERT_EQ(EAGAIN, errno);
->>>>>> +       }
->>>>>> +}
->>>>>> +
->>>>>> +/* Test 3: closing unaccepted (embryo) server socket should reset client. */
->>>>>> +TEST_F(unix_sock, reset_closed_embryo)
->>>>>> +{
->>>>>> +       char buf[16] = {};
->>>>>> +       ssize_t n;
->>>>>> +
->>>>>> +       if (variant->socket_type == SOCK_DGRAM)
->>>>>> +               SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
->>>>>> +
->>>>>> +       /* Close server without accept()ing */
->>>>>> +       close(self->server);
->>>>>> +
->>>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
->>>>>> +
->>>>>> +       ASSERT_EQ(-1, n);
->>>>>> +       ASSERT_EQ(ECONNRESET, errno);
->>>>>> +}
->>>>>> +
->>>>>> +TEST_HARNESS_MAIN
->>>>>> +
->>>>>> --
->>>>>> 2.43.0
->>>>>>
+To verify the change, use perf to trace vfs_write with both options
+enabled:
+
+Before:
+ # perf ftrace -G vfs_write --graph-opts args,retaddr
+   ......
+   down_read() { /* <-n_tty_write+0xa3/0x540 */
+     __cond_resched(); /* <-down_read+0x12/0x160 */
+     preempt_count_add(); /* <-down_read+0x3b/0x160 */
+     preempt_count_sub(); /* <-down_read+0x8b/0x160 */
+   }
+
+After:
+ # perf ftrace -G vfs_write --graph-opts args,retaddr
+   ......
+   down_read(sem=0xffff8880100bea78) { /* <-n_tty_write+0xa3/0x540 */
+     __cond_resched(); /* <-down_read+0x12/0x160 */
+     preempt_count_add(val=1); /* <-down_read+0x3b/0x160 */
+     preempt_count_sub(val=1); /* <-down_read+0x8b/0x160 */
+   }
+
+Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Donglin Peng <pengdonglin@xiaomi.com>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+v5:
+- Avoid unnecessary branch overhead by first verifying
+  CONFIG_FUNCTION_GRAPH_RETADDR is enabled prior to testing
+  the TRACE_GRAPH_PRINT_RETADDR flag
+
+v4:
+- Remove redundant TRACE_GRAPH_ARGS flag check
+- Eliminate unnecessary retaddr initialization
+- Resend to add missing add Acked-by tags
+
+v3:
+- Replace min() with min_t() to improve type safety and maintainability
+- Keep only one Signed-off-by for cleaner attribution
+- Code refactoring for improved readability
+
+v2:
+- Preserve retaddr event functionality (suggested by Steven)
+- Store the retaddr in args[0] (suggested by Steven)
+- Refactor implementation logic and commit message clarity
+---
+ include/linux/ftrace.h               |  11 ---
+ kernel/trace/trace.h                 |   4 -
+ kernel/trace/trace_entries.h         |   6 +-
+ kernel/trace/trace_functions_graph.c | 142 ++++++++++++---------------
+ 4 files changed, 66 insertions(+), 97 deletions(-)
+
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 7ded7df6e9b5..88cb54d73bdb 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
+ 	int depth;
+ } __packed;
+ 
+-/*
+- * Structure that defines an entry function trace with retaddr.
+- * It's already packed but the attribute "packed" is needed
+- * to remove extra padding at the end.
+- */
+-struct fgraph_retaddr_ent {
+-	unsigned long func; /* Current function */
+-	int depth;
+-	unsigned long retaddr;  /* Return address */
+-} __packed;
+-
+ /*
+  * Structure that defines a return function trace.
+  * It's already packed but the attribute "packed" is needed
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 85eabb454bee..9fac291b913a 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -955,10 +955,6 @@ extern void graph_trace_close(struct trace_iterator *iter);
+ extern int __trace_graph_entry(struct trace_array *tr,
+ 			       struct ftrace_graph_ent *trace,
+ 			       unsigned int trace_ctx);
+-extern int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr);
+ extern void __trace_graph_return(struct trace_array *tr,
+ 				 struct ftrace_graph_ret *trace,
+ 				 unsigned int trace_ctx,
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index de294ae2c5c5..593a74663c65 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -95,14 +95,14 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
+ 	TRACE_GRAPH_RETADDR_ENT,
+ 
+ 	F_STRUCT(
+-		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
++		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+ 		__field_packed(	unsigned int,	graph_ent,	depth		)
+-		__field_packed(	unsigned long,	graph_ent,	retaddr		)
++		__dynamic_array(unsigned long,	args				)
+ 	),
+ 
+ 	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
+-		(void *)__entry->retaddr)
++		(void *)__entry->args[0])
+ );
+ 
+ #else
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index a7f4b9a47a71..fa2fb9a0a8ba 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -16,6 +16,15 @@
+ #include "trace.h"
+ #include "trace_output.h"
+ 
++#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
++#define HAVE_RETADDR	1
++#define ARGS_OFFS(args_size) \
++	((args_size) > FTRACE_REGS_MAX_ARGS * sizeof(long) ? 1 : 0)
++#else
++#define HAVE_RETADDR	0
++#define ARGS_OFFS(args_size)	0
++#endif
++
+ /* When set, irq functions will be ignored */
+ static int ftrace_graph_skip_irqs;
+ 
+@@ -27,21 +36,25 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
+ 
++/*
++ * fgraph_retaddr_ent_entry and ftrace_graph_ent_entry share layout, ent
++ * member repurposed for storage
++ */
+ struct fgraph_ent_args {
+ 	struct ftrace_graph_ent_entry	ent;
+-	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
+-	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++	/*
++	 * Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR)
++	 * entries with the first entry storing the return address for
++	 * TRACE_GRAPH_RETADDR_ENT.
++	 */
++	unsigned long		args[FTRACE_REGS_MAX_ARGS + HAVE_RETADDR];
+ };
+ 
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
+ 
+ 	/* Place to preserve last processed entry. */
+-	union {
+-		struct fgraph_ent_args		ent;
+-		/* TODO allow retaddr to have args */
+-		struct fgraph_retaddr_ent_entry	rent;
+-	};
++	struct fgraph_ent_args		ent;
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -127,22 +140,40 @@ static int __graph_entry(struct trace_array *tr, struct ftrace_graph_ent *trace,
+ 	struct ring_buffer_event *event;
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+ 	struct ftrace_graph_ent_entry *entry;
+-	int size;
++	unsigned long retaddr;
++	int size = sizeof(*entry);
++	int type = TRACE_GRAPH_ENT;
++	int nr_args = 0, args_offs = 0;
++
++	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
++		tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
++		retaddr = ftrace_graph_top_ret_addr(current);
++		type = TRACE_GRAPH_RETADDR_ENT;
++		nr_args += 1;
++	}
+ 
+ 	/* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words */
+-	size = sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeof(long));
++	if (!!fregs)
++		nr_args += FTRACE_REGS_MAX_ARGS;
+ 
+-	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size, trace_ctx);
++	size += nr_args * sizeof(long);
++	event = trace_buffer_lock_reserve(buffer, type, size, trace_ctx);
+ 	if (!event)
+ 		return 0;
+ 
+ 	entry = ring_buffer_event_data(event);
+ 	entry->graph_ent = *trace;
+ 
++	/* Store the retaddr in args[0] */
++	if (type == TRACE_GRAPH_RETADDR_ENT) {
++		entry->args[0] = retaddr;
++		args_offs += 1;
++	}
++
+ #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+-	if (fregs) {
++	if (nr_args >= FTRACE_REGS_MAX_ARGS) {
+ 		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
+-			entry->args[i] = ftrace_regs_get_argument(fregs, i);
++			entry->args[i + args_offs] = ftrace_regs_get_argument(fregs, i);
+ 	}
+ #endif
+ 
+@@ -158,38 +189,6 @@ int __trace_graph_entry(struct trace_array *tr,
+ 	return __graph_entry(tr, trace, trace_ctx, NULL);
+ }
+ 
+-#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+-int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr)
+-{
+-	struct ring_buffer_event *event;
+-	struct trace_buffer *buffer = tr->array_buffer.buffer;
+-	struct fgraph_retaddr_ent_entry *entry;
+-
+-	event = trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_ENT,
+-					  sizeof(*entry), trace_ctx);
+-	if (!event)
+-		return 0;
+-	entry	= ring_buffer_event_data(event);
+-	entry->graph_ent.func = trace->func;
+-	entry->graph_ent.depth = trace->depth;
+-	entry->graph_ent.retaddr = retaddr;
+-	trace_buffer_unlock_commit_nostack(buffer, event);
+-
+-	return 1;
+-}
+-#else
+-int __trace_graph_retaddr_entry(struct trace_array *tr,
+-				struct ftrace_graph_ent *trace,
+-				unsigned int trace_ctx,
+-				unsigned long retaddr)
+-{
+-	return 1;
+-}
+-#endif
+-
+ static inline int ftrace_graph_ignore_irqs(void)
+ {
+ 	if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT))
+@@ -211,7 +210,6 @@ static int graph_entry(struct ftrace_graph_ent *trace,
+ 	struct trace_array *tr = gops->private;
+ 	struct fgraph_times *ftimes;
+ 	unsigned int trace_ctx;
+-	int ret = 0;
+ 
+ 	if (*task_var & TRACE_GRAPH_NOTRACE)
+ 		return 0;
+@@ -262,15 +260,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
+ 		return 1;
+ 
+ 	trace_ctx = tracing_gen_ctx();
+-	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
+-	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+-		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
+-		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
+-	} else {
+-		ret = __graph_entry(tr, trace, trace_ctx, fregs);
+-	}
+-
+-	return ret;
++	return __graph_entry(tr, trace, trace_ctx, fregs);
+ }
+ 
+ int trace_graph_entry(struct ftrace_graph_ent *trace,
+@@ -634,13 +624,9 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
+-				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
+-			} else {
+-				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
++			int size = min_t(int, sizeof(data->ent), iter->ent_size);
+ 
+-				memcpy(&data->ent, curr, size);
+-			}
++			memcpy(&data->ent, curr, size);
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
+@@ -811,21 +797,21 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+ #define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
+-static void print_graph_retaddr(struct trace_seq *s, struct fgraph_retaddr_ent_entry *entry,
+-				u32 trace_flags, bool comment)
++static void print_graph_retaddr(struct trace_seq *s, unsigned long retaddr, u32 trace_flags,
++				bool comment)
+ {
+ 	if (comment)
+ 		trace_seq_puts(s, " /*");
+ 
+ 	trace_seq_puts(s, " <-");
+-	seq_print_ip_sym(s, entry->graph_ent.retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
++	seq_print_ip_sym(s, retaddr, trace_flags | TRACE_ITER_SYM_OFFSET);
+ 
+ 	if (comment)
+ 		trace_seq_puts(s, " */");
+ }
+ #else
+ #define __TRACE_GRAPH_PRINT_RETADDR 0
+-#define print_graph_retaddr(_seq, _entry, _tflags, _comment)		do { } while (0)
++#define print_graph_retaddr(_seq, _retaddr, _tflags, _comment)		do { } while (0)
+ #endif
+ 
+ #if defined(CONFIG_FUNCTION_GRAPH_RETVAL) || defined(CONFIG_FUNCTION_GRAPH_RETADDR)
+@@ -869,10 +855,12 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
+ 		trace_seq_printf(s, "%ps", func);
+ 
+ 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+-			print_function_args(s, entry->args, (unsigned long)func);
++			print_function_args(s, entry->args + ARGS_OFFS(args_size),
++					    (unsigned long)func);
+ 			trace_seq_putc(s, ';');
+-		} else
++		} else {
+ 			trace_seq_puts(s, "();");
++		}
+ 
+ 		if (print_retval || print_retaddr)
+ 			trace_seq_puts(s, " /*");
+@@ -882,8 +870,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
+ 	}
+ 
+ 	if (print_retaddr)
+-		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
+-				    trace_flags, false);
++		print_graph_retaddr(s, entry->args[0], trace_flags, false);
+ 
+ 	if (print_retval) {
+ 		if (hex_format || (err_code == 0))
+@@ -964,10 +951,12 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 		trace_seq_printf(s, "%ps", (void *)ret_func);
+ 
+ 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+-			print_function_args(s, entry->args, ret_func);
++			print_function_args(s, entry->args + ARGS_OFFS(args_size),
++					    ret_func);
+ 			trace_seq_putc(s, ';');
+-		} else
++		} else {
+ 			trace_seq_puts(s, "();");
++		}
+ 	}
+ 	trace_seq_putc(s, '\n');
+ 
+@@ -1016,7 +1005,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
+ 	args_size = iter->ent_size - offsetof(struct ftrace_graph_ent_entry, args);
+ 
+ 	if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long))
+-		print_function_args(s, entry->args, func);
++		print_function_args(s, entry->args + ARGS_OFFS(args_size), func);
+ 	else
+ 		trace_seq_puts(s, "()");
+ 
+@@ -1024,8 +1013,7 @@ print_graph_entry_nested(struct trace_iterator *iter,
+ 
+ 	if (flags & __TRACE_GRAPH_PRINT_RETADDR  &&
+ 		entry->ent.type == TRACE_GRAPH_RETADDR_ENT)
+-		print_graph_retaddr(s, (struct fgraph_retaddr_ent_entry *)entry,
+-			tr->trace_flags, true);
++		print_graph_retaddr(s, entry->args[0], tr->trace_flags, true);
+ 	trace_seq_putc(s, '\n');
+ 
+ 	if (trace_seq_has_overflowed(s))
+@@ -1202,7 +1190,7 @@ print_graph_entry(struct ftrace_graph_ent_entry *field, struct trace_seq *s,
+ 	 * it can be safely saved at the stack.
+ 	 */
+ 	struct ftrace_graph_ent_entry *entry;
+-	u8 save_buf[sizeof(*entry) + FTRACE_REGS_MAX_ARGS * sizeof(long)];
++	u8 save_buf[sizeof(*entry) + (FTRACE_REGS_MAX_ARGS + HAVE_RETADDR) * sizeof(long)];
+ 
+ 	/* The ent_size is expected to be as big as the entry */
+ 	if (iter->ent_size > sizeof(save_buf))
+@@ -1429,16 +1417,12 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
+ 		trace_assign_type(field, entry);
+ 		return print_graph_entry(field, s, iter, flags);
+ 	}
+-#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+ 	case TRACE_GRAPH_RETADDR_ENT: {
+-		struct fgraph_retaddr_ent_entry saved;
+ 		struct fgraph_retaddr_ent_entry *rfield;
+ 
+ 		trace_assign_type(rfield, entry);
+-		saved = *rfield;
+-		return print_graph_entry((struct ftrace_graph_ent_entry *)&saved, s, iter, flags);
++		return print_graph_entry((typeof(field))rfield, s, iter, flags);
+ 	}
+-#endif
+ 	case TRACE_GRAPH_RET: {
+ 		struct ftrace_graph_ret_entry *field;
+ 		trace_assign_type(field, entry);
+-- 
+2.34.1
 
 
