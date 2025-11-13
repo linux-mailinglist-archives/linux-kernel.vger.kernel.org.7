@@ -1,87 +1,201 @@
-Return-Path: <linux-kernel+bounces-899833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388C6C58D85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:48:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04875C58DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4530B3BBD8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74D74423EA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4930335292F;
-	Thu, 13 Nov 2025 16:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E243A35CB85;
+	Thu, 13 Nov 2025 16:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JN24s2zn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQKMGcvW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793F2FA0DF;
-	Thu, 13 Nov 2025 16:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F96035CB78;
+	Thu, 13 Nov 2025 16:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051501; cv=none; b=J2re6KXr2X34U20iWI2PXngG1tiOQmX1LV1X/Pmeky7GtT6hekwWumT44q2RKhP36Tp1aBJYKqdxOEZK6AhfiRWZYITr+3ydlaL/D0xTzfr00LWSQE2LW/qjFMa7o9rG/7Z3wpai1haNzbdaQyYdU8Yxv9wGPDxzYMjd2QPgXsk=
+	t=1763051660; cv=none; b=OcUJ33r01/CSH4oxNOXnR7MNFTJxBVVQA5HOMZ/O8PcD2glPgLnqimXkXT4ASEQh62L41EGEjvgbQNHeViFttG0V70HKfnnlnBEzFFOIkVQvQlDEfrKWWz5LSmWP9DJWHyHa7aST7984vOt9dqo1DNxkFlC15U2HYqw19UM3PP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051501; c=relaxed/simple;
-	bh=kF+kWxPyVh+z5FgM0Q2Did65oYs/q684yfo71ZgaTCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thNklratBun+CGAWHDcdma8dMB6v+XVPqYjaoqJhoO0m/OYaHp1nNV/IbpDWxXEOp1c5KFqQKQMfMnmOdCwviYy5WwZxMLuqf522LquidzARchXr6CQ317fTfXcyVrpx+F/G8k8FQ8HM4l6A8aDEoq539u0F3fgQd4O2wnxCznY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JN24s2zn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0B2C4CEF7;
-	Thu, 13 Nov 2025 16:31:41 +0000 (UTC)
+	s=arc-20240116; t=1763051660; c=relaxed/simple;
+	bh=qN6vkdRA+SD3osdiT+bql8/nbfPL5qfu0t44p2AElEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KWyyhcaXUtoCLeTOovv4vZsf9jOOI3sM22xmNbD/z3OyaxADN4VZ4DwrdRWDtBvzdYIIU4/+yGm+F1E2UgWB9TCFz61R+ShjTQ2RKRD1aSDDGHximdiwZzHGywS24D31V+lIkKvEzHQHo9TPFruE0hzazv1V70AbO/iISgoXwJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQKMGcvW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4A4C4CEF7;
+	Thu, 13 Nov 2025 16:34:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763051501;
-	bh=kF+kWxPyVh+z5FgM0Q2Did65oYs/q684yfo71ZgaTCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JN24s2znNS9vkkaUXTdz1pdutkLld2c5PDgdWXBdkz2Sq7e0VfZMaGPaKYRr6g9En
-	 8BwUWrJ+dgCAngShttKvv0IfksPk3gEcUk2w9LHgz68KiHXhkKtQTitBdJWhoRMOJa
-	 je8OIXGsKp2GgcN/cNlB9qPqt2cs64AVkAd/LMydq41j0Mkjs7qI+GNBh/yMRJgdqg
-	 ZrYPAGRNOsSDSvZOF+BO7v4WFUtdCK67Z53aQDtIpV6yyEVIr/LzeEcZUVapieylXM
-	 KFGENpjL0KYOOdn9OOa4+Bv5/zbglcL75Dsd97o3pVw81bC/Uuj29t0mI0XrGoWds3
-	 7vWSg/gQhbpEw==
-Date: Thu, 13 Nov 2025 06:31:40 -1000
-From: Tejun Heo <tj@kernel.org>
-To: ying chen <yc1082463@gmail.com>
-Cc: corbet@lwn.net, jiangshanlai@gmail.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, laoar.shao@gmail.com
-Subject: Re: [PATCH] workqueue: add workqueue.mayday_initial_timeout
-Message-ID: <aRYH7NwIEdC2kM8Q@slm.duckdns.org>
-References: <CAN2Y7hwttMyUn0qsEcSBbrQ1h+aSzNpHMhgAxEbqJZn4vf5hBw@mail.gmail.com>
- <aROfRBGmglPgcPVf@slm.duckdns.org>
- <CAN2Y7hwUmdFMM=mwYq7gsBpbSEBq6n0nXzmES4_=p3fDV=S+Ag@mail.gmail.com>
- <aRSvxyoWiqzcBj-N@slm.duckdns.org>
- <CAN2Y7hzDZxt5tBPeqwKwNNwwGXgmhj_uYDMkxx5_QtoqV97v1A@mail.gmail.com>
+	s=k20201202; t=1763051659;
+	bh=qN6vkdRA+SD3osdiT+bql8/nbfPL5qfu0t44p2AElEU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CQKMGcvW1owOb8kmjPFGLgUOupZ3TVEvmZc5tLkJE7HljUGcexPhg9cxvMhFTPk7p
+	 6GfpSTvMleUxXNL9kt37fdgfezrp7xQ0DS5MwJPNi49WgIbe4QcM69xfwPGYA6ze5W
+	 12KQRDjQ9WIua/7NQ/s+1ByaWpxedcoYMYaBV+++TxEiac6NliLtRPnLQ935WrBjg2
+	 7naUVuCCaiPTTzp9DxfWOmU9zEZTKzkmWHj0hKFCyjpJt7kSF2PrXrq+ocgw46rcRz
+	 iXjlqfsmCIqsO4TBkBrFf/tbr8t9qEgw8Aw2vM9fG9pkNYVoiqyvm+c8GT6sLqw8vP
+	 Zuv9OeCZd/ngw==
+Message-ID: <6490f20a-2492-4ee0-8f34-d529e0df0bad@kernel.org>
+Date: Thu, 13 Nov 2025 17:34:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAN2Y7hzDZxt5tBPeqwKwNNwwGXgmhj_uYDMkxx5_QtoqV97v1A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
+ frankel/blazer/mustang
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
+ William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+ <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org>
+ <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
+ <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
+ <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 13/11/2025 17:23, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Nov 12, 2025 at 11:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>>>> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
+>>>>> +      - description: Tensor G5 SoC (laguna)
+>>>>> +        items:
+>>>>> +          - enum:
+>>>>> +              - google,soc-id-0005-rev-00  # A0
+>>>>> +              - google,soc-id-0005-rev-10  # B0
+>>>>
+>>>> SoCs cannot be final compatibles.
+>>>
+>>> Right. I talked about this at length "after the cut" in my patch. See
+>>> above. I wish to relitigate this policy and wish to know more details
+>>> about where it is documented, the reasons for decision, and where the
+>>> boundary exactly lies between something that's allowed to be a final
+>>> compatible and something that's not. I made several arguments above
+>>> for why I think the SoC should be allowed as a final compatible, so it
+>>
+>> Because this represents a actual device users run. It is electronically,
+>> physically impossible to run the SoC alone.
+> 
+> I'm not convinced that this definition is as clear as you're making it
+> out to be. It's physically impossible to run many "boards" alone.
+> 
+> Want to boot up a Raspberry Pi? Provide it with power. Hook up a
+> display to it. Hook up a keyboard to it. Plug in an Ethernet cable.
+> Plug an SD card in it. Without those things it doesn't run.
 
-On Thu, Nov 13, 2025 at 10:34:43AM +0800, ying chen wrote:
-> Processing work items one-by-one is indeed an excellent solution.
-> However, wouldn't it also be necessary to provide a method for
-> adjusting the mayday initial timeout?
+But I can plug them...
 
-Adding an interface like that isn't difficult but I'm not sure what that
-would achieve. A rescuer is there to guarantee forward progress when the
-system is under memory pressure and processing work items of the workqueue
-may be required to free up memory. IOW, when that workqueue not making
-forward progress can lead to system deadlock.
+> 
+> Want to boot up a lga-B0 SoC? Hook up power to the power pins. Connect
+> a MIPI panel to the MIPI pins. Connect a UFS chip to the UFS pins.
+> Without those things it doesn't run.
 
-As such, this doesn't have that much system performance implications (aside
-from the serialization effect that you raised). If rescuer is needed, the
-system is in tatters anyway, especially in terms of latency response, so I'm
-not sure what fine-tuning rescuer response time would help with.
+These I cannot plug, it's impossible for me.
 
-Thanks.
+My clumsy fingers are too big for these pins.
 
--- 
-tejun
+And following your logic, we should have the compatible for the
+transistors, because that's basically what SoC is made of.
+
+> 
+> Yes, the complexity of just "hooking up" the components on an SoC is
+> an order of magnitude harder than a Raspberry Pi, but it's still just
+> hooking it up to external components. In both cases, we are modeling
+> the core "brains" (the part that contains the processor) as the DTB
+> and everything else just "hooks up" to interfaces.
+
+You mix the topics, so I don't follow. I speak here about bindings - you
+cannot have the that compatible alone, because it is incomplete, just
+like compatible for "transistor" is not correct in that context. You
+speak what could or could be DTB, different topic.
+
+> 
+> If I had to make a definition for what the base DTB should be it
+> should be the component with the boot CPU. _Why_ is that the wrong
+> definition?
+> 
+> 
+>> There are few - one or two - exceptions for the SoMs, but never for SoC.
+> 
+> OK, but the big question: _WHY???_
+> 
+> Where does it say that a DTB has to be something that can run "alone"
+
+We don't discuss DTB here, but the top-level compatibles.
+
+Why? Because DT spec says so.
+
+"Specifies a list of platform architectures with which this platform is
+compatible. "
+
+And when you combine it with the standard definition of the
+"compatible", it is not *a* "platform architecture" but *list* of
+platform architectures describing this device as a whole.
+
+
+Best regards,
+Krzysztof
 
