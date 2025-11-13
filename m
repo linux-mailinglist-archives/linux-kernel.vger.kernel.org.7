@@ -1,165 +1,219 @@
-Return-Path: <linux-kernel+bounces-899502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67230C57F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:32:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B32AC57F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75B914EA71B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEC13AC85B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D095D28C854;
-	Thu, 13 Nov 2025 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36380284B29;
+	Thu, 13 Nov 2025 14:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsycDSpp"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dcTbGm/1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8BC204583
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A34D204583
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044042; cv=none; b=Vtc0meRQJqeFpT00IiJiVfhxTaBVM2fbKGB+ylin3BOXRpPbwwtKHy+/bjAfpYYrnWgLKcXmwmXTRttcyXqR6fi/RHZjDZKkx6As+6x+NY19h5pMVA0VJbTC+OAtgVTK9aUQ/WOFHkWhckv62UmVHxJHZ1TNq7QyVhaBIo6nSJQ=
+	t=1763044050; cv=none; b=VGtg323z414ToiyC9tWg2+JQX0WbjDRaQwlMtvO45sfrCB1eodCYI6aWQvAnS1cgZm2c9DAG7n1zujb6AYAE8jBTBuq4IEuoWnK0lQKSSThIrfUJsPrZhUwzy9OrnFVh0G2zy5qPlppRxbXXpAvrL5iWwXhkhdmE3nSBiLHcd6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044042; c=relaxed/simple;
-	bh=0Tw6q9uVnCB5RsC3DsVy4ZccNs7ur2RBRKPq+4D012o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZe4/+7JFC9CKjFdryHYbWpEmfZUgFnJm1aukuPdCTXsLJin5z1jH5ng8jbQzZGL41lH4DBROmMkL6HjaX9NQyB7EynMLXHiKsVpIJb26Bzt9V1tfIqQYgaNC8H7NXAzsMDNMvwXrlZibPrtGOkF3UikdZ/od/tMDqMgOoDgT/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsycDSpp; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-bb2447d11ceso545584a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:27:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763044039; x=1763648839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFXYEF7QB/i0A/FdoVAEDHxZYMr8pDZZX3lr2SNEpCE=;
-        b=CsycDSppE1KSpDgiaKq+TAMob1NKpnbMq1D1lVw/J9USc8WH7u5CFqzDeC2lqnsG3+
-         MM9uw9UJMgoG/gx77LPgibrpwpkkGRc+ol+7pPWMty++MOjdNCeNqkYsNA/QWSUaeRAS
-         4E1RXaSpPFDB14wv1y6sAkWFMs6W3MOWUMM+CgtOCdMsA/toFdCl1rG9L66lYjEwSxYo
-         OQxKwwfJu1jZa2Wpppg/kMboIvbczPP5dhJOxS45B2h1csmC0bcg6q3eJoLVcjK1EKTH
-         2BhNyVwZK5qZpIaK83A1kwNE7thGe1wLgLKLsiPi1Ud7UtR+RFHYPX2VJL+fApyXrDFn
-         G3MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044039; x=1763648839;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UFXYEF7QB/i0A/FdoVAEDHxZYMr8pDZZX3lr2SNEpCE=;
-        b=Y1c7gwjHgKKxcWD06a4Ec4cYXXDmtwpsqkKTYO/Ji7mvhRAPbHDDBA/xzKnB6O5FJL
-         GA8oYynVILUJpEP/BjgDBdzR+rjTNDu264rNIrQG1DAsX5dBU0GFCOrPpmSBDOqM1fTU
-         9fzrXUSvj9KpgJEF5xYGD2t6AXZJM6Wh2iGOoUWWo6GM9HBo2jDpXCr0voSuMfy8Jtv4
-         W4dRT+MmCr7mHKKJISAZpoQwqQEtoONCn88zDjNiJco/mEVPKfsupVJd1LUBuX5W7ocu
-         84K89QIccYAQAxAMPsAQadzal6HHcg1FaA7EbfgOj++/PQjoE7sLgFpmKAgnAD2hwLdJ
-         QbuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8TDx+4fVt5rKQV14KJUEN9rYoBl4fKp/0tNZ+5b2xbglB9qF6sl72ptguQBG9DpQ/hcAIIKBOSXgWa3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfsL8r/y4DbHFHDGrsTAcANGA/yThLV5WTxRE4GRrKakdGEGtv
-	nfvSbX1wTU9nZhFBL+DtIhWQ97kbCxaRevF8yXiNiHUuHLNnk22t+fes
-X-Gm-Gg: ASbGncuXi0lfLpfeJwNG4y5TMpdb8jophFDyavbbA5GmxUR+aleOnz60jrWl+LOvJCW
-	mPqKavMtzzQU4Qi/glJtnINg5w3/yNzImyS/MI5PlFh9jIBVHlmT0PJUeR4rSlvxodjexdbsVz0
-	/nZ3woVC2YfZMd1CvrrLEApIYEUA/jWzgX91UUr8stUrpkBpxI7hXNvHV0rlV9D7e4d4yPxetH6
-	yfDVQK7ZW8QZHssChdwjP0qMYoJFkTw9u3it0xOFUs9frX0qAqTLB9TtRXhfWykDrVgBfiyXHmZ
-	zdDwfU9VzLH3zuaYWW5IMS4keUzdjy0nW2KDejdGmHojijrUE28Nu7YHWLeZdGGZgkqYTl/x77r
-	u5jMjmBkMTkrctP2FHBVsMlmZWKl6HIBieZkm7IRQoO0VGmu6hMF9JYQle4fPFgIxlSVb0ZXaKY
-	P2hwsxgp52ri01ndjP
-X-Google-Smtp-Source: AGHT+IF3GrG7ZK+M9RU6VrohEraA5W5GhEDI6zHXa1dkOUqo9dFQeLn6sFP+g+cHtwCkgQIyJU9QrQ==
-X-Received: by 2002:a17:903:2b0f:b0:297:f09a:51db with SMTP id d9443c01a7336-2984ed45caemr92249865ad.15.1763044038540;
-        Thu, 13 Nov 2025 06:27:18 -0800 (PST)
-Received: from gmail.com ([152.57.125.163])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2346dasm28242755ad.7.2025.11.13.06.27.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 06:27:17 -0800 (PST)
-From: hariconscious@gmail.com
-To: cezary.rojewski@intel.com,
-	liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com,
-	kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	amadeuszx.slawinski@linux.intel.com,
-	sakari.ailus@linux.intel.com,
-	khalid@kernel.org,
-	shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	HariKrishna Sagala <hariconscious@gmail.com>
-Subject: [PATCH v3] ASoC: Intel: avs: Replace snprintf() with scnprintf()
-Date: Thu, 13 Nov 2025 19:56:38 +0530
-Message-ID: <20251113142637.259737-2-hariconscious@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1763044050; c=relaxed/simple;
+	bh=Ifb0Cj076tpWX2yvxsNpaJjmNCsTXeVM0kXB/rP9bgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C01IlIZ+qlXHiSH5FnhkpwMl4HYpSUwBgynMndOKN5GNkoj7rYbxQHwSpj2djt//QMVqPEIiNyzkEmYqHA0mZSSHIU/OqZF/yqT0MwUevofY52Gt56P81uHgRezgpoHMSl71pQZWmcwOn4VZnk/VF6o63XRQgPOd66tAUXcC9mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dcTbGm/1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2C8DE40E022E;
+	Thu, 13 Nov 2025 14:27:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id yzauhrkjpnpa; Thu, 13 Nov 2025 14:27:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1763044040; bh=Z7zpHoG2VXvquJsRrjkvaZlpyb+tgu/pAOsVrdaCBpQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dcTbGm/1JUl7uatRhwBxwWNvoT9e4WftKpROKx/lDYYztU19jmr2g4/cxn5Q2/t34
+	 uf+PWGBd9OcOp5yzuAVnGCp7RUESzQrlZK1psxP7OOo4o1ErxfsBUpBS2La4BqFkZv
+	 b/9qn79QNN6+myB7QSLPvg2W5kR8uv3L8CUmLr0jc1bOS87L8qRMLE8IJ5Kg2+q+pT
+	 cGfVpz3JR0rU2lYuuAoVWHHcUQH/VIgiCp9xbu95zndATho/yHNTDEaqzziidP4fNK
+	 NqXnzR4bHj9Ne6Yf1ZpnBQGyUqvzOO9cFT+z+HW/4BUTFusg4JsJAS6JrNmqb2lP+6
+	 kdjTuGASG7xTA6OKfYAItxI19kChBHV9UrvgP2nnTLiUhNLyVrdDcBKYOs5ZOysuwc
+	 4JJEXd/ZLieyXcd2vjN0d/nPymxa5Pk2urg2ZOgOlX8W9PNLjNQRRgHSAWig+2lL4m
+	 EJLx5FFsDUgbWoWNtpO4HoMbKY7IJzV3PmZSXZQJ2S/EI+1cHHbIAPXIkCYoPMneOZ
+	 lxneNO7LWsHBfcvv3ThjZoLqj2KTCBhv9YvaIIsDrVJE5sMaL4EMuRdCs/ejMdn+zw
+	 SIdlGMAbI5jIoIQbmDx4MDvuOWSNqjzroB6y2F3pl3eelW1lqUUlNWz69ZxAn1lVWx
+	 ajTzGGljbRL3j0ibCERNrYbI=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6E7EF40E0219;
+	Thu, 13 Nov 2025 14:27:14 +0000 (UTC)
+Date: Thu, 13 Nov 2025 15:27:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Michal Pecio <michal.pecio@gmail.com>,
+	Eric DeVolder <eric.devolder@oracle.com>
+Subject: [PATCH] x86/acpi/boot: Correct acpi_is_processor_usable() check again
+Message-ID: <20251113142713.GBaRXqweHEuZw1bjD1@fat_crate.local>
+References: <20251111145357.4031846-1-yazen.ghannam@amd.com>
+ <20251112135618.GCaRSSAkqagSF_gr9j@fat_crate.local>
+ <c430ae05-74ca-4620-bb11-ff40d2eb62f6@amd.com>
+ <20251112172113.GFaRTCCfu2H6JpkZWB@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251112172113.GFaRTCCfu2H6JpkZWB@fat_crate.local>
 
-From: HariKrishna Sagala <hariconscious@gmail.com>
+Seems to work here, I will run it on a couple more machines and even if it is
+stable material, I'd let it go through a full cycle merge window so that it
+sees more testing.
 
-snprintf() as defined by the C99 standard,returns the
-number of characters that *would have been* written if
-enough space were available.Use scnprintf() that returns
-the actual number of characters written.
+Thx.
 
-Link: https://github.com/KSPP/linux/issues/105
-Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
 ---
-Thank you all for the valuable feedback and suggestions.
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+Date: Tue, 11 Nov 2025 14:53:57 +0000
 
-This patch updates usage of snprintf() with scnprintf(). 
-As in accordance with the C99 standard, snprintf() returns
-the number of characters that would have been written if
-enough space were available.With scnprintf(),the return value
-reflects the actual number of characters written.
-Change log:
-V3:
-Dropped the Fixes, stable tag & updated the commit message.
-scnprintf doesn't return the negative values as per the contract.
-Hence removed the check of ret < 0 as it is unreachable.
-https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.scnprintf
-V2:
-https://lore.kernel.org/all/20251112181851.13450-1-hariconscious@gmail.com/
-V1:
-https://lore.kernel.org/all/20251112120235.54328-2-hariconscious@gmail.com/
+ACPI v6.3 defined a new "Online Capable" MADT LAPIC flag. This bit is
+used in conjunction with the "Enabled" MADT LAPIC flag to determine if
+a CPU can be enabled/hotplugged by the OS after boot.
 
- sound/soc/intel/avs/debugfs.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Before the new bit was defined, the "Enabled" bit was explicitly
+described like this (ACPI v6.0 wording provided):
 
-diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
-index 3534de46f9e4..d224b25323be 100644
---- a/sound/soc/intel/avs/debugfs.c
-+++ b/sound/soc/intel/avs/debugfs.c
-@@ -119,16 +119,13 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
+  "If zero, this processor is unusable, and the operating system
+  support will not attempt to use it"
+
+This means that CPU hotplug (based on MADT) is not possible. Many BIOS
+implementations follow this guidance. They may include LAPIC entries in
+MADT for unavailable CPUs, but since these entries are marked with
+"Enabled=0" it is expected that the OS will completely ignore these
+entries.
+
+However, QEMU will do the same (include entries with "Enabled=0") for
+the purpose of allowing CPU hotplug within the guest.
+
+Comment from QEMU function pc_madt_cpu_entry():
+
+  /* ACPI spec says that LAPIC entry for non present
+   * CPU may be omitted from MADT or it must be marked
+   * as disabled. However omitting non present CPU from
+   * MADT breaks hotplug on linux. So possible CPUs
+   * should be put in MADT but kept disabled.
+   */
+
+Recent Linux topology changes broke the QEMU use case. A following fix
+for the QEMU use case broke bare metal topology enumeration.
+
+Rework the Linux MADT LAPIC flags check to allow the QEMU use case only
+for guests and to maintain the ACPI spec behavior for bare metal.
+
+Remove an unnecessary check added to fix a bare metal case introduced by
+the QEMU "fix".
+
+  [ bp: Change logic as Michal suggested. ]
+
+Fixes: fed8d8773b8e ("x86/acpi/boot: Correct acpi_is_processor_usable() check")
+Fixes: f0551af02130 ("x86/topology: Ignore non-present APIC IDs in a present package")
+Closes: https://lore.kernel.org/r/20251024204658.3da9bf3f.michal.pecio@gmail.com
+Reported-by: Michal Pecio <michal.pecio@gmail.com>
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Tested-by: Michal Pecio <michal.pecio@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/20251111145357.4031846-1-yazen.ghannam@amd.com
+---
+ arch/x86/kernel/acpi/boot.c    | 12 ++++++++----
+ arch/x86/kernel/cpu/topology.c | 15 ---------------
+ 2 files changed, 8 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 9fa321a95eb3..d6138b2b633a 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -35,6 +35,7 @@
+ #include <asm/smp.h>
+ #include <asm/i8259.h>
+ #include <asm/setup.h>
++#include <asm/hypervisor.h>
+ 
+ #include "sleep.h" /* To include x86_acpi_suspend_lowlevel */
+ static int __initdata acpi_force = 0;
+@@ -164,11 +165,14 @@ static bool __init acpi_is_processor_usable(u32 lapic_flags)
+ 	if (lapic_flags & ACPI_MADT_ENABLED)
+ 		return true;
+ 
+-	if (!acpi_support_online_capable ||
+-	    (lapic_flags & ACPI_MADT_ONLINE_CAPABLE))
+-		return true;
++	if (acpi_support_online_capable)
++		return lapic_flags & ACPI_MADT_ONLINE_CAPABLE;
+ 
+-	return false;
++	/*
++	 * QEMU expects legacy "Enabled=0" LAPIC entries to be counted as usable
++	 * in order to support CPU hotplug in guests.
++	 */
++	return !hypervisor_is_type(X86_HYPER_NATIVE);
+ }
+ 
+ static int __init
+diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
+index 6073a16628f9..425404e7b7b4 100644
+--- a/arch/x86/kernel/cpu/topology.c
++++ b/arch/x86/kernel/cpu/topology.c
+@@ -27,7 +27,6 @@
+ #include <xen/xen.h>
+ 
+ #include <asm/apic.h>
+-#include <asm/hypervisor.h>
+ #include <asm/io_apic.h>
+ #include <asm/mpspec.h>
+ #include <asm/msr.h>
+@@ -240,20 +239,6 @@ static __init void topo_register_apic(u32 apic_id, u32 acpi_id, bool present)
+ 		cpuid_to_apicid[cpu] = apic_id;
+ 		topo_set_cpuids(cpu, apic_id, acpi_id);
+ 	} else {
+-		u32 pkgid = topo_apicid(apic_id, TOPO_PKG_DOMAIN);
+-
+-		/*
+-		 * Check for present APICs in the same package when running
+-		 * on bare metal. Allow the bogosity in a guest.
+-		 */
+-		if (hypervisor_is_type(X86_HYPER_NATIVE) &&
+-		    topo_unit_count(pkgid, TOPO_PKG_DOMAIN, phys_cpu_present_map)) {
+-			pr_info_once("Ignoring hot-pluggable APIC ID %x in present package.\n",
+-				     apic_id);
+-			topo_info.nr_rejected_cpus++;
+-			return;
+-		}
+-
+ 		topo_info.nr_disabled_cpus++;
  	}
  
- 	for (i = 0; i < num_desc; i++) {
--		ret = snprintf(buf + len, PAGE_SIZE - len,
--			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
--			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
--		if (ret < 0)
--			goto free_desc;
-+		ret = scnprintf(buf + len, PAGE_SIZE - len,
-+				"Id: %#010x  Purpose: %d  Node id: %#x\n",
-+				desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
- 		len += ret;
- 	}
- 
- 	ret = simple_read_from_buffer(to, count, ppos, buf, len);
--free_desc:
- 	kfree(desc);
- exit:
- 	kfree(buf);
-
-base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
 -- 
-2.43.0
+2.51.0
 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
