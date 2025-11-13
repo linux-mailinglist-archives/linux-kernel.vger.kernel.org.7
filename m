@@ -1,330 +1,203 @@
-Return-Path: <linux-kernel+bounces-899824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAFEC58D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:45:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D17C58CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:42:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21C52547D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD0B421A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6C335B122;
-	Thu, 13 Nov 2025 16:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1581E334395;
+	Thu, 13 Nov 2025 16:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GzMG7oVS"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WMplJWs4"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013036.outbound.protection.outlook.com [40.93.196.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7527033BBCD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051446; cv=none; b=OCBqI4PHB/bx01GZ2RPnqRMN32YO/DGWb0DTKiloRHSlbVyniWDGI4H2E1AKfx8HwZJXsKUXnD3pUAkFCZ0DT3Gm2wCO8mBGxrRfnSxgjtpFYY7d//eBMg0Q4z9wDHxBgWSVJZCJ4p8iadqzNCN3FKBICWzDqcCkEyRJhLKSuRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051446; c=relaxed/simple;
-	bh=YrHg4D4Rn+vC2SZi4KRny6/RVdR+R0c8DKxuDoshRZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uti77ukLI/x9uwLmjPaeig65NRTV59SelIGeXNk85ayuOJSTI5jOVNThBmhq7SBCW3KIr94tmFFHRW9vXFcIRgUz0YBDVwa116Q+Fxn0Rve3UcMeYYBCE7NTcUj5QIaQ2p6jEg/Qx9pmWMgIvjoQjht9Iuw/f6TiobNwet/CS7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GzMG7oVS; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so1571639a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1763051442; x=1763656242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K5wt2b9AIytvZm3PkDsPhENWn/BTbuYs0T0/KW2/iVE=;
-        b=GzMG7oVSfsSWuCO/T4m68xnX/AnrB//zJamwSRcTccliw/W59DWXw0UK5m8cwLBool
-         B/DjqyaPLs2fz0EqSCZaKwxFT5+M7zQTAxkiBfmHmtnP3MC2bT+iRU5hzMhBZaLyW6Wb
-         k1/Nlv7xbIiiXpVAolVHXWadJ6goCGDGS3D6w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763051442; x=1763656242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=K5wt2b9AIytvZm3PkDsPhENWn/BTbuYs0T0/KW2/iVE=;
-        b=GW3JCXfQfuAYfXTMY32u30baDA38jg9TWDbQLiSIyMM2jstStOnmi2hdxLT8jJuQdx
-         CXcbNRHAHtI1kIjVqJx4rG4hI7/xa+fOAI3C9lCkqqnO4aidJ0edrOZIGAFNy79ndWji
-         qhuWpqWknu/GaIb4fAm5uzl+sb1kmAXKzMMLwelMmPTYr+CunJERW2mu1ULV7tEAMXSX
-         D8jtuF33Js2irhwsmQRxpwKc2Leoh3aWpoaPHDXyEjQdJdOlh4G4wc4RjkKMMxIJA6oP
-         e76DUuDa9CN+KLT6UTLoWfTreoTliHT8vnIH9BF8YFCW22etadysy2kJoUcaoqty8Y+b
-         h+9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6hOScSQHDGDUiHGwHWNJP3Jwo2ioAlT2eTTcNte0+tEn++DiKslLjwbYC3NKebd1DSd2cJ+WN9fMsII8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCGb3E+F83aXlp+HB7KcvTlvGf2b58yEzH8Cg19G78lbs0Qch7
-	4U7e9L2npVbDJmA1g5tAZaXYal4qjiWf4lQ+GzziwKcwC6mq49vejgUuIu78UOPT8J3md9zFkkq
-	DhosWB6DI
-X-Gm-Gg: ASbGncunRffb86UZMjitEBI/2wfE32yebvn+9qEMrhWPKIaAGOrTpbX0LIB3n2LlSxL
-	dYNWyhX1TVoSLM5BaBrfLVndfeDOBevsGshki3JYrL8HSiwON+i8iB1ILwiy3MY8F0V4yGLNCqT
-	+FiAbYsoVJdMgTNm8GAU78UcCNq5y0llIk/i42MwJMaHQLpLTc0qFKRovX3qvk/p2H2rzAV2VUg
-	0O/uSg4Hia/6WkwEj+g5MCo+PTdAWgtKfPPBH26urY+QV3bnLijnKya/C25+SLW07v+ZKQS9d80
-	QESRzB5Ro9J6V8zFuyzd71paLf9gXj20B1yFK2czu8I+8cfqCmBjNoa9zOiFd7sbyoTN0ST84yS
-	7sMSdPAiz6EF3/v/NtaJoYYod22K05itH4GdQub3wWMnXWLzInzNh9ouPSCixU2+lElCEMC5859
-	ixxN2jO7VMDNMl5FkFOx0+U2CdrpMZv/3qnb8wFuUPd4+nn+dVkQ==
-X-Google-Smtp-Source: AGHT+IFrf6WhEW0FrCfiSLhkX+djiV1Yo0G5Ys/WFLc/kLwPcyUP+Zx+0TL9Uw7lPP6DkzufhA/0FQ==
-X-Received: by 2002:a17:907:962a:b0:b6d:67b0:ca0b with SMTP id a640c23a62f3a-b7331c06865mr693594866b.61.1763051442116;
-        Thu, 13 Nov 2025 08:30:42 -0800 (PST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fd80a06sm193830966b.38.2025.11.13.08.30.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 08:30:41 -0800 (PST)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477775d3728so10557455e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 08:30:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVweTGx1emfKFK3LOkIA9VfzFOoVtlqS3RSYKhOtAU1PI1+bDvx6yemCSkiKltJAsueq23g/nVc0Nta2Kk=@vger.kernel.org
-X-Received: by 2002:a05:600c:350d:b0:46e:32a5:bd8d with SMTP id
- 5b1f17b1804b1-4778fe553famr1167935e9.3.1763051043969; Thu, 13 Nov 2025
- 08:24:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760422FD665
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 16:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763051070; cv=fail; b=iBY9lJJVDL6OOWqPZAdihqntsD8Hsyr3xo6l1A1KH5/FAvryVLDGz8w4WQ9K4J4aIzR+Bx6wdfOS9GaQ53DTw3XB3vuVemnlmpv/OWWi14b6sPjfaKP+C2vyl/O4SDGWClurbtQRiXpv8bJ4/H+S/JB24E2r+MW4W7Ckih398hQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763051070; c=relaxed/simple;
+	bh=jRcyiYQJEvHFFpPfOgoGJD4jyYcSVyx60+vZuQjA0HY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kCi5VxMmoeHAlsM64Vn3QRtZbqIVbnQ8UV3bbKnYMQto9D7L2vsyQdRil3yQVXBbWhIjxkQxQgqr/jBZkLoQK7jq6/oS7aQCJEw+kv249I9yLDwXBDgzrnSYiGvqQysArhlG3uIiwuDTwL8UUlmqLAHTZ/1TCH31pt7CLzJVIK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WMplJWs4; arc=fail smtp.client-ip=40.93.196.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kHDLsr1a7Zg+6gEI1KZFn1hSxO+R7IAw07exRbh09sR7+UNUAlsEOIO5hxQLCq32GIYtRKSuq2xF56ZjjAQ1RICPkZcfVizmTHIgg1xyOCeZpnV5gm+V538X/SNitlciDJ6ZTQGG5dajZ6ynpQD2irn0yYOM+gym2noKTT/sUApZU60xqFAlOfSWpC4bdM1yulVbRU0dXGmvHmkNu/NHCf8WxbHKle/tSJNTV4b/iGTKuMRoGx2s5CpMwRljqbCTb4CvGLM3KPXdOuGnWCDXnYb4/pwcrBZeN9e4f5CvRSLhRLc77NQH1XrHkNf/WUAkS+lilvdMfhpez/AlTW3xNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jRcyiYQJEvHFFpPfOgoGJD4jyYcSVyx60+vZuQjA0HY=;
+ b=jvbxudT/lAQAhGKfjh/S1q3EvlxswRksmz4KuExLs14mwUqN+9NIwKT/s7J0eS85QHUHfth2Yp1jagUTGv4lExOUqvBfj6yz2bU2b8Qo9xLcWTnxdsut3QSQkGO4/w1PN+YwD6fyJwmYwg/4VRRX9WJQFRUF1SVpuMz9xrotkvK4MXGrx/h+pJRCrWSk4/tR7oZ7lpu/104pa8hfaWglEdkDqZIgQEFeFsVz2fFQp+a8t+Y8Kkl8WZpzcj8FVH4SVlIDZ0xGjKIWp6XDJqCIecYuJ5BZiWa1SWhFVsV9Mdb0/4aofNnFyO7D55ZUeQvQK5c98P7SntAnUQKZ44UWqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jRcyiYQJEvHFFpPfOgoGJD4jyYcSVyx60+vZuQjA0HY=;
+ b=WMplJWs4ZCxqLKkbgrhSNwEGEPspFnBmuzU1+wrUru/eVYv3vTrXIYGVnfeDpTyRBnxCbSNAzAZlrZv3I5WNEDgLo6Z/78b+RQz38MKS1KvQCvRT+I4Lqu2EQDWviEuL+NcJiTiHaFXshNHcz6vBv1rrqxMY5MJf3AXEjYCfhUz0+LVDfVRPhtvgySeVoWfTZhVnqoruq80tr15qQXKXQwY3OncEjyS0OsY25rSL6lOSC0mnOWFvYKcQJD/CuvXPj5iv3mhwt6KNPGwSK4eRmy6OTREa4EP8uNZoV6vVwboFJHzCxUEqIFeoNLqHrm7TUB6Hy6ucENTIJjqq15hcAw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ MN2PR12MB4237.namprd12.prod.outlook.com (2603:10b6:208:1d6::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.16; Thu, 13 Nov 2025 16:24:24 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 16:24:24 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Francois Dugast <francois.dugast@intel.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ David Hildenbrand <david@redhat.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?utf-8?q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>
+Subject: Re: [PATCH] mm/huge_memory.c: introduce split_unmapped_folio_to_order
+Date: Thu, 13 Nov 2025 11:24:20 -0500
+X-Mailer: MailMate (2.0r6283)
+Message-ID: <389A23ED-106B-413C-B13F-BB0F1E90B6C8@nvidia.com>
+In-Reply-To: <8ffcbd7a-511e-499b-919d-0c56ccc3c63b@lucifer.local>
+References: <20251112044634.963360-1-balbirs@nvidia.com>
+ <aRX62SR8NLps2NWH@fdugast-desk>
+ <8ffcbd7a-511e-499b-919d-0c56ccc3c63b@lucifer.local>
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0398.namprd13.prod.outlook.com
+ (2603:10b6:208:2c2::13) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
- <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org> <CAD=FV=XXWK9pmZQvNk6gjkqe6kgLXaVENgz0pBii6Gai7BdL-A@mail.gmail.com>
- <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
-In-Reply-To: <00ea821c-5252-42cb-8f6f-da01453947bd@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 13 Nov 2025 08:23:52 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkn8U9vLweoLL7ChsWq65S9_NbSZw7csl7J0f4Er_fIbKu-AjDA18N3giM
-Message-ID: <CAD=FV=VSxeKgGcsRb9qiXq7nsbOWZjPvzmGEOhFA+pmABWdknQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for frankel/blazer/mustang
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	Roy Luo <royluo@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, 
-	Julius Werner <jwerner@chromium.org>, William McVicker <willmcvicker@google.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN2PR12MB4237:EE_
+X-MS-Office365-Filtering-Correlation-Id: 692ce656-96ea-4cc8-c822-08de22d11b85
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D58eiOjJj82eF+Xz7xU8PRm7GyDiSGzMvCF+qRvt0PoJ/V7lnhpCoRYesH0R?=
+ =?us-ascii?Q?Y40pVE3Bojt/KdcL25YuqREXdPjp73334c5D0JFFhDGvN4c5VcsOJgbICvkA?=
+ =?us-ascii?Q?vdg1TUMlRVD+wXotz7k1eqU6txM3a30NbVuCZsqoujKiBeKt7OKMoiZUw4P/?=
+ =?us-ascii?Q?fHao7N/yztzu8u6lvh80DH1ys5bnnnA67xQuhUx6ST4HUZrRjzuaOHNbGJrG?=
+ =?us-ascii?Q?AARTWlickEHOLCHlAR9CxyddRkUA4hUNkILtA58Nhb1ycKjna8q93HHCJPNO?=
+ =?us-ascii?Q?VlJ0ku2IErxNtnROF199bbCUqzz81PZQgrhkAWNSWefift7YCVAKNwhEya+N?=
+ =?us-ascii?Q?9lOqkxAASs8nSro45W6nFmrwpIKHapi1DzbhLOMT3TbHfspieqyVJByc1eWP?=
+ =?us-ascii?Q?0PF4eQ4HFNupBQ4UU8IUMBKItJAcI+y5vy0/lUEcHr+pxobAlxmQtgFQ6M0T?=
+ =?us-ascii?Q?uulS9DKxMyioDST1ML+BCQVBNlfcuqSUUM8+1qZb/YeKIhuVYMk/2RgSiSoa?=
+ =?us-ascii?Q?yPgomuNYyfKobp0V/F0flyNM4DdCD1jRQn83AVpZtsZV7fLa3gjBEH+1SfPV?=
+ =?us-ascii?Q?GG6Rp3VEGBmEbrdbVabsWk9W8yZq/FMFvXR3PonvUvoYIYeLkUD9gG7FKN3v?=
+ =?us-ascii?Q?ZAeOseEezV3mLKsrAE2jcyk21W4ug60ShGf/TEdxrKYSD4PltOJm+oljuAgf?=
+ =?us-ascii?Q?wE0eyOAJRFQqmqjxZmrTGBgKfG/w9j88srEHreUMaKjoJl97C50PbCtT2KTj?=
+ =?us-ascii?Q?VvgOEkes1UY6sHf/BIfmZmFGjX+DfEuF2/5g9tpptCI6IGtPx6y5NYueH+29?=
+ =?us-ascii?Q?dCtkCQ0sOLIS6aVXB0sCpXU3JyoTo+Z3T0MBRcvycLkx5PhXaIOgM9EZ6rFv?=
+ =?us-ascii?Q?YMFdeRJ+CWU9lRxiGwnNYOBkiEHpjzTG9XafwW/DvlNXVjhuVVR/TwWddE1p?=
+ =?us-ascii?Q?kVMdDK5XVhsqGzrP+9F0LLESqezm29W8XHL573qwJz/4pGXcTcnxmAH8tP0D?=
+ =?us-ascii?Q?ac3/0Zn0kFTv//mAAxsXHtmgDeq3+yIUCQPGwGlItRXSTUT0tD/8NJ/tprUl?=
+ =?us-ascii?Q?JsPWupeAcUyc/vS3aebf4ehZfY38Gz5REh67lnxjkcqyEZ/U7e+jSozwkDSV?=
+ =?us-ascii?Q?tWRU10mS13qd2P+tevik7YjRt+8eMyYC6Y3B4yCCg98mt5e26gu9WMWgWXe+?=
+ =?us-ascii?Q?A3udRb5sKVvebUpxsDZtxm0SnDXffB1Cs76Iu3X5ZPtcErOXYQTy5Jf5qBpM?=
+ =?us-ascii?Q?foeCOvVC2cbbou+zFzYEMf0IsIVk4hfIlTpDDtpn87A3dJX7w7uZYM4rGYxg?=
+ =?us-ascii?Q?BRLDyuhIXjeqzlVahtuyt0krwQg5a4toqobJKP2pkf+yvgT/GA741FhdFaRU?=
+ =?us-ascii?Q?tqHHb50A8LNoEnYVDvxPzKjQyQbAHD33RYfNNOKw9xMZaodcejbn+cVFmmcr?=
+ =?us-ascii?Q?UWBIdzIMlLFGSsj1kkjp0sUpzOwAD9/0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DhjjWVESUyS6WC0efEv9WZAsumj+9hTTNu5Q/tgUJ5nuf/o066PsRQvXyhxP?=
+ =?us-ascii?Q?2sYwTeZ+NiKEeKbH3IMK1JOwyStDrnRXSCXdVvWQih35OFRPB2Ocbx6vEf+N?=
+ =?us-ascii?Q?8EP5s9wZWLl1tvzqljgYcbX0cUxrlkkRRSardTGhqolqqxzL3snu9+q7Vyhq?=
+ =?us-ascii?Q?MsUo2P3hqDM969r+1IkKoK3Pl2Uh4HjiBRjRLqB10ekVnmv+PFqnnDVgcarf?=
+ =?us-ascii?Q?2A15aveZm74mloPYXGjw3Ctg/vQka0PnRRkYqwk+rnNiDjszkSrHWoEw16Hk?=
+ =?us-ascii?Q?s2lJwkbpuwEyOxjZ5wkxdTB6KXC0ca1g928WmkgedfXZoW201W99XZLo4mA1?=
+ =?us-ascii?Q?LYjwKZo2msIS5zekrRSvGHAyGbdsA/mCzQaG1yGKMPoPIPtoZt5n6mXIXpJ/?=
+ =?us-ascii?Q?LQBcCpWFwvIo5NLoZLc/AblS8Iu/ZpJgJJqK+W/fkBtYzi7wzdom0jMY47rr?=
+ =?us-ascii?Q?x1Ku0sKmidv5qBISWqKfMWLafc5VlPbsFDcXM/TOEn8p4mYL7ONWnwtyYzHw?=
+ =?us-ascii?Q?4pz7NHPm/4qlMm4H9seZxvS5cPKUzfN0djacWdpK0GbAejpuAtpbedWHr/zg?=
+ =?us-ascii?Q?e3GP/4+NMdXsHk1goKFvRNHvYgKvHWw1GIfXsbJ7RKdwUkxS4fIHGEQc+fna?=
+ =?us-ascii?Q?nWS5PhlY7i2I48Kpi/TTy/DiHmVvrdkb78ssNeORZYMPAe93/c1ylzxvj3oI?=
+ =?us-ascii?Q?bp3b0+Gjick3lAgvOPR7AYyzPcL9ETnXyc0UIX1PZS5FCGPbI2QD9QRSijxq?=
+ =?us-ascii?Q?uqpNpohKOtMPZlz5QDUNsu1umFmm97RsKDyqE2H10SsSMDDFWWNcHi9T06lQ?=
+ =?us-ascii?Q?7Skw/VaQruORhNVpIOU+7WtUijlHX/jj47s7CrKwS6B1U0LMQB/ZgJIBx1DY?=
+ =?us-ascii?Q?R7bbnYJtK4bwOcbHglXLSoNdu/LQYGZdjhZwuC9nhUabkiJPknXWeIYNZeOA?=
+ =?us-ascii?Q?/6CvpKQq494fswaiDw8rXD0W93rxb9qypxL+XN5itiayqD7FqrQgQCW5j+YQ?=
+ =?us-ascii?Q?cfl6XPY1sb1pHarxLlYSXAfIvsH++qZ6q1BewU6++6ZdxRM8xrBu3m8AfmTh?=
+ =?us-ascii?Q?HF+tiuNsBGL8n+DRhD0GmevuQFtxB4ISzWy9t3M6FWL5udDIZ1qzbQgX63oe?=
+ =?us-ascii?Q?YbiBUifVj/MHMmypZZpLxdCsTLjw+KlUDYO/HT90nDfnKi1h/UxKKDVnmys6?=
+ =?us-ascii?Q?OQN2oBD+VAuLrLR1Xo3W0PwiUZ2WGubN7LWsigFZIJW/r5cd7SPPI05rzYvh?=
+ =?us-ascii?Q?lYQ2i8wuPaBmrXdC5GfaNs8SMg3OwuKERnGIJ3Bnfe94EHugY0onnkL3VnQa?=
+ =?us-ascii?Q?o2dYrFMz/1oBRoU6vOjoeUiW1RDY7dBA6uTrBSlZNIIk6riHvMaM75lOEyA9?=
+ =?us-ascii?Q?b0hhIgEWxh1x7fZUop8Egf/2oSSI3hPw8OAmeKqSFMgBwKNNzAZkRS5HpP5q?=
+ =?us-ascii?Q?3zi9PjTDARiMsa2csSRAk/maDq6ZDlgU6+2lTFiPBxSjLW5QvinsdA+/YL7n?=
+ =?us-ascii?Q?cQ5OseHeK/4N/4bCuKHx4SJMlfj9pH84a4vpQBvhABLrL+vrppZO09H7ASkX?=
+ =?us-ascii?Q?2ej3rDtY89cDVVWD+Bn/3b+Ow53PF/Lz4uooGmHu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 692ce656-96ea-4cc8-c822-08de22d11b85
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 16:24:24.0163
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: srUInuUWdwsddlbD87+EHC3IlbKOWEvo61iLE0oc23/empBYzK21aroaWPyt4+Sk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4237
 
-Hi,
+On 13 Nov 2025, at 11:02, Lorenzo Stoakes wrote:
 
-On Wed, Nov 12, 2025 at 11:23=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
+> On Thu, Nov 13, 2025 at 04:36:01PM +0100, Francois Dugast wrote:
+>> Hi Balbir,
+>>
+>> On Wed, Nov 12, 2025 at 03:46:33PM +1100, Balbir Singh wrote:
+>>> Unmapped was added as a parameter to __folio_split() and related
+>>> call sites to support splitting of folios already in the midst
+>>> of a migration. This special case arose for device private folio
+>>> migration since during migration there could be a disconnect between
+>>> source and destination on the folio size.
+>>>
+>>> Introduce split_unmapped_folio_to_order() to handle this special case.
+>>> This in turn removes the special casing introduced by the unmapped
+>>> parameter in __folio_split().
+>>
+>> Such a helper would be needed in drm_pagemap_migrate_to_devmem when
+>> reallocating a device folio to smaller pages.
+>>
+>> Could we export it (EXPORT_SYMBOL)?
+
+drm_pagemap_migrate_to_devmem() is a function defined in tree, you
+just need to include huge_mm.h to use split_unmapped_folio_to_order().
+Why do you need to export split_unmapped_folio_to_order()?
+
 >
-> >>> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
-> >>> +      - description: Tensor G5 SoC (laguna)
-> >>> +        items:
-> >>> +          - enum:
-> >>> +              - google,soc-id-0005-rev-00  # A0
-> >>> +              - google,soc-id-0005-rev-10  # B0
-> >>
-> >> SoCs cannot be final compatibles.
-> >
-> > Right. I talked about this at length "after the cut" in my patch. See
-> > above. I wish to relitigate this policy and wish to know more details
-> > about where it is documented, the reasons for decision, and where the
-> > boundary exactly lies between something that's allowed to be a final
-> > compatible and something that's not. I made several arguments above
-> > for why I think the SoC should be allowed as a final compatible, so it
+> As a rule we don't export things from core mm. And certainly not to non-GPL
+> modules.
 >
-> Because this represents a actual device users run. It is electronically,
-> physically impossible to run the SoC alone.
-
-I'm not convinced that this definition is as clear as you're making it
-out to be. It's physically impossible to run many "boards" alone.
-
-Want to boot up a Raspberry Pi? Provide it with power. Hook up a
-display to it. Hook up a keyboard to it. Plug in an Ethernet cable.
-Plug an SD card in it. Without those things it doesn't run.
-
-Want to boot up a lga-B0 SoC? Hook up power to the power pins. Connect
-a MIPI panel to the MIPI pins. Connect a UFS chip to the UFS pins.
-Without those things it doesn't run.
-
-Yes, the complexity of just "hooking up" the components on an SoC is
-an order of magnitude harder than a Raspberry Pi, but it's still just
-hooking it up to external components. In both cases, we are modeling
-the core "brains" (the part that contains the processor) as the DTB
-and everything else just "hooks up" to interfaces.
-
-If I had to make a definition for what the base DTB should be it
-should be the component with the boot CPU. _Why_ is that the wrong
-definition?
+> Unless David feels very differently or there's some enormously compelling
+> reason for it I'd really rather we didn't.
 
 
-> There are few - one or two - exceptions for the SoMs, but never for SoC.
-
-OK, but the big question: _WHY???_
-
-Where does it say that a DTB has to be something that can run "alone"
-and (most importantly) what benefit do we get for making that
-requirement (AKA _WHY_)? This is the question you're not answering.
-From Rob's response, he doesn't seem to think that a DTB needs to be
-for something that can boot alone and he seems OK with allowing a
-fairly flexible split here. Rob's response was focused on making sure
-we can do validation and I'd love to continue on with that discussion.
-
-
-> > would be great if you could respond to them and tell me where I got it
-> > wrong.
-> >
-> >
-> >> Your commit msg does not explain what
-> >> is 'soc-id' or 'soc_id' in this context.
-> >
-> > In the commit message I do say: "SoC: an A0 pre-production variant (ID
-> > 0x000500) and a B0 variant (ID 0x000510) used in production. The ID is
-> > canonicaly broken up into a 16-bit SoC product ID, a 4-bit major rev,
-> > and a 4-bit minor rev."
->
-> >
-> > ...then, I further say "In this patch, put the SoC IDs straight into
->
-> That's fine.
->
-> > the compatible. Though the bootloader doesn't look at the compatible
-> > at the moment, this should be easy to teach the bootloader about."
->
-> But nothing explains why this SoC can be run alone without board.
-> >
-> > The idea here is for the bootloader, which can read the ID of the
-> > current SoC, to be able to pick the right device tree from among
-> > multiple. I am certainly not married to putting the SoC ID in the
->
-> I am not discussing about style of the compatible. I said - you cannot
-> have SoC compatible alone. None of above gives any argument for that.
->
-> > compatible like this. As I mentioned above, in downstream device trees
-> > the SoC is stored in a custom node and I thought upstream would hate
-> > that. I also considered giving the `soc@0` node a custom compatible
-> > string and adding properties about the SoC ID underneath that and
-> > teaching the bootloader how to find this, and I can switch to this if
-> > you prefer.
-> >
-> > If you have an alternate technique for which the bootloader could pick
-> > a device tree based on the current SoC ID or you have specific wording
-> > that you think I should add to the commit message to explain my
-> > current scheme, I'm happy to adjust things.
-> >
-> >
-> >>> +          - const: google,lga
-> >>> +      - description: Google Pixel 10 Board (Frankel)
-> >>> +        items:
-> >>> +          - enum:
-> >>> +              - google,pixel-id-070302-rev-000000  # Proto 0
-> >>> +              - google,pixel-id-070302-rev-010000  # Proto 1
-> >>> +              - google,pixel-id-070302-rev-010100  # Proto 1.1
-> >>> +              - google,pixel-id-070303-rev-010000  # EVT 1
-> >>> +              - google,pixel-id-070303-rev-010100  # EVT 1.1
-> >>> +              - google,pixel-id-070303-rev-010101  # EVT 1.1 Wingboa=
-rd
-> >>> +              - google,pixel-id-070304-rev-010000  # DVT 1
-> >>> +              - google,pixel-id-070305-rev-010000  # PVT 1
-> >>> +              - google,pixel-id-070306-rev-010000  # MP 1
-> >>> +          - const: google,lga-frankel
-> >>> +          - const: google,lga
-> >>
-> >> So what is the lga?
-> >
-> > "google,lga" is the name of the processor. I was under the impression
-> > that the last entry in the top-level compatible string was supposed to
-> > be the SoC compatible string. Certainly this was true in every board
->
-> google,soc-id-0005-rev-00 is the soc compatible string.
->
-> > I've worked with and I seem to even recall it being requested by DT
-> > folks. It also seems to match what I see in examples in the kernel
-> > docs [1].
->
-> Sorry but no. Writing bindings do not request having two compatibles for
-> the same soc in two different, independent (orthogonal) lists.
->
-> So it is rev-xyz + google,lga-frankel + soc-id + lga, if you need that
-> soc-id part.
-
-Probably not worth continuing to discuss until we can agree that the
-SoC can be in its own dtb. If we can agree upon that we can talk about
-if we need the SoC part in the top-level compatible and how to
-accomplish that. I had a few ideas / suggestions in my response to Rob
-that roughly break down into:
-
-* Don't model the SoC in the top-level compatible. Maybe put it in the
-soc@0 node.
-
-* Come up with a rule for "merging" top-level compatibles if a base
-and overlay both define.
-
-Whatever solution we come up with, I want to make sure it handles our
-socketed dev boards where the SoC can be removed and replaced with a
-different one.
-
-
-> >>> +allOf:
-> >>>    # Bootloader requires empty ect node to be present
-> >>> -  ect:
-> >>> -    type: object
-> >>> -    additionalProperties: false
-> >>
-> >> Please keep it here
-> >
-> > "it" being "additionalProperties", I think? I'm not sure I understand,
-> > but let's discuss below in the context of full examples and not diffs.
->
-> I meant ect node, existing hunk. Properties must be defined in top-level.
-
-OK, much clearer. Thanks!
-
-
-> > The best my brain can parse your request, I think you're asking for thi=
-s:
-> >
-> > --
-> >
-> > properties:
-> >   ...
-> >   ...
-> >   ect:
-> >     type: object
-> >     additionalProperties: false
-> >
-> > allOf:
-> >   # Bootloader requires empty ect node to be present
-> >   - if:
-> >       properties:
-> >         compatible:
-> >           not:
-> >             contains:
-> >               const: google,gs101
-> >     then:
-> >       properties:
-> >         ect: false
-> >     else:
-> >       required:
-> >       - ect
->
-> Yes, actually now I see you could drop the "not:" and exchange the
-> "then:else:" branches.
-
-For the sake of clarity, I'll go with this:
-
-properties:
-  ...
-  ...
-  ect:
-    type: object
-    additionalProperties: false
-
-allOf:
-  # Bootloader requires empty ect node to be present
-  - if:
-      properties:
-        compatible:
-          contains:
-            const: google,gs101
-    then:
-      required:
-      - ect
-
-additionalProperties: true
+Best Regards,
+Yan, Zi
 
