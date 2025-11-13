@@ -1,322 +1,263 @@
-Return-Path: <linux-kernel+bounces-898683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9374FC55C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:05:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A91C55C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FA404E2767
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:05:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 13CE0346919
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 05:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DD83054C8;
-	Thu, 13 Nov 2025 05:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFB9306B2C;
+	Thu, 13 Nov 2025 05:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gSCfUDcn"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010044.outbound.protection.outlook.com [52.101.46.44])
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="QVOkEyPM"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6644E35CBC3;
-	Thu, 13 Nov 2025 05:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763010328; cv=fail; b=qK+oLTLsnGJt9tya2vj04wFedln3/fIVPytFn0bjIvDXCsr1gwk+hqZ1HGZB1xFsDVaDdnzFnn3d0kjmBpijpoCEeJsvVAmsHHJiN7UO4sXIf8EWliNLt2w2DwvzESSXkzPfpdo+jziQzCCzqdjyUuPU7Xq556dRVEMExIPkB6c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763010328; c=relaxed/simple;
-	bh=DQ0SuFa21exJVFVe8l+1CuA7S0xSE7otryqs8Xa1f5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sOlocUgLdD7nJXvM6yznOYozieWYE/eCSyak1iEteimsQkpZIoq/ifyD34gJV2h/GfHn+WJsWCCVcI9n+XgWrTwpi3p6xThI2uTGe8fa4hj4h+upVx20Mq0h/US/fikFadWQMPWdtJ1Q+3F3x2+e4RT5AbppSTvpAYIbFwetiSY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gSCfUDcn; arc=fail smtp.client-ip=52.101.46.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UjTEConIyR7/+3gxPgauIdyKvt1rTUbgX4BdZ08KevqrmdId53T9ejcE8HmuSSYjvZFU8ejW8xRXgukKC5v5vLBSecPkpdIH8hUpdoUcwqZockpmehTuci2BdBXrj1lynYMx5YCj8+4PPPCWaSfIyeec1d5VBUA9LsDB4JrFf4QbRMGpDxOja4aF3MKTshEV5c5U/G00JYNJ52sl9ofBRZD5VFwJsftoanxgAcLieOGSIVhaIC+kQDPljKGLIEgP0hUa9J2jeFymLikWhYubjCswORWmVds0SPBXjqi+MtZK6ePK5rZjaaxT12KmC55fLAAqQdzhUkimR0eYWWsneg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pfigttYfUV0Low99waBmevRWY/1LoxZavJtViP/dpAQ=;
- b=tGPudqLBB3k8WXMwN35wBS9EwOKzUr+2Vc6EqlI8EQTUQADScsM3vXmreOj3caM6zueQEUf/smlvi5gO97SJSZM4+Mnt4bPpX+Vbxt8GX9H76D0xlyJ3iH6UD18kjDWWOT+iBLg6cFVnZ2ghM+TaL6JKrBqykyxH0Mv0eU1pWG15DAfJnVBwPMMCjrypIQm+WqljG7ggAAq5giX4B0ud1oN3sOk2/N1GEYQ2NUq18CLmqPUqCCIW54/WM5MwdZ6GPwbQyuhc1a8RHFITxKH+9uc1mvsB2DgP/J6Atl8Fpyw4x3ukQcx9anhswLleHWl58N/V48tLuLF+9Dgl3+WTwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pfigttYfUV0Low99waBmevRWY/1LoxZavJtViP/dpAQ=;
- b=gSCfUDcnwT4jqodxv734LqDbKpVW4Pk9npXrqUo87nlzPzyalo6PQDG0sq3G0lVm1MN7Ndoq+V79i3r+ZJhuC08YLPs1A/luWLgvFEmj48/7q8Jw6rRgU2JfMkv5fSl37kyUid3ogjdfv3RNonzgh00Ogye9M6ckI2uZmJ8HNjSvMrPe2eP3/UmocljKEUZ9nhc9pQ8nPOPI3/Yiy2JflrJugektYMKYzlFsPbNMchNNI3Sq/afTS70MNicDu0HR/jCx6KtdlgL+3CDoDilPBAKYROMPDGqOgMk3DhjMfjbalmcwDj/GvqsjVpiFszB4573HmRfcna5WnwEa2IzuSg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- LV9PR12MB9831.namprd12.prod.outlook.com (2603:10b6:408:2e7::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.16; Thu, 13 Nov 2025 05:05:24 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9298.015; Thu, 13 Nov 2025
- 05:05:24 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Svyatoslav Ryhel <clamor95@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject:
- Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
-Date: Thu, 13 Nov 2025 14:05:21 +0900
-Message-ID: <6112196.aeNJFYEL58@senjougahara>
-In-Reply-To: <20250915080157.28195-7-clamor95@gmail.com>
-References:
- <20250915080157.28195-1-clamor95@gmail.com>
- <20250915080157.28195-7-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0316.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3b7::9) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E86303CAF;
+	Thu, 13 Nov 2025 05:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763010806; cv=none; b=feWehCvU8ZV+5cnwyBna/vBPWMr6AZKCPMP/U226VqYgJ/BjMXvsd9KwuvMbXBipW4UnA0k032gS8cSmjnRrAbUGQf7xl04s5DPdElxTQqqaSFG/jxl4vQlLR+7Ac6t4Ecy76M5/mE1/dNObEz+Fb+F4Pqk9sM2Be1xPELEHQpo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763010806; c=relaxed/simple;
+	bh=w6VnChjWXLaUIHw0Uj2aPaJuRb2LWVTU3UZD2pZaYao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7vsWodZ3gJOOm83x4BeNYM/eF4nhHjZrTVfJ2fp2Ma1JI7FCVVPtZWs2GXv50SlIzwjGJ3VrlNshFs5PbFFzYo+PwTfUsdaqZDs0z20rlSidOOPnFBLT4Dy0A/9OuwFWwyTsjum40W5z/XWBmGEb7BAEhaHfD1ufQRKGGmkEjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=QVOkEyPM; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eRdN4W5FjgTTUfIcBQJPO5dB8HkX8B/+7CnhV6rjIQ4=; b=QVOkEyPM+/M2NRH/lxyazd21lH
+	GeBc4xzbmNsCeXqekcl4cQP8qNO/GBPPJ7QUgBj3GCGdu6CYOibNqqhp72lXD9hr5hTtABg5CEAf7
+	SdwhLzGIUWjic0V8iJH97QMqayQigmy9kYlMHMLN/OIboYduUAwqJGmDbmhMeLnl+UoOMNvjW9r+M
+	HwBH+9J4cq0palFTV8XGkI2VVRP5AEKMJQgFIaLZ9wS30SJJ9DaTUUFLy8zX+hzIXXAjUu82wOB4R
+	mtTHYzuJDv2Y46Ur3yXOXM1KwxyuPxhG0cO6AnAnOI5f/BKsk6tuU5/mnyx6sdEVnCxI4PYN1VnJr
+	X4/OKhOw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1vJPRk-00AvY4-Kv; Thu, 13 Nov 2025 05:00:36 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 86BF2BE2EE7; Thu, 13 Nov 2025 06:00:35 +0100 (CET)
+Date: Thu, 13 Nov 2025 06:00:35 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: "Tyler W. Ross" <twr+debbugs@tylerwross.com>, 1120598@bugs.debian.org,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Scott Mayhew <smayhew@redhat.com>,
+	Steve Dickson <steved@redhat.com>
+Cc: Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: ls input/output error ("NFS: readdir(/) returns -5") on krb5 NFSv4
+ client using SHA2
+Message-ID: <aRVl8yGqTkyaWxPM@eldamar.lan>
+References: <176298368872.955.14091113173156448257.reportbug@nfsclient-sid.ipa.twrlab.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|LV9PR12MB9831:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9005c09-c588-45c8-f979-08de227240b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V3UyVWRraDA3R2V4dE40QVozQVFaQ2xrcnphaEVWUVJnZjF3SkszTHp5cld4?=
- =?utf-8?B?THMzTTdHdldTWnJKazlrcDNLNUVMK094TTNyK1NpVnB6SGdldVk0S09SQVRo?=
- =?utf-8?B?bVRYM2p6RllvM3JESitTcTdOUUlkZStjWGpKcmErdUxhRkErdXc2Z1FjZU9U?=
- =?utf-8?B?QjFuUjRSRFFJTitPYmdqYXRWY3dteU1QNmVkelpqYi93STNwUDZPcEVXQUdv?=
- =?utf-8?B?aDhEUWs2RXpiSWpaUk0rK0prUTJKNFZiVXZDbzF5RjFRZ1JGeUZ6VzY5d1hL?=
- =?utf-8?B?UzlyVER5R2tuSGxpaFA1WHhtUW9uTWR4ODR2bFNBeEdDSzFGMVh1Mzg5Mm1x?=
- =?utf-8?B?dUFIbmtYOFhtREM5cjJFMnpFUHVDU0xHcHZoMWFNcmsrMkk5OXV5OXVsQ0VE?=
- =?utf-8?B?VHhHSXpCMGdmeHB0SFQyeHlnZ0NOcUxXbXJzekxkMkFicVdiOTl1ZHBOU3NV?=
- =?utf-8?B?VGNSUEV5QURpMXVpRFZRMjBkZ1BQZ2V4M2c5RE5WbnVZTE1kSS9LUGFWdmZ5?=
- =?utf-8?B?RjU3VDcyVmR3K3pZNGtDbHhIbkxUYVVUdWZaNTY2V3dkV2t5ZXFldkpEMUts?=
- =?utf-8?B?d1F1TlZwblpvbDZoemhON3ZvT3dxMHNkSjBqVmNCV0FDajRNVDhjb0dOTHJ3?=
- =?utf-8?B?aHR0YTE5b0hyK1VoaHhLRC9XdDUrQzNjV3VXYUtsOGEzTHZiZWoyQ1YvZmdV?=
- =?utf-8?B?QktjSWpPS1hrYWswb0tkcXd3SExGQzZxeWVna3V2MmkzU0hSemVLZnBnamh4?=
- =?utf-8?B?NUVBVXlPWjV6V0FOUUhhdWwzZHVSSjNoNlMvYW9WTFRySFdWV1ZvTWNqeTVw?=
- =?utf-8?B?bHV6NFRGWGk2dTdLdjdLK0JodmlUb2MyNVFTSFlIcEw2Um1ucEc1ZklqOGJG?=
- =?utf-8?B?blN1RGROeHE1WDZyWStlWWdGTHBBOWF0dUJTMG9pL1pYLzhZbFR2NTdDcm1E?=
- =?utf-8?B?NW9OU3V3bDJVZFh0QXhMZHJCUE52YkJoSkE3Q2lpcjI4Z0g0S0dJaXBLSW9w?=
- =?utf-8?B?aGZqcWsyNmpLYjhOWjhLOXlZZEdJcHZ4ZnRSeGNKR1VNK05kUC90VUtGV253?=
- =?utf-8?B?bXBoWGw0SEpjaUQyYmlQTlhnYllEUmZjL3JwUE02RTlNODRFbVU0Sms1cDM2?=
- =?utf-8?B?UlRDSHdZY2Nza0p5YmJkWGk1NEJyMTQvU2pKY2ZmUGZRY1VZZ3lyR1JUeFVv?=
- =?utf-8?B?S0s3eEE5WWg0ejgyMUVRRlhUQmhpTWQ3OEU2R0RMai9iTE1SSTZpQm96T25P?=
- =?utf-8?B?WktSenNoaTFaWXJmdnV2emNDNG11VFlOZHBhU3J3K1FxVDcyS1creUtjQ3ho?=
- =?utf-8?B?Q3NjRE1vYlo0d1pDRDN4TndkS2NiQTAvbW1Nb2dwTllGSytpNDMyb05TcmlP?=
- =?utf-8?B?RzJpcGE1SzhUNVlMRm9XR2VpKzZTM0N3WUtORWU5QVl0bmZQUVRsRGt2M3Uw?=
- =?utf-8?B?eldKTi9YVkRkdDB5RnFXUmQ5Ympid1B2TkhXN3h0LzJQbVZRZUczYVF0cGZB?=
- =?utf-8?B?Y2syYU5GM0ZoLzdDcCtFQmV5SzFOQTBZYVgzUVBEM0NhbnVPdGo4dVdWa3ZG?=
- =?utf-8?B?MDFCTFNROU9Pa2pjR1N3aWgrQTZ1UE5GS28weDFpOCt2VEtIMXpKcjNqb1gv?=
- =?utf-8?B?RmxlSldxQkcxOHpYY3lHNExxMW9aM1Zzckh3OWJBS3pRRjU1R2h1UGM3bnVv?=
- =?utf-8?B?dm5zWG8zTmU4TXJaYnFKaFh5SnJBbFZCbGg4Qm5VOUtzQ2x3WXh3dmlyMUk5?=
- =?utf-8?B?R2pPS3ZZblpXR28rUUJuSkFCdXRWeFVaSFA0Mk5SRnNNTkJRcEhPeUhZNlEr?=
- =?utf-8?B?VDErT0xjL3J6OWhXS2MrMlZQcml2bENXSDJ3UVRsZXY1ZHR3QTBwSEliakZk?=
- =?utf-8?B?SlVsSW5iZnZSUlAvOXVFK2h4ZUVNelV1OC95VHZlRE5aV1JXeTZiVnJzbmJh?=
- =?utf-8?B?RkphKy9uczNyR3R0am5sU1kvdnNCWVlUZTg3b21tRXZiNFVwTnFmVGJGL1N5?=
- =?utf-8?Q?m+JTAHlFV2DlFWljoh59dj3XfaqnFc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V1UrYmNlVmZFSlBTdmE3cjJEM0ZSMm1sN2N5emM4Q2c5YUcxblp6dWZHemxV?=
- =?utf-8?B?MTBxbjhLVUdSaVBoV0svOGxBSFcwcDV0dGs4MHZJSEt1cFFCTXd4dEo3TDRJ?=
- =?utf-8?B?L2c2WHNzMytqa0lOK3VuTnNaRytaVGNaeGo4OFFyRFc0Z3pBOUZ6bXc0RVEr?=
- =?utf-8?B?cGtJTUtXdjlscldlUEJrRE44by96Yms1WGFXeXdwR05JNSs3SjNSbFF1cE1X?=
- =?utf-8?B?Y3ZDVk15ZW1zSVNqUThBQzB5T2c5cVFxRStibFRyUWdnamFpVW54dDZEeFpt?=
- =?utf-8?B?Wi9HQkhHa0JQOEZaOXBUNFN6T2VhMHZVQ1VGd2FXVmF1YkhUczlSbkVnMDZk?=
- =?utf-8?B?MW12cUVoVU9JMW56QXN5S0lXL25ka1FoWjJqb2Rxcnc1dStEMEhoVndGV1R5?=
- =?utf-8?B?cVhIRklxcGhjVEpCd2pKWUhpOElHM0plemlrZ3RNeUxwRC9nOGtUSzBUS3Q3?=
- =?utf-8?B?YTJjSWdDWGJDSnVHdnNkL2lvT0FmaXpCTitnUkZ3ZjFDL3NOTjJxbFdWa2xj?=
- =?utf-8?B?ZHdEd0gzRklTaTNjL0FXN3pUbWx0aG43VVpOVUd4ZmYvSWhhK0ZScWZ5MCtF?=
- =?utf-8?B?T2FiVVpoMEkzeENLdHpiZzZWYWpuc2NKOEJmYVJ0d1lWa1Z6WEovc09nMmh1?=
- =?utf-8?B?ZFVQb3ROeWpEekh5NElDVzFoVytHUjZJUGpRZHI3Q295MGsrMzVPZ3YrRXZt?=
- =?utf-8?B?SnZSWjlLZjFDSWlFVHQ2QkxlOFB1VElOSjVUUlJwWTMxRjdtUHB4VHBKL0hr?=
- =?utf-8?B?bEh4RTNPNHpZSmlqKzRjdTI2VjZ1U24yOUNLUWlMdE5CeGZFb2RpeHZMZDJB?=
- =?utf-8?B?Y3I3MWpwRWg2TTVwWU1oaVlwTk13aWVWSDA2WmVtUDFQQlBiL3pFd1poUWE1?=
- =?utf-8?B?a2FrS01YMFRwS0NlNzluRmlLc2JXMnNERzJRMmtGd3NSOG13UENhQWUyQVNJ?=
- =?utf-8?B?RUV1RVJLK08wRjJ6WVNOQ1JkT2NHL3c0T3ZkTndRb0I5UkduY2M3RnZ5cE1C?=
- =?utf-8?B?cWl0YzltZkJHWnd5WEV5TTNJOG15Tml5WGJaQWlJMUFUOGx4cG1rdFJudnM0?=
- =?utf-8?B?eUpjdE1zbzJjRmNtYjc4VU1tU0FCTDNZQk1ZYzl6ci8zSzNlZkJVK1Y5Qkpq?=
- =?utf-8?B?eVQyS2lYcXdYK3FCYksyY3VkcDdaWnBoWFRKWGM5U1RSTjczQkp2aTU4V2pJ?=
- =?utf-8?B?dlg3eXkxUFhRYTBBTFdONy9DTFhqV1BxaUxiNnVuYW5jWDRxc0pXV2xxb3dP?=
- =?utf-8?B?NnRYSytTcjZ6a1lLazhLdndMTUtKYWQwVm5KbjlZZHhkdVoxaTYvaEFxMEN4?=
- =?utf-8?B?RVYyblBMOXJLcnE0OTYydUJHQzJMbVFjVzhWbVFYTnFFS2FRRlRFanVyemhT?=
- =?utf-8?B?NjBzVk5kZm0vaXRKakNhblBtU2FxZGgyRldJd3MwV2VJR3lIRnJyQnNST25J?=
- =?utf-8?B?eTEzMUhMdFVpbENvcW1sZHliVFdjY0RUejNhS1pjT0J6UXlzVXlFajRUVXFB?=
- =?utf-8?B?WDdzOGxGT21NSS9iM1ZpTnBqcUxSZkRzV0pJWnZoOXljamhSS2xQb1A5Wm5I?=
- =?utf-8?B?OTRHUkpGSlYyWHlSTDRaS2hacFNBTWJDTVhoV3ljYVJPVmR5Zlo3TlNZbFlx?=
- =?utf-8?B?ZDQrdHhzNThuQWJnem1wUkdhREI4YnRqb2hVRU4rZTBPMlNid0RzRzZINUYz?=
- =?utf-8?B?VjJZUDBjejR0VnhYbzM0VEVJb2UrSlFWOXZJOUp3WlMzMCtTbzlaOGtGbThT?=
- =?utf-8?B?NDR1Q1NHcDdYb1ppd2dvb01pODFVYm9QT203d0hzK3VGYy9CY042R0JkUzhE?=
- =?utf-8?B?SENaZTFndnp1WHA5V09jeWNheHUxUklQUDdJZGZMN2VKYnRiN1dRTGtpQngx?=
- =?utf-8?B?K3dzUjQ2RHJTZ0s5L1pPRS9vcFlwakc0cEhvRDlidHdnQ2J1QWEvNU5zOXdQ?=
- =?utf-8?B?ZlFmOHZ2L0dyUG4yMnVXNDhnRzEyQnZkV2ZFdEt1MW5jZlNWYUJtUjJCWGlU?=
- =?utf-8?B?R05GZFJmMUVQU05IL2s2by9Zc0ovOUxHMXZEZGN5V1BXS09ybnFtdkVhU1dZ?=
- =?utf-8?B?aHhINTUreTU5REV5K0s2VkJtME01QzF6S3pxZnliSmpQbjIxaDFxT05kUHBt?=
- =?utf-8?B?cjBSNXVZdTdtZFEyVi9mMGxtWkVLZXVSZ3Y4RHlDMUZ5dG82enZ1bnZLckNy?=
- =?utf-8?B?M2F1ZXN4MzVuQmhRUjduc09XOUthU3UvZFNGb3ZYNGIrYWVHazlKaVhpRkFr?=
- =?utf-8?B?TTBFTGFQNnIvR09Ic1ErMENWSW5BPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9005c09-c588-45c8-f979-08de227240b3
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 05:05:24.2145
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: unjMhUJO6SgN73XyeDmqzMvlE8GfbCy66uNEiQ2FKilVfiHLm6Ern6ySBfCa7193651EwsbvBAqAZTu0LtW+uw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9831
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176298368872.955.14091113173156448257.reportbug@nfsclient-sid.ipa.twrlab.net>
+X-Debian-User: carnil
 
-On Monday, September 15, 2025 5:01=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Configure EMC without mux for correct EMC driver support.
+Hi NFS folks,
 
-Rather than just 'removing EMC to MC clock mux in Tegra114', I would say th=
-is patch removes current emc and emc_mux clocks and replaces them with the =
-proper EMC clock implementation. I would edit the commit subject and commit=
- message along those lines.
+Tyler W. Ross reported the following issue in Debian (in
+https://bugs.debian.org/1120598)
 
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra114.c | 48 ++++++++++++++++++++++----------
->  1 file changed, 33 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
-ra114.c
-> index 8bde72aa5e68..6b3a140772c2 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -622,10 +622,6 @@ static const char *mux_plld_out0_plld2_out0[] =3D {
->  };
->  #define mux_plld_out0_plld2_out0_idx NULL
-> =20
-> -static const char *mux_pllmcp_clkm[] =3D {
-> -	"pll_m_out0", "pll_c_out0", "pll_p_out0", "clk_m", "pll_m_ud",
-> -};
-> -
->  static const struct clk_div_table pll_re_div_table[] =3D {
->  	{ .val =3D 0, .div =3D 1 },
->  	{ .val =3D 1, .div =3D 2 },
-> @@ -672,7 +668,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] =
-__initdata =3D {
->  	[tegra_clk_csi] =3D { .dt_id =3D TEGRA114_CLK_CSI, .present =3D true },
->  	[tegra_clk_i2c2] =3D { .dt_id =3D TEGRA114_CLK_I2C2, .present =3D true =
-},
->  	[tegra_clk_uartc] =3D { .dt_id =3D TEGRA114_CLK_UARTC, .present =3D tru=
-e },
-> -	[tegra_clk_emc] =3D { .dt_id =3D TEGRA114_CLK_EMC, .present =3D true },
->  	[tegra_clk_usb2] =3D { .dt_id =3D TEGRA114_CLK_USB2, .present =3D true =
-},
->  	[tegra_clk_usb3] =3D { .dt_id =3D TEGRA114_CLK_USB3, .present =3D true =
-},
->  	[tegra_clk_vde_8] =3D { .dt_id =3D TEGRA114_CLK_VDE, .present =3D true =
-},
-> @@ -1048,14 +1043,7 @@ static __init void tegra114_periph_clk_init(void _=
-_iomem *clk_base,
->  					     0, 82, periph_clk_enb_refcnt);
->  	clks[TEGRA114_CLK_DSIB] =3D clk;
-> =20
-> -	/* emc mux */
-> -	clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> -			       ARRAY_SIZE(mux_pllmcp_clkm),
-> -			       CLK_SET_RATE_NO_REPARENT,
-> -			       clk_base + CLK_SOURCE_EMC,
-> -			       29, 3, 0, &emc_lock);
-> -
-> -	clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EM=
-C,
-> +	clk =3D tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
->  				    &emc_lock);
->  	clks[TEGRA114_CLK_MC] =3D clk;
-> =20
-> @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long i=
-d)
->  	return 0;
->  }
-> =20
-> +#ifdef CONFIG_TEGRA124_CLK_EMC
-> +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args *=
-clkspec,
-> +						void *data)
-> +{
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +
-> +	clk =3D of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	hw =3D __clk_get_hw(clk);
-> +
-> +	if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
-> +		if (!tegra124_clk_emc_driver_available(hw))
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
-> +}
-> +#endif
-> +
->  static void __init tegra114_clock_init(struct device_node *np)
->  {
->  	struct device_node *node;
-> @@ -1362,16 +1372,24 @@ static void __init tegra114_clock_init(struct dev=
-ice_node *np)
->  	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
->  			     tegra114_audio_plls,
->  			     ARRAY_SIZE(tegra114_audio_plls), 24000000);
-> +
-> +	tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> +
+On Wed, Nov 12, 2025 at 04:41:28PM -0500, Tyler W. Ross wrote:
+> Package: nfs-common
+> Version: 1:2.8.4-1+b1
+> Severity: important
+> X-Debbugs-Cc: twr+debbugs@tylerwross.com
+> 
+> 
+> When the session key of a kerberos ticket uses a SHA2 cipher (aes256-cts-hmac-sha384-192 and aes128-cts-hmac-sha256-128 tested), readdir requests fail.
+> 
+> SHA1 ciphers (aes256-cts-hmac-sha1-96 and aes128-cts-hmac-sha1-96 tested) work as expected.
+> 
+> ls reports the following:
+> ls: reading directory '/mnt/example/': Input/output error
+> 
+> stat and touch of files and directories is working, and cat'ing a file works (see also: later note about cat with NFSv4.1 and 4.0).
+> 
+> 
+> 
+> Example of a non-working ticket, as reported by klist -e:
+> 11/12/25 18:37:30  11/13/25 17:49:03  nfs/nfssrv.ipa.twrlab.net@IPA.TWRLAB.NET
+> 	Etype (skey, tkt): aes256-cts-hmac-sha384-192, aes256-cts-hmac-sha384-192 
+> 
+> Example of a working ticket:
+> 11/12/25 19:01:46  11/13/25 18:27:33  nfs/nfssrv.ipa.twrlab.net@IPA.TWRLAB.NET
+> 	Etype (skey, tkt): aes256-cts-hmac-sha1-96, aes256-cts-hmac-sha384-192 
+> 
+> If rpcdebug is enabled for nfs and rpc modules, the following is logged to dmesg: 
+> [332376.797836] NFS: nfs_weak_revalidate: inode 262146 is valid
+> [332376.798512] NFS: revalidating (0:58/262146)
+> [332376.799169] --> nfs41_call_sync_prepare data->seq_server 00000000e22b1bd9
+> [332376.799916] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=64
+> [332376.800764] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+> [332376.801507] RPC:       gss_krb5_get_mic_v2
+> [332376.802009] encode_sequence: sessionid=1762048597:1479457708:22:0 seqid=27 slotid=0 max_slotid=0 cache_this=0
+> [332376.803204] RPC:       gss_krb5_get_mic_v2
+> [332376.803726] RPC:       xs_tcp_send_request(260) = 0
+> [332376.804536] RPC:       gss_krb5_verify_mic_v2
+> [332376.805093] RPC:       gss_krb5_verify_mic_v2
+> [332376.805643] decode_attr_type: type=040000
+> [332376.806149] decode_attr_change: change attribute=22
+> [332376.806866] decode_attr_size: file size=4096
+> [332376.807398] decode_attr_fsid: fsid=(0xfdcb5a40986843e0/0xa4fc6c44ad8345ad)
+> [332376.808154] decode_attr_fileid: fileid=262146
+> [332376.808742] decode_attr_fs_locations: fs_locations done, error = 0
+> [332376.809495] decode_attr_mode: file mode=0777
+> [332376.810042] decode_attr_nlink: nlink=3
+> [332376.810695] decode_attr_owner: uid=591200000
+> [332376.811229] decode_attr_group: gid=591200004
+> [332376.811761] decode_attr_rdev: rdev=(0x0:0x0)
+> [332376.812291] decode_attr_space_used: space used=4096
+> [332376.812878] decode_attr_time_access: atime=1762383044
+> [332376.813487] decode_attr_time_create: btime=1761952933
+> [332376.814098] decode_attr_time_metadata: ctime=1762055558
+> [332376.814895] decode_attr_time_modify: mtime=1762055558
+> [332376.815578] decode_attr_mounted_on_fileid: fileid=262146
+> [332376.816225] decode_getfattr_attrs: xdr returned 0
+> [332376.816796] decode_getfattr_generic: xdr returned 0
+> [332376.817374] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+> [332376.818135] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+> [332376.818873] nfs4_free_slot: slotid 1 highest_used_slotid 0
+> [332376.819604] nfs41_sequence_process: Error 0 free the slot 
+> [332376.820228] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+> [332376.820930] NFS: nfs_update_inode(0:58/262146 fh_crc=0xad8c294c ct=2 info=0x4427e7f)
+> [332376.821767] NFS: (0:58/262146) revalidation complete
+> [332376.822342] NFS: nfs_weak_revalidate: inode 262146 is valid
+> [332376.823056] NFS: permission(0:58/262146), mask=0x24, res=0
+> [332376.823684] NFS: open dir(/)
+> [332376.824087] NFS: readdir(/) starting at cookie 0
+> [332376.824641] _nfs4_proc_readdir: dentry = /, cookie = 0
+> [332376.825229] --> nfs41_call_sync_prepare data->seq_server 00000000e22b1bd9
+> [332376.825967] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=64
+> [332376.826814] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+> [332376.827616] RPC:       gss_krb5_get_mic_v2
+> [332376.828114] encode_sequence: sessionid=1762048597:1479457708:22:0 seqid=28 slotid=0 max_slotid=0 cache_this=0
+> [332376.829146] encode_readdir: cookie = 0, verifier = 00000000:00000000, bitmap = 0018091a:00b4a23a:00000000
+> [332376.830144] RPC:       gss_krb5_get_mic_v2
+> [332376.830720] RPC:       xs_tcp_send_request(284) = 0
+> [332376.831431] RPC:       gss_krb5_verify_mic_v2
+> [332376.831967] RPC:       gss_krb5_verify_mic_v2
+> [332376.832498] --> nfs4_alloc_slot used_slots=0001 highest_used=0 max_slots=64
+> [332376.833254] <-- nfs4_alloc_slot used_slots=0003 highest_used=1 slotid=1
+> [332376.833994] nfs4_free_slot: slotid 1 highest_used_slotid 0
+> [332376.834695] nfs41_sequence_process: Error 0 free the slot 
+> [332376.835318] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+> [332376.836016] _nfs4_proc_readdir: returns -5
+> [332376.836519] NFS: readdir(/) returns -5
+> 
+> 
+> 
+> Environment/Supporting Systems:
+> - The NFS server is a fresh Debian 13 cloud image. freeipa-client, gssproxy, nfs-kernel-server, and qemu-guest-agent have been installed. Joined to FreeIPA via ipa-client-install.
+> - Kerberos is provided by a newly installed FreeIPA instance on Fedora 43.
+> 
+> Failing NFS client configurations:
+> 1. Freshly deployed and updated Debian 13 official cloud image (debian-13-genericcloud-amd64). freeipa-client, gssproxy, nfs-common, and qemu-guest-agent have been installed. Joined to FreeIPA via ipa-client-install.
+> 2. Freshly installed Debian sid via mini ISO (2025-11-01). Same configuration as 1/above.
+> 3. Minimal replication config: freshly installed Debian 13 via debian-13.1.0-amd64-netinst.iso . Installed nfs-common, krb5-config and krb5-user. Manually installed keytab: no additional krb5 configuration done (realm was automatically configured from hostname by krb5-config).
+> 
+> Working NFS client configuration:
+> - Fedora 43 installation configured via ipa-client-install .
+> 
+> This issue was escalated to me by someone with a matching production environment (FreeIPA on Fedora 43, and Debian 13 NFS client(s) and server). This original reporter also found that a Fedora 43 client worked as-expected with SHA2.
+> 
+> 
+> 
+> Miscellaneous observations:
+> - Testing was primarily conducted with NFS v4.2. Error occurs with krb5, krb5i and krb5p on 4.2. Also confirmed with krb5i on 4.1 and 4.0 (other combinations of krb5/krb5p and vers 4.1/4.0 not tested).
+> - readdir failure observed when client is mounted with NFS v4.2, 4.1, and 4.0. ls reports "input/output error" and dmesg reports "readdir(/) returns -5" in all 3 versions.
+> - When mounted with v4.1 and 4.0, cat'ing a file also fails with SHA2. There is no obvious (to me) error in dmesg. stat/touch of files and directories remains working.
+> - Failing state is cached on the client: if a user runs ls with a SHA2 session key, then acquires a new SHA1 session key ticket, the "input/output error" persists unless the NFS share is remounted. Setting noac, actimeo=0, and lookupcache=none mount options do not affect this behavior: the error persists until a remount. Error persisted when left overnight (about 13 hours).
+> - Cursory examination of a packet capture shows an apparently normal NFSv4 readdir call and reply. The reply contains the expected directory listing.
+> 
+> Attempted file/directory operations with SHA2 session key and sec=krb5i:
+> (all are successful/OK with SHA1 session key)
+> ls directory:
+>     4.2: "Input/output error"
+>     4.1: "Input/output error"
+>     4.0: "Input/output error"
+> stat file and directory:
+>     4.2: OK
+>     4.1: OK
+>     4.0: OK
+> touch file and directory:
+>     4.2: OK
+>     4.1: OK
+>     4.0: OK
+> cat file:
+>     4.2: OK
+>     4.1: "Input/output error"
+>     4.0: "Input/output error"
+> 
+> 
+> 
+> 
+> -- Package-specific info:
+> -- rpcinfo --
+>    program vers proto   port  service
+>     100000    4   tcp    111  portmapper
+>     100000    3   tcp    111  portmapper
+>     100000    2   tcp    111  portmapper
+>     100000    4   udp    111  portmapper
+>     100000    3   udp    111  portmapper
+>     100000    2   udp    111  portmapper
+> -- /etc/default/nfs-common --
+> NEED_STATD=
+> NEED_IDMAPD=
+> NEED_GSSD=
+> -- /etc/nfs.conf --
+> [general]
+> pipefs-directory=/run/rpc_pipefs
+> [nfsrahead]
+> [exports]
+> [exportfs]
+> [gssd]
+> use-gss-proxy=1
+> [lockd]
+> [exportd]
+> [mountd]
+> manage-gids=y
+> [nfsdcld]
+> [nfsd]
+> [statd]
+> [sm-notify]
+> [svcgssd]
+> -- /etc/nfs.conf.d/*.conf --
+> 
+> -- System Information:
+> Debian Release: forky/sid
+>   APT prefers unstable
+>   APT policy: (500, 'unstable')
+> Architecture: amd64 (x86_64)
+> 
+> Kernel: Linux 6.17.7+deb14+1-amd64 (SMP w/4 CPU threads; PREEMPT)
+> Locale: LANG=en_US.UTF-8, LC_CTYPE=en_US.UTF-8 (charmap=UTF-8), LANGUAGE not set
+> Shell: /bin/sh linked to /usr/bin/dash
+> Init: systemd (via /run/systemd/system)
+> LSM: AppArmor: enabled
 
-Is there any particular reason for moving this here? If not, omitting the c=
-hange would simplify the patch a bit.
+Is there anything which could help us debugging this?
 
->  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->  					&pll_x_params);
-> =20
->  	tegra_init_special_resets(1, tegra114_reset_assert,
->  				  tegra114_reset_deassert);
-> =20
-> +#ifdef CONFIG_TEGRA124_CLK_EMC
-> +	tegra_add_of_provider(np, tegra114_clk_src_onecell_get);
-> +	clks[TEGRA114_CLK_EMC] =3D tegra124_clk_register_emc(clk_base, np,
-> +							   &emc_lock);
-> +#else
->  	tegra_add_of_provider(np, of_clk_src_onecell_get);
-> -	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> +#endif
-
-tegra124_clk_register_emc and tegra124_clk_emc_driver_available have stub i=
-mplementations when CONFIG_TEGRA124_CLK_EMC is not enabled, so it would be =
-cleaner to just call them always.
-
-> =20
-> -	tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> +	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> =20
->  	tegra_cpu_car_ops =3D &tegra114_cpu_car_ops;
->  }
->=20
-
-
-
-
+Regards,
+Salvatore
 
