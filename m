@@ -1,239 +1,209 @@
-Return-Path: <linux-kernel+bounces-898793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD53C5608C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:20:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BEEC56095
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59E664E2DC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:20:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40E6E4E33CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB7320CBA;
-	Thu, 13 Nov 2025 07:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5DC289811;
+	Thu, 13 Nov 2025 07:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XoHXrO4m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mFX1Ro8v";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CBNccGxT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ngHRWq0q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bS6ha2zm"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53B929CEB;
-	Thu, 13 Nov 2025 07:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905F426CE39
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018443; cv=none; b=MptV/xyOeZfppE0hhcj/hYlYDHuoMQNaMovqmT/wMzBGxE6k2E0r3CJWk+8Mt9gqB5E5lqzXWt0SPZMxE940Fy7Qmi5XvcPkBTNAwNj+egErcNvX3Qz/++DKzDrqXY3kwOc7LdnNkMICUj8ZJcFRbBuOA/KA/zWHkCqP8g5xZRo=
+	t=1763018471; cv=none; b=qJn3szwkY1RbtA9DB1iBVte86LqZC87DiticD9PS04bYScgWLPS835D0HpIXUXAjBKSqaDemv6RyrAzimV97sHHsQoHTo3rbfJAf55MWW7Y4sdv7F1JdFeJcgIY5vCSE1kIOLXCfghuMSlWoLem1+qzayeLAGX6QP+/gQdExoBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018443; c=relaxed/simple;
-	bh=6Me6GWqOMV1Te3Vqndd4JPy4GgWbf+TWVFwtSqdGhwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVWyJBPAu/RX5kQDx8v3jzI2NJQB0sovY/ps2znTT/S5szidlCeox+FghpoW8VS2wV8o2aA4Du9KdprG54HaaOx2HzM+g175Q3O7U7WEgnnPszAvrcdvcxpty2U8jayg5SbLOIrZNF7PP1TXx/kcsOyUqOqO4vqRpgkJ5BgDhfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XoHXrO4m; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763018441; x=1794554441;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6Me6GWqOMV1Te3Vqndd4JPy4GgWbf+TWVFwtSqdGhwE=;
-  b=XoHXrO4m2Yhq1LoEz3M3uBAQFx47UO6m0xcfZrHt75ivhZNBDrUXFv7L
-   US2f+hoaefflnDOeIDFPuzr0o1wmqVZm11TBHECuRBWIceapPMtu35EPA
-   KxlERTK9U4zniMRG2UXLL+DuOCX4S0bmIbKNbCH0eGbxi/edECrAH03Ip
-   pqQyN2C67EGyDbFCSQ5XznN7PHFMyNUGs2Z4GHn5q1udD4f4+8TYRXnyu
-   AYiNyr5Y7TfvrFYG1xDDsYxKd1QMdDuBNcGFVkU6AjJRWNtZOMPLUM3e2
-   ytEft3SMJlGDrZSjMNSCgAR4UJQvgr9GZG3TYYn3Mvz0nXe9+YCf9uaMj
-   g==;
-X-CSE-ConnectionGUID: G+urj6xYRjm3sNkRx+8NHQ==
-X-CSE-MsgGUID: bd6YLeY8Qm633qVyroyOwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65018343"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="65018343"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 23:20:40 -0800
-X-CSE-ConnectionGUID: Gj2hNzySSG+P7YfpZN0+0w==
-X-CSE-MsgGUID: Rg/fE/d9SqiQUCtfAuTUPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
-   d="scan'208";a="189614267"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 12 Nov 2025 23:20:36 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJRdB-00051L-19;
-	Thu, 13 Nov 2025 07:20:33 +0000
-Date: Thu, 13 Nov 2025 15:19:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	devicetree@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@suse.com>, Conor Dooley <conor@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh+dt@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v3 08/22] mm: Allow page table accessors to be
- non-idempotent
-Message-ID: <202511131448.ZCsuBlBE-lkp@intel.com>
-References: <20251113014656.2605447-9-samuel.holland@sifive.com>
+	s=arc-20240116; t=1763018471; c=relaxed/simple;
+	bh=+e5vyuZtNunYpnjO09KC3VxITCJoLOIfNhP9xGTZhkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lMaKSKucozPjYhTMxpfeR+ujzNvofPOdHs0gNk04w3FgmZg1hD+6C1lfoN12R8z2PajmdrOeVz9E02dKFLW7ACdM6VH7KNKdAeRAujthJmmLZ29MIEcqd7+qopcVw2kT+bijrNQ+57cRPTJPg9fCuUpUabNXY2lLwTO4VxLGkP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mFX1Ro8v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CBNccGxT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ngHRWq0q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bS6ha2zm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E2FD21F45A;
+	Thu, 13 Nov 2025 07:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763018467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
+	b=mFX1Ro8vHqtsDiUajsAj3tbAzeoME9+D7GjgaEqJ2M+cFlaX/1Agx7kcnGfH/PDx/rfzMf
+	agJkL8l49BbsamMzclFcQ1zNqu1IXaTw0w41pwz51UYGUqRLcJ8tpBCyV6W/Kf9aXz0Lal
+	vRjzm0DmBvrYpvbaLPLQ9FDqN9QUIuM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763018467;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
+	b=CBNccGxT2DGuDlwUJdT6i5bvqubAxp4zxRAtd6zTm/v+iQP4WK8mq32qr18/VFIxehar2l
+	zBYaYejGGncUpuBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ngHRWq0q;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bS6ha2zm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1763018466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
+	b=ngHRWq0qxgRCLr8Imp7mmcNkr9APxHxI62ZQNeSqz9OdBEAxd20ygLk7GjT2VqzzIH+3Ln
+	vsjJJR+vASYETp+1WqANlxSEfOhJh42etlO+E+3buYBvYu/Aiq6nvVXkTnXa/m5UQU+jRp
+	0JxH4C+2w5332GkNtKIslQeJPqxJWTk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1763018466;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izWwmm75QloOQ0n7LfH2mcNAkauxG6c9HuiSvb7m4WA=;
+	b=bS6ha2zm6f46pAaAlZGb6+NFPfS/gM+h6Yd7s6j9lqUxcWzVDMPdGZxOZPaRpeILtFt3PE
+	tEIB7dAe6W8boNDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84A613EA61;
+	Thu, 13 Nov 2025 07:21:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DssjHeKGFWkFcwAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 13 Nov 2025 07:21:06 +0000
+Message-ID: <2019e372-c079-4230-97ba-a3299ced0474@suse.de>
+Date: Thu, 13 Nov 2025 08:21:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251113014656.2605447-9-samuel.holland@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] nvme: Expose the tls_configured sysfs for secure
+ concat connections
+To: Alistair Francis <alistair23@gmail.com>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+ kch@nvidia.com, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
+References: <20251111234519.3467440-1-alistair.francis@wdc.com>
+ <20251111234519.3467440-4-alistair.francis@wdc.com>
+ <caadfcbb-8964-4447-a93d-8e49b4c14c7e@suse.de>
+ <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <CAKmqyKNzi7OAq49b-aa1H8++ReTvWnHKBDwA88ionJshhOVp9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E2FD21F45A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email,wdc.com:email]
+X-Spam-Score: -4.51
 
-Hi Samuel,
+On 11/13/25 03:08, Alistair Francis wrote:
+> On Wed, Nov 12, 2025 at 5:08 PM Hannes Reinecke <hare@suse.de> wrote:
+>>
+>> On 11/12/25 00:45, alistair23@gmail.com wrote:
+>>> From: Alistair Francis <alistair.francis@wdc.com>
+>>>
+>>> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+>>> ---
+>>> v2:
+>>>    - New patch
+>>>
+>>>    drivers/nvme/host/sysfs.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+>>> index 29430949ce2f..6d10e12136d0 100644
+>>> --- a/drivers/nvme/host/sysfs.c
+>>> +++ b/drivers/nvme/host/sysfs.c
+>>> @@ -838,7 +838,7 @@ static umode_t nvme_tls_attrs_are_visible(struct kobject *kobj,
+>>>            !ctrl->opts->tls && !ctrl->opts->concat)
+>>>                return 0;
+>>>        if (a == &dev_attr_tls_configured_key.attr &&
+>>> -         (!ctrl->opts->tls_key || ctrl->opts->concat))
+>>> +         !ctrl->opts->concat)
+>>>                return 0;
+>>>        if (a == &dev_attr_tls_keyring.attr &&
+>>>            !ctrl->opts->keyring)
+>>
+>> ??
+>>
+>> How can you have a configured TLS Key for secure concatenation?
+> 
+> I'm not sure I follow
+> 
+> `ctrl->opts->tls_key` is directly set at the end of the
+> `nvme_auth_secure_concat()` function, so it will be set for secure
+> concatenation.
+> 
+Right, sorry. Of course you are right.
 
-kernel test robot noticed the following build errors:
+But I'm still a bit unsure about the interface here; just writing
+anything into it doesn't feel like the correct way of doing it.
 
-[auto build test ERROR on 24172e0d79900908cf5ebf366600616d29c9b417]
+I would rather modify the interface to allow a key serial number (or 0).
+That would allow us to modify the configured key, which currently is
+fixed for the lifetime of the connection.
+And writing '0' would reset the configured key, reverting to automatic
+key selection.
+Having such an interface would actually be beneficial, as it would
+remove some limitations from the current interface.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/mm-ptdump-replace-READ_ONCE-with-standard-page-table-accessors/20251113-095117
-base:   24172e0d79900908cf5ebf366600616d29c9b417
-patch link:    https://lore.kernel.org/r/20251113014656.2605447-9-samuel.holland%40sifive.com
-patch subject: [PATCH v3 08/22] mm: Allow page table accessors to be non-idempotent
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20251113/202511131448.ZCsuBlBE-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251113/202511131448.ZCsuBlBE-lkp@intel.com/reproduce)
+Hmm?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511131448.ZCsuBlBE-lkp@intel.com/
+Cheers,
 
-All errors (new ones prefixed by >>):
-
-   mm/gup.c: In function 'gup_fast_pte_range':
->> mm/gup.c:2848:9: error: implicit declaration of function 'set_pmd'; did you mean 'set_p4d'? [-Wimplicit-function-declaration]
-    2848 |         set_pmd(&pmd, pmd);
-         |         ^~~~~~~
-         |         set_p4d
---
-   mm/pgtable-generic.c: In function '___pte_offset_map':
->> mm/pgtable-generic.c:303:9: error: implicit declaration of function 'set_pmd'; did you mean 'set_p4d'? [-Wimplicit-function-declaration]
-     303 |         set_pmd(&pmdval, pmdval);
-         |         ^~~~~~~
-         |         set_p4d
-
-
-vim +2848 mm/gup.c
-
-  2819	
-  2820	#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
-  2821	/*
-  2822	 * GUP-fast relies on pte change detection to avoid concurrent pgtable
-  2823	 * operations.
-  2824	 *
-  2825	 * To pin the page, GUP-fast needs to do below in order:
-  2826	 * (1) pin the page (by prefetching pte), then (2) check pte not changed.
-  2827	 *
-  2828	 * For the rest of pgtable operations where pgtable updates can be racy
-  2829	 * with GUP-fast, we need to do (1) clear pte, then (2) check whether page
-  2830	 * is pinned.
-  2831	 *
-  2832	 * Above will work for all pte-level operations, including THP split.
-  2833	 *
-  2834	 * For THP collapse, it's a bit more complicated because GUP-fast may be
-  2835	 * walking a pgtable page that is being freed (pte is still valid but pmd
-  2836	 * can be cleared already).  To avoid race in such condition, we need to
-  2837	 * also check pmd here to make sure pmd doesn't change (corresponds to
-  2838	 * pmdp_collapse_flush() in the THP collapse code path).
-  2839	 */
-  2840	static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
-  2841			unsigned long end, unsigned int flags, struct page **pages,
-  2842			int *nr)
-  2843	{
-  2844		int ret = 0;
-  2845		pte_t *ptep, *ptem;
-  2846	
-  2847		/* transform pmd as if &pmd pointed to a hardware page table */
-> 2848		set_pmd(&pmd, pmd);
-  2849		ptem = ptep = pte_offset_map(&pmd, addr);
-  2850		pmd = pmdp_get(&pmd);
-  2851		if (!ptep)
-  2852			return 0;
-  2853		do {
-  2854			pte_t pte = ptep_get_lockless(ptep);
-  2855			struct page *page;
-  2856			struct folio *folio;
-  2857	
-  2858			/*
-  2859			 * Always fallback to ordinary GUP on PROT_NONE-mapped pages:
-  2860			 * pte_access_permitted() better should reject these pages
-  2861			 * either way: otherwise, GUP-fast might succeed in
-  2862			 * cases where ordinary GUP would fail due to VMA access
-  2863			 * permissions.
-  2864			 */
-  2865			if (pte_protnone(pte))
-  2866				goto pte_unmap;
-  2867	
-  2868			if (!pte_access_permitted(pte, flags & FOLL_WRITE))
-  2869				goto pte_unmap;
-  2870	
-  2871			if (pte_special(pte))
-  2872				goto pte_unmap;
-  2873	
-  2874			/* If it's not marked as special it must have a valid memmap. */
-  2875			VM_WARN_ON_ONCE(!pfn_valid(pte_pfn(pte)));
-  2876			page = pte_page(pte);
-  2877	
-  2878			folio = try_grab_folio_fast(page, 1, flags);
-  2879			if (!folio)
-  2880				goto pte_unmap;
-  2881	
-  2882			if (unlikely(pmd_val(pmd) != pmd_val(pmdp_get(pmdp))) ||
-  2883			    unlikely(pte_val(pte) != pte_val(ptep_get(ptep)))) {
-  2884				gup_put_folio(folio, 1, flags);
-  2885				goto pte_unmap;
-  2886			}
-  2887	
-  2888			if (!gup_fast_folio_allowed(folio, flags)) {
-  2889				gup_put_folio(folio, 1, flags);
-  2890				goto pte_unmap;
-  2891			}
-  2892	
-  2893			if (!pte_write(pte) && gup_must_unshare(NULL, flags, page)) {
-  2894				gup_put_folio(folio, 1, flags);
-  2895				goto pte_unmap;
-  2896			}
-  2897	
-  2898			/*
-  2899			 * We need to make the page accessible if and only if we are
-  2900			 * going to access its content (the FOLL_PIN case).  Please
-  2901			 * see Documentation/core-api/pin_user_pages.rst for
-  2902			 * details.
-  2903			 */
-  2904			if ((flags & FOLL_PIN) && arch_make_folio_accessible(folio)) {
-  2905				gup_put_folio(folio, 1, flags);
-  2906				goto pte_unmap;
-  2907			}
-  2908			folio_set_referenced(folio);
-  2909			pages[*nr] = page;
-  2910			(*nr)++;
-  2911		} while (ptep++, addr += PAGE_SIZE, addr != end);
-  2912	
-  2913		ret = 1;
-  2914	
-  2915	pte_unmap:
-  2916		pte_unmap(ptem);
-  2917		return ret;
-  2918	}
-  2919	#else
-  2920	
-
+Hannes
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
