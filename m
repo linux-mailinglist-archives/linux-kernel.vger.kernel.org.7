@@ -1,174 +1,171 @@
-Return-Path: <linux-kernel+bounces-899942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FC8C592A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:31:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53AEDC59287
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EEF424B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:14:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD87E4F82C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674D63A8D5F;
-	Thu, 13 Nov 2025 17:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B9C265CA2;
+	Thu, 13 Nov 2025 16:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pdb2eHGD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjmrlEV7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7201C3A79B1;
-	Thu, 13 Nov 2025 17:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E25328B57;
+	Thu, 13 Nov 2025 16:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763053223; cv=none; b=AA+XC4dbzdYdnV64zK69XVkJMxOLqEOG5GjD6kWhGoqVB0cGs4VduTt1sP0wnU4Lbvs3hKC8o6vKwgBbxCCy3DehbmuqUjPiO2OQBf4P5jE0WgFLmhpZ5a1lpheUKzuPetyqUrB4iD9aNyOGFPDJ0rVr+POldpEa76OuFV1bjSc=
+	t=1763052945; cv=none; b=kbxi8TqQL9vdQXufGBmQMwddFGntNe6bW04NHmluMNwU0RdNcpeAeW2BnJOOIVq/Tv9/AvQGys0phdnBrQUvaIRHBHeUtbY/7v/5hPA3JCWmgpRS47cVbj91nG4zNyPzonwBrk+Hp9lVSldSIheY3d6OFEHmuRp31ipH4Y1I3tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763053223; c=relaxed/simple;
-	bh=PYci18VlZZ5sru0Tx0m/q5hJzWG4Ytkv44neBev88QY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i2dzWH6L+cddBZpEmCI+vEzIJTiBmgJk9Gg0O9QeXJ3VypzZsjbGBOFsEkfcT5VE+I+0cYevQR0N+12IQvuAYawpdscSITYyhiIkmhk7PVHJDfu/XB+7DOxdnQM1rlvii6wrTPPeq4s9aUpToMj0Eng12BnXB5zsFuJZy9ET2ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pdb2eHGD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1763053220;
-	bh=PYci18VlZZ5sru0Tx0m/q5hJzWG4Ytkv44neBev88QY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pdb2eHGDc3SXjifd/YCj4PTrkKL7xAsYwSXKYf2WvYHoXxuMgPXC2KOL9aoefU+WA
-	 b5gTYL+oUwg6sNzyLRptfHCzQJB7EZ761jQTwHZlJkdoWYhdGt3V8oNQGJsDmCmDNs
-	 LgLXkwd/WroB4zDGXQLKocE979pGEABZSppInfiHXtr8+o20aBtDyiQAobunN6RjNg
-	 DLV9QRjmT3e8n5hvtPNvoIaMc4mY7UGsrYNll6s55m6hxcqrOywq1xLulJeK/Tx1zB
-	 V5nIPbLvDTW8R9DGNV1svUV2QrRW6FnhuZnAfWaNC6hWkqO6+HPlBWzxL4HjbYm6fa
-	 +M5pSsw5SsNwQ==
-Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: loicmolinari)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 32E5D17E156D;
-	Thu, 13 Nov 2025 18:00:19 +0100 (CET)
-From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Nitin Gote <nitin.r.gote@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Christopher Healy <healych@amazon.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v8 09/11] drm/panthor: Improve IOMMU map/unmap debugging logs
-Date: Thu, 13 Nov 2025 18:00:05 +0100
-Message-ID: <20251113170008.79587-10-loic.molinari@collabora.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251113170008.79587-1-loic.molinari@collabora.com>
-References: <20251113170008.79587-1-loic.molinari@collabora.com>
+	s=arc-20240116; t=1763052945; c=relaxed/simple;
+	bh=cDuGUvpznpYi4xeC9A2xiX1DogtcEl4H0soP0vHU4YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHYWnC43NmwqLk+8roh/U9vYP5r+GAglAnwSfv0rHoxN4PJB7RlJ1Ux5zOgRGP6125Ixe7QxQvFpcNfqijCorG39q6dMnaZpxMuEHbxzPP6VGpJPTQntNUBgUY2ZhYaNssgBNYuL/TewQRgNvXIkWPRvwis3X/mwFZM63cleV6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjmrlEV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90766C4CEF5;
+	Thu, 13 Nov 2025 16:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763052944;
+	bh=cDuGUvpznpYi4xeC9A2xiX1DogtcEl4H0soP0vHU4YQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NjmrlEV7ZsT6s6HFZiZy9Knh8SNJyAlxNuYI3LsZUtRpM69G5QUG4vFpfhOGF8GHd
+	 xHyJID508VRbLcmnT2JdMJSH8okk7f2WLmbuSC31oIFyINVPGAFcghvirhf1zCU3cg
+	 nc3JK690hHCisBhj8pDgKo+dhul4pPw0dpKyrGl0Ux6sRmIASVBn/7/JSvHGJ1Gz3B
+	 2Oet4Wxa7ZLx7GgdE/KQVQpt49wnLZ8H/BGlQyUrwExbzeEPnS0k4h49l833fKhW4t
+	 zJguUv/IfwsCIUFQegANAutlxbxwxWLesu6sKUDulT1t13RLxFqAKahO5nidsPbsqq
+	 WNcb3vyJCD9ow==
+Date: Thu, 13 Nov 2025 11:00:06 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com, 
+	Yi Zhang <zhanyi@qti.qualcomm.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: Enable lvds panel-DV215FHM-R01 for
+ rb3gen2 industrial mezzanine
+Message-ID: <p6rsi7nmzlk2q2wtnccwx4r7p74zoyeqq7d7pemhiv6tao56o6@6fivz7qrhkgx>
+References: <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-0-6eab844ec3ac@oss.qualcomm.com>
+ <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-1-6eab844ec3ac@oss.qualcomm.com>
+ <kosvayxmpbngn56v7t734f4qqrc2rptkjdd7q5q23brg22dvov@cxs7kzzuapim>
+ <qps5fkbgdqqvoqa3m5l4naksyc4aoq4xqnciyrpkrbs5qcno7c@aa6ync6sk4ju>
+ <vz7u2jsb677imufu6aillcqnnaybed3occniyx3fgniwtxzij5@uplpfhhyjk5k>
+ <5lkcoekfn3d6gwk4ra6u65lu6mtgzn2iucyvswvn4lhwuw3pxv@jcrp22msbaip>
+ <72ffjdik46dpespj2i2bakju6zcbu5eu7atuqrl4i4ri437nrj@aigb6akxb266>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72ffjdik46dpespj2i2bakju6zcbu5eu7atuqrl4i4ri437nrj@aigb6akxb266>
 
-Log the number of pages and their sizes actually mapped/unmapped by
-the IOMMU page table driver. Since a map/unmap op is often split in
-several ops depending on the underlying scatter/gather table, add the
-start address and the total size to the debugging logs in order to
-help understand which batch an op is part of.
+On Thu, Nov 13, 2025 at 05:45:42AM +0200, Dmitry Baryshkov wrote:
+> On Wed, Nov 12, 2025 at 04:07:27PM -0600, Bjorn Andersson wrote:
+> > On Wed, Nov 12, 2025 at 10:16:27PM +0200, Dmitry Baryshkov wrote:
+> > > On Wed, Nov 12, 2025 at 10:53:36AM -0600, Bjorn Andersson wrote:
+> > > > On Wed, Nov 12, 2025 at 05:02:20PM +0200, Dmitry Baryshkov wrote:
+> > > > > On Wed, Nov 12, 2025 at 08:18:11PM +0530, Gopi Botlagunta wrote:
+> > > > > > Below is the routing diagram of dsi lanes from qcs6490 soc to
+> > > > > > mezzanine.
+> > > > > > 
+> > > > > > DSI0 --> SW1403.4 --> LT9611uxc --> hdmi port
+> > > > > >                  |
+> > > > > >                   --> SW2700.1 --> dsi connector
+> > > > > >                               |
+> > > > > >                                --> LT9211c --> LVDS connector
+> > > > > > 
+> > > > > > Disable hdmi connector for industrial mezzanine and enable
+> > > > > > LT9211c bridge and lvds panel node.
+> > > > > > LT9211c is powered by default with reset gpio connected to 117.
+> > > > > > 
+> > > > > > Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
+> > > > > > Signed-off-by: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
+> > > > > > ---
+> > > > > >  .../qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso | 106 +++++++++++++++++++++
+> > > > > >  1 file changed, 106 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > > > > index 619a42b5ef48..cc8ee1643167 100644
+> > > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
+> > > > > > @@ -8,6 +8,112 @@
+> > > > > >  #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> > > > > >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> > > > > >  
+> > > > > > +/ {
+> > > > > > +
+> > > > > > +	hdmi-connector {
+> > > > > > +		status = "disabled";
+> > > > > > +	};
+> > > > > > +
+> > > > > > +	panel_lvds: panel-lvds@0 {
+> > > > > > +		compatible = "panel-lvds";
+> > > > > 
+> > > > > Please describe the actual panel using compatible, etc. It's not that
+> > > > > this is some generic uknown LVDS panel.
+> > > > > 
+> > > > 
+> > > > I presume the mezzanine doesn't have a panel, so how do we provide the
+> > > > description of the mezzanine such that a developer can quickly get up to
+> > > > speed with their specific panel connected to it?
+> > > > 
+> > > > Do we leave this node disabled, just for reference, or do we specify a
+> > > > specific panel and then have the developer copy and adopt this to their
+> > > > panel?
+> > > > 
+> > > > The benefit of doing it like that is that we provide a complete example
+> > > > and something we can test. But at the same time, If I presume we might
+> > > > have users of the mezzanine without an attached LVDS panel?
+> > > > 
+> > > > > > +		data-mapping = "vesa-24";
+> > > > > > +		width-mm = <476>;
+> > > > > > +		height-mm = <268>;
+> > > > 
+> > > > The way this patch is written we certainly have some specific panel in
+> > > > mind...
+> > > 
+> > > It's even mentioned in the subject: BOE DV215FHM-R01. Having a proper
+> > > panel compatible is demanded by the panel-lvds bindings.
+> > > 
+> > 
+> > I missed that mention. But that implies then that this isn't "the
+> > industrial mezzanine", but "the industrial mezznine with a boe
+> > DV215FHM-R01 connected".
+> > 
+> > Are you saying that this is the way you'd prefer that we handle the
+> > mezzanines with capabilities for extension?
+> 
+> Some time ago, around APQ8064 boards there was a discussion of using
+> EDID to identify LVDS panels (in a manner similar to panel-edp).
+> 
+> Does industrial mezzanine provide EDID support for the panel?
+> 
 
-Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_mmu.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+Even if there is EDID in this particular case, the problem still
+remains broadly. If we have a mezzanine with a standard connector, but
+the non-probable device is connected by the developer at a later stage,
+how do we facilitate their experience?
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 58fead90533a..32410713c61c 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -918,10 +918,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
- {
- 	struct panthor_device *ptdev = vm->ptdev;
- 	struct io_pgtable_ops *ops = vm->pgtbl_ops;
-+	u64 start_iova = iova;
- 	u64 offset = 0;
- 
--	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
--
- 	while (offset < size) {
- 		size_t unmapped_sz = 0, pgcount;
- 		size_t pgsize = get_pgsize(iova + offset, size - offset, &pgcount);
-@@ -936,6 +935,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
- 			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
- 			return  -EINVAL;
- 		}
-+
-+		drm_dbg(&ptdev->base,
-+			"unmap: as=%d, iova=0x%llx, sz=%llu, va=0x%llx, pgcnt=%zu, pgsz=%zu",
-+			vm->as.id, start_iova, size, iova + offset,
-+			unmapped_sz / pgsize, pgsize);
-+
- 		offset += unmapped_sz;
- 	}
- 
-@@ -951,6 +956,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
- 	struct scatterlist *sgl;
- 	struct io_pgtable_ops *ops = vm->pgtbl_ops;
- 	u64 start_iova = iova;
-+	u64 start_size = size;
- 	int ret;
- 
- 	if (!size)
-@@ -970,15 +976,18 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
- 		len = min_t(size_t, len, size);
- 		size -= len;
- 
--		drm_dbg(&ptdev->base, "map: as=%d, iova=%llx, paddr=%pad, len=%zx",
--			vm->as.id, iova, &paddr, len);
--
- 		while (len) {
- 			size_t pgcount, mapped = 0;
- 			size_t pgsize = get_pgsize(iova | paddr, len, &pgcount);
- 
- 			ret = ops->map_pages(ops, iova, paddr, pgsize, pgcount, prot,
- 					     GFP_KERNEL, &mapped);
-+
-+			drm_dbg(&ptdev->base,
-+				"map: as=%d, iova=0x%llx, sz=%llu, va=0x%llx, pa=%pad, pgcnt=%zu, pgsz=%zu",
-+				vm->as.id, start_iova, start_size, iova, &paddr,
-+				mapped / pgsize, pgsize);
-+
- 			iova += mapped;
- 			paddr += mapped;
- 			len -= mapped;
--- 
-2.47.3
+Concretely, the Particle Tachyon has two CSI/DSI connectors compatible
+with Rasberry-Pi accessories, I believe RubikPi3 has the same. We have
+no idea what DSI panel (or CSI camera) the user might connect, but
+there's common board-specifics and boilerplate that a tinkerer need to
+put in place.
 
+Regards,
+Bjorn
+
+> -- 
+> With best wishes
+> Dmitry
 
