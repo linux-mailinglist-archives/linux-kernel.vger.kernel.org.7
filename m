@@ -1,162 +1,157 @@
-Return-Path: <linux-kernel+bounces-899348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C96C57799
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:45:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDFBC57760
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A474F420CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:40:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6668A4E5CF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2021934EEF2;
-	Thu, 13 Nov 2025 12:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD922DECA5;
+	Thu, 13 Nov 2025 12:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k70PRfsx"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUkQWyzG"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63334DCEC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA9A343D6F
 	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763037604; cv=none; b=tk3xKU0sdq75G6d4YbBGEjwe1rbVe81QiYEsFqPdFT15BntG/DvQ1wprYJVIGJwLTQzeApj1JFcBMRKejMeQd0yfc4xdnX3Q7QTvjH44R580xuokBxuUQypIQFV6wJM6gnxI4Gk9oP15vnFI9PVNvh5DpOYoh+QE9NlwXgYF9UE=
+	t=1763037603; cv=none; b=NiNirNHXN9i5ymBK/2BLOn1c6Wlza0OXn74ViiFPGiNt21nqnlSu3nZss1ouUr5B+zAbUGeEHGXHLjWQwuchJOiQTCfYXJ1hUgxv9UPgptFLabJZpkHBvBTHO2qjxFEAYNC2ll1qouqN5QlAGM9kG5aIH7qZ8ajgxKqJUWoFNWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763037604; c=relaxed/simple;
-	bh=+kTwDuwG6rspdkZ99dNoC1BLBNHio/t4Ku94BnnhqRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JbxP9o9z3zZx2T2hvnak57QbjMe2mPoFHJpUsb27gHIUfUkbw5sUrbvaxDTvK+j+1cYDnq3to/RsftpBs8OJ4E+5Pmbdmww5CEQzy67jIPG16SpgHk0YZyTu6dVSGYwLGXyHGGeoC+CkvJ46hXrpe0fn4qq1raYSXjzaEQy+vCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k70PRfsx; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59428d2d975so823352e87.3
+	s=arc-20240116; t=1763037603; c=relaxed/simple;
+	bh=zPxQZq6swDm7cDZrcHpyHFJLp+QXnuSI6H2xrgOhuug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qN7H2Op/xYv7e+Py8kNnBi4R48AYuBXxzekaLz2QlG1MQWmM9ZwOPKfvoECG1Xx+7J1lGfSPHE8rXmlWnA1C57ZZLwEmExdaGao27OOwrARD3hkEtKgYstI3pHLJnlm2YBAS3Pd8niWqCj5EygqtCGNJd5I6x8HKyAcyV+B92lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUkQWyzG; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b312a089fso450099f8f.2
         for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:40:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763037600; x=1763642400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AUOrtPsGub1HhpXyzrUpFchIESa38qs85WIyjbHg4K8=;
-        b=k70PRfsxSapODP2hSfOJ/F/sCO3uVA5pmXnaBQcvEkzOkrmmaBgIMLdKvCB+GjKFhg
-         DHsWqidK96RQgK80hLFLKn8nbDnEnRAr7avhDtWujfGOLfFdfCNodLgos8wYgp+7v1+p
-         Aiu/OK5XSqJZyEwCA4xYQ1XazUzGGHwajHC/6EQ1w0E0KzdqLFPSTxZUJogI+93I0xOP
-         P4ZugIH4/7WVZZuklJyhwmIbYkYJ+gpGNSmwfIwbcdqiCaPC4E3PhjqkMPgWMWM4v40q
-         uS93wPY0UOD90sqXNt/OXYWk3xKuvblwxguwJNUzpCwYTbn7cryMGcJmhsGCo+4WPMeO
-         sHeQ==
+        d=gmail.com; s=20230601; t=1763037600; x=1763642400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wa4Z5vcyVHYCi6FZLrrSakjhFJDnPUnns7XV2UHv/wQ=;
+        b=hUkQWyzG/XrseNZdjDH4Nab5qx84In6X0lgfOmPDZU3bBlwzbyG5X8sZifrjnIUL2q
+         ISd/0Cj4gPhEdTzgulajy896RuirBzHWc9Nnf9TBRclb3sXRt5QUa8n+mOqEDCZBOl0V
+         2EpQkAqXsPtmb4M4sygfTnSESXsVm1KkZRNwsHtR9BDPJw4aDPGYFUe+4fy1AU/QmCc9
+         zvJbfbrjnWJIJQpg7ucj2mfpk/YnZGJav5OT2qTBEZAkCwEryGg4xo1ad9SzEn0c6SeV
+         vziz+fA9/mVLhnlMDaNpe/7sDvGaiFJaeI6hrMeip/MDs6GHhDDFCnO/m2tB7QuZqMvA
+         mukA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1763037600; x=1763642400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AUOrtPsGub1HhpXyzrUpFchIESa38qs85WIyjbHg4K8=;
-        b=YnRyEIVnAYFZkjTINfCIvTyNwCec6Syq2t0+hE2C4ySZKzIZuinDXu38kKl43tpkQt
-         cm2zkiWs9MS8z7mBt83ZOhHduVXVcJ9qqj1bX40naplYzkgGUfMq44ZKWrzv2zCz+NVL
-         8hEMGUVK3+JLqTMPWRP853RUs8PgBXvU3gjwfb0KEZqrne9B8FD3UFgnxcDrvVSdBWW4
-         7cFQmeFxz21KEDOFA1AgubyxZ3nhSo0BfixCL1tnzfLG1ZQ1F2L/9i72MkcSeiiE3UC7
-         /ohI2AbiyQgXqF9aFOT3JUJbRZSvT4KIgkcrleDiqbM0YIDlxDz+5n3jaxYkHn65KoAc
-         RAzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNoNQoEtcY89odC1c8/ViiOM6uFNuTsAGwzHnlWIQ4MIn1ebAnQwwlgoADKCS3C5+9Fkb/izWlTQByGzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4u88qsHkFka+3qKUY0Hv7kIbBDZXNOOIIKO7486Dt4vknLAae
-	OrtCC6mnp84WRZ2VO8LFMfyZ/+h/TXjE6cxfHAIM8tEgSA7GchpGL0bfETdMUO1nWh20n5juYJE
-	Ng94TJMD82YfGCWlbyzHRaZNibmc1+uJRJS2E1SPB8Q==
-X-Gm-Gg: ASbGncu+g77VKhgwI98zexixYpErxGvT1lNLNL9+5c46arbxHvOr1sWO6qP7xjaR1UT
-	vQsBm1o8FbyAOB7j7iVGKoQ8rhDNQ+gile39J0te0eGRsu8QMTFzgW/I8Qm8OU7DN0Uxhr2fVej
-	PHJ0TPSeBXhfHGkxHFNR5Y2SbEfwcBpUtmXpMqTejbze17oAxbEycDnlEZkuTScJBq0Aa4dger0
-	HKcKq3P51z3oy82in9wXqSj83HDDvtOTruVfJbjtUrYgcTWzyRHVi6CoeG/0x5oo1bQlVkm1cOc
-	edfReU09zRS9xq+4
-X-Google-Smtp-Source: AGHT+IEwidGHoNOMaYo4htt19dYp1oulw6jtGUPFtCAr2wRYS9NFrgMFss39wedYdFqyQ0XIZvSRls+UzQXDbZ99yYM=
-X-Received: by 2002:a05:6512:3b1e:b0:594:51ac:13e with SMTP id
- 2adb3069b0e04-59576df8da4mr2157404e87.17.1763037600276; Thu, 13 Nov 2025
- 04:40:00 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wa4Z5vcyVHYCi6FZLrrSakjhFJDnPUnns7XV2UHv/wQ=;
+        b=Y9GzCl3KPX3B1XeTKskDXvicLXhymyDkEzdGOtNwtHv7tKgBC2I6sCqvsl711xRVJO
+         11OeYvYplUCD/zyJ5OB8MF3BFhRgy70NpOt5O5pAsL7b3et8IdMc6SCP3j/F2akgMXg7
+         4lQwuWEabI9ltOVQCToWZQJtAALXbhLrrE6x511ewL4IY4xCyP4GQKA4eEvf0k+tiVB0
+         Uay/JxdE+FBgYPe0i9xZyKviZ6qOfMvETmyLWbMCOxZI4NcObI22pIaA1hvfF/Ss40Ku
+         oSZunweS9+rvYd4xXW6fLWxFjFSAM1sBXEQILuQ+sln6bZ9edytTkUzNULK6TJPOfEpz
+         eO1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhWtzImJx1kVEjXcWar7CneQIsWBMwraMX9EIzOCdG/+fdYEqITvJehpNTHcW3UAtF9wb5aSUOs77HInY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8UIIYmGH4+Hnok8h2T3zBliShMRVBH/Sy9jM2qzwJ/rnbJ8SW
+	RGIP+I0oLJ52QIxkRGpf1gndl5f0+2kk+0YL1TbCqWzK48YaK+dHqhRr
+X-Gm-Gg: ASbGncsPmxHB2t/G5uS4hN7PGRStNJ3TdT8Ck7n9rj/Wwb5FqqBT+V9DgADX5w9eCcd
+	ej7vW2Oz9lWPVncmdhXaSgt2GPmqwv9K+BIr1XmjCwzd4n48YdRFNNpP6uQaGMIXl3PtQGCuJDB
+	9urzt8a/s9VKk9Uf1M3+pINbdU3f1r/gZl6TNacrGHYFNgOziSoNX3dw9GzlxXKC5qeOOXomIZU
+	L9Tq9rbIrnqHs12RDyMycjp8xJBbz9ROcexI1Yjbjg4zu1jeSliprdZSArKu5VaVLx8oQLyWUbz
+	BrvRL7hV/7AkaF5OJT2n6KzjrD3w+M9FeL0YshBdEPeJBXxN/y93gZI4x7ueHbOMuNVwtjEtCYF
+	izedDeFAsTKiONr3ca6zyFoV/qv7gfWPtc5fJ6lAzi/cKKc/SRZTGIHkNEQ9+qgEnp46wQAUVgH
+	3b3AmsG5ZhLNcubGXBOua3cR0=
+X-Google-Smtp-Source: AGHT+IGJEiCSuPDOO3Jx8gHScyRdLNX97D4znVoZz/xNuPgCq2qLems59o3ScwU+fbav/LPhdOQFFg==
+X-Received: by 2002:a05:6000:1849:b0:42b:3806:2ba0 with SMTP id ffacd0b85a97d-42b4bb89b8amr5613657f8f.2.1763037599393;
+        Thu, 13 Nov 2025 04:39:59 -0800 (PST)
+Received: from paul-Precision-5770 ([80.12.41.69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b62dsm3697140f8f.24.2025.11.13.04.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 04:39:59 -0800 (PST)
+From: Paul Houssel <paulhoussel2@gmail.com>
+X-Google-Original-From: Paul Houssel <paul.houssel@orange.com>
+To: Paul Houssel <paulhoussel2@gmail.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Martin Horth <martin.horth@telecom-sudparis.eu>,
+	Ouail Derghal <ouail.derghal@imt-atlantique.fr>,
+	Guilhem Jazeron <guilhem.jazeron@inria.fr>,
+	Ludovic Paillat <ludovic.paillat@inria.fr>,
+	Robin Theveniaut <robin.theveniaut@irit.fr>,
+	Tristan d'Audibert <tristan.daudibert@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Paul Houssel <paul.houssel@orange.com>
+Subject: [PATCH v4 0/2] libbpf: fix BTF dedup to support recursive typedef
+Date: Thu, 13 Nov 2025 13:39:49 +0100
+Message-ID: <cover.1763037045.git.paul.houssel@orange.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106-reset-gpios-swnodes-v6-0-69aa852de9e4@linaro.org>
- <e0e81310332cfdc075bf13f66d7be712b42964ed.camel@pengutronix.de>
- <CAMRc=Mfcir56ZizXgZZpt4nQY234PA9jx3CQ24YCVQJFBQ7msA@mail.gmail.com>
- <7aa5a0ce599f86cc29e5075aa4e35155dfcd013e.camel@pengutronix.de> <CAMRc=Me3mOaFpn=xwpDwBzLWjOqS0Gx4rV0E=v_aEg6s_uJyvw@mail.gmail.com>
-In-Reply-To: <CAMRc=Me3mOaFpn=xwpDwBzLWjOqS0Gx4rV0E=v_aEg6s_uJyvw@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Nov 2025 13:39:47 +0100
-X-Gm-Features: AWmQ_blTF4bGHOPBFto4bdAeuDnTVCZ4z2kdDUSFoogNBWSvY3rUo6lXRjR-7mU
-Message-ID: <CAMRc=Men0Dc3rokguW-ghsViyMmJzLgvJZtx9ACur5h7U4z_7w@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] reset: rework reset-gpios handling
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 1:16=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> On Thu, 13 Nov 2025 11:30:39 +0100, Philipp Zabel <p.zabel@pengutronix.de=
-> said:
-> > On Mo, 2025-11-10 at 17:57 +0100, Bartosz Golaszewski wrote:
-> >> On Mon, Nov 10, 2025 at 10:02=E2=80=AFAM Philipp Zabel <p.zabel@pengut=
-ronix.de> wrote:
-> >> >
-> >> > On Do, 2025-11-06 at 15:32 +0100, Bartosz Golaszewski wrote:
-> >> > > NOTE: I've picked up commit e5d527be7e69 ("gpio: swnode: don't use=
- the
-> >> > > swnode's name as the key for GPIO lookup") into my fixes branch an=
-d will
-> >> > > send it upstream by the end of this week. It will be part of v6.18=
--rc5
-> >> > > which tag will need to be the base for the future immutable branch
-> >> > > created by Philipp.
-> >> > >
-> >> > > Software node maintainers: if this versions is good to go, can you=
- leave
-> >> > > your Acks under patches 1-3 and allow Philipp to take it through t=
-he
-> >> > > reset tree, provided he creates an immutable branch you can pull f=
-rom
-> >> > > for v6.19?
-> >> >
-> >> > Now that -rc5 is out, could I get an Ack to create an immutable bran=
-ch
-> >> > with this series on top of v6.18-rc5 (and merge it into reset/next)?
-> >> >
-> >>
-> >> Hi Philipp,
-> >>
-> >> I assume the Reviewed-by tags by Andy and Sakari under patches 1-3
-> >> make them good enough to go in?
-> >
-> > I assumed I also need an Acked-by by Greg or Rafael.
-> >
->
-> From MAINTAINERS:
->
-> SOFTWARE NODES AND DEVICE PROPERTIES
-> R:      Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> R:      Daniel Scally <djrscally@gmail.com>
-> R:      Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> R:      Sakari Ailus <sakari.ailus@linux.intel.com>
->
-> Looks like neither Greg nor Rafael are mentioned.
->
+Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
+Podman) due to recursive type definitions that create reference loops
+not representable in C. These recursive typedefs trigger a failure in
+the BTF deduplication algorithm.
 
-Ah but also:
+This patch extends btf_dedup_struct_types() to properly handle potential
+recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
+handled for BTF_KIND_STRUCT. This allows pahole to successfully
+generate BTF for Go binaries using recursive types without impacting
+existing C-based workflows.
 
-DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS
-M:      Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-M:      "Rafael J. Wysocki" <rafael@kernel.org>
-M:      Danilo Krummrich <dakr@kernel.org>
+Changes in v4: fix typo found by Claude-based CI
 
-So depending how we look at it. Greg, Rafael, Danilo: can you leave an Ack =
-here?
+Changes in v3:
+  1. Patch 1: Adjusted the comment of btf_dedup_ref_type() to refer to
+  typedef as well.
+  2. Patch 2: Update of the "dedup: recursive typedef" test to include a
+  duplicated version of the types to make sure deduplication still happens
+  in this case.
 
-Bartosz
+Changes in v2:
+  1. Patch 1: Refactored code to prevent copying existing logic. Instead of
+  adding a new function we modify the existing btf_dedup_struct_type()
+  function to handle the BTF_KIND_TYPEDEF case. Calls to btf_hash_struct()
+  and btf_shallow_equal_struct() are replaced with calls to functions that
+  select btf_hash_struct() / btf_hash_typedef() based on the type.
+  2. Patch 2: Added tests
+
+v3: https://lore.kernel.org/lkml/cover.1763024337.git.paul.houssel@orange.com/
+
+v2: https://lore.kernel.org/lkml/cover.1762956564.git.paul.houssel@orange.com/
+
+v1: https://lore.kernel.org/lkml/20251107153408.159342-1-paulhoussel2@gmail.com/
+
+Paul Houssel (2):
+  libbpf: fix BTF dedup to support recursive typedef definitions
+  selftests/bpf: add BTF dedup tests for recursive typedef definitions
+
+ tools/lib/bpf/btf.c                          | 71 +++++++++++++++-----
+ tools/testing/selftests/bpf/prog_tests/btf.c | 65 ++++++++++++++++++
+ 2 files changed, 120 insertions(+), 16 deletions(-)
+
+-- 
+2.51.0
+
 
