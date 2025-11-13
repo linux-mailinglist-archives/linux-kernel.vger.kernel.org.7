@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-899359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC34C577FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F3FC5780E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729873BEE30
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801DC3A75DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 12:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A7B3502B0;
-	Thu, 13 Nov 2025 12:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A0934FF7C;
+	Thu, 13 Nov 2025 12:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ath6boxO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hsUdmOXc"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE6A2FFF8B;
-	Thu, 13 Nov 2025 12:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604492FFF8B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 12:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763038295; cv=none; b=uS5UZp8GOBuz6l/eG3/d31L7zHtU7UyyNKOBMY0v39CEhbbmvKErhQkrPRji1d20CabD5STgPtZy/sqpAe+0vwkGdUqxJbwpETj+C1T/InpuhAIrrWljjUItVW8pcAJ090dK/rV7D/3mXXofLwONCkTXd3q1mW8FR6GqSopKu30=
+	t=1763038355; cv=none; b=FuVv+XBgkcB4tiYoRuxulzqrjXQ81VszkdXPBASASAirjzij3lE7AK3IViHRrtxHTtutzQ31GZlXdAh9dwmrr9pvUxjS1ypsbehjesomH0M+BEQPV+s4VfaGTHcBO0PcXOP8ZimCRGASqlHC0uSjt04jT3s/uwZc+bKxOKFxT8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763038295; c=relaxed/simple;
-	bh=2b/mi2lloLGIcXzaj3h6NL6vBojEJTDY+DmChPaaOnA=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=F7TbAcBJa8gxIbiTsWHiOHlYuzgc48dVwdiFKYGWYHL2hzf/6p8h97bUHKqEqky2B6NBHA7wQefqikiy9eu5O69rC+Kk1HHzxDr1KiAcwj0nOSEhcDWIoa07m0U5y6VYqdkP5dAdHk9YDY8J/zVzDXV1SDzQa2eLprHpqK3aaII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ath6boxO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD8NWbj031615;
-	Thu, 13 Nov 2025 12:51:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=K/1kQhnlBr+ALCh9jEHK1uWpQt/t
-	CSc0s4jxAWwaMV0=; b=ath6boxOrrwuzUvXTUKalxQwFKNq5xDnr1I+RUQd3E4I
-	UuE5gf4us5ok0VkkfciB3c0hZApFhQEtCVLtGJdV+GsgVkoxX+cjP0PL/mVyfKSt
-	15vrrlJzhliAN7sHfWR8gUsxEAzfpiYfHRkfgIdfJHbYJFDJBn/rl5ArXXwoZjjE
-	BQzkCfqu9NKEGNCdamLD0tVQgwASwgeYpf/jb5WHGc6cwpPDInS8D1TnZOpO0VLn
-	CwcRrjO9HFpeB5jF/F3KlhAGC6OPuf4Bq4RY6PkARTRCYHhqiCzav6VCjT/Oq1vv
-	CwXC1G4smuIv36yP3ceK5d6syKUsyjitj1V4KCE1ig==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk8g06e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Nov 2025 12:51:26 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ADCkknh018605;
-	Thu, 13 Nov 2025 12:51:26 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk8g06b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Nov 2025 12:51:26 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AD90td3011428;
-	Thu, 13 Nov 2025 12:51:25 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw1ngfv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Nov 2025 12:51:25 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ADCpNTp27525790
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Nov 2025 12:51:23 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 16B405803F;
-	Thu, 13 Nov 2025 12:51:23 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A9B775805A;
-	Thu, 13 Nov 2025 12:51:20 +0000 (GMT)
-Received: from [9.61.246.65] (unknown [9.61.246.65])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Nov 2025 12:51:20 +0000 (GMT)
-Message-ID: <83749167-c479-46df-a749-e3f65ffc3964@linux.ibm.com>
-Date: Thu, 13 Nov 2025 18:21:19 +0530
+	s=arc-20240116; t=1763038355; c=relaxed/simple;
+	bh=6rf5XICqyYYUFtlvVo+knUPiKpsZJ2UtI9BoM7WxNHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qWEBAYsBff/ol9ik3XfwkmmBGxrucQ9pzY2Qw+xRdRkX0G90aiAIfNSh12ydj+CbBVuPfXw9G92VJeS/c7NwXG10B7xC4dv61jl32jahhn0x1bt2fSiTg5tke2NQB8fMeuLT8Oo/jyDMpsjzBYKBLny1S0QlRGjBxhCQ03tj07M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hsUdmOXc; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477549b3082so6846925e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 04:52:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763038348; x=1763643148; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FXYoTtDd3fqHx8jiPhi5RZA+APMZjV0IIjDW2SgiBMo=;
+        b=hsUdmOXcxVfusS8JDOe8Ch+o1ahwXn8wpQ1i7zxYY+frevQwvxJtdKheol/ASrS2fG
+         S/gi2Mn2QKY7T45RtXol7ETORcSCHeEM+mqLrt2WhexmM8rdrpidAwhL77+1P+y+o+FC
+         OPK4f1FvJFuZ4Dd8a/YgUN74GgxWa+crLvDqmftpHQp2kFb8+c5VUCPKeKvuA4FdP+8X
+         K+Eql/6bnYcLkYuuvqIlgtBSVRyZSLso3/VUBVEUz+AXZS5pTsI7dtFPCS7kYKSleWMM
+         c4PVgWSnPdzOQ8PrM5hMRw6eARRxOysh5owNHW/9Zc8f3qaWfX2n2Mhff0DRcGXSaY4y
+         dfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763038348; x=1763643148;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FXYoTtDd3fqHx8jiPhi5RZA+APMZjV0IIjDW2SgiBMo=;
+        b=AdAqJWAnFjeknKiTOo8/jb1oVOTvxSEGwja9pqif4OaFrS3T9pRSxcVlxlVSCTz5AW
+         pr7h+kcgsja+nmuVECNkKoLy07UoxdziVjhAOwJFjY4FsSlCqp8UITAS2h1aQwvhVCgu
+         FuJB+mPhZKybUaL2CYiIFgU+nxLr4W5Ijt1Fhma033KUDRpST+AWXucduLCmtwq+DFqh
+         dC7K+5J4Essa52j6nJyUI9WB6xzI4H6ZrFZn3fu1ongwdRmKvbqOPzItsQLL2HlgKIU4
+         FljpnEDbhs7dKbbUsrZJUu+X/CXykUQMEneRjEDV9T8Os7tIyfrZpwsuS8EGTMYErnAk
+         Pm4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOOuYKCHzX8UMef0wOLxzKqZnX27N3fmDlL4bE9yOlfsFAwma5qAK8ia7A73bA22z2Vbs7z2ozyp+QOyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuZOaVmqlPiwsQFS6iqagxxb0cMJKh1G1BG+87zoRFwPLl9tQV
+	0ix+rgIQST4KZy5cy/pIDJw7Iu5iiAd3gm5iXGYeKDu/Rh4NBfPH3IRyzN0X44WTwqY=
+X-Gm-Gg: ASbGnct+XKA2q4bLfZKLtlUZx99XmZMcMi1GkRwLcacmOKOlxHAI+aLUr/CnVF6/Lr/
+	VUabZJc/beKwYGHBXTy012TDxUOkIqe3xNn281BbH+AQLb8sjDk6AbTGXr/hQxy90oiJnXtsHgZ
+	+/Tb3lnYjLm7x5Z1yTB+xw/UAbi9cN2oC/KtSDtJBLgQ+WFtCgAZXM31GPrwMyJDUVdJLdMvy7R
+	rwSlvBQ6CNdMX5peVVFclh8vXcJ/Lllf10XhyFvqktFoxChpv7m63SY+kFcnKvAmTH6KAV2SMrx
+	Kd022GtvCpJymShReEoZzZtj/nBr7J0PrUvNbr+fSl27lTnp9+HqcTWZ6jWfV+pUqlU2C2WR0/V
+	Zg1U63GtYMmyU4Ce6EM1K5xWFwxAHAGovlZHKx1+IfZ+XrkJI2hYSQbRARrPuNrbhXkh9duDgzC
+	+vxfvt/A==
+X-Google-Smtp-Source: AGHT+IHpr3MsueMipe4IlddXi4/Vzl0f21raKHfRPZH2whdQqJt5/ks7Bz8Gchg8IDQDCn7p4XbSfQ==
+X-Received: by 2002:a05:600c:c4a3:b0:477:5ad9:6df1 with SMTP id 5b1f17b1804b1-4778704513amr69672855e9.3.1763038347935;
+        Thu, 13 Nov 2025 04:52:27 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bb30e3asm21086955e9.1.2025.11.13.04.52.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 04:52:27 -0800 (PST)
+Message-ID: <8cb0b7eb-d958-48a6-8940-6672d01b7e49@linaro.org>
+Date: Thu, 13 Nov 2025 14:52:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,165 +83,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: riteshh@linux.ibm.com, linux-btrfs@vger.kernel.org,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>, David Sterba <dsterba@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [linux-next20251112]Kernel OOPs while running btrfs/023 test case
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX/2F/9+2D13vR
- 8qx1fmkhdOoOXQ36KUDMaVAiupOZGaTF5gL7jESfkDCmNXp41Uc6sdB1FBv+/E+l+aaI6UkPYhm
- vEW+DFwxCPiKhEa+yiO/JHeH1BjhghrBBZ0LJ4NLqxrgMrcyuyVH8INmjAQo2tEHQif+BdgR90U
- Gh8+5lX88cTd/5EtGoLBFX5Q2lmxL5eERJq+IjmfnZT6G7hSaE4Dsd52tREca1x7QPX78PhUBF+
- MDs+LY1mVzJxjx3hFlKu0Rueqn5sIRXkuezLvS4SGU3HG44JDAWkRO6IaMxk5GTA2IIRlVy3RQx
- NdBqr/XPiO4IEhaoR7uDDSOxXfE3gBd2Oky0wXIT1jdRu3lcoKDYazVY8DWf12n6uFOKE1SQTxM
- b0mY/P2B9mFln9spMVLLxYp4dX4Z5Q==
-X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6915d44e cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=-xG82UhcpxHdGwSs7ZEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 5Ns0_-OT-nVe6WYzIE9HSG8FTRiqZQHl
-X-Proofpoint-GUID: chu-st7vAWBdjCHW-O1F8_TgxhxHbl0l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-13_02,2025-11-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
-
-Greetings!!!
+Subject: Re: [PATCH v2 2/5] nvmem: add Samsung Exynos OTP support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ semen.protsenko@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20251112-gs101-otp-v2-0-bff2eb020c95@linaro.org>
+ <20251112-gs101-otp-v2-2-bff2eb020c95@linaro.org>
+ <20251113-benign-macaw-of-development-dbd1f8@kuoka>
+ <9d77461c-4487-4719-98db-1c5c5025c87e@linaro.org>
+ <725ea727-d488-40aa-b36d-04d6d44a8ec5@kernel.org>
+ <1af37451-1f66-4b6b-8b36-846cbd2ca1e8@linaro.org>
+ <62bb6c08-a1d0-4dba-a431-0d6ce49d66b2@linaro.org>
+ <8eea72ea-c106-4dff-979f-c1acd6b0d617@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <8eea72ea-c106-4dff-979f-c1acd6b0d617@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-IBM CI has reported a kernel crash while running btrfs/023 test from 
-xfstest suite on IBM Power11 system.
 
+On 11/13/25 12:44 PM, Krzysztof Kozlowski wrote:
+> On 13/11/2025 11:26, Tudor Ambarus wrote:
+>>>
+>>>>>> this can easily be just customized chipid driver - with different
+>>>>>> implementation of exynos_chipid_get_chipid_info().
+>>>>>
+>>>>> If the answer is no to my question above, how shall I model the device
+>>>>> that binds to the existing exynos-chipid driver?
+>>>> Just extend the existing driver.
+>>>>
+>>> So you mean I shall have something like that in DT:
+>>>
+>>> +		chipid@10000000 {
+>>> +			compatible = "google,gs101-chipid";
+>>> +			reg = <0x10000000 0xf084>;
+>>> +			clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
+>>> +			interrupts = <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH 0>;
+>>> +		};
+>>>
+>>> Maybe remove the interrupts because I don't need them for reading OTP regs.
+>>>
+>>> What happens in the maybe unlikely case we do want to add support for OTP
+>>> for GS101? How will we describe that in DT?
+>>>
+>>
+>> Ah, I guess you meant to keep the node as I described it in patch 3/5,
+>> an efuse node with a google,gs101-otp compatible, that will bind to the
+>> existing exynos-chipid driver. Then if/when we add OTP support, move
+>> everything to a new OTP driver. That can work, yes. Unless I add some
+>> OTP support now, to justify the new driver. Both shall be okay, right?
+> 
+> Yes.
+> 
 
-Traces:
+I'm going to extend the existing chipid driver. I looked downstream again,
+and couldn't see any other consumer of OTP, even for newer SoCs than gs101.
 
-
-[  184.714500] BTRFS: device fsid b8c762d5-3f1a-4020-bca9-2e7e107e5363 
-devid 1 transid 8 /dev/loop1 (7:1) scanned by mkfs.btrfs (2697)
-[  184.714612] BTRFS: device fsid b8c762d5-3f1a-4020-bca9-2e7e107e5363 
-devid 2 transid 8 /dev/loop2 (7:2) scanned by mkfs.btrfs (2697)
-[  184.714731] BTRFS: device fsid b8c762d5-3f1a-4020-bca9-2e7e107e5363 
-devid 3 transid 8 /dev/loop3 (7:3) scanned by mkfs.btrfs (2697)
-[  184.714825] BTRFS: device fsid b8c762d5-3f1a-4020-bca9-2e7e107e5363 
-devid 4 transid 8 /dev/loop4 (7:4) scanned by mkfs.btrfs (2697)
-[  184.714918] BTRFS: device fsid b8c762d5-3f1a-4020-bca9-2e7e107e5363 
-devid 5 transid 8 /dev/loop5 (7:5) scanned by mkfs.btrfs (2697)
-[  184.720659] BTRFS info (device loop1): first mount of filesystem 
-b8c762d5-3f1a-4020-bca9-2e7e107e5363
-[  184.720694] BTRFS info (device loop1): using crc32c (crc32c-lib) 
-checksum algorithm
-[  184.720708] BTRFS info (device loop1): forcing free space tree for 
-sector size 4096 with page size 65536
-[  184.725011] BTRFS info (device loop1): checking UUID tree
-[  184.725060] BTRFS info (device loop1): enabling ssd optimizations
-[  184.725068] BTRFS info (device loop1): turning on async discard
-[  184.725075] BTRFS info (device loop1): enabling free space tree
-[  184.735050] BUG: Unable to handle kernel data access at 
-0x6696fffdda1ea4c2
-[  184.735072] Faulting instruction address: 0xc0000000007bd030
-[  184.735087] Oops: Kernel access of bad area, sig: 11 [#1]
-[  184.735101] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-[  184.735118] Modules linked in: loop nft_fib_inet nft_fib_ipv4 
-nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
-nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 
-nf_defrag_ipv4 bonding tls ip_set rfkill nf_tables sunrpc nfnetlink 
-pseries_rng vmx_crypto fuse ext4 crc16 mbcache jbd2 sd_mod sg ibmvscsi 
-ibmveth scsi_transport_srp pseries_wdt
-[  184.735316] CPU: 22 UID: 0 PID: 1948 Comm: systemd-udevd Kdump: 
-loaded Tainted: G    B               6.18.0-rc5-next-20251112 #1 VOLUNTARY
-[  184.735342] Tainted: [B]=BAD_PAGE
-[  184.735352] Hardware name: IBM,9080-HEX Power11 (architected) 
-0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-[  184.735369] NIP:  c0000000007bd030 LR: c0000000007bcef4 CTR: 
-c000000000902824
-[  184.735386] REGS: c00000006fdb7910 TRAP: 0380   Tainted: G B          
-       (6.18.0-rc5-next-20251112)
-[  184.735404] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-28004402  XER: 20040000
-[  184.735460] CFAR: c0000000007bcf98 IRQMASK: 0
-[  184.735460] GPR00: c0000000007bcef4 c00000006fdb7bb0 c0000000026aa100 
-0000000000000000
-[  184.735460] GPR04: 0000000000000cc0 000000013470ff60 00000000000006f0 
-c0000009906ff4f0
-[  184.735460] GPR08: 669164fddb1e9c02 0000000000000800 000000098d420000 
-0000000000000000
-[  184.735460] GPR12: c000000000902824 c000000991e0e700 0000000000000000 
-0000000000000000
-[  184.735460] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[  184.735460] GPR20: 0000000000000000 0000000000000000 0000000000000000 
-0000000000000000
-[  184.735460] GPR24: 00000000000006ef 0000000000001000 ffffffffffffffff 
-c00c000000402680
-[  184.735460] GPR28: c0000000008f312c 0000000000000cc0 6696fffdda1e9cc2 
-c00000000701e880
-[  184.735688] NIP [c0000000007bd030] kmem_cache_alloc_noprof+0x4ac/0x708
-[  184.735711] LR [c0000000007bcef4] kmem_cache_alloc_noprof+0x370/0x708
-[  184.735729] Call Trace:
-[  184.735738] [c00000006fdb7bb0] [c0000000007bcef4] 
-kmem_cache_alloc_noprof+0x370/0x708 (unreliable)
-[  184.735766] [c00000006fdb7c30] [c0000000008f312c] 
-getname_flags.part.0+0x54/0x30c
-[  184.735793] [c00000006fdb7c80] [c0000000009028a0] sys_unlinkat+0x7c/0xe4
-[  184.735814] [c00000006fdb7cc0] [c000000000039d50] 
-system_call_exception+0x1e0/0x450
-[  184.735839] [c00000006fdb7e50] [c00000000000d05c] 
-system_call_vectored_common+0x15c/0x2ec
-[  184.735866] ---- interrupt: 3000 at 0x7fff9df366bc
-[  184.735881] NIP:  00007fff9df366bc LR: 00007fff9df366bc CTR: 
-0000000000000000
-[  184.735897] REGS: c00000006fdb7e80 TRAP: 3000   Tainted: G B          
-       (6.18.0-rc5-next-20251112)
-[  184.735913] MSR:  800000000280f033 
-<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48004402  XER: 00000000
-[  184.735989] IRQMASK: 0
-[  184.735989] GPR00: 0000000000000124 00007fffe0b3a3a0 00007fff9e037d00 
-0000000000000006
-[  184.735989] GPR04: 000000013470ff60 0000000000000000 0000000000001000 
-00007fff9e0314b8
-[  184.735989] GPR08: 0000000000000271 0000000000000000 0000000000000000 
-0000000000000000
-[  184.735989] GPR12: 0000000000000000 00007fff9e8c4ca0 00000001161e5a78 
-00007fffe0b3ab10
-[  184.735989] GPR16: 0000000000000003 0000000000000000 00000001161aaed0 
-00000001161e9750
-[  184.735989] GPR20: 00007fffe0b3a780 00000001161eb260 00000001161eb320 
-0000000000000008
-[  184.735989] GPR24: 00000001347061c0 0000000000000000 0000000000000009 
-00000001347061c0
-[  184.735989] GPR28: 0000000000000006 00007fffe0b3a53c 0000000134715740 
-0000000000100000
-[  184.736216] NIP [00007fff9df366bc] 0x7fff9df366bc
-[  184.736231] LR [00007fff9df366bc] 0x7fff9df366bc
-[  184.736251] ---- interrupt: 3000
-[  184.736262] Code: f8610030 4082fccc 4bfffc28 2c3e0000 4182ff98 
-2c3b0000 4182ff90 60000000 3b40ffff 813f0030 e91f00c0 38d80001 
-<7f7e482a> 7d3e4a14 79270022 552ac03e
-[  184.736362] ---[ end trace 0000000000000000 ]---
-
-
-If you happen to fix this, please add below tag.
-
-
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
-
-
+Thanks!
+ta
 
