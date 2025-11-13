@@ -1,95 +1,176 @@
-Return-Path: <linux-kernel+bounces-898774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D5DC55FD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:56:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322CEC55FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 129C63B3CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411763B30F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 06:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F4F320A3C;
-	Thu, 13 Nov 2025 06:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE4F320CBB;
+	Thu, 13 Nov 2025 06:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aVHJitlj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhG7EyqT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9BC2F2E;
-	Thu, 13 Nov 2025 06:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D202035959;
+	Thu, 13 Nov 2025 06:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763016948; cv=none; b=P9fkU2RFtug9jJahWUU8eJa+QC1wEuuXPBKwVnTNfW1rZlO/4Fjjgy+45myqtUHSofvx/9a5KE6KhvqgYGbdl1hgqWLdTgywQLkcSKi4W+xBchll4Ghb+atW5qiOT+HTP4Ol8r6tbBQi2JP7JQ3Ot46Cpoh8Xs9Gs1/nvO7iN8M=
+	t=1763017159; cv=none; b=Tmwq1RDmowZPRav5dC54+VaiEdSVmpqDLazgD3JVaaUxN1SKkndHrh8AAfSAhK2wpjOYJeKjHsg615uLvtyk1hKm/7XUjUx9/z9fOCQ4c+DcqX+EyNJzoOiX4lA2B4iWII2O/ZK73hqNYDb8yNJFkIWunT0OwG0jHzTbb0prpco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763016948; c=relaxed/simple;
-	bh=NdrChLn5Ca63Qt8rRXJjVn3C6tdxVnLlwSl0CfW6iMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoBnvcttYvO7YpHz/ZojXfJGZKsyhhBzwcL0tlRiS/lllaY1C41rkNRWMGUewXImejKx1CThi2B4Td+vk9RjMJs3NCJ4c5BgLWisDh3MF20UETbxqMsGb0FHftIitn54TfAnTvTlA/HBtR3ce2J9Q6rlXdMEG2iYVigGh4/4vNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aVHJitlj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=El7SI5PteVGd8tbOlaue5rfugn9SVEem2nHz9oU0BvI=; b=aVHJitljtBgk4hh3Pkc2l0tkJM
-	knBECJWSzmXxCpWyqOauwO3EyvW2DbZIG5wrGwZhfHI5+8bRy10/mCE13DHjENoLsfExmzkBJnsmT
-	qA/f8qVFwM+Oe0dPXpdDVMn3rDHykjBlmpV3IX2jmCToxXyZvpwkmGbqfqcyz+KcTsuBLd29ngrgL
-	xh/Xg7Wf8Ypwuh49cwF4fhhVCkiZUiGvFocJNXAjDkPNBCDGDUZqRMY+FVjH//yB4LsvCr+MOzIPX
-	LQP/p6n24M42gSmQr4qCYkSG3IqAF6myu0f7PdovoF1eHMTcfG2kXXrDhNGogpIPydktGMUkxmN04
-	qgU73Ysg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJRF8-00000009ySp-1VBd;
-	Thu, 13 Nov 2025 06:55:42 +0000
-Date: Wed, 12 Nov 2025 22:55:42 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>, cem@kernel.org,
-	chandanbabu@kernel.org, bfoster@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
-	syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] xfs: reject log records with v2 size but v1 header
- version to avoid OOB
-Message-ID: <aRWA7v5Yng5i4X1U@infradead.org>
-References: <aRSng1I6l1f7l7EB@infradead.org>
- <20251112181817.2027616-2-rpthibeault@gmail.com>
- <20251112184504.GA196370@frogsfrogsfrogs>
+	s=arc-20240116; t=1763017159; c=relaxed/simple;
+	bh=kmWf36IUs4aP8gCc4jy0Ny15SO/HPLfZN4FMLoTkYkU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pLWetYJq5SMbDYzgEtg4bdquAzzlhRmHL5bKWhJHqU3Ub4U67SpHq3qwWFjs3vyJjGJWQVih9DhX5TIPUVXq+6HdD5uYCCGN2QUN/aYNWyV5S9nUrbch86DJ6ankPvK1+X0SWVR+GjfVYFDLRz2EHpqZH72h535/h+qq0EBeObs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhG7EyqT; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763017157; x=1794553157;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=kmWf36IUs4aP8gCc4jy0Ny15SO/HPLfZN4FMLoTkYkU=;
+  b=hhG7EyqTIAeuLHerR2zNEcLelMDWYuPSB2Pmtn7JtUTRyyF3C7ivBNlH
+   fO3YG79NMyKeNV9nehk5Inkv0WIocQQpP/EFxVHv+UtPgvv9t57tJXAOU
+   EsNpmDouK6ODApZ14U+PeVfB8E2GL3gyzjqL38wYnX5/PveBG96P9c8sF
+   r5y5GqjdUjSb/UT3xorsboRqBXLANKsin/0IrxZ0I9QXIvBiKLlmGoYNj
+   23bHyfeN5ePVIDgD4AgcqQeIAQJpK8si4gvhVIExMHzd9xxE6+XJf4S4s
+   Od8Xe7A+qrJLsliwOPFVnSWQrXEGy69O1PLkJOrXKO+3bg85x92qm91Hs
+   A==;
+X-CSE-ConnectionGUID: Xr0yuDlARzWABgMQhLgpVQ==
+X-CSE-MsgGUID: WwHkPe80Q+eczPrwcTUfwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="90561828"
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="90561828"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:59:16 -0800
+X-CSE-ConnectionGUID: L9n9Nk4bS7Sb5L5sbSqStQ==
+X-CSE-MsgGUID: waa/RnZ8SlyIGgRfi7zybw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,301,1754982000"; 
+   d="scan'208";a="212809703"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 22:59:13 -0800
+Message-ID: <9c0c1a27-8db5-4af3-87a3-a29351b438fc@linux.intel.com>
+Date: Thu, 13 Nov 2025 14:59:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112184504.GA196370@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/events/intel/cstate: Add Pantherlake support
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, jolsa@kernel.org,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251112090024.3298186-1-kaushlendra.kumar@intel.com>
+ <db0d7975-946e-4d74-928a-0c7018adcc03@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <db0d7975-946e-4d74-928a-0c7018adcc03@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 10:45:04AM -0800, Darrick J. Wong wrote:
-> > @@ -3064,8 +3064,12 @@ xlog_do_recovery_pass(
-> >  		 * still allocate the buffer based on the incorrect on-disk
-> >  		 * size.
-> >  		 */
-> > -		if (h_size > XLOG_HEADER_CYCLE_SIZE &&
-> > -		    (rhead->h_version & cpu_to_be32(XLOG_VERSION_2))) {
-> 
-> Just out of curiosity, why is this a bit flag test?  Did XFS ever emit a
-> log record with both XLOG_VERSION_2 *and* XLOG_VERSION_1 set?  The code
-> that writes new log records only sets h_version to 1 or 2, not 3.
 
-Yeah.  This particular instance got added by me, but it is a copy and
-paste from xlog_logrec_hblks, which again consolidate multiple chunks
-of this style of code, which were moved around a few times.
+On 11/13/2025 2:50 PM, Mi, Dapeng wrote:
+> Hi Kaushlendra,
+>
+> The PTL cstate enabling patch had been merged into tip perf/core branch. :)
 
-I think originally this came from Nathan fixing this:
+Sorry, forgot to paste the link.
+https://lore.kernel.org/all/20251023223754.1743928-4-zide.chen@intel.com/
 
--               if ((h_version && XLOG_VERSION_2) &&
-+
-+               if ((h_version & XLOG_VERSION_2) &&
 
-or in other words, this was a mess all the way back.
-
+>
+> Thanks,
+>
+> - Dapeng
+>
+> On 11/12/2025 5:00 PM, Kaushlendra Kumar wrote:
+>> It supports the same C-state residency counters as Lunarlake.This
+>> enables monitoring of C1, C6, C7 core states and C2,C3,C6,C10
+>> package states residency counters on Pantherlake platforms.
+>>
+>> Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+>> ---
+>>  arch/x86/events/intel/cstate.c | 16 +++++++++-------
+>>  1 file changed, 9 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+>> index ec753e39b007..b3582eeb6c4b 100644
+>> --- a/arch/x86/events/intel/cstate.c
+>> +++ b/arch/x86/events/intel/cstate.c
+>> @@ -41,7 +41,7 @@
+>>   *	MSR_CORE_C1_RES: CORE C1 Residency Counter
+>>   *			 perf code: 0x00
+>>   *			 Available model: SLM,AMT,GLM,CNL,ICX,TNT,ADL,RPL
+>> - *					  MTL,SRF,GRR,ARL,LNL
+>> + *					  MTL,SRF,GRR,ARL,LNL,PTL
+>>   *			 Scope: Core (each processor core has a MSR)
+>>   *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
+>>   *			       perf code: 0x01
+>> @@ -53,31 +53,32 @@
+>>   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+>>   *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
+>>   *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
+>> - *						GRR,ARL,LNL
+>> + *						GRR,ARL,LNL,PTL
+>>   *			       Scope: Core
+>>   *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
+>>   *			       perf code: 0x03
+>>   *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,KBL,CML,
+>> - *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL
+>> + *						ICL,TGL,RKL,ADL,RPL,MTL,ARL,LNL,
+>> + *						PTL
+>>   *			       Scope: Core
+>>   *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
+>>   *			       perf code: 0x00
+>>   *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+>>   *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+>> - *						RPL,SPR,MTL,ARL,LNL,SRF
+>> + *						RPL,SPR,MTL,ARL,LNL,SRF,PTL
+>>   *			       Scope: Package (physical package)
+>>   *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+>>   *			       perf code: 0x01
+>>   *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
+>>   *						GLM,CNL,KBL,CML,ICL,TGL,TNT,RKL,
+>> - *						ADL,RPL,MTL,ARL,LNL
+>> + *						ADL,RPL,MTL,ARL,LNL,PTL
+>>   *			       Scope: Package (physical package)
+>>   *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
+>>   *			       perf code: 0x02
+>>   *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
+>>   *						SKL,KNL,GLM,CNL,KBL,CML,ICL,ICX,
+>>   *						TGL,TNT,RKL,ADL,RPL,SPR,MTL,SRF,
+>> - *						ARL,LNL
+>> + *						ARL,LNL,PTL
+>>   *			       Scope: Package (physical package)
+>>   *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
+>>   *			       perf code: 0x03
+>> @@ -96,7 +97,7 @@
+>>   *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
+>>   *			       perf code: 0x06
+>>   *			       Available model: HSW ULT,KBL,GLM,CNL,CML,ICL,TGL,
+>> - *						TNT,RKL,ADL,RPL,MTL,ARL,LNL
+>> + *						TNT,RKL,ADL,RPL,MTL,ARL,LNL,PTL
+>>   *			       Scope: Package (physical package)
+>>   *	MSR_MODULE_C6_RES_MS:  Module C6 Residency Counter.
+>>   *			       perf code: 0x00
+>> @@ -652,6 +653,7 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+>>  	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&adl_cstates),
+>>  	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	&adl_cstates),
+>>  	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_cstates),
+>> +	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&lnl_cstates),
+>>  	{ },
+>>  };
+>>  MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
 
