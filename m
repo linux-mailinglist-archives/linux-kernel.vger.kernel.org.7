@@ -1,107 +1,156 @@
-Return-Path: <linux-kernel+bounces-898799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DD6C560A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 857D4C561DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 08:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976903AF168
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B623AD9AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 07:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CCE26E703;
-	Thu, 13 Nov 2025 07:24:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6187032F775;
+	Thu, 13 Nov 2025 07:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A9l14zFZ"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226D2FF167
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E10732ED4A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763018645; cv=none; b=rH+IV0xDUZ2bge1RaSZ7nsrfIS20ZoQAKsL6NYziDPi2/fWXuE8YhVgbq996tDsa2NHLOY969lidVX5UP8KRqrObww9rOwsKUqUgO1eCd26ttbrTSivrJrMFRuNy09bsyoZ3cJPPEc3+uU23R48bUD+wsEGjQfVSBqfcF8Eqbjo=
+	t=1763020206; cv=none; b=kX23ADhxlAjYo5/Qk/UC1HB6TRQi3WZqeXu5PsVAYJjbINCzlJoXKpj8Aj8z6Vyc8sLV2dY9ts8Y9kjm3b5OQ/5/PvdxFgjl4MXNg3DM1OKiGWLTWDmqh1OSn5Zs+Bk7MdiufXKsbtEMSZwXOP9E4CpRMop0JL8JOrRftBAgn7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763018645; c=relaxed/simple;
-	bh=LTKOslVxt0GwzczsKH3HLgx4PRqnfgp189PkvckpDTQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BFRgoaLI7KP4x/99H6xDGP2MmPx3h1PuuG2nucGAoTzpx9pMPI4zQw8g41kW0AaFTxM42dzXF7OFe/PEW+hk+9FH8FqR33VNFX0gP60tSkDRhsXRvjeHAjUMOCCeNIoPq3nk6xLq8TGf+FKN9yNCx0wEosODgnqBgRCgIotjRbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43377f5ae6fso22302355ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 23:24:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763018642; x=1763623442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0QwhD92ZC9+T0AS2viZmXj5BXsavT1B3l8pbL/LjXuY=;
-        b=mPURjeE75CyTnvG4yDejyZx/lTrceFf8n1XtwxzjYLZr2HP3IN8V+D0krdpWa0knkQ
-         5WN0dqbSb0fPrsjXEuf/3LIugxxd3+O2LooLC6ukMQaVrib/xlfQz4SV+dTsboDtwlsW
-         vzLIa0Zqm7zIpr4luJvxYCWcjH88tG1rQU7GaT0khO8QBo+WbvIVnCp+QXa3W2r6+NUq
-         hTy9U25t6K95Cfq0xDAROqDhzLcSulKcOhK3DJQOBaQCZNpxboCD3y5iquQ6NZGWQ+fZ
-         +qsR+5CPNEuLUfUnYcpQYk/pSHz4boj2VhJVlzCFqpz+4bbGwHVoX9thxeX08wm9P3G5
-         kKaw==
-X-Gm-Message-State: AOJu0YxaCaBTu1GVvPpWF2lyAKCH452F/q64qhekCyqinWxQu+gW40ZI
-	bU91DHenFcx8WZB85p90kQYviEyW9MTWH3Hdzwka+Y5SblxeyEX47VN1osIGqPov7BTwV0w65do
-	odDOtdxBTr13L7Rk0lUOVVJEQyeNvHah/KOl768DzzSksytg6JdaQFd001+w=
-X-Google-Smtp-Source: AGHT+IEie4G4F1nV1zrQCTClLxYKQv+AMu9ZGr5rcIdTp2aVlQn3yiEFsHjSJwsNbZGExVT16Ht9/bx0ICLmI93jsU5PdXf8Rjqv
+	s=arc-20240116; t=1763020206; c=relaxed/simple;
+	bh=rPpv0YpI1s5IrHKxhIrzkZ9tfhot0vKl5EEgO7jMoXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=SnOP6Mfv5CqT9tUNoLyG6nowIJQIES/+QVq0IFRr2EEkVoXtqZYc2aaqskivWgRn0dXT7n1/D6Uqk8WKZUnjaRiIvV3dGnmwA7ERXLRO9fGHy4HYytGWjhhpyu46hmTiqKO+V2eHAVu2HjZ9/5t61Mxd6LpLaTuijGPlO5JPzgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A9l14zFZ; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251113075002epoutp04281b0a2f64038d5f0f4c8ac4b1ecbe37~3gYiBtMpK0329003290epoutp04M
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:50:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251113075002epoutp04281b0a2f64038d5f0f4c8ac4b1ecbe37~3gYiBtMpK0329003290epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763020202;
+	bh=rPpv0YpI1s5IrHKxhIrzkZ9tfhot0vKl5EEgO7jMoXw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A9l14zFZuSkh+OidejInaqgr+qLiNd+IwX/OebIx1AoomckDymuGsivNFVyzMEwEE
+	 JSpmaW/oWo78pYwbzW5R0ws3qAspDdoj3sXsTWRSHOx+ipaBSxoHOIkeVTrc3C01kf
+	 ItnqK9I6WqBjgC2a/DoCJ+mazpcyG9U01k/sEP2M=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251113075002epcas5p2223c3bb7ed92c0b3dd1494dc7113ef43~3gYhvQe4-2564525645epcas5p2O;
+	Thu, 13 Nov 2025 07:50:02 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4d6XVf0cddz6B9m6; Thu, 13 Nov
+	2025 07:50:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251113072717epcas5p22ac6aa251df5c33fadfe2c100ab833b1~3gEqdwnW62353123531epcas5p2U;
+	Thu, 13 Nov 2025 07:27:17 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251113072715epsmtip1f93902a24349817692a96ba43c340c6c~3gEpFe0zQ2815128151epsmtip1S;
+	Thu, 13 Nov 2025 07:27:15 +0000 (GMT)
+Date: Thu, 13 Nov 2025 12:57:09 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V3 13/20] cxl/mem: Refactor cxl pmem region
+ auto-assembling
+Message-ID: <1983025922.01763020202072.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:434:6f29:6cb with SMTP id
- e9e14a558f8ab-43473da2d18mr84365325ab.26.1763018642535; Wed, 12 Nov 2025
- 23:24:02 -0800 (PST)
-Date: Wed, 12 Nov 2025 23:24:02 -0800
-In-Reply-To: <67da6f4b.050a0220.3657bb.013b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69158792.050a0220.3565dc.0020.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [usb?] [media?] WARNING in
- media_create_pad_link (2)
-From: syzbot <syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a204bc0e-1111-4ff9-a8d2-eeb8b7b9fe8d@intel.com>
+X-CMS-MailID: 20251113072717epcas5p22ac6aa251df5c33fadfe2c100ab833b1
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----DpLuDkH5jVwtRmV_no6S5rPRFid5ecuUEflgz2nUXUkLddKC=_bc0e0_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+	<CGME20250917134157epcas5p1b30306bc8596b7b50548ddf3683c3b97@epcas5p1.samsung.com>
+	<20250917134116.1623730-14-s.neeraj@samsung.com>
+	<c7b41eb6-b946-4ac0-9ddd-e75ba4ceb636@intel.com>
+	<1296674576.21759726502325.JavaMail.epsvc@epcpadp1new>
+	<361d0e84-9362-4389-a909-37878910b90f@intel.com>
+	<1983025922.01762749301758.JavaMail.epsvc@epcpadp1new>
+	<a204bc0e-1111-4ff9-a8d2-eeb8b7b9fe8d@intel.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+------DpLuDkH5jVwtRmV_no6S5rPRFid5ecuUEflgz2nUXUkLddKC=_bc0e0_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-***
-
-Subject: Re: [syzbot] [usb?] [media?] WARNING in media_create_pad_link (2)
-Author: ribalda@chromium.org
-
-#syz fix: media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID
-
-On Thu, 13 Nov 2025 at 01:45, syzbot
-<syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com> wrote:
+On 12/11/25 08:55AM, Dave Jiang wrote:
 >
-> syzbot suspects this issue was fixed by commit:
 >
-> commit 0e2ee70291e64a30fe36960c85294726d34a103e
-> Author: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> Date:   Wed Aug 20 16:08:16 2025 +0000
+
+<snip>
+
+>> During cxl_pci_probe() we call devm_cxl_add_memdev(struct cxl_memdev_ops *ops)
+>> where function pointer as ops gets registered which gets called in cxl_mem_probe()
+>> using cxlmd->ops->probe()
+>>
+>> The probe callback runs after the port topology is successfully attached for
+>> the given memdev.
+>>
+>> So to use this infra we have to pass cxl_region_discovery() as ops parameter
+>> of devm_cxl_add_memdev() getting called from cxl_pci_probe().
+>>  
+>> In this patch-set cxl_region_discovery() signature is different from cxlmd->ops->probe()
+>>
+>>    {{{
+>>     void cxl_region_discovery(struct cxl_port *port)
+>>     {
+>>             device_for_each_child(&port->dev, NULL, discover_region);
+>>     }
+>>
+>>     struct cxl_memdev_ops {
+>>             int (*probe)(struct cxl_memdev *cxlmd);
+>>     };
+>>    }}}
+>>
+>> Even after changing the signature of cxl_region_discovery() as per cxlmd->ops->probe()
+>> may create problem as when the ops->probe() fails, then it will halts the probe sequence
+>> of cxl_pci_probe()
+>>
+>> It is because discover_region() may fail if two memdevs are participating into one region
 >
->     media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID
+>While discover_region() may fail, the return value is ignored. The current code disregards failures from device_for_each_child(). And also above, cxl_region_discovery() returns void. So I don't follow how ops->probe() would fail if we ignore errors from discover_region().
 >
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f0f0b4580000
-> start commit:   07e27ad16399 Linux 6.17-rc7
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e38142580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da427c580000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: media: uvcvideo: Mark invalid entities with id UVC_INVALID_ENTITY_ID
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>DJ
+
+Hi Dave,
+
+Yes, you are correct. We can just change signature of cxl_region_discovery() as per
+cxlmd->ops->probe(), anyway we are ignoring errors from discover_region().
+With this change we can directly register cxl_region_discovery() with
+devm_cxl_add_memdev(struct cxl_memdev_ops *ops) during pci_probe() using Dan's Infra.
+
+I will use this new infra for region auto-assembling and share the v4 series shortly.
 
 
+Regards,
+Neeraj
 
--- 
-Ricardo Ribalda
+------DpLuDkH5jVwtRmV_no6S5rPRFid5ecuUEflgz2nUXUkLddKC=_bc0e0_
+Content-Type: text/plain; charset="utf-8"
+
+
+------DpLuDkH5jVwtRmV_no6S5rPRFid5ecuUEflgz2nUXUkLddKC=_bc0e0_--
+
 
