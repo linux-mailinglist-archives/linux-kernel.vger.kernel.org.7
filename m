@@ -1,84 +1,102 @@
-Return-Path: <linux-kernel+bounces-899703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E523C58A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:18:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF9AC58BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:32:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51ADE424FB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:54:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7DC04F824F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5F42FFF8B;
-	Thu, 13 Nov 2025 15:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C401A340DB1;
+	Thu, 13 Nov 2025 15:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSdsaO9G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O70z7SGs"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292542F0C63;
-	Thu, 13 Nov 2025 15:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9033B96C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763049054; cv=none; b=XhA6ZaMSvYQUG6TcKjsEm66lrFLPvWqe7NB2szYEqEIY/1lX85B7CCVg/i1J6LSqXcBx973WIA2jwWTaZrWyVY1IoNgl2mIkSh0Y8kUrlPMXxSpTj07y0zwF2bZzDmb/J0rIFHwTkdPYxr6ekxeKFdEr7+/pWfrcwXiFTFfqNn0=
+	t=1763049134; cv=none; b=BraQ2tbX/IJgNKnt7Q/fSulAeTrGj0Nzrg9F1puNVzr/UdBoNxxDgFab+RAGr8SsmNIQ/w9TFvwuw7iFc6Hn68b+HjPHUxowp9GSwm/dONCREEE+ZYEe3Xy7NOgmS32b2AY1b9aHNya7sFgEE5JnCspSGji6waJnVWJxs1gM55M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763049054; c=relaxed/simple;
-	bh=NuvIv3BIziLrSvD6tGsq18oZc4WyYyoamFBFn3ungY4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tluKL7s0S+LkrKMLKIMPEBcZ9ZB7F0qzZJXtP6/o9rrEpWuzRfM1nYj8VYYa3zbvwQkHZKSkS/hv0bhZa3uy9eEYxHOLXkFgriHQDdQVs/Q9RN0Q1/Y7lUF4m5pA06d+Vymtgc3HW9ozbg30Nl/TDpKlTPbqpN+P6WdsZvWJzcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSdsaO9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7726C113D0;
-	Thu, 13 Nov 2025 15:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763049053;
-	bh=NuvIv3BIziLrSvD6tGsq18oZc4WyYyoamFBFn3ungY4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=nSdsaO9GnKg2pmEwldqy4fqLsoZYIkCyIQSMru/hInKQtul8r7h0aSUReBCUvUXtI
-	 lzTdfq1s3+JJZtIBvyHrkTXE1G0SyuqQt/e0BMCOIbu1aR37iVdar71o02N5l2pdbn
-	 O4cp3zWAG9nJrt41Nf8x6lkONutxN6TO4Yx4vfOthXFnnOSElVVPbvaZrZ+HfqxDZQ
-	 DGEXYV4OsJWmUYr119Yv4eFmH7LjbEIpdYvFxSF4G4bk8qQNhaNFKJScuregxpI2e5
-	 pW9fHzY6GRKwKzFCXBoHg66NLALMsIgzd0Unudd5VFgVXCCD6hc8g66xpzTz+RjiM4
-	 ezb5uuMNE+YLA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, imx@lists.linux.dev, 
- Samuel Kayode <samkay014@gmail.com>, Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Frank Li <Frank.Li@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sean Nyekjaer <sean@geanix.com>, kernel-janitors@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-In-Reply-To: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
-References: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
-Subject: Re: (subset) [PATCH] MAINTAINERS: adjust file entry in NXP PF1550
- PMIC MFD DRIVER
-Message-Id: <176304905155.1551730.17046698654950057712.b4-ty@kernel.org>
-Date: Thu, 13 Nov 2025 15:50:51 +0000
+	s=arc-20240116; t=1763049134; c=relaxed/simple;
+	bh=7WKzXKew6KgiSOeZU/u8kGox8b1sYC8NnUAddHTdcGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zz997hM2ey2HYpRms2fFGNv9lUN2f22JkxoVAce+8BUkthKLpnSOfrKFz0W/RvBYIfZtWGgmrbPI6JZrgqsXw8M0l0/NAVzEIZy4WCMTs4sC80LonJ7yComKziZSu396VaQoHL9dJGCIj56+1PnIYcRHcLFjg7yidSkpwUYkf/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O70z7SGs; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763049130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9RqZn7CnG+RuCFOcaoApPmBzNHLrXH0MNcl0E1VTIG4=;
+	b=O70z7SGsb21L/G0AQDCsfxFpCGWD3ZstkzMgKtDdXanqHdO3LozC6xKlSDCJ4fVmuozpbH
+	tzzWUoRAMxTTo9FQP1XRd0Ls7wdUdrFrnB7pyaKM2wRQJEnxhbU33eVGEeDnRq/djTXuK6
+	c/TxUdBU6ZlukJ+2yk8Yb/bKdjddUlE=
+From: Yuntao Wang <yuntao.wang@linux.dev>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Baoquan He <bhe@redhat.com>,
+	Zhen Lei <thunder.leizhen@huawei.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geoff Levand <geoff@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Alexander Graf <graf@amazon.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuntao Wang <yuntao.wang@linux.dev>
+Subject: [PATCH v2 0/7] of/fdt: Some bug fixes and cleanups
+Date: Thu, 13 Nov 2025 23:50:57 +0800
+Message-ID: <20251113155104.226617-1-yuntao.wang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 29 Oct 2025 11:42:28 +0100, Lukas Bulwahn wrote:
-> Commit ebaec90ec0b5 ("mfd: pf1550: Add core driver for the PF1550 PMIC")
-> adds the header file pf1550.h in include/linux/mfd/, and commit
-> a7d6255a0bf3 ("MAINTAINERS: Add an entry for PF1550 MFD driver") adds a new
-> section NXP PF1550 PMIC MFD DRIVER intending to refer to that header file.
-> It however adds the entry for pfd1550.h; note the additional letter in the
-> filename.
-> 
-> [...]
+This patch series fixes several bugs related to dt_root_addr_cells and
+dt_root_size_cells, and performs some cleanup.
 
-Applied, thanks!
+Changelog:
 
-[1/1] MAINTAINERS: adjust file entry in NXP PF1550 PMIC MFD DRIVER
-      commit: 5c17042d6ce7490477eb11b7f90983adbcb5fa0c
+v1: Consolidate duplicate code into helper functions
 
---
-Lee Jones [李琼斯]
+Links:
 
+v1: https://lore.kernel.org/linux-devicetree/20251112143520.233870-11-yuntao.wang@linux.dev/t/
+
+Yuntao Wang (7):
+  of/fdt: Consolidate duplicate code into helper functions
+  of/fdt: Fix the len check in early_init_dt_check_for_elfcorehdr()
+  of/fdt: Fix the len check in
+    early_init_dt_check_for_usable_mem_range()
+  of/fdt: Fix incorrect use of dt_root_addr_cells in
+    early_init_dt_check_kho()
+  of/fdt: Simplify the logic of early_init_dt_scan_memory()
+  of/reserved_mem: Simplify the logic of __reserved_mem_reserve_reg()
+  of/reserved_mem: Simplify the logic of
+    fdt_scan_reserved_mem_reg_nodes()
+
+ drivers/of/fdt.c             | 93 ++++++++++++++++++++++--------------
+ drivers/of/of_reserved_mem.c | 37 ++++----------
+ include/linux/of_fdt.h       |  5 ++
+ 3 files changed, 72 insertions(+), 63 deletions(-)
+
+-- 
+2.51.0
 
