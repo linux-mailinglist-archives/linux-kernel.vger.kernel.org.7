@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-899629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FA4C588B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:00:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D565AC58734
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 101384F2A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:32:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C918C35B38F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A74C2F6932;
-	Thu, 13 Nov 2025 15:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B072F8BCB;
+	Thu, 13 Nov 2025 15:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="mVFHUc32"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9402EE60B;
-	Thu, 13 Nov 2025 15:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047361; cv=none; b=iq+rDB062roffT7YRsTyeNtOp9iLtx1RfqAYL5nl1uxFHOQNFutL63tK9c80pl5iiDDIF3gDLM8I7E4Tg7ZbtKwii8YBtjsWuCSEYcdNgJhGcV/khN3i8vMbtxvxDSyMiY2GTQUipW5yY/O4gbOJgUxQYkqu0xXBdOICGwUZHwc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047361; c=relaxed/simple;
-	bh=GXUVT5DeTUDwirgImMsBRE1IapdOHh4ftY+jbZ509jc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huIaXKRtMLUn72/ydURKruXE+/6exSosYHk1VGpLZ/MBF76mW+1SE7dycfMbO5AeZQW0jU5QBPsD02OxowiKMi1f8OlsUnPYvZersABQQ+1oNAMuiFAJdPmDPW/JtnSOYl2jOFjnqU4DEGXV5n0TBZYBXyAmARiE+ts7JMccOTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=mVFHUc32; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p549214ac.dip0.t-ipconnect.de [84.146.20.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dCYVtHuS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 43B9D5AE33;
-	Thu, 13 Nov 2025 16:22:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1763047357;
-	bh=GXUVT5DeTUDwirgImMsBRE1IapdOHh4ftY+jbZ509jc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mVFHUc32qYmz2AOOYJ81HTJSqKoMAqN8tszCwc3WyrYjezNQ/u7e62qXkmiZfapHf
-	 4DOUEyZu2kcl3bfXm+YoDkAYgfDd2Q1Lzv3VUqpvtKYkjymzgaZtPR5AhncsYeY4A7
-	 FfW0D0R0PaloccwbK391s5/zVz9EmPGtMthi2LgyOfLK3nWxS4WuUMT4XPgbPuSevm
-	 A8cNM9O6Jjfh9bNPDcTgyFdz7YQFfQEdnTIlA9zlvoWmcAZJr7IfkABSw8k+XXcIVQ
-	 DKL70gSgyD71AFgp6ZK5c4fuIP/bCWrho57kl6glqSvELPP23pdfd9bhTD/FApK9Y9
-	 HmQgZ2kU5Ex8A==
-Date: Thu, 13 Nov 2025 16:22:34 +0100
-From: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-To: Jinhui Guo <guojinhui.liam@bytedance.com>
-Cc: suravee.suthikulpanit@amd.com, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [RESEND PATCH] iommu/amd: Fix pci_segment memleak in
- alloc_pci_segment()
-Message-ID: <yzhwgps5cawvflyg2jtl4x6zlu6bnrfpjy7hbler6v5qbdgit5@s6ijyxynxhx3>
-References: <20250928053657.1205-1-guojinhui.liam@bytedance.com>
- <20251027165017.4189-1-guojinhui.liam@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499AC2F83B3
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763047372; cv=none; b=aPn/9P4mitG12J5sGCOMotn6BThUA2NSrJblcA04kEnDRfvFWkkHvW96FPMvFpqE1yieQjb2AdLiaRQndU0C1UeIt+MhDhV5dnayM1L5uOG0sNNhkNP+kiPEDh1j7br3lDbynX85CSb6+mlfccm8fCwack3zA0VsXaE5Llgm9EI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763047372; c=relaxed/simple;
+	bh=1S/lEwwEIAoQIgeK0eXkfIk1Dc14TBtOKqQwEW2+8TM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q27OhyZVEEJ+nqW71J14sbcjeIOxUXxDoOOnGbKLz6ZKtzg8JzgZXNQ+OTSnP+OW6ZAI8HCzsQNvDb2vy8yC9+Wymc1t8agA6ITE8tjkJnaKbqCoBy6DALTtbFDc+GvH8mxXofRnOsX/o4jNdyp7Zdf+bK8RQbHgl7bq4AkiiZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dCYVtHuS; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763047370; x=1794583370;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1S/lEwwEIAoQIgeK0eXkfIk1Dc14TBtOKqQwEW2+8TM=;
+  b=dCYVtHuSrYDrMblHUJ/qy4P3qfA407m+w/vAMrR43gWRq5wn/sz+Ufa8
+   8NwbnpmiI0DEpat1jiQGY6aQchI94qEHtdL/6EFD8GCiRSQjfPmVWPQll
+   Y2B+xdDhOr8wUJr66dlDkdvYlp4dq2jc9Rv8WAX0KX9XLDHd0aOE1ibTx
+   whkkuOETh+Ef/IOop+37yKWxRx4Hl6pD1/s3u58LoNyvaABoqzQHGKGrn
+   dr9PcVqsMj7/mloN+m00bIyP4IV3HLqo4jWhCJq6ccy+hkDeJYwTZVC+m
+   9VJxsgMrJrcZx0HRmtCamXo0VrVOP8nd/pAISViCkO/4MPIkBOnwhX+/h
+   A==;
+X-CSE-ConnectionGUID: DUPV/2LmTki4tR1t5QryDQ==
+X-CSE-MsgGUID: i16vKemqQkezL2Ut/2fVuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11612"; a="65169086"
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="65169086"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:22:49 -0800
+X-CSE-ConnectionGUID: knFBjVgZSa62bHP2w4ADJA==
+X-CSE-MsgGUID: a61Gpr/lQdu4hnM0S+m4Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,302,1754982000"; 
+   d="scan'208";a="193964618"
+Received: from mfalkows-mobl.ger.corp.intel.com (HELO [10.246.18.39]) ([10.246.18.39])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2025 07:22:48 -0800
+Message-ID: <3ee3c7a6-65cc-4d67-9a4d-5b9b09e7908e@linux.intel.com>
+Date: Thu, 13 Nov 2025 16:22:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027165017.4189-1-guojinhui.liam@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] accel/amdxdna: Clear mailbox interrupt register during
+ channel creation
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
+ mario.limonciello@amd.com
+References: <20251107181115.1293158-1-lizhi.hou@amd.com>
+Content-Language: en-US
+From: "Falkowski, Maciej" <maciej.falkowski@linux.intel.com>
+In-Reply-To: <20251107181115.1293158-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 28, 2025 at 12:50:17AM +0800, Jinhui Guo wrote:
-> Fix a memory leak of struct amd_iommu_pci_segment in alloc_pci_segment()
-> when system memory (or contiguous memory) is insufficient.
-> 
-> Fixes: 04230c119930 ("iommu/amd: Introduce per PCI segment device table")
-> Fixes: eda797a27795 ("iommu/amd: Introduce per PCI segment rlookup table")
-> Fixes: 99fc4ac3d297 ("iommu/amd: Introduce per PCI segment alias_table")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
+Reviewed-by: Maciej Falkowski <maciej.falkowski@linux.intel.com>
 
-Applied, thanks.
+On 11/7/2025 7:11 PM, Lizhi Hou wrote:
+> The mailbox interrupt register is not always cleared when a mailbox channel
+> is created. This can leave stale interrupt states from previous operations.
+>
+> Fix this by explicitly clearing the interrupt register in the mailbox
+> channel creation function.
+>
+> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>   drivers/accel/amdxdna/amdxdna_mailbox.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
+> index 24258dcc18eb..858df97cd3fb 100644
+> --- a/drivers/accel/amdxdna/amdxdna_mailbox.c
+> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
+> @@ -516,6 +516,7 @@ xdna_mailbox_create_channel(struct mailbox *mb,
+>   	}
+>   
+>   	mb_chann->bad_state = false;
+> +	mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
+>   
+>   	MB_DBG(mb_chann, "Mailbox channel created (irq: %d)", mb_chann->msix_irq);
+>   	return mb_chann;
 
