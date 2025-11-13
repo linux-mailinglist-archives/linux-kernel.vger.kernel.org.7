@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-899444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA87C57C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:49:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE8BC57C9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 96D8E344B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:42:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CA3F735828B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEB3223710;
-	Thu, 13 Nov 2025 13:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419072222C4;
+	Thu, 13 Nov 2025 13:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="b/rzjPAC"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qog5kLiq"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C961FC0E2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83938208994
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041321; cv=none; b=UdpG7YJTk+Qbpa6iEnDEYRmpdxu8ufrJrlcZTNOt85Y/QqXNGeqQn5HtZCC8MRcETy7kz2MWDOiZfDwyIerc/qqC/XRoF3XB7269odcuDkRU6TQLRBiG3fGc+T8ekY1XohOxZqNIA+f35Ruc/LF1oK3oKrVK8HQo+gcUAw3ccBc=
+	t=1763041468; cv=none; b=PmWFy/0HmUcAPSNBh+7vhBdmR+XyT/es+yBVWl88FIbzec1jyb5fIBFRsRrnZkAadGIwV3BkraYJHdbPNQYFmpXNnCY0BUmWY5oyOc4DKgoz8IR7KQbT/HNKxqD/opq12feFK2LzAOPSVFr+C/cJZYpleIcwCn8tkLqZ/yi1zUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041321; c=relaxed/simple;
-	bh=GLqncc5/5zGkwI1+bv2pb78gB9RyxcsUzYNiDGa3NKc=;
+	s=arc-20240116; t=1763041468; c=relaxed/simple;
+	bh=n3yn/Qzs/10SowO+cV6IyFirX5NhFXBaRiN32HGuPq0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JYJW46IsNJCYVNO/TcgCOYx+dcIsxQxIxWwaGoAr517jPILF0NvkLBNxcSsCWIubS6/k3LhJMNYCDOS75O5a0yvwYsQLo9AidjwEHJZAw6baQjvUGJpwyivJR/U+jaQqzZZhTB8U26tDHNJYpiQkTacyi0oBO2axXlNWlbg8D94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=b/rzjPAC; arc=none smtp.client-ip=209.85.167.54
+	 To:Cc:Content-Type; b=uv71Cr0kfLxw3cukstfExGtYY3I6nqzY1F5yOaG53BEsZOINBm6G4nVnjaHPUardY5RFjecFW/pu2X+yYnTPEfOlbzM5fxOkq8CJFNUHDNMT4mGuZn8ekNUyTLYwtML4/9fBUcPeuZkkZh7HjeOfW8cmxRLPxHUmngDY05ZCto8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qog5kLiq; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-59447ca49afso1055811e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:41:58 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5957d86f800so817829e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:44:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763041316; x=1763646116; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763041464; x=1763646264; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e6YFPbYQaXtcm5LdD7/GneIOXBdjWXCgrgn8VVQE3So=;
-        b=b/rzjPAC2S040culAnBENk6/YqMZYIyWQXPQcGegmnq623g+PTO4bW4p6296vA6Bi3
-         sIXhx1kGeJZd7sjOKnVTidd95r+HgvMYD8HPUFdoowbtK9TUF74eKlL4XWumluttlLFh
-         d9snIpjWWVQ+U+D+OHH9Ub8OvHpAeTjm6kQbx4OTdPAgZzhwgVTdYVCh9SIOkCVP2ItU
-         AwKCD63BYqtSg7h9r7n8CXvDBENBGBhS+AeUUgXWip4Z7tAQ7VJY0LneGzVXKsWEtld9
-         N4bjXEODBpkijQO638Rj5I7waG0ri+WKEUdYsdO/c38Gn8mZ698LjiRfhskBSDqCTmWD
-         aU8Q==
+        bh=gHk2bNA1OTHNC9vr3z2H2JeUdyy+rk3RBEHgiTzG238=;
+        b=qog5kLiqxL98ShFKc/SwX9mP+f24xq3WCQrZs3mf/iNDSxNs9ehsTSA1uZY/PGDKU1
+         f7s24wBBKmrsWq66ZvGC3M1zsmd5PSjUXxIKdkgYLyXyWY3F/svgRipvOnz7FDHyum5U
+         ettEqYXWaNlhAVoG1sUtFdJkaujxjVsOm8/tQmJHYkRiRTP9gOYghyVph0ZDg2/A/M3c
+         eIvhZj3sl2wBX4BhjLdX7LYq2F5xUnmcaFLfpofFiao355Vw6LVJIPG26l16TKfG6m1L
+         KVaSgPP4an0HQ22Zxs1IIMtHs+YdVvdKgqUxLN3uzwoYUPD/NmIANVjkfqCHgIpT9Lju
+         Y+zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763041316; x=1763646116;
+        d=1e100.net; s=20230601; t=1763041464; x=1763646264;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=e6YFPbYQaXtcm5LdD7/GneIOXBdjWXCgrgn8VVQE3So=;
-        b=mPhsEInnZn1ClYQ99iVTmaTZVAtaxaluco+IIGyR4tWVat0FxvMaSNFhpPky6W3EFO
-         f7iPljeL3zf+ZqXfJKZZStB2YeS7X2KoeRz+yh0WTWl3bB0WI6tfzOqtnUvpP/UpMd8+
-         paICL+E+SoDHl7Xh6ev2Kj43Nc+eCxFxG2sSXMWE61JYb32f4Pd/em4ylT/GudbNfFKb
-         0Wn9V51MT/tQdHmt7zyOJDpw/qsLyz7SGEpw/6yQboI/gYJ6AY8VL25gNR9AsMiFs3aJ
-         zJNpkTwj3PyO7jp+uqsqVrIRrDvdEocWGse+lhnlLl129TDVxL205JHoRY9cTaGVU7ak
-         oq7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJpI4a3PnimM2EHPQhmSoEV1pqWb082nkHrlgDvoQPWRyRkBQtWzeYGyjVCZgnEz5AOzf9lkjF6MiOLm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHqnzamSlv9yTv/NDvjmC0IDjHit8p1JOXnmqsL/NUqIXpeZL0
-	CuosMCfsMapJNKN9fa7cMW8Y7nxXIRePevY79UZ9+SLH8JtAMDvKwOvKSbVtsItwghp3BsHEYRb
-	2e+EqAe1jALvkOZTrLMbkzzYxvjI4r/eVlBYldGWOpw==
-X-Gm-Gg: ASbGncteAv+wXXAIoNAhUMvBIyGAXU/Us5NWi9rVIxc0MRrWjEQj0nCKgNpkGjel4dw
-	QhPtrOxZg93QwY+Frs+kVHrmG/Sslq0pK83HLCH3bNZfRcLIv44dMS5uhYh/H5yMYsGbawScl90
-	8Zpd5lm3atXT6xW0MtBsYtNYHgPDMANk3XffxBQ0fi2e8gGl7TbRNJkb6Hf2E5Ypu6w+pfIUvYq
-	J23/2r5wn+mvVKsxXgk7hO0HdpvMuwyjFazOdvd7TaaGcd6Ne1XvVBYqVJVJndjpRHC1MWRltEn
-	v/HFPQ0ep6YZT5wE
-X-Google-Smtp-Source: AGHT+IGgWlCG9kIv5RM7lpIk9LC7ddziZ8QniI5XBDNtHyHFdpWvdUKYxGgON08x+t3awJ+Cz4M6eIo1aCJcpUc2eyg=
-X-Received: by 2002:a05:6512:3c8c:b0:594:2fde:a159 with SMTP id
- 2adb3069b0e04-59576e552camr2521011e87.43.1763041316428; Thu, 13 Nov 2025
- 05:41:56 -0800 (PST)
+        bh=gHk2bNA1OTHNC9vr3z2H2JeUdyy+rk3RBEHgiTzG238=;
+        b=rGIJMSyyGoB+Io3qm9aS5zIBQD/j1PXYvoxgsvRsdKlzGT6NMd7yzuX6r5dTzQJgHy
+         2B/VSTZCIAsp1XEnzq8wi9rYZh3UZv42dge2h4M6Czm82Bk+2VM/LL9fJ4U6pr4VeCLR
+         VqbaZ3NvIXiI++a2/HcQQUJXhnxPelFNqK9nhFC14K12IZwlK6H4xZBIW7HRm5gL1dN5
+         ncbanwh5XQ6lnKZIyPi/HU+i8+4YSbaLLoiqXrV8hMVrwo2yIW+rg4tjXf3QH841z4Xf
+         GCn0Xl6MU//1wM7F8jnM06wXb76B5xqWgPXIEK8hyq4h6h7NHlh+AM17P6U7bpQRYuAG
+         APJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn+z4NirfO2FwJaQv6gVdI3y9dXlL/d0YB+zGnfXpwn3G5DJmQ45/ufXNlH8YvGiKHSgKLqpClkUkeqW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWwdhZyomf/6pqd7wasRNAqDhnd7N+BwwaePW3tkYfCtnHrjDC
+	H+eIgpWTcQcupoF0a8la7jEBqQWb0Lx0PmMyv0NpLXojyZ+HGZlFWoxjK89aA7n3hXLrKhbWUbM
+	dsZ0eCGlkuVCZzZbhOjubDKKzCbCw/iF9y0CmmS0/vw==
+X-Gm-Gg: ASbGnctvUEy5d6RW/qsInHnHls1s8vTH6sKbVOUewbUZ/3RxDav2tXPaOFv2lFH/0iw
+	7cRuaxiLb/MbwYfsQ6n3d2FyDjItx1/1BCKW8nZCWED7SVbQeOlxkKhdzZ7kX9MBZEqFyCbWjDT
+	l7vJoMHF14bTUavrk+giFKE1IyoLtZ0t9g4y3zjsfOYD0bjnJxnKHNnCl2VdmHBryRtcv9wxG6U
+	XYJZAnp/qJgMm5hOiFUK/TPnj7L/KTMr8TNDTpBlNB67PzbK5E2BTBun/HH+ivbQdKKOB3BWNQy
+	wVvEpaoJpBDFjbbj
+X-Google-Smtp-Source: AGHT+IF9+pE/QXln9/ghLnXjpwA3j+ZQdhSMaqAds1VqCnmNiZvVcKXj+XjAJW9rczSh1FwGivl5ToawEe+J2/Cq7qU=
+X-Received: by 2002:a05:6512:6d4:b0:592:f7cf:9f6f with SMTP id
+ 2adb3069b0e04-59576df5dfemr2184445e87.14.1763041463584; Thu, 13 Nov 2025
+ 05:44:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,14 +76,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
- <20251107-qcom-sa8255p-emac-v5-2-01d3e3aaf388@linaro.org> <21a3d269-76e6-4da9-aa25-bfd1fb6dfb07@oss.qualcomm.com>
- <CAMRc=MexMn_GSC2EtMek5hDRLjGYA5HKM8ge9vrxw1pYDqPJgw@mail.gmail.com> <cd7c0490-a2d6-4885-aa36-ee1492f107b8@oss.qualcomm.com>
-In-Reply-To: <cd7c0490-a2d6-4885-aa36-ee1492f107b8@oss.qualcomm.com>
+ <20251107-qcom-sa8255p-emac-v5-6-01d3e3aaf388@linaro.org> <14f95efb-0eb0-48ee-9132-df35abddfcc7@oss.qualcomm.com>
+In-Reply-To: <14f95efb-0eb0-48ee-9132-df35abddfcc7@oss.qualcomm.com>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Nov 2025 14:41:44 +0100
-X-Gm-Features: AWmQ_bk13TVZ2MEYPAt7pfoLg7e0lkaPcfsA9km-tpYIh11AXtLgw1MABlXNgK4
-Message-ID: <CAMRc=MeuByh=N_-F2+zPiqnh+Qp9u97kiMheLJ-xxcSZSy+_tw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/8] net: stmmac: qcom-ethqos: use generic device properties
+Date: Thu, 13 Nov 2025 14:44:12 +0100
+X-Gm-Features: AWmQ_blnqOG7JKELYBN2x3sW4StFzPpU8xniVnWCV7D_4z_I3CQNMw3VuWKeQ6A
+Message-ID: <CAMRc=Mf03rYoi-C+kMic9RYZdk2vtAW5LDMYNMqg-H5vJccUhA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] net: stmmac: qcom-ethqos: split power management
+ context into a separate struct
 To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -125,48 +125,46 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.or
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 2:33=E2=80=AFPM Konrad Dybcio
+On Fri, Nov 7, 2025 at 12:00=E2=80=AFPM Konrad Dybcio
 <konrad.dybcio@oss.qualcomm.com> wrote:
 >
-> On 11/13/25 2:18 PM, Bartosz Golaszewski wrote:
-> > On Fri, Nov 7, 2025 at 11:49=E2=80=AFAM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>
-> >> On 11/7/25 11:29 AM, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>
-> >>> In order to drop the dependency on CONFIG_OF, convert all device prop=
-erty
-> >>> getters from OF-specific to generic device properties and stop pullin=
-g
-> >>> in any linux/of.h symbols.
-> >>>
-> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>> -     if (of_property_read_bool(np, "snps,tso"))
-> >>> +     if (device_property_present(dev, "snps,tso"))
-> >>
-> >> This is a change in behavior - "snps,tso =3D <0>" would have previousl=
-y
-> >> returned false, it now returns true
-> >>
+> On 11/7/25 11:29 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > >
-> > This property is a boolean flag, it cannot have a value.
+> > With match data split into general and power-management sections, let's
+> > now do the same with runtime device data.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 46 ++++++++++++--=
+--------
+> >  1 file changed, 25 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/=
+drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> > index 1f00556bbad997e2ec76b521cffe2eb14fabb79e..09f122062dec87aa11804af=
+2769ddff4964e6596 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> > @@ -105,17 +105,21 @@ struct ethqos_emac_match_data {
+> >       const struct ethqos_emac_pm_data *pm_data;
+> >  };
+> >
+> > +struct ethqos_emac_pm_ctx {
+> > +     struct clk *link_clk;
+> > +     unsigned int link_clk_rate;
+> > +     struct phy *serdes_phy;
 >
-> Every DT property may have a value, so this is not as obvious as we'd
-> like it to be (IIUC - unless that changed recently)
+> What is the benefit of doing this? PHY APIs happily consume a nullptr
+> and NOP out, and the PHY is already retrieved with _optional(),
+> similarly with clk
 >
+> Konrad
 
-That's new to me. I thought that if a property is a
-/schemas/types.yaml#/definitions/flag then only its boolean form is
-allowed. The fact that the dtc can compile it with a value doesn't
-matter as the bindings are the higher authority for DT sources?
-
-I don't mind changing it to device_property_read_bool() but I'm not
-sure if we really should.
+Because it clearly divides the driver's logic into the manual and
+firmware-driven variants. Just because we could, doesn't necessarily
+mean we should just call PHY APIs with a nullptr if readability is
+better when we don't.
 
 Bartosz
 
