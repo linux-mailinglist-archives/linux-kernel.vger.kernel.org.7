@@ -1,138 +1,210 @@
-Return-Path: <linux-kernel+bounces-899482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D556C57E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:20:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E50C57F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C24B14EDEB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:15:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 808E13503D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A41727990A;
-	Thu, 13 Nov 2025 14:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7829BDBC;
+	Thu, 13 Nov 2025 14:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dbT+ZjWl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZFw0neMO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ew70EQT5"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9FC1946C8;
-	Thu, 13 Nov 2025 14:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA7C279903
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043319; cv=none; b=pGve/p52pdwhvKgGGzsXyPsMFiTiA/qgNQFA4IaBJlSTPl+CY3iRMPaZiRkRHGTnJPhmCatsakBeIMrez70xDUENVo6LQIZ3D+fQ3jFiArheHVzhf2GNIDmea2HkDjdq+Nk1tivFfFbF6gvowpeWoetCM79nUyFZsRt4JEa+Lyg=
+	t=1763043993; cv=none; b=CQ5W2U3TMRi9rHLQZn/TLMvsfrVchMoCaxnfhYqucWH2tL3zOPOsGV9sTTiGoOOlDHDYPXTUzyPRnnmYaegWTkAod5BS/ZsaHUapJr07T09oqbMBMs7dTpAzf8xsBzBLCE+IXtJlV4h8QjZy1E8V7meZBrkfEW78IMzZcvDfEVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043319; c=relaxed/simple;
-	bh=nWMhQRjakyXKC4rTkqBZ5NopTYYleHzJwHoDbpGBUhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jomwyN6LHOgZgMmkz4DNUA+n/N5rrs8pjwqcBuU5RPBGwrqbnUrs1XBUdQL/yU1PXWAZ+sSk+PqujNZ36wE1C3nUHZAltFwgo0FO9Vn9RamI2w+/XHpKGnaG8RAXXD6+FAHXbFX9Iqk9ZSB/RVkwkRN2a82o6AbtaMKLot21mc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dbT+ZjWl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZFw0neMO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 13 Nov 2025 15:15:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1763043316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SiruBdR++j5tVUStoBtH3b0TZxEBb9tGVfS5KkiuCyE=;
-	b=dbT+ZjWlYzH5DvbWfZBk0lM29niWzWpkLhd5TAZTyazT7jTMK05q9XW0SVidJ1RYxdPYOc
-	J6daknsORyW7fzzbuWSagl/+IqGBdFWarF+BSarXCnmunLGsbodITAbA8s1CBcEadDiNXh
-	tDpSgHHUMz0KajgXELIrq+UucEvsFbKWn1UmAPPzKrHQLeaYXqjI3BHKDYbf5zpuCVYihV
-	kIKVKf7rn6qUPHb2yztp/Vp85csuNEZbm5IEo1nNE5+iIe7C8NKZXbFrE05ghGVVl3jvgJ
-	hD3JKRSCwUttqJ2ZuVnMnx2ZK9NhGWN4v80hrRKrG3E5eDaM0ORwzOUkPXF+Fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1763043316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SiruBdR++j5tVUStoBtH3b0TZxEBb9tGVfS5KkiuCyE=;
-	b=ZFw0neMO1x/Ijtzi3YWRMDCsFa9VFqudEboNgWo3fl/iHGKJfYw6j72TYKcY4imSyDy9n6
-	NjAuh4j1z5y40OCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Yongliang Gao <leonylgao@gmail.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com,
-	Yongliang Gao <leonylgao@tencent.com>,
-	Huang Cun <cunhuang@tencent.com>
-Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
-Message-ID: <20251113141515.iZSIDK0T@linutronix.de>
-References: <20251113000252.1058144-1-leonylgao@gmail.com>
- <20251113073420.yko6jYcI@linutronix.de>
- <CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
+	s=arc-20240116; t=1763043993; c=relaxed/simple;
+	bh=pEtsXEYDUVwFnZGZDZwf6LQ8RdbFl0B6scfu0LRUXU4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P3+COHrCv9NBG5pNah2KwSRXxU1riFZtJZzYz8X005/4yF1CsD18oQauCQK2Xw0SFKq4TqdMTedklHY3nTxIuHyGCXTndRkCgLnNoThm7CTyS3FpTREejwC9iD4zWDvj0mjrRd3D+P5ifvEKsjtHoRA8iq4NVcL/0+M31Ls8Q9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ew70EQT5; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id D83B1240104
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:17:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1763043457; bh=adBBVnRsn7HOZmzACpymK40j8Veheszabl7lrdMc79A=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:OpenPGP:From;
+	b=ew70EQT52cJdMgXCXLOLor/H/VLZGG3bz/CZ83Wu+R/5Q5MLsdzoat8QBWz8d4+bI
+	 wIRTwCmtKi/JVSwLUyCbIQSWcIAyeJAD/fuCr/30NEum8KpBK0HT2aQo7lKrHF5qv6
+	 g7zU3R/6idx9cJAcqMqPZJPp42OkL8hfHAKDCZEZTFhT9tkwEzoe/DttLqClB9RbdL
+	 6qSwPuuIcnH/bfOFeKb1WB0JG9shLP45xENrlC0Xzbz6JOUeajOwf4IsDAlKPEisX3
+	 k4FysbpxZ6DvLWu6Wz5hIpySSEYE7QfI9B4xvF63lG0QJrbOZy5JJ3NafuXp+kJJly
+	 VwNp3mDJytCAg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4d6j5p2CqVz6trs;
+	Thu, 13 Nov 2025 15:17:34 +0100 (CET)
+Message-ID: <ce0b823830c8477b723fb8d6ee0166e5b5848fa0.camel@posteo.de>
+Subject: Re: [PATCH v7 0/2] rust: leds: add led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda
+	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich
+	 <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones
+	 <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+  Leon Romanovsky	 <leon@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, 	bjorn3_gh@protonmail.com, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross	 <tmgross@umich.edu>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 13 Nov 2025 14:17:36 +0000
+In-Reply-To: <20251027200547.1038967-1-markus.probst@posteo.de>
+References: <20251027200547.1038967-1-markus.probst@posteo.de>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ R3rOFHA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On 2025-11-13 19:13:23 [+0800], Yongliang Gao wrote:
-> Hi Sebastian,
-Hi Yongliang,
+On Mon, 2025-10-27 at 20:06 +0000, Markus Probst wrote:
+> This patch series has previously been contained in
+> https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.pro=
+bst@posteo.de/T/#t
+> which added a rust written led driver for a microcontroller via i2c.
+>=20
+> As the reading and writing to the i2c client via the register!
+> macro has not been implemented yet [1], the patch series will only
+> contain the additional abstractions required.
+>=20
+> [1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@ker=
+nel.org/
+>=20
+> The following changes were made:
+> * add abstraction to convert a device reference to a bus device
+>   reference for use in class device callbacks
+>=20
+> * add basic led classdev abstractions to register and unregister leds
+>=20
+> Changes since v6:
+> * fixed typos
+> * improved documentation
+>=20
+> Changes since v5:
+> * rename `IntoBusDevice` trait into `AsBusDevice`
+> * fix documentation about `LedOps::BLOCKING`
+> * removed dependency on i2c bindings
+> * added `AsBusDevice` implementation for `platform::Device`
+> * removed `device::Device` fallback implementation
+> * document that `AsBusDevice` must not be used by drivers and is
+>   intended for bus and class device abstractions only.
+>=20
+> Changes since v4:
+> * add abstraction to convert a device reference to a bus device
+>   reference
+> * require the bus device as parent device and provide it in class device
+>   callbacks
+> * remove Pin<Vec<_>> abstraction (as not relevant for the led
+>   abstractions)
+> * fixed formatting in `led::Device::new`
+> * fixed `LedOps::BLOCKING` did the inverse effect
+>=20
+> Changes since v3:
+> * fixed kunit tests failing because of example in documentation
+>=20
+> Changes since v2:
+> * return `Devres` on `led::Device` creation
+> * replace KBox<T> with T in struct definition
+> * increment and decrement reference-count of fwnode
+> * make a device parent mandatory for led classdev creation
+> * rename `led::Handler` to `led::LedOps`
+> * add optional `brightness_get` function to `led::LedOps`
+> * use `#[vtable]` instead of `const BLINK: bool`
+> * use `Opaque::cast_from` instead of casting a pointer
+> * improve documentation
+> * improve support for older rust versions
+> * use `&Device<Bound>` for parent
+>=20
+> Changes since v1:
+> * fixed typos noticed by Onur =C3=96zkan
+>=20
+> Markus Probst (2):
+>   rust: Add trait to convert a device reference to a bus device
+>     reference
+>   rust: leds: add basic led classdev abstractions
+>=20
+> Markus Probst (2):
+>   rust: Add trait to convert a device reference to a bus device
+>     reference
+>   rust: leds: add basic led classdev abstractions
 
-> Thank you for your review and the thoughtful questions.
-> 
-> 1. Performance Data
-> We encountered this issue in a production environment with 288 cores
-> where enabling set_ftrace_pid caused system CPU usage (sys%) to
-> increase from 10% to over 90%. In our 92-core VM test environment:
-> 
-> Before patch (spinlock):
-> - Without filtering: cs=2395401/s, sys%=7%
-> - With filtering: cs=1828261/s, sys%=40%
-> 
-> After patch (seqlock):
-> - Without filtering: cs=2397032/s, sys%=6%
-> - With filtering: cs=2398922/s, sys%=6%
-> 
-> The seqlock approach eliminates the pid_list->lock contention that was
-> previously causing sys% to increase from 7% to 40%.
-> 
-> 2. Reader Retry Behavior
-> Yes, if the write side is continuously busy, the reader might spin and
-> retry. However, in practice:
-> - Writes are infrequent (only when setting ftrace_pid filter or during
-> task fork/exit with function-fork enabled)
-> - For readers, trace_pid_list_is_set() is called on every task switch,
-> which can occur at a very high frequency.
+Hi,
 
-See.
+So you know in advance, I will add a 3. patch for multicolor led
+classdev abstractions (drivers/leds/led-class-multicolor.c,
+include/linux/led-class-multicolor.h) to this patch series.
 
-> 3. Result Accuracy
-> You're correct that the result might change immediately after the
-> read. For trace_ignore_this_task(), we don't require absolute
-> accuracy. Slight race conditions (where a task might be traced or not
-> in borderline cases) are acceptable.
+In the atmega1608 led driver (the user of these abstractions) there are
+leds with different colors that share the same slot.
+Technically "drivers/leds/rgb/leds-group-multicolor.c" could be used in
+combination with single color leds instead, but then hardware
+accelerated blinking wouldn't be supported. I think it would make more
+sense to directly implement it in the driver.
 
-I don't see why RCU work shouldn't work here.
-If a pid is removed then it might result that a chunk cleared/ removed
-then upper_chunk/ lower_chunk can become NULL. The buffer itself can be
-reused and point to something else. It could lear to a false outcome in
-test_bit(). This is handled by read_seqcount_retry().
+The existing 2 patches shouldn't change, so feel free to review them.
 
-You could assign upper1, upper2, to NULL/ buffer as now and the removal
-(in put_lower_chunk(), put_upper_chunk()) delay to RCU so it happens
-after the grace period. That would allow you to iterate over it in
-trace_pid_list_is_set() lockless since the buffer will not disappear and
-will not be reused for another task until after all reader left.
+Thanks
+- Markus Probst
 
-Additionally it would guarantee that the buffer is not released in
-trace_pid_list_free(). I don't see how the seqcount ensures that the
-buffer is not gone. I mean you could have a reader and the retry would
-force you to do another loop but before that happens you dereference the
-upper_chunk pointer which could be reused.
-
-So I *think* the RCU approach should be doable and cover this.
-
-> Best regards,
-> Yongliang
-
-Sebastian
+>=20
+>  rust/kernel/auxiliary.rs |   7 +
+>  rust/kernel/device.rs    |  33 ++++
+>  rust/kernel/led.rs       | 375 +++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs       |   1 +
+>  rust/kernel/pci.rs       |   7 +
+>  rust/kernel/platform.rs  |   7 +
+>  rust/kernel/usb.rs       |   6 +
+>  7 files changed, 436 insertions(+)
+>  create mode 100644 rust/kernel/led.rs
 
