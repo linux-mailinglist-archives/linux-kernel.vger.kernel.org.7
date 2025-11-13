@@ -1,171 +1,237 @@
-Return-Path: <linux-kernel+bounces-899920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AEDC59287
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D5CC592CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 18:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD87E4F82C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B204A5F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 17:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B9C265CA2;
-	Thu, 13 Nov 2025 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F243A9BE0;
+	Thu, 13 Nov 2025 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjmrlEV7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f8C4RoEI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E25328B57;
-	Thu, 13 Nov 2025 16:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0833A79D2;
+	Thu, 13 Nov 2025 17:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052945; cv=none; b=kbxi8TqQL9vdQXufGBmQMwddFGntNe6bW04NHmluMNwU0RdNcpeAeW2BnJOOIVq/Tv9/AvQGys0phdnBrQUvaIRHBHeUtbY/7v/5hPA3JCWmgpRS47cVbj91nG4zNyPzonwBrk+Hp9lVSldSIheY3d6OFEHmuRp31ipH4Y1I3tE=
+	t=1763053225; cv=none; b=CwNrP5/mTQdar1/7A575+KNar7Wggv63z0vfP04kDr/1tVAKWOJ9MQ9XSCxT2d3MbyYYjMcyZvBKMBjiY1LQvqExl7DrzPm9iOCGnrOHMZ17z/CzhpwKPSW6MMVN5t81xciC/FtTOh4kLnif3ZGtBzfr5v2sguolUemwIcCqKI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052945; c=relaxed/simple;
-	bh=cDuGUvpznpYi4xeC9A2xiX1DogtcEl4H0soP0vHU4YQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHYWnC43NmwqLk+8roh/U9vYP5r+GAglAnwSfv0rHoxN4PJB7RlJ1Ux5zOgRGP6125Ixe7QxQvFpcNfqijCorG39q6dMnaZpxMuEHbxzPP6VGpJPTQntNUBgUY2ZhYaNssgBNYuL/TewQRgNvXIkWPRvwis3X/mwFZM63cleV6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjmrlEV7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90766C4CEF5;
-	Thu, 13 Nov 2025 16:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763052944;
-	bh=cDuGUvpznpYi4xeC9A2xiX1DogtcEl4H0soP0vHU4YQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NjmrlEV7ZsT6s6HFZiZy9Knh8SNJyAlxNuYI3LsZUtRpM69G5QUG4vFpfhOGF8GHd
-	 xHyJID508VRbLcmnT2JdMJSH8okk7f2WLmbuSC31oIFyINVPGAFcghvirhf1zCU3cg
-	 nc3JK690hHCisBhj8pDgKo+dhul4pPw0dpKyrGl0Ux6sRmIASVBn/7/JSvHGJ1Gz3B
-	 2Oet4Wxa7ZLx7GgdE/KQVQpt49wnLZ8H/BGlQyUrwExbzeEPnS0k4h49l833fKhW4t
-	 zJguUv/IfwsCIUFQegANAutlxbxwxWLesu6sKUDulT1t13RLxFqAKahO5nidsPbsqq
-	 WNcb3vyJCD9ow==
-Date: Thu, 13 Nov 2025 11:00:06 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com, 
-	Yi Zhang <zhanyi@qti.qualcomm.com>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: Enable lvds panel-DV215FHM-R01 for
- rb3gen2 industrial mezzanine
-Message-ID: <p6rsi7nmzlk2q2wtnccwx4r7p74zoyeqq7d7pemhiv6tao56o6@6fivz7qrhkgx>
-References: <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-0-6eab844ec3ac@oss.qualcomm.com>
- <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-1-6eab844ec3ac@oss.qualcomm.com>
- <kosvayxmpbngn56v7t734f4qqrc2rptkjdd7q5q23brg22dvov@cxs7kzzuapim>
- <qps5fkbgdqqvoqa3m5l4naksyc4aoq4xqnciyrpkrbs5qcno7c@aa6ync6sk4ju>
- <vz7u2jsb677imufu6aillcqnnaybed3occniyx3fgniwtxzij5@uplpfhhyjk5k>
- <5lkcoekfn3d6gwk4ra6u65lu6mtgzn2iucyvswvn4lhwuw3pxv@jcrp22msbaip>
- <72ffjdik46dpespj2i2bakju6zcbu5eu7atuqrl4i4ri437nrj@aigb6akxb266>
+	s=arc-20240116; t=1763053225; c=relaxed/simple;
+	bh=zYBl/Dqp6Izqq1kQ5gjEICYJes4BCUnNwwCmCl6OpvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d+noicObSrtMTGEXcz1aoJgvnTfgPfzJ7+klUjGEtk4oQrXWVpo5BfDDblr4dOntOlHjLEbjQzpYv4EdIETS8aeE9dwpgG0FKZytfyyKmdic7uwlRMkPbJKDfJIeQM+YH6uVyoahAGKy1iJQQkRblCEbx51R7Eq7DgeNg2Afc4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f8C4RoEI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1763053221;
+	bh=zYBl/Dqp6Izqq1kQ5gjEICYJes4BCUnNwwCmCl6OpvY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f8C4RoEIQl4ixC4AaSJTwU/a73ZdGP3iO7JtymnuRD46ZnGLlrX3zXIkeMEE38ivH
+	 NWbHWsSVmZVNJLMesX2GA2qEEIDBzOywRh7KpHLr1Enc274iJMUSR8OVGNMkmJkUNT
+	 qB4i3GRb1r5qfpBPWiZFYzPrWXoHV2a7w8BWxMzRP7rSAUkUGt7OetJFHHe5bXUwku
+	 xALRb4jhPjFNJBLQAZMkwsEwlSgRMdKiCIVdnq1H3tzw1Sb3Nbjvo0Cynx/QCK2zS3
+	 lK2uWqC1sH6v4LLyNA3y9ph+dmuiy0HOwT/dAnonGddOVEq8rIkVVsDV4dSsUrWABy
+	 PqW485btNwz6w==
+Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 35F8717E35D3;
+	Thu, 13 Nov 2025 18:00:20 +0100 (CET)
+From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Nitin Gote <nitin.r.gote@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Christopher Healy <healych@amazon.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v8 10/11] drm/panfrost: Introduce huge tmpfs mountpoint option
+Date: Thu, 13 Nov 2025 18:00:06 +0100
+Message-ID: <20251113170008.79587-11-loic.molinari@collabora.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251113170008.79587-1-loic.molinari@collabora.com>
+References: <20251113170008.79587-1-loic.molinari@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72ffjdik46dpespj2i2bakju6zcbu5eu7atuqrl4i4ri437nrj@aigb6akxb266>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 05:45:42AM +0200, Dmitry Baryshkov wrote:
-> On Wed, Nov 12, 2025 at 04:07:27PM -0600, Bjorn Andersson wrote:
-> > On Wed, Nov 12, 2025 at 10:16:27PM +0200, Dmitry Baryshkov wrote:
-> > > On Wed, Nov 12, 2025 at 10:53:36AM -0600, Bjorn Andersson wrote:
-> > > > On Wed, Nov 12, 2025 at 05:02:20PM +0200, Dmitry Baryshkov wrote:
-> > > > > On Wed, Nov 12, 2025 at 08:18:11PM +0530, Gopi Botlagunta wrote:
-> > > > > > Below is the routing diagram of dsi lanes from qcs6490 soc to
-> > > > > > mezzanine.
-> > > > > > 
-> > > > > > DSI0 --> SW1403.4 --> LT9611uxc --> hdmi port
-> > > > > >                  |
-> > > > > >                   --> SW2700.1 --> dsi connector
-> > > > > >                               |
-> > > > > >                                --> LT9211c --> LVDS connector
-> > > > > > 
-> > > > > > Disable hdmi connector for industrial mezzanine and enable
-> > > > > > LT9211c bridge and lvds panel node.
-> > > > > > LT9211c is powered by default with reset gpio connected to 117.
-> > > > > > 
-> > > > > > Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
-> > > > > > Signed-off-by: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
-> > > > > > ---
-> > > > > >  .../qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso | 106 +++++++++++++++++++++
-> > > > > >  1 file changed, 106 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > > > > > index 619a42b5ef48..cc8ee1643167 100644
-> > > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > > > > > @@ -8,6 +8,112 @@
-> > > > > >  #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> > > > > >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> > > > > >  
-> > > > > > +/ {
-> > > > > > +
-> > > > > > +	hdmi-connector {
-> > > > > > +		status = "disabled";
-> > > > > > +	};
-> > > > > > +
-> > > > > > +	panel_lvds: panel-lvds@0 {
-> > > > > > +		compatible = "panel-lvds";
-> > > > > 
-> > > > > Please describe the actual panel using compatible, etc. It's not that
-> > > > > this is some generic uknown LVDS panel.
-> > > > > 
-> > > > 
-> > > > I presume the mezzanine doesn't have a panel, so how do we provide the
-> > > > description of the mezzanine such that a developer can quickly get up to
-> > > > speed with their specific panel connected to it?
-> > > > 
-> > > > Do we leave this node disabled, just for reference, or do we specify a
-> > > > specific panel and then have the developer copy and adopt this to their
-> > > > panel?
-> > > > 
-> > > > The benefit of doing it like that is that we provide a complete example
-> > > > and something we can test. But at the same time, If I presume we might
-> > > > have users of the mezzanine without an attached LVDS panel?
-> > > > 
-> > > > > > +		data-mapping = "vesa-24";
-> > > > > > +		width-mm = <476>;
-> > > > > > +		height-mm = <268>;
-> > > > 
-> > > > The way this patch is written we certainly have some specific panel in
-> > > > mind...
-> > > 
-> > > It's even mentioned in the subject: BOE DV215FHM-R01. Having a proper
-> > > panel compatible is demanded by the panel-lvds bindings.
-> > > 
-> > 
-> > I missed that mention. But that implies then that this isn't "the
-> > industrial mezzanine", but "the industrial mezznine with a boe
-> > DV215FHM-R01 connected".
-> > 
-> > Are you saying that this is the way you'd prefer that we handle the
-> > mezzanines with capabilities for extension?
-> 
-> Some time ago, around APQ8064 boards there was a discussion of using
-> EDID to identify LVDS panels (in a manner similar to panel-edp).
-> 
-> Does industrial mezzanine provide EDID support for the panel?
-> 
+Introduce the 'panfrost.transparent_hugepage' boolean module parameter
+(false by default). When the parameter is set to true, a new tmpfs
+mountpoint is created and mounted using the 'huge=within_size'
+option. It's then used at GEM object creation instead of the default
+'shm_mnt' mountpoint in order to enable Transparent Hugepage (THP) for
+the object (without having to rely on a system wide parameter).
 
-Even if there is EDID in this particular case, the problem still
-remains broadly. If we have a mezzanine with a standard connector, but
-the non-probable device is connected by the developer at a later stage,
-how do we facilitate their experience?
+v3:
+- use huge tmpfs mountpoint in drm_device
 
-Concretely, the Particle Tachyon has two CSI/DSI connectors compatible
-with Rasberry-Pi accessories, I believe RubikPi3 has the same. We have
-no idea what DSI panel (or CSI camera) the user might connect, but
-there's common board-specifics and boilerplate that a tinkerer need to
-put in place.
+v4:
+- fix builds with CONFIG_TRANSPARENT_HUGEPAGE=n
+- clean up mountpoint creation error handling
+- print negative error value
 
-Regards,
-Bjorn
+v5:
+- use drm_gem_has_huge_tmp() helper
+- get rid of CONFIG_TRANSPARENT_HUGEPAGE ifdefs
 
-> -- 
-> With best wishes
-> Dmitry
+Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_device.c |  3 +++
+ drivers/gpu/drm/panfrost/panfrost_drv.c    |  6 ++++++
+ drivers/gpu/drm/panfrost/panfrost_drv.h    |  9 +++++++++
+ drivers/gpu/drm/panfrost/panfrost_gem.c    | 18 ++++++++++++++++++
+ drivers/gpu/drm/panfrost/panfrost_gem.h    |  2 ++
+ 5 files changed, 38 insertions(+)
+ create mode 100644 drivers/gpu/drm/panfrost/panfrost_drv.h
+
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index c61b97af120c..dedc13e56631 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -12,6 +12,7 @@
+ #include "panfrost_device.h"
+ #include "panfrost_devfreq.h"
+ #include "panfrost_features.h"
++#include "panfrost_gem.h"
+ #include "panfrost_issues.h"
+ #include "panfrost_gpu.h"
+ #include "panfrost_job.h"
+@@ -267,6 +268,8 @@ int panfrost_device_init(struct panfrost_device *pfdev)
+ 	if (err)
+ 		goto out_job;
+ 
++	panfrost_gem_init(pfdev);
++
+ 	return 0;
+ out_job:
+ 	panfrost_jm_fini(pfdev);
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 7d8c7c337606..7f59568faa05 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -858,6 +858,12 @@ static const struct drm_driver panfrost_drm_driver = {
+ #endif
+ };
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++bool panfrost_transparent_hugepage;
++module_param_named(transparent_hugepage, panfrost_transparent_hugepage, bool, 0400);
++MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount point with Transparent Hugepage enabled (false = default)");
++#endif
++
+ static int panfrost_probe(struct platform_device *pdev)
+ {
+ 	struct panfrost_device *pfdev;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.h b/drivers/gpu/drm/panfrost/panfrost_drv.h
+new file mode 100644
+index 000000000000..edeb093eb6da
+--- /dev/null
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.h
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0 or MIT
++/* Copyright 2025 Amazon.com, Inc. or its affiliates */
++
++#ifndef __PANFROST_DRV_H__
++#define __PANFROST_DRV_H__
++
++extern bool panfrost_transparent_hugepage;
++
++#endif
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+index 8041b65c6609..d8472a023e05 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gem.c
++++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
++/* Copyright 2025 Amazon.com, Inc. or its affiliates */
+ 
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
+@@ -10,9 +11,26 @@
+ #include <drm/panfrost_drm.h>
+ #include <drm/drm_print.h>
+ #include "panfrost_device.h"
++#include "panfrost_drv.h"
+ #include "panfrost_gem.h"
+ #include "panfrost_mmu.h"
+ 
++void panfrost_gem_init(struct panfrost_device *pfdev)
++{
++	int err;
++
++	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
++	    !panfrost_transparent_hugepage)
++		return;
++
++	err = drm_gem_huge_mnt_create(&pfdev->base, "within_size");
++	if (drm_gem_has_huge_mnt(&pfdev->base))
++		drm_info(&pfdev->base, "Using Transparent Hugepage\n");
++	else if (err)
++		drm_warn(&pfdev->base, "Can't use Transparent Hugepage (%d)\n",
++			 err);
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ static void panfrost_gem_debugfs_bo_add(struct panfrost_device *pfdev,
+ 					struct panfrost_gem_object *bo)
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
+index 8de3e76f2717..1a62529ff06f 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gem.h
++++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
+@@ -124,6 +124,8 @@ drm_mm_node_to_panfrost_mapping(struct drm_mm_node *node)
+ 	return container_of(node, struct panfrost_gem_mapping, mmnode);
+ }
+ 
++void panfrost_gem_init(struct panfrost_device *pfdev);
++
+ struct drm_gem_object *panfrost_gem_create_object(struct drm_device *dev, size_t size);
+ 
+ struct drm_gem_object *
+-- 
+2.47.3
+
 
