@@ -1,116 +1,104 @@
-Return-Path: <linux-kernel+bounces-899431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426AAC57B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:40:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C13C57BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E83053441F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:37:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 415C1343B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075881F91E3;
-	Thu, 13 Nov 2025 13:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256EB227B83;
+	Thu, 13 Nov 2025 13:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8GpjPHj"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8GYThTK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31BD15ADB4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AC12222BF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 13:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763041022; cv=none; b=rR6UFvCgvDq/9uJkQp0ji6pJYLj0GUOeDZmD2IaCGhnCIH+pjZmf9IcPmCmP8Kecxyw28G+VIw42lHlxNAPwH/bKLoe+ZPF8v6DXK+4Tcl6hPfTEeKw5f8p7ITnuOxryrKZrWJJ0G1LuQRslTa+i7g2rotBrp5Qnqe2JcIzNKYY=
+	t=1763041033; cv=none; b=n9fPfAptlojk9oh0HdYmkZ9D3O8wggBjM6a74H2dRR2Ze0ACfOtFqSKSDgmQu7IEMiH4v90rxTICuTMMf8qY3j9D+AzHqNRNTx+3kUw2xKf2rqIRNB1jReLkxTmXoai6VdtnDxjT1VmMvPumz3Y4Muy1gZfU7kdhuEe8twXcfjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763041022; c=relaxed/simple;
-	bh=bQ+P52mNlITuRTiW9s5XEFgomZzd9bFBs7jFB6ckx4s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HqB0CJHPOpNtCQsd9pZhhba/MHSWvy4HcIWR7m5yHJRjkgWse2oVbX+VqDqpykwScOV+UDHvv+eq6kFL9wk10nyx31tlvPe2ACdvXuD4OJ9TyuXWzve5IYyF7x3RvTwsgh/hGzKQMT8yiWEGpWgfmd/rg2xN8uRsSSp8PbvxTIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N8GpjPHj; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477632d9326so5997045e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 05:36:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763041018; x=1763645818; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bQ+P52mNlITuRTiW9s5XEFgomZzd9bFBs7jFB6ckx4s=;
-        b=N8GpjPHjPV+MezPF3iWHG7PwPq0xv/G87Yk4awggJ9C7SsfsNmEADgJMPGwYoAAcq3
-         YO/t6JxN4Yt9Z/CzOV4abzojq6rSlj4gOYspoLGbj8nHGAsfs5zG/Cjw9UyJFf6NEC69
-         EDU6RQYhOs9dh4TjmX7dtKGqnV6srSGEWVBykpn592BTDym68BwgT5pWf0wA9mNgKOg1
-         IF1ALuG1Oj0xdNNv+y3ICIBCK/CxzJ48sWuX0pIyXCD4BXrPoC8VswfO70H4ox5u9d6i
-         DR9lGdQ4Aj7jW0f/hOFsxiKPokDQbYpDDZxpzPk/xYknvXdvXe5fUrPH2d7HqI+ebpgp
-         pgNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763041018; x=1763645818;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bQ+P52mNlITuRTiW9s5XEFgomZzd9bFBs7jFB6ckx4s=;
-        b=xCcxp4bmnLOcCtwbbBQQewa4XutZpCRYH4LwV/xLC9LcymNw3sHaa30jnklEQz6Zdh
-         6qGzO74K7qqGSkR1IodxNnbVWjZed7RIiIggrNXXpzhVQf01BMIROSK2f2TqzkpnJ4/R
-         yX9nulkRGvnlJop+nvZgbSVuOd7/03Hso42AQqFfYADctLrRxttaflrdMcTMGSUpwkgY
-         Hn1l4y+IOxalfI1SZ6GUNLpVpnKXOLIONwyIX8PAILYLMlFvFgqiCvUZhVHeT8IHDBP7
-         pkyWpGGf45hcvXgvrpL8sbWCweJQPCf06NXE7f0lDAlvBi6bUh8oaKgm8nr1YGLZbme8
-         S6yw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2hKlFBAE9xF0dm+6lCNc2mf+yK6aK780tSriMYjn4Uw67DyGTIHLM66UA1CczSRZ+GFyaPvRcpT3MWtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpQzz5OAZlDIlkbpo6CnZXPS+3VVxSPZ9ZDDdx9b44h+gRUcpC
-	7KCYbQNuoHwPO0Vpgu3uZONReRCE5jmxvegto48xfVdKvCSFWyjIThmGBZ322Mb62Kw=
-X-Gm-Gg: ASbGncuGDUWzd09HH5GvwVP6IdD4sCLASlcPqvN7zPspQwYypkLWKHj/5nTx9/zn7iC
-	MdzGHeKeCcT69Z1KB75zuL7K5s6FaqWEpHDdsuxElSe64MYeJff4ZuZ8n6Kxa8DI0+QOx67tGmZ
-	u6uU7Wjp3r3ETfrHXPMs+zP8F0oz2Of3XTLKiTWpBXsjGAdIE5QdU1n5FOLVJBiSol8CLQLUjga
-	wCjc1wuTWPsW73nQP07iesryik9e8SsdO+MMoS5jolJweu7fESqjBVtdehlcVHmvuhPuSkEuk/Q
-	1kEz00EpXYjn+bGhF5l/KcjDXCUDf1djdzA3SMETgNurEVxuDd9k+dN8164+fOow4kO80/Hkaaa
-	H0BS/ZV4HQQQYmIVFlgswptbRXY5rmnPxo8mEYPzGk99w/vP2U6GC/dMnbQyEyUUepjfPNrdIl9
-	XN1wpyLyDouF7JKa8=
-X-Google-Smtp-Source: AGHT+IEkKKvXAgOUI2Gp8aNFTSnGeJkVMys49MhyLUt2uRO+8qeq7VUrFz/uoy33AXxXBmgM6zvg9Q==
-X-Received: by 2002:a05:600c:6305:b0:477:79cf:89d4 with SMTP id 5b1f17b1804b1-477870a6581mr59325775e9.31.1763041017943;
-        Thu, 13 Nov 2025 05:36:57 -0800 (PST)
-Received: from draszik.lan ([212.129.72.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e45677sm96382115e9.8.2025.11.13.05.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 05:36:57 -0800 (PST)
-Message-ID: <5e58b99bc6d1ef9169a0600f6694c0ee34758389.camel@linaro.org>
-Subject: Re: [PATCH v4 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
- drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>, Lee
- Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,  Bartosz
- Golaszewski	 <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Date: Thu, 13 Nov 2025 13:36:53 +0000
-In-Reply-To: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
-References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	s=arc-20240116; t=1763041033; c=relaxed/simple;
+	bh=ITUKq37G54FdMNV++QNuaG95UHtduurUTc61Vy70kTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ENSahuVovEi0nReBD/WYYDfpoMPvTNVtcI3C1v/4+t949IQSbXnk2YX8uVVvJF8ZsOGTxC1xdoC7B8b0Pyd+RrQx+TWOJKu4kXtbVlk3ZB50E5/bJ/gPUhErtFcp5r5N7HZ3C+u6qFQFptlv48GIT4xO4odyrM8w8l1t1mmHjZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8GYThTK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763041030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Iva89Jq9h47cYma4tPYPJMDkfJQ4oDC4mjQP4QFuAx4=;
+	b=X8GYThTKfpa9A6SGZRPb5yy0NUPJWTCcrrbaMmxqIENJAnUZyunq8SJ6b4P1F06iKRgvJD
+	15kN5zd8BSBKwzGLKiJ6AjksLBIqGANehM4CkOj3BFN5KVAIhrrW0KBI64DoCUEFhAwKa6
+	crV3P8Ik7lHaNDZP2IxPxULS76V+oH0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-wJyhP-w3Nm6Zf1sDows6LQ-1; Thu,
+ 13 Nov 2025 08:37:07 -0500
+X-MC-Unique: wJyhP-w3Nm6Zf1sDows6LQ-1
+X-Mimecast-MFC-AGG-ID: wJyhP-w3Nm6Zf1sDows6LQ_1763041026
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E256118002CC;
+	Thu, 13 Nov 2025 13:37:05 +0000 (UTC)
+Received: from wsxc.redhat.com (unknown [10.96.134.76])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 483E319540E8;
+	Thu, 13 Nov 2025 13:37:00 +0000 (UTC)
+From: Ricardo Robaina <rrobaina@redhat.com>
+To: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Cc: paul@paul-moore.com,
+	eparis@redhat.com,
+	fw@strlen.de,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	Ricardo Robaina <rrobaina@redhat.com>
+Subject: [PATCH v6 0/2] audit: improve NETFILTER_PKT records
+Date: Thu, 13 Nov 2025 10:36:54 -0300
+Message-ID: <cover.1762978910.git.rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, 2025-11-10 at 19:28 +0000, Andr=C3=A9 Draszik wrote:
-> This series extends the existing S2MPG10 PMIC driver to add support for
-> the regulators, and adds new S2MPG11 core and regulator drivers.
->=20
-> [...]
->=20
-> A DT update for Oriole / Raven to enable these is required which I will
-> send out separately.
+Currently, NETFILTER_PKT records lack source and destination
+port information, which is often valuable for troubleshooting.
+This patch series adds ports numbers, to NETFILTER_PKT records.
 
-https://lore.kernel.org/all/20251113-s2mpg1x-regulators-dts-v1-1-80a70ef42b=
-e1@linaro.org/
+The first patch refactors netfilter-related code, by moving
+duplicated code to audit.c, by creating audit_log_nf_skb()
+helper function.
+The second one, improves the NETFILTER_PKT records, by 
+including source and destination ports for protocols of
+interest.
 
-Cheers,
-Andre'
+Ricardo Robaina (2):
+  audit: add audit_log_nf_skb helper function
+  audit: include source and destination ports to NETFILTER_PKT
+
+ include/linux/audit.h    |   8 ++
+ kernel/audit.c           | 159 +++++++++++++++++++++++++++++++++++++++
+ net/netfilter/nft_log.c  |  57 +-------------
+ net/netfilter/xt_AUDIT.c |  57 +-------------
+ 4 files changed, 169 insertions(+), 112 deletions(-)
+
+-- 
+2.51.1
+
 
