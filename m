@@ -1,142 +1,197 @@
-Return-Path: <linux-kernel+bounces-899492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F478C57F07
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:27:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67ABC57E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84F454EE0B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:21:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EEE143553E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 14:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A1E28506C;
-	Thu, 13 Nov 2025 14:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BBC2877D9;
+	Thu, 13 Nov 2025 14:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haoMfR6B"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWwkvqje"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79120285068
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56996285068
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763043699; cv=none; b=DeSUwfV8yYjEm3l24EgpSmvgknj7cY7s6eFMAZlkq7XsQSx5YNol3iPqhbCKmhSxpQvtwAnfyN1+GiuQ5ALkvePOLBiSeGJQZTG01s919f5Di1SICSgCOZnO/WbgEy/CWLtjTOmB3677kgIgzdCIongA+9eQEF/5H6Ca+QRQl3Q=
+	t=1763043709; cv=none; b=aDT8VO+DOCLWvEpJ22499/WBGKRFyJ+DjKbATE0YS24rp6z/5vUpLYrg0ppm0K9pqi2F/m6EP8VlbEymNm8KVOprrrSMdVV5GP5wQ5w0DJeUC/B6ZRRjd4KfI3G+9U+F/y1PiSz1BcTSEdkmByTKfgUpOmOIawzk9dCtdGw4WZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763043699; c=relaxed/simple;
-	bh=Xe7Ea1AD5sUFo6oXsT+qD/kgt+3KXcnBspVGZoedp+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GnJYXbwLqmqTtr0VEafdwz4jlBJnUAOYIUKkkwiAuFHL09w0c43N7u/73vT58Wct7Qo6JcEY4S9L/+QqQkivyWw+qzv5YLCbW6HoKAo9myIdstdFCym01KcPiY/IIbl/AthzHcqUiMpkUhfJGpxqNZGQueuZ0qFmF53iFXKr6ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haoMfR6B; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1763043709; c=relaxed/simple;
+	bh=HnLlGXQ6hziyuWpD7ktGyynF2p4st0May1o0iDn8UrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+/fkh+60Y80zk2ngq4R5ovEHVMiupwKv4DXzEkOqw4/UY0C0cUwxyK+zHPiGbmSCBBeck3Sw+hlzhMwm/tjt6gSigHfbNmREF0+4BPpR4qOpNaOZM/vsxy4h3xkIrydPSW6yHz8rfwS8y7qokHAm5uK3ixXNbbAko3zx0ccKI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWwkvqje; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b387483bbso729410f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:21:37 -0800 (PST)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b427cda88so620664f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 06:21:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763043696; x=1763648496; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PVTH3OodIWn9qSwlGdTpQLDwP01tYh5/+5JVhlUv+nY=;
-        b=haoMfR6BOBTWSk33QievBrW0k/VGkRlaKureVuWz+EWYvTVVkZkFCMS6eUUnmQYSAw
-         vR00hPMIblDxs46XHig8ocQyFTYfG0mPmuOK11AFrGYZs57O3apL4OpumSJgqFigVh36
-         lyVMQdtFw3YH4m+hcIbCk3o2FezKLi4XqOV58JZ2kJkkNQ1WX0Sif7s9Hx0Tt3siIYBg
-         jDvH4kP6ALOvxN8Y29K9hs/n8oC+sunAquEbV+d1ez384R0covO6b3Kc2mg9vhSHDpWe
-         AgdmA1cioKdK4YcHP25oSF/2Y4YsemfW6erNdywEyN0rKnW0Bm31/95VA0jms1JTGL7A
-         45Zg==
+        d=gmail.com; s=20230601; t=1763043707; x=1763648507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=we6ktqHl8CIb+a6ejDPrewCJowKT1E/8mfmEjuw9yCE=;
+        b=gWwkvqje5prlHr562DnoKLbNf0My6FSxCFAE4aMjSfsRNLfV2xiRD8iqlrIOu0RcFy
+         2uIEySPA2TnyKOeo8V9plDdZDLbS87Y/co8w7XGMEYFmC1FMkZIogP786OskUtk6ilPh
+         ACO6+4bBXV0Ld2I5W0lS48PVLMh7N6KGRFvsUpl++iOzhkjPYWCBuBnmcYbTrZpegOnU
+         E5SASORue5uccjIPwBpbwMnn/5FDoFimR84dDfZ35Oaie7GAerwutTF9aJezzIdFxaQ0
+         CFHWO5AVxg0TcVq2Qusc5DXLQLbte8AbzDr3/F5YnOznePtH2rTpgG7erl8rBXmTszkO
+         3rbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763043696; x=1763648496;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PVTH3OodIWn9qSwlGdTpQLDwP01tYh5/+5JVhlUv+nY=;
-        b=WpT45bnUbZk5SerM2ZrTRZrW5abOf6r8otkP+TeiG7F27YoOVuz3lTE02gmMEXHGCH
-         JPqTu4FERJQfzB2aw4wOC5pxu3OhaGMIStfnrDwOu/C9+GFB/1cQSaTe2AJcPOfn9XpJ
-         wJl9RTKshXMwZ1ArNBGFXtykUJrhe1ripQcaPOCcQKhZHtQV/4Tx9UmU/7QmX/hANoWj
-         lan7Deuamf/lz0xR9haBfRgIItEb8bHWnmhPujvdgMwbSP75knVTA3LIZ4+x6yQNmxzU
-         oE0ihNnpJpVzM7b0OxOi+pbhkDsbRd490xHDIEK4IOlxg4rnCtizLKDIN+N95YPX17Q0
-         +20g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYprgf7GNe6eFWH/wvkIDpcdLRAZFt6MB6XHJ7y+3HjUOXUenQLM2Yxi5eNM90J5sFHyfRvYf7zGgwu6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAJzvtnPOybcjLPdWsdB0pCDbW+M+IeC9u9qBO0+WFBF1lrPKa
-	ysfE3leYgVV+d7S4/N0kCNqYiSJcuE3/+V+WXtxdSod6qDOWdBzv7pLyyH/jQtETFzCFo7ZHuOM
-	3sU1fw0mXHyftE8zcl0eurg3s8ECX/Qg=
-X-Gm-Gg: ASbGncuU6XrE/FLMrzx9G1Vn0eoIAy3Mdwz0ymP+FM8RRdSF1TGpS9/w4pLxJm5wJFd
-	1YEqe4jqmbg/Xb/TYxWd7K4pY95eSK6T+s15WuP0pXdZP3/qV0Rlo88XQT6I+wF1WfiGpXCA0pY
-	/B+YpYRPweNye0siBqzajdXsbjx8sJNT0x3jfI9m7uug59Zl2SD2cmFhxh+MAvo0QPD/3j1sDdA
-	+pU6isFnSpl2yhx7f8I+627P9mUsaPtGOJkPHz0NDfIbV8Ej9Di5FxD0kMqzWJhVIIG0MIU
-X-Google-Smtp-Source: AGHT+IHpKdVN83TCm20YE3t1L1lDlWwYUNuksMEsa3ToWtEDthhiiFsiCO+R+2diKHhI8EC3wUv5l0WKP1xsWN52j2s=
-X-Received: by 2002:a05:6000:4210:b0:42b:3ed2:c079 with SMTP id
- ffacd0b85a97d-42b4bdb3157mr6520095f8f.48.1763043695648; Thu, 13 Nov 2025
- 06:21:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763043707; x=1763648507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=we6ktqHl8CIb+a6ejDPrewCJowKT1E/8mfmEjuw9yCE=;
+        b=eYL2x8qdjcvCM3IItXLK0QMOvIBqrsNg99XRjBfc3nvB2OZGtGRnJ8cw96Av+C/SFE
+         bhP3FrsmL2Tnf2tC+IX6wyXcUfQ7epcJ0Iod70qCmiZnC4X65TnRV0F03SLgST4lVfyr
+         4Tf93zph9qIh7srkidkr3QFI7z3tEmxIIf+JnBz2BV2u8zi03lsk4oi9Euo6wmONUNGk
+         LclEqDtusA7DJ0UVqyJxRvqZa6Uu50UJ//LZdZHGBysmD6O+YGDw7sGvDdZnw+gFOMWz
+         s6HHYEE9sT6otiCNyUMf5KwQhpMQJ8OXerib+BW8Vfgh3L2yRF/1voCbRoBeVLpqxgRc
+         eFqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXN0lW7WB7LTqJP69s5oOArFNugEQ6p+9AfBD0UKvVCooSZzWyC9i/bIQnWM5KyDDEg9EWg+ujfoyeD/5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYbzv9DT1YnjBOxbSr1qAy4CmBhIKqp1LlW+/5iI5XUOHGzeWt
+	tnWJmlpenJhW3YktvBIKIvsvfcHvUnYgbl/PsagQs9q4weQWJZNwyWeZ
+X-Gm-Gg: ASbGncvTXZGoKwZTjOKq5k5zCZ4QfZfOSogvyAAaKnxOOcJ/JdsKQ8CA6npDOdkkvIX
+	ZEsvsJIFIv6IVwZJfZcqIOPp4W0JQGc3/0TfApyL06UB4UYpJwyuFnYw6exMmhDQLsKt5QQlZi3
+	8EFpwnawBycjK1m1+ZT9E0MSMi2NXEN3DtGQvnSgCs4iehTXPa+KTgJxRC8BY8rcSjKycCDMko1
+	fsVxpapD/ZqEZ1FqRv4513006xrC77xwZxeWjGVZVU47t7reKHigwf4Y3wauzIQc5n4uErO4vZH
+	KKLjTxwS8xoE5uupLqSuyy3rBF1aFB0aa9pp7wNclbutD39rsK7kB+A1M0H/p5VFBgUK3l8d/WX
+	IcaQKJb38WYL5iJGeBQP0YBOLzDtsHFoAr/SokeC99+TPMAruFKE86uVZYpUS+h3RIWFYb4yiew
+	==
+X-Google-Smtp-Source: AGHT+IGldfDXCrb7BH7hy572KrLOiAR1Lp75or0+sxa276AqeqbFud8+BeO55XZxpLa7Ug0Up1nVpw==
+X-Received: by 2002:a05:6000:40cd:b0:42b:4803:75e8 with SMTP id ffacd0b85a97d-42b4bdb44c0mr4800835f8f.43.1763043706616;
+        Thu, 13 Nov 2025 06:21:46 -0800 (PST)
+Received: from fedora ([94.73.38.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f21948sm4239920f8f.43.2025.11.13.06.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Nov 2025 06:21:46 -0800 (PST)
+Date: Thu, 13 Nov 2025 15:21:44 +0100
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RESEND v2 06/32] drm/vkms: Introduce configfs for plane
+ name
+Message-ID: <aRXpeE2fCRj4uyBY@fedora>
+References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
+ <20251029-vkms-all-config-v2-6-a49a2d4cba26@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-7-clamor95@gmail.com>
- <175847725338.4354.4145979844570539358@lazor>
-In-Reply-To: <175847725338.4354.4145979844570539358@lazor>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 13 Nov 2025 16:21:24 +0200
-X-Gm-Features: AWmQ_blflchRXgqVJi0za8JR5StKpVBhyxQTDb1Y4F00r9nuMPcYEvgT9Q0wdNU
-Message-ID: <CAPVz0n2gUT5aOT3S05Up+vAiMBf5jmthRV_7z_fpj9RsPWEg_w@mail.gmail.com>
-Subject: Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-vkms-all-config-v2-6-a49a2d4cba26@bootlin.com>
 
-=D0=BD=D0=B4, 21 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 20:54 Step=
-hen Boyd <sboyd@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Quoting Svyatoslav Ryhel (2025-09-15 01:01:52)
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
-egra114.c
-> > index 8bde72aa5e68..6b3a140772c2 100644
-> > --- a/drivers/clk/tegra/clk-tegra114.c
-> > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long=
- id)
-> >         return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_TEGRA124_CLK_EMC
-> > +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args=
- *clkspec,
-> > +                                               void *data)
-> > +{
-> > +       struct clk_hw *hw;
-> > +       struct clk *clk;
-> > +
-> > +       clk =3D of_clk_src_onecell_get(clkspec, data);
-> > +       if (IS_ERR(clk))
-> > +               return clk;
-> > +
-> > +       hw =3D __clk_get_hw(clk);
->
-> Can you just use of_clk_hw_onecell_get() instead? Then we don't need to
-> use __clk_get_hw(). Or is this whole function used to return a clk
-> pointer to something that isn't the clk framework?
->
+On Wed, Oct 29, 2025 at 03:36:43PM +0100, Louis Chauvet wrote:
+> Planes can have name, create a plane attribute to configure it. Currently
+> plane name is mainly used in logs.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  Documentation/gpu/vkms.rst           |  3 ++-
+>  drivers/gpu/drm/vkms/vkms_configfs.c | 32 ++++++++++++++++++++++++++++++++
+>  2 files changed, 34 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+> index 3574e01b928d..1fe6e420c963 100644
+> --- a/Documentation/gpu/vkms.rst
+> +++ b/Documentation/gpu/vkms.rst
+> @@ -87,10 +87,11 @@ Start by creating one or more planes::
+>  
+>    sudo mkdir /config/vkms/my-vkms/planes/plane0
+>  
+> -Planes have 1 configurable attribute:
+> +Planes have 2 configurable attributes:
+>  
+>  - type: Plane type: 0 overlay, 1 primary, 2 cursor (same values as those
+>    exposed by the "type" property of a plane)
+> +- name: Name of the plane
 
-This logic was adopted from Tegra124 driver, but of_clk_hw_onecell_get
-might be applicable. I will adjust to use it and if all works as
-expected, I will apply it in v4. Thank you.
+I'd like to mention again my comment on limiting the name to a set of
+well-known characters [1].
 
-> > +
-> > +       if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
-> > +               if (!tegra124_clk_emc_driver_available(hw))
-> > +                       return ERR_PTR(-EPROBE_DEFER);
-> > +       }
-> > +
-> > +       return clk;
+The reason is that, in libinput, we had a format string vulnerability
+due to the kernel exposing devices with names containing strings like
+"%s" in the name (CVE-2022-1215):
+https://gitlab.freedesktop.org/libinput/libinput/-/issues/752
+
+In my opinion, we should avoid surprising user-space too much and allow
+only a set of "safe" characters.
+
+Maybe I'm too cautious, as this is valid code, but I'd like to bring up
+the discussion again to see if someone else agrees or disagrees.
+
+[1] https://lore.kernel.org/all/aPtgCUX5kixTh2ua@fedora/
+  
+>  Continue by creating one or more CRTCs::
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
+> index 07ab794e1052..be6c3ba998b9 100644
+> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
+> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
+> @@ -322,10 +322,42 @@ static ssize_t plane_type_store(struct config_item *item, const char *page,
+>  	return (ssize_t)count;
+>  }
+>  
+> +static ssize_t plane_name_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +	const char *name;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock)
+> +		name = vkms_config_plane_get_name(plane->config);
+> +
+> +	return sprintf(page, "%s\n", name);
+> +}
+> +
+> +static ssize_t plane_name_store(struct config_item *item, const char *page,
+> +				size_t count)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		if (plane->dev->enabled)
+> +			return -EBUSY;
+> +
+> +		vkms_config_plane_set_name(plane->config, page);
+> +	}
+> +
+> +	return (ssize_t)count;
+> +}
+> +
+>  CONFIGFS_ATTR(plane_, type);
+> +CONFIGFS_ATTR(plane_, name);
+>  
+>  static struct configfs_attribute *plane_item_attrs[] = {
+>  	&plane_attr_type,
+> +	&plane_attr_name,
+>  	NULL,
+>  };
+>  
+> 
+> -- 
+> 2.51.0
+> 
 
