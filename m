@@ -1,153 +1,111 @@
-Return-Path: <linux-kernel+bounces-899633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-899636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA74C5877F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5938C5874C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 16:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85A342341D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373313A5DF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6025EF9C;
-	Thu, 13 Nov 2025 15:24:37 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D95433BBB0;
+	Thu, 13 Nov 2025 15:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG0SAln8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2638C265CA8;
-	Thu, 13 Nov 2025 15:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FCE3321A4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763047477; cv=none; b=P84+aH1XCZsf0wbV+fk2/HWVZ9P28ecERmRSaX/B5BsVtONX0JsMsYmj+yFOKMIUXaBsSyH7l1W0jQKBi+3HpoM311vwyWnOreO+QjsJhGX3yOcvi6sfhMAiixMFv6iKDPpbCMELfe6eV+G0gGUnPOoo3ynVqIO6yvYPEnfvgOY=
+	t=1763047515; cv=none; b=BdyER7rVpDxEm7rfhusfc83dRIsX2yu9YJGnv2N1VAolunWZPOVJ885jf1/tDLSqFEn42MJBpDr3rEA7IOav4GFb8sWEfZ6BkxAeT2hBkpraJV4gLiOz0md+vvQebqPoYz4tqChpsByAoI8QqjEKqPj4CSXNR1HYTFWD5KAJcq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763047477; c=relaxed/simple;
-	bh=2It9o6JabpBJyviUFjHoEtWYMON2YRsbiX+X2ReFwXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o6To6wNrIsJR4URRlBO1LU8qRNJUzSlKxQ863o4Nlbc+tKJDQbaBiOmUrdD8Tx4cHm11sjAddRIVYS8Zy785WOiuesosZow//yMh9zEtzIcgC9veOH3O/dVe9qV7XIBMm7MwQjfAIeDweiBVUmCiUwdbH/5yXpAc5cZMafF/Eas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 6177E160A35;
-	Thu, 13 Nov 2025 15:24:32 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 26B6B2D;
-	Thu, 13 Nov 2025 15:24:30 +0000 (UTC)
-Date: Thu, 13 Nov 2025 10:24:45 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com, Yongliang Gao
- <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
-Subject: Re: [PATCH v3] trace/pid_list: optimize pid_list->lock contention
-Message-ID: <20251113102445.3e70c1ec@gandalf.local.home>
-In-Reply-To: <20251113151729.4Zky6d-t@linutronix.de>
-References: <20251113000252.1058144-1-leonylgao@gmail.com>
-	<20251113073420.yko6jYcI@linutronix.de>
-	<CAJxhyqCyB3-CyDKgPtP-EoC=G9cWAYgLvse003+i2n6U4Pgv1w@mail.gmail.com>
-	<20251113141515.iZSIDK0T@linutronix.de>
-	<20251113100524.5c5f6bdc@gandalf.local.home>
-	<20251113151729.4Zky6d-t@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1763047515; c=relaxed/simple;
+	bh=zVXuKQQY5c+w49KZil6xN/VdD3U8/LYFNkcdzi/d9Jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QVePmsJPW0buCOkFYjFnqIC92O1wX8uNgyU4lHpq+tHTLkG4Fa2k/gAbNjm9gZL5KC2/jEJJeht8TifgXeeRKfsCnY+VnCgpv/ddiRyxtl1n1MPwfguRzyD138r1EJQQom23NcWwVMoPENjpyZbii+9xKq6a/S4FGJ0YkKiqSNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG0SAln8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9AAC2BC87
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 15:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763047515;
+	bh=zVXuKQQY5c+w49KZil6xN/VdD3U8/LYFNkcdzi/d9Jg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VG0SAln8X5hDAzGWIpcCvMT3nHvaEUZO2q/NXQBAkFbvP6GTSy+nxanUiWeppQavo
+	 b62nh0uR+J7Ke8239WlagW3h08WlmKI8ZvkmansIfD1RgaMhQI2gA9fia49pnPhr2Q
+	 YuAOZXGNbigalvda3Bkv7mH6ffBD3HTYE/KBZY2rAdn4JV2AdiBPVeajoYOjUFUmVr
+	 M9uo8l2eT4Wo0PATOC6nGZvuO41rzd37fLQUwNbyzp9iiQ7TUIzUchSVTSg+qXRbDG
+	 b6hdk70kL3AvoR9Nm2sP2ov9fTijrDWxdaKJCGt2tOVmQGI6ufQ4YYA5sYhDNbD+Ao
+	 9w5Bd2tAigYiQ==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-45033024e45so410525b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Nov 2025 07:25:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWrGrQ5K94d5cRtBhSo1KJMVxyCDEUfpC8eBLvD7uScUNYbAipEpeoze0hO9DZX9/fh/eEp6RjW9N25uu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOOVSHnEOgXjrjLem7/I4Rawp8TENEkOdQsAPdInNEBo05tPTQ
+	SRg+B9pRxn/KafysO/R6hKZrHoKFAfkpIScDswIdy9onqeFGNgtMJZJI3EisjnzKqOkkJ14pRJy
+	h74j3ZkHsk1Idel53PvavrGy637AJBF0=
+X-Google-Smtp-Source: AGHT+IFfmmIT1O0Jd8y77kmYZ06G5uXm163vmKDKtM5n96Ro7peJ5hDMSwqL4MNbQKH56lk/SqOCUOy9kBnuSlJqUnA=
+X-Received: by 2002:a05:6808:318a:b0:44d:be6b:33c1 with SMTP id
+ 5614622812f47-450745d93c4mr3472624b6e.65.1763047514456; Thu, 13 Nov 2025
+ 07:25:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: nn86zzbryeh16jhya5sq9kjkaouuroup
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 26B6B2D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/k7+5HGHEXXge806eidABq3yIxNovnI0k=
-X-HE-Tag: 1763047470-513433
-X-HE-Meta: U2FsdGVkX1/R7pU2DyCLzS2PoGceG06boACnxiYi1H3EPyqXaWilg5TSyRTpqhm/zUeNiqmHfZe91Vkl/NKWVo52TdT4JiivfkQNODz9oj3aXwjwW6v5ZF1TkJd/wtPSt/R8OhqkkaNVYhC10cE/2YSnnU5GBy/fPeMo2WWWX/IhXGbEdS7SScA1diD6XB5wWrjjC8JUtupJ28LMjfGkRwifBu8+Nywm0n8M98U5Bs6dAXSmSszKS5ZL95VW5CvajJsyK7fKDnKabaH+/FTr6Mpesn1NYE+JO4e6Ev2drl7ObpJ8MXW3LVwk8Z5+d+SW
+References: <4701737.LvFx2qVVIh@rafael.j.wysocki> <69115878-ec5e-4f7c-bb3e-9f61cce75c70@arm.com>
+In-Reply-To: <69115878-ec5e-4f7c-bb3e-9f61cce75c70@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Nov 2025 16:25:01 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gWrkT9-wucHBGLLN1AVOazBLEv0Xn_ebpO1dt=Xp3XeQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bl0a74gTL4igagURGNIBDyo6DjQ8P3FklGJBAiHMwLu5o5AlK695HdZILU
+Message-ID: <CAJZ5v0gWrkT9-wucHBGLLN1AVOazBLEv0Xn_ebpO1dt=Xp3XeQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] cpuidle: governors: teo: Assorted improvements
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Reka Norman <rekanorman@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Nov 2025 16:17:29 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+On Thu, Nov 13, 2025 at 4:21=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 11/12/25 16:21, Rafael J. Wysocki wrote:
+> > Hi,
+> >
+> > This is a bunch of teo cpuidle governor improvements, some of which are=
+ related
+> > to a bug report discussed recently:
+> >
+> > https://lore.kernel.org/linux-pm/CAEmPcwsNMNnNXuxgvHTQ93Mx-q3Oz9U57THQs=
+U_qdcCx1m4w5g@mail.gmail.com/
+> >
+> > The first patch fixes a bug that may cause an overly deep idle state
+> > to be selected when the scheduler tick has been already stopped.
+> >
+> > Patch [2/4] removes an unnecessary function argument.
+> >
+> > Patch [3/4] makes teo_update() to use s64 as the data type for its loca=
+l
+> > variables more consistently.
+> >
+> > The last patch reworks the governor's decay implementation to also deca=
+y
+> > metric values lower than 8.
+> >
+>
+> Tested-by: Christian Loehle <christian.loehle@arm.com>
 
-> On 2025-11-13 10:05:24 [-0500], Steven Rostedt wrote:
-> > This means that the chunks are not being freed and we can't be doing
-> > synchronize_rcu() in every exit.  
-> 
-> You don't have to, you can do call_rcu().
+Thank you!
 
-But the chunk isn't being freed. They may be used right away.
+> Test results below, although there really isn't anything interesting in t=
+here.
+> teo-1 to teo-4 (patches 1 to 4 respectively are essentially indistinguish=
+able from
+> teo-m =3D mainline)
 
-
-> So if the kfree() is not an issue, it is just the use of the block from
-> the freelist which must not point to a wrong item? And therefore the
-> seqcount?
-
-Correct.
-
-> 
-> > > So I *think* the RCU approach should be doable and cover this.  
-> > 
-> > Where would you put the synchronize_rcu()? In do_exit()?  
-> 
-> simply call_rcu() and let it move to the freelist.
-
-A couple of issues. One, the chunks are fully used. There's no place to put
-a "rcu_head" in them. Well, we may be able to make use of them.
-
-Second, if there's a lot of tasks exiting and forking, we can easily run
-out of chunks that are waiting to be "freed" via call_rcu().
-
-> 
-> > Also understanding what this is used for helps in understanding the scope
-> > of protection needed.
-> > 
-> > The pid_list is created when you add anything into one of the pid files in
-> > tracefs. Let's use /sys/kernel/tracing/set_ftrace_pid:
-> > 
-> >   # cd /sys/kernel/tracing
-> >   # echo $$ > set_ftrace_pid
-> >   # echo 1 > options/function-fork
-> >   # cat set_ftrace_pid
-> >   2716
-> >   2936
-> >   # cat set_ftrace_pid
-> >   2716
-> >   2945
-> > 
-> > What the above did was to create a pid_list for the function tracer. I
-> > added the bash process pid using $$ (2716). Then when I cat the file, it
-> > showed the pid for the bash process as well as the pid for the cat process,
-> > as the cat process is a child of the bash process. The function-fork option
-> > means to add any child process to the set_ftrace_pid if the parent is
-> > already in the list. It also means to remove the pid if a process in the
-> > list exits.  
-> 
-> This adding/ add-on-fork, removing and remove-on-exit is the only write
-> side?
-
-That and manual writes to the set_ftrace_pid file.
-
-> > What we are protecting against is when one chunk is freed, but then
-> > allocated again for a different set of PIDs. Where the reader has the chunk,
-> > it was freed and re-allocated and the bit that is about to be checked
-> > doesn't represent the bit it is checking for.  
-> 
-> This I assumed.
-> And the kfree() at the end can not happen while there is still a reader?
-
-Correct. That's done by the pid_list user:
-
-In clear_ftrace_pids():
-
-	/* Wait till all users are no longer using pid filtering */
-	synchronize_rcu();
-
-	if ((type & TRACE_PIDS) && pid_list)
-		trace_pid_list_free(pid_list);
-
-	if ((type & TRACE_NO_PIDS) && no_pid_list)
-		trace_pid_list_free(no_pid_list);
-
--- Steve
-
+Good, that's how it should be.
 
